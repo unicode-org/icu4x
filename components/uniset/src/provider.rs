@@ -335,14 +335,6 @@ impl Default for UnicodePropertyV1<'static> {
 
 impl<'data> UnicodePropertyV1<'data> {
     #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
-    pub fn from_uniset(set: &'data UnicodeSet, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
-        UnicodePropertyV1 {
-            name,
-            inv_list: set.clone(),
-        }
-    }
-
-    #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
     pub fn from_owned_uniset(
         set: UnicodeSet<'data>,
         name: Cow<'data, str>,
@@ -395,7 +387,7 @@ impl<'de> serde::Deserialize<'de> for UnicodePropertyV1<'de> {
             type Value = UnicodePropertyV1<'de>;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("struct UnicodePropertyV1")
+                formatter.write_str("a valid UnicodePropertyV1 struct")
             }
 
             fn visit_seq<V>(self, mut seq: V) -> Result<UnicodePropertyV1<'de>, V::Error>

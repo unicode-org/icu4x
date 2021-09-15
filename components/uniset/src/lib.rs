@@ -78,6 +78,7 @@ use zerovec::ZeroVec;
 
 /// Custom Errors for [`UnicodeSet`].
 #[derive(Display, Debug)]
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 pub enum UnicodeSetError<'data> {
     #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(ZeroVec<'data, u32>),

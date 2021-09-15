@@ -105,7 +105,7 @@ impl<'data> UnicodeSet<'data> {
     /// let result = UnicodeSet::from_inversion_list(inv_list);
     /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
     /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
-    ///     assert_eq!(ZeroVec::from_slice(&invalid), actual);
+    ///     assert_eq!(ZeroVec::try_from_slice(&invalid), Some(actual));
     /// }
     /// ```
     pub fn clone_from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError<'data>> {
@@ -115,7 +115,7 @@ impl<'data> UnicodeSet<'data> {
 
     /// Returns an owned inversion list representing the current [`UnicodeSet`]
     pub fn get_inversion_list(&self) -> Vec<u32> {
-        let result: Vec<u32> = self.as_inversion_list(); // Only crate public, to not leak impl
+        let result: Vec<u32> = self.to_inversion_list(); // Only crate public, to not leak impl
         result
     }
 
@@ -142,7 +142,7 @@ impl<'data> UnicodeSet<'data> {
     /// Returns the inversion list as a slice
     ///
     /// Public only to the crate, not exposed to public
-    pub(crate) fn as_inversion_list(&self) -> Vec<u32> {
+    pub(crate) fn to_inversion_list(&self) -> Vec<u32> {
         self.inv_list.to_vec()
     }
 
@@ -360,7 +360,7 @@ impl<'data> UnicodeSet<'data> {
         if set.size() > self.size() {
             return false;
         }
-        let inv_list = set.as_inversion_list();
+        let inv_list = set.to_inversion_list();
         let mut set_ranges: Chunks<u32> = inv_list.chunks(2);
         let mut check = set_ranges.next();
         let ranges = self.iter_ranges();

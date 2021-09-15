@@ -18,13 +18,13 @@ icu_benchmark_macros::static_setup!();
 
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
-fn get_basic_latin_block<'data>() -> UnicodeSet<'data> {
+fn get_basic_latin_block() -> UnicodeSet<'static> {
     let mut builder = UnicodeSetBuilder::new();
     builder.add_range(&('\u{0000}'..='\u{007F}'));
     builder.build()
 }
 
-fn get_latin1_supplement_block<'data>() -> UnicodeSet<'data> {
+fn get_latin1_supplement_block() -> UnicodeSet<'static> {
     let mut builder = UnicodeSetBuilder::new();
     builder.add_range(&('\u{0080}'..='\u{00FF}'));
     builder.build()

@@ -164,7 +164,7 @@ impl UnicodeSetBuilder {
     /// assert_eq!(check.iter_chars().next(), Some('A'));
     /// ```
     pub fn add_set(&mut self, set: &UnicodeSet) {
-        for range in set.as_inversion_list().chunks(2) {
+        for range in set.to_inversion_list().chunks(2) {
             self.add(range[0], range[1]);
         }
     }
@@ -231,7 +231,7 @@ impl UnicodeSetBuilder {
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('F'));
     pub fn remove_set(&mut self, set: &UnicodeSet) {
-        for range in set.as_inversion_list().chunks(2) {
+        for range in set.to_inversion_list().chunks(2) {
             self.remove(range[0], range[1]);
         }
     }
@@ -293,7 +293,7 @@ impl UnicodeSetBuilder {
     /// ```
     pub fn retain_set(&mut self, set: &UnicodeSet) {
         let mut prev = 0;
-        for range in set.as_inversion_list().chunks(2) {
+        for range in set.to_inversion_list().chunks(2) {
             self.remove(prev, range[0]);
             prev = range[1];
         }
@@ -426,7 +426,7 @@ impl UnicodeSetBuilder {
     /// assert!(!check.contains('N')); // 78
     /// ```
     pub fn complement_set(&mut self, set: &UnicodeSet) {
-        self.complement_list(&set.as_inversion_list());
+        self.complement_list(&set.to_inversion_list());
     }
 
     /// Returns whether the build is empty.

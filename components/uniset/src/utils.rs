@@ -16,13 +16,10 @@ pub fn is_valid(v: &[u32]) -> bool {
         || (v.len() % 2 == 0
             && v.windows(2).all(|chunk| chunk[0] < chunk[1])
             && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
-    // let v_iter = v.iter();
-    // let v_len = v.len();
-    // let v_last = v.last();
-    // is_iter_valid(v_iter, v_len, v_last)
 }
 
-/// TODO: fill out doc strings / examples
+/// Similar to [`is_valid()`], but accepts a `ZeroVec<u32>` of code points
+/// instead of a `&[u32]` slice.
 pub fn is_valid_zv(inv_list_zv: &ZeroVec<'_, u32>) -> bool {
     let slice = inv_list_zv.as_slice();
     slice.is_empty()
@@ -56,45 +53,103 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::{deconstruct_range, is_valid};
+    use super::{deconstruct_range, is_valid, is_valid_zv};
     use core::char;
+    use zerovec::ZeroVec;
 
+    // is_valid
+    
     #[test]
     fn test_is_valid() {
         let check = vec![0x2, 0x3, 0x4, 0x5];
         assert!(is_valid(&check));
     }
+
     #[test]
     fn test_is_valid_empty() {
         let check = vec![];
         assert!(is_valid(&check));
     }
+
     #[test]
     fn test_is_valid_overlapping() {
         let check = vec![0x2, 0x5, 0x4, 0x6];
         assert!(!is_valid(&check));
     }
+
     #[test]
     fn test_is_valid_out_of_order() {
         let check = vec![0x5, 0x4, 0x5, 0x6, 0x7];
         assert!(!is_valid(&check));
     }
+
     #[test]
     fn test_is_valid_duplicate() {
         let check = vec![0x1, 0x2, 0x3, 0x3, 0x5];
         assert!(!is_valid(&check));
     }
+
     #[test]
     fn test_is_valid_odd() {
         let check = vec![0x1, 0x2, 0x3, 0x4, 0x5];
         assert!(!is_valid(&check));
     }
+
     #[test]
     fn test_is_valid_out_of_range() {
         let check = vec![0x1, 0x2, 0x3, 0x4, (char::MAX as u32) + 1];
         assert!(!is_valid(&check));
     }
+
+
+    // is_valid_zv
+    
+    #[test]
+    fn test_is_valid_zv() {
+        let check = ZeroVec::from_slice(&[0x2, 0x3, 0x4, 0x5]);
+        assert!(is_valid_zv(&check));
+    }
+
+    #[test]
+    fn test_is_valid_zv_empty() {
+        let v: Vec<u32> = vec![];
+        let check = ZeroVec::from_slice(&v);
+        assert!(is_valid_zv(&check));
+    }
+
+    #[test]
+    fn test_is_valid_zv_overlapping() {
+        let check = ZeroVec::from_slice(&[0x2, 0x5, 0x4, 0x6]);
+        assert!(!is_valid_zv(&check));
+    }
+
+    #[test]
+    fn test_is_valid_zv_out_of_order() {
+        let check = ZeroVec::from_slice(&[0x5, 0x4, 0x5, 0x6, 0x7]);
+        assert!(!is_valid_zv(&check));
+    }
+
+    #[test]
+    fn test_is_valid_zv_duplicate() {
+        let check = ZeroVec::from_slice(&[0x1, 0x2, 0x3, 0x3, 0x5]);
+        assert!(!is_valid_zv(&check));
+    }
+
+    #[test]
+    fn test_is_valid_zv_odd() {
+        let check = ZeroVec::from_slice(&[0x1, 0x2, 0x3, 0x4, 0x5]);
+        assert!(!is_valid_zv(&check));
+    }
+
+    #[test]
+    fn test_is_valid_zv_out_of_range() {
+        let check = ZeroVec::from_slice(&[0x1, 0x2, 0x3, 0x4, (char::MAX as u32) + 1]);
+        assert!(!is_valid_zv(&check));
+    }
+
+
     // deconstruct_range
+
     #[test]
     fn test_deconstruct_range() {
         let expected = (0x41, 0x45);

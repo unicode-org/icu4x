@@ -16,7 +16,6 @@ members = [
     "components/plurals",
     "components/uniset",
     "experimental/bies",
-    # "experimental/calendar",
     "experimental/codepointtrie",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
