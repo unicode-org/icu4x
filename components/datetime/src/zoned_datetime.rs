@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
-use icu_locid::Locale;
+use icu_locid::{LanguageIdentifier, Locale};
+use icu_plurals::{provider::PluralRuleStringsV1Marker, PluralRuleType, PluralRules};
 use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
 
 use crate::{
@@ -14,6 +15,7 @@ use crate::{
         zoned_datetime::{self, FormattedZonedDateTime},
     },
     options::DateTimeFormatOptions,
+    pattern::reference::PatternPlurals,
     provider::{
         self,
         gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
@@ -49,13 +51,14 @@ use crate::{
 ///
 /// let date_provider = InvariantDataProvider;
 /// let zone_provider = InvariantDataProvider;
+/// let plural_provider = InvariantDataProvider;
 ///
 /// let options = length::Bag {
 ///     date: Some(length::Date::Medium),
 ///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
-/// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &options.into())
+/// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -88,17 +91,19 @@ impl<'data> ZonedDateTimeFormat<'data> {
     ///
     /// let date_provider = InvariantDataProvider;
     /// let zone_provider = InvariantDataProvider;
+    /// let plural_provider = InvariantDataProvider;
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &options);
+    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options);
     ///
     /// assert_eq!(zdtf.is_ok(), true);
     /// ```
-    pub fn try_new<L, DP, ZP>(
+    pub fn try_new<L, DP, ZP, PP>(
         locale: L,
         date_provider: &DP,
         zone_provider: &ZP,
+        plural_provider: &PP,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
@@ -113,14 +118,26 @@ impl<'data> ZonedDateTimeFormat<'data> {
             + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
+        PP: DataProvider<'data, PluralRuleStringsV1Marker> + ?Sized,
     {
         let locale = locale.into();
+        let langid: LanguageIdentifier = locale.clone().into();
 
-        let pattern = provider::date_time::pattern_for_options(date_provider, &locale, options)?
+        let patterns = provider::date_time::patterns_for_options(date_provider, &locale, options)?
             .unwrap_or_default();
 
-        let requires_data = datetime::analyze_pattern(&pattern, true)
+        let requires_data = datetime::analyze_patterns(&patterns, true)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
+
+        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns {
+            Some(PluralRules::try_new(
+                langid.clone(),
+                plural_provider,
+                PluralRuleType::Ordinal,
+            )?)
+        } else {
+            None
+        };
 
         let symbols_data = if requires_data {
             Some(
@@ -130,7 +147,7 @@ impl<'data> ZonedDateTimeFormat<'data> {
                             key: provider::key::GREGORY_DATE_SYMBOLS_V1,
                             options: ResourceOptions {
                                 variant: None,
-                                langid: Some(locale.clone().into()),
+                                langid: Some(langid.clone()),
                             },
                         },
                     })?
@@ -140,10 +157,16 @@ impl<'data> ZonedDateTimeFormat<'data> {
             None
         };
 
-        let datetime_format = DateTimeFormat::new(locale, pattern, symbols_data);
+        let datetime_format = DateTimeFormat::new(locale, patterns, symbols_data, ordinal_rules);
         let time_zone_format = TimeZoneFormat::try_new(
             datetime_format.locale.clone(),
-            datetime_format.pattern.clone(),
+            datetime_format
+                // Only dates have plural variants so we can use any of the patterns for the time segment.
+                .patterns
+                .patterns_iter()
+                .nth(0)
+                .expect("PatternPlurals should have at least one Pattern")
+                .clone(),
             zone_provider,
         )?;
 
@@ -167,8 +190,9 @@ impl<'data> ZonedDateTimeFormat<'data> {
     /// # let locale: Locale = langid!("en").into();
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
+    /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &options)
+    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options)
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -207,8 +231,9 @@ impl<'data> ZonedDateTimeFormat<'data> {
     /// # let locale: Locale = langid!("en").into();
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
+    /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &options.into())
+    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -242,8 +267,9 @@ impl<'data> ZonedDateTimeFormat<'data> {
     /// # let locale: Locale = langid!("en").into();
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
+    /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &options.into())
+    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"

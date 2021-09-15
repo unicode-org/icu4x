@@ -93,7 +93,10 @@ mod test {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
             | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(
-                    available_format_pattern.0.to_string(),
+                    available_format_pattern
+                        .0
+                        .expect_pattern("pattern should not have plural variants")
+                        .to_string(),
                     String::from("MMMM d, y")
                 )
             }
@@ -115,7 +118,13 @@ mod test {
 
         match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
-                assert_eq!(available_format_pattern.0.to_string(), String::from("L"))
+                assert_eq!(
+                    available_format_pattern
+                        .0
+                        .expect_pattern("pattern should not have plural variants")
+                        .to_string(),
+                    String::from("L")
+                )
             }
             best => panic!("Unexpected {:?}", best),
         };
@@ -146,7 +155,10 @@ mod test {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
                 // TODO - Append items are needed here.
                 assert_eq!(
-                    available_format_pattern.0.to_string(),
+                    available_format_pattern
+                        .0
+                        .expect_pattern("pattern should not have plural variants")
+                        .to_string(),
                     String::from("MMMM d, y vvvv")
                 )
             }

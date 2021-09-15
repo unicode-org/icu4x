@@ -7,9 +7,13 @@ use alloc::vec::Vec;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::{components, length},
-    pattern::{hour_cycle, reference::Pattern, PatternItem},
+    pattern::{
+        hour_cycle,
+        reference::{Pattern, PatternPlurals},
+        PatternItem,
+    },
     provider::gregory::{
-        patterns::{LengthPatternsV1, PatternV1},
+        patterns::{LengthPatternsV1, PatternPluralsV1},
         DateSkeletonPatternsV1,
     },
 };
@@ -87,12 +91,12 @@ pub enum BestSkeleton<T> {
 /// This function swaps out the the time zone name field for the appropriate one. Skeleton matching
 /// only needs to find a single "v" field, and then the time zone name can expand from there.
 fn naively_apply_time_zone_name(
-    pattern: &mut PatternV1,
+    pattern: &mut Pattern,
     time_zone_name: &Option<components::TimeZoneName>,
 ) {
     // If there is a preference overiding the hour cycle, apply it now.
     if let Some(time_zone_name) = time_zone_name {
-        for item in pattern.0.items_mut() {
+        for item in pattern.items_mut() {
             if let PatternItem::Field(fields::Field {
                 symbol: fields::FieldSymbol::TimeZone(_),
                 length: _,
@@ -125,15 +129,17 @@ pub fn create_best_pattern_for_fields<'a>(
     fields: &[Field],
     components: &components::Bag,
     prefer_matched_pattern: bool,
-) -> BestSkeleton<PatternV1> {
+) -> BestSkeleton<PatternPluralsV1> {
     let first_pattern_match =
         get_best_available_format_pattern(skeletons, fields, prefer_matched_pattern);
 
     // Try to match a skeleton to all of the fields.
-    if let BestSkeleton::AllFieldsMatch(mut pattern) = first_pattern_match {
-        hour_cycle::naively_apply_preferences(&mut pattern.0, &components.preferences);
-        naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
-        return BestSkeleton::AllFieldsMatch(pattern);
+    if let BestSkeleton::AllFieldsMatch(mut pattern_plurals) = first_pattern_match {
+        pattern_plurals.0.patterns_iter_mut().for_each(|pattern| {
+            hour_cycle::naively_apply_preferences(pattern, &components.preferences);
+            naively_apply_time_zone_name(pattern, &components.time_zone_name);
+        });
+        return BestSkeleton::AllFieldsMatch(pattern_plurals);
     }
 
     let FieldsByType { date, time } = group_fields_by_type(fields);
@@ -143,12 +149,14 @@ pub fn create_best_pattern_for_fields<'a>(
             BestSkeleton::AllFieldsMatch(_) => {
                 unreachable!("Logic error in implementation. AllFieldsMatch handled above.")
             }
-            BestSkeleton::MissingOrExtraFields(mut pattern) => {
+            BestSkeleton::MissingOrExtraFields(mut pattern_plurals) => {
                 if date.is_empty() {
-                    hour_cycle::naively_apply_preferences(&mut pattern.0, &components.preferences);
-                    naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
+                    pattern_plurals.0.patterns_iter_mut().for_each(|pattern| {
+                        hour_cycle::naively_apply_preferences(pattern, &components.preferences);
+                        naively_apply_time_zone_name(pattern, &components.time_zone_name);
+                    });
                 }
-                BestSkeleton::MissingOrExtraFields(pattern)
+                BestSkeleton::MissingOrExtraFields(pattern_plurals)
             }
             BestSkeleton::NoMatch => BestSkeleton::NoMatch,
         };
@@ -156,28 +164,31 @@ pub fn create_best_pattern_for_fields<'a>(
 
     // Match the date and time, and then simplify the combinatorial logic of the results into
     // an optional values of the results, and a boolean value.
-    let (date_pattern, date_missing_or_extra) =
+    let (date_patterns, date_missing_or_extra) =
         match get_best_available_format_pattern(skeletons, &date, prefer_matched_pattern) {
-            BestSkeleton::MissingOrExtraFields(fields) => (Some(fields), true),
-            BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
+            BestSkeleton::MissingOrExtraFields(fields) => (Some(fields.0), true),
+            BestSkeleton::AllFieldsMatch(fields) => (Some(fields.0), false),
             BestSkeleton::NoMatch => (None, true),
         };
 
-    let (mut time_pattern, time_missing_or_extra) =
+    let (time_patterns, time_missing_or_extra) =
         match get_best_available_format_pattern(skeletons, &time, prefer_matched_pattern) {
             BestSkeleton::MissingOrExtraFields(fields) => (Some(fields), true),
             BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
             BestSkeleton::NoMatch => (None, true),
         };
-
-    if let Some(ref mut pattern) = time_pattern {
-        hour_cycle::naively_apply_preferences(&mut pattern.0, &components.preferences);
-        naively_apply_time_zone_name(pattern, &components.time_zone_name);
-    }
+    let time_pattern = time_patterns.map(|pattern_plurals| {
+        let mut pattern = pattern_plurals
+            .0
+            .expect_pattern("Only date patterns can contain plural variants");
+        hour_cycle::naively_apply_preferences(&mut pattern, &components.preferences);
+        naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
+        pattern
+    });
 
     // Determine how to combine the date and time.
-    let pattern: Option<PatternV1> = match (date_pattern, time_pattern) {
-        (Some(date_pattern), Some(time_pattern)) => {
+    let patterns: Option<PatternPlurals> = match (date_patterns, time_pattern) {
+        (Some(date_patterns), Some(time_pattern)) => {
             let month_field = fields
                 .iter()
                 .find(|f| matches!(f.symbol, FieldSymbol::Month(_)));
@@ -215,23 +226,36 @@ pub fn create_best_pattern_for_fields<'a>(
                 length::Date::Short => &length_patterns.short,
             };
 
-            Some(
-                Pattern::from_bytes_combination(bytes, date_pattern.0, time_pattern.0)
-                    .expect("Failed to create a Pattern from bytes")
-                    .into(),
-            )
+            let date_patterns = match date_patterns {
+                PatternPlurals::MultipleVariants(mut date_patterns) => {
+                    date_patterns.patterns_iter_mut().for_each(|date_pattern| {
+                        *date_pattern = Pattern::from_bytes_combination(
+                            bytes,
+                            date_pattern.clone(),
+                            time_pattern.clone(),
+                        )
+                        .expect("Failed to create a Pattern from bytes");
+                    });
+                    PatternPlurals::MultipleVariants(date_patterns)
+                }
+                PatternPlurals::SinglePattern(date_pattern) => PatternPlurals::SinglePattern(
+                    Pattern::from_bytes_combination(bytes, date_pattern, time_pattern)
+                        .expect("Failed to create a Pattern from bytes"),
+                ),
+            };
+            Some(date_patterns)
         }
-        (None, Some(pattern)) => Some(pattern),
-        (Some(pattern), None) => Some(pattern),
+        (None, Some(pattern)) => Some(pattern.into()),
+        (Some(patterns), None) => Some(patterns),
         (None, None) => None,
     };
 
-    match pattern {
-        Some(pattern) => {
+    match patterns {
+        Some(patterns) => {
             if date_missing_or_extra || time_missing_or_extra {
-                BestSkeleton::MissingOrExtraFields(pattern)
+                BestSkeleton::MissingOrExtraFields(PatternPluralsV1(patterns))
             } else {
-                BestSkeleton::AllFieldsMatch(pattern)
+                BestSkeleton::AllFieldsMatch(PatternPluralsV1(patterns))
             }
         }
         None => BestSkeleton::NoMatch,
@@ -276,6 +300,26 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
     FieldsByType { date, time }
 }
 
+/// Alters given Pattern so that its fields have the same length as 'fields'.
+///
+///  For example the "d MMM y" pattern will be changed to "d MMMM y" given fields ["y", "MMMM", "d"].
+fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut Pattern) {
+    pattern.items_mut().iter_mut().for_each(|item| {
+        if let PatternItem::Field(pattern_field) = item {
+            if let Some(requested_field) = fields
+                .iter()
+                .find(|field| field.symbol == pattern_field.symbol)
+            {
+                if requested_field.length != pattern_field.length
+                    && requested_field.get_length_type() == pattern_field.get_length_type()
+                {
+                    *pattern_field = *requested_field;
+                }
+            }
+        }
+    });
+}
+
 /// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
 ///
 /// The following is implemented:
@@ -296,7 +340,7 @@ pub fn get_best_available_format_pattern(
     skeletons: &DateSkeletonPatternsV1,
     fields: &[Field],
     prefer_matched_pattern: bool,
-) -> BestSkeleton<PatternV1> {
+) -> BestSkeleton<PatternPluralsV1> {
     let mut closest_format_pattern = None;
     let mut closest_distance: u32 = u32::MAX;
     let mut closest_missing_fields = 0;
@@ -379,13 +423,9 @@ pub fn get_best_available_format_pattern(
         }
     }
 
-    let mut closest_format_pattern = PatternV1(
-        closest_format_pattern
-            .expect("At least one closest format pattern will always be found.")
-            .0
-            .expect_pattern_ref("todo #488")
-            .clone(),
-    );
+    let mut closest_format_pattern = closest_format_pattern
+        .expect("At least one closest format pattern will always be found.")
+        .clone();
 
     if closest_missing_fields == fields.len() {
         return BestSkeleton::NoMatch;
@@ -400,21 +440,11 @@ pub fn get_best_available_format_pattern(
         #[cfg(not(feature = "provider_transform_internals"))]
         panic!("This code branch should only be run when transforming provider code.");
     } else {
-        closest_format_pattern.0.items.iter_mut().for_each(|item| {
-            if let PatternItem::Field(pattern_field) = item {
-                if let Some(requested_field) = fields
-                    .iter()
-                    .find(|field| field.symbol == pattern_field.symbol)
-                {
-                    if requested_field.length != pattern_field.length
-                        && requested_field.get_length_type() == pattern_field.get_length_type()
-                    {
-                        *item = PatternItem::Field(*requested_field);
-                    }
-                }
-            }
-        });
-    }
+        closest_format_pattern
+            .0
+            .patterns_iter_mut()
+            .for_each(|pattern| adjust_pattern_field_lengths(fields, pattern));
+    };
 
     if closest_distance >= SKELETON_EXTRA_SYMBOL {
         return BestSkeleton::MissingOrExtraFields(closest_format_pattern);

@@ -47,6 +47,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             locale,
             &provider,
             &provider,
+            &provider,
             &DateTimeFormatOptions::default(),
         )
         .expect("Failed to create DateTimeFormat.");

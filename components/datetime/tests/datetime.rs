@@ -21,6 +21,7 @@ use icu_datetime::{
     DateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
+use icu_plurals::provider::PluralRuleStringsV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::struct_provider::StructProvider;
 use patterns::{
@@ -64,6 +65,15 @@ impl<'data> DataProvider<'data, DatePatternsV1Marker> for MultiKeyStructProvider
         req: &DataRequest,
     ) -> Result<DataResponse<'data, DatePatternsV1Marker>, icu_provider::DataError> {
         self.patterns.load_payload(req)
+    }
+}
+
+impl<'data> DataProvider<'data, PluralRuleStringsV1Marker> for MultiKeyStructProvider<'data> {
+    fn load_payload(
+        &self,
+        _req: &DataRequest,
+    ) -> Result<DataResponse<'data, PluralRuleStringsV1Marker>, icu_provider::DataError> {
+        Err(icu_provider::DataError::MissingPayload)
     }
 }
 
@@ -133,7 +143,9 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         };
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
-            let dtf = ZonedDateTimeFormat::try_new(locale, &provider, &provider, &options).unwrap();
+            let dtf =
+                ZonedDateTimeFormat::try_new(locale, &provider, &provider, &provider, &options)
+                    .unwrap();
             let result = dtf.format_to_string(&input_value);
 
             assert_eq!(result, output_value, "{}", description);
@@ -253,6 +265,7 @@ fn test_dayperiod_patterns() {
 #[test]
 fn test_time_zone_patterns() {
     let date_provider = icu_testdata::get_provider();
+    let plural_provider = icu_testdata::get_provider();
     let zone_provider = icu_testdata::get_provider();
     let format_options = DateTimeFormatOptions::default();
 
@@ -335,6 +348,7 @@ fn test_time_zone_patterns() {
                     langid.clone(),
                     &local_provider,
                     &zone_provider,
+                    &plural_provider,
                     &format_options,
                 )
                 .unwrap();
