@@ -4,12 +4,13 @@
 
 /** A FormattedStringBuilder with L levels of type annotations. */
 pub struct FormattedStringBuilder<F: Copy, const L: usize> {
+    // This could be Vec<u8> as well, but String makes the encoding more explicit
     chars: std::string::String,
     // The first dimension corresponds to the chars (i.e. Chars, code points), the second are the L levels of annotations
     annotations: Vec<Annotation<F, L>>,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 enum LocationInPart { Beginning, Inside, End, Single }
 
 // An L-level deep annotation for a single character, using F as field types
@@ -59,6 +60,7 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
 
     pub fn insert_fsb<const L1: usize>(&mut self, pos: usize, string: FormattedStringBuilder<F, L1>, field: F) -> &mut Self  {
         assert_eq!(L - 1, L1);
+        assert!(self.chars.is_char_boundary(pos));
         self.chars.insert_str(pos, string.chars.as_str());
         let new_annotations = raise_annotation(field, string.annotations);
         self.annotations.splice(pos..pos, new_annotations);
@@ -76,6 +78,12 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
         }
         res
     }
+
+    pub fn is_field_start(&self, pos: usize, level: usize) -> bool {
+        assert!(level < L);
+        let (location, _) = self.annotations[pos][level];
+        return location == LocationInPart::Beginning || location == LocationInPart::Single
+    }
 }
 
 pub type SimpleFormattedStringBuilder<F> = FormattedStringBuilder::<F, 1>;
@@ -87,8 +95,9 @@ impl<F: Copy> SimpleFormattedStringBuilder<F> {
     }
 
     pub fn insert(&mut self, pos: usize, string: &str, field: F) -> &mut SimpleFormattedStringBuilder<F>  {
+        assert!(self.chars.is_char_boundary(pos));
         self.chars.insert_str(pos, string);
-        self.annotations.splice(pos..pos, raise_annotation(field, vec![[]; string.chars().count()]));
+        self.annotations.splice(pos..pos, raise_annotation(field, vec![[]; string.len()]));
         self
     }
     
@@ -96,30 +105,6 @@ impl<F: Copy> SimpleFormattedStringBuilder<F> {
         self.annotations[pos][0].1
     }
 }
-
-
-// impl<F: Debug + Copy, const L: usize> Debug for FormattedStringBuilder<F, L> {
-//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//         let mut res = Ok(());
-//         for pos in 0..self.chars.len() {
-//             match self.chars.as_str().chars().nth(pos) {
-//                 Some(char) => {
-//                     res = res.and(f.write_fmt(format_args!("Character {}: {}\n", pos+1, char)));
-//                     for level in self.annotations[pos] {
-//                         res = res.and(match level {
-//                             (LocationInPart::Single, field) => f.write_fmt(format_args!("Single character of {:?}\n", field)),
-//                             (LocationInPart::Beginning, field) => f.write_fmt(format_args!("First character of {:?}\n", field)),
-//                             (LocationInPart::Inside, field) => f.write_fmt(format_args!("Middle character of {:?}\n", field)),
-//                             (LocationInPart::End, field) => f.write_fmt(format_args!("Last character of {:?}\n", field)),
-//                         });
-//                     }
-//                 }
-//                 None => ()
-//             }
-//         }
-//         res
-//     }
-// }
 
 #[cfg(test)]
 mod test {
@@ -169,10 +154,11 @@ mod test {
     #[test]
     fn test_multi_byte() {
         let mut x = SimpleFormattedStringBuilder::<Field>::new();
-        x.append("한", Field::Word);
-        assert_eq!(x.as_str(), "한");
+        x.append("π", Field::Word);
+        assert_eq!(x.as_str(), "π");
         assert_eq!(x.field_at(0), Field::Word);
-        assert_panics(|| x.field_at(1));
+        assert_eq!(x.field_at(1), Field::Word);
+        assert_panics(|| x.field_at(2));
     }
 
     #[test]
