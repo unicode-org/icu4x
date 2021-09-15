@@ -17,6 +17,8 @@
 
         Construct an :js:class:`ICU4XLocale` for the Bangla language.
 
+    .. js:staticfunction:: und()
+
     .. js:function:: clone()
 
         Clones the :js:class:`ICU4XLocale`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
@@ -33,13 +35,25 @@
 
         Write a string representation of :js:class:`ICU4XLocale` language to ``write`` See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id>`__ for more information.
 
+    .. js:function:: set_language(bytes)
+
+        Set the language part of the :js:class:`ICU4XLocale`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
+
     .. js:function:: region()
 
         Write a string representation of :js:class:`ICU4XLocale` region to ``write`` See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id>`__ for more information.
 
+    .. js:function:: set_region(bytes)
+
+        Set the region part of the :js:class:`ICU4XLocale`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
+
     .. js:function:: script()
 
         Write a string representation of :js:class:`ICU4XLocale` script to ``write`` See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id>`__ for more information.
+
+    .. js:function:: set_script(bytes)
+
+        Set the script part of the :js:class:`ICU4XLocale`. Pass an empty string to remove the script. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
 
     .. js:function:: tostring()
 

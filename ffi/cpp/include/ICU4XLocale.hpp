@@ -26,6 +26,7 @@ class ICU4XLocale {
   static std::optional<ICU4XLocale> create(const std::string_view name);
   static ICU4XLocale create_en();
   static ICU4XLocale create_bn();
+  static ICU4XLocale und();
   ICU4XLocale clone() const;
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> basename_to_writeable(W& write) const;
   diplomat::result<std::string, ICU4XLocaleError> basename() const;
@@ -33,10 +34,13 @@ class ICU4XLocale {
   diplomat::result<std::string, ICU4XLocaleError> get_unicode_extension(const std::string_view bytes) const;
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> language_to_writeable(W& write) const;
   diplomat::result<std::string, ICU4XLocaleError> language() const;
+  diplomat::result<std::monostate, ICU4XLocaleError> set_language(const std::string_view bytes);
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> region_to_writeable(W& write) const;
   diplomat::result<std::string, ICU4XLocaleError> region() const;
+  diplomat::result<std::monostate, ICU4XLocaleError> set_region(const std::string_view bytes);
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> script_to_writeable(W& write) const;
   diplomat::result<std::string, ICU4XLocaleError> script() const;
+  diplomat::result<std::monostate, ICU4XLocaleError> set_script(const std::string_view bytes);
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> tostring_to_writeable(W& write) const;
   diplomat::result<std::string, ICU4XLocaleError> tostring() const;
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }
@@ -62,6 +66,9 @@ inline ICU4XLocale ICU4XLocale::create_en() {
 }
 inline ICU4XLocale ICU4XLocale::create_bn() {
   return ICU4XLocale(capi::ICU4XLocale_create_bn());
+}
+inline ICU4XLocale ICU4XLocale::und() {
+  return ICU4XLocale(capi::ICU4XLocale_und());
 }
 inline ICU4XLocale ICU4XLocale::clone() const {
   return ICU4XLocale(capi::ICU4XLocale_clone(this->inner.get()));
@@ -129,6 +136,15 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::language() c
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
+inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::set_language(const std::string_view bytes) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_language(this->inner.get(), bytes.data(), bytes.length());
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.set_err((std::move(static_cast<ICU4XLocaleError>(diplomat_result_raw_out_value.err))));
+  }
+  return diplomat_result_out_value;
+}
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::region_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_region(this->inner.get(), &write_writer);
@@ -150,6 +166,15 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::region() con
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
+inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::set_region(const std::string_view bytes) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_region(this->inner.get(), bytes.data(), bytes.length());
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.set_err((std::move(static_cast<ICU4XLocaleError>(diplomat_result_raw_out_value.err))));
+  }
+  return diplomat_result_out_value;
+}
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::script_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_script(this->inner.get(), &write_writer);
@@ -170,6 +195,15 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::script() con
     diplomat_result_out_value.set_err((std::move(static_cast<ICU4XLocaleError>(diplomat_result_raw_out_value.err))));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+}
+inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::set_script(const std::string_view bytes) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_script(this->inner.get(), bytes.data(), bytes.length());
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.set_err((std::move(static_cast<ICU4XLocaleError>(diplomat_result_raw_out_value.err))));
+  }
+  return diplomat_result_out_value;
 }
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::tostring_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
