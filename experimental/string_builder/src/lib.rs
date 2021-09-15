@@ -7,3 +7,4 @@ mod string_builder;
 
 pub use error::Error as FormattedStringBuilderError;
 pub use string_builder::FormattedStringBuilder;
+pub use string_builder::SimpleFormattedStringBuilder;
