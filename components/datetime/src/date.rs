@@ -5,7 +5,7 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-use icu_calendar::{AsCalendar, Date, DateTime, Gregorian};
+use icu_calendar::{utils::week_of, AsCalendar, Date, DateTime, Gregorian};
 use icu_locid::Locale;
 use tinystr::TinyStr8;
 
@@ -97,7 +97,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// The year number according to week numbering.
     ///
     /// For example, December 31, 2020 is part of the first week of 2021.
-    fn year_week(&self) -> Year;
+    fn year_week(&self) -> Result<Year, DateTimeError>;
 
     /// The week of the month according to UTS 35.
     fn week_of_month(&self) -> WeekOfMonth;
@@ -105,7 +105,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// The week number of the year.
     ///
     /// For example, December 31, 2020 is part of the first week of 2021.
-    fn week_of_year(&self) -> WeekOfYear;
+    fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError>;
 
     /// TODO(#487): Implement flexible day periods.
     fn flexible_day_period(&self);
@@ -113,8 +113,50 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
 
 pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
     data: &'data T,
-    _first_weekday: u8,
-    _anchor_weekday: u8,
+    calendar: week_of::CalendarInfo,
+}
+
+fn compute_week_of_year<T: DateInput>(
+    datetime: &T,
+    calendar: &week_of::CalendarInfo,
+) -> Result<(DayOfYearInfo, week_of::WeekOf), DateTimeError> {
+    let doy_info = datetime
+        .day_of_year_info()
+        .ok_or(DateTimeError::MissingInput(
+            "DateTimeInput::day_of_year_info",
+        ))?;
+    let week = week_of::week_of(
+        calendar,
+        doy_info.days_in_prev_year as u16,
+        doy_info.days_in_year as u16,
+        doy_info.day_of_year as u16,
+        datetime
+            .iso_weekday()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?,
+    )?;
+    Ok((doy_info, week))
+}
+
+fn year_week<T: DateInput>(
+    datetime: &T,
+    calendar: &week_of::CalendarInfo,
+) -> Result<Year, DateTimeError> {
+    let (doy_info, week) = compute_week_of_year(datetime, calendar)?;
+    Ok(match week.unit {
+        week_of::RelativeUnit::Previous => doy_info.prev_year,
+        week_of::RelativeUnit::Current => datetime
+            .year()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::year"))?,
+        week_of::RelativeUnit::Next => doy_info.next_year,
+    })
+}
+
+fn week_of_year<T: DateInput>(
+    datetime: &T,
+    calendar: &week_of::CalendarInfo,
+) -> Result<WeekOfYear, DateTimeError> {
+    let (_, week) = compute_week_of_year(datetime, calendar)?;
+    Ok(WeekOfYear(u32::from(week.week)))
 }
 
 impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
@@ -122,16 +164,17 @@ impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
         Self {
             data,
             // TODO(#488): Implement week calculations.
-            _first_weekday: 1,
-            _anchor_weekday: 4,
+            calendar: week_of::CalendarInfo {
+                first_weekday: IsoWeekday::Monday,
+                min_week_days: 4,
+            },
         }
     }
 }
 
 pub(crate) struct ZonedDateTimeInputWithLocale<'data, T: ZonedDateTimeInput> {
     data: &'data T,
-    _first_weekday: u8,
-    _anchor_weekday: u8,
+    calendar: week_of::CalendarInfo,
 }
 
 impl<'data, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'data, T> {
@@ -139,8 +182,10 @@ impl<'data, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'data, T> {
         Self {
             data,
             // TODO(#488): Implement week calculations.
-            _first_weekday: 1,
-            _anchor_weekday: 4,
+            calendar: week_of::CalendarInfo {
+                first_weekday: IsoWeekday::Monday,
+                min_week_days: 4,
+            },
         }
     }
 }
@@ -150,16 +195,16 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
         self.data
     }
 
-    fn year_week(&self) -> Year {
-        todo!("#488")
+    fn year_week(&self) -> Result<Year, DateTimeError> {
+        year_week(self.data, &self.calendar)
     }
 
     fn week_of_month(&self) -> WeekOfMonth {
         todo!("#488")
     }
 
-    fn week_of_year(&self) -> WeekOfYear {
-        todo!("#488")
+    fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
+        week_of_year(self.data, &self.calendar)
     }
 
     fn flexible_day_period(&self) {
@@ -174,16 +219,16 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
         self.data
     }
 
-    fn year_week(&self) -> Year {
-        todo!("#488")
+    fn year_week(&self) -> Result<Year, DateTimeError> {
+        year_week(self.data, &self.calendar)
     }
 
     fn week_of_month(&self) -> WeekOfMonth {
         todo!("#488")
     }
 
-    fn week_of_year(&self) -> WeekOfYear {
-        todo!("#488")
+    fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
+        week_of_year(self.data, &self.calendar)
     }
 
     fn flexible_day_period(&self) {
