@@ -4,7 +4,9 @@
 
 mod error;
 mod string_builder;
+mod list_formatter;
 
 pub use error::Error as FormattedStringBuilderError;
 pub use string_builder::FormattedStringBuilder;
 pub use string_builder::SimpleFormattedStringBuilder;
+pub use list_formatter::ListFormatter;

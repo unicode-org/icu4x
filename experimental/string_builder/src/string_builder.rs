@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::FormattedStringBuilderError;
+
 /** A FormattedStringBuilder with L levels of type annotations. */
 pub struct FormattedStringBuilder<F: Copy, const L: usize> {
     // This could be Vec<u8> as well, but String makes the encoding more explicit
@@ -48,23 +50,30 @@ fn raise_annotation<F: Copy, const L: usize, const L1: usize>(top_level: F, mut 
 impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
     pub fn new() -> Self {
         Self {
-            chars: String::with_capacity(50),
+            chars: String::with_capacity(40),
             annotations: Vec::with_capacity(40),
         }
     }
 
     pub fn append_fsb<const L1: usize>(&mut self, string: FormattedStringBuilder<F, L1>, field: F) -> &mut Self {
         assert_eq!(L - 1, L1);
-        self.insert_fsb(self.chars.len(), string, field)
+        self.insert_fsb(self.chars.len(), string, field).expect("self.chars.len() is always a char boundary")
     }
 
-    pub fn insert_fsb<const L1: usize>(&mut self, pos: usize, string: FormattedStringBuilder<F, L1>, field: F) -> &mut Self  {
+    pub fn prepend_fsb<const L1: usize>(&mut self, string: FormattedStringBuilder<F, L1>, field: F) -> &mut Self {
         assert_eq!(L - 1, L1);
-        assert!(self.chars.is_char_boundary(pos));
+        self.insert_fsb(0, string, field).expect("0 is always a char boundary")
+    }
+
+    pub fn insert_fsb<const L1: usize>(&mut self, pos: usize, string: FormattedStringBuilder<F, L1>, field: F) -> Result<&mut Self, FormattedStringBuilderError> {
+        assert_eq!(L - 1, L1);
+        if !self.chars.is_char_boundary(pos) {
+            return Err(FormattedStringBuilderError::PositionNotCharBoundary)
+        }
         self.chars.insert_str(pos, string.chars.as_str());
         let new_annotations = raise_annotation(field, string.annotations);
         self.annotations.splice(pos..pos, new_annotations);
-        self
+        Ok(self)
     }
 
     pub fn as_str(&self) -> &str {
@@ -91,14 +100,20 @@ pub type SimpleFormattedStringBuilder<F> = FormattedStringBuilder::<F, 1>;
 impl<F: Copy> SimpleFormattedStringBuilder<F> {
 
     pub fn append(&mut self, string: &str, field: F) -> &mut SimpleFormattedStringBuilder<F> {
-        self.insert(self.chars.len(), string, field)
+        self.insert(self.chars.len(), string, field).expect("self.chars.len() is always a char boundary")
     }
 
-    pub fn insert(&mut self, pos: usize, string: &str, field: F) -> &mut SimpleFormattedStringBuilder<F>  {
-        assert!(self.chars.is_char_boundary(pos));
+    pub fn prepend(&mut self, string: &str, field: F) -> &mut SimpleFormattedStringBuilder<F> {
+        self.insert(0, string, field).expect("0 is always a char boundary")
+    }
+
+    pub fn insert(&mut self, pos: usize, string: &str, field: F) -> Result<&mut SimpleFormattedStringBuilder<F>, FormattedStringBuilderError> {
+        if !self.chars.is_char_boundary(pos) {
+            return Err(FormattedStringBuilderError::PositionNotCharBoundary)
+        }
         self.chars.insert_str(pos, string);
         self.annotations.splice(pos..pos, raise_annotation(field, vec![[]; string.len()]));
-        self
+        Ok(self)
     }
     
     pub fn field_at(&self, pos: usize) -> F {
@@ -121,8 +136,8 @@ mod test {
             SimpleFormattedStringBuilder::<Field>::new();
         x
             .append("world", Field::Word)
-            .insert(0, " ", Field::Space)
-            .insert(0, "hello", Field::Word);
+            .prepend(" ", Field::Space)
+            .prepend("hello", Field::Word);
 
         assert_eq!(x.as_str(), "hello world");
 
@@ -141,8 +156,8 @@ mod test {
         let mut x = SimpleFormattedStringBuilder::<Field>::new();
         x
             .append("world", Field::Word)
-            .insert(0, " ", Field::Space)
-            .insert(0, "hello", Field::Word);
+            .prepend(" ", Field::Space)
+            .prepend("hello", Field::Word);
 
         let mut y = FormattedStringBuilder::<Field, 2>::new();
         y.append_fsb(x, Field::Greeting);

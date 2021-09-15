@@ -2,16 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use lib::SimpleFormattedStringBuilder;
+use crate::SimpleFormattedStringBuilder;
 
-enum FieldType {
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum FieldType {
     Element,
     Literal,
 }
 
-type Pattern = str;
+type Pattern = String;
 
-struct ListFormatter {
+pub struct ListFormatter {
     first: Pattern,
     pair: Pattern,
     middle: Pattern,
@@ -21,53 +22,56 @@ struct ListFormatter {
 impl ListFormatter {
     fn simple() -> Self {
         Self {
-            pair: "; ",
-            first: ": ",
-            middle: ", ",
-            last: ". ",
+            pair: "; ".to_string(),
+            first: ": ".to_string(),
+            middle: ", ".to_string(),
+            last: ". ".to_string(),
         }
     }
 
     fn format_internal<B>(
         &self,
-        values: &[str],
+        values: &[&str],
         init: fn() -> B,
-        appendValue: fn(B, Pattern, str) -> B,
-        appendLast: fn(B, str) -> B,
+        append_value: fn(B, Pattern, &str) -> B,
+        append_last: fn(B, &str) -> B,
     ) -> B {
         match values.len() {
             0 => init(),
-            1 => appendLast(init(), values[0]),
-            2 => appendLast(appendValue(init(), self.pair, values[0]), values[1]),
+            1 => append_last(init(), values[0]),
+            2 => append_last(append_value(init(), self.pair.to_string(), values[0]), values[1]),
             n => {
-                let mut res = appendValue(init(), self.first, values[0]);
-                for i in 1..values.len() - 2 {
-                    res = appendValue(init, self.middle, values[0]);
+                let mut res = append_value(init(), self.first.to_string(), values[0]);
+                for i in 1..n - 2 {
+                    res = append_value(res, self.middle.to_string(), values[i]);
                 }
-                res = appendValue(init, values[0], self.last);
-                res
+                append_last(append_value(res, self.last.to_string(), values[n-2]), values[n-1])
             }
         }
     }
 
-    fn format(&self, values: &[str]) -> str {
+    pub fn format(&self, values: &[&str]) -> String {
         self.format_internal(
             values,
-            || "",
-            |builder, pattern, value| builder + value + pattern,
+            || "".to_string(),
+            |builder, pattern, value| builder + value + &pattern,
             |builder, value| builder + value,
         )
     }
 
-    fn format_to_parts(&self, values: &[str]) -> SimpleStringFormatter<Type> {
+    pub fn format_to_parts(&self, values: &[&str]) -> SimpleFormattedStringBuilder<FieldType> {
         self.format_internal(
             values,
-            SimpleStringFormatter::<Type>::new,
-            |builder, pattern, value| {
-                f.append(value, FieldType::Value)
-                    .append(pattern, FieldType::Literal)
+            SimpleFormattedStringBuilder::<FieldType>::new,
+            |mut builder, pattern, value| {
+                builder.append(value, FieldType::Element);
+                builder.append(&pattern, FieldType::Literal);
+                builder
             },
-            |builder, value| f.append(s, FieldType::Value),
+            |mut builder, value| {
+                builder.append(value, FieldType::Element); 
+                builder
+            },
         )
     }
 }
@@ -76,35 +80,39 @@ impl ListFormatter {
 mod test {
     use super::*;
 
+    const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
+
     #[test]
     fn test_format() {
         let f = ListFormatter::simple();
-        let values = ["one", "two", "three", "four", "five"];
-        assert_eq!(f.format(values[0..0]), "one");
-        assert_eq!(f.format(values[0..1]), "one; two");
-        assert_eq!(f.format(values[0..2]), "one: two. three");
-        assert_eq!(f.format(values[0..3]), "one: two, three. four");
-        assert_eq!(f.format(values), "one: two, three, four. five");
+        assert_eq!(f.format(&VALUES[0..0]), "");
+        assert_eq!(f.format(&VALUES[0..1]), "one");
+        assert_eq!(f.format(&VALUES[0..2]), "one; two");
+        assert_eq!(f.format(&VALUES[0..3]), "one: two. three");
+        assert_eq!(f.format(&VALUES[0..4]), "one: two, three. four");
+        assert_eq!(f.format(VALUES), "one: two, three, four. five");
     }
 
     #[test]
     fn test_format_to_parts() {
         let f = ListFormatter::simple();
-        let values = ["one", "two", "three", "four", "five"];
-        assert_eq!(f.format_to_parts(values[0..0]).as_str(), "one");
-        assert_eq!(f.format_to_parts(values[0..1]).as_str(), "one; two");
-        assert_eq!(f.format_to_parts(values[0..2]).as_str(), "one: two. three");
-        assert_eq!(
-            f.format_to_parts(values[0..3]).as_str(),
-            "one: two, three. four"
-        );
-
-        let parts = f.format_to_parts(values);
+        assert_eq!(f.format_to_parts(&VALUES[0..0]).as_str(), "");
+        assert_eq!(f.format_to_parts(&VALUES[0..1]).as_str(), "one");
+        assert_eq!(f.format_to_parts(&VALUES[0..2]).as_str(), "one; two");
+        assert_eq!(f.format_to_parts(&VALUES[0..3]).as_str(), "one: two. three");
+        assert_eq!(f.format_to_parts(&VALUES[0..4]).as_str(), "one: two, three. four");
+        let parts = f.format_to_parts(VALUES);
         assert_eq!(parts.as_str(), "one: two, three, four. five");
+
         assert_eq!(parts.field_at(0), FieldType::Element);
+        assert!(parts.is_field_start(0, 0));
         assert_eq!(parts.field_at(2), FieldType::Element);
+        assert!(!parts.is_field_start(2, 0));
         assert_eq!(parts.field_at(3), FieldType::Literal);
+        assert!(parts.is_field_start(3, 0));
         assert_eq!(parts.field_at(4), FieldType::Literal);
+        assert!(!parts.is_field_start(4, 0));
         assert_eq!(parts.field_at(5), FieldType::Element);
+        assert!(parts.is_field_start(5, 0));
     }
 }
