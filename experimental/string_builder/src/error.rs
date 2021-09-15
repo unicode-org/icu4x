@@ -4,5 +4,5 @@
 
 #[derive(Debug)]
 pub enum Error {
-    PositionNotCharBoundary
+    PositionNotCharBoundary,
 }

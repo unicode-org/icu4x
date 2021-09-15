@@ -39,13 +39,19 @@ impl ListFormatter {
         match values.len() {
             0 => init(),
             1 => append_last(init(), values[0]),
-            2 => append_last(append_value(init(), self.pair.to_string(), values[0]), values[1]),
+            2 => append_last(
+                append_value(init(), self.pair.to_string(), values[0]),
+                values[1],
+            ),
             n => {
                 let mut res = append_value(init(), self.first.to_string(), values[0]);
                 for i in 1..n - 2 {
                     res = append_value(res, self.middle.to_string(), values[i]);
                 }
-                append_last(append_value(res, self.last.to_string(), values[n-2]), values[n-1])
+                append_last(
+                    append_value(res, self.last.to_string(), values[n - 2]),
+                    values[n - 1],
+                )
             }
         }
     }
@@ -69,7 +75,7 @@ impl ListFormatter {
                 builder
             },
             |mut builder, value| {
-                builder.append(value, FieldType::Element); 
+                builder.append(value, FieldType::Element);
                 builder
             },
         )
@@ -100,7 +106,10 @@ mod test {
         assert_eq!(f.format_to_parts(&VALUES[0..1]).as_str(), "one");
         assert_eq!(f.format_to_parts(&VALUES[0..2]).as_str(), "one; two");
         assert_eq!(f.format_to_parts(&VALUES[0..3]).as_str(), "one: two. three");
-        assert_eq!(f.format_to_parts(&VALUES[0..4]).as_str(), "one: two, three. four");
+        assert_eq!(
+            f.format_to_parts(&VALUES[0..4]).as_str(),
+            "one: two, three. four"
+        );
         let parts = f.format_to_parts(VALUES);
         assert_eq!(parts.as_str(), "one: two, three, four. five");
 
