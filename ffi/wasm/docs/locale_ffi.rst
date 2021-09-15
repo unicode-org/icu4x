@@ -19,6 +19,8 @@
 
     .. js:staticfunction:: und()
 
+        Construct a default undefined :js:class:`ICU4XLocale` "und".
+
     .. js:function:: clone()
 
         Clones the :js:class:`ICU4XLocale`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.

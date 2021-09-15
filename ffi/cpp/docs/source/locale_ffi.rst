@@ -19,6 +19,8 @@
 
     .. cpp:function:: static ICU4XLocale und()
 
+        Construct a default undefined :cpp:class:`ICU4XLocale` "und".
+
     .. cpp:function:: ICU4XLocale clone() const
 
         Clones the :cpp:class:`ICU4XLocale`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
