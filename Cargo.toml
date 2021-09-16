@@ -20,7 +20,7 @@ members = [
     "experimental/provider_ppucd",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
-    "ffi/capi",
+    "ffi/diplomat",
     "ffi/ecma402",
     "provider/blob",
     "provider/cldr",
