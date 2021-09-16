@@ -3,7 +3,7 @@ Enums or Identifiers
 
 An *entity* is a discrete item in a set. For example, English is an entity: it is a specific instance of a language.
 
-There are two general ways to represent entities: *enumerations* and *identifiers*. An *enumeration* is a fixed list of entities; an *identifier* is a universally understood space of numbers or strings. For example, `"en"` is an identifier: it is a language code according to a standard published by ISO.
+There are two general ways to represent entities: *enumerations* and *identifiers*. An *enumeration* is a fixed, finite list of entities. An *identifier* is a universally understood space of numbers or strings, which may or may not be finite. For example, the identifier `"en"` is a language code according to a standard published by ISO.
 
 This design doc helps explain how we think about entities in ICU4X and when to use enums versus identifiers to represent them.
 
@@ -11,21 +11,24 @@ This design doc helps explain how we think about entities in ICU4X and when to u
 
 If you need to decide whether to use an enum or an identifier for a certain set of entities in ICU4X, consider following this decision tree:
 
-**Question 1:** How are new entities added to the set?
+**Question 1:** How many entities are in the set?
+
+- *More than 20 or Infinite:* Use identifiers.
+- *20 or fewer:* Continue to Question 2.
+
+**Question 2:** How are new entities added to the set?
 
 - *Spontaneously:* Use identifiers.
 - *By an authority, at least once every few years:* Use identifiers.
-- *Set is fixed or grows rarely:* Continue to Question 2.
+- *Set is fixed or grows rarely:* Continue to Question 3.
 
-**Question 2:** How many entities are in the set?
+**Question 3:** Consider the following statements:
 
-- *More than 20 or Infinite:* Use identifiers.
-- *20 or fewer:* Continue to Question 3.
+1. The set is *comprehensive*. It is inclusive of all peoples and cultures. There are no additional entities that are not currently represented.
+2. The entities are used within the context of a single program, and are *not normally interchanged* between different programs.
+3. Entities in the set are usually *compared* with one another. Entities are rarely expressed in a standalone context.
 
-**Question 3:** Are the entities inclusive of all peoples and cultures? Is there a larger set out there which is not currently represented?
-
-- *No:* Use identifiers or an enum with a private-use variant.
-- *Yes or not applicable:* Use either enums or identifiers.
+If all three statements are *true*, then an enum is probably the right choice. If all three statements are *false*, then an identifier is probably the right choice. If there is a mix, you are in a gray area; continue reading this document for additional guidance.
 
 ## Enumerations
 
@@ -38,6 +41,11 @@ enum FooEnum {
     Entity3,
 }
 ```
+
+### Advantages
+
+- Enums are useful for large codebase maintenance. When an enum changes, engineers can identify and update all call sites.
+- The compiler has many opportunities to optimize enums; for example, memory layout and match statements.
 
 ### Examples
 
@@ -52,21 +60,61 @@ Examples of entities that are represented by enums:
     - Could theoretically change, but has not grown for a long period of time
     - Correctly represents all languages supported by CLDR
 
+### Private-use variants
+
+An enum can have a private-use variant:
+
+```rust
+enum FooEnum {
+    Entity1,
+    Entity2,
+    Entity3,
+    PrivateUse(TinyStr8),
+}
+```
+
+An enum with a private-use variant bridges the extensibility of identifiers with the engineering convenience of enums.
+
+### Explicit discriminants
+
+Enum values can be given explicit discriminant values:
+
+```rust
+enum FooEnum {
+    Entity1 = 1,
+    Entity2 = 2,
+    Entity3 = 3,
+}
+```
+
+If an enum is used for interchange between programs, including over FFI, discriminants should be explicitly specified. However, if the enum is only used within the context of the current program (if it never leaves Rust), explicitly specifying the discriminants could limit the compiler's ability to optimize the enum.
+
 ### Non-exhaustive enums
 
 It is possible in Rust to mark enums as `#[non_exhaustive]`, which allows additional entries to be added over time.
 
-However, if there is a need to do this, then it means that the set of entities could grow over time. If this is the case, consider using identifiers instead.
+However, if there is a need to do this, then it means that the set of entities could grow over time. If this is the case, you should probably be using identifiers instead.
 
 ## Identifiers
 
 An *identifier* is a universally understood space of numbers or strings, where a particular number or string represents a particular entity.
+
+Identifiers are also discussed and defined in [Unicode Technical Standard #39](http://unicode.org/reports/tr39/):
+
+> Identifiers ("IDs") are strings used in application contexts to refer to specific entities of certain significance in the given application. In a given application, an identifier will map to at most one specific entity.
 
 In ICU4X, identifiers are often represented as [new types](https://doc.rust-lang.org/rust-by-example/generics/new_types.html) wrapping the underlying representation:
 
 ```rust
 struct FooId(u8);
 ```
+
+Using a new type means that any instance of an identifier is guaranteed to be valid. Validation could happen either at compile time (e.g., `const` values or a proc macro) or at runtime (e.g., deserializing from a data file).
+
+### Advantages
+
+- Identifiers are highly compatible with information interchange: the entity automatically comes with a universally understood serialization format.
+- Identifier schemes are robust to changes in the world, since new entities can be readily assigned an identifier.
 
 ### Examples
 
