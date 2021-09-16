@@ -702,4 +702,16 @@ mod tests {
         let act_result: Result<UnicodeSet, serde_json::Error> = serde_json::from_str(inv_list_str);
         assert!(matches!(act_result, Err(_)));
     }
+
+    #[test]
+    fn test_serde_with_postcard_roundtrip() -> Result<(), postcard::Error> {
+        let set = UnicodeSet::bmp();
+        let set_serialized: Vec<u8> = postcard::to_allocvec(&set).unwrap();
+        let set_deserialized: UnicodeSet = postcard::from_bytes::<UnicodeSet>(&set_serialized)?;
+
+        assert_eq!(&set, &set_deserialized);
+        assert!(matches!(set_deserialized.inv_list, ZeroVec::Borrowed(_)));
+
+        Ok(())
+    }
 }
