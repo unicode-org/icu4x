@@ -26,14 +26,21 @@ macro_rules! impl_byte_slice_size {
                 &self.0
             }
         }
-        impl ULE for PlainOldULE<$size> {
+        // This is safe to implement because from_byte_slice_unchecked returns
+        // the same value as parse_byte_slice
+        unsafe impl ULE for PlainOldULE<$size> {
             type Error = std::convert::Infallible;
             #[inline]
             fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+                // Safe because Self is transparent over [u8; $size]
+                Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+            }
+            #[inline]
+            unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
                 let data = bytes.as_ptr();
                 let len = bytes.len() / $size;
                 // Safe because Self is transparent over [u8; $size]
-                Ok(unsafe { std::slice::from_raw_parts(data as *const Self, len) })
+                std::slice::from_raw_parts(data as *const Self, len)
             }
             #[inline]
             fn as_byte_slice(slice: &[Self]) -> &[u8] {

@@ -4,7 +4,7 @@
 
 pub mod structs;
 
-use icu_datetime::options::{length, DateTimeFormatOptions};
+use icu_datetime::options::DateTimeFormatOptions;
 use std::fs::File;
 use std::io::BufReader;
 
@@ -26,20 +26,8 @@ pub fn get_patterns_fixture() -> std::io::Result<structs::PatternsFixture> {
 
 #[allow(dead_code)]
 pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatOptions {
-    let length = length::Bag {
-        date: input.length.date.as_ref().map(|date| match date {
-            structs::TestLength::Full => length::Date::Full,
-            structs::TestLength::Long => length::Date::Long,
-            structs::TestLength::Medium => length::Date::Medium,
-            structs::TestLength::Short => length::Date::Short,
-        }),
-        time: input.length.time.as_ref().map(|time| match time {
-            structs::TestLength::Full => length::Time::Full,
-            structs::TestLength::Long => length::Time::Long,
-            structs::TestLength::Medium => length::Time::Medium,
-            structs::TestLength::Short => length::Time::Short,
-        }),
-        ..Default::default()
-    };
-    length.into()
+    match input {
+        structs::TestOptions::Length(bag) => (*bag).clone().into(),
+        structs::TestOptions::Components(bag) => (*bag).clone().into(),
+    }
 }

@@ -17,7 +17,9 @@ impl AsVarULE for String {
     }
 }
 
-impl VarULE for str {
+// This is safe to implement because from_byte_slice_unchecked returns
+// the same value as parse_byte_slice
+unsafe impl VarULE for str {
     type Error = str::Utf8Error;
 
     #[inline]

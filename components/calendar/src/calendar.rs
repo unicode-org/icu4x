@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Date, DateDuration, DurationUnit, Iso};
+use crate::{Date, DateDuration, DateDurationUnit, Iso};
 
 /// A calendar implementation
 ///
@@ -12,17 +12,27 @@ use crate::{Date, DateDuration, DurationUnit, Iso};
 /// Individual [`Calendar`] implementations may have inherent utility methods
 /// allowing for direct construction, etc.
 pub trait Calendar {
+    /// The internal type used to represent dates
     type DateInner: PartialEq + Eq + Clone;
     /// Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner;
+    /// Obtain an ISO date from this date
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso>;
     // fn validate_date(&self, e: Era, y: Year, m: MonthCode, d: Day) -> bool;
     // // similar validators for YearMonth, etc
 
     // fn is_leap<A: AsCalendar<Calendar = Self>>(&self, date: &Date<A>) -> bool;
+    /// Count the number of months in a given year, specified by providing a date
+    /// from that year
     fn months_in_year(&self, date: &Self::DateInner) -> u8;
+    /// Count the number of days in a given year, specified by providing a date
+    /// from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u32;
+    /// Count the number of days in a given month, specified by providing a date
+    /// from that year/month
     fn days_in_month(&self, date: &Self::DateInner) -> u8;
+    /// Calculate the day of the week and return it
+    ///
     /// Monday is 1, Sunday is 7, according to ISO
     fn day_of_week(&self, date: &Self::DateInner) -> u8 {
         self.date_to_iso(date).day_of_week()
@@ -37,10 +47,11 @@ pub trait Calendar {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        largest_unit: DurationUnit,
-        smallest_unit: DurationUnit,
+        largest_unit: DateDurationUnit,
+        smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self>;
 
+    /// Obtain a name for the calendar for debug printing
     fn debug_name() -> &'static str;
     // fn since(&self, from: &Date<Self>, to: &Date<Self>) -> Duration<Self>, Error;
 }

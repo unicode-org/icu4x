@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! The collection of code that is needed for handling formatting operations for DateTimes.
+//! Central to this is the [`DateTimeFormat`].
+
 use crate::{
     format::datetime,
     options::DateTimeFormatOptions,

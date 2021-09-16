@@ -3,24 +3,35 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::Calendar;
-use std::fmt;
-use std::marker::PhantomData;
+use core::fmt;
+use core::marker::PhantomData;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 /// A duration between two dates
 pub struct DateDuration<C: Calendar + ?Sized> {
+    /// The number of years
     pub years: i32,
+    /// The number of months
     pub months: i32,
+    /// The number of weeks
     pub weeks: i32,
+    /// The number of days
     pub days: i32,
+    /// A marker for the calendar
     pub marker: PhantomData<C>,
 }
 
+/// A "duration unit" used to specify the minimum or maximum duration of time to
+/// care about
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum DurationUnit {
+pub enum DateDurationUnit {
+    /// Duration in years
     Years,
+    /// Duration in months
     Months,
+    /// Duration in weeks
     Weeks,
+    /// Duration in days
     Days,
 }
 
@@ -37,6 +48,13 @@ impl<C: Calendar + ?Sized> Default for DateDuration<C> {
 }
 
 impl<C: Calendar + ?Sized> DateDuration<C> {
+    /// Construct a DateDuration
+    ///
+    /// ```rust
+    /// # use icu_calendar::*;
+    /// // two years, three months, and five days
+    /// let duration: DateDuration<Iso> = DateDuration::new(2, 3, 0, 5);
+    /// ```
     pub fn new(years: i32, months: i32, weeks: i32, days: i32) -> Self {
         DateDuration {
             years,

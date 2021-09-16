@@ -96,6 +96,7 @@ impl Other {
         Ok(Self::from_vec_unchecked(ext, keys))
     }
 
+    #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
     pub fn get_ext(&self) -> char {
         self.0 .0 as char
     }

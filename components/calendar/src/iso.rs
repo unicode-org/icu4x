@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Calendar, Date, DateDuration, DurationUnit, Error};
-use std::convert::{TryFrom, TryInto};
+//! This module contains types and implementations for the ISO calendar
+
+use crate::{Calendar, Date, DateDuration, DateDurationUnit, DateTimeError};
+use core::convert::{TryFrom, TryInto};
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
@@ -20,20 +22,20 @@ pub struct IsoMonth(u8);
 pub struct IsoYear(pub i32);
 
 impl TryFrom<u8> for IsoDay {
-    type Error = Error;
-    fn try_from(int: u8) -> Result<Self, Error> {
+    type Error = DateTimeError;
+    fn try_from(int: u8) -> Result<Self, DateTimeError> {
         if !(1..=31).contains(&int) {
-            return Err(Error::OutOfRange);
+            return Err(DateTimeError::OutOfRange);
         }
         Ok(Self(int))
     }
 }
 
 impl TryFrom<u8> for IsoMonth {
-    type Error = Error;
-    fn try_from(int: u8) -> Result<Self, Error> {
+    type Error = DateTimeError;
+    fn try_from(int: u8) -> Result<Self, DateTimeError> {
         if !(1..=12).contains(&int) {
-            return Err(Error::OutOfRange);
+            return Err(DateTimeError::OutOfRange);
         }
         Ok(Self(int))
     }
@@ -64,6 +66,7 @@ impl From<IsoYear> for i32 {
 }
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+/// The inner date type used for representing Date<Iso>
 pub struct IsoDateInner {
     day: IsoDay,
     month: IsoMonth,
@@ -203,8 +206,8 @@ impl Calendar for Iso {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _largest_unit: DurationUnit,
-        _smallest_unit: DurationUnit,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
         let mut difference = DateDuration::default();
         // TODO (Manishearth) handle the unit bounds and rounding behavior
@@ -222,30 +225,44 @@ impl Calendar for Iso {
 }
 
 impl Date<Iso> {
-    pub fn new_iso_date(day: IsoDay, month: IsoMonth, year: IsoYear) -> Result<Date<Iso>, Error> {
+    /// Construct a new ISO Date
+    pub fn new_iso_date(
+        day: IsoDay,
+        month: IsoMonth,
+        year: IsoYear,
+    ) -> Result<Date<Iso>, DateTimeError> {
         if day.0 > 28 {
             let bound = Iso::days_in_month(year, month);
             if day.0 < bound {
-                return Err(Error::OutOfRange);
+                return Err(DateTimeError::OutOfRange);
             }
         }
 
         Ok(Date::from_raw(IsoDateInner { day, month, year }, Iso))
     }
-    pub fn new_iso_date_from_integers(day: u8, month: u8, year: i32) -> Result<Date<Iso>, Error> {
+
+    /// Construct a new ISO date from integers
+    pub fn new_iso_date_from_integers(
+        day: u8,
+        month: u8,
+        year: i32,
+    ) -> Result<Date<Iso>, DateTimeError> {
         Self::new_iso_date(day.try_into()?, month.try_into()?, year.into())
     }
 }
 
 impl Iso {
+    /// Construct a new ISO Calendar
     pub fn new() -> Self {
         Self
     }
 
+    /// Check if a given ISO year is a leap year
     pub fn is_leap_year(year: IsoYear) -> bool {
         year.0 % 4 == 0 && (year.0 % 400 == 0 || year.0 % 100 != 0)
     }
 
+    /// Count the number of days in a given month/year combo
     fn days_in_month(year: IsoYear, month: IsoMonth) -> u8 {
         match month.0 {
             4 | 6 | 9 | 11 => 30,

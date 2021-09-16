@@ -178,7 +178,10 @@ where
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
-pub trait SerdeSeDataStruct<'data>: 'data {
+///
+/// This trait requires [`IsCovariant`] such that it can be safely used as a trait object in
+/// [`DataProvider`].
+pub trait SerdeSeDataStruct<'data>: IsCovariant<'data> {
     /// Return this trait object reference for Serde serialization.
     ///
     /// # Examples
@@ -208,40 +211,31 @@ pub trait SerdeSeDataStruct<'data>: 'data {
 
 impl<'data, T> SerdeSeDataStruct<'data> for T
 where
-    T: 'data + serde::Serialize,
+    T: IsCovariant<'data> + serde::Serialize,
 {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
     }
 }
 
-/// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'data>` for integration with DataProvider.
-pub struct SerdeSeDataStructWrap<'b, 'data> {
-    inner: &'b (dyn SerdeSeDataStruct<'data> + 'data),
-}
-
-impl<'b, 'data> Deref for SerdeSeDataStructWrap<'b, 'data> {
-    type Target = dyn SerdeSeDataStruct<'data> + 'data;
-    fn deref(&self) -> &Self::Target {
-        self.inner.deref()
-    }
-}
-
-impl<'b, 'data: 'b> SerdeSeDataStructWrap<'b, 'data> {
-    fn shorten(self) -> SerdeSeDataStructWrap<'b, 'b> {
-        // This is safe because 'data exceeds 'b
-        // TODO(#760): The types must be covariant for this to actually be safe.
-        unsafe { core::mem::transmute(self) }
-    }
-}
+/// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'a>` for integration with DataProvider.
+pub struct SerdeSeDataStructDynRef<'a>(&'a (dyn SerdeSeDataStruct<'a> + 'a));
 
 impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data>
-    for SerdeSeDataStructWrap<'static, 'static>
+    for SerdeSeDataStructDynRef<'static>
 {
     fn zero_copy_from<'b>(
         this: &'b (dyn SerdeSeDataStruct<'data> + 'data),
-    ) -> SerdeSeDataStructWrap<'b, 'b> {
-        SerdeSeDataStructWrap { inner: this }.shorten()
+    ) -> SerdeSeDataStructDynRef<'b> {
+        // This is safe because the trait object requires IsCovariant.
+        SerdeSeDataStructDynRef(unsafe { core::mem::transmute(this) })
+    }
+}
+
+impl<'a> Deref for SerdeSeDataStructDynRef<'a> {
+    type Target = dyn SerdeSeDataStruct<'a> + 'a;
+    fn deref(&self) -> &Self::Target {
+        self.0.deref()
     }
 }
 
@@ -249,6 +243,7 @@ impl<'data, M> crate::dynutil::UpcastDataPayload<'data, M> for SerdeSeDataStruct
 where
     M: DataMarker<'data>,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
+    M::Cart: IsCovariant<'data>,
 {
     fn upcast(other: DataPayload<'data, M>) -> DataPayload<'data, SerdeSeDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
@@ -261,14 +256,10 @@ where
     }
 }
 
-unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
-    type Output = SerdeSeDataStructWrap<'a, 'a>;
+unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructDynRef<'static> {
+    type Output = SerdeSeDataStructDynRef<'a>;
     fn transform(&'a self) -> &'a Self::Output {
-        // The compiler isn't able to guess the variance of the trait object,
-        // so we must transmute
-        // Note (Manishearth): this is technically unsound since SerdeDeDataStruct
-        // has no variance requirements. This will become a non-issue
-        // once Borrowed is removed (https://github.com/unicode-org/icu4x/issues/752)
+        // This is safe because SerdeSeDataStruct requires IsCovariant.
         unsafe { core::mem::transmute(self) }
     }
     fn transform_owned(self) -> Self::Output {
@@ -294,6 +285,6 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
 pub struct SerdeSeDataStructMarker {}
 
 impl<'data> DataMarker<'data> for SerdeSeDataStructMarker {
-    type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
+    type Yokeable = SerdeSeDataStructDynRef<'static>;
     type Cart = dyn SerdeSeDataStruct<'data>;
 }

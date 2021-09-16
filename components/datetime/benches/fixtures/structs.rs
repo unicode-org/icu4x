@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datetime::options;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -20,8 +21,11 @@ pub struct TestInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestOptions {
-    pub length: TestOptionsLength,
+pub enum TestOptions {
+    #[serde(rename = "length")]
+    Length(options::length::Bag),
+    #[serde(rename = "components")]
+    Components(options::components::Bag),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

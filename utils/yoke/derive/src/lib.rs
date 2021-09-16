@@ -13,14 +13,19 @@ use synstructure::Structure;
 
 /// Custom derive for `yoke::Yokeable`,
 ///
-/// If this fails to compile for lifetime issues, it means that
-/// the lifetime is not covariant and `Yokeable` is not safe to implement.
+/// If your struct contains `zerovec::ZeroMap`, then the compiler will not
+/// be able to guarantee the lifetime covariance due to the generic types on
+/// the `ZeroMap` itself. You must add the following attribute in order for
+/// the custom derive to work with `ZeroMap`.
 ///
-/// Note that right now this will fail to compile on structs involving
-/// `zerovec::ZeroMap`.
-/// Please comment on https://github.com/unicode-org/icu4x/issues/844
-/// if you need this
-#[proc_macro_derive(Yokeable)]
+/// ```rust,ignore
+/// #[derive(Yokeable)]
+/// #[yoke(manually_prove_covariance)]
+/// ```
+///
+/// Beyond this case, if the derive fails to compile due to lifetime issues, it
+/// means that the lifetime is not covariant and `Yokeable` is not safe to implement.
+#[proc_macro_derive(Yokeable, attributes(yoke))]
 pub fn yokeable_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(yokeable_derive_impl(&input))
@@ -39,6 +44,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     if lts == 0 {
         let name = &input.ident;
         quote! {
+            // This is safe because there are no lifetime parameters.
             unsafe impl<'a> yoke::Yokeable<'a> for #name {
                 type Output = Self;
                 fn transform(&self) -> &Self::Output {
@@ -56,6 +62,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     f(self)
                 }
             }
+            // This is safe because there are no lifetime parameters.
+            unsafe impl<'a> yoke::IsCovariant<'a> for #name {}
         }
     } else {
         if lts != 1 {
@@ -66,6 +74,60 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .to_compile_error();
         }
         let name = &input.ident;
+        let manual_covariance = input.attrs.iter().any(|a| {
+            if let Ok(i) = a.parse_args::<Ident>() {
+                if i == "prove_covariance_manually" {
+                    return true;
+                }
+            }
+            false
+        });
+        if manual_covariance {
+            let mut structure = Structure::new(input);
+            structure.bind_with(|_| synstructure::BindStyle::Move);
+            let body = structure.each_variant(|vi| {
+                vi.construct(|f, i| {
+                    let binding = format!("__binding_{}", i);
+                    let field = Ident::new(&binding, Span::call_site());
+                    let fty = replace_lifetime(&f.ty, static_lt());
+                    // By calling transform_owned on all fields, we manually prove
+                    // that the lifetimes are covariant, since this requirement
+                    // must already be true for the type that implements transform_owned().
+                    quote! {
+                        <#fty as yoke::Yokeable<'a>>::transform_owned(#field)
+                    }
+                })
+            });
+            return quote! {
+                unsafe impl<'a> yoke::Yokeable<'a> for #name<'static> {
+                    type Output = #name<'a>;
+                    fn transform(&'a self) -> &'a Self::Output {
+                        unsafe {
+                            // safety: we have asserted covariance in
+                            // transform_owned
+                            ::core::mem::transmute(self)
+                        }
+                    }
+                    fn transform_owned(self) -> Self::Output {
+                        match self { #body }
+                    }
+                    unsafe fn make(this: Self::Output) -> Self {
+                        use core::{mem, ptr};
+                        // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
+                        // are the same
+                        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
+                        let ptr: *const Self = (&this as *const Self::Output).cast();
+                        mem::forget(this);
+                        ptr::read(ptr)
+                    }
+                    fn transform_mut<F>(&'a mut self, f: F)
+                    where
+                        F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
+                        unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+                    }
+                }
+            };
+        }
         quote! {
             // This is safe because as long as `transform()` compiles,
             // we can be sure that `'a` is a covariant lifetime on `Self`
@@ -98,6 +160,9 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
                 }
             }
+            // This is safe because it is in the same block as the above impl, which only compiles
+            // if 'a is a covariant lifetime.
+            unsafe impl<'a> yoke::IsCovariant<'a> for #name<'a> {}
         }
     }
 }

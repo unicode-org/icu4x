@@ -84,18 +84,28 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
+    /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
+    /// Include the year, such as "1970" or "70".
     pub year: Option<Numeric>,
+    /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
+    /// Include the day, such as "07" or "7".
     pub day: Option<Numeric>,
+    /// Include the weekday, such as "Wednesday" or "Wed".
     pub weekday: Option<Text>,
 
+    /// Include the hour such as "2" or "14".
     pub hour: Option<Numeric>,
+    /// Include the minute such as "3" or "03".
     pub minute: Option<Numeric>,
+    /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
 
+    /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
 
+    /// Adjust the preferences for the date, such as setting the hour cycle.
     pub preferences: Option<preferences::Bag>,
 }
 
@@ -231,7 +241,7 @@ impl Bag {
                     // region-based (h12 for US, h23 for GB, etc). This is in CLDR, but we need
                     // to load it as well as think about the best architecture for where that
                     // data loading code should reside.
-                    _ => fields::Hour::H24,
+                    _ => fields::Hour::H23,
                 }),
                 length: match hour {
                     // Example for h: (note that this is the same for k, K, and H)
@@ -269,10 +279,13 @@ impl Bag {
             // A - Milliseconds in day. Not used in skeletons.
         }
 
-        // TODO(#583) - Implement:
-        // if self.time_zone_name.is_some() {
-        //     unimplemented!();
-        // }
+        if self.time_zone_name.is_some() {
+            // Only the lower "v" field is used in skeletons.
+            fields.push(Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::One,
+            });
+        }
 
         debug_assert!(
             fields.windows(2).all(|f| f[0] < f[1]),
@@ -303,48 +316,130 @@ impl Default for Bag {
     }
 }
 
+/// A numeric component for the `components::`[`Bag`]. It is used for the year, day, hour, minute,
+/// and second.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Numeric {
+    /// Display the numeric value. For instance in a year this would be "1970".
     #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
+    /// Display the two digit value. For instance in a year this would be "70".
     #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
 }
 
+/// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Text {
+    /// Display the long form of the text, such as "Wednesday" for the weekday.
     #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
+    /// Display the short form of the text, such as "Wed" for the weekday.
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
+    /// Display the narrow form of the text, such as "W" for the weekday.
     #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
 }
 
+/// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Month {
+    /// The numeric value of the month, such as "4".
     #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
+    /// The two-digit value of the month, such as "04".
     #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
+    /// The two-digit value of the month, such as "April".
     #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
+    /// The short value of the month, such as "Apr".
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
+    /// The narrow value of the month, such as "A".
     #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
 }
 
+// Each enum variant is documented with the UTS 35 field information from:
+// https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
+//
+/// Options for displaying a time zone for the `components::`[`Bag`].
+///
+/// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
+/// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum TimeZoneName {
-    #[cfg_attr(feature = "serde", serde(rename = "long"))]
-    Long,
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
-    Short,
+    // UTS-35 fields: z..zzz
+    //
+    /// Short localized form, without the location. (e.g.: PST, GMT-8)
+    #[cfg_attr(feature = "serde", serde(rename = "shortSpecific"))]
+    ShortSpecific,
+
+    // UTS-35 fields: zzzz
+    // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
+    //
+    /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
+    #[cfg_attr(feature = "serde", serde(rename = "longSpecific"))]
+    LongSpecific,
+
+    // UTS-35 fields: O, OOOO
+    // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
+    // Per UTS-35: Short localized GMT format (e.g., GMT-8)
+    // This enum variant is combining the two types of fields, as the CLDR specifices the preferred
+    // hour-format for the locale, and ICU4X uses the preferred one.
+    //   e.g.
+    //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
+    //
+    /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
+    #[cfg_attr(feature = "serde", serde(rename = "gmtOffset"))]
+    GmtOffset,
+
+    // UTS-35 fields: v
+    //   * falling back to generic location (See UTS 35 for more specific rules)
+    //   * falling back to short localized GMT
+    /// Short generic non-location format (e.g.: PT, Los Angeles, Zeit).
+    #[cfg_attr(feature = "serde", serde(rename = "shortGeneric"))]
+    ShortGeneric,
+
+    // UTS-35 fields: vvvv
+    //  * falling back to generic location (See UTS 35 for more specific rules)
+    //  * falling back to long localized GMT
+    /// Long generic non-location format (e.g.: Pacific Time, Nordamerikanische Westküstenzeit),
+    #[cfg_attr(feature = "serde", serde(rename = "longGeneric"))]
+    LongGeneric,
+}
+
+impl From<TimeZoneName> for Field {
+    fn from(time_zone_name: TimeZoneName) -> Self {
+        match time_zone_name {
+            TimeZoneName::ShortSpecific => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                length: FieldLength::One,
+            },
+            TimeZoneName::LongSpecific => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                length: FieldLength::Wide,
+            },
+            TimeZoneName::GmtOffset => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+                length: FieldLength::Wide,
+            },
+            TimeZoneName::ShortGeneric => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::One,
+            },
+            TimeZoneName::LongGeneric => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::Wide,
+            },
+        }
+    }
 }
 
 #[cfg(test)]
@@ -374,7 +469,7 @@ mod test {
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
-                (Symbol::Hour(fields::Hour::H24), Length::One).into(),
+                (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
                 (Symbol::Second(fields::Second::Second), Length::One).into(),
             ]

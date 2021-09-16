@@ -2,10 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! A collection of enums for enumerated properties.
+
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
 /// See UProperty in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[non_exhaustive]
 pub enum EnumeratedProperty {
     GeneralCategory = 0x1005,
@@ -20,6 +23,7 @@ pub enum EnumeratedProperty {
 /// See https://www.unicode.org/reports/tr44/ .
 /// See UCharCategory and U_GET_GC_MASK in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[repr(u32)]
 #[non_exhaustive]
 pub enum GeneralCategory {
@@ -92,6 +96,7 @@ pub enum GeneralCategory {
 /// This enum only contains variants for scripts that are used in the Unicode
 /// Property Database.
 #[derive(Clone, PartialEq, Debug)]
+#[allow(missing_docs)] // The variants should not need documenting.
 #[non_exhaustive]
 pub enum Script {
     Adlam = 167,

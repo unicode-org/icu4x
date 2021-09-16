@@ -5,6 +5,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "components/calendar",
     "components/datetime",
     "components/decimal",
     "components/icu",
@@ -15,7 +16,6 @@ members = [
     "components/plurals",
     "components/uniset",
     "experimental/bies",
-    "experimental/calendar",
     "experimental/codepointtrie",
     "experimental/provider_ppucd",
     "experimental/segmenter",

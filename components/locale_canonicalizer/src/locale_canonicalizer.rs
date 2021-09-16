@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! The collection of code for locale canonicalization.
+
 use crate::provider::*;
 use alloc::string::ToString;
 use alloc::vec;
@@ -16,13 +18,94 @@ use tinystr::{tinystr4, TinyStr4, TinyStr8};
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
 pub enum CanonicalizationResult {
+    /// The canonicalization operation modified the locale.
     Modified,
+    /// The canonicalization operation did not modify the locale.
     Unmodified,
 }
 
+/// LocaleCanonicalizer implementation.
+///
+/// The LocaleCanonicalizer provides methods to canonicalize Locales and
+/// LanguageIdentifiers based upon [`CLDR`] data.
+///
+/// It currently supports locale canonicalization based upon the canonicalization
+/// algorithm from [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`].
+///
+/// It also supports the `minimize` and `maximize` likely subtags algorithms
+/// as described in [`UTS #35: Unicode LDML 3. Likely Subtags`].
+///
+/// The maximize method potentially updates a passed in locale in place
+/// depending up the results of running the 'Add Likely Subtags' algorithm
+/// from [`UTS #35: Unicode LDML 3. Likely Subtags`].
+///
+/// This minimize method returns a new Locale that is the result of running the
+/// 'Remove Likely Subtags' algorithm from [`UTS #35: Unicode LDML 3. Likely Subtags`].
+///
+/// # Examples
+///
+/// ```
+/// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+/// use icu_locid::Locale;
+///
+/// let provider = icu_testdata::get_provider();
+/// let lc = LocaleCanonicalizer::new(&provider)
+///     .expect("create failed");
+///
+/// let mut locale : Locale = "ja-Latn-fonipa-hepburn-heploc".parse()
+///     .expect("parse failed");
+/// assert_eq!(lc.canonicalize(&mut locale), CanonicalizationResult::Modified);
+/// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
+/// ```
+///
+/// ```
+/// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+/// use icu_locid::Locale;
+///
+/// let provider = icu_testdata::get_provider();
+/// let lc = LocaleCanonicalizer::new(&provider)
+///     .expect("create failed");
+///
+/// let mut locale : Locale = "zh-CN".parse()
+///     .expect("parse failed");
+/// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
+/// assert_eq!(locale.to_string(), "zh-Hans-CN");
+///
+/// let mut locale : Locale = "zh-Hant-TW".parse()
+///     .expect("parse failed");
+/// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
+/// assert_eq!(locale.to_string(), "zh-Hant-TW");
+/// ```
+///
+/// ```
+/// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+/// use icu_locid::Locale;
+///
+/// let provider = icu_testdata::get_provider();
+/// let lc = LocaleCanonicalizer::new(&provider)
+///     .expect("create failed");
+///
+/// let mut locale : Locale = "zh-Hans-CN".parse()
+///     .expect("parse failed");
+/// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
+/// assert_eq!(locale.to_string(), "zh");
+///
+/// let mut locale : Locale = "zh".parse()
+///     .expect("parse failed");
+/// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
+/// assert_eq!(locale.to_string(), "zh");
+/// ```
+///
+/// [`ICU4X`]: ../icu/index.html
+/// [`CLDR`]: http://cldr.unicode.org/
+/// [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
+/// [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
 pub struct LocaleCanonicalizer<'data> {
+    /// Data to support canonicalization.
     aliases: DataPayload<'data, AliasesV1Marker>,
+    /// Data to support likely subtags maximize and minimize.
     likely_subtags: DataPayload<'data, LikelySubtagsV1Marker>,
+    /// Extension keys that require canonicalization.
     extension_keys: Vec<Key>,
 }
 
