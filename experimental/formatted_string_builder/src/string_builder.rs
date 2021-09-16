@@ -5,6 +5,7 @@
 use crate::FormattedStringBuilderError;
 
 /** A FormattedStringBuilder with L levels of type annotations. */
+#[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct FormattedStringBuilder<F: Copy, const L: usize> {
     // This could be Vec<u8> as well, but String makes the encoding more explicit
     chars: std::string::String,
@@ -12,7 +13,7 @@ pub struct FormattedStringBuilder<F: Copy, const L: usize> {
     annotations: Vec<Annotation<F, L>>,
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 enum LocationInPart {
     Beginning,
     Inside,
@@ -84,8 +85,8 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
         field: F,
     ) -> &mut Self {
         assert_eq!(L - 1, L1);
-        self.insert_fsb(self.chars.len(), string, field)
-            .expect("self.chars.len() is always a char boundary")
+        // len() is always a char boundary
+        self.insert_fsb_internal(self.chars.len(), string, field)
     }
 
     pub fn prepend_fsb<const L1: usize>(
@@ -94,8 +95,8 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
         field: F,
     ) -> &mut Self {
         assert_eq!(L - 1, L1);
-        self.insert_fsb(0, string, field)
-            .expect("0 is always a char boundary")
+        // 0 is always a char boundary
+        self.insert_fsb_internal(0, string, field)
     }
 
     pub fn insert_fsb<const L1: usize>(
@@ -106,12 +107,23 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
     ) -> Result<&mut Self, FormattedStringBuilderError> {
         assert_eq!(L - 1, L1);
         if !self.chars.is_char_boundary(pos) {
-            return Err(FormattedStringBuilderError::PositionNotCharBoundary);
+            Err(FormattedStringBuilderError::PositionNotCharBoundary)
+        } else {
+            Ok(self.insert_fsb_internal(pos, string, field))
         }
+    }
+
+    // Precondition here is that pos is a char boundary. This avoids the check for prepend and append
+    fn insert_fsb_internal<const L1: usize>(        &mut self,
+        pos: usize,
+        string: FormattedStringBuilder<F, L1>,
+        field: F,
+    ) -> &mut Self {
+        assert_eq!(L - 1, L1);
         self.chars.insert_str(pos, string.chars.as_str());
         let new_annotations = raise_annotation(field, string.annotations);
         self.annotations.splice(pos..pos, new_annotations);
-        Ok(self)
+        self
     }
 
     pub fn as_str(&self) -> &str {
@@ -137,28 +149,39 @@ pub type SimpleFormattedStringBuilder<F> = FormattedStringBuilder<F, 1>;
 
 impl<F: Copy> SimpleFormattedStringBuilder<F> {
     pub fn append(&mut self, string: &str, field: F) -> &mut SimpleFormattedStringBuilder<F> {
-        self.insert(self.chars.len(), string, field)
-            .expect("self.chars.len() is always a char boundary")
+        // len() is always a char boundary
+        self.insert_internal(self.chars.len(), string, field)
     }
 
     pub fn prepend(&mut self, string: &str, field: F) -> &mut SimpleFormattedStringBuilder<F> {
-        self.insert(0, string, field)
-            .expect("0 is always a char boundary")
+        // 0 is always a char boundary
+        self.insert_internal(0, string, field)
     }
 
-    pub fn insert(
+    fn insert(
         &mut self,
         pos: usize,
         string: &str,
         field: F,
     ) -> Result<&mut SimpleFormattedStringBuilder<F>, FormattedStringBuilderError> {
         if !self.chars.is_char_boundary(pos) {
-            return Err(FormattedStringBuilderError::PositionNotCharBoundary);
+            Err(FormattedStringBuilderError::PositionNotCharBoundary)
+        } else {
+            Ok(self.insert_internal(pos, string, field))
         }
+    }
+
+    // Precondition here is that pos is a char boundary. This avoids the check for prepend and append
+    fn insert_internal(
+        &mut self,
+        pos: usize,
+        string: &str,
+        field: F,
+    ) -> &mut SimpleFormattedStringBuilder<F> {
         self.chars.insert_str(pos, string);
         self.annotations
             .splice(pos..pos, raise_annotation(field, vec![[]; string.len()]));
-        Ok(self)
+        self
     }
 
     pub fn field_at(&self, pos: usize) -> F {
@@ -169,7 +192,7 @@ impl<F: Copy> SimpleFormattedStringBuilder<F> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use std::{fmt::Debug, num::NonZeroU8, panic};
+    use std::{fmt::Debug, panic};
 
     #[derive(Clone, Copy, Debug, PartialEq)]
     pub enum Field {
@@ -215,20 +238,11 @@ mod test {
     fn test_multi_byte() {
         let mut x = SimpleFormattedStringBuilder::<Field>::new();
         x.append("π", Field::Word);
+        assert_eq!(x.insert(1, "pi/2", Field::Word), Err(FormattedStringBuilderError::PositionNotCharBoundary));
         assert_eq!(x.as_str(), "π");
         assert_eq!(x.field_at(0), Field::Word);
         assert_eq!(x.field_at(1), Field::Word);
         assert_panics(|| x.field_at(2));
-    }
-
-    #[test]
-    #[allow(dead_code)]
-    fn test_enum_packing() {
-        enum FieldWithIndex {
-            Empty,
-            Index(NonZeroU8),
-        }
-        assert_eq!(std::mem::size_of::<FieldWithIndex>(), 1);
     }
 
     fn assert_panics<F: FnOnce() -> R + panic::UnwindSafe, R>(f: F) {

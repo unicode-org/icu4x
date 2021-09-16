@@ -3,10 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod error;
-mod list_formatter;
 mod string_builder;
 
 pub use error::Error as FormattedStringBuilderError;
-pub use list_formatter::ListFormatter;
 pub use string_builder::FormattedStringBuilder;
 pub use string_builder::SimpleFormattedStringBuilder;

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::SimpleFormattedStringBuilder;
+use formatted_string_builder::SimpleFormattedStringBuilder;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum FieldType {
@@ -83,7 +83,7 @@ impl ListFormatter {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
