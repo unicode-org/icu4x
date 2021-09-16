@@ -12,7 +12,11 @@ pub enum FieldType {
 
 pub trait Pattern {
     fn append_element_to_string(&self, list: String, element: &str) -> String;
-    fn append_element_to_sfsb(&self, list: SimpleFormattedStringBuilder<FieldType>, element: &str) -> SimpleFormattedStringBuilder<FieldType>;
+    fn append_element_to_sfsb(
+        &self,
+        list: SimpleFormattedStringBuilder<FieldType>,
+        element: &str,
+    ) -> SimpleFormattedStringBuilder<FieldType>;
     // This ain't great because all levels need to use the same field types. This also produces an error:
     // for a trait to be "object safe" it needs to allow building a vtable to allow the call to be resolvable dynamically; for more information visit <https://doc.rust-lang.org/reference/items/traits.html#object-safety>
     // fn append_fsb_to_fsb<const L: usize, const L1: usize>(&self, list: FormattedStringBuilder<FieldType, L>, element: FormattedStringBuilder<FieldType, L1>) -> FormattedStringBuilder<FieldType, L>;
@@ -25,7 +29,7 @@ pub struct ListFormatter<'a> {
     last: &'a dyn Pattern,
 }
 
-impl <'a>  ListFormatter<'a> {
+impl<'a> ListFormatter<'a> {
     fn format_internal<B>(
         &self,
         values: &[&str],
@@ -42,7 +46,7 @@ impl <'a>  ListFormatter<'a> {
                 for i in 2..n - 1 {
                     res = append(res, self.middle, values[i]);
                 }
-                append(res, self.last, values[n-1])
+                append(res, self.last, values[n - 1])
             }
         }
     }
@@ -80,7 +84,11 @@ mod tests {
             list + self + element
         }
 
-        fn append_element_to_sfsb(&self, mut list: SimpleFormattedStringBuilder<FieldType>, element: &str) -> SimpleFormattedStringBuilder<FieldType> { 
+        fn append_element_to_sfsb(
+            &self,
+            mut list: SimpleFormattedStringBuilder<FieldType>,
+            element: &str,
+        ) -> SimpleFormattedStringBuilder<FieldType> {
             list.append(self, FieldType::Literal);
             list.append(element, FieldType::Element);
             list
@@ -104,16 +112,31 @@ mod tests {
         assert_eq!(test_formatter().format(&VALUES[0..1]), "one");
         assert_eq!(test_formatter().format(&VALUES[0..2]), "one; two");
         assert_eq!(test_formatter().format(&VALUES[0..3]), "one: two. three");
-        assert_eq!(test_formatter().format(&VALUES[0..4]), "one: two, three. four");
-        assert_eq!(test_formatter().format(VALUES), "one: two, three, four. five");
+        assert_eq!(
+            test_formatter().format(&VALUES[0..4]),
+            "one: two, three. four"
+        );
+        assert_eq!(
+            test_formatter().format(VALUES),
+            "one: two, three, four. five"
+        );
     }
 
     #[test]
     fn test_format_to_parts() {
         assert_eq!(test_formatter().format_to_parts(&VALUES[0..0]).as_str(), "");
-        assert_eq!(test_formatter().format_to_parts(&VALUES[0..1]).as_str(), "one");
-        assert_eq!(test_formatter().format_to_parts(&VALUES[0..2]).as_str(), "one; two");
-        assert_eq!(test_formatter().format_to_parts(&VALUES[0..3]).as_str(), "one: two. three");
+        assert_eq!(
+            test_formatter().format_to_parts(&VALUES[0..1]).as_str(),
+            "one"
+        );
+        assert_eq!(
+            test_formatter().format_to_parts(&VALUES[0..2]).as_str(),
+            "one; two"
+        );
+        assert_eq!(
+            test_formatter().format_to_parts(&VALUES[0..3]).as_str(),
+            "one: two. three"
+        );
         assert_eq!(
             test_formatter().format_to_parts(&VALUES[0..4]).as_str(),
             "one: two, three. four"

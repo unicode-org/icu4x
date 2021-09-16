@@ -114,7 +114,8 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
     }
 
     // Precondition here is that pos is a char boundary. This avoids the check for prepend and append
-    fn insert_fsb_internal<const L1: usize>(        &mut self,
+    fn insert_fsb_internal<const L1: usize>(
+        &mut self,
         pos: usize,
         string: FormattedStringBuilder<F, L1>,
         field: F,
@@ -238,7 +239,10 @@ mod test {
     fn test_multi_byte() {
         let mut x = SimpleFormattedStringBuilder::<Field>::new();
         x.append("π", Field::Word);
-        assert_eq!(x.insert(1, "pi/2", Field::Word), Err(FormattedStringBuilderError::PositionNotCharBoundary));
+        assert_eq!(
+            x.insert(1, "pi/2", Field::Word),
+            Err(FormattedStringBuilderError::PositionNotCharBoundary)
+        );
         assert_eq!(x.as_str(), "π");
         assert_eq!(x.field_at(0), Field::Word);
         assert_eq!(x.field_at(1), Field::Word);
