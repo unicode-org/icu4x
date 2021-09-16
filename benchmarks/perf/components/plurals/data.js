@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631812977251,
+  "lastUpdate": 1631827746624,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13859,6 +13859,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 23803,
             "range": "± 1972",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "software@lfcode.ca",
+            "name": "Jade",
+            "username": "lf-"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5039bf90501011338aacb875d20f90ac116bce1b",
+          "message": "Change \"us\" to μs in zerovec documentation (#1062)",
+          "timestamp": "2021-09-16T14:22:10-07:00",
+          "tree_id": "dc022abe4381792d19a0bd7b0992195b5831d346",
+          "url": "https://github.com/unicode-org/icu4x/commit/5039bf90501011338aacb875d20f90ac116bce1b"
+        },
+        "date": 1631827743748,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1146,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6698,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20802,
+            "range": "± 98",
             "unit": "ns/iter"
           }
         ]
