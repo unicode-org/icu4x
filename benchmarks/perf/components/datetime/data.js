@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631812975588,
+  "lastUpdate": 1631827778258,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7487,6 +7487,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 669888,
             "range": "± 25827",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "software@lfcode.ca",
+            "name": "Jade",
+            "username": "lf-"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5039bf90501011338aacb875d20f90ac116bce1b",
+          "message": "Change \"us\" to μs in zerovec documentation (#1062)",
+          "timestamp": "2021-09-16T14:22:10-07:00",
+          "tree_id": "dc022abe4381792d19a0bd7b0992195b5831d346",
+          "url": "https://github.com/unicode-org/icu4x/commit/5039bf90501011338aacb875d20f90ac116bce1b"
+        },
+        "date": 1631827774654,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 367325,
+            "range": "± 3411",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1854331,
+            "range": "± 15883",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 681924,
+            "range": "± 10418",
             "unit": "ns/iter"
           }
         ]
