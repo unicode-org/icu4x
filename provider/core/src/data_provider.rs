@@ -150,6 +150,8 @@ where
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
+///
+/// [`ErasedDataStructMarker`]: crate::erased::ErasedDataStructMarker
 pub struct DataPayload<'data, M>
 where
     M: DataMarker<'data>,
@@ -169,6 +171,16 @@ where
 
 /// Cloning a DataPayload is generally a cheap operation.
 /// See notes in the `Clone` impl for [`Yoke`].
+///
+/// # Examples
+///
+/// ```no_run
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+///
+/// let resp1: DataPayload<HelloWorldV1Marker> = todo!();
+/// let resp2 = resp1.clone();
+/// ```
 impl<'data, M> Clone for DataPayload<'data, M>
 where
     M: DataMarker<'data>,
@@ -428,7 +440,10 @@ where
     ///
     /// Map from `HelloWorldV1` to a `Cow<str>` containing just the message:
     ///
-    /// ```
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.56.***
+    ///
+    /// ```compile_fail
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
@@ -455,6 +470,7 @@ where
     /// // Note: at this point, p1 has been moved.
     /// assert_eq!("Hello World", p2.get());
     /// ```
+    #[allow(clippy::type_complexity)]
     pub fn map_project<M2>(
         self,
         f: for<'a> fn(
@@ -485,7 +501,10 @@ where
     ///
     /// Same example as above, but this time, do not move out of `p1`:
     ///
-    /// ```
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.57.***
+    ///
+    /// ```compile_fail
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -509,6 +528,7 @@ where
     /// // Note: p1 is still valid.
     /// assert_eq!(p1.get().message, *p2.get());
     /// ```
+    #[allow(clippy::type_complexity)]
     pub fn map_project_cloned<'this, M2>(
         &'this self,
         f: for<'a> fn(
@@ -540,7 +560,10 @@ where
     ///
     /// Capture a string from the context and append it to the message:
     ///
-    /// ```
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.57.***
+    ///
+    /// ```compile_fail
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -566,6 +589,39 @@ where
     ///
     /// assert_eq!("Hello WorldExtra", p2.get());
     /// ```
+    ///
+    /// Prior to Rust 1.57, pass the capture by value instead of by reference:
+    ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.56.***
+    ///
+    /// ```compile_fail
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_with_capture(
+    ///     "Extra".to_string(),
+    ///     |mut obj, capture, _| {
+    ///         obj.message.to_mut().push_str(&capture);
+    ///         obj.message
+    ///     });
+    ///
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// ```
+    #[allow(clippy::type_complexity)]
     pub fn map_project_with_capture<M2, T>(
         self,
         capture: T,
@@ -599,7 +655,10 @@ where
     ///
     /// Same example as above, but this time, do not move out of `p1`:
     ///
-    /// ```
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.57.***
+    ///
+    /// ```compile_fail
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -628,6 +687,7 @@ where
     /// assert_ne!(p1.get().message, *p2.get());
     /// assert_eq!("Hello WorldExtra", p2.get());
     /// ```
+    #[allow(clippy::type_complexity)]
     pub fn map_project_cloned_with_capture<'this, M2, T>(
         &'this self,
         capture: T,
@@ -703,13 +763,23 @@ where
     }
 }
 
+/// Cloning a DataResponse is generally a cheap operation.
+/// See notes in the `Clone` impl for [`Yoke`].
+///
+/// # Examples
+///
+/// ```no_run
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+///
+/// let resp1: DataResponse<HelloWorldV1Marker> = todo!();
+/// let resp2 = resp1.clone();
+/// ```
 impl<'data, M> Clone for DataResponse<'data, M>
 where
     M: DataMarker<'data>,
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
-    /// Note: This function is currently inoperable. For more details, see
-    /// https://github.com/unicode-org/icu4x/issues/753
     fn clone(&self) -> Self {
         Self {
             metadata: self.metadata.clone(),
