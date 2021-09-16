@@ -370,7 +370,7 @@ dependencies = [
 ]
 script_runner = "@duckscript"
 script = '''
-cd ./ffi/wasm/test
+cd ./ffi/diplomat/wasm/test
 exec --fail-on-error npm install
 exec --fail-on-error npm test
 '''
@@ -381,15 +381,15 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/capi
+cd ffi/diplomat
 
 # Duckscript doesn't support globs in rm, so we delete the relevant files
-rm ../wasm/lib/api.mjs
-rm ../wasm/lib/diplomat-runtime.mjs
-rm -r ../wasm/docs/
-mkdir ../wasm/docs
+rm ./wasm/lib/api.mjs
+rm ./wasm/lib/diplomat-runtime.mjs
+rm -r ./wasm/docs/
+mkdir ./wasm/docs
 
-exec --fail-on-error diplomat-tool js ../wasm/lib/ --docs ../wasm/docs
+exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs
 '''
 
 [tasks.wasm-clean]
