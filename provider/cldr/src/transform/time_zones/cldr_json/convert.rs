@@ -12,6 +12,18 @@ use litemap::LiteMap;
 use std::borrow::Cow;
 use tinystr::TinyStr8;
 
+/// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
+/// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
+///
+/// Part 2 of type fallback requires access to the IANA TimeZone Database Dat
+/// as well as a specific datetime context, so it is not relevant to DataProvier.
+fn type_fallback(zone_format: &ZoneFormat) -> Option<&String> {
+    zone_format
+        .0
+        .get("generic")
+        .or_else(|| zone_format.0.get("standard"))
+}
+
 fn parse_hour_format<'data>(hour_format: &str) -> (Cow<'data, str>, Cow<'data, str>) {
     // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
     let index = hour_format.rfind(';').unwrap();
@@ -104,14 +116,8 @@ impl<'data> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'data> {
                         metazone
                             .long
                             .as_ref()
-                            .and_then(|long| {
-                                if long.0.len() == 1 {
-                                    long.0.values().next()
-                                } else {
-                                    long.0.get("generic")
-                                }
-                            })
-                            .map(|generic| (key.clone().into(), generic.clone().into()))
+                            .and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+                            .map(|format| (key.clone().into(), format.clone().into()))
                     })
                     .collect(),
             ),
@@ -131,14 +137,8 @@ impl<'data> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'data> {
                         metazone
                             .short
                             .as_ref()
-                            .and_then(|short| {
-                                if short.0.len() == 1 {
-                                    short.0.values().next()
-                                } else {
-                                    short.0.get("generic")
-                                }
-                            })
-                            .map(|generic| (key.clone().into(), generic.clone().into()))
+                            .and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+                            .map(|format| (key.clone().into(), format.clone().into()))
                     })
                     .collect(),
             ),
@@ -155,10 +155,10 @@ impl<'data> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'data> {
                     .0
                     .into_iter()
                     .filter_map(|(key, metazone)| metazone.long.map(|value| (key, value)))
-                    .map(|(key, value)| (key.into(), value.into()))
+                    .map(|(key, zf)| (key.into(), zf.into()))
                     .filter(
-                        |(_, value): &(Cow<'static, str>, MetaZoneSpecificNamesV1)| {
-                            !value.is_empty()
+                        |(_, names): &(Cow<'static, str>, MetaZoneSpecificNamesV1)| {
+                            !names.is_empty()
                         },
                     )
                     .collect(),
@@ -178,8 +178,8 @@ impl<'data> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'data> {
                     .filter_map(|(key, metazone)| metazone.short.map(|value| (key, value)))
                     .map(|(key, value)| (key.into(), value.into()))
                     .filter(
-                        |(_, value): &(Cow<'static, str>, MetaZoneSpecificNamesV1)| {
-                            !value.is_empty()
+                        |(_, names): &(Cow<'static, str>, MetaZoneSpecificNamesV1)| {
+                            !names.is_empty()
                         },
                     )
                     .collect(),
