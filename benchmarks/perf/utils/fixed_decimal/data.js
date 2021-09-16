@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631812898005,
+  "lastUpdate": 1631827726824,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9899,6 +9899,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 143244,
             "range": "± 4030",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "software@lfcode.ca",
+            "name": "Jade",
+            "username": "lf-"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5039bf90501011338aacb875d20f90ac116bce1b",
+          "message": "Change \"us\" to μs in zerovec documentation (#1062)",
+          "timestamp": "2021-09-16T14:22:10-07:00",
+          "tree_id": "dc022abe4381792d19a0bd7b0992195b5831d346",
+          "url": "https://github.com/unicode-org/icu4x/commit/5039bf90501011338aacb875d20f90ac116bce1b"
+        },
+        "date": 1631827723593,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 125435,
+            "range": "± 3840",
             "unit": "ns/iter"
           }
         ]
