@@ -443,7 +443,7 @@ where
     /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
     /// requires Rust 1.56.***
     ///
-    /// ```compile_fail
+    /// ```ignore
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
@@ -504,7 +504,7 @@ where
     /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
     /// requires Rust 1.57.***
     ///
-    /// ```compile_fail
+    /// ```ignore
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -563,7 +563,7 @@ where
     /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
     /// requires Rust 1.57.***
     ///
-    /// ```compile_fail
+    /// ```ignore
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -595,7 +595,7 @@ where
     /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
     /// requires Rust 1.56.***
     ///
-    /// ```compile_fail
+    /// ```ignore
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -658,7 +658,7 @@ where
     /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
     /// requires Rust 1.57.***
     ///
-    /// ```compile_fail
+    /// ```ignore
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
