@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631802397406,
+  "lastUpdate": 1631812968540,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12449,6 +12449,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5266,
             "range": "± 385",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a40b7bd39520ba58eb95bd211f539eeb22a3a842",
+          "message": "Update the READMEs for FFI (#1054)",
+          "timestamp": "2021-09-16T12:14:56-05:00",
+          "tree_id": "ac0704750c7f4f7a3316c1037c156a64c9762ddf",
+          "url": "https://github.com/unicode-org/icu4x/commit/a40b7bd39520ba58eb95bd211f539eeb22a3a842"
+        },
+        "date": 1631812964194,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3262,
+            "range": "± 161",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5362,
+            "range": "± 129",
             "unit": "ns/iter"
           }
         ]
