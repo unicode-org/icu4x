@@ -147,9 +147,11 @@ args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
 [tasks.diplomat-get-rev]
 description = "Get current Diplomat revision"
 category = "ICU4X Development"
+install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.35.0" }
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
+echo "(Note: some task failures may be due to an old version of cargo-make)"
 metadata = exec --fail-on-error cargo metadata
 metadata = set ${metadata.stdout}
 # Parse output
