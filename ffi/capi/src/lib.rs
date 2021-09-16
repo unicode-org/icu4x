@@ -12,9 +12,11 @@
 #![no_std]
 #![allow(clippy::upper_case_acronyms)]
 
-//! This module contains the C FFI for ICU4X. Currently it is also used as the source
-//! of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated FFI bindings
-//! for C++ and WASM. To re-generate the bindings run:
+//! This module contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
+//! FFI bindings. This generates the C, C++ and Wasm bindings. This module also contains the C
+//! FFI for ICU4X.
+//!
+//! To re-generate the bindings run:
 //!
 //! ```sh
 //! cargo make diplomat-install
