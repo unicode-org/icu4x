@@ -78,20 +78,50 @@ macro_rules! impl_byte_slice_type {
     };
 }
 
-impl_byte_slice_size!(1);
 impl_byte_slice_size!(2);
 impl_byte_slice_size!(4);
 impl_byte_slice_size!(8);
 impl_byte_slice_size!(16);
 
-impl_byte_slice_type!(u8, 1);
 impl_byte_slice_type!(u16, 2);
 impl_byte_slice_type!(u32, 4);
 impl_byte_slice_type!(u64, 8);
 impl_byte_slice_type!(u128, 16);
 
-impl_byte_slice_type!(i8, 1);
 impl_byte_slice_type!(i16, 2);
 impl_byte_slice_type!(i32, 4);
 impl_byte_slice_type!(i64, 8);
 impl_byte_slice_type!(i128, 16);
+
+// This is safe to implement because from_byte_slice_unchecked returns
+// the same value as parse_byte_slice
+unsafe impl ULE for u8 {
+    type Error = std::convert::Infallible;
+    #[inline]
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+        Ok(bytes)
+    }
+    #[inline]
+    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
+        bytes
+    }
+    #[inline]
+    fn as_byte_slice(slice: &[Self]) -> &[u8] {
+        slice
+    }
+}
+
+impl AsULE for u8 {
+    type ULE = Self;
+    #[inline]
+    fn as_unaligned(&self) -> Self::ULE {
+        *self
+    }
+    #[inline]
+    fn from_unaligned(unaligned: &Self::ULE) -> Self {
+        *unaligned
+    }
+}
+
+// EqULE is true because u8 is its own ULE.
+unsafe impl EqULE for u8 {}
