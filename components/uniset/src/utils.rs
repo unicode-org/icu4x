@@ -58,7 +58,7 @@ mod tests {
     use zerovec::ZeroVec;
 
     // is_valid
-    
+
     #[test]
     fn test_is_valid() {
         let check = vec![0x2, 0x3, 0x4, 0x5];
@@ -101,9 +101,8 @@ mod tests {
         assert!(!is_valid(&check));
     }
 
-
     // is_valid_zv
-    
+
     #[test]
     fn test_is_valid_zv() {
         let check = ZeroVec::from_slice(&[0x2, 0x3, 0x4, 0x5]);
@@ -146,7 +145,6 @@ mod tests {
         let check = ZeroVec::from_slice(&[0x1, 0x2, 0x3, 0x4, (char::MAX as u32) + 1]);
         assert!(!is_valid_zv(&check));
     }
-
 
     // deconstruct_range
 

@@ -9,7 +9,6 @@
 use crate::builder::UnicodeSetBuilder;
 use crate::uniset::UnicodeSet;
 use alloc::borrow::Cow;
-use core::convert::TryInto;
 use icu_provider::yoke::{self, *};
 
 #[cfg(feature = "provider_serde")]
@@ -346,10 +345,9 @@ impl<'data> UnicodePropertyV1<'data> {
     }
 }
 
-impl<'data> TryInto<UnicodeSet<'data>> for UnicodePropertyV1<'data> {
-    type Error = crate::UnicodeSetError<'data>;
-    fn try_into(self) -> Result<UnicodeSet<'data>, Self::Error> {
-        Ok(self.inv_list)
+impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
+    fn from(prop: UnicodePropertyV1<'data>) -> UnicodeSet<'data> {
+        prop.inv_list
     }
 }
 
