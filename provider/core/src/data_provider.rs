@@ -424,7 +424,7 @@ where
     /// - [`DataPayload::map_project_with_capture()`] to pass context to the mapping function
     /// - [`DataPayload::map_project_cloned_with_capture()`] to do both of these things
     ///
-    /// # Example
+    /// # Examples
     ///
     /// Map from `HelloWorldV1` to a `Cow<str>` containing just the message:
     ///
@@ -452,6 +452,7 @@ where
     ///     obj.message
     /// });
     ///
+    /// // Note: at this point, p1 has been moved.
     /// assert_eq!("Hello World", p2.get());
     /// ```
     pub fn map_project<M2>(
@@ -479,6 +480,35 @@ where
     }
 
     /// Version of [`DataPayload::map_project()`] that borrows `self` instead of moving `self`.
+    ///
+    /// # Examples
+    ///
+    /// Same example as above, but this time, do not move out of `p1`:
+    ///
+    /// ```
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_cloned(|obj, _| {
+    ///     obj.message.clone()
+    /// });
+    ///
+    /// // Note: p1 is still valid.
+    /// assert_eq!(p1.get().message, *p2.get());
+    /// ```
     pub fn map_project_cloned<'this, M2>(
         &'this self,
         f: for<'a> fn(
@@ -505,6 +535,37 @@ where
 
     /// Version of [`DataPayload::map_project()`] that moves `self` and takes a `capture`
     /// parameter to pass additional data to `f`.
+    ///
+    /// # Examples
+    ///
+    /// Capture a string from the context and append it to the message:
+    ///
+    /// ```
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_with_capture(
+    ///     "Extra",
+    ///     |mut obj, capture, _| {
+    ///         obj.message.to_mut().push_str(capture);
+    ///         obj.message
+    ///     });
+    ///
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// ```
     pub fn map_project_with_capture<M2, T>(
         self,
         capture: T,
@@ -533,6 +594,40 @@ where
 
     /// Version of [`DataPayload::map_project()`] that borrows `self` and takes a `capture`
     /// parameter to pass additional data to `f`.
+    ///
+    /// # Examples
+    ///
+    /// Same example as above, but this time, do not move out of `p1`:
+    ///
+    /// ```
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_cloned_with_capture(
+    ///     "Extra",
+    ///     |obj, capture, _| {
+    ///         let mut message = obj.message.clone();
+    ///         message.to_mut().push_str(capture);
+    ///         message
+    ///     });
+    ///
+    /// // Note: p1 is still valid, but the values no longer equal.
+    /// assert_ne!(p1.get().message, *p2.get());
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// ```
     pub fn map_project_cloned_with_capture<'this, M2, T>(
         &'this self,
         capture: T,
