@@ -20,14 +20,9 @@
 //!
 //! ```sh
 //! cargo make diplomat-install
-//! cargo make diplomat-gen-c
-//! ```
-//!
-//! Or re-generate all of the bindings:
-//!
-//! ```sh
 //! cargo make diplomat-gen
 //! ```
+//!
 
 // Needed to be able to build cdylibs/etc
 //
