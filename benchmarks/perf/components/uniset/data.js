@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631647744175,
+  "lastUpdate": 1631802372524,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10859,6 +10859,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34530567,
             "range": "± 2083287",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "630b25eefe50fad986919fe604ed40f81b39ad6d",
+          "message": "Add basic setter implementations to the ICU4XLocale FFI (#1055)",
+          "timestamp": "2021-09-16T09:18:50-05:00",
+          "tree_id": "60d51cf91d6c826177d1d5b209efa6c7e4baea3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/630b25eefe50fad986919fe604ed40f81b39ad6d"
+        },
+        "date": 1631802368773,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 43230096,
+            "range": "± 1128145",
             "unit": "ns/iter"
           }
         ]
