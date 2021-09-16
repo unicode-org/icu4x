@@ -8,6 +8,7 @@ pub mod ffi {
     use core::str::FromStr;
     use diplomat_runtime::DiplomatResult;
     use icu_locid::extensions::unicode::Key;
+    use icu_locid::subtags::{Language, Region, Script};
     use icu_locid::Locale;
 
     use writeable::Writeable;
@@ -39,6 +40,11 @@ pub mod ffi {
         /// Construct an [`ICU4XLocale`] for the Bangla language.
         pub fn create_bn() -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(icu_locid_macros::langid!("bn").into()))
+        }
+
+        /// Construct a default undefined [`ICU4XLocale`] "und".
+        pub fn und() -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(Locale::und()))
         }
 
         /// Clones the [`ICU4XLocale`].
@@ -108,6 +114,23 @@ pub mod ffi {
             result
         }
 
+        /// Set the language part of the [`ICU4XLocale`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+        pub fn set_language(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XLocaleError> {
+            if bytes.is_empty() {
+                self.0.id.language = Language::und();
+                return Ok(()).into();
+            }
+            match Language::from_bytes(bytes.as_bytes()) {
+                Ok(language) => {
+                    self.0.id.language = language;
+                    Ok(())
+                }
+                Err(_) => Err(ICU4XLocaleError::Error),
+            }
+            .into()
+        }
+
         /// Write a string representation of [`ICU4XLocale`] region to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
         pub fn region(
@@ -127,6 +150,23 @@ pub mod ffi {
             }
         }
 
+        /// Set the region part of the [`ICU4XLocale`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+        pub fn set_region(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XLocaleError> {
+            if bytes.is_empty() {
+                self.0.id.region = None;
+                return Ok(()).into();
+            }
+            match Region::from_bytes(bytes.as_bytes()) {
+                Ok(region) => {
+                    self.0.id.region = Some(region);
+                    Ok(())
+                }
+                Err(_) => Err(ICU4XLocaleError::Error),
+            }
+            .into()
+        }
+
         /// Write a string representation of [`ICU4XLocale`] script to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
         pub fn script(
@@ -144,6 +184,23 @@ pub mod ffi {
             } else {
                 Result::Err(ICU4XLocaleError::Undefined).into()
             }
+        }
+
+        /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+        pub fn set_script(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XLocaleError> {
+            if bytes.is_empty() {
+                self.0.id.script = None;
+                return Ok(()).into();
+            }
+            match Script::from_bytes(bytes.as_bytes()) {
+                Ok(script) => {
+                    self.0.id.script = Some(script);
+                    Ok(())
+                }
+                Err(_) => Err(ICU4XLocaleError::Error),
+            }
+            .into()
         }
 
         /// Write a string representation of [`ICU4XLocale`] to `write`

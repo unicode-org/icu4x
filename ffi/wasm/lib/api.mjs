@@ -428,6 +428,19 @@ export class ICU4XLocale {
     return diplomat_out;
   }
 
+  static und() {
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XLocale(wasm.ICU4XLocale_und());
+        out.owner = null;
+        return out;
+      })();
+      ICU4XLocale_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    return diplomat_out;
+  }
+
   clone() {
     const diplomat_out = (() => {
       const out = (() => {
@@ -515,6 +528,32 @@ export class ICU4XLocale {
     return diplomat_out;
   }
 
+  set_language(bytes) {
+    let bytes_diplomat_bytes = (new TextEncoder()).encode(bytes);
+    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length);
+    let bytes_diplomat_buf = new Uint8Array(wasm.memory.buffer, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    bytes_diplomat_buf.set(bytes_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5
+      });
+      wasm.ICU4XLocale_set_language(diplomat_receive_buffer, this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = {};
+        return ok_value;
+      } else {
+        const throw_value = ICU4XLocaleError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw throw_value;
+      }
+    })();
+    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    return diplomat_out;
+  }
+
   region() {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
@@ -538,6 +577,32 @@ export class ICU4XLocale {
     return diplomat_out;
   }
 
+  set_region(bytes) {
+    let bytes_diplomat_bytes = (new TextEncoder()).encode(bytes);
+    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length);
+    let bytes_diplomat_buf = new Uint8Array(wasm.memory.buffer, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    bytes_diplomat_buf.set(bytes_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5
+      });
+      wasm.ICU4XLocale_set_region(diplomat_receive_buffer, this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = {};
+        return ok_value;
+      } else {
+        const throw_value = ICU4XLocaleError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw throw_value;
+      }
+    })();
+    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    return diplomat_out;
+  }
+
   script() {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
@@ -558,6 +623,32 @@ export class ICU4XLocale {
         }
       })();
     });
+    return diplomat_out;
+  }
+
+  set_script(bytes) {
+    let bytes_diplomat_bytes = (new TextEncoder()).encode(bytes);
+    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length);
+    let bytes_diplomat_buf = new Uint8Array(wasm.memory.buffer, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    bytes_diplomat_buf.set(bytes_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5
+      });
+      wasm.ICU4XLocale_set_script(diplomat_receive_buffer, this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = {};
+        return ok_value;
+      } else {
+        const throw_value = ICU4XLocaleError_rust_to_js[(new Int32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]];
+        throw throw_value;
+      }
+    })();
+    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length);
     return diplomat_out;
   }
 

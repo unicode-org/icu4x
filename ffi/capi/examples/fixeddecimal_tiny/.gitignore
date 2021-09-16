@@ -4,3 +4,4 @@ optim*
 *.dot
 *.elf
 *.o
+a.out.dSYM
