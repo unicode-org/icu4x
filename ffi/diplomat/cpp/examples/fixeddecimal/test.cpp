@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-const std::string_view path = "../../../../provider/testdata/data/json/";
+const std::string_view path = "../../../../../provider/testdata/data/json/";
 
 int main() {
     ICU4XLocale locale = ICU4XLocale::create("bn").value();

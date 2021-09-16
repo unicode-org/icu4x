@@ -35,7 +35,7 @@ ICU4XLocale* get_locale(const char* localeText) {
 }
 
 
-const char* path = "../../../../provider/testdata/data/json/";
+const char* path = "../../../../../provider/testdata/data/json/";
 int main() {
     char output[40];
 
