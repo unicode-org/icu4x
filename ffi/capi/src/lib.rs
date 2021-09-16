@@ -12,6 +12,23 @@
 #![no_std]
 #![allow(clippy::upper_case_acronyms)]
 
+//! This module contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
+//! FFI bindings. This generates the C, C++ and Wasm bindings. This module also contains the C
+//! FFI for ICU4X.
+//!
+//! To re-generate the bindings run:
+//!
+//! ```sh
+//! cargo make diplomat-install
+//! cargo make diplomat-gen-c
+//! ```
+//!
+//! Or re-generate all of the bindings:
+//!
+//! ```sh
+//! cargo make diplomat-gen
+//! ```
+
 // Needed to be able to build cdylibs/etc
 //
 // Renamed so you can't accidentally use it

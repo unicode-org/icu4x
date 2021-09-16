@@ -4,7 +4,7 @@
 
 pub mod json;
 
-#[cfg(feature = "bincode")]
+#[cfg(feature = "provider_bincode")]
 pub mod bincode;
 
 use crate::manifest::SyntaxOption;

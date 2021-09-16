@@ -19,7 +19,6 @@
 //!
 //! [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>` is used by data exporters such as `FilesystemExporter`.
 
-use crate::data_provider::DataPayloadInner;
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
@@ -179,7 +178,10 @@ where
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
-pub trait SerdeSeDataStruct<'data>: 'data {
+///
+/// This trait requires [`IsCovariant`] such that it can be safely used as a trait object in
+/// [`DataProvider`].
+pub trait SerdeSeDataStruct<'data>: IsCovariant<'data> {
     /// Return this trait object reference for Serde serialization.
     ///
     /// # Examples
@@ -209,18 +211,29 @@ pub trait SerdeSeDataStruct<'data>: 'data {
 
 impl<'data, T> SerdeSeDataStruct<'data> for T
 where
-    T: 'data + serde::Serialize,
+    T: IsCovariant<'data> + serde::Serialize,
 {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
     }
 }
 
-/// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'data>` for integration with DataProvider.
-pub struct SerdeSeDataStructWrap<'data>(&'data (dyn SerdeSeDataStruct<'data> + 'data));
+/// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'a>` for integration with DataProvider.
+pub struct SerdeSeDataStructDynRef<'a>(&'a (dyn SerdeSeDataStruct<'a> + 'a));
 
-impl<'data> Deref for SerdeSeDataStructWrap<'data> {
-    type Target = dyn SerdeSeDataStruct<'data> + 'data;
+impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data>
+    for SerdeSeDataStructDynRef<'static>
+{
+    fn zero_copy_from<'b>(
+        this: &'b (dyn SerdeSeDataStruct<'data> + 'data),
+    ) -> SerdeSeDataStructDynRef<'b> {
+        // This is safe because the trait object requires IsCovariant.
+        SerdeSeDataStructDynRef(unsafe { core::mem::transmute(this) })
+    }
+}
+
+impl<'a> Deref for SerdeSeDataStructDynRef<'a> {
+    type Target = dyn SerdeSeDataStruct<'a> + 'a;
     fn deref(&self) -> &Self::Target {
         self.0.deref()
     }
@@ -230,6 +243,7 @@ impl<'data, M> crate::dynutil::UpcastDataPayload<'data, M> for SerdeSeDataStruct
 where
     M: DataMarker<'data>,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
+    M::Cart: IsCovariant<'data>,
 {
     fn upcast(other: DataPayload<'data, M>) -> DataPayload<'data, SerdeSeDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
@@ -238,28 +252,14 @@ where
             Owned(yoke) => Rc::from(yoke),
             RcBuf(yoke) => Rc::from(yoke),
         };
-        let yoke_helper: for<'b> fn(
-            &'b (dyn SerdeSeDataStruct<'data> + 'data),
-        )
-            -> <SerdeSeDataStructWrap<'static> as Yokeable<'b>>::Output = |obj| {
-            // The following block casts 'data to '_ on the trait object. This is safe because:
-            //   1. '_ (the local scope lifetime) is shorter than 'data
-            //   2. This impl is only defined on types implementing Yokeable, so the lifetime on
-            //      the resulting trait object is covariant
-            let shortened: &(dyn SerdeSeDataStruct<'_> + '_) = unsafe { core::mem::transmute(obj) };
-            SerdeSeDataStructWrap(shortened)
-        };
-        DataPayload {
-            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly(cart, yoke_helper)),
-        }
+        DataPayload::from_partial_owned(cart)
     }
 }
 
-unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static> {
-    type Output = SerdeSeDataStructWrap<'a>;
+unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructDynRef<'static> {
+    type Output = SerdeSeDataStructDynRef<'a>;
     fn transform(&'a self) -> &'a Self::Output {
-        // This is only safe to the extent that the only way to create a SerdeSeDataStructWrap is
-        // via the `upcast()` function above, which asserts that the lifetimes are covariant.
+        // This is safe because SerdeSeDataStruct requires IsCovariant.
         unsafe { core::mem::transmute(self) }
     }
     fn transform_owned(self) -> Self::Output {
@@ -285,6 +285,6 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static> {
 pub struct SerdeSeDataStructMarker {}
 
 impl<'data> DataMarker<'data> for SerdeSeDataStructMarker {
-    type Yokeable = SerdeSeDataStructWrap<'static>;
+    type Yokeable = SerdeSeDataStructDynRef<'static>;
     type Cart = dyn SerdeSeDataStruct<'data>;
 }

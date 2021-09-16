@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::Error;
-use crate::upropdump_serde;
+use crate::uprops_serde;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::provider::*;
@@ -16,12 +16,12 @@ pub struct BinaryPropertiesDataProvider {
     root_dir: PathBuf,
 }
 
-/// A data provider reading from .toml files produced by the ICU4C upropdump tool.
+/// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
 impl BinaryPropertiesDataProvider {
     pub fn new(root_dir: PathBuf) -> Self {
         BinaryPropertiesDataProvider { root_dir }
     }
-    fn get_toml_data(&self, name: &str) -> Result<upropdump_serde::binary::Main, Error> {
+    fn get_toml_data(&self, name: &str) -> Result<uprops_serde::binary::Main, Error> {
         let mut path: PathBuf = self.root_dir.clone().join(name);
         path.set_extension("toml");
         let toml_str = fs::read_to_string(&path).map_err(|e| Error::Io(e, path.clone()))?;
@@ -34,17 +34,17 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertiesDat
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'data, UnicodePropertyV1Marker>, DataError> {
-        let toml_data: upropdump_serde::binary::Main = self
+        let toml_data: uprops_serde::binary::Main = self
             .get_toml_data(&req.resource_path.key.sub_category)
             .map_err(DataError::new_resc_error)?;
 
         let mut builder = UnicodeSetBuilder::new();
-        for (start, end) in toml_data.unicode_set.data.ranges {
+        for (start, end) in toml_data.binary_property.data.ranges {
             builder.add_range_u32(&(start..=end));
         }
         let uniset = builder.build();
 
-        let name = Cow::from(toml_data.unicode_set.data.name);
+        let name = Cow::from(toml_data.binary_property.data.short_name);
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),

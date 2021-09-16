@@ -6,3 +6,4 @@ node-version.wasm
 package-lock.json
 node_modules
 a.out
+a.out.dSYM
