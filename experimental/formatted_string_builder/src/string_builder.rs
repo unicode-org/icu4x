@@ -158,7 +158,7 @@ impl<F: Copy> SimpleFormattedStringBuilder<F> {
         self.insert_internal(0, string, field)
     }
 
-    fn insert(
+    pub fn insert(
         &mut self,
         pos: usize,
         string: &str,
