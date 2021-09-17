@@ -87,6 +87,39 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
         Ok(components)
     }
 
+    /// Construct a [`SliceComponents`] from a byte slice that has previously
+    /// successfully returned a [`SliceComponents`] when passed to
+    /// [`SliceComponents::parse_byte_slice()`]. Will return the same
+    /// object as one would get from calling [`SliceComponents::parse_byte_slice()`].
+    ///
+    /// # Safety
+    /// The bytes must have previously successfully run through
+    /// [`SliceComponents::parse_byte_slice()`]
+    pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
+        if slice.is_empty() {
+            return SliceComponents {
+                indices: &[],
+                things: &[],
+                entire_slice: slice,
+                marker: PhantomData,
+            };
+        }
+        let len_bytes = slice.get_unchecked(0..4);
+        let len_ule = PlainOldULE::<4>::from_byte_slice_unchecked(len_bytes);
+
+        let len = u32::from_unaligned(len_ule.get_unchecked(0)) as usize;
+        let indices_bytes = slice.get_unchecked(4..4 * len + 4);
+        let indices = PlainOldULE::<4>::from_byte_slice_unchecked(indices_bytes);
+        let things = slice.get_unchecked(4 * len + 4..);
+
+        SliceComponents {
+            indices,
+            things,
+            entire_slice: slice,
+            marker: PhantomData,
+        }
+    }
+
     #[inline]
     pub fn len(self) -> usize {
         self.indices.len()
