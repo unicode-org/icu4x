@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631827726824,
+  "lastUpdate": 1631900484928,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9929,6 +9929,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 125435,
             "range": "± 3840",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5b1bf8820b3c3759c34c418c3abeab0b8e58c015",
+          "message": "Misc cleanup done for #488 (#1059)\n\n* Only compute DateTimeFormatsV1 once when building DatePatternsV1.\r\n\r\n* Remove unnecessary get_mut() in parse_placeholders.\r\n\r\n* Cleanup redundant test fixture: combine-datetime was forked from date-time 5 months ago but the test still referred to the old file.\r\n\r\n* Add a basic skeleton parsing test.\r\n\r\n* Update test_components_combine_datetime's comment to the correct path.",
+          "timestamp": "2021-09-17T10:33:59-07:00",
+          "tree_id": "5fad7650df25e12df2edcacf33108788e5d4e973",
+          "url": "https://github.com/unicode-org/icu4x/commit/5b1bf8820b3c3759c34c418c3abeab0b8e58c015"
+        },
+        "date": 1631900481177,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 134578,
+            "range": "± 10824",
             "unit": "ns/iter"
           }
         ]
