@@ -144,7 +144,7 @@ impl<'p> Parser<'p> {
 
     pub fn parse_placeholders(
         mut self,
-        mut replacements: Vec<Pattern>,
+        replacements: Vec<Pattern>,
     ) -> Result<Vec<PatternItem>, Error> {
         let mut chars = self.source.chars().peekable();
         let mut result = vec![];
@@ -157,7 +157,7 @@ impl<'p> Parser<'p> {
                     let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
                     let idx: u32 = ch.to_digit(10).ok_or(Error::UnknownSubstitution(ch))?;
                     let replacement = replacements
-                        .get_mut(idx as usize)
+                        .get(idx as usize)
                         .ok_or(Error::UnknownSubstitution(ch))?;
                     result.extend_from_slice(replacement.items());
                     let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
