@@ -45,7 +45,7 @@ impl<'a> ListFormatter<'a> {
             Some(raw) => { 
                 // let [first, pair, middle, last] = raw.map(Pattern::parse);
                 // Ok(ListFormatter{first, pair, middle, last})
-                Ok( ListFormatter {
+                Ok(ListFormatter {
                     first: Pattern::parse(raw[0]), 
                     pair: Pattern::parse(raw[1]), 
                     middle: Pattern::parse(raw[2]), 
@@ -59,19 +59,19 @@ impl<'a> ListFormatter<'a> {
         &self,
         values: &[&str],
         empty: fn() -> B,
-        first: fn(&str) -> B,
-        append: fn(B, &Pattern<'a>, &str) -> B,
+        single: fn(&str) -> B,
+        apply_pattern: fn(&str, &PatternParts<'a>, B) -> B,
     ) -> B {
         match values.len() {
             0 => empty(),
-            1 => first(values[0]),
-            2 => append(first(values[0]), &self.pair, values[1]),
+            1 => single(values[0]),
+            2 => apply_pattern(values[0], &self.pair.get_parts(values[1]), single(values[1])),
             n => {
-                let mut res = append(first(values[0]), &self.first, values[1]);
-                for i in 2..n - 1 {
-                    res = append(res, &self.middle, values[i]);
+                let mut builder = apply_pattern(values[n-2], &self.last.get_parts(values[n-1]), single(values[n-1]));
+                for i in (1..n - 2).rev() {
+                    builder = apply_pattern(values[i], &self.middle.get_parts(values[i+1]), builder);
                 }
-                append(res, &self.last, values[n - 1])
+                apply_pattern(values[0], &self.first.get_parts(values[1]), builder)
             }
         }
     }
@@ -81,9 +81,12 @@ impl<'a> ListFormatter<'a> {
             values,
             || "".to_string(),
             |value| value.to_string(),
-            |builder, pattern, value| { 
-                let (before_value, after_value) = pattern.eval(value);
-                builder + before_value + value + after_value
+            |value, (before, between, after), mut builder| { 
+                builder = builder + after;
+                builder.insert_str(0, between);
+                builder.insert_str(0, value);
+                builder.insert_str(0, before);
+                builder
             }
         )
     }
@@ -93,25 +96,24 @@ impl<'a> ListFormatter<'a> {
             values,
             SimpleFormattedStringBuilder::<FieldType>::new,
             |value| {
-                let mut fsb = SimpleFormattedStringBuilder::<FieldType>::new();
-                fsb.append(value, FieldType::Element);
-                fsb
-            },
-            |mut builder, pattern, value| {
-                let (before_value, after_value) = pattern.eval(value);
-                builder.append(before_value, FieldType::Literal);
+                let mut builder = SimpleFormattedStringBuilder::<FieldType>::new();
                 builder.append(value, FieldType::Element);
-                builder.append(after_value, FieldType::Literal);
+                builder
+            },
+            |value, (before, between, after), mut builder| {
+                builder.append(after, FieldType::Literal);
+                builder.prepend(between, FieldType::Literal);
+                builder.prepend(value, FieldType::Element);
+                builder.prepend(before, FieldType::Literal);
                 builder
             }
         )
     }
-
-    
 }
 
-pub(crate) enum Pattern<'a> {
-    Simple { between: &'a str, after: &'a str},
+type PatternParts<'a> = (&'a str,&'a str,&'a str);
+enum Pattern<'a> {
+    Simple(PatternParts<'a>),
     Conditional { cond: Regex, then: Box<Pattern<'a>>, else_: Box<Pattern<'a>> },
 }
 
@@ -126,18 +128,16 @@ impl <'a> Pattern<'a> {
                 else_: Box::new(Pattern::parse(&raw[else_index+6..]))
             };
         }
-        if !raw.starts_with("{0}") {
-            panic!("doesn't start with {}", "{0}");
-        }
-        let element_index = raw.find("{1}").expect("missing {1}");
-        Pattern::Simple { between: &raw[3..element_index], after: &raw[element_index+3..]}
+        let index_0 = raw.find("{0}").expect("missing {0}");
+        let index_1 = raw.find("{1}").expect("missing {1}");
+        Pattern::Simple((&raw[0..index_0], &raw[index_0+3..index_1], &raw[index_1+3..]))
     }
 
-    fn eval(&self, value: &str) -> (&'a str, &'a str) {
+    fn get_parts(&self, following_value: &str) -> &PatternParts<'a> {
         match self {
-            Pattern::Simple {between: before, after} => (before, after),
+            Pattern::Simple(parts) => parts,
             Pattern::Conditional{cond, then, else_} => 
-                if cond.is_match(value) {then.eval(value)} else {else_.eval(value)},
+                if cond.is_match(following_value) {then.get_parts(following_value)} else {else_.get_parts(following_value)},
         }
     }
 }
