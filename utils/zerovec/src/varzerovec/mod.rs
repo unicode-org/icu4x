@@ -8,9 +8,12 @@ use either::Either;
 use std::fmt::{self, Display};
 use std::ops::Index;
 
-mod components;
+pub(crate) mod components;
 #[cfg(feature = "serde")]
 mod serde;
+mod ule;
+
+pub use ule::VarZeroVecULE;
 
 /// A zero-copy vector for variable-width types.
 ///
@@ -156,7 +159,7 @@ where
     }
 }
 
-type ParseErrorFor<T> = VarZeroVecError<<<T as AsVarULE>::VarULE as VarULE>::Error>;
+pub type ParseErrorFor<T> = VarZeroVecError<<<T as AsVarULE>::VarULE as VarULE>::Error>;
 
 impl<E> From<E> for VarZeroVecError<E> {
     fn from(e: E) -> Self {

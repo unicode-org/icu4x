@@ -81,7 +81,7 @@ pub mod map;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;
-mod varzerovec;
+pub mod varzerovec;
 mod zerovec;
 
 #[cfg(feature = "yoke")]
