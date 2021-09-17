@@ -2,12 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashMap;
-
 use formatted_string_builder::SimpleFormattedStringBuilder;
 use regex::Regex;
-
-use crate::patterns::create_formatters;
+use crate::patterns::get_patterns;
 
 #[derive(Debug)]
 pub enum Error {
@@ -19,66 +16,62 @@ pub enum FieldType {
     Element,
     Literal,
 }
+
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Type {
-    Standard,
+    And,
     Or,
     Unit,
 }
+
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Width {
-    Standard,
-    Narrow,
+    Wide,
     Short,
+    Narrow,
 }
 
 pub struct ListFormatter<'a> {
-    // Using references has two advantages:
-    // - Common patterns like ", " only have to exist once
-    // - We can do dynamic dispatch for more complicated patterns
-    first: &'a dyn Pattern<'a>,
-    pair: &'a dyn Pattern<'a>,
-    middle: &'a dyn Pattern<'a>,
-    last: &'a dyn Pattern<'a>,
+    first: Pattern<'a>,
+    pair: Pattern<'a>,
+    middle: Pattern<'a>,
+    last: Pattern<'a>,
 }
 
 impl<'a> ListFormatter<'a> {
-
     pub fn new(locale: &str, type_: Type, width: Width) -> Result<ListFormatter<'static>, Error> {
-        match LIST_FORMATTERS.get(locale) {
-            Some(array) => { 
-                let &[first, pair, middle, last] = &array[match type_ {
-                    Type::Standard => 0,
-                    Type::Or => 1,
-                    Type::Unit => 2,
-                }][match width {
-                    Width::Standard => 0,
-                    Width::Narrow => 1,
-                    Width::Short => 2,
-                }];
-                Ok(ListFormatter{first, pair, middle, last})
-            }
+        match get_patterns(locale, type_, width) {
             None => Err(Error::UnknownLocale),
+            Some(raw) => { 
+                // let [first, pair, middle, last] = raw.map(Pattern::parse);
+                // Ok(ListFormatter{first, pair, middle, last})
+                Ok( ListFormatter {
+                    first: Pattern::parse(raw[0]), 
+                    pair: Pattern::parse(raw[1]), 
+                    middle: Pattern::parse(raw[2]), 
+                    last: Pattern::parse(raw[3])
+                })
+            }
         }
     }
-    
+
     fn format_internal<B>(
         &self,
         values: &[&str],
         empty: fn() -> B,
         first: fn(&str) -> B,
-        append: fn(B, &dyn Pattern, &str) -> B,
+        append: fn(B, &Pattern<'a>, &str) -> B,
     ) -> B {
         match values.len() {
             0 => empty(),
             1 => first(values[0]),
-            2 => append(first(values[0]), self.pair, values[1]),
+            2 => append(first(values[0]), &self.pair, values[1]),
             n => {
-                let mut res = append(first(values[0]), self.first, values[1]);
+                let mut res = append(first(values[0]), &self.first, values[1]);
                 for i in 2..n - 1 {
-                    res = append(res, self.middle, values[i]);
+                    res = append(res, &self.middle, values[i]);
                 }
-                append(res, self.last, values[n - 1])
+                append(res, &self.last, values[n - 1])
             }
         }
     }
@@ -88,7 +81,10 @@ impl<'a> ListFormatter<'a> {
             values,
             || "".to_string(),
             |value| value.to_string(),
-            |builder, pattern, value| pattern.append_element_to_string(builder, value),
+            |builder, pattern, value| { 
+                let (before_value, after_value) = pattern.eval(value);
+                builder + before_value + value + after_value
+            }
         )
     }
 
@@ -101,81 +97,49 @@ impl<'a> ListFormatter<'a> {
                 fsb.append(value, FieldType::Element);
                 fsb
             },
-            |builder, pattern, value| pattern.append_element_to_sfsb(builder, value),
+            |mut builder, pattern, value| {
+                let (before_value, after_value) = pattern.eval(value);
+                builder.append(before_value, FieldType::Literal);
+                builder.append(value, FieldType::Element);
+                builder.append(after_value, FieldType::Literal);
+                builder
+            }
         )
     }
+
+    
 }
 
-// We want to store these in a lazy static, which requires Sync and Send
-pub(crate) trait Pattern<'a>: Send + Sync {
-    fn append_element_to_string(&self, list: String, element: &str) -> String;
-    fn append_element_to_sfsb(
-        &self,
-        list: SimpleFormattedStringBuilder<FieldType>,
-        element: &str,
-    ) -> SimpleFormattedStringBuilder<FieldType>;
+pub(crate) enum Pattern<'a> {
+    Simple { between: &'a str, after: &'a str},
+    Conditional { cond: Regex, then: Box<Pattern<'a>>, else_: Box<Pattern<'a>> },
 }
 
-impl <'a> Pattern<'a> for &'a str {
-    fn append_element_to_string(&self, list: String, element: &str) -> String {
-        list + self + element
+impl <'a> Pattern<'a> {
+    fn parse(raw: &'a str) -> Pattern<'a> {
+        if raw.starts_with("{cond}") {
+            let then_index = raw.find("{then}").expect("missing {then}");
+            let else_index = raw.find("{else}").expect("missing {else}");
+            return Pattern::Conditional{
+                cond: Regex::new(&raw[6..then_index]).expect("invalid regex"), 
+                then: Box::new(Pattern::parse(&raw[then_index+6..else_index])), 
+                else_: Box::new(Pattern::parse(&raw[else_index+6..]))
+            };
+        }
+        if !raw.starts_with("{0}") {
+            panic!("doesn't start with {}", "{0}");
+        }
+        let element_index = raw.find("{1}").expect("missing {1}");
+        Pattern::Simple { between: &raw[3..element_index], after: &raw[element_index+3..]}
     }
 
-    fn append_element_to_sfsb(
-        &self,
-        mut list: SimpleFormattedStringBuilder<FieldType>,
-        element: &str,
-    ) -> SimpleFormattedStringBuilder<FieldType> {
-        list.append(self, FieldType::Literal);
-        list.append(element, FieldType::Element);
-        list
-    }
-}
-
-// Allows the pattern to depend on the element that's being added.
-pub(crate) struct ConditionalPattern<'a> {
-    condition: &'a Regex,
-    standard: &'a dyn Pattern<'a>,
-    special: &'a dyn Pattern<'a>,
-}
-
-impl <'a> ConditionalPattern<'a> {
-    fn relevant_pattern(&self, element: &str) -> &'a dyn Pattern<'a> {
-        if self.condition.is_match(element) {
-            self.special
-        } else {
-            self.standard
+    fn eval(&self, value: &str) -> (&'a str, &'a str) {
+        match self {
+            Pattern::Simple {between: before, after} => (before, after),
+            Pattern::Conditional{cond, then, else_} => 
+                if cond.is_match(value) {then.eval(value)} else {else_.eval(value)},
         }
     }
-}
-
-impl <'a> Pattern<'a> for ConditionalPattern<'a> {
-    fn append_element_to_string(&self, list: String, element: &str) -> String {
-        self.relevant_pattern(element)
-            .append_element_to_string(list, element)
-    }
-
-    fn append_element_to_sfsb(
-        &self,
-        list: SimpleFormattedStringBuilder<FieldType>,
-        element: &str,
-    ) -> SimpleFormattedStringBuilder<FieldType> {
-        self.relevant_pattern(element)
-            .append_element_to_sfsb(list, element)
-    }
-}
-
-
-lazy_static! {
-    // This static map should be a compact representation of the CLDR data. Each locale entry is
-    // a 3 x 3 array (type x width) of ListFormatter objects, which contain references to static
-    // strings. As lots of patterns are repeated many times, this should be more efficient than
-    // having strings owned by the ListFormatters.
-    static ref LIST_FORMATTERS: HashMap<&'static str, [[[&'static dyn Pattern<'static>;4];3];3]> = {
-        create_formatters(
-            |condition, standard, special| ConditionalPattern {condition, standard, special},
-        )
-    };
 }
 
 #[cfg(test)]
@@ -186,10 +150,10 @@ mod tests {
 
     fn test_formatter() -> ListFormatter<'static> {
         ListFormatter {
-            pair: &"; ",
-            first: &": ",
-            middle: &", ",
-            last: &". ",
+            pair: Pattern::parse("{0}; {1}"),
+            first: Pattern::parse("{0}: {1}"),
+            middle: Pattern::parse("{0}, {1}"),
+            last: Pattern::parse("{0}. {1}!"),
         }
     }
 
@@ -198,14 +162,14 @@ mod tests {
         assert_eq!(test_formatter().format(&VALUES[0..0]), "");
         assert_eq!(test_formatter().format(&VALUES[0..1]), "one");
         assert_eq!(test_formatter().format(&VALUES[0..2]), "one; two");
-        assert_eq!(test_formatter().format(&VALUES[0..3]), "one: two. three");
+        assert_eq!(test_formatter().format(&VALUES[0..3]), "one: two. three!");
         assert_eq!(
             test_formatter().format(&VALUES[0..4]),
-            "one: two, three. four"
+            "one: two, three. four!"
         );
         assert_eq!(
             test_formatter().format(VALUES),
-            "one: two, three, four. five"
+            "one: two, three, four. five!"
         );
     }
 
@@ -222,14 +186,14 @@ mod tests {
         );
         assert_eq!(
             test_formatter().format_to_parts(&VALUES[0..3]).as_str(),
-            "one: two. three"
+            "one: two. three!"
         );
         assert_eq!(
             test_formatter().format_to_parts(&VALUES[0..4]).as_str(),
-            "one: two, three. four"
+            "one: two, three. four!"
         );
         let parts = test_formatter().format_to_parts(VALUES);
-        assert_eq!(parts.as_str(), "one: two, three, four. five");
+        assert_eq!(parts.as_str(), "one: two, three, four. five!");
 
         assert_eq!(parts.field_at(0), FieldType::Element);
         assert!(parts.is_field_start(0, 0));
@@ -245,15 +209,15 @@ mod tests {
 
     #[test]
     fn test_spanish() {
-        let mut formatter = ListFormatter::new("es", Type::Standard, Width::Standard).unwrap();
+        let mut formatter = ListFormatter::new("es", Type::And, Width::Wide).unwrap();
         assert_eq!(formatter.format(VALUES), "one, two, three, four y five");
         assert_eq!(formatter.format(&["Mallorca", "Ibiza"]), "Mallorca e Ibiza");
-        formatter = ListFormatter::new("es", Type::Or, Width::Standard).unwrap();
+        formatter = ListFormatter::new("es", Type::Or, Width::Wide).unwrap();
         assert_eq!(formatter.format(&["7", "8"]), "7 u 8");
         assert_eq!(formatter.format(&["siete", "ocho"]), "siete u ocho");
         // un millón ciento cuatro mil trescientos veinticuatro
-        assert_eq!(formatter.format(&["7", "1104324"]), "siete o 1104324");
+        assert_eq!(formatter.format(&["7", "1104324"]), "7 o 1104324");
         // *o*nce millones cuarenta y tres mil doscientos treinta y cuatro
-        assert_eq!(formatter.format(&["7", "11 043 234"]), "siete u 11 043 234");
+        assert_eq!(formatter.format(&["7", "11043234"]), "7 u 11043234");
     }
 }
