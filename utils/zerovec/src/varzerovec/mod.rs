@@ -412,7 +412,6 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     }
 
     /// If this is borrowed, get the borrowed slice
-    #[cfg(feature = "serde")]
     pub(crate) fn get_slice_for_borrowed(&self) -> Option<&'a [u8]> {
         match self.0 {
             VarZeroVecInner::Owned(..) => None,

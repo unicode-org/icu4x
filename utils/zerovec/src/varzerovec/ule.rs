@@ -84,3 +84,25 @@ unsafe impl<T: AsVarULE + 'static> VarULE for VarZeroVecULE<T> {
         &self.entire_slice
     }
 }
+
+impl<T> AsVarULE for VarZeroVec<'static, T>
+where
+    T: AsVarULE,
+    T: Clone,
+{
+    type VarULE = VarZeroVecULE<T>;
+    #[inline]
+    fn as_unaligned(&self) -> &VarZeroVecULE<T> {
+        let slice = self
+            .get_slice_for_borrowed()
+            .expect("It should not be possible for borrowed VarZeroVecs to contain owned VarZeroVecs");
+        unsafe {
+            // safety: the slice is known to come from a valid parsed VZV
+            VarZeroVecULE::from_byte_slice_unchecked(slice)
+        }
+    }
+    #[inline]
+    fn from_unaligned(unaligned: &VarZeroVecULE<T>) -> Self {
+        unaligned.as_varzerovec().into_owned()
+    }
+}

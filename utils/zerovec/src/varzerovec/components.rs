@@ -131,7 +131,6 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     }
 
     #[inline]
-    #[cfg(feature = "serde")]
     pub fn entire_slice(self) -> &'a [u8] {
         self.entire_slice
     }
