@@ -4,13 +4,31 @@
 
 use formatted_string_builder::SimpleFormattedStringBuilder;
 
+#[derive(Debug)]
+pub enum Error {
+    UnknownLocale,
+}
+
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum FieldType {
     Element,
     Literal,
 }
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum Type {
+    Standard,
+    Or,
+    Unit,
+}
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum Width {
+    Standard,
+    Narrow,
+    Short,
+}
 
-pub trait Pattern {
+// We want to store these in a static global, so they need to be Sync and Send
+pub(crate) trait Pattern: Send + Sync {
     fn append_element_to_string(&self, list: String, element: &str) -> String;
     fn append_element_to_sfsb(
         &self,
@@ -23,10 +41,10 @@ pub trait Pattern {
 }
 
 pub struct ListFormatter<'a> {
-    first: &'a dyn Pattern,
-    pair: &'a dyn Pattern,
-    middle: &'a dyn Pattern,
-    last: &'a dyn Pattern,
+    pub(crate) first: &'a dyn Pattern,
+    pub(crate) pair: &'a dyn Pattern,
+    pub(crate) middle: &'a dyn Pattern,
+    pub(crate) last: &'a dyn Pattern,
 }
 
 impl<'a> ListFormatter<'a> {
@@ -77,23 +95,6 @@ impl<'a> ListFormatter<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    // Just represent Pattern by a &str for now.
-    impl Pattern for &str {
-        fn append_element_to_string(&self, list: String, element: &str) -> String {
-            list + self + element
-        }
-
-        fn append_element_to_sfsb(
-            &self,
-            mut list: SimpleFormattedStringBuilder<FieldType>,
-            element: &str,
-        ) -> SimpleFormattedStringBuilder<FieldType> {
-            list.append(self, FieldType::Literal);
-            list.append(element, FieldType::Element);
-            list
-        }
-    }
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
@@ -154,5 +155,18 @@ mod tests {
         assert!(!parts.is_field_start(4, 0));
         assert_eq!(parts.field_at(5), FieldType::Element);
         assert!(parts.is_field_start(5, 0));
+    }
+
+    #[test]
+    fn test_spanish() {
+        let formatter = ListFormatter::new("es", Type::Standard, Width::Standard).unwrap();
+        assert_eq!(formatter.format(VALUES), "one, two, three, four y five");
+        assert_eq!(formatter.format(&["Mallorca", "Ibiza"]), "Mallorca e Ibiza");
+        assert_eq!(
+            ListFormatter::new("es", Type::Or, Width::Standard)
+                .unwrap()
+                .format(&["siete", "ocho"]),
+            "siete u ocho"
+        );
     }
 }
