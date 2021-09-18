@@ -9,6 +9,7 @@ use std::fmt::{self, Display};
 use std::ops::Index;
 
 pub(crate) mod components;
+mod owned;
 #[cfg(feature = "serde")]
 mod serde;
 mod ule;
@@ -359,7 +360,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
         match self.0 {
             VarZeroVecInner::Owned(ref mut vec) => vec,
             VarZeroVecInner::Borrowed(components) => {
-                let vec = components.iter().map(T::from_unaligned).collect();
+                let vec = components.to_vec();
                 let new_self = VarZeroVecInner::Owned(vec).into();
                 *self = new_self;
                 // recursion is limited since we are guaranteed to hit the Owned branch

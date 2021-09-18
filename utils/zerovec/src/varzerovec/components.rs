@@ -224,6 +224,13 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
             .chain(last)
             .map(|s| unsafe { T::VarULE::from_byte_slice_unchecked(s) })
     }
+
+    pub fn to_vec(&self) -> Vec<T>
+    where
+        T: Clone,
+    {
+        self.iter().map(T::from_unaligned).collect()
+    }
 }
 
 impl<'a, T> SliceComponents<'a, T>

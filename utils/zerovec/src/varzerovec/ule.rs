@@ -93,9 +93,9 @@ where
     type VarULE = VarZeroVecULE<T>;
     #[inline]
     fn as_unaligned(&self) -> &VarZeroVecULE<T> {
-        let slice = self
-            .get_slice_for_borrowed()
-            .expect("It should not be possible for borrowed VarZeroVecs to contain owned VarZeroVecs");
+        let slice = self.get_slice_for_borrowed().expect(
+            "It should not be possible for borrowed VarZeroVecs to contain owned VarZeroVecs",
+        );
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
             VarZeroVecULE::from_byte_slice_unchecked(slice)
