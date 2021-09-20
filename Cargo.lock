@@ -1273,18 +1273,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_provider_ppucd"
-version = "0.1.0"
-dependencies = [
- "displaydoc",
- "icu_locid",
- "icu_locid_macros",
- "icu_provider",
- "icu_uniset",
- "tinystr",
-]
-
-[[package]]
 name = "icu_provider_uprops"
 version = "0.3.0"
 dependencies = [
