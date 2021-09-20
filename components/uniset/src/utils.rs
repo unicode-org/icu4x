@@ -11,15 +11,6 @@ use zerovec::ZeroVec;
 
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
-pub fn is_valid(v: &[u32]) -> bool {
-    v.is_empty()
-        || (v.len() % 2 == 0
-            && v.windows(2).all(|chunk| chunk[0] < chunk[1])
-            && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
-}
-
-/// Similar to [`is_valid()`], but accepts a `ZeroVec<u32>` of code points
-/// instead of a `&[u32]` slice.
 pub fn is_valid_zv(inv_list_zv: &ZeroVec<'_, u32>) -> bool {
     let slice = inv_list_zv.as_slice();
     slice.is_empty()
@@ -53,55 +44,9 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::{deconstruct_range, is_valid, is_valid_zv};
+    use super::{deconstruct_range, is_valid_zv};
     use core::char;
     use zerovec::ZeroVec;
-
-    // is_valid
-
-    #[test]
-    fn test_is_valid() {
-        let check = vec![0x2, 0x3, 0x4, 0x5];
-        assert!(is_valid(&check));
-    }
-
-    #[test]
-    fn test_is_valid_empty() {
-        let check = vec![];
-        assert!(is_valid(&check));
-    }
-
-    #[test]
-    fn test_is_valid_overlapping() {
-        let check = vec![0x2, 0x5, 0x4, 0x6];
-        assert!(!is_valid(&check));
-    }
-
-    #[test]
-    fn test_is_valid_out_of_order() {
-        let check = vec![0x5, 0x4, 0x5, 0x6, 0x7];
-        assert!(!is_valid(&check));
-    }
-
-    #[test]
-    fn test_is_valid_duplicate() {
-        let check = vec![0x1, 0x2, 0x3, 0x3, 0x5];
-        assert!(!is_valid(&check));
-    }
-
-    #[test]
-    fn test_is_valid_odd() {
-        let check = vec![0x1, 0x2, 0x3, 0x4, 0x5];
-        assert!(!is_valid(&check));
-    }
-
-    #[test]
-    fn test_is_valid_out_of_range() {
-        let check = vec![0x1, 0x2, 0x3, 0x4, (char::MAX as u32) + 1];
-        assert!(!is_valid(&check));
-    }
-
-    // is_valid_zv
 
     #[test]
     fn test_is_valid_zv() {
