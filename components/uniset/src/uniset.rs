@@ -67,9 +67,7 @@ impl<'data> Eq for UnicodeSet<'data> {}
 
 impl<'data> UnicodeSet<'data> {
     /// TODO: doc strings + doc test
-    pub fn from_inversion_list(
-        inv_list: ZeroVec<'data, u32>,
-    ) -> Result<Self, UnicodeSetError<'data>> {
+    pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, UnicodeSetError> {
         if is_valid_zv(&inv_list) {
             let size: usize = inv_list
                 .as_slice()
@@ -81,7 +79,7 @@ impl<'data> UnicodeSet<'data> {
                 .sum::<u32>() as usize;
             Ok(Self { inv_list, size })
         } else {
-            Err(UnicodeSetError::InvalidSet(inv_list))
+            Err(UnicodeSetError::InvalidSet(inv_list.to_vec()))
         }
     }
 
@@ -102,12 +100,10 @@ impl<'data> UnicodeSet<'data> {
     /// let result = UnicodeSet::from_inversion_list(inv_list);
     /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
     /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
-    ///     assert_eq!(ZeroVec::try_from_slice(&invalid), Some(actual));
+    ///     assert_eq!(&invalid, &actual);
     /// }
     /// ```
-    pub fn from_inversion_list_slice(
-        inv_list: &'data [u32],
-    ) -> Result<Self, UnicodeSetError<'data>> {
+    pub fn from_inversion_list_slice(inv_list: &'data [u32]) -> Result<Self, UnicodeSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice(inv_list);
         UnicodeSet::from_inversion_list(inv_list_zv)
     }
@@ -442,7 +438,7 @@ mod tests {
         let set = UnicodeSet::from_inversion_list(inv_list);
         assert!(matches!(set, Err(UnicodeSetError::InvalidSet(_))));
         if let Err(UnicodeSetError::InvalidSet(actual)) = set {
-            assert_eq!(ZeroVec::from_slice(&check), actual);
+            assert_eq!(&check, &actual);
         }
     }
 

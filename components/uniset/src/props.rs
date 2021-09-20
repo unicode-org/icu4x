@@ -7,8 +7,7 @@ use crate::provider::*;
 use crate::UnicodeSetError;
 use icu_provider::prelude::*;
 
-type UnisetResult<'data> =
-    Result<DataPayload<'data, UnicodePropertyV1Marker>, UnicodeSetError<'data>>;
+type UnisetResult<'data> = Result<DataPayload<'data, UnicodePropertyV1Marker>, UnicodeSetError>;
 
 // helper fn
 fn get_prop<'data, D>(provider: &'data D, resc_key: ResourceKey) -> UnisetResult<'data>

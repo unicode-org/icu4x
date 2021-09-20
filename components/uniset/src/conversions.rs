@@ -15,7 +15,7 @@ use zerovec::ZeroVec;
 
 fn try_from_range<'data, 'r>(
     range: &'r impl RangeBounds<char>,
-) -> Result<UnicodeSet<'data>, UnicodeSetError<'data>> {
+) -> Result<UnicodeSet<'data>, UnicodeSetError> {
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];
@@ -27,7 +27,7 @@ fn try_from_range<'data, 'r>(
 }
 
 impl<'data> TryFrom<&Range<char>> for UnicodeSet<'data> {
-    type Error = UnicodeSetError<'data>;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &Range<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -35,7 +35,7 @@ impl<'data> TryFrom<&Range<char>> for UnicodeSet<'data> {
 }
 
 impl<'data> TryFrom<&RangeFrom<char>> for UnicodeSet<'data> {
-    type Error = UnicodeSetError<'data>;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &RangeFrom<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -43,7 +43,7 @@ impl<'data> TryFrom<&RangeFrom<char>> for UnicodeSet<'data> {
 }
 
 impl<'data> TryFrom<&RangeFull> for UnicodeSet<'data> {
-    type Error = UnicodeSetError<'data>;
+    type Error = UnicodeSetError;
 
     fn try_from(_: &RangeFull) -> Result<Self, Self::Error> {
         Ok(Self::all())
@@ -51,7 +51,7 @@ impl<'data> TryFrom<&RangeFull> for UnicodeSet<'data> {
 }
 
 impl<'data> TryFrom<&RangeInclusive<char>> for UnicodeSet<'data> {
-    type Error = UnicodeSetError<'data>;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &RangeInclusive<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -59,7 +59,7 @@ impl<'data> TryFrom<&RangeInclusive<char>> for UnicodeSet<'data> {
 }
 
 impl<'data> TryFrom<&RangeTo<char>> for UnicodeSet<'data> {
-    type Error = UnicodeSetError<'data>;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &RangeTo<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -67,7 +67,7 @@ impl<'data> TryFrom<&RangeTo<char>> for UnicodeSet<'data> {
 }
 
 impl<'data> TryFrom<&RangeToInclusive<char>> for UnicodeSet<'data> {
-    type Error = UnicodeSetError<'data>;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &RangeToInclusive<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
