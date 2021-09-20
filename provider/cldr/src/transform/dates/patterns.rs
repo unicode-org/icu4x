@@ -273,7 +273,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             time_h11_h12,
             time_h23_h24,
             preferred_hour_cycle,
-            datetime: (&other.calendars.gregorian.datetime_formats).into(),
+            datetime: date_time_formats_v1,
         }
     }
 }
@@ -326,4 +326,33 @@ fn test_with_numbering_system() {
     assert_eq!("d MMM y", cs_dates.get().date.medium);
     // TODO(#308): Support numbering system variations. We currently throw them away.
     assert_eq!("d/M/yy", cs_dates.get().date.short);
+}
+
+#[test]
+fn test_datetime_skeletons() {
+    use gregory::patterns::{PatternV1, SkeletonV1};
+    use icu_locid_macros::langid;
+
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+
+    let cs_dates: DataPayload<gregory::DatePatternsV1Marker> = provider
+        .load_payload(&DataRequest {
+            resource_path: ResourcePath {
+                key: key::GREGORY_DATE_PATTERNS_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: Some(langid!("haw")),
+                },
+            },
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+    let skeletons = &cs_dates.get().datetime.skeletons.0;
+
+    assert_eq!(
+        Some(&PatternV1::try_from("L").expect("Failed to create pattern")),
+        skeletons.get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))
+    );
 }

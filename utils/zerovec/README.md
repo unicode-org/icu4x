@@ -30,11 +30,11 @@ Benchmark results on x86_64:
 | Deserialize vec of 100 `u32` | 233.18 ns | 14.120 ns |
 | Compute sum of vec of 100 `u32` (read every element) | 8.7472 ns | 10.775 ns |
 | Binary search vec of 1000 `u32` 50 times | 442.80 ns | 472.51 ns |
-| Deserialize vec of 100 strings | 7.3740 us\* | 1.4495 us |
+| Deserialize vec of 100 strings | 7.3740 μs\* | 1.4495 μs |
 | Count chars in vec of 100 strings (read every element) | 747.50 ns | 955.28 ns |
 | Binary search vec of 500 strings 10 times | 466.09 ns | 790.33 ns |
 
-\* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to `Vec<&str>`; this gives 1.8420 us, much faster than `Vec<String>` but a bit slower than `zerovec`.*
+\* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to `Vec<&str>`; this gives 1.8420 μs, much faster than `Vec<String>` but a bit slower than `zerovec`.*
 
 The benches used to generate the above table can be found in the `benches` directory in the project repository.
 
