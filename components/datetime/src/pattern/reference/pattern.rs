@@ -242,7 +242,7 @@ impl Serialize for Pattern {
 
 #[cfg(feature = "provider_serde")]
 mod week_field_serialization {
-    use crate::fields::{FieldSymbol, Week};
+    use crate::fields::Week;
     use alloc::format;
     use core::convert::TryInto;
     use serde::{self, de, Deserialize};
@@ -251,27 +251,19 @@ mod week_field_serialization {
     where
         S: serde::Serializer,
     {
-        serializer.serialize_char(FieldSymbol::Week(*week).into())
+        serializer.serialize_char((*week).into())
     }
 
     pub fn deserialize<'de, D>(deserializer: D) -> Result<Week, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
-        let c = char::deserialize(deserializer)?;
-        let symbol: FieldSymbol = c.try_into().map_err(|err| {
+        char::deserialize(deserializer)?.try_into().map_err(|err| {
             de::Error::invalid_value(
                 de::Unexpected::Other(&format!("{}", err)),
-                &"a valid UTS 35 symbol",
+                &"a valid UTS 35 week symbol",
             )
-        })?;
-        match symbol {
-            FieldSymbol::Week(w) => Ok(w),
-            _ => Err(de::Error::invalid_value(
-                de::Unexpected::Char(c),
-                &"a UTS 35 week symbol",
-            )),
-        }
+        })
     }
 }
 
