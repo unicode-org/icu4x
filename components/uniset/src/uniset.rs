@@ -15,6 +15,12 @@ use crate::utils::{deconstruct_range, is_valid_zv};
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
 
+/// Represents the inversion list for a set of all code points in the Basic Multilingual Plane.
+const BMP_INV_LIST_SLICE: &[u32] = &[0x0, BMP_MAX + 1];
+
+/// Represents the inversion list for all of the code points in the Unicode range.
+const ALL_SLICE: &[u32] = &[0x0, (char::MAX as u32) + 1];
+
 /// A membership wrapper for [`UnicodeSet`].
 ///
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
@@ -172,7 +178,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::clone_from_slice(&[0x0, (char::MAX as u32) + 1]),
+            inv_list: ZeroVec::<u32>::clone_from_slice(ALL_SLICE),
             size: (char::MAX as usize) + 1,
         }
     }
@@ -182,7 +188,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0xFFFF` inclusive
     pub fn bmp() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::clone_from_slice(&[0x0, BMP_MAX + 1]),
+            inv_list: ZeroVec::<u32>::from_slice(BMP_INV_LIST_SLICE),
             size: (BMP_MAX as usize) + 1,
         }
     }
