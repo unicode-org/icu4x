@@ -11,6 +11,7 @@ use core::{
 use super::UnicodeSetError;
 use crate::utils::deconstruct_range;
 use crate::UnicodeSet;
+use zerovec::ZeroVec;
 
 fn try_from_range<'data, 'r>(
     range: &'r impl RangeBounds<char>,
@@ -18,7 +19,8 @@ fn try_from_range<'data, 'r>(
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];
-        Ok(UnicodeSet::clone_from_inversion_list(set).unwrap())
+        let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&set).into_owned();
+        Ok(UnicodeSet::from_inversion_list(inv_list).unwrap())
     } else {
         Err(UnicodeSetError::InvalidRange(from, till))
     }
