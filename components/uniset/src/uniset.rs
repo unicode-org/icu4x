@@ -382,7 +382,7 @@ impl<'data> UnicodeSet<'data> {
                 } else {
                     // This code should be unreachable because:
                     // Inversion list query should not return out of bounds index
-                    false
+                    unreachable!()
                 }
             }
             None => false,
