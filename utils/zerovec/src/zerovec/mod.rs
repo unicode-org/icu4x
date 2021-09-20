@@ -62,6 +62,8 @@ where
     Borrowed(&'a [T::ULE]),
 }
 
+impl<T> Eq for ZeroVec<'_, T> where T: AsULE + ?Sized + Eq + std::marker::Copy {}
+
 impl<T> fmt::Debug for ZeroVec<'_, T>
 where
     T: AsULE + fmt::Debug,

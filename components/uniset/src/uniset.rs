@@ -19,7 +19,7 @@ const BMP_MAX: u32 = 0xFFFF;
 ///
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[yoke(cloning_zcf)]
 pub struct UnicodeSet<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
@@ -62,8 +62,6 @@ impl<'data> serde::Serialize for UnicodeSet<'data> {
         self.inv_list.serialize(serializer)
     }
 }
-
-impl<'data> Eq for UnicodeSet<'data> {}
 
 impl<'data> UnicodeSet<'data> {
     /// TODO: doc strings + doc test
