@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632159172551,
+  "lastUpdate": 1632171777473,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13985,6 +13985,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 62478,
             "range": "± 276",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "04cfbd2684f1eaa0439ffe3e394fd496e6160a85",
+          "message": "Remove provider_ppucd (#1069)",
+          "timestamp": "2021-09-20T13:55:31-07:00",
+          "tree_id": "c24ef6012e2105fa1ccf4a0cf686aa6ee105e542",
+          "url": "https://github.com/unicode-org/icu4x/commit/04cfbd2684f1eaa0439ffe3e394fd496e6160a85"
+        },
+        "date": 1632171773955,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1251,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7191,
+            "range": "± 601",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23272,
+            "range": "± 1605",
             "unit": "ns/iter"
           }
         ]
