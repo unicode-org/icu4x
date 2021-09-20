@@ -165,9 +165,17 @@ impl UnicodeSetBuilder {
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
     /// ```
+    #[allow(unused_assignments)]
     pub fn add_set(&mut self, set: &UnicodeSet) {
-        for range in set.as_inversion_list().to_vec().chunks(2) {
-            self.add(range[0], range[1]);
+        let mut range_start = u32::MAX;
+        let mut range_limit = u32::MAX;
+        for (index, cp) in set.as_inversion_list().iter().enumerate() {
+            if index % 2 == 0 {
+                range_start = cp;
+            } else {
+                range_limit = cp;
+                self.add(range_start, range_limit);
+            }
         }
     }
 
@@ -232,9 +240,17 @@ impl UnicodeSetBuilder {
     /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('F'));
+    #[allow(unused_assignments)]
     pub fn remove_set(&mut self, set: &UnicodeSet) {
-        for range in set.as_inversion_list().to_vec().chunks(2) {
-            self.remove(range[0], range[1]);
+        let mut range_start = u32::MAX;
+        let mut range_limit = u32::MAX;
+        for (index, cp) in set.as_inversion_list().iter().enumerate() {
+            if index % 2 == 0 {
+                range_start = cp;
+            } else {
+                range_limit = cp;
+                self.remove(range_start, range_limit);
+            }
         }
     }
 
@@ -293,11 +309,19 @@ impl UnicodeSetBuilder {
     /// assert!(check.contains('A'));
     /// assert!(!check.contains('G'));
     /// ```
+    #[allow(unused_assignments)]
     pub fn retain_set(&mut self, set: &UnicodeSet) {
         let mut prev = 0;
-        for range in set.as_inversion_list().to_vec().chunks(2) {
-            self.remove(prev, range[0]);
-            prev = range[1];
+        let mut range_start = u32::MAX;
+        let mut range_limit = u32::MAX;
+        for (index, cp) in set.as_inversion_list().iter().enumerate() {
+            if index % 2 == 0 {
+                range_start = cp;
+            } else {
+                range_limit = cp;
+                self.remove(prev, range_start);
+                prev = range_limit;
+            }
         }
         self.remove(prev, (char::MAX as u32) + 1);
     }
