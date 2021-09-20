@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631900513582,
+  "lastUpdate": 1632159212002,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7571,6 +7571,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 700766,
             "range": "± 17105",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f19a64b4662d56c2588a592685e87c1e799c7f2a",
+          "message": "Add data size benchmark: monitor size of file (#1051)\n\nprovider/testdata/data/testdata.postcard.\r\n\r\nRemove erroneous second print-out of results.\r\n\r\nMoves directory datasize/ with the output data under 'benchmarks/' directory,\r\nfrom 'benchmarks/binsize/'.",
+          "timestamp": "2021-09-20T10:25:55-07:00",
+          "tree_id": "470c8072eebfc55a2fad062841a147b4b49fdae1",
+          "url": "https://github.com/unicode-org/icu4x/commit/f19a64b4662d56c2588a592685e87c1e799c7f2a"
+        },
+        "date": 1632159208163,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 382446,
+            "range": "± 16317",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1911339,
+            "range": "± 81627",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 709738,
+            "range": "± 23418",
             "unit": "ns/iter"
           }
         ]
