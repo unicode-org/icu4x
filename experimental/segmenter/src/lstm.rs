@@ -55,6 +55,11 @@ fn get_best_lstm_model(codepoint: u32) -> &'static Lstm {
     }
 }
 
+/// This struct is an iterator that returns the string per language from the
+/// given string.
+///
+/// Actually supported LSTM model is Thai and Burmese only. If using other
+/// code point, it causes panic.
 struct LanguageIterator<'a> {
     input: Chars<'a>,
     last: Option<char>,
