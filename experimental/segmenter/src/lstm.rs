@@ -196,19 +196,13 @@ pub fn get_line_break_utf16(input: &[u16]) -> Option<Vec<usize>> {
         .map(|r| r.unwrap())
         .collect();
     let mut result: Vec<usize> = Vec::new();
-    let mut lang_iter = LanguageIterator::new(&s);
     let mut offset = 0;
-    loop {
-        let str_per_lang = lang_iter.next();
-        if str_per_lang.is_none() {
-            break;
-        }
+    for str_per_lang in LanguageIterator::new(&s) {
         if offset != 0 {
             // language break
             result.push(offset);
         }
 
-        let str_per_lang = str_per_lang.unwrap();
         let lstm = get_best_lstm_model(str_per_lang.chars().next().unwrap() as u32);
         let lstm_iter = LstmSegmenterIteratorUtf16::new(lstm, &str_per_lang);
         let mut r: Vec<usize> = lstm_iter.map(|n| offset + n).collect();
