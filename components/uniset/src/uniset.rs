@@ -5,7 +5,7 @@
 #[cfg(feature = "serde")]
 use alloc::format;
 use alloc::vec::Vec;
-use core::{char, ops::RangeBounds, ops::RangeInclusive, slice::Chunks};
+use core::{char, ops::RangeBounds, ops::RangeInclusive};
 use icu_provider::yoke::{self, *};
 use zerovec::{ule::AsULE, ZeroVec};
 
@@ -414,22 +414,22 @@ impl<'data> UnicodeSet<'data> {
         if set.size() > self.size() {
             return false;
         }
-        let inv_list = set.as_inversion_list();
-        let inv_list_vec = inv_list.to_vec();
-        let mut set_ranges: Chunks<u32> = inv_list_vec.chunks(2);
-        let mut check = set_ranges.next();
+        let mut set_ranges = set.iter_ranges();
+        let mut check_elem = set_ranges.next();
         let ranges = self.iter_ranges();
         for range in ranges {
-            match check {
-                Some(r) => {
-                    if r[0] >= *range.start() && r[1] <= (range.end() + 1) {
-                        check = set_ranges.next();
+            match check_elem {
+                Some(ref check_range) => {
+                    if check_range.start() >= range.start()
+                        && check_range.end() <= &(range.end() + 1)
+                    {
+                        check_elem = set_ranges.next();
                     }
                 }
                 _ => break,
             }
         }
-        check.is_none()
+        check_elem.is_none()
     }
 
     /// Returns the end of the initial substring where the characters are either contained/not contained
