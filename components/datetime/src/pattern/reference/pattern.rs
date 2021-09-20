@@ -316,18 +316,22 @@ impl PluralPattern {
         Ok(plural_pattern)
     }
 
+    /// Returns which week field determines the [icu_plurals::PluralCategory] used to select a pattern variant for a given date.
     pub fn pivot_field(&self) -> Week {
         self.pivot_field
     }
 
+    /// Adds `pattern` associated with `plural_category` to this pattern collection.
     pub fn add_variant(&mut self, plural_category: PluralCategory, pattern: Pattern) {
         self.variants.push((plural_category, pattern));
     }
 
+    /// Returns an iterator over all of this collection's patterns.
     pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern> {
         self.variants.iter().map(|(_, pattern)| pattern)
     }
 
+    /// Returns a mutable iterator over all of this collection's patterns.
     pub fn patterns_iter_mut(&mut self) -> impl Iterator<Item = &mut Pattern> {
         self.variants.iter_mut().map(|(_, pattern)| pattern)
     }
@@ -342,14 +346,17 @@ impl PluralPattern {
     }
 }
 
+/// Either a single Pattern or a collection of pattern when there are plural variants.
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub enum PatternPlurals {
+    /// A collection of pattern variants for when plurals differ.
     #[cfg_attr(feature = "provider_serde", serde(rename = "plural_patterns"))]
     MultipleVariants(PluralPattern),
+    /// A single pattern.
     #[cfg_attr(feature = "provider_serde", serde(rename = "pattern"))]
     SinglePattern(Pattern),
 }
@@ -399,6 +406,7 @@ where
 }
 
 impl PatternPlurals {
+    /// Returns an iterator over all of this collection's patterns.
     pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern> {
         match self {
             PatternPlurals::SinglePattern(pattern) => {
@@ -410,6 +418,7 @@ impl PatternPlurals {
         }
     }
 
+    /// Returns a mutable iterator over all of this collection's patterns.
     pub fn patterns_iter_mut(&mut self) -> impl Iterator<Item = &mut Pattern> {
         match self {
             PatternPlurals::SinglePattern(pattern) => {
@@ -421,6 +430,12 @@ impl PatternPlurals {
         }
     }
 
+    /// Returns the contained [`SinglePattern`] pattern, consuming `self`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the value is a [`MultipleVariants`] with a custom panic message provided by
+    /// `msg`.
     pub fn expect_pattern(self, msg: &str) -> Pattern {
         match self {
             PatternPlurals::SinglePattern(pattern) => pattern,
@@ -428,6 +443,12 @@ impl PatternPlurals {
         }
     }
 
+    /// Returns a reference to the contained [`SinglePattern`] pattern, consuming `self`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the value is a [`MultipleVariants`] with a custom panic message provided by
+    /// `msg`.
     pub fn expect_pattern_ref(&self, msg: &str) -> &Pattern {
         match self {
             PatternPlurals::SinglePattern(pattern) => pattern,
