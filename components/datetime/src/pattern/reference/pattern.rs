@@ -384,7 +384,7 @@ impl PatternPlurals {
     pub fn expect_pattern(self, msg: &str) -> Pattern {
         match self {
             PatternPlurals::SinglePattern(pattern) => pattern,
-            _ => panic!("{}", msg),
+            _ => panic!("expect_pattern failed: {}", msg),
         }
     }
 
@@ -397,7 +397,7 @@ impl PatternPlurals {
     pub fn expect_pattern_ref(&self, msg: &str) -> &Pattern {
         match self {
             PatternPlurals::SinglePattern(pattern) => pattern,
-            _ => panic!("{}", msg),
+            _ => panic!("expect_pattern failed: {}", msg),
         }
     }
 }
