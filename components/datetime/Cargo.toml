@@ -44,6 +44,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 serde-tuple-vec-map = { version = "1.0", optional = true }
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
+either = "1.6.1"
 num_enum = { version = "0.5", default_features = false }
 
 [dev-dependencies]

@@ -1107,6 +1107,7 @@ dependencies = [
  "bincode",
  "criterion",
  "displaydoc",
+ "either",
  "icu",
  "icu_benchmark_macros",
  "icu_calendar",

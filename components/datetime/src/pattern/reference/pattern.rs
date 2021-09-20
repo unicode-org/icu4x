@@ -15,6 +15,7 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
+use either::Either;
 use icu_plurals::PluralCategory;
 #[cfg(feature = "provider_serde")]
 use serde::{
@@ -353,59 +354,13 @@ pub enum PatternPlurals {
     SinglePattern(Pattern),
 }
 
-enum PatternPluralsIterator<'a, T>
-where
-    T: Iterator<Item = &'a Pattern>,
-{
-    MultipleVariants(T),
-    SinglePattern(Option<&'a Pattern>),
-}
-
-impl<'a, T> Iterator for PatternPluralsIterator<'a, T>
-where
-    T: Iterator<Item = &'a Pattern>,
-{
-    type Item = &'a Pattern;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self {
-            PatternPluralsIterator::MultipleVariants(iter) => iter.next(),
-            PatternPluralsIterator::SinglePattern(opt_pattern) => opt_pattern.take(),
-        }
-    }
-}
-
-enum PatternPluralsMutIterator<'a, T>
-where
-    T: Iterator<Item = &'a mut Pattern>,
-{
-    MultipleVariants(T),
-    SinglePattern(Option<&'a mut Pattern>),
-}
-
-impl<'a, T> Iterator for PatternPluralsMutIterator<'a, T>
-where
-    T: Iterator<Item = &'a mut Pattern>,
-{
-    type Item = &'a mut Pattern;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self {
-            PatternPluralsMutIterator::MultipleVariants(iter) => iter.next(),
-            PatternPluralsMutIterator::SinglePattern(opt_pattern) => opt_pattern.take(),
-        }
-    }
-}
-
 impl PatternPlurals {
     /// Returns an iterator over all of this collection's patterns.
     pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern> {
         match self {
-            PatternPlurals::SinglePattern(pattern) => {
-                PatternPluralsIterator::SinglePattern(Some(pattern))
-            }
+            PatternPlurals::SinglePattern(pattern) => Either::Left(core::iter::once(pattern)),
             PatternPlurals::MultipleVariants(plural_pattern) => {
-                PatternPluralsIterator::MultipleVariants(plural_pattern.patterns_iter())
+                Either::Right(plural_pattern.patterns_iter())
             }
         }
     }
@@ -413,11 +368,9 @@ impl PatternPlurals {
     /// Returns a mutable iterator over all of this collection's patterns.
     pub fn patterns_iter_mut(&mut self) -> impl Iterator<Item = &mut Pattern> {
         match self {
-            PatternPlurals::SinglePattern(pattern) => {
-                PatternPluralsMutIterator::SinglePattern(Some(pattern))
-            }
+            PatternPlurals::SinglePattern(pattern) => Either::Left(core::iter::once(pattern)),
             PatternPlurals::MultipleVariants(plural_pattern) => {
-                PatternPluralsMutIterator::MultipleVariants(plural_pattern.patterns_iter_mut())
+                Either::Right(plural_pattern.patterns_iter_mut())
             }
         }
     }
