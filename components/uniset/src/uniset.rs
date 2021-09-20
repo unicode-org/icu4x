@@ -64,7 +64,31 @@ impl<'data> serde::Serialize for UnicodeSet<'data> {
 }
 
 impl<'data> UnicodeSet<'data> {
-    /// TODO: doc strings + doc test
+    /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
+    /// represented by a [`ZeroVec`]`<`[`u32`]`>` of codepoints.
+    ///
+    /// The inversion list must be of even length, sorted ascending non-overlapping,
+    /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::uniset::UnicodeSet;
+    /// use icu::uniset::UnicodeSetError;
+    /// use zerovec::ZeroVec;
+    /// let valid = [0x0, 0xFFFF];
+    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&valid);
+    /// let result = UnicodeSet::from_inversion_list(inv_list);
+    /// assert!(matches!(result, UnicodeSet));
+    ///
+    /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
+    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&invalid);
+    /// let result = UnicodeSet::from_inversion_list(inv_list);
+    /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
+    /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
+    ///     assert_eq!(&invalid, &actual);
+    /// }
+    /// ```
     pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, UnicodeSetError> {
         if is_valid_zv(&inv_list) {
             let size: usize = inv_list
@@ -82,7 +106,7 @@ impl<'data> UnicodeSet<'data> {
     }
 
     /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    /// represented by a [`Vec`]`<`[`u32`]`>` of codepoints.
+    /// represented by a slice of [`u32`]`>` of codepoints with a lifetime.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
@@ -93,9 +117,12 @@ impl<'data> UnicodeSet<'data> {
     /// use icu::uniset::UnicodeSet;
     /// use icu::uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
+    /// let valid = [0x0, 0xFFFF];
+    /// let result = UnicodeSet::from_inversion_list_slice(&valid);
+    /// assert!(matches!(result, UnicodeSet));
+    ///
     /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
-    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&invalid);
-    /// let result = UnicodeSet::from_inversion_list(inv_list);
+    /// let result = UnicodeSet::from_inversion_list_slice(&invalid);
     /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
     /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
     ///     assert_eq!(&invalid, &actual);
@@ -103,6 +130,34 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     pub fn from_inversion_list_slice(inv_list: &'data [u32]) -> Result<Self, UnicodeSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice(inv_list);
+        UnicodeSet::from_inversion_list(inv_list_zv)
+    }
+
+    /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
+    /// represented by a slice of [`u32`]`>` of codepoints.
+    ///
+    /// The inversion list must be of even length, sorted ascending non-overlapping,
+    /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::uniset::UnicodeSet;
+    /// use icu::uniset::UnicodeSetError;
+    /// use zerovec::ZeroVec;
+    /// let valid = [0x0, 0xFFFF];
+    /// let result = UnicodeSet::from_inversion_list_slice(&valid);
+    /// assert!(matches!(result, UnicodeSet));
+    ///
+    /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
+    /// let result = UnicodeSet::from_inversion_list_slice(&invalid);
+    /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
+    /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
+    ///     assert_eq!(&invalid, &actual);
+    /// }
+    /// ```
+    pub fn clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, UnicodeSetError> {
+        let inv_list_zv: ZeroVec<u32> = ZeroVec::clone_from_slice(inv_list);
         UnicodeSet::from_inversion_list(inv_list_zv)
     }
 
