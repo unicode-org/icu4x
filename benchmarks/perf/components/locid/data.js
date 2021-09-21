@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632171718391,
+  "lastUpdate": 1632249226494,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12629,6 +12629,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4327,
             "range": "± 187",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "adf02273511847c7b3422a0916e05d8ac7c236ec",
+          "message": "Add DataPayload::map_project functions (#920)",
+          "timestamp": "2021-09-21T13:26:51-05:00",
+          "tree_id": "24a3d122e6416385e322c8bfb13b5d2cb24bfacd",
+          "url": "https://github.com/unicode-org/icu4x/commit/adf02273511847c7b3422a0916e05d8ac7c236ec"
+        },
+        "date": 1632249223789,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2416,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4156,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
