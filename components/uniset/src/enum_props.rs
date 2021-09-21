@@ -83,25 +83,31 @@ pub enum GeneralCategory {
     TitlecaseLetter = 1 << (GS::TitlecaseLetter as u32),
     ModifierLetter = 1 << (GS::ModifierLetter as u32),
     OtherLetter = 1 << (GS::OtherLetter as u32),
-    CasedLetter =
-        1 << (GS::UppercaseLetter as u32) | 1 << (GS::LowercaseLetter as u32) | 1 << (GS::TitlecaseLetter as u32),
-    Letter = Self::CasedLetter as u32 | 1 << (GS::ModifierLetter as u32) | 1 << (GS::OtherLetter as u32),
+    CasedLetter = 1 << (GS::UppercaseLetter as u32)
+        | 1 << (GS::LowercaseLetter as u32)
+        | 1 << (GS::TitlecaseLetter as u32),
+    Letter =
+        Self::CasedLetter as u32 | 1 << (GS::ModifierLetter as u32) | 1 << (GS::OtherLetter as u32),
 
     NonspacingMark = 1 << (GS::NonspacingMark as u32),
     EnclosingMark = 1 << (GS::EnclosingMark as u32),
     SpacingMark = 1 << (GS::SpacingMark as u32),
-    Mark = 1 << (GS::NonspacingMark as u32) | 1 << (GS::EnclosingMark as u32) | 1 << (GS::SpacingMark as u32),
+    Mark = 1 << (GS::NonspacingMark as u32)
+        | 1 << (GS::EnclosingMark as u32)
+        | 1 << (GS::SpacingMark as u32),
 
     Digit = 1 << (GS::Digit as u32),
     LetterNumber = 1 << (GS::LetterNumber as u32),
     OtherNumber = 1 << (GS::OtherNumber as u32),
-    Number = 1 << (GS::Digit as u32) | 1 << (GS::LetterNumber as u32) | 1 << (GS::OtherNumber as u32),
+    Number =
+        1 << (GS::Digit as u32) | 1 << (GS::LetterNumber as u32) | 1 << (GS::OtherNumber as u32),
 
     SpaceSeparator = 1 << (GS::SpaceSeparator as u32),
     LineSeparator = 1 << (GS::LineSeparator as u32),
     ParagraphSeparator = 1 << (GS::ParagraphSeparator as u32),
-    Separator =
-        1 << (GS::SpaceSeparator as u32) | 1 << (GS::LineSeparator as u32) | 1 << (GS::ParagraphSeparator as u32),
+    Separator = 1 << (GS::SpaceSeparator as u32)
+        | 1 << (GS::LineSeparator as u32)
+        | 1 << (GS::ParagraphSeparator as u32),
 
     Control = 1 << (GS::Control as u32),
     Format = 1 << (GS::Format as u32),
