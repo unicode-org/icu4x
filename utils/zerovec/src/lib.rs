@@ -63,7 +63,7 @@
 //!
 //! let data = DataStruct {
 //!     nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
-//!     strs: VarZeroVec::from(vec!["hello".to_string(), "world".to_string()]),
+//!     strs: VarZeroVec::from(&["hello".to_string(), "world".to_string()] as &[_]),
 //! };
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");

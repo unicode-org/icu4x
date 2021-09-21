@@ -5,10 +5,11 @@
 use super::*;
 use core::fmt;
 use core::marker::PhantomData;
+use core::mem;
 use core::ptr;
 use core::slice;
-use core::mem;
 
+#[derive(Clone)]
 pub struct VarZeroVecOwned<T> {
     marker: PhantomData<[T]>,
     // safety invariant: must parse into a valid SliceComponents
@@ -16,8 +17,23 @@ pub struct VarZeroVecOwned<T> {
 }
 
 impl<T: AsVarULE> VarZeroVecOwned<T> {
+    /// Construct an empty VarZeroVecOwned
+    pub fn new() -> Self {
+        Self {
+            marker: PhantomData,
+            entire_slice: Vec::new(),
+        }
+    }
+
+    pub fn from_components(components: SliceComponents<T>) -> Self {
+        Self {
+            marker: PhantomData,
+            entire_slice: components.entire_slice().into(),
+        }
+    }
+
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn new(elements: &[T]) -> Self {
+    pub fn from_elements(elements: &[T]) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: components::get_serializable_bytes(elements).unwrap(),
@@ -27,14 +43,21 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// Try to allocate a buffer with enough capacity for `capacity`
     /// elements. Since `T` can take up an arbitrary size this will
     /// just allocate enough space for 4-byte Ts
-    pub fn with_capacity(capacity: usize) -> Self {
+    pub(crate) fn with_capacity(capacity: usize) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: Vec::with_capacity(capacity * 8 + 1),
+            entire_slice: Vec::with_capacity(capacity * 8),
         }
     }
 
-    fn get_components<'a>(&'a self) -> SliceComponents<'a, T> {
+    /// Try to reserve space for `capacity`
+    /// elements. Since `T` can take up an arbitrary size this will
+    /// just allocate enough space for 4-byte Ts
+    pub(crate) fn reserve(&mut self, capacity: usize) {
+        self.entire_slice.reserve(capacity * 8)
+    }
+
+    pub(crate) fn get_components<'a>(&'a self) -> SliceComponents<'a, T> {
         unsafe {
             // safety: VarZeroVecOwned is guaranteed to parse here
             SliceComponents::from_bytes_unchecked(&self.entire_slice)
@@ -204,19 +227,25 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         }
     }
 
-    pub fn remove(&mut self, index: usize) -> T  where T: Clone{
+    pub fn remove(&mut self, index: usize) -> T
+    where
+        T: Clone,
+    {
         // TODO (Manishearth) make these faster
         let mut vec = self.to_vec();
         let ret = vec.remove(index);
-        *self = Self::new(&vec);
+        *self = Self::from_elements(&vec);
         ret
     }
 
-    pub fn replace(&mut self, index: usize, value: T) -> T where T: Clone {
+    pub fn replace(&mut self, index: usize, value: T) -> T
+    where
+        T: Clone,
+    {
         // TODO (Manishearth) make these faster
         let mut vec = self.to_vec();
         let ret = mem::replace(&mut vec[index], value);
-        *self = Self::new(&vec);
+        *self = Self::from_elements(&vec);
         ret
     }
 }
@@ -275,7 +304,7 @@ mod test {
             "abcdefghijklmn".into(),
             "five".into(),
         ];
-        let mut zerovec = VarZeroVecOwned::new(&items);
+        let mut zerovec = VarZeroVecOwned::from_elements(&items);
         zerovec.insert(1, &"foo3".into());
         items.insert(1, "foo3".into());
         assert_eq!(zerovec, &*items);

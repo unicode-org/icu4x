@@ -4,16 +4,16 @@
 
 use crate::ule::*;
 use components::SliceComponents;
-use either::Either;
 use std::fmt::{self, Display};
 use std::ops::Index;
 
 pub(crate) mod components;
-mod owned;
+pub(crate) mod owned;
 #[cfg(feature = "serde")]
 mod serde;
 mod ule;
 
+use owned::VarZeroVecOwned;
 pub use ule::VarZeroVecULE;
 
 /// A zero-copy vector for variable-width types.
@@ -128,7 +128,7 @@ pub struct VarZeroVec<'a, T>(VarZeroVecInner<'a, T>);
 /// The actual implementation details of this can be found in the `components` module
 #[derive(Clone)]
 enum VarZeroVecInner<'a, T> {
-    Owned(Vec<T>),
+    Owned(VarZeroVecOwned<T>),
     /// This is *basically* an `&'a [u8]` to a zero copy buffer, but split out into
     /// the buffer components. Logically this is capable of behaving as
     /// a `&'a [T::VarULE]`, but since `T::VarULE` is unsized that type does not actually
@@ -168,13 +168,6 @@ impl<E> From<E> for VarZeroVecError<E> {
     }
 }
 
-impl<'a, T> From<Vec<T>> for VarZeroVec<'a, T> {
-    #[inline]
-    fn from(other: Vec<T>) -> Self {
-        Self(VarZeroVecInner::Owned(other))
-    }
-}
-
 impl<'a, T> From<VarZeroVecInner<'a, T>> for VarZeroVec<'a, T> {
     #[inline]
     fn from(other: VarZeroVecInner<'a, T>) -> Self {
@@ -182,7 +175,20 @@ impl<'a, T> From<VarZeroVecInner<'a, T>> for VarZeroVec<'a, T> {
     }
 }
 
+impl<'a, T> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
+    #[inline]
+    fn from(other: VarZeroVecOwned<T>) -> Self {
+        VarZeroVecInner::Owned(other).into()
+    }
+}
+
 impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
+    fn get_components<'b>(&'b self) -> SliceComponents<'b, T> {
+        match self.0 {
+            VarZeroVecInner::Owned(ref vec) => vec.get_components(),
+            VarZeroVecInner::Borrowed(components) => components,
+        }
+    }
     /// Get the number of elements in this vector
     ///
     /// # Example
@@ -201,10 +207,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn len(&self) -> usize {
-        match self.0 {
-            VarZeroVecInner::Owned(ref vec) => vec.len(),
-            VarZeroVecInner::Borrowed(components) => components.len(),
-        }
+        self.get_components().len()
     }
 
     /// Returns `true` if the vector contains no elements.
@@ -224,10 +227,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn is_empty(&self) -> bool {
-        match self.0 {
-            VarZeroVecInner::Owned(ref vec) => vec.is_empty(),
-            VarZeroVecInner::Borrowed(components) => components.is_empty(),
-        }
+        self.get_components().is_empty()
     }
 
     /// Parse a VarZeroVec from a slice of the appropriate format
@@ -255,7 +255,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     pub fn try_from_bytes(slice: &'a [u8]) -> Result<Self, ParseErrorFor<T>> {
         if slice.is_empty() {
             // does not allocate
-            return Ok(VarZeroVecInner::Owned(Vec::new()).into());
+            return Ok(VarZeroVecInner::Owned(VarZeroVecOwned::new()).into());
         }
 
         let components = SliceComponents::<T>::try_from_bytes(slice)?;
@@ -285,14 +285,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn iter<'b: 'a>(&'b self) -> impl Iterator<Item = &'b T::VarULE> {
-        // We use Either here so that we can use `impl Trait` with heterogeneous types
-        //
-        // An alternate design is to write explicit iterators. Once Rust has generators this will
-        // be unnecessary.
-        match self.0 {
-            VarZeroVecInner::Owned(ref vec) => Either::Left(vec.iter().map(|t| t.as_unaligned())),
-            VarZeroVecInner::Borrowed(components) => Either::Right(components.iter()),
-        }
+        self.get_components().iter()
     }
 
     /// Get one of VarZeroVec's elements, returning None if the index is out of bounds
@@ -318,10 +311,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn get(&self, idx: usize) -> Option<&T::VarULE> {
-        match self.0 {
-            VarZeroVecInner::Owned(ref vec) => vec.get(idx).map(|t| t.as_unaligned()),
-            VarZeroVecInner::Borrowed(components) => components.get(idx),
-        }
+        self.get_components().get(idx)
     }
 
     /// Convert this into a mutable vector of the owned `T` type, cloning if necessary.
@@ -353,15 +343,14 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     //
     // This function is crate-public for now since we don't yet want to stabilize
     // the internal implementation details
-    pub(crate) fn make_mut(&mut self) -> &mut Vec<T>
+    pub(crate) fn make_mut(&mut self) -> &mut VarZeroVecOwned<T>
     where
         T: Clone,
     {
         match self.0 {
             VarZeroVecInner::Owned(ref mut vec) => vec,
             VarZeroVecInner::Borrowed(components) => {
-                let vec = components.to_vec();
-                let new_self = VarZeroVecInner::Owned(vec).into();
+                let new_self = VarZeroVecOwned::from_components(components).into();
                 *self = new_self;
                 // recursion is limited since we are guaranteed to hit the Owned branch
                 self.make_mut()
@@ -404,20 +393,12 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     where
         T: Clone,
     {
-        let mut new = self.clone();
-        new.make_mut();
-        match new.0 {
-            VarZeroVecInner::Owned(vec) => vec,
-            _ => unreachable!(),
-        }
+        self.get_components().to_vec()
     }
 
     /// If this is borrowed, get the borrowed slice
-    pub(crate) fn get_slice_for_borrowed(&self) -> Option<&'a [u8]> {
-        match self.0 {
-            VarZeroVecInner::Owned(..) => None,
-            VarZeroVecInner::Borrowed(b) => Some(b.entire_slice()),
-        }
+    pub(crate) fn get_encoded_slice(&self) -> &[u8] {
+        self.get_components().entire_slice()
     }
 
     /// For a slice of `T`, get a list of bytes that can be passed to
@@ -444,6 +425,13 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     pub fn get_serializable_bytes(elements: &[T]) -> Option<Vec<u8>> {
         components::get_serializable_bytes(elements)
+    }
+
+    pub(crate) fn is_owned(&self) -> bool {
+        match self.0 {
+            VarZeroVecInner::Owned(..) => true,
+            VarZeroVecInner::Borrowed(..) => false,
+        }
     }
 }
 
@@ -475,12 +463,7 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T::VarULE) -> Result<usize, usize> {
-        match self.0 {
-            VarZeroVecInner::Owned(ref vec) => {
-                vec.binary_search_by(|probe| probe.as_unaligned().cmp(x))
-            }
-            VarZeroVecInner::Borrowed(components) => components.binary_search(x),
-        }
+        self.get_components().binary_search(x)
     }
 }
 
@@ -488,6 +471,15 @@ impl<'a, T: AsVarULE> Index<usize> for VarZeroVec<'a, T> {
     type Output = T::VarULE;
     fn index(&self, index: usize) -> &Self::Output {
         self.get(index).expect("Indexing VarZeroVec out of bounds")
+    }
+}
+
+impl<'a, T> From<&'_ [T]> for VarZeroVec<'a, T>
+where
+    T: AsVarULE,
+{
+    fn from(other: &'_ [T]) -> Self {
+        VarZeroVecOwned::from_elements(other).into()
     }
 }
 

@@ -5,7 +5,7 @@
 use super::VarZeroVec;
 use crate::ule::*;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
-use serde::ser::{self, Serialize, SerializeSeq, Serializer};
+use serde::ser::{Serialize, SerializeSeq, Serializer};
 use std::fmt;
 use std::marker::PhantomData;
 
@@ -51,7 +51,7 @@ where
         while let Some(value) = seq.next_element::<T>()? {
             vec.push(value);
         }
-        Ok(vec.into())
+        Ok((&*vec).into())
     }
 }
 
@@ -95,16 +95,8 @@ where
                 seq.serialize_element(&T::from_unaligned(value))?;
             }
             seq.end()
-        } else if let Some(slice) = self.get_slice_for_borrowed() {
-            serializer.serialize_bytes(slice)
         } else {
-            // This creates an additional Vec allocation to enable code reuse of
-            // VarZeroVec::to_vec()'s. The alternative is to write a different
-            // implementation of get_serializable_bytes() which enables us to pull
-            // out the byte buffer components bit by bit and use serialize_seq + serialize_element
-            let vec = VarZeroVec::get_serializable_bytes(&self.to_vec())
-                .ok_or_else(|| ser::Error::custom("VarZeroVec too large to be serialized"))?;
-            serializer.serialize_bytes(&vec)
+            serializer.serialize_bytes(self.get_encoded_slice())
         }
     }
 }
@@ -144,7 +136,7 @@ mod test {
         let zerovec_new: VarZeroVec<String> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to VarZeroVec");
         assert_eq!(zerovec_orig.to_vec(), zerovec_new.to_vec());
-        assert!(zerovec_new.get_slice_for_borrowed().is_none());
+        assert!(zerovec_new.is_owned());
     }
 
     #[test]
@@ -155,7 +147,7 @@ mod test {
         let zerovec_new: VarZeroVec<String> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to VarZeroVec");
         assert_eq!(zerovec_orig.to_vec(), zerovec_new.to_vec());
-        assert!(zerovec_new.get_slice_for_borrowed().is_some());
+        assert!(!zerovec_new.is_owned());
     }
 
     #[test]
