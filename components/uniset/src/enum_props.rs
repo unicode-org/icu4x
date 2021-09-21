@@ -64,8 +64,6 @@ pub enum GeneralSubcategory {
     OtherSymbol = 27,
 }
 
-use GeneralSubcategory as GS;
-
 /// Enumerated Unicode general category types.
 /// The discriminants correspond to the U_GC_XX_MASK constants in ICU4C.
 /// Unlike GeneralSubcategory, this supports groups of general categories: for example, `Letter`
@@ -79,68 +77,71 @@ pub enum GeneralCategory {
     Unassigned = 0,
 
     UppercaseLetter = 1 << (GS::UppercaseLetter as u32),
-    LowercaseLetter = 1 << (GS::LowercaseLetter as u32),
-    TitlecaseLetter = 1 << (GS::TitlecaseLetter as u32),
-    ModifierLetter = 1 << (GS::ModifierLetter as u32),
-    OtherLetter = 1 << (GS::OtherLetter as u32),
-    CasedLetter = 1 << (GS::UppercaseLetter as u32)
-        | 1 << (GS::LowercaseLetter as u32)
-        | 1 << (GS::TitlecaseLetter as u32),
-    Letter =
-        Self::CasedLetter as u32 | 1 << (GS::ModifierLetter as u32) | 1 << (GS::OtherLetter as u32),
+    LowercaseLetter = 1 << (GeneralSubcategory::LowercaseLetter as u32),
+    TitlecaseLetter = 1 << (GeneralSubcategory::TitlecaseLetter as u32),
+    ModifierLetter = 1 << (GeneralSubcategory::ModifierLetter as u32),
+    OtherLetter = 1 << (GeneralSubcategory::OtherLetter as u32),
+    CasedLetter = 1 << (GeneralSubcategory::UppercaseLetter as u32)
+        | 1 << (GeneralSubcategory::LowercaseLetter as u32)
+        | 1 << (GeneralSubcategory::TitlecaseLetter as u32),
+    Letter = 1 << (GeneralSubcategory::UppercaseLetter as u32)
+        | 1 << (GeneralSubcategory::LowercaseLetter as u32)
+        | 1 << (GeneralSubcategory::TitlecaseLetter as u32)
+        | 1 << (GeneralSubcategory::ModifierLetter as u32)
+        | 1 << (GeneralSubcategory::OtherLetter as u32),
 
-    NonspacingMark = 1 << (GS::NonspacingMark as u32),
-    EnclosingMark = 1 << (GS::EnclosingMark as u32),
-    SpacingMark = 1 << (GS::SpacingMark as u32),
-    Mark = 1 << (GS::NonspacingMark as u32)
-        | 1 << (GS::EnclosingMark as u32)
-        | 1 << (GS::SpacingMark as u32),
+    NonspacingMark = 1 << (GeneralSubcategory::NonspacingMark as u32),
+    EnclosingMark = 1 << (GeneralSubcategory::EnclosingMark as u32),
+    SpacingMark = 1 << (GeneralSubcategory::SpacingMark as u32),
+    Mark = 1 << (GeneralSubcategory::NonspacingMark as u32)
+        | 1 << (GeneralSubcategory::EnclosingMark as u32)
+        | 1 << (GeneralSubcategory::SpacingMark as u32),
 
-    Digit = 1 << (GS::Digit as u32),
-    LetterNumber = 1 << (GS::LetterNumber as u32),
-    OtherNumber = 1 << (GS::OtherNumber as u32),
+    Digit = 1 << (GeneralSubcategory::Digit as u32),
+    LetterNumber = 1 << (GeneralSubcategory::LetterNumber as u32),
+    OtherNumber = 1 << (GeneralSubcategory::OtherNumber as u32),
     Number =
-        1 << (GS::Digit as u32) | 1 << (GS::LetterNumber as u32) | 1 << (GS::OtherNumber as u32),
+        1 << (GeneralSubcategory::Digit as u32) | 1 << (GeneralSubcategory::LetterNumber as u32) | 1 << (GeneralSubcategory::OtherNumber as u32),
 
-    SpaceSeparator = 1 << (GS::SpaceSeparator as u32),
-    LineSeparator = 1 << (GS::LineSeparator as u32),
-    ParagraphSeparator = 1 << (GS::ParagraphSeparator as u32),
-    Separator = 1 << (GS::SpaceSeparator as u32)
-        | 1 << (GS::LineSeparator as u32)
-        | 1 << (GS::ParagraphSeparator as u32),
+    SpaceSeparator = 1 << (GeneralSubcategory::SpaceSeparator as u32),
+    LineSeparator = 1 << (GeneralSubcategory::LineSeparator as u32),
+    ParagraphSeparator = 1 << (GeneralSubcategory::ParagraphSeparator as u32),
+    Separator = 1 << (GeneralSubcategory::SpaceSeparator as u32)
+        | 1 << (GeneralSubcategory::LineSeparator as u32)
+        | 1 << (GeneralSubcategory::ParagraphSeparator as u32),
 
-    Control = 1 << (GS::Control as u32),
-    Format = 1 << (GS::Format as u32),
-    PrivateUse = 1 << (GS::PrivateUse as u32),
-    Surrogate = 1 << (GS::Surrogate as u32),
-    Other = 1 << (GS::Control as u32)
-        | 1 << (GS::Format as u32)
-        | 1 << (GS::PrivateUse as u32)
-        | 1 << (GS::Surrogate as u32),
+    Control = 1 << (GeneralSubcategory::Control as u32),
+    Format = 1 << (GeneralSubcategory::Format as u32),
+    PrivateUse = 1 << (GeneralSubcategory::PrivateUse as u32),
+    Surrogate = 1 << (GeneralSubcategory::Surrogate as u32),
+    Other = 1 << (GeneralSubcategory::Control as u32)
+        | 1 << (GeneralSubcategory::Format as u32)
+        | 1 << (GeneralSubcategory::PrivateUse as u32)
+        | 1 << (GeneralSubcategory::Surrogate as u32),
 
-    DashPunctuation = 1 << (GS::DashPunctuation as u32),
-    OpenPunctuation = 1 << (GS::OpenPunctuation as u32),
-    ClosePunctuation = 1 << (GS::ClosePunctuation as u32),
-    ConnectorPunctuation = 1 << (GS::ConnectorPunctuation as u32),
-    OtherPunctuation = 1 << (GS::OtherPunctuation as u32),
-    InitialPunctuation = 1 << (GS::InitialPunctuation as u32),
-    FinalPunctuation = 1 << (GS::FinalPunctuation as u32),
-    Punctuation = 1 << (GS::DashPunctuation as u32)
-        | 1 << (GS::OpenPunctuation as u32)
-        | 1 << (GS::ClosePunctuation as u32)
-        | 1 << (GS::ConnectorPunctuation as u32)
-        | 1 << (GS::OtherPunctuation as u32)
-        | 1 << (GS::InitialPunctuation as u32)
-        | 1 << (GS::FinalPunctuation as u32),
+    DashPunctuation = 1 << (GeneralSubcategory::DashPunctuation as u32),
+    OpenPunctuation = 1 << (GeneralSubcategory::OpenPunctuation as u32),
+    ClosePunctuation = 1 << (GeneralSubcategory::ClosePunctuation as u32),
+    ConnectorPunctuation = 1 << (GeneralSubcategory::ConnectorPunctuation as u32),
+    OtherPunctuation = 1 << (GeneralSubcategory::OtherPunctuation as u32),
+    InitialPunctuation = 1 << (GeneralSubcategory::InitialPunctuation as u32),
+    FinalPunctuation = 1 << (GeneralSubcategory::FinalPunctuation as u32),
+    Punctuation = 1 << (GeneralSubcategory::DashPunctuation as u32)
+        | 1 << (GeneralSubcategory::OpenPunctuation as u32)
+        | 1 << (GeneralSubcategory::ClosePunctuation as u32)
+        | 1 << (GeneralSubcategory::ConnectorPunctuation as u32)
+        | 1 << (GeneralSubcategory::OtherPunctuation as u32)
+        | 1 << (GeneralSubcategory::InitialPunctuation as u32)
+        | 1 << (GeneralSubcategory::FinalPunctuation as u32),
 
-    MathSymbol = 1 << (GS::MathSymbol as u32),
-    CurrencySymbol = 1 << (GS::CurrencySymbol as u32),
-    ModifierSymbol = 1 << (GS::ModifierSymbol as u32),
-    OtherSymbol = 1 << (GS::OtherSymbol as u32),
-    Symbol = 1 << (GS::MathSymbol as u32)
-        | 1 << (GS::CurrencySymbol as u32)
-        | 1 << (GS::ModifierSymbol as u32)
-        | 1 << (GS::OtherSymbol as u32),
+    MathSymbol = 1 << (GeneralSubcategory::MathSymbol as u32),
+    CurrencySymbol = 1 << (GeneralSubcategory::CurrencySymbol as u32),
+    ModifierSymbol = 1 << (GeneralSubcategory::ModifierSymbol as u32),
+    OtherSymbol = 1 << (GeneralSubcategory::OtherSymbol as u32),
+    Symbol = 1 << (GeneralSubcategory::MathSymbol as u32)
+        | 1 << (GeneralSubcategory::CurrencySymbol as u32)
+        | 1 << (GeneralSubcategory::ModifierSymbol as u32)
+        | 1 << (GeneralSubcategory::OtherSymbol as u32),
 }
 
 /// Enumerated property Script.
