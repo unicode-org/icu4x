@@ -25,7 +25,6 @@ pub enum EnumeratedProperty {
 #[derive(Clone, PartialEq, Debug)]
 #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[repr(u32)]
-#[non_exhaustive]
 pub enum GeneralCategory {
     Unassigned = 0,
 
