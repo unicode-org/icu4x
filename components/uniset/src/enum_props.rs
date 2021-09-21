@@ -23,7 +23,7 @@ pub enum EnumeratedProperty {
 /// It does not support grouped categories (eg Letter). For grouped categories, use GeneralCategory.
 #[derive(Copy, Clone, PartialEq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
 #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
-#[repr(u32)]
+#[repr(u8)]
 pub enum GeneralSubcategory {
     Unassigned = 0,
 
@@ -76,7 +76,7 @@ pub enum GeneralSubcategory {
 pub enum GeneralCategory {
     Unassigned = 0,
 
-    UppercaseLetter = 1 << (GS::UppercaseLetter as u32),
+    UppercaseLetter = 1 << (GeneralSubcategory::UppercaseLetter as u32),
     LowercaseLetter = 1 << (GeneralSubcategory::LowercaseLetter as u32),
     TitlecaseLetter = 1 << (GeneralSubcategory::TitlecaseLetter as u32),
     ModifierLetter = 1 << (GeneralSubcategory::ModifierLetter as u32),
