@@ -4,6 +4,8 @@
 
 //! A collection of enums for enumerated properties.
 
+use num_enum::{TryFromPrimitive, UnsafeFromPrimitive};
+
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
 /// See UProperty in ICU4C.
@@ -19,7 +21,7 @@ pub enum EnumeratedProperty {
 /// Enumerated Unicode general category types.
 /// GeneralSubcategory only supports specific subcategories (eg UppercaseLetter).
 /// It does not support grouped categories (eg Letter). For grouped categories, use GeneralCategory.
-#[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
 #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[repr(u32)]
 pub enum GeneralSubcategory {
