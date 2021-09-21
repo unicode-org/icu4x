@@ -18,6 +18,7 @@ use alloc::rc::Rc;
 use core::convert::TryFrom;
 use core::fmt;
 use core::fmt::Debug;
+use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 
 /// A struct to request a certain piece of data from a data provider.
@@ -103,12 +104,38 @@ where
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
 
-/// A wrapper around the payload returned in a [`DataResponse`].
+/// A container for data payloads returned from a [`DataProvider`].
 ///
-/// Internally, the data is represented using the [`yoke`] crate, with several variations for
-/// different ownership models.
+/// [`DataPayload`] is built on top of the [`yoke`] framework, which allows for cheap, zero-copy
+/// operations on data via the use of self-references. A [`DataPayload`] may be backed by one of
+/// several data stores ("carts"):
 ///
-/// `DataPayload` is closely coupled with [`DataMarker`].
+/// 1. Fully-owned structured data ([`DataPayload::from_owned()`])
+/// 2. Partially-owned structured data in an [`Rc`] ([`DataPayload::from_partial_owned()`])
+/// 3. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
+///
+/// The type of the data stored in [`DataPayload`], and the type of the structured data store
+/// (cart), is determined by the [`DataMarker`] type parameter.
+///
+/// ## Accessing the data
+///
+/// To get a reference to the data inside [`DataPayload`], use [`DataPayload::get()`]. If you need
+/// to store the data for later use, it is recommended to store the [`DataPayload`] itself, not
+/// the ephemeral reference, since the reference results in a short-lived lifetime.
+///
+/// ## Mutating the data
+///
+/// To modify the data stored in a [`DataPayload`], use [`DataPayload::with_mut()`].
+///
+/// ## Transforming the data to a different type
+///
+/// To transform a [`DataPayload`] to a different type backed by the same data store (cart), use
+/// [`DataPayload::map_project()`] or one of its sister methods.
+///
+/// ## Downcasting from a trait object
+///
+/// If you have a [`DataPayload`]`<`[`ErasedDataStructMarker`]`>`, use [`DataPayload::downcast()`]
+/// to transform it into a payload of a concrete type.
 ///
 /// # Examples
 ///
@@ -123,6 +150,8 @@ where
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
+///
+/// [`ErasedDataStructMarker`]: crate::erased::ErasedDataStructMarker
 pub struct DataPayload<'data, M>
 where
     M: DataMarker<'data>,
@@ -142,6 +171,16 @@ where
 
 /// Cloning a DataPayload is generally a cheap operation.
 /// See notes in the `Clone` impl for [`Yoke`].
+///
+/// # Examples
+///
+/// ```no_run
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+///
+/// let resp1: DataPayload<HelloWorldV1Marker> = todo!();
+/// let resp2 = resp1.clone();
+/// ```
 impl<'data, M> Clone for DataPayload<'data, M>
 where
     M: DataMarker<'data>,
@@ -380,6 +419,300 @@ where
             RcBuf(yoke) => yoke.get(),
         }
     }
+
+    /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::project`].
+    ///
+    /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data
+    /// type. The function takes a second argument which should be ignored. For more details,
+    /// see [`Yoke::project()`].
+    ///
+    /// Both `M` and `M2` have the same [`DataMarker::Cart`]. This means that when using
+    /// `map_project`, it is usually necessary to define a custom [`DataMarker`] type.
+    ///
+    /// The standard [`DataPayload::map_project()`] function moves `self` and cannot capture any
+    /// data from its context. Use one of the sister methods if you need these capabilities:
+    ///
+    /// - [`DataPayload::map_project_cloned()`] if you don't have ownership of `self`
+    /// - [`DataPayload::map_project_with_capture()`] to pass context to the mapping function
+    /// - [`DataPayload::map_project_cloned_with_capture()`] to do both of these things
+    ///
+    /// # Examples
+    ///
+    /// Map from `HelloWorldV1` to a `Cow<str>` containing just the message:
+    ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.56.***
+    ///
+    /// ```ignore
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// // A custom marker type is required when using `map_project`. The Yokeable should be the
+    /// // target type, and the Cart should correspond to the type being transformed.
+    ///
+    /// struct HelloWorldV1MessageMarker;
+    /// impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    ///     type Yokeable = Cow<'static, str>;
+    ///     type Cart = HelloWorldV1<'data>;
+    /// }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project(|obj, _| {
+    ///     obj.message
+    /// });
+    ///
+    /// // Note: at this point, p1 has been moved.
+    /// assert_eq!("Hello World", p2.get());
+    /// ```
+    #[allow(clippy::type_complexity)]
+    pub fn map_project<M2>(
+        self,
+        f: for<'a> fn(
+            <M::Yokeable as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+    ) -> DataPayload<'data, M2>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        match self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.project(f)),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.project(f)),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.project(f)),
+            },
+        }
+    }
+
+    /// Version of [`DataPayload::map_project()`] that borrows `self` instead of moving `self`.
+    ///
+    /// # Examples
+    ///
+    /// Same example as above, but this time, do not move out of `p1`:
+    ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.57.***
+    ///
+    /// ```ignore
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_cloned(|obj, _| {
+    ///     obj.message.clone()
+    /// });
+    ///
+    /// // Note: p1 is still valid.
+    /// assert_eq!(p1.get().message, *p2.get());
+    /// ```
+    #[allow(clippy::type_complexity)]
+    pub fn map_project_cloned<'this, M2>(
+        &'this self,
+        f: for<'a> fn(
+            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+    ) -> DataPayload<'data, M2>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        match &self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.project_cloned(f)),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.project_cloned(f)),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.project_cloned(f)),
+            },
+        }
+    }
+
+    /// Version of [`DataPayload::map_project()`] that moves `self` and takes a `capture`
+    /// parameter to pass additional data to `f`.
+    ///
+    /// # Examples
+    ///
+    /// Capture a string from the context and append it to the message:
+    ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.57.***
+    ///
+    /// ```ignore
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_with_capture(
+    ///     "Extra",
+    ///     |mut obj, capture, _| {
+    ///         obj.message.to_mut().push_str(capture);
+    ///         obj.message
+    ///     });
+    ///
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// ```
+    ///
+    /// Prior to Rust 1.57, pass the capture by value instead of by reference:
+    ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.56.***
+    ///
+    /// ```ignore
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_with_capture(
+    ///     "Extra".to_string(),
+    ///     |mut obj, capture, _| {
+    ///         obj.message.to_mut().push_str(&capture);
+    ///         obj.message
+    ///     });
+    ///
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// ```
+    #[allow(clippy::type_complexity)]
+    pub fn map_project_with_capture<M2, T>(
+        self,
+        capture: T,
+        f: for<'a> fn(
+            <M::Yokeable as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+    ) -> DataPayload<'data, M2>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        match self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.project_with_capture(capture, f)),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.project_with_capture(capture, f)),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.project_with_capture(capture, f)),
+            },
+        }
+    }
+
+    /// Version of [`DataPayload::map_project()`] that borrows `self` and takes a `capture`
+    /// parameter to pass additional data to `f`.
+    ///
+    /// # Examples
+    ///
+    /// Same example as above, but this time, do not move out of `p1`:
+    ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.57.***
+    ///
+    /// ```ignore
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project_cloned_with_capture(
+    ///     "Extra",
+    ///     |obj, capture, _| {
+    ///         let mut message = obj.message.clone();
+    ///         message.to_mut().push_str(capture);
+    ///         message
+    ///     });
+    ///
+    /// // Note: p1 is still valid, but the values no longer equal.
+    /// assert_ne!(p1.get().message, *p2.get());
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// ```
+    #[allow(clippy::type_complexity)]
+    pub fn map_project_cloned_with_capture<'this, M2, T>(
+        &'this self,
+        capture: T,
+        f: for<'a> fn(
+            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+    ) -> DataPayload<'data, M2>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        match &self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.project_cloned_with_capture(capture, f)),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.project_cloned_with_capture(capture, f)),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.project_cloned_with_capture(capture, f)),
+            },
+        }
+    }
 }
 
 /// A response object containing an object as payload and metadata about it.
@@ -430,13 +763,23 @@ where
     }
 }
 
+/// Cloning a DataResponse is generally a cheap operation.
+/// See notes in the `Clone` impl for [`Yoke`].
+///
+/// # Examples
+///
+/// ```no_run
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+///
+/// let resp1: DataResponse<HelloWorldV1Marker> = todo!();
+/// let resp2 = resp1.clone();
+/// ```
 impl<'data, M> Clone for DataResponse<'data, M>
 where
     M: DataMarker<'data>,
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
-    /// Note: This function is currently inoperable. For more details, see
-    /// https://github.com/unicode-org/icu4x/issues/753
     fn clone(&self) -> Self {
         Self {
             metadata: self.metadata.clone(),

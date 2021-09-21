@@ -105,7 +105,7 @@ where
     /// one in the allowlist.
     ///
     /// This will be replaced with a smarter algorithm for locale filtering; see
-    /// https://github.com/unicode-org/icu4x/issues/834
+    /// <https://github.com/unicode-org/icu4x/issues/834>
     ///
     /// Data requests with no langid will be allowed. To reject data requests without a langid,
     /// chain this with [`Self::require_langid`].
