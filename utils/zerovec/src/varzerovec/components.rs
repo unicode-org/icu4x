@@ -231,6 +231,16 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     {
         self.iter().map(T::from_unaligned).collect()
     }
+
+    // Dump a debuggable representation of this type
+    pub(crate) fn dump(&self) -> String {
+        let indices = self
+            .indices
+            .iter()
+            .map(u32::from_unaligned)
+            .collect::<Vec<_>>();
+        format!("SliceComponents {{ indices: {:?} }}", indices)
+    }
 }
 
 impl<'a, T> SliceComponents<'a, T>
