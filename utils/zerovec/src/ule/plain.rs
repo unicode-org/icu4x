@@ -53,14 +53,13 @@ macro_rules! impl_byte_slice_size {
 
         impl PlainOldULE<$size> {
             #[inline]
-            /// This has the same invariants as from_byte_slice_unchecked:
-            /// this must be called on slices that would successfully work through
-            /// parse_byte_slice()
-            pub unsafe fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+            pub fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
                 let data = bytes.as_mut_ptr();
                 let len = bytes.len() / $size;
                 // Safe because Self is transparent over [u8; $size]
-                std::slice::from_raw_parts_mut(data as *mut Self, len)
+                unsafe {
+                    std::slice::from_raw_parts_mut(data as *mut Self, len)
+                }
             }
         }
     };
