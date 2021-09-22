@@ -700,6 +700,29 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
+    /// A version of [`Yoke::project`] that takes a capture and bubbles up an error
+    /// from the callback function.
+    pub fn try_project_with_capture<P, T, E>(
+        self,
+        capture: T,
+        f: for<'a> fn(
+            <Y as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> Result<<P as Yokeable<'a>>::Output, E>,
+    ) -> Result<Yoke<P, C>, E>
+    where
+        P: for<'a> Yokeable<'a>,
+    {
+        let p = f(self.yokeable.transform_owned(), capture, PhantomData)?;
+        Ok(Yoke {
+            yokeable: unsafe { P::make(p) },
+            cart: self.cart,
+        })
+    }
+
+    /// A version of [`Yoke::project_cloned`] that takes a capture and bubbles up an error
+    /// from the callback function.
     pub fn try_project_cloned_with_capture<'this, P, T, E>(
         &'this self,
         capture: T,

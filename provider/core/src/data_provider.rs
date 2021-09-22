@@ -330,6 +330,17 @@ where
         }
     }
 
+    pub fn try_from_yoked_buffer<T, E>(
+        yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>,
+        capture: T,
+        f: for<'de> fn(<&'static [u8] as yoke::Yokeable<'de>>::Output, T, PhantomData<&'de ()>) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
+    ) -> Result<Self, E> {
+        let yoke = yoked_buffer.try_project_with_capture(capture, f)?;
+        Ok(Self {
+            inner: DataPayloadInner::RcBuf(yoke),
+        })
+    }
+
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     ///
     /// This constructor creates `'static` payloads.

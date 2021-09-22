@@ -111,3 +111,34 @@ where
         })
     }
 }
+
+impl SerdeDeDataProvider for BlobDataProvider {
+    fn load_to_receiver(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn SerdeDeDataReceiver,
+    ) -> Result<DataResponseMetadata, DataError> {
+        let path = path_util::resource_path_to_string(&req.resource_path);
+        let yoked_buffer = self
+            .blob
+            .try_project_cloned_with_capture::<&'static [u8], String, ()>(
+                path,
+                move |blob, path, _| {
+                    let BlobSchema::V001(blob) = blob;
+                    blob
+                        .resources
+                        .get(&*path)
+                        .ok_or(())
+                        .map(|v| *v)
+                },
+            )
+            .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))?;
+        receiver.receive_yoked_buffer(yoked_buffer, |bytes, f2| {
+            let mut d = postcard::Deserializer::from_bytes(bytes);
+            f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
+        })?;
+        Ok(DataResponseMetadata {
+            data_langid: req.resource_path.options.langid.clone(),
+        })
+    }
+}
