@@ -31,11 +31,11 @@ use yoke::*;
 ///     .expect("File should exist")
 ///     .read_to_end(&mut blob)
 ///     .expect("Reading pre-computed postcard buffer");
-/// 
+///
 /// // Create a DataProvider from it:
 /// let provider = BlobDataProvider::new_from_rc_blob(Rc::from(blob))
 ///     .expect("Deserialization should succeed");
-/// 
+///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider.load_payload(
 ///     &DataRequest {
@@ -63,6 +63,21 @@ impl BlobDataProvider {
             .map_err(DataError::new_resc_error)?,
         })
     }
+
+    /// Gets the buffer for the given DataRequest out of the BlobSchema and returns it yoked
+    /// to the buffer backing the BlobSchema.
+    fn get_file(&self, req: &DataRequest) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
+        let path = path_util::resource_path_to_string(&req.resource_path);
+        self.blob
+            .try_project_cloned_with_capture::<&'static [u8], String, ()>(
+                path,
+                move |blob, path, _| {
+                    let BlobSchema::V001(blob) = blob;
+                    blob.resources.get(&*path).ok_or(()).map(|v| *v)
+                },
+            )
+            .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))
+    }
 }
 
 impl<'data, M> DataProvider<'data, M> for BlobDataProvider
@@ -74,40 +89,19 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, DataError> {
-        enum LocalError {
-            MissingResourceKey,
-            Postcard(postcard::Error),
-        }
-        let path = path_util::resource_path_to_string(&req.resource_path);
-        let raw_payload = self
-            .blob
-            .try_project_cloned_with_capture::<M::Yokeable, String, LocalError>(
-                path,
-                move |blob, path, _| {
-                    let BlobSchema::V001(blob) = blob;
-                    let file = blob
-                        .resources
-                        .get(&*path)
-                        .ok_or(LocalError::MissingResourceKey)
-                        .map(|v| *v)?;
-                    let mut d = postcard::Deserializer::from_bytes(file);
-                    let data =
-                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
-                            .map_err(LocalError::Postcard)?;
-                    Ok(data.0)
-                },
-            )
-            .map_err(|local_error| match local_error {
-                LocalError::MissingResourceKey => {
-                    DataError::MissingResourceKey(req.resource_path.key)
-                }
-                LocalError::Postcard(err) => DataError::new_resc_error(err),
+        let file = self.get_file(req)?;
+        let payload =
+            DataPayload::try_from_yoked_buffer::<(), DataError>(file, (), |bytes, _, _| {
+                let mut d = postcard::Deserializer::from_bytes(bytes);
+                let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
+                    .map_err(DataError::new_resc_error)?;
+                Ok(data.0)
             })?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_rc_buffer_yoke(raw_payload)),
+            payload: Some(payload),
         })
     }
 }
@@ -118,22 +112,8 @@ impl SerdeDeDataProvider for BlobDataProvider {
         req: &DataRequest,
         receiver: &mut dyn SerdeDeDataReceiver,
     ) -> Result<DataResponseMetadata, DataError> {
-        let path = path_util::resource_path_to_string(&req.resource_path);
-        let yoked_buffer = self
-            .blob
-            .try_project_cloned_with_capture::<&'static [u8], String, ()>(
-                path,
-                move |blob, path, _| {
-                    let BlobSchema::V001(blob) = blob;
-                    blob
-                        .resources
-                        .get(&*path)
-                        .ok_or(())
-                        .map(|v| *v)
-                },
-            )
-            .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))?;
-        receiver.receive_yoked_buffer(yoked_buffer, |bytes, f2| {
+        let file = self.get_file(req)?;
+        receiver.receive_yoked_buffer(file, |bytes, f2| {
             let mut d = postcard::Deserializer::from_bytes(bytes);
             f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
         })?;
