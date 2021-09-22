@@ -82,7 +82,7 @@ impl<'data> UnicodeSet<'data> {
     /// use icu::uniset::UnicodeSet;
     /// use icu::uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
-    /// let valid = [0x0, 0xFFFF];
+    /// let valid = [0x0, 0x10000];
     /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&valid);
     /// let result = UnicodeSet::from_inversion_list(inv_list);
     /// assert!(matches!(result, UnicodeSet));
@@ -125,7 +125,7 @@ impl<'data> UnicodeSet<'data> {
     /// use icu::uniset::UnicodeSet;
     /// use icu::uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
-    /// let valid = [0x0, 0xFFFF];
+    /// let valid = [0x0, 0x10000];
     /// let result = UnicodeSet::from_inversion_list_slice(&valid);
     /// assert!(matches!(result, UnicodeSet));
     ///
@@ -190,7 +190,17 @@ impl<'data> UnicodeSet<'data> {
 
     /// Returns [`UnicodeSet`] spanning entire Unicode range
     ///
-    /// The range spans from `0x0 -> 0x10FFFF` inclusive
+    /// The range spans from `0x0 -> 0x10FFFF` inclusive.
+    ///  
+    /// # Examples
+    /// 
+    /// let expected = vec![0x0, (char::MAX as u32) + 1];
+    /// assert_eq!(UnicodeSet::all().inv_list, ZeroVec::from_slice(&expected));
+    /// assert_eq!(
+    ///     UnicodeSet::all().size(),
+    ///     (expected[1] - expected[0]) as usize
+    /// );
+    ///
     pub fn all() -> Self {
         Self {
             inv_list: ZeroVec::<u32>::from_slice(ALL_SLICE),
@@ -199,8 +209,17 @@ impl<'data> UnicodeSet<'data> {
     }
 
     /// Returns [`UnicodeSet`] spanning BMP range
+    /// 
+    /// The range spans from `0x0 -> 0xFFFF` inclusive.
     ///
-    /// The range spans from `0x0 -> 0xFFFF` inclusive
+    /// # Examples
+    /// 
+    /// let expected = vec![0x0, BMP_MAX + 1];
+    /// assert_eq!(UnicodeSet::bmp().inv_list, ZeroVec::from_slice(&expected));
+    /// assert_eq!(
+    ///     UnicodeSet::bmp().size(),
+    ///     (expected[1] - expected[0]) as usize
+    /// );
     pub fn bmp() -> Self {
         Self {
             inv_list: ZeroVec::<u32>::from_slice(BMP_INV_LIST_SLICE),
@@ -495,7 +514,7 @@ impl<'data> UnicodeSet<'data> {
 
 #[cfg(test)]
 mod tests {
-    use super::{UnicodeSet, UnicodeSetError, BMP_MAX};
+    use super::{UnicodeSet, UnicodeSetError};
     use std::{char, vec::Vec};
     use zerovec::ZeroVec;
 
@@ -516,26 +535,6 @@ mod tests {
         if let Err(UnicodeSetError::InvalidSet(actual)) = set {
             assert_eq!(&check, &actual);
         }
-    }
-
-    #[test]
-    fn test_unicodeset_all() {
-        let expected = vec![0x0, (char::MAX as u32) + 1];
-        assert_eq!(UnicodeSet::all().inv_list, ZeroVec::from_slice(&expected));
-        assert_eq!(
-            UnicodeSet::all().size(),
-            (expected[1] - expected[0]) as usize
-        )
-    }
-
-    #[test]
-    fn test_unicodeset_bmp() {
-        let expected = vec![0x0, BMP_MAX + 1];
-        assert_eq!(UnicodeSet::bmp().inv_list, ZeroVec::from_slice(&expected));
-        assert_eq!(
-            UnicodeSet::bmp().size(),
-            (expected[1] - expected[0]) as usize
-        );
     }
 
     // UnicodeSet membership functions
