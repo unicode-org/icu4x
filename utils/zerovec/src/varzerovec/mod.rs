@@ -102,6 +102,10 @@ pub use ule::VarZeroVecULE;
 /// # Ok::<(), VarZeroVecError<std::convert::Infallible>>(())
 /// ```
 ///
+///
+/// [`VarZeroVec`]s can be nested infinitely, see the docs of [`VarZeroVecULE`]
+/// for more information.
+///
 /// [`ule`]: crate::ule
 #[derive(Clone)]
 pub struct VarZeroVec<'a, T>(VarZeroVecInner<'a, T>);
@@ -232,7 +236,8 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
 
     /// Parse a VarZeroVec from a slice of the appropriate format
     ///
-    /// Slices of the right format can be obtained via VarZeroVec::get_serializable_bytes()
+    /// Slices of the right format can be obtained via [`VarZeroVec::get_serializable_bytes()`]
+    /// or [`VarZeroVec::get_encoded_slice()`]
     ///
     /// # Example
     ///
@@ -396,8 +401,10 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
         self.get_components().to_vec()
     }
 
-    /// If this is borrowed, get the borrowed slice
-    pub(crate) fn get_encoded_slice(&self) -> &[u8] {
+    /// Obtain the internal encoded slice
+    ///
+    /// This can be passed back to [`Self::try_from_bytes()`]
+    pub fn get_encoded_slice(&self) -> &[u8] {
         self.get_components().entire_slice()
     }
 

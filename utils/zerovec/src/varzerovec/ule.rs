@@ -7,6 +7,40 @@ use super::*;
 use core::marker::PhantomData;
 use core::mem;
 
+/// A VarULE version of VarZeroVec allowing for VarZeroVecs to be nested indefinitely
+///
+/// ```rust
+/// use zerovec::VarZeroVec;
+/// use zerovec::ZeroVec;
+/// use zerovec::varzerovec::VarZeroVecULE;
+/// use zerovec::ule::*;
+/// let strings_1: Vec<String> = vec!["foo".into(), "bar".into(), "baz".into()];
+/// let strings_2: Vec<String> = vec!["twelve".into(), "seventeen".into(), "forty two".into()];
+/// let strings_3: Vec<String> = vec!["我".into(), "喜歡".into(), "烏龍茶".into()];
+/// let strings_4: Vec<String> = vec!["w".into(), "ω".into(), "文".into(), "𑄃".into()];
+/// let strings_12 = vec![strings_1.clone(), strings_2.clone()];
+/// let strings_34 = vec![strings_3.clone(), strings_4.clone()];
+/// let all_strings = vec![strings_12, strings_34];
+///
+/// let vzv_1 = VarZeroVec::from(&*strings_1);
+/// let vzv_2 = VarZeroVec::from(&*strings_2);
+/// let vzv_3 = VarZeroVec::from(&*strings_3);
+/// let vzv_4 = VarZeroVec::from(&*strings_4);
+/// let vzv_12 = VarZeroVec::from(&[vzv_1, vzv_2] as &[_]);
+/// let vzv_34 = VarZeroVec::from(&[vzv_3, vzv_4] as &[_]);
+/// let vzv_all = VarZeroVec::from(&[vzv_12, vzv_34] as &[_]);
+///
+/// let reconstructed = vzv_all.iter()
+///        .map(|v: &VarZeroVecULE<_>| {
+///             v.iter().map(|x: &VarZeroVecULE<_>| x.as_varzerovec().to_vec()).collect::<Vec<_>>()
+///         }).collect::<Vec<_>>();
+/// assert_eq!(reconstructed, all_strings);
+///
+/// let bytes = vzv_all.get_encoded_slice();
+/// let vzv_from_bytes: VarZeroVec<VarZeroVec<VarZeroVec<String>>> = VarZeroVec::try_from_bytes(bytes).unwrap();
+/// assert_eq!(vzv_from_bytes, vzv_all);
+/// ```
+//
 // safety invariant: The slice MUST be one which parses to
 // a valid SliceComponents<T>
 #[repr(transparent)]
@@ -102,5 +136,26 @@ where
     #[inline]
     fn from_unaligned(unaligned: &VarZeroVecULE<T>) -> Self {
         unaligned.as_varzerovec().into_owned()
+    }
+}
+
+impl<T> PartialEq<VarZeroVecULE<T>> for VarZeroVecULE<T>
+where
+    T: AsVarULE,
+    T::VarULE: PartialEq,
+{
+    #[inline]
+    fn eq(&self, other: &VarZeroVecULE<T>) -> bool {
+        // Note: T implements PartialEq but not T::ULE
+        self.iter().eq(other.iter())
+    }
+}
+
+impl<T: AsVarULE> fmt::Debug for VarZeroVecULE<T>
+where
+    T::VarULE: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_list().entries(self.iter()).finish()
     }
 }
