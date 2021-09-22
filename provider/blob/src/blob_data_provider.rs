@@ -12,6 +12,44 @@ use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
+/// ```
+/// use icu_locid_macros::langid;
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// use icu_provider_blob::BlobDataProvider;
+/// use std::fs::File;
+/// use std::io::Read;
+/// use std::rc::Rc;
+///
+/// // Read an ICU4X data blob dynamically:
+/// let mut blob: Vec<u8> = Vec::new();
+/// let filename = concat!(
+///     env!("CARGO_MANIFEST_DIR"),
+///     "/tests/data/hello_world.postcard",
+/// );
+/// File::open(filename)
+///     .expect("File should exist")
+///     .read_to_end(&mut blob)
+///     .expect("Reading pre-computed postcard buffer");
+/// 
+/// // Create a DataProvider from it:
+/// let provider = BlobDataProvider::new_from_rc_blob(Rc::from(blob))
+///     .expect("Deserialization should succeed");
+/// 
+/// // Check that it works:
+/// let response: DataPayload<HelloWorldV1Marker> = provider.load_payload(
+///     &DataRequest {
+///         resource_path: ResourcePath {
+///             key: key::HELLO_WORLD_V1,
+///             options: langid!("la").into(),
+///         }
+///     })
+///     .expect("Data should be valid")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!(response.get().message, "Ave, munde");
+/// ```
 pub struct BlobDataProvider {
     blob: Yoke<BlobSchema<'static>, Rc<[u8]>>,
 }
