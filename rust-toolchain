@@ -1,3 +1,5 @@
 [toolchain]
-# Version updated on 2021-07-29
-channel = "1.54.0"
+# Version updated on 2021-09-22
+# Note: This is 1.56.0-beta.3, but it can't be specified in that way;
+# see https://github.com/rust-lang/rustup/issues/1329
+channel = "beta-2021-09-18"
