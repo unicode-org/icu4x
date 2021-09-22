@@ -193,7 +193,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::clone_from_slice(ALL_SLICE),
+            inv_list: ZeroVec::<u32>::from_slice(ALL_SLICE),
             size: (char::MAX as usize) + 1,
         }
     }
