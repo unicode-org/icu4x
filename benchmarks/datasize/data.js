@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632248901574,
+  "lastUpdate": 1632278627593,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -83,6 +83,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/adf02273511847c7b3422a0916e05d8ac7c236ec"
         },
         "date": 1632248897832,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 582678,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "007b532720771ef334a02d8c4704db6f689b8493",
+          "message": "Restructure FFI folder (#1060)\n\n* Move all diplomat generated stuff into diplomat folder\n\n* Update readme\n\n* Update CI paths\n\n* Update tests\n\n* Add c readme\n\n* Update script\n\n* fix readmes\n\n* fix wasm",
+          "timestamp": "2021-09-21T19:42:24-07:00",
+          "tree_id": "684b960c5edb80e5e5f92613a3bf00cef648d7f9",
+          "url": "https://github.com/unicode-org/icu4x/commit/007b532720771ef334a02d8c4704db6f689b8493"
+        },
+        "date": 1632278624534,
         "tool": "ndjson",
         "benches": [
           {
