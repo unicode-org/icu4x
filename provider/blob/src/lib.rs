@@ -5,8 +5,10 @@
 //! `icu_provider_blob` contains implementations of the [`ICU4X`] [`DataProvider`] interface
 //! that load data from a single blob.
 //!
-//! Currently, this crate supports only static blobs, but it will soon support blobs loaded
-//! dynamically at runtime (see [#848](https://github.com/unicode-org/icu4x/issues/848)).
+//! There are two exports:
+//!
+//! 1. [`BlobDataProvider`] supports data blobs loaded dynamically at runtime.
+//! 2. [`StaticDataProvider`] supports data blobs baked into the binary at compile time.
 //!
 //! To build blob data, use the `--format blob` option of [`icu4x-datagen`]. For example, to build
 //! "hello world" data, run:
@@ -27,6 +29,8 @@
 //! ```
 //! let _ = icu_testdata::get_static_provider();
 //! ```
+//!
+//! For more examples, see the specific data providers.
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: icu_provider::prelude::DataProvider

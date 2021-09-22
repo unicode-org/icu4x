@@ -12,6 +12,15 @@ use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
+/// A data provider loading data from blobs dynamically created at runtime.
+///
+/// This enables data blobs to be read from the filesystem or from an HTTP request dynamically
+/// at runtime, so that the code and data can be shipped separately.
+///
+/// If you prefer to bake the data into your binary, see [`StaticDataProvider`].
+///
+/// # Examples
+///
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_provider::prelude::*;
@@ -50,6 +59,8 @@ use yoke::*;
 ///
 /// assert_eq!(response.get().message, "Ave, munde");
 /// ```
+///
+/// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
     blob: Yoke<BlobSchema<'static>, Rc<[u8]>>,
 }

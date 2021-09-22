@@ -10,7 +10,8 @@ use serde::de::Deserialize;
 
 /// A data provider loading data statically baked in to the binary.
 ///
-/// Although static data is convenient and highly portable, it also increases binary size.
+/// Although static data is convenient and highly portable, it also increases binary size. To
+/// load the data files dynamically at runtime, see [`BlobDataProvider`].
 ///
 /// To bake blob data into your binary, use [`include_bytes!`](std::include_bytes), as shown in
 /// the example below.
@@ -47,6 +48,8 @@ use serde::de::Deserialize;
 ///
 /// assert_eq!(response.get().message, "Ave, munde");
 /// ```
+///
+/// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
     blob: BlobSchema<'static>,
 }
