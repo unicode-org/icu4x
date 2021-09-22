@@ -37,7 +37,7 @@ use core::mem;
 /// assert_eq!(reconstructed, all_strings);
 ///
 /// let bytes = vzv_all.get_encoded_slice();
-/// let vzv_from_bytes: VarZeroVec<VarZeroVec<VarZeroVec<String>>> = VarZeroVec::try_from_bytes(bytes).unwrap();
+/// let vzv_from_bytes: VarZeroVec<VarZeroVec<VarZeroVec<String>>> = VarZeroVec::parse_byte_slice(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
 /// ```
 //
@@ -105,7 +105,7 @@ unsafe impl<T: AsVarULE + 'static> VarULE for VarZeroVecULE<T> {
     type Error = ParseErrorFor<T>;
 
     fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
-        let _: SliceComponents<T> = SliceComponents::try_from_bytes(bytes)?;
+        let _: SliceComponents<T> = SliceComponents::parse_byte_slice(bytes)?;
         unsafe { Ok(Self::from_byte_slice_unchecked(bytes)) }
     }
 

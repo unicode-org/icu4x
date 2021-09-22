@@ -15,7 +15,7 @@ fn usizeify(x: PlainOldULE<4>) -> usize {
 ///
 /// This is where the actual work involved in VarZeroVec happens
 ///
-/// See [`SliceComponents::try_from_bytes()`] for information on the internal invariants involved
+/// See [`SliceComponents::parse_byte_slice()`] for information on the internal invariants involved
 pub struct SliceComponents<'a, T> {
     /// The list of indices into the `things` slice
     indices: &'a [PlainOldULE<4>],
@@ -50,7 +50,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     /// - `indices[len - 1]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
-    pub fn try_from_bytes(slice: &'a [u8]) -> Result<Self, ParseErrorFor<T>> {
+    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ParseErrorFor<T>> {
         if slice.is_empty() {
             return Ok(SliceComponents {
                 indices: &[],
