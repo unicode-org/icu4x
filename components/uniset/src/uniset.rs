@@ -401,9 +401,11 @@ impl<'data> UnicodeSet<'data> {
                 if let Some(x) = self.inv_list.get(pos + 1) {
                     (till) <= x
                 } else {
-                    // This code should be unreachable because:
-                    // Inversion list query should not return out of bounds index
-                    unreachable!()
+                    debug_assert!(
+                        false,
+                        "Inversion list query should not return out of bounds index"
+                    );
+                    false
                 }
             }
             None => false,
