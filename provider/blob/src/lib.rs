@@ -36,6 +36,7 @@
 
 extern crate alloc;
 
+mod blob_data_provider;
 mod blob_schema;
 mod path_util;
 mod static_data_provider;
@@ -43,4 +44,5 @@ mod static_data_provider;
 #[cfg(feature = "export")]
 pub mod export;
 
+pub use blob_data_provider::BlobDataProvider;
 pub use static_data_provider::StaticDataProvider;

@@ -1210,6 +1210,7 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
+ "yoke",
 ]
 
 [[package]]

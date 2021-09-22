@@ -324,6 +324,12 @@ where
         })
     }
 
+    pub fn from_rc_buffer_yoke(yoke: Yoke<M::Yokeable, Rc<[u8]>>) -> Self {
+        Self {
+            inner: DataPayloadInner::RcBuf(yoke)
+        }
+    }
+
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     ///
     /// This constructor creates `'static` payloads.
