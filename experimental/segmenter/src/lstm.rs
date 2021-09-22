@@ -67,10 +67,9 @@ struct LanguageIterator<'a> {
 
 impl<'a> LanguageIterator<'a> {
     pub fn new(input: &'a str) -> Self {
-        Self {
-            input: input.chars(),
-            last: None,
-        }
+        let mut input = input.chars();
+        let last = input.next();
+        Self { input, last }
     }
 }
 
@@ -80,9 +79,6 @@ impl<'a> Iterator for LanguageIterator<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         let mut s = "".to_string();
 
-        if self.last.is_none() {
-            self.last = self.input.next();
-        }
         let lang = get_language(self.last? as u32);
         s.push(self.last.unwrap());
         loop {
