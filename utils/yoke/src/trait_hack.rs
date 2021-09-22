@@ -28,7 +28,10 @@
 //!
 //! Code that does not compile:
 //!
-//! ```compile_fail
+//! ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+//! compiles starting in Rust 1.56.
+//!
+//! ```
 //! use yoke::Yoke;
 //! use yoke::Yokeable;
 //!
