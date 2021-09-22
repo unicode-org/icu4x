@@ -233,6 +233,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     }
 
     // Dump a debuggable representation of this type
+    #[allow(unused)] // useful for debugging
     pub(crate) fn dump(&self) -> String {
         let indices = self
             .indices

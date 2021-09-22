@@ -434,7 +434,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
         components::get_serializable_bytes(elements)
     }
 
-    pub(crate) fn is_owned(&self) -> bool {
+    pub fn is_owned(&self) -> bool {
         match self.0 {
             VarZeroVecInner::Owned(..) => true,
             VarZeroVecInner::Borrowed(..) => false,
