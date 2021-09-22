@@ -62,8 +62,6 @@ where
     Borrowed(&'a [T::ULE]),
 }
 
-impl<T> Eq for ZeroVec<'_, T> where T: AsULE + ?Sized + Eq + std::marker::Copy {}
-
 impl<T> fmt::Debug for ZeroVec<'_, T>
 where
     T: AsULE + fmt::Debug,
@@ -76,9 +74,11 @@ where
     }
 }
 
+impl<T> Eq for ZeroVec<'_, T> where T: AsULE + Copy + Eq + ?Sized {}
+
 impl<'a, 'b, T> PartialEq<ZeroVec<'b, T>> for ZeroVec<'a, T>
 where
-    T: AsULE + Copy + PartialEq,
+    T: AsULE + Copy + PartialEq + ?Sized,
 {
     #[inline]
     fn eq(&self, other: &ZeroVec<'b, T>) -> bool {
