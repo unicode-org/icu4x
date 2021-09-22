@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632279022625,
+  "lastUpdate": 1632287556702,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14111,6 +14111,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22600,
             "range": "± 1552",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fea0eb7cba1a52e4316b444edff46575f4639c94",
+          "message": "More docs for ZeroMap and add Vec<u8> as supported type (#1057)",
+          "timestamp": "2021-09-22T00:05:37-05:00",
+          "tree_id": "e375ec6c540f24dc62f6fefe1339c992de9efbed",
+          "url": "https://github.com/unicode-org/icu4x/commit/fea0eb7cba1a52e4316b444edff46575f4639c94"
+        },
+        "date": 1632287553640,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1290,
+            "range": "± 96",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7438,
+            "range": "± 822",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23256,
+            "range": "± 2085",
             "unit": "ns/iter"
           }
         ]
