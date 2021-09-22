@@ -193,7 +193,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0x10FFFF` inclusive.
     ///  
     /// # Examples
-    /// 
+    ///
     /// let expected = vec![0x0, (char::MAX as u32) + 1];
     /// assert_eq!(UnicodeSet::all().inv_list, ZeroVec::from_slice(&expected));
     /// assert_eq!(
@@ -209,11 +209,11 @@ impl<'data> UnicodeSet<'data> {
     }
 
     /// Returns [`UnicodeSet`] spanning BMP range
-    /// 
+    ///
     /// The range spans from `0x0 -> 0xFFFF` inclusive.
     ///
     /// # Examples
-    /// 
+    ///
     /// let expected = vec![0x0, BMP_MAX + 1];
     /// assert_eq!(UnicodeSet::bmp().inv_list, ZeroVec::from_slice(&expected));
     /// assert_eq!(

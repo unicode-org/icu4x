@@ -7,7 +7,7 @@ use alloc::vec::Vec;
 use core::{char, cmp::Ordering, ops::RangeBounds};
 
 use crate::{uniset::UnicodeSet, utils::deconstruct_range};
-use zerovec::ZeroVec;
+use zerovec::{ule::AsULE, ZeroVec};
 
 /// A builder for [`UnicodeSet`].
 ///
@@ -167,16 +167,15 @@ impl UnicodeSetBuilder {
     /// ```
     #[allow(unused_assignments)]
     pub fn add_set(&mut self, set: &UnicodeSet) {
-        let mut range_start = u32::MAX;
-        let mut range_limit = u32::MAX;
-        for (index, cp) in set.as_inversion_list().iter().enumerate() {
-            if index % 2 == 0 {
-                range_start = cp;
-            } else {
-                range_limit = cp;
-                self.add(range_start, range_limit);
-            }
-        }
+        set.as_inversion_list()
+            .as_slice()
+            .chunks(2)
+            .for_each(|pair| {
+                self.add(
+                    AsULE::from_unaligned(&pair[0]),
+                    AsULE::from_unaligned(&pair[1]),
+                )
+            });
     }
 
     /// Removes the range from the [`UnicodeSetBuilder`]
@@ -242,16 +241,15 @@ impl UnicodeSetBuilder {
     /// assert_eq!(check.iter_chars().next(), Some('F'));
     #[allow(unused_assignments)]
     pub fn remove_set(&mut self, set: &UnicodeSet) {
-        let mut range_start = u32::MAX;
-        let mut range_limit = u32::MAX;
-        for (index, cp) in set.as_inversion_list().iter().enumerate() {
-            if index % 2 == 0 {
-                range_start = cp;
-            } else {
-                range_limit = cp;
-                self.remove(range_start, range_limit);
-            }
-        }
+        set.as_inversion_list()
+            .as_slice()
+            .chunks(2)
+            .for_each(|pair| {
+                self.remove(
+                    AsULE::from_unaligned(&pair[0]),
+                    AsULE::from_unaligned(&pair[1]),
+                )
+            });
     }
 
     /// Retain the specified character in the [`UnicodeSetBuilder`] if it exists
