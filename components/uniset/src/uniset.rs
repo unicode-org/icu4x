@@ -70,8 +70,8 @@ impl<'data> serde::Serialize for UnicodeSet<'data> {
 }
 
 impl<'data> UnicodeSet<'data> {
-    /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    /// represented by a [`ZeroVec`]`<`[`u32`]`>` of codepoints.
+    /// Returns a new [`UnicodeSet`] from an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
+    /// represented as a [`ZeroVec`]`<`[`u32`]`>` of code points.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
@@ -111,11 +111,13 @@ impl<'data> UnicodeSet<'data> {
         }
     }
 
-    /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    /// represented by a slice of [`u32`]`>` of codepoints with a lifetime.
+    /// Returns a new [`UnicodeSet`] by borrowing an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
+    /// represented as a slice of [`u32`] code points.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
+    ///
+    /// Note: The slice may be cloned on certain platforms; for more information, see [`ZeroVec::from_slice`].
     ///
     /// # Examples
     ///
@@ -139,8 +141,8 @@ impl<'data> UnicodeSet<'data> {
         UnicodeSet::from_inversion_list(inv_list_zv)
     }
 
-    /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    /// represented by a slice of [`u32`]`>` of codepoints.
+    /// Returns a new, fully-owned [`UnicodeSet`] by cloning an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
+    /// represented as a slice of [`u32`] code points.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
@@ -151,28 +153,28 @@ impl<'data> UnicodeSet<'data> {
     /// use icu::uniset::UnicodeSet;
     /// use icu::uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
-    /// 
+    ///
     /// use std::vec::Vec;
-    /// 
+    ///
     /// fn inv_list_to_owned_unicodeset(inv_list: &[u32]) -> UnicodeSet {
     ///     UnicodeSet::clone_from_inversion_list_slice(inv_list)
     ///         .unwrap()
     /// }
-    /// 
+    ///
     /// let bmp_list: [u32; 2] = [0x0, 0x10000];
     /// let smp_list: Vec<u32> = vec![0x10000, 0x20000];
     /// let sip_list: &[u32] = &vec![0x20000, 0x30000];
-    /// 
+    ///
     /// let inv_lists: [&[u32]; 3] = [&bmp_list, &smp_list, sip_list];
-    /// let unicodesets: Vec<UnicodeSet> = 
+    /// let unicodesets: Vec<UnicodeSet> =
     ///     inv_lists.iter()
     ///         .map(|il| inv_list_to_owned_unicodeset(il))
     ///         .collect();
-    /// 
+    ///
     /// let bmp = &unicodesets.get(0).unwrap();
     /// assert!(bmp.contains_u32(0xFFFF));
     /// assert!(!bmp.contains_u32(0x10000));
-    /// 
+    ///
     /// assert!(!&unicodesets.iter().any(|set| set.contains_u32(0x40000)));
     /// ```
     pub fn clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, UnicodeSetError> {
