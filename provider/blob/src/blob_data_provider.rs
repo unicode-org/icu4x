@@ -36,27 +36,28 @@ where
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
-        let raw_payload: Yoke<M::Yokeable, Rc<[u8]>> = self.blob.project_cloned_with_capture(
-            (path, req.resource_path.key),
-            move |blob, (path, key), _| {
-                let BlobSchema::V001(blob) = blob;
-                let file = blob
-                    .resources
-                    .get(&*path)
-                    .ok_or(DataError::MissingResourceKey(key))
-                    .map(|v| *v)
-                    .unwrap();
-                let mut d = postcard::Deserializer::from_bytes(file);
-                let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
-                    .unwrap();
-                data.0
-            },
-        );
+        let raw_payload: Result<Yoke<M::Yokeable, Rc<[u8]>>, DataError> =
+            self.blob.try_project_cloned_with_capture(
+                (path, req.resource_path.key),
+                move |blob, (path, key), _| {
+                    let BlobSchema::V001(blob) = blob;
+                    let file = blob
+                        .resources
+                        .get(&*path)
+                        .ok_or(DataError::MissingResourceKey(key))
+                        .map(|v| *v)?;
+                    let mut d = postcard::Deserializer::from_bytes(file);
+                    let data =
+                        YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
+                            .map_err(DataError::new_resc_error)?;
+                    Ok(data.0)
+                },
+            );
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_rc_buffer_yoke(raw_payload)),
+            payload: Some(DataPayload::from_rc_buffer_yoke(raw_payload?)),
         })
     }
 }

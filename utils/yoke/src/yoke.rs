@@ -699,6 +699,26 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             cart: self.cart.clone(),
         }
     }
+
+    pub fn try_project_cloned_with_capture<'this, P, T, E>(
+        &'this self,
+        capture: T,
+        f: for<'a> fn(
+            &'this <Y as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> Result<<P as Yokeable<'a>>::Output, E>,
+    ) -> Result<Yoke<P, C>, E>
+    where
+        P: for<'a> Yokeable<'a>,
+        C: CloneableCart,
+    {
+        let p = f(self.get(), capture, PhantomData)?;
+        Ok(Yoke {
+            yokeable: unsafe { P::make(p) },
+            cart: self.cart.clone(),
+        })
+    }
 }
 
 /// Safety docs for project()
