@@ -151,16 +151,29 @@ impl<'data> UnicodeSet<'data> {
     /// use icu::uniset::UnicodeSet;
     /// use icu::uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
-    /// let valid = [0x0, 0xFFFF];
-    /// let result = UnicodeSet::from_inversion_list_slice(&valid);
-    /// assert!(matches!(result, UnicodeSet));
-    ///
-    /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
-    /// let result = UnicodeSet::from_inversion_list_slice(&invalid);
-    /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
-    /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
-    ///     assert_eq!(&invalid, &actual);
+    /// 
+    /// use std::vec::Vec;
+    /// 
+    /// fn inv_list_to_owned_unicodeset(inv_list: &[u32]) -> UnicodeSet {
+    ///     UnicodeSet::clone_from_inversion_list_slice(inv_list)
+    ///         .unwrap()
     /// }
+    /// 
+    /// let bmp_list: [u32; 2] = [0x0, 0x10000];
+    /// let smp_list: Vec<u32> = vec![0x10000, 0x20000];
+    /// let sip_list: &[u32] = &vec![0x20000, 0x30000];
+    /// 
+    /// let inv_lists: [&[u32]; 3] = [&bmp_list, &smp_list, sip_list];
+    /// let unicodesets: Vec<UnicodeSet> = 
+    ///     inv_lists.iter()
+    ///         .map(|il| inv_list_to_owned_unicodeset(il))
+    ///         .collect();
+    /// 
+    /// let bmp = &unicodesets.get(0).unwrap();
+    /// assert!(bmp.contains_u32(0xFFFF));
+    /// assert!(!bmp.contains_u32(0x10000));
+    /// 
+    /// assert!(!&unicodesets.iter().any(|set| set.contains_u32(0x40000)));
     /// ```
     pub fn clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, UnicodeSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::clone_from_slice(inv_list);
