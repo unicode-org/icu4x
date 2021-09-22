@@ -19,7 +19,7 @@ fn try_from_range<'data, 'r>(
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];
-        let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&set).into_owned();
+        let inv_list: ZeroVec<u32> = ZeroVec::clone_from_slice(&set);
         Ok(UnicodeSet::from_inversion_list(inv_list).unwrap())
     } else {
         Err(UnicodeSetError::InvalidRange(from, till))

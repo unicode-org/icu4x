@@ -25,7 +25,7 @@ impl UnicodeSetBuilder {
 
     /// Returns a [`UnicodeSet`] and consumes the [`UnicodeSetBuilder`]
     pub fn build(self) -> UnicodeSet<'static> {
-        let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&self.intervals).into_owned();
+        let inv_list: ZeroVec<u32> = ZeroVec::clone_from_slice(&self.intervals);
         UnicodeSet::from_inversion_list(inv_list).unwrap()
     }
 
@@ -477,7 +477,7 @@ mod tests {
     use zerovec::ZeroVec;
 
     fn generate_tester(ex: Vec<u32>) -> UnicodeSetBuilder {
-        let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&ex).into_owned();
+        let inv_list: ZeroVec<u32> = ZeroVec::clone_from_slice(&ex);
         let check = UnicodeSet::from_inversion_list(inv_list).unwrap();
         let mut builder = UnicodeSetBuilder::new();
         builder.add_set(&check);
