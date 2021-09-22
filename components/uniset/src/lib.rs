@@ -86,6 +86,8 @@ pub enum UnicodeSetError {
     InvalidSet(Vec<u32>),
     #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
+    #[displaydoc("Unknown script id: {0}")]
+    UnknownScriptId(u16),
     #[displaydoc("{0}")]
     PropDataLoad(DataError),
 }

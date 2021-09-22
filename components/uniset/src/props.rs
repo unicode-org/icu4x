@@ -715,6 +715,7 @@ where
         Script::Yezidi => key::SCRIPT_YEZIDI_V1,
         Script::Yi => key::SCRIPT_YI_V1,
         Script::ZanabazarSquare => key::SCRIPT_ZANABAZAR_SQUARE_V1,
+        _ => return Err(UnicodeSetError::UnknownScriptId(enum_val.0)),
     };
     get_prop(provider, key)
 }
