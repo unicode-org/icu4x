@@ -181,8 +181,6 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
                     // by `shift` to make room for one extra index and `element_slice` data
                     let shift_start = u32::from_unaligned(&indices[index]) as usize;
                     let shift_start_p = data.as_mut_ptr().add(shift_start);
-                    debug_assert!(shift_start <= data.len());
-                    debug_assert!(shift_start + shift <= data.capacity());
                     // shift elements from shift_start_p to the end of the slice by `shift` elements
                     ptr::copy(
                         shift_start_p,
@@ -237,8 +235,8 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
                 }
 
                 // Step 3: update the length
-                debug_assert!(u32::from_unaligned(&len_ule[0]) + 1 == len);
-                len_ule[0] = len.into()
+                debug_assert!(u32::from_unaligned(&len_ule[0]) + 1 == len as u32);
+                len_ule[0] = (len as u32).into()
             }
         }
     }
