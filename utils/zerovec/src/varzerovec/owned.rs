@@ -36,7 +36,10 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     pub fn from_elements(elements: &[T]) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: components::get_serializable_bytes(elements).unwrap(),
+            entire_slice: components::get_serializable_bytes(elements).expect(
+                "Attempted to build VarZeroVec out of elements that \
+                                     cumulatively are larger than a u32 in size",
+            ),
         }
     }
 
@@ -57,6 +60,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         self.entire_slice.reserve(capacity * 8)
     }
 
+    #[inline]
     pub(crate) fn get_components<'a>(&'a self) -> SliceComponents<'a, T> {
         unsafe {
             // safety: VarZeroVecOwned is guaranteed to parse here
@@ -117,8 +121,11 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         if len == 0 {
             // If there is no data, just construct it with the existing procedure
             // for constructing an entire slice
-            self.entire_slice =
-                components::get_serializable_bytes(slice::from_ref(element)).unwrap();
+            self.entire_slice = components::get_serializable_bytes(slice::from_ref(element))
+                .expect(
+                    "attempted to insert an element too large to be encoded\
+                         in a VarZeroVec",
+                );
             return;
         }
 
@@ -150,6 +157,12 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         // the amount the vector is growing by
         let shift = 4 + element_slice.len();
         self.entire_slice.reserve(shift);
+        if self.entire_slice.len() + shift > u32::MAX as usize {
+            // (on 32 bit platforms the `.reserve()` itself will panic)
+            panic!(
+                "Attempted to grow VarZeroVec to an encoded size that does not fit within a u32"
+            );
+        }
         unsafe {
             // Step 1: Shift the data around
             {

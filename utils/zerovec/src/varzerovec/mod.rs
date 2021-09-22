@@ -189,7 +189,7 @@ impl<'a, T> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
 impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     fn get_components<'b>(&'b self) -> SliceComponents<'b, T> {
         match self.0 {
-            VarZeroVecInner::Owned(ref vec) => vec.get_components(),
+            VarZeroVecInner::Owned(ref owned) => owned.get_components(),
             VarZeroVecInner::Borrowed(components) => components,
         }
     }
@@ -434,6 +434,9 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
         components::get_serializable_bytes(elements)
     }
 
+    /// Return whether the [`VarZeroVec`] is operating on owned or borrowed
+    /// data. [`VarZeroVec::into_owned()`] and [`VarZeroVec::make_mut()`] can
+    /// be used to force it into an owned type
     pub fn is_owned(&self) -> bool {
         match self.0 {
             VarZeroVecInner::Owned(..) => true,

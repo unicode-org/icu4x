@@ -51,6 +51,7 @@ pub struct VarZeroVecULE<T> {
 }
 
 impl<T: AsVarULE> VarZeroVecULE<T> {
+    #[inline]
     fn get_components<'a>(&'a self) -> SliceComponents<'a, T> {
         unsafe {
             // safety: VarZeroVecULE is guaranteed to parse here

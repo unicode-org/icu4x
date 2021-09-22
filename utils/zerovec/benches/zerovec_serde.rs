@@ -31,9 +31,10 @@ fn random_numbers(count: usize) -> Vec<u32> {
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("zerovec_serde/overview", |b| {
         // Same as "zerovec_serde/deserialize_sum/u32/zerovec"
-        let buffer =
-            bincode::serialize(&ZeroVec::<u32>::parse_byte_slice(black_box(TEST_BUFFER_LE)).unwrap())
-                .unwrap();
+        let buffer = bincode::serialize(
+            &ZeroVec::<u32>::parse_byte_slice(black_box(TEST_BUFFER_LE)).unwrap(),
+        )
+        .unwrap();
         b.iter(|| {
             bincode::deserialize::<ZeroVec<u32>>(&buffer)
                 .unwrap()
@@ -71,9 +72,10 @@ fn u32_benches(c: &mut Criterion) {
     });
 
     c.bench_function("zerovec_serde/deserialize_sum/u32/zerovec", |b| {
-        let buffer =
-            bincode::serialize(&ZeroVec::<u32>::parse_byte_slice(black_box(TEST_BUFFER_LE)).unwrap())
-                .unwrap();
+        let buffer = bincode::serialize(
+            &ZeroVec::<u32>::parse_byte_slice(black_box(TEST_BUFFER_LE)).unwrap(),
+        )
+        .unwrap();
         b.iter(|| {
             bincode::deserialize::<ZeroVec<u32>>(&buffer)
                 .unwrap()

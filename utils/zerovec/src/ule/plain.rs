@@ -57,9 +57,7 @@ macro_rules! impl_byte_slice_size {
                 let data = bytes.as_mut_ptr();
                 let len = bytes.len() / $size;
                 // Safe because Self is transparent over [u8; $size]
-                unsafe {
-                    std::slice::from_raw_parts_mut(data as *mut Self, len)
-                }
+                unsafe { std::slice::from_raw_parts_mut(data as *mut Self, len) }
             }
         }
     };
