@@ -40,6 +40,11 @@
 //!
 //! \* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to `Vec<&str>`; this gives 1.8420 μs, much faster than `Vec<String>` but a bit slower than `zerovec`.*
 //!
+//! | Operation | `HashMap<K,V>`  | `LiteMap<K,V>` | `zeromap` |
+//! |---|---|---|---|
+//! | Look up a `&str` key from a 16-element map | 45 ns | 40 ns | 36 ns |
+//! | Look up a `&str` key from a 1,048,576-element map | 49 ns | 216 ns | 191 ns |
+//!
 //! The benches used to generate the above table can be found in the `benches` directory in the project repository.
 //!
 //! # Features

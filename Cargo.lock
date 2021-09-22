@@ -1434,6 +1434,7 @@ version = "0.2.2"
 dependencies = [
  "bincode",
  "bytecheck",
+ "criterion",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
