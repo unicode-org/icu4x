@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632287530334,
+  "lastUpdate": 1632348987115,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12737,6 +12737,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4384,
             "range": "± 242",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a342c02c162fd3090fb10f5d4a5496a5f0ba427b",
+          "message": "Upgrade default rust-toolchain to 1.56-beta.3 (#1085)",
+          "timestamp": "2021-09-22T17:09:49-05:00",
+          "tree_id": "18b607f90ad903dce9baa07d7a19adcc44754195",
+          "url": "https://github.com/unicode-org/icu4x/commit/a342c02c162fd3090fb10f5d4a5496a5f0ba427b"
+        },
+        "date": 1632348984354,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2495,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4215,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
