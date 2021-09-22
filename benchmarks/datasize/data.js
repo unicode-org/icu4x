@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632287218602,
+  "lastUpdate": 1632348675894,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -143,6 +143,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fea0eb7cba1a52e4316b444edff46575f4639c94"
         },
         "date": 1632287215315,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 582678,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a342c02c162fd3090fb10f5d4a5496a5f0ba427b",
+          "message": "Upgrade default rust-toolchain to 1.56-beta.3 (#1085)",
+          "timestamp": "2021-09-22T17:09:49-05:00",
+          "tree_id": "18b607f90ad903dce9baa07d7a19adcc44754195",
+          "url": "https://github.com/unicode-org/icu4x/commit/a342c02c162fd3090fb10f5d4a5496a5f0ba427b"
+        },
+        "date": 1632348672696,
         "tool": "ndjson",
         "benches": [
           {
