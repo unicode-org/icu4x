@@ -184,7 +184,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
                     // shift elements from shift_start_p to the end of the slice by `shift` elements
                     ptr::copy(
                         shift_start_p,
-                        shift_start_p.offset(shift as isize),
+                        shift_start_p.add(shift),
                         data.len() - shift_start,
                     );
                     shift_start + 4
@@ -199,7 +199,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
                 // Step 1b: insert the new element
                 ptr::copy(
                     element_slice.as_ptr(),
-                    data_p.offset(insertion_point as isize),
+                    data_p.add(insertion_point),
                     element_slice.len(),
                 );
 
@@ -303,6 +303,12 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.iter()).finish()
+    }
+}
+
+impl<T: AsVarULE> Default for VarZeroVecOwned<T> {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

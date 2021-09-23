@@ -225,7 +225,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
             .map(|s| unsafe { T::VarULE::from_byte_slice_unchecked(s) })
     }
 
-    pub fn to_vec(&self) -> Vec<T>
+    pub fn to_vec(self) -> Vec<T>
     where
         T: Clone,
     {

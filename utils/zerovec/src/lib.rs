@@ -77,6 +77,10 @@
 //! # } // feature = "serde"
 //! ```
 
+// this crate does a lot of nuanced lifetime manipulation, being explicit
+// is better here.
+#![allow(clippy::needless_lifetimes)]
+
 pub mod map;
 #[cfg(test)]
 pub mod samples;
