@@ -189,7 +189,11 @@ pub trait AsVarULE {
 ///
 /// # Safety
 ///
-/// See the safety invariant documented on [`Self::from_byte_slice_unchecked()`] to implement this trait.
+/// There must be no padding bytes involved in this type: [`Self::as_byte_slice()`] MUST return
+/// a slice of initialized bytes provided that `Self` is initialized.
+///
+/// [`VarULE::from_byte_slice_unchecked()`] _must_ be implemented to return the same result
+/// as [`VarULE::parse_byte_slice()`] provided both are passed the same validly parsing byte slices.
 pub unsafe trait VarULE: 'static {
     /// The error type to used by [`VarULE::parse_byte_slice()`]
     type Error;

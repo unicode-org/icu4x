@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
+use crate::varzerovec::owned::VarZeroVecOwned;
 use crate::VarZeroVec;
 use crate::ZeroVec;
 use std::cmp::Ordering;
@@ -108,26 +109,27 @@ where
         self.get(index)
     }
     fn insert(&mut self, index: usize, value: T) {
-        self.make_mut().insert(index, value)
+        self.make_mut().insert(index, &value)
     }
     fn remove(&mut self, index: usize) -> T {
         self.make_mut().remove(index)
     }
     fn replace(&mut self, index: usize, value: T) -> T {
         let vec = self.make_mut();
-        mem::replace(&mut vec[index], value)
+        vec.replace(index, value)
     }
     fn push(&mut self, value: T) {
-        self.make_mut().push(value)
+        let len = self.len();
+        self.make_mut().insert(len, &value)
     }
     fn len(&self) -> usize {
         self.len()
     }
     fn new() -> Self {
-        Vec::new().into()
+        VarZeroVecOwned::new().into()
     }
     fn with_capacity(cap: usize) -> Self {
-        Vec::with_capacity(cap).into()
+        VarZeroVecOwned::with_capacity(cap).into()
     }
     fn clear(&mut self) {
         self.make_mut().clear()
