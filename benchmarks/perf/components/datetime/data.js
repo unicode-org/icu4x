@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632431734779,
+  "lastUpdate": 1632433452192,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7991,6 +7991,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 644882,
             "range": "± 18955",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d821987ada3f86d2fbba8777c81184ba3fe71aa6",
+          "message": "Move zerovec to no_std (#1094)\n\nMake zerovec no_std",
+          "timestamp": "2021-09-23T14:36:42-07:00",
+          "tree_id": "ab06701f9c750f3bb77f77b94a46425ce04801c3",
+          "url": "https://github.com/unicode-org/icu4x/commit/d821987ada3f86d2fbba8777c81184ba3fe71aa6"
+        },
+        "date": 1632433448361,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 343546,
+            "range": "± 17233",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1727180,
+            "range": "± 98888",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 647177,
+            "range": "± 26952",
             "unit": "ns/iter"
           }
         ]
