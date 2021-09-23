@@ -450,8 +450,10 @@ impl<'data> UnicodeSet<'data> {
         if set.size() > self.size() {
             return false;
         }
+
         let mut set_ranges = set.iter_ranges();
         let mut check_elem = set_ranges.next();
+
         let ranges = self.iter_ranges();
         for range in ranges {
             match check_elem {
