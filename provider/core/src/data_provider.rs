@@ -325,7 +325,7 @@ where
 
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
-    /// 
+    ///
     /// This function is similar to [`DataPayload::try_from_rc_buffer`], but it accepts a buffer
     /// that is already yoked to an Rc buffer cart.
     ///
