@@ -194,13 +194,17 @@ impl<'data> UnicodeSet<'data> {
     ///  
     /// # Examples
     ///
+    /// ```
+    /// use icu::uniset::UnicodeSet;
+    /// use zerovec::ZeroVec;
+    ///
     /// let expected = vec![0x0, (char::MAX as u32) + 1];
-    /// assert_eq!(UnicodeSet::all().inv_list, ZeroVec::from_slice(&expected));
+    /// assert_eq!(UnicodeSet::all().get_inversion_list(), expected);
     /// assert_eq!(
     ///     UnicodeSet::all().size(),
     ///     (expected[1] - expected[0]) as usize
     /// );
-    ///
+    /// ```
     pub fn all() -> Self {
         Self {
             inv_list: ZeroVec::<u32>::from_slice(ALL_SLICE),
@@ -214,12 +218,19 @@ impl<'data> UnicodeSet<'data> {
     ///
     /// # Examples
     ///
+    /// ```
+    /// use icu::uniset::UnicodeSet;
+    /// use zerovec::ZeroVec;
+    ///
+    /// const BMP_MAX: u32 = 0xFFFF;
+    ///
     /// let expected = vec![0x0, BMP_MAX + 1];
-    /// assert_eq!(UnicodeSet::bmp().inv_list, ZeroVec::from_slice(&expected));
+    /// assert_eq!(UnicodeSet::bmp().get_inversion_list(), expected);
     /// assert_eq!(
     ///     UnicodeSet::bmp().size(),
     ///     (expected[1] - expected[0]) as usize
     /// );
+    /// ```
     pub fn bmp() -> Self {
         Self {
             inv_list: ZeroVec::<u32>::from_slice(BMP_INV_LIST_SLICE),
