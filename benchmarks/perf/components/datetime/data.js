@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632349049565,
+  "lastUpdate": 1632357522579,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7823,6 +7823,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 748940,
             "range": "± 29557",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6ec54a4d7bb189161c11fd0cb8784a27066e782",
+          "message": "Upgrade nightly version to 2021-09-22 (#1088)",
+          "timestamp": "2021-09-22T19:31:17-05:00",
+          "tree_id": "ec2512ee6bd90179a95e58722b1b4e14e0974b14",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6ec54a4d7bb189161c11fd0cb8784a27066e782"
+        },
+        "date": 1632357519421,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 357366,
+            "range": "± 9800",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1792817,
+            "range": "± 55038",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 659385,
+            "range": "± 17483",
             "unit": "ns/iter"
           }
         ]
