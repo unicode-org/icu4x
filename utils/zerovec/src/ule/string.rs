@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::string::String;
 use crate::ule::*;
-use std::str;
+use core::str;
 
 impl AsVarULE for String {
     type VarULE = str;

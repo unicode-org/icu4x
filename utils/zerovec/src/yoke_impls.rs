@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::vec::Vec;
 use crate::map::ZeroMapKV;
 use crate::ule::*;
 use crate::{VarZeroVec, ZeroMap, ZeroVec};
-use std::{mem, ptr};
+use core::{mem, ptr};
 use yoke::*;
 
 // This impl is similar to the impl on Cow and is safe for the same reasons

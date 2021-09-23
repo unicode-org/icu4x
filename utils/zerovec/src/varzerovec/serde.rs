@@ -2,12 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec::Vec;
 use super::VarZeroVec;
 use crate::ule::*;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, SerializeSeq, Serializer};
-use std::fmt;
-use std::marker::PhantomData;
+use core::fmt;
+use core::marker::PhantomData;
 
 struct VarZeroVecVisitor<T> {
     marker: PhantomData<fn() -> T>,

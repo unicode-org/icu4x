@@ -2,10 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::format;
+use alloc::string::String;
+use alloc::vec::Vec;
 use super::*;
-use std::convert::TryInto;
-use std::marker::PhantomData;
-use std::{iter, mem};
+use core::convert::TryInto;
+use core::marker::PhantomData;
+use core::{iter, mem};
 
 fn usizeify(x: PlainOldULE<4>) -> usize {
     u32::from_unaligned(&x) as usize

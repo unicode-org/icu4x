@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::vec::Vec;
 use super::components::SliceComponents;
 use super::*;
 use core::marker::PhantomData;
