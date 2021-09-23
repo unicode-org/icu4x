@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use crate::ule::*;
+use alloc::vec::Vec;
 use components::SliceComponents;
 use core::fmt::{self, Display};
 use core::ops::Index;

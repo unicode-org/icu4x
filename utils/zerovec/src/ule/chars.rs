@@ -5,7 +5,6 @@
 #![allow(clippy::upper_case_acronyms)]
 //! ULE implementation for the `char` type.
 
-
 use super::*;
 use core::convert::TryFrom;
 

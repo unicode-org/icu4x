@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::String;
-use alloc::vec::Vec;
 use super::vecs::ZeroVecLike;
 use crate::ule::*;
 use crate::VarZeroVec;
 use crate::ZeroVec;
+use alloc::string::String;
+use alloc::vec::Vec;
 use core::cmp::Ordering;
 
 /// Trait marking types which are allowed to be keys or values in [`ZeroMap`](super::ZeroMap).

@@ -5,8 +5,8 @@
 #[cfg(feature = "serde")]
 mod serde;
 
-use alloc::vec::Vec;
 use crate::ule::*;
+use alloc::vec::Vec;
 use core::fmt;
 
 /// A zero-copy vector for fixed-width types.

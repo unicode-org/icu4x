@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
 use crate::VarZeroVec;
 use crate::ZeroVec;
+use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::mem;
 
