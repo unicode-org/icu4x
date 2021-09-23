@@ -211,7 +211,7 @@ where
             };
             format_number(w, value, field.length)?
         }
-        FieldSymbol::Minute => format_number(
+        FieldSymbol::Minute(..) => format_number(
             w,
             usize::from(
                 datetime

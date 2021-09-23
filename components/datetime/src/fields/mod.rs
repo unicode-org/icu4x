@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[macro_use]
+mod macros;
 mod length;
 pub(crate) mod symbols;
 
@@ -42,7 +44,7 @@ impl Field {
             FieldSymbol::Weekday(weekday) => weekday.get_length_type(self.length),
             FieldSymbol::DayPeriod(day_period) => day_period.get_length_type(self.length),
             FieldSymbol::Hour(hour) => hour.get_length_type(self.length),
-            FieldSymbol::Minute => TextOrNumeric::Numeric,
+            FieldSymbol::Minute(minute) => minute.get_length_type(self.length),
             FieldSymbol::Second(second) => second.get_length_type(self.length),
             FieldSymbol::TimeZone(zone) => zone.get_length_type(self.length),
         }

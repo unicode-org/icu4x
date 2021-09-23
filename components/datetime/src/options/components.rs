@@ -257,7 +257,7 @@ impl Bag {
             // m   8, 59    Numeric: minimum digits
             // mm  08, 59   Numeric: 2 digits, zero pad if needed
             fields.push(Field {
-                symbol: FieldSymbol::Minute,
+                symbol: FieldSymbol::Minute(fields::Minute::Minute),
                 length: match minute {
                     Numeric::Numeric => FieldLength::One,
                     Numeric::TwoDigit => FieldLength::TwoDigit,
@@ -470,7 +470,7 @@ mod test {
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
-                (Symbol::Minute, Length::One).into(),
+                (Symbol::Minute(fields::Minute::Minute), Length::One).into(),
                 (Symbol::Second(fields::Second::Second), Length::One).into(),
             ]
         );
