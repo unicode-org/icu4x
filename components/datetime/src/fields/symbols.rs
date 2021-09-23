@@ -33,7 +33,7 @@ pub enum FieldSymbol {
     Weekday(Weekday),
     DayPeriod(DayPeriod),
     Hour(Hour),
-    Minute(Minute),
+    Minute,
     Second(Second),
     TimeZone(TimeZone),
 }
@@ -78,7 +78,7 @@ impl FieldSymbol {
             Self::Hour(Hour::H12) => 14,
             Self::Hour(Hour::H23) => 15,
             Self::Hour(Hour::H24) => 16,
-            Self::Minute(Minute::Minute) => 17,
+            Self::Minute => 17,
             Self::Second(Second::Second) => 18,
             Self::Second(Second::FractionalSecond) => 19,
             Self::Second(Second::Millisecond) => 20,
@@ -106,7 +106,13 @@ impl TryFrom<char> for FieldSymbol {
             .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
             .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))
             .or_else(|_| Hour::try_from(ch).map(Self::Hour))
-            .or_else(|_| Minute::try_from(ch).map(Self::Minute))
+            .or_else(|_| {
+                if ch == 'm' {
+                    Ok(Self::Minute)
+                } else {
+                    Err(SymbolError::Unknown(ch))
+                }
+            })
             .or_else(|_| Second::try_from(ch).map(Self::Second))
             .or_else(|_| TimeZone::try_from(ch).map(Self::TimeZone))
     }
@@ -121,7 +127,7 @@ impl From<FieldSymbol> for char {
             FieldSymbol::Weekday(weekday) => weekday.into(),
             FieldSymbol::DayPeriod(dayperiod) => dayperiod.into(),
             FieldSymbol::Hour(hour) => hour.into(),
-            FieldSymbol::Minute(minute) => minute.into(),
+            FieldSymbol::Minute => 'm',
             FieldSymbol::Second(second) => second.into(),
             FieldSymbol::TimeZone(time_zone) => time_zone.into(),
         }
@@ -175,10 +181,6 @@ field_type!(Hour; {
     1; 'h' => H12,
     2; 'H' => H23,
     3; 'k' => H24
-}; Numeric);
-
-field_type!(Minute; {
-    0; 'm' => Minute
 }; Numeric);
 
 field_type!(Second; {

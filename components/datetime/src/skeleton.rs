@@ -248,7 +248,7 @@ impl From<&Pattern> for Skeleton {
                     }
 
                     // Pass through all of the following preferences unchanged.
-                    FieldSymbol::Minute(_)
+                    FieldSymbol::Minute
                     | FieldSymbol::Second(_)
                     | FieldSymbol::TimeZone(_)
                     | FieldSymbol::Year(_)
@@ -620,7 +620,7 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             // Time components:
             FieldSymbol::DayPeriod(_)
             | FieldSymbol::Hour(_)
-            | FieldSymbol::Minute(_)
+            | FieldSymbol::Minute
             | FieldSymbol::Second(_)
             | FieldSymbol::TimeZone(_) => time.push(*field),
             // Other components

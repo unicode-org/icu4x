@@ -94,7 +94,7 @@ fn get_time_granularity(item: &PatternItem) -> Option<TimeGranularity> {
     match item {
         PatternItem::Field(field) => match field.symbol {
             fields::FieldSymbol::Hour(_) => Some(TimeGranularity::Hours),
-            fields::FieldSymbol::Minute(_) => Some(TimeGranularity::Minutes),
+            fields::FieldSymbol::Minute => Some(TimeGranularity::Minutes),
             fields::FieldSymbol::Second(_) => Some(TimeGranularity::Seconds),
             _ => None,
         },
