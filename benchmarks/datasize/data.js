@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632408957805,
+  "lastUpdate": 1632431419992,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -268,6 +268,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 582678,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "292419806edd3c5a3e1e430f5bc820c296c8ee83",
+          "message": "Clean up type fallback in TimeZonesProvider (#1063)\n\n* Clean up type fallback in TimeZonesProvider\r\n\r\nThe old way of handling type fallback in the DataProvider made assumptions\r\nabout the shape of the CLDR data (that I realize now were wrong, in at least one case).\r\n\r\nThis adds an explicit function to handle type fallback exactly as specified by UTS-35,\r\nimproving the readability of the code.\r\n\r\nUpdates the data and test case to fix the prior mistake.",
+          "timestamp": "2021-09-23T14:08:46-07:00",
+          "tree_id": "4a013e7a2297f7351f548b28a8b0813ac08abd0a",
+          "url": "https://github.com/unicode-org/icu4x/commit/292419806edd3c5a3e1e430f5bc820c296c8ee83"
+        },
+        "date": 1632431416147,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 582688,
             "unit": "bytes",
             "biggerIsBetter": false
           }
