@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::trait_hack::YokeTraitHack;
 use crate::IsCovariant;
 use crate::Yokeable;
 use core::marker::PhantomData;
@@ -484,14 +483,11 @@ unsafe impl CloneableCart for () {}
 /// (e.g., from `.with_mut()`), that data will need to be cloned.
 impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Clone for Yoke<Y, C>
 where
-    for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: Clone,
+    for<'a> <Y as Yokeable<'a>>::Output: Clone,
 {
     fn clone(&self) -> Self {
-        let this: &Y::Output = self.get();
-        // We have an &T not a T, and we can clone YokeTraitHack<T>
-        let this_hack = YokeTraitHack(this).into_ref();
         Yoke {
-            yokeable: unsafe { Y::make(this_hack.clone().0) },
+            yokeable: unsafe { Y::make(self.get().clone()) },
             cart: self.cart.clone(),
         }
     }
@@ -546,13 +542,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// this from taking a capturing closure, however [`Yoke::project_with_capture()`]
     /// can be used for the same use cases.
     ///
+    /// This function requires Rust 1.56 or newer; for details, see
+    /// (#1061)[https://github.com/unicode-org/icu4x/issues/1061].
     ///
     /// This can be used, for example, to transform data from one format to another:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.56.***
-    ///
-    /// ```rust,ignore
+    /// ```rust
     /// # use std::rc::Rc;
     /// # use yoke::Yoke;
     /// #
@@ -564,10 +559,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This can also be used to create a yoke for a subfield
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.56.***
-    ///
-    /// ```rust,ignore
+    /// ```rust
     /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;

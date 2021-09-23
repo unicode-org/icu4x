@@ -6,7 +6,6 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
 /// A data provider that returns clones of a constant data payload.
@@ -49,7 +48,7 @@ where
 impl<'data, M> DataProvider<'data, M> for StructProvider<'data, M>
 where
     M: DataMarker<'data>,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
         req.resource_path.key.match_key(self.key)?;
@@ -58,4 +57,31 @@ where
             payload: Some(self.data.clone()),
         })
     }
+}
+
+#[test]
+fn test_traits() {
+    #[derive(Clone, yoke::Yokeable)]
+    struct SimpleStruct(pub u32);
+
+    impl<'data> DataMarker<'data> for SimpleStruct {
+        type Yokeable = SimpleStruct;
+        type Cart = SimpleStruct;
+    }
+
+    // A placeholder key to use to serve the data struct
+    const SAMPLE_KEY: ResourceKey = crate::resource_key!(x, "xyz", "example", 1);
+
+    let provider = StructProvider {
+        key: SAMPLE_KEY,
+        data: DataPayload::from_owned(SimpleStruct(42)),
+    };
+
+    let payload: DataPayload<SimpleStruct> = provider
+        .load_payload(&DataRequest::from(SAMPLE_KEY))
+        .expect("Load should succeed")
+        .take_payload()
+        .expect("Data should be present");
+
+    assert_eq!(payload.get().0, 42);
 }

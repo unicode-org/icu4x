@@ -10,7 +10,6 @@ use crate::error::Error;
 use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
-use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
 use alloc::rc::Rc;
@@ -184,7 +183,7 @@ where
 impl<'data, M> Clone for DataPayload<'data, M>
 where
     M: DataMarker<'data>,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 {
     fn clone(&self) -> Self {
         use DataPayloadInner::*;
@@ -200,24 +199,24 @@ where
 impl<'data, M> PartialEq for DataPayload<'data, M>
 where
     M: DataMarker<'data>,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
-        YokeTraitHack(self.get()).into_ref() == YokeTraitHack(other.get()).into_ref()
+        self.get() == other.get()
     }
 }
 
 impl<'data, M> Eq for DataPayload<'data, M>
 where
     M: DataMarker<'data>,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Eq,
 {
 }
 
 #[test]
 fn test_clone_eq() {
-    use crate::marker::CowStrMarker;
-    let p1 = DataPayload::<CowStrMarker>::from_static_str("Demo");
+    use crate::hello_world::HelloWorldV1Marker;
+    let p1 = DataPayload::<HelloWorldV1Marker>::from_owned(Default::default());
     let p2 = p1.clone();
     assert_eq!(p1, p2);
 }
@@ -481,14 +480,14 @@ where
     /// - [`DataPayload::map_project_with_capture()`] to pass context to the mapping function
     /// - [`DataPayload::map_project_cloned_with_capture()`] to do both of these things
     ///
+    /// All `DataPayload::map_project()` functions require Rust 1.56 or newer; for details, see
+    /// (#1061)[https://github.com/unicode-org/icu4x/issues/1061].
+    ///
     /// # Examples
     ///
     /// Map from `HelloWorldV1` to a `Cow<str>` containing just the message:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.56.***
-    ///
-    /// ```ignore
+    /// ```
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
@@ -637,10 +636,7 @@ where
     ///
     /// Prior to Rust 1.57, pass the capture by value instead of by reference:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.56.***
-    ///
-    /// ```ignore
+    /// ```
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -823,7 +819,7 @@ where
 impl<'data, M> Clone for DataResponse<'data, M>
 where
     M: DataMarker<'data>,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 {
     fn clone(&self) -> Self {
         Self {
