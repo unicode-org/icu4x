@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632357501377,
+  "lastUpdate": 1632362458649,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14237,6 +14237,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20847,
             "range": "± 221",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "877707aa532a45ec51c1f2a27140ce632ed6173d",
+          "message": "Support for infinitely nesting VarZeroVecs (#1065)\n\n* Add SliceComponents::from_bytes_unchecked\r\n\r\n* Add VZVULE\r\n\r\n* Impl AsVarULE for VarZeroVec\r\n\r\n* Add basic readonly VarZeroVecOwned\r\n\r\n* Add mutation ops\r\n\r\n* Use VZVOwned in VZV\r\n\r\n* Add test\r\n\r\n* fix ci\r\n\r\n* no unsafe on from_byte_slice_unchecked_mut\r\n\r\n* try_from_bytes -> parse_byte_slice\r\n\r\n* Address some review comments\r\n\r\n* get issue number\r\n\r\n* require no padding bytes in VarULE\r\n\r\n* fix compile\r\n\r\n* rename try_from_bytes\r\n\r\n* fix tidy\r\n\r\n* satisfy clippy\r\n\r\n* safety comment",
+          "timestamp": "2021-09-22T18:53:38-07:00",
+          "tree_id": "8473207dcc7ba2bb216ef7a586e35bdd59e8fc58",
+          "url": "https://github.com/unicode-org/icu4x/commit/877707aa532a45ec51c1f2a27140ce632ed6173d"
+        },
+        "date": 1632362455054,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1259,
+            "range": "± 264",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8151,
+            "range": "± 558",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23125,
+            "range": "± 2021",
             "unit": "ns/iter"
           }
         ]
