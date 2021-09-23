@@ -169,8 +169,8 @@ pub fn get_planes_trie() -> CodePointTrie<'static, u8, Small> {
         0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
         0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x10, 0x10, 0x10, 0,
     ];
-    let index: ZeroVec<u16> = ZeroVec::try_from_bytes(index_array_as_bytes).expect("infallible");
-    let data: ZeroVec<u8> = ZeroVec::try_from_bytes(data_8_array).expect("infallible");
+    let index: ZeroVec<u16> = ZeroVec::parse_byte_slice(index_array_as_bytes).expect("infallible");
+    let data: ZeroVec<u8> = ZeroVec::parse_byte_slice(data_8_array).expect("infallible");
     let index_length = 1168;
     let data_length = 372;
     let high_start = 0x100000;
@@ -291,7 +291,7 @@ mod tests {
     fn test_index_byte_array_literal() {
         let index_array_as_bytes: &[u8] = super::INDEX_ARRAY_AS_BYTES;
         let index_zv_bytes: ZeroVec<u16> =
-            ZeroVec::try_from_bytes(index_array_as_bytes).expect("infallible");
+            ZeroVec::parse_byte_slice(index_array_as_bytes).expect("infallible");
         let index_zv_aligned: ZeroVec<u16> = ZeroVec::from_slice(INDEX_ARRAY);
         assert_eq!(index_zv_bytes, index_zv_aligned);
     }
