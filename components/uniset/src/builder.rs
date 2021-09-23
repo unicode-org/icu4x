@@ -310,16 +310,11 @@ impl UnicodeSetBuilder {
     #[allow(unused_assignments)]
     pub fn retain_set(&mut self, set: &UnicodeSet) {
         let mut prev = 0;
-        let mut range_start = u32::MAX;
-        let mut range_limit = u32::MAX;
-        for (index, cp) in set.as_inversion_list().iter().enumerate() {
-            if index % 2 == 0 {
-                range_start = cp;
-            } else {
-                range_limit = cp;
-                self.remove(prev, range_start);
-                prev = range_limit;
-            }
+        for pair in set.as_inversion_list().as_slice().chunks(2) {
+            let range_start = AsULE::from_unaligned(&pair[0]);
+            let range_limit = AsULE::from_unaligned(&pair[1]);
+            self.remove(prev, range_start);
+            prev = range_limit;
         }
         self.remove(prev, (char::MAX as u32) + 1);
     }
