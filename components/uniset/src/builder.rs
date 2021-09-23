@@ -324,20 +324,20 @@ impl UnicodeSetBuilder {
     ///
     /// Performs in `O(B + S)`, where `B` is the number of endpoints in the Builder, and `S` is the number
     /// of endpoints in the argument.
-    fn complement_list(&mut self, set: &[u32]) {
+    fn complement_list(&mut self, set_iter: impl core::iter::Iterator<Item = u32>) {
         let mut res: Vec<u32> = vec![]; // not the biggest fan of having to allocate new memory
         let mut ai = self.intervals.iter();
-        let mut bi = set.iter();
+        let mut bi = set_iter;
         let mut a = ai.next();
         let mut b = bi.next();
         while let (Some(c), Some(d)) = (a, b) {
-            match c.cmp(d) {
+            match c.cmp(&d) {
                 Ordering::Less => {
                     res.push(*c);
                     a = ai.next();
                 }
                 Ordering::Greater => {
-                    res.push(*d);
+                    res.push(d);
                     b = bi.next();
                 }
                 Ordering::Equal => {
@@ -350,7 +350,7 @@ impl UnicodeSetBuilder {
             res.push(*c)
         }
         if let Some(d) = b {
-            res.push(*d)
+            res.push(d)
         }
         res.extend(ai);
         res.extend(bi);
@@ -406,7 +406,7 @@ impl UnicodeSetBuilder {
     pub fn complement_char(&mut self, c: char) {
         let code_point = c as u32;
         let to_complement = [code_point, code_point + 1];
-        self.complement_list(&to_complement);
+        self.complement_list(to_complement.iter().copied());
     }
 
     /// Complements the range in the builder, adding any elements in the range if not in the builder, and
@@ -426,7 +426,7 @@ impl UnicodeSetBuilder {
     pub fn complement_range(&mut self, range: &impl RangeBounds<char>) {
         let (start, end) = deconstruct_range(range);
         let to_complement = [start, end];
-        self.complement_list(&to_complement);
+        self.complement_list(to_complement.iter().copied());
     }
 
     /// Complements the set in the builder, adding any elements in the set if not in the builder, and
@@ -445,7 +445,12 @@ impl UnicodeSetBuilder {
     /// assert!(!check.contains('N')); // 78
     /// ```
     pub fn complement_set(&mut self, set: &UnicodeSet) {
-        self.complement_list(&set.as_inversion_list().to_vec());
+        let inv_list_iter_owned = set
+            .as_inversion_list()
+            .as_slice()
+            .iter()
+            .map(|cp| <u32 as AsULE>::from_unaligned(cp));
+        self.complement_list(inv_list_iter_owned);
     }
 
     /// Returns whether the build is empty.
@@ -859,7 +864,7 @@ mod tests {
     #[test]
     fn test_complement_interior() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        builder.complement_list(&[0xE, 0x14]);
+        builder.complement_list([0xE, 0x14].iter().copied());
         let expected = vec![0xA, 0xE, 0x28, 0x32];
         assert_eq!(builder.intervals, expected);
     }
@@ -867,7 +872,7 @@ mod tests {
     #[test]
     fn test_complement_exterior() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        builder.complement_list(&[0x19, 0x23]);
+        builder.complement_list([0x19, 0x23].iter().copied());
         let expected = vec![0xA, 0x14, 0x19, 0x23, 0x28, 0x32];
         assert_eq!(builder.intervals, expected);
     }
@@ -875,7 +880,7 @@ mod tests {
     #[test]
     fn test_complement_larger_list() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        builder.complement_list(&[0x1E, 0x37, 0x3C, 0x46]);
+        builder.complement_list([0x1E, 0x37, 0x3C, 0x46].iter().copied());
         let expected = vec![0xA, 0x14, 0x1E, 0x28, 0x32, 0x37, 0x3C, 0x46];
         assert_eq!(builder.intervals, expected);
     }
