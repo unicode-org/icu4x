@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632431665366,
+  "lastUpdate": 1632433428547,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11279,6 +11279,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36243690,
             "range": "± 63609",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d821987ada3f86d2fbba8777c81184ba3fe71aa6",
+          "message": "Move zerovec to no_std (#1094)\n\nMake zerovec no_std",
+          "timestamp": "2021-09-23T14:36:42-07:00",
+          "tree_id": "ab06701f9c750f3bb77f77b94a46425ce04801c3",
+          "url": "https://github.com/unicode-org/icu4x/commit/d821987ada3f86d2fbba8777c81184ba3fe71aa6"
+        },
+        "date": 1632433425151,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29332220,
+            "range": "± 3276028",
             "unit": "ns/iter"
           }
         ]
