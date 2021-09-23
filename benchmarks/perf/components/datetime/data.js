@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632362477512,
+  "lastUpdate": 1632409312802,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7907,6 +7907,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 780862,
             "range": "± 42829",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ea4b7d9d7b2363dbcfd5d883e9890fe881ddea45",
+          "message": "Adding BlobDataProvider for dynamically loaded data blobs (#1084)\n\n- Adds try_project_cloned_with_capture",
+          "timestamp": "2021-09-23T09:54:39-05:00",
+          "tree_id": "0215c38db8f7aa7793fc7798353b719114dd4b5f",
+          "url": "https://github.com/unicode-org/icu4x/commit/ea4b7d9d7b2363dbcfd5d883e9890fe881ddea45"
+        },
+        "date": 1632409309143,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 351375,
+            "range": "± 11736",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1740249,
+            "range": "± 64050",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 631986,
+            "range": "± 32905",
             "unit": "ns/iter"
           }
         ]
