@@ -3,9 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
+use alloc::vec::Vec;
 use components::SliceComponents;
-use std::fmt::{self, Display};
-use std::ops::Index;
+use core::fmt::{self, Display};
+use core::ops::Index;
 
 pub(crate) mod components;
 pub(crate) mod owned;

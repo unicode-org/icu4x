@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{ZeroMap, ZeroMapKV, ZeroVecLike};
+use core::fmt;
+use core::marker::PhantomData;
 use serde::de::{self, MapAccess, Visitor};
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::fmt;
-use std::marker::PhantomData;
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>

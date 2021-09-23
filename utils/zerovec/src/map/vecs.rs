@@ -6,8 +6,9 @@ use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
 use crate::VarZeroVec;
 use crate::ZeroVec;
-use std::cmp::Ordering;
-use std::mem;
+use alloc::vec::Vec;
+use core::cmp::Ordering;
+use core::mem;
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.

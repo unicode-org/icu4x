@@ -79,9 +79,12 @@
 //! # } // feature = "serde"
 //! ```
 
+#![cfg_attr(not(test), no_std)]
 // this crate does a lot of nuanced lifetime manipulation, being explicit
 // is better here.
 #![allow(clippy::needless_lifetimes)]
+
+extern crate alloc;
 
 pub mod map;
 #[cfg(test)]

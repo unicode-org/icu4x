@@ -6,7 +6,8 @@
 mod serde;
 
 use crate::ule::*;
-use std::fmt;
+use alloc::vec::Vec;
+use core::fmt;
 
 /// A zero-copy vector for fixed-width types.
 ///

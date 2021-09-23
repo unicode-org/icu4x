@@ -4,10 +4,11 @@
 
 use super::ZeroVec;
 use crate::ule::*;
+use alloc::vec::Vec;
+use core::fmt;
+use core::marker::PhantomData;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, SerializeSeq, Serializer};
-use std::fmt;
-use std::marker::PhantomData;
 
 struct ZeroVecVisitor<T> {
     marker: PhantomData<fn() -> T>,
