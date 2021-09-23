@@ -326,14 +326,19 @@ where
 
     pub fn from_rc_buffer_yoke(yoke: Yoke<M::Yokeable, Rc<[u8]>>) -> Self {
         Self {
-            inner: DataPayloadInner::RcBuf(yoke)
+            inner: DataPayloadInner::RcBuf(yoke),
         }
     }
 
+    #[allow(clippy::type_complexity)]
     pub fn try_from_yoked_buffer<T, E>(
         yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>,
         capture: T,
-        f: for<'de> fn(<&'static [u8] as yoke::Yokeable<'de>>::Output, T, PhantomData<&'de ()>) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
+        f: for<'de> fn(
+            <&'static [u8] as yoke::Yokeable<'de>>::Output,
+            T,
+            PhantomData<&'de ()>,
+        ) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
         let yoke = yoked_buffer.try_project_with_capture(capture, f)?;
         Ok(Self {
