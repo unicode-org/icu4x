@@ -38,7 +38,7 @@ pub struct UnicodeSet<'data> {
 }
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for UnicodeSet<'de> {
+impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,

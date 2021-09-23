@@ -11,9 +11,6 @@ use crate::uniset::UnicodeSet;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 
-#[cfg(feature = "provider_serde")]
-use serde::ser::SerializeStruct;
-
 //
 // resource key structs - the structs used directly by users of data provider
 //
@@ -317,8 +314,14 @@ pub mod key {
 #[icu_provider::data_struct]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct UnicodePropertyV1<'data> {
+    #[serde(borrow)]
     pub name: Cow<'data, str>,
+    #[serde(borrow)]
     pub inv_list: UnicodeSet<'data>,
 }
 
@@ -348,89 +351,5 @@ impl<'data> UnicodePropertyV1<'data> {
 impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
     fn from(prop: UnicodePropertyV1<'data>) -> UnicodeSet<'data> {
         prop.inv_list
-    }
-}
-
-#[cfg(feature = "provider_serde")]
-impl<'data> serde::Serialize for UnicodePropertyV1<'data> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut state = serializer.serialize_struct("UnicodePropertyV1", 2)?;
-        state.serialize_field("name", &self.name)?;
-        state.serialize_field("inv_list", &self.inv_list)?;
-        state.end()
-    }
-}
-
-#[cfg(feature = "provider_serde")]
-impl<'de> serde::Deserialize<'de> for UnicodePropertyV1<'de> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        use core::fmt;
-
-        #[derive(serde::Deserialize)]
-        #[serde(field_identifier, rename_all = "lowercase")]
-        enum Field {
-            Name,
-            InvList,
-        }
-
-        struct UnicodePropertyV1Visitor;
-
-        impl<'de> serde::de::Visitor<'de> for UnicodePropertyV1Visitor {
-            type Value = UnicodePropertyV1<'de>;
-
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("a valid UnicodePropertyV1 struct")
-            }
-
-            fn visit_seq<V>(self, mut seq: V) -> Result<UnicodePropertyV1<'de>, V::Error>
-            where
-                V: serde::de::SeqAccess<'de>,
-            {
-                let name = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(0, &self))?;
-                let inv_list = seq
-                    .next_element()?
-                    .ok_or_else(|| serde::de::Error::invalid_length(1, &self))?;
-                Ok(UnicodePropertyV1 { name, inv_list })
-            }
-
-            fn visit_map<V>(self, mut map: V) -> Result<UnicodePropertyV1<'de>, V::Error>
-            where
-                V: serde::de::MapAccess<'de>,
-            {
-                let mut name = None;
-                let mut inv_list = None;
-                while let Some(key) = map.next_key()? {
-                    match key {
-                        Field::Name => {
-                            if name.is_some() {
-                                return Err(serde::de::Error::duplicate_field("name"));
-                            }
-                            name = Some(map.next_value()?);
-                        }
-                        Field::InvList => {
-                            if inv_list.is_some() {
-                                return Err(serde::de::Error::duplicate_field("inv_list"));
-                            }
-                            inv_list = Some(map.next_value()?);
-                        }
-                    }
-                }
-                let name = name.ok_or_else(|| serde::de::Error::missing_field("name"))?;
-                let inv_list =
-                    inv_list.ok_or_else(|| serde::de::Error::missing_field("inv_list"))?;
-                Ok(UnicodePropertyV1 { name, inv_list })
-            }
-        }
-
-        const FIELDS: &[&str] = &["name", "inv_list"];
-        deserializer.deserialize_struct("UnicodePropertyV1", FIELDS, UnicodePropertyV1Visitor)
     }
 }
