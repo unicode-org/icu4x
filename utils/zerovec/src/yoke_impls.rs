@@ -5,7 +5,7 @@
 use crate::map::ZeroMapKV;
 use crate::ule::*;
 use crate::{VarZeroVec, ZeroMap, ZeroVec};
-use std::{mem, ptr};
+use core::{mem, ptr};
 use yoke::*;
 
 // This impl is similar to the impl on Cow and is safe for the same reasons

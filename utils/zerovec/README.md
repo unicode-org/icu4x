@@ -5,14 +5,16 @@ Zero-copy vector abstractions over byte arrays.
 `zerovec` enable vectors of multibyte types to be backed by a byte array, abstracting away
 issues including memory alignment and endianness.
 
-This crate has two main types:
+This crate has three main types:
 
-- `ZeroVec<T>` for fixed-width types like `u32`
-- `VarZeroVec<T>` for variable-width types like `str`
+- [`ZeroVec<T>`](ZeroVec) for fixed-width types like `u32`
+- [`VarZeroVec<T>`](VarZeroVec) for variable-width types like `str`
+- [`ZeroMap<K, V>`](ZeroMap) to map from `K` to `V`
 
-Both are intended as drop-in replacements for `Vec<T>` in Serde structs serialized with a
-format supporting a borrowed byte buffer, like Bincode. Clients upgrading from Vec to ZeroVec
-or VarZeroVec benefit from zero heap allocations when deserializing read-only data.
+The first two are intended as drop-in replacements for `Vec<T>` in Serde structs serialized
+with a format supporting a borrowed byte buffer, like Bincode. The third is indended as a
+replacement for `HashMap` or `LiteMap`. Clients upgrading to `ZeroVec`, `VarZeroVec`, or
+`ZeroMap` benefit from zero heap allocations when deserializing read-only data.
 
 This crate has two optional features: `serde` and `yoke`. `serde` allows serializing and deserializing
 `zerovec`'s abstractions via [`serde`](https://docs.rs/serde), and `yoke` enables implementations of `Yokeable`
@@ -60,7 +62,7 @@ pub struct DataStruct<'data> {
 
 let data = DataStruct {
     nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
-    strs: VarZeroVec::from(vec!["hello".to_string(), "world".to_string()]),
+    strs: VarZeroVec::from(&["hello".to_string(), "world".to_string()] as &[_]),
 };
 let bincode_bytes = bincode::serialize(&data)
     .expect("Serialization should be successful");

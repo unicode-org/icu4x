@@ -69,6 +69,18 @@ pub trait SerdeDeDataReceiver {
         ),
     ) -> Result<(), Error>;
 
+    /// Receives a yoked byte buffer.
+    ///
+    /// This function has behavior identical to that of [`SerdeDeDataReceiver::receive_rc_buffer`].
+    fn receive_yoked_buffer(
+        &mut self,
+        yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>,
+        f1: for<'de> fn(
+            bytes: &'de [u8],
+            f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>),
+        ),
+    ) -> Result<(), Error>;
+
     /// Receives a `&'static` byte buffer via an [`erased_serde::Deserializer`].
     ///
     /// Note: Since the purpose of this function is to handle zero-copy deserialization of static
@@ -130,6 +142,35 @@ where
             // which is in the contract of `receive_rc_buffer`.
             holder.unwrap()
         })?);
+        Ok(())
+    }
+
+    fn receive_yoked_buffer(
+        &mut self,
+        yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>,
+        f1: for<'de> fn(
+            bytes: &'de [u8],
+            f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>),
+        ),
+    ) -> Result<(), Error> {
+        self.replace(DataPayload::try_from_yoked_buffer(
+            yoked_buffer,
+            f1,
+            move |bytes, f1, _| {
+                let mut holder = None;
+                f1(bytes, &mut |deserializer| {
+                    holder.replace(
+                    erased_serde::deserialize::<YokeTraitHack<<M::Yokeable as Yokeable>::Output>>(
+                        deserializer,
+                    )
+                    .map(|w| w.0),
+                );
+                });
+                // The holder is guaranteed to be populated so long as the lambda function was invoked,
+                // which is in the contract of `receive_rc_buffer`.
+                holder.unwrap()
+            },
+        )?);
         Ok(())
     }
 

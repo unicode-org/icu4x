@@ -6,7 +6,7 @@
 
 use crate::ule::AsULE;
 use crate::ZeroVec;
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 
 mod kv;
 #[cfg(feature = "serde")]
@@ -17,11 +17,34 @@ pub use kv::ZeroMapKV;
 pub use vecs::ZeroVecLike;
 
 /// A zero-copy map datastructure, built on sorted binary-searchable [`ZeroVec`]
-/// and [`VarZeroVec`](crate::VarZeroVec).
+/// and [`VarZeroVec`].
 ///
-/// This type, like [`ZeroVec`] and [`VarZeroVec`](crate::VarZeroVec), is able to zero-copy
+/// This type, like [`ZeroVec`] and [`VarZeroVec`], is able to zero-copy
 /// deserialize from appropriately formatted byte buffers. It is internally copy-on-write, so it can be mutated
 /// afterwards as necessary.
+///
+/// Internally, a `ZeroMap` is a zero-copy vector for keys paired with a zero-copy vector for
+/// values, sorted by the keys. Therefore, all types used in `ZeroMap` need to work with either
+/// [`ZeroVec`] or [`VarZeroVec`].
+///
+/// # Examples
+///
+/// ```
+/// use zerovec::ZeroMap;
+///
+/// // Example byte buffer representing the map { 1: "one" }
+/// let BINCODE_BYTES: &[u8; 31] = &[
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
+///     1, 0, 0, 0, 0, 0, 0, 0, 111, 110, 101
+/// ];
+///
+/// // Deserializing to ZeroMap requires no heap allocations.
+/// let zero_map: ZeroMap<u32, String> = bincode::deserialize(BINCODE_BYTES)
+///     .expect("Should deserialize successfully");
+/// assert_eq!(zero_map.get(&1), Some("one"));
+/// ```
+///
+/// [`VarZeroVec`]: crate::VarZeroVec
 pub struct ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,

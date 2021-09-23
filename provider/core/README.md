@@ -14,6 +14,8 @@ A [`Request`] contains a [`ResourceKey`] (a composition of a [`Category`] and su
 "plurals/cardinal@1") and [`ResourceOptions`] (a language identifier and optional variant, e.g.,
 "fr") being requested. The Response contains the data payload corresponding to the Request.
 
+A [`Response`] contains a [`DataPayload`] along with other metadata.
+
 The most common types required for ICU4X [`DataProvider`] are included via the prelude:
 
 ```rust

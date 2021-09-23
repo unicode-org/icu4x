@@ -4,6 +4,7 @@
 
 use crate::ule::*;
 use crate::ZeroVec;
+use alloc::vec::Vec;
 
 impl<T> AsVarULE for Vec<T>
 where

@@ -6,7 +6,8 @@
 mod serde;
 
 use crate::ule::*;
-use std::fmt;
+use alloc::vec::Vec;
+use core::fmt;
 
 /// A zero-copy vector for fixed-width types.
 ///
@@ -44,7 +45,7 @@ use std::fmt;
 /// let nums: &[u16] = &[211, 281, 421, 461];
 ///
 /// // Conversion from &[u8] to &[u16::ULE] is infallible.
-/// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+/// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
 ///
 /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
 /// assert_eq!(zerovec.get(2), Some(421));
@@ -119,12 +120,12 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
     /// assert_eq!(zerovec.get(2), Some(421));
     /// ```
-    pub fn try_from_bytes(bytes: &'a [u8]) -> Result<Self, <<T as AsULE>::ULE as ULE>::Error> {
+    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, <<T as AsULE>::ULE as ULE>::Error> {
         let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
         Ok(Self::Borrowed(slice))
     }
@@ -170,7 +171,7 @@ where
     /// use zerovec::ule::AsULE;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(4, zerovec.len());
     /// assert_eq!(
@@ -191,10 +192,10 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_empty());
     ///
-    /// let emptyvec: ZeroVec<u16> = ZeroVec::try_from_bytes(&[]).expect("infallible");
+    /// let emptyvec: ZeroVec<u16> = ZeroVec::parse_byte_slice(&[]).expect("infallible");
     /// assert!(emptyvec.is_empty());
     /// ```
     #[inline]
@@ -315,7 +316,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.get(2), Some(421));
     /// assert_eq!(zerovec.get(4), None);
@@ -339,7 +340,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.first(), Some(211));
     /// ```
@@ -358,7 +359,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.last(), Some(461));
     /// ```
@@ -377,7 +378,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// let mut it = zerovec.iter();
     ///
     /// assert_eq!(it.next(), Some(211));
@@ -399,7 +400,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
     ///
     /// let owned = zerovec.into_owned();
@@ -424,7 +425,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
     ///
     /// zerovec.make_mut().push(12_u16.as_unaligned());
@@ -460,7 +461,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     ///
     /// assert_eq!(zerovec.binary_search(&281), Ok(1));
     /// assert_eq!(zerovec.binary_search(&282), Err(2));
@@ -488,7 +489,7 @@ mod tests {
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
         }
         {
-            let zerovec = ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE).unwrap();
+            let zerovec = ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE).unwrap();
             assert_eq!(zerovec.get(0), Some(TEST_SLICE[0]));
             assert_eq!(zerovec.get(1), Some(TEST_SLICE[1]));
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
@@ -503,7 +504,7 @@ mod tests {
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }
         {
-            let zerovec = ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE).unwrap();
+            let zerovec = ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE).unwrap();
             assert_eq!(Ok(3), zerovec.binary_search(&0x0e0d0c));
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }
@@ -513,73 +514,73 @@ mod tests {
     fn test_odd_alignment() {
         assert_eq!(
             Some(0x020100),
-            ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE)
+            ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE)
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x04000201),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[1..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[1..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x05040002),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[2..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[2..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x06050400),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[3..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x060504),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[4..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[4..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c00),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[75..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[75..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c00),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[3..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..])
                 .unwrap()
                 .get(18)
         );
         assert_eq!(
             Some(0x4e4d4c),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[76..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[76..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c),
-            ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE)
+            ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE)
                 .unwrap()
                 .get(19)
         );
         assert_eq!(
             None,
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[77..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[77..])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             None,
-            ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE)
+            ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE)
                 .unwrap()
                 .get(20)
         );
         assert_eq!(
             None,
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE[3..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..])
                 .unwrap()
                 .get(19)
         );

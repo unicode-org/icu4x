@@ -6,7 +6,7 @@
 //! ULE implementation for the `char` type.
 
 use super::*;
-use std::convert::TryFrom;
+use core::convert::TryFrom;
 
 /// A u8 array of little-endian data corresponding to a Unicode code point.
 ///
@@ -42,7 +42,7 @@ pub struct CharULE([u8; 4]);
 // This is safe to implement because from_byte_slice_unchecked returns
 // the same value as parse_byte_slice
 unsafe impl ULE for CharULE {
-    type Error = std::char::CharTryFromError;
+    type Error = core::char::CharTryFromError;
 
     #[inline]
     fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
@@ -60,7 +60,7 @@ unsafe impl ULE for CharULE {
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
         let data = bytes.as_ptr();
         let len = bytes.len() / 4;
-        std::slice::from_raw_parts(data as *const Self, len)
+        core::slice::from_raw_parts(data as *const Self, len)
     }
 
     #[inline]
@@ -68,7 +68,7 @@ unsafe impl ULE for CharULE {
         let data = slice.as_ptr();
         let len = slice.len() * 4;
         // Safe because Self is transparent over [u8; 4]
-        unsafe { std::slice::from_raw_parts(data as *const u8, len) }
+        unsafe { core::slice::from_raw_parts(data as *const u8, len) }
     }
 }
 

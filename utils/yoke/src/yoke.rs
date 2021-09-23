@@ -549,8 +549,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This can be used, for example, to transform data from one format to another:
     ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.56.***
+    ///
     /// ```rust,ignore
-    /// # // This doctest is temporarily ignored because of https://github.com/rust-lang/rust/issues/86703
     /// # use std::rc::Rc;
     /// # use yoke::Yoke;
     /// #
@@ -562,8 +564,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This can also be used to create a yoke for a subfield
     ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.56.***
+    ///
     /// ```rust,ignore
-    /// # // This doctest is temporarily ignored because of https://github.com/rust-lang/rust/issues/86703
     /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;
@@ -694,6 +698,51 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
         }
+    }
+
+    /// A version of [`Yoke::project`] that takes a capture and bubbles up an error
+    /// from the callback function.
+    #[allow(clippy::type_complexity)]
+    pub fn try_project_with_capture<P, T, E>(
+        self,
+        capture: T,
+        f: for<'a> fn(
+            <Y as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> Result<<P as Yokeable<'a>>::Output, E>,
+    ) -> Result<Yoke<P, C>, E>
+    where
+        P: for<'a> Yokeable<'a>,
+    {
+        let p = f(self.yokeable.transform_owned(), capture, PhantomData)?;
+        Ok(Yoke {
+            yokeable: unsafe { P::make(p) },
+            cart: self.cart,
+        })
+    }
+
+    /// A version of [`Yoke::project_cloned`] that takes a capture and bubbles up an error
+    /// from the callback function.
+    #[allow(clippy::type_complexity)]
+    pub fn try_project_cloned_with_capture<'this, P, T, E>(
+        &'this self,
+        capture: T,
+        f: for<'a> fn(
+            &'this <Y as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> Result<<P as Yokeable<'a>>::Output, E>,
+    ) -> Result<Yoke<P, C>, E>
+    where
+        P: for<'a> Yokeable<'a>,
+        C: CloneableCart,
+    {
+        let p = f(self.get(), capture, PhantomData)?;
+        Ok(Yoke {
+            yokeable: unsafe { P::make(p) },
+            cart: self.cart.clone(),
+        })
     }
 }
 

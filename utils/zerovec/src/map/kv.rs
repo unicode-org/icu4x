@@ -6,7 +6,9 @@ use super::vecs::ZeroVecLike;
 use crate::ule::*;
 use crate::VarZeroVec;
 use crate::ZeroVec;
-use std::cmp::Ordering;
+use alloc::string::String;
+use alloc::vec::Vec;
+use core::cmp::Ordering;
 
 /// Trait marking types which are allowed to be keys or values in [`ZeroMap`](super::ZeroMap).
 ///
@@ -86,6 +88,23 @@ impl<'a> ZeroMapKV<'a> for String {
     }
 
     fn with_ser<R>(g: &str, f: impl FnOnce(&str) -> R) -> R {
+        f(g)
+    }
+}
+
+impl<'a> ZeroMapKV<'a> for Vec<u8> {
+    type Container = VarZeroVec<'a, Vec<u8>>;
+    type NeedleType = [u8];
+    type GetType = [u8];
+    type SerializeType = [u8];
+    fn as_needle(&self) -> &[u8] {
+        self
+    }
+    fn cmp_get(&self, g: &[u8]) -> Ordering {
+        (&**self).cmp(g)
+    }
+
+    fn with_ser<R>(g: &[u8], f: impl FnOnce(&[u8]) -> R) -> R {
         f(g)
     }
 }
