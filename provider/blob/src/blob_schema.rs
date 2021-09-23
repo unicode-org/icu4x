@@ -5,7 +5,7 @@
 use litemap::LiteMap;
 
 /// A versioned Serde schema for ICU4X data blobs.
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, yoke::Yokeable)]
 pub enum BlobSchema<'data> {
     #[serde(borrow)]
     V001(BlobSchemaV1<'data>),
