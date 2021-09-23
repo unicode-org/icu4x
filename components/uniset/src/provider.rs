@@ -319,9 +319,9 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct UnicodePropertyV1<'data> {
-    #[serde(borrow)]
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub name: Cow<'data, str>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub inv_list: UnicodeSet<'data>,
 }
 
