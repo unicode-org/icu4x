@@ -66,6 +66,7 @@ pub struct BlobDataProvider {
 }
 
 impl BlobDataProvider {
+    /// Create a [`BlobDataProvider`] from an `Rc` blob of ICU4X data.
     pub fn new_from_rc_blob(blob: Rc<[u8]>) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
             blob: Yoke::try_attach_to_cart_badly(blob, |bytes| {
