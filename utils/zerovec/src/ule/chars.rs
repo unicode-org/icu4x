@@ -5,7 +5,7 @@
 #![allow(clippy::upper_case_acronyms)]
 //! ULE implementation for the `char` type.
 
-use alloc::vec::Vec;
+
 use super::*;
 use core::convert::TryFrom;
 

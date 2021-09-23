@@ -4,7 +4,7 @@
 
 //! See [`ZeroMap`] for details.
 
-use alloc::vec::Vec;
+
 use crate::ule::AsULE;
 use crate::ZeroVec;
 use core::cmp::Ordering;

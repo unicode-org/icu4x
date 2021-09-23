@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::String;
+
 use alloc::vec::Vec;
-use alloc::vec;
+
 use super::*;
 use core::fmt;
 use core::marker::PhantomData;
