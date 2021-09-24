@@ -4,7 +4,7 @@
 
 //! This module contains types and implementations for the ISO calendar
 
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTimeError};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
 use tinystr::tinystr8;
 
@@ -69,7 +69,7 @@ impl From<IsoYear> for i32 {
 impl From<IsoYear> for types::Year {
     fn from(year: IsoYear) -> types::Year {
         types::Year {
-            era: types::Era(tinystr8!(" ")),
+            era: types::Era(tinystr8!("default")),
             number: year.0,
             related_iso: year.0,
         }
@@ -300,6 +300,23 @@ impl Date<Iso> {
         year: i32,
     ) -> Result<Date<Iso>, DateTimeError> {
         Self::new_iso_date(day.try_into()?, month.try_into()?, year.into())
+    }
+}
+
+impl DateTime<Iso> {
+    /// Construct a new ISO date from integers
+    pub fn new_iso_datetime_from_integers(
+        day: u8,
+        month: u8,
+        year: i32,
+        hour: u8,
+        minute: u8,
+        second: u8,
+    ) -> Result<DateTime<Iso>, DateTimeError> {
+        Ok(DateTime {
+            date: Date::new_iso_date_from_integers(day, month, year)?,
+            time: types::Time::try_new(hour, minute, second)?,
+        })
     }
 }
 

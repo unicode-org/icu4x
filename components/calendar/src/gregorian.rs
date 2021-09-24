@@ -5,7 +5,8 @@
 //! This module contains types and implementations for the Gregorian calendar
 
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTimeError};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use core::convert::TryInto;
 use tinystr::tinystr8;
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -94,6 +95,25 @@ impl Date<Gregorian> {
         year: IsoYear,
     ) -> Result<Date<Gregorian>, DateTimeError> {
         Date::new_iso_date(day, month, year).map(|d| Date::new_from_iso(d, Gregorian))
+    }
+}
+
+impl DateTime<Gregorian> {
+    /// Construct a new Gregorian datetime from integers
+    ///
+    /// Years are specified as ISO years
+    pub fn new_gregorian_datetime_from_integers(
+        day: u8,
+        month: u8,
+        year: i32,
+        hour: u8,
+        minute: u8,
+        second: u8,
+    ) -> Result<DateTime<Gregorian>, DateTimeError> {
+        Ok(DateTime {
+            date: Date::new_gregorian_date(day.try_into()?, month.try_into()?, year.into())?,
+            time: types::Time::try_new(hour, minute, second)?,
+        })
     }
 }
 

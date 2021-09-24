@@ -6,6 +6,7 @@
 
 use crate::error::DateTimeError;
 use core::convert::TryFrom;
+use core::convert::TryInto;
 use core::ops::{Add, Sub};
 use core::str::FromStr;
 use tinystr::TinyStr8;
@@ -206,6 +207,14 @@ impl Time {
             minute,
             second,
         }
+    }
+
+    pub fn try_new(hour: u8, minute: u8, second: u8) -> Result<Self, DateTimeError> {
+        Ok(Self {
+            hour: hour.try_into()?,
+            minute: minute.try_into()?,
+            second: second.try_into()?,
+        })
     }
 }
 
