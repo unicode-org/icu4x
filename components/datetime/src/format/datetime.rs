@@ -28,7 +28,7 @@ use writeable::Writeable;
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
 /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-/// use icu::datetime::mock::datetime::MockDateTime;
+/// use icu_calendar::DateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 /// let locale: Locale = langid!("en").into();
 /// # let provider = InvariantDataProvider;
@@ -36,7 +36,7 @@ use writeable::Writeable;
 /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
-/// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let formatted_date = dtf.format(&datetime);
@@ -295,8 +295,8 @@ mod tests {
     #[test]
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
-        use crate::mock::datetime::MockDateTime;
         use crate::provider::gregory::DateSymbolsV1Marker;
+        use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
@@ -314,7 +314,8 @@ mod tests {
             .take_payload()
             .unwrap();
         let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
-        let datetime = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
+        let datetime =
+            DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
         write_pattern(
             &pattern,
