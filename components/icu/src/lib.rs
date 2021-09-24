@@ -100,7 +100,7 @@ pub mod datetime {
     //! ```
     //! use icu::locid::Locale;
     //! use icu::locid::macros::langid;
-    //! use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
+    //! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
@@ -115,7 +115,7 @@ pub mod datetime {
     //! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
     //!     .expect("Failed to create DateTimeFormat instance.");
     //!
-    //! let date: MockDateTime = "2020-09-12T12:35:00".parse()
+    //! let date = parse_gregorian_from_str("2020-09-12T12:35:00")
     //!     .expect("Failed to parse date.");
     //!
     //! let formatted_date = dtf.format(&date);
