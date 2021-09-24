@@ -7,12 +7,15 @@ use tinystr::TinyStr8;
 use crate::date::*;
 use core::str::FromStr;
 
-use super::{datetime::MockDateTime, time_zone::MockTimeZone};
+use super::parse_gregorian_from_str;
+use super::time_zone::MockTimeZone;
+
+use icu_calendar::{DateTime, Gregorian};
 
 /// A temporary struct that implements [`ZonedDateTimeInput`]
 /// and is used in tests, benchmarks and examples of this component.
 ///
-/// The composition of [`MockDateTime`] and [`MockTimeZone`].
+/// The composition of `DateTime<Gregorian>` and [`MockTimeZone`].
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
 /// `MockZonedDateTime` as an example of the data necessary for ICU [`ZonedDateTimeFormat`] to work, and
@@ -22,11 +25,12 @@ use super::{datetime::MockDateTime, time_zone::MockTimeZone};
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::mock::datetime::MockDateTime;
+/// use icu::datetime::mock::parse_gregorian_from_str;
 /// use icu::datetime::mock::time_zone::MockTimeZone;
+/// use icu_calendar::{DateTime, Gregorian};
 /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
 ///
-/// let dt: MockDateTime = "2020-10-14T13:21:00".parse()
+/// let dt: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00")
 ///     .expect("Failed to parse a datetime.");
 ///
 /// let tz: MockTimeZone = "+05:00".parse()
@@ -37,17 +41,17 @@ use super::{datetime::MockDateTime, time_zone::MockTimeZone};
 ///     .expect("Failed to parse a zoned datetime.");
 /// ```
 /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct MockZonedDateTime {
     /// The datetime component.
-    pub datetime: MockDateTime,
+    pub datetime: DateTime<Gregorian>,
     /// The time zone component.
     pub time_zone: MockTimeZone,
 }
 
 impl MockZonedDateTime {
-    /// Creates a new [`MockZonedDateTime`] from an already validated [`MockDateTime`] and [`MockTimeZone`].
-    pub const fn new(datetime: MockDateTime, time_zone: MockTimeZone) -> Self {
+    /// Creates a new [`MockZonedDateTime`] from an already validated `DateTime<Gregorian>` and [`MockTimeZone`].
+    pub const fn new(datetime: DateTime<Gregorian>, time_zone: MockTimeZone) -> Self {
         Self {
             datetime,
             time_zone,
@@ -75,7 +79,7 @@ impl FromStr for MockZonedDateTime {
     ///     .expect("Failed to parse a zoned datetime.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let datetime = MockDateTime::from_str(input)?;
+        let datetime = parse_gregorian_from_str(input)?;
         let time_zone = match input
             .rfind(|c| c == '+' || /* ASCII */ c == '-' || /* U+2212 */ c == '−' || c == 'Z')
         {

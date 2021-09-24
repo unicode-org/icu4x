@@ -10,6 +10,7 @@ use crate::{AsCalendar, Date};
 /// This can work with wrappers arount [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait, much like
 /// [`Date`]
+#[derive(Debug)]
 pub struct DateTime<A: AsCalendar> {
     pub date: Date<A>,
     pub time: Time,

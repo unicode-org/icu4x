@@ -188,6 +188,7 @@ dt_unit!(
     "An ISO-8601 second component, for use with the [`IsoTimeInput`]."
 );
 
+#[derive(Debug)]
 pub struct Time {
     /// 0-based hour.
     pub hour: IsoHour,
