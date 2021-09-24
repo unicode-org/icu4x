@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632525379042,
+  "lastUpdate": 1632526555951,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8117,6 +8117,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 518996,
             "range": "± 5305",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3dd207490113fc19549732cc56f0d2a5ccdc5c36",
+          "message": "Introduce GenericPattern (#1101)",
+          "timestamp": "2021-09-24T16:29:25-07:00",
+          "tree_id": "67fc59cc3d73e7880b3cc553a362d1685165a666",
+          "url": "https://github.com/unicode-org/icu4x/commit/3dd207490113fc19549732cc56f0d2a5ccdc5c36"
+        },
+        "date": 1632526552601,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 266234,
+            "range": "± 822",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1371123,
+            "range": "± 13209",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 515531,
+            "range": "± 1311",
             "unit": "ns/iter"
           }
         ]
