@@ -8,9 +8,11 @@ pub mod week_of {
 
     pub const MIN_UNIT_DAYS: u16 = 14;
 
+    /// Information about how a given calendar assigns weeks to a year or month.
     pub struct CalendarInfo {
+        /// The first day of a week.
         pub first_weekday: IsoWeekday,
-        // For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
+        /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
         pub min_week_days: u8,
     }
 
@@ -27,20 +29,28 @@ pub mod week_of {
         IsoWeekday::from(new_weekday as usize)
     }
 
+    /// Which year or month that a calendar assigns a week to relative to the year/month
+    /// the week is in.
     #[derive(Clone, Copy, Debug, PartialEq)]
     enum RelativeWeek {
+        /// A week that is assigned to the last week of the previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
         LastWeekOfPreviousUnit,
-        // 1-based.
+        /// A week that's assigned to the current year/month. The offset is 1-based. e.g. 2021-01-11 is week 2 of 2021 per the ISO calendar so would be WeekOfCurrentUnit(2).
         WeekOfCurrentUnit(u16),
+        /// A week that is assigned to the first week of the next year/month. e.g. 2019-12-31 is week 1 of 2020 per the ISO calendar.
         FirstWeekOfNextUnit,
     }
 
+    /// Information about a year or month.
     struct UnitInfo {
+        /// The weekday of ths year/month's first day.
         first_day: IsoWeekday,
+        /// The number of days in this year/month.
         duration_days: u16,
     }
 
     impl UnitInfo {
+        /// Creates a UnitInfo for a given year or month.
         fn new(first_day: IsoWeekday, duration_days: u16) -> Result<UnitInfo, DateTimeError> {
             if duration_days < MIN_UNIT_DAYS {
                 return Err(DateTimeError::Underflow {
@@ -95,13 +105,18 @@ pub mod week_of {
         }
     }
 
+    /// The year or month that a calendar assigns a week to relative to the year/month that it is in.
     #[derive(Debug, PartialEq)]
     pub enum RelativeUnit {
+        /// A week that is assigned to previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
         Previous,
+        /// A week that's assigned to the current year/month. e.g. 2021-01-11 is week 2 of 2021 per the ISO calendar.
         Current,
+        /// A week that is assigned to the next year/month. e.g. 2019-12-31 is week 1 of 2020 per the ISO calendar.
         Next,
     }
 
+    /// The week number assigned to a given week according to a calendar.
     #[derive(Debug, PartialEq)]
     pub struct WeekOf {
         /// Week of month/year. 1 based.
