@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod error;
+mod generic;
 mod parser;
 pub mod transform_hour_cycle;
 
