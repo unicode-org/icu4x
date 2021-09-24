@@ -90,11 +90,11 @@ impl Calendar for Gregorian {
 impl Date<Gregorian> {
     /// Construct a new Gregorian Date
     pub fn new_gregorian_date(
-        day: IsoDay,
-        month: IsoMonth,
         year: IsoYear,
+        month: IsoMonth,
+        day: IsoDay,
     ) -> Result<Date<Gregorian>, DateTimeError> {
-        Date::new_iso_date(day, month, year).map(|d| Date::new_from_iso(d, Gregorian))
+        Date::new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
     }
 }
 
@@ -103,15 +103,15 @@ impl DateTime<Gregorian> {
     ///
     /// Years are specified as ISO years
     pub fn new_gregorian_datetime_from_integers(
-        day: u8,
-        month: u8,
         year: i32,
+        month: u8,
+        day: u8,
         hour: u8,
         minute: u8,
         second: u8,
     ) -> Result<DateTime<Gregorian>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_gregorian_date(day.try_into()?, month.try_into()?, year.into())?,
+            date: Date::new_gregorian_date(year.into(), month.try_into()?, day.try_into()?)?,
             time: types::Time::try_new(hour, minute, second)?,
         })
     }

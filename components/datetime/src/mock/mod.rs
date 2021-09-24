@@ -35,5 +35,5 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     let hour: u8 = input[11..13].parse()?;
     let minute: u8 = input[14..16].parse()?;
     let second: u8 = input[17..19].parse()?;
-    DateTime::new_gregorian_datetime_from_integers(day, month, year, hour, minute, second)
+    DateTime::new_gregorian_datetime_from_integers(year, month, day, hour, minute, second)
 }
