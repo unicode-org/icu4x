@@ -144,9 +144,13 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
                 Pattern::from_bytes(pattern_str as &str).expect("Unable to parse a pattern");
 
             match variant_parts.as_slice() {
+                // A single pattern for a skeleton.
+                // i.e. <dateFormatItem id=${skeleton_str}>${pattern}</dateFormatItem>
                 [] => {
                     skeletons.insert(skeleton_fields_v1, pattern.into());
                 }
+                // One of several pattern plural variants for a given skeleton.
+                // i.e. <dateFormatItem id=${skeleton_str} count=${plural_category_str}>${pattern}</dateFormatItem>
                 ["count", plural_category_str] => {
                     let plural_category = PluralCategory::from_tr35_string(plural_category_str)
                         .expect("Unable to parse a plural category");
