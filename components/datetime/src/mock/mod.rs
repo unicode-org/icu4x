@@ -7,9 +7,6 @@
 
 use icu_calendar::{DateTime, DateTimeError, Gregorian};
 
-/// Temporary DateTime input utilities.
-pub mod datetime;
-
 /// Temporary time zone input utilities.
 pub mod time_zone;
 
