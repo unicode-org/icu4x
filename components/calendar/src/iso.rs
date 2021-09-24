@@ -285,7 +285,7 @@ impl Date<Iso> {
     ) -> Result<Date<Iso>, DateTimeError> {
         if day.0 > 28 {
             let bound = Iso::days_in_month(year, month);
-            if day.0 < bound {
+            if day.0 > bound {
                 return Err(DateTimeError::OutOfRange);
             }
         }
