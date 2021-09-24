@@ -436,7 +436,7 @@ mod test {
     #[test]
     fn test_offset() {
         let today = Date::new_iso_date_from_integers(2021, 6, 23).unwrap();
-        let today_plus_5000 = Date::new_iso_date_from_integers(2035,3, 2,).unwrap();
+        let today_plus_5000 = Date::new_iso_date_from_integers(2035, 3, 2).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, 5000));
         assert_eq!(offset, today_plus_5000);
         let offset = today
