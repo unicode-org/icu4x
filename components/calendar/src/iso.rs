@@ -161,13 +161,13 @@ impl Calendar for Iso {
         // https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week#Corresponding_months
         let month_offset = if Self::is_leap_year(date.year) {
             match date.month.0 {
-                1 | 4 | 7 => 0,
-                10 => 1,
-                5 => 2,
-                2 | 8 => 3,
-                3 | 11 => 4,
-                6 => 5,
-                9 | 12 => 6,
+                10 => 0,
+                5 => 1,
+                2 | 8 => 2,
+                3 | 11 => 3,
+                6 => 4,
+                9 | 12 => 5,
+                1 | 4 | 7 => 6,
                 _ => unreachable!(),
             }
         } else {
@@ -384,6 +384,13 @@ mod test {
                 .unwrap()
                 .day_of_week(),
             IsoWeekday::Wednesday,
+        );
+        // Jan 21, 2021 was a Tuesday
+        assert_eq!(
+            Date::new_iso_date_from_integers(21, 1, 2020)
+                .unwrap()
+                .day_of_week(),
+            IsoWeekday::Tuesday,
         );
     }
 
