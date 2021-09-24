@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632433298141,
+  "lastUpdate": 1632447929784,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4679,6 +4679,144 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d821987ada3f86d2fbba8777c81184ba3fe71aa6"
         },
         "date": 1632433294429,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "language_names_lite_map+opt.wasm.gz",
+            "value": 3273,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm.gz",
+            "value": 2936,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple+opt.wasm.gz",
+            "value": 119479,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm.gz",
+            "value": 3595,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm.gz",
+            "value": 12938,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm.gz",
+            "value": 7114,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm.gz",
+            "value": 4688,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm.gz",
+            "value": 6044,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm.gz",
+            "value": 2962,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm.gz",
+            "value": 225,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm.gz",
+            "value": 2955,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm.gz",
+            "value": 4024,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm.gz",
+            "value": 3961,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm.gz",
+            "value": 9182,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm.gz",
+            "value": 2931,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm.gz",
+            "value": 5830,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm.gz",
+            "value": 3806,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm.gz",
+            "value": 2958,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm.gz",
+            "value": 5731,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6dfdac6ae98bdd2d96d83c13f423a42c7f307b93",
+          "message": "Switch DTF field symbols to use macros. (#1093)\n\n* Switch DTF field symbols to use macros.\r\n\r\n* Revert Minute changes",
+          "timestamp": "2021-09-23T18:40:36-07:00",
+          "tree_id": "a90826366e0d1cec72aaeef4a1c4311b3bda0835",
+          "url": "https://github.com/unicode-org/icu4x/commit/6dfdac6ae98bdd2d96d83c13f423a42c7f307b93"
+        },
+        "date": 1632447925934,
         "tool": "ndjson",
         "benches": [
           {
