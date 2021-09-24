@@ -177,6 +177,8 @@ jobs:
       with:
         command: make
         args: ci-job-ffi
+        env:
+          CXX: g++-10
 
 
   # Feature coverage job - builds all permutations of features
