@@ -27,7 +27,7 @@ use icu_calendar::{DateTime, Gregorian};
 /// ```
 /// use icu::datetime::mock::parse_gregorian_from_str;
 /// use icu::datetime::mock::time_zone::MockTimeZone;
-/// use icu_calendar::{DateTime, Gregorian};
+/// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
 ///
 /// let dt: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00")

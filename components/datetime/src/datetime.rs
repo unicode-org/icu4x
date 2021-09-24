@@ -37,7 +37,7 @@ use crate::{
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
 /// use icu::datetime::{DateTimeFormat, options::length};
-/// use icu_calendar::DateTime;
+/// use icu::calendar::DateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let locale: Locale = langid!("en").into();
@@ -179,7 +179,7 @@ impl<'data> DateTimeFormat<'data> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_calendar::DateTime;
+    /// use icu::calendar::DateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -219,7 +219,7 @@ impl<'data> DateTimeFormat<'data> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_calendar::DateTime;
+    /// use icu::calendar::DateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -259,7 +259,7 @@ impl<'data> DateTimeFormat<'data> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_calendar::DateTime;
+    /// use icu::calendar::DateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;

@@ -28,7 +28,7 @@ use writeable::Writeable;
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
 /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-/// use icu_calendar::DateTime;
+/// use icu::calendar::DateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 /// let locale: Locale = langid!("en").into();
 /// # let provider = InvariantDataProvider;

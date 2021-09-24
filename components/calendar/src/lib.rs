@@ -4,7 +4,7 @@
 
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
-//! The `icu_calendars` crate contains the core types used by ICU4X for dealing
+//! The `icu_calendar` crate contains the core types used by ICU4X for dealing
 //! with dates, times, and custom calendars.
 //!
 //! The [`types`] module has a lot of common types for dealing with dates and times.
