@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632525348090,
+  "lastUpdate": 1632526515127,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10349,6 +10349,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 127894,
             "range": "± 16226",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3dd207490113fc19549732cc56f0d2a5ccdc5c36",
+          "message": "Introduce GenericPattern (#1101)",
+          "timestamp": "2021-09-24T16:29:25-07:00",
+          "tree_id": "67fc59cc3d73e7880b3cc553a362d1685165a666",
+          "url": "https://github.com/unicode-org/icu4x/commit/3dd207490113fc19549732cc56f0d2a5ccdc5c36"
+        },
+        "date": 1632526511710,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117228,
+            "range": "± 5211",
             "unit": "ns/iter"
           }
         ]
