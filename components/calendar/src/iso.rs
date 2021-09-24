@@ -144,9 +144,7 @@ impl Calendar for Iso {
         Self::days_in_month(date.year, date.month)
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> u8 {
-        // TODO (Manishearth) share code with icu_datetime
-
+    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
         // For the purposes of the calculation here, Monday is 0, Sunday is 6
         // ISO has Monday=1, Sunday=7, which we transform in the last step
 
@@ -189,7 +187,7 @@ impl Calendar for Iso {
         let day_offset = (january_1_2000 + year_offset + month_offset + date.day.0 as i32) % 7;
 
         // We calculated in a zero-indexed fashion, but ISO specifies one-indexed
-        (day_offset + 1) as u8
+        types::IsoWeekday::from((day_offset + 1) as usize)
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, mut offset: DateDuration<Self>) {
@@ -318,6 +316,7 @@ impl Iso {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::types::IsoWeekday;
 
     #[test]
     fn test_day_of_week() {
@@ -326,14 +325,14 @@ mod test {
             Date::new_iso_date_from_integers(23, 6, 2021)
                 .unwrap()
                 .day_of_week(),
-            3
+            IsoWeekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
             Date::new_iso_date_from_integers(2, 2, 1983)
                 .unwrap()
                 .day_of_week(),
-            3
+            IsoWeekday::Wednesday,
         );
     }
 

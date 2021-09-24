@@ -69,7 +69,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Monday is 1, Sunday is 7, according to ISO
     #[inline]
-    pub fn day_of_week(&self) -> u8 {
+    pub fn day_of_week(&self) -> types::IsoWeekday {
         self.calendar.as_calendar().day_of_week(self.inner())
     }
 
