@@ -8,7 +8,8 @@ The [`types`] module has a lot of common types for dealing with dates and times.
 [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]
 can represent dates for arbitrary calendars.
 
-The [`iso`] module contains an implementation for the ISO calendar.
+The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
+Gregorian calendars respectively.
 
 ## More Information
 
