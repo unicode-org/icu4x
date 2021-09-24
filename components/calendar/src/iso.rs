@@ -259,6 +259,18 @@ impl Calendar for Iso {
         date.day.into()
     }
 
+    /// Information of the day of the year
+    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
+        let prev_year = IsoYear(date.year.0 - 1);
+        let next_year = IsoYear(date.year.0 + 1);
+        types::DayOfYearInfo {
+            day_of_year: Iso::day_of_year(*date),
+            days_in_year: Iso::days_in_year(date.year),
+            prev_year: prev_year.into(),
+            next_year: next_year.into(),
+        }
+    }
+
     fn debug_name() -> &'static str {
         "ISO"
     }
@@ -311,6 +323,28 @@ impl Iso {
             _ => 31,
         }
     }
+
+    fn days_in_year(year: IsoYear) -> u32 {
+        if Self::is_leap_year(year) {
+            366
+        } else {
+            365
+        }
+    }
+
+    fn day_of_year(date: IsoDateInner) -> u32 {
+        // Cumulatively how much are dates in each month
+        // offset from "30 days in each month" (in non leap years)
+        let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
+        let mut offset = month_offset[date.month.0 as usize - 1];
+        if Self::is_leap_year(date.year) && date.month.0 > 2 {
+            // Months after February in a leap year are offset by one less
+            offset += 1;
+        }
+        let prev_month_days = (30 * (date.month.0 as i32 - 1) + offset) as u32;
+
+        prev_month_days + date.day.0 as u32
+    }
 }
 
 #[cfg(test)]
@@ -333,6 +367,34 @@ mod test {
                 .unwrap()
                 .day_of_week(),
             IsoWeekday::Wednesday,
+        );
+    }
+
+    #[test]
+    fn test_day_of_year() {
+        // June 23, 2021 was day 174
+        assert_eq!(
+            Date::new_iso_date_from_integers(23, 6, 2021)
+                .unwrap()
+                .day_of_year_info()
+                .day_of_year,
+            174,
+        );
+        // June 23, 2020 was day 175
+        assert_eq!(
+            Date::new_iso_date_from_integers(23, 6, 2020)
+                .unwrap()
+                .day_of_year_info()
+                .day_of_year,
+            175,
+        );
+        // Feb 2, 1983 was a Wednesday
+        assert_eq!(
+            Date::new_iso_date_from_integers(2, 2, 1983)
+                .unwrap()
+                .day_of_year_info()
+                .day_of_year,
+            33,
         );
     }
 

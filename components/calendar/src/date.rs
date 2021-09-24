@@ -116,6 +116,11 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().day_of_month(&self.inner)
     }
 
+    /// The calendar-specific day-of-month represented by `self`
+    pub fn day_of_year_info(&self) -> types::DayOfYearInfo {
+        self.calendar.as_calendar().day_of_year_info(&self.inner)
+    }
+
     /// Construct a date from raw values for a given calendar. This does not check any
     /// invariants for the date and calendar, and should only be called by calendar implementations.
     ///

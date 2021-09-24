@@ -61,4 +61,7 @@ pub trait Calendar {
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;
+
+    /// Information of the day of the year
+    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo;
 }
