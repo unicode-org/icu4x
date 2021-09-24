@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -21,6 +22,9 @@ struct ICU4XPluralOperands;
 #include "ICU4XPluralCategory.hpp"
 struct ICU4XPluralCategories;
 
+/**
+ * A destruction policy for using ICU4XPluralRules with std::unique_ptr.
+ */
 struct ICU4XPluralRulesDeleter {
   void operator()(capi::ICU4XPluralRules* l) const noexcept {
     capi::ICU4XPluralRules_destroy(l);
@@ -28,8 +32,23 @@ struct ICU4XPluralRulesDeleter {
 };
 class ICU4XPluralRules {
  public:
+
+  /**
+   * FFI version of `PluralRules::try_new()`.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
+   */
   static ICU4XCreatePluralRulesResult create(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XPluralRuleType ty);
+
+  /**
+   * FFI version of `PluralRules::select()`.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select) for more details.
+   */
   ICU4XPluralCategory select(const ICU4XPluralOperands& op) const;
+
+  /**
+   * FFI version of `PluralRules::categories()`.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.categories) for more details.
+   */
   ICU4XPluralCategories categories() const;
   inline const capi::ICU4XPluralRules* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XPluralRules* AsFFIMut() { return this->inner.get(); }

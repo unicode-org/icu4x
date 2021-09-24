@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -20,6 +21,9 @@ struct ICU4XFixedDecimalFormatResult;
 class ICU4XStaticDataProvider;
 class ICU4XFixedDecimal;
 
+/**
+ * A destruction policy for using ICU4XFixedDecimalFormat with std::unique_ptr.
+ */
 struct ICU4XFixedDecimalFormatDeleter {
   void operator()(capi::ICU4XFixedDecimalFormat* l) const noexcept {
     capi::ICU4XFixedDecimalFormat_destroy(l);
@@ -27,9 +31,26 @@ struct ICU4XFixedDecimalFormatDeleter {
 };
 class ICU4XFixedDecimalFormat {
  public:
+
+  /**
+   * Creates a new [`ICU4XFixedDecimalFormat`] from locale data. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
+   */
   static ICU4XFixedDecimalFormatResult try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XFixedDecimalFormatOptions options);
+
+  /**
+   * Creates a new [`ICU4XFixedDecimalFormat`] from a [`ICU4XStaticDataProvider`].
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
+   */
   static ICU4XFixedDecimalFormatResult try_new_from_static(const ICU4XLocale& locale, const ICU4XStaticDataProvider& provider, ICU4XFixedDecimalFormatOptions options);
+
+  /**
+   * Formats a [`ICU4XFixedDecimal`] to a string. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.format) for more information.
+   */
   template<typename W> diplomat::result<std::monostate, std::monostate> format_to_writeable(const ICU4XFixedDecimal& value, W& write) const;
+
+  /**
+   * Formats a [`ICU4XFixedDecimal`] to a string. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.format) for more information.
+   */
   diplomat::result<std::string, std::monostate> format(const ICU4XFixedDecimal& value) const;
   inline const capi::ICU4XFixedDecimalFormat* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XFixedDecimalFormat* AsFFIMut() { return this->inner.get(); }

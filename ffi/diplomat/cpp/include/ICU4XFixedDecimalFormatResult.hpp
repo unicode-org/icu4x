@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -15,6 +16,9 @@ namespace capi {
 
 class ICU4XFixedDecimalFormat;
 
+/**
+ * A destruction policy for using ICU4XFixedDecimalFormatResult with std::unique_ptr.
+ */
 struct ICU4XFixedDecimalFormatResultDeleter {
   void operator()(capi::ICU4XFixedDecimalFormatResult* l) const noexcept {
     capi::ICU4XFixedDecimalFormatResult_destroy(l);
@@ -22,7 +26,15 @@ struct ICU4XFixedDecimalFormatResultDeleter {
 };
 struct ICU4XFixedDecimalFormatResult {
  public:
+
+  /**
+   * The [`ICU4XFixedDecimalFormat`], exists if creation was successful.
+   */
   std::optional<ICU4XFixedDecimalFormat> fdf;
+
+  /**
+   * Whether creating the [`ICU4XFixedDecimalFormat`] was successful.
+   */
   bool success;
 };
 

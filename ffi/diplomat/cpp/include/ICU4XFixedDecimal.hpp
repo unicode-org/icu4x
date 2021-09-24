@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -16,6 +17,9 @@ namespace capi {
 class ICU4XFixedDecimal;
 struct ICU4XCreateFixedDecimalResult;
 
+/**
+ * A destruction policy for using ICU4XFixedDecimal with std::unique_ptr.
+ */
 struct ICU4XFixedDecimalDeleter {
   void operator()(capi::ICU4XFixedDecimal* l) const noexcept {
     capi::ICU4XFixedDecimal_destroy(l);
@@ -23,11 +27,41 @@ struct ICU4XFixedDecimalDeleter {
 };
 class ICU4XFixedDecimal {
  public:
+
+  /**
+   * Construct an [`ICU4XFixedDecimal`] from an integer.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+   */
   static ICU4XFixedDecimal create(int32_t v);
+
+  /**
+   * Construct an [`ICU4XFixedDecimal`] from a string.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+   */
   static ICU4XCreateFixedDecimalResult create_fromstr(const std::string_view v);
+
+  /**
+   * Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
+   */
   bool multiply_pow10(int16_t power);
+
+  /**
+   * Invert the sign of the [`ICU4XFixedDecimal`].
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
+   */
   void negate();
+
+  /**
+   * Format the [`ICU4XFixedDecimal`] as a string.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
+   */
   template<typename W> void to_string_to_writeable(W& to) const;
+
+  /**
+   * Format the [`ICU4XFixedDecimal`] as a string.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
+   */
   std::string to_string() const;
   inline const capi::ICU4XFixedDecimal* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XFixedDecimal* AsFFIMut() { return this->inner.get(); }

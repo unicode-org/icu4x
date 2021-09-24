@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -15,11 +16,19 @@ namespace capi {
 
 struct ICU4XCreatePluralOperandsResult;
 
+/**
+ * A destruction policy for using ICU4XPluralOperands with std::unique_ptr.
+ */
 struct ICU4XPluralOperandsDeleter {
   void operator()(capi::ICU4XPluralOperands* l) const noexcept {
     capi::ICU4XPluralOperands_destroy(l);
   }
 };
+
+/**
+ * FFI version of `PluralOperands`.
+ * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more details.
+ */
 struct ICU4XPluralOperands {
  public:
   uint64_t i;
@@ -28,6 +37,11 @@ struct ICU4XPluralOperands {
   uint64_t f;
   uint64_t t;
   size_t c;
+
+  /**
+   * FFI version of `PluralOperands::from_str()`.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str) for more details.
+   */
   static ICU4XCreatePluralOperandsResult create(const std::string_view s);
 };
 

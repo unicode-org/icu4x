@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -15,6 +16,9 @@ namespace capi {
 
 class ICU4XPluralRules;
 
+/**
+ * A destruction policy for using ICU4XCreatePluralRulesResult with std::unique_ptr.
+ */
 struct ICU4XCreatePluralRulesResultDeleter {
   void operator()(capi::ICU4XCreatePluralRulesResult* l) const noexcept {
     capi::ICU4XCreatePluralRulesResult_destroy(l);
