@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632447727446,
+  "lastUpdate": 1632525040998,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -358,6 +358,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 582688,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b890acff2184b6a8857a5193fd20cbf55b55cd6b",
+          "message": "Make DTF PatternItem Copy (#1098)\n\n* Switch Skeletons to work on chars\r\n\r\n* Switch API of field type index operations to be more explicit.\r\n\r\n* Switch PatternItem::Literal to be a char",
+          "timestamp": "2021-09-24T16:09:33-07:00",
+          "tree_id": "aec04be38b879ace95b7434cb704bd2e92cde362",
+          "url": "https://github.com/unicode-org/icu4x/commit/b890acff2184b6a8857a5193fd20cbf55b55cd6b"
+        },
+        "date": 1632525037857,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
             "unit": "bytes",
             "biggerIsBetter": false
           }
