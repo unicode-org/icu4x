@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632525411315,
+  "lastUpdate": 1632526557543,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13025,6 +13025,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5575,
             "range": "± 383",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3dd207490113fc19549732cc56f0d2a5ccdc5c36",
+          "message": "Introduce GenericPattern (#1101)",
+          "timestamp": "2021-09-24T16:29:25-07:00",
+          "tree_id": "67fc59cc3d73e7880b3cc553a362d1685165a666",
+          "url": "https://github.com/unicode-org/icu4x/commit/3dd207490113fc19549732cc56f0d2a5ccdc5c36"
+        },
+        "date": 1632526552665,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2359,
+            "range": "± 210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4212,
+            "range": "± 319",
             "unit": "ns/iter"
           }
         ]
