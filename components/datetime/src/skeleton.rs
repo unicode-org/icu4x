@@ -775,7 +775,7 @@ pub fn get_best_available_format_pattern(
                         }
                     }
                     // There's no match, or this is a string literal return the original item.
-                    item.clone()
+                    *item
                 })
                 .collect::<Vec<PatternItem>>(),
         )

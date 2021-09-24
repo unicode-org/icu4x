@@ -26,14 +26,14 @@ use serde::{
     Deserialize, Deserializer, Serialize,
 };
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub enum PatternItem {
     Field(fields::Field),
-    Literal(String),
+    Literal(char),
 }
 
 impl From<(FieldSymbol, FieldLength)> for PatternItem {
@@ -57,14 +57,8 @@ impl TryFrom<(FieldSymbol, u8)> for PatternItem {
     }
 }
 
-impl<'p> From<&str> for PatternItem {
-    fn from(input: &str) -> Self {
-        Self::Literal(input.into())
-    }
-}
-
-impl<'p> From<String> for PatternItem {
-    fn from(input: String) -> Self {
+impl From<char> for PatternItem {
+    fn from(input: char) -> Self {
         Self::Literal(input)
     }
 }
@@ -136,6 +130,66 @@ impl From<Vec<PatternItem>> for Pattern {
     }
 }
 
+impl From<&str> for Pattern {
+    fn from(items: &str) -> Self {
+        Self {
+            time_granularity: None,
+            items: items.chars().map(|ch| ch.into()).collect(),
+        }
+    }
+}
+
+fn dump_buffer_into_formatter(literal: &str, formatter: &mut fmt::Formatter) -> fmt::Result {
+    if literal.is_empty() {
+        return Ok(());
+    }
+    // Determine if the literal contains any characters that would need to be escaped.
+    let mut needs_escaping = false;
+    for ch in literal.chars() {
+        if ch.is_ascii_alphabetic() || ch == '\'' {
+            needs_escaping = true;
+            break;
+        }
+    }
+
+    if needs_escaping {
+        let mut ch_iter = literal.trim_end().chars().peekable();
+
+        // Do not escape the leading whitespace.
+        while let Some(ch) = ch_iter.peek() {
+            if ch.is_whitespace() {
+                formatter.write_char(*ch)?;
+                ch_iter.next();
+            } else {
+                break;
+            }
+        }
+
+        // Wrap in "'" and escape "'".
+        formatter.write_char('\'')?;
+        for ch in ch_iter {
+            if ch == '\'' {
+                // Escape a single quote.
+                formatter.write_char('\\')?;
+            }
+            formatter.write_char(ch)?;
+        }
+        formatter.write_char('\'')?;
+
+        // Add the trailing whitespace
+        for ch in literal.chars().rev() {
+            if ch.is_whitespace() {
+                formatter.write_char(ch)?;
+            } else {
+                break;
+            }
+        }
+    } else {
+        formatter.write_str(literal)?;
+    }
+    Ok(())
+}
+
 /// This trait is implemented in order to provide the machinery to convert a [`Pattern`] to a UTS 35
 /// pattern string. It could also be implemented as the Writeable trait, but at the time of writing
 /// this was not done, as this code would need to implement the [`write_len()`] method, which would
@@ -143,62 +197,24 @@ impl From<Vec<PatternItem>> for Pattern {
 /// the data providers and is not as performance sensitive.
 impl fmt::Display for Pattern {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        for pattern_item in self.items().iter() {
+        let mut buffer = String::new();
+        for pattern_item in self.items.iter() {
             match pattern_item {
                 PatternItem::Field(field) => {
+                    dump_buffer_into_formatter(&buffer, formatter)?;
+                    buffer.clear();
                     let ch: char = field.symbol.into();
                     for _ in 0..field.length as usize {
                         formatter.write_char(ch)?;
                     }
                 }
-                PatternItem::Literal(literal) => {
-                    // Determine if the literal contains any characters that would need to be escaped.
-                    let mut needs_escaping = false;
-                    for ch in literal.chars() {
-                        if ch.is_ascii_alphabetic() || ch == '\'' {
-                            needs_escaping = true;
-                            break;
-                        }
-                    }
-
-                    if needs_escaping {
-                        let mut ch_iter = literal.trim_end().chars().peekable();
-
-                        // Do not escape the leading whitespace.
-                        while let Some(ch) = ch_iter.peek() {
-                            if ch.is_whitespace() {
-                                formatter.write_char(*ch)?;
-                                ch_iter.next();
-                            } else {
-                                break;
-                            }
-                        }
-
-                        // Wrap in "'" and escape "'".
-                        formatter.write_char('\'')?;
-                        for ch in ch_iter {
-                            if ch == '\'' {
-                                // Escape a single quote.
-                                formatter.write_char('\\')?;
-                            }
-                            formatter.write_char(ch)?;
-                        }
-                        formatter.write_char('\'')?;
-
-                        // Add the trailing whitespace
-                        for ch in literal.chars().rev() {
-                            if ch.is_whitespace() {
-                                formatter.write_char(ch)?;
-                            } else {
-                                break;
-                            }
-                        }
-                    } else {
-                        formatter.write_str(literal)?;
-                    }
+                PatternItem::Literal(ch) => {
+                    buffer.push(*ch);
                 }
             }
         }
+        dump_buffer_into_formatter(&buffer, formatter)?;
+        buffer.clear();
         Ok(())
     }
 }

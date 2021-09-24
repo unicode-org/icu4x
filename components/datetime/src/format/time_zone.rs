@@ -55,7 +55,7 @@ where
     for item in pattern.items() {
         match item {
             PatternItem::Field(field) => write_field(field, time_zone_format, time_zone, w)?,
-            PatternItem::Literal(l) => w.write_str(l)?,
+            PatternItem::Literal(ch) => w.write_char(*ch)?,
         }
     }
     Ok(())

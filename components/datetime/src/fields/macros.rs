@@ -49,7 +49,7 @@ macro_rules! field_type {
             ///
             /// # Examples
             ///
-            /// ```
+            /// ```ignore
             /// use icu::datetime::fields::Month;
             ///
             /// assert_eq!(Month::StandAlone::idx(), 1);
@@ -60,7 +60,7 @@ macro_rules! field_type {
             /// This is mostly useful for serialization,
             /// and does not guarantee index stability between ICU4X
             /// versions.
-            pub(crate) fn idx(&self) -> u8 {
+            pub(crate) fn _idx(&self) -> u8 {
                 match self {
                     $(
                         $i::$val => $idx,
@@ -72,7 +72,7 @@ macro_rules! field_type {
             ///
             /// # Examples
             ///
-            /// ```
+            /// ```ignore
             /// use icu::datetime::fields::Month;
             ///
             /// assert_eq!(Month::from_idx(0), Month::Format);
@@ -83,7 +83,7 @@ macro_rules! field_type {
             /// This is mostly useful for serialization,
             /// and does not guarantee index stability between ICU4X
             /// versions.
-            pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+            pub(crate) fn _from_idx(idx: u8) -> Result<Self, SymbolError> {
                 match idx {
                     $(
                         $idx => Ok(Self::$val),

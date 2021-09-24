@@ -110,7 +110,7 @@ where
     for item in pattern.items() {
         match item {
             PatternItem::Field(field) => write_field(pattern, field, symbols, &loc_datetime, w)?,
-            PatternItem::Literal(l) => w.write_str(l)?,
+            PatternItem::Literal(ch) => w.write_char(*ch)?,
         }
     }
     Ok(())

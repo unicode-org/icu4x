@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::error::Error;
-use super::{Pattern, PatternItem};
+use super::{error::Error, Pattern, PatternItem};
 use crate::fields::FieldSymbol;
 use alloc::string::String;
 use alloc::vec;
@@ -90,8 +89,8 @@ impl<'p> Parser<'p> {
                 return Err(Error::UnclosedLiteral);
             }
             Segment::Literal { literal, .. } => {
-                if !literal.is_empty() {
-                    result.push(literal.into());
+                for ch in literal.chars() {
+                    result.push(ch.into());
                 }
             }
         }
@@ -198,9 +197,9 @@ mod tests {
                 "dd/MM/y",
                 vec![
                     (fields::Day::DayOfMonth.into(), FieldLength::TwoDigit).into(),
-                    "/".into(),
+                    '/'.into(),
                     (fields::Month::Format.into(), FieldLength::TwoDigit).into(),
-                    "/".into(),
+                    '/'.into(),
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
                 ],
             ),
@@ -208,9 +207,9 @@ mod tests {
                 "HH:mm:ss",
                 vec![
                     (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
-                    ":".into(),
+                    ':'.into(),
                     (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
-                    ":".into(),
+                    ':'.into(),
                     (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
                 ],
             ),
@@ -218,11 +217,11 @@ mod tests {
                 "y年M月d日",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    "年".into(),
+                    '年'.into(),
                     (fields::Month::Format.into(), FieldLength::One).into(),
-                    "月".into(),
+                    '月'.into(),
                     (fields::Day::DayOfMonth.into(), FieldLength::One).into(),
-                    "日".into(),
+                    '日'.into(),
                 ],
             ),
         ];
@@ -235,22 +234,26 @@ mod tests {
         }
     }
 
+    fn str2pis(input: &str) -> Vec<PatternItem> {
+        input.chars().map(Into::into).collect()
+    }
+
     #[test]
     fn pattern_parse_literals() {
         let samples = vec![
-            ("", vec![]),
-            (" ", vec![" ".into()]),
-            ("  ", vec!["  ".into()]),
-            (" żółć ", vec![" żółć ".into()]),
-            ("''", vec!["'".into()]),
-            (" ''", vec![" '".into()]),
-            (" '' ", vec![" ' ".into()]),
-            ("''''", vec!["''".into()]),
-            (" '' '' ", vec![" ' ' ".into()]),
-            ("ż'ół'ć", vec!["żółć".into()]),
-            ("ż'ó''ł'ć", vec!["żó'łć".into()]),
-            (" 'Ymd' ", vec![" Ymd ".into()]),
-            ("الأسبوع", vec!["الأسبوع".into()]),
+            ("", ""),
+            (" ", " "),
+            ("  ", "  "),
+            (" żółć ", " żółć "),
+            ("''", "'"),
+            (" ''", " '"),
+            (" '' ", " ' "),
+            ("''''", "''"),
+            (" '' '' ", " ' ' "),
+            ("ż'ół'ć", "żółć"),
+            ("ż'ó''ł'ć", "żó'łć"),
+            (" 'Ymd' ", " Ymd "),
+            ("الأسبوع", "الأسبوع"),
         ];
 
         for (string, pattern) in samples {
@@ -258,14 +261,14 @@ mod tests {
                 Parser::new(string)
                     .parse()
                     .expect("Parsing pattern failed."),
-                pattern,
+                str2pis(pattern),
             );
 
             assert_eq!(
                 Parser::new(string)
                     .parse_placeholders(vec![])
                     .expect("Parsing pattern failed."),
-                pattern,
+                str2pis(pattern),
             );
         }
 
@@ -314,14 +317,14 @@ mod tests {
                 "y ",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    " ".into(),
+                    ' '.into(),
                 ],
             ),
             (
                 "y M",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    " ".into(),
+                    ' '.into(),
                     (fields::Month::Format.into(), FieldLength::One).into(),
                 ],
             ),
@@ -329,7 +332,7 @@ mod tests {
                 "hh''a",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    "'".into(),
+                    '\''.into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
                 ],
             ),
@@ -337,7 +340,7 @@ mod tests {
                 "hh''b",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    "'".into(),
+                    '\''.into(),
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
@@ -345,7 +348,8 @@ mod tests {
                 "y'My'M",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    "My".into(),
+                    'M'.into(),
+                    'y'.into(),
                     (fields::Month::Format.into(), FieldLength::One).into(),
                 ],
             ),
@@ -353,16 +357,38 @@ mod tests {
                 "y 'My' M",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    " My ".into(),
+                    ' '.into(),
+                    'M'.into(),
+                    'y'.into(),
+                    ' '.into(),
                     (fields::Month::Format.into(), FieldLength::One).into(),
                 ],
             ),
-            (" 'r'. 'y'. ", vec![" r. y. ".into()]),
+            (
+                " 'r'. 'y'. ",
+                vec![
+                    ' '.into(),
+                    'r'.into(),
+                    '.'.into(),
+                    ' '.into(),
+                    'y'.into(),
+                    '.'.into(),
+                    ' '.into(),
+                ],
+            ),
             (
                 "hh 'o''clock' a",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    " o'clock ".into(),
+                    ' '.into(),
+                    'o'.into(),
+                    '\''.into(),
+                    'c'.into(),
+                    'l'.into(),
+                    'o'.into(),
+                    'c'.into(),
+                    'k'.into(),
+                    ' '.into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
                 ],
             ),
@@ -370,7 +396,15 @@ mod tests {
                 "hh 'o''clock' b",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    " o'clock ".into(),
+                    ' '.into(),
+                    'o'.into(),
+                    '\''.into(),
+                    'c'.into(),
+                    'l'.into(),
+                    'o'.into(),
+                    'c'.into(),
+                    'k'.into(),
+                    ' '.into(),
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
@@ -378,7 +412,7 @@ mod tests {
                 "hh''a",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    "'".into(),
+                    '\''.into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
                 ],
             ),
@@ -386,7 +420,7 @@ mod tests {
                 "hh''b",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    "'".into(),
+                    '\''.into(),
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
@@ -442,42 +476,26 @@ mod tests {
     #[test]
     fn pattern_parse_placeholders() {
         let samples = vec![
-            (
-                "{0}",
-                vec![Pattern::from(vec!["ONE".into()])],
-                vec!["ONE".into()],
-            ),
+            ("{0}", vec![Pattern::from("ONE")], str2pis("ONE")),
             (
                 "{0}{1}",
-                vec![
-                    Pattern::from(vec!["ONE".into()]),
-                    Pattern::from(vec!["TWO".into()]),
-                ],
-                vec!["ONE".into(), "TWO".into()],
+                vec![Pattern::from("ONE"), Pattern::from("TWO")],
+                str2pis("ONETWO"),
             ),
             (
                 "{0} 'at' {1}",
-                vec![
-                    Pattern::from(vec!["ONE".into()]),
-                    Pattern::from(vec!["TWO".into()]),
-                ],
-                vec!["ONE".into(), " at ".into(), "TWO".into()],
+                vec![Pattern::from("ONE"), Pattern::from("TWO")],
+                str2pis("ONE at TWO"),
             ),
             (
                 "{0}'at'{1}",
-                vec![
-                    Pattern::from(vec!["ONE".into()]),
-                    Pattern::from(vec!["TWO".into()]),
-                ],
-                vec!["ONE".into(), "at".into(), "TWO".into()],
+                vec![Pattern::from("ONE"), Pattern::from("TWO")],
+                str2pis("ONEatTWO"),
             ),
             (
                 "'{0}' 'at' '{1}'",
-                vec![
-                    Pattern::from(vec!["ONE".into()]),
-                    Pattern::from(vec!["TWO".into()]),
-                ],
-                vec!["{0} at {1}".into()],
+                vec![Pattern::from("ONE"), Pattern::from("TWO")],
+                str2pis("{0} at {1}"),
             ),
         ];
 
