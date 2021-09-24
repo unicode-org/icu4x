@@ -30,7 +30,7 @@ all-features = true
 icu_provider = { version = "0.3", path = "../../provider/core", features = ["provider_serde"] }
 icu_locid = { version = "0.3", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
-postcard = { version = "0.7.0" }
+postcard = { version = "0.7.0", default-features = false }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
 litemap = { version = "0.2.0", path = "../../utils/litemap/", features = ["serde"] }
 writeable = { path = "../../utils/writeable" }
