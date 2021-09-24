@@ -179,15 +179,15 @@ impl TryFrom<&str> for Skeleton {
     fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {
         let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
 
-        let mut iter = skeleton_string.bytes().peekable();
-        while let Some(byte) = iter.next() {
+        let mut iter = skeleton_string.chars().peekable();
+        while let Some(ch) = iter.next() {
             // Convert the byte to a valid field symbol.
-            let field_symbol = FieldSymbol::try_from(byte as char)?;
+            let field_symbol = FieldSymbol::try_from(ch)?;
 
-            // Go through the bytes to count how often it's repeated.
+            // Go through the chars to count how often it's repeated.
             let mut field_length: u8 = 1;
-            while let Some(next_byte) = iter.peek() {
-                if *next_byte != byte {
+            while let Some(next_ch) = iter.peek() {
+                if *next_ch != ch {
                     break;
                 }
                 field_length += 1;
@@ -775,7 +775,7 @@ pub fn get_best_available_format_pattern(
                         }
                     }
                     // There's no match, or this is a string literal return the original item.
-                    item.clone()
+                    *item
                 })
                 .collect::<Vec<PatternItem>>(),
         )
