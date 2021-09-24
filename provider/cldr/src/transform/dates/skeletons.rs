@@ -8,6 +8,7 @@ use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::{provider::*, skeleton::SkeletonError};
+use icu_plurals::PluralCategory;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -107,7 +108,6 @@ impl<'data> IterableDataProviderCore for DateSkeletonPatternsProvider<'data> {
 
 impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use crate::transform::plurals::parse_plural_category;
         use gregory::{patterns::PatternPluralsV1, SkeletonV1};
         use icu_datetime::pattern::reference::{Pattern, PatternPlurals, PluralPattern};
         use litemap::LiteMap;
@@ -148,7 +148,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
                     skeletons.insert(skeleton_fields_v1, pattern.into());
                 }
                 ["count", plural_category_str] => {
-                    let plural_category = parse_plural_category(plural_category_str)
+                    let plural_category = PluralCategory::from_tr35_string(plural_category_str)
                         .expect("Unable to parse a plural category");
 
                     match skeletons.get_mut(&skeleton_fields_v1) {
