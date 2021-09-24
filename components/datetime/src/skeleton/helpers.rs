@@ -135,10 +135,10 @@ pub fn create_best_pattern_for_fields<'a>(
 
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(mut pattern_plurals) = first_pattern_match {
-        pattern_plurals.0.patterns_iter_mut().for_each(|pattern| {
+        for pattern in pattern_plurals.0.patterns_iter_mut() {
             hour_cycle::naively_apply_preferences(pattern, &components.preferences);
             naively_apply_time_zone_name(pattern, &components.time_zone_name);
-        });
+        }
         return BestSkeleton::AllFieldsMatch(pattern_plurals);
     }
 
@@ -151,10 +151,10 @@ pub fn create_best_pattern_for_fields<'a>(
             }
             BestSkeleton::MissingOrExtraFields(mut pattern_plurals) => {
                 if date.is_empty() {
-                    pattern_plurals.0.patterns_iter_mut().for_each(|pattern| {
+                    for pattern in pattern_plurals.0.patterns_iter_mut() {
                         hour_cycle::naively_apply_preferences(pattern, &components.preferences);
                         naively_apply_time_zone_name(pattern, &components.time_zone_name);
-                    });
+                    }
                 }
                 BestSkeleton::MissingOrExtraFields(pattern_plurals)
             }
@@ -228,14 +228,14 @@ pub fn create_best_pattern_for_fields<'a>(
 
             let date_patterns = match date_patterns {
                 PatternPlurals::MultipleVariants(mut date_patterns) => {
-                    date_patterns.patterns_iter_mut().for_each(|date_pattern| {
+                    for date_pattern in date_patterns.patterns_iter_mut() {
                         *date_pattern = Pattern::from_bytes_combination(
                             bytes,
                             date_pattern.clone(),
                             time_pattern.clone(),
                         )
                         .expect("Failed to create a Pattern from bytes");
-                    });
+                    }
                     PatternPlurals::MultipleVariants(date_patterns)
                 }
                 PatternPlurals::SinglePattern(date_pattern) => PatternPlurals::SinglePattern(
@@ -304,7 +304,7 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 ///
 ///  For example the "d MMM y" pattern will be changed to "d MMMM y" given fields ["y", "MMMM", "d"].
 fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut Pattern) {
-    pattern.items_mut().iter_mut().for_each(|item| {
+    for item in pattern.items_mut() {
         if let PatternItem::Field(pattern_field) = item {
             if let Some(requested_field) = fields
                 .iter()
@@ -317,7 +317,7 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut Pattern) {
                 }
             }
         }
-    });
+    }
 }
 
 /// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
@@ -440,11 +440,10 @@ pub fn get_best_available_format_pattern(
         #[cfg(not(feature = "provider_transform_internals"))]
         panic!("This code branch should only be run when transforming provider code.");
     } else {
-        closest_format_pattern
-            .0
-            .patterns_iter_mut()
-            .for_each(|pattern| adjust_pattern_field_lengths(fields, pattern));
-    };
+        for pattern in closest_format_pattern.0.patterns_iter_mut() {
+            adjust_pattern_field_lengths(fields, pattern);
+        }
+    }
 
     if closest_distance >= SKELETON_EXTRA_SYMBOL {
         return BestSkeleton::MissingOrExtraFields(closest_format_pattern);
