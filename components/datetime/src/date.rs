@@ -5,6 +5,7 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
+use icu_calendar::{AsCalendar, Date, DateTime, Gregorian};
 use icu_locid::Locale;
 use tinystr::TinyStr8;
 
@@ -187,5 +188,81 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
 
     fn flexible_day_period(&self) {
         todo!("#487")
+    }
+}
+
+impl<A: AsCalendar<Calendar = Gregorian>> DateInput for Date<A> {
+    /// Gets the era and year input.
+    fn year(&self) -> Option<Year> {
+        Some(self.year())
+    }
+
+    /// Gets the month input.
+    fn month(&self) -> Option<Month> {
+        Some(self.month())
+    }
+
+    /// Gets the day input.
+    fn day_of_month(&self) -> Option<DayOfMonth> {
+        Some(self.day_of_month())
+    }
+
+    /// Gets the weekday input.
+    fn iso_weekday(&self) -> Option<IsoWeekday> {
+        Some(self.day_of_week())
+    }
+
+    /// Gets information on the position of the day within the year.
+    fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
+        Some(self.day_of_year_info())
+    }
+}
+
+impl<A: AsCalendar<Calendar = Gregorian>> DateInput for DateTime<A> {
+    /// Gets the era and year input.
+    fn year(&self) -> Option<Year> {
+        Some(self.date.year())
+    }
+
+    /// Gets the month input.
+    fn month(&self) -> Option<Month> {
+        Some(self.date.month())
+    }
+
+    /// Gets the day input.
+    fn day_of_month(&self) -> Option<DayOfMonth> {
+        Some(self.date.day_of_month())
+    }
+
+    /// Gets the weekday input.
+    fn iso_weekday(&self) -> Option<IsoWeekday> {
+        Some(self.date.day_of_week())
+    }
+
+    /// Gets information on the position of the day within the year.
+    fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
+        Some(self.date.day_of_year_info())
+    }
+}
+
+impl<A: AsCalendar<Calendar = Gregorian>> IsoTimeInput for DateTime<A> {
+    /// Gets the hour input.
+    fn hour(&self) -> Option<IsoHour> {
+        Some(self.time.hour)
+    }
+
+    /// Gets the minute input.
+    fn minute(&self) -> Option<IsoMinute> {
+        Some(self.time.minute)
+    }
+
+    /// Gets the second input.
+    fn second(&self) -> Option<IsoSecond> {
+        Some(self.time.second)
+    }
+
+    /// Gets the fractional second input.
+    fn fraction(&self) -> Option<FractionalSecond> {
+        None
     }
 }
