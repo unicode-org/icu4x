@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632433378153,
+  "lastUpdate": 1632448070065,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10289,6 +10289,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 126311,
             "range": "± 4584",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6dfdac6ae98bdd2d96d83c13f423a42c7f307b93",
+          "message": "Switch DTF field symbols to use macros. (#1093)\n\n* Switch DTF field symbols to use macros.\r\n\r\n* Revert Minute changes",
+          "timestamp": "2021-09-23T18:40:36-07:00",
+          "tree_id": "a90826366e0d1cec72aaeef4a1c4311b3bda0835",
+          "url": "https://github.com/unicode-org/icu4x/commit/6dfdac6ae98bdd2d96d83c13f423a42c7f307b93"
+        },
+        "date": 1632448067033,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 113254,
+            "range": "± 6958",
             "unit": "ns/iter"
           }
         ]
