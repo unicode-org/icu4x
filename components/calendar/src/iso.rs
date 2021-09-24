@@ -95,9 +95,9 @@ impl From<IsoDay> for types::DayOfMonth {
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 /// The inner date type used for representing Date<Iso>
 pub struct IsoDateInner {
-    day: IsoDay,
-    month: IsoMonth,
-    year: IsoYear,
+    pub(crate) day: IsoDay,
+    pub(crate) month: IsoMonth,
+    pub(crate) year: IsoYear,
 }
 
 impl IsoDateInner {
@@ -324,7 +324,7 @@ impl Iso {
         }
     }
 
-    fn days_in_year(year: IsoYear) -> u32 {
+    pub(crate) fn days_in_year(year: IsoYear) -> u32 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -332,7 +332,7 @@ impl Iso {
         }
     }
 
-    fn day_of_year(date: IsoDateInner) -> u32 {
+    pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
         // Cumulatively how much are dates in each month
         // offset from "30 days in each month" (in non leap years)
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];

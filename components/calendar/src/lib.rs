@@ -20,6 +20,7 @@ mod date;
 mod datetime;
 mod duration;
 mod error;
+pub mod gregorian;
 pub mod iso;
 pub mod types;
 
@@ -28,4 +29,5 @@ pub use date::{AsCalendar, Date};
 pub use datetime::DateTime;
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::DateTimeError;
+pub use gregorian::Gregorian;
 pub use iso::Iso;
