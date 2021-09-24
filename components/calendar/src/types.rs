@@ -187,6 +187,28 @@ dt_unit!(
     "An ISO-8601 second component, for use with the [`IsoTimeInput`]."
 );
 
+pub struct Time {
+    /// 0-based hour.
+    pub hour: IsoHour,
+
+    /// 0-based minute.
+    pub minute: IsoMinute,
+
+    /// 0-based second.
+    pub second: IsoSecond,
+}
+
+impl Time {
+    /// Do not validate the numeric input for this component.
+    pub const fn new(hour: IsoHour, minute: IsoMinute, second: IsoSecond) -> Self {
+        Self {
+            hour,
+            minute,
+            second,
+        }
+    }
+}
+
 // TODO(#485): Improve FractionalSecond.
 /// A placeholder for fractional seconds support. See [Issue #485](https://github.com/unicode-org/icu4x/issues/485)
 /// for tracking the support of this feature.

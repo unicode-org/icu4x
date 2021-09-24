@@ -17,6 +17,7 @@ extern crate alloc;
 
 mod calendar;
 mod date;
+mod datetime;
 mod duration;
 mod error;
 pub mod iso;
@@ -24,6 +25,7 @@ pub mod types;
 
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date};
+pub use datetime::DateTime;
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::DateTimeError;
 pub use iso::Iso;
