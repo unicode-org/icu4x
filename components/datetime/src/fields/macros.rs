@@ -44,6 +44,55 @@ macro_rules! field_type {
             $($val, )*
         }
 
+        impl $i {
+            /// Retrieves an index of the field variant.
+            ///
+            /// # Examples
+            ///
+            /// ```
+            /// use icu::datetime::fields::Month;
+            ///
+            /// assert_eq!(Month::StandAlone::idx(), 1);
+            /// ```
+            ///
+            /// # Stability
+            ///
+            /// This is mostly useful for serialization,
+            /// and does not guarantee index stability between ICU4X
+            /// versions.
+            pub(crate) fn idx(&self) -> u8 {
+                match self {
+                    $(
+                        $i::$val => $idx,
+                    )*
+                }
+            }
+
+            /// Retrieves a field variant from an index.
+            ///
+            /// # Examples
+            ///
+            /// ```
+            /// use icu::datetime::fields::Month;
+            ///
+            /// assert_eq!(Month::from_idx(0), Month::Format);
+            /// ```
+            ///
+            /// # Stability
+            ///
+            /// This is mostly useful for serialization,
+            /// and does not guarantee index stability between ICU4X
+            /// versions.
+            pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+                match idx {
+                    $(
+                        $idx => Ok(Self::$val),
+                    )*
+                    _ => Err(SymbolError::InvalidIndex(idx)),
+                }
+            }
+        }
+
         impl TryFrom<char> for $i {
             type Error = SymbolError;
 
@@ -68,32 +117,6 @@ macro_rules! field_type {
                 match input {
                     $(
                         $i::$val => $key,
-                    )*
-                }
-            }
-        }
-
-        // The conversion from/to `u8` is used for serialization/deserialization
-
-        impl TryFrom<u8> for $i {
-            type Error = SymbolError;
-
-            fn try_from(b: u8) -> Result<Self, Self::Error> {
-                match b {
-                    $(
-                        $idx => Ok(Self::$val),
-                    )*
-                    _ => Err(SymbolError::InvalidIndex(b)),
-                }
-            }
-        }
-
-
-        impl From<$i> for u8 {
-            fn from(b: $i) -> u8 {
-                match b {
-                    $(
-                        $i::$val => $idx,
                     )*
                 }
             }
