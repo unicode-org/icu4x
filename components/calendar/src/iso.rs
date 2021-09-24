@@ -4,8 +4,9 @@
 
 //! This module contains types and implementations for the ISO calendar
 
-use crate::{Calendar, Date, DateDuration, DateDurationUnit, DateTimeError};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTimeError};
 use core::convert::{TryFrom, TryInto};
+use tinystr::tinystr8;
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
@@ -62,6 +63,32 @@ impl From<IsoMonth> for u8 {
 impl From<IsoYear> for i32 {
     fn from(year: IsoYear) -> Self {
         year.0
+    }
+}
+
+impl From<IsoYear> for types::Year {
+    fn from(year: IsoYear) -> types::Year {
+        types::Year {
+            era: types::Era(tinystr8!(" ")),
+            number: year.0,
+            related_iso: year.0,
+        }
+    }
+}
+
+impl From<IsoMonth> for types::Month {
+    fn from(month: IsoMonth) -> types::Month {
+        types::Month {
+            number: month.0 as u32,
+            // TODO(#486): Implement month codes
+            code: types::MonthCode(tinystr8!("TODO")),
+        }
+    }
+}
+
+impl From<IsoDay> for types::DayOfMonth {
+    fn from(day: IsoDay) -> types::DayOfMonth {
+        types::DayOfMonth(day.0 as u32)
     }
 }
 
@@ -217,6 +244,21 @@ impl Calendar for Iso {
         difference.days = date1.day.0 as i32 - date2.day.0 as i32;
 
         difference
+    }
+
+    /// The calendar-specific year represented by `date`
+    fn year(&self, date: &Self::DateInner) -> types::Year {
+        date.year.into()
+    }
+
+    /// The calendar-specific month represented by `date`
+    fn month(&self, date: &Self::DateInner) -> types::Month {
+        date.month.into()
+    }
+
+    /// The calendar-specific day-of-month represented by `date`
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
+        date.day.into()
     }
 
     fn debug_name() -> &'static str {

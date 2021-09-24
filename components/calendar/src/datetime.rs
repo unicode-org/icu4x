@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Date, AsCalendar};
 use crate::types::Time;
+use crate::{AsCalendar, Date};
 
 /// A date+time for a given calendar
 ///
@@ -17,6 +17,6 @@ pub struct DateTime<A: AsCalendar> {
 
 impl<A: AsCalendar> DateTime<A> {
     pub fn new(date: Date<A>, time: Time) -> Self {
-        DateTime {date, time}
+        DateTime { date, time }
     }
 }

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Date, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Date, DateDuration, DateDurationUnit, Iso};
 
 /// A calendar implementation
 ///
@@ -54,4 +54,13 @@ pub trait Calendar {
     /// Obtain a name for the calendar for debug printing
     fn debug_name() -> &'static str;
     // fn since(&self, from: &Date<Self>, to: &Date<Self>) -> Duration<Self>, Error;
+
+    /// The calendar-specific year represented by `date`
+    fn year(&self, date: &Self::DateInner) -> types::Year;
+
+    /// The calendar-specific month represented by `date`
+    fn month(&self, date: &Self::DateInner) -> types::Month;
+
+    /// The calendar-specific day-of-month represented by `date`
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;
 }
