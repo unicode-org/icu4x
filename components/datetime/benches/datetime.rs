@@ -7,9 +7,10 @@ mod fixtures;
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::fmt::Write;
 
+use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::DateTimeFormat;
 use icu_datetime::{
-    mock::{datetime::MockDateTime, zoned_datetime::MockZonedDateTime},
+    mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     ZonedDateTimeFormat,
 };
 use icu_locid::Locale;
@@ -23,10 +24,12 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function(&format!("datetime_{}", name), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockDateTime> = fx
+                    let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().expect("Failed to parse value."))
+                        .map(|value| {
+                            parse_gregorian_from_str(value).expect("Failed to parse value.")
+                        })
                         .collect();
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
@@ -88,10 +91,10 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("DateTimeFormat/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockDateTime> = fx
+                    let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().unwrap())
+                        .map(|value| parse_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -113,10 +116,10 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("DateTimeFormat/format_to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockDateTime> = fx
+                    let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().unwrap())
+                        .map(|value| parse_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -135,10 +138,10 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedDateTime/format", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockDateTime> = fx
+                    let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().unwrap())
+                        .map(|value| parse_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -161,10 +164,10 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedDateTime/to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockDateTime> = fx
+                    let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().unwrap())
+                        .map(|value| parse_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Calendar, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 use core::fmt;
 
 /// Types that contain a calendar
@@ -69,7 +69,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Monday is 1, Sunday is 7, according to ISO
     #[inline]
-    pub fn day_of_week(&self) -> u8 {
+    pub fn day_of_week(&self) -> types::IsoWeekday {
         self.calendar.as_calendar().day_of_week(self.inner())
     }
 
@@ -99,6 +99,30 @@ impl<A: AsCalendar> Date<A> {
         self.calendar
             .as_calendar()
             .until(self.inner(), other.inner(), largest_unit, smallest_unit)
+    }
+
+    /// The calendar-specific year represented by `self`
+    #[inline]
+    pub fn year(&self) -> types::Year {
+        self.calendar.as_calendar().year(&self.inner)
+    }
+
+    /// The calendar-specific month represented by `self`
+    #[inline]
+    pub fn month(&self) -> types::Month {
+        self.calendar.as_calendar().month(&self.inner)
+    }
+
+    /// The calendar-specific day-of-month represented by `self`
+    #[inline]
+    pub fn day_of_month(&self) -> types::DayOfMonth {
+        self.calendar.as_calendar().day_of_month(&self.inner)
+    }
+
+    /// The calendar-specific day-of-month represented by `self`
+    #[inline]
+    pub fn day_of_year_info(&self) -> types::DayOfYearInfo {
+        self.calendar.as_calendar().day_of_year_info(&self.inner)
     }
 
     /// Construct a date from raw values for a given calendar. This does not check any
@@ -131,10 +155,7 @@ where
 
 impl<A: AsCalendar> Eq for Date<A> {}
 
-impl<A: AsCalendar> fmt::Debug for Date<A>
-where
-    <A::Calendar as Calendar>::DateInner: fmt::Debug,
-{
+impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(
             f,

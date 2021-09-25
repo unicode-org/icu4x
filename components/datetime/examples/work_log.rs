@@ -9,7 +9,8 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_datetime::mock::datetime::MockDateTime;
+use icu_calendar::{DateTime, Gregorian};
+use icu_datetime::mock::parse_gregorian_from_str;
 use icu_datetime::{options::length, DateTimeFormat};
 use icu_locid::Locale;
 use icu_locid_macros::langid;
@@ -46,8 +47,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     let dates = DATES_ISO
         .iter()
-        .map(|date| date.parse())
-        .collect::<Result<Vec<MockDateTime>, _>>()
+        .copied()
+        .map(parse_gregorian_from_str)
+        .collect::<Result<Vec<DateTime<Gregorian>>, _>>()
         .expect("Failed to parse dates.");
 
     let options = length::Bag {

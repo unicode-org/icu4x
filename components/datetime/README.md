@@ -13,7 +13,7 @@ used to quickly format any date and time provided.
 ```rust
 use icu::locid::Locale;
 use icu::locid::macros::langid;
-use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
+use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
 
 let provider = icu_testdata::get_provider();
 
@@ -30,7 +30,7 @@ let dtf = DateTimeFormat::try_new(locale, &provider, &options)
     .expect("Failed to create DateTimeFormat instance.");
 
 
-let date: MockDateTime = "2020-09-12T12:35:00".parse()
+let date = parse_gregorian_from_str("2020-09-12T12:35:00")
     .expect("Failed to parse date.");
 
 let formatted_date = dtf.format(&date);
@@ -43,7 +43,7 @@ convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 ```rust
 use icu::locid::Locale;
 use icu::locid::macros::langid;
-use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
+use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 let options = length::Bag {
     date: Some(length::Date::Medium),
     time: Some(length::Time::Short),
@@ -56,15 +56,16 @@ let dtf = DateTimeFormat::try_new(locale, &provider, &options);
 At the moment, the crate provides only options using the [`Length`] bag, but in the future,
 we expect to add more ways to customize the output, like skeletons, and components.
 
-*Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
-[`MockDateTime`] as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
+*Notice:* Rust at the moment does not have a canonical way to represent date and time. We use
+[`DateTime`] as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
 [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md)
-to develop core date and time APIs that will work as an input for this component.
+to develop core date and time APIs that will work as an input for this component. [`DateTime`] additionally
+has support for non-Gregorian calendars, which this module will eventually be able to format.
 
 [`DataProvider`]: icu_provider::DataProvider
 [`ICU4X`]: ../icu/index.html
 [`Length`]: options::length
-[`MockDateTime`]: mock::datetime::MockDateTime
+[`DateTime`]: icu_calendar::DateTime
 
 ## More Information
 

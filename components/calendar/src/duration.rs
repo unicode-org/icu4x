@@ -64,6 +64,17 @@ impl<C: Calendar + ?Sized> DateDuration<C> {
             marker: PhantomData,
         }
     }
+
+    /// Explicitly cast duration to one for a different calendar
+    pub fn cast_unit<C2: Calendar + ?Sized>(self) -> DateDuration<C2> {
+        DateDuration {
+            years: self.years,
+            months: self.months,
+            days: self.days,
+            weeks: self.weeks,
+            marker: PhantomData,
+        }
+    }
 }
 
 impl<C: Calendar> fmt::Debug for DateDuration<C> {

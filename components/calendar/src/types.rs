@@ -6,6 +6,7 @@
 
 use crate::error::DateTimeError;
 use core::convert::TryFrom;
+use core::convert::TryInto;
 use core::ops::{Add, Sub};
 use core::str::FromStr;
 use tinystr::TinyStr8;
@@ -186,6 +187,37 @@ dt_unit!(
     61,
     "An ISO-8601 second component, for use with the [`IsoTimeInput`]."
 );
+
+#[derive(Debug)]
+pub struct Time {
+    /// 0-based hour.
+    pub hour: IsoHour,
+
+    /// 0-based minute.
+    pub minute: IsoMinute,
+
+    /// 0-based second.
+    pub second: IsoSecond,
+}
+
+impl Time {
+    /// Do not validate the numeric input for this component.
+    pub const fn new(hour: IsoHour, minute: IsoMinute, second: IsoSecond) -> Self {
+        Self {
+            hour,
+            minute,
+            second,
+        }
+    }
+
+    pub fn try_new(hour: u8, minute: u8, second: u8) -> Result<Self, DateTimeError> {
+        Ok(Self {
+            hour: hour.try_into()?,
+            minute: minute.try_into()?,
+            second: second.try_into()?,
+        })
+    }
+}
 
 // TODO(#485): Improve FractionalSecond.
 /// A placeholder for fractional seconds support. See [Issue #485](https://github.com/unicode-org/icu4x/issues/485)
