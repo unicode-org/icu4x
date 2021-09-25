@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632528698030,
+  "lastUpdate": 1632530656610,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14573,6 +14573,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25890,
             "range": "± 1564",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "49079e09fa7fb6baa998ed1bcc0949a8174dbbe7",
+          "message": "Fix wasm-cpp-emscripten (#1099)",
+          "timestamp": "2021-09-24T19:37:04-05:00",
+          "tree_id": "51edaf9605a21b5d191b90ccf1836fcf4a8b7c7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/49079e09fa7fb6baa998ed1bcc0949a8174dbbe7"
+        },
+        "date": 1632530652732,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1261,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7387,
+            "range": "± 345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23730,
+            "range": "± 908",
             "unit": "ns/iter"
           }
         ]
