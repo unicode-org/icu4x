@@ -19,7 +19,20 @@ pub use plain::PlainOldULE;
 ///
 /// # Safety
 ///
-/// See the safety invariant documented on [`Self::from_byte_slice_unchecked()`] to implement this trait.
+/// There must be no padding bytes involved in this type: [`Self::as_byte_slice()`] MUST return
+/// a slice of initialized bytes provided that `Self` is initialized.
+///
+/// This method _must_ be implemented to return the same result as [`ULE::parse_byte_slice()`].
+///
+/// [`ULE::as_byte_slice()`] should return a slice that is the in-memory representation of `Self`,
+/// i.e. it should be just a pointer cast, and `mem::size_of_val(self) == mem::size_of_val(self.as_byte_slice())`=
+///
+/// # Equality invariant
+///
+/// A non-safety invariant is that if `Self` implements `PartialEq`, it *must* be logically equivalent to
+/// byte equality on `.as_byte_slice()`. Failure to follow this invariant will not cause undefined
+/// behavior, but may cause problems in the `PartialEq` implementations of `ZeroVec` and `VarZeroVec`,
+/// as well as the predictable operation of `ZeroMap`
 pub unsafe trait ULE
 where
     Self: Sized,
@@ -66,9 +79,9 @@ where
     ///
     /// # Safety
     ///
-    /// In most cases, the implementation of this function should involve re-casting the pointer.
+    /// The implementation of this function should involve re-casting the pointer.
     /// It is up to the implementation to reason about the safety. Keep in mind that `&[Self]` and
-    /// `&[u8]` may have different lengths.
+    /// `&[u8]` may have different lengths (but should cover the same data).
     #[allow(clippy::wrong_self_convention)] // https://github.com/rust-lang/rust-clippy/issues/7219
     fn as_byte_slice(slice: &[Self]) -> &[u8];
 }
@@ -194,6 +207,16 @@ pub trait AsVarULE {
 ///
 /// [`VarULE::from_byte_slice_unchecked()`] _must_ be implemented to return the same result
 /// as [`VarULE::parse_byte_slice()`] provided both are passed the same validly parsing byte slices.
+///
+/// [`VarULE::as_byte_slice()`] should return a slice that is the in-memory representation of `Self`,
+/// i.e. it should be just a pointer cast, and `mem::size_of_val(self) == mem::size_of_val(self.as_byte_slice())`
+///
+/// # Equality invariant
+///
+/// A non-safety invariant is that if `Self` implements `PartialEq`, it *must* be logically equivalent to
+/// byte equality on `.as_byte_slice()`. Failure to follow this invariant will not cause undefined
+/// behavior, but may cause problems in the `PartialEq` implementations of `ZeroVec` and `VarZeroVec`,
+/// as well as the predictable operation of `ZeroMap`.
 pub unsafe trait VarULE: 'static {
     /// The error type to used by [`VarULE::parse_byte_slice()`]
     type Error;
@@ -233,7 +256,7 @@ pub unsafe trait VarULE: 'static {
     ///
     /// # Safety
     ///
-    /// In most cases, the implementation of this function should involve re-casting the pointer.
+    /// The implementation of this function should involve re-casting the pointer.
     /// It is up to the implementation to reason about the safety.
     fn as_byte_slice(&self) -> &[u8];
 }
