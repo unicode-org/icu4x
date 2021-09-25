@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632530627554,
+  "lastUpdate": 1632590226923,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13133,6 +13133,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4868,
             "range": "± 269",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a5810de8ea75fe661ef9461735505ebde249b6b",
+          "message": "Make it possible to use icu_calendar dates with DateTimeFormat (#1097)",
+          "timestamp": "2021-09-25T10:10:24-07:00",
+          "tree_id": "83bca2805cc0fb3702207b2d3d96683404e4e8fc",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a5810de8ea75fe661ef9461735505ebde249b6b"
+        },
+        "date": 1632590222097,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3043,
+            "range": "± 229",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5011,
+            "range": "± 318",
             "unit": "ns/iter"
           }
         ]
