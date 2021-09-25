@@ -33,6 +33,10 @@
 
         Constructs an ``StaticDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more details.
 
+    .. cpp:function:: static ICU4XCreateDataProviderResult create_blob_from_slice(const std::span<uint8_t> blob)
+
+        Constructs a ``BlobDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html>`__ for more details.
+
 .. cpp:class:: ICU4XStaticDataProvider
 
     An ICU4X data provider backed by static data. This is a specialization of :cpp:class:`ICU4XDataProvider` intended to reduce code size.
