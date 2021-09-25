@@ -147,8 +147,9 @@ where
 {
     #[inline]
     fn eq(&self, other: &VarZeroVecULE<T>) -> bool {
-        // Note: T implements PartialEq but not T::ULE
-        self.iter().eq(other.iter())
+        // VarULE has an API guarantee that this is equivalent
+        // to `T::VarULE::eq()`
+        self.entire_slice.eq(&other.entire_slice)
     }
 }
 

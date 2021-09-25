@@ -501,8 +501,9 @@ where
 {
     #[inline]
     fn eq(&self, other: &VarZeroVec<'b, T>) -> bool {
-        // Note: T implements PartialEq but not T::ULE
-        self.iter().eq(other.iter())
+        // VarULE has an API guarantee that this is equivalent
+        // to `T::VarULE::eq()`
+        self.get_encoded_slice().eq(other.get_encoded_slice())
     }
 }
 
