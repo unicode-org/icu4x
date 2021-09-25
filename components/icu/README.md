@@ -53,6 +53,33 @@ functionality are compiled. These features are:
 ```rust
 use icu::locid::Locale;
 use icu::locid::macros::langid;
+use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
+
+let provider = icu_testdata::get_provider();
+
+let locale: Locale = langid!("en").into();
+
+let options = length::Bag {
+    date: Some(length::Date::Long),
+    time: Some(length::Time::Medium),
+    ..Default::default()
+}.into();
+
+let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+    .expect("Failed to create DateTimeFormat instance.");
+
+let date = parse_gregorian_from_str("2020-09-12T12:35:00")
+    .expect("Failed to parse date.");
+
+let formatted_date = dtf.format(&date);
+assert_eq!(formatted_date.to_string(), "September 12, 2020 at 12:35:00 PM");
+```
+
+[`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
+[`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
+[`icu_testdata`]: ../icu_testdata/index.html
+[`Locale`]: crate::locid::Locale
+[`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 
 ## More Information
 
