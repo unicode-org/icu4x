@@ -102,21 +102,25 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// The calendar-specific year represented by `self`
+    #[inline]
     pub fn year(&self) -> types::Year {
         self.calendar.as_calendar().year(&self.inner)
     }
 
     /// The calendar-specific month represented by `self`
+    #[inline]
     pub fn month(&self) -> types::Month {
         self.calendar.as_calendar().month(&self.inner)
     }
 
     /// The calendar-specific day-of-month represented by `self`
+    #[inline]
     pub fn day_of_month(&self) -> types::DayOfMonth {
         self.calendar.as_calendar().day_of_month(&self.inner)
     }
 
     /// The calendar-specific day-of-month represented by `self`
+    #[inline]
     pub fn day_of_year_info(&self) -> types::DayOfYearInfo {
         self.calendar.as_calendar().day_of_year_info(&self.inner)
     }
