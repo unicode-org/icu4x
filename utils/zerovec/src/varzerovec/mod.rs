@@ -406,7 +406,10 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// This can be passed back to [`Self::parse_byte_slice()`]
     pub fn get_encoded_slice(&self) -> &[u8] {
-        self.get_components().entire_slice()
+        match self.0 {
+            VarZeroVecInner::Owned(ref vec) => vec.entire_slice(),
+            VarZeroVecInner::Borrowed(vec) => vec.entire_slice(),
+        }
     }
 
     /// For a slice of `T`, get a list of bytes that can be passed to
