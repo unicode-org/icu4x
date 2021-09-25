@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -14,11 +15,18 @@ namespace capi {
 }
 
 
+/**
+ * A destruction policy for using ICU4XPluralCategories with std::unique_ptr.
+ */
 struct ICU4XPluralCategoriesDeleter {
   void operator()(capi::ICU4XPluralCategories* l) const noexcept {
     capi::ICU4XPluralCategories_destroy(l);
   }
 };
+
+/**
+ * FFI version of `PluralRules::categories()` data.
+ */
 struct ICU4XPluralCategories {
  public:
   bool zero;

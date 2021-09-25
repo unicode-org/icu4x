@@ -1,7 +1,7 @@
 import wasm from "./wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.mjs"
 const diplomat_alloc_destroy_registry = new FinalizationRegistry(obj => {
-  wasm.diplomat_free(obj["ptr"], obj["size"]);
+  wasm.diplomat_free(obj["ptr"], obj["size"], obj["align"]);
 });
 
 const ICU4XCanonicalizationResult_js_to_rust = {
@@ -75,7 +75,7 @@ export class ICU4XCreatePluralOperandsResult {
   }
 
   get success() {
-    return (new Uint8Array(wasm.memory.buffer, this.underlying + 24, 1))[0] == 1;
+    return (new Uint8Array(wasm.memory.buffer, this.underlying + 36, 1))[0] == 1;
   }
 }
 
@@ -134,11 +134,11 @@ export class ICU4XDataProvider {
 
   static create_fs(path) {
     let path_diplomat_bytes = (new TextEncoder()).encode(path);
-    let path_diplomat_ptr = wasm.diplomat_alloc(path_diplomat_bytes.length);
+    let path_diplomat_ptr = wasm.diplomat_alloc(path_diplomat_bytes.length, 1);
     let path_diplomat_buf = new Uint8Array(wasm.memory.buffer, path_diplomat_ptr, path_diplomat_bytes.length);
     path_diplomat_buf.set(path_diplomat_bytes, 0);
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XDataProvider_create_fs(diplomat_receive_buffer, path_diplomat_ptr, path_diplomat_bytes.length);
       const out = new ICU4XCreateDataProviderResult(diplomat_receive_buffer);
       const out_provider_value = out.provider;
@@ -146,17 +146,18 @@ export class ICU4XDataProvider {
       Object.defineProperty(out, "provider", { value: out_provider_value });
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 5
+        size: 5,
+        align: 4,
       });
       return out;
     })();
-    wasm.diplomat_free(path_diplomat_ptr, path_diplomat_bytes.length);
+    wasm.diplomat_free(path_diplomat_ptr, path_diplomat_bytes.length, 1);
     return diplomat_out;
   }
 
   static create_static() {
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XDataProvider_create_static(diplomat_receive_buffer);
       const out = new ICU4XCreateDataProviderResult(diplomat_receive_buffer);
       const out_provider_value = out.provider;
@@ -164,7 +165,8 @@ export class ICU4XDataProvider {
       Object.defineProperty(out, "provider", { value: out_provider_value });
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 5
+        size: 5,
+        align: 4,
       });
       return out;
     })();
@@ -196,11 +198,11 @@ export class ICU4XFixedDecimal {
 
   static create_fromstr(v) {
     let v_diplomat_bytes = (new TextEncoder()).encode(v);
-    let v_diplomat_ptr = wasm.diplomat_alloc(v_diplomat_bytes.length);
+    let v_diplomat_ptr = wasm.diplomat_alloc(v_diplomat_bytes.length, 1);
     let v_diplomat_buf = new Uint8Array(wasm.memory.buffer, v_diplomat_ptr, v_diplomat_bytes.length);
     v_diplomat_buf.set(v_diplomat_bytes, 0);
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XFixedDecimal_create_fromstr(diplomat_receive_buffer, v_diplomat_ptr, v_diplomat_bytes.length);
       const out = new ICU4XCreateFixedDecimalResult(diplomat_receive_buffer);
       const out_fd_value = out.fd;
@@ -208,11 +210,12 @@ export class ICU4XFixedDecimal {
       Object.defineProperty(out, "fd", { value: out_fd_value });
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 5
+        size: 5,
+        align: 4,
       });
       return out;
     })();
-    wasm.diplomat_free(v_diplomat_ptr, v_diplomat_bytes.length);
+    wasm.diplomat_free(v_diplomat_ptr, v_diplomat_bytes.length, 1);
     return diplomat_out;
   }
 
@@ -246,7 +249,7 @@ export class ICU4XFixedDecimalFormat {
     const diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy = options["grouping_strategy"];
     const diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display = options["sign_display"];
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XFixedDecimalFormat_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy], ICU4XFixedDecimalSignDisplay_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display]);
       const out = new ICU4XFixedDecimalFormatResult(diplomat_receive_buffer);
       const out_fdf_value = out.fdf;
@@ -254,7 +257,8 @@ export class ICU4XFixedDecimalFormat {
       Object.defineProperty(out, "fdf", { value: out_fdf_value });
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 5
+        size: 5,
+        align: 4,
       });
       return out;
     })();
@@ -265,7 +269,7 @@ export class ICU4XFixedDecimalFormat {
     const diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy = options["grouping_strategy"];
     const diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display = options["sign_display"];
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XFixedDecimalFormat_try_new_from_static(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy], ICU4XFixedDecimalSignDisplay_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display]);
       const out = new ICU4XFixedDecimalFormatResult(diplomat_receive_buffer);
       const out_fdf_value = out.fdf;
@@ -273,7 +277,8 @@ export class ICU4XFixedDecimalFormat {
       Object.defineProperty(out, "fdf", { value: out_fdf_value });
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 5
+        size: 5,
+        align: 4,
       });
       return out;
     })();
@@ -304,12 +309,13 @@ export class ICU4XFixedDecimalFormatOptions {
 
   static default() {
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(8);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(8, 4);
       wasm.ICU4XFixedDecimalFormatOptions_default(diplomat_receive_buffer);
       const out = new ICU4XFixedDecimalFormatOptions(diplomat_receive_buffer);
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 8
+        size: 8,
+        align: 4,
       });
       return out;
     })();
@@ -386,7 +392,7 @@ export class ICU4XLocale {
 
   static create(name) {
     let name_diplomat_bytes = (new TextEncoder()).encode(name);
-    let name_diplomat_ptr = wasm.diplomat_alloc(name_diplomat_bytes.length);
+    let name_diplomat_ptr = wasm.diplomat_alloc(name_diplomat_bytes.length, 1);
     let name_diplomat_buf = new Uint8Array(wasm.memory.buffer, name_diplomat_ptr, name_diplomat_bytes.length);
     name_diplomat_buf.set(name_diplomat_bytes, 0);
     const diplomat_out = (() => {
@@ -398,7 +404,7 @@ export class ICU4XLocale {
       ICU4XLocale_box_destroy_registry.register(out, out.underlying)
       return out;
     })();
-    wasm.diplomat_free(name_diplomat_ptr, name_diplomat_bytes.length);
+    wasm.diplomat_free(name_diplomat_ptr, name_diplomat_bytes.length, 1);
     return diplomat_out;
   }
 
@@ -457,11 +463,12 @@ export class ICU4XLocale {
   basename() {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result_tag = {};
         diplomat_alloc_destroy_registry.register(result_tag, {
           ptr: diplomat_receive_buffer,
-          size: 5
+          size: 5,
+          align: 4,
         });
         wasm.ICU4XLocale_basename(diplomat_receive_buffer, this.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -479,16 +486,17 @@ export class ICU4XLocale {
 
   get_unicode_extension(bytes) {
     let bytes_diplomat_bytes = (new TextEncoder()).encode(bytes);
-    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length);
+    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length, 1);
     let bytes_diplomat_buf = new Uint8Array(wasm.memory.buffer, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
     bytes_diplomat_buf.set(bytes_diplomat_bytes, 0);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result_tag = {};
         diplomat_alloc_destroy_registry.register(result_tag, {
           ptr: diplomat_receive_buffer,
-          size: 5
+          size: 5,
+          align: 4,
         });
         wasm.ICU4XLocale_get_unicode_extension(diplomat_receive_buffer, this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -501,18 +509,19 @@ export class ICU4XLocale {
         }
       })();
     });
-    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length, 1);
     return diplomat_out;
   }
 
   language() {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result_tag = {};
         diplomat_alloc_destroy_registry.register(result_tag, {
           ptr: diplomat_receive_buffer,
-          size: 5
+          size: 5,
+          align: 4,
         });
         wasm.ICU4XLocale_language(diplomat_receive_buffer, this.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -530,15 +539,16 @@ export class ICU4XLocale {
 
   set_language(bytes) {
     let bytes_diplomat_bytes = (new TextEncoder()).encode(bytes);
-    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length);
+    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length, 1);
     let bytes_diplomat_buf = new Uint8Array(wasm.memory.buffer, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
     bytes_diplomat_buf.set(bytes_diplomat_bytes, 0);
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
       diplomat_alloc_destroy_registry.register(result_tag, {
         ptr: diplomat_receive_buffer,
-        size: 5
+        size: 5,
+        align: 4,
       });
       wasm.ICU4XLocale_set_language(diplomat_receive_buffer, this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -550,18 +560,19 @@ export class ICU4XLocale {
         throw throw_value;
       }
     })();
-    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length, 1);
     return diplomat_out;
   }
 
   region() {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result_tag = {};
         diplomat_alloc_destroy_registry.register(result_tag, {
           ptr: diplomat_receive_buffer,
-          size: 5
+          size: 5,
+          align: 4,
         });
         wasm.ICU4XLocale_region(diplomat_receive_buffer, this.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -579,15 +590,16 @@ export class ICU4XLocale {
 
   set_region(bytes) {
     let bytes_diplomat_bytes = (new TextEncoder()).encode(bytes);
-    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length);
+    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length, 1);
     let bytes_diplomat_buf = new Uint8Array(wasm.memory.buffer, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
     bytes_diplomat_buf.set(bytes_diplomat_bytes, 0);
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
       diplomat_alloc_destroy_registry.register(result_tag, {
         ptr: diplomat_receive_buffer,
-        size: 5
+        size: 5,
+        align: 4,
       });
       wasm.ICU4XLocale_set_region(diplomat_receive_buffer, this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -599,18 +611,19 @@ export class ICU4XLocale {
         throw throw_value;
       }
     })();
-    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length, 1);
     return diplomat_out;
   }
 
   script() {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result_tag = {};
         diplomat_alloc_destroy_registry.register(result_tag, {
           ptr: diplomat_receive_buffer,
-          size: 5
+          size: 5,
+          align: 4,
         });
         wasm.ICU4XLocale_script(diplomat_receive_buffer, this.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -628,15 +641,16 @@ export class ICU4XLocale {
 
   set_script(bytes) {
     let bytes_diplomat_bytes = (new TextEncoder()).encode(bytes);
-    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length);
+    let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length, 1);
     let bytes_diplomat_buf = new Uint8Array(wasm.memory.buffer, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
     bytes_diplomat_buf.set(bytes_diplomat_bytes, 0);
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       const result_tag = {};
       diplomat_alloc_destroy_registry.register(result_tag, {
         ptr: diplomat_receive_buffer,
-        size: 5
+        size: 5,
+        align: 4,
       });
       wasm.ICU4XLocale_set_script(diplomat_receive_buffer, this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -648,18 +662,19 @@ export class ICU4XLocale {
         throw throw_value;
       }
     })();
-    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length);
+    wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length, 1);
     return diplomat_out;
   }
 
   tostring() {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
         const result_tag = {};
         diplomat_alloc_destroy_registry.register(result_tag, {
           ptr: diplomat_receive_buffer,
-          size: 5
+          size: 5,
+          align: 4,
         });
         wasm.ICU4XLocale_tostring(diplomat_receive_buffer, this.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
@@ -785,20 +800,21 @@ export class ICU4XPluralOperands {
 
   static create(s) {
     let s_diplomat_bytes = (new TextEncoder()).encode(s);
-    let s_diplomat_ptr = wasm.diplomat_alloc(s_diplomat_bytes.length);
+    let s_diplomat_ptr = wasm.diplomat_alloc(s_diplomat_bytes.length, 1);
     let s_diplomat_buf = new Uint8Array(wasm.memory.buffer, s_diplomat_ptr, s_diplomat_bytes.length);
     s_diplomat_buf.set(s_diplomat_bytes, 0);
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(25);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(37, 8);
       wasm.ICU4XPluralOperands_create(diplomat_receive_buffer, s_diplomat_ptr, s_diplomat_bytes.length);
       const out = new ICU4XCreatePluralOperandsResult(diplomat_receive_buffer);
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 25
+        size: 37,
+        align: 8,
       });
       return out;
     })();
-    wasm.diplomat_free(s_diplomat_ptr, s_diplomat_bytes.length);
+    wasm.diplomat_free(s_diplomat_ptr, s_diplomat_bytes.length, 1);
     return diplomat_out;
   }
 
@@ -807,23 +823,23 @@ export class ICU4XPluralOperands {
   }
 
   get v() {
-    return (new Uint32Array(wasm.memory.buffer, this.underlying + 4, 1))[0];
-  }
-
-  get w() {
     return (new Uint32Array(wasm.memory.buffer, this.underlying + 8, 1))[0];
   }
 
-  get f() {
-    return (new BigUint64Array(wasm.memory.buffer, this.underlying + 12, 1))[0];
+  get w() {
+    return (new Uint32Array(wasm.memory.buffer, this.underlying + 12, 1))[0];
   }
 
-  get t() {
+  get f() {
     return (new BigUint64Array(wasm.memory.buffer, this.underlying + 16, 1))[0];
   }
 
+  get t() {
+    return (new BigUint64Array(wasm.memory.buffer, this.underlying + 24, 1))[0];
+  }
+
   get c() {
-    return (new Uint32Array(wasm.memory.buffer, this.underlying + 20, 1))[0];
+    return (new Uint32Array(wasm.memory.buffer, this.underlying + 32, 1))[0];
   }
 }
 
@@ -847,7 +863,7 @@ export class ICU4XPluralRules {
 
   static create(locale, provider, ty) {
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XPluralRules_create(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XPluralRuleType_js_to_rust[ty]);
       const out = new ICU4XCreatePluralRulesResult(diplomat_receive_buffer);
       const out_rules_value = out.rules;
@@ -855,7 +871,8 @@ export class ICU4XPluralRules {
       Object.defineProperty(out, "rules", { value: out_rules_value });
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 5
+        size: 5,
+        align: 4,
       });
       return out;
     })();
@@ -869,12 +886,13 @@ export class ICU4XPluralRules {
 
   categories() {
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(6);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(6, 1);
       wasm.ICU4XPluralRules_categories(diplomat_receive_buffer, this.underlying);
       const out = new ICU4XPluralCategories(diplomat_receive_buffer);
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 6
+        size: 6,
+        align: 1,
       });
       return out;
     })();
@@ -893,7 +911,7 @@ export class ICU4XStaticDataProvider {
 
   static create() {
     const diplomat_out = (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XStaticDataProvider_create(diplomat_receive_buffer);
       const out = new ICU4XCreateStaticDataProviderResult(diplomat_receive_buffer);
       const out_provider_value = out.provider;
@@ -901,7 +919,8 @@ export class ICU4XStaticDataProvider {
       Object.defineProperty(out, "provider", { value: out_provider_value });
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
-        size: 5
+        size: 5,
+        align: 4,
       });
       return out;
     })();

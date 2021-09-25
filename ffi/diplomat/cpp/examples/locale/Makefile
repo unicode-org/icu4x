@@ -8,6 +8,8 @@
 ALL_HEADERS := $(wildcard ../../include/*.hpp) $(wildcard ../../../c/include/*.h)
 ALL_RUST := $(wildcard ../../../src/*.rs)
 
+CXX?=g++
+
 $(ALL_RUST):
 
 $(ALL_HEADERS):
@@ -17,7 +19,7 @@ $(ALL_HEADERS):
 	cargo build -p icu_capi
 
 a.out: ../../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.cpp
-	g++ -std=c++17 test.cpp ../../../../../target/debug/libicu_capi.a -ldl -lpthread -lm -g
+	$(CXX) -std=c++20 test.cpp ../../../../../target/debug/libicu_capi.a -ldl -lpthread -lm -g
 
 build: a.out
 

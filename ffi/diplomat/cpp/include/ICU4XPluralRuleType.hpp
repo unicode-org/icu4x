@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -14,6 +15,11 @@ namespace capi {
 }
 
 
+
+/**
+ * FFI version of `PluralRuleType`.
+ * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralRuleType.html) for more details.
+ */
 enum struct ICU4XPluralRuleType {
   Cardinal = 0,
   Ordinal = 1,
