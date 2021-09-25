@@ -13,6 +13,8 @@ mod vec;
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
 
+use core::{mem, slice};
+
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
 /// "ULE" stands for "Unaligned little-endian"
@@ -84,8 +86,16 @@ where
     /// The implementation of this function should involve re-casting the pointer.
     /// It is up to the implementation to reason about the safety. Keep in mind that `&[Self]` and
     /// `&[u8]` may have different lengths (but should cover the same data).
+    ///
+    /// The default implementation already does this, however it can be overridden with
+    /// a fully-safe method if possible.
+    #[inline]
     #[allow(clippy::wrong_self_convention)] // https://github.com/rust-lang/rust-clippy/issues/7219
-    fn as_byte_slice(slice: &[Self]) -> &[u8];
+    fn as_byte_slice(slice: &[Self]) -> &[u8] {
+        unsafe {
+            slice::from_raw_parts(slice as *const [Self] as *const u8, mem::size_of_val(slice))
+        }
+    }
 }
 
 /// A trait for any type that has a 1:1 mapping with an unaligned little-endian (ULE) type.
@@ -262,5 +272,11 @@ pub unsafe trait VarULE: 'static {
     ///
     /// The implementation of this function should involve re-casting the pointer.
     /// It is up to the implementation to reason about the safety.
-    fn as_byte_slice(&self) -> &[u8];
+    ///
+    /// The default implementation already does this, however it can be overridden with
+    /// a fully-safe method if possible.
+    #[inline]
+    fn as_byte_slice(&self) -> &[u8] {
+        unsafe { slice::from_raw_parts(self as *const Self as *const u8, mem::size_of_val(self)) }
+    }
 }

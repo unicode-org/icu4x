@@ -62,14 +62,6 @@ unsafe impl ULE for CharULE {
         let len = bytes.len() / 4;
         core::slice::from_raw_parts(data as *const Self, len)
     }
-
-    #[inline]
-    fn as_byte_slice(slice: &[Self]) -> &[u8] {
-        let data = slice.as_ptr();
-        let len = slice.len() * 4;
-        // Safe because Self is transparent over [u8; 4]
-        unsafe { core::slice::from_raw_parts(data as *const u8, len) }
-    }
 }
 
 impl AsULE for char {

@@ -42,13 +42,6 @@ macro_rules! impl_byte_slice_size {
                 // Safe because Self is transparent over [u8; $size]
                 core::slice::from_raw_parts(data as *const Self, len)
             }
-            #[inline]
-            fn as_byte_slice(slice: &[Self]) -> &[u8] {
-                let data = slice.as_ptr();
-                let len = slice.len() * $size;
-                // Safe because Self is transparent over [u8; $size]
-                unsafe { core::slice::from_raw_parts(data as *const u8, len) }
-            }
         }
 
         impl PlainOldULE<$size> {
