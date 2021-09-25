@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632530299528,
+  "lastUpdate": 1632589897917,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -473,6 +473,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/49079e09fa7fb6baa998ed1bcc0949a8174dbbe7"
         },
         "date": 1632530295837,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a5810de8ea75fe661ef9461735505ebde249b6b",
+          "message": "Make it possible to use icu_calendar dates with DateTimeFormat (#1097)",
+          "timestamp": "2021-09-25T10:10:24-07:00",
+          "tree_id": "83bca2805cc0fb3702207b2d3d96683404e4e8fc",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a5810de8ea75fe661ef9461735505ebde249b6b"
+        },
+        "date": 1632589893900,
         "tool": "ndjson",
         "benches": [
           {
