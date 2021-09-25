@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632528687838,
+  "lastUpdate": 1632530614033,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8201,6 +8201,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 626086,
             "range": "± 36308",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "49079e09fa7fb6baa998ed1bcc0949a8174dbbe7",
+          "message": "Fix wasm-cpp-emscripten (#1099)",
+          "timestamp": "2021-09-24T19:37:04-05:00",
+          "tree_id": "51edaf9605a21b5d191b90ccf1836fcf4a8b7c7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/49079e09fa7fb6baa998ed1bcc0949a8174dbbe7"
+        },
+        "date": 1632530611042,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 265833,
+            "range": "± 18336",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1328532,
+            "range": "± 55801",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 518761,
+            "range": "± 41109",
             "unit": "ns/iter"
           }
         ]
