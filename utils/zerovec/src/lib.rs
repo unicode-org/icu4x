@@ -29,7 +29,7 @@
 //!
 //! Benchmark results on x86_64:
 //!
-//! | Operation | `Vec<T>` | `zerovec` |
+//! | Operation | `Vec<T>` | `ZeroVec<T>` |
 //! |---|---|---|
 //! | Deserialize vec of 100 `u32` | 233.18 ns | 14.120 ns |
 //! | Compute sum of vec of 100 `u32` (read every element) | 8.7472 ns | 10.775 ns |
@@ -40,10 +40,13 @@
 //!
 //! \* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to `Vec<&str>`; this gives 1.8420 μs, much faster than `Vec<String>` but a bit slower than `zerovec`.*
 //!
-//! | Operation | `HashMap<K,V>`  | `LiteMap<K,V>` | `zeromap` |
+//! | Operation | `HashMap<K,V>`  | `LiteMap<K,V>` | `ZeroMap<K,V>` |
 //! |---|---|---|---|
-//! | Look up a `&str` key from a 16-element map | 45 ns | 40 ns | 36 ns |
-//! | Look up a `&str` key from a 1,048,576-element map | 49 ns | 216 ns | 191 ns |
+//! | Look up a `&str` key from a 16-element map | 46 ns | 41 ns | 38 ns |
+//! | Look up a `&str` key from a 1,048,576-element map | 49 ns | 211 ns | 171 ns |
+//! | Look up a `&str` key from a deserialized 1,048,576-element map | 51 ns | 220 ns | 269 ns |
+//! | Serialize a 16-element `<String, String>` map | 524 ns | 607 ns | 1.48 μs |
+//! | Deserialize a 16-element `<String, String>` map | 2.53 μs | 1.75 μs | 494 ns |
 //!
 //! The benches used to generate the above table can be found in the `benches` directory in the project repository.
 //!
