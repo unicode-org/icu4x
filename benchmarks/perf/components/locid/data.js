@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632526557543,
+  "lastUpdate": 1632528656798,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13061,6 +13061,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4212,
             "range": "± 319",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e7e6feb68c6415c802da0630065f31f216aec4f4",
+          "message": "Update diplomat (#1100)",
+          "timestamp": "2021-09-24T19:04:48-05:00",
+          "tree_id": "3d287c3c8266df80d77053f983e82ff2104b928f",
+          "url": "https://github.com/unicode-org/icu4x/commit/e7e6feb68c6415c802da0630065f31f216aec4f4"
+        },
+        "date": 1632528652930,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2731,
+            "range": "± 139",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4822,
+            "range": "± 230",
             "unit": "ns/iter"
           }
         ]
