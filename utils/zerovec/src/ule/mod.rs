@@ -19,10 +19,10 @@ pub use plain::PlainOldULE;
 ///
 /// # Safety
 ///
-/// There must be no padding bytes involved in this type: [`Self::as_byte_slice()`] MUST return
+/// There must be no padding bytes involved in this type: [`Self::as_byte_slice()`] *must* return
 /// a slice of initialized bytes provided that `Self` is initialized.
 ///
-/// This method _must_ be implemented to return the same result as [`ULE::parse_byte_slice()`].
+/// [`ULE::from_bytes_unchecked()`] *must* be implemented to return the same result as [`ULE::parse_byte_slice()`].
 ///
 /// [`ULE::as_byte_slice()`] should return a slice that is the in-memory representation of `Self`,
 /// i.e. it should be just a pointer cast, and `mem::size_of_val(self) == mem::size_of_val(self.as_byte_slice())`=
@@ -30,9 +30,11 @@ pub use plain::PlainOldULE;
 /// # Equality invariant
 ///
 /// A non-safety invariant is that if `Self` implements `PartialEq`, it *must* be logically equivalent to
-/// byte equality on `.as_byte_slice()`. Failure to follow this invariant will not cause undefined
-/// behavior, but may cause problems in the `PartialEq` implementations of `ZeroVec` and `VarZeroVec`,
-/// as well as the predictable operation of `ZeroMap`
+/// byte equality on `.as_byte_slice()`. If `PartialEq` does not imply byte-for-byte equality, then
+/// `.parse_byte_slice()` should return an error code for any values that are not in canonical form.
+///
+/// Failure to follow this invariant will cause surprising behavior in `PartialEq`, which may result in
+/// unpredictable operations on `ZeroVec`, `VarZeroVec`, and `ZeroMap`.
 pub unsafe trait ULE
 where
     Self: Sized,
@@ -205,7 +207,7 @@ pub trait AsVarULE {
 /// There must be no padding bytes involved in this type: [`Self::as_byte_slice()`] MUST return
 /// a slice of initialized bytes provided that `Self` is initialized.
 ///
-/// [`VarULE::from_byte_slice_unchecked()`] _must_ be implemented to return the same result
+/// [`VarULE::from_byte_slice_unchecked()`] *must* be implemented to return the same result
 /// as [`VarULE::parse_byte_slice()`] provided both are passed the same validly parsing byte slices.
 ///
 /// [`VarULE::as_byte_slice()`] should return a slice that is the in-memory representation of `Self`,
@@ -214,9 +216,11 @@ pub trait AsVarULE {
 /// # Equality invariant
 ///
 /// A non-safety invariant is that if `Self` implements `PartialEq`, it *must* be logically equivalent to
-/// byte equality on `.as_byte_slice()`. Failure to follow this invariant will not cause undefined
-/// behavior, but may cause problems in the `PartialEq` implementations of `ZeroVec` and `VarZeroVec`,
-/// as well as the predictable operation of `ZeroMap`.
+/// byte equality on `.as_byte_slice()`. If `PartialEq` does not imply byte-for-byte equality, then
+/// `.parse_byte_slice()` should return an error code for any values that are not in canonical form.
+///
+/// Failure to follow this invariant will cause surprising behavior in `PartialEq`, which may result in
+/// unpredictable operations on `ZeroVec`, `VarZeroVec`, and `ZeroMap`.
 pub unsafe trait VarULE: 'static {
     /// The error type to used by [`VarULE::parse_byte_slice()`]
     type Error;
