@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632590205671,
+  "lastUpdate": 1632635523965,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14657,6 +14657,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18451,
             "range": "± 87",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47cea1b4b494bd723a63328fd09e3b72378cd785",
+          "message": "Disable default features for postcard (#1096)\n\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-09-25T22:44:50-07:00",
+          "tree_id": "0bcb0186593b76087850351478cc5206987a513e",
+          "url": "https://github.com/unicode-org/icu4x/commit/47cea1b4b494bd723a63328fd09e3b72378cd785"
+        },
+        "date": 1632635519854,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1321,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7922,
+            "range": "± 337",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25469,
+            "range": "± 1581",
             "unit": "ns/iter"
           }
         ]
