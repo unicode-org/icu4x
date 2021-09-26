@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{
-    error::Error,
-    generic::{GenericPattern, GenericPatternItem},
-    Pattern, PatternItem,
+    super::error::PatternError,
+    super::{GenericPatternItem, PatternItem},
+    GenericPattern, Pattern,
 };
 use crate::fields::FieldSymbol;
 use alloc::string::String;
@@ -40,7 +40,7 @@ impl<'p> Parser<'p> {
         ch: char,
         chars: &mut core::iter::Peekable<core::str::Chars>,
         result: &mut Vec<PatternItem>,
-    ) -> Result<bool, Error> {
+    ) -> Result<bool, PatternError> {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
                 (
@@ -88,7 +88,7 @@ impl<'p> Parser<'p> {
         &mut self,
         ch: char,
         chars: &mut core::iter::Peekable<core::str::Chars>,
-    ) -> Result<bool, Error> {
+    ) -> Result<bool, PatternError> {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
                 (
@@ -118,13 +118,13 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn collect_segment(state: Segment, result: &mut Vec<PatternItem>) -> Result<(), Error> {
+    fn collect_segment(state: Segment, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
         match state {
             Segment::Symbol { symbol, length } => {
                 result.push((symbol, length).try_into()?);
             }
             Segment::Literal { quoted, .. } if quoted => {
-                return Err(Error::UnclosedLiteral);
+                return Err(PatternError::UnclosedLiteral);
             }
             Segment::Literal { literal, .. } => {
                 for ch in literal.chars() {
@@ -138,10 +138,10 @@ impl<'p> Parser<'p> {
     fn collect_generic_segment(
         state: Segment,
         result: &mut Vec<GenericPatternItem>,
-    ) -> Result<(), Error> {
+    ) -> Result<(), PatternError> {
         match state {
             Segment::Literal { quoted, .. } if quoted => {
-                return Err(Error::UnclosedLiteral);
+                return Err(PatternError::UnclosedLiteral);
             }
             Segment::Literal { literal, .. } => {
                 if !literal.is_empty() {
@@ -155,7 +155,7 @@ impl<'p> Parser<'p> {
         Ok(())
     }
 
-    pub fn parse(mut self) -> Result<Vec<PatternItem>, Error> {
+    pub fn parse(mut self) -> Result<Vec<PatternItem>, PatternError> {
         let mut chars = self.source.chars().peekable();
         let mut result = vec![];
 
@@ -199,7 +199,7 @@ impl<'p> Parser<'p> {
         Ok(result)
     }
 
-    pub fn parse_generic(mut self) -> Result<Vec<GenericPatternItem>, Error> {
+    pub fn parse_generic(mut self) -> Result<Vec<GenericPatternItem>, PatternError> {
         let mut chars = self.source.chars().peekable();
         let mut result = vec![];
 
@@ -208,12 +208,14 @@ impl<'p> Parser<'p> {
                 if ch == '{' {
                     Self::collect_generic_segment(self.state, &mut result)?;
 
-                    let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
-                    let idx: u32 = ch.to_digit(10).ok_or(Error::UnknownSubstitution(ch))?;
+                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
+                    let idx: u32 = ch
+                        .to_digit(10)
+                        .ok_or(PatternError::UnknownSubstitution(ch))?;
                     result.push(GenericPatternItem::Placeholder(idx as u8));
-                    let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
+                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
                     if ch != '}' {
-                        return Err(Error::UnclosedPlaceholder);
+                        return Err(PatternError::UnclosedPlaceholder);
                     }
                     self.state = Segment::Literal {
                         literal: String::new(),
@@ -235,11 +237,14 @@ impl<'p> Parser<'p> {
         Ok(result)
     }
 
-    pub fn parse_placeholders(self, replacements: Vec<Pattern>) -> Result<Vec<PatternItem>, Error> {
+    pub fn parse_placeholders(
+        self,
+        replacements: Vec<Pattern>,
+    ) -> Result<Vec<PatternItem>, PatternError> {
         let generic_items = self.parse_generic()?;
 
         let gp = GenericPattern::from(generic_items);
-        Ok(gp.combined(replacements)?.items)
+        Ok(gp.combined(replacements)?.items.to_vec())
     }
 }
 
@@ -247,7 +252,7 @@ impl<'p> Parser<'p> {
 mod tests {
     use super::*;
     use crate::fields::{self, FieldLength};
-    use crate::pattern::Pattern;
+    use crate::pattern::reference::Pattern;
 
     #[test]
     fn pattern_parse_simple() {
@@ -285,10 +290,10 @@ mod tests {
             ),
         ];
 
-        for (string, pattern) in samples {
+        for (string, items) in samples {
             assert_eq!(
                 Pattern::from_bytes(string).expect("Parsing pattern failed."),
-                pattern.into_iter().collect()
+                Pattern::from(items)
             );
         }
     }
@@ -331,7 +336,7 @@ mod tests {
             );
         }
 
-        let broken = vec![(" 'foo ", Error::UnclosedLiteral)];
+        let broken = vec![(" 'foo ", PatternError::UnclosedLiteral)];
 
         for (string, error) in broken {
             assert_eq!(Parser::new(string).parse(), Err(error),);
@@ -524,7 +529,7 @@ mod tests {
 
         let broken = vec![(
             "yyyyyyy",
-            Error::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
+            PatternError::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
         )];
 
         for (string, error) in broken {
@@ -568,25 +573,29 @@ mod tests {
         }
 
         let broken = vec![
-            ("{0}", vec![], Error::UnknownSubstitution('0')),
-            ("{a}", vec![], Error::UnknownSubstitution('a')),
-            ("{", vec![], Error::UnclosedPlaceholder),
+            ("{0}", vec![], PatternError::UnknownSubstitution('0')),
+            ("{a}", vec![], PatternError::UnknownSubstitution('a')),
+            ("{", vec![], PatternError::UnclosedPlaceholder),
             (
                 "{0",
                 vec![Pattern::from(vec![])],
-                Error::UnclosedPlaceholder,
+                PatternError::UnclosedPlaceholder,
             ),
             (
                 "{01",
                 vec![Pattern::from(vec![])],
-                Error::UnclosedPlaceholder,
+                PatternError::UnclosedPlaceholder,
             ),
             (
                 "{00}",
                 vec![Pattern::from(vec![])],
-                Error::UnclosedPlaceholder,
+                PatternError::UnclosedPlaceholder,
             ),
-            ("'{00}", vec![Pattern::from(vec![])], Error::UnclosedLiteral),
+            (
+                "'{00}",
+                vec![Pattern::from(vec![])],
+                PatternError::UnclosedLiteral,
+            ),
         ];
 
         for (string, replacements, error) in broken {

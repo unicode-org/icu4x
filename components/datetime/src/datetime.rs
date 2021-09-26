@@ -18,7 +18,8 @@ use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 use crate::{
-    date::DateTimeInput, pattern::Pattern, provider, DateTimeFormatError, FormattedDateTime,
+    date::DateTimeInput, pattern::reference::Pattern, provider, DateTimeFormatError,
+    FormattedDateTime,
 };
 
 /// [`DateTimeFormat`] is the main structure of the [`icu_datetime`] component.

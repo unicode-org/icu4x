@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::arithmetic;
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
-use crate::pattern::{Pattern, PatternItem};
+use crate::pattern::{reference::Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeSymbols;
 
@@ -96,7 +95,7 @@ where
 }
 
 pub fn write_pattern<T, W>(
-    pattern: &crate::pattern::Pattern,
+    pattern: &crate::pattern::reference::Pattern,
     symbols: Option<&provider::gregory::DateSymbolsV1>,
     datetime: &T,
     locale: &Locale,
@@ -122,7 +121,7 @@ where
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 pub(super) fn write_field<T, W>(
-    pattern: &crate::pattern::Pattern,
+    pattern: &crate::pattern::reference::Pattern,
     field: &fields::Field,
     symbols: Option<&crate::provider::gregory::DateSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
@@ -238,8 +237,7 @@ where
                     period,
                     field.length,
                     datetime.datetime().hour().ok_or(Error::MissingInputField)?,
-                    arithmetic::is_top_of_hour(
-                        pattern,
+                    pattern.time_granularity.is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                     ),
@@ -313,7 +311,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
+        let pattern = crate::pattern::reference::Pattern::from_bytes("MMM").unwrap();
         let datetime =
             DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
