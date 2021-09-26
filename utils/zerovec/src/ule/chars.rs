@@ -55,13 +55,6 @@ unsafe impl ULE for CharULE {
         // Safe because Self is transparent over [u8; 4] and has been validated
         Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
     }
-
-    #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
-        let data = bytes.as_ptr();
-        let len = bytes.len() / 4;
-        core::slice::from_raw_parts(data as *const Self, len)
-    }
 }
 
 impl AsULE for char {

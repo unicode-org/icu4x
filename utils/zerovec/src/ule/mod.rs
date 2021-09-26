@@ -24,7 +24,8 @@ use core::{mem, slice};
 /// There must be no padding bytes involved in this type: [`Self::as_byte_slice()`] *must* return
 /// a slice of initialized bytes provided that `Self` is initialized.
 ///
-/// [`ULE::from_bytes_unchecked()`] *must* be implemented to return the same result as [`ULE::parse_byte_slice()`].
+/// [`ULE::from_bytes_unchecked()`] *must* be implemented to return the same result as [`ULE::parse_byte_slice()`],
+/// and both should return slices to the same region of memory.
 ///
 /// [`ULE::as_byte_slice()`] should return a slice that is the in-memory representation of `Self`,
 /// i.e. it should be just a pointer cast, and `mem::size_of_val(self) == mem::size_of_val(self.as_byte_slice())`=
@@ -56,6 +57,8 @@ where
     /// correct type. It is up to the implementation to reason about the safety. Keep in mind that
     /// `&[Self]` and `&[u8]` may have different lengths.
     ///
+    /// Implementors must return a slice to the same region of memory if parsing succeeds.
+    ///
     /// Ideally, implementations call [`ULE::from_byte_slice_unchecked()`] after validation.
     fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error>;
 
@@ -74,10 +77,17 @@ where
     /// ## Implementors
     /// This method _must_ be implemented to return the same result as [`ULE::parse_byte_slice()`].
     ///
+    /// Implementors must return a slice to the same region of memory. The default implementation
+    /// does this directly.
+    ///
     /// Implementations of this method may involve `unsafe{}` blocks to cast the pointer to the
     /// correct type. It is up to the implementation to reason about the safety, assuming the invariant
     /// above.
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self];
+    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
+        let data = bytes.as_ptr();
+        let len = bytes.len() / mem::size_of::<Self>();
+        core::slice::from_raw_parts(data as *const Self, len)
+    }
 
     /// Given `&[Self]`, returns a `&[u8]` with the same lifetime.
     ///
@@ -219,6 +229,8 @@ pub trait AsVarULE {
 ///
 /// [`VarULE::from_byte_slice_unchecked()`] *must* be implemented to return the same result
 /// as [`VarULE::parse_byte_slice()`] provided both are passed the same validly parsing byte slices.
+/// Both should return a pointer to the same region of memory that was passed in, covering that region
+/// completely.
 ///
 /// [`VarULE::as_byte_slice()`] should return a slice that is the in-memory representation of `Self`,
 /// i.e. it should be just a pointer cast, and `mem::size_of_val(self) == mem::size_of_val(self.as_byte_slice())`
@@ -244,6 +256,8 @@ pub unsafe trait VarULE: 'static {
     ///
     /// Implementations of this method may involve `unsafe{}` blocks to cast the pointer to the
     /// correct type. It is up to the implementation to reason about the safety.
+    ///
+    /// Implementors must return a pointer to the same region of memory if parsing succeeds.
     fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error>;
 
     /// Takes a byte slice, `&[u8]`, and return it as `&self` with the same lifetime, assuming that
@@ -260,6 +274,8 @@ pub unsafe trait VarULE: 'static {
     ///
     /// ## Implementors
     /// This method _must_ be implemented to return the same result as [`VarULE::parse_byte_slice()`].
+    ///
+    /// Implementors must return a pointer to the same region of memory.
     ///
     /// Implementations of this method may involve `unsafe{}` blocks to cast the pointer to the
     /// correct type. It is up to the implementation to reason about the safety, assuming the invariant
