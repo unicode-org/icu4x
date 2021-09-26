@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632590185474,
+  "lastUpdate": 1632635455638,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11489,6 +11489,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 28173634,
             "range": "± 1680118",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47cea1b4b494bd723a63328fd09e3b72378cd785",
+          "message": "Disable default features for postcard (#1096)\n\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-09-25T22:44:50-07:00",
+          "tree_id": "0bcb0186593b76087850351478cc5206987a513e",
+          "url": "https://github.com/unicode-org/icu4x/commit/47cea1b4b494bd723a63328fd09e3b72378cd785"
+        },
+        "date": 1632635452303,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29335392,
+            "range": "± 1889679",
             "unit": "ns/iter"
           }
         ]
