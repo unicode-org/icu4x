@@ -8,6 +8,7 @@
 description = "Run FFI tests"
 category = "ICU4X Development"
 dependencies = [
+    "cargo-make-min-version",
     "verify-diplomat-gen",
     "test-c",
     # TODO(#964): Enable this CI test.
@@ -16,6 +17,16 @@ dependencies = [
     "build-wearos-ffi",
     "test-nostd",
 ]
+
+# Some tasks need a minimum version of cargo-make. Configs within cargo-make
+# task stanzas such as this allow setting the minimum version of deps (including
+# min version for cargo-make itself). But cargo-make might only be applying
+# such dep upgrades defined in the `install_crate` field after the task script
+# has run.
+[tasks.cargo-make-min-version]
+description = "Verify that the minimum version of cargo-make exists"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.35.0" }
 
 [tasks.verify-diplomat-gen]
 description = "Verify that checked-in Diplomat bindings are up to date"
@@ -147,6 +158,7 @@ args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
 [tasks.diplomat-get-rev]
 description = "Get current Diplomat revision"
 category = "ICU4X Development"
+dependencies = [ "cargo-make-min-version" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -181,6 +193,7 @@ release --recursive ${metadata}
 [tasks.diplomat-install]
 description = "Install Diplomat at current Diplomat revision"
 category = "ICU4X Development"
+dependencies = [ "cargo-make-min-version" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
