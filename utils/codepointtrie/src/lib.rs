@@ -12,7 +12,23 @@
 //!
 //! # Architecture
 //!
-//! Hello, architecture!...
+//! ICU4X [`CodePointTrie`] is designed to provide a read-only view of CodePointTrie data that is exported
+//! from ICU4C. Detailed information about the design of the data structure can be found in the documentation
+//! for the [`CodePointTrie`] struct.
+//!
+//! # Examples
+//!
+//! ## Querying a `CodePointTrie`
+//!
+//! ```
+//! use icu_codepointtrie::planes;
+//! let trie = planes::get_planes_trie();
+//! assert_eq!(0, trie.get(0x41));  // 'A' as u32
+//! assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
+//! assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
+//! ```
+//!
+//! [`ICU4X`]: ../icu/index.html
 
 pub mod codepointtrie;
 pub mod error;
