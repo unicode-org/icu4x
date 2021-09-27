@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632635523965,
+  "lastUpdate": 1632703088322,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14699,6 +14699,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25469,
             "range": "± 1581",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3c4852e13703f829b31413e58e51090ed8f457d8",
+          "message": "Set min version of cargo-make for diplomat-get-rev task (#1064)",
+          "timestamp": "2021-09-26T17:27:26-07:00",
+          "tree_id": "caac163edc4dcd0b6b7172ab9ace0971c16c1978",
+          "url": "https://github.com/unicode-org/icu4x/commit/3c4852e13703f829b31413e58e51090ed8f457d8"
+        },
+        "date": 1632703082202,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 2127,
+            "range": "± 680",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 13387,
+            "range": "± 4535",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 67824,
+            "range": "± 66065",
             "unit": "ns/iter"
           }
         ]
