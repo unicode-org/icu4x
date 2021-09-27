@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632755012518,
+  "lastUpdate": 1632778074846,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10589,6 +10589,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 116725,
             "range": "± 400",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "31497db60513ba6f34b6acf68c30ac0b710d8d55",
+          "message": "Use/require byte equality in VarZeroVec (#1103)\n\n* Add equality and same-slice invariants to ULE traits\r\n\r\n* Add assert for same-slice invariant in VarZeroVec\r\n\r\n* use equality guarantee in vzv partialeq impl\r\n\r\n* Don't construct the SliceComponents for get_encoded_slice()\r\n\r\n* review fixes\r\n\r\n* Add default impls of as_byte_slice()\r\n\r\n* Add default impl for ULE::from_byte_slice_unchecked()",
+          "timestamp": "2021-09-27T14:22:44-07:00",
+          "tree_id": "f7ff2623ebd59b54c77ef005069b03d6ab8c143e",
+          "url": "https://github.com/unicode-org/icu4x/commit/31497db60513ba6f34b6acf68c30ac0b710d8d55"
+        },
+        "date": 1632778071465,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116710,
+            "range": "± 368",
             "unit": "ns/iter"
           }
         ]
