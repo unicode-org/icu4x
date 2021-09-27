@@ -110,6 +110,11 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         self.get_components().to_vec()
     }
 
+    #[inline]
+    pub fn entire_slice(&self) -> &[u8] {
+        &self.entire_slice
+    }
+
     /// Insert an element at index `idx`
     pub fn insert(&mut self, index: usize, element: &T) {
         let len = self.len();

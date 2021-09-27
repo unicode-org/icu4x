@@ -406,7 +406,10 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// This can be passed back to [`Self::parse_byte_slice()`]
     pub fn get_encoded_slice(&self) -> &[u8] {
-        self.get_components().entire_slice()
+        match self.0 {
+            VarZeroVecInner::Owned(ref vec) => vec.entire_slice(),
+            VarZeroVecInner::Borrowed(vec) => vec.entire_slice(),
+        }
     }
 
     /// For a slice of `T`, get a list of bytes that can be passed to
@@ -501,8 +504,9 @@ where
 {
     #[inline]
     fn eq(&self, other: &VarZeroVec<'b, T>) -> bool {
-        // Note: T implements PartialEq but not T::ULE
-        self.iter().eq(other.iter())
+        // VarULE has an API guarantee that this is equivalent
+        // to `T::VarULE::eq()`
+        self.get_encoded_slice().eq(other.get_encoded_slice())
     }
 }
 
