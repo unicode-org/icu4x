@@ -49,12 +49,8 @@ where
     /// Validates a byte slice, `&[u8]`.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
-    /// and `Self::Error` should be returned if they are not valid.
-    ///
-    /// The default implementation validates the slice for all possible bit values.
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), Self::Error> {
-        Ok(())
-    }
+    /// that they can be transumted to a `Self` and `Self::Error` should be returned otherwise.
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), Self::Error>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime.
     ///
