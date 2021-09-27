@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632702858283,
+  "lastUpdate": 1632753990819,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8369,6 +8369,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 592943,
             "range": "± 21574",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19e4a15de3a91d9ec74e6942ddbdfcaa63010062",
+          "message": "Use ZeroVec in UnicodeSet (#922)",
+          "timestamp": "2021-09-27T07:40:16-07:00",
+          "tree_id": "eb9a545863c1db55745fbab0dd72b2f307ea246e",
+          "url": "https://github.com/unicode-org/icu4x/commit/19e4a15de3a91d9ec74e6942ddbdfcaa63010062"
+        },
+        "date": 1632753987476,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 273248,
+            "range": "± 933",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1399584,
+            "range": "± 1849",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 512994,
+            "range": "± 784",
             "unit": "ns/iter"
           }
         ]
