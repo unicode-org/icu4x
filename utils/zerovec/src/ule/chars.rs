@@ -45,15 +45,14 @@ unsafe impl ULE for CharULE {
     type Error = core::char::CharTryFromError;
 
     #[inline]
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
         // Validate the bytes
         for chunk in bytes.chunks_exact(4) {
             // TODO: Use slice::as_chunks() when stabilized
             let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
             char::try_from(u)?;
         }
-        // Safe because Self is transparent over [u8; 4] and has been validated
-        Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+        Ok(())
     }
 }
 

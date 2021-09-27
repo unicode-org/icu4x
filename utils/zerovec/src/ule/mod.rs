@@ -46,6 +46,16 @@ where
     /// The error that occurs if a byte array is not valid for this ULE.
     type Error;
 
+    /// Validates a byte slice, `&[u8]`.
+    ///
+    /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
+    /// and `Self::Error` should be returned if they are not valid.
+    ///
+    /// The default implementation validates the slice for all possible bit values.
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), Self::Error> {
+        Ok(())
+    }
+
     /// Parses a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
@@ -60,7 +70,10 @@ where
     /// Implementors must return a slice to the same region of memory if parsing succeeds.
     ///
     /// Ideally, implementations call [`ULE::from_byte_slice_unchecked()`] after validation.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error>;
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+        Self::validate_byte_slice(bytes)?;
+        Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+    }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime, assuming that
     /// this byte slice has previously been run through [`ULE::parse_byte_slice()`] with success.

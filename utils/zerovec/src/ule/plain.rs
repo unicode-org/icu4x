@@ -30,11 +30,6 @@ macro_rules! impl_byte_slice_size {
         // the same value as parse_byte_slice
         unsafe impl ULE for PlainOldULE<$size> {
             type Error = core::convert::Infallible;
-            #[inline]
-            fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
-                // Safe because Self is transparent over [u8; $size]
-                Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
-            }
         }
 
         impl PlainOldULE<$size> {
