@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Display)]
 pub enum Error {
+    #[displaydoc("attempted to insert at an index that is not a character boundary")]
     PositionNotCharBoundary,
 }
