@@ -36,7 +36,6 @@ macro_rules! impl_byte_slice_size {
                 // Safe because Self is transparent over [u8; $size]
                 Ok(())
             }
-
         }
 
         impl PlainOldULE<$size> {

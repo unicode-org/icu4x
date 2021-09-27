@@ -66,6 +66,9 @@ where
     /// Implementors must return a slice to the same region of memory if parsing succeeds.
     ///
     /// Ideally, implementations call [`ULE::from_byte_slice_unchecked()`] after validation.
+    ///
+    /// The default implementation executes `Self::validate_byte_slice` followed by
+    /// `Self::from_byte_slice_unchecked`.
     fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
         Self::validate_byte_slice(bytes)?;
         Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
@@ -256,6 +259,12 @@ pub unsafe trait VarULE: 'static {
     /// The error type to used by [`VarULE::parse_byte_slice()`]
     type Error;
 
+    /// Validates a byte slice, `&[u8]`.
+    ///
+    /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
+    /// that they can be transumted to a `Self` and `Self::Error` should be returned otherwise.
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), Self::Error>;
+
     /// Parses a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
@@ -267,7 +276,13 @@ pub unsafe trait VarULE: 'static {
     /// correct type. It is up to the implementation to reason about the safety.
     ///
     /// Implementors must return a pointer to the same region of memory if parsing succeeds.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error>;
+    ///
+    /// The default implementation executes `Self::validate_byte_slice` followed by
+    /// `Self::from_byte_slice_unchecked`.
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
+        Self::validate_byte_slice(bytes)?;
+        Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+    }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&self` with the same lifetime, assuming that
     /// this byte slice has previously been run through [`VarULE::parse_byte_slice()`] with success.

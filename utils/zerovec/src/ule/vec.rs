@@ -46,6 +46,11 @@ where
     type Error = T::Error;
 
     #[inline]
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+        T::validate_byte_slice(bytes)
+    }
+
+    #[inline]
     fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
         T::parse_byte_slice(bytes)
     }
