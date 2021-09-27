@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632753988828,
+  "lastUpdate": 1632755084141,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14783,6 +14783,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18434,
             "range": "± 679",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "89d9c504c1fa8f444bb7cfd69b9f6b6fe7d7e927",
+          "message": "Reorganize DTF pattern and move it to reference module. (#1111)",
+          "timestamp": "2021-09-27T07:57:47-07:00",
+          "tree_id": "93d602459b30b859a8c2b280a0ab21198e50b3ec",
+          "url": "https://github.com/unicode-org/icu4x/commit/89d9c504c1fa8f444bb7cfd69b9f6b6fe7d7e927"
+        },
+        "date": 1632755080831,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1084,
+            "range": "± 221",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6341,
+            "range": "± 432",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20211,
+            "range": "± 1797",
             "unit": "ns/iter"
           }
         ]
