@@ -9,8 +9,8 @@
 use crate::builder::UnicodeSetBuilder;
 use crate::uniset::UnicodeSet;
 use alloc::borrow::Cow;
-use core::convert::TryInto;
 use icu_provider::yoke::{self, *};
+
 //
 // resource key structs - the structs used directly by users of data provider
 //
@@ -312,15 +312,17 @@ pub mod key {
 }
 
 #[icu_provider::data_struct]
-#[derive(Debug, Hash, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct UnicodePropertyV1<'data> {
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub name: Cow<'data, str>,
-    pub inv_list: UnicodeSet,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub inv_list: UnicodeSet<'data>,
 }
 
 impl Default for UnicodePropertyV1<'static> {
@@ -335,17 +337,19 @@ impl Default for UnicodePropertyV1<'static> {
 
 impl<'data> UnicodePropertyV1<'data> {
     #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
-    pub fn from_uniset(set: &UnicodeSet, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
+    pub fn from_owned_uniset(
+        set: UnicodeSet<'data>,
+        name: Cow<'data, str>,
+    ) -> UnicodePropertyV1<'data> {
         UnicodePropertyV1 {
             name,
-            inv_list: set.clone(),
+            inv_list: set,
         }
     }
 }
 
-impl<'data> TryInto<UnicodeSet> for UnicodePropertyV1<'data> {
-    type Error = crate::UnicodeSetError;
-    fn try_into(self) -> Result<UnicodeSet, Self::Error> {
-        Ok(self.inv_list)
+impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
+    fn from(prop: UnicodePropertyV1<'data>) -> UnicodeSet<'data> {
+        prop.inv_list
     }
 }

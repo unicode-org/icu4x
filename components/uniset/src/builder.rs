@@ -7,6 +7,7 @@ use alloc::vec::Vec;
 use core::{char, cmp::Ordering, ops::RangeBounds};
 
 use crate::{uniset::UnicodeSet, utils::deconstruct_range};
+use zerovec::{ule::AsULE, ZeroVec};
 
 /// A builder for [`UnicodeSet`].
 ///
@@ -23,8 +24,9 @@ impl UnicodeSetBuilder {
     }
 
     /// Returns a [`UnicodeSet`] and consumes the [`UnicodeSetBuilder`]
-    pub fn build(self) -> UnicodeSet {
-        UnicodeSet::from_inversion_list(self.intervals).unwrap()
+    pub fn build(self) -> UnicodeSet<'static> {
+        let inv_list: ZeroVec<u32> = ZeroVec::clone_from_slice(&self.intervals);
+        UnicodeSet::from_inversion_list(inv_list).unwrap()
     }
 
     /// Abstraction for adding/removing a range from start..end
@@ -158,15 +160,22 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![0x41, 0x4C]).unwrap();
+    /// let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x4C]).unwrap();
     /// builder.add_set(&set);
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
     /// ```
+    #[allow(unused_assignments)]
     pub fn add_set(&mut self, set: &UnicodeSet) {
-        for range in set.as_inversion_list().chunks(2) {
-            self.add(range[0], range[1]);
-        }
+        set.as_inversion_list()
+            .as_slice()
+            .chunks(2)
+            .for_each(|pair| {
+                self.add(
+                    AsULE::from_unaligned(&pair[0]),
+                    AsULE::from_unaligned(&pair[1]),
+                )
+            });
     }
 
     /// Removes the range from the [`UnicodeSetBuilder`]
@@ -225,15 +234,22 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![0x41, 0x46]).unwrap();
+    /// let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x46]).unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('F'));
+    #[allow(unused_assignments)]
     pub fn remove_set(&mut self, set: &UnicodeSet) {
-        for range in set.as_inversion_list().chunks(2) {
-            self.remove(range[0], range[1]);
-        }
+        set.as_inversion_list()
+            .as_slice()
+            .chunks(2)
+            .for_each(|pair| {
+                self.remove(
+                    AsULE::from_unaligned(&pair[0]),
+                    AsULE::from_unaligned(&pair[1]),
+                )
+            });
     }
 
     /// Retain the specified character in the [`UnicodeSetBuilder`] if it exists
@@ -284,18 +300,21 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![65, 70]).unwrap();
+    /// let set = UnicodeSet::from_inversion_list_slice(&[65, 70]).unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_set(&set); // retains 'A'..='E'
     /// let check = builder.build();
     /// assert!(check.contains('A'));
     /// assert!(!check.contains('G'));
     /// ```
+    #[allow(unused_assignments)]
     pub fn retain_set(&mut self, set: &UnicodeSet) {
         let mut prev = 0;
-        for range in set.as_inversion_list().chunks(2) {
-            self.remove(prev, range[0]);
-            prev = range[1];
+        for pair in set.as_inversion_list().as_slice().chunks(2) {
+            let range_start = AsULE::from_unaligned(&pair[0]);
+            let range_limit = AsULE::from_unaligned(&pair[1]);
+            self.remove(prev, range_start);
+            prev = range_limit;
         }
         self.remove(prev, (char::MAX as u32) + 1);
     }
@@ -305,20 +324,20 @@ impl UnicodeSetBuilder {
     ///
     /// Performs in `O(B + S)`, where `B` is the number of endpoints in the Builder, and `S` is the number
     /// of endpoints in the argument.
-    fn complement_list(&mut self, set: &[u32]) {
+    fn complement_list(&mut self, set_iter: impl core::iter::Iterator<Item = u32>) {
         let mut res: Vec<u32> = vec![]; // not the biggest fan of having to allocate new memory
         let mut ai = self.intervals.iter();
-        let mut bi = set.iter();
+        let mut bi = set_iter;
         let mut a = ai.next();
         let mut b = bi.next();
         while let (Some(c), Some(d)) = (a, b) {
-            match c.cmp(d) {
+            match c.cmp(&d) {
                 Ordering::Less => {
                     res.push(*c);
                     a = ai.next();
                 }
                 Ordering::Greater => {
-                    res.push(*d);
+                    res.push(d);
                     b = bi.next();
                 }
                 Ordering::Equal => {
@@ -331,7 +350,7 @@ impl UnicodeSetBuilder {
             res.push(*c)
         }
         if let Some(d) = b {
-            res.push(*d)
+            res.push(d)
         }
         res.extend(ai);
         res.extend(bi);
@@ -346,7 +365,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![0x0, 0x41, 0x46, (std::char::MAX as u32) + 1]).unwrap();
+    /// let set = UnicodeSet::from_inversion_list_slice(&[0x0, 0x41, 0x46, (std::char::MAX as u32) + 1]).unwrap();
     /// builder.add_set(&set);
     /// builder.complement();
     /// let check = builder.build();
@@ -387,7 +406,7 @@ impl UnicodeSetBuilder {
     pub fn complement_char(&mut self, c: char) {
         let code_point = c as u32;
         let to_complement = [code_point, code_point + 1];
-        self.complement_list(&to_complement);
+        self.complement_list(to_complement.iter().copied());
     }
 
     /// Complements the range in the builder, adding any elements in the range if not in the builder, and
@@ -407,7 +426,7 @@ impl UnicodeSetBuilder {
     pub fn complement_range(&mut self, range: &impl RangeBounds<char>) {
         let (start, end) = deconstruct_range(range);
         let to_complement = [start, end];
-        self.complement_list(&to_complement);
+        self.complement_list(to_complement.iter().copied());
     }
 
     /// Complements the set in the builder, adding any elements in the set if not in the builder, and
@@ -418,7 +437,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![0x41, 0x46, 0x4B, 0x5A]).unwrap();
+    /// let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
     /// builder.add_range(&('C'..='N')); // 67 - 78
     /// builder.complement_set(&set);
     /// let check = builder.build();
@@ -426,7 +445,12 @@ impl UnicodeSetBuilder {
     /// assert!(!check.contains('N')); // 78
     /// ```
     pub fn complement_set(&mut self, set: &UnicodeSet) {
-        self.complement_list(set.as_inversion_list());
+        let inv_list_iter_owned = set
+            .as_inversion_list()
+            .as_slice()
+            .iter()
+            .map(|cp| <u32 as AsULE>::from_unaligned(cp));
+        self.complement_list(inv_list_iter_owned);
     }
 
     /// Returns whether the build is empty.
@@ -448,9 +472,11 @@ impl UnicodeSetBuilder {
 mod tests {
     use super::{UnicodeSet, UnicodeSetBuilder};
     use core::char;
+    use zerovec::ZeroVec;
 
     fn generate_tester(ex: Vec<u32>) -> UnicodeSetBuilder {
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let inv_list: ZeroVec<u32> = ZeroVec::clone_from_slice(&ex);
+        let check = UnicodeSet::from_inversion_list(inv_list).unwrap();
         let mut builder = UnicodeSetBuilder::new();
         builder.add_set(&check);
         builder
@@ -634,7 +660,7 @@ mod tests {
     fn test_add_unicodeset() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
         let check =
-            UnicodeSet::from_inversion_list(vec![0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
+            UnicodeSet::from_inversion_list_slice(&[0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
         builder.add_set(&check);
         let expected = vec![0x5, 0x14, 0x16, 0x21, 0x28, 0x33];
         assert_eq!(builder.intervals, expected);
@@ -768,7 +794,7 @@ mod tests {
     #[test]
     fn test_remove_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
-        let remove = UnicodeSet::from_inversion_list(vec![0xA, 0x14, 0x2D, 0x4B]).unwrap();
+        let remove = UnicodeSet::from_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B]).unwrap();
         builder.remove_set(&remove);
         let expected = vec![0x28, 0x2D, 0x4B, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -801,7 +827,7 @@ mod tests {
     fn test_retain_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
         let retain =
-            UnicodeSet::from_inversion_list(vec![0xE, 0x14, 0x19, 0x37, 0x4D, 0x51]).unwrap();
+            UnicodeSet::from_inversion_list_slice(&[0xE, 0x14, 0x19, 0x37, 0x4D, 0x51]).unwrap();
         builder.retain_set(&retain);
         let expected = vec![0xE, 0x14, 0x28, 0x32, 0x4D, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -838,7 +864,7 @@ mod tests {
     #[test]
     fn test_complement_interior() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        builder.complement_list(&[0xE, 0x14]);
+        builder.complement_list([0xE, 0x14].iter().copied());
         let expected = vec![0xA, 0xE, 0x28, 0x32];
         assert_eq!(builder.intervals, expected);
     }
@@ -846,7 +872,7 @@ mod tests {
     #[test]
     fn test_complement_exterior() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        builder.complement_list(&[0x19, 0x23]);
+        builder.complement_list([0x19, 0x23].iter().copied());
         let expected = vec![0xA, 0x14, 0x19, 0x23, 0x28, 0x32];
         assert_eq!(builder.intervals, expected);
     }
@@ -854,7 +880,7 @@ mod tests {
     #[test]
     fn test_complement_larger_list() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        builder.complement_list(&[0x1E, 0x37, 0x3C, 0x46]);
+        builder.complement_list([0x1E, 0x37, 0x3C, 0x46].iter().copied());
         let expected = vec![0xA, 0x14, 0x1E, 0x28, 0x32, 0x37, 0x3C, 0x46];
         assert_eq!(builder.intervals, expected);
     }
@@ -879,7 +905,7 @@ mod tests {
     #[test]
     fn test_complement_set() {
         let mut builder = generate_tester(vec![0x43, 0x4E]);
-        let set = UnicodeSet::from_inversion_list(vec![0x41, 0x46, 0x4B, 0x5A]).unwrap();
+        let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
         builder.complement_set(&set);
         let expected = vec![0x41, 0x43, 0x46, 0x4B, 0x4E, 0x5A];
         assert_eq!(builder.intervals, expected);

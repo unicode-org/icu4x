@@ -99,9 +99,9 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for EnumeratedPropertie
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_owned(UnicodePropertyV1::from_uniset(
-                &uniset, name,
-            ))),
+            payload: Some(DataPayload::from_owned(
+                UnicodePropertyV1::from_owned_uniset(uniset, name),
+            )),
         })
     }
 }
@@ -181,10 +181,9 @@ fn test_gc_groupings() {
     use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
     use std::convert::TryInto;
 
-    let root_dir = icu_testdata::paths::data_root().join("uprops");
-    let provider = EnumeratedPropertiesDataProvider::new(root_dir);
-
-    let get_uniset = |key| -> UnicodeSet {
+    fn get_uniset_payload<'data>(key: ResourceKey) -> DataPayload<'data, UnicodePropertyV1Marker> {
+        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let provider = EnumeratedPropertiesDataProvider::new(root_dir);
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
@@ -195,15 +194,25 @@ fn test_gc_groupings() {
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
-
-        payload.get().clone().try_into().expect("Valid unicode set")
-    };
+        payload
+    }
 
     let test_group = |category: ResourceKey, subcategories: &[ResourceKey]| {
-        let category_set = get_uniset(category);
+        let category_set_payload = get_uniset_payload(category);
+        let category_set: UnicodeSet = category_set_payload
+            .get()
+            .clone()
+            .try_into()
+            .expect("Valid unicode set");
         let mut builder = UnicodeSetBuilder::new();
         for subcategory in subcategories {
-            builder.add_set(&get_uniset(*subcategory));
+            builder.add_set(
+                &get_uniset_payload(*subcategory)
+                    .get()
+                    .clone()
+                    .try_into()
+                    .expect("Valid unicode set"),
+            );
         }
         let combined_set = builder.build();
         println!("{:?} {:?}", category, subcategories);

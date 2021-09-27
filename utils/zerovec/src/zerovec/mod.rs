@@ -75,9 +75,11 @@ where
     }
 }
 
+impl<T> Eq for ZeroVec<'_, T> where T: AsULE + Copy + Eq + ?Sized {}
+
 impl<'a, 'b, T> PartialEq<ZeroVec<'b, T>> for ZeroVec<'a, T>
 where
-    T: AsULE + Copy + PartialEq,
+    T: AsULE + Copy + PartialEq + ?Sized,
 {
     #[inline]
     fn eq(&self, other: &ZeroVec<'b, T>) -> bool {
@@ -88,7 +90,7 @@ where
 
 impl<T> PartialEq<&[T]> for ZeroVec<'_, T>
 where
-    T: AsULE + Copy + PartialEq,
+    T: AsULE + Copy + PartialEq + ?Sized,
 {
     #[inline]
     fn eq(&self, other: &&[T]) -> bool {
