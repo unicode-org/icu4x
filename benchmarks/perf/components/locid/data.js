@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632754003512,
+  "lastUpdate": 1632755064360,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13277,6 +13277,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4986,
             "range": "± 266",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "89d9c504c1fa8f444bb7cfd69b9f6b6fe7d7e927",
+          "message": "Reorganize DTF pattern and move it to reference module. (#1111)",
+          "timestamp": "2021-09-27T07:57:47-07:00",
+          "tree_id": "93d602459b30b859a8c2b280a0ab21198e50b3ec",
+          "url": "https://github.com/unicode-org/icu4x/commit/89d9c504c1fa8f444bb7cfd69b9f6b6fe7d7e927"
+        },
+        "date": 1632755060065,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2963,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4957,
+            "range": "± 79",
             "unit": "ns/iter"
           }
         ]
