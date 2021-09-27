@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632703088322,
+  "lastUpdate": 1632753988828,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14741,6 +14741,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 67824,
             "range": "± 66065",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19e4a15de3a91d9ec74e6942ddbdfcaa63010062",
+          "message": "Use ZeroVec in UnicodeSet (#922)",
+          "timestamp": "2021-09-27T07:40:16-07:00",
+          "tree_id": "eb9a545863c1db55745fbab0dd72b2f307ea246e",
+          "url": "https://github.com/unicode-org/icu4x/commit/19e4a15de3a91d9ec74e6942ddbdfcaa63010062"
+        },
+        "date": 1632753985603,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 970,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5657,
+            "range": "± 170",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18434,
+            "range": "± 679",
             "unit": "ns/iter"
           }
         ]
