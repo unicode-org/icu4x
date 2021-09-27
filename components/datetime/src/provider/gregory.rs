@@ -150,7 +150,7 @@ symbols!(
 pub mod patterns {
     use super::*;
     use crate::{
-        pattern::{self, Pattern},
+        pattern::{self, reference::Pattern},
         skeleton::{Skeleton, SkeletonError},
     };
     use core::convert::TryFrom;
@@ -188,7 +188,7 @@ pub mod patterns {
     }
 
     impl TryFrom<&str> for PatternV1 {
-        type Error = pattern::Error;
+        type Error = pattern::PatternError;
 
         fn try_from(pattern_string: &str) -> Result<Self, Self::Error> {
             let pattern = Pattern::from_bytes(pattern_string);

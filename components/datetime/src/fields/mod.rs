@@ -13,7 +13,7 @@ pub use symbols::*;
 
 use core::{
     cmp::{Ord, PartialOrd},
-    convert::{TryFrom, TryInto},
+    convert::TryFrom,
 };
 
 #[derive(Display, Debug)]
@@ -65,9 +65,7 @@ impl TryFrom<(FieldSymbol, usize)> for Field {
     fn try_from(input: (FieldSymbol, usize)) -> Result<Self, Self::Error> {
         let (symbol, length) = (
             input.0,
-            input
-                .1
-                .try_into()
+            FieldLength::from_idx(input.1 as u8)
                 .map_err(|_| Self::Error::InvalidLength(input.0))?,
         );
         Ok(Self { symbol, length })

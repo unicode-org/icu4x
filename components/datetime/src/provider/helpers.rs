@@ -6,7 +6,7 @@ use crate::date;
 use crate::error::DateTimeFormatError;
 use crate::fields;
 use crate::options::{components, length, preferences, DateTimeFormatOptions};
-use crate::pattern::{Pattern, PatternItem};
+use crate::pattern::{reference::Pattern, PatternItem};
 use crate::provider;
 use crate::skeleton;
 use alloc::borrow::Cow;

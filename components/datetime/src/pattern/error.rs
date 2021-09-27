@@ -11,7 +11,7 @@ use displaydoc::Display;
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
 #[derive(Display, Debug, PartialEq)]
-pub enum Error {
+pub enum PatternError {
     #[displaydoc("{0:?} invalid field length in pattern")]
     FieldLengthInvalid(fields::FieldSymbol),
     #[displaydoc("unknown substitution {0} in pattern")]
@@ -23,9 +23,9 @@ pub enum Error {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for Error {}
+impl std::error::Error for PatternError {}
 
-impl From<fields::Error> for Error {
+impl From<fields::Error> for PatternError {
     fn from(input: fields::Error) -> Self {
         match input {
             fields::Error::InvalidLength(symbol) => Self::FieldLengthInvalid(symbol),

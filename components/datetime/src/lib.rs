@@ -77,7 +77,6 @@
 
 extern crate alloc;
 
-mod arithmetic;
 pub mod date;
 pub mod datetime;
 mod error;

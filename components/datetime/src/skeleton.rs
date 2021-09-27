@@ -17,7 +17,7 @@ use smallvec::SmallVec;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::{components, length, preferences},
-    pattern::{Pattern, PatternItem},
+    pattern::{reference::Pattern, PatternItem},
     provider::gregory::patterns::{LengthPatternsV1, PatternV1, SkeletonV1, SkeletonsV1},
 };
 
@@ -194,7 +194,7 @@ impl TryFrom<&str> for Skeleton {
                 iter.next();
             }
 
-            let field = Field::from((field_symbol, FieldLength::try_from(field_length)?));
+            let field = Field::from((field_symbol, FieldLength::from_idx(field_length)?));
 
             match fields.binary_search(&field) {
                 Ok(_) => return Err(SkeletonError::DuplicateField),
@@ -758,7 +758,7 @@ pub fn get_best_available_format_pattern(
     } else {
         Pattern::from(
             closest_format_pattern
-                .items()
+                .items
                 .iter()
                 .map(|item| {
                     if let PatternItem::Field(pattern_field) = item {

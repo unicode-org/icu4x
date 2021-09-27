@@ -233,13 +233,13 @@ impl LengthType for TimeZone {
             //
             // The default cases may want to be updated to return errors themselves
             // if the skeleton matching code ever becomes fallible.
-            Self::UpperZ => match u8::from(length) {
+            Self::UpperZ => match length.idx() {
                 1..=3 => Numeric,
                 4 => Text,
                 5 => Numeric,
                 _ => Text,
             },
-            Self::UpperO => match u8::from(length) {
+            Self::UpperO => match length.idx() {
                 1 => Text,
                 4 => Numeric,
                 _ => Text,

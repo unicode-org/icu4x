@@ -6,7 +6,7 @@ use core::fmt;
 
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
-use crate::pattern::{Error as PatternError, PatternItem};
+use crate::pattern::{PatternError, PatternItem};
 use crate::{
     date::TimeZoneInput,
     time_zone::{IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat},
@@ -75,7 +75,7 @@ where
 {
     if let FieldSymbol::TimeZone(zone_symbol) = field.symbol {
         match zone_symbol {
-            fields::TimeZone::LowerZ => match u8::from(field.length) {
+            fields::TimeZone::LowerZ => match field.length.idx() {
                 1..=3 => time_zone_format
                     .short_specific_non_location_format(w, time_zone)
                     .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
@@ -88,7 +88,7 @@ where
                     )))
                 }
             },
-            fields::TimeZone::UpperZ => match u8::from(field.length) {
+            fields::TimeZone::UpperZ => match field.length.idx() {
                 1..=3 => time_zone_format.iso8601_format(
                     w,
                     time_zone,
@@ -110,7 +110,7 @@ where
                     )))
                 }
             },
-            fields::TimeZone::UpperO => match u8::from(field.length) {
+            fields::TimeZone::UpperO => match field.length.idx() {
                 1..=4 => time_zone_format.localized_gmt_format(w, time_zone)?,
                 _ => {
                     return Err(Error::Pattern(PatternError::FieldLengthInvalid(
@@ -118,7 +118,7 @@ where
                     )))
                 }
             },
-            fields::TimeZone::LowerV => match u8::from(field.length) {
+            fields::TimeZone::LowerV => match field.length.idx() {
                 1 => time_zone_format
                     .short_generic_non_location_format(w, time_zone)
                     .or_else(|_| time_zone_format.generic_location_format(w, time_zone))
@@ -133,7 +133,7 @@ where
                     )))
                 }
             },
-            fields::TimeZone::UpperV => match u8::from(field.length) {
+            fields::TimeZone::UpperV => match field.length.idx() {
                 1 => todo!("#606 (BCP-47 identifiers)"),
                 2 => todo!("#606 (BCP-47 identifiers)"),
                 3 => time_zone_format
@@ -148,7 +148,7 @@ where
                     )))
                 }
             },
-            fields::TimeZone::LowerX => match u8::from(field.length) {
+            fields::TimeZone::LowerX => match field.length.idx() {
                 1 => time_zone_format.iso8601_format(
                     w,
                     time_zone,
@@ -190,7 +190,7 @@ where
                     )))
                 }
             },
-            fields::TimeZone::UpperX => match u8::from(field.length) {
+            fields::TimeZone::UpperX => match field.length.idx() {
                 1 => time_zone_format.iso8601_format(
                     w,
                     time_zone,
