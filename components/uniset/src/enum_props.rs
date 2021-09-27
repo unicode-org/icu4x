@@ -100,8 +100,9 @@ pub enum GeneralCategory {
     Digit = 1 << (GeneralSubcategory::Digit as u32),
     LetterNumber = 1 << (GeneralSubcategory::LetterNumber as u32),
     OtherNumber = 1 << (GeneralSubcategory::OtherNumber as u32),
-    Number =
-        1 << (GeneralSubcategory::Digit as u32) | 1 << (GeneralSubcategory::LetterNumber as u32) | 1 << (GeneralSubcategory::OtherNumber as u32),
+    Number = 1 << (GeneralSubcategory::Digit as u32)
+        | 1 << (GeneralSubcategory::LetterNumber as u32)
+        | 1 << (GeneralSubcategory::OtherNumber as u32),
 
     SpaceSeparator = 1 << (GeneralSubcategory::SpaceSeparator as u32),
     LineSeparator = 1 << (GeneralSubcategory::LineSeparator as u32),
