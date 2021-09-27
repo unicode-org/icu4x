@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632702521103,
+  "lastUpdate": 1632753696983,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -563,6 +563,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3c4852e13703f829b31413e58e51090ed8f457d8"
         },
         "date": 1632702517472,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19e4a15de3a91d9ec74e6942ddbdfcaa63010062",
+          "message": "Use ZeroVec in UnicodeSet (#922)",
+          "timestamp": "2021-09-27T07:40:16-07:00",
+          "tree_id": "eb9a545863c1db55745fbab0dd72b2f307ea246e",
+          "url": "https://github.com/unicode-org/icu4x/commit/19e4a15de3a91d9ec74e6942ddbdfcaa63010062"
+        },
+        "date": 1632753693277,
         "tool": "ndjson",
         "benches": [
           {
