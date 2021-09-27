@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632635491577,
+  "lastUpdate": 1632702844652,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13205,6 +13205,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5249,
             "range": "± 192",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3c4852e13703f829b31413e58e51090ed8f457d8",
+          "message": "Set min version of cargo-make for diplomat-get-rev task (#1064)",
+          "timestamp": "2021-09-26T17:27:26-07:00",
+          "tree_id": "caac163edc4dcd0b6b7172ab9ace0971c16c1978",
+          "url": "https://github.com/unicode-org/icu4x/commit/3c4852e13703f829b31413e58e51090ed8f457d8"
+        },
+        "date": 1632702840602,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2571,
+            "range": "± 223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4545,
+            "range": "± 351",
             "unit": "ns/iter"
           }
         ]
