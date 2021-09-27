@@ -497,7 +497,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d98d31bdbdad3af98493ccfdc955b32fca886176#d98d31bdbdad3af98493ccfdc955b32fca886176"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=48bb3c742eb0a186948256ac1d66569573613158#48bb3c742eb0a186948256ac1d66569573613158"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -508,12 +508,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d98d31bdbdad3af98493ccfdc955b32fca886176#d98d31bdbdad3af98493ccfdc955b32fca886176"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=48bb3c742eb0a186948256ac1d66569573613158#48bb3c742eb0a186948256ac1d66569573613158"
 
 [[package]]
 name = "diplomat_core"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d98d31bdbdad3af98493ccfdc955b32fca886176#d98d31bdbdad3af98493ccfdc955b32fca886176"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=48bb3c742eb0a186948256ac1d66569573613158#48bb3c742eb0a186948256ac1d66569573613158"
 dependencies = [
  "impls",
  "lazy_static",
@@ -951,6 +951,7 @@ name = "icu"
 version = "0.3.0"
 dependencies = [
  "fixed_decimal",
+ "icu_calendar",
  "icu_datetime",
  "icu_decimal",
  "icu_locale_canonicalizer",
@@ -1210,6 +1211,7 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
+ "yoke",
 ]
 
 [[package]]
@@ -1333,9 +1335,11 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_provider",
  "litemap",
+ "postcard",
  "serde",
  "serde_json",
  "tinystr",
+ "zerovec",
 ]
 
 [[package]]
@@ -2914,7 +2918,6 @@ version = "0.3.0"
 dependencies = [
  "bincode",
  "criterion",
- "either",
  "getrandom 0.2.2",
  "iai",
  "icu_benchmark_macros",

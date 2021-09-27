@@ -4,15 +4,14 @@
 
 use crate::blob_schema::BlobSchema;
 use crate::path_util;
-use icu_provider::{
-    prelude::*,
-    serde::{SerdeDeDataProvider, SerdeDeDataReceiver},
-};
+use icu_provider::prelude::*;
+use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
 
 /// A data provider loading data statically baked in to the binary.
 ///
-/// Although static data is convenient and highly portable, it also increases binary size.
+/// Although static data is convenient and highly portable, it also increases binary size. To
+/// load the data files dynamically at runtime, see [`BlobDataProvider`].
 ///
 /// To bake blob data into your binary, use [`include_bytes!`](std::include_bytes), as shown in
 /// the example below.
@@ -49,6 +48,8 @@ use serde::de::Deserialize;
 ///
 /// assert_eq!(response.get().message, "Ave, munde");
 /// ```
+///
+/// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
     blob: BlobSchema<'static>,
 }
@@ -76,7 +77,7 @@ impl<'data, M> DataProvider<'data, M> for StaticDataProvider
 where
     M: DataMarker<'data>,
     // 'static is what we want here, because we are deserializing from a static buffer.
-    M::Yokeable: serde::de::Deserialize<'static>,
+    M::Yokeable: Deserialize<'static>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, DataError> {
         let file = self.get_file(req)?;

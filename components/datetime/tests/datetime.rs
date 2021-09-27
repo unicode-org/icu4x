@@ -8,7 +8,7 @@ mod fixtures;
 mod patterns;
 
 use icu_datetime::{
-    mock::{datetime::MockDateTime, zoned_datetime::MockZonedDateTime},
+    mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_datetime::{
@@ -66,7 +66,7 @@ fn test_fixture(fixture_name: &str) {
         let options = fixtures::get_options(&fx.input.options);
 
         let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
-        let value: MockDateTime = fx.input.value.parse().unwrap();
+        let value = parse_gregorian_from_str(&fx.input.value).unwrap();
 
         let result = dtf.format_to_string(&value);
         let description = match fx.description {
@@ -176,7 +176,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
-                let datetime: MockDateTime = dt_input.parse().unwrap();
+                let datetime = parse_gregorian_from_str(dt_input).unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         let new_pattern_cow1 = Cow::Owned(pattern_input.to_string());

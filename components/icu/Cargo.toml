@@ -31,6 +31,11 @@ denylist = ["bench"]
 [package.metadata.docs.rs]
 all-features = true
 
+[dependencies.icu_calendar]
+version = "0.3"
+path = "../calendar"
+default-features = false
+
 [dependencies.icu_datetime]
 version = "0.3"
 path = "../datetime"

@@ -6,7 +6,9 @@ use super::vecs::ZeroVecLike;
 use crate::ule::*;
 use crate::VarZeroVec;
 use crate::ZeroVec;
-use std::cmp::Ordering;
+use alloc::string::String;
+use alloc::vec::Vec;
+use core::cmp::Ordering;
 
 /// Trait marking types which are allowed to be keys or values in [`ZeroMap`](super::ZeroMap).
 ///

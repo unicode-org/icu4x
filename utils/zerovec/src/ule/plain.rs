@@ -29,7 +29,7 @@ macro_rules! impl_byte_slice_size {
         // This is safe to implement because from_byte_slice_unchecked returns
         // the same value as parse_byte_slice
         unsafe impl ULE for PlainOldULE<$size> {
-            type Error = std::convert::Infallible;
+            type Error = core::convert::Infallible;
             #[inline]
             fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
                 // Safe because Self is transparent over [u8; $size]
@@ -40,14 +40,24 @@ macro_rules! impl_byte_slice_size {
                 let data = bytes.as_ptr();
                 let len = bytes.len() / $size;
                 // Safe because Self is transparent over [u8; $size]
-                std::slice::from_raw_parts(data as *const Self, len)
+                core::slice::from_raw_parts(data as *const Self, len)
             }
             #[inline]
             fn as_byte_slice(slice: &[Self]) -> &[u8] {
                 let data = slice.as_ptr();
                 let len = slice.len() * $size;
                 // Safe because Self is transparent over [u8; $size]
-                unsafe { std::slice::from_raw_parts(data as *const u8, len) }
+                unsafe { core::slice::from_raw_parts(data as *const u8, len) }
+            }
+        }
+
+        impl PlainOldULE<$size> {
+            #[inline]
+            pub fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+                let data = bytes.as_mut_ptr();
+                let len = bytes.len() / $size;
+                // Safe because Self is transparent over [u8; $size]
+                unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
             }
         }
     };
@@ -96,7 +106,7 @@ impl_byte_slice_type!(i128, 16);
 // This is safe to implement because from_byte_slice_unchecked returns
 // the same value as parse_byte_slice
 unsafe impl ULE for u8 {
-    type Error = std::convert::Infallible;
+    type Error = core::convert::Infallible;
     #[inline]
     fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
         Ok(bytes)

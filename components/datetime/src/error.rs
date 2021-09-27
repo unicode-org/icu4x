@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::FieldSymbol;
-use crate::pattern;
+use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
 use icu_provider::prelude::DataError;
@@ -13,7 +13,7 @@ use icu_provider::prelude::DataError;
 pub enum DateTimeFormatError {
     /// An error originating from parsing a pattern.
     #[displaydoc("{0}")]
-    Pattern(pattern::Error),
+    Pattern(PatternError),
     /// An error originating from the [`Write`](std::fmt::Write) trait.
     #[displaydoc("{0}")]
     Format(core::fmt::Error),
@@ -35,8 +35,8 @@ pub enum DateTimeFormatError {
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeFormatError {}
 
-impl From<pattern::Error> for DateTimeFormatError {
-    fn from(e: pattern::Error) -> Self {
+impl From<PatternError> for DateTimeFormatError {
+    fn from(e: PatternError) -> Self {
         DateTimeFormatError::Pattern(e)
     }
 }

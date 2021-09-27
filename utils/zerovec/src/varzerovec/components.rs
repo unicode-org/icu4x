@@ -3,9 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use std::convert::TryInto;
-use std::marker::PhantomData;
-use std::{iter, mem};
+use alloc::format;
+use alloc::string::String;
+use alloc::vec::Vec;
+use core::convert::TryInto;
+use core::marker::PhantomData;
+use core::{iter, mem};
 
 fn usizeify(x: PlainOldULE<4>) -> usize {
     u32::from_unaligned(&x) as usize
@@ -15,7 +18,7 @@ fn usizeify(x: PlainOldULE<4>) -> usize {
 ///
 /// This is where the actual work involved in VarZeroVec happens
 ///
-/// See [`SliceComponents::try_from_bytes()`] for information on the internal invariants involved
+/// See [`SliceComponents::parse_byte_slice()`] for information on the internal invariants involved
 pub struct SliceComponents<'a, T> {
     /// The list of indices into the `things` slice
     indices: &'a [PlainOldULE<4>],
@@ -50,7 +53,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     /// - `indices[len - 1]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
-    pub fn try_from_bytes(slice: &'a [u8]) -> Result<Self, ParseErrorFor<T>> {
+    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ParseErrorFor<T>> {
         if slice.is_empty() {
             return Ok(SliceComponents {
                 indices: &[],
@@ -87,6 +90,39 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
         Ok(components)
     }
 
+    /// Construct a [`SliceComponents`] from a byte slice that has previously
+    /// successfully returned a [`SliceComponents`] when passed to
+    /// [`SliceComponents::parse_byte_slice()`]. Will return the same
+    /// object as one would get from calling [`SliceComponents::parse_byte_slice()`].
+    ///
+    /// # Safety
+    /// The bytes must have previously successfully run through
+    /// [`SliceComponents::parse_byte_slice()`]
+    pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
+        if slice.is_empty() {
+            return SliceComponents {
+                indices: &[],
+                things: &[],
+                entire_slice: slice,
+                marker: PhantomData,
+            };
+        }
+        let len_bytes = slice.get_unchecked(0..4);
+        let len_ule = PlainOldULE::<4>::from_byte_slice_unchecked(len_bytes);
+
+        let len = u32::from_unaligned(len_ule.get_unchecked(0)) as usize;
+        let indices_bytes = slice.get_unchecked(4..4 * len + 4);
+        let indices = PlainOldULE::<4>::from_byte_slice_unchecked(indices_bytes);
+        let things = slice.get_unchecked(4 * len + 4..);
+
+        SliceComponents {
+            indices,
+            things,
+            entire_slice: slice,
+            marker: PhantomData,
+        }
+    }
+
     #[inline]
     pub fn len(self) -> usize {
         self.indices.len()
@@ -98,7 +134,6 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     }
 
     #[inline]
-    #[cfg(feature = "serde")]
     pub fn entire_slice(self) -> &'a [u8] {
         self.entire_slice
     }
@@ -191,6 +226,24 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
             })
             .chain(last)
             .map(|s| unsafe { T::VarULE::from_byte_slice_unchecked(s) })
+    }
+
+    pub fn to_vec(self) -> Vec<T>
+    where
+        T: Clone,
+    {
+        self.iter().map(T::from_unaligned).collect()
+    }
+
+    // Dump a debuggable representation of this type
+    #[allow(unused)] // useful for debugging
+    pub(crate) fn dump(&self) -> String {
+        let indices = self
+            .indices
+            .iter()
+            .map(u32::from_unaligned)
+            .collect::<Vec<_>>();
+        format!("SliceComponents {{ indices: {:?} }}", indices)
     }
 }
 

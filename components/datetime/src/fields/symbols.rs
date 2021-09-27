@@ -8,12 +8,14 @@ use displaydoc::Display;
 
 #[derive(Display, Debug, PartialEq)]
 pub enum SymbolError {
-    /// Unknown field symbol.
+    /// Invalid field symbol index.
+    #[displaydoc("Invalid field symbol index: {0}")]
+    InvalidIndex(u8),
     #[displaydoc("Unknown field symbol: {0}")]
-    Unknown(u8),
+    Unknown(char),
     /// Invalid character for a field symbol.
     #[displaydoc("Invalid character for a field symbol: {0}")]
-    Invalid(char),
+    Invalid(u8),
 }
 
 #[cfg(feature = "std")]
@@ -91,83 +93,43 @@ impl FieldSymbol {
     }
 }
 
-impl TryFrom<u8> for FieldSymbol {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b'm' => Ok(Self::Minute),
-            _ => Year::try_from(b)
-                .map(Self::Year)
-                .or_else(|_| Month::try_from(b).map(Self::Month))
-                .or_else(|_| Day::try_from(b).map(Self::Day))
-                .or_else(|_| Weekday::try_from(b).map(Self::Weekday))
-                .or_else(|_| DayPeriod::try_from(b).map(Self::DayPeriod))
-                .or_else(|_| Hour::try_from(b).map(Self::Hour))
-                .or_else(|_| Second::try_from(b).map(Self::Second))
-                .or_else(|_| TimeZone::try_from(b).map(Self::TimeZone)),
-        }
-    }
-}
-
 impl TryFrom<char> for FieldSymbol {
     type Error = SymbolError;
-
     fn try_from(ch: char) -> Result<Self, Self::Error> {
-        if ch.is_ascii() {
-            Self::try_from(ch as u8)
-        } else {
-            Err(SymbolError::Invalid(ch))
+        if !ch.is_ascii_alphanumeric() {
+            return Err(SymbolError::Invalid(ch as u8));
         }
+        Year::try_from(ch)
+            .map(Self::Year)
+            .or_else(|_| Month::try_from(ch).map(Self::Month))
+            .or_else(|_| Day::try_from(ch).map(Self::Day))
+            .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
+            .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))
+            .or_else(|_| Hour::try_from(ch).map(Self::Hour))
+            .or_else(|_| {
+                if ch == 'm' {
+                    Ok(Self::Minute)
+                } else {
+                    Err(SymbolError::Unknown(ch))
+                }
+            })
+            .or_else(|_| Second::try_from(ch).map(Self::Second))
+            .or_else(|_| TimeZone::try_from(ch).map(Self::TimeZone))
     }
 }
 
 impl From<FieldSymbol> for char {
     fn from(symbol: FieldSymbol) -> Self {
         match symbol {
-            FieldSymbol::Year(year) => match year {
-                Year::Calendar => 'y',
-                Year::WeekOf => 'Y',
-            },
-            FieldSymbol::Month(month) => match month {
-                Month::Format => 'M',
-                Month::StandAlone => 'L',
-            },
-            FieldSymbol::Day(day) => match day {
-                Day::DayOfMonth => 'd',
-                Day::DayOfYear => 'D',
-                Day::DayOfWeekInMonth => 'F',
-                Day::ModifiedJulianDay => 'g',
-            },
-            FieldSymbol::Weekday(weekday) => match weekday {
-                Weekday::Format => 'E',
-                Weekday::Local => 'e',
-                Weekday::StandAlone => 'c',
-            },
-            FieldSymbol::DayPeriod(dayperiod) => match dayperiod {
-                DayPeriod::AmPm => 'a',
-                DayPeriod::NoonMidnight => 'b',
-            },
-            FieldSymbol::Hour(hour) => match hour {
-                Hour::H11 => 'K',
-                Hour::H12 => 'h',
-                Hour::H23 => 'H',
-                Hour::H24 => 'k',
-            },
+            FieldSymbol::Year(year) => year.into(),
+            FieldSymbol::Month(month) => month.into(),
+            FieldSymbol::Day(day) => day.into(),
+            FieldSymbol::Weekday(weekday) => weekday.into(),
+            FieldSymbol::DayPeriod(dayperiod) => dayperiod.into(),
+            FieldSymbol::Hour(hour) => hour.into(),
             FieldSymbol::Minute => 'm',
-            FieldSymbol::Second(second) => match second {
-                Second::Second => 's',
-                Second::FractionalSecond => 'S',
-                Second::Millisecond => 'A',
-            },
-            FieldSymbol::TimeZone(time_zone) => match time_zone {
-                TimeZone::LowerZ => 'z',
-                TimeZone::UpperZ => 'Z',
-                TimeZone::UpperO => 'O',
-                TimeZone::LowerV => 'v',
-                TimeZone::UpperV => 'V',
-                TimeZone::LowerX => 'x',
-                TimeZone::UpperX => 'X',
-            },
+            FieldSymbol::Second(second) => second.into(),
+            FieldSymbol::TimeZone(time_zone) => time_zone.into(),
         }
     }
 }
@@ -184,48 +146,15 @@ impl Ord for FieldSymbol {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub enum Year {
-    Calendar,
-    WeekOf,
-}
+field_type!(Year; {
+    0; 'y' => Calendar,
+    1; 'Y' => WeekOf
+}; Numeric);
 
-impl LengthType for Year {
-    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
-        TextOrNumeric::Numeric
-    }
-}
-
-impl TryFrom<u8> for Year {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b'y' => Ok(Self::Calendar),
-            b'Y' => Ok(Self::WeekOf),
-            b => Err(SymbolError::Unknown(b)),
-        }
-    }
-}
-
-impl From<Year> for FieldSymbol {
-    fn from(input: Year) -> Self {
-        Self::Year(input)
-    }
-}
-
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub enum Month {
-    Format,
-    StandAlone,
-}
+field_type!(Month; {
+    0; 'M' => Format,
+    1; 'L' => StandAlone
+});
 
 impl LengthType for Month {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
@@ -240,144 +169,31 @@ impl LengthType for Month {
     }
 }
 
-impl TryFrom<u8> for Month {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b'M' => Ok(Self::Format),
-            b'L' => Ok(Self::StandAlone),
-            b => Err(SymbolError::Unknown(b)),
-        }
-    }
-}
+field_type!(Day; {
+    0; 'd' => DayOfMonth,
+    1; 'D' => DayOfYear,
+    2; 'F' => DayOfWeekInMonth,
+    3; 'g' => ModifiedJulianDay
+}; Numeric);
 
-impl From<Month> for FieldSymbol {
-    fn from(input: Month) -> Self {
-        Self::Month(input)
-    }
-}
+field_type!(Hour; {
+    0; 'K' => H11,
+    1; 'h' => H12,
+    2; 'H' => H23,
+    3; 'k' => H24
+}; Numeric);
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[allow(clippy::enum_variant_names)]
-pub enum Day {
-    DayOfMonth,
-    DayOfYear,
-    DayOfWeekInMonth,
-    ModifiedJulianDay,
-}
+field_type!(Second; {
+    0; 's' => Second,
+    1; 'S' => FractionalSecond,
+    2; 'A' => Millisecond
+}; Numeric);
 
-impl LengthType for Day {
-    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
-        TextOrNumeric::Numeric
-    }
-}
-
-impl TryFrom<u8> for Day {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b'd' => Ok(Self::DayOfMonth),
-            b'D' => Ok(Self::DayOfYear),
-            b'F' => Ok(Self::DayOfWeekInMonth),
-            b'g' => Ok(Self::ModifiedJulianDay),
-            b => Err(SymbolError::Unknown(b)),
-        }
-    }
-}
-
-impl From<Day> for FieldSymbol {
-    fn from(input: Day) -> Self {
-        Self::Day(input)
-    }
-}
-
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub enum Hour {
-    H11,
-    H12,
-    H23,
-    H24,
-}
-
-impl LengthType for Hour {
-    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
-        TextOrNumeric::Numeric
-    }
-}
-
-impl TryFrom<u8> for Hour {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b'K' => Ok(Self::H11),
-            b'h' => Ok(Self::H12),
-            b'H' => Ok(Self::H23),
-            b'k' => Ok(Self::H24),
-            b => Err(SymbolError::Unknown(b)),
-        }
-    }
-}
-
-impl From<Hour> for FieldSymbol {
-    fn from(input: Hour) -> Self {
-        Self::Hour(input)
-    }
-}
-
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[allow(clippy::enum_variant_names)]
-pub enum Second {
-    Second,
-    FractionalSecond,
-    Millisecond,
-}
-
-impl LengthType for Second {
-    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
-        TextOrNumeric::Numeric
-    }
-}
-
-impl TryFrom<u8> for Second {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b's' => Ok(Self::Second),
-            b'S' => Ok(Self::FractionalSecond),
-            b'A' => Ok(Self::Millisecond),
-            b => Err(SymbolError::Unknown(b)),
-        }
-    }
-}
-
-impl From<Second> for FieldSymbol {
-    fn from(input: Second) -> Self {
-        Self::Second(input)
-    }
-}
-
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub enum Weekday {
-    Format,
-    Local,
-    StandAlone,
-}
+field_type!(Weekday; {
+    0; 'E' => Format,
+    1; 'e' => Local,
+    2; 'c' => StandAlone
+});
 
 impl LengthType for Weekday {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
@@ -391,71 +207,20 @@ impl LengthType for Weekday {
     }
 }
 
-impl TryFrom<u8> for Weekday {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b'E' => Ok(Self::Format),
-            b'e' => Ok(Self::Local),
-            b'c' => Ok(Self::StandAlone),
-            b => Err(SymbolError::Unknown(b)),
-        }
-    }
-}
+field_type!(DayPeriod; {
+    0; 'a' => AmPm,
+    1; 'b' => NoonMidnight
+}; Text);
 
-impl From<Weekday> for FieldSymbol {
-    fn from(input: Weekday) -> Self {
-        Self::Weekday(input)
-    }
-}
-
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub enum DayPeriod {
-    AmPm,
-    NoonMidnight,
-}
-
-impl LengthType for DayPeriod {
-    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
-        TextOrNumeric::Text
-    }
-}
-
-impl TryFrom<u8> for DayPeriod {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b'a' => Ok(Self::AmPm),
-            b'b' => Ok(Self::NoonMidnight),
-            b => Err(SymbolError::Unknown(b)),
-        }
-    }
-}
-
-impl From<DayPeriod> for FieldSymbol {
-    fn from(input: DayPeriod) -> Self {
-        Self::DayPeriod(input)
-    }
-}
-
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub enum TimeZone {
-    LowerZ,
-    UpperZ,
-    UpperO,
-    LowerV,
-    UpperV,
-    LowerX,
-    UpperX,
-}
+field_type!(TimeZone; {
+    0; 'z' => LowerZ,
+    1; 'Z' => UpperZ,
+    2; 'O' => UpperO,
+    3; 'v' => LowerV,
+    4; 'V' => UpperV,
+    5; 'x' => LowerX,
+    6; 'X' => UpperX
+});
 
 impl LengthType for TimeZone {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
@@ -468,13 +233,13 @@ impl LengthType for TimeZone {
             //
             // The default cases may want to be updated to return errors themselves
             // if the skeleton matching code ever becomes fallible.
-            Self::UpperZ => match u8::from(length) {
+            Self::UpperZ => match length.idx() {
                 1..=3 => Numeric,
                 4 => Text,
                 5 => Numeric,
                 _ => Text,
             },
-            Self::UpperO => match u8::from(length) {
+            Self::UpperO => match length.idx() {
                 1 => Text,
                 4 => Numeric,
                 _ => Text,
@@ -482,27 +247,5 @@ impl LengthType for TimeZone {
             Self::LowerX | Self::UpperX => Numeric,
             Self::LowerZ | Self::LowerV | Self::UpperV => Text,
         }
-    }
-}
-
-impl TryFrom<u8> for TimeZone {
-    type Error = SymbolError;
-    fn try_from(b: u8) -> Result<Self, Self::Error> {
-        match b {
-            b'z' => Ok(Self::LowerZ),
-            b'Z' => Ok(Self::UpperZ),
-            b'O' => Ok(Self::UpperO),
-            b'v' => Ok(Self::LowerV),
-            b'V' => Ok(Self::UpperV),
-            b'x' => Ok(Self::LowerX),
-            b'X' => Ok(Self::UpperX),
-            b => Err(SymbolError::Unknown(b)),
-        }
-    }
-}
-
-impl From<TimeZone> for FieldSymbol {
-    fn from(input: TimeZone) -> Self {
-        Self::TimeZone(input)
     }
 }

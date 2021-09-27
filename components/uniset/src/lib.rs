@@ -52,6 +52,10 @@
 #![warn(missing_docs)]
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
+// Workaround for https://github.com/rust-lang/rust/issues/87932
+#[cfg(feature = "serde")]
+extern crate serde;
+
 extern crate alloc;
 
 #[macro_use]
@@ -65,6 +69,7 @@ mod uniset;
 mod utils;
 
 use alloc::vec::Vec;
+
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
 use displaydoc::Display;

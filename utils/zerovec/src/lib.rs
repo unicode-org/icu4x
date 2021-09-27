@@ -73,7 +73,7 @@
 //!
 //! let data = DataStruct {
 //!     nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
-//!     strs: VarZeroVec::from(vec!["hello".to_string(), "world".to_string()]),
+//!     strs: VarZeroVec::from(&["hello".to_string(), "world".to_string()] as &[_]),
 //! };
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
@@ -87,11 +87,18 @@
 //! # } // feature = "serde"
 //! ```
 
+#![cfg_attr(not(test), no_std)]
+// this crate does a lot of nuanced lifetime manipulation, being explicit
+// is better here.
+#![allow(clippy::needless_lifetimes)]
+
+extern crate alloc;
+
 pub mod map;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;
-mod varzerovec;
+pub mod varzerovec;
 mod zerovec;
 
 #[cfg(feature = "yoke")]

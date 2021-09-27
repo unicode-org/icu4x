@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::arithmetic;
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
-use crate::pattern::{Pattern, PatternItem};
+use crate::pattern::{reference::Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeSymbols;
 
@@ -28,7 +27,7 @@ use writeable::Writeable;
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
 /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-/// use icu::datetime::mock::datetime::MockDateTime;
+/// use icu::calendar::DateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 /// let locale: Locale = langid!("en").into();
 /// # let provider = InvariantDataProvider;
@@ -36,7 +35,7 @@ use writeable::Writeable;
 /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
-/// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let formatted_date = dtf.format(&datetime);
@@ -96,7 +95,7 @@ where
 }
 
 pub fn write_pattern<T, W>(
-    pattern: &crate::pattern::Pattern,
+    pattern: &crate::pattern::reference::Pattern,
     symbols: Option<&provider::gregory::DateSymbolsV1>,
     datetime: &T,
     locale: &Locale,
@@ -110,7 +109,7 @@ where
     for item in pattern.items() {
         match item {
             PatternItem::Field(field) => write_field(pattern, field, symbols, &loc_datetime, w)?,
-            PatternItem::Literal(l) => w.write_str(l)?,
+            PatternItem::Literal(ch) => w.write_char(*ch)?,
         }
     }
     Ok(())
@@ -122,7 +121,7 @@ where
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 pub(super) fn write_field<T, W>(
-    pattern: &crate::pattern::Pattern,
+    pattern: &crate::pattern::reference::Pattern,
     field: &fields::Field,
     symbols: Option<&crate::provider::gregory::DateSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
@@ -238,8 +237,7 @@ where
                     period,
                     field.length,
                     datetime.datetime().hour().ok_or(Error::MissingInputField)?,
-                    arithmetic::is_top_of_hour(
-                        pattern,
+                    pattern.time_granularity.is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                     ),
@@ -295,8 +293,8 @@ mod tests {
     #[test]
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
-        use crate::mock::datetime::MockDateTime;
         use crate::provider::gregory::DateSymbolsV1Marker;
+        use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
@@ -313,8 +311,9 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
-        let datetime = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
+        let pattern = crate::pattern::reference::Pattern::from_bytes("MMM").unwrap();
+        let datetime =
+            DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
         write_pattern(
             &pattern,

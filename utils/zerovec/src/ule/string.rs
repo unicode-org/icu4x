@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
-use std::str;
+use alloc::string::String;
+use core::str;
 
 impl AsVarULE for String {
     type VarULE = str;

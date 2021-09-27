@@ -297,7 +297,6 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use std::rc::Rc;
-    /// use icu_provider::yoke::Yokeable;
     ///
     /// let json_text = "{\"message\":\"Hello World\"}";
     /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
@@ -319,6 +318,52 @@ where
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
         let yoke = Yoke::try_attach_to_cart_badly(rc_buffer, f)?;
+        Ok(Self {
+            inner: DataPayloadInner::RcBuf(yoke),
+        })
+    }
+
+    /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
+    /// conversion. This can often be a Serde deserialization operation.
+    ///
+    /// This function is similar to [`DataPayload::try_from_rc_buffer`], but it accepts a buffer
+    /// that is already yoked to an Rc buffer cart.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[cfg(feature = "provider_serde")] {
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::rc::Rc;
+    /// use icu_provider::yoke::Yoke;
+    ///
+    /// let json_text = "{\"message\":\"Hello World\"}";
+    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
+    ///
+    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
+    ///     Yoke::attach_to_rc_cart(json_rc_buffer),
+    ///     (),
+    ///     |bytes, _, _| {
+    ///         serde_json::from_slice(bytes)
+    ///     }
+    /// )
+    /// .expect("JSON is valid");
+    ///
+    /// assert_eq!("Hello World", payload.get().message);
+    /// # } // feature = "provider_serde"
+    /// ```
+    #[allow(clippy::type_complexity)]
+    pub fn try_from_yoked_buffer<T, E>(
+        yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>,
+        capture: T,
+        f: for<'de> fn(
+            <&'static [u8] as yoke::Yokeable<'de>>::Output,
+            T,
+            PhantomData<&'de ()>,
+        ) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
+    ) -> Result<Self, E> {
+        let yoke = yoked_buffer.try_project_with_capture(capture, f)?;
         Ok(Self {
             inner: DataPayloadInner::RcBuf(yoke),
         })

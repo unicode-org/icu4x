@@ -8,15 +8,15 @@ use alloc::string::String;
 use core::fmt;
 
 use crate::{
-    date::TimeZoneInput, format::time_zone::FormattedTimeZone, pattern::Error as PatternError,
-    provider, DateTimeFormatError,
+    date::TimeZoneInput, format::time_zone::FormattedTimeZone, pattern::PatternError, provider,
+    DateTimeFormatError,
 };
 use crate::{format::time_zone, provider::time_zones::TimeZoneFormatsV1Marker};
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::prelude::*;
 
 use crate::fields::{FieldSymbol, TimeZone};
-use crate::pattern::{Pattern, PatternItem};
+use crate::pattern::{reference::Pattern, PatternItem};
 
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load_resource<'data, D, L, P>(
@@ -173,14 +173,14 @@ impl<'data> TimeZoneFormat<'data> {
 
         let zone_symbols = time_zone_format
             .pattern
-            .items()
+            .items
             .iter()
             .filter_map(|item| match item {
                 PatternItem::Field(field) => Some(field),
                 _ => None,
             })
             .filter_map(|field| match field.symbol {
-                FieldSymbol::TimeZone(zone) => Some((u8::from(field.length), zone)),
+                FieldSymbol::TimeZone(zone) => Some((field.length.idx(), zone)),
                 _ => None,
             });
 

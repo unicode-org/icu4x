@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::error::Error;
-use super::{Pattern, PatternItem};
+use super::{
+    super::error::PatternError,
+    super::{GenericPatternItem, PatternItem},
+    GenericPattern, Pattern,
+};
 use crate::fields::FieldSymbol;
 use alloc::string::String;
 use alloc::vec;
@@ -37,7 +40,7 @@ impl<'p> Parser<'p> {
         ch: char,
         chars: &mut core::iter::Peekable<core::str::Chars>,
         result: &mut Vec<PatternItem>,
-    ) -> Result<bool, Error> {
+    ) -> Result<bool, PatternError> {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
                 (
@@ -81,24 +84,78 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn collect_segment(state: Segment, result: &mut Vec<PatternItem>) -> Result<(), Error> {
+    fn handle_generic_quoted_literal(
+        &mut self,
+        ch: char,
+        chars: &mut core::iter::Peekable<core::str::Chars>,
+    ) -> Result<bool, PatternError> {
+        if ch == '\'' {
+            match (&mut self.state, chars.peek() == Some(&'\'')) {
+                (
+                    Segment::Literal {
+                        ref mut literal, ..
+                    },
+                    true,
+                ) => {
+                    literal.push('\'');
+                    chars.next();
+                }
+                (Segment::Literal { ref mut quoted, .. }, false) => {
+                    *quoted = !*quoted;
+                }
+                _ => panic!(),
+            }
+            Ok(true)
+        } else if let Segment::Literal {
+            ref mut literal,
+            quoted: true,
+        } = self.state
+        {
+            literal.push(ch);
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+
+    fn collect_segment(state: Segment, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
         match state {
             Segment::Symbol { symbol, length } => {
                 result.push((symbol, length).try_into()?);
             }
             Segment::Literal { quoted, .. } if quoted => {
-                return Err(Error::UnclosedLiteral);
+                return Err(PatternError::UnclosedLiteral);
             }
             Segment::Literal { literal, .. } => {
-                if !literal.is_empty() {
-                    result.push(literal.into());
+                for ch in literal.chars() {
+                    result.push(ch.into());
                 }
             }
         }
         Ok(())
     }
 
-    pub fn parse(mut self) -> Result<Vec<PatternItem>, Error> {
+    fn collect_generic_segment(
+        state: Segment,
+        result: &mut Vec<GenericPatternItem>,
+    ) -> Result<(), PatternError> {
+        match state {
+            Segment::Literal { quoted, .. } if quoted => {
+                return Err(PatternError::UnclosedLiteral);
+            }
+            Segment::Literal { literal, .. } => {
+                if !literal.is_empty() {
+                    for ch in literal.chars() {
+                        result.push(ch.into());
+                    }
+                }
+            }
+            _ => panic!(),
+        }
+        Ok(())
+    }
+
+    pub fn parse(mut self) -> Result<Vec<PatternItem>, PatternError> {
         let mut chars = self.source.chars().peekable();
         let mut result = vec![];
 
@@ -142,27 +199,23 @@ impl<'p> Parser<'p> {
         Ok(result)
     }
 
-    pub fn parse_placeholders(
-        mut self,
-        replacements: Vec<Pattern>,
-    ) -> Result<Vec<PatternItem>, Error> {
+    pub fn parse_generic(mut self) -> Result<Vec<GenericPatternItem>, PatternError> {
         let mut chars = self.source.chars().peekable();
         let mut result = vec![];
 
         while let Some(ch) = chars.next() {
-            if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
+            if !self.handle_generic_quoted_literal(ch, &mut chars)? {
                 if ch == '{' {
-                    Self::collect_segment(self.state, &mut result)?;
+                    Self::collect_generic_segment(self.state, &mut result)?;
 
-                    let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
-                    let idx: u32 = ch.to_digit(10).ok_or(Error::UnknownSubstitution(ch))?;
-                    let replacement = replacements
-                        .get(idx as usize)
-                        .ok_or(Error::UnknownSubstitution(ch))?;
-                    result.extend_from_slice(replacement.items());
-                    let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
+                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
+                    let idx: u32 = ch
+                        .to_digit(10)
+                        .ok_or(PatternError::UnknownSubstitution(ch))?;
+                    result.push(GenericPatternItem::Placeholder(idx as u8));
+                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
                     if ch != '}' {
-                        return Err(Error::UnclosedPlaceholder);
+                        return Err(PatternError::UnclosedPlaceholder);
                     }
                     self.state = Segment::Literal {
                         literal: String::new(),
@@ -179,9 +232,19 @@ impl<'p> Parser<'p> {
             }
         }
 
-        Self::collect_segment(self.state, &mut result)?;
+        Self::collect_generic_segment(self.state, &mut result)?;
 
         Ok(result)
+    }
+
+    pub fn parse_placeholders(
+        self,
+        replacements: Vec<Pattern>,
+    ) -> Result<Vec<PatternItem>, PatternError> {
+        let generic_items = self.parse_generic()?;
+
+        let gp = GenericPattern::from(generic_items);
+        Ok(gp.combined(replacements)?.items.to_vec())
     }
 }
 
@@ -189,7 +252,7 @@ impl<'p> Parser<'p> {
 mod tests {
     use super::*;
     use crate::fields::{self, FieldLength};
-    use crate::pattern::Pattern;
+    use crate::pattern::reference::Pattern;
 
     #[test]
     fn pattern_parse_simple() {
@@ -198,9 +261,9 @@ mod tests {
                 "dd/MM/y",
                 vec![
                     (fields::Day::DayOfMonth.into(), FieldLength::TwoDigit).into(),
-                    "/".into(),
+                    '/'.into(),
                     (fields::Month::Format.into(), FieldLength::TwoDigit).into(),
-                    "/".into(),
+                    '/'.into(),
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
                 ],
             ),
@@ -208,9 +271,9 @@ mod tests {
                 "HH:mm:ss",
                 vec![
                     (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
-                    ":".into(),
+                    ':'.into(),
                     (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
-                    ":".into(),
+                    ':'.into(),
                     (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
                 ],
             ),
@@ -218,39 +281,43 @@ mod tests {
                 "y年M月d日",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    "年".into(),
+                    '年'.into(),
                     (fields::Month::Format.into(), FieldLength::One).into(),
-                    "月".into(),
+                    '月'.into(),
                     (fields::Day::DayOfMonth.into(), FieldLength::One).into(),
-                    "日".into(),
+                    '日'.into(),
                 ],
             ),
         ];
 
-        for (string, pattern) in samples {
+        for (string, items) in samples {
             assert_eq!(
                 Pattern::from_bytes(string).expect("Parsing pattern failed."),
-                pattern.into_iter().collect()
+                Pattern::from(items)
             );
         }
+    }
+
+    fn str2pis(input: &str) -> Vec<PatternItem> {
+        input.chars().map(Into::into).collect()
     }
 
     #[test]
     fn pattern_parse_literals() {
         let samples = vec![
-            ("", vec![]),
-            (" ", vec![" ".into()]),
-            ("  ", vec!["  ".into()]),
-            (" żółć ", vec![" żółć ".into()]),
-            ("''", vec!["'".into()]),
-            (" ''", vec![" '".into()]),
-            (" '' ", vec![" ' ".into()]),
-            ("''''", vec!["''".into()]),
-            (" '' '' ", vec![" ' ' ".into()]),
-            ("ż'ół'ć", vec!["żółć".into()]),
-            ("ż'ó''ł'ć", vec!["żó'łć".into()]),
-            (" 'Ymd' ", vec![" Ymd ".into()]),
-            ("الأسبوع", vec!["الأسبوع".into()]),
+            ("", ""),
+            (" ", " "),
+            ("  ", "  "),
+            (" żółć ", " żółć "),
+            ("''", "'"),
+            (" ''", " '"),
+            (" '' ", " ' "),
+            ("''''", "''"),
+            (" '' '' ", " ' ' "),
+            ("ż'ół'ć", "żółć"),
+            ("ż'ó''ł'ć", "żó'łć"),
+            (" 'Ymd' ", " Ymd "),
+            ("الأسبوع", "الأسبوع"),
         ];
 
         for (string, pattern) in samples {
@@ -258,18 +325,18 @@ mod tests {
                 Parser::new(string)
                     .parse()
                     .expect("Parsing pattern failed."),
-                pattern,
+                str2pis(pattern),
             );
 
             assert_eq!(
                 Parser::new(string)
                     .parse_placeholders(vec![])
                     .expect("Parsing pattern failed."),
-                pattern,
+                str2pis(pattern),
             );
         }
 
-        let broken = vec![(" 'foo ", Error::UnclosedLiteral)];
+        let broken = vec![(" 'foo ", PatternError::UnclosedLiteral)];
 
         for (string, error) in broken {
             assert_eq!(Parser::new(string).parse(), Err(error),);
@@ -314,14 +381,14 @@ mod tests {
                 "y ",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    " ".into(),
+                    ' '.into(),
                 ],
             ),
             (
                 "y M",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    " ".into(),
+                    ' '.into(),
                     (fields::Month::Format.into(), FieldLength::One).into(),
                 ],
             ),
@@ -329,7 +396,7 @@ mod tests {
                 "hh''a",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    "'".into(),
+                    '\''.into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
                 ],
             ),
@@ -337,7 +404,7 @@ mod tests {
                 "hh''b",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    "'".into(),
+                    '\''.into(),
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
@@ -345,7 +412,8 @@ mod tests {
                 "y'My'M",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    "My".into(),
+                    'M'.into(),
+                    'y'.into(),
                     (fields::Month::Format.into(), FieldLength::One).into(),
                 ],
             ),
@@ -353,16 +421,38 @@ mod tests {
                 "y 'My' M",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
-                    " My ".into(),
+                    ' '.into(),
+                    'M'.into(),
+                    'y'.into(),
+                    ' '.into(),
                     (fields::Month::Format.into(), FieldLength::One).into(),
                 ],
             ),
-            (" 'r'. 'y'. ", vec![" r. y. ".into()]),
+            (
+                " 'r'. 'y'. ",
+                vec![
+                    ' '.into(),
+                    'r'.into(),
+                    '.'.into(),
+                    ' '.into(),
+                    'y'.into(),
+                    '.'.into(),
+                    ' '.into(),
+                ],
+            ),
             (
                 "hh 'o''clock' a",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    " o'clock ".into(),
+                    ' '.into(),
+                    'o'.into(),
+                    '\''.into(),
+                    'c'.into(),
+                    'l'.into(),
+                    'o'.into(),
+                    'c'.into(),
+                    'k'.into(),
+                    ' '.into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
                 ],
             ),
@@ -370,7 +460,15 @@ mod tests {
                 "hh 'o''clock' b",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    " o'clock ".into(),
+                    ' '.into(),
+                    'o'.into(),
+                    '\''.into(),
+                    'c'.into(),
+                    'l'.into(),
+                    'o'.into(),
+                    'c'.into(),
+                    'k'.into(),
+                    ' '.into(),
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
@@ -378,7 +476,7 @@ mod tests {
                 "hh''a",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    "'".into(),
+                    '\''.into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
                 ],
             ),
@@ -386,7 +484,7 @@ mod tests {
                 "hh''b",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
-                    "'".into(),
+                    '\''.into(),
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
@@ -431,7 +529,7 @@ mod tests {
 
         let broken = vec![(
             "yyyyyyy",
-            Error::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
+            PatternError::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
         )];
 
         for (string, error) in broken {
@@ -442,42 +540,26 @@ mod tests {
     #[test]
     fn pattern_parse_placeholders() {
         let samples = vec![
-            (
-                "{0}",
-                vec![Pattern::from(vec!["ONE".into()])],
-                vec!["ONE".into()],
-            ),
+            ("{0}", vec![Pattern::from("ONE")], str2pis("ONE")),
             (
                 "{0}{1}",
-                vec![
-                    Pattern::from(vec!["ONE".into()]),
-                    Pattern::from(vec!["TWO".into()]),
-                ],
-                vec!["ONE".into(), "TWO".into()],
+                vec![Pattern::from("ONE"), Pattern::from("TWO")],
+                str2pis("ONETWO"),
             ),
             (
                 "{0} 'at' {1}",
-                vec![
-                    Pattern::from(vec!["ONE".into()]),
-                    Pattern::from(vec!["TWO".into()]),
-                ],
-                vec!["ONE".into(), " at ".into(), "TWO".into()],
+                vec![Pattern::from("ONE"), Pattern::from("TWO")],
+                str2pis("ONE at TWO"),
             ),
             (
                 "{0}'at'{1}",
-                vec![
-                    Pattern::from(vec!["ONE".into()]),
-                    Pattern::from(vec!["TWO".into()]),
-                ],
-                vec!["ONE".into(), "at".into(), "TWO".into()],
+                vec![Pattern::from("ONE"), Pattern::from("TWO")],
+                str2pis("ONEatTWO"),
             ),
             (
                 "'{0}' 'at' '{1}'",
-                vec![
-                    Pattern::from(vec!["ONE".into()]),
-                    Pattern::from(vec!["TWO".into()]),
-                ],
-                vec!["{0} at {1}".into()],
+                vec![Pattern::from("ONE"), Pattern::from("TWO")],
+                str2pis("{0} at {1}"),
             ),
         ];
 
@@ -491,25 +573,29 @@ mod tests {
         }
 
         let broken = vec![
-            ("{0}", vec![], Error::UnknownSubstitution('0')),
-            ("{a}", vec![], Error::UnknownSubstitution('a')),
-            ("{", vec![], Error::UnclosedPlaceholder),
+            ("{0}", vec![], PatternError::UnknownSubstitution('0')),
+            ("{a}", vec![], PatternError::UnknownSubstitution('a')),
+            ("{", vec![], PatternError::UnclosedPlaceholder),
             (
                 "{0",
                 vec![Pattern::from(vec![])],
-                Error::UnclosedPlaceholder,
+                PatternError::UnclosedPlaceholder,
             ),
             (
                 "{01",
                 vec![Pattern::from(vec![])],
-                Error::UnclosedPlaceholder,
+                PatternError::UnclosedPlaceholder,
             ),
             (
                 "{00}",
                 vec![Pattern::from(vec![])],
-                Error::UnclosedPlaceholder,
+                PatternError::UnclosedPlaceholder,
             ),
-            ("'{00}", vec![Pattern::from(vec![])], Error::UnclosedLiteral),
+            (
+                "'{00}",
+                vec![Pattern::from(vec![])],
+                PatternError::UnclosedLiteral,
+            ),
         ];
 
         for (string, replacements, error) in broken {

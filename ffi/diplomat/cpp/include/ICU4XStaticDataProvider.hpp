@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -15,6 +16,9 @@ namespace capi {
 
 struct ICU4XCreateStaticDataProviderResult;
 
+/**
+ * A destruction policy for using ICU4XStaticDataProvider with std::unique_ptr.
+ */
 struct ICU4XStaticDataProviderDeleter {
   void operator()(capi::ICU4XStaticDataProvider* l) const noexcept {
     capi::ICU4XStaticDataProvider_destroy(l);
@@ -22,6 +26,12 @@ struct ICU4XStaticDataProviderDeleter {
 };
 class ICU4XStaticDataProvider {
  public:
+
+  /**
+   * Constructs an `StaticDataProvider` and returns it as an [`ICU4XStaticDataProvider`].
+   * 
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
+   */
   static ICU4XCreateStaticDataProviderResult create();
   inline const capi::ICU4XStaticDataProvider* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XStaticDataProvider* AsFFIMut() { return this->inner.get(); }

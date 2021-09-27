@@ -4,10 +4,11 @@
 
 use super::VarZeroVec;
 use crate::ule::*;
+use alloc::vec::Vec;
+use core::fmt;
+use core::marker::PhantomData;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
-use serde::ser::{self, Serialize, SerializeSeq, Serializer};
-use std::fmt;
-use std::marker::PhantomData;
+use serde::ser::{Serialize, SerializeSeq, Serializer};
 
 struct VarZeroVecVisitor<T> {
     marker: PhantomData<fn() -> T>,
@@ -36,7 +37,7 @@ where
     where
         E: de::Error,
     {
-        VarZeroVec::try_from_bytes(bytes).map_err(de::Error::custom)
+        VarZeroVec::parse_byte_slice(bytes).map_err(de::Error::custom)
     }
 
     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
@@ -51,7 +52,7 @@ where
         while let Some(value) = seq.next_element::<T>()? {
             vec.push(value);
         }
-        Ok(vec.into())
+        Ok((&*vec).into())
     }
 }
 
@@ -95,16 +96,8 @@ where
                 seq.serialize_element(&T::from_unaligned(value))?;
             }
             seq.end()
-        } else if let Some(slice) = self.get_slice_for_borrowed() {
-            serializer.serialize_bytes(slice)
         } else {
-            // This creates an additional Vec allocation to enable code reuse of
-            // VarZeroVec::to_vec()'s. The alternative is to write a different
-            // implementation of get_serializable_bytes() which enables us to pull
-            // out the byte buffer components bit by bit and use serialize_seq + serialize_element
-            let vec = VarZeroVec::get_serializable_bytes(&self.to_vec())
-                .ok_or_else(|| ser::Error::custom("VarZeroVec too large to be serialized"))?;
-            serializer.serialize_bytes(&vec)
+            serializer.serialize_bytes(self.get_encoded_slice())
         }
     }
 }
@@ -134,7 +127,7 @@ mod test {
     ];
     #[test]
     fn test_serde_json() {
-        let zerovec_orig: VarZeroVec<String> = VarZeroVec::try_from_bytes(BYTES).expect("parse");
+        let zerovec_orig: VarZeroVec<String> = VarZeroVec::parse_byte_slice(BYTES).expect("parse");
         let json_str = serde_json::to_string(&zerovec_orig).expect("serialize");
         assert_eq!(JSON_STR, json_str);
         // VarZeroVec should deserialize from JSON to either Vec or VarZeroVec
@@ -144,18 +137,18 @@ mod test {
         let zerovec_new: VarZeroVec<String> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to VarZeroVec");
         assert_eq!(zerovec_orig.to_vec(), zerovec_new.to_vec());
-        assert!(zerovec_new.get_slice_for_borrowed().is_none());
+        assert!(zerovec_new.is_owned());
     }
 
     #[test]
     fn test_serde_bincode() {
-        let zerovec_orig: VarZeroVec<String> = VarZeroVec::try_from_bytes(BYTES).expect("parse");
+        let zerovec_orig: VarZeroVec<String> = VarZeroVec::parse_byte_slice(BYTES).expect("parse");
         let bincode_buf = bincode::serialize(&zerovec_orig).expect("serialize");
         assert_eq!(BINCODE_BUF, bincode_buf);
         let zerovec_new: VarZeroVec<String> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to VarZeroVec");
         assert_eq!(zerovec_orig.to_vec(), zerovec_new.to_vec());
-        assert!(zerovec_new.get_slice_for_borrowed().is_some());
+        assert!(!zerovec_new.is_owned());
     }
 
     #[test]
@@ -166,7 +159,7 @@ mod test {
             .map(String::from)
             .collect::<Vec<_>>();
         let mut zerovec: VarZeroVec<String> =
-            VarZeroVec::try_from_bytes(NONASCII_BYTES).expect("parse");
+            VarZeroVec::parse_byte_slice(NONASCII_BYTES).expect("parse");
         assert_eq!(zerovec.to_vec(), src_vec);
         let bincode_buf = bincode::serialize(&zerovec).expect("serialize");
         let zerovec_result =

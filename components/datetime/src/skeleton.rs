@@ -17,7 +17,7 @@ use smallvec::SmallVec;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::{components, length, preferences},
-    pattern::{Pattern, PatternItem},
+    pattern::{reference::Pattern, PatternItem},
     provider::gregory::patterns::{LengthPatternsV1, PatternV1, SkeletonV1, SkeletonsV1},
 };
 
@@ -179,22 +179,22 @@ impl TryFrom<&str> for Skeleton {
     fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {
         let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
 
-        let mut iter = skeleton_string.bytes().peekable();
-        while let Some(byte) = iter.next() {
+        let mut iter = skeleton_string.chars().peekable();
+        while let Some(ch) = iter.next() {
             // Convert the byte to a valid field symbol.
-            let field_symbol = FieldSymbol::try_from(byte)?;
+            let field_symbol = FieldSymbol::try_from(ch)?;
 
-            // Go through the bytes to count how often it's repeated.
+            // Go through the chars to count how often it's repeated.
             let mut field_length: u8 = 1;
-            while let Some(next_byte) = iter.peek() {
-                if *next_byte != byte {
+            while let Some(next_ch) = iter.peek() {
+                if *next_ch != ch {
                     break;
                 }
                 field_length += 1;
                 iter.next();
             }
 
-            let field = Field::from((field_symbol, FieldLength::try_from(field_length)?));
+            let field = Field::from((field_symbol, FieldLength::from_idx(field_length)?));
 
             match fields.binary_search(&field) {
                 Ok(_) => return Err(SkeletonError::DuplicateField),
@@ -299,7 +299,7 @@ pub enum SkeletonError {
     #[displaydoc("symbol unknown {0} in skeleton")]
     SymbolUnknown(char),
     #[displaydoc("symbol invalid {0} in skeleton")]
-    SymbolInvalid(char),
+    SymbolInvalid(u8),
     #[displaydoc("symbol unimplemented {0} in skeleton")]
     SymbolUnimplemented(char),
     #[displaydoc("unimplemented field {0} in skeleton")]
@@ -327,23 +327,24 @@ impl From<fields::SymbolError> for SkeletonError {
     fn from(symbol_error: fields::SymbolError) -> Self {
         match symbol_error {
             fields::SymbolError::Invalid(ch) => Self::SymbolInvalid(ch),
-            fields::SymbolError::Unknown(byte) => {
+            fields::SymbolError::InvalidIndex(_) => unimplemented!(),
+            fields::SymbolError::Unknown(ch) => {
                 // NOTE: If you remove a symbol due to it now being supported,
                 //       make sure to regenerate the test data.
                 //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
-                match byte {
+                match ch {
                     // TODO(#487) - Flexible day periods
-                    b'B'
+                    'B'
                     // TODO(#486) - Era
-                    | b'G'
+                    | 'G'
                     // TODO(#502) - Week of month
-                    | b'W'
+                    | 'W'
                     // TODO(#501) - Quarters
-                    | b'Q'
+                    | 'Q'
                     // TODO (#488) - Week of year
-                    | b'w'
-                    => Self::SymbolUnimplemented(byte.into()),
-                    _ => Self::SymbolUnknown(byte.into()),
+                    | 'w'
+                    => Self::SymbolUnimplemented(ch),
+                    _ => Self::SymbolUnknown(ch),
                 }
             }
         }
@@ -757,7 +758,7 @@ pub fn get_best_available_format_pattern(
     } else {
         Pattern::from(
             closest_format_pattern
-                .items()
+                .items
                 .iter()
                 .map(|item| {
                     if let PatternItem::Field(pattern_field) = item {
@@ -774,7 +775,7 @@ pub fn get_best_available_format_pattern(
                         }
                     }
                     // There's no match, or this is a string literal return the original item.
-                    item.clone()
+                    *item
                 })
                 .collect::<Vec<PatternItem>>(),
         )

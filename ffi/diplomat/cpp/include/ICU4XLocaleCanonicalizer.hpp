@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 #include <variant>
 #include "diplomat_runtime.hpp"
 
@@ -18,6 +19,9 @@ class ICU4XLocaleCanonicalizer;
 class ICU4XLocale;
 #include "ICU4XCanonicalizationResult.hpp"
 
+/**
+ * A destruction policy for using ICU4XLocaleCanonicalizer with std::unique_ptr.
+ */
 struct ICU4XLocaleCanonicalizerDeleter {
   void operator()(capi::ICU4XLocaleCanonicalizer* l) const noexcept {
     capi::ICU4XLocaleCanonicalizer_destroy(l);
@@ -25,9 +29,29 @@ struct ICU4XLocaleCanonicalizerDeleter {
 };
 class ICU4XLocaleCanonicalizer {
  public:
+
+  /**
+   * Create a new [`ICU4XLocaleCanonicalizer`].
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more details.
+   */
   static std::optional<ICU4XLocaleCanonicalizer> create(const ICU4XDataProvider& provider);
+
+  /**
+   * FFI version of `LocaleCanonicalizer::canonicalize()`.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more details.
+   */
   ICU4XCanonicalizationResult canonicalize(ICU4XLocale& locale) const;
+
+  /**
+   * FFI version of `LocaleCanonicalizer::maximize()`.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize) for more details.
+   */
   ICU4XCanonicalizationResult maximize(ICU4XLocale& locale) const;
+
+  /**
+   * FFI version of `LocaleCanonicalizer::minimize()`.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize) for more details.
+   */
   ICU4XCanonicalizationResult minimize(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleCanonicalizer* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleCanonicalizer* AsFFIMut() { return this->inner.get(); }

@@ -4,8 +4,9 @@
 
 //! This module contains types and implementations for the ISO calendar
 
-use crate::{Calendar, Date, DateDuration, DateDurationUnit, DateTimeError};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
+use tinystr::tinystr8;
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
@@ -65,12 +66,38 @@ impl From<IsoYear> for i32 {
     }
 }
 
+impl From<IsoYear> for types::Year {
+    fn from(year: IsoYear) -> types::Year {
+        types::Year {
+            era: types::Era(tinystr8!("default")),
+            number: year.0,
+            related_iso: year.0,
+        }
+    }
+}
+
+impl From<IsoMonth> for types::Month {
+    fn from(month: IsoMonth) -> types::Month {
+        types::Month {
+            number: month.0 as u32,
+            // TODO(#486): Implement month codes
+            code: types::MonthCode(tinystr8!("TODO")),
+        }
+    }
+}
+
+impl From<IsoDay> for types::DayOfMonth {
+    fn from(day: IsoDay) -> types::DayOfMonth {
+        types::DayOfMonth(day.0 as u32)
+    }
+}
+
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 /// The inner date type used for representing Date<Iso>
 pub struct IsoDateInner {
-    day: IsoDay,
-    month: IsoMonth,
-    year: IsoYear,
+    pub(crate) day: IsoDay,
+    pub(crate) month: IsoMonth,
+    pub(crate) year: IsoYear,
 }
 
 impl IsoDateInner {
@@ -117,9 +144,7 @@ impl Calendar for Iso {
         Self::days_in_month(date.year, date.month)
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> u8 {
-        // TODO (Manishearth) share code with icu_datetime
-
+    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
         // For the purposes of the calculation here, Monday is 0, Sunday is 6
         // ISO has Monday=1, Sunday=7, which we transform in the last step
 
@@ -136,13 +161,13 @@ impl Calendar for Iso {
         // https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week#Corresponding_months
         let month_offset = if Self::is_leap_year(date.year) {
             match date.month.0 {
-                1 | 4 | 7 => 0,
-                10 => 1,
-                5 => 2,
-                2 | 8 => 3,
-                3 | 11 => 4,
-                6 => 5,
-                9 | 12 => 6,
+                10 => 0,
+                5 => 1,
+                2 | 8 => 2,
+                3 | 11 => 3,
+                6 => 4,
+                9 | 12 => 5,
+                1 | 4 | 7 => 6,
                 _ => unreachable!(),
             }
         } else {
@@ -162,7 +187,7 @@ impl Calendar for Iso {
         let day_offset = (january_1_2000 + year_offset + month_offset + date.day.0 as i32) % 7;
 
         // We calculated in a zero-indexed fashion, but ISO specifies one-indexed
-        (day_offset + 1) as u8
+        types::IsoWeekday::from((day_offset + 1) as usize)
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, mut offset: DateDuration<Self>) {
@@ -219,6 +244,33 @@ impl Calendar for Iso {
         difference
     }
 
+    /// The calendar-specific year represented by `date`
+    fn year(&self, date: &Self::DateInner) -> types::Year {
+        date.year.into()
+    }
+
+    /// The calendar-specific month represented by `date`
+    fn month(&self, date: &Self::DateInner) -> types::Month {
+        date.month.into()
+    }
+
+    /// The calendar-specific day-of-month represented by `date`
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
+        date.day.into()
+    }
+
+    /// Information of the day of the year
+    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
+        let prev_year = IsoYear(date.year.0 - 1);
+        let next_year = IsoYear(date.year.0 + 1);
+        types::DayOfYearInfo {
+            day_of_year: Iso::day_of_year(*date),
+            days_in_year: Iso::days_in_year(date.year),
+            prev_year: prev_year.into(),
+            next_year: next_year.into(),
+        }
+    }
+
     fn debug_name() -> &'static str {
         "ISO"
     }
@@ -227,13 +279,13 @@ impl Calendar for Iso {
 impl Date<Iso> {
     /// Construct a new ISO Date
     pub fn new_iso_date(
-        day: IsoDay,
-        month: IsoMonth,
         year: IsoYear,
+        month: IsoMonth,
+        day: IsoDay,
     ) -> Result<Date<Iso>, DateTimeError> {
         if day.0 > 28 {
             let bound = Iso::days_in_month(year, month);
-            if day.0 < bound {
+            if day.0 > bound {
                 return Err(DateTimeError::OutOfRange);
             }
         }
@@ -243,11 +295,28 @@ impl Date<Iso> {
 
     /// Construct a new ISO date from integers
     pub fn new_iso_date_from_integers(
-        day: u8,
-        month: u8,
         year: i32,
+        month: u8,
+        day: u8,
     ) -> Result<Date<Iso>, DateTimeError> {
-        Self::new_iso_date(day.try_into()?, month.try_into()?, year.into())
+        Self::new_iso_date(year.into(), month.try_into()?, day.try_into()?)
+    }
+}
+
+impl DateTime<Iso> {
+    /// Construct a new ISO date from integers
+    pub fn new_iso_datetime_from_integers(
+        year: i32,
+        month: u8,
+        day: u8,
+        hour: u8,
+        minute: u8,
+        second: u8,
+    ) -> Result<DateTime<Iso>, DateTimeError> {
+        Ok(DateTime {
+            date: Date::new_iso_date_from_integers(year, month, day)?,
+            time: types::Time::try_new(hour, minute, second)?,
+        })
     }
 }
 
@@ -271,27 +340,85 @@ impl Iso {
             _ => 31,
         }
     }
+
+    pub(crate) fn days_in_year(year: IsoYear) -> u32 {
+        if Self::is_leap_year(year) {
+            366
+        } else {
+            365
+        }
+    }
+
+    pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
+        // Cumulatively how much are dates in each month
+        // offset from "30 days in each month" (in non leap years)
+        let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
+        let mut offset = month_offset[date.month.0 as usize - 1];
+        if Self::is_leap_year(date.year) && date.month.0 > 2 {
+            // Months after February in a leap year are offset by one less
+            offset += 1;
+        }
+        let prev_month_days = (30 * (date.month.0 as i32 - 1) + offset) as u32;
+
+        prev_month_days + date.day.0 as u32
+    }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::types::IsoWeekday;
 
     #[test]
     fn test_day_of_week() {
         // June 23, 2021 is a Wednesday
         assert_eq!(
-            Date::new_iso_date_from_integers(23, 6, 2021)
+            Date::new_iso_date_from_integers(2021, 6, 23)
                 .unwrap()
                 .day_of_week(),
-            3
+            IsoWeekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::new_iso_date_from_integers(2, 2, 1983)
+            Date::new_iso_date_from_integers(1983, 2, 2)
                 .unwrap()
                 .day_of_week(),
-            3
+            IsoWeekday::Wednesday,
+        );
+        // Jan 21, 2021 was a Tuesday
+        assert_eq!(
+            Date::new_iso_date_from_integers(2020, 1, 21)
+                .unwrap()
+                .day_of_week(),
+            IsoWeekday::Tuesday,
+        );
+    }
+
+    #[test]
+    fn test_day_of_year() {
+        // June 23, 2021 was day 174
+        assert_eq!(
+            Date::new_iso_date_from_integers(2021, 6, 23)
+                .unwrap()
+                .day_of_year_info()
+                .day_of_year,
+            174,
+        );
+        // June 23, 2020 was day 175
+        assert_eq!(
+            Date::new_iso_date_from_integers(2020, 6, 23)
+                .unwrap()
+                .day_of_year_info()
+                .day_of_year,
+            175,
+        );
+        // Feb 2, 1983 was a Wednesday
+        assert_eq!(
+            Date::new_iso_date_from_integers(1983, 2, 2)
+                .unwrap()
+                .day_of_year_info()
+                .day_of_year,
+            33,
         );
     }
 
@@ -308,8 +435,8 @@ mod test {
 
     #[test]
     fn test_offset() {
-        let today = Date::new_iso_date_from_integers(23, 6, 2021).unwrap();
-        let today_plus_5000 = Date::new_iso_date_from_integers(2, 3, 2035).unwrap();
+        let today = Date::new_iso_date_from_integers(2021, 6, 23).unwrap();
+        let today_plus_5000 = Date::new_iso_date_from_integers(2035, 3, 2).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, 5000));
         assert_eq!(offset, today_plus_5000);
         let offset = today
@@ -317,8 +444,8 @@ mod test {
             .added(simple_subtract(&today_plus_5000, &today));
         assert_eq!(offset, today_plus_5000);
 
-        let today = Date::new_iso_date_from_integers(23, 6, 2021).unwrap();
-        let today_minus_5000 = Date::new_iso_date_from_integers(15, 10, 2007).unwrap();
+        let today = Date::new_iso_date_from_integers(2021, 6, 23).unwrap();
+        let today_minus_5000 = Date::new_iso_date_from_integers(2007, 10, 15).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, -5000));
         assert_eq!(offset, today_minus_5000);
         let offset = today

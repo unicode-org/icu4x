@@ -55,7 +55,7 @@
 //! ```
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
-//! use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
+//! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
@@ -70,7 +70,7 @@
 //! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
-//! let date: MockDateTime = "2020-09-12T12:35:00".parse()
+//! let date = parse_gregorian_from_str("2020-09-12T12:35:00")
 //!     .expect("Failed to parse date.");
 //!
 //! let formatted_date = dtf.format(&date);
@@ -86,6 +86,20 @@
 #![warn(missing_docs)]
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
+pub mod calendar {
+    //! Contains the core types used by ICU4X for dealing
+    //! with dates, times, and custom calendars.
+    //!
+    //! The [`types`] module has a lot of common types for dealing with dates and times.
+    //!
+    //! [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]
+    //! can represent dates for arbitrary calendars.
+    //!
+    //! The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
+    //! Gregorian calendars respectively.
+    pub use icu_calendar::*;
+}
+
 pub mod datetime {
     //! Date and Time operations
     //!
@@ -100,7 +114,7 @@ pub mod datetime {
     //! ```
     //! use icu::locid::Locale;
     //! use icu::locid::macros::langid;
-    //! use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
+    //! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
@@ -115,7 +129,7 @@ pub mod datetime {
     //! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
     //!     .expect("Failed to create DateTimeFormat instance.");
     //!
-    //! let date: MockDateTime = "2020-09-12T12:35:00".parse()
+    //! let date = parse_gregorian_from_str("2020-09-12T12:35:00")
     //!     .expect("Failed to parse date.");
     //!
     //! let formatted_date = dtf.format(&date);

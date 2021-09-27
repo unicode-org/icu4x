@@ -18,7 +18,8 @@ use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 use crate::{
-    date::DateTimeInput, pattern::Pattern, provider, DateTimeFormatError, FormattedDateTime,
+    date::DateTimeInput, pattern::reference::Pattern, provider, DateTimeFormatError,
+    FormattedDateTime,
 };
 
 /// [`DateTimeFormat`] is the main structure of the [`icu_datetime`] component.
@@ -37,7 +38,7 @@ use crate::{
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
 /// use icu::datetime::{DateTimeFormat, options::length};
-/// use icu::datetime::mock::datetime::MockDateTime;
+/// use icu::calendar::DateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let locale: Locale = langid!("en").into();
@@ -53,7 +54,7 @@ use crate::{
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
-/// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let value = dtf.format_to_string(&datetime);
@@ -77,7 +78,6 @@ impl<'data> DateTimeFormat<'data> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::datetime::mock::datetime::MockDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let locale: Locale = langid!("en").into();
@@ -180,7 +180,7 @@ impl<'data> DateTimeFormat<'data> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::datetime::mock::datetime::MockDateTime;
+    /// use icu::calendar::DateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -188,7 +188,7 @@ impl<'data> DateTimeFormat<'data> {
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let formatted_date = dtf.format(&datetime);
@@ -220,7 +220,7 @@ impl<'data> DateTimeFormat<'data> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::datetime::mock::datetime::MockDateTime;
+    /// use icu::calendar::DateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -228,7 +228,7 @@ impl<'data> DateTimeFormat<'data> {
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let mut buffer = String::new();
@@ -260,7 +260,7 @@ impl<'data> DateTimeFormat<'data> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::datetime::mock::datetime::MockDateTime;
+    /// use icu::calendar::DateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -268,7 +268,7 @@ impl<'data> DateTimeFormat<'data> {
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let _ = dtf.format_to_string(&datetime);

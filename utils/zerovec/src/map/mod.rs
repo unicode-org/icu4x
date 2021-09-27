@@ -6,7 +6,7 @@
 
 use crate::ule::AsULE;
 use crate::ZeroVec;
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 
 mod kv;
 #[cfg(feature = "serde")]

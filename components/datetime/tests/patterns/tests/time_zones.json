@@ -144,7 +144,7 @@
         "patterns": [
           "v"
         ],
-        "expected": "東京時間"
+        "expected": "JST"
       },
       {
         "patterns": [
