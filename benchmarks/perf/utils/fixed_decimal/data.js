@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632787950194,
+  "lastUpdate": 1632870536494,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10649,6 +10649,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 116794,
             "range": "± 318",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5d367e88ef6a21ef055acff920ace6cec87c5b1c",
+          "message": " Use Burmese LSTM for Burmese code point (#1045)\n\n* Add Burmese LTSM model.\r\n\r\n* Use Burmese LSTM model when codepoint is Burmese.\r\n\r\n* Fix clippy lints\r\n\r\n* Fix clippy lints\r\n\r\n* Add more codepoint range for Burmese.\r\n\r\n* Use for-loop intead of loop.\r\n\r\n* Add document for LanguageIterator.\r\n\r\n* Make LanguageIterator::new simple.\r\n\r\n* Add comment for Burmese test.\r\n\r\n* Use common function to detect language.\r\n\r\n* Remove TODO from test comments.",
+          "timestamp": "2021-09-29T08:03:01+09:00",
+          "tree_id": "c29c392138fade7da9a8305baed9dedce301ebdf",
+          "url": "https://github.com/unicode-org/icu4x/commit/5d367e88ef6a21ef055acff920ace6cec87c5b1c"
+        },
+        "date": 1632870532667,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 132251,
+            "range": "± 6454",
             "unit": "ns/iter"
           }
         ]
