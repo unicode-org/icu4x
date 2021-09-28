@@ -29,7 +29,7 @@
 //!
 //! Benchmark results on x86_64:
 //!
-//! | Operation | `Vec<T>` | `ZeroVec<T>` |
+//! | Operation | `Vec<T>` | `zerovec` |
 //! |---|---|---|
 //! | Deserialize vec of 100 `u32` | 233.18 ns | 14.120 ns |
 //! | Compute sum of vec of 100 `u32` (read every element) | 8.7472 ns | 10.775 ns |
@@ -42,13 +42,16 @@
 //!
 //! | Operation | `HashMap<K,V>`  | `LiteMap<K,V>` | `ZeroMap<K,V>` |
 //! |---|---|---|---|
-//! | Look up a `&str` key from a 16-element map | 46 ns | 41 ns | 38 ns |
-//! | Look up a `&str` key from a 1,048,576-element map | 49 ns | 211 ns | 171 ns |
-//! | Look up a `&str` key from a deserialized 1,048,576-element map | 51 ns | 220 ns | 269 ns |
-//! | Serialize a 16-element `<String, String>` map | 524 ns | 607 ns | 1.48 μs |
-//! | Deserialize a 16-element `<String, String>` map | 2.53 μs | 1.75 μs | 494 ns |
+//! | Deserialize a small map | 2.72 μs | 1.28 μs | 480 ns |
+//! | Deserialize a large map | 50.5 ms | 18.3 ms | 3.74 ms |
+//! | Look up from a small deserialized map | 49 ns | 42 ns | 54 ns |
+//! | Look up from a large deserialized map | 51 ns | 155 ns | 213 ns |
+//!
+//! Small = 16 elements, large = 131,072 elements. Maps contain `<String, String>`.
 //!
 //! The benches used to generate the above table can be found in the `benches` directory in the project repository.
+//! `zeromap` benches are named by convention, e.g. `zeromap/deserialize/small`, `zeromap/lookup/large`. The type
+//! is appended for baseline comparisons, e.g. `zeromap/lookup/small/hashmap`.
 //!
 //! # Features
 //!

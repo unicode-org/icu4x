@@ -4,7 +4,7 @@
 
 use std::collections::HashMap;
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use zerovec::ZeroMap;
 
@@ -56,35 +56,28 @@ const POSTCARD_HASHMAP: [u8; 176] = [
 
 /// Run this function to print new data to the console. Requires the optional `serde` feature.
 #[allow(dead_code)]
-fn generate(map: &ZeroMap<String, String>) {
+fn generate() {
+    let map = build_zeromap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
     println!("{:?}", buf);
 }
 
 /// Run this function to print new data to the console. Requires the optional `serde` feature.
 #[allow(dead_code)]
-fn generate_hashmap(map: &HashMap<String, String>) {
+fn generate_hashmap() {
+    let map = build_hashmap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
     println!("{:?}", buf);
 }
 
 fn overview_bench(c: &mut Criterion) {
-    let map = build_zeromap(false);
-    c.bench_function("zeromap/read", |b| {
-        b.iter(|| {
-            assert_eq!(map.get("iu"), Some("Inuktitut"));
-            assert_eq!(map.get("zz"), None);
-        });
-    });
-
     // Uncomment the following line to re-generate the binary data.
-    // generate(&map);
+    // generate();
 
-    bench_serialization(c);
-    bench_deserialization(c);
-
-    bench_large(c);
-    bench_large_deserialized(c);
+    bench_deserialize(c);
+    bench_deserialize_large(c);
+    bench_lookup(c);
+    bench_lookup_large(c);
 
     bench_hashmap(c);
 }
@@ -93,7 +86,7 @@ fn build_zeromap(large: bool) -> ZeroMap<'static, String, String> {
     let mut map: ZeroMap<String, String> = ZeroMap::new();
     for (key, value) in DATA.iter() {
         if large {
-            for n in 0..65536 {
+            for n in 0..8192 {
                 map.insert(format!("{}{}", key, n), value.to_string());
             }
         } else {
@@ -103,70 +96,63 @@ fn build_zeromap(large: bool) -> ZeroMap<'static, String, String> {
     map
 }
 
-fn bench_large(c: &mut Criterion) {
-    let map = build_zeromap(true);
-    c.bench_function("zeromap/read/1m", |b| {
+fn bench_deserialize(c: &mut Criterion) {
+    c.bench_function("zeromap/deserialize/small", |b| {
         b.iter(|| {
-            assert_eq!(map.get("iu33333"), Some("Inuktitut"));
-            assert_eq!(map.get("zz"), None);
-        });
-    });
-}
-
-fn bench_serialization(c: &mut Criterion) {
-    let map = build_zeromap(false);
-    c.bench_function("zeromap/serialize", |b| {
-        b.iter(|| {
-            let buf = postcard::to_stdvec(&map).unwrap();
-            assert_eq!(buf.len(), POSTCARD.len());
-        })
-    });
-}
-
-fn bench_deserialization(c: &mut Criterion) {
-    c.bench_function("zeromap/deserialize", |b| {
-        b.iter(|| {
-            let map: ZeroMap<String, String> = postcard::from_bytes(&POSTCARD).unwrap();
+            let map: ZeroMap<String, String> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
             assert_eq!(map.get("iu"), Some("Inuktitut"));
         })
     });
 }
 
-fn bench_large_deserialized(c: &mut Criterion) {
+fn bench_deserialize_large(c: &mut Criterion) {
+    let original_map = build_zeromap(true);
+    let buf = postcard::to_stdvec(&original_map).unwrap();
+    c.bench_function("zeromap/deserialize/large", |b| {
+        b.iter(|| {
+            let map: ZeroMap<String, String> = postcard::from_bytes(black_box(&buf)).unwrap();
+            assert_eq!(map.get("iu3333"), Some("Inuktitut"));
+        })
+    });
+}
+
+fn bench_lookup(c: &mut Criterion) {
+    let map: ZeroMap<String, String> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
+    c.bench_function("zeromap/lookup/small", |b| {
+        b.iter(|| {
+            assert_eq!(map.get(black_box("iu")), Some("Inuktitut"));
+            assert_eq!(map.get(black_box("zz")), None);
+        });
+    });
+}
+
+fn bench_lookup_large(c: &mut Criterion) {
     let original_map = build_zeromap(true);
     let buf = postcard::to_stdvec(&original_map).unwrap();
     let map: ZeroMap<String, String> = postcard::from_bytes(&buf).unwrap();
-    c.bench_function("zeromap/read/1m/deseralized", |b| {
+    c.bench_function("zeromap/lookup/large", |b| {
         b.iter(|| {
-            assert_eq!(map.get("iu33333"), Some("Inuktitut"));
-            assert_eq!(map.get("zz"), None);
+            assert_eq!(map.get(black_box("iu3333")), Some("Inuktitut"));
+            assert_eq!(map.get(black_box("zz")), None);
         });
     });
 }
 
 fn bench_hashmap(c: &mut Criterion) {
-    let map = build_hashmap(false);
-    c.bench_function("zeromap/read/hashmap", |b| {
-        b.iter(|| {
-            assert_eq!(map.get("iu"), Some(&"Inuktitut".to_string()));
-            assert_eq!(map.get("zz"), None);
-        });
-    });
-
     // Uncomment the following line to re-generate the binary data.
-    // generate_hashmap(&map);
-    bench_serialization_hashmap(c);
-    bench_deserialization_hashmap(c);
+    // generate_hashmap();
 
-    bench_large_hashmap(c);
-    bench_large_deserialized_hashmap(c);
+    bench_deserialize_hashmap(c);
+    bench_deserialize_large_hashmap(c);
+    bench_lookup_hashmap(c);
+    bench_lookup_large_hashmap(c);
 }
 
 fn build_hashmap(large: bool) -> HashMap<String, String> {
     let mut map: HashMap<String, String> = HashMap::new();
     for (key, value) in DATA.iter() {
         if large {
-            for n in 0..65536 {
+            for n in 0..8192 {
                 map.insert(format!("{}{}", key, n), value.to_string());
             }
         } else {
@@ -176,43 +162,45 @@ fn build_hashmap(large: bool) -> HashMap<String, String> {
     map
 }
 
-fn bench_large_hashmap(c: &mut Criterion) {
-    let map = build_hashmap(true);
-    c.bench_function("zeromap/read/1m/hashmap", |b| {
+fn bench_deserialize_hashmap(c: &mut Criterion) {
+    c.bench_function("zeromap/deserialize/small/hashmap", |b| {
         b.iter(|| {
-            assert_eq!(map.get("iu33333"), Some(&"Inuktitut".to_string()));
-            assert_eq!(map.get("zz"), None);
-        });
-    });
-}
-
-fn bench_serialization_hashmap(c: &mut Criterion) {
-    let map = build_hashmap(false);
-    c.bench_function("zeromap/serialize/hashmap", |b| {
-        b.iter(|| {
-            let buf = postcard::to_stdvec(&map).unwrap();
-            assert_eq!(buf.len(), POSTCARD_HASHMAP.len());
-        })
-    });
-}
-
-fn bench_deserialization_hashmap(c: &mut Criterion) {
-    c.bench_function("zeromap/deserialize/hashmap", |b| {
-        b.iter(|| {
-            let map: HashMap<String, String> = postcard::from_bytes(&POSTCARD_HASHMAP).unwrap();
+            let map: HashMap<String, String> =
+                postcard::from_bytes(black_box(&POSTCARD_HASHMAP)).unwrap();
             assert_eq!(map.get("iu"), Some(&"Inuktitut".to_string()));
         })
     });
 }
 
-fn bench_large_deserialized_hashmap(c: &mut Criterion) {
+fn bench_deserialize_large_hashmap(c: &mut Criterion) {
+    let original_map = build_hashmap(true);
+    let buf = postcard::to_stdvec(&original_map).unwrap();
+    c.bench_function("zeromap/deserialize/large/hashmap", |b| {
+        b.iter(|| {
+            let map: HashMap<String, String> = postcard::from_bytes(black_box(&buf)).unwrap();
+            assert_eq!(map.get("iu3333"), Some(&"Inuktitut".to_string()));
+        })
+    });
+}
+
+fn bench_lookup_hashmap(c: &mut Criterion) {
+    let map: HashMap<String, String> = postcard::from_bytes(black_box(&POSTCARD_HASHMAP)).unwrap();
+    c.bench_function("zeromap/lookup/small/hashmap", |b| {
+        b.iter(|| {
+            assert_eq!(map.get(black_box("iu")), Some(&"Inuktitut".to_string()));
+            assert_eq!(map.get(black_box("zz")), None);
+        });
+    });
+}
+
+fn bench_lookup_large_hashmap(c: &mut Criterion) {
     let original_map = build_hashmap(true);
     let buf = postcard::to_stdvec(&original_map).unwrap();
     let map: HashMap<String, String> = postcard::from_bytes(&buf).unwrap();
-    c.bench_function("zeromap/read/1m/deseralized/hashmap", |b| {
+    c.bench_function("zeromap/lookup/large/hashmap", |b| {
         b.iter(|| {
-            assert_eq!(map.get("iu33333"), Some(&"Inuktitut".to_string()));
-            assert_eq!(map.get("zz"), None);
+            assert_eq!(map.get(black_box("iu3333")), Some(&"Inuktitut".to_string()));
+            assert_eq!(map.get(black_box("zz")), None);
         });
     });
 }

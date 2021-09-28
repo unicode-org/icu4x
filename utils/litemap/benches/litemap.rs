@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use litemap::LiteMap;
 
@@ -37,30 +37,29 @@ const POSTCARD: [u8; 176] = [
     105, 110, 101, 115, 101,
 ];
 
-fn overview_bench(c: &mut Criterion) {
+/// Run this function to print new data to the console. Requires the optional `serde` feature.
+#[allow(dead_code)]
+fn generate() {
     let map = build_litemap(false);
-    c.bench_function("litemap/read", |b| {
-        b.iter(|| {
-            assert_eq!(map.get("iu"), Some(&"Inuktitut".to_string()));
-            assert_eq!(map.get("zz"), None);
-        });
-    });
+    let buf = postcard::to_stdvec(&map).unwrap();
+    println!("{:?}", buf);
+}
 
+fn overview_bench(c: &mut Criterion) {
     // Uncomment the following line to re-generate the binary data.
-    // generate(&map);
+    // generate();
 
-    bench_serialization(c);
-    bench_deserialization(c);
-
-    bench_large(c);
-    bench_large_deserialized(c);
+    bench_deserialize(c);
+    bench_deserialize_large(c);
+    bench_lookup(c);
+    bench_lookup_large(c);
 }
 
 fn build_litemap(large: bool) -> LiteMap<String, String> {
     let mut map: LiteMap<String, String> = LiteMap::new();
     for (key, value) in DATA.iter() {
         if large {
-            for n in 0..65536 {
+            for n in 0..8192 {
                 map.insert(format!("{}{}", key, n), value.to_string());
             }
         } else {
@@ -70,52 +69,46 @@ fn build_litemap(large: bool) -> LiteMap<String, String> {
     map
 }
 
-fn bench_large(c: &mut Criterion) {
-    let map = build_litemap(true);
-    c.bench_function("litemap/read/1m", |b| {
+fn bench_deserialize(c: &mut Criterion) {
+    c.bench_function("litemap/deserialize/small", |b| {
         b.iter(|| {
-            assert_eq!(map.get("iu33333"), Some(&"Inuktitut".to_string()));
-            assert_eq!(map.get("zz"), None);
-        });
-    });
-}
-
-fn bench_serialization(c: &mut Criterion) {
-    let map = build_litemap(false);
-    c.bench_function("litemap/serialize", |b| {
-        b.iter(|| {
-            let buf = postcard::to_stdvec(&map).unwrap();
-            assert_eq!(buf.len(), POSTCARD.len());
-        })
-    });
-}
-
-fn bench_deserialization(c: &mut Criterion) {
-    c.bench_function("litemap/deserialize", |b| {
-        b.iter(|| {
-            let map: LiteMap<String, String> = postcard::from_bytes(&POSTCARD).unwrap();
+            let map: LiteMap<String, String> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
             assert_eq!(map.get("iu"), Some(&"Inuktitut".to_string()));
         })
     });
 }
 
-fn bench_large_deserialized(c: &mut Criterion) {
+fn bench_deserialize_large(c: &mut Criterion) {
     let original_map = build_litemap(true);
     let buf = postcard::to_stdvec(&original_map).unwrap();
-    let map: LiteMap<String, String> = postcard::from_bytes(&buf).unwrap();
-    c.bench_function("litemap/read/1m/deseralized", |b| {
+    c.bench_function("litemap/deseralize/large", |b| {
         b.iter(|| {
-            assert_eq!(map.get("iu33333"), Some(&"Inuktitut".to_string()));
-            assert_eq!(map.get("zz"), None);
+            let map: LiteMap<String, String> = postcard::from_bytes(black_box(&buf)).unwrap();
+            assert_eq!(map.get("iu3333"), Some(&"Inuktitut".to_string()));
         });
     });
 }
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
-#[allow(dead_code)]
-fn generate(map: &LiteMap<String, String>) {
-    let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+fn bench_lookup(c: &mut Criterion) {
+    let map: LiteMap<String, String> = postcard::from_bytes(&POSTCARD).unwrap();
+    c.bench_function("litemap/lookup/small", |b| {
+        b.iter(|| {
+            assert_eq!(map.get(black_box("iu")), Some(&"Inuktitut".to_string()));
+            assert_eq!(map.get(black_box("zz")), None);
+        });
+    });
+}
+
+fn bench_lookup_large(c: &mut Criterion) {
+    let original_map = build_litemap(true);
+    let buf = postcard::to_stdvec(&original_map).unwrap();
+    let map: LiteMap<String, String> = postcard::from_bytes(&buf).unwrap();
+    c.bench_function("litemap/lookup/large", |b| {
+        b.iter(|| {
+            assert_eq!(map.get(black_box("iu3333")), Some(&"Inuktitut".to_string()));
+            assert_eq!(map.get(black_box("zz")), None);
+        });
+    });
 }
 
 criterion_group!(benches, overview_bench);
