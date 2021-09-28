@@ -4,6 +4,7 @@
 
 extern crate unicode_width;
 
+use crate::language::*;
 use crate::lb_define::*;
 use crate::lstm::*;
 use crate::property_table::*;
@@ -249,16 +250,9 @@ fn use_complex_breaking_utf32(codepoint: u32) -> bool {
         LineBreakRule::Strict,
         WordBreakRule::Normal,
     );
-    if line_break_property == SA {
-        // Thai
-        (0xe01..=0xe7f).contains(&codepoint) ||
-        // Burmese
-        (0x1000..=0x109f).contains(&codepoint) ||
-        (0xa9e0..=0xa9ff).contains(&codepoint) ||
-        (0xaa60..=0xaa7f).contains(&codepoint)
-    } else {
-        false
-    }
+
+    line_break_property == SA
+        && matches!(get_language(codepoint), Language::Thai | Language::Burmese)
 }
 
 /*

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::language::*;
+
 use icu_segmenter_lstm::lstm::Lstm;
 use std::char::decode_utf16;
 use std::str::Chars;
@@ -27,25 +29,6 @@ lazy_static! {
 }
 
 // LSTM model depends on language, So we have to switch models per language.
-
-#[derive(PartialEq)]
-enum Language {
-    Burmese,
-    Thai,
-    Unknown,
-}
-
-fn get_language(codepoint: u32) -> Language {
-    match codepoint {
-        0xe01..=0xe7f => Language::Thai,
-        0x1000..=0x109f => Language::Burmese,
-        0xa9e0..=0xa9ff => Language::Burmese,
-        0xaa60..=0xaa7f => Language::Burmese,
-
-        _ => Language::Unknown,
-    }
-}
-
 fn get_best_lstm_model(codepoint: u32) -> &'static Lstm {
     let lang = get_language(codepoint);
     match lang {
