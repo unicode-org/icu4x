@@ -30,13 +30,12 @@ impl AsULE for GeneralSubcategory {
 unsafe impl ULE for GeneralSubcategoryULE {
     type Error = TryFromPrimitiveError<GeneralSubcategory>;
 
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
         // Validate the bytes
         for b in bytes {
             GeneralSubcategory::try_from(*b)?;
         }
-        // Safe because Self is transparent over u8 and has been validated
-        Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+        Ok(())
     }
 
     /// Invariant: must be safe to call when called on a slice that previously
