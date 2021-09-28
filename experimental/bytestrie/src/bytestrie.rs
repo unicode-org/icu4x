@@ -20,7 +20,7 @@
 use zerovec::ZeroVec;
 
 pub struct BytesTrie<'trie> {
-    bytes : ZeroVec<'trie, u8>
+  pub bytes : ZeroVec<'trie, u8>
 }
 
 impl <'trie> From<Vec<u8>> for BytesTrie<'trie>{

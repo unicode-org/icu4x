@@ -23,22 +23,22 @@ impl<'a> BytesTrieElement<'a> {
 
 pub struct BytesTrieBuilder<'a> {
     elements: Vec<BytesTrieElement<'a>>,
-    bytes: zerovec::ZeroVec<'a, i8>
+    bytes: zerovec::ZeroVec<'a, u8>
 }
 
 trait TrieBuilder {
-    fn write(&mut self, byte: i8) -> usize;
-    fn writeMany(&mut self,bytes: &[i8] ) -> usize;
+    fn write(&mut self, byte: u8) -> usize;
+    fn writeMany(&mut self,bytes: &[u8] ) -> usize;
 }
 
-impl TrieBuilder for zerovec::ZeroVec<'_, i8> {
+impl TrieBuilder for zerovec::ZeroVec<'_, u8> {
     
-    fn write(&mut self,byte: i8) -> usize{
+    fn write(&mut self,byte: u8) -> usize{
         self.push(byte);
         self.len()
     }
 
-    fn writeMany(&mut self, bytes: &[i8]) -> usize {
+    fn writeMany(&mut self, bytes: &[u8]) -> usize {
         self.reserve(bytes.len());
         // todo consider using memcpy
         for &x in bytes {
