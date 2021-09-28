@@ -1008,6 +1008,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_bytestrie"
+version = "0.0.1"
+dependencies = [
+ "serde",
+ "thiserror",
+ "toml",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_calendar"
 version = "0.3.0"
 dependencies = [
