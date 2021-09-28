@@ -2,6 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+macro_rules! const_expr_count {
+    () => (0);
+    ($e:expr) => (1);
+    ($e:expr; $($other_e:expr);*) => ({
+        1 $(+ const_expr_count!($other_e) )*
+    });
+
+    ($e:expr; $($other_e:expr);* ; ) => (
+        const_expr_count! { $e; $($other_e);* }
+    );
+}
+
 /// Macro used to generate Field type.
 ///
 /// The macro takes three arguments:
@@ -60,7 +72,7 @@ macro_rules! field_type {
             /// This is mostly useful for serialization,
             /// and does not guarantee index stability between ICU4X
             /// versions.
-            pub(crate) fn _idx(&self) -> u8 {
+            pub(crate) fn idx(&self) -> u8 {
                 match self {
                     $(
                         $i::$val => $idx,
@@ -83,13 +95,18 @@ macro_rules! field_type {
             /// This is mostly useful for serialization,
             /// and does not guarantee index stability between ICU4X
             /// versions.
-            pub(crate) fn _from_idx(idx: u8) -> Result<Self, SymbolError> {
+            pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
                 match idx {
                     $(
                         $idx => Ok(Self::$val),
                     )*
                     _ => Err(SymbolError::InvalidIndex(idx)),
                 }
+            }
+
+            pub(crate) fn idx_in_range(v: &u8) -> bool {
+                let count = const_expr_count!($($key);*);
+                (0..count).contains(v)
             }
         }
 

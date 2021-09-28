@@ -38,6 +38,7 @@ icu_calendar = { version = "0.3", path = "../calendar" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 litemap = { version = "0.2", path = "../../utils/litemap", features = ["serde"] }
 tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features = false }
+zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["yoke", "serde"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }

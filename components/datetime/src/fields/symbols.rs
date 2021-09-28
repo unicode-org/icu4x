@@ -38,6 +38,92 @@ pub enum FieldSymbol {
     TimeZone(TimeZone),
 }
 
+impl FieldSymbol {
+    /// Symbols are necessary components of `Pattern` struct, which
+    /// uses efficient byte serialization and deserialization via `zerovec`.
+    ///
+    /// The `FieldSymbol` impl provides non-public methods that can be used to efficiently
+    /// convert between `u8` and the symbol variant.
+    ///
+    /// The serialization model packages the variant in one byte.
+    ///
+    /// 1) The top four bits are used to determine the type of the field.
+    ///    (Examples: `Year`, `Month`, `Hour`)
+    ///
+    /// 2) The bottom four bites are used to determine the symbol of the type.
+    ///    (Examples: `Year::Calendar`, `Hour::H11`)
+    ///
+    /// # Diagram
+    ///
+    /// ┌─┬─┬─┬─┬─┬─┬─┬─┐
+    /// ├─┴─┴─┴─┼─┴─┴─┴─┤
+    /// │ Type  │Symbol │
+    /// └───────┴───────┘
+    ///
+    /// # Optimization
+    ///
+    /// This model is optimized to package data efficiently when `FieldSymbol`
+    /// is used as a variant of `PatternItem`. See the documentation of `PatternItemULE`
+    /// for details on how it is composed.
+    ///
+    /// # Constraints
+    ///
+    /// This model limits the available number of possible types and symbols to 16 each.
+
+    pub(crate) fn idx_in_range(kv: &u8) -> bool {
+        let k = kv & 0b0000_1111;
+        let v = kv >> 4;
+        match k {
+            0 => Year::idx_in_range(&v),
+            1 => Month::idx_in_range(&v),
+            2 => Day::idx_in_range(&v),
+            3 => Weekday::idx_in_range(&v),
+            4 => DayPeriod::idx_in_range(&v),
+            5 => Hour::idx_in_range(&v),
+            6 => true,
+            7 => Second::idx_in_range(&v),
+            8 => TimeZone::idx_in_range(&v),
+            _ => false,
+        }
+    }
+
+    pub(crate) fn idx(&self) -> u8 {
+        let (lower, upper) = match self {
+            FieldSymbol::Year(year) => (0, year.idx()),
+            FieldSymbol::Month(month) => (1, month.idx()),
+            FieldSymbol::Day(day) => (2, day.idx()),
+            FieldSymbol::Weekday(wd) => (3, wd.idx()),
+            FieldSymbol::DayPeriod(dp) => (4, dp.idx()),
+            FieldSymbol::Hour(hour) => (5, hour.idx()),
+            FieldSymbol::Minute => (6, 0),
+            FieldSymbol::Second(second) => (7, second.idx()),
+            FieldSymbol::TimeZone(tz) => (8, tz.idx()),
+        };
+        let result = upper << 4;
+        result | lower
+    }
+
+    pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+        // extract the top four bits out of `u8` to disriminate the field type.
+        let lower = idx & 0b0000_1111;
+        // use the bottom four bits to determine the symbol.
+        let upper = idx >> 4;
+
+        Ok(match lower {
+            0 => Self::Year(Year::from_idx(upper)?),
+            1 => Self::Month(Month::from_idx(upper)?),
+            2 => Self::Day(Day::from_idx(upper)?),
+            3 => Self::Weekday(Weekday::from_idx(upper)?),
+            4 => Self::DayPeriod(DayPeriod::from_idx(upper)?),
+            5 => Self::Hour(Hour::from_idx(upper)?),
+            6 => Self::Minute,
+            7 => Self::Second(Second::from_idx(upper)?),
+            8 => Self::TimeZone(TimeZone::from_idx(upper)?),
+            _ => return Err(SymbolError::InvalidIndex(idx)),
+        })
+    }
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum TextOrNumeric {
     Text,

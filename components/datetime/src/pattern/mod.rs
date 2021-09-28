@@ -6,6 +6,7 @@ mod error;
 mod hour_cycle;
 mod item;
 pub mod reference;
+pub mod runtime;
 
 use crate::fields;
 pub use error::PatternError;

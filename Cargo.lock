@@ -1091,6 +1091,7 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
