@@ -5,7 +5,11 @@
 use crate::error::Error;
 use crate::impl_const::*;
 
+use core::fmt::Display;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use zerovec::ZeroVec;
+use zerovec::ule::{AsULE, ULE};
 
 // Enums
 
@@ -115,13 +119,17 @@ impl TrieType for Small {
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-pub struct CodePointTrie<'trie, W: ValueWidth> {
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct CodePointTrie<'trie, W: ValueWidth>
+where <<W as AsULE>::ULE as ULE>::Error: Display
+{
     header: CodePointTrieHeader,
     index: ZeroVec<'trie, u16>,
     data: ZeroVec<'trie, W>,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct CodePointTrieHeader {
     /// Length of the trie's `index` array
     pub index_length: u32,
@@ -159,7 +167,9 @@ pub struct CodePointTrieHeader {
     pub trie_type: TrieTypeEnum,
 }
 
-impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
+impl<'trie, W: ValueWidth> CodePointTrie<'trie, W>
+where <<W as AsULE>::ULE as ULE>::Error: Display
+{
     /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
     /// array and `data` array, whose data values have width `W`.
     pub fn try_new(
