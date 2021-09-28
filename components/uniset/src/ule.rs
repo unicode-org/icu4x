@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::enum_props::GeneralSubcategory;
+use crate::enum_props::{GeneralSubcategory, Script};
 use core::convert::TryFrom;
 use num_enum::TryFromPrimitiveError;
-use zerovec::ule::{AsULE, ULE};
+use zerovec::ule::{AsULE, PlainOldULE, ULE};
 
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -51,5 +51,19 @@ unsafe impl ULE for GeneralSubcategoryULE {
         let len = slice.len();
         // Safe because Self is transparent over u8
         unsafe { core::slice::from_raw_parts(data, len) }
+    }
+}
+
+impl AsULE for Script {
+    type ULE = PlainOldULE<2>;
+
+    #[inline]
+    fn as_unaligned(&self) -> Self::ULE {
+        PlainOldULE(self.0.to_le_bytes())
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: &Self::ULE) -> Self {
+        Script(u16::from_le_bytes(unaligned.0))
     }
 }
