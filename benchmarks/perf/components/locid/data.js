@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632778109692,
+  "lastUpdate": 1632787988995,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13349,6 +13349,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4212,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e7cbcdbd7fe129c8cfc41d374eb262767004dded",
+          "message": "Separate out validation function for ULE to be able to derive parse_byte_slice (#1113)\n\n* Separate out validation function for ULE to be able to derive parse_byte_slice\r\n\r\n* Apply reviewers feedback\r\n\r\n* Add same for VarULE and document default impl for parse_byte_slice\r\n\r\n* Improve docs",
+          "timestamp": "2021-09-27T17:06:34-07:00",
+          "tree_id": "da488d2aa0bbebb65e865a20b928754af0ef4ebe",
+          "url": "https://github.com/unicode-org/icu4x/commit/e7cbcdbd7fe129c8cfc41d374eb262767004dded"
+        },
+        "date": 1632787985272,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2481,
+            "range": "± 212",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4292,
+            "range": "± 281",
             "unit": "ns/iter"
           }
         ]
