@@ -232,7 +232,7 @@ mod tests {
         const TEST_STR: &str = "မြန်မာဘာသာစကား";
 
         let breaks = get_line_break_utf8(TEST_STR);
-        // TODO: LSTM model breaks more characters, but it is better to return [30]
+        // LSTM model breaks more characters, but it is better to return [30].
         assert_eq!(breaks.unwrap(), [12, 18, 30], "Burmese test");
     }
 
@@ -244,7 +244,7 @@ mod tests {
             0x1000, 0x102c, 0x1038,
         ];
         let breaks = get_line_break_utf16(&text);
-        // TODO: LSTM model breaks more characters, but it is better to return [10]
+        // LSTM model breaks more characters, but it is better to return [10].
         assert_eq!(breaks.unwrap(), [4, 6, 10], "Burmese utf-16 test");
     }
 
