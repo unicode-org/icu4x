@@ -39,6 +39,17 @@ fn planes_trie_deserialize_check_test() {
 
     let code_point_trie_struct = planes_enum_prop.code_point_trie.trie_struct;
 
+    let trie_type_enum =
+        match test_util::get_code_point_trie_type_enum(code_point_trie_struct.trie_type_enum_val) {
+            Some(enum_val) => enum_val,
+            _ => {
+                panic!(
+                    "Could not parse trie_type serialized enum value in test data file: {}",
+                    code_point_trie_struct.name
+                );
+            }
+        };
+
     let trie_header = CodePointTrieHeader {
         index_length: code_point_trie_struct.index_length,
         data_length: code_point_trie_struct.data_length,
@@ -47,11 +58,12 @@ fn planes_trie_deserialize_check_test() {
         index3_null_offset: code_point_trie_struct.index3_null_offset,
         data_null_offset: code_point_trie_struct.data_null_offset,
         null_value: code_point_trie_struct.null_value,
+        trie_type: trie_type_enum,
     };
 
     let data = ZeroVec::from_slice(code_point_trie_struct.data_8.as_ref().unwrap());
     let index = ZeroVec::from_slice(&code_point_trie_struct.index);
-    let trie_result: Result<CodePointTrie<u8, Small>, Error> =
+    let trie_result: Result<CodePointTrie<u8>, Error> =
         CodePointTrie::try_new(trie_header, index, data);
     let act_planes_trie = trie_result.unwrap();
 

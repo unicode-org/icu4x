@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, Fast};
+use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieTypeEnum};
 use icu_codepointtrie::error::Error;
 use zerovec::ZeroVec;
 
@@ -63,6 +63,7 @@ fn try_new_error_test() {
     let index3_null_offset: u16 = 0x7fff;
     let data_null_offset: u32 = 0x0;
     let null_value: u32 = 0x1;
+    let trie_type = TrieTypeEnum::Fast;
 
     let header = CodePointTrieHeader {
         index_length,
@@ -72,11 +73,12 @@ fn try_new_error_test() {
         index3_null_offset,
         data_null_offset,
         null_value,
+        trie_type,
     };
 
     let index = ZeroVec::from_slice(&INDEX);
     let data = ZeroVec::from_slice(&DATA_8);
-    let trie_new_result: Result<CodePointTrie<u8, Fast>, Error> =
+    let trie_new_result: Result<CodePointTrie<u8>, Error> =
         CodePointTrie::try_new(header, index, data);
     match trie_new_result {
         Ok(_) => {

@@ -4,7 +4,7 @@
 
 use crate::error::Error;
 use crate::impl_const::*;
-use std::marker::PhantomData;
+
 use zerovec::ZeroVec;
 
 // Enums
@@ -115,11 +115,10 @@ impl TrieType for Small {
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
+pub struct CodePointTrie<'trie, W: ValueWidth> {
     header: CodePointTrieHeader,
     index: ZeroVec<'trie, u16>,
     data: ZeroVec<'trie, W>,
-    _marker_ty: PhantomData<T>,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
@@ -155,17 +154,19 @@ pub struct CodePointTrieHeader {
     /// The value stored in the trie that represents a null value being
     /// associated to a code point.
     pub null_value: u32,
+    /// The enum value representing the type of trie, where trie type is as it
+    /// is defined in ICU (ex: Fast, Small).
+    pub trie_type: TrieTypeEnum,
 }
 
-impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
+impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
     /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
-    /// array and `data` array, whose data values have width `W`, for a trie
-    /// type `T`.
+    /// array and `data` array, whose data values have width `W`.
     pub fn try_new(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, W>,
-    ) -> Result<CodePointTrie<'trie, W, T>, Error> {
+    ) -> Result<CodePointTrie<'trie, W>, Error> {
         if header.data_length < ERROR_VALUE_NEG_DATA_OFFSET {
             return Err(Error::FromDeserialized {
                 reason: "Data array must be large enough to contain error value",
@@ -191,11 +192,10 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             });
         }
 
-        let trie: CodePointTrie<'trie, W, T> = CodePointTrie {
+        let trie: CodePointTrie<'trie, W> = CodePointTrie {
             header,
             index,
             data,
-            _marker_ty: PhantomData,
         };
         Ok(trie)
     }
@@ -208,7 +208,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 
     fn internal_small_index(&self, code_point: u32) -> u32 {
         let mut index1_pos: u32 = code_point >> SHIFT_1;
-        if T::ENUM_VALUE == TrieTypeEnum::Fast {
+        if self.header.trie_type == TrieTypeEnum::Fast {
             debug_assert!(
                 FAST_TYPE_FAST_INDEXING_MAX < code_point && code_point < self.header.high_start
             );
@@ -264,10 +264,10 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 
     /// Returns the position in the `data` array for the given code point,
     /// where this code point is at or above the fast limit associated for the
-    /// trie type, `T`.
+    /// `trie_type`. We will refer to that limit as "`fastMax`" here.
     ///
     /// A lookup of the value in the code point trie for a code point in the
-    /// code point space range [`T::FAST_MAX`, `high_start`) will be a 4-step
+    /// code point space range [`fastMax`, `high_start`) will be a 4-step
     /// lookup: 3 lookups in the `index` array and one lookup in the `data`
     /// array. Lookups for code points in the range [`high_start`,
     /// `CODE_POINT_MAX`] are short-circuited to be a single lookup, see
@@ -282,13 +282,13 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 
     /// Returns the position in the `data` array for the given code point,
     /// where this code point is below the fast limit associated for the
-    /// trie type, `T`.
+    /// `trie type`. We will refer to that limit as "`fastMax`" here.
     ///
     /// A lookup of the value in the code point trie for a code point in the
-    /// code point space range [0, `T::FAST_MAX`) will be a 2-step lookup: 1
+    /// code point space range [0, `fastMax`) will be a 2-step lookup: 1
     /// lookup in the `index` array and one lookup in the `data` array. By
     /// design, for trie type `T`, there is an element allocated in the `index`
-    /// array for each block of code points in [0, `T::FAST_MAX`), which in
+    /// array for each block of code points in [0, `fastMax`), which in
     /// turn guarantees that those code points are represented and only need 1
     /// lookup.
     fn fast_index(&self, code_point: u32) -> u32 {
@@ -316,7 +316,11 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
     /// ```
     pub fn get(&self, code_point: u32) -> W {
-        let data_pos: u32 = if code_point <= T::FAST_MAX {
+        let fast_max = match self.header.trie_type {
+            TrieTypeEnum::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+            TrieTypeEnum::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+        };
+        let data_pos: u32 = if code_point <= fast_max {
             Self::fast_index(self, code_point)
         } else if code_point <= CODE_POINT_MAX {
             Self::small_index(self, code_point)
