@@ -4,6 +4,7 @@
 
 extern crate unicode_width;
 
+use crate::language::*;
 use crate::lb_define::*;
 use crate::lstm::*;
 use crate::property_table::*;
@@ -244,8 +245,14 @@ fn get_break_state(left: u8, right: u8) -> i8 {
 
 #[inline]
 fn use_complex_breaking_utf32(codepoint: u32) -> bool {
-    // Thai
-    (0xe01..=0xe7f).contains(&codepoint)
+    let line_break_property = get_linebreak_property_utf32_with_rule(
+        codepoint,
+        LineBreakRule::Strict,
+        WordBreakRule::Normal,
+    );
+
+    line_break_property == SA
+        && matches!(get_language(codepoint), Language::Thai | Language::Burmese)
 }
 
 /*
