@@ -149,7 +149,7 @@ const INDEX_ARRAY_AS_BYTES: &[u8] = &[
 /// integer from 0-16 inclusive, for each code point. This `CodePointTrie`
 /// does not actually represent any Unicode property, but it is provided in
 /// case it is useful to users of `CodePointTrie` for testing or other
-/// purposes. See https://www.unicode.org/glossary/#plane
+/// purposes. See <https://www.unicode.org/glossary/#plane>.
 pub fn get_planes_trie() -> CodePointTrie<'static, u8, Small> {
     let index_array_as_bytes: &[u8] = INDEX_ARRAY_AS_BYTES;
     let data_8_array: &[u8] = &[

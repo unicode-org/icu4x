@@ -1,6 +1,6 @@
 # icu_codepointtrie [![crates.io](http://meritbadge.herokuapp.com/icu_codepointtrie)](https://crates.io/crates/icu_codepointtrie)
 
-`icu_codepointtrie`  is one of the [`ICU4X`] components.
+`icu_codepointtrie` is a utility crate of the [`ICU4X`] project.
 
 This component provides a data structure for an time-efficient lookup of values
 associated to code points.
@@ -10,9 +10,9 @@ It is an implementation of the existing [ICU4C UCPTrie](https://unicode-org.gith
 
 ## Architecture
 
-ICU4X [`CodePointTrie`] is designed to provide a read-only view of CodePointTrie data that is exported
+ICU4X [`CodePointTrie`](crate::codepointtrie::CodePointTrie) is designed to provide a read-only view of CodePointTrie data that is exported
 from ICU4C. Detailed information about the design of the data structure can be found in the documentation
-for the [`CodePointTrie`] struct.
+for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
 
 ## Examples
 
@@ -21,6 +21,7 @@ for the [`CodePointTrie`] struct.
 ```rust
 use icu_codepointtrie::planes;
 let trie = planes::get_planes_trie();
+
 assert_eq!(0, trie.get(0x41));  // 'A' as u32
 assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
 assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32

@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO: add module-level Rust-doc with examples
-
 use crate::error::Error;
 use crate::impl_const::*;
 use std::marker::PhantomData;
@@ -12,7 +10,7 @@ use zerovec::ZeroVec;
 // Enums
 
 /// The width of the elements in the data array of a [`CodePointTrie`].
-/// See UCPTrieValueWidth in ICU4C.
+/// See [`UCPTrieValueWidth`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
 pub enum ValueWidthEnum {
     Bits16 = 0,
@@ -22,7 +20,7 @@ pub enum ValueWidthEnum {
 
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
-/// See UCPTrieType in ICU4C.
+/// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
 pub enum TrieTypeEnum {
     Fast = 0,
@@ -85,7 +83,7 @@ impl ValueWidth for u32 {
 pub trait TrieType {
     /// All code points up to the fast max limit are represented
     /// individually in the `index` array to hold their `data` array position, and
-    /// thus only need 2 lookups for a [`crate::codepointtrie::CodePointTrie::get`].
+    /// thus only need 2 lookups for a [CodePointTrie::get()](`crate::codepointtrie::CodePointTrie::get`).
     /// Code points above the "fast max" limit require 4 lookups.
     const FAST_MAX: u32;
     /// This enum variant represents the specific instance of `TrieType` such
@@ -94,7 +92,7 @@ pub trait TrieType {
 }
 
 /// An empty struct to represent "fast" type code point tries for the
-///  [`TrieType`] trait. The "fast max" limit is set to 0xffff.
+///  [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
 pub struct Fast;
 
 impl TrieType for Fast {
@@ -103,7 +101,7 @@ impl TrieType for Fast {
 }
 
 /// An empty struct to represent "small" type code point tries for the
-///  [`TrieType`] trait. The "fast max" limit is set to 0x0fff.
+///  [`TrieType`] trait. The "fast max" limit is set to `0x0fff`.
 pub struct Small;
 
 impl TrieType for Small {
@@ -130,26 +128,28 @@ pub struct CodePointTrieHeader {
     pub index_length: u32,
     /// Length of the trie's `data` array
     pub data_length: u32,
-    /// The code point of the start of the last range of the trie, where a
+    /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
     /// value in this trie associated with all code points of the same range is
-    /// the same. For the property value data for many Unicode properties,
-    /// often times, `high_start` is U+10000 or lower. In such cases, not
+    /// the same.
+    ///
+    /// For the property value data for many Unicode properties,
+    /// often times, `high_start` is `U+10000` or lower. In such cases, not
     /// reserving space in the `index` array for duplicate values is a large
     /// savings. The "highValue" associated with the `high_start` range is
     /// stored at the second-to-last position of the `data` array.
     /// (See `impl_const::HIGH_VALUE_NEG_DATA_OFFSET`.)
     pub high_start: u32,
     /// A version of the `high_start` value that is right-shifted 12 spaces,
-    /// but is rounded up to a multiple 0x1000 for easy testing from UTF-8
+    /// but is rounded up to a multiple `0x1000` for easy testing from UTF-8
     /// lead bytes.
     pub shifted12_high_start: u16,
     /// Offset for the null block in the "index-3" table of the `index` array.
-    /// Set to an impossibly high value (e.g., 0xffff) if there is no
+    /// Set to an impossibly high value (e.g., `0xffff`) if there is no
     /// dedicated index-3 null block.
     pub index3_null_offset: u16,
     /// Internal data null block offset, not shifted.
-    /// Set to an impossibly high value (e.g., 0xfffff) if there is no
+    /// Set to an impossibly high value (e.g., `0xfffff`) if there is no
     /// dedicated data null block.
     pub data_null_offset: u32,
     /// The value stored in the trie that represents a null value being
@@ -310,6 +310,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     /// ```
     /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
+    ///
     /// assert_eq!(0, trie.get(0x41));  // 'A' as u32
     /// assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
     /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
@@ -332,6 +333,20 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 
     /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
     /// as a `u32`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let cp = '𑖎' as u32;
+    /// assert_eq!(cp, 0x1158E);
+    /// let trie = planes::get_planes_trie();
+    /// let plane_num: u8 = trie.get(cp);
+    /// assert_eq!(trie.get_u32(cp), plane_num as u32);
+    /// ```
+    ///
     // Note: This API method maintains consistency with the corresponding
     // original ICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
