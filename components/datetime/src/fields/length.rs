@@ -29,15 +29,18 @@ pub enum FieldLength {
 }
 
 impl FieldLength {
-    pub fn u8_in_range(v: &u8) -> bool {
+    #[inline]
+    pub(crate) fn idx_in_range(v: &u8) -> bool {
         (1..=6).contains(v)
     }
 
-    pub fn idx(&self) -> u8 {
+    #[inline]
+    pub(crate) fn idx(&self) -> u8 {
         *self as usize as u8
     }
 
-    pub fn from_idx(idx: u8) -> Result<Self, LengthError> {
+    #[inline]
+    pub(crate) fn from_idx(idx: u8) -> Result<Self, LengthError> {
         Ok(match idx {
             1 => Self::One,
             2 => Self::TwoDigit,

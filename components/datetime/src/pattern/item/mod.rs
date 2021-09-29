@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod generic;
+mod ule;
 
 use crate::fields::{Field, FieldLength, FieldSymbol};
 use crate::pattern::PatternError;
@@ -37,6 +38,17 @@ impl TryFrom<(FieldSymbol, u8)> for PatternItem {
             symbol: input.0,
             length,
         }))
+    }
+}
+
+impl TryFrom<(char, u8)> for PatternItem {
+    type Error = PatternError;
+    fn try_from(input: (char, u8)) -> Result<Self, Self::Error> {
+        let symbol =
+            FieldSymbol::try_from(input.0).map_err(|_| PatternError::InvalidSymbol(input.0))?;
+        let length =
+            FieldLength::from_idx(input.1).map_err(|_| PatternError::FieldLengthInvalid(symbol))?;
+        Ok(Self::Field(Field { symbol, length }))
     }
 }
 

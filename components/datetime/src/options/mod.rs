@@ -55,7 +55,7 @@ pub mod preferences;
 ///
 /// At the moment only the [`length::Bag`] works, and we plan to extend that to support
 /// `ECMA402` like components bag later.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DateTimeFormatOptions {
     /// Bag of lengths for date and time.
     Length(length::Bag),

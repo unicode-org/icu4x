@@ -36,7 +36,7 @@ pub struct Field {
 }
 
 impl Field {
-    pub fn get_length_type(&self) -> TextOrNumeric {
+    pub(crate) fn get_length_type(&self) -> TextOrNumeric {
         match self.symbol {
             FieldSymbol::Year(year) => year.get_length_type(self.length),
             FieldSymbol::Month(month) => month.get_length_type(self.length),
@@ -48,6 +48,11 @@ impl Field {
             FieldSymbol::Second(second) => second.get_length_type(self.length),
             FieldSymbol::TimeZone(zone) => zone.get_length_type(self.length),
         }
+    }
+
+    #[inline]
+    pub(crate) fn bytes_in_range(symbol: &u8, length: &u8) -> bool {
+        FieldSymbol::idx_in_range(symbol) && FieldLength::idx_in_range(length)
     }
 }
 
