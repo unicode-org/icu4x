@@ -17,15 +17,6 @@ pub struct Pattern<'data> {
     pub(crate) time_granularity: TimeGranularity,
 }
 
-impl<'data> From<&'data reference::Pattern> for Pattern<'data> {
-    fn from(input: &'data reference::Pattern) -> Self {
-        Self {
-            items: ZeroVec::clone_from_slice(&input.items),
-            time_granularity: input.time_granularity,
-        }
-    }
-}
-
 impl From<reference::Pattern> for Pattern<'_> {
     fn from(input: reference::Pattern) -> Self {
         Self {

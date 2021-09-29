@@ -39,7 +39,7 @@ pub enum FieldSymbol {
 }
 
 impl FieldSymbol {
-    /// Symbols are necessary components of `Pattern` struct, which
+    /// Symbols are necessary components of `Pattern` struct which
     /// uses efficient byte serialization and deserialization via `zerovec`.
     ///
     /// The `FieldSymbol` impl provides non-public methods that can be used to efficiently
@@ -47,19 +47,21 @@ impl FieldSymbol {
     ///
     /// The serialization model packages the variant in one byte.
     ///
-    /// 1) The top four bits are used to determine the type of the field.
+    /// 1) The top four bits are used to determine the type of the field
+    ///    using that type's `idx()/from_idx()` for the mapping.
     ///    (Examples: `Year`, `Month`, `Hour`)
     ///
     /// 2) The bottom four bits are used to determine the symbol of the type.
     ///    (Examples: `Year::Calendar`, `Hour::H11`)
     ///
     /// # Diagram
-    /// <pre>
+    ///
+    /// ```text
     /// ┌─┬─┬─┬─┬─┬─┬─┬─┐
     /// ├─┴─┴─┴─┼─┴─┴─┴─┤
     /// │ Type  │Symbol │
     /// └───────┴───────┘
-    /// </pre>
+    /// ```
     ///
     /// # Optimization
     ///
@@ -82,7 +84,7 @@ impl FieldSymbol {
             3 => Weekday::idx_in_range(&symbol),
             4 => DayPeriod::idx_in_range(&symbol),
             5 => Hour::idx_in_range(&symbol),
-            6 => true,
+            6 => symbol == 0,
             7 => Second::idx_in_range(&symbol),
             8 => TimeZone::idx_in_range(&symbol),
             _ => false,
@@ -120,7 +122,7 @@ impl FieldSymbol {
             3 => Self::Weekday(Weekday::from_idx(low)?),
             4 => Self::DayPeriod(DayPeriod::from_idx(low)?),
             5 => Self::Hour(Hour::from_idx(low)?),
-            6 => Self::Minute,
+            6 if low == 0 => Self::Minute,
             7 => Self::Second(Second::from_idx(low)?),
             8 => Self::TimeZone(TimeZone::from_idx(low)?),
             _ => return Err(SymbolError::InvalidIndex(idx)),

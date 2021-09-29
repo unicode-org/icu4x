@@ -19,7 +19,7 @@ use zerovec::ule::{AsULE, ULE};
 ///
 /// In case the discriminant is set:
 ///
-/// 1) The rest of the first byte remains usnused.
+/// 1) The rest of the first byte remains unused.
 /// 2) The second byte encodes `FieldSymbol` encoded as (Type: 4 bits, Symbol: 4 bits).
 /// 3) The third byte encodes the field length.
 ///
@@ -29,7 +29,7 @@ use zerovec::ule::{AsULE, ULE};
 ///
 /// # Diagram
 ///
-/// <pre>
+/// ```text
 /// ┌───────────────┬───────────────┬───────────────┐
 /// │       u8      │       u8      │       u8      │
 /// ├─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┤
@@ -41,7 +41,7 @@ use zerovec::ule::{AsULE, ULE};
 ///  ▲
 ///  │
 ///  Variant Discriminant
-/// </pre>
+/// ```
 ///
 /// # Optimization
 ///
@@ -58,6 +58,10 @@ use zerovec::ule::{AsULE, ULE};
 pub struct PatternItemULE([u8; 3]);
 
 impl PatternItemULE {
+    /// Given the first byte of the three-byte array that `PatternItemULE` encodes,
+    /// the method determins whether the discriminant in
+    /// the byte indicates that the array encodes the `PatternItem::Field`
+    /// or `PatternItem::Literal` variant of the `PatternItem`.
     #[inline]
     fn determine_field_from_u8(byte: u8) -> bool {
         byte & 0b1000_0000 != 0
