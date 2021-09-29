@@ -11,11 +11,10 @@ use std::str::Chars;
 // TODO:
 // json file is big, So I should use anoher binary format like npy.
 // But provided npy uses tensorflow dtype.
-const THAI_MODEL: &[u8; 373466] = include_bytes!(
-    "../../segmenter_lstm/tests/testdata/Thai_codepoints_exclusive_model4_heavy/weights.json"
-);
+const THAI_MODEL: &[u8; 373466] =
+    include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/th.json");
 const BURMESE_MODEL: &[u8; 475209] =
-    include_bytes!("../data/Burmese_codepoints_exclusive_model4_heavy/weights.json");
+    include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
 
 lazy_static! {
     static ref THAI_LSTM: Lstm = {

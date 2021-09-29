@@ -6,6 +6,7 @@ use ndarray::Array1;
 use ndarray::Array2;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use yoke::*;
 
 /// 'LstmData' is a struct that store a LSTM model. Its attributes are:
 /// `model`: name of the model
@@ -14,7 +15,7 @@ use std::collections::HashMap;
 /// `mat2` - `mat4`: the matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
 /// `mat5` - `mat7`: the matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
 /// `mat8` - `mat9`: the matrices associated with output layer (weight and bias term respectiely)
-#[derive(PartialEq, Debug, Serialize, Deserialize)]
+#[derive(PartialEq, Debug, Serialize, Deserialize, Yokeable, Clone)]
 pub struct LstmData {
     pub model: String,
     pub dic: HashMap<String, i16>,

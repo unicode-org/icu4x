@@ -51,6 +51,7 @@ mod language;
 mod lb_define;
 mod line_breaker;
 mod lstm;
+mod lstm_provider;
 mod properties_defines;
 mod properties_other;
 mod property_table;

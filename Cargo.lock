@@ -1305,6 +1305,10 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu_locid",
+ "icu_locid_macros",
+ "icu_provider",
+ "icu_provider_fs",
  "icu_segmenter_lstm",
  "lazy_static",
  "serde",
@@ -1320,6 +1324,7 @@ dependencies = [
  "serde",
  "serde_json",
  "unicode-segmentation",
+ "yoke",
 ]
 
 [[package]]
