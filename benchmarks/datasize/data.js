@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632889088699,
+  "lastUpdate": 1632957534197,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -743,6 +743,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/30a5f4ad1417d5c1bd2189d139ac09b8726644f2"
         },
         "date": 1632889084740,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "848f20957de134138ff1a27d341105140df7d702",
+          "message": "Remove name field from UnicodePropertyV1 (#1125)\n\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-09-29T16:17:33-07:00",
+          "tree_id": "f405cf70750c235e9fe642689195cad33d1d4f6f",
+          "url": "https://github.com/unicode-org/icu4x/commit/848f20957de134138ff1a27d341105140df7d702"
+        },
+        "date": 1632957529700,
         "tool": "ndjson",
         "benches": [
           {
