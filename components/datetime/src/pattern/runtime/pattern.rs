@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::super::{reference, PatternItem, TimeGranularity};
-use alloc::vec;
+use alloc::{vec, vec::Vec};
 use zerovec::ZeroVec;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -15,6 +15,15 @@ pub struct Pattern<'data> {
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub items: ZeroVec<'data, PatternItem>,
     pub(crate) time_granularity: TimeGranularity,
+}
+
+impl From<Vec<PatternItem>> for Pattern<'_> {
+    fn from(items: Vec<PatternItem>) -> Self {
+        Self {
+            time_granularity: items.iter().map(Into::into).max().unwrap_or_default(),
+            items: ZeroVec::clone_from_slice(&items),
+        }
+    }
 }
 
 impl From<reference::Pattern> for Pattern<'_> {
