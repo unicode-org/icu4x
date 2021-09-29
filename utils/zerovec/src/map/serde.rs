@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{ZeroMap, ZeroMapKV, ZeroVecLike};
+use alloc::boxed::Box;
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{self, MapAccess, Visitor};
@@ -14,6 +15,8 @@ impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
     K::SerializeType: Serialize,
@@ -37,11 +40,12 @@ where
 }
 
 /// Modified example from https://serde.rs/deserialize-map.html
-struct ZeroMapMapVisitor<K, V> {
-    marker: PhantomData<fn() -> (K, V)>,
+struct ZeroMapMapVisitor<K: ?Sized, V: ?Sized> {
+    #[allow(clippy::type_complexity)] // it's a marker type, complexity doesn't matter
+    marker: PhantomData<fn() -> (Box<K>, Box<V>)>,
 }
 
-impl<K, V> ZeroMapMapVisitor<K, V> {
+impl<K: ?Sized, V: ?Sized> ZeroMapMapVisitor<K, V> {
     fn new() -> Self {
         ZeroMapMapVisitor {
             marker: PhantomData,
@@ -49,12 +53,13 @@ impl<K, V> ZeroMapMapVisitor<K, V> {
     }
 }
 
-impl<'de, K, V> Visitor<'de> for ZeroMapMapVisitor<K, V>
+impl<'de, K: ?Sized, V: ?Sized> Visitor<'de> for ZeroMapMapVisitor<K, V>
 where
-    K: Deserialize<'de> + Ord,
-    V: Deserialize<'de>,
+    K: Ord,
     K: ZeroMapKV<'de>,
     V: ZeroMapKV<'de>,
+    K::OwnedType: Deserialize<'de>,
+    V::OwnedType: Deserialize<'de>,
 {
     type Value = ZeroMap<'de, K, V>;
 
@@ -70,11 +75,14 @@ where
 
         // While there are entries remaining in the input, add them
         // into our map.
-        while let Some((key, value)) = access.next_entry()? {
+        while let Some((key, value)) = access.next_entry::<K::OwnedType, V::OwnedType>()? {
             // Try to append it at the end, hoping for a sorted map.
             // If not sorted, return an error
             // a serialized map that came from another ZeroMap
-            if map.try_append(key, value).is_some() {
+            if map
+                .try_append(K::owned_as_self(&key), V::owned_as_self(&value))
+                .is_some()
+            {
                 return Err(de::Error::custom(
                     "ZeroMap's keys must be sorted while deserializing",
                 ));
@@ -86,14 +94,15 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<'de, K, V> Deserialize<'de> for ZeroMap<'de, K, V>
+impl<'de, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMap<'de, K, V>
 where
-    K: Deserialize<'de> + Ord,
-    V: Deserialize<'de>,
+    K: Ord,
     K::Container: Deserialize<'de>,
     V::Container: Deserialize<'de>,
     K: ZeroMapKV<'de>,
     V: ZeroMapKV<'de>,
+    K::OwnedType: Deserialize<'de>,
+    V::OwnedType: Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -127,11 +136,11 @@ mod test {
         0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 117, 110, 111, 100, 111, 115, 116, 114, 101, 115,
     ];
 
-    fn make_map() -> ZeroMap<'static, u32, String> {
+    fn make_map() -> ZeroMap<'static, u32, str> {
         let mut map = ZeroMap::new();
-        map.insert(1, "uno".to_owned());
-        map.insert(2, "dos".to_owned());
-        map.insert(3, "tres".to_owned());
+        map.insert(&1, "uno");
+        map.insert(&2, "dos");
+        map.insert(&3, "tres");
         map
     }
     #[test]
@@ -139,7 +148,7 @@ mod test {
         let map = make_map();
         let json_str = serde_json::to_string(&map).expect("serialize");
         assert_eq!(JSON_STR, json_str);
-        let new_map: ZeroMap<u32, String> = serde_json::from_str(&json_str).expect("deserialize");
+        let new_map: ZeroMap<u32, str> = serde_json::from_str(&json_str).expect("deserialize");
         assert_eq!(
             new_map.iter().collect::<Vec<_>>(),
             map.iter().collect::<Vec<_>>()
@@ -151,8 +160,7 @@ mod test {
         let map = make_map();
         let bincode_bytes = bincode::serialize(&map).expect("serialize");
         assert_eq!(BINCODE_BYTES, bincode_bytes);
-        let new_map: ZeroMap<u32, String> =
-            bincode::deserialize(&bincode_bytes).expect("deserialize");
+        let new_map: ZeroMap<u32, str> = bincode::deserialize(&bincode_bytes).expect("deserialize");
         assert_eq!(
             new_map.iter().collect::<Vec<_>>(),
             map.iter().collect::<Vec<_>>()

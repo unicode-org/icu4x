@@ -35,7 +35,7 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
 /// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
-unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
+unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'static, T> {
     type Output = VarZeroVec<'a, T>;
     fn transform(&'a self) -> &'a VarZeroVec<'a, T> {
         self
@@ -62,8 +62,8 @@ unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
 #[allow(clippy::transmute_ptr_to_ptr)]
 unsafe impl<'a, K, V> Yokeable<'a> for ZeroMap<'static, K, V>
 where
-    K: 'static + for<'b> ZeroMapKV<'b>,
-    V: 'static + for<'b> ZeroMapKV<'b>,
+    K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
+    V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
 {
     type Output = ZeroMap<'a, K, V>;
     fn transform(&'a self) -> &'a ZeroMap<'a, K, V> {
@@ -105,18 +105,18 @@ impl<'a, T: 'static + AsULE + ?Sized> ZeroCopyFrom<ZeroVec<'a, T>> for ZeroVec<'
     }
 }
 
-impl<'a, T: 'static + AsVarULE + Clone> ZeroCopyFrom<VarZeroVec<'a, T>> for VarZeroVec<'static, T> {
+impl<'a, T: 'static + VarULE + ?Sized> ZeroCopyFrom<VarZeroVec<'a, T>> for VarZeroVec<'static, T> {
     fn zero_copy_from<'b>(cart: &'b VarZeroVec<'a, T>) -> VarZeroVec<'b, T> {
         // the owned variant is not compatible with the borrowed one
         // clones are shallow for the borrowed variant anyway
-        Clone::clone(cart)
+        cart.as_borrowed()
     }
 }
 
 impl<'a, K, V> ZeroCopyFrom<ZeroMap<'a, K, V>> for ZeroMap<'static, K, V>
 where
-    K: 'static + for<'b> ZeroMapKV<'b>,
-    V: 'static + for<'b> ZeroMapKV<'b>,
+    K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
+    V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     <K as ZeroMapKV<'static>>::Container: for<'b> ZeroCopyFrom<<K as ZeroMapKV<'b>>::Container>,
     <V as ZeroMapKV<'static>>::Container: for<'b> ZeroCopyFrom<<V as ZeroMapKV<'b>>::Container>,
     <K as ZeroMapKV<'static>>::Container:
