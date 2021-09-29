@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632889381542,
+  "lastUpdate": 1632957809934,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11729,6 +11729,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44238931,
             "range": "± 131804",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "848f20957de134138ff1a27d341105140df7d702",
+          "message": "Remove name field from UnicodePropertyV1 (#1125)\n\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-09-29T16:17:33-07:00",
+          "tree_id": "f405cf70750c235e9fe642689195cad33d1d4f6f",
+          "url": "https://github.com/unicode-org/icu4x/commit/848f20957de134138ff1a27d341105140df7d702"
+        },
+        "date": 1632957806078,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44139407,
+            "range": "± 89541",
             "unit": "ns/iter"
           }
         ]
