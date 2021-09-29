@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632870575688,
+  "lastUpdate": 1632889422223,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13421,6 +13421,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5641,
             "range": "± 193",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30a5f4ad1417d5c1bd2189d139ac09b8726644f2",
+          "message": "Introduce DTF runtime Pattern backed by ZV (#1112)\n\n* Introduce DTF runtime Pattern backed by ZV\r\n\r\n* Apply reviewers feedback\r\n\r\n* Make num_enum work with no_std\r\n\r\n* Apply reviewers feedback\r\n\r\n* Append final feedback",
+          "timestamp": "2021-09-28T21:16:55-07:00",
+          "tree_id": "0f1da621772ceece2c525267ba0490f2dfc2a7d3",
+          "url": "https://github.com/unicode-org/icu4x/commit/30a5f4ad1417d5c1bd2189d139ac09b8726644f2"
+        },
+        "date": 1632889418456,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2979,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5024,
+            "range": "± 55",
             "unit": "ns/iter"
           }
         ]
