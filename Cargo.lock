@@ -678,6 +678,7 @@ name = "formatted_string_builder"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "displaydoc",
 ]
 
 [[package]]
@@ -1457,6 +1458,7 @@ name = "list_formatter"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "formatted_string_builder",
  "lazy_static",
  "regex",
