@@ -5,9 +5,9 @@
 use super::PatternItem;
 use crate::fields;
 use core::convert::TryFrom;
-use zerovec::ule::{AsULE, EqULE, ULE};
+use zerovec::ule::{AsULE, ULE};
 
-/// `PatternItemULE` is new type optimized for efficent storing and
+/// `PatternItemULE` is a type optimized for efficent storing and
 /// deserialization of `DateTimeFormat` `PatternItem` elements using
 /// `ZeroVec` model.
 ///
@@ -29,6 +29,7 @@ use zerovec::ule::{AsULE, EqULE, ULE};
 ///
 /// # Diagram
 ///
+/// <pre>
 /// ┌───────────────┬───────────────┬───────────────┐
 /// │       u8      │       u8      │       u8      │
 /// ├─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┤
@@ -40,6 +41,7 @@ use zerovec::ule::{AsULE, EqULE, ULE};
 ///  ▲
 ///  │
 ///  Variant Discriminant
+/// </pre>
 ///
 /// # Optimization
 ///
@@ -49,7 +51,7 @@ use zerovec::ule::{AsULE, EqULE, ULE};
 /// # Constraints
 ///
 /// The model leaves at most 8 `PatternItem` variants, limits the number of possible
-/// field types and symbols to 16 each and limits the number of length variants to 128.
+/// field types and symbols to 16 each and limits the number of length variants to 256.
 ///
 /// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -73,6 +75,8 @@ impl PatternItemULE {
     }
 }
 
+// This impl is safe because (1) validate_byte_slice rejects all invalid byte slices, including
+// those that are the wrong length, and (2) byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
     type Error = &'static str;
 
@@ -95,7 +99,7 @@ impl AsULE for PatternItem {
     fn as_unaligned(&self) -> Self::ULE {
         match self {
             Self::Field(field) => {
-                PatternItemULE([0b1000_0000, field.symbol.idx(), field.length as u8])
+                PatternItemULE([0b1000_0000, field.symbol.idx(), field.length.idx()])
             }
             Self::Literal(ch) => {
                 let u = *ch as u32;
@@ -122,8 +126,6 @@ impl AsULE for PatternItem {
         }
     }
 }
-
-unsafe impl EqULE for PatternItem {}
 
 #[cfg(test)]
 mod test {
@@ -209,7 +211,7 @@ mod test {
             }
 
             assert!(PatternItemULE::validate_byte_slice(&bytes).is_ok());
-            assert_eq!(bytes, bytes2,);
+            assert_eq!(bytes, bytes2);
         }
     }
 }

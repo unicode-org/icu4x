@@ -50,6 +50,7 @@ impl Field {
         }
     }
 
+    #[inline]
     pub(crate) fn bytes_in_range(symbol: &u8, length: &u8) -> bool {
         FieldSymbol::idx_in_range(symbol) && FieldLength::idx_in_range(length)
     }

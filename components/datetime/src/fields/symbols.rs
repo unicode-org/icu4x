@@ -50,15 +50,16 @@ impl FieldSymbol {
     /// 1) The top four bits are used to determine the type of the field.
     ///    (Examples: `Year`, `Month`, `Hour`)
     ///
-    /// 2) The bottom four bites are used to determine the symbol of the type.
+    /// 2) The bottom four bits are used to determine the symbol of the type.
     ///    (Examples: `Year::Calendar`, `Hour::H11`)
     ///
     /// # Diagram
-    ///
+    /// <pre>
     /// ┌─┬─┬─┬─┬─┬─┬─┬─┐
     /// ├─┴─┴─┴─┼─┴─┴─┴─┤
     /// │ Type  │Symbol │
     /// └───────┴───────┘
+    /// </pre>
     ///
     /// # Optimization
     ///
@@ -70,25 +71,27 @@ impl FieldSymbol {
     ///
     /// This model limits the available number of possible types and symbols to 16 each.
 
+    #[inline]
     pub(crate) fn idx_in_range(kv: &u8) -> bool {
-        let k = kv & 0b0000_1111;
-        let v = kv >> 4;
-        match k {
-            0 => Year::idx_in_range(&v),
-            1 => Month::idx_in_range(&v),
-            2 => Day::idx_in_range(&v),
-            3 => Weekday::idx_in_range(&v),
-            4 => DayPeriod::idx_in_range(&v),
-            5 => Hour::idx_in_range(&v),
+        let symbol = kv & 0b0000_1111;
+        let field_type = kv >> 4;
+        match field_type {
+            0 => Year::idx_in_range(&symbol),
+            1 => Month::idx_in_range(&symbol),
+            2 => Day::idx_in_range(&symbol),
+            3 => Weekday::idx_in_range(&symbol),
+            4 => DayPeriod::idx_in_range(&symbol),
+            5 => Hour::idx_in_range(&symbol),
             6 => true,
-            7 => Second::idx_in_range(&v),
-            8 => TimeZone::idx_in_range(&v),
+            7 => Second::idx_in_range(&symbol),
+            8 => TimeZone::idx_in_range(&symbol),
             _ => false,
         }
     }
 
+    #[inline]
     pub(crate) fn idx(&self) -> u8 {
-        let (lower, upper) = match self {
+        let (high, low) = match self {
             FieldSymbol::Year(year) => (0, year.idx()),
             FieldSymbol::Month(month) => (1, month.idx()),
             FieldSymbol::Day(day) => (2, day.idx()),
@@ -99,26 +102,27 @@ impl FieldSymbol {
             FieldSymbol::Second(second) => (7, second.idx()),
             FieldSymbol::TimeZone(tz) => (8, tz.idx()),
         };
-        let result = upper << 4;
-        result | lower
+        let result = high << 4;
+        result | low
     }
 
+    #[inline]
     pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
-        // extract the top four bits out of `u8` to disriminate the field type.
-        let lower = idx & 0b0000_1111;
-        // use the bottom four bits to determine the symbol.
-        let upper = idx >> 4;
+        // extract the top four bits to determine the symbol.
+        let low = idx & 0b0000_1111;
+        // use the bottom four bits out of `u8` to disriminate the field type.
+        let high = idx >> 4;
 
-        Ok(match lower {
-            0 => Self::Year(Year::from_idx(upper)?),
-            1 => Self::Month(Month::from_idx(upper)?),
-            2 => Self::Day(Day::from_idx(upper)?),
-            3 => Self::Weekday(Weekday::from_idx(upper)?),
-            4 => Self::DayPeriod(DayPeriod::from_idx(upper)?),
-            5 => Self::Hour(Hour::from_idx(upper)?),
+        Ok(match high {
+            0 => Self::Year(Year::from_idx(low)?),
+            1 => Self::Month(Month::from_idx(low)?),
+            2 => Self::Day(Day::from_idx(low)?),
+            3 => Self::Weekday(Weekday::from_idx(low)?),
+            4 => Self::DayPeriod(DayPeriod::from_idx(low)?),
+            5 => Self::Hour(Hour::from_idx(low)?),
             6 => Self::Minute,
-            7 => Self::Second(Second::from_idx(upper)?),
-            8 => Self::TimeZone(TimeZone::from_idx(upper)?),
+            7 => Self::Second(Second::from_idx(low)?),
+            8 => Self::TimeZone(TimeZone::from_idx(low)?),
             _ => return Err(SymbolError::InvalidIndex(idx)),
         })
     }
@@ -233,13 +237,13 @@ impl Ord for FieldSymbol {
 }
 
 field_type!(Year; {
-    0; 'y' => Calendar,
-    1; 'Y' => WeekOf
+    'y' => Calendar,
+    'Y' => WeekOf
 }; Numeric);
 
 field_type!(Month; {
-    0; 'M' => Format,
-    1; 'L' => StandAlone
+    'M' => Format,
+    'L' => StandAlone
 });
 
 impl LengthType for Month {
@@ -256,29 +260,29 @@ impl LengthType for Month {
 }
 
 field_type!(Day; {
-    0; 'd' => DayOfMonth,
-    1; 'D' => DayOfYear,
-    2; 'F' => DayOfWeekInMonth,
-    3; 'g' => ModifiedJulianDay
+    'd' => DayOfMonth,
+    'D' => DayOfYear,
+    'F' => DayOfWeekInMonth,
+    'g' => ModifiedJulianDay
 }; Numeric);
 
 field_type!(Hour; {
-    0; 'K' => H11,
-    1; 'h' => H12,
-    2; 'H' => H23,
-    3; 'k' => H24
+    'K' => H11,
+    'h' => H12,
+    'H' => H23,
+    'k' => H24
 }; Numeric);
 
 field_type!(Second; {
-    0; 's' => Second,
-    1; 'S' => FractionalSecond,
-    2; 'A' => Millisecond
+    's' => Second,
+    'S' => FractionalSecond,
+    'A' => Millisecond
 }; Numeric);
 
 field_type!(Weekday; {
-    0; 'E' => Format,
-    1; 'e' => Local,
-    2; 'c' => StandAlone
+    'E' => Format,
+    'e' => Local,
+    'c' => StandAlone
 });
 
 impl LengthType for Weekday {
@@ -294,18 +298,18 @@ impl LengthType for Weekday {
 }
 
 field_type!(DayPeriod; {
-    0; 'a' => AmPm,
-    1; 'b' => NoonMidnight
+    'a' => AmPm,
+    'b' => NoonMidnight
 }; Text);
 
 field_type!(TimeZone; {
-    0; 'z' => LowerZ,
-    1; 'Z' => UpperZ,
-    2; 'O' => UpperO,
-    3; 'v' => LowerV,
-    4; 'V' => UpperV,
-    5; 'x' => LowerX,
-    6; 'X' => UpperX
+    'z' => LowerZ,
+    'Z' => UpperZ,
+    'O' => UpperO,
+    'v' => LowerV,
+    'V' => UpperV,
+    'x' => LowerX,
+    'X' => UpperX
 });
 
 impl LengthType for TimeZone {

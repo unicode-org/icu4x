@@ -4,7 +4,7 @@
 
 use super::super::{reference, PatternItem, TimeGranularity};
 use alloc::vec;
-use zerovec::{ule::AsULE, ZeroVec};
+use zerovec::ZeroVec;
 
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(
@@ -20,7 +20,7 @@ pub struct Pattern<'data> {
 impl<'data> From<&'data reference::Pattern> for Pattern<'data> {
     fn from(input: &'data reference::Pattern) -> Self {
         Self {
-            items: ZeroVec::from_slice(&input.items),
+            items: ZeroVec::clone_from_slice(&input.items),
             time_granularity: input.time_granularity,
         }
     }
@@ -29,7 +29,7 @@ impl<'data> From<&'data reference::Pattern> for Pattern<'data> {
 impl From<reference::Pattern> for Pattern<'_> {
     fn from(input: reference::Pattern) -> Self {
         Self {
-            items: ZeroVec::Owned(input.items.into_iter().map(|i| i.as_unaligned()).collect()),
+            items: ZeroVec::clone_from_slice(&input.items),
             time_granularity: input.time_granularity,
         }
     }

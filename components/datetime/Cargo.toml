@@ -42,6 +42,7 @@ zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["yoke", "
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
+num_enum = "0.5"
 
 [dev-dependencies]
 criterion = "0.3"
