@@ -62,6 +62,8 @@ impl PatternItemULE {
     /// the method determins whether the discriminant in
     /// the byte indicates that the array encodes the `PatternItem::Field`
     /// or `PatternItem::Literal` variant of the `PatternItem`.
+    ///
+    /// Returns true when it is a `PatternItem::Field`.
     #[inline]
     fn determine_field_from_u8(byte: u8) -> bool {
         byte & 0b1000_0000 != 0
