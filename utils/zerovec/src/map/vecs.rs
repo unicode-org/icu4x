@@ -62,17 +62,17 @@ where
         self.get_ule_ref(index)
     }
     fn insert(&mut self, index: usize, value: T) {
-        self.make_mut().insert(index, value.as_unaligned())
+        self.to_mut().insert(index, value.as_unaligned())
     }
     fn remove(&mut self, index: usize) -> T {
-        T::from_unaligned(&self.make_mut().remove(index))
+        T::from_unaligned(&self.to_mut().remove(index))
     }
     fn replace(&mut self, index: usize, value: T) -> T {
-        let vec = self.make_mut();
+        let vec = self.to_mut();
         T::from_unaligned(&mem::replace(&mut vec[index], value.as_unaligned()))
     }
     fn push(&mut self, value: T) {
-        self.make_mut().push(value.as_unaligned())
+        self.to_mut().push(value.as_unaligned())
     }
     fn len(&self) -> usize {
         self.len()
@@ -84,10 +84,10 @@ where
         ZeroVec::Owned(Vec::with_capacity(cap))
     }
     fn clear(&mut self) {
-        self.make_mut().clear()
+        self.to_mut().clear()
     }
     fn reserve(&mut self, addl: usize) {
-        self.make_mut().reserve(addl)
+        self.to_mut().reserve(addl)
     }
     fn is_ascending(&self) -> bool {
         self.as_slice()
