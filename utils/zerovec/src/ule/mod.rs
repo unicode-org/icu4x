@@ -13,7 +13,7 @@ mod vec;
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
 
-use core::{mem, slice};
+use core::{mem, slice, fmt};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
@@ -47,7 +47,7 @@ where
     Self: 'static,
 {
     /// The error that occurs if a byte array is not valid for this ULE.
-    type Error;
+    type Error: fmt::Display;
 
     /// Validates a byte slice, `&[u8]`.
     ///
@@ -263,7 +263,7 @@ pub trait AsVarULE {
 /// unpredictable operations on `ZeroVec`, `VarZeroVec`, and `ZeroMap`.
 pub unsafe trait VarULE: 'static {
     /// The error type to used by [`VarULE::parse_byte_slice()`]
-    type Error;
+    type Error: fmt::Display;
 
     /// Validates a byte slice, `&[u8]`.
     ///
