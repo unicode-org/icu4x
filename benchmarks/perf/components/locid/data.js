@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633037454940,
+  "lastUpdate": 1633045645356,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13529,6 +13529,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4981,
             "range": "± 305",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20100345fc28379015107c7b4aa8b3d088bd41c8",
+          "message": "Move Display bound on ULE::Error for Serde (#1130)",
+          "timestamp": "2021-09-30T18:41:01-05:00",
+          "tree_id": "ae42e9daadea8e64133edc94add784ed47a65c9c",
+          "url": "https://github.com/unicode-org/icu4x/commit/20100345fc28379015107c7b4aa8b3d088bd41c8"
+        },
+        "date": 1633045640949,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2804,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4936,
+            "range": "± 163",
             "unit": "ns/iter"
           }
         ]
