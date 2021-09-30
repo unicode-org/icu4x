@@ -113,11 +113,16 @@ where
         self.make_mut().insert(index, &value)
     }
     fn remove(&mut self, index: usize) -> T {
-        self.make_mut().remove(index)
+        let vec = self.make_mut();
+        let old = T::from_unaligned(vec.get(index).expect("invalid index"));
+        vec.remove(index);
+        old
     }
     fn replace(&mut self, index: usize, value: T) -> T {
         let vec = self.make_mut();
-        vec.replace(index, value)
+        let old = T::from_unaligned(vec.get(index).expect("invalid index"));
+        vec.replace(index, value);
+        old
     }
     fn push(&mut self, value: T) {
         let len = self.len();
