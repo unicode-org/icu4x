@@ -25,7 +25,6 @@ impl<T> Default for VarZeroVecVisitor<T> {
 impl<'de, T> Visitor<'de> for VarZeroVecVisitor<T>
 where
     T: 'de + Deserialize<'de> + AsVarULE,
-    <<T as AsVarULE>::VarULE as VarULE>::Error: fmt::Display,
 {
     type Value = VarZeroVec<'de, T>;
 
@@ -60,7 +59,6 @@ where
 impl<'de, 'a, T> Deserialize<'de> for VarZeroVec<'a, T>
 where
     T: 'de + Deserialize<'de> + AsVarULE,
-    <<T as AsVarULE>::VarULE as VarULE>::Error: fmt::Display,
     'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
