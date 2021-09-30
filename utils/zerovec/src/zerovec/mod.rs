@@ -437,6 +437,7 @@ where
     /// })?;
     ///
     /// assert_eq!(zerovec.to_vec(), &[212, 282, 422, 462]);
+    /// assert!(matches!(owned, ZeroVec::Owned(_)));
     /// # Ok::<(), ()>(())
     /// ```
     #[inline]
