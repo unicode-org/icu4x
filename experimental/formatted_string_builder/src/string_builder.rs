@@ -6,7 +6,7 @@ use crate::FormattedStringBuilderError;
 
 /** A FormattedStringBuilder with L levels of type annotations. */
 #[cfg_attr(test, derive(Debug, PartialEq))]
-pub struct FormattedStringBuilder<F: Copy, const L: usize> {
+pub struct LayeredFormattedStringBuilder<F: Copy, const L: usize> {
     // This could be Vec<u8> as well, but String makes the encoding more explicit
     chars: std::string::String,
     // The first dimension corresponds to the chars (i.e. Chars, code points), the second are the L levels of annotations
@@ -71,7 +71,7 @@ fn raise_annotation<F: Copy, const L: usize, const L1: usize>(
     }
 }
 
-impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
+impl<F: Copy, const L: usize> LayeredFormattedStringBuilder<F, L> {
     pub fn new() -> Self {
         Self {
             chars: String::with_capacity(40),
@@ -81,7 +81,7 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
 
     pub fn append_fsb<const L1: usize>(
         &mut self,
-        string: FormattedStringBuilder<F, L1>,
+        string: LayeredFormattedStringBuilder<F, L1>,
         field: F,
     ) -> &mut Self {
         assert_eq!(L - 1, L1);
@@ -91,7 +91,7 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
 
     pub fn prepend_fsb<const L1: usize>(
         &mut self,
-        string: FormattedStringBuilder<F, L1>,
+        string: LayeredFormattedStringBuilder<F, L1>,
         field: F,
     ) -> &mut Self {
         assert_eq!(L - 1, L1);
@@ -102,7 +102,7 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
     pub fn insert_fsb<const L1: usize>(
         &mut self,
         pos: usize,
-        string: FormattedStringBuilder<F, L1>,
+        string: LayeredFormattedStringBuilder<F, L1>,
         field: F,
     ) -> Result<&mut Self, FormattedStringBuilderError> {
         assert_eq!(L - 1, L1);
@@ -117,7 +117,7 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
     fn insert_fsb_internal<const L1: usize>(
         &mut self,
         pos: usize,
-        string: FormattedStringBuilder<F, L1>,
+        string: LayeredFormattedStringBuilder<F, L1>,
         field: F,
     ) -> &mut Self {
         assert_eq!(L - 1, L1);
@@ -146,15 +146,15 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
     }
 }
 
-pub type SimpleFormattedStringBuilder<F> = FormattedStringBuilder<F, 1>;
+pub type FormattedStringBuilder<F> = LayeredFormattedStringBuilder<F, 1>;
 
-impl<F: Copy> SimpleFormattedStringBuilder<F> {
-    pub fn append(&mut self, string: &str, field: F) -> &mut SimpleFormattedStringBuilder<F> {
+impl<F: Copy> FormattedStringBuilder<F> {
+    pub fn append(&mut self, string: &str, field: F) -> &mut FormattedStringBuilder<F> {
         // len() is always a char boundary
         self.insert_internal(self.chars.len(), string, field)
     }
 
-    pub fn prepend(&mut self, string: &str, field: F) -> &mut SimpleFormattedStringBuilder<F> {
+    pub fn prepend(&mut self, string: &str, field: F) -> &mut FormattedStringBuilder<F> {
         // 0 is always a char boundary
         self.insert_internal(0, string, field)
     }
@@ -164,7 +164,7 @@ impl<F: Copy> SimpleFormattedStringBuilder<F> {
         pos: usize,
         string: &str,
         field: F,
-    ) -> Result<&mut SimpleFormattedStringBuilder<F>, FormattedStringBuilderError> {
+    ) -> Result<&mut FormattedStringBuilder<F>, FormattedStringBuilderError> {
         if !self.chars.is_char_boundary(pos) {
             Err(FormattedStringBuilderError::PositionNotCharBoundary)
         } else {
@@ -178,7 +178,7 @@ impl<F: Copy> SimpleFormattedStringBuilder<F> {
         pos: usize,
         string: &str,
         field: F,
-    ) -> &mut SimpleFormattedStringBuilder<F> {
+    ) -> &mut FormattedStringBuilder<F> {
         self.chars.insert_str(pos, string);
         self.annotations
             .splice(pos..pos, raise_annotation(field, vec![[]; string.len()]));
@@ -204,7 +204,7 @@ mod test {
 
     #[test]
     fn test_basic() {
-        let mut x = SimpleFormattedStringBuilder::<Field>::new();
+        let mut x = FormattedStringBuilder::<Field>::new();
         x.append("world", Field::Word)
             .prepend(" ", Field::Space)
             .prepend("hello", Field::Word);
@@ -223,12 +223,12 @@ mod test {
 
     #[test]
     fn test_multi_level() {
-        let mut x = SimpleFormattedStringBuilder::<Field>::new();
+        let mut x = FormattedStringBuilder::<Field>::new();
         x.append("world", Field::Word)
             .prepend(" ", Field::Space)
             .prepend("hello", Field::Word);
 
-        let mut y = FormattedStringBuilder::<Field, 2>::new();
+        let mut y = LayeredFormattedStringBuilder::<Field, 2>::new();
         y.append_fsb(x, Field::Greeting);
 
         assert_eq!(y.as_str(), "hello world");
@@ -237,7 +237,7 @@ mod test {
 
     #[test]
     fn test_multi_byte() {
-        let mut x = SimpleFormattedStringBuilder::<Field>::new();
+        let mut x = FormattedStringBuilder::<Field>::new();
         x.append("π", Field::Word);
         assert_eq!(
             x.insert(1, "pi/2", Field::Word),

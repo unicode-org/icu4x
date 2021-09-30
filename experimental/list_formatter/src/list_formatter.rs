@@ -4,7 +4,7 @@
 
 use crate::patterns::get_patterns;
 use displaydoc::Display;
-use formatted_string_builder::SimpleFormattedStringBuilder;
+use formatted_string_builder::FormattedStringBuilder;
 
 #[derive(Debug, Display)]
 pub enum Error {
@@ -100,12 +100,12 @@ impl<'a> ListFormatter<'a> {
         )
     }
 
-    pub fn format_to_parts(&self, values: &[&str]) -> SimpleFormattedStringBuilder<FieldType> {
+    pub fn format_to_parts(&self, values: &[&str]) -> FormattedStringBuilder<FieldType> {
         self.format_internal(
             values,
-            SimpleFormattedStringBuilder::<FieldType>::new,
+            FormattedStringBuilder::<FieldType>::new,
             |value| {
-                let mut builder = SimpleFormattedStringBuilder::<FieldType>::new();
+                let mut builder = FormattedStringBuilder::<FieldType>::new();
                 builder.append(value, FieldType::Element);
                 builder
             },
