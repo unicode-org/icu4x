@@ -392,6 +392,30 @@ where
         self.as_slice().iter().map(T::from_unaligned)
     }
 
+    /// Gets a mutable iterator over the elements.
+    ///
+    /// This will convert the ZeroVec into an owned ZeroVec if not already the case.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    /// use zerovec::ule::AsULE;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// 
+    /// for i in zerovec.iter_mut() {
+    ///     *i = (u16::from_unaligned(i) + 1).into();
+    /// }
+    ///
+    /// assert_eq!(zerovec.to_vec(), &[212, 282, 422, 462]);
+    /// ```
+    #[inline]
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut T::ULE> + '_ {
+        self.make_mut().iter_mut()
+    }
+
     /// Converts a borrowed ZeroVec to an owned ZeroVec. No-op if already owned.
     ///
     /// # Example
