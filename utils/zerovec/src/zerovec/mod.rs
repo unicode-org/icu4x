@@ -409,7 +409,7 @@ where
     /// zerovec.for_each_mut(|item| *item += 1);
     ///
     /// assert_eq!(zerovec.to_vec(), &[212, 282, 422, 462]);
-    /// assert!(matches!(ZeroVec::Owned(_), zerovec));
+    /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// ```
     #[inline]
     pub fn for_each_mut(&mut self, mut f: impl FnMut(&mut T)) {
@@ -437,7 +437,7 @@ where
     /// })?;
     ///
     /// assert_eq!(zerovec.to_vec(), &[212, 282, 422, 462]);
-    /// assert!(matches!(owned, ZeroVec::Owned(_)));
+    /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// # Ok::<(), ()>(())
     /// ```
     #[inline]
