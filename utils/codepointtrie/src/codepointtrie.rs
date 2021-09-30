@@ -119,9 +119,7 @@ impl TrieType for Small {
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct CodePointTrie<'trie, W: ValueWidth>
-where <<W as AsULE>::ULE as ULE>::Error: Display
 {
     header: CodePointTrieHeader,
     index: ZeroVec<'trie, u16>,
@@ -129,7 +127,6 @@ where <<W as AsULE>::ULE as ULE>::Error: Display
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct CodePointTrieHeader {
     /// Length of the trie's `index` array
     pub index_length: u32,
@@ -167,8 +164,169 @@ pub struct CodePointTrieHeader {
     pub trie_type: TrieTypeEnum,
 }
 
+
+#[cfg(feature = "serde")]
+impl<'de: 'a, 'a, W: ValueWidth> serde::Serialize for CodePointTrie<'a, W> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut state = serializer.serialize_struct("CodePointTrie", 11)?;
+        state.serialize_field("index", &self.index)?;
+        match W::ENUM_VALUE {
+            ValueWidthEnum::Bits8 => {
+                state.serialize_field("data_8", &self.data)?;
+            },
+            ValueWidthEnum::Bits16 => {
+                state.serialize_field("data_16", &self.data)?;
+            },
+            ValueWidthEnum::Bits32 => {
+                state.serialize_field("data_32", &self.data)?;
+            },
+        };
+        state.serialize_field("indexLength", &self.header.index_length)?;
+        state.serialize_field("dataLength", &self.header.data_length)?;
+        state.serialize_field("highStart", &self.header.high_start)?;
+        state.serialize_field("shifted12HighStart", &self.header.shifted12_high_start)?;
+        state.serialize_field("type", &self.header.trie_type as u8)?;
+        state.serialize_field("valueWidth", W::ENUM_VALUE as u8)?;
+        state.serialize_field("index3NullOffset", &self.header.index3_null_offset)?;
+        state.serialize_field("dataNullOffset", &self.header.data_null_offset)?;
+        state.serialize_field("nullValue", &self.header.null_value)?;
+        state.end()
+    }
+}
+
+/// Converts the serialized `u8` value for the trie type into a [`TrieTypeEnum`].
+pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> {
+    match trie_type_int {
+        0 => Some(TrieTypeEnum::Fast),
+        1 => Some(TrieTypeEnum::Small),
+        _ => None,
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de: 'a, 'a, W: ValueWidth> serde::Deserialize<'de> for CodePointTrie<'a, W> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use core::fmt;
+
+        #[derive(serde::Deserialize)]
+        #[serde(field_identifier, rename_all = "lowercase")]
+        enum Field {
+            Index,
+            Data,
+            IndexLength,
+            DataLength,
+            HighStart,
+            Shifted12HighStart,
+            TrieType,
+            ValueWidth,
+            Index3NullOffset,
+            DataNullOffset,
+            NullValue,
+        }
+
+        struct CodePointTrieVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for CodePointTrieVisitor {
+            type Value = CodePointTrie<W>;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("a valid CodePointTrie struct")
+            }
+
+            fn visit_seq<V>(self, mut seq: V) -> Result<Self::Value, V::Error>
+            where
+                V: serde::de::SeqAccess<'de>,
+            {
+                let index = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(0, &self))?;
+                let data = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(1, &self))?;
+                let index_length = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(2, &self))?;
+                let data_length = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(3, &self))?;
+                let high_start = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(4, &self))?;
+                let shifted12_high_start = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(5, &self))?;
+                let trie_type: TrieTypeEnum = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(6, &self))?;
+                let value_width = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(7, &self))?;
+                let index3_null_offset = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(8, &self))?;
+                let data_null_offset = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(9, &self))?;
+                let null_value = seq
+                    .next_element()?
+                    .ok_or_else(|| serde::de::Error::invalid_length(10, &self))?;
+                
+                let header = CodePointTrieHeader {
+                    index_length,
+                    data_length,
+                    high_start,
+                    shifted12_high_start,
+                    index3_null_offset,
+                    data_null_offset,
+                    null_value,
+                    trie_type,
+                };
+                Ok(CodePointTrie { header, index, data })
+            }
+
+            fn visit_map<V>(self, mut map: V) -> Result<Self::Value, V::Error>
+            where
+                V: serde::de::MapAccess<'de>,
+            {
+                let mut name = None;
+                let mut inv_list = None;
+                while let Some(key) = map.next_key()? {
+                    match key {
+                        Field::Name => {
+                            if name.is_some() {
+                                return Err(serde::de::Error::duplicate_field("name"));
+                            }
+                            name = Some(map.next_value()?);
+                        },
+                        Field::InvList => {
+                            if inv_list.is_some() {
+                                return Err(serde::de::Error::duplicate_field("inv_list"));
+                            }
+                            inv_list = Some(map.next_value()?);
+                        },
+                    }
+                }
+                let name = name.ok_or_else(|| serde::de::Error::missing_field("name"))?;
+                let inv_list =
+                    inv_list.ok_or_else(|| serde::de::Error::missing_field("inv_list"))?;
+                Ok(CodePointTrie { name, inv_list })
+            }
+        }
+
+        const FIELDS: &[&str] = &["index", "data", "indexLength", "dataLength", "highStart",
+            "shifted12HighStart", "trieType", "valueWidth", "index3NullOffset", "dataNullOffset",
+            "nullValue"];
+        deserializer.deserialize_struct("CodePointTrie", FIELDS, CodePointTrieVisitor)
+    }
+}
+
 impl<'trie, W: ValueWidth> CodePointTrie<'trie, W>
-where <<W as AsULE>::ULE as ULE>::Error: Display
 {
     /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
     /// array and `data` array, whose data values have width `W`.

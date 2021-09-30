@@ -30,15 +30,6 @@ pub fn check_trie<W: ValueWidth>(trie: &CodePointTrie<W>, check_ranges: &[u32]) 
     }
 }
 
-/// Converts the serialized `u8` value for the trie type into a [`TrieTypeEnum`].
-pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> {
-    match trie_type_int {
-        0 => Some(TrieTypeEnum::Fast),
-        1 => Some(TrieTypeEnum::Small),
-        _ => None,
-    }
-}
-
 // The following structs might be useful later for de-/serialization of the
 // main `CodePointTrie` struct in the corresponding data provider.
 
