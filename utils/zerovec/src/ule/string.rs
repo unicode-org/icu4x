@@ -24,6 +24,12 @@ unsafe impl VarULE for str {
     type Error = str::Utf8Error;
 
     #[inline]
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+        str::from_utf8(bytes)?;
+        Ok(())
+    }
+
+    #[inline]
     fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
         str::from_utf8(bytes)
     }

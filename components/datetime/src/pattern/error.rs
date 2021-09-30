@@ -16,6 +16,8 @@ pub enum PatternError {
     FieldLengthInvalid(fields::FieldSymbol),
     #[displaydoc("unknown substitution {0} in pattern")]
     UnknownSubstitution(char),
+    #[displaydoc("invalid symbol {0} in pattern")]
+    InvalidSymbol(char),
     #[displaydoc("unclosed literal in pattern")]
     UnclosedLiteral,
     #[displaydoc("unclosed placeholder in pattern")]

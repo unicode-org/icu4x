@@ -105,9 +105,9 @@ where
 unsafe impl<T: AsVarULE + 'static> VarULE for VarZeroVecULE<T> {
     type Error = ParseErrorFor<T>;
 
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
         let _: SliceComponents<T> = SliceComponents::parse_byte_slice(bytes)?;
-        unsafe { Ok(Self::from_byte_slice_unchecked(bytes)) }
+        Ok(())
     }
 
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
@@ -147,8 +147,9 @@ where
 {
     #[inline]
     fn eq(&self, other: &VarZeroVecULE<T>) -> bool {
-        // Note: T implements PartialEq but not T::ULE
-        self.iter().eq(other.iter())
+        // VarULE has an API guarantee that this is equivalent
+        // to `T::VarULE::eq()`
+        self.entire_slice.eq(&other.entire_slice)
     }
 }
 
