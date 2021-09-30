@@ -37,20 +37,6 @@ unsafe impl ULE for GeneralSubcategoryULE {
         }
         Ok(())
     }
-
-    /// Invariant: must be safe to call when called on a slice that previously
-    /// succeeded with `parse_byte_slice`
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
-        let data = bytes.as_ptr() as *const Self;
-        let len = bytes.len();
-        core::slice::from_raw_parts(data, len)
-    }
-    fn as_byte_slice(slice: &[Self]) -> &[u8] {
-        let data = slice.as_ptr() as *const u8;
-        let len = slice.len();
-        // Safe because Self is transparent over u8
-        unsafe { core::slice::from_raw_parts(data, len) }
-    }
 }
 
 impl AsULE for Script {
