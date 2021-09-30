@@ -13,7 +13,7 @@ mod vec;
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
 
-use core::{mem, slice, fmt};
+use core::{fmt, mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
