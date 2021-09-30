@@ -5,13 +5,9 @@
 use crate::error::Error;
 use crate::impl_const::*;
 
-use core::fmt::Display;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-#[cfg(feature = "serde")]
-use crate::serde::ser::SerializeStruct;
 use zerovec::ZeroVec;
-use zerovec::ule::{AsULE, ULE};
 
 // Enums
 
@@ -27,7 +23,8 @@ pub enum ValueWidthEnum {
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
 /// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
-#[derive(Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
 pub enum TrieTypeEnum {
     Fast = 0,
     Small = 1,
@@ -121,7 +118,7 @@ impl TrieType for Small {
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-#[derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
 pub struct CodePointTrie<'trie, W: ValueWidth>
 {
     header: CodePointTrieHeader,
@@ -130,7 +127,7 @@ pub struct CodePointTrie<'trie, W: ValueWidth>
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
-#[derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -180,7 +177,7 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W>
     pub fn try_new(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
-        #[serde(bound(deserialize = "ZeroVec<'trie, W>: Deserialize<'de>"))]
+        // #[serde(bound(deserialize = "ZeroVec<'trie, W>: Deserialize<'de>"))]
         data: ZeroVec<'trie, W>,
     ) -> Result<CodePointTrie<'trie, W>, Error> {
 
