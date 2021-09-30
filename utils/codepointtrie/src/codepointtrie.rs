@@ -177,7 +177,10 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W>
     pub fn try_new(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
-        // #[serde(bound(deserialize = "ZeroVec<'trie, W>: Deserialize<'de>"))]
+        #[cfg_attr(
+            feature = "provider_serde",
+            serde(bound(deserialize = "ZeroVec<'trie, W>: Deserialize<'de>"))
+        )]
         data: ZeroVec<'trie, W>,
     ) -> Result<CodePointTrie<'trie, W>, Error> {
 
