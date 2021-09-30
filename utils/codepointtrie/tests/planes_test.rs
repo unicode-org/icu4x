@@ -40,7 +40,7 @@ fn planes_trie_deserialize_check_test() {
     let code_point_trie_struct = planes_enum_prop.code_point_trie.trie_struct;
 
     let trie_type_enum =
-        match test_util::get_code_point_trie_type_enum(code_point_trie_struct.trie_type_enum_val) {
+        match icu_codepointtrie::codepointtrie::get_code_point_trie_type_enum(code_point_trie_struct.trie_type_enum_val) {
             Some(enum_val) => enum_val,
             _ => {
                 panic!(
