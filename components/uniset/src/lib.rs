@@ -88,6 +88,8 @@ pub enum UnicodeSetError {
     InvalidRange(u32, u32),
     #[displaydoc("Unknown script id: {0}")]
     UnknownScriptId(u16),
+    #[displaydoc("Unknown general category set: {0}")]
+    UnknownGeneralCategorySet(u32),
     #[displaydoc("{0}")]
     PropDataLoad(DataError),
 }

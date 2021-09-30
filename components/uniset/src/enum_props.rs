@@ -70,79 +70,91 @@ pub enum GeneralSubcategory {
 /// is the union of `UppercaseLetter`, `LowercaseLetter`, etc...
 /// See https://www.unicode.org/reports/tr44/ .
 /// See UCharCategory and U_GET_GC_MASK in ICU4C.
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug, Eq)]
 #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
-#[repr(u32)]
-pub enum GeneralCategory {
-    Unassigned = 0,
+#[repr(transparent)]
+pub struct GeneralCategory(pub(crate) u32);
 
-    UppercaseLetter = 1 << (GeneralSubcategory::UppercaseLetter as u32),
-    LowercaseLetter = 1 << (GeneralSubcategory::LowercaseLetter as u32),
-    TitlecaseLetter = 1 << (GeneralSubcategory::TitlecaseLetter as u32),
-    ModifierLetter = 1 << (GeneralSubcategory::ModifierLetter as u32),
-    OtherLetter = 1 << (GeneralSubcategory::OtherLetter as u32),
-    CasedLetter = 1 << (GeneralSubcategory::UppercaseLetter as u32)
-        | 1 << (GeneralSubcategory::LowercaseLetter as u32)
-        | 1 << (GeneralSubcategory::TitlecaseLetter as u32),
-    Letter = 1 << (GeneralSubcategory::UppercaseLetter as u32)
-        | 1 << (GeneralSubcategory::LowercaseLetter as u32)
-        | 1 << (GeneralSubcategory::TitlecaseLetter as u32)
-        | 1 << (GeneralSubcategory::ModifierLetter as u32)
-        | 1 << (GeneralSubcategory::OtherLetter as u32),
+use GeneralCategory as GC;
+use GeneralSubcategory as GS;
 
-    NonspacingMark = 1 << (GeneralSubcategory::NonspacingMark as u32),
-    EnclosingMark = 1 << (GeneralSubcategory::EnclosingMark as u32),
-    SpacingMark = 1 << (GeneralSubcategory::SpacingMark as u32),
-    Mark = 1 << (GeneralSubcategory::NonspacingMark as u32)
-        | 1 << (GeneralSubcategory::EnclosingMark as u32)
-        | 1 << (GeneralSubcategory::SpacingMark as u32),
+#[allow(missing_docs)] // These constants don't need documentation.
+#[allow(non_upper_case_globals)]
+impl GeneralCategory {
+    pub const Unassigned: GeneralCategory = GC(1 << (GS::Unassigned as u32));
+    pub const UppercaseLetter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32));
+    pub const LowercaseLetter: GeneralCategory = GC(1 << (GS::LowercaseLetter as u32));
+    pub const TitlecaseLetter: GeneralCategory = GC(1 << (GS::TitlecaseLetter as u32));
+    pub const ModifierLetter: GeneralCategory = GC(1 << (GS::ModifierLetter as u32));
+    pub const OtherLetter: GeneralCategory = GC(1 << (GS::OtherLetter as u32));
+    pub const CasedLetter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32)
+        | 1 << (GS::LowercaseLetter as u32)
+        | 1 << (GS::TitlecaseLetter as u32));
+    pub const Letter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32)
+        | 1 << (GS::LowercaseLetter as u32)
+        | 1 << (GS::TitlecaseLetter as u32)
+        | 1 << (GS::ModifierLetter as u32)
+        | 1 << (GS::OtherLetter as u32));
 
-    Digit = 1 << (GeneralSubcategory::Digit as u32),
-    LetterNumber = 1 << (GeneralSubcategory::LetterNumber as u32),
-    OtherNumber = 1 << (GeneralSubcategory::OtherNumber as u32),
-    Number = 1 << (GeneralSubcategory::Digit as u32)
-        | 1 << (GeneralSubcategory::LetterNumber as u32)
-        | 1 << (GeneralSubcategory::OtherNumber as u32),
+    pub const NonspacingMark: GeneralCategory = GC(1 << (GS::NonspacingMark as u32));
+    pub const EnclosingMark: GeneralCategory = GC(1 << (GS::EnclosingMark as u32));
+    pub const SpacingMark: GeneralCategory = GC(1 << (GS::SpacingMark as u32));
+    pub const Mark: GeneralCategory = GC(1 << (GS::NonspacingMark as u32)
+        | 1 << (GS::EnclosingMark as u32)
+        | 1 << (GS::SpacingMark as u32));
 
-    SpaceSeparator = 1 << (GeneralSubcategory::SpaceSeparator as u32),
-    LineSeparator = 1 << (GeneralSubcategory::LineSeparator as u32),
-    ParagraphSeparator = 1 << (GeneralSubcategory::ParagraphSeparator as u32),
-    Separator = 1 << (GeneralSubcategory::SpaceSeparator as u32)
-        | 1 << (GeneralSubcategory::LineSeparator as u32)
-        | 1 << (GeneralSubcategory::ParagraphSeparator as u32),
+    pub const Digit: GeneralCategory = GC(1 << (GS::Digit as u32));
+    pub const LetterNumber: GeneralCategory = GC(1 << (GS::LetterNumber as u32));
+    pub const OtherNumber: GeneralCategory = GC(1 << (GS::OtherNumber as u32));
+    pub const Number: GeneralCategory = GC(1 << (GS::Digit as u32)
+        | 1 << (GS::LetterNumber as u32)
+        | 1 << (GS::OtherNumber as u32));
 
-    Control = 1 << (GeneralSubcategory::Control as u32),
-    Format = 1 << (GeneralSubcategory::Format as u32),
-    PrivateUse = 1 << (GeneralSubcategory::PrivateUse as u32),
-    Surrogate = 1 << (GeneralSubcategory::Surrogate as u32),
-    Other = 1 << (GeneralSubcategory::Control as u32)
-        | 1 << (GeneralSubcategory::Format as u32)
-        | 1 << (GeneralSubcategory::PrivateUse as u32)
-        | 1 << (GeneralSubcategory::Surrogate as u32),
+    pub const SpaceSeparator: GeneralCategory = GC(1 << (GS::SpaceSeparator as u32));
+    pub const LineSeparator: GeneralCategory = GC(1 << (GS::LineSeparator as u32));
+    pub const ParagraphSeparator: GeneralCategory = GC(1 << (GS::ParagraphSeparator as u32));
+    pub const Separator: GeneralCategory = GC(1 << (GS::SpaceSeparator as u32)
+        | 1 << (GS::LineSeparator as u32)
+        | 1 << (GS::ParagraphSeparator as u32));
 
-    DashPunctuation = 1 << (GeneralSubcategory::DashPunctuation as u32),
-    OpenPunctuation = 1 << (GeneralSubcategory::OpenPunctuation as u32),
-    ClosePunctuation = 1 << (GeneralSubcategory::ClosePunctuation as u32),
-    ConnectorPunctuation = 1 << (GeneralSubcategory::ConnectorPunctuation as u32),
-    OtherPunctuation = 1 << (GeneralSubcategory::OtherPunctuation as u32),
-    InitialPunctuation = 1 << (GeneralSubcategory::InitialPunctuation as u32),
-    FinalPunctuation = 1 << (GeneralSubcategory::FinalPunctuation as u32),
-    Punctuation = 1 << (GeneralSubcategory::DashPunctuation as u32)
-        | 1 << (GeneralSubcategory::OpenPunctuation as u32)
-        | 1 << (GeneralSubcategory::ClosePunctuation as u32)
-        | 1 << (GeneralSubcategory::ConnectorPunctuation as u32)
-        | 1 << (GeneralSubcategory::OtherPunctuation as u32)
-        | 1 << (GeneralSubcategory::InitialPunctuation as u32)
-        | 1 << (GeneralSubcategory::FinalPunctuation as u32),
+    pub const Control: GeneralCategory = GC(1 << (GS::Control as u32));
+    pub const Format: GeneralCategory = GC(1 << (GS::Format as u32));
+    pub const PrivateUse: GeneralCategory = GC(1 << (GS::PrivateUse as u32));
+    pub const Surrogate: GeneralCategory = GC(1 << (GS::Surrogate as u32));
+    pub const Other: GeneralCategory = GC(1 << (GS::Control as u32)
+        | 1 << (GS::Format as u32)
+        | 1 << (GS::PrivateUse as u32)
+        | 1 << (GS::Surrogate as u32));
 
-    MathSymbol = 1 << (GeneralSubcategory::MathSymbol as u32),
-    CurrencySymbol = 1 << (GeneralSubcategory::CurrencySymbol as u32),
-    ModifierSymbol = 1 << (GeneralSubcategory::ModifierSymbol as u32),
-    OtherSymbol = 1 << (GeneralSubcategory::OtherSymbol as u32),
-    Symbol = 1 << (GeneralSubcategory::MathSymbol as u32)
-        | 1 << (GeneralSubcategory::CurrencySymbol as u32)
-        | 1 << (GeneralSubcategory::ModifierSymbol as u32)
-        | 1 << (GeneralSubcategory::OtherSymbol as u32),
+    pub const DashPunctuation: GeneralCategory = GC(1 << (GS::DashPunctuation as u32));
+    pub const OpenPunctuation: GeneralCategory = GC(1 << (GS::OpenPunctuation as u32));
+    pub const ClosePunctuation: GeneralCategory = GC(1 << (GS::ClosePunctuation as u32));
+    pub const ConnectorPunctuation: GeneralCategory = GC(1 << (GS::ConnectorPunctuation as u32));
+    pub const OtherPunctuation: GeneralCategory = GC(1 << (GS::OtherPunctuation as u32));
+    pub const InitialPunctuation: GeneralCategory = GC(1 << (GS::InitialPunctuation as u32));
+    pub const FinalPunctuation: GeneralCategory = GC(1 << (GS::FinalPunctuation as u32));
+    pub const Punctuation: GeneralCategory = GC(1 << (GS::DashPunctuation as u32)
+        | 1 << (GS::OpenPunctuation as u32)
+        | 1 << (GS::ClosePunctuation as u32)
+        | 1 << (GS::ConnectorPunctuation as u32)
+        | 1 << (GS::OtherPunctuation as u32)
+        | 1 << (GS::InitialPunctuation as u32)
+        | 1 << (GS::FinalPunctuation as u32));
+
+    pub const MathSymbol: GeneralCategory = GC(1 << (GS::MathSymbol as u32));
+    pub const CurrencySymbol: GeneralCategory = GC(1 << (GS::CurrencySymbol as u32));
+    pub const ModifierSymbol: GeneralCategory = GC(1 << (GS::ModifierSymbol as u32));
+    pub const OtherSymbol: GeneralCategory = GC(1 << (GS::OtherSymbol as u32));
+    pub const Symbol: GeneralCategory = GC(1 << (GS::MathSymbol as u32)
+        | 1 << (GS::CurrencySymbol as u32)
+        | 1 << (GS::ModifierSymbol as u32)
+        | 1 << (GS::OtherSymbol as u32));
+}
+
+impl From<GeneralSubcategory> for GeneralCategory {
+    fn from(subcategory: GeneralSubcategory) -> Self {
+        GeneralCategory(1 << (subcategory as u32))
+    }
 }
 
 /// Enumerated property Script.
