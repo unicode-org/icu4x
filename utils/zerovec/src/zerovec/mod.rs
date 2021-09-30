@@ -413,7 +413,7 @@ where
     /// ```
     #[inline]
     pub fn for_each_mut(&mut self, mut f: impl FnMut(&mut T)) {
-        self.make_mut().iter_mut().for_each(|item| {
+        self.to_mut().iter_mut().for_each(|item| {
             let mut aligned = T::from_unaligned(item);
             f(&mut aligned);
             *item = aligned.as_unaligned()
@@ -445,7 +445,7 @@ where
         &mut self,
         mut f: impl FnMut(&mut T) -> Result<(), E>,
     ) -> Result<(), E> {
-        self.make_mut().iter_mut().try_for_each(|item| {
+        self.to_mut().iter_mut().try_for_each(|item| {
             let mut aligned = T::from_unaligned(item);
             f(&mut aligned)?;
             *item = aligned.as_unaligned();
@@ -490,10 +490,10 @@ where
     /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
     ///
-    /// zerovec.make_mut().push(12_u16.as_unaligned());
+    /// zerovec.to_mut().push(12_u16.as_unaligned());
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// ```
-    pub fn make_mut(&mut self) -> &mut Vec<T::ULE> {
+    pub fn to_mut(&mut self) -> &mut Vec<T::ULE> {
         match self {
             ZeroVec::Owned(ref mut vec) => vec,
             ZeroVec::Borrowed(_) => {
@@ -501,7 +501,7 @@ where
                 let new_self = ZeroVec::Owned(vec);
                 *self = new_self;
                 // recursion is limited since we are guaranteed to hit the Owned branch
-                self.make_mut()
+                self.to_mut()
             }
         }
     }
