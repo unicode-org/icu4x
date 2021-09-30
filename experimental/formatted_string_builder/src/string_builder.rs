@@ -15,10 +15,8 @@ pub struct LayeredFormattedStringBuilder<F: Copy, const L: usize> {
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 enum LocationInPart {
-    Beginning,
-    Inside,
-    End,
-    Single,
+    Begin,
+    Extend,
 }
 
 // An L-level deep annotation for a single character, using F as field types
@@ -46,26 +44,18 @@ fn raise_annotation<F: Copy, const L: usize, const L1: usize>(
 
     match lower_levels.len() {
         0 => vec![],
-        1 => vec![add_level(
-            &mut lower_levels[0],
-            (LocationInPart::Single, top_level),
-        )],
         n => {
             let mut vec: Vec<Annotation<F, L>> = Vec::with_capacity(n);
             vec.push(add_level(
                 &mut lower_levels[0],
-                (LocationInPart::Beginning, top_level),
+                (LocationInPart::Begin, top_level),
             ));
-            for j in 1..n - 1 {
+            for j in 1..n {
                 vec.push(add_level(
                     &mut lower_levels[j],
-                    (LocationInPart::Inside, top_level),
+                    (LocationInPart::Extend, top_level),
                 ));
             }
-            vec.push(add_level(
-                &mut lower_levels[n - 1],
-                (LocationInPart::End, top_level),
-            ));
             vec
         }
     }
@@ -142,7 +132,7 @@ impl<F: Copy, const L: usize> LayeredFormattedStringBuilder<F, L> {
     pub fn is_field_start(&self, pos: usize, level: usize) -> bool {
         assert!(level < L);
         let (location, _) = self.annotations[pos][level];
-        return location == LocationInPart::Beginning || location == LocationInPart::Single;
+        return location == LocationInPart::Begin;
     }
 }
 
