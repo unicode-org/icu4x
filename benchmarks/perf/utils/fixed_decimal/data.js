@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1632957800679,
+  "lastUpdate": 1633037389632,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10739,6 +10739,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 105901,
             "range": "± 7874",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47f667eae48d6b8a446a36e1cae01b8eccf66881",
+          "message": "Add ZeroVec::iter_mut() (#1128)\n\n* Add ZeroVec::iter_mut()\r\n\r\n* Add ZeroVec::for_each_mut()\r\n\r\n* Expose make_mut, remove iter_mut, expose try_for_each_mut\r\n\r\n* Update utils/zerovec/src/zerovec/mod.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* apply suggestion\r\n\r\n* make_mut -> to_mut\r\n\r\n* fix\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2021-09-30T14:24:14-07:00",
+          "tree_id": "d605158ffdabb5d6a61471cdcba0f8cff72a2da2",
+          "url": "https://github.com/unicode-org/icu4x/commit/47f667eae48d6b8a446a36e1cae01b8eccf66881"
+        },
+        "date": 1633037385756,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 104201,
+            "range": "± 7871",
             "unit": "ns/iter"
           }
         ]
