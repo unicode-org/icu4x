@@ -392,6 +392,67 @@ where
         self.as_slice().iter().map(T::from_unaligned)
     }
 
+    /// Mutates each element according to a given function, meant to be
+    /// a more convenient version of [`ZeroVec::iter_mut()`] which serves fewer use cases.
+    ///
+    /// This will convert the ZeroVec into an owned ZeroVec if not already the case.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    /// use zerovec::ule::AsULE;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///
+    /// zerovec.for_each_mut(|item| *item += 1);
+    ///
+    /// assert_eq!(zerovec.to_vec(), &[212, 282, 422, 462]);
+    /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
+    /// ```
+    #[inline]
+    pub fn for_each_mut(&mut self, mut f: impl FnMut(&mut T)) {
+        self.to_mut().iter_mut().for_each(|item| {
+            let mut aligned = T::from_unaligned(item);
+            f(&mut aligned);
+            *item = aligned.as_unaligned()
+        });
+    }
+
+    /// Same as [`ZeroVec::for_each_mut()`], but bubbles up errors.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    /// use zerovec::ule::AsULE;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///
+    /// zerovec.try_for_each_mut(|item| {
+    ///     *item = item.checked_add(1).ok_or(())?;
+    ///     Ok(())   
+    /// })?;
+    ///
+    /// assert_eq!(zerovec.to_vec(), &[212, 282, 422, 462]);
+    /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
+    /// # Ok::<(), ()>(())
+    /// ```
+    #[inline]
+    pub fn try_for_each_mut<E>(
+        &mut self,
+        mut f: impl FnMut(&mut T) -> Result<(), E>,
+    ) -> Result<(), E> {
+        self.to_mut().iter_mut().try_for_each(|item| {
+            let mut aligned = T::from_unaligned(item);
+            f(&mut aligned)?;
+            *item = aligned.as_unaligned();
+            Ok(())
+        })
+    }
+
     /// Converts a borrowed ZeroVec to an owned ZeroVec. No-op if already owned.
     ///
     /// # Example
@@ -416,7 +477,8 @@ where
         }
     }
 
-    /// Allows the ZeroVec to be mutated by converting it to an owned variant
+    /// Allows the ZeroVec to be mutated by converting it to an owned variant, and producing
+    /// a mutable vector of ULEs.
     ///
     /// # Example
     ///
@@ -428,13 +490,10 @@ where
     /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
     ///
-    /// zerovec.make_mut().push(12_u16.as_unaligned());
+    /// zerovec.to_mut().push(12_u16.as_unaligned());
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// ```
-    //
-    // This function is crate-public for now since we don't yet want to stabilize
-    // the internal implementation details
-    pub(crate) fn make_mut(&mut self) -> &mut Vec<T::ULE> {
+    pub fn to_mut(&mut self) -> &mut Vec<T::ULE> {
         match self {
             ZeroVec::Owned(ref mut vec) => vec,
             ZeroVec::Borrowed(_) => {
@@ -442,7 +501,7 @@ where
                 let new_self = ZeroVec::Owned(vec);
                 *self = new_self;
                 // recursion is limited since we are guaranteed to hit the Owned branch
-                self.make_mut()
+                self.to_mut()
             }
         }
     }
