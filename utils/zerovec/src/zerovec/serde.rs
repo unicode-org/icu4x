@@ -25,7 +25,6 @@ impl<T> Default for ZeroVecVisitor<T> {
 impl<'de, T> Visitor<'de> for ZeroVecVisitor<T>
 where
     T: 'de + Deserialize<'de> + AsULE,
-    <<T as AsULE>::ULE as ULE>::Error: fmt::Display,
 {
     type Value = ZeroVec<'de, T>;
 
@@ -60,7 +59,6 @@ where
 impl<'de, 'a, T> Deserialize<'de> for ZeroVec<'a, T>
 where
     T: 'de + Deserialize<'de> + AsULE,
-    <<T as AsULE>::ULE as ULE>::Error: fmt::Display,
     'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
