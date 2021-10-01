@@ -1366,6 +1366,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_provider",
  "litemap",
+ "num_enum",
  "postcard",
  "serde",
  "serde_json",
