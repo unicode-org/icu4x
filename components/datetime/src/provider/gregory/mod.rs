@@ -4,24 +4,12 @@
 
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
+pub mod symbols;
+
 use crate::pattern;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
-
-#[icu_provider::data_struct]
-#[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[yoke(cloning_zcf)]
-pub struct DateSymbolsV1 {
-    pub months: months::ContextsV1,
-
-    pub weekdays: weekdays::ContextsV1,
-
-    pub day_periods: day_periods::ContextsV1,
-}
+pub use symbols::{DateSymbolsV1, DateSymbolsV1Marker};
 
 #[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -48,105 +36,6 @@ pub struct DatePatternsV1 {
 
     pub datetime: patterns::DateTimeFormatsV1,
 }
-
-macro_rules! symbols {
-        ($name: ident, $expr: ty) => {
-            pub mod $name {
-                use super::*;
-
-                #[derive(Debug, PartialEq, Clone, Default)]
-                #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-                pub struct SymbolsV1(pub $expr);
-
-                symbols!();
-            }
-        };
-        ($name: ident { $($tokens: tt)* }) => {
-            symbols!($name { $($tokens)* } -> ());
-        };
-        ($name: ident { $element: ident: Option<$ty: ty>, $($tokens: tt)+ } -> ($($members:tt)*)) => {
-            symbols!($name { $($tokens)* } -> (
-                $($members)*
-                pub $element: Option<$ty>,
-            ));
-        };
-        ($name: ident { $element: ident: $ty: ty, $($tokens: tt)+ } -> ($($members:tt)*)) => {
-            symbols!($name { $($tokens)* } -> (
-                $($members)*
-                pub $element: $ty,
-            ));
-        };
-        ($name: ident { $element: ident: Option<$ty: ty> $(,)? } -> ($($members:tt)*)) => {
-            symbols!($name { } -> (
-                $($members)*
-                pub $element: Option<$ty>,
-            ));
-        };
-        ($name: ident { $element: ident: $ty: ty $(,)? } -> ($($members:tt)*)) => {
-            symbols!($name { } -> (
-                $($members)*
-                pub $element: $ty,
-            ));
-        };
-        ($name: ident { } -> ($($members: tt)*)) => {
-            pub mod $name {
-                use super::*;
-
-                #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
-                #[yoke(cloning_zcf)]
-                #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-                pub struct SymbolsV1 {
-                    $($members)*
-                }
-                symbols!();
-            }
-        };
-        () => {
-            // UTS 35 specifies that `format` widths are mandatory
-            // except of `short`.
-            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
-            #[yoke(cloning_zcf)]
-            #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-            pub struct FormatWidthsV1 {
-                pub abbreviated: SymbolsV1,
-                pub narrow: SymbolsV1,
-                pub short: Option<SymbolsV1>,
-                pub wide: SymbolsV1,
-            }
-
-            // UTS 35 specifies that `stand_alone` widths are optional
-            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
-            #[yoke(cloning_zcf)]
-            #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-            pub struct StandAloneWidthsV1 {
-                pub abbreviated: Option<SymbolsV1>,
-                pub narrow: Option<SymbolsV1>,
-                pub short: Option<SymbolsV1>,
-                pub wide: Option<SymbolsV1>,
-            }
-
-            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
-            #[yoke(cloning_zcf)]
-            #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-            pub struct ContextsV1 {
-                pub format: FormatWidthsV1,
-                pub stand_alone: Option<StandAloneWidthsV1>,
-            }
-        };
-    }
-
-symbols!(months, [Cow<'static, str>; 12]);
-
-symbols!(weekdays, [Cow<'static, str>; 7]);
-
-symbols!(
-    day_periods {
-        am: Cow<'static, str>,
-        pm: Cow<'static, str>,
-        noon: Option<Cow<'static, str>>,
-        midnight: Option<Cow<'static, str>>,
-    }
-);
 
 pub mod patterns {
     use super::*;
