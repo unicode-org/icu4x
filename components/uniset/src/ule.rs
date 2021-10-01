@@ -27,6 +27,12 @@ impl AsULE for GeneralSubcategory {
     }
 }
 
+// Safety (based on the safety checklist on the ULE trait):
+//  1. GeneralSubcategory does not include any uninitialized or padding bytes.
+//  2. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//     Because GeneralSubcategory is repr(u8), any length of byte slice is okay.
+//  3. The other ULE methods use the default impl.
+//  4. The PartialEq implementation on GeneralSubcategory uses byte equality.
 unsafe impl ULE for GeneralSubcategoryULE {
     type Error = TryFromPrimitiveError<GeneralSubcategory>;
 
