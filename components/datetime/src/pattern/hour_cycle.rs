@@ -91,8 +91,8 @@ impl CoarseHourCycle {
         let skeleton = skeleton::Skeleton::from(&pattern);
 
         match skeleton::create_best_pattern_for_fields(
-            &skeletons,
-            &date_time,
+            skeletons,
+            date_time,
             skeleton.as_slice(),
             &Default::default(),
             // Prefer using the matched pattern directly, rather than mutating it to match the
