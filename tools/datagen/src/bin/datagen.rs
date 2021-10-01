@@ -207,7 +207,11 @@ fn main() -> anyhow::Result<()> {
         .get_matches();
 
     match matches.occurrences_of("VERBOSE") {
-        0 => SimpleLogger::from_env().init().unwrap(),
+        0 => SimpleLogger::new()
+            .env()
+            .with_level(log::LevelFilter::Info)
+            .init()
+            .unwrap(),
         1 => SimpleLogger::new()
             .with_level(log::LevelFilter::Info)
             .init()
