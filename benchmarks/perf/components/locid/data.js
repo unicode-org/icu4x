@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633099189339,
+  "lastUpdate": 1633107458157,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13637,6 +13637,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4194,
             "range": "± 20",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4aaac96425b8a9de9f4566c1c2d2453f5654d5ba",
+          "message": "Update property enums to support CodepointTrie (#1089)\n\n* Make GC exhaustive\r\n\r\nGeneralCategory will never be extended\r\nSee https://www.unicode.org/policies/stability_policy.html\r\n\r\n* Add GeneralSubcategory to represent raw GC data\r\n\r\n* Implement AsULE for GeneralSubcategory\r\n\r\n* Cargo fmt\r\n\r\n* refactor\r\n\r\n* Make GC repr(u8)\r\n\r\n* Cargo fmt\r\n\r\n* Convert Script to an identifier\r\n\r\n* Implement AsULE for Script\r\n\r\n* Implement validate_byte_slice instead of parse_byte_slice\r\n\r\n* Impl From<GeneralSubcategory> for GeneralCategory\r\n\r\n* Remove default-implemented ULE methods\r\n\r\n* Add safety comment on GeneralSubcategoryULE impl\r\n\r\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-10-01T09:51:24-07:00",
+          "tree_id": "bd7e6e9c4a851a30a6b8594d1eebf7018aa48c0d",
+          "url": "https://github.com/unicode-org/icu4x/commit/4aaac96425b8a9de9f4566c1c2d2453f5654d5ba"
+        },
+        "date": 1633107453674,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2643,
+            "range": "± 120",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4825,
+            "range": "± 233",
             "unit": "ns/iter"
           }
         ]
