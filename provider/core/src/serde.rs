@@ -25,7 +25,6 @@ use crate::yoke::*;
 use alloc::rc::Rc;
 
 use core::ops::Deref;
-use yoke::trait_hack::YokeTraitHack;
 
 /// An object that receives data from a Serde Deserializer.
 ///
@@ -115,10 +114,7 @@ impl<'data, M> SerdeDeDataReceiver for Option<DataPayload<'data, M>>
 where
     M: DataMarker<'data>,
     M::Yokeable: serde::de::Deserialize<'static>,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
+    for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
 {
     fn receive_rc_buffer(
         &mut self,
@@ -132,10 +128,9 @@ where
             let mut holder = None;
             f1(bytes, &mut |deserializer| {
                 holder.replace(
-                    erased_serde::deserialize::<YokeTraitHack<<M::Yokeable as Yokeable>::Output>>(
+                    erased_serde::deserialize::<<M::Yokeable as Yokeable>::Output>(
                         deserializer,
-                    )
-                    .map(|w| w.0),
+                    ),
                 );
             });
             // The holder is guaranteed to be populated so long as the lambda function was invoked,
@@ -160,10 +155,9 @@ where
                 let mut holder = None;
                 f1(bytes, &mut |deserializer| {
                     holder.replace(
-                    erased_serde::deserialize::<YokeTraitHack<<M::Yokeable as Yokeable>::Output>>(
+                    erased_serde::deserialize::<<M::Yokeable as Yokeable>::Output>(
                         deserializer,
-                    )
-                    .map(|w| w.0),
+                    ),
                 );
                 });
                 // The holder is guaranteed to be populated so long as the lambda function was invoked,
@@ -204,10 +198,7 @@ impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'static
 where
     M: DataMarker<'data>,
     M::Yokeable: serde::de::Deserialize<'static>,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
+    for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
 {
     /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {

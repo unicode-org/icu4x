@@ -63,8 +63,13 @@ fn test_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = provider
-        .load_payload(&get_request(langid!("ru")))
+    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = 
+    // XXX: Requires fully qualified call signature in order to compile!
+    // Old:
+    //  provider.load_payload(&get_request(langid!("ru")))
+    // New:
+        DataProvider::<PluralRuleStringsV1Marker>::load_payload(&provider, &get_request(langid!("ru")))
+    // (end)
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
@@ -77,9 +82,14 @@ fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = (&provider
-        as &dyn SerdeDeDataProvider)
-        .load_payload(&get_request(langid!("ru")))
+    let plurals_data: DataPayload<PluralRuleStringsV1Marker> =
+    // XXX: Requires fully qualified call signature in order to compile!
+    // Old:
+    //  (&provider as &dyn SerdeDeDataProvider).load_payload(&get_request(langid!("ru")))
+    // New:
+        DataProvider::<PluralRuleStringsV1Marker>::load_payload(
+            &provider as &dyn SerdeDeDataProvider, &get_request(langid!("ru")))
+    // (end)
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
@@ -165,8 +175,13 @@ fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = provider
-        .load_payload(&get_request(langid!("sr")))
+    let plurals_data: DataPayload<PluralRuleStringsV1Marker> =
+    // XXX: Requires fully qualified call signature in order to compile!
+    // Old:
+    //  provider.load_payload(&get_request(langid!("sr")))
+    // New:
+        DataProvider::<PluralRuleStringsV1Marker>::load_payload(&provider, &get_request(langid!("sr")))
+    // (end)
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
@@ -179,9 +194,14 @@ fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = (&provider
-        as &dyn SerdeDeDataProvider)
-        .load_payload(&get_request(langid!("sr")))
+    let plurals_data: DataPayload<PluralRuleStringsV1Marker> =
+    // XXX: Requires fully qualified call signature in order to compile!
+    // Old:
+    //  (&provider as &dyn SerdeDeDataProvider).load_payload(&get_request(langid!("sr")))
+    // New:
+        DataProvider::<PluralRuleStringsV1Marker>::load_payload(
+            &provider as &dyn SerdeDeDataProvider, &get_request(langid!("sr")))
+    // (end)
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");

@@ -19,7 +19,6 @@ extern crate alloc;
 
 mod is_covariant;
 mod macro_impls;
-pub mod trait_hack;
 mod yoke;
 mod yokeable;
 mod zero_copy_from;
