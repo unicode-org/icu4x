@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633108472671,
+  "lastUpdate": 1633108790326,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -953,6 +953,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/209ddc7aaf9c78c646da3add611dfabc6f82c1d8"
         },
         "date": 1633108468167,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5067da312ef0cd0b31894e82239be70a91f5602",
+          "message": "Clean up DTF Skeleton. (#1132)\n\n* Clean up DTF Skeleton.\r\n\r\n* Fix fmt\r\n\r\n* Fix clippy\r\n\r\n* Fix regression in prefer_matched_pattern",
+          "timestamp": "2021-10-01T10:18:36-07:00",
+          "tree_id": "5d38e239551c13728f04748c2f3734200a7a2c78",
+          "url": "https://github.com/unicode-org/icu4x/commit/e5067da312ef0cd0b31894e82239be70a91f5602"
+        },
+        "date": 1633108785771,
         "tool": "ndjson",
         "benches": [
           {
