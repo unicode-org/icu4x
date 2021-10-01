@@ -25,7 +25,7 @@ use crate::yoke::*;
 /// // A placeholder key to use to serve the data struct
 /// const SAMPLE_KEY: ResourceKey = icu_provider::resource_key!(x, "xyz", "example", 1);
 ///
-/// let provider = StructProvider {
+/// let provider = StructProvider::<HelloWorldV1Marker> {
 ///     key: SAMPLE_KEY,
 ///     data: DataPayload::from_owned(local_data),
 /// };
@@ -72,7 +72,7 @@ fn test_traits() {
     // A placeholder key to use to serve the data struct
     const SAMPLE_KEY: ResourceKey = crate::resource_key!(x, "xyz", "example", 1);
 
-    let provider = StructProvider {
+    let provider = StructProvider::<SimpleStruct> {
         key: SAMPLE_KEY,
         data: DataPayload::from_owned(SimpleStruct(42)),
     };
