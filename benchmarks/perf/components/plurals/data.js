@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633050149326,
+  "lastUpdate": 1633099239511,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15161,6 +15161,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 23733,
             "range": "± 1614",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d11c8404177eb0f762cda93d376a772e08f932bd",
+          "message": "Move CodePointTrie to components/utils (#1114)",
+          "timestamp": "2021-10-01T07:32:54-07:00",
+          "tree_id": "7de796383da4b4e00fcceb88c6ed0876b7e20168",
+          "url": "https://github.com/unicode-org/icu4x/commit/d11c8404177eb0f762cda93d376a772e08f932bd"
+        },
+        "date": 1633099235424,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1131,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6806,
+            "range": "± 280",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22471,
+            "range": "± 2418",
             "unit": "ns/iter"
           }
         ]
