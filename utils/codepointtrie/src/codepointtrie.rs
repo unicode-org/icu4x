@@ -15,7 +15,7 @@ use zerovec::ZeroVec;
 /// The width of the elements in the data array of a [`CodePointTrie`].
 /// See [`UCPTrieValueWidth`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum ValueWidthEnum {
     Bits16 = 0,
     Bits32 = 1,
@@ -26,7 +26,7 @@ pub enum ValueWidthEnum {
 /// would make it small or fast.
 /// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum TrieTypeEnum {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -89,17 +89,17 @@ impl ValueWidth for u32 {
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-#[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct CodePointTrie<'trie, W: ValueWidth> {
     header: CodePointTrieHeader,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     index: ZeroVec<'trie, u16>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     data: ZeroVec<'trie, W>,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
-#[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -339,13 +339,13 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
 
 #[cfg(test)]
 mod tests {
-    #[cfg(feature = "provider_serde")]
+    #[cfg(feature = "serde")]
     use super::CodePointTrie;
-    #[cfg(feature = "provider_serde")]
+    #[cfg(feature = "serde")]
     use zerovec::ZeroVec;
 
     #[test]
-    #[cfg(feature = "provider_serde")]
+    #[cfg(feature = "serde")]
     fn test_serde_with_postcard_roundtrip() -> Result<(), postcard::Error> {
         let trie = crate::planes::get_planes_trie();
         let trie_serialized: Vec<u8> = postcard::to_allocvec(&trie).unwrap();
