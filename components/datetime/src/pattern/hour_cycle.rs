@@ -99,7 +99,9 @@ impl CoarseHourCycle {
             true,
         ) {
             skeleton::BestSkeleton::AllFieldsMatch(pattern)
-            | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(format!("{}", pattern.0)),
+            | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => {
+                Some(format!("{}", pattern.0))
+            }
             skeleton::BestSkeleton::NoMatch => None,
         }
     }
