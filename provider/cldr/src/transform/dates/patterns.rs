@@ -8,7 +8,7 @@ use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::pattern::CoarseHourCycle;
-use icu_datetime::{pattern, provider::*, skeleton::SkeletonError};
+use icu_datetime::{pattern, provider::*};
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -117,64 +117,14 @@ impl From<&cldr_json::LengthPatterns> for gregory::patterns::LengthPatternsV1 {
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 {
+impl From<&cldr_json::DateTimeFormats> for gregory::patterns::LengthPatternsV1 {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use gregory::patterns::{PatternV1, SkeletonV1, SkeletonsV1};
-        use litemap::LiteMap;
-
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
-            length_patterns: gregory::patterns::LengthPatternsV1 {
-                full: Cow::Owned(other.full.get_pattern().clone()),
-                long: Cow::Owned(other.long.get_pattern().clone()),
-                medium: Cow::Owned(other.medium.get_pattern().clone()),
-                short: Cow::Owned(other.short.get_pattern().clone()),
-            },
-            skeletons: {
-                let mut skeletons = SkeletonsV1(LiteMap::new());
-
-                // The CLDR keys for available_formats can have duplicate skeletons with either
-                // an additional variant, or with multiple variants for different plurals.
-                for (skeleton_str, pattern_str) in other.available_formats.0.iter() {
-                    let mut unique_skeleton = None;
-                    let mut variant_parts = Vec::new();
-
-                    for part in skeleton_str.split('-') {
-                        match unique_skeleton {
-                            None => {
-                                unique_skeleton = Some(part);
-                            }
-                            Some(_) => variant_parts.push(part),
-                        }
-                    }
-
-                    let unique_skeleton = unique_skeleton.expect("Expected to find a skeleton.");
-
-                    let skeleton_fields_v1 = match SkeletonV1::try_from(unique_skeleton) {
-                        Ok(s) => s,
-                        Err(err) => match err {
-                            // Ignore unimplemented fields for now.
-                            SkeletonError::SymbolUnimplemented(_) => continue,
-                            _ => panic!("{:?} {}", unique_skeleton, err),
-                        },
-                    };
-
-                    if !variant_parts.is_empty() {
-                        eprintln!(
-                            "This skeleton string is not yet supported: {:?}",
-                            skeleton_str
-                        );
-                        continue;
-                    }
-
-                    let pattern_v1 = PatternV1::try_from(pattern_str as &str)
-                        .expect("Unable to parse a pattern");
-
-                    skeletons.0.insert(skeleton_fields_v1, pattern_v1);
-                }
-
-                skeletons
-            },
+            full: Cow::Owned(other.full.get_pattern().clone()),
+            long: Cow::Owned(other.long.get_pattern().clone()),
+            medium: Cow::Owned(other.medium.get_pattern().clone()),
+            short: Cow::Owned(other.short.get_pattern().clone()),
         }
     }
 }
@@ -182,7 +132,9 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
 impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
     fn from(other: &cldr_json::Dates) -> Self {
         let date_time_formats_v1 =
-            gregory::patterns::DateTimeFormatsV1::from(&other.calendars.gregorian.datetime_formats);
+            gregory::patterns::LengthPatternsV1::from(&other.calendars.gregorian.datetime_formats);
+        let skeletons_v1 =
+            gregory::DateSkeletonPatternsV1::from(&other.calendars.gregorian.datetime_formats);
 
         let pattern_str_full = other.calendars.gregorian.time_formats.full.get_pattern();
         let pattern_str_long = other.calendars.gregorian.time_formats.long.get_pattern();
@@ -231,19 +183,39 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             let time = (&other.calendars.gregorian.time_formats).into();
             let alt_time = gregory::patterns::LengthPatternsV1 {
                 full: alt_hour_cycle
-                    .apply_on_pattern(&date_time_formats_v1, pattern_str_full, pattern_full)
+                    .apply_on_pattern(
+                        &date_time_formats_v1,
+                        &skeletons_v1,
+                        pattern_str_full,
+                        pattern_full,
+                    )
                     .expect("Failed to apply a coarse hour cycle to a full pattern.")
                     .into(),
                 long: alt_hour_cycle
-                    .apply_on_pattern(&date_time_formats_v1, pattern_str_long, pattern_long)
+                    .apply_on_pattern(
+                        &date_time_formats_v1,
+                        &skeletons_v1,
+                        pattern_str_long,
+                        pattern_long,
+                    )
                     .expect("Failed to apply a coarse hour cycle to a long pattern.")
                     .into(),
                 medium: alt_hour_cycle
-                    .apply_on_pattern(&date_time_formats_v1, pattern_str_medium, pattern_medium)
+                    .apply_on_pattern(
+                        &date_time_formats_v1,
+                        &skeletons_v1,
+                        pattern_str_medium,
+                        pattern_medium,
+                    )
                     .expect("Failed to apply a coarse hour cycle to a medium pattern.")
                     .into(),
                 short: alt_hour_cycle
-                    .apply_on_pattern(&date_time_formats_v1, pattern_str_short, pattern_short)
+                    .apply_on_pattern(
+                        &date_time_formats_v1,
+                        &skeletons_v1,
+                        pattern_str_short,
+                        pattern_short,
+                    )
                     .expect("Failed to apply a coarse hour cycle to a short pattern.")
                     .into(),
             };
@@ -259,7 +231,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             time_h11_h12,
             time_h23_h24,
             preferred_hour_cycle,
-            datetime: date_time_formats_v1,
+            date_time: date_time_formats_v1,
         }
     }
 }
@@ -312,33 +284,4 @@ fn test_with_numbering_system() {
     assert_eq!("d MMM y", cs_dates.get().date.medium);
     // TODO(#308): Support numbering system variations. We currently throw them away.
     assert_eq!("d/M/yy", cs_dates.get().date.short);
-}
-
-#[test]
-fn test_datetime_skeletons() {
-    use gregory::patterns::{PatternV1, SkeletonV1};
-    use icu_locid_macros::langid;
-
-    let cldr_paths = crate::cldr_paths::for_test();
-    let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-
-    let cs_dates: DataPayload<gregory::DatePatternsV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::GREGORY_DATE_PATTERNS_V1,
-                options: ResourceOptions {
-                    variant: None,
-                    langid: Some(langid!("haw")),
-                },
-            },
-        })
-        .unwrap()
-        .take_payload()
-        .unwrap();
-    let skeletons = &cs_dates.get().datetime.skeletons.0;
-
-    assert_eq!(
-        Some(&PatternV1::try_from("L").expect("Failed to create pattern")),
-        skeletons.get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))
-    );
 }
