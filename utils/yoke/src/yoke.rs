@@ -567,7 +567,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
     /// requires Rust 1.56.***
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;
@@ -579,8 +579,16 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///     string_2: &'a str,
     /// }
     ///
+    /// // Project with a fixed mapping function
     /// fn project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-    ///     bar.project(|bar, _| bar.string_1)   
+    ///     bar.map_project(|bar, _| bar.string_1)
+    /// }
+    ///
+    /// // Project with a mapping function that captures data from the context
+    /// fn project_string_with_capture(bar: Yoke<Bar<'static>, Rc<[u8]>>, choice: bool)
+    ///     -> Yoke<&'static str, Rc<[u8]>>
+    /// {
+    ///     bar.map_project(|bar, _| if choice { bar.string_1 } else { bar.string_2 })
     /// }
     ///
     /// #
@@ -611,9 +619,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ```
     //
     // Safety docs can be found below on `__project_safety_docs()`
-    pub fn project<P>(
+    pub fn map_project<P>(
         self,
-        f: for<'a> fn(
+        f: impl for<'a> FnOnce(
             <Y as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
@@ -633,9 +641,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::project`]
     /// because then it will not clone fields that are going to be discarded.
-    pub fn project_cloned<'this, P>(
+    pub fn ref_project<'this, P>(
         &'this self,
-        f: for<'a> fn(
+        f: impl for<'a> FnOnce(
             &'this <Y as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
@@ -651,71 +659,19 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::project`], however it works around it not being able to
-    /// use `FnOnce` by using an explicit capture input, until [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937)
-    /// is fixed.
-    ///
-    /// See the docs of [`Yoke::project`] for how this works.
-    pub fn project_with_capture<P, T>(
-        self,
-        capture: T,
-        f: for<'a> fn(
-            <Y as Yokeable<'a>>::Output,
-            capture: T,
-            PhantomData<&'a ()>,
-        ) -> <P as Yokeable<'a>>::Output,
-    ) -> Yoke<P, C>
-    where
-        P: for<'a> Yokeable<'a>,
-    {
-        let p = f(self.yokeable.transform_owned(), capture, PhantomData);
-        Yoke {
-            yokeable: unsafe { P::make(p) },
-            cart: self.cart,
-        }
-    }
-
-    /// This is similar to [`Yoke::project_cloned`], however it works around it not being able to
-    /// use `FnOnce` by using an explicit capture input, until [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937)
-    /// is fixed.
-    ///
-    /// See the docs of [`Yoke::project_cloned`] for how this works.
-    pub fn project_cloned_with_capture<'this, P, T>(
-        &'this self,
-        capture: T,
-        f: for<'a> fn(
-            &'this <Y as Yokeable<'a>>::Output,
-            capture: T,
-            PhantomData<&'a ()>,
-        ) -> <P as Yokeable<'a>>::Output,
-    ) -> Yoke<P, C>
-    where
-        P: for<'a> Yokeable<'a>,
-        C: CloneableCart,
-    {
-        let p = f(self.get(), capture, PhantomData);
-        Yoke {
-            yokeable: unsafe { P::make(p) },
-            cart: self.cart.clone(),
-        }
-    }
-
     /// A version of [`Yoke::project`] that takes a capture and bubbles up an error
     /// from the callback function.
-    #[allow(clippy::type_complexity)]
-    pub fn try_project_with_capture<P, T, E>(
+    pub fn try_map_project<P, T, E>(
         self,
-        capture: T,
-        f: for<'a> fn(
+        f: impl for<'a> FnOnce(
             <Y as Yokeable<'a>>::Output,
-            capture: T,
             PhantomData<&'a ()>,
         ) -> Result<<P as Yokeable<'a>>::Output, E>,
     ) -> Result<Yoke<P, C>, E>
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.yokeable.transform_owned(), capture, PhantomData)?;
+        let p = f(self.yokeable.transform_owned(), PhantomData)?;
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
@@ -724,13 +680,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 
     /// A version of [`Yoke::project_cloned`] that takes a capture and bubbles up an error
     /// from the callback function.
-    #[allow(clippy::type_complexity)]
-    pub fn try_project_cloned_with_capture<'this, P, T, E>(
+    pub fn try_ref_project<'this, P, T, E>(
         &'this self,
-        capture: T,
-        f: for<'a> fn(
+        f: impl for<'a> FnOnce(
             &'this <Y as Yokeable<'a>>::Output,
-            capture: T,
             PhantomData<&'a ()>,
         ) -> Result<<P as Yokeable<'a>>::Output, E>,
     ) -> Result<Yoke<P, C>, E>
@@ -738,7 +691,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         P: for<'a> Yokeable<'a>,
         C: CloneableCart,
     {
-        let p = f(self.get(), capture, PhantomData)?;
+        let p = f(self.get(), PhantomData)?;
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
@@ -764,12 +717,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///
 /// Let's walk through these and see how they're prevented.
 ///
-/// ```rust, compile_fail
+/// ```rust,compile_fail
 /// # use std::rc::Rc;
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: &Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.project_cloned(|cow, _| &*cow)   
+///    y.ref_project(|cow, _| cow.as_ref())
 /// }
 /// ```
 ///
@@ -777,12 +730,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// `&'a str` _for all `'a`_, which isn't possible.
 ///
 ///
-/// ```rust, compile_fail
+/// ```rust,compile_fail
 /// # use std::rc::Rc;
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.project(|cow, _| &*cow)   
+///    y.map_project(|cow, _| &*cow)
 /// }
 /// ```
 ///
@@ -804,7 +757,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///
 /// fn project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
 ///     // ERROR (but works if you replace owned with string_2)
-///     bar.project_cloned(|bar, _| &*bar.owned)   
+///     bar.ref_project(|bar, _| &*bar.owned)   
 /// }
 ///
 /// #
@@ -848,4 +801,26 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// Essentially, safety is achieved by using `for<'a> fn(...)` with `'a` used in both `Yokeable`s to ensure that
 /// the output yokeable can _only_ have borrowed data flow in to it from the input. All paths of unsoundness require the
 /// unification of an existential and universal lifetime, which isn't possible.
+/// 
+/// Note that data cannot be borrowed directly from the context, with either a short or a long lifetime:
+///
+/// ```rust,compile_fail
+/// # use std::rc::Rc;
+/// # use yoke::Yoke;
+/// # use std::borrow::Cow;
+/// fn borrow_from_context(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///     let outer: String = "".to_string();
+///     y.map_project(|cow, _| outer.as_str())
+/// }
+/// ```
+///
+/// ```rust,compile_fail
+/// # use std::rc::Rc;
+/// # use yoke::Yoke;
+/// # use std::borrow::Cow;
+/// fn borrow_from_static(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///     let outer: &'static str = "";
+///     y.map_project(|cow, _| outer)
+/// }
+/// ```
 const _: () = ();
