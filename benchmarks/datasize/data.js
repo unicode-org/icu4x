@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633045338411,
+  "lastUpdate": 1633049779319,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -833,6 +833,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/20100345fc28379015107c7b4aa8b3d088bd41c8"
         },
         "date": 1633045334132,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "530279a1c48f8d3f7d18a9cdf4441ff862d00b13",
+          "message": "Add BlobDataProvider FFI and async data loading test in JavaScript (#1104)",
+          "timestamp": "2021-09-30T19:55:00-05:00",
+          "tree_id": "6973996a72974b6eb04db1c3a219a6783962c106",
+          "url": "https://github.com/unicode-org/icu4x/commit/530279a1c48f8d3f7d18a9cdf4441ff862d00b13"
+        },
+        "date": 1633049775448,
         "tool": "ndjson",
         "benches": [
           {
