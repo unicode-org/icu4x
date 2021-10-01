@@ -7,6 +7,7 @@ use alloc::vec::Vec;
 use super::*;
 use core::fmt;
 use core::marker::PhantomData;
+use core::ops::Range;
 use core::ptr;
 use core::slice;
 
@@ -98,20 +99,26 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     }
 
     /// Get the position of a specific element in the data segment.
+    ///
+    /// If `idx == self.len()`, it will return the size of the data segment (where a new element would go).
+    ///
+    /// ## Safety
+    /// `idx <= self.len()` and the index is valid
     unsafe fn element_position_unchecked(&self, idx: usize) -> usize {
         let len = self.len();
         let out = if idx == len {
             self.entire_slice.len() - 4 - (4 * len)
         } else {
-            let idx_offset = 4 + idx * 4;
-            let idx_slice = &self.entire_slice[idx_offset..idx_offset + 4];
-            u32::from_unaligned(&PlainOldULE::<4>::from_byte_slice_unchecked(idx_slice)[0]) as usize
+            u32::from_unaligned(self.index_data(idx)) as usize
         };
         debug_assert!(out + 4 + len * 4 <= self.entire_slice.len());
         out
     }
 
     /// Get the range of a specific element in the data segment.
+    ///
+    /// ## Safety
+    /// `idx < self.len()` and the index is valid
     unsafe fn element_range_unchecked(&self, idx: usize) -> core::ops::Range<usize> {
         let start = self.element_position_unchecked(idx);
         let end = self.element_position_unchecked(idx + 1);
@@ -120,19 +127,42 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     }
 
     /// Set the number of elements in the list without any checks.
+    ///
+    /// ## Safety
+    /// No safe functions may be called until all indices are valid.
     unsafe fn set_len(&mut self, len: u32) {
         PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[..4])[0] =
             len.into();
     }
 
-    /// Return the slice representing the given `index`.
-    unsafe fn index_data(&mut self, index: usize) -> &mut PlainOldULE<4> {
+    fn index_range(index: usize) -> Range<usize> {
         let pos = 4 + 4 * index;
-        &mut PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[pos..pos + 4])
+        pos..pos + 4
+    }
+
+    /// Return the slice representing the given `index`.
+    ///
+    /// ## Safety
+    /// The index must be valid.
+    unsafe fn index_data(&self, index: usize) -> &PlainOldULE<4> {
+        &PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
             [0]
     }
 
+    /// Return the mutable slice representing the given `index`.
+    ///
+    /// ## Safety
+    /// The index must be valid.
+    unsafe fn index_data_mut(&mut self, index: usize) -> &mut PlainOldULE<4> {
+        &mut PlainOldULE::<4>::from_byte_slice_unchecked_mut(
+            &mut self.entire_slice[Self::index_range(index)],
+        )[0]
+    }
+
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
+    ///
+    /// ## Safety
+    /// Adding amount to each index must not result in them becoming invalid.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
         let indices =
@@ -167,9 +197,13 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         &self.entire_slice
     }
 
-    // Invalidate and resize the data at an index, optionally inserting or removing the index.
-    // Also updates affected indices and the length.
-    // Returns a slice to the new element data - it doesn't contain uninitialized data but its value is indeterminate.
+    /// Invalidate and resize the data at an index, optionally inserting or removing the index.
+    /// Also updates affected indices and the length.
+    /// Returns a slice to the new element data - it doesn't contain uninitialized data but its value is indeterminate.
+    ///
+    /// ## Safety
+    /// - `index` must be a valid index, or, if `shift_type == ShiftType::Insert`, `index == self.len()` is allowed.
+    /// - `new_size` musn't result in the data segment growing larger than `u32::MAX`.
     unsafe fn shift(&mut self, index: usize, new_size: u32, shift_type: ShiftType) -> &mut [u8] {
         // The format of the encoded data is:
         //  - four bytes of "len"
@@ -192,7 +226,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
             _ => self.element_range_unchecked(index),
         };
 
-        // How much shifting must be done due to removal/insertion of an index.
+        // How much shifting must be done in bytes due to removal/insertion of an index.
         let index_shift: i64 = match shift_type {
             ShiftType::Insert => 4,
             ShiftType::Replace => 0,
@@ -212,7 +246,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         }
 
         // Now that we've ensured there's enough space, we can shift the data around.
-        let first_affected_index = {
+        {
             // Note: There are no references introduced between pointer creation and pointer use, and all
             //       raw pointers are derived from a single &mut. This preserves pointer provenance.
             let slice_range = self.entire_slice.as_mut_ptr_range();
@@ -220,42 +254,39 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
             let prev_element_p =
                 data_start.add(prev_element.start)..data_start.add(prev_element.end);
 
+            // The memory range of the affected index.
+            // When inserting: where the new index goes.
+            // When removing:  where the index being removed is.
+            // When replacing: unused.
             let index_range = {
                 let index_start = slice_range.start.add(4 + 4 * index);
                 index_start..index_start.add(4)
             };
 
+            unsafe fn shift_bytes(block: Range<*const u8>, to: *mut u8) {
+                debug_assert!(block.end >= block.start);
+                ptr::copy(block.start, to, block.end.offset_from(block.start) as usize);
+            }
+
             if shift_type == ShiftType::Remove {
                 // Move the data before the element back by 4 to remove the index.
-                debug_assert!(prev_element_p.start >= index_range.end);
-                ptr::copy(
-                    index_range.end,
-                    index_range.start,
-                    prev_element_p.start.offset_from(index_range.end) as usize,
-                );
+                shift_bytes(index_range.end..prev_element_p.start, index_range.start);
             }
 
             // Shift data after the element to its new position.
-            debug_assert!(slice_range.end >= prev_element_p.end);
-            ptr::copy(
-                prev_element_p.end,
+            shift_bytes(
+                prev_element_p.end..slice_range.end,
                 prev_element_p
                     .start
                     .offset((new_size as i64 + index_shift) as isize),
-                slice_range.end.offset_from(prev_element_p.end) as usize,
             );
 
-            match shift_type {
+            let first_affected_index = match shift_type {
                 ShiftType::Insert => {
                     // Move data before the element forward by 4 to make space for a new index.
-                    debug_assert!(prev_element_p.start >= index_range.start);
-                    ptr::copy(
-                        index_range.start,
-                        index_range.end,
-                        prev_element_p.start.offset_from(index_range.start) as usize,
-                    );
+                    shift_bytes(index_range.start..prev_element_p.start, index_range.end);
 
-                    *self.index_data(index) = (prev_element.start as u32).into();
+                    *self.index_data_mut(index) = (prev_element.start as u32).into();
                     self.set_len((len + 1) as u32);
                     index + 1
                 }
@@ -264,19 +295,72 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
                     index
                 }
                 ShiftType::Replace => index + 1,
-            }
+            };
             // No raw pointer use should occur after this point (because of self.index_data and self.set_len).
+
+            // Set the new slice length. This must be done after shifting data around to avoid uninitialized data.
+            self.entire_slice.set_len(new_slice_len);
+
+            // Shift the affected indices.
+            self.shift_indices(first_affected_index, (shift - index_shift) as i32);
         };
 
-        // Set the new slice length. This must be done after shifting data around to avoid uninitialized data.
-        self.entire_slice.set_len(new_slice_len);
-
-        // Shift the affected indices.
-        self.shift_indices(first_affected_index, (shift - index_shift) as i32);
+        debug_assert!(self.verify_integrity());
 
         // Return a mut slice to the new element data.
         let element_pos = 4 + self.len() * 4 + self.element_position_unchecked(index);
         &mut self.entire_slice[element_pos..element_pos + new_size as usize]
+    }
+
+    /// Checks the internal invariants of the vec to ensure safe code will not cause UB.
+    /// Returns whether integrity was verified.
+    ///
+    /// Note: an index is valid if it doesn't point to data past the end of the slice and is
+    /// less than or equal to all future indices. The length of the index segment is not part of each index.
+    fn verify_integrity(&self) -> bool {
+        let slice_len = self.entire_slice.len();
+        match slice_len {
+            0 => return true,
+            1..=3 => return false,
+            _ => (),
+        }
+        let len = unsafe {
+            u32::from_unaligned(
+                &PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
+            )
+        };
+        if len == 0 {
+            // An empty vec must have an empty slice: there is only a single valid byte representation.
+            return false;
+        }
+        if slice_len <= 4 + len as usize * 4 {
+            // Not enough room for the indices.
+            return false;
+        }
+        let data_len = self.entire_slice.len() - 4 - len as usize * 4;
+        if data_len > u32::MAX as usize {
+            // The data segment is too long.
+            return false;
+        }
+        let data_len = data_len as u32;
+
+        // Test index validity.
+        let indices = unsafe {
+            PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[4..4 + len as usize * 4])
+        };
+        for idx in indices {
+            if u32::from_unaligned(idx) > data_len {
+                // Indices must not point past the data segment.
+                return false;
+            }
+        }
+        for window in indices.windows(2) {
+            if u32::from_unaligned(&window[0]) > u32::from_unaligned(&window[1]) {
+                // Indices must be in increasing order.
+                return false;
+            }
+        }
+        true
     }
 
     /// Insert an element at index `idx`
@@ -315,6 +399,11 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
                 "Called out-of-bounds remove() on VarZeroVec, index {} len {}",
                 index, len
             );
+        }
+        if len == 1 {
+            // This is removing the last element. Set the slice to empty to ensure all empty vecs have empty data slices.
+            self.entire_slice.clear();
+            return;
         }
         unsafe {
             self.shift(index, 0, ShiftType::Remove);
@@ -442,6 +531,14 @@ mod test {
             zerovec.remove(index);
             assert_eq!(zerovec, &*items, "index {}, len {}", index, items.len());
         }
+    }
+
+    #[test]
+    fn test_removing_last_element_clears() {
+        let mut zerovec = VarZeroVecOwned::from_elements(&["buy some apples".to_string()]);
+        assert!(!zerovec.get_components().entire_slice().is_empty());
+        zerovec.remove(0);
+        assert!(zerovec.get_components().entire_slice().is_empty());
     }
 
     #[test]
