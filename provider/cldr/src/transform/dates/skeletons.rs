@@ -167,7 +167,7 @@ fn test_datetime_skeletons() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DateSkeletonPatternsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: DataPayload<gregory::DateSkeletonPatternsV1Marker> = provider
+    let skeletons: DataPayload<gregory::DateSkeletonPatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_DATE_SKELETON_PATTERNS_V1,
@@ -180,10 +180,12 @@ fn test_datetime_skeletons() {
         .unwrap()
         .take_payload()
         .unwrap();
-    let skeletons = &cs_dates.get().skeletons.0;
+    let skeletons = skeletons.get();
 
     assert_eq!(
         Some(&PatternV1::try_from("L").expect("Failed to create pattern")),
-        skeletons.get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))
+        skeletons
+            .0
+            .get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))
     );
 }
