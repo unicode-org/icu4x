@@ -705,13 +705,7 @@ pub fn get_best_available_format_pattern(
     }
 
     // Modify the resulting pattern to have fields of the same length.
-    let expanded_pattern = if prefer_matched_pattern {
-        #[cfg(not(feature = "provider_transform_internals"))]
-        panic!("This code branch should only be run when transforming provider code.");
-
-        #[cfg(feature = "provider_transform_internals")]
-        closest_format_pattern
-    } else {
+    if prefer_matched_pattern {
         closest_format_pattern.0.items.iter_mut().for_each(|item| {
             if let PatternItem::Field(pattern_field) = item {
                 if let Some(requested_field) = fields
@@ -726,14 +720,16 @@ pub fn get_best_available_format_pattern(
                 }
             }
         });
-        closest_format_pattern
-    };
-
-    if closest_distance >= SKELETON_EXTRA_SYMBOL {
-        return BestSkeleton::MissingOrExtraFields(expanded_pattern);
+    } else {
+        #[cfg(not(feature = "provider_transform_internals"))]
+        panic!("This code branch should only be run when transforming provider code.");
     }
 
-    BestSkeleton::AllFieldsMatch(expanded_pattern)
+    if closest_distance >= SKELETON_EXTRA_SYMBOL {
+        return BestSkeleton::MissingOrExtraFields(closest_format_pattern);
+    }
+
+    BestSkeleton::AllFieldsMatch(closest_format_pattern)
 }
 
 #[cfg(all(test, feature = "provider_serde"))]
