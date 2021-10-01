@@ -45,8 +45,3 @@ zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde"] 
 [lib]
 bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
-
-[features]
-default = ["provider_serde"]
-bench = []
-provider_serde = ["serde", "zerovec/serde"]
