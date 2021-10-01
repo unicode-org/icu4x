@@ -27,7 +27,11 @@ pub enum ValueWidthEnum {
 #[derive(Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
 pub enum TrieTypeEnum {
+    /// Represents the "fast" type code point tries for the
+    /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
     Fast = 0,
+    /// Represents the "small" type code point tries for the
+    /// [`TrieType`] trait. The "fast max" limit is set to `0x0fff`.
     Small = 1,
 }
 
@@ -76,41 +80,6 @@ impl ValueWidth for u32 {
     fn cast_to_widest(self) -> u32 {
         self
     }
-}
-
-// TrieType trait
-
-/// A trait representing the "trie type" of a [`CodePointTrie`].
-///
-/// Currently, the options are "fast" and "small", which differ in the "fast max"
-/// limit.
-pub trait TrieType {
-    /// All code points up to the fast max limit are represented
-    /// individually in the `index` array to hold their `data` array position, and
-    /// thus only need 2 lookups for a [CodePointTrie::get()](`crate::codepointtrie::CodePointTrie::get`).
-    /// Code points above the "fast max" limit require 4 lookups.
-    const FAST_MAX: u32;
-    /// This enum variant represents the specific instance of `TrieType` such
-    /// that the enum discriminant values matches ICU4C's enum integer value.
-    const ENUM_VALUE: TrieTypeEnum;
-}
-
-/// An empty struct to represent "fast" type code point tries for the
-///  [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
-pub struct Fast;
-
-impl TrieType for Fast {
-    const FAST_MAX: u32 = FAST_TYPE_FAST_INDEXING_MAX;
-    const ENUM_VALUE: TrieTypeEnum = TrieTypeEnum::Fast;
-}
-
-/// An empty struct to represent "small" type code point tries for the
-///  [`TrieType`] trait. The "fast max" limit is set to `0x0fff`.
-pub struct Small;
-
-impl TrieType for Small {
-    const FAST_MAX: u32 = SMALL_TYPE_FAST_INDEXING_MAX;
-    const ENUM_VALUE: TrieTypeEnum = TrieTypeEnum::Small;
 }
 
 /// This struct represents a de-serialized CodePointTrie that was exported from
@@ -316,6 +285,10 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
     /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
     /// ```
     pub fn get(&self, code_point: u32) -> W {
+        // All code points up to the fast max limit are represented
+        // individually in the `index` array to hold their `data` array position, and
+        // thus only need 2 lookups for a [CodePointTrie::get()](`crate::codepointtrie::CodePointTrie::get`).
+        // Code points above the "fast max" limit require 4 lookups.
         let fast_max = match self.header.trie_type {
             TrieTypeEnum::Fast => FAST_TYPE_FAST_INDEXING_MAX,
             TrieTypeEnum::Small => SMALL_TYPE_FAST_INDEXING_MAX,
