@@ -6,7 +6,7 @@ use crate::date;
 use crate::error::DateTimeFormatError;
 use crate::fields;
 use crate::options::{components, length, preferences, DateTimeFormatOptions};
-use crate::pattern::{reference::Pattern, PatternItem};
+use crate::pattern::{hour_cycle, reference::Pattern};
 use crate::provider;
 use crate::skeleton;
 use alloc::borrow::Cow;
@@ -79,7 +79,7 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
                 false, // Prefer the requested fields over the matched pattern.
             ) {
                 skeleton::BestSkeleton::AllFieldsMatch(pattern)
-                | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(pattern),
+                | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(pattern.0),
                 skeleton::BestSkeleton::NoMatch => None,
             },
         )
@@ -161,20 +161,7 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
             length::Time::Short => &time.short,
         })?;
 
-        if let Some(preferences::Bag {
-            hour_cycle: Some(hour_cycle_pref),
-        }) = preferences
-        {
-            // Apply the preference::Bag override and change the pattern from a coarse hour cycle
-            // to the specific hour cycle.
-            for item in pattern.items_mut() {
-                if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
-                    if let fields::FieldSymbol::Hour(_) = symbol {
-                        *symbol = fields::FieldSymbol::Hour(hour_cycle_pref.field());
-                    }
-                }
-            }
-        }
+        hour_cycle::naively_apply_preferences(&mut pattern, preferences);
 
         Ok(pattern)
     }

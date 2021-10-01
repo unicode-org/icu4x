@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{reference::Pattern, PatternItem};
-use crate::fields;
+use crate::{fields, options::preferences};
 #[cfg(feature = "provider_transform_internals")]
 use crate::{provider, skeleton};
 
@@ -99,8 +99,30 @@ impl CoarseHourCycle {
             true,
         ) {
             skeleton::BestSkeleton::AllFieldsMatch(pattern)
-            | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(format!("{}", pattern)),
+            | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(format!("{}", pattern.0)),
             skeleton::BestSkeleton::NoMatch => None,
+        }
+    }
+}
+
+/// The hour cycle can be set by preferences. This function switches between h11 and h12,
+/// and between h23 and h24. This function is naive as it is assumed that this application of
+/// the hour cycle will not change between h1x to h2x.
+pub(crate) fn naively_apply_preferences(
+    pattern: &mut Pattern,
+    preferences: &Option<preferences::Bag>,
+) {
+    // If there is a preference overiding the hour cycle, apply it now.
+    if let Some(preferences::Bag {
+        hour_cycle: Some(hour_cycle),
+    }) = preferences
+    {
+        for item in pattern.items_mut() {
+            if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
+                if let fields::FieldSymbol::Hour(_) = symbol {
+                    *symbol = fields::FieldSymbol::Hour(hour_cycle.field());
+                }
+            }
         }
     }
 }

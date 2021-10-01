@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod error;
-mod hour_cycle;
+pub(crate) mod hour_cycle;
 mod item;
 pub mod reference;
 pub mod runtime;
