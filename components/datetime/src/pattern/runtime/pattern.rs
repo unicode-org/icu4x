@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::super::{reference, PatternItem, TimeGranularity};
+use crate::pattern::reference::pattern::dump_buffer_into_formatter;
+use alloc::fmt::{self, Write};
+use alloc::string::String;
 use alloc::{vec, vec::Vec};
 use zerovec::ZeroVec;
 
@@ -41,5 +44,34 @@ impl Default for Pattern<'_> {
             items: ZeroVec::Owned(vec![]),
             time_granularity: TimeGranularity::default(),
         }
+    }
+}
+
+/// This trait is implemented in order to provide the machinery to convert a [`Pattern`] to a UTS 35
+/// pattern string. It could also be implemented as the Writeable trait, but at the time of writing
+/// this was not done, as this code would need to implement the [`write_len()`] method, which would
+/// need to duplicate the branching logic of the [`fmt`](std::fmt) method here. This code is used in generating
+/// the data providers and is not as performance sensitive.
+impl fmt::Display for Pattern<'_> {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        let mut buffer = String::new();
+        for pattern_item in self.items.iter() {
+            match pattern_item {
+                PatternItem::Field(field) => {
+                    dump_buffer_into_formatter(&buffer, formatter)?;
+                    buffer.clear();
+                    let ch: char = field.symbol.into();
+                    for _ in 0..field.length as usize {
+                        formatter.write_char(ch)?;
+                    }
+                }
+                PatternItem::Literal(ch) => {
+                    buffer.push(ch);
+                }
+            }
+        }
+        dump_buffer_into_formatter(&buffer, formatter)?;
+        buffer.clear();
+        Ok(())
     }
 }

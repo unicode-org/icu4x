@@ -15,6 +15,34 @@ pub struct GenericPattern<'data> {
 }
 
 impl<'data> GenericPattern<'data> {
+    /// The function allows for creation of new DTF pattern from a generic pattern
+    /// and replacement patterns.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_datetime::pattern::{runtime, reference};
+    ///
+    /// let date: runtime::Pattern =
+    ///     reference::Pattern::from_bytes("Y-m-d")
+    ///         .expect("Failed to parse pattern")
+    ///         .into();
+    /// let time: runtime::Pattern =
+    ///     reference::Pattern::from_bytes("HH:mm")
+    ///         .expect("Failed to parse pattern")
+    ///         .into();
+    ///
+    /// let glue: runtime::GenericPattern =
+    ///     reference::GenericPattern::from_bytes("{0} 'at' {1}")
+    ///         .expect("Failed to parse generic pattern")
+    ///         .into();
+    /// assert_eq!(
+    ///     glue.combined(vec![date, time])
+    ///         .expect("Failed to combine patterns")
+    ///         .to_string(),
+    ///     "Y-m-d 'at' HH:mm"
+    /// );
+    /// ```
     pub fn combined(self, replacements: Vec<Pattern>) -> Result<Pattern, PatternError> {
         let size = replacements.iter().fold(0, |acc, r| acc + r.items.len());
         let mut result = Vec::with_capacity(self.items.len() + size);

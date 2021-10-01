@@ -72,7 +72,8 @@ impl PatternItemULE {
     #[inline]
     fn bytes_in_range(value: (&u8, &u8, &u8)) -> bool {
         match Self::determine_field_from_u8(*value.0) {
-            true => fields::Field::bytes_in_range(value.1, value.2),
+            // ensure that unused bytes are all zero
+            true => fields::Field::bytes_in_range(value.1, value.2) && *value.0 == 0b1000_0000,
             false => {
                 let u = u32::from_be_bytes([0x00, *value.0, *value.1, *value.2]);
                 char::try_from(u).is_ok()
@@ -135,7 +136,7 @@ impl AsULE for PatternItem {
 
 /// `GenericPatternItemULE` is a type optimized for efficent storing and
 /// deserialization of `DateTimeFormat` `GenericPatternItem` elements using
-/// `ZeroVec` model.
+/// the `ZeroVec` model.
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
@@ -198,7 +199,8 @@ impl GenericPatternItemULE {
     #[inline]
     fn bytes_in_range(value: (&u8, &u8, &u8)) -> bool {
         match Self::determine_field_from_u8(*value.0) {
-            true => true,
+            // ensure that unused bytes are all zero
+            true => *value.0 == 0b1000_0000 && *value.1 == 0,
             false => {
                 let u = u32::from_be_bytes([0x00, *value.0, *value.1, *value.2]);
                 char::try_from(u).is_ok()
