@@ -357,3 +357,28 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
         self.get(code_point).cast_to_widest()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[cfg(feature = "provider_serde")]
+    use super::CodePointTrie;
+    #[cfg(feature = "provider_serde")]
+    use zerovec::ZeroVec;
+
+    #[test]
+    #[cfg(feature = "provider_serde")]
+    fn test_serde_with_postcard_roundtrip() -> Result<(), postcard::Error> {
+        let trie = crate::planes::get_planes_trie();
+        let trie_serialized: Vec<u8> = postcard::to_allocvec(&trie).unwrap();
+        let trie_deserialized: CodePointTrie<u8> =
+            postcard::from_bytes::<CodePointTrie<u8>>(&trie_serialized)?;
+
+        assert_eq!(&trie.index, &trie_deserialized.index);
+        assert_eq!(&trie.data, &trie_deserialized.data);
+
+        assert!(matches!(trie_deserialized.index, ZeroVec::Borrowed(_)));
+        assert!(matches!(trie_deserialized.data, ZeroVec::Borrowed(_)));
+
+        Ok(())
+    }
+}
