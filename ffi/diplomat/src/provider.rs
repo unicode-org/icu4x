@@ -12,6 +12,7 @@ pub mod ffi {
     use alloc::string::ToString;
 
     use icu_provider::serde::SerdeDeDataProvider;
+    use icu_provider_blob::BlobDataProvider;
     use icu_provider_blob::StaticDataProvider;
     #[cfg(all(
         feature = "provider_fs",
@@ -79,6 +80,22 @@ pub mod ffi {
                     provider: Some(Box::new(ICU4XDataProvider(erased))),
                     success: true,
                 }
+            }
+        }
+
+        /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more details.
+        pub fn create_from_byte_slice(blob: &[u8]) -> ICU4XCreateDataProviderResult {
+            use alloc::rc::Rc;
+            match BlobDataProvider::new_from_rc_blob(Rc::from(blob)) {
+                Ok(provider) => ICU4XCreateDataProviderResult {
+                    provider: Some(Box::new(ICU4XDataProvider(Box::new(provider)))),
+                    success: true,
+                },
+                Err(_) => ICU4XCreateDataProviderResult {
+                    provider: None,
+                    success: false,
+                },
             }
         }
     }
