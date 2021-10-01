@@ -462,7 +462,7 @@ mod tests {
         ];
         assert_eq!(trie_serialized, EXP_TRIE_SERIALIZED);
 
-        let trie_deserialized: CodePointTrie<u8> =
+        let trie_deserialized =
             postcard::from_bytes::<CodePointTrie<u8>>(&trie_serialized)?;
 
         assert_eq!(&trie.index, &trie_deserialized.index);
