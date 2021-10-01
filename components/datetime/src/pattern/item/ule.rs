@@ -55,6 +55,7 @@ use zerovec::ule::{AsULE, ULE};
 ///
 /// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[repr(transparent)]
 pub struct PatternItemULE([u8; 3]);
 
 impl PatternItemULE {
@@ -185,6 +186,7 @@ impl AsULE for PatternItem {
 ///
 /// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[repr(transparent)]
 pub struct GenericPatternItemULE([u8; 3]);
 
 impl GenericPatternItemULE {
