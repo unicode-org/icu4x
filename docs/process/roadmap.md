@@ -27,23 +27,21 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 	* [x] June-September
 	        * [x] 0.3 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/12))
 		* [x] Unicode Regular Expressions ([#168](https://github.com/unicode-org/icu4x/issues/168))
-		* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
-		* [ ] C++ FFI ([#674](https://github.com/unicode-org/icu4x/issues/674))
-		* [ ] Data provider productionization ([#873](https://github.com/unicode-org/icu4x/issues/873))
-		* [ ] Enable core components on `#![no_std]` ([#812](https://github.com/unicode-org/icu4x/issues/812))
-		* [ ] Optimize code size of FFI ([#874](https://github.com/unicode-org/icu4x/issues/874))
-		* [ ] Static Data Provider (#78)
-	* [ ] October
+		* [x] C++ FFI ([#674](https://github.com/unicode-org/icu4x/issues/674))
+		* [x] Data provider productionization ([#873](https://github.com/unicode-org/icu4x/issues/873))
+		* [x] Enable core components on `#![no_std]` ([#812](https://github.com/unicode-org/icu4x/issues/812))
+		* [x] Static Data Provider (#78)
+	* [ ] October-December
 		* [ ] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 		* [ ] Migration to ICU4X is enabled
 		* [ ] DateTime performance (#603)
 		* [ ] Full support for enumerated properties ([#148](https://github.com/unicode-org/icu4x/issues/148))
-	* [ ] November
 	 	* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109))
 	 	* [ ] DateTime Calendars ([#534](https://github.com/unicode-org/icu4x/issues/534))
 		* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
-	* [ ] December
+		* [ ] Optimize code size of FFI ([#874](https://github.com/unicode-org/icu4x/issues/874))
 		* [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
+		* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
 		* [ ] UnicodeSet L3b (#168)
 * [ ] 2022
 	* [ ] Q1
