@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633109134740,
+  "lastUpdate": 1633127987482,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15329,6 +15329,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20907,
             "range": "± 110",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb2f1e279675e374233d260112cb2f12125d2a05",
+          "message": "Set default datagen log level to INFO (#1138)\n\n* Update SimpleLogger\r\n\r\n* Set default datagen log level to INFO",
+          "timestamp": "2021-10-01T15:32:21-07:00",
+          "tree_id": "c94f15127bd233e1c1d5599dc77708926b499f0c",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb2f1e279675e374233d260112cb2f12125d2a05"
+        },
+        "date": 1633127982872,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1359,
+            "range": "± 68",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8079,
+            "range": "± 413",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 26184,
+            "range": "± 1713",
             "unit": "ns/iter"
           }
         ]
