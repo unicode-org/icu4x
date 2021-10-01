@@ -16,38 +16,39 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [x] Components Bag (#481)
 		* [x] UnicodeSet
 			* [x] L3a (#478)
-	* [ ] March/April
-		* [ ] FFI/WASM exploration (#398)
-		* [ ] UnicodeSet L3b (#168)
-		* [ ] 0.2 Release (#239)
-		* [ ] Static Data Provider (#78)
-	* [ ] May
-		* [ ] FFI/WASM exploration (#207)
-		* [ ] DateTime performance (#603)
-		* [ ] Data Provider performance (#667)
-		* [ ] Gecko integration experiment
-	 		* [ ] Test262 evaluation
-		* [ ] 0.3 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/12))
-	* [ ] June-September
-		* [ ] DateTime Calendars ([#534](https://github.com/unicode-org/icu4x/issues/534))
-		* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109))
-		* [ ] Unicode Regular Expressions ([#168](https://github.com/unicode-org/icu4x/issues/168))
-		* [ ] Full support for enumerated properties ([#148](https://github.com/unicode-org/icu4x/issues/148))
-		* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
+	* [x] March/April
+		* [x] FFI/WASM exploration (#398)
+		* [x] 0.2 Release (#239)
+	* [x] May
+		* [x] FFI/WASM exploration (#207)
+		* [x] Data Provider performance (#667)
+		* [x] Gecko integration experiment
+	 	* [x] Test262 evaluation	
+	* [x] June-September
+	        * [x] 0.3 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/12))
+		* [x] Unicode Regular Expressions ([#168](https://github.com/unicode-org/icu4x/issues/168))
 		* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
 		* [ ] C++ FFI ([#674](https://github.com/unicode-org/icu4x/issues/674))
 		* [ ] Data provider productionization ([#873](https://github.com/unicode-org/icu4x/issues/873))
 		* [ ] Enable core components on `#![no_std]` ([#812](https://github.com/unicode-org/icu4x/issues/812))
 		* [ ] Optimize code size of FFI ([#874](https://github.com/unicode-org/icu4x/issues/874))
+		* [ ] Static Data Provider (#78)
 	* [ ] October
 		* [ ] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 		* [ ] Migration to ICU4X is enabled
+		* [ ] DateTime performance (#603)
+		* [ ] Full support for enumerated properties ([#148](https://github.com/unicode-org/icu4x/issues/148))
 	* [ ] November
-	 	* [ ] Data + API stability
+	 	* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109))
+	 	* [ ] DateTime Calendars ([#534](https://github.com/unicode-org/icu4x/issues/534))
+		* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
 	* [ ] December
 		* [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
+		* [ ] UnicodeSet L3b (#168)
 * [ ] 2022
 	* [ ] Q1
 		* [ ] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
+		* [ ] Data + API stability
 	* [ ] Q2
 		* [ ] 1.0 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/16))
+		
