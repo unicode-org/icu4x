@@ -82,8 +82,11 @@ impl PatternItemULE {
     }
 }
 
-// This impl is safe because (1) validate_byte_slice rejects all invalid byte slices, including
-// those that are the wrong length, and (2) byte equality is semantic equality.
+// Safety (based on the safety checklist on the ULE trait):
+//  1. PatternItemULE does not include any uninitialized or padding bytes.
+//  2. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  3. The other ULE methods use the default impl.
+//  4. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
     type Error = &'static str;
 
@@ -209,8 +212,11 @@ impl GenericPatternItemULE {
     }
 }
 
-// This impl is safe because (1) validate_byte_slice rejects all invalid byte slices, including
-// those that are the wrong length, and (2) byte equality is semantic equality.
+// Safety (based on the safety checklist on the ULE trait):
+//  1. GenericPatternItemULE does not include any uninitialized or padding bytes.
+//  2. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  3. The other ULE methods use the default impl.
+//  4. GenericPatternItemULE byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
     type Error = &'static str;
 
