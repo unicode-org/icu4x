@@ -5,6 +5,7 @@
 use crate::error::Error;
 use crate::impl_const::*;
 
+use core::convert::TryFrom;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::ZeroVec;
@@ -132,12 +133,17 @@ pub struct CodePointTrieHeader {
     pub trie_type: TrieTypeEnum,
 }
 
-/// Converts the serialized `u8` value for the trie type into a [`TrieTypeEnum`].
-pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> {
-    match trie_type_int {
-        0 => Some(TrieTypeEnum::Fast),
-        1 => Some(TrieTypeEnum::Small),
-        _ => None,
+impl TryFrom<u8> for TrieTypeEnum {
+    type Error = crate::error::Error;
+
+    fn try_from(trie_type_int: u8) -> Result<TrieTypeEnum, crate::error::Error> {
+        match trie_type_int {
+            0 => Ok(TrieTypeEnum::Fast),
+            1 => Ok(TrieTypeEnum::Small),
+            _ => Err(crate::error::Error::FromDeserialized {
+                reason: "Cannot parse value for trie_type",
+            }),
+        }
     }
 }
 
@@ -462,8 +468,7 @@ mod tests {
         ];
         assert_eq!(trie_serialized, EXP_TRIE_SERIALIZED);
 
-        let trie_deserialized =
-            postcard::from_bytes::<CodePointTrie<u8>>(&trie_serialized)?;
+        let trie_deserialized = postcard::from_bytes::<CodePointTrie<u8>>(&trie_serialized)?;
 
         assert_eq!(&trie.index, &trie_deserialized.index);
         assert_eq!(&trie.data, &trie_deserialized.data);

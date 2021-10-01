@@ -7,10 +7,12 @@ mod test_util;
 use icu_codepointtrie::codepointtrie::*;
 use icu_codepointtrie::error::Error;
 use icu_codepointtrie::planes::get_planes_trie;
+use test_util::UnicodeEnumeratedProperty;
+
+use core::convert::TryFrom;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
-use test_util::UnicodeEnumeratedProperty;
 use zerovec::ZeroVec;
 
 #[test]
@@ -39,10 +41,8 @@ fn planes_trie_deserialize_check_test() {
 
     let code_point_trie_struct = planes_enum_prop.code_point_trie.trie_struct;
 
-    let trie_type_enum = match icu_codepointtrie::codepointtrie::get_code_point_trie_type_enum(
-        code_point_trie_struct.trie_type_enum_val,
-    ) {
-        Some(enum_val) => enum_val,
+    let trie_type_enum = match TrieTypeEnum::try_from(code_point_trie_struct.trie_type_enum_val) {
+        Ok(enum_val) => enum_val,
         _ => {
             panic!(
                 "Could not parse trie_type serialized enum value in test data file: {}",

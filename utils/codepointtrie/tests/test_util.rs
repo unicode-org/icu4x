@@ -4,6 +4,8 @@
 
 use icu_codepointtrie::codepointtrie::*;
 use icu_codepointtrie::error::Error;
+
+use core::convert::TryFrom;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
@@ -150,8 +152,8 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         test_struct.name
     );
 
-    let trie_type_enum = match get_code_point_trie_type_enum(test_struct.trie_type_enum_val) {
-        Some(enum_val) => enum_val,
+    let trie_type_enum = match TrieTypeEnum::try_from(test_struct.trie_type_enum_val) {
+        Ok(enum_val) => enum_val,
         _ => {
             panic!(
                 "Could not parse trie_type serialized enum value in test data file: {}",
