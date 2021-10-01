@@ -318,6 +318,9 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// Note: an index is valid if it doesn't point to data past the end of the slice and is
     /// less than or equal to all future indices. The length of the index segment is not part of each index.
     fn verify_integrity(&self) -> bool {
+        if self.len() == 0 && !self.entire_slice.is_empty() {
+            return false;
+        }
         let slice_len = self.entire_slice.len();
         match slice_len {
             0 => return true,
@@ -356,7 +359,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         }
         for window in indices.windows(2) {
             if u32::from_unaligned(&window[0]) > u32::from_unaligned(&window[1]) {
-                // Indices must be in increasing order.
+                // Indices must be in non-decreasing order.
                 return false;
             }
         }
