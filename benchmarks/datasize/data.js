@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633108790326,
+  "lastUpdate": 1633127622094,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -983,6 +983,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e5067da312ef0cd0b31894e82239be70a91f5602"
         },
         "date": 1633108785771,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb2f1e279675e374233d260112cb2f12125d2a05",
+          "message": "Set default datagen log level to INFO (#1138)\n\n* Update SimpleLogger\r\n\r\n* Set default datagen log level to INFO",
+          "timestamp": "2021-10-01T15:32:21-07:00",
+          "tree_id": "c94f15127bd233e1c1d5599dc77708926b499f0c",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb2f1e279675e374233d260112cb2f12125d2a05"
+        },
+        "date": 1633127617281,
         "tool": "ndjson",
         "benches": [
           {
