@@ -39,7 +39,7 @@ icu_testdata = { version = "0.3", path = "../../provider/testdata", features = [
 log = "0.4"
 reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
-simple_logger = "1.11"
+simple_logger = "1.12"
 tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"] }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
