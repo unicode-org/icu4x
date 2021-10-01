@@ -107,22 +107,20 @@
 //!     type Yokeable = SimpleStruct;
 //! }
 //!
-//! fn main() {
-//!     let provider = MiniStructProvider {
-//!         payload: MiniDataPayload {
-//!             yoke: Yoke::new_always_owned(SimpleStruct(42))
-//!         }
-//!     };
+//! let provider = MiniStructProvider {
+//!     payload: MiniDataPayload {
+//!         yoke: Yoke::new_always_owned(SimpleStruct(42))
+//!     }
+//! };
 //!
-//!     // Broken:
-//!     // "method cannot be called on `MiniStructProvider<_>` due to unsatisfied trait bounds"
-//!     let payload: MiniDataPayload<SimpleStruct> = provider.mini_load_payload();
+//! // Broken:
+//! // "method cannot be called on `MiniStructProvider<_>` due to unsatisfied trait bounds"
+//! let payload: MiniDataPayload<SimpleStruct> = provider.mini_load_payload();
 //!
-//!     // Working:
-//!     let payload = MiniDataProvider::<SimpleStruct>::mini_load_payload(&provider);
+//! // Working:
+//! let payload = MiniDataProvider::<SimpleStruct>::mini_load_payload(&provider);
 //!
-//!     assert_eq!(payload.yoke.get().0, 42);
-//! }
+//! assert_eq!(payload.yoke.get().0, 42);
 //! ```
 //!
 //! Example for binding the trait to a reference:
