@@ -171,8 +171,6 @@ pub fn get_planes_trie() -> CodePointTrie<'static, u8> {
     ];
     let index: ZeroVec<u16> = ZeroVec::parse_byte_slice(index_array_as_bytes).expect("infallible");
     let data: ZeroVec<u8> = ZeroVec::parse_byte_slice(data_8_array).expect("infallible");
-    let index_length = 1168;
-    let data_length = 372;
     let high_start = 0x100000;
     let shifted12_high_start = 0x100;
     let index3_null_offset = 0x2;

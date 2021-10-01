@@ -39,20 +39,19 @@ fn planes_trie_deserialize_check_test() {
 
     let code_point_trie_struct = planes_enum_prop.code_point_trie.trie_struct;
 
-    let trie_type_enum =
-        match icu_codepointtrie::codepointtrie::get_code_point_trie_type_enum(code_point_trie_struct.trie_type_enum_val) {
-            Some(enum_val) => enum_val,
-            _ => {
-                panic!(
-                    "Could not parse trie_type serialized enum value in test data file: {}",
-                    code_point_trie_struct.name
-                );
-            }
-        };
+    let trie_type_enum = match icu_codepointtrie::codepointtrie::get_code_point_trie_type_enum(
+        code_point_trie_struct.trie_type_enum_val,
+    ) {
+        Some(enum_val) => enum_val,
+        _ => {
+            panic!(
+                "Could not parse trie_type serialized enum value in test data file: {}",
+                code_point_trie_struct.name
+            );
+        }
+    };
 
     let trie_header = CodePointTrieHeader {
-        index_length: code_point_trie_struct.index_length,
-        data_length: code_point_trie_struct.data_length,
         high_start: code_point_trie_struct.high_start,
         shifted12_high_start: code_point_trie_struct.shifted12_high_start,
         index3_null_offset: code_point_trie_struct.index3_null_offset,

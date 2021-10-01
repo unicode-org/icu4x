@@ -73,9 +73,9 @@ pub struct EnumPropSerializedCPTStruct {
     pub data_8: Option<Vec<u8>>,
     pub data_16: Option<Vec<u16>>,
     pub data_32: Option<Vec<u32>>,
-    #[cfg_attr(any(feature = "serde", test), serde(rename = "indexLength"))]
+    #[cfg_attr(any(feature = "serde", test), serde(skip))]
     pub index_length: u32,
-    #[cfg_attr(any(feature = "serde", test), serde(rename = "dataLength"))]
+    #[cfg_attr(any(feature = "serde", test), serde(skip))]
     pub data_length: u32,
     #[cfg_attr(any(feature = "serde", test), serde(rename = "highStart"))]
     pub high_start: u32,
@@ -161,8 +161,6 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
     };
 
     let trie_header = CodePointTrieHeader {
-        index_length: test_struct.index_length,
-        data_length: test_struct.data_length,
         high_start: test_struct.high_start,
         shifted12_high_start: test_struct.shifted12_high_start,
         index3_null_offset: test_struct.index3_null_offset,

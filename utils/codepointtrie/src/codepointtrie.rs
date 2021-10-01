@@ -13,7 +13,8 @@ use zerovec::ZeroVec;
 
 /// The width of the elements in the data array of a [`CodePointTrie`].
 /// See [`UCPTrieValueWidth`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
-#[derive(Clone, Copy, PartialEq, Serialize)]
+#[derive(Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
 pub enum ValueWidthEnum {
     Bits16 = 0,
     Bits32 = 1,
@@ -37,7 +38,7 @@ pub enum TrieTypeEnum {
 /// A trait representing the width of the values stored in the data array of a
 /// [`CodePointTrie`]. This trait is used as a type parameter in constructing
 /// a `CodePointTrie`.
-pub trait ValueWidth: Copy + zerovec::ule::AsULE {
+pub trait ValueWidth: Copy + zerovec::ule::AsULE + 'static {
     /// This enum variant represents the specific instance of `ValueWidth` such
     /// that the enum discriminant values matches ICU4C's enum integer value.
     const ENUM_VALUE: ValueWidthEnum;
@@ -119,10 +120,11 @@ impl TrieType for Small {
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 #[cfg_attr(feature = "provider_serde", derive(Serialize, Deserialize))]
-pub struct CodePointTrie<'trie, W: ValueWidth>
-{
+pub struct CodePointTrie<'trie, W: ValueWidth> {
     header: CodePointTrieHeader,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     index: ZeroVec<'trie, u16>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     data: ZeroVec<'trie, W>,
 }
 
@@ -170,29 +172,23 @@ pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> 
     }
 }
 
-impl<'trie, W: ValueWidth> CodePointTrie<'trie, W>
-{
+impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
     /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
     /// array and `data` array, whose data values have width `W`.
     pub fn try_new(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
-        #[cfg_attr(
-            feature = "provider_serde",
-            serde(bound(deserialize = "ZeroVec<'trie, W>: Deserialize<'de>"))
-        )]
         data: ZeroVec<'trie, W>,
     ) -> Result<CodePointTrie<'trie, W>, Error> {
-
-        // Validation invariants are not needed here when constructing a new 
+        // Validation invariants are not needed here when constructing a new
         // `CodePointTrie` because:
         //
         // - Rust includes the size of a slice (or Vec or similar), which allows it
         //   to prevent lookups at out-of-bounds indices, whereas in C++, it is the
         //   programmer's responsibility to keep track of length info.
         // - For lookups into collections, Rust guarantees that a fallback value will
-        //   be returned in the case of `.get()` encountering a lookup error, via 
-        //   the `Option` type. 
+        //   be returned in the case of `.get()` encountering a lookup error, via
+        //   the `Option` type.
         // - The `ZeroVec` serializer stores the length of the array along with the
         //   ZeroVec data, meaning that a deserializer would also see that length info.
 
