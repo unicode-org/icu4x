@@ -209,6 +209,8 @@ impl GenericPatternItemULE {
     }
 }
 
+// This impl is safe because (1) validate_byte_slice rejects all invalid byte slices, including
+// those that are the wrong length, and (2) byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
     type Error = &'static str;
 
