@@ -12,10 +12,10 @@ use icu_provider::prelude::ResourceKey;
 /// Data providers for the Gregorian Calendar.
 pub mod gregory;
 
-pub(crate) mod helpers;
-
 /// Data providers for time zones.
 pub mod time_zones;
+
+pub(crate) mod helpers;
 
 /// A collection of [`ResourceKey`] structs for DateTime providers.
 pub mod key {
