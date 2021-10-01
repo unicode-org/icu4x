@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633107467904,
+  "lastUpdate": 1633108796561,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8873,6 +8873,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 504430,
             "range": "± 25956",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "209ddc7aaf9c78c646da3add611dfabc6f82c1d8",
+          "message": "Start splitting gregory provider data (#1137)\n\n* Start splitting gregory provider data\r\n\r\n* Fix imports from symbols for provider",
+          "timestamp": "2021-10-01T10:13:11-07:00",
+          "tree_id": "a9d0ade0dcb8f3c3d05669dc3fa7e0b1edac2790",
+          "url": "https://github.com/unicode-org/icu4x/commit/209ddc7aaf9c78c646da3add611dfabc6f82c1d8"
+        },
+        "date": 1633108792027,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 283302,
+            "range": "± 28600",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1495398,
+            "range": "± 108531",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 543900,
+            "range": "± 33272",
             "unit": "ns/iter"
           }
         ]
