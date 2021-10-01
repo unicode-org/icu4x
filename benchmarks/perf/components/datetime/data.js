@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633045671564,
+  "lastUpdate": 1633050134695,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8747,6 +8747,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 646964,
             "range": "± 1662",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "530279a1c48f8d3f7d18a9cdf4441ff862d00b13",
+          "message": "Add BlobDataProvider FFI and async data loading test in JavaScript (#1104)",
+          "timestamp": "2021-09-30T19:55:00-05:00",
+          "tree_id": "6973996a72974b6eb04db1c3a219a6783962c106",
+          "url": "https://github.com/unicode-org/icu4x/commit/530279a1c48f8d3f7d18a9cdf4441ff862d00b13"
+        },
+        "date": 1633050130802,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 317193,
+            "range": "± 1174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1640414,
+            "range": "± 12868",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 618226,
+            "range": "± 5984",
             "unit": "ns/iter"
           }
         ]
