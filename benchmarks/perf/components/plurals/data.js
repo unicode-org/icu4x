@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633045670376,
+  "lastUpdate": 1633050149326,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15119,6 +15119,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24844,
             "range": "± 330",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "530279a1c48f8d3f7d18a9cdf4441ff862d00b13",
+          "message": "Add BlobDataProvider FFI and async data loading test in JavaScript (#1104)",
+          "timestamp": "2021-09-30T19:55:00-05:00",
+          "tree_id": "6973996a72974b6eb04db1c3a219a6783962c106",
+          "url": "https://github.com/unicode-org/icu4x/commit/530279a1c48f8d3f7d18a9cdf4441ff862d00b13"
+        },
+        "date": 1633050145137,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1298,
+            "range": "± 231",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7438,
+            "range": "± 449",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23733,
+            "range": "± 1614",
             "unit": "ns/iter"
           }
         ]
