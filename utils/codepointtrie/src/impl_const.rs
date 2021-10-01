@@ -10,10 +10,10 @@ pub const FAST_TYPE_DATA_BLOCK_LENGTH: u32 = 1 << FAST_TYPE_SHIFT;
 /// Mask for getting the lower bits for the in-fast-data-block offset.
 pub const FAST_TYPE_DATA_MASK: u32 = FAST_TYPE_DATA_BLOCK_LENGTH - 1;
 
-// Fast indexing limit for "fast"-type trie
+/// Fast indexing limit for "fast"-type trie
 pub const FAST_TYPE_FAST_INDEXING_MAX: u32 = 0xffff;
 
-// Fast indexing limit for "small"-type trie
+/// Fast indexing limit for "small"-type trie
 pub const SMALL_TYPE_FAST_INDEXING_MAX: u32 = 0xfff;
 
 /// Offset from dataLength (to be subtracted) for fetching the
