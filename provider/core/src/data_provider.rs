@@ -485,10 +485,7 @@ where
     ///
     /// Map from `HelloWorldV1` to a `Cow<str>` containing just the message:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.56.***
-    ///
-    /// ```ignore
+    /// ```
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
@@ -637,10 +634,7 @@ where
     ///
     /// Prior to Rust 1.57, pass the capture by value instead of by reference:
     ///
-    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-    /// requires Rust 1.56.***
-    ///
-    /// ```ignore
+    /// ```
     /// // Same imports and definitions as above
     /// # use icu_provider::hello_world::*;
     /// # use icu_provider::prelude::*;
@@ -757,6 +751,176 @@ where
                 inner: RcBuf(yoke.project_cloned_with_capture(capture, f)),
             },
         }
+    }
+
+    /// Version of [`DataPayload::map_project()`] that moves `self`, takes a `capture`
+    /// parameter to pass additional data to `f`, and bubbles up an error from `f`.
+    ///
+    /// # Examples
+    ///
+    /// Same example as above, but bubble up an error:
+    ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.57.***
+    ///
+    /// ```ignore
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.try_map_project_with_capture(
+    ///     "Extra",
+    ///     |mut obj, capture, _| {
+    ///         if obj.message.is_empty() {
+    ///             return Err("Example error");
+    ///         }
+    ///         obj.message.to_mut().push_str(&capture);
+    ///         Ok(obj.message)
+    ///     })?;
+    ///
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// # Ok::<(), &'static str>(())
+    /// ```
+    ///
+    /// Prior to Rust 1.57, pass the capture by value instead of by reference:
+    ///
+    /// ```
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.try_map_project_with_capture(
+    ///     "Extra".to_string(),
+    ///     |mut obj, capture, _| {
+    ///         if obj.message.is_empty() {
+    ///             return Err(())
+    ///         }
+    ///         obj.message.to_mut().push_str(&capture);
+    ///         Ok(obj.message)
+    ///     })?;
+    ///
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// # Ok::<(), ()>(())
+    /// ```
+    #[allow(clippy::type_complexity)]
+    pub fn try_map_project_with_capture<M2, T, E>(
+        self,
+        capture: T,
+        f: for<'a> fn(
+            <M::Yokeable as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
+    ) -> Result<DataPayload<'data, M2>, E>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        Ok(match self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.try_project_with_capture(capture, f)?),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.try_project_with_capture(capture, f)?),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.try_project_with_capture(capture, f)?),
+            },
+        })
+    }
+
+    /// Version of [`DataPayload::map_project()`] that borrows `self`, takes a `capture`
+    /// parameter to pass additional data to `f`, and bubbles up an error from `f`.
+    ///
+    /// # Examples
+    ///
+    /// Same example as above, but bubble up an error:
+    ///
+    /// ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
+    /// requires Rust 1.57.***
+    ///
+    /// ```ignore
+    /// // Same imports and definitions as above
+    /// # use icu_provider::hello_world::*;
+    /// # use icu_provider::prelude::*;
+    /// # use std::borrow::Cow;
+    /// # struct HelloWorldV1MessageMarker;
+    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// #     type Yokeable = Cow<'static, str>;
+    /// #     type Cart = HelloWorldV1<'data>;
+    /// # }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.try_map_project_cloned_with_capture(
+    ///     "Extra",
+    ///     |obj, capture, _| {
+    ///         if obj.message.is_empty() {
+    ///             return Err("Example error");
+    ///         }
+    ///         let mut message = obj.message.clone();
+    ///         message.to_mut().push_str(capture);
+    ///         Ok(message)
+    ///     })?;
+    ///
+    /// // Note: p1 is still valid, but the values no longer equal.
+    /// assert_ne!(p1.get().message, *p2.get());
+    /// assert_eq!("Hello WorldExtra", p2.get());
+    /// # Ok::<(), &'static str>(())
+    /// ```
+    #[allow(clippy::type_complexity)]
+    pub fn try_map_project_cloned_with_capture<'this, M2, T, E>(
+        &'this self,
+        capture: T,
+        f: for<'a> fn(
+            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
+    ) -> Result<DataPayload<'data, M2>, E>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        Ok(match &self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.try_project_cloned_with_capture(capture, f)?),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.try_project_cloned_with_capture(capture, f)?),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.try_project_cloned_with_capture(capture, f)?),
+            },
+        })
     }
 }
 
