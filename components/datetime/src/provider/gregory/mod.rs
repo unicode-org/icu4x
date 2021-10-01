@@ -9,7 +9,7 @@ pub mod symbols;
 use crate::pattern;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
-pub use symbols::{DateSymbolsV1, DateSymbolsV1Marker};
+pub use symbols::*;
 
 #[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
