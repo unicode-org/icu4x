@@ -29,39 +29,23 @@
 //! Code that does not compile ([playground](https://play.rust-lang.org/?version=beta&mode=debug&edition=2018&gist=ebbda5b15a398d648bdff9e439b27dc0)):
 //!
 //! ```compile_fail
-//! trait MiniYokeable<'a> {
-//!     type Output;
-//! }
-//!
-//! struct MiniYoke<Y: for<'a> MiniYokeable<'a>> {
-//!     pub yokeable: Y,
-//! }
-//!
-//! impl<Y> Clone for MiniYoke<Y>
-//! where
-//!     Y: for<'a> MiniYokeable<'a>,
-//!     for<'a> <Y as MiniYokeable<'a>>::Output: Clone
-//! {
-//!     fn clone(&self) -> Self {
-//!         unimplemented!()
-//!     }
-//! }
+//! use yoke::*;
 //!
 //! trait MiniDataMarker {
-//!     type Yokeable: for<'a> MiniYokeable<'a>;
+//!     type Yokeable: for<'a> Yokeable<'a>;
 //! }
 //!
 //! struct MiniDataPayload<M>
 //! where
 //!     M: MiniDataMarker
 //! {
-//!     pub yoke: MiniYoke<M::Yokeable>,
+//!     pub yoke: Yoke<M::Yokeable, ()>,
 //! }
 //!
 //! impl<M> Clone for MiniDataPayload<M>
 //! where
 //!     M: MiniDataMarker,
-//!     for<'a> <M::Yokeable as MiniYokeable<'a>>::Output: Clone,
+//!     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 //! {
 //!     fn clone(&self) -> Self {
 //!         unimplemented!()
@@ -85,7 +69,7 @@
 //! impl<M> MiniDataProvider<M> for MiniStructProvider<M>
 //! where
 //!     M: MiniDataMarker,
-//!     for<'a> <M::Yokeable as MiniYokeable<'a>>::Output: Clone,
+//!     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 //! {
 //!     fn mini_load_payload(&self) -> MiniDataPayload<M> {
 //!         self.payload.clone()
@@ -95,8 +79,28 @@
 //! #[derive(Clone)]
 //! struct SimpleStruct(pub u32);
 //!
-//! impl<'a> MiniYokeable<'a> for SimpleStruct {
-//!     type Output = SimpleStruct;
+//! unsafe impl<'a> Yokeable<'a> for SimpleStruct {
+//!     // (not shown; see `Yokeable` for examples)
+//! #    type Output = SimpleStruct;
+//! #    fn transform(&'a self) -> &'a Self::Output {
+//! #        self
+//! #    }
+//! #    fn transform_owned(self) -> Self::Output {
+//! #        self
+//! #    }
+//! #    unsafe fn make(from: Self::Output) -> Self {
+//! #        std::mem::transmute(from)
+//! #    }
+//! #    fn transform_mut<F>(&'a mut self, f: F)
+//! #    where
+//! #        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+//! #    {
+//! #        unsafe {
+//! #            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
+//! #                self,
+//! #            ))
+//! #        }
+//! #    }
 //! }
 //!
 //! impl MiniDataMarker for SimpleStruct {
@@ -106,9 +110,7 @@
 //! fn main() {
 //!     let provider = MiniStructProvider {
 //!         payload: MiniDataPayload {
-//!             yoke: MiniYoke {
-//!                 yokeable: SimpleStruct(42)
-//!             }
+//!             yoke: Yoke::new_always_owned(SimpleStruct(42))
 //!         }
 //!     };
 //!
@@ -119,7 +121,7 @@
 //!     // Working:
 //!     let payload = MiniDataProvider::<SimpleStruct>::mini_load_payload(&provider);
 //!
-//!     assert_eq!(payload.yoke.yokeable.0, 42);
+//!     assert_eq!(payload.yoke.get().0, 42);
 //! }
 //! ```
 //!
