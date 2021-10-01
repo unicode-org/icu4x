@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633045617894,
+  "lastUpdate": 1633050070168,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11819,6 +11819,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31950654,
             "range": "± 1509873",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "530279a1c48f8d3f7d18a9cdf4441ff862d00b13",
+          "message": "Add BlobDataProvider FFI and async data loading test in JavaScript (#1104)",
+          "timestamp": "2021-09-30T19:55:00-05:00",
+          "tree_id": "6973996a72974b6eb04db1c3a219a6783962c106",
+          "url": "https://github.com/unicode-org/icu4x/commit/530279a1c48f8d3f7d18a9cdf4441ff862d00b13"
+        },
+        "date": 1633050066726,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 43957078,
+            "range": "± 73589",
             "unit": "ns/iter"
           }
         ]
