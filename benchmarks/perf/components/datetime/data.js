@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633127973923,
+  "lastUpdate": 1633139929593,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8999,6 +8999,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 609666,
             "range": "± 26012",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d169c30a21eb8a784801ee88a90a741f8da86902",
+          "message": "Make datagen only need one -v option (#1141)",
+          "timestamp": "2021-10-01T18:51:49-07:00",
+          "tree_id": "912ce99f90576952386f5034a5137d53dc9b14d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/d169c30a21eb8a784801ee88a90a741f8da86902"
+        },
+        "date": 1633139925612,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 317624,
+            "range": "± 1395",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1635006,
+            "range": "± 10621",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 622548,
+            "range": "± 2575",
             "unit": "ns/iter"
           }
         ]
