@@ -163,6 +163,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     ///
     /// ## Safety
     /// Adding `amount` to each index after `starting_index` must not result in the slice from becoming malformed.
+    /// The length of the slice must be correctly set.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
         let indices =
