@@ -35,8 +35,7 @@ fn main() -> anyhow::Result<()> {
             Arg::with_name("VERBOSE")
                 .short("v")
                 .long("verbose")
-                .multiple(true)
-                .help("Sets the level of verbosity (-v or -vv)"),
+                .help("Requests verbose output"),
         )
         .arg(
             Arg::with_name("DRY_RUN")
@@ -206,21 +205,17 @@ fn main() -> anyhow::Result<()> {
         )
         .get_matches();
 
-    match matches.occurrences_of("VERBOSE") {
-        0 => SimpleLogger::new()
+    if matches.is_present("VERBOSE") {
+        SimpleLogger::new()
+            .with_level(log::LevelFilter::Trace)
+            .init()
+            .unwrap()
+    } else {
+        SimpleLogger::new()
             .env()
             .with_level(log::LevelFilter::Info)
             .init()
-            .unwrap(),
-        1 => SimpleLogger::new()
-            .with_level(log::LevelFilter::Info)
-            .init()
-            .unwrap(),
-        2 => SimpleLogger::new()
-            .with_level(log::LevelFilter::Trace)
-            .init()
-            .unwrap(),
-        _ => anyhow::bail!("Only -v and -vv are supported"),
+            .unwrap()
     }
 
     if matches.is_present("KEY_FILE") {
