@@ -143,7 +143,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// Return the slice representing the given `index`.
     ///
     /// ## Safety
-    /// The index must be valid.
+    /// The index must be valid, and self.entire_slice() must be well-formed
     unsafe fn index_data(&self, index: usize) -> &PlainOldULE<4> {
         &PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
             [0]
@@ -152,11 +152,18 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// Return the mutable slice representing the given `index`.
     ///
     /// ## Safety
-    /// The index must be valid.
+    /// The index must be valid. self.entire_slice() must have allocated space
+    /// for this index, but need not have its length appropriately set.
     unsafe fn index_data_mut(&mut self, index: usize) -> &mut PlainOldULE<4> {
-        &mut PlainOldULE::<4>::from_byte_slice_unchecked_mut(
-            &mut self.entire_slice[Self::index_range(index)],
-        )[0]
+        let ptr = self.entire_slice.as_mut_ptr();
+        let range = Self::index_range(index);
+
+        // Doing this instead of just `get_unchecked_mut()` because it's unclear
+        // if `get_unchecked_mut()` can be called out of bounds on a slice even
+        // if we know the buffer is larger.
+        let data = slice::from_raw_parts_mut(ptr.add(range.start), 4);
+
+        &mut PlainOldULE::<4>::from_byte_slice_unchecked_mut(data)[0]
     }
 
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
@@ -508,6 +515,23 @@ mod test {
 
         items.insert(2, "".into());
         zerovec.insert(2, &"".into());
+        assert_eq!(zerovec, &*items);
+    }
+
+    #[test]
+    fn test_small_insert_integrity() {
+        // Tests that insert() works even when there
+        // is not enough space for the new index in entire_slice.len()
+        let mut items: Vec<String> = Vec::new();
+        let mut zerovec = VarZeroVecOwned::new();
+
+        // Insert into an empty vec.
+        items.insert(0, "abc".into());
+        zerovec.insert(0, &"abc".into());
+        assert_eq!(zerovec, &*items);
+
+        zerovec.insert(1, &"def".into());
+        items.insert(1, "def".into());
         assert_eq!(zerovec, &*items);
     }
 
