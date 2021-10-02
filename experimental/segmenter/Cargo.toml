@@ -35,7 +35,8 @@ lazy_static = "1.0"
 criterion = "0.3"
 icu_locid = { version = "0.3", path = "../../components/locid" }
 icu_locid_macros = { version = "0.3", path = "../../components/locid/macros" }
-icu_provider_fs = { version = "0.3", path = "../../provider/fs", features = ["export", "provider_json"] }
+icu_provider_fs = { version = "0.3", path = "../../provider/fs", features = ["provider_json"] }
+serde-json-core = { version = "0.4", features = ["std"] }
 
 [lib]
 path = "src/lib.rs"

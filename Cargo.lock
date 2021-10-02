@@ -1312,6 +1312,7 @@ dependencies = [
  "icu_segmenter_lstm",
  "lazy_static",
  "serde",
+ "serde-json-core",
  "serde_json",
  "unicode-width",
 ]
