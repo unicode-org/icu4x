@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633127903231,
+  "lastUpdate": 1633139918911,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13781,6 +13781,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4233,
             "range": "± 27",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d169c30a21eb8a784801ee88a90a741f8da86902",
+          "message": "Make datagen only need one -v option (#1141)",
+          "timestamp": "2021-10-01T18:51:49-07:00",
+          "tree_id": "912ce99f90576952386f5034a5137d53dc9b14d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/d169c30a21eb8a784801ee88a90a741f8da86902"
+        },
+        "date": 1633139914634,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2784,
+            "range": "± 114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4908,
+            "range": "± 358",
             "unit": "ns/iter"
           }
         ]
