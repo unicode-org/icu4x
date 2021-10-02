@@ -7,7 +7,7 @@ use alloc::vec::Vec;
 use super::*;
 use core::fmt;
 use core::marker::PhantomData;
-use core::mem;
+use core::ops::Range;
 use core::ptr;
 use core::slice;
 
@@ -16,6 +16,14 @@ pub struct VarZeroVecOwned<T> {
     marker: PhantomData<[T]>,
     // safety invariant: must parse into a valid SliceComponents
     entire_slice: Vec<u8>,
+}
+
+// The effect of a shift on the indices in the varzerovec.
+#[derive(PartialEq)]
+enum ShiftType {
+    Insert,
+    Replace,
+    Remove,
 }
 
 impl<T: AsVarULE> VarZeroVecOwned<T> {
@@ -90,6 +98,88 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         self.get_components().get(idx)
     }
 
+    /// Get the position of a specific element in the data segment.
+    ///
+    /// If `idx == self.len()`, it will return the size of the data segment (where a new element would go).
+    ///
+    /// ## Safety
+    /// `idx <= self.len()` and `self.entire_slice()` is well-formed.
+    unsafe fn element_position_unchecked(&self, idx: usize) -> usize {
+        let len = self.len();
+        let out = if idx == len {
+            self.entire_slice.len() - 4 - (4 * len)
+        } else {
+            u32::from_unaligned(self.index_data(idx)) as usize
+        };
+        debug_assert!(out + 4 + len * 4 <= self.entire_slice.len());
+        out
+    }
+
+    /// Get the range of a specific element in the data segment.
+    ///
+    /// ## Safety
+    /// `idx < self.len()` and `self.entire_slice()` is well-formed.
+    unsafe fn element_range_unchecked(&self, idx: usize) -> core::ops::Range<usize> {
+        let start = self.element_position_unchecked(idx);
+        let end = self.element_position_unchecked(idx + 1);
+        debug_assert!(start <= end, "{} > {}", start, end);
+        start..end
+    }
+
+    /// Set the number of elements in the list without any checks.
+    ///
+    /// ## Safety
+    /// No safe functions may be called until `self.entire_slice()` is well-formed.
+    unsafe fn set_len(&mut self, len: u32) {
+        PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[..4])[0] =
+            len.into();
+    }
+
+    fn index_range(index: usize) -> Range<usize> {
+        let pos = 4 + 4 * index;
+        pos..pos + 4
+    }
+
+    /// Return the slice representing the given `index`.
+    ///
+    /// ## Safety
+    /// The index must be valid, and self.entire_slice() must be well-formed
+    unsafe fn index_data(&self, index: usize) -> &PlainOldULE<4> {
+        &PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
+            [0]
+    }
+
+    /// Return the mutable slice representing the given `index`.
+    ///
+    /// ## Safety
+    /// The index must be valid. self.entire_slice() must have allocated space
+    /// for this index, but need not have its length appropriately set.
+    unsafe fn index_data_mut(&mut self, index: usize) -> &mut PlainOldULE<4> {
+        let ptr = self.entire_slice.as_mut_ptr();
+        let range = Self::index_range(index);
+
+        // Doing this instead of just `get_unchecked_mut()` because it's unclear
+        // if `get_unchecked_mut()` can be called out of bounds on a slice even
+        // if we know the buffer is larger.
+        let data = slice::from_raw_parts_mut(ptr.add(range.start), 4);
+
+        &mut PlainOldULE::<4>::from_byte_slice_unchecked_mut(data)[0]
+    }
+
+    /// Shift the indices starting with and after `starting_index` by the provided `amount`.
+    ///
+    /// ## Safety
+    /// Adding `amount` to each index after `starting_index` must not result in the slice from becoming malformed.
+    /// The length of the slice must be correctly set.
+    unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
+        let len = self.len();
+        let indices =
+            PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[4..4 + 4 * len]);
+        for idx in &mut indices[starting_index..] {
+            *idx = (u32::from_unaligned(idx).wrapping_add(amount as u32)).into();
+        }
+    }
+
     /// Get this [`VarZeroVecOwned`] as a borrowed [`VarZeroVec`]
     ///
     /// If you wish to repeatedly call methods on this [`VarZeroVecOwned`],
@@ -115,6 +205,175 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         &self.entire_slice
     }
 
+    /// Invalidate and resize the data at an index, optionally inserting or removing the index.
+    /// Also updates affected indices and the length.
+    /// Returns a slice to the new element data - it doesn't contain uninitialized data but its value is indeterminate.
+    ///
+    /// ## Safety
+    /// - `index` must be a valid index, or, if `shift_type == ShiftType::Insert`, `index == self.len()` is allowed.
+    /// - `new_size` musn't result in the data segment growing larger than `u32::MAX`.
+    unsafe fn shift(&mut self, index: usize, new_size: u32, shift_type: ShiftType) -> &mut [u8] {
+        // The format of the encoded data is:
+        //  - four bytes of "len"
+        //  - len*4 bytes for an array of indices
+        //  - the actual data to which the indices point
+        //
+        // When inserting or removing an element, the size of the indices segment must be changed,
+        // so the data before the target element must be shifted by 4 bytes in addition to the
+        // shifting needed for the new element size.
+        let len = self.len();
+        let slice_len = self.entire_slice.len();
+
+        let prev_element = match shift_type {
+            ShiftType::Insert => {
+                let pos = self.element_position_unchecked(index);
+                // In the case of an insert, there's no previous element,
+                // so it's an empty range at the new position.
+                pos..pos
+            }
+            _ => self.element_range_unchecked(index),
+        };
+
+        // How much shifting must be done in bytes due to removal/insertion of an index.
+        let index_shift: i64 = match shift_type {
+            ShiftType::Insert => 4,
+            ShiftType::Replace => 0,
+            ShiftType::Remove => -4,
+        };
+        // The total shift in byte size of the owned slice.
+        let shift: i64 =
+            new_size as i64 - (prev_element.end - prev_element.start) as i64 + index_shift;
+        let new_slice_len = slice_len.wrapping_add(shift as usize);
+        if shift > 0 {
+            if new_slice_len > u32::MAX as usize {
+                panic!(
+                    "Attempted to grow VarZeroVec to an encoded size that does not fit within a u32"
+                );
+            }
+            self.entire_slice.reserve(shift as usize);
+        }
+
+        // Now that we've ensured there's enough space, we can shift the data around.
+        {
+            // Note: There are no references introduced between pointer creation and pointer use, and all
+            //       raw pointers are derived from a single &mut. This preserves pointer provenance.
+            let slice_range = self.entire_slice.as_mut_ptr_range();
+            let data_start = slice_range.start.add(4 + len * 4);
+            let prev_element_p =
+                data_start.add(prev_element.start)..data_start.add(prev_element.end);
+
+            // The memory range of the affected index.
+            // When inserting: where the new index goes.
+            // When removing:  where the index being removed is.
+            // When replacing: unused.
+            let index_range = {
+                let index_start = slice_range.start.add(4 + 4 * index);
+                index_start..index_start.add(4)
+            };
+
+            unsafe fn shift_bytes(block: Range<*const u8>, to: *mut u8) {
+                debug_assert!(block.end >= block.start);
+                ptr::copy(block.start, to, block.end.offset_from(block.start) as usize);
+            }
+
+            if shift_type == ShiftType::Remove {
+                // Move the data before the element back by 4 to remove the index.
+                shift_bytes(index_range.end..prev_element_p.start, index_range.start);
+            }
+
+            // Shift data after the element to its new position.
+            shift_bytes(
+                prev_element_p.end..slice_range.end,
+                prev_element_p
+                    .start
+                    .offset((new_size as i64 + index_shift) as isize),
+            );
+
+            let first_affected_index = match shift_type {
+                ShiftType::Insert => {
+                    // Move data before the element forward by 4 to make space for a new index.
+                    shift_bytes(index_range.start..prev_element_p.start, index_range.end);
+
+                    *self.index_data_mut(index) = (prev_element.start as u32).into();
+                    self.set_len((len + 1) as u32);
+                    index + 1
+                }
+                ShiftType::Remove => {
+                    self.set_len((len - 1) as u32);
+                    index
+                }
+                ShiftType::Replace => index + 1,
+            };
+            // No raw pointer use should occur after this point (because of self.index_data and self.set_len).
+
+            // Set the new slice length. This must be done after shifting data around to avoid uninitialized data.
+            self.entire_slice.set_len(new_slice_len);
+
+            // Shift the affected indices.
+            self.shift_indices(first_affected_index, (shift - index_shift) as i32);
+        };
+
+        debug_assert!(self.verify_integrity());
+
+        // Return a mut slice to the new element data.
+        let element_pos = 4 + self.len() * 4 + self.element_position_unchecked(index);
+        &mut self.entire_slice[element_pos..element_pos + new_size as usize]
+    }
+
+    /// Checks the internal invariants of the vec to ensure safe code will not cause UB.
+    /// Returns whether integrity was verified.
+    ///
+    /// Note: an index is valid if it doesn't point to data past the end of the slice and is
+    /// less than or equal to all future indices. The length of the index segment is not part of each index.
+    fn verify_integrity(&self) -> bool {
+        if self.is_empty() && !self.entire_slice.is_empty() {
+            return false;
+        }
+        let slice_len = self.entire_slice.len();
+        match slice_len {
+            0 => return true,
+            1..=3 => return false,
+            _ => (),
+        }
+        let len = unsafe {
+            u32::from_unaligned(
+                &PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
+            )
+        };
+        if len == 0 {
+            // An empty vec must have an empty slice: there is only a single valid byte representation.
+            return false;
+        }
+        if slice_len <= 4 + len as usize * 4 {
+            // Not enough room for the indices.
+            return false;
+        }
+        let data_len = self.entire_slice.len() - 4 - len as usize * 4;
+        if data_len > u32::MAX as usize {
+            // The data segment is too long.
+            return false;
+        }
+        let data_len = data_len as u32;
+
+        // Test index validity.
+        let indices = unsafe {
+            PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[4..4 + len as usize * 4])
+        };
+        for idx in indices {
+            if u32::from_unaligned(idx) > data_len {
+                // Indices must not point past the data segment.
+                return false;
+            }
+        }
+        for window in indices.windows(2) {
+            if u32::from_unaligned(&window[0]) > u32::from_unaligned(&window[1]) {
+                // Indices must be in non-decreasing order.
+                return false;
+            }
+        }
+        true
+    }
+
     /// Insert an element at index `idx`
     pub fn insert(&mut self, index: usize, element: &T) {
         let len = self.len();
@@ -136,138 +395,47 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
             return;
         }
 
-        // The format of the encoded data is:
-        //  - four bytes of "len"
-        //  - len*4 bytes for an array of indices
-        //  - the actual data to which the indices point
-        //
-        // When inserting an element, space must be made in the `data`
-        // segment for the element, and space must be made in the `indices` segment
-        // for the new index. Note that making space in the indices segment
-        // means that the data segment needs to be shifted by 4 bytes, on top
-        // of any reshuffling that needs to be done to make space
-        //
-        // We do this in the following steps:
-        // 1. Shift the data around
-        //   1a. We move any data *after* the inserted element by the length of the element + 4
-        //       to make space for the element and one extra index
-        //   1b. We insert the element at four bytes after the spot where the data we just moved
-        //       started, again making space for that extra index
-        //   1c. We move the data from *before* the inserted element by 4 bytes to make space for the
-        //       extra index
-        // 2. Update the indices: Shift indices after the inserted element by one slot, incrementing them
-        //       by the length of the inserted element
-        // 3. Update the length
+        let value = element.as_unaligned().as_byte_slice();
+        assert!(value.len() < u32::MAX as usize);
+        unsafe {
+            self.shift(index, value.len() as u32, ShiftType::Insert)
+                .copy_from_slice(value)
+        }
+    }
 
-        let element = element.as_unaligned();
-        let element_slice = element.as_byte_slice();
-        // the amount the vector is growing by
-        let shift = 4 + element_slice.len();
-        self.entire_slice.reserve(shift);
-        if self.entire_slice.len() + shift > u32::MAX as usize {
-            // (on 32 bit platforms the `.reserve()` itself will panic)
+    pub fn remove(&mut self, index: usize) {
+        let len = self.len();
+        if index >= len {
             panic!(
-                "Attempted to grow VarZeroVec to an encoded size that does not fit within a u32"
+                "Called out-of-bounds remove() on VarZeroVec, index {} len {}",
+                index, len
             );
         }
+        if len == 1 {
+            // This is removing the last element. Set the slice to empty to ensure all empty vecs have empty data slices.
+            self.entire_slice.clear();
+            return;
+        }
         unsafe {
-            // Step 1: Shift the data around
-            {
-                let (indices, data) = self.entire_slice.split_at_mut(4 + 4 * len);
-
-                let (_len, indices) = indices.split_at_mut(4);
-                // safety: the indices at [4...4 + len * 4] form a slice of PlainOldULE<4>
-                let indices = PlainOldULE::<4>::from_byte_slice_unchecked(indices);
-
-                // Step 1a: Move the data after the inserted element by the length of
-                // the element + 4 to make space for the element and one extra index
-
-                // calculate the data insertion point as an index into `data`
-                let insertion_point = if index != len {
-                    // Assuming we're not pushing onto the end, we need to shift the tail-end elements
-                    // by `shift` to make room for one extra index and `element_slice` data
-                    let shift_start = u32::from_unaligned(&indices[index]) as usize;
-                    let shift_start_p = data.as_mut_ptr().add(shift_start);
-                    // shift elements from shift_start_p to the end of the slice by `shift` elements
-                    ptr::copy(
-                        shift_start_p,
-                        shift_start_p.add(shift),
-                        data.len() - shift_start,
-                    );
-                    shift_start + 4
-                } else {
-                    // If we're inserting to the end of the vector, we just need to insert at
-                    // the length + 4 (space for one index)
-                    data.len() + 4
-                };
-
-                let data_p = data.as_mut_ptr();
-
-                // Step 1b: insert the new element
-                ptr::copy(
-                    element_slice.as_ptr(),
-                    data_p.add(insertion_point),
-                    element_slice.len(),
-                );
-
-                // Step 1c: shift the remaining elements to make room for the new index
-                if insertion_point != 0 {
-                    ptr::copy(data_p, data_p.offset(4), insertion_point - 4);
-                }
-            }
-            self.entire_slice.set_len(self.entire_slice.len() + shift);
-            // Step 2: Shift indices after the inserted element by one slot, incrementing them
-            // by the length of the inserted element
-            {
-                let len = len + 1;
-                let (indices, data) = self.entire_slice.split_at_mut(4 + 4 * len);
-                let (len_ule, indices) = indices.split_at_mut(4);
-                // safety: the indices at [4...4 + len * 4] form a slice of PlainOldULE<4>
-                let indices = PlainOldULE::<4>::from_byte_slice_unchecked_mut(indices);
-                // safety: the starting index is a single PlainOldULE<4>
-                let len_ule = PlainOldULE::<4>::from_byte_slice_unchecked_mut(len_ule);
-
-                let element_len = element_slice.len() as u32;
-                if index + 1 == len {
-                    // appending to the end is weird, because there's no end-index for us to copy;
-                    // the end-index is simply the old length
-                    indices[index] = (data.len() as u32 - element_len).into();
-                } else {
-                    let mut next = u32::from_unaligned(&indices[index]);
-                    for idx in &mut indices[index + 1..] {
-                        let incremented: u32 = next + element_len;
-                        next = u32::from_unaligned(idx);
-                        *idx = incremented.into();
-                    }
-                }
-
-                // Step 3: update the length
-                debug_assert!(u32::from_unaligned(&len_ule[0]) + 1 == len as u32);
-                len_ule[0] = (len as u32).into()
-            }
+            self.shift(index, 0, ShiftType::Remove);
         }
     }
 
-    pub fn remove(&mut self, index: usize) -> T
-    where
-        T: Clone,
-    {
-        // TODO (#1080) make these faster
-        let mut vec = self.to_vec();
-        let ret = vec.remove(index);
-        *self = Self::from_elements(&vec);
-        ret
-    }
+    pub fn replace(&mut self, index: usize, value: T) {
+        let len = self.len();
+        if index >= len {
+            panic!(
+                "Called out-of-bounds replace() on VarZeroVec, index {} len {}",
+                index, len
+            );
+        }
 
-    pub fn replace(&mut self, index: usize, value: T) -> T
-    where
-        T: Clone,
-    {
-        // TODO (#1080) make these faster
-        let mut vec = self.to_vec();
-        let ret = mem::replace(&mut vec[index], value);
-        *self = Self::from_elements(&vec);
-        ret
+        let value = value.as_unaligned().as_byte_slice();
+        assert!(value.len() < u32::MAX as usize);
+        unsafe {
+            self.shift(index, value.len() as u32, ShiftType::Replace)
+                .copy_from_slice(value);
+        }
     }
 }
 
@@ -324,23 +492,19 @@ mod test {
     use super::VarZeroVecOwned;
     #[test]
     fn test_insert_integrity() {
-        let mut items: Vec<String> = vec![
-            "foo".into(),
-            "bar".into(),
-            "baz".into(),
-            "abcdefghijklmn".into(),
-            "five".into(),
-        ];
-        let mut zerovec = VarZeroVecOwned::from_elements(&items);
-        zerovec.insert(1, &"foo3".into());
-        items.insert(1, "foo3".into());
-        assert_eq!(zerovec, &*items);
+        let mut items: Vec<String> = Vec::new();
+        let mut zerovec = VarZeroVecOwned::new();
 
+        // Insert into an empty vec.
         items.insert(0, "1234567890".into());
         zerovec.insert(0, &"1234567890".into());
         assert_eq!(zerovec, &*items);
 
-        // make sure inserting at the end works
+        zerovec.insert(1, &"foo3".into());
+        items.insert(1, "foo3".into());
+        assert_eq!(zerovec, &*items);
+
+        // Insert at the end.
         items.insert(items.len(), "qwertyuiop".into());
         zerovec.insert(zerovec.len(), &"qwertyuiop".into());
         assert_eq!(zerovec, &*items);
@@ -348,5 +512,111 @@ mod test {
         items.insert(0, "asdfghjkl;".into());
         zerovec.insert(0, &"asdfghjkl;".into());
         assert_eq!(zerovec, &*items);
+
+        items.insert(2, "".into());
+        zerovec.insert(2, &"".into());
+        assert_eq!(zerovec, &*items);
+    }
+
+    #[test]
+    fn test_small_insert_integrity() {
+        // Tests that insert() works even when there
+        // is not enough space for the new index in entire_slice.len()
+        let mut items: Vec<String> = Vec::new();
+        let mut zerovec = VarZeroVecOwned::new();
+
+        // Insert into an empty vec.
+        items.insert(0, "abc".into());
+        zerovec.insert(0, &"abc".into());
+        assert_eq!(zerovec, &*items);
+
+        zerovec.insert(1, &"def".into());
+        items.insert(1, "def".into());
+        assert_eq!(zerovec, &*items);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_insert_past_end() {
+        VarZeroVecOwned::<String>::new().insert(1, &"".into());
+    }
+
+    #[test]
+    fn test_remove_integrity() {
+        let mut items: Vec<String> = vec![
+            "apples".into(),
+            "bananas".into(),
+            "eeples".into(),
+            "".into(),
+            "baneenees".into(),
+            "five".into(),
+            "".into(),
+        ];
+        let mut zerovec = VarZeroVecOwned::from_elements(&items);
+
+        for index in [0, 2, 4, 0, 1, 1, 0] {
+            items.remove(index);
+            zerovec.remove(index);
+            assert_eq!(zerovec, &*items, "index {}, len {}", index, items.len());
+        }
+    }
+
+    #[test]
+    fn test_removing_last_element_clears() {
+        let mut zerovec = VarZeroVecOwned::from_elements(&["buy some apples".to_string()]);
+        assert!(!zerovec.get_components().entire_slice().is_empty());
+        zerovec.remove(0);
+        assert!(zerovec.get_components().entire_slice().is_empty());
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_remove_past_end() {
+        VarZeroVecOwned::<String>::new().remove(0);
+    }
+
+    #[test]
+    fn test_replace_integrity() {
+        let mut items: Vec<String> = vec![
+            "apples".into(),
+            "bananas".into(),
+            "eeples".into(),
+            "".into(),
+            "baneenees".into(),
+            "five".into(),
+            "".into(),
+        ];
+        let mut zerovec = VarZeroVecOwned::from_elements(&items);
+
+        // Replace with an element of the same size (and the first element)
+        items[0] = "blablah".into();
+        zerovec.replace(0, "blablah".into());
+        assert_eq!(zerovec, &*items);
+
+        // Replace with a smaller element
+        items[1] = "twily".into();
+        zerovec.replace(1, "twily".into());
+        assert_eq!(zerovec, &*items);
+
+        // Replace an empty element
+        items[3] = "aoeuidhtns".into();
+        zerovec.replace(3, "aoeuidhtns".into());
+        assert_eq!(zerovec, &*items);
+
+        // Replace the last element
+        items[6] = "0123456789".into();
+        zerovec.replace(6, "0123456789".into());
+        assert_eq!(zerovec, &*items);
+
+        // Replace with an empty element
+        items[2] = "".into();
+        zerovec.replace(2, "".into());
+        assert_eq!(zerovec, &*items);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_replace_past_end() {
+        VarZeroVecOwned::<String>::new().replace(0, "".into());
     }
 }
