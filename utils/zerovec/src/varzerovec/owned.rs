@@ -326,7 +326,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// Note: an index is valid if it doesn't point to data past the end of the slice and is
     /// less than or equal to all future indices. The length of the index segment is not part of each index.
     fn verify_integrity(&self) -> bool {
-        if self.len() == 0 && !self.entire_slice.is_empty() {
+        if self.is_empty() && !self.entire_slice.is_empty() {
             return false;
         }
         let slice_len = self.entire_slice.len();
