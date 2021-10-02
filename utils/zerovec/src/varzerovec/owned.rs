@@ -103,7 +103,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// If `idx == self.len()`, it will return the size of the data segment (where a new element would go).
     ///
     /// ## Safety
-    /// `idx <= self.len()` and the index is valid
+    /// `idx <= self.len()` and `self.entire_slice()` is well-formed.
     unsafe fn element_position_unchecked(&self, idx: usize) -> usize {
         let len = self.len();
         let out = if idx == len {
@@ -118,7 +118,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// Get the range of a specific element in the data segment.
     ///
     /// ## Safety
-    /// `idx < self.len()` and the index is valid
+    /// `idx < self.len()` and `self.entire_slice()` is well-formed.
     unsafe fn element_range_unchecked(&self, idx: usize) -> core::ops::Range<usize> {
         let start = self.element_position_unchecked(idx);
         let end = self.element_position_unchecked(idx + 1);
@@ -129,7 +129,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// Set the number of elements in the list without any checks.
     ///
     /// ## Safety
-    /// No safe functions may be called until all indices are valid.
+    /// No safe functions may be called until `self.entire_slice()` is well-formed.
     unsafe fn set_len(&mut self, len: u32) {
         PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[..4])[0] =
             len.into();
@@ -162,7 +162,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
     ///
     /// ## Safety
-    /// Adding amount to each index must not result in them becoming invalid.
+    /// Adding `amount` to each index after `starting_index` must not result in the slice from becoming malformed.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
         let indices =
