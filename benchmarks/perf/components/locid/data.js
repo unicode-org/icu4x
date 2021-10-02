@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633139918911,
+  "lastUpdate": 1633161263974,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13817,6 +13817,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4908,
             "range": "± 358",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kupiakos@gmail.com",
+            "name": "Alyssa Haroldsen",
+            "username": "kupiakos"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e6245c2001931f22c60fd889f9523e6830597d1e",
+          "message": "Implement and consolidate VarZeroVec mutation operations (#1127)\n\n* Implement and consolidate VarZeroVec mutation operations\r\n\r\nThis consolidates all bit-shifting mutation operations into a single\r\nfunction, since there's significant shared logic.\r\n\r\nFixes #1080.\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2021-10-02T00:48:26-07:00",
+          "tree_id": "3de484e2b5cf81706a5b2e80bed524f52139229d",
+          "url": "https://github.com/unicode-org/icu4x/commit/e6245c2001931f22c60fd889f9523e6830597d1e"
+        },
+        "date": 1633161260764,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2429,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4188,
+            "range": "± 63",
             "unit": "ns/iter"
           }
         ]
