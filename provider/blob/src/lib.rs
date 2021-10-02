@@ -15,7 +15,6 @@
 //!
 //! ```bash
 //! $ cargo run --bin=icu4x-datagen -- \
-//!     -v \
 //!     --format blob \
 //!     --hello-world-key \
 //!     --all-locales \
