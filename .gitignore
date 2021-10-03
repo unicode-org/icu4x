@@ -26,3 +26,5 @@ provider/testdata/data/bincode
 
 # Ignore irrelevant files that get generated on macOS
 **/.DS_Store
+
+**/node_modules/
