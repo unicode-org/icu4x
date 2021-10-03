@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633238814741,
+  "lastUpdate": 1633238967537,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1103,6 +1103,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/75b01f9f4939969ab7bb468f452a5c50dfe15fab"
         },
         "date": 1633238811137,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f7f0bc43874d7d0b24f44011498f83ef55c1d0ce",
+          "message": "Add try_map_project_[cloned]_with_capture (#1135)",
+          "timestamp": "2021-10-03T00:28:14-05:00",
+          "tree_id": "21fd95b724da056d4e2cbb3184864e82a70b9815",
+          "url": "https://github.com/unicode-org/icu4x/commit/f7f0bc43874d7d0b24f44011498f83ef55c1d0ce"
+        },
+        "date": 1633238963894,
         "tool": "ndjson",
         "benches": [
           {
