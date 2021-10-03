@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633161297693,
+  "lastUpdate": 1633239376625,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9083,6 +9083,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 523303,
             "range": "± 21051",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "75b01f9f4939969ab7bb468f452a5c50dfe15fab",
+          "message": "Move package.json up one level and add better path resolution (#1143)",
+          "timestamp": "2021-10-03T00:25:39-05:00",
+          "tree_id": "3f80725bdb49a01ffef0e81beec81e8f4ecffc1a",
+          "url": "https://github.com/unicode-org/icu4x/commit/75b01f9f4939969ab7bb468f452a5c50dfe15fab"
+        },
+        "date": 1633239372577,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 301729,
+            "range": "± 14694",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1557816,
+            "range": "± 46587",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 606069,
+            "range": "± 24270",
             "unit": "ns/iter"
           }
         ]
