@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633161249220,
+  "lastUpdate": 1633239330094,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12059,6 +12059,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 41221056,
             "range": "± 73396",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "75b01f9f4939969ab7bb468f452a5c50dfe15fab",
+          "message": "Move package.json up one level and add better path resolution (#1143)",
+          "timestamp": "2021-10-03T00:25:39-05:00",
+          "tree_id": "3f80725bdb49a01ffef0e81beec81e8f4ecffc1a",
+          "url": "https://github.com/unicode-org/icu4x/commit/75b01f9f4939969ab7bb468f452a5c50dfe15fab"
+        },
+        "date": 1633239326649,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32205375,
+            "range": "± 1731182",
             "unit": "ns/iter"
           }
         ]
