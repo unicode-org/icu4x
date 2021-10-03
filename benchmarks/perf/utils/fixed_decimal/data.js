@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633239430547,
+  "lastUpdate": 1633239523919,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11099,6 +11099,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 130870,
             "range": "± 7493",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2d64d81d4661090c0d446b7bd700e65035840a5e",
+          "message": "Update tracking bug for removal of YokeTraitHack (#1134)",
+          "timestamp": "2021-10-03T00:29:22-05:00",
+          "tree_id": "3b946fe94fb1248550596d343b88e32157cc0a96",
+          "url": "https://github.com/unicode-org/icu4x/commit/2d64d81d4661090c0d446b7bd700e65035840a5e"
+        },
+        "date": 1633239519879,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116005,
+            "range": "± 4057",
             "unit": "ns/iter"
           }
         ]
