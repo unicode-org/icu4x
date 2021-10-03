@@ -296,7 +296,7 @@ pub unsafe trait VarULE: 'static {
         Self::validate_byte_slice(bytes)?;
         let result = unsafe { Self::from_byte_slice_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));
-        return Ok(result);
+        Ok(result)
     }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime, assuming
