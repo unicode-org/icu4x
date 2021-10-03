@@ -9,26 +9,15 @@ This design doc helps explain how we think about entities in ICU4X and when to u
 
 ## Decision Tree
 
-If you need to decide whether to use an enum or an identifier for a certain set of entities in ICU4X, consider following this decision tree:
+If you need to decide whether to use an enum or an identifier for a certain set of entities in ICU4X, consider the following questions:
 
-**Question 1:** How many entities are in the set?
+1. Is the set **fixed**?
+2. Is the set **comprehensive**? Is it inclusive of all peoples and cultures? Are there no additional entities that are not currently represented?
+3. Are there **30 or fewer items** in the set?
+4. Are the entities used within the context of a single program, and **not normally interchanged** between different programs?
+5. Are entities in the set usually **compared** with one another, and rarely expressed in a standalone context?
 
-- *More than 20 or Infinite:* Use identifiers.
-- *20 or fewer:* Continue to Question 2.
-
-**Question 2:** How are new entities added to the set?
-
-- *Spontaneously:* Use identifiers.
-- *By an authority, at least once every few years:* Use identifiers.
-- *Set is fixed or grows rarely:* Continue to Question 3.
-
-**Question 3:** Consider the following statements:
-
-1. The set is *comprehensive*. It is inclusive of all peoples and cultures. There are no additional entities that are not currently represented.
-2. The entities are used within the context of a single program, and are *not normally interchanged* between different programs.
-3. Entities in the set are usually *compared* with one another. Entities are rarely expressed in a standalone context.
-
-If all three statements are *true*, then an enum is probably the right choice. If all three statements are *false*, then an identifier is probably the right choice. If there is a mix, you are in a gray area; continue reading this document for additional guidance.
+If you answered *yes* to the above questions, then an enum is probably the right choice. If you answered *no* to the above questions, then an identifier is probably the right choice. If there is a mix of *yes* and *no*, you are in a gray area; continue reading this document for additional guidance.
 
 ## Enumerations
 
