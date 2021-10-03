@@ -82,7 +82,7 @@ If an enum is used for interchange between programs, including over FFI, discrim
 
 It is possible in Rust to mark enums as `#[non_exhaustive]`, which allows additional entries to be added over time.
 
-However, if there is a need to do this, then it means that the set of entities could grow over time. This is a signal that an enum might not be the right choice, which should be weighed with the other pros and cons of enums versus identifiers.
+Often, we do this in ICU4X out of an abundance of caution so that we can change APIs without breaking client code, such as option bag values. However, in other contexts, the need to mark an enum as `#[non_exhaustive]` could indicate that the enum is not fixed, which is a signal that an enum might not be the correct choice. As always, weigh this against the other pros and cons of enums versus identifiers.
 
 ## Identifiers
 
