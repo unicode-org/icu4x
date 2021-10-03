@@ -95,12 +95,12 @@ where
     ///
     /// Implementations of this method may call unsafe functions to cast the pointer to the correct
     /// type, assuming the "Callers" invariant above.
-    /// 
+    ///
     /// Keep in mind that `&[Self]` and `&[u8]` may have different lengths.
     ///
     /// Safety checklist:
     ///
-    /// 1. This method *must* be return the same result as [`Self::parse_byte_slice()`].
+    /// 1. This method *must* return the same result as [`Self::parse_byte_slice()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
@@ -317,7 +317,7 @@ pub unsafe trait VarULE: 'static {
     ///
     /// Safety checklist:
     ///
-    /// 1. This method *must* be return the same result as [`Self::parse_byte_slice()`].
+    /// 1. This method *must* return the same result as [`Self::parse_byte_slice()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self;
 
