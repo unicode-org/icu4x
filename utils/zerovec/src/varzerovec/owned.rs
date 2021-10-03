@@ -618,6 +618,6 @@ mod test {
     #[test]
     #[should_panic]
     fn test_replace_past_end() {
-        VarZeroVecOwned::<str>::new().replace(0, "".into());
+        VarZeroVecOwned::<str>::new().replace(0, "");
     }
 }
