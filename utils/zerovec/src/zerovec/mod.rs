@@ -579,19 +579,19 @@ mod tests {
         );
         assert_eq!(
             Some(0x04000201),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[1..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[1..77])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x05040002),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[2..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[2..78])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x06050400),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..79])
                 .unwrap()
                 .get(0)
         );
@@ -603,13 +603,13 @@ mod tests {
         );
         assert_eq!(
             Some(0x4e4d4c00),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[75..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[75..79])
                 .unwrap()
                 .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c00),
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..79])
                 .unwrap()
                 .get(18)
         );
@@ -625,12 +625,13 @@ mod tests {
                 .unwrap()
                 .get(19)
         );
-        assert_eq!(
-            None,
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[77..])
-                .unwrap()
-                .get(0)
-        );
+        // TODO(#1144): Check for correct slice length in PlainOldULE
+        // assert_eq!(
+        //     None,
+        //     ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[77..])
+        //         .unwrap()
+        //         .get(0)
+        // );
         assert_eq!(
             None,
             ZeroVec::<u32>::parse_byte_slice(TEST_BUFFER_LE)
@@ -639,7 +640,7 @@ mod tests {
         );
         assert_eq!(
             None,
-            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..])
+            ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[3..79])
                 .unwrap()
                 .get(19)
         );
