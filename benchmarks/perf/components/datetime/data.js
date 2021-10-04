@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633311298275,
+  "lastUpdate": 1633320846284,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9251,6 +9251,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 520020,
             "range": "± 37957",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2528fe16843a31c74f91e30d20bffefc64a1d01f",
+          "message": "Check for lengths in ULE and revise safety docs (#1121)",
+          "timestamp": "2021-10-03T21:06:58-07:00",
+          "tree_id": "af79dd21fd558d4af6ea2c1793c3a0d39be72943",
+          "url": "https://github.com/unicode-org/icu4x/commit/2528fe16843a31c74f91e30d20bffefc64a1d01f"
+        },
+        "date": 1633320841874,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 303383,
+            "range": "± 38502",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1528348,
+            "range": "± 82915",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 593714,
+            "range": "± 38349",
             "unit": "ns/iter"
           }
         ]
