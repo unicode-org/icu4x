@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633365895013,
+  "lastUpdate": 1633379771891,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14069,6 +14069,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5131,
             "range": "± 661",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e6582015d32d370e5a673c61dbb46aed727bf194",
+          "message": "Add UleError type; use for PlainOldULE and char conversions (#1147)",
+          "timestamp": "2021-10-04T13:29:27-07:00",
+          "tree_id": "a717317fc89f3bafa82f258e2f07a020b6cffd26",
+          "url": "https://github.com/unicode-org/icu4x/commit/e6582015d32d370e5a673c61dbb46aed727bf194"
+        },
+        "date": 1633379767820,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2543,
+            "range": "± 203",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4436,
+            "range": "± 417",
             "unit": "ns/iter"
           }
         ]
