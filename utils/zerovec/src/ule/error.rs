@@ -27,3 +27,6 @@ impl<E> From<E> for ULEError<E> {
         ULEError::ParseError(e)
     }
 }
+
+#[cfg(feature = "std")]
+impl<E: fmt::Display + fmt::Debug> ::std::error::Error for ULEError<E> {}
