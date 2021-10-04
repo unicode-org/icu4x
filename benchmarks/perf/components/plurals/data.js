@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633379808625,
+  "lastUpdate": 1633380016089,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15749,6 +15749,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24404,
             "range": "± 1809",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9b1462728cb5b7cd6d739a50728400810b2975fb",
+          "message": "Add doc discussing enumerations versus identifiers (#1052)",
+          "timestamp": "2021-10-04T13:32:45-07:00",
+          "tree_id": "0f12ec29da7e5da026d833e661542ec159dbd76e",
+          "url": "https://github.com/unicode-org/icu4x/commit/9b1462728cb5b7cd6d739a50728400810b2975fb"
+        },
+        "date": 1633380011660,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1272,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7819,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24796,
+            "range": "± 533",
             "unit": "ns/iter"
           }
         ]
