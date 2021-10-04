@@ -29,12 +29,19 @@ macro_rules! impl_byte_slice_size {
         // This is safe to implement because from_byte_slice_unchecked returns
         // the same value as parse_byte_slice
         unsafe impl ULE for PlainOldULE<$size> {
-            type Error = core::convert::Infallible;
+            type Error = ULEError<core::convert::Infallible>;
 
             #[inline]
-            fn validate_byte_slice(_bytes: &[u8]) -> Result<(), Self::Error> {
-                // Safe because Self is transparent over [u8; $size]
-                Ok(())
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+                if bytes.len() % $size == 0 {
+                    // Safe because Self is transparent over [u8; $size]
+                    Ok(())
+                } else {
+                    Err(ULEError::InvalidLength {
+                        ty: concat!("PlainOldULE<", stringify!($size), ">"),
+                        len: bytes.len(),
+                    })
+                }
             }
         }
 

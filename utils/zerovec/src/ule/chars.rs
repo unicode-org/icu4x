@@ -42,10 +42,16 @@ pub struct CharULE([u8; 4]);
 // This is safe to implement because from_byte_slice_unchecked returns
 // the same value as parse_byte_slice
 unsafe impl ULE for CharULE {
-    type Error = core::char::CharTryFromError;
+    type Error = ULEError<core::char::CharTryFromError>;
 
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+        if bytes.len() % 4 != 0 {
+            return Err(ULEError::InvalidLength {
+                ty: "char",
+                len: bytes.len(),
+            });
+        }
         // Validate the bytes
         for chunk in bytes.chunks_exact(4) {
             // TODO: Use slice::as_chunks() when stabilized
