@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633320846284,
+  "lastUpdate": 1633365914023,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9293,6 +9293,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 593714,
             "range": "± 38349",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8a8c0ab9dcd24b0e6af8d834bb23dabfb87c6ceb",
+          "message": "Remove AsVarULE (#1126)",
+          "timestamp": "2021-10-04T09:37:48-07:00",
+          "tree_id": "ce1a3085cb8add5f554ee2da3002d2e7cda97244",
+          "url": "https://github.com/unicode-org/icu4x/commit/8a8c0ab9dcd24b0e6af8d834bb23dabfb87c6ceb"
+        },
+        "date": 1633365910202,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 313927,
+            "range": "± 29422",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1580879,
+            "range": "± 87683",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 587130,
+            "range": "± 61065",
             "unit": "ns/iter"
           }
         ]
