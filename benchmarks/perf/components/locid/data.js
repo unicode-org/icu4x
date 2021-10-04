@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633388546060,
+  "lastUpdate": 1633388744288,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14177,6 +14177,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5060,
             "range": "± 439",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "ebff2635aa4a83811d34187eba085f9976ebe56f",
+          "message": "Apply last round of feedback on splitting DTF Skeletons.",
+          "timestamp": "2021-10-04T15:58:19-07:00",
+          "tree_id": "c379d6674a2b2a961ba6245cf4aa845026ebf2a6",
+          "url": "https://github.com/unicode-org/icu4x/commit/ebff2635aa4a83811d34187eba085f9976ebe56f"
+        },
+        "date": 1633388739489,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3027,
+            "range": "± 128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5429,
+            "range": "± 743",
             "unit": "ns/iter"
           }
         ]
