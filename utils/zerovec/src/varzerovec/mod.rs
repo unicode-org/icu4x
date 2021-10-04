@@ -97,7 +97,7 @@ pub use ule::VarZeroVecULE;
 /// for (zv, v) in zerovec.iter().zip(numbers.iter()) {
 ///     assert_eq!(zv, v);   
 /// }
-/// # Ok::<(), VarZeroVecError<std::convert::Infallible>>(())
+/// # Ok::<(), VarZeroVecError<ULEError<_>>>(())
 /// ```
 ///
 ///
