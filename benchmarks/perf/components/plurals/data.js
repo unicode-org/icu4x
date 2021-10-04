@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633388535538,
+  "lastUpdate": 1633388743005,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15833,6 +15833,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20922,
             "range": "± 100",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "ebff2635aa4a83811d34187eba085f9976ebe56f",
+          "message": "Apply last round of feedback on splitting DTF Skeletons.",
+          "timestamp": "2021-10-04T15:58:19-07:00",
+          "tree_id": "c379d6674a2b2a961ba6245cf4aa845026ebf2a6",
+          "url": "https://github.com/unicode-org/icu4x/commit/ebff2635aa4a83811d34187eba085f9976ebe56f"
+        },
+        "date": 1633388738759,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1271,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7642,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25115,
+            "range": "± 317",
             "unit": "ns/iter"
           }
         ]
