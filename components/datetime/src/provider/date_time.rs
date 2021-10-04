@@ -8,9 +8,7 @@ use crate::fields;
 use crate::options::{components, length, preferences, DateTimeFormatOptions};
 use crate::pattern::{hour_cycle, reference::Pattern};
 use crate::provider;
-use crate::provider::gregory::{
-    DatePatternsV1Marker, DateSkeletonPatternsV1Marker,
-};
+use crate::provider::gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker};
 use crate::skeleton;
 use alloc::borrow::Cow;
 use icu_locid::Locale;
@@ -28,7 +26,8 @@ pub(crate) fn pattern_for_options<'data, D>(
     locale: &Locale,
     options: &DateTimeFormatOptions,
 ) -> Result<Option<Pattern>>
-where D: DataProvider<'data, DatePatternsV1Marker>
+where
+    D: DataProvider<'data, DatePatternsV1Marker>
         + DataProvider<'data, DateSkeletonPatternsV1Marker>,
 {
     let mut selector = PatternSelector::new(data_provider, locale);
@@ -47,7 +46,7 @@ where D: DataProvider<'data, DatePatternsV1Marker>
 /// This structure is acts at a junction of data provider and options bags.
 /// It allows us to chunk data into small payloads, selectively
 /// load them when needed and cache for the duration of the selection.
-/// 
+///
 /// # Implementation Details
 ///
 /// Because of how Rust borrow checking works, we use new type structs for each payload option
@@ -66,8 +65,14 @@ pub struct PatternSelector<'a, 'data, D> {
 struct DatePatternsOption<'data>(Option<DataPayload<'data, DatePatternsV1Marker>>);
 
 impl<'data> DatePatternsOption<'data> {
-    fn retrieve<D>(&mut self, data_provider: &D, locale: &Locale) -> Result<&DataPayload<'data, DatePatternsV1Marker>>
-    where D: DataProvider<'data, DatePatternsV1Marker> {
+    fn retrieve<D>(
+        &mut self,
+        data_provider: &D,
+        locale: &Locale,
+    ) -> Result<&DataPayload<'data, DatePatternsV1Marker>>
+    where
+        D: DataProvider<'data, DatePatternsV1Marker>,
+    {
         if let Some(ref value) = self.0 {
             Ok(value)
         } else {
@@ -91,8 +96,14 @@ impl<'data> DatePatternsOption<'data> {
 struct DateSkeletonPatternsOption<'data>(Option<DataPayload<'data, DateSkeletonPatternsV1Marker>>);
 
 impl<'data> DateSkeletonPatternsOption<'data> {
-    fn retrieve<D>(&mut self, data_provider: &D, locale: &Locale) -> Result<&DataPayload<'data, DateSkeletonPatternsV1Marker>>
-    where D: DataProvider<'data, DateSkeletonPatternsV1Marker> {
+    fn retrieve<D>(
+        &mut self,
+        data_provider: &D,
+        locale: &Locale,
+    ) -> Result<&DataPayload<'data, DateSkeletonPatternsV1Marker>>
+    where
+        D: DataProvider<'data, DateSkeletonPatternsV1Marker>,
+    {
         if let Some(ref value) = self.0 {
             Ok(value)
         } else {
@@ -155,7 +166,11 @@ where
 
     /// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
     fn pattern_for_date_length(&mut self, length: length::Date) -> Result<Pattern> {
-        let date = &self.date_patterns.retrieve(self.data_provider, self.locale)?.get().date;
+        let date = &self
+            .date_patterns
+            .retrieve(self.data_provider, self.locale)?
+            .get()
+            .date;
         let s = match length {
             length::Date::Full => &date.full,
             length::Date::Long => &date.long,
@@ -173,7 +188,10 @@ where
         length: length::Time,
         preferences: &Option<preferences::Bag>,
     ) -> Result<Pattern> {
-        let patterns = &self.date_patterns.retrieve(self.data_provider, self.locale)?.get();
+        let patterns = &self
+            .date_patterns
+            .retrieve(self.data_provider, self.locale)?
+            .get();
         // Determine the coarse hour cycle patterns to use from either the preference bag,
         // or the preferred hour cycle for the locale.
         let time = if let Some(preferences::Bag {
@@ -211,7 +229,10 @@ where
         date: Pattern,
         time: Pattern,
     ) -> Result<Pattern> {
-        let patterns = &self.date_patterns.retrieve(self.data_provider, self.locale)?.get();
+        let patterns = &self
+            .date_patterns
+            .retrieve(self.data_provider, self.locale)?
+            .get();
         let s = match date_time_length {
             length::Date::Full => &patterns.length_combinations.full,
             length::Date::Long => &patterns.length_combinations.long,
@@ -226,8 +247,14 @@ where
         &mut self,
         components: &components::Bag,
     ) -> Result<Option<Pattern>> {
-        let patterns = &self.date_patterns.retrieve(self.data_provider, self.locale)?.get();
-        let skeletons = &self.skeletons.retrieve(self.data_provider, self.locale)?.get();
+        let patterns = &self
+            .date_patterns
+            .retrieve(self.data_provider, self.locale)?
+            .get();
+        let skeletons = &self
+            .skeletons
+            .retrieve(self.data_provider, self.locale)?
+            .get();
         // Not all skeletons are currently supported.
         let requested_fields = components.to_vec_fields();
         Ok(
