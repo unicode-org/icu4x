@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633388688735,
+  "lastUpdate": 1633388716876,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11339,6 +11339,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 133507,
             "range": "± 8293",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "5da378032b6a98225436c476938744a6156da8b8",
+          "message": "Make clippy happy",
+          "timestamp": "2021-10-04T15:59:31-07:00",
+          "tree_id": "a827f99d580f3c336dc91b5524b74f7c9d1a9f03",
+          "url": "https://github.com/unicode-org/icu4x/commit/5da378032b6a98225436c476938744a6156da8b8"
+        },
+        "date": 1633388712772,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110793,
+            "range": "± 4915",
             "unit": "ns/iter"
           }
         ]
