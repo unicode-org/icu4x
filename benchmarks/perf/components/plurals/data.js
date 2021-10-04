@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633320847552,
+  "lastUpdate": 1633365924800,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15665,6 +15665,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22158,
             "range": "± 2108",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8a8c0ab9dcd24b0e6af8d834bb23dabfb87c6ceb",
+          "message": "Remove AsVarULE (#1126)",
+          "timestamp": "2021-10-04T09:37:48-07:00",
+          "tree_id": "ce1a3085cb8add5f554ee2da3002d2e7cda97244",
+          "url": "https://github.com/unicode-org/icu4x/commit/8a8c0ab9dcd24b0e6af8d834bb23dabfb87c6ceb"
+        },
+        "date": 1633365920370,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1324,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7203,
+            "range": "± 332",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24013,
+            "range": "± 999",
             "unit": "ns/iter"
           }
         ]
