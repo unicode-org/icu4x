@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 
 use super::*;
@@ -12,8 +13,8 @@ use core::ptr;
 use core::slice;
 
 #[derive(Clone)]
-pub struct VarZeroVecOwned<T> {
-    marker: PhantomData<[T]>,
+pub struct VarZeroVecOwned<T: ?Sized> {
+    marker: PhantomData<Box<T>>,
     // safety invariant: must parse into a valid SliceComponents
     entire_slice: Vec<u8>,
 }
@@ -26,7 +27,7 @@ enum ShiftType {
     Remove,
 }
 
-impl<T: AsVarULE> VarZeroVecOwned<T> {
+impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Construct an empty VarZeroVecOwned
     pub fn new() -> Self {
         Self {
@@ -43,7 +44,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements(elements: &[T]) -> Self {
+    pub fn from_elements<A: AsRef<T>>(elements: &[A]) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: components::get_serializable_bytes(elements).expect(
@@ -89,12 +90,12 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
     }
 
     /// Obtain an iterator over VarZeroVecOwned's elements
-    pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T::VarULE> {
+    pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
         self.get_components().iter()
     }
 
     /// Get one of VarZeroVecOwned's elements, returning None if the index is out of bounds
-    pub fn get(&self, idx: usize) -> Option<&T::VarULE> {
+    pub fn get(&self, idx: usize) -> Option<&T> {
         self.get_components().get(idx)
     }
 
@@ -193,10 +194,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         self.entire_slice.clear()
     }
 
-    pub fn to_vec(&self) -> Vec<T>
-    where
-        T: Clone,
-    {
+    pub fn to_vec(&self) -> Vec<Box<T>> {
         self.get_components().to_vec()
     }
 
@@ -384,18 +382,19 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
             );
         }
 
+        let value = element.as_byte_slice();
+
         if len == 0 {
-            // If there is no data, just construct it with the existing procedure
-            // for constructing an entire slice
-            self.entire_slice = components::get_serializable_bytes(slice::from_ref(element))
-                .expect(
-                    "attempted to insert an element too large to be encoded\
-                         in a VarZeroVec",
-                );
+            // 4 bytes for length, 4 bytes for the index, remaining for element
+            self.reserve(8 + value.len());
+            let len_u32 = 1u32;
+            let index_u32 = 0u32;
+            self.entire_slice.extend(&len_u32.as_unaligned().0);
+            self.entire_slice.extend(&index_u32.as_unaligned().0);
+            self.entire_slice.extend(value);
             return;
         }
 
-        let value = element.as_unaligned().as_byte_slice();
         assert!(value.len() < u32::MAX as usize);
         unsafe {
             self.shift(index, value.len() as u32, ShiftType::Insert)
@@ -421,7 +420,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
         }
     }
 
-    pub fn replace(&mut self, index: usize, value: T) {
+    pub fn replace(&mut self, index: usize, value: &T) {
         let len = self.len();
         if index >= len {
             panic!(
@@ -430,7 +429,7 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
             );
         }
 
-        let value = value.as_unaligned().as_byte_slice();
+        let value = value.as_byte_slice();
         assert!(value.len() < u32::MAX as usize);
         unsafe {
             self.shift(index, value.len() as u32, ShiftType::Replace)
@@ -441,49 +440,51 @@ impl<T: AsVarULE> VarZeroVecOwned<T> {
 
 impl<T> VarZeroVecOwned<T>
 where
-    T: AsVarULE,
-    T::VarULE: Ord,
+    T: VarULE,
+    T: ?Sized,
+    T: Ord,
 {
     /// Binary searches a sorted `VarZeroVecOwned<T>` for the given element. FoGeneralr more information, see
     /// the primitive function [`binary_search`].
     ///
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
-    pub fn binary_search(&self, x: &T::VarULE) -> Result<usize, usize> {
+    pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
         self.get_components().binary_search(x)
     }
 }
 
-impl<T> PartialEq<&[T]> for VarZeroVecOwned<T>
-where
-    T: AsVarULE,
-    T::VarULE: PartialEq,
-{
-    #[inline]
-    fn eq(&self, other: &&[T]) -> bool {
-        self.iter().eq(other.iter().map(|t| t.as_unaligned()))
-    }
-}
-
-impl<T: AsVarULE> Index<usize> for VarZeroVecOwned<T> {
-    type Output = T::VarULE;
+impl<T: VarULE + ?Sized> Index<usize> for VarZeroVecOwned<T> {
+    type Output = T;
     fn index(&self, index: usize) -> &Self::Output {
         self.get(index).expect("Indexing VarZeroVec out of bounds")
     }
 }
 
-impl<T: AsVarULE> fmt::Debug for VarZeroVecOwned<T>
+impl<T: VarULE + ?Sized> fmt::Debug for VarZeroVecOwned<T>
 where
-    T::VarULE: fmt::Debug,
+    T: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.iter()).finish()
     }
 }
 
-impl<T: AsVarULE> Default for VarZeroVecOwned<T> {
+impl<T: VarULE + ?Sized> Default for VarZeroVecOwned<T> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl<T, A> PartialEq<&'_ [A]> for VarZeroVecOwned<T>
+where
+    T: VarULE + ?Sized,
+    T: PartialEq,
+    A: AsRef<T>,
+{
+    #[inline]
+    fn eq(&self, other: &&[A]) -> bool {
+        self.iter().eq(other.iter().map(|t| t.as_ref()))
     }
 }
 
@@ -493,28 +494,28 @@ mod test {
     #[test]
     fn test_insert_integrity() {
         let mut items: Vec<String> = Vec::new();
-        let mut zerovec = VarZeroVecOwned::new();
+        let mut zerovec = VarZeroVecOwned::<str>::new();
 
         // Insert into an empty vec.
         items.insert(0, "1234567890".into());
-        zerovec.insert(0, &"1234567890".into());
+        zerovec.insert(0, "1234567890");
         assert_eq!(zerovec, &*items);
 
-        zerovec.insert(1, &"foo3".into());
+        zerovec.insert(1, "foo3");
         items.insert(1, "foo3".into());
         assert_eq!(zerovec, &*items);
 
         // Insert at the end.
         items.insert(items.len(), "qwertyuiop".into());
-        zerovec.insert(zerovec.len(), &"qwertyuiop".into());
+        zerovec.insert(zerovec.len(), "qwertyuiop");
         assert_eq!(zerovec, &*items);
 
         items.insert(0, "asdfghjkl;".into());
-        zerovec.insert(0, &"asdfghjkl;".into());
+        zerovec.insert(0, "asdfghjkl;");
         assert_eq!(zerovec, &*items);
 
         items.insert(2, "".into());
-        zerovec.insert(2, &"".into());
+        zerovec.insert(2, "");
         assert_eq!(zerovec, &*items);
     }
 
@@ -523,14 +524,14 @@ mod test {
         // Tests that insert() works even when there
         // is not enough space for the new index in entire_slice.len()
         let mut items: Vec<String> = Vec::new();
-        let mut zerovec = VarZeroVecOwned::new();
+        let mut zerovec = VarZeroVecOwned::<str>::new();
 
         // Insert into an empty vec.
         items.insert(0, "abc".into());
-        zerovec.insert(0, &"abc".into());
+        zerovec.insert(0, "abc");
         assert_eq!(zerovec, &*items);
 
-        zerovec.insert(1, &"def".into());
+        zerovec.insert(1, "def");
         items.insert(1, "def".into());
         assert_eq!(zerovec, &*items);
     }
@@ -538,7 +539,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_insert_past_end() {
-        VarZeroVecOwned::<String>::new().insert(1, &"".into());
+        VarZeroVecOwned::<str>::new().insert(1, "");
     }
 
     #[test]
@@ -552,7 +553,7 @@ mod test {
             "five".into(),
             "".into(),
         ];
-        let mut zerovec = VarZeroVecOwned::from_elements(&items);
+        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
 
         for index in [0, 2, 4, 0, 1, 1, 0] {
             items.remove(index);
@@ -563,7 +564,7 @@ mod test {
 
     #[test]
     fn test_removing_last_element_clears() {
-        let mut zerovec = VarZeroVecOwned::from_elements(&["buy some apples".to_string()]);
+        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&["buy some apples".to_string()]);
         assert!(!zerovec.get_components().entire_slice().is_empty());
         zerovec.remove(0);
         assert!(zerovec.get_components().entire_slice().is_empty());
@@ -572,7 +573,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_remove_past_end() {
-        VarZeroVecOwned::<String>::new().remove(0);
+        VarZeroVecOwned::<str>::new().remove(0);
     }
 
     #[test]
@@ -586,37 +587,37 @@ mod test {
             "five".into(),
             "".into(),
         ];
-        let mut zerovec = VarZeroVecOwned::from_elements(&items);
+        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
 
         // Replace with an element of the same size (and the first element)
         items[0] = "blablah".into();
-        zerovec.replace(0, "blablah".into());
+        zerovec.replace(0, "blablah");
         assert_eq!(zerovec, &*items);
 
         // Replace with a smaller element
         items[1] = "twily".into();
-        zerovec.replace(1, "twily".into());
+        zerovec.replace(1, "twily");
         assert_eq!(zerovec, &*items);
 
         // Replace an empty element
         items[3] = "aoeuidhtns".into();
-        zerovec.replace(3, "aoeuidhtns".into());
+        zerovec.replace(3, "aoeuidhtns");
         assert_eq!(zerovec, &*items);
 
         // Replace the last element
         items[6] = "0123456789".into();
-        zerovec.replace(6, "0123456789".into());
+        zerovec.replace(6, "0123456789");
         assert_eq!(zerovec, &*items);
 
         // Replace with an empty element
         items[2] = "".into();
-        zerovec.replace(2, "".into());
+        zerovec.replace(2, "");
         assert_eq!(zerovec, &*items);
     }
 
     #[test]
     #[should_panic]
     fn test_replace_past_end() {
-        VarZeroVecOwned::<String>::new().replace(0, "".into());
+        VarZeroVecOwned::<str>::new().replace(0, "");
     }
 }

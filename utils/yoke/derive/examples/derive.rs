@@ -23,7 +23,7 @@ pub struct CowExample<'a> {
 
 #[derive(Yokeable, ZeroCopyFrom)]
 pub struct ZeroVecExample<'a> {
-    var: VarZeroVec<'a, String>,
+    var: VarZeroVec<'a, str>,
     vec: ZeroVec<'a, u16>,
 }
 
@@ -34,7 +34,7 @@ pub struct ZeroVecExample<'a> {
 #[derive(Yokeable)]
 #[yoke(prove_covariance_manually)]
 pub struct ZeroMapExample<'a> {
-    map: ZeroMap<'a, String, u16>,
+    map: ZeroMap<'a, str, u16>,
 }
 
 fn main() {}
