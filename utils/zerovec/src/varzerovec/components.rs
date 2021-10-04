@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use alloc::boxed::Box;
 use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -19,20 +20,20 @@ fn usizeify(x: PlainOldULE<4>) -> usize {
 /// This is where the actual work involved in VarZeroVec happens
 ///
 /// See [`SliceComponents::parse_byte_slice()`] for information on the internal invariants involved
-pub struct SliceComponents<'a, T> {
+pub struct SliceComponents<'a, T: ?Sized> {
     /// The list of indices into the `things` slice
     indices: &'a [PlainOldULE<4>],
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
     /// The original slice this was constructed from
     entire_slice: &'a [u8],
-    marker: PhantomData<&'a [T]>,
+    marker: PhantomData<&'a T>,
 }
 
 // #[derive()] won't work here since we do not want it to be
 // bound on T: Copy
-impl<'a, T> Copy for SliceComponents<'a, T> {}
-impl<'a, T> Clone for SliceComponents<'a, T> {
+impl<'a, T: ?Sized> Copy for SliceComponents<'a, T> {}
+impl<'a, T: ?Sized> Clone for SliceComponents<'a, T> {
     fn clone(&self) -> Self {
         SliceComponents {
             indices: self.indices,
@@ -43,7 +44,7 @@ impl<'a, T> Clone for SliceComponents<'a, T> {
     }
 }
 
-impl<'a, T: AsVarULE> SliceComponents<'a, T> {
+impl<'a, T: VarULE + ?Sized> SliceComponents<'a, T> {
     /// Construct a new SliceComponents, checking invariants about the overall buffer size:
     ///
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
@@ -140,7 +141,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
 
     /// Get the idx'th element out of this slice. Returns `None` if out of bounds.
     #[inline]
-    pub fn get(self, idx: usize) -> Option<&'a T::VarULE> {
+    pub fn get(self, idx: usize) -> Option<&'a T> {
         if idx >= self.len() {
             return None;
         }
@@ -152,7 +153,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     /// Safety:
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
-    unsafe fn get_unchecked(self, idx: usize) -> &'a T::VarULE {
+    unsafe fn get_unchecked(self, idx: usize) -> &'a T {
         let start = usizeify(*self.indices.get_unchecked(idx));
         let end = if idx + 1 == self.len() {
             self.things.len()
@@ -161,7 +162,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
         };
         debug_assert!(start <= end);
         let things_slice = self.things.get_unchecked(start..end);
-        T::VarULE::from_byte_slice_unchecked(things_slice)
+        T::from_byte_slice_unchecked(things_slice)
     }
 
     /// Create an iterator over the Ts contained in SliceComponents, checking internal invariants:
@@ -175,7 +176,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     /// This method is NOT allowed to call any other methods on SliceComponents since all other methods
     /// assume that the slice has been passed through iter_checked
     #[inline]
-    fn iter_checked(self) -> impl Iterator<Item = Result<&'a T::VarULE, ParseErrorFor<T>>> {
+    fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ParseErrorFor<T>>> {
         let last = iter::from_fn(move || {
             if !self.is_empty() {
                 let start = usizeify(self.indices[self.len() - 1]);
@@ -201,12 +202,12 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
                     .ok_or(VarZeroVecError::FormatError)
             })
             .chain(last)
-            .map(|s| s.and_then(|s| T::VarULE::parse_byte_slice(s).map_err(|e| e.into())))
+            .map(|s| s.and_then(|s| T::parse_byte_slice(s).map_err(|e| e.into())))
     }
 
     /// Create an iterator over the Ts contained in SliceComponents
     #[inline]
-    pub fn iter(self) -> impl Iterator<Item = &'a T::VarULE> {
+    pub fn iter(self) -> impl Iterator<Item = &'a T> {
         let last = iter::from_fn(move || {
             if !self.is_empty() {
                 let start = usizeify(self.indices[self.len() - 1]);
@@ -225,14 +226,11 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
                 unsafe { self.things.get_unchecked(start..end) }
             })
             .chain(last)
-            .map(|s| unsafe { T::VarULE::from_byte_slice_unchecked(s) })
+            .map(|s| unsafe { T::from_byte_slice_unchecked(s) })
     }
 
-    pub fn to_vec(self) -> Vec<T>
-    where
-        T: Clone,
-    {
-        self.iter().map(T::from_unaligned).collect()
+    pub fn to_vec(self) -> Vec<Box<T>> {
+        self.iter().map(T::to_boxed).collect()
     }
 
     // Dump a debuggable representation of this type
@@ -249,10 +247,11 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
 
 impl<'a, T> SliceComponents<'a, T>
 where
-    T: AsVarULE,
-    T::VarULE: Ord,
+    T: VarULE,
+    T: ?Sized,
+    T: Ord,
 {
-    pub fn binary_search(&self, needle: &T::VarULE) -> Result<usize, usize> {
+    pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
         // code is known to the State of California to cause cancer.
         //
@@ -287,24 +286,22 @@ where
     }
 }
 
-pub fn get_serializable_bytes<T: AsVarULE>(elements: &[T]) -> Option<Vec<u8>> {
+pub fn get_serializable_bytes<T: VarULE + ?Sized, A: AsRef<T>>(elements: &[A]) -> Option<Vec<u8>> {
     let mut vec = Vec::with_capacity(4 + 4 * elements.len());
     let len_u32: u32 = elements.len().try_into().ok()?;
     vec.extend(&len_u32.as_unaligned().0);
     let mut offset: u32 = 0;
     for element in elements {
         vec.extend(&offset.as_unaligned().0);
-        let len_u32: u32 = element
-            .as_unaligned()
-            .as_byte_slice()
-            .len()
-            .try_into()
-            .ok()?;
+        let ule = element.as_ref();
+        let slice = ule.as_byte_slice();
+        debug_assert_eq!(mem::size_of_val(ule), mem::size_of_val(slice));
+        let len_u32: u32 = slice.len().try_into().ok()?;
         offset = offset.checked_add(len_u32)?;
     }
     vec.reserve(offset as usize);
     for element in elements {
-        vec.extend(element.as_unaligned().as_byte_slice())
+        vec.extend(element.as_ref().as_byte_slice())
     }
     Some(vec)
 }

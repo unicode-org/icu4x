@@ -47,6 +47,7 @@
 //! - <https://www.unicode.org/Public/UCD/latest/ucd/LineBreak.txt>
 //! - <https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt>
 
+mod language;
 mod lb_define;
 mod line_breaker;
 mod lstm;

@@ -8,7 +8,6 @@ use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::provider::*;
 use icu_uniset::UnicodeSetBuilder;
-use std::borrow::Cow;
 use std::fs;
 use std::path::PathBuf;
 
@@ -94,13 +93,12 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for EnumeratedPropertie
         }
         let uniset = builder.build();
 
-        let name = Cow::from(toml_data.enum_property.data.long_name);
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(DataPayload::from_owned(
-                UnicodePropertyV1::from_owned_uniset(uniset, name),
+                UnicodePropertyV1::from_owned_uniset(uniset),
             )),
         })
     }

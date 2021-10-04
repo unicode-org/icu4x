@@ -45,8 +45,9 @@ fn overview_bench(c: &mut Criterion) {
     // Same as vzv/char_count/vzv but with different inputs
     let seed = 42;
     let (string_vec, _) = random_alphanums(2..=10, 100, seed);
-    let bytes: Vec<u8> = VarZeroVec::get_serializable_bytes(string_vec.as_slice()).unwrap();
-    let vzv = VarZeroVec::<String>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
+    let bytes: Vec<u8> =
+        VarZeroVec::<str>::get_serializable_bytes::<String>(string_vec.as_slice()).unwrap();
+    let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
 
     c.bench_function("vzv/overview", |b| {
         b.iter(|| {
@@ -72,8 +73,9 @@ fn overview_bench(c: &mut Criterion) {
 fn char_count_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, _) = random_alphanums(2..=20, 100, seed);
-    let bytes: Vec<u8> = VarZeroVec::get_serializable_bytes(string_vec.as_slice()).unwrap();
-    let vzv = VarZeroVec::<String>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
+    let bytes: Vec<u8> =
+        VarZeroVec::<str>::get_serializable_bytes::<String>(string_vec.as_slice()).unwrap();
+    let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
 
     // *** Count chars in vec of 100 strings ***
     c.bench_function("vzv/char_count/slice", |b| {
@@ -99,8 +101,9 @@ fn binary_search_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, seed) = random_alphanums(2..=20, 500, seed);
     let (needles, _) = random_alphanums(2..=20, 10, seed);
-    let bytes: Vec<u8> = VarZeroVec::get_serializable_bytes(string_vec.as_slice()).unwrap();
-    let vzv = VarZeroVec::<String>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
+    let bytes: Vec<u8> =
+        VarZeroVec::<str>::get_serializable_bytes::<String>(string_vec.as_slice()).unwrap();
+    let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
     let single_needle = "lmnop".to_string();
 
     // *** Binary search vec of 500 strings 10 times ***
@@ -139,7 +142,7 @@ fn serde_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, _) = random_alphanums(2..=20, 100, seed);
     let bincode_vec = bincode::serialize(&string_vec).unwrap();
-    let vzv = VarZeroVec::from(&*string_vec);
+    let vzv: VarZeroVec<str> = VarZeroVec::from(&*string_vec);
     let bincode_vzv = bincode::serialize(&vzv).unwrap();
 
     // *** Deserialize vec of 100 strings ***
@@ -154,7 +157,7 @@ fn serde_benches(c: &mut Criterion) {
 
     // *** Deserialize vec of 100 strings ***
     c.bench_function("vzv/deserialize/string/vzv", |b| {
-        b.iter(|| bincode::deserialize::<VarZeroVec<String>>(black_box(&bincode_vzv)));
+        b.iter(|| bincode::deserialize::<VarZeroVec<str>>(black_box(&bincode_vzv)));
     });
 }
 

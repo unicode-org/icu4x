@@ -65,6 +65,7 @@ pub mod enum_props;
 #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 pub mod props;
 pub mod provider;
+mod ule;
 mod uniset;
 mod utils;
 
@@ -85,6 +86,10 @@ pub enum UnicodeSetError {
     InvalidSet(Vec<u32>),
     #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
+    #[displaydoc("Unknown script id: {0}")]
+    UnknownScriptId(u16),
+    #[displaydoc("Unknown general category set: {0}")]
+    UnknownGeneralCategorySet(u32),
     #[displaydoc("{0}")]
     PropDataLoad(DataError),
 }

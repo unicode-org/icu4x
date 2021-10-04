@@ -33,6 +33,12 @@
 
         Constructs an ``StaticDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more details.
 
+    .. js:staticfunction:: create_from_byte_slice(blob)
+
+        Constructs a ``BlobDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html>`__ for more details.
+
+        - Note: ``blob`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
 .. js:class:: ICU4XStaticDataProvider
 
     An ICU4X data provider backed by static data. This is a specialization of :js:class:`ICU4XDataProvider` intended to reduce code size.

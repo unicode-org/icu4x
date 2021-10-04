@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 let wasm;
 
 function readString(ptr) {
@@ -25,13 +29,27 @@ const imports = {
 
 if (typeof fetch === 'undefined') {
   const fs = await import("fs");
-  const path = await import("path");
-  const wasmFile = new Uint8Array(fs.readFileSync(path.resolve('../../../../wasmpkg/icu_capi.wasm')));
+  const paths = await import("./paths.mjs");
+  const wasmFile = new Uint8Array(fs.readFileSync(paths.WASM_PATH));
   const loadedWasm = await WebAssembly.instantiate(wasmFile, imports);
   wasm = loadedWasm.instance.exports;
 } else {
-  const loadedWasm = await WebAssembly.instantiateStreaming(fetch('../../../../wasmpkg/icu_capi.wasm'), imports);
-  wasm = loadedWasm.instance.exports;
+  const pathsToTry = [
+    "./icu_capi.wasm",
+    "../../../../wasmpkg/icu_capi.wasm",
+  ];
+  let loadedWasm;
+  for (const path of pathsToTry) {
+    try {
+      loadedWasm = await WebAssembly.instantiateStreaming(fetch(path), imports);
+      wasm = loadedWasm.instance.exports;
+      break;
+    } catch(e) {
+    }
+  }
+  if (!loadedWasm) {
+    console.error("Could not find icu_capi.wasm");
+  }
 }
 
 wasm.diplomat_init();

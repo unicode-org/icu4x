@@ -2,6 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+macro_rules! const_expr_count {
+    () => (0);
+    ($e:expr) => (1);
+    ($e:expr; $($other_e:expr);*) => ({
+        1 $(+ const_expr_count!($other_e) )*
+    });
+
+    ($e:expr; $($other_e:expr);* ; ) => (
+        const_expr_count! { $e; $($other_e);* }
+    );
+}
+
 /// Macro used to generate Field type.
 ///
 /// The macro takes three arguments:
@@ -19,13 +31,13 @@
 ///
 /// ```
 /// field_type!(DayPeriod, {
-///   0: 'a' => AmPm,
-///   1: 'b' => NoonMidnight
+///   'a' => AmPm,
+///   'b' => NoonMidnight
 /// }; Text);
 /// ```
 macro_rules! field_type {
-    ($i:ident; { $($idx:expr; $key:expr => $val:ident),* }; $length_type:ident) => (
-        field_type!($i; {$($idx; $key => $val),*});
+    ($i:ident; { $($key:expr => $val:ident),* }; $length_type:ident) => (
+        field_type!($i; {$($key => $val),*});
 
         impl LengthType for $i {
             fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
@@ -33,13 +45,17 @@ macro_rules! field_type {
             }
         }
     );
-    ($i:ident; { $($idx:expr; $key:expr => $val:ident),* }) => (
+    ($i:ident; { $($key:expr => $val:ident),* }) => (
         #[derive(Debug, Eq, PartialEq, Clone, Copy)]
+        // FIXME: This should be replaced with a custom derive.
+        // See: https://github.com/unicode-org/icu4x/issues/1044
+        #[derive(num_enum::IntoPrimitive, num_enum::TryFromPrimitive)]
         #[cfg_attr(
             feature = "provider_serde",
             derive(serde::Serialize, serde::Deserialize)
         )]
         #[allow(clippy::enum_variant_names)]
+        #[repr(u8)]
         pub enum $i {
             $($val, )*
         }
@@ -60,12 +76,9 @@ macro_rules! field_type {
             /// This is mostly useful for serialization,
             /// and does not guarantee index stability between ICU4X
             /// versions.
-            pub(crate) fn _idx(&self) -> u8 {
-                match self {
-                    $(
-                        $i::$val => $idx,
-                    )*
-                }
+            #[inline]
+            pub(crate) fn idx(self) -> u8 {
+                self.into()
             }
 
             /// Retrieves a field variant from an index.
@@ -83,13 +96,16 @@ macro_rules! field_type {
             /// This is mostly useful for serialization,
             /// and does not guarantee index stability between ICU4X
             /// versions.
-            pub(crate) fn _from_idx(idx: u8) -> Result<Self, SymbolError> {
-                match idx {
-                    $(
-                        $idx => Ok(Self::$val),
-                    )*
-                    _ => Err(SymbolError::InvalidIndex(idx)),
-                }
+            #[inline]
+            pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
+                Self::try_from(idx)
+                    .map_err(|_| SymbolError::InvalidIndex(idx))
+            }
+
+            #[inline]
+            pub(crate) fn idx_in_range(v: &u8) -> bool {
+                let count = const_expr_count!($($key);*);
+                (0..count).contains(v)
             }
         }
 

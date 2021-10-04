@@ -13,7 +13,6 @@ To build blob data, use the `--format blob` option of [`icu4x-datagen`]. For exa
 
 ```bash
 $ cargo run --bin=icu4x-datagen -- \
-    -v \
     --format blob \
     --hello-world-key \
     --all-locales \

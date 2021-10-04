@@ -149,8 +149,8 @@ const INDEX_ARRAY_AS_BYTES: &[u8] = &[
 /// integer from 0-16 inclusive, for each code point. This `CodePointTrie`
 /// does not actually represent any Unicode property, but it is provided in
 /// case it is useful to users of `CodePointTrie` for testing or other
-/// purposes. See https://www.unicode.org/glossary/#plane
-pub fn get_planes_trie() -> CodePointTrie<'static, u8, Small> {
+/// purposes. See <https://www.unicode.org/glossary/#plane>.
+pub fn get_planes_trie() -> CodePointTrie<'static, u8> {
     let index_array_as_bytes: &[u8] = INDEX_ARRAY_AS_BYTES;
     let data_8_array: &[u8] = &[
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -171,25 +171,23 @@ pub fn get_planes_trie() -> CodePointTrie<'static, u8, Small> {
     ];
     let index: ZeroVec<u16> = ZeroVec::parse_byte_slice(index_array_as_bytes).expect("infallible");
     let data: ZeroVec<u8> = ZeroVec::parse_byte_slice(data_8_array).expect("infallible");
-    let index_length = 1168;
-    let data_length = 372;
     let high_start = 0x100000;
     let shifted12_high_start = 0x100;
     let index3_null_offset = 0x2;
     let data_null_offset = 0x0;
     let null_value = 0x0;
+    let trie_type = TrieTypeEnum::Small;
 
     let trie_header = CodePointTrieHeader {
-        index_length,
-        data_length,
         high_start,
         shifted12_high_start,
         index3_null_offset,
         data_null_offset,
         null_value,
+        trie_type,
     };
 
-    let trie_result: Result<CodePointTrie<u8, Small>, Error> =
+    let trie_result: Result<CodePointTrie<u8>, Error> =
         CodePointTrie::try_new(trie_header, index, data);
     assert!(
         trie_result.is_ok(),

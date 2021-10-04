@@ -39,7 +39,7 @@ pub use vecs::ZeroVecLike;
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
-/// let zero_map: ZeroMap<u32, String> = bincode::deserialize(BINCODE_BYTES)
+/// let zero_map: ZeroMap<u32, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1), Some("one"));
 /// ```
@@ -49,6 +49,8 @@ pub struct ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
 {
     pub(crate) keys: K::Container,
     pub(crate) values: V::Container,
@@ -58,6 +60,8 @@ impl<'a, K, V> Default for ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
 {
     fn default() -> Self {
         Self {
@@ -71,6 +75,8 @@ impl<'a, K, V> ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
 {
     /// Construct a new [`ZeroMap`]
     pub fn new() -> Self {
@@ -116,8 +122,8 @@ where
     /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
-    /// map.insert(1, "one".to_owned());
-    /// map.insert(2, "two".to_owned());
+    /// map.insert(&1, "one");
+    /// map.insert(&2, "two");
     /// assert_eq!(map.get(&1), Some("one"));
     /// assert_eq!(map.get(&3), None);
     /// ```
@@ -132,8 +138,8 @@ where
     /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
-    /// map.insert(1, "one".to_owned());
-    /// map.insert(2, "two".to_owned());
+    /// map.insert(&1, "one");
+    /// map.insert(&2, "two");
     /// assert_eq!(map.contains_key(&1), true);
     /// assert_eq!(map.contains_key(&3), false);
     /// ```
@@ -147,12 +153,12 @@ where
     /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
-    /// map.insert(1, "one".to_owned());
-    /// map.insert(2, "two".to_owned());
+    /// map.insert(&1, "one");
+    /// map.insert(&2, "two");
     /// assert_eq!(map.get(&1), Some("one"));
     /// assert_eq!(map.get(&3), None);
     /// ```
-    pub fn insert(&mut self, key: K, value: V) -> Option<V> {
+    pub fn insert(&mut self, key: &K, value: &V) -> Option<V::OwnedType> {
         let key_needle = key.as_needle();
         match self.keys.binary_search(key_needle) {
             Ok(index) => Some(self.values.replace(index, value)),
@@ -170,12 +176,12 @@ where
     /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
-    /// map.insert(1, "one".to_owned());
-    /// map.insert(2, "two".to_owned());
-    /// assert_eq!(map.remove(&1), Some("one".to_owned()));
+    /// map.insert(&1, "one");
+    /// map.insert(&2, "two");
+    /// assert_eq!(map.remove(&1), Some("one".to_owned().into_boxed_str()));
     /// assert_eq!(map.get(&1), None);
     /// ```
-    pub fn remove(&mut self, key: &K::NeedleType) -> Option<V> {
+    pub fn remove(&mut self, key: &K::NeedleType) -> Option<V::OwnedType> {
         let idx = self.keys.binary_search(key).ok()?;
         self.keys.remove(idx);
         Some(self.values.remove(idx))
@@ -188,13 +194,13 @@ where
     /// use zerovec::ZeroMap;
     ///
     /// let mut map = ZeroMap::new();
-    /// assert!(map.try_append(1, "uno".to_owned()).is_none());
-    /// assert!(map.try_append(3, "tres".to_owned()).is_none());
+    /// assert!(map.try_append(&1, "uno").is_none());
+    /// assert!(map.try_append(&3, "tres").is_none());
     ///
-    /// let unsuccessful = map.try_append(3, "tres-updated".to_owned());
+    /// let unsuccessful = map.try_append(&3, "tres-updated");
     /// assert!(unsuccessful.is_some(), "append duplicate of last key");
     ///
-    /// let unsuccessful = map.try_append(2, "dos".to_owned());
+    /// let unsuccessful = map.try_append(&2, "dos");
     /// assert!(unsuccessful.is_some(), "append out of order");
     ///
     /// assert_eq!(map.get(&1), Some("uno"));
@@ -206,7 +212,7 @@ where
     /// assert_eq!(map.get(&2), None);
     /// ```
     #[must_use]
-    pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
+    pub fn try_append<'b>(&mut self, key: &'b K, value: &'b V) -> Option<(&'b K, &'b V)> {
         if self.keys.len() != 0 {
             if let Some(last) = self.keys.get(self.keys.len() - 1) {
                 if key.cmp_get(last) != Ordering::Greater {

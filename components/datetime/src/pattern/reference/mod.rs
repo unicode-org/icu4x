@@ -4,7 +4,7 @@
 
 mod generic;
 mod parser;
-mod pattern;
+pub(crate) mod pattern;
 
 pub use generic::GenericPattern;
 pub use parser::Parser;

@@ -42,6 +42,7 @@ getrandom = { version = "0.2", features = ["js"] }
 
 [features]
 bench = []
+std = []
 
 [[bench]]
 name = "zerovec"

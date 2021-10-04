@@ -8,7 +8,6 @@
 
 use crate::builder::UnicodeSetBuilder;
 use crate::uniset::UnicodeSet;
-use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 
 //
@@ -320,16 +319,13 @@ pub mod key {
 )]
 pub struct UnicodePropertyV1<'data> {
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub name: Cow<'data, str>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub inv_list: UnicodeSet<'data>,
 }
 
 impl Default for UnicodePropertyV1<'static> {
-    /// Default empty nameless property
+    /// Default empty property
     fn default() -> UnicodePropertyV1<'static> {
         UnicodePropertyV1 {
-            name: Cow::Borrowed(""),
             inv_list: UnicodeSetBuilder::new().build(),
         }
     }
@@ -337,14 +333,8 @@ impl Default for UnicodePropertyV1<'static> {
 
 impl<'data> UnicodePropertyV1<'data> {
     #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
-    pub fn from_owned_uniset(
-        set: UnicodeSet<'data>,
-        name: Cow<'data, str>,
-    ) -> UnicodePropertyV1<'data> {
-        UnicodePropertyV1 {
-            name,
-            inv_list: set,
-        }
+    pub fn from_owned_uniset(set: UnicodeSet<'data>) -> UnicodePropertyV1<'data> {
+        UnicodePropertyV1 { inv_list: set }
     }
 }
 

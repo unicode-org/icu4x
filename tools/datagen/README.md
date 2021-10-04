@@ -19,8 +19,7 @@ $ cargo run --bin icu4x-datagen -- \
    --cldr-tag 39.0.0 \
    --all-keys \
    --all-locales \
-   --out /tmp/icu4x_data/json \
-   -v
+   --out /tmp/icu4x_data/json
 ```
 
 Generate ICU4X Bincode blob (single file):
@@ -32,8 +31,7 @@ $ cargo run --bin icu4x-datagen -- \
    --all-keys \
    --all-locales \
    --format blob \
-   --out /tmp/icu4x_data/icu4x_data.postcard \
-   -v
+   --out /tmp/icu4x_data/icu4x_data.postcard
 ```
 
 Generate ICU4X Bincode file tree:
@@ -45,8 +43,7 @@ $ cargo run --bin icu4x-datagen -- \
    --all-keys \
    --all-locales \
    --syntax bincode \
-   --out /tmp/icu4x_data/bincode \
-   -v
+   --out /tmp/icu4x_data/bincode
 ```
 
 ## More Information
