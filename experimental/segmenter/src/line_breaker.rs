@@ -4,6 +4,7 @@
 
 extern crate unicode_width;
 
+use crate::indices::*;
 use crate::language::*;
 use crate::lb_define::*;
 use crate::lstm::*;
@@ -562,38 +563,14 @@ impl<'a> LineBreakIterator<'a> {
     */
 }
 
-/// Latin-1 version of line break iterator.
-#[derive(Clone)]
-struct Latin1Indices<'a> {
-    front_offset: usize,
-    iter: &'a [u8],
-}
-
-impl<'a> Iterator for Latin1Indices<'a> {
-    type Item = (usize, u8);
-
-    #[inline]
-    fn next(&mut self) -> Option<(usize, u8)> {
-        if self.front_offset >= self.iter.len() {
-            return None;
-        }
-        let ch = self.iter[self.front_offset];
-        let index = self.front_offset;
-        self.front_offset += 1;
-        Some((index, ch))
-    }
-}
-
 break_iterator_impl!(LineBreakIteratorLatin1, Latin1Indices<'a>, u8);
 
+/// Latin-1 version of line break iterator.
 impl<'a> LineBreakIteratorLatin1<'a> {
     /// Create a line break iterator for a Latin-1 (8-bit) string.
     pub fn new(input: &[u8]) -> LineBreakIteratorLatin1 {
         LineBreakIteratorLatin1 {
-            iter: Latin1Indices {
-                front_offset: 0,
-                iter: input,
-            },
+            iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -611,10 +588,7 @@ impl<'a> LineBreakIteratorLatin1<'a> {
         word_break_rule: WordBreakRule,
     ) -> LineBreakIteratorLatin1 {
         LineBreakIteratorLatin1 {
-            iter: Latin1Indices {
-                front_offset: 0,
-                iter: input,
-            },
+            iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -648,52 +622,14 @@ impl<'a> LineBreakIteratorLatin1<'a> {
     }
 }
 
-/// UTF-16 version of line break iterator.
-#[derive(Clone)]
-struct Utf16Indices<'a> {
-    front_offset: usize,
-    iter: &'a [u16],
-}
-
-impl<'a> Iterator for Utf16Indices<'a> {
-    type Item = (usize, u32);
-
-    #[inline]
-    fn next(&mut self) -> Option<(usize, u32)> {
-        if self.front_offset >= self.iter.len() {
-            return None;
-        }
-        let ch = self.iter[self.front_offset];
-        let index = self.front_offset;
-        self.front_offset += 1;
-
-        if (ch & 0xfc00) != 0xd800 {
-            return Some((index, ch as u32));
-        }
-
-        let mut ch = ch as u32;
-        if self.front_offset < self.iter.len() {
-            let next = self.iter[self.front_offset] as u32;
-            if (next & 0xfc00) == 0xdc00 {
-                ch = ((ch & 0x3ff) << 10) + (next & 0x3ff) + 0x10000;
-                self.front_offset += 1;
-                return Some((index, ch));
-            }
-        }
-        Some((index, ch))
-    }
-}
-
 break_iterator_impl!(LineBreakIteratorUtf16, Utf16Indices<'a>, u32);
 
+/// UTF-16 version of line break iterator.
 impl<'a> LineBreakIteratorUtf16<'a> {
     /// Create a line break iterator for a UTF-16 string.
     pub fn new(input: &[u16]) -> LineBreakIteratorUtf16 {
         LineBreakIteratorUtf16 {
-            iter: Utf16Indices {
-                front_offset: 0,
-                iter: input,
-            },
+            iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -716,10 +652,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
         ja_zh: bool,
     ) -> LineBreakIteratorUtf16 {
         LineBreakIteratorUtf16 {
-            iter: Utf16Indices {
-                front_offset: 0,
-                iter: input,
-            },
+            iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
