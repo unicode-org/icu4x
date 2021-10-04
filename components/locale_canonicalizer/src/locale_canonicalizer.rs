@@ -8,6 +8,7 @@ use crate::provider::*;
 use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
+use core::mem;
 use icu_locid::{
     extensions::unicode::{Key, Value},
     subtags, LanguageIdentifier, Locale,
@@ -579,6 +580,7 @@ impl<'data> LocaleCanonicalizer<'data> {
 
         let mut max = langid.clone();
         self.maximize(&mut max);
+        let variants = mem::replace(&mut max.variants, Default::default());
         max.variants.clear();
         let mut trial = max.clone();
 
@@ -586,9 +588,17 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.script.is_some() || langid.script.is_some() {
-                langid.script = None;
-                langid.region = None;
+            if langid.language != max.language || langid.script.is_some() || langid.region.is_some() {
+                if langid.language != max.language {
+                    langid.language = max.language
+                }
+                if langid.script.is_some() {
+                    langid.script = None;
+                }
+                if langid.region.is_some() {
+                    langid.region = None;
+                }
+                langid.variants = variants;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
@@ -599,9 +609,17 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = max.region;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.script.is_some() || langid.region != max.region {
-                langid.script = None;
-                langid.region = max.region;
+            if langid.language != max.language || langid.script.is_some() || langid.region != max.region {
+                if langid.language != max.language {
+                    langid.language = max.language
+                }
+                if langid.script.is_some() {
+                    langid.script = None;
+                }
+                if langid.region != max.region {
+                    langid.region = max.region;
+                }
+                langid.variants = variants;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
@@ -612,18 +630,33 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.script != max.script || langid.region.is_some() {
-                langid.script = max.script;
-                langid.region = None;
+            if langid.language != max.language || langid.script != max.script || langid.region.is_some() {
+                if langid.language != max.language {
+                    langid.language = max.language
+                }
+                if langid.script != max.script {
+                    langid.script = max.script;
+                }
+                if langid.region.is_some() {
+                    langid.region = None;
+                }
+                langid.variants = variants;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
             }
         }
 
-        if langid.script != max.script || langid.region != max.region {
-            langid.script = max.script;
-            langid.region = max.region;
+        if langid.language != max.language || langid.script != max.script || langid.region != max.region {
+            if langid.language != max.language {
+                langid.language = max.language
+            }
+            if langid.script != max.script {
+                langid.script = max.script;
+            }
+            if langid.region != max.region {
+                langid.region = max.region;
+            }
             CanonicalizationResult::Modified
         } else {
             CanonicalizationResult::Unmodified
