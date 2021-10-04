@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633311288945,
+  "lastUpdate": 1633320815625,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13997,6 +13997,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5654,
             "range": "± 172",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2528fe16843a31c74f91e30d20bffefc64a1d01f",
+          "message": "Check for lengths in ULE and revise safety docs (#1121)",
+          "timestamp": "2021-10-03T21:06:58-07:00",
+          "tree_id": "af79dd21fd558d4af6ea2c1793c3a0d39be72943",
+          "url": "https://github.com/unicode-org/icu4x/commit/2528fe16843a31c74f91e30d20bffefc64a1d01f"
+        },
+        "date": 1633320811479,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2545,
+            "range": "± 294",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4419,
+            "range": "± 270",
             "unit": "ns/iter"
           }
         ]
