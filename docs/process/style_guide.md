@@ -478,15 +478,19 @@ for n in 0 .. lang.len() {
 
 ## Enums
 
-### Strongly prefer enums to define states :: suggested
+### Strongly prefer enums to define bounded sets of states :: suggested
 
 Enums in Rust are cheap/free, and incredibly useful. They can be used (as in C++/Java) for providing named, bounded "choices", including avoiding bare boolean parameters, but they can also provide the basis for type-safe patterns such as [elegant finite state machines](https://bluejekyll.github.io/blog/fsm/rust/2015/08/13/rust-and-the-most-elegant-fsm.html) using generified enums with data.
 
 It's probably worth noting here that the [Result](https://doc.rust-lang.org/std/result/) type itself is just a normal enum in Rust with two values (`Ok` and `Err`).
 
+### Don't use enums to represent unbounded sets :: suggested
+
+If a set of entities is unbounded or grows over time, use an identifier instead of an enum. For more details, see [enums_or_ids.md](../design/enums_or_ids.md).
+
 ### Don't use explicit usize values :: suggested
 
-ICU4C has a convention of assigning stable integer values to enum entries. However, this is not common practice in Rust (main issue: [#115](https://github.com/unicode-org/icu4x/issues/115)). Instead, limit the definitions of stable values to the FFI layer, such as *cbindgen*.
+ICU4C has a convention of assigning stable integer values to enum entries. However, this is not common practice in Rust (main issue: [#115](https://github.com/unicode-org/icu4x/issues/115)). Instead, limit the definitions of stable values to the FFI layer.
 
 ## Matching
 
