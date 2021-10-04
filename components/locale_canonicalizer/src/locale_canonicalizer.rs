@@ -579,7 +579,6 @@ impl<'data> LocaleCanonicalizer<'data> {
 
         let mut max = langid.clone();
         self.maximize(&mut max);
-        let variants = max.variants.clone();
         max.variants.clear();
         let mut trial = max.clone();
 
@@ -587,11 +586,9 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language || langid.script.is_some() || langid.region.is_some() {
-                langid.language = max.language;
+            if langid.script.is_some() || langid.script.is_some() {
                 langid.script = None;
                 langid.region = None;
-                langid.variants = variants;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
@@ -602,11 +599,9 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = max.region;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language || langid.script.is_some() || langid.region != max.region {
-                langid.language = max.language;
+            if langid.script.is_some() || langid.region != max.region {
                 langid.script = None;
                 langid.region = max.region;
-                langid.variants = variants;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
@@ -617,19 +612,16 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language || langid.script != max.script || langid.region.is_some() {
-                langid.language = max.language;
+            if langid.script != max.script || langid.region.is_some() {
                 langid.script = max.script;
                 langid.region = None;
-                langid.variants = variants;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
             }
         }
 
-        if langid.language != max.language || langid.script != max.script || langid.region != max.region {
-            langid.language = max.language;
+        if langid.script != max.script || langid.region != max.region {
             langid.script = max.script;
             langid.region = max.region;
             CanonicalizationResult::Modified
