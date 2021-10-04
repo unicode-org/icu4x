@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633380016089,
+  "lastUpdate": 1633388535538,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15791,6 +15791,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24796,
             "range": "± 533",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "807116bfedf24c04d6bd7987431eb6b2ddc8434f",
+          "message": "Separate SkeletonPatterns into its own key (#1139)\n\n* Separate SkeletonPatterns into its own key\r\n\r\n* Fix test\r\n\r\n* Make cargo clippy happy",
+          "timestamp": "2021-10-04T15:54:54-07:00",
+          "tree_id": "de502eed1d3bc762828b7b391506edb1a59bb162",
+          "url": "https://github.com/unicode-org/icu4x/commit/807116bfedf24c04d6bd7987431eb6b2ddc8434f"
+        },
+        "date": 1633388531652,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1052,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6371,
+            "range": "± 293",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20922,
+            "range": "± 100",
             "unit": "ns/iter"
           }
         ]
