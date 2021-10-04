@@ -13,6 +13,9 @@ mod vec;
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
 
+use alloc::alloc::Layout;
+use alloc::borrow::ToOwned;
+use alloc::boxed::Box;
 use core::{fmt, mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
@@ -211,38 +214,13 @@ where
     }
 }
 
-/// A trait for any type that has a 1:1 mapping with an variable-width unaligned little-endian (VarULE) type.
-///
-/// One such type is `String`, which can be handled as an [`str`], which has no alignment or endianness requirements.
-pub trait AsVarULE {
-    /// The VarULE type corresponding to `Self`.
-    type VarULE: VarULE + ?Sized;
-
-    /// Converts from `&Self` to `Self::ULE`.
-    ///
-    /// This function will almost always be a `Deref` or similar.
-    ///
-    /// For best performance, mark your implementation of this function `#[inline]`.
-    fn as_unaligned(&self) -> &Self::VarULE;
-
-    /// Converts from `&Self::ULE` to an owned `Self`.
-    ///
-    /// This function may involve allocation.
-    ///
-    /// For best performance, mark your implementation of this function `#[inline]`.
-    ///
-    /// # Safety
-    ///
-    /// This function is infallible because bit validation should have occured when `Self::ULE`
-    /// was first constructed. An implementation may therefore involve an `unsafe{}` block, like
-    /// `from_bytes_unchecked()`.
-    fn from_unaligned(unaligned: &Self::VarULE) -> Self;
-}
-
 /// Variable-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
 /// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types;
 /// however, it is much more preferable to use [`ULE`] for that purpose.
+///
+/// If deserialization with `VarZeroVec` is desired is recommended to implement `Deserialize` for
+/// `Box<T>` (serde does not do this automatically for unsized `T`).
 ///
 /// # Safety
 ///
@@ -332,5 +310,21 @@ pub unsafe trait VarULE: 'static {
     #[inline]
     fn as_byte_slice(&self) -> &[u8] {
         unsafe { slice::from_raw_parts(self as *const Self as *const u8, mem::size_of_val(self)) }
+    }
+
+    /// Allocate on the heap as a `Box<T>`
+    #[inline]
+    fn to_boxed(&self) -> Box<Self> {
+        let bytesvec = self.as_byte_slice().to_owned().into_boxed_slice();
+        unsafe {
+            // Get the pointer representation
+            let ptr: *mut Self =
+                Self::from_byte_slice_unchecked(&bytesvec) as *const Self as *mut Self;
+            assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&*bytesvec));
+            // Forget the allocation
+            mem::forget(bytesvec);
+            // Transmute the pointer to an owned pointer
+            Box::from_raw(ptr)
+        }
     }
 }
