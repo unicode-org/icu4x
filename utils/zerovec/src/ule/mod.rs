@@ -13,6 +13,7 @@ mod vec;
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
 
+use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
 use core::{fmt, mem, slice};
@@ -311,6 +312,7 @@ pub unsafe trait VarULE: 'static {
             // Get the pointer representation
             let ptr: *mut Self =
                 Self::from_byte_slice_unchecked(&bytesvec) as *const Self as *mut Self;
+            assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&*bytesvec));
             // Forget the allocation
             mem::forget(bytesvec);
             // Transmute the pointer to an owned pointer

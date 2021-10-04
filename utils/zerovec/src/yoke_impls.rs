@@ -107,8 +107,6 @@ impl<'a, T: 'static + AsULE + ?Sized> ZeroCopyFrom<ZeroVec<'a, T>> for ZeroVec<'
 
 impl<'a, T: 'static + VarULE + ?Sized> ZeroCopyFrom<VarZeroVec<'a, T>> for VarZeroVec<'static, T> {
     fn zero_copy_from<'b>(cart: &'b VarZeroVec<'a, T>) -> VarZeroVec<'b, T> {
-        // the owned variant is not compatible with the borrowed one
-        // clones are shallow for the borrowed variant anyway
         cart.as_borrowed()
     }
 }
