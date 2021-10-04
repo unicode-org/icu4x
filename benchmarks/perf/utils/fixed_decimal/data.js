@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633379728982,
+  "lastUpdate": 1633379965628,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11249,6 +11249,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 105672,
             "range": "± 6505",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9b1462728cb5b7cd6d739a50728400810b2975fb",
+          "message": "Add doc discussing enumerations versus identifiers (#1052)",
+          "timestamp": "2021-10-04T13:32:45-07:00",
+          "tree_id": "0f12ec29da7e5da026d833e661542ec159dbd76e",
+          "url": "https://github.com/unicode-org/icu4x/commit/9b1462728cb5b7cd6d739a50728400810b2975fb"
+        },
+        "date": 1633379961425,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 136973,
+            "range": "± 5966",
             "unit": "ns/iter"
           }
         ]
