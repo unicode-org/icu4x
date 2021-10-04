@@ -7,7 +7,7 @@ use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::pattern::{reference::Pattern, PatternItem};
 use crate::provider;
-use crate::provider::helpers::DateTimeSymbols;
+use crate::provider::date_time::DateTimeSymbols;
 
 use alloc::string::ToString;
 use core::fmt;

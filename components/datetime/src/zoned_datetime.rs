@@ -14,7 +14,10 @@ use crate::{
         zoned_datetime::{self, FormattedZonedDateTime},
     },
     options::DateTimeFormatOptions,
-    provider::{self, helpers::DateTimePatterns},
+    provider::{
+        self,
+        gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    },
     time_zone::TimeZoneFormat,
     DateTimeFormatError,
 };
@@ -100,9 +103,9 @@ impl<'data> ZonedDateTimeFormat<'data> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        DP: DataProvider<'data, provider::gregory::DatePatternsV1Marker>
-            + DataProvider<'data, provider::gregory::DateSymbolsV1Marker>
-            + ?Sized,
+        DP: DataProvider<'data, DateSymbolsV1Marker>
+            + DataProvider<'data, DatePatternsV1Marker>
+            + DataProvider<'data, DateSkeletonPatternsV1Marker>,
         ZP: DataProvider<'data, provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<'data, provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<'data, provider::time_zones::MetaZoneGenericNamesLongV1Marker>
@@ -112,22 +115,8 @@ impl<'data> ZonedDateTimeFormat<'data> {
             + ?Sized,
     {
         let locale = locale.into();
-        let pattern_data: icu_provider::DataPayload<'_, provider::gregory::DatePatternsV1Marker> =
-            date_provider
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key: provider::key::GREGORY_DATE_PATTERNS_V1,
-                        options: ResourceOptions {
-                            variant: None,
-                            langid: Some(locale.clone().into()),
-                        },
-                    },
-                })?
-                .take_payload()?;
 
-        let pattern = pattern_data
-            .get()
-            .get_pattern_for_options(options)?
+        let pattern = provider::date_time::pattern_for_options(date_provider, &locale, options)?
             .unwrap_or_default();
 
         let requires_data = datetime::analyze_pattern(&pattern, true)

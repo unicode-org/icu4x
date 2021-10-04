@@ -55,7 +55,8 @@ impl CoarseHourCycle {
     #[cfg(feature = "provider_transform_internals")]
     pub fn apply_on_pattern(
         &self,
-        datetime: &provider::gregory::patterns::DateTimeFormatsV1,
+        date_time: &provider::gregory::patterns::LengthPatternsV1,
+        skeletons: &provider::gregory::DateSkeletonPatternsV1,
         pattern_str: &str,
         mut pattern: Pattern,
     ) -> Option<String> {
@@ -90,8 +91,8 @@ impl CoarseHourCycle {
         let skeleton = skeleton::Skeleton::from(&pattern);
 
         match skeleton::create_best_pattern_for_fields(
-            &datetime.skeletons,
-            &datetime.length_patterns,
+            skeletons,
+            date_time,
             skeleton.as_slice(),
             &Default::default(),
             // Prefer using the matched pattern directly, rather than mutating it to match the

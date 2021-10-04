@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod patterns;
+pub mod skeletons;
 pub mod symbols;
 
 /// Serde structs for the CLDR JSON dates files.

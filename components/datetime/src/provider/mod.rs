@@ -15,7 +15,8 @@ pub mod gregory;
 /// Data providers for time zones.
 pub mod time_zones;
 
-pub(crate) mod helpers;
+/// Traits for managing data needed by [`DateTimeFormat`].
+pub(crate) mod date_time;
 
 /// A collection of [`ResourceKey`] structs for DateTime providers.
 pub mod key {
@@ -27,6 +28,10 @@ pub mod key {
     /// A [`ResourceKey`] to [`gregory::DatePatternsV1`].
     pub const GREGORY_DATE_PATTERNS_V1: ResourceKey =
         resource_key!(DateTime, "gregory_patterns", 1);
+
+    /// A [`ResourceKey`] to [`gregory::DateSkeletonPatternsV1`].
+    pub const GREGORY_DATE_SKELETON_PATTERNS_V1: ResourceKey =
+        resource_key!(DateTime, "gregory_skltns", 1);
 
     /// A [`ResourceKey`] to [`gregory::DateSymbolsV1`]
     pub const GREGORY_DATE_SYMBOLS_V1: ResourceKey = resource_key!(DateTime, "gregory_symbols", 1);
