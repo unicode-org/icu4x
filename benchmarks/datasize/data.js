@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633310965352,
+  "lastUpdate": 1633320487183,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1193,6 +1193,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7ab53189bd43c03a9baf57a532b7fe714c97a26b"
         },
         "date": 1633310961396,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583108,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2528fe16843a31c74f91e30d20bffefc64a1d01f",
+          "message": "Check for lengths in ULE and revise safety docs (#1121)",
+          "timestamp": "2021-10-03T21:06:58-07:00",
+          "tree_id": "af79dd21fd558d4af6ea2c1793c3a0d39be72943",
+          "url": "https://github.com/unicode-org/icu4x/commit/2528fe16843a31c74f91e30d20bffefc64a1d01f"
+        },
+        "date": 1633320482982,
         "tool": "ndjson",
         "benches": [
           {
