@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633239564544,
+  "lastUpdate": 1633311288945,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13961,6 +13961,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4440,
             "range": "± 319",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ab53189bd43c03a9baf57a532b7fe714c97a26b",
+          "message": "Add runtime GenericPattern to DTF. (#1120)\n\n* Add runtime GenericPattern to DTF.\r\n\r\n* Apply reviewers feedback\r\n\r\n* Apply reviewers feedback\r\n\r\n* Fix comment\r\n\r\n* Make PatternULE repr transparent",
+          "timestamp": "2021-10-03T18:28:10-07:00",
+          "tree_id": "d07e48c0a56e2e0f03e50b3cfbb72bf98d07a9f7",
+          "url": "https://github.com/unicode-org/icu4x/commit/7ab53189bd43c03a9baf57a532b7fe714c97a26b"
+        },
+        "date": 1633311285139,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2901,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5654,
+            "range": "± 172",
             "unit": "ns/iter"
           }
         ]
