@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633365924800,
+  "lastUpdate": 1633379808625,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15707,6 +15707,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24013,
             "range": "± 999",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e6582015d32d370e5a673c61dbb46aed727bf194",
+          "message": "Add UleError type; use for PlainOldULE and char conversions (#1147)",
+          "timestamp": "2021-10-04T13:29:27-07:00",
+          "tree_id": "a717317fc89f3bafa82f258e2f07a020b6cffd26",
+          "url": "https://github.com/unicode-org/icu4x/commit/e6582015d32d370e5a673c61dbb46aed727bf194"
+        },
+        "date": 1633379803994,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1282,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7137,
+            "range": "± 432",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24404,
+            "range": "± 1809",
             "unit": "ns/iter"
           }
         ]
