@@ -6,11 +6,13 @@
 //! Traits over unaligned little-endian data (ULE, pronounced "yule").
 
 mod chars;
+mod error;
 mod plain;
 mod string;
 mod vec;
 
 pub use chars::CharULE;
+pub use error::ULEError;
 pub use plain::PlainOldULE;
 
 use alloc::alloc::Layout;
