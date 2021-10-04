@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633388174290,
+  "lastUpdate": 1633388384596,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1348,6 +1348,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 583709,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "ebff2635aa4a83811d34187eba085f9976ebe56f",
+          "message": "Apply last round of feedback on splitting DTF Skeletons.",
+          "timestamp": "2021-10-04T15:58:19-07:00",
+          "tree_id": "c379d6674a2b2a961ba6245cf4aa845026ebf2a6",
+          "url": "https://github.com/unicode-org/icu4x/commit/ebff2635aa4a83811d34187eba085f9976ebe56f"
+        },
+        "date": 1633388380114,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583691,
             "unit": "bytes",
             "biggerIsBetter": false
           }
