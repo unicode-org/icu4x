@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633320779810,
+  "lastUpdate": 1633365867682,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11189,6 +11189,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 117562,
             "range": "± 5006",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8a8c0ab9dcd24b0e6af8d834bb23dabfb87c6ceb",
+          "message": "Remove AsVarULE (#1126)",
+          "timestamp": "2021-10-04T09:37:48-07:00",
+          "tree_id": "ce1a3085cb8add5f554ee2da3002d2e7cda97244",
+          "url": "https://github.com/unicode-org/icu4x/commit/8a8c0ab9dcd24b0e6af8d834bb23dabfb87c6ceb"
+        },
+        "date": 1633365863505,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130959,
+            "range": "± 5240",
             "unit": "ns/iter"
           }
         ]
