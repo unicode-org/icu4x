@@ -1,15 +1,15 @@
 {
   "date": {
-    "full": "EEEE, dd. MMMM y.",
-    "long": "dd. MMMM y.",
-    "medium": "dd.MM.y.",
-    "short": "d.M.yy."
+    "full": "d MMMM y EEEE",
+    "long": "d MMMM y",
+    "medium": "d MMM y",
+    "short": "d.MM.y"
   },
   "time_h11_h12": {
-    "full": "h:mm:ss a",
-    "long": "h:mm:ss a",
-    "medium": "h:mm:ss a",
-    "short": "h:mm a"
+    "full": "a h:mm:ss",
+    "long": "a h:mm:ss",
+    "medium": "a h:mm:ss",
+    "short": "a h:mm"
   },
   "time_h23_h24": {
     "full": "HH:mm:ss zzzz",
@@ -18,7 +18,7 @@
     "short": "HH:mm"
   },
   "preferred_hour_cycle": "H23H24",
-  "date_time": {
+  "length_combinations": {
     "full": "{1} {0}",
     "long": "{1} {0}",
     "medium": "{1} {0}",

@@ -18,7 +18,7 @@
     "short": "H:mm"
   },
   "preferred_hour_cycle": "H23H24",
-  "date_time": {
+  "length_combinations": {
     "full": "{1} {0}",
     "long": "{1} {0}",
     "medium": "{1} {0}",

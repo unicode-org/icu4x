@@ -36,7 +36,8 @@ pub struct DatePatternsV1 {
     /// By default a locale will prefer one hour cycle type over another.
     pub preferred_hour_cycle: pattern::CoarseHourCycle,
 
-    pub date_time: patterns::LengthPatternsV1,
+    /// Patterns used to combine date and time length patterns into full date_time patterns.
+    pub length_combinations: patterns::LengthPatternsV1,
 }
 
 pub mod patterns {

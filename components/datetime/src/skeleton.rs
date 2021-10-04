@@ -836,7 +836,7 @@ mod test {
         };
     }
 
-    // // TODO(#586) - Append items support needs to be added.
+    // TODO(#586) - Append items support needs to be added.
     #[test]
     #[should_panic]
     fn test_missing_append_items_support() {
@@ -853,7 +853,7 @@ mod test {
 
         match create_best_pattern_for_fields(
             skeletons.get(),
-            &patterns.get().date_time,
+            &patterns.get().length_combinations,
             &requested_fields,
             &Default::default(),
             false,

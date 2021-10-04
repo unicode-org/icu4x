@@ -1,9 +1,9 @@
 {
   "date": {
-    "full": "y MMMM d, EEEE",
-    "long": "y MMMM d",
-    "medium": "y MMM d",
-    "short": "y-MM-dd"
+    "full": "EEEEที่ d MMMM G y",
+    "long": "d MMMM G y",
+    "medium": "d MMM y",
+    "short": "d/M/yy"
   },
   "time_h11_h12": {
     "full": "h:mm:ss a",
@@ -12,13 +12,13 @@
     "short": "h:mm a"
   },
   "time_h23_h24": {
-    "full": "HH:mm:ss zzzz",
-    "long": "HH:mm:ss z",
+    "full": "H นาฬิกา mm นาที ss วินาที zzzz",
+    "long": "H นาฬิกา mm นาที ss วินาที z",
     "medium": "HH:mm:ss",
     "short": "HH:mm"
   },
   "preferred_hour_cycle": "H23H24",
-  "date_time": {
+  "length_combinations": {
     "full": "{1} {0}",
     "long": "{1} {0}",
     "medium": "{1} {0}",

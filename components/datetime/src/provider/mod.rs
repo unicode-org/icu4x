@@ -27,7 +27,7 @@ pub mod key {
 
     /// A [`ResourceKey`] to [`gregory::DatePatternsV1`].
     pub const GREGORY_DATE_PATTERNS_V1: ResourceKey =
-        resource_key!(DateTime, "gregory_patterns", 1);
+        resource_key!(DateTime, "gregory_lengths", 1);
 
     /// A [`ResourceKey`] to [`gregory::DateSkeletonPatternsV1`].
     pub const GREGORY_DATE_SKELETON_PATTERNS_V1: ResourceKey =

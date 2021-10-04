@@ -171,7 +171,7 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         patterns_data.with_mut(|data| {
-            data.date_time.long = Cow::Borrowed("{0}");
+            data.length_combinations.long = Cow::Borrowed("{0}");
         });
         let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
             .load_payload(&DataRequest {
@@ -303,7 +303,7 @@ fn test_time_zone_patterns() {
             .unwrap();
 
         patterns_data.with_mut(|data| {
-            data.date_time.long = Cow::Borrowed("{0}");
+            data.length_combinations.long = Cow::Borrowed("{0}");
         });
 
         for TimeZoneExpectation { patterns, expected } in &test.expectations {

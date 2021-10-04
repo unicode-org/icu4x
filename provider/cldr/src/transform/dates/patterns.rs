@@ -131,7 +131,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::LengthPatternsV1 {
 
 impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
     fn from(other: &cldr_json::Dates) -> Self {
-        let date_time_formats_v1 =
+        let length_combinations_v1 =
             gregory::patterns::LengthPatternsV1::from(&other.calendars.gregorian.datetime_formats);
         let skeletons_v1 =
             gregory::DateSkeletonPatternsV1::from(&other.calendars.gregorian.datetime_formats);
@@ -184,7 +184,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             let alt_time = gregory::patterns::LengthPatternsV1 {
                 full: alt_hour_cycle
                     .apply_on_pattern(
-                        &date_time_formats_v1,
+                        &length_combinations_v1,
                         &skeletons_v1,
                         pattern_str_full,
                         pattern_full,
@@ -193,7 +193,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                     .into(),
                 long: alt_hour_cycle
                     .apply_on_pattern(
-                        &date_time_formats_v1,
+                        &length_combinations_v1,
                         &skeletons_v1,
                         pattern_str_long,
                         pattern_long,
@@ -202,7 +202,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                     .into(),
                 medium: alt_hour_cycle
                     .apply_on_pattern(
-                        &date_time_formats_v1,
+                        &length_combinations_v1,
                         &skeletons_v1,
                         pattern_str_medium,
                         pattern_medium,
@@ -211,7 +211,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                     .into(),
                 short: alt_hour_cycle
                     .apply_on_pattern(
-                        &date_time_formats_v1,
+                        &length_combinations_v1,
                         &skeletons_v1,
                         pattern_str_short,
                         pattern_short,
@@ -231,7 +231,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             time_h11_h12,
             time_h23_h24,
             preferred_hour_cycle,
-            date_time: date_time_formats_v1,
+            length_combinations: length_combinations_v1,
         }
     }
 }
