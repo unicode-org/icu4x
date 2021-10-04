@@ -70,7 +70,10 @@ impl From<&str> for Pattern {
     }
 }
 
-fn dump_buffer_into_formatter(literal: &str, formatter: &mut fmt::Formatter) -> fmt::Result {
+pub(crate) fn dump_buffer_into_formatter(
+    literal: &str,
+    formatter: &mut fmt::Formatter,
+) -> fmt::Result {
     if literal.is_empty() {
         return Ok(());
     }

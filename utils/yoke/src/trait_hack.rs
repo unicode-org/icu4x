@@ -6,7 +6,7 @@
 //!
 //! # Trait bounds in Yoke
 //!
-//! [Compiler bug #85636](https://github.com/rust-lang/rust/issues/85636) makes it tricky to add
+//! [Compiler bug #89196](https://github.com/rust-lang/rust/issues/89196) makes it tricky to add
 //! trait bounds involving `yoke` types.
 //!
 //! For example, you may want to write:
@@ -26,22 +26,62 @@
 //!
 //! # Examples
 //!
-//! Code that does not compile:
+//! Code that does not compile ([playground](https://play.rust-lang.org/?version=beta&mode=debug&edition=2018&gist=ebbda5b15a398d648bdff9e439b27dc0)):
 //!
-//! ***[#1061](https://github.com/unicode-org/icu4x/issues/1061): The following example
-//! compiles starting in Rust 1.56.
+//! ```compile_fail
+//! use yoke::*;
 //!
-//! ```ignore
-//! use yoke::Yoke;
-//! use yoke::Yokeable;
+//! trait MiniDataMarker {
+//!     type Yokeable: for<'a> Yokeable<'a>;
+//! }
 //!
-//! // Example trait and struct for illustration purposes:
-//! trait MyTrait {}
-//! struct MyStruct {}
-//! impl MyTrait for MyStruct {}
-//! unsafe impl<'a> Yokeable<'a> for MyStruct {
+//! struct MiniDataPayload<M>
+//! where
+//!     M: MiniDataMarker
+//! {
+//!     pub yoke: Yoke<M::Yokeable, ()>,
+//! }
+//!
+//! impl<M> Clone for MiniDataPayload<M>
+//! where
+//!     M: MiniDataMarker,
+//!     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
+//! {
+//!     fn clone(&self) -> Self {
+//!         unimplemented!()
+//!     }
+//! }
+//!
+//! trait MiniDataProvider<M>
+//! where
+//!     M: MiniDataMarker
+//! {
+//!     fn mini_load_payload(&self) -> MiniDataPayload<M>;
+//! }
+//!
+//! struct MiniStructProvider<M>
+//! where
+//!     M: MiniDataMarker,
+//! {
+//!     pub payload: MiniDataPayload<M>,
+//! }
+//!
+//! impl<M> MiniDataProvider<M> for MiniStructProvider<M>
+//! where
+//!     M: MiniDataMarker,
+//!     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
+//! {
+//!     fn mini_load_payload(&self) -> MiniDataPayload<M> {
+//!         self.payload.clone()
+//!     }
+//! }
+//!
+//! #[derive(Clone)]
+//! struct SimpleStruct(pub u32);
+//!
+//! unsafe impl<'a> Yokeable<'a> for SimpleStruct {
 //!     // (not shown; see `Yokeable` for examples)
-//! #    type Output = MyStruct;
+//! #    type Output = SimpleStruct;
 //! #    fn transform(&'a self) -> &'a Self::Output {
 //! #        self
 //! #    }
@@ -63,17 +103,24 @@
 //! #    }
 //! }
 //!
-//! impl<Y, C> MyTrait for Yoke<Y, C>
-//! where
-//!     Y: for<'a> Yokeable<'a>,
-//!     for<'a> <Y as Yokeable<'a>>::Output: MyTrait,
-//! {}
-//!
-//! fn example() {
-//!     let y = Yoke::<MyStruct, ()>::new_always_owned(MyStruct {});
-//!     // error[E0277]: the trait bound `for<'a> <MyStruct as Yokeable<'a>>::Output: MyTrait` is not satisfied
-//!     let _: &dyn MyTrait = &y;
+//! impl MiniDataMarker for SimpleStruct {
+//!     type Yokeable = SimpleStruct;
 //! }
+//!
+//! let provider = MiniStructProvider {
+//!     payload: MiniDataPayload {
+//!         yoke: Yoke::new_always_owned(SimpleStruct(42))
+//!     }
+//! };
+//!
+//! // Broken:
+//! // "method cannot be called on `MiniStructProvider<_>` due to unsatisfied trait bounds"
+//! let payload: MiniDataPayload<SimpleStruct> = provider.mini_load_payload();
+//!
+//! // Working:
+//! let payload = MiniDataProvider::<SimpleStruct>::mini_load_payload(&provider);
+//!
+//! assert_eq!(payload.yoke.get().0, 42);
 //! ```
 //!
 //! Example for binding the trait to a reference:

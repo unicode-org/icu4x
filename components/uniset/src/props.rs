@@ -542,6 +542,7 @@ where
         GeneralCategory::LineSeparator => key::GENERAL_CATEGORY_LINE_SEPARATOR_V1,
         GeneralCategory::ParagraphSeparator => key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1,
         GeneralCategory::SpaceSeparator => key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1,
+        _ => return Err(UnicodeSetError::UnknownGeneralCategorySet(enum_val.0)),
     };
     get_prop(provider, key)
 }
@@ -715,6 +716,7 @@ where
         Script::Yezidi => key::SCRIPT_YEZIDI_V1,
         Script::Yi => key::SCRIPT_YI_V1,
         Script::ZanabazarSquare => key::SCRIPT_ZANABAZAR_SQUARE_V1,
+        _ => return Err(UnicodeSetError::UnknownScriptId(enum_val.0)),
     };
     get_prop(provider, key)
 }

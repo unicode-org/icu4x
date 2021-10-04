@@ -3,20 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
-use alloc::string::String;
 use core::str;
-
-impl AsVarULE for String {
-    type VarULE = str;
-    #[inline]
-    fn as_unaligned(&self) -> &str {
-        self
-    }
-    #[inline]
-    fn from_unaligned(unaligned: &str) -> Self {
-        unaligned.into()
-    }
-}
 
 // This is safe to implement because from_byte_slice_unchecked returns
 // the same value as parse_byte_slice
