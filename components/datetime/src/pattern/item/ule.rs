@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::PatternItem;
+use super::{GenericPatternItem, PatternItem};
 use crate::fields;
 use core::convert::TryFrom;
 use zerovec::ule::{AsULE, ULE};
@@ -55,6 +55,7 @@ use zerovec::ule::{AsULE, ULE};
 ///
 /// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[repr(transparent)]
 pub struct PatternItemULE([u8; 3]);
 
 impl PatternItemULE {
@@ -72,7 +73,8 @@ impl PatternItemULE {
     #[inline]
     fn bytes_in_range(value: (&u8, &u8, &u8)) -> bool {
         match Self::determine_field_from_u8(*value.0) {
-            true => fields::Field::bytes_in_range(value.1, value.2),
+            // ensure that unused bytes are all zero
+            true => fields::Field::bytes_in_range(value.1, value.2) && *value.0 == 0b1000_0000,
             false => {
                 let u = u32::from_be_bytes([0x00, *value.0, *value.1, *value.2]);
                 char::try_from(u).is_ok()
@@ -81,8 +83,11 @@ impl PatternItemULE {
     }
 }
 
-// This impl is safe because (1) validate_byte_slice rejects all invalid byte slices, including
-// those that are the wrong length, and (2) byte equality is semantic equality.
+// Safety (based on the safety checklist on the ULE trait):
+//  1. PatternItemULE does not include any uninitialized or padding bytes.
+//  2. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  3. The other ULE methods use the default impl.
+//  4. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
     type Error = &'static str;
 
@@ -133,9 +138,133 @@ impl AsULE for PatternItem {
     }
 }
 
+/// `GenericPatternItemULE` is a type optimized for efficent storing and
+/// deserialization of `DateTimeFormat` `GenericPatternItem` elements using
+/// the `ZeroVec` model.
+///
+/// The serialization model packages the pattern item in three bytes.
+///
+/// The first bit is used to disriminate the item variant. If the bit is
+/// set, then the value is the `GenericPatternItem::Placeholder` variant. Otherwise,
+/// the `GenericPatternItem::Literal` is used.
+///
+/// In case the discriminant is set:
+///
+/// 1) The rest of the first byte remains unused.
+/// 2) The second byte is unused.
+/// 3) The third byte encodes the placeholder index.
+///
+/// If the discriminant is not set, the bottom three bits of the first byte,
+/// together with the next two bytes, contain all 21 bits required to encode
+/// any [`Unicode Code Point`].
+///
+/// # Diagram
+///
+/// ```text
+/// ┌───────────────┬───────────────┬───────────────┐
+/// │       u8      │       u8      │       u8      │
+/// ├─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┤
+/// ├─┴─┴─┼─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┤
+/// │     │          Unicode Code Point             │ Literal
+/// ├─┬───┴─────────────────────────┬───────────────┤
+/// │X│                             │  Placeholder  │ Placeholder
+/// └─┴─────────────────────────────┴───────────────┘
+///  ▲
+///  │
+///  Variant Discriminant
+/// ```
+///
+/// # Optimization
+///
+/// This model is optimized for efficient packaging of the `GenericPatternItem` elements
+/// and performant deserialization from the `GernericPatternItemULE` to `GenericPatternItem` type.
+///
+/// # Constraints
+///
+/// The model leaves at most 8 `PatternItem` variants, and limits the placeholder
+/// to a single u8.
+///
+/// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[repr(transparent)]
+pub struct GenericPatternItemULE([u8; 3]);
+
+impl GenericPatternItemULE {
+    /// Given the first byte of the three-byte array that `GenericPatternItemULE` encodes,
+    /// the method determins whether the discriminant in
+    /// the byte indicates that the array encodes the `GenericPatternItem::Field`
+    /// or `GenericPatternItem::Literal` variant of the `GenericPatternItem`.
+    ///
+    /// Returns true when it is a `GenericPatternItem::Field`.
+    #[inline]
+    fn determine_field_from_u8(byte: u8) -> bool {
+        byte & 0b1000_0000 != 0
+    }
+
+    #[inline]
+    fn bytes_in_range(value: (&u8, &u8, &u8)) -> bool {
+        match Self::determine_field_from_u8(*value.0) {
+            // ensure that unused bytes are all zero
+            true => *value.0 == 0b1000_0000 && *value.1 == 0,
+            false => {
+                let u = u32::from_be_bytes([0x00, *value.0, *value.1, *value.2]);
+                char::try_from(u).is_ok()
+            }
+        }
+    }
+}
+
+// Safety (based on the safety checklist on the ULE trait):
+//  1. GenericPatternItemULE does not include any uninitialized or padding bytes.
+//  2. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  3. The other ULE methods use the default impl.
+//  4. GenericPatternItemULE byte equality is semantic equality.
+unsafe impl ULE for GenericPatternItemULE {
+    type Error = &'static str;
+
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+        let mut chunks = bytes.chunks_exact(3);
+
+        if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
+            || !chunks.remainder().is_empty()
+        {
+            return Err("Invalid byte sequence");
+        }
+        Ok(())
+    }
+}
+
+impl AsULE for GenericPatternItem {
+    type ULE = GenericPatternItemULE;
+
+    #[inline]
+    fn as_unaligned(&self) -> Self::ULE {
+        match self {
+            Self::Placeholder(idx) => GenericPatternItemULE([0b1000_0000, 0x00, *idx]),
+            Self::Literal(ch) => {
+                let u = *ch as u32;
+                let bytes = u.to_be_bytes();
+                GenericPatternItemULE([bytes[1], bytes[2], bytes[3]])
+            }
+        }
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: &Self::ULE) -> Self {
+        let value = unaligned.0;
+        match GenericPatternItemULE::determine_field_from_u8(value[0]) {
+            false => {
+                let u = u32::from_be_bytes([0x00, value[0], value[1], value[2]]);
+                Self::Literal(char::try_from(u).unwrap())
+            }
+            true => Self::Placeholder(value[2]),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use super::{PatternItem, PatternItemULE};
+    use super::*;
     use crate::fields::{FieldLength, FieldSymbol, Second, Year};
     use zerovec::ule::{AsULE, ULE};
 
@@ -218,6 +347,22 @@ mod test {
 
             assert!(PatternItemULE::validate_byte_slice(&bytes).is_ok());
             assert_eq!(bytes, bytes2);
+        }
+    }
+
+    #[test]
+    fn test_generic_pattern_item_as_ule() {
+        let samples = &[
+            (GenericPatternItem::Placeholder(4), &[0x80, 0x00, 4]),
+            (GenericPatternItem::Placeholder(0), &[0x80, 0x00, 0]),
+            (GenericPatternItem::from('z'), &[0x00, 0x00, 0x7a]),
+        ];
+
+        for (ref_pattern, ref_bytes) in samples {
+            let ule = ref_pattern.as_unaligned();
+            assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+            let pattern = GenericPatternItem::from_unaligned(&ule);
+            assert_eq!(pattern, *ref_pattern);
         }
     }
 }
