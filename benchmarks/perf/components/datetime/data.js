@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633388756385,
+  "lastUpdate": 1633388805701,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9503,6 +9503,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 353769,
             "range": "± 24629",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "5da378032b6a98225436c476938744a6156da8b8",
+          "message": "Make clippy happy",
+          "timestamp": "2021-10-04T15:59:31-07:00",
+          "tree_id": "a827f99d580f3c336dc91b5524b74f7c9d1a9f03",
+          "url": "https://github.com/unicode-org/icu4x/commit/5da378032b6a98225436c476938744a6156da8b8"
+        },
+        "date": 1633388800936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 125381,
+            "range": "± 5715",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1827914,
+            "range": "± 115471",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 389241,
+            "range": "± 24081",
             "unit": "ns/iter"
           }
         ]
