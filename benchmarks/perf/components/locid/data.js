@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633379999235,
+  "lastUpdate": 1633388546060,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14141,6 +14141,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4984,
             "range": "± 230",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "807116bfedf24c04d6bd7987431eb6b2ddc8434f",
+          "message": "Separate SkeletonPatterns into its own key (#1139)\n\n* Separate SkeletonPatterns into its own key\r\n\r\n* Fix test\r\n\r\n* Make cargo clippy happy",
+          "timestamp": "2021-10-04T15:54:54-07:00",
+          "tree_id": "de502eed1d3bc762828b7b391506edb1a59bb162",
+          "url": "https://github.com/unicode-org/icu4x/commit/807116bfedf24c04d6bd7987431eb6b2ddc8434f"
+        },
+        "date": 1633388542060,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2911,
+            "range": "± 217",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5060,
+            "range": "± 439",
             "unit": "ns/iter"
           }
         ]
