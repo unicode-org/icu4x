@@ -82,15 +82,15 @@ fn overview_bench(c: &mut Criterion) {
     bench_hashmap(c);
 }
 
-fn build_zeromap(large: bool) -> ZeroMap<'static, String, String> {
-    let mut map: ZeroMap<String, String> = ZeroMap::new();
+fn build_zeromap(large: bool) -> ZeroMap<'static, str, str> {
+    let mut map: ZeroMap<str, str> = ZeroMap::new();
     for (key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
-                map.insert(format!("{}{}", key, n), value.to_string());
+                map.insert(&format!("{}{}", key, n), value);
             }
         } else {
-            map.insert(key.to_string(), value.to_string());
+            map.insert(key, value);
         }
     }
     map
@@ -99,7 +99,7 @@ fn build_zeromap(large: bool) -> ZeroMap<'static, String, String> {
 fn bench_deserialize(c: &mut Criterion) {
     c.bench_function("zeromap/deserialize/small", |b| {
         b.iter(|| {
-            let map: ZeroMap<String, String> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
+            let map: ZeroMap<str, str> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
             assert_eq!(map.get("iu"), Some("Inuktitut"));
         })
     });
@@ -110,14 +110,14 @@ fn bench_deserialize_large(c: &mut Criterion) {
     let buf = postcard::to_stdvec(&original_map).unwrap();
     c.bench_function("zeromap/deserialize/large", |b| {
         b.iter(|| {
-            let map: ZeroMap<String, String> = postcard::from_bytes(black_box(&buf)).unwrap();
+            let map: ZeroMap<str, str> = postcard::from_bytes(black_box(&buf)).unwrap();
             assert_eq!(map.get("iu3333"), Some("Inuktitut"));
         })
     });
 }
 
 fn bench_lookup(c: &mut Criterion) {
-    let map: ZeroMap<String, String> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
+    let map: ZeroMap<str, str> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
     c.bench_function("zeromap/lookup/small", |b| {
         b.iter(|| {
             assert_eq!(map.get(black_box("iu")), Some("Inuktitut"));
@@ -129,7 +129,7 @@ fn bench_lookup(c: &mut Criterion) {
 fn bench_lookup_large(c: &mut Criterion) {
     let original_map = build_zeromap(true);
     let buf = postcard::to_stdvec(&original_map).unwrap();
-    let map: ZeroMap<String, String> = postcard::from_bytes(&buf).unwrap();
+    let map: ZeroMap<str, str> = postcard::from_bytes(&buf).unwrap();
     c.bench_function("zeromap/lookup/large", |b| {
         b.iter(|| {
             assert_eq!(map.get(black_box("iu3333")), Some("Inuktitut"));
