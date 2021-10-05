@@ -35,7 +35,7 @@ mod tests {
     use super::key;
     use super::LstmDataV1Marker;
 
-    fn get_request(langid: LanguageIdentifier) -> DataRequest {
+    fn get_request_v1(langid: LanguageIdentifier) -> DataRequest {
         DataRequest {
             resource_path: ResourcePath {
                 key: key::SEGMENTER_LSTM_V1,
@@ -53,7 +53,7 @@ mod tests {
             .expect("Loading file from testdata directory");
 
         let lstm_data: DataPayload<LstmDataV1Marker> = (&provider as &dyn SerdeDeDataProvider)
-            .load_payload(&get_request(langid!("th")))
+            .load_payload(&get_request_v1(langid!("th")))
             .expect("The data should be valid")
             .take_payload()
             .expect("The data should be present");

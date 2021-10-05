@@ -6,7 +6,7 @@ use ndarray::Array1;
 use ndarray::Array2;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use yoke::*;
+use yoke::Yokeable;
 
 /// 'LstmData' is a struct that store a LSTM model. Its attributes are:
 /// `model`: name of the model
