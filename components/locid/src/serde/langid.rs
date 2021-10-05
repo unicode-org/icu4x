@@ -43,7 +43,7 @@ impl<'de> Deserialize<'de> for LanguageIdentifier {
 }
 
 #[test]
-fn serialize() -> Result<(), Box<dyn std::error::Error>> {
+fn test_langid_serde_serialize() -> Result<(), Box<dyn std::error::Error>> {
     let fr = serde_json::json!("fr".parse::<LanguageIdentifier>()?);
     let en = serde_json::json!("en-US".parse::<LanguageIdentifier>()?);
 
@@ -54,7 +54,7 @@ fn serialize() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
+fn test_langid_serde_deserialize() -> Result<(), Box<dyn std::error::Error>> {
     let fr = serde_json::from_str::<LanguageIdentifier>(r#""fr""#)?;
     let en = serde_json::from_str::<LanguageIdentifier>(r#""en-US""#)?;
 
