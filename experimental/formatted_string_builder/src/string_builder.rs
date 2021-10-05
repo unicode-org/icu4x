@@ -36,9 +36,7 @@ fn raise_annotation<F: Copy, const L: usize, const L1: usize>(
     ) -> Annotation<F, L> {
         assert_eq!(L - 1, L1);
         let mut all_levels = [top_level; L];
-        for i in 0..L1 {
-            all_levels[i + 1] = lower_levels[i];
-        }
+        all_levels[1..L].clone_from_slice(&lower_levels[..L1]);
         all_levels
     }
 
@@ -50,11 +48,8 @@ fn raise_annotation<F: Copy, const L: usize, const L1: usize>(
                 &mut lower_levels[0],
                 (LocationInPart::Begin, top_level),
             ));
-            for j in 1..n {
-                vec.push(add_level(
-                    &mut lower_levels[j],
-                    (LocationInPart::Extend, top_level),
-                ));
+            for item in &mut lower_levels[1..n] {
+                vec.push(add_level(item, (LocationInPart::Extend, top_level)));
             }
             vec
         }
@@ -123,8 +118,8 @@ impl<F: Copy, const L: usize> LayeredFormattedStringBuilder<F, L> {
 
     pub fn fields_at(&self, pos: usize) -> [F; L] {
         let mut res = [self.annotations[pos][0].1; L];
-        for i in 1..L {
-            res[i] = self.annotations[pos][i].1
+        for (i, (_bies, field)) in self.annotations[pos][1..L].iter().enumerate() {
+            res[i+1] = *field;
         }
         res
     }
@@ -132,7 +127,7 @@ impl<F: Copy, const L: usize> LayeredFormattedStringBuilder<F, L> {
     pub fn is_field_start(&self, pos: usize, level: usize) -> bool {
         assert!(level < L);
         let (location, _) = self.annotations[pos][level];
-        return location == LocationInPart::Begin;
+        location == LocationInPart::Begin
     }
 }
 
@@ -177,6 +172,11 @@ impl<F: Copy> FormattedStringBuilder<F> {
 
     pub fn field_at(&self, pos: usize) -> F {
         self.annotations[pos][0].1
+    }
+}
+impl<F: Copy, const L: usize> Default for LayeredFormattedStringBuilder<F, L> {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

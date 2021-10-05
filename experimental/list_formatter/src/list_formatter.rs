@@ -65,22 +65,18 @@ impl<'a> ListFormatter<'a> {
         match values.len() {
             0 => empty(),
             1 => single(values[0]),
-            2 => apply_pattern(
-                values[0],
-                &self.pair.get_parts(values[1]),
-                single(values[1]),
-            ),
+            2 => apply_pattern(values[0], self.pair.get_parts(values[1]), single(values[1])),
             n => {
                 let mut builder = apply_pattern(
                     values[n - 2],
-                    &self.last.get_parts(values[n - 1]),
+                    self.last.get_parts(values[n - 1]),
                     single(values[n - 1]),
                 );
                 for i in (1..n - 2).rev() {
                     builder =
-                        apply_pattern(values[i], &self.middle.get_parts(values[i + 1]), builder);
+                        apply_pattern(values[i], self.middle.get_parts(values[i + 1]), builder);
                 }
-                apply_pattern(values[0], &self.first.get_parts(values[1]), builder)
+                apply_pattern(values[0], self.first.get_parts(values[1]), builder)
             }
         }
     }
@@ -156,10 +152,18 @@ mod tests {
 
     fn test_formatter() -> ListFormatter<'static> {
         ListFormatter {
-            pair: &Pattern::Simple{ parts: ("", "; ", "") },
-            first: &Pattern::Simple{ parts: ("", ": ", "")},
-            middle: &Pattern::Simple{ parts: ("", ", ", "")},
-            last: &Pattern::Simple{ parts: ("", ". ", "!")},
+            pair: &Pattern::Simple {
+                parts: ("", "; ", ""),
+            },
+            first: &Pattern::Simple {
+                parts: ("", ": ", ""),
+            },
+            middle: &Pattern::Simple {
+                parts: ("", ", ", ""),
+            },
+            last: &Pattern::Simple {
+                parts: ("", ". ", "!"),
+            },
         }
     }
 

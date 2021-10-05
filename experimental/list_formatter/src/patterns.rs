@@ -5,7 +5,7 @@
 use crate::list_formatter::{Pattern, Type, Width};
 use regex::Regex;
 
-fn p<'a>(pattern: &'a str) -> Pattern<'a> {
+fn p(pattern: &'_ str) -> Pattern<'_> {
     let index_0 = pattern.find("{0}").expect("missing {0}");
     let index_1 = pattern.find("{1}").expect("missing {1}");
     assert!(
