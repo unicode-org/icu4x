@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633388805701,
+  "lastUpdate": 1633533972823,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9545,6 +9545,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 389241,
             "range": "± 24081",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a7cd0430f4ca3256d4cea75b57af08ae992a54d",
+          "message": "Add initial FormattedStringBuilder and ListFormatter to experimental (#1053)",
+          "timestamp": "2021-10-06T08:19:09-07:00",
+          "tree_id": "be1442c6796b1debe1f1554c63babca0682e2424",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a7cd0430f4ca3256d4cea75b57af08ae992a54d"
+        },
+        "date": 1633533968874,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 96786,
+            "range": "± 4757",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1432932,
+            "range": "± 57837",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 287604,
+            "range": "± 16064",
             "unit": "ns/iter"
           }
         ]
