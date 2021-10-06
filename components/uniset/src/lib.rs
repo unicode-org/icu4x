@@ -62,7 +62,6 @@ extern crate alloc;
 mod builder;
 mod conversions;
 pub mod enum_props;
-#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 pub mod props;
 pub mod provider;
 mod ule;
@@ -80,16 +79,16 @@ pub use utils::*;
 
 /// Custom Errors for [`UnicodeSet`].
 #[derive(Display, Debug)]
-#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 pub enum UnicodeSetError {
-    #[displaydoc("Invalid set: {0:?}")]
+    /// Invalid set: {0:?}
     InvalidSet(Vec<u32>),
-    #[displaydoc("Invalid range: {0}..{1}")]
+    /// Invalid range: {0}..{1}
     InvalidRange(u32, u32),
-    #[displaydoc("Unknown script id: {0}")]
+    /// Unknown script id: {0}
     UnknownScriptId(u16),
-    #[displaydoc("Unknown general category set: {0}")]
+    /// Unknown general category set: {0}
     UnknownGeneralCategorySet(u32),
+    /// An error occurred while loading data
     #[displaydoc("{0}")]
     PropDataLoad(DataError),
 }
@@ -101,11 +100,4 @@ impl From<DataError> for UnicodeSetError {
     fn from(e: DataError) -> Self {
         UnicodeSetError::PropDataLoad(e)
     }
-}
-
-#[derive(PartialEq)]
-#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
-pub enum UnicodeSetSpanCondition {
-    Contained,
-    NotContained,
 }
