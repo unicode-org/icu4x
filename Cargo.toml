@@ -16,6 +16,8 @@ members = [
     "components/plurals",
     "components/uniset",
     "experimental/bies",
+    "experimental/formatted_string_builder",
+    "experimental/list_formatter",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/diplomat",
