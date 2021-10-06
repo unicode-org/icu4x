@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633388452381,
+  "lastUpdate": 1633533631555,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1403,6 +1403,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5da378032b6a98225436c476938744a6156da8b8"
         },
         "date": 1633388448031,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583691,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a7cd0430f4ca3256d4cea75b57af08ae992a54d",
+          "message": "Add initial FormattedStringBuilder and ListFormatter to experimental (#1053)",
+          "timestamp": "2021-10-06T08:19:09-07:00",
+          "tree_id": "be1442c6796b1debe1f1554c63babca0682e2424",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a7cd0430f4ca3256d4cea75b57af08ae992a54d"
+        },
+        "date": 1633533627281,
         "tool": "ndjson",
         "benches": [
           {
