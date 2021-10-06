@@ -1,7 +1,6 @@
 [
     {
         "input": {
-            "locale": "en",
             "value": "2020-02-20T00:12:00.000",
             "options": {
                 "length": {
@@ -11,12 +10,13 @@
             }
         },
         "output": {
-            "value": "Feb 20, 2020, 12:12:00 AM"
+            "values": {
+                "en" : "Feb 20, 2020, 12:12:00 AM"
+            }
         }
     },
     {
         "input": {
-            "locale": "en",
             "value": "2000-01-30T22:15:11.000",
             "options": {
                 "length": {
@@ -26,12 +26,13 @@
             }
         },
         "output": {
-            "value": "1/30/00, 10:15 PM"
+            "values": {
+                "en": "1/30/00, 10:15 PM"
+            }
         }
     },
     {
         "input": {
-            "locale": "en",
             "value": "2045-02-01T18:45:10.000",
             "options": {
                 "length": {
@@ -41,12 +42,13 @@
             }
         },
         "output": {
-            "value": "February 1, 2045"
+            "values": {
+                "en": "February 1, 2045"
+            }
         }
     },
     {
         "input": {
-            "locale": "en",
             "value": "2045-02-01T18:45:10.000",
             "options": {
                 "length": {
@@ -56,12 +58,14 @@
             }
         },
         "output": {
-            "value": "6:45:10 PM"
+            "values": {
+                "en": "6:45:10 PM"
+            }
         }
     },
     {
         "input": {
-            "locale": "ru",
+
             "value": "2020-03-21T08:25:07.000",
             "options": {
                 "length": {
@@ -71,7 +75,9 @@
             }
         },
         "output": {
-            "value": "21 мар. 2020 г., 08:25"
+            "values": {
+                "ru": "21 мар. 2020 г., 08:25"
+            }
         }
     }
 ]

@@ -9,6 +9,7 @@
 
 use icu_datetime::options::{components, length};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Fixture(pub Vec<Test>);
@@ -22,7 +23,6 @@ pub struct Test {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestInput {
-    pub locale: String,
     pub value: String,
     pub options: TestOptions,
 }
@@ -37,5 +37,5 @@ pub enum TestOptions {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOutput {
-    pub value: String,
+    pub values: HashMap<String, String>,
 }
