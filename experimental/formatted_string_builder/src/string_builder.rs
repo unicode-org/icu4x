@@ -119,7 +119,7 @@ impl<F: Copy, const L: usize> LayeredFormattedStringBuilder<F, L> {
     pub fn fields_at(&self, pos: usize) -> [F; L] {
         let mut res = [self.annotations[pos][0].1; L];
         for (i, (_bies, field)) in self.annotations[pos][1..L].iter().enumerate() {
-            res[i+1] = *field;
+            res[i + 1] = *field;
         }
         res
     }
