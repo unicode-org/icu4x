@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633388797796,
+  "lastUpdate": 1633534009635,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15917,6 +15917,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24957,
             "range": "± 1065",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a7cd0430f4ca3256d4cea75b57af08ae992a54d",
+          "message": "Add initial FormattedStringBuilder and ListFormatter to experimental (#1053)",
+          "timestamp": "2021-10-06T08:19:09-07:00",
+          "tree_id": "be1442c6796b1debe1f1554c63babca0682e2424",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a7cd0430f4ca3256d4cea75b57af08ae992a54d"
+        },
+        "date": 1633534004912,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1353,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7120,
+            "range": "± 803",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23768,
+            "range": "± 1709",
             "unit": "ns/iter"
           }
         ]
