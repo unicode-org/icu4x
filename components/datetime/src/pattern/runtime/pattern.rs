@@ -6,16 +6,19 @@ use super::super::{reference, PatternItem, TimeGranularity};
 use crate::pattern::reference::pattern::dump_buffer_into_formatter;
 use alloc::fmt::{self, Write};
 use alloc::string::String;
+#[cfg(feature = "provider_serde")]
+use alloc::string::ToString;
 use alloc::{vec, vec::Vec};
+#[cfg(feature = "provider_serde")]
+use serde::{
+    de,
+    ser::{self, SerializeSeq},
+    Deserialize, Deserializer, Serialize,
+};
 use zerovec::ZeroVec;
 
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
 pub struct Pattern<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub items: ZeroVec<'data, PatternItem>,
     pub(crate) time_granularity: TimeGranularity,
 }
@@ -73,5 +76,88 @@ impl fmt::Display for Pattern<'_> {
         dump_buffer_into_formatter(&buffer, formatter)?;
         buffer.clear();
         Ok(())
+    }
+}
+
+#[cfg(feature = "provider_serde")]
+#[allow(clippy::upper_case_acronyms)]
+struct DeserializePatternUTS35String;
+
+#[cfg(feature = "provider_serde")]
+impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
+    type Value = Pattern<'de>;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "Expected to find a valid pattern.")
+    }
+
+    fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        // Parse a string into a list of fields.
+        let reference_deserializer = crate::pattern::reference::pattern::DeserializePatternUTS35String;
+        let pattern = reference_deserializer.visit_str(pattern_string)?;
+
+        Ok(pattern.into())
+    }
+}
+
+#[cfg(feature = "provider_serde")]
+struct DeserializePatternBincode;
+
+#[cfg(feature = "provider_serde")]
+impl<'de> de::Visitor<'de> for DeserializePatternBincode {
+    type Value = Pattern<'de>;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "Unable to deserialize a bincode Pattern.")
+    }
+
+    fn visit_seq<V>(self, mut seq: V) -> Result<Pattern<'de>, V::Error>
+    where
+        V: de::SeqAccess<'de>,
+    {
+        let mut items = Vec::new();
+        while let Some(item) = seq.next_element()? {
+            items.push(item)
+        }
+        Ok(Pattern::from(items))
+    }
+}
+
+#[cfg(feature = "provider_serde")]
+impl<'de> Deserialize<'de> for Pattern<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_str(DeserializePatternUTS35String)
+        } else {
+            deserializer.deserialize_seq(DeserializePatternBincode)
+        }
+    }
+}
+
+#[cfg(feature = "provider_serde")]
+impl Serialize for Pattern<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: ser::Serializer,
+    {
+        if serializer.is_human_readable() {
+            // Serialize into the UTS 35 string representation.
+            let string: String = self.to_string();
+            serializer.serialize_str(&string)
+        } else {
+            // Serialize into a bincode-friendly representation. This means that pattern parsing
+            // will not be needed when deserializing.
+            let mut seq = serializer.serialize_seq(Some(self.items.len()))?;
+            for item in self.items.iter() {
+                seq.serialize_element(&item)?;
+            }
+            seq.end()
+        }
     }
 }

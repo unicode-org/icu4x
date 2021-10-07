@@ -155,7 +155,7 @@ impl fmt::Display for Pattern {
 
 #[cfg(feature = "provider_serde")]
 #[allow(clippy::upper_case_acronyms)]
-struct DeserializePatternUTS35String;
+pub(crate) struct DeserializePatternUTS35String;
 
 #[cfg(feature = "provider_serde")]
 impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
@@ -180,7 +180,7 @@ impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
 }
 
 #[cfg(feature = "provider_serde")]
-struct DeserializePatternBincode;
+pub(crate) struct DeserializePatternBincode;
 
 #[cfg(feature = "provider_serde")]
 impl<'de> de::Visitor<'de> for DeserializePatternBincode {
