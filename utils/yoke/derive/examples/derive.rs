@@ -18,7 +18,7 @@ pub struct IntExample {
     x: u32,
 }
 
-#[derive(Yokeable, Copy, Clone)]
+#[derive(Yokeable, ZeroCopyFrom, Copy, Clone)]
 pub struct GenericsExample<T> {
     x: u32,
     y: T,

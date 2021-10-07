@@ -187,14 +187,7 @@ pub fn zcf_derive(input: TokenStream) -> TokenStream {
 }
 
 fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let typarams = input.generics.type_params().count();
-    if typarams != 0 {
-        return syn::Error::new(
-            input.generics.span(),
-            "derive(ZeroCopyFrom) does not support type parameters",
-        )
-        .to_compile_error();
-    }
+    let typarams = input.generics.type_params().collect::<Vec<_>>();
     let has_clone = input.attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
             if i == "cloning_zcf" {
@@ -206,19 +199,31 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let lts = input.generics.lifetimes().count();
     let name = &input.ident;
     if lts == 0 {
-        let clone = if has_clone {
-            quote!(this.clone())
+        let (clone, clone_trait) = if has_clone {
+            (quote!(this.clone()), quote!(Clone))
         } else {
-            quote!(*this)
+            (quote!(*this), quote!(Copy))
         };
+        let bounds: Vec<WherePredicate> = input
+            .generics
+            .type_params()
+            .map(|ty| parse_quote!(#ty: #clone_trait + 'static))
+            .collect();
         quote! {
-            impl ZeroCopyFrom<#name> for #name {
+            impl<#(#typarams),*> ZeroCopyFrom<#name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
                 fn zero_copy_from(this: &Self) -> Self {
                     #clone
                 }
             }
         }
     } else {
+        if !typarams.is_empty() {
+            return syn::Error::new(
+                input.generics.span(),
+                "derive(ZeroCopyFrom) does not support type parameters for types with lifetimes",
+            )
+            .to_compile_error();
+        }
         if lts != 1 {
             return syn::Error::new(
                 input.generics.span(),
