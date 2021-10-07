@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633534009635,
+  "lastUpdate": 1633641473539,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15959,6 +15959,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 23768,
             "range": "± 1709",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a289b6a80fc83817bf6e1ab0323e55a5a8fad7c1",
+          "message": "Test fixture data should be easier to repeat with multiple locales (#1152)",
+          "timestamp": "2021-10-07T14:09:44-07:00",
+          "tree_id": "2b4a22079923449cbcf1eddf01472e7bc978dcae",
+          "url": "https://github.com/unicode-org/icu4x/commit/a289b6a80fc83817bf6e1ab0323e55a5a8fad7c1"
+        },
+        "date": 1633641468568,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1366,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7727,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24216,
+            "range": "± 1068",
             "unit": "ns/iter"
           }
         ]
