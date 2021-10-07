@@ -9,18 +9,7 @@ use core::convert::TryFrom;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::ZeroVec;
-
-// Enums
-
-/// The width of the elements in the data array of a [`CodePointTrie`].
-/// See [`UCPTrieValueWidth`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
-#[derive(Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub enum ValueWidthEnum {
-    Bits16 = 0,
-    Bits32 = 1,
-    Bits8 = 2,
-}
+use icu_provider::yoke::ZeroCopyFrom;
 
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
@@ -36,51 +25,26 @@ pub enum TrieType {
     Small = 1,
 }
 
-// ValueWidth trait
+// TrieValue trait
 
 // AsULE is AsUnalignedLittleEndian, i.e. "allowed in a zerovec"
 
-/// A trait representing the width of the values stored in the data array of a
-/// [`CodePointTrie`]. This trait is used as a type parameter in constructing
-/// a `CodePointTrie`.
-pub trait ValueWidth: Copy + zerovec::ule::AsULE + 'static {
-    /// This enum variant represents the specific instance of `ValueWidth` such
-    /// that the enum discriminant values matches ICU4C's enum integer value.
-    const ENUM_VALUE: ValueWidthEnum;
-    /// This value is used to indicate an error in the Rust code in accessing
-    /// a position in the trie's `data` array. In normal cases, the position in
-    /// the `data` array will return either the correct value, or in case of a
-    /// logical error in the trie's computation, the trie's own error value
-    /// which is stored that in the `data` array.
+/// A trait representing the values stored in the data array of a [`CodePointTrie`].
+/// This trait is used as a type parameter in constructing a `CodePointTrie`.
+pub trait TrieValue: Copy + zerovec::ule::AsULE + 'static {
     const DATA_GET_ERROR_VALUE: Self;
-    fn cast_to_widest(self) -> u32;
 }
 
-impl ValueWidth for u8 {
-    const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits8;
+impl TrieValue for u8 {
     const DATA_GET_ERROR_VALUE: u8 = u8::MAX;
-
-    fn cast_to_widest(self) -> u32 {
-        self as u32
-    }
 }
 
-impl ValueWidth for u16 {
-    const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits16;
+impl TrieValue for u16 {
     const DATA_GET_ERROR_VALUE: u16 = u16::MAX;
-
-    fn cast_to_widest(self) -> u32 {
-        self as u32
-    }
 }
 
-impl ValueWidth for u32 {
-    const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits32;
+impl TrieValue for u32 {
     const DATA_GET_ERROR_VALUE: u32 = u32::MAX;
-
-    fn cast_to_widest(self) -> u32 {
-        self
-    }
 }
 
 /// This struct represents a de-serialized CodePointTrie that was exported from
@@ -90,16 +54,17 @@ impl ValueWidth for u32 {
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct CodePointTrie<'trie, W: ValueWidth> {
+pub struct CodePointTrie<'trie, T: TrieValue> {
     header: CodePointTrieHeader,
     #[cfg_attr(feature = "serde", serde(borrow))]
     index: ZeroVec<'trie, u16>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    data: ZeroVec<'trie, W>,
+    data: ZeroVec<'trie, T>,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Copy,Clone)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -147,14 +112,14 @@ impl TryFrom<u8> for TrieType {
     }
 }
 
-impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
+impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
     /// array and `data` array, whose data values have width `W`.
     pub fn try_new(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
-        data: ZeroVec<'trie, W>,
-    ) -> Result<CodePointTrie<'trie, W>, Error> {
+        data: ZeroVec<'trie, T>,
+    ) -> Result<CodePointTrie<'trie, T>, Error> {
         // Validation invariants are not needed here when constructing a new
         // `CodePointTrie` because:
         //
@@ -167,7 +132,7 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
         // - The `ZeroVec` serializer stores the length of the array along with the
         //   ZeroVec data, meaning that a deserializer would also see that length info.
 
-        let trie: CodePointTrie<'trie, W> = CodePointTrie {
+        let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
             index,
             data,
@@ -290,7 +255,7 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
     /// assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
     /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
     /// ```
-    pub fn get(&self, code_point: u32) -> W {
+    pub fn get(&self, code_point: u32) -> T {
         // All code points up to the fast max limit are represented
         // individually in the `index` array to hold their `data` array position, and
         // thus only need 2 lookups for a [CodePointTrie::get()](`crate::codepointtrie::CodePointTrie::get`).
@@ -308,12 +273,14 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
         };
         // Returns the trie value (or trie's error value).
         // If we cannot read from the data array, then return the associated constant
-        // DATA_GET_ERROR_VALUE for the instance type for W: ValueWidth.
+        // DATA_GET_ERROR_VALUE for the instance type for T: TrieValue.
         self.data
             .get(data_pos as usize)
-            .unwrap_or(W::DATA_GET_ERROR_VALUE)
+            .unwrap_or(T::DATA_GET_ERROR_VALUE)
     }
+}
 
+impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
     /// as a `u32`.
     ///
@@ -333,7 +300,18 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
     // Note: This API method maintains consistency with the corresponding
     // original ICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
-        self.get(code_point).cast_to_widest()
+        self.get(code_point).into()
+    }
+}
+
+impl<'a, T: TrieValue> ZeroCopyFrom<CodePointTrie<'a, T>> for CodePointTrie<'static, T>
+{
+    fn zero_copy_from<'b>(cart: &'b CodePointTrie<'a, T>) -> CodePointTrie<'b, T> {
+        CodePointTrie {
+            header: cart.header,
+            index: ZeroVec::<'static, u16>::zero_copy_from(&cart.index),
+            data: ZeroVec::<'static, T>::zero_copy_from(&cart.data)
+        }
     }
 }
 

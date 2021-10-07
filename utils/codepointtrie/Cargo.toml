@@ -32,9 +32,10 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 thiserror = "1.0"
-zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde"] }
+zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 [dev-dependencies]
 postcard = { version = "0.7", features = ["alloc"] }
