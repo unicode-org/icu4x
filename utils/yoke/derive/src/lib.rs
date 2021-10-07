@@ -64,13 +64,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             unsafe impl<'a, #(#typarams),*> yoke::IsCovariant<'a> for #name<#(#typarams),*> where #(#bounds),* {}
         }
     } else {
-        if !typarams.is_empty() {
-            return syn::Error::new(
-                input.generics.span(),
-                "derive(Yokeable) does not support type parameters for types with lifetimes",
-            )
-            .to_compile_error();
-        }
         if lts != 1 {
             return syn::Error::new(
                 input.generics.span(),
@@ -88,6 +81,13 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             false
         });
         if manual_covariance {
+            if !typarams.is_empty() {
+                return syn::Error::new(
+                    input.generics.span(),
+                    "yoke(prove_covariance_manually) does not support type parameters",
+                )
+                .to_compile_error();
+            }
             let mut structure = Structure::new(input);
             structure.bind_with(|_| synstructure::BindStyle::Move);
             let body = structure.each_variant(|vi| {
@@ -142,8 +142,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             //
             // This custom derive can be improved to handle this case when
             // necessary
-            unsafe impl<'a> yoke::Yokeable<'a> for #name<'static> {
-                type Output = #name<'a>;
+            unsafe impl<'a, #(#typarams),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*> where #(#bounds),* {
+                type Output = #name<'a, #(#typarams),*>;
                 fn transform(&'a self) -> &'a Self::Output {
                     self
                 }
@@ -167,7 +167,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
             // This is safe because it is in the same block as the above impl, which only compiles
             // if 'a is a covariant lifetime.
-            unsafe impl<'a> yoke::IsCovariant<'a> for #name<'a> {}
+            unsafe impl<'a, #(#typarams),*> yoke::IsCovariant<'a> for #name<'a, #(#typarams),*> where #(#bounds),* {}
         }
     }
 }
