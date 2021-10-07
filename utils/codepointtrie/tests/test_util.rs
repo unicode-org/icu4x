@@ -11,7 +11,17 @@ use std::io::Read;
 use std::path::Path;
 use zerovec::ZeroVec;
 
-pub fn check_trie<W: ValueWidth>(trie: &CodePointTrie<W>, check_ranges: &[u32]) {
+/// The width of the elements in the data array of a [`CodePointTrie`].
+/// See [`UCPTrieValueWidth`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
+#[derive(Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub enum ValueWidthEnum {
+    Bits16 = 0,
+    Bits32 = 1,
+    Bits8 = 2,
+}
+
+pub fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
     assert_eq!(
         0,
         check_ranges.len() % 2,
