@@ -32,10 +32,13 @@ pub fn yokeable_derive(input: TokenStream) -> TokenStream {
 }
 
 fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let typarams = input.generics.type_params().collect::<Vec<_>>();
-    let bounds: Vec<WherePredicate> = input
-        .generics
-        .type_params()
+    let tybounds = input.generics.type_params().collect::<Vec<_>>();
+    let typarams = tybounds
+        .iter()
+        .map(|ty| ty.ident.clone())
+        .collect::<Vec<_>>();
+    let static_bounds: Vec<WherePredicate> = typarams
+        .iter()
         .map(|ty| parse_quote!(#ty: 'static))
         .collect();
     let lts = input.generics.lifetimes().count();
@@ -43,7 +46,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         let name = &input.ident;
         quote! {
             // This is safe because there are no lifetime parameters.
-            unsafe impl<'a, #(#typarams),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#bounds),* {
+            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#static_bounds),* {
                 type Output = Self;
                 fn transform(&self) -> &Self::Output {
                     self
@@ -61,7 +64,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 }
             }
             // This is safe because there are no lifetime parameters.
-            unsafe impl<'a, #(#typarams),*> yoke::IsCovariant<'a> for #name<#(#typarams),*> where #(#bounds),* {}
+            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<#(#typarams),*> where #(#static_bounds),* {}
         }
     } else {
         if lts != 1 {
@@ -142,7 +145,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             //
             // This custom derive can be improved to handle this case when
             // necessary
-            unsafe impl<'a, #(#typarams),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*> where #(#bounds),* {
+            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*> where #(#static_bounds),* {
                 type Output = #name<'a, #(#typarams),*>;
                 fn transform(&'a self) -> &'a Self::Output {
                     self
@@ -167,7 +170,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
             // This is safe because it is in the same block as the above impl, which only compiles
             // if 'a is a covariant lifetime.
-            unsafe impl<'a, #(#typarams),*> yoke::IsCovariant<'a> for #name<'a, #(#typarams),*> where #(#bounds),* {}
+            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<'a, #(#typarams),*> where #(#static_bounds),* {}
         }
     }
 }
@@ -187,7 +190,11 @@ pub fn zcf_derive(input: TokenStream) -> TokenStream {
 }
 
 fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let typarams = input.generics.type_params().collect::<Vec<_>>();
+    let tybounds = input.generics.type_params().collect::<Vec<_>>();
+    let typarams = tybounds
+        .iter()
+        .map(|ty| ty.ident.clone())
+        .collect::<Vec<_>>();
     let has_clone = input.attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
             if i == "cloning_zcf" {
@@ -204,13 +211,12 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         } else {
             (quote!(*this), quote!(Copy))
         };
-        let bounds: Vec<WherePredicate> = input
-            .generics
-            .type_params()
+        let bounds: Vec<WherePredicate> = typarams
+            .iter()
             .map(|ty| parse_quote!(#ty: #clone_trait + 'static))
             .collect();
         quote! {
-            impl<#(#typarams),*> ZeroCopyFrom<#name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
+            impl<#(#tybounds),*> ZeroCopyFrom<#name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
                 fn zero_copy_from(this: &Self) -> Self {
                     #clone
                 }

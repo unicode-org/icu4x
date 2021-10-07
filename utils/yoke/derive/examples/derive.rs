@@ -6,7 +6,7 @@
 
 use std::borrow::Cow;
 use yoke::{Yokeable, ZeroCopyFrom};
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(Yokeable)]
 pub struct StringExample {
@@ -35,6 +35,12 @@ pub struct CowExample<'a> {
 #[derive(Yokeable, ZeroCopyFrom)]
 pub struct ZeroVecExample<'a> {
     var: VarZeroVec<'a, str>,
+    vec: ZeroVec<'a, u16>,
+}
+
+#[derive(Yokeable)]
+pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
+    gen: ZeroVec<'a, T>,
     vec: ZeroVec<'a, u16>,
 }
 
