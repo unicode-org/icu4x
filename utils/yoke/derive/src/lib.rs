@@ -11,6 +11,8 @@ use syn::spanned::Spanned;
 use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, Type, WherePredicate};
 use synstructure::Structure;
 
+mod visitor;
+
 /// Custom derive for `yoke::Yokeable`,
 ///
 /// If your struct contains `zerovec::ZeroMap`, then the compiler will not
