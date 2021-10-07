@@ -78,7 +78,7 @@ fn test_fixture(fixture_name: &str) {
             let locale: Locale = locale.parse().unwrap();
             let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
             let result = dtf.format_to_string(&input_value);
-            
+
             assert_eq!(result, output_value, "{}", description);
 
             let mut s = String::new();
@@ -109,7 +109,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         input_value.time_zone.time_zone_id = config.time_zone_id.clone();
         input_value.time_zone.metazone_id = config.metazone_id.clone();
         input_value.time_zone.time_variant = config.time_variant;
-            
+
         let description = match fx.description {
             Some(description) => {
                 format!(
@@ -123,7 +123,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             let locale: Locale = locale.parse().unwrap();
             let dtf = ZonedDateTimeFormat::try_new(locale, &provider, &provider, &options).unwrap();
             let result = dtf.format_to_string(&input_value);
-            
+
             assert_eq!(result, output_value, "{}", description);
 
             let mut s = String::new();
@@ -137,7 +137,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             let mut s = String::new();
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
-        }        
+        }
     }
 }
 
