@@ -13,6 +13,12 @@ pub struct StringExample {
     x: String,
 }
 
+#[derive(Yokeable)]
+pub struct GenericsExample<T> {
+    x: String,
+    y: T,
+}
+
 #[derive(Yokeable, ZeroCopyFrom)]
 pub struct CowExample<'a> {
     x: u8,

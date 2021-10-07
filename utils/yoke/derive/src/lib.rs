@@ -8,7 +8,7 @@ use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse_macro_input, DeriveInput, Ident, Lifetime, Type};
+use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, Type, WherePredicate};
 use synstructure::Structure;
 
 /// Custom derive for `yoke::Yokeable`,
@@ -32,20 +32,18 @@ pub fn yokeable_derive(input: TokenStream) -> TokenStream {
 }
 
 fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let typarams = input.generics.type_params().count();
-    if typarams != 0 {
-        return syn::Error::new(
-            input.generics.span(),
-            "derive(Yokeable) does not support type parameters",
-        )
-        .to_compile_error();
-    }
+    let typarams = input.generics.type_params().collect::<Vec<_>>();
+    let bounds: Vec<WherePredicate> = input
+        .generics
+        .type_params()
+        .map(|ty| parse_quote!(#ty: 'static))
+        .collect();
     let lts = input.generics.lifetimes().count();
     if lts == 0 {
         let name = &input.ident;
         quote! {
             // This is safe because there are no lifetime parameters.
-            unsafe impl<'a> yoke::Yokeable<'a> for #name {
+            unsafe impl<'a, #(#typarams),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#bounds),* {
                 type Output = Self;
                 fn transform(&self) -> &Self::Output {
                     self
@@ -63,9 +61,16 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 }
             }
             // This is safe because there are no lifetime parameters.
-            unsafe impl<'a> yoke::IsCovariant<'a> for #name {}
+            unsafe impl<'a, #(#typarams),*> yoke::IsCovariant<'a> for #name<#(#typarams),*> where #(#bounds),* {}
         }
     } else {
+        if !typarams.is_empty() {
+            return syn::Error::new(
+                input.generics.span(),
+                "derive(Yokeable) does not support type parameters for types with lifetimes",
+            )
+            .to_compile_error();
+        }
         if lts != 1 {
             return syn::Error::new(
                 input.generics.span(),
