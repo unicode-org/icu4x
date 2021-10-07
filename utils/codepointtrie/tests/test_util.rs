@@ -152,7 +152,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         test_struct.name
     );
 
-    let trie_type_enum = match TrieTypeEnum::try_from(test_struct.trie_type_enum_val) {
+    let trie_type_enum = match TrieType::try_from(test_struct.trie_type_enum_val) {
         Ok(enum_val) => enum_val,
         _ => {
             panic!(
