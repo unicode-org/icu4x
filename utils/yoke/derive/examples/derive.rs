@@ -5,7 +5,7 @@
 #![allow(unused)]
 
 use std::borrow::Cow;
-use yoke_derive::{Yokeable, ZeroCopyFrom};
+use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(Yokeable)]
@@ -13,9 +13,14 @@ pub struct StringExample {
     x: String,
 }
 
-#[derive(Yokeable)]
+#[derive(Yokeable, ZeroCopyFrom, Copy, Clone)]
+pub struct IntExample {
+    x: u32,
+}
+
+#[derive(Yokeable, Copy, Clone)]
 pub struct GenericsExample<T> {
-    x: String,
+    x: u32,
     y: T,
 }
 
