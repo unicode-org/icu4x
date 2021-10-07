@@ -27,7 +27,7 @@ pub enum ValueWidthEnum {
 /// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub enum TrieTypeEnum {
+pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
     Fast = 0,
@@ -130,16 +130,16 @@ pub struct CodePointTrieHeader {
     pub null_value: u32,
     /// The enum value representing the type of trie, where trie type is as it
     /// is defined in ICU (ex: Fast, Small).
-    pub trie_type: TrieTypeEnum,
+    pub trie_type: TrieType,
 }
 
-impl TryFrom<u8> for TrieTypeEnum {
+impl TryFrom<u8> for TrieType {
     type Error = crate::error::Error;
 
-    fn try_from(trie_type_int: u8) -> Result<TrieTypeEnum, crate::error::Error> {
+    fn try_from(trie_type_int: u8) -> Result<TrieType, crate::error::Error> {
         match trie_type_int {
-            0 => Ok(TrieTypeEnum::Fast),
-            1 => Ok(TrieTypeEnum::Small),
+            0 => Ok(TrieType::Fast),
+            1 => Ok(TrieType::Small),
             _ => Err(crate::error::Error::FromDeserialized {
                 reason: "Cannot parse value for trie_type",
             }),
@@ -183,7 +183,7 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
 
     fn internal_small_index(&self, code_point: u32) -> u32 {
         let mut index1_pos: u32 = code_point >> SHIFT_1;
-        if self.header.trie_type == TrieTypeEnum::Fast {
+        if self.header.trie_type == TrieType::Fast {
             debug_assert!(
                 FAST_TYPE_FAST_INDEXING_MAX < code_point && code_point < self.header.high_start
             );
@@ -296,8 +296,8 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
         // thus only need 2 lookups for a [CodePointTrie::get()](`crate::codepointtrie::CodePointTrie::get`).
         // Code points above the "fast max" limit require 4 lookups.
         let fast_max = match self.header.trie_type {
-            TrieTypeEnum::Fast => FAST_TYPE_FAST_INDEXING_MAX,
-            TrieTypeEnum::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
         };
         let data_pos: u32 = if code_point <= fast_max {
             Self::fast_index(self, code_point)
