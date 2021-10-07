@@ -80,13 +80,17 @@ pub use utils::*;
 /// Custom Errors for [`UnicodeSet`].
 #[derive(Display, Debug)]
 pub enum UnicodeSetError {
-    /// Invalid set: {0:?}
+    /// A UnicodeSet was constructed with an invalid inversion list
+    #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),
-    /// Invalid range: {0}..{1}
+    /// A UnicodeSet was constructed containing an invalid range
+    #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
-    /// Unknown script id: {0}
+    /// An unknown value was used for the [`Script`] property
+    #[displaydoc("Unknown script id: {0}")]
     UnknownScriptId(u16),
-    /// Unknown general category set: {0}
+    /// An unknown value was used for the [`GeneralCategory`] property
+    #[displaydoc("Unknown general category set: {0}")]
     UnknownGeneralCategorySet(u32),
     /// An error occurred while loading data
     #[displaydoc("{0}")]
