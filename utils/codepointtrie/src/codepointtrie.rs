@@ -6,10 +6,10 @@ use crate::error::Error;
 use crate::impl_const::*;
 
 use core::convert::TryFrom;
+use icu_provider::yoke::ZeroCopyFrom;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::ZeroVec;
-use icu_provider::yoke::ZeroCopyFrom;
 
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
@@ -64,7 +64,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy,Clone)]
+#[derive(Copy, Clone)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -304,13 +304,12 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     }
 }
 
-impl<'a, T: TrieValue> ZeroCopyFrom<CodePointTrie<'a, T>> for CodePointTrie<'static, T>
-{
+impl<'a, T: TrieValue> ZeroCopyFrom<CodePointTrie<'a, T>> for CodePointTrie<'static, T> {
     fn zero_copy_from<'b>(cart: &'b CodePointTrie<'a, T>) -> CodePointTrie<'b, T> {
         CodePointTrie {
             header: cart.header,
             index: ZeroVec::<'static, u16>::zero_copy_from(&cart.index),
-            data: ZeroVec::<'static, T>::zero_copy_from(&cart.data)
+            data: ZeroVec::<'static, T>::zero_copy_from(&cart.data),
         }
     }
 }

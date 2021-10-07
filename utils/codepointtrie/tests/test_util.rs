@@ -6,6 +6,8 @@ use icu_codepointtrie::codepointtrie::*;
 use icu_codepointtrie::error::Error;
 
 use core::convert::TryFrom;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
