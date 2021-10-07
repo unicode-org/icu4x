@@ -8,10 +8,7 @@
 use crate::{
     format::datetime,
     options::DateTimeFormatOptions,
-    provider::{
-        gregory::{DatePatternsV1Marker, DateSymbolsV1Marker},
-        helpers::DateTimePatterns,
-    },
+    provider::gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
 };
 use alloc::string::String;
 use icu_locid::Locale;
@@ -90,34 +87,19 @@ impl<'data> DateTimeFormat<'data> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<
-        T: Into<Locale>,
-        D: DataProvider<'data, DateSymbolsV1Marker>
-            + DataProvider<'data, DatePatternsV1Marker>
-            + ?Sized,
-    >(
+    pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
         options: &DateTimeFormatOptions,
-    ) -> Result<Self, DateTimeFormatError> {
+    ) -> Result<Self, DateTimeFormatError>
+    where
+        D: DataProvider<'data, DateSymbolsV1Marker>
+            + DataProvider<'data, DatePatternsV1Marker>
+            + DataProvider<'data, DateSkeletonPatternsV1Marker>,
+    {
         let locale = locale.into();
 
-        let patterns_data: icu_provider::DataPayload<'_, provider::gregory::DatePatternsV1Marker> =
-            data_provider
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key: provider::key::GREGORY_DATE_PATTERNS_V1,
-                        options: ResourceOptions {
-                            variant: None,
-                            langid: Some(locale.clone().into()),
-                        },
-                    },
-                })?
-                .take_payload()?;
-
-        let pattern = patterns_data
-            .get()
-            .get_pattern_for_options(options)?
+        let pattern = provider::date_time::pattern_for_options(data_provider, &locale, options)?
             .unwrap_or_default();
 
         let requires_data = datetime::analyze_pattern(&pattern, false)

@@ -13,8 +13,10 @@ use icu_datetime::{
 };
 use icu_datetime::{
     provider::{
-        gregory::{DatePatternsV1Marker, DateSymbolsV1Marker},
-        key::{GREGORY_DATE_PATTERNS_V1, GREGORY_DATE_SYMBOLS_V1},
+        gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        key::{
+            GREGORY_DATE_PATTERNS_V1, GREGORY_DATE_SKELETON_PATTERNS_V1, GREGORY_DATE_SYMBOLS_V1,
+        },
     },
     DateTimeFormat,
 };
@@ -34,6 +36,7 @@ use tinystr::tinystr8;
 
 struct MultiKeyStructProvider<'data> {
     pub symbols: StructProvider<'data, DateSymbolsV1Marker>,
+    pub skeletons: StructProvider<'data, DateSkeletonPatternsV1Marker>,
     pub patterns: StructProvider<'data, DatePatternsV1Marker>,
 }
 
@@ -43,6 +46,15 @@ impl<'data> DataProvider<'data, DateSymbolsV1Marker> for MultiKeyStructProvider<
         req: &DataRequest,
     ) -> Result<DataResponse<'data, DateSymbolsV1Marker>, icu_provider::DataError> {
         self.symbols.load_payload(req)
+    }
+}
+
+impl<'data> DataProvider<'data, DateSkeletonPatternsV1Marker> for MultiKeyStructProvider<'data> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'data, DateSkeletonPatternsV1Marker>, icu_provider::DataError> {
+        self.skeletons.load_payload(req)
     }
 }
 
@@ -62,13 +74,9 @@ fn test_fixture(fixture_name: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let locale: Locale = fx.input.locale.parse().unwrap();
         let options = fixtures::get_options(&fx.input.options);
+        let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
 
-        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
-        let value = parse_gregorian_from_str(&fx.input.value).unwrap();
-
-        let result = dtf.format_to_string(&value);
         let description = match fx.description {
             Some(description) => {
                 format!(
@@ -78,20 +86,25 @@ fn test_fixture(fixture_name: &str) {
             }
             None => format!("\n  file: {}.json\n", fixture_name),
         };
+        for (locale, output_value) in fx.output.values.into_iter() {
+            let locale: Locale = locale.parse().unwrap();
+            let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
+            let result = dtf.format_to_string(&input_value);
 
-        assert_eq!(result, fx.output.value, "{}", description);
+            assert_eq!(result, output_value, "{}", description);
 
-        let mut s = String::new();
-        dtf.format_to_write(&mut s, &value).unwrap();
-        assert_eq!(s, fx.output.value, "{}", description);
+            let mut s = String::new();
+            dtf.format_to_write(&mut s, &input_value).unwrap();
+            assert_eq!(s, output_value, "{}", description);
 
-        let fdt = dtf.format(&value);
-        let s = fdt.to_string();
-        assert_eq!(s, fx.output.value, "{}", description);
+            let fdt = dtf.format(&input_value);
+            let s = fdt.to_string();
+            assert_eq!(s, output_value, "{}", description);
 
-        let mut s = String::new();
-        write!(s, "{}", fdt).unwrap();
-        assert_eq!(s, fx.output.value, "{}", description);
+            let mut s = String::new();
+            write!(s, "{}", fdt).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+        }
     }
 }
 
@@ -102,17 +115,13 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         .expect("Unable to get fixture.")
         .0
     {
-        let locale: Locale = fx.input.locale.parse().unwrap();
         let options = fixtures::get_options(&fx.input.options);
 
-        let dtf = ZonedDateTimeFormat::try_new(locale, &provider, &provider, &options).unwrap();
+        let mut input_value: MockZonedDateTime = fx.input.value.parse().unwrap();
+        input_value.time_zone.time_zone_id = config.time_zone_id.clone();
+        input_value.time_zone.metazone_id = config.metazone_id.clone();
+        input_value.time_zone.time_variant = config.time_variant;
 
-        let mut value: MockZonedDateTime = fx.input.value.parse().unwrap();
-        value.time_zone.time_zone_id = config.time_zone_id.clone();
-        value.time_zone.metazone_id = config.metazone_id.clone();
-        value.time_zone.time_variant = config.time_variant;
-
-        let result = dtf.format_to_string(&value);
         let description = match fx.description {
             Some(description) => {
                 format!(
@@ -122,20 +131,25 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             }
             None => format!("\n  file: {}.json\n", fixture_name),
         };
+        for (locale, output_value) in fx.output.values.into_iter() {
+            let locale: Locale = locale.parse().unwrap();
+            let dtf = ZonedDateTimeFormat::try_new(locale, &provider, &provider, &options).unwrap();
+            let result = dtf.format_to_string(&input_value);
 
-        assert_eq!(result, fx.output.value, "{}", description);
+            assert_eq!(result, output_value, "{}", description);
 
-        let mut s = String::new();
-        dtf.format_to_write(&mut s, &value).unwrap();
-        assert_eq!(s, fx.output.value, "{}", description);
+            let mut s = String::new();
+            dtf.format_to_write(&mut s, &input_value).unwrap();
+            assert_eq!(s, output_value, "{}", description);
 
-        let fdt = dtf.format(&value);
-        let s = fdt.to_string();
-        assert_eq!(s, fx.output.value, "{}", description);
+            let fdt = dtf.format(&input_value);
+            let s = fdt.to_string();
+            assert_eq!(s, output_value, "{}", description);
 
-        let mut s = String::new();
-        write!(s, "{}", fdt).unwrap();
-        assert_eq!(s, fx.output.value, "{}", description);
+            let mut s = String::new();
+            write!(s, "{}", fdt).unwrap();
+            assert_eq!(s, output_value, "{}", description);
+        }
     }
 }
 
@@ -159,12 +173,25 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         patterns_data.with_mut(|data| {
-            data.datetime.length_patterns.long = Cow::Borrowed("{0}");
+            data.length_combinations.long = Cow::Borrowed("{0}");
         });
         let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: GREGORY_DATE_SYMBOLS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: GREGORY_DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid.clone()),
@@ -189,6 +216,10 @@ fn test_dayperiod_patterns() {
                             symbols: StructProvider {
                                 key: GREGORY_DATE_SYMBOLS_V1,
                                 data: symbols_data.clone(),
+                            },
+                            skeletons: StructProvider {
+                                key: GREGORY_DATE_SKELETON_PATTERNS_V1,
+                                data: skeleton_data.clone(),
                             },
                             patterns: StructProvider {
                                 key: GREGORY_DATE_PATTERNS_V1,
@@ -246,6 +277,19 @@ fn test_time_zone_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = date_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: GREGORY_DATE_SKELETON_PATTERNS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
         let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
@@ -261,7 +305,7 @@ fn test_time_zone_patterns() {
             .unwrap();
 
         patterns_data.with_mut(|data| {
-            data.datetime.length_patterns.long = Cow::Borrowed("{0}");
+            data.length_combinations.long = Cow::Borrowed("{0}");
         });
 
         for TimeZoneExpectation { patterns, expected } in &test.expectations {
@@ -276,6 +320,10 @@ fn test_time_zone_patterns() {
                     symbols: StructProvider {
                         key: GREGORY_DATE_SYMBOLS_V1,
                         data: symbols_data.clone(),
+                    },
+                    skeletons: StructProvider {
+                        key: GREGORY_DATE_SKELETON_PATTERNS_V1,
+                        data: skeleton_data.clone(),
                     },
                     patterns: StructProvider {
                         key: GREGORY_DATE_PATTERNS_V1,

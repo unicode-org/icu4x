@@ -18,7 +18,10 @@ use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::{components, length},
     pattern::{hour_cycle, reference::Pattern, PatternItem},
-    provider::gregory::patterns::{LengthPatternsV1, PatternV1, SkeletonsV1},
+    provider::gregory::{
+        patterns::{LengthPatternsV1, PatternV1},
+        DateSkeletonPatternsV1,
+    },
 };
 
 #[cfg(feature = "provider_serde")]
@@ -434,7 +437,7 @@ fn naively_apply_time_zone_name(
 ///         configuration option makes it so that the final pattern won't have additional work
 ///         done to mutate it to match the fields. It will prefer the actual matched pattern.
 pub fn create_best_pattern_for_fields<'a>(
-    skeletons: &'a SkeletonsV1,
+    skeletons: &'a DateSkeletonPatternsV1,
     length_patterns: &LengthPatternsV1,
     fields: &[Field],
     components: &components::Bag,
@@ -606,7 +609,7 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 ///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
 ///      much of this step to implement. See the issue for more information.
 pub fn get_best_available_format_pattern(
-    skeletons: &SkeletonsV1,
+    skeletons: &DateSkeletonPatternsV1,
     fields: &[Field],
     prefer_matched_pattern: bool,
 ) -> BestSkeleton<PatternV1> {
@@ -742,16 +745,35 @@ mod test {
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
-        provider::{gregory::DatePatternsV1Marker, key::GREGORY_DATE_PATTERNS_V1},
+        provider::{
+            gregory::DatePatternsV1Marker, gregory::DateSkeletonPatternsV1Marker,
+            key::GREGORY_DATE_PATTERNS_V1, key::GREGORY_DATE_SKELETON_PATTERNS_V1,
+        },
     };
 
-    fn get_data_payload() -> DataPayload<'static, DatePatternsV1Marker> {
+    fn get_data_payload() -> (
+        DataPayload<'static, DatePatternsV1Marker>,
+        DataPayload<'static, DateSkeletonPatternsV1Marker>,
+    ) {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
-        provider
+        let patterns = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: GREGORY_DATE_PATTERNS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let skeletons = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: GREGORY_DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid),
@@ -760,7 +782,8 @@ mod test {
             })
             .unwrap()
             .take_payload()
-            .unwrap()
+            .unwrap();
+        (patterns, skeletons)
     }
 
     /// This is an initial smoke test to verify the skeleton machinery is working. For more in-depth
@@ -779,13 +802,9 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_payload();
+        let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(
-            &data_provider.get().datetime.skeletons,
-            &requested_fields,
-            false,
-        ) {
+        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
             | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(
@@ -807,13 +826,9 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_payload();
+        let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(
-            &data_provider.get().datetime.skeletons,
-            &requested_fields,
-            false,
-        ) {
+        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(available_format_pattern.0.to_string(), String::from("L"))
             }
@@ -834,11 +849,11 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_payload();
+        let (patterns, skeletons) = get_data_payload();
 
         match create_best_pattern_for_fields(
-            &data_provider.get().datetime.skeletons,
-            &data_provider.get().datetime.length_patterns,
+            skeletons.get(),
+            &patterns.get().length_combinations,
             &requested_fields,
             &Default::default(),
             false,
@@ -858,14 +873,10 @@ mod test {
     fn test_skeleton_empty_bag() {
         let components: components::Bag = Default::default();
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_payload();
+        let (_, skeletons) = get_data_payload();
 
         assert_eq!(
-            get_best_available_format_pattern(
-                &data_provider.get().datetime.skeletons,
-                &requested_fields,
-                false
-            ),
+            get_best_available_format_pattern(skeletons.get(), &requested_fields, false),
             BestSkeleton::NoMatch,
             "No match was found"
         );
@@ -880,14 +891,10 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_payload();
+        let (_, skeletons) = get_data_payload();
 
         assert_eq!(
-            get_best_available_format_pattern(
-                &data_provider.get().datetime.skeletons,
-                &requested_fields,
-                false
-            ),
+            get_best_available_format_pattern(skeletons.get(), &requested_fields, false),
             BestSkeleton::NoMatch,
             "No match was found"
         );
