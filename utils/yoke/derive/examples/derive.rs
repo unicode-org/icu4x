@@ -6,7 +6,7 @@
 
 use std::borrow::Cow;
 use yoke::{Yoke, Yokeable, ZeroCopyFrom};
-use zerovec::{ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{map::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(Yokeable)]
 pub struct StringExample {
@@ -60,6 +60,12 @@ pub struct ZeroMapExample<'a> {
     map: ZeroMap<'a, str, u16>,
 }
 
+#[derive(Yokeable)]
+#[yoke(prove_covariance_manually)]
+pub struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
+    map: ZeroMap<'a, str, T>,
+}
+
 pub struct AssertYokeable {
     string: Yoke<StringExample, Box<[u8]>>,
     int: Yoke<IntExample, Box<[u8]>>,
@@ -70,6 +76,8 @@ pub struct AssertYokeable {
     zv_gen1: Yoke<ZeroVecExampleWithGenerics<'static, u8>, Box<[u8]>>,
     zv_gen2: Yoke<ZeroVecExampleWithGenerics<'static, char>, Box<[u8]>>,
     map: Yoke<ZeroMapExample<'static>, Box<[u8]>>,
+    map_gen1: Yoke<ZeroMapGenericExample<'static, u32>, Box<[u8]>>,
+    map_gen2: Yoke<ZeroMapGenericExample<'static, str>, Box<[u8]>>,
 }
 
 fn main() {}

@@ -86,20 +86,24 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             false
         });
         if manual_covariance {
-            if !typarams.is_empty() {
-                return syn::Error::new(
-                    input.generics.span(),
-                    "yoke(prove_covariance_manually) does not support type parameters",
-                )
-                .to_compile_error();
-            }
             let mut structure = Structure::new(input);
+            let generics_env = typarams.iter().cloned().collect();
+            let static_bounds: Vec<WherePredicate> = typarams
+                .iter()
+                .map(|ty| parse_quote!(#ty: 'static))
+                .collect();
+            let mut yoke_bounds: Vec<WherePredicate> = vec![];
             structure.bind_with(|_| synstructure::BindStyle::Move);
             let body = structure.each_variant(|vi| {
                 vi.construct(|f, i| {
                     let binding = format!("__binding_{}", i);
                     let field = Ident::new(&binding, Span::call_site());
                     let fty = replace_lifetime(&f.ty, static_lt());
+
+                    if visitor::check_type_for_parameters(&f.ty, &generics_env) == (true, true) {
+                        let a_ty = replace_lifetime(&f.ty, custom_lt("'a"));
+                        yoke_bounds.push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #a_ty>));
+                    }
                     // By calling transform_owned on all fields, we manually prove
                     // that the lifetimes are covariant, since this requirement
                     // must already be true for the type that implements transform_owned().
@@ -109,8 +113,10 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 })
             });
             return quote! {
-                unsafe impl<'a> yoke::Yokeable<'a> for #name<'static> {
-                    type Output = #name<'a>;
+                unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*>
+                    where #(#static_bounds,)*
+                    #(#yoke_bounds,)* {
+                    type Output = #name<'a, #(#typarams),*>;
                     fn transform(&'a self) -> &'a Self::Output {
                         unsafe {
                             // safety: we have asserted covariance in
