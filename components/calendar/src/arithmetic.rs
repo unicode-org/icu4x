@@ -32,6 +32,7 @@ pub mod week_of {
     /// Which year or month that a calendar assigns a week to relative to the year/month
     /// the week is in.
     #[derive(Clone, Copy, Debug, PartialEq)]
+    #[allow(clippy::enum_variant_names)]
     enum RelativeWeek {
         /// A week that is assigned to the last week of the previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
         LastWeekOfPreviousUnit,
@@ -59,8 +60,8 @@ pub mod week_of {
                 });
             }
             Ok(UnitInfo {
-                first_day: first_day,
-                duration_days: duration_days,
+                first_day,
+                duration_days,
             })
         }
 

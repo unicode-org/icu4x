@@ -147,7 +147,7 @@ impl<'data> ZonedDateTimeFormat<'data> {
                             key: provider::key::GREGORY_DATE_SYMBOLS_V1,
                             options: ResourceOptions {
                                 variant: None,
-                                langid: Some(langid.clone()),
+                                langid: Some(langid),
                             },
                         },
                     })?
@@ -164,7 +164,7 @@ impl<'data> ZonedDateTimeFormat<'data> {
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns
                 .patterns_iter()
-                .nth(0)
+                .next()
                 .expect("PatternPlurals should have at least one Pattern")
                 .clone(),
             zone_provider,
