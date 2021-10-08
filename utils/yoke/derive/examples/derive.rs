@@ -38,10 +38,16 @@ pub struct ZeroVecExample<'a> {
     vec: ZeroVec<'a, u16>,
 }
 
-#[derive(Yokeable)]
+#[derive(Yokeable, ZeroCopyFrom)]
 pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
     gen: ZeroVec<'a, T>,
     vec: ZeroVec<'a, u16>,
+}
+
+pub fn assert_zcf_generics<'a, 'b>(
+    x: &'b ZeroVecExampleWithGenerics<'a, u8>,
+) -> ZeroVecExampleWithGenerics<'b, u8> {
+    ZeroVecExampleWithGenerics::<'static, u8>::zero_copy_from(x)
 }
 
 // Since ZeroMap has generic parameters, the Rust compiler cannot

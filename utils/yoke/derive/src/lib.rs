@@ -225,13 +225,6 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
         }
     } else {
-        if !typarams.is_empty() {
-            return syn::Error::new(
-                input.generics.span(),
-                "derive(ZeroCopyFrom) does not support type parameters for types with lifetimes",
-            )
-            .to_compile_error();
-        }
         if lts != 1 {
             return syn::Error::new(
                 input.generics.span(),
@@ -250,22 +243,39 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         }
 
         let structure = Structure::new(input);
+        let generics_env = typarams.iter().cloned().collect();
+        let static_bounds: Vec<WherePredicate> = typarams
+            .iter()
+            .map(|ty| parse_quote!(#ty: 'static))
+            .collect();
+
+        let mut zcf_bounds: Vec<WherePredicate> = vec![];
         let body = structure.each_variant(|vi| {
             vi.construct(|f, i| {
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
                 let fty = replace_lifetime(&f.ty, static_lt());
+                let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'data"));
+
+                if visitor::check_type_for_parameters(&f.ty, &generics_env) == (true, true) {
+                    let hrtb_ty = replace_lifetime(&f.ty, custom_lt("'data_hrtb"));
+                    zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#lifetime_ty>));
+                    zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #hrtb_ty>));
+                }
+
                 // By doing this we essentially require ZCF to be implemented
                 // on all fields
                 quote! {
-                    <#fty as yoke::ZeroCopyFrom<_>>::zero_copy_from(#field)
+                    <#fty as yoke::ZeroCopyFrom<#lifetime_ty>>::zero_copy_from(#field)
                 }
             })
         });
 
         quote! {
-            impl<'data> yoke::ZeroCopyFrom<#name<'data>> for #name<'static> {
-                fn zero_copy_from<'b>(this: &'b #name<'data>) -> #name<'b> {
+            impl<'data, #(#tybounds),*> yoke::ZeroCopyFrom<#name<'data, #(#typarams),*>> for #name<'static, #(#typarams),*>
+                where #(#static_bounds,)*
+                #(#zcf_bounds,)* {
+                fn zero_copy_from<'b>(this: &'b #name<'data, #(#typarams),*>) -> #name<'b, #(#typarams),*> {
                     match *this { #body }
                 }
             }
@@ -275,6 +285,10 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
 fn static_lt() -> Lifetime {
     Lifetime::new("'static", Span::call_site())
+}
+
+fn custom_lt(s: &str) -> Lifetime {
+    Lifetime::new(s, Span::call_site())
 }
 
 fn replace_lifetime(x: &Type, lt: Lifetime) -> Type {
