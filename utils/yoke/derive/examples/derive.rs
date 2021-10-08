@@ -5,7 +5,7 @@
 #![allow(unused)]
 
 use std::borrow::Cow;
-use yoke::{Yokeable, ZeroCopyFrom};
+use yoke::{Yoke, Yokeable, ZeroCopyFrom};
 use zerovec::{ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(Yokeable)]
@@ -58,6 +58,18 @@ pub fn assert_zcf_generics<'a, 'b>(
 #[yoke(prove_covariance_manually)]
 pub struct ZeroMapExample<'a> {
     map: ZeroMap<'a, str, u16>,
+}
+
+pub struct AssertYokeable {
+    string: Yoke<StringExample, Box<[u8]>>,
+    int: Yoke<IntExample, Box<[u8]>>,
+    gen1: Yoke<GenericsExample<u32>, Box<[u8]>>,
+    gen2: Yoke<GenericsExample<String>, Box<[u8]>>,
+    cow: Yoke<CowExample<'static>, Box<[u8]>>,
+    zv: Yoke<ZeroVecExample<'static>, Box<[u8]>>,
+    zv_gen1: Yoke<ZeroVecExampleWithGenerics<'static, u8>, Box<[u8]>>,
+    zv_gen2: Yoke<ZeroVecExampleWithGenerics<'static, char>, Box<[u8]>>,
+    map: Yoke<ZeroMapExample<'static>, Box<[u8]>>,
 }
 
 fn main() {}
