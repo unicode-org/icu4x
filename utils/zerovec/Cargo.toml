@@ -61,6 +61,10 @@ harness = false
 name = "zerovec_iai"
 harness = false
 
+[[bench]]
+name = "zeromap"
+harness = false
+
 [[example]]
 name = "zv_serde"
 required-features = ["serde"]
