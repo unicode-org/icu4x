@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashMap;
+use std::{collections::HashMap, fs};
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -70,6 +70,17 @@ fn generate_hashmap() {
     println!("{:?}", buf);
 }
 
+#[cfg(feature = "generate")]
+fn generate_test_data() {
+    let zeromap = build_zeromap(true);
+    let zeromap_bytes = postcard::to_stdvec(&zeromap).unwrap();
+    fs::write("large_zeromap.postcard", &zeromap_bytes).unwrap();
+
+    let hashmap = build_hashmap(true);
+    let hashmap_bytes = postcard::to_stdvec(&hashmap).unwrap();
+    fs::write("large_hashmap.postcard", &hashmap_bytes).unwrap();
+}
+
 fn overview_bench(c: &mut Criterion) {
     // Uncomment the following line to re-generate the binary data.
     // generate();
@@ -80,6 +91,9 @@ fn overview_bench(c: &mut Criterion) {
     bench_lookup_large(c);
 
     bench_hashmap(c);
+
+    #[cfg(feature = "generate")]
+    generate_test_data();
 }
 
 fn build_zeromap(large: bool) -> ZeroMap<'static, str, str> {
@@ -106,8 +120,7 @@ fn bench_deserialize(c: &mut Criterion) {
 }
 
 fn bench_deserialize_large(c: &mut Criterion) {
-    let original_map = build_zeromap(true);
-    let buf = postcard::to_stdvec(&original_map).unwrap();
+    let buf = read_large_zeromap_postcard_bytes();
     c.bench_function("zeromap/deserialize/large", |b| {
         b.iter(|| {
             let map: ZeroMap<str, str> = postcard::from_bytes(black_box(&buf)).unwrap();
@@ -127,8 +140,7 @@ fn bench_lookup(c: &mut Criterion) {
 }
 
 fn bench_lookup_large(c: &mut Criterion) {
-    let original_map = build_zeromap(true);
-    let buf = postcard::to_stdvec(&original_map).unwrap();
+    let buf = read_large_zeromap_postcard_bytes();
     let map: ZeroMap<str, str> = postcard::from_bytes(&buf).unwrap();
     c.bench_function("zeromap/lookup/large", |b| {
         b.iter(|| {
@@ -136,6 +148,14 @@ fn bench_lookup_large(c: &mut Criterion) {
             assert_eq!(map.get(black_box("zz")), None);
         });
     });
+}
+
+fn read_large_zeromap_postcard_bytes() -> Vec<u8> {
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/benches/testdata/large_zeromap.postcard"
+    );
+    fs::read(path).unwrap()
 }
 
 fn bench_hashmap(c: &mut Criterion) {
@@ -173,8 +193,7 @@ fn bench_deserialize_hashmap(c: &mut Criterion) {
 }
 
 fn bench_deserialize_large_hashmap(c: &mut Criterion) {
-    let original_map = build_hashmap(true);
-    let buf = postcard::to_stdvec(&original_map).unwrap();
+    let buf = read_large_hashmap_postcard_bytes();
     c.bench_function("zeromap/deserialize/large/hashmap", |b| {
         b.iter(|| {
             let map: HashMap<String, String> = postcard::from_bytes(black_box(&buf)).unwrap();
@@ -194,8 +213,7 @@ fn bench_lookup_hashmap(c: &mut Criterion) {
 }
 
 fn bench_lookup_large_hashmap(c: &mut Criterion) {
-    let original_map = build_hashmap(true);
-    let buf = postcard::to_stdvec(&original_map).unwrap();
+    let buf = read_large_hashmap_postcard_bytes();
     let map: HashMap<String, String> = postcard::from_bytes(&buf).unwrap();
     c.bench_function("zeromap/lookup/large/hashmap", |b| {
         b.iter(|| {
@@ -203,6 +221,14 @@ fn bench_lookup_large_hashmap(c: &mut Criterion) {
             assert_eq!(map.get(black_box("zz")), None);
         });
     });
+}
+
+fn read_large_hashmap_postcard_bytes() -> Vec<u8> {
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/benches/testdata/large_hashmap.postcard"
+    );
+    fs::read(path).unwrap()
 }
 
 criterion_group!(benches, overview_bench);
