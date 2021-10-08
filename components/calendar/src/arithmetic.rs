@@ -141,6 +141,7 @@ pub mod week_of {
         week_day: IsoWeekday,
     ) -> Result<WeekOf, DateTimeError> {
         let current = UnitInfo::new(
+            // The first day of this month/year is (day - 1) days from `day`.
             add_to_weekday(week_day, 1 - i32::from(day)),
             num_days_in_unit,
         )?;

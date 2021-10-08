@@ -5,7 +5,7 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-use icu_calendar::{utils::week_of, AsCalendar, Date, DateTime, Gregorian};
+use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Gregorian};
 use icu_locid::Locale;
 use tinystr::TinyStr8;
 
