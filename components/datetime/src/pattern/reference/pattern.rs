@@ -17,6 +17,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use either::Either;
 use icu_plurals::PluralCategory;
+use litemap::LiteMap;
 #[cfg(feature = "provider_serde")]
 use serde::{
     de,
@@ -278,8 +279,7 @@ pub struct PluralPattern {
     /// The field that 'variants' are predicated on.
     #[cfg_attr(feature = "provider_serde", serde(with = "week_field_serialization"))]
     pivot_field: Week,
-    #[cfg_attr(feature = "provider_serde", serde(with = "tuple_vec_map"))]
-    variants: Vec<(PluralCategory, Pattern)>,
+    variants: LiteMap<PluralCategory, Pattern>,
 }
 
 impl PluralPattern {
@@ -303,7 +303,7 @@ impl PluralPattern {
 
         let mut plural_pattern = PluralPattern {
             pivot_field: *pivot_field,
-            variants: Vec::new(),
+            variants: LiteMap::new(),
         };
         plural_pattern.add_variant(plural_category, pattern);
         Ok(plural_pattern)
@@ -320,26 +320,25 @@ impl PluralPattern {
     pub fn add_variant(&mut self, plural_category: PluralCategory, pattern: Pattern) {
         if plural_category != PluralCategory::Other {
             if *self
-                .get(PluralCategory::Other)
+                .variants
+                .get(&PluralCategory::Other)
                 .map(|p| *p == pattern)
                 .get_or_insert(false)
             {
                 return;
             }
         } else {
-            let duplicate_indices: Vec<usize> = self
+            let duplicates: Vec<PluralCategory> = self
                 .variants
                 .iter()
-                .enumerate()
-                .filter_map(|(i, (_, p))| if *p == pattern { Some(i) } else { None })
-                .rev()
+                .filter_map(|(c, p)| if *p == pattern { Some(*c) } else { None })
                 .collect();
-            for index in duplicate_indices {
-                self.variants.swap_remove(index);
+            for category in duplicates {
+                self.variants.remove(&category);
             }
         }
 
-        self.variants.push((plural_category, pattern));
+        self.variants.insert(plural_category, pattern);
     }
 
     /// Returns an iterator over all of this collection's patterns.
@@ -354,11 +353,11 @@ impl PluralPattern {
 
     // Returns the pattern with given category, falling back to the pattern with the Other category if not present.
     pub fn get(&self, category: PluralCategory) -> Option<&Pattern> {
-        self.variants
-            .iter()
-            .filter(|(c, _)| *c == category || *c == PluralCategory::Other)
-            .reduce(|a, b| if a.0 == PluralCategory::Other { b } else { a })
-            .map(|(_, v)| v)
+        let pattern = self.variants.get(&category);
+        if pattern.is_some() {
+            return pattern;
+        }
+        self.variants.get(&PluralCategory::Other)
     }
 }
 
@@ -376,12 +375,12 @@ fn build_plural_pattern() {
 
     assert_eq!(patterns.pivot_field, Week::WeekOfYear);
     assert_eq!(
-        patterns.variants,
+        patterns.variants.into_tuple_vec(),
         vec![
             (PluralCategory::Zero, red_pattern.clone()),
             (PluralCategory::Two, red_pattern.clone()),
-            (PluralCategory::Other, blue_pattern.clone()),
-            (PluralCategory::Few, red_pattern.clone())
+            (PluralCategory::Few, red_pattern.clone()),
+            (PluralCategory::Other, blue_pattern.clone())
         ]
     )
 }

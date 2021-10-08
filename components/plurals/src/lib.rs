@@ -76,6 +76,7 @@ mod operands;
 pub mod provider;
 pub mod rules;
 
+use core::cmp::{Ord, PartialOrd};
 use core::convert::TryInto;
 pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
@@ -137,7 +138,7 @@ pub enum PluralRuleType {
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -150,7 +151,7 @@ pub enum PluralCategory {
     /// - 0 in Arabic (ar), Latvian (lv)
     /// - 10~20, 30, 40, 50, ... in Latvian (lv)
     #[cfg_attr(feature = "provider_serde", serde(rename = "zero"))]
-    Zero,
+    Zero = 0,
     /// CLDR "one" plural category. Signifies the singular form in many languages.
     ///
     /// Examples of numbers having this category:
@@ -160,7 +161,7 @@ pub enum PluralCategory {
     /// - 2.1 in Filipino (fil), Croatian (hr), Latvian (lv), Serbian (sr)
     /// - 2, 3, 5, 7, 8, ... in Filipino (fil)
     #[cfg_attr(feature = "provider_serde", serde(rename = "one"))]
-    One,
+    One = 1,
     /// CLDR "two" plural category. Used in Arabic, Hebrew, and Slovenian, among others.
     ///
     /// Examples of numbers having this category:
@@ -168,7 +169,7 @@ pub enum PluralCategory {
     /// - 2 in Arabic (ar), Hebrew (iw), Slovenian (sl)
     /// - 2.0 in Arabic (ar)
     #[cfg_attr(feature = "provider_serde", serde(rename = "two"))]
-    Two,
+    Two = 2,
     /// CLDR "few" plural category. Used in Romanian, Polish, Russian, and others.
     ///
     /// Examples of numbers having this category:
@@ -178,7 +179,7 @@ pub enum PluralCategory {
     /// - 2 in Polish (pl), Russian (ru), Czech (cs), ...
     /// - 5 in Arabic (ar), Lithuanian (lt), Romanian (ro)
     #[cfg_attr(feature = "provider_serde", serde(rename = "few"))]
-    Few,
+    Few = 3,
     /// CLDR "many" plural category. Used in Polish, Russian, Ukrainian, and others.
     ///
     /// Examples of numbers having this category:
@@ -188,7 +189,7 @@ pub enum PluralCategory {
     /// - 1.1 in Czech (cs), Lithuanian (lt), Slovak (sk)
     /// - 15 in Arabic (ar), Polish (pl), Russian (ru), Ukrainian (uk)
     #[cfg_attr(feature = "provider_serde", serde(rename = "many"))]
-    Many,
+    Many = 4,
     /// CLDR "other" plural category, used as a catch-all. Each language supports it, and it
     /// is also used as a fail safe result for in case no better match can be identified.
     ///
@@ -201,7 +202,7 @@ pub enum PluralCategory {
     /// - 1 in Japanese (ja), Korean (ko), Chinese (zh), Thai (th), ...
     /// - 2 in English (en), German (de), Spanish (es), ...
     #[cfg_attr(feature = "provider_serde", serde(rename = "other"))]
-    Other,
+    Other = 5,
 }
 
 impl PluralCategory {
