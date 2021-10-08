@@ -10,7 +10,7 @@ use core::marker::PhantomData;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
-pub struct ZeroVecVisitor<T> {
+struct ZeroVecVisitor<T> {
     marker: PhantomData<fn() -> T>,
 }
 

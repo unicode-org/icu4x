@@ -88,6 +88,34 @@ impl fmt::Display for Pattern<'_> {
     }
 }
 
+/// A helper struct that is shaped exactly like `runtime::Pattern`
+/// and is used to aid in quick deserialization.
+#[cfg(feature = "provider_serde")]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct PatternForSerde<'data> {
+    #[serde(borrow)]
+    pub items: ZeroVec<'data, PatternItem>,
+    pub(crate) time_granularity: TimeGranularity,
+}
+
+impl<'data> From<PatternForSerde<'data>> for Pattern<'data> {
+    fn from(pfs: PatternForSerde<'data>) -> Self {
+        Self {
+            items: pfs.items,
+            time_granularity: pfs.time_granularity,
+        }
+    }
+}
+
+impl<'data> From<&Pattern<'data>> for PatternForSerde<'data> {
+    fn from(pfs: &Pattern<'data>) -> Self {
+        Self {
+            items: pfs.items.clone(),
+            time_granularity: pfs.time_granularity,
+        }
+    }
+}
+
 #[cfg(feature = "provider_serde")]
 #[allow(clippy::upper_case_acronyms)]
 struct DeserializePatternUTS35String;
@@ -122,9 +150,8 @@ impl<'de> Deserialize<'de> for Pattern<'de> {
         if deserializer.is_human_readable() {
             deserializer.deserialize_str(DeserializePatternUTS35String)
         } else {
-            let visitor = zerovec::zerovec::serde::ZeroVecVisitor::default();
-            let zv = deserializer.deserialize_bytes(visitor)?;
-            Ok(Pattern::from(zv))
+            let pattern = PatternForSerde::deserialize(deserializer)?;
+            Ok(pattern.into())
         }
     }
 }
@@ -140,7 +167,8 @@ impl Serialize for Pattern<'_> {
             let string: String = self.to_string();
             serializer.serialize_str(&string)
         } else {
-            self.items.serialize(serializer)
+            let pfs: PatternForSerde = self.into();
+            pfs.serialize(serializer)
         }
     }
 }
