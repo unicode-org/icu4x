@@ -34,15 +34,13 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 	* [ ] October-December
 		* [ ] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 		* [ ] Migration to ICU4X is enabled
-		* [ ] Implement vertical locale fallback([#1109](https://github.com/unicode-org/icu4x/issues/1109))
-		* [ ] Implement static data slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
+		* [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
+		* [ ] User-Friendly Data Slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
 		* [ ] User-friendly data tooling (multi-blob, source data downloader)([#1110](https://github.com/unicode-org/icu4x/issues/1110))
-		* [ ] Implement select ZeroVec improvements to unblock zero-copy data ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
-		* [ ] Finish full-stack enumerated Unicode properties (GC, Script, and Skia properties) ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
+		* [ ] ZeroVec improvements ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
+		* [ ] Finish full-stack enumerated Unicode properties ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
 		* [ ] High-fidelity code size reduction ([#874](https://github.com/unicode-org/icu4x/issues/874))
-		* [ ] Supporting WearOS in their efforts to integrate ICU4X
-		* [ ] Implement full-stack proof-of-concept ICU4X backend for Skia
-		* [ ] Fix priority Diplomat issues to unblock new target languages
+		* [ ] Enable diplomat bindings to X, Y, Z
 		* [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))
 		* [ ] Finish full-stack Script_Extensions property
 		* [ ] Implement full-stack properties of strings
