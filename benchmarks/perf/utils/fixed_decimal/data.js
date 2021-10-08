@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633720226776,
+  "lastUpdate": 1633735735947,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11519,6 +11519,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 136966,
             "range": "± 9981",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "alansliu@gmail.com",
+            "name": "Alan Liu",
+            "username": "poulsbo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "317a263fcd60805bc5c4c468eab2513e3087fd33",
+          "message": "Add benches for ZeroMap::get, also litemap/HashMap for comparison (#1087)",
+          "timestamp": "2021-10-08T16:22:50-07:00",
+          "tree_id": "64f429b38d3eef556294ec7e2a7c5e20091ef267",
+          "url": "https://github.com/unicode-org/icu4x/commit/317a263fcd60805bc5c4c468eab2513e3087fd33"
+        },
+        "date": 1633735730161,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 120850,
+            "range": "± 8522",
             "unit": "ns/iter"
           }
         ]
