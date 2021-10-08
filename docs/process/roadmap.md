@@ -34,14 +34,19 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 	* [ ] October-December
 		* [ ] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 		* [ ] Migration to ICU4X is enabled
+		* [ ] Implement vertical locale fallback([#1109](https://github.com/unicode-org/icu4x/issues/1109))
+		* [ ] Implement static data slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
+		* [ ] User-friendly data tooling (multi-blob, source data downloader)([#1110](https://github.com/unicode-org/icu4x/issues/1110))
+		* [ ] Implement select ZeroVec improvements to unblock zero-copy data ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
 		* [ ] DateTime performance (#603)
 		* [ ] Full support for enumerated properties ([#148](https://github.com/unicode-org/icu4x/issues/148))
 	 	* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109))
-	 	* [ ] DateTime Calendars ([#534](https://github.com/unicode-org/icu4x/issues/534))
+	 	* [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))
 		* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
-		* [ ] Optimize code size of FFI ([#874](https://github.com/unicode-org/icu4x/issues/874))
+		* [ ] High-fidelity code size reduction ([#874](https://github.com/unicode-org/icu4x/issues/874))
 		* [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
 		* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
+		* [ ] Mentor team of 20%ers
 		* [ ] UnicodeSet L3b (#168)
 * [ ] 2022
 	* [ ] Q1
