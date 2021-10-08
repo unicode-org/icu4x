@@ -8,8 +8,10 @@ use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse_macro_input, DeriveInput, Ident, Lifetime, Type};
+use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, Type, WherePredicate};
 use synstructure::Structure;
+
+mod visitor;
 
 /// Custom derive for `yoke::Yokeable`,
 ///
@@ -32,20 +34,23 @@ pub fn yokeable_derive(input: TokenStream) -> TokenStream {
 }
 
 fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let typarams = input.generics.type_params().count();
-    if typarams != 0 {
-        return syn::Error::new(
-            input.generics.span(),
-            "derive(Yokeable) does not support type parameters",
-        )
-        .to_compile_error();
-    }
+    let tybounds = input.generics.type_params().collect::<Vec<_>>();
+    let typarams = tybounds
+        .iter()
+        .map(|ty| ty.ident.clone())
+        .collect::<Vec<_>>();
+    // We require all type parameters be 'static, otherwise
+    // the Yokeable impl becomes really unweildy to generate safely
+    let static_bounds: Vec<WherePredicate> = typarams
+        .iter()
+        .map(|ty| parse_quote!(#ty: 'static))
+        .collect();
     let lts = input.generics.lifetimes().count();
     if lts == 0 {
         let name = &input.ident;
         quote! {
             // This is safe because there are no lifetime parameters.
-            unsafe impl<'a> yoke::Yokeable<'a> for #name {
+            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#static_bounds),* {
                 type Output = Self;
                 fn transform(&self) -> &Self::Output {
                     self
@@ -63,7 +68,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 }
             }
             // This is safe because there are no lifetime parameters.
-            unsafe impl<'a> yoke::IsCovariant<'a> for #name {}
+            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<#(#typarams),*> where #(#static_bounds),* {}
         }
     } else {
         if lts != 1 {
@@ -84,12 +89,33 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         });
         if manual_covariance {
             let mut structure = Structure::new(input);
+            let generics_env = typarams.iter().cloned().collect();
+            let static_bounds: Vec<WherePredicate> = typarams
+                .iter()
+                .map(|ty| parse_quote!(#ty: 'static))
+                .collect();
+            let mut yoke_bounds: Vec<WherePredicate> = vec![];
             structure.bind_with(|_| synstructure::BindStyle::Move);
             let body = structure.each_variant(|vi| {
                 vi.construct(|f, i| {
                     let binding = format!("__binding_{}", i);
                     let field = Ident::new(&binding, Span::call_site());
                     let fty = replace_lifetime(&f.ty, static_lt());
+
+                    let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
+                    if has_ty {
+                        // For types without type parameters, the compiler can figure out that the field implements
+                        // Yokeable on its own. However, if there are type parameters, there may be complex preconditions
+                        // to `FieldTy: Yokeable` that need to be satisfied. We get them to be satisfied by requiring
+                        // `FieldTy<'static>: Yokeable<FieldTy<'a>>`
+                        if has_lt {
+                            let a_ty = replace_lifetime(&f.ty, custom_lt("'a"));
+                            yoke_bounds
+                                .push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #a_ty>));
+                        } else {
+                            yoke_bounds.push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #fty>));
+                        }
+                    }
                     // By calling transform_owned on all fields, we manually prove
                     // that the lifetimes are covariant, since this requirement
                     // must already be true for the type that implements transform_owned().
@@ -99,8 +125,10 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 })
             });
             return quote! {
-                unsafe impl<'a> yoke::Yokeable<'a> for #name<'static> {
-                    type Output = #name<'a>;
+                unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*>
+                    where #(#static_bounds,)*
+                    #(#yoke_bounds,)* {
+                    type Output = #name<'a, #(#typarams),*>;
                     fn transform(&'a self) -> &'a Self::Output {
                         unsafe {
                             // safety: we have asserted covariance in
@@ -137,8 +165,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             //
             // This custom derive can be improved to handle this case when
             // necessary
-            unsafe impl<'a> yoke::Yokeable<'a> for #name<'static> {
-                type Output = #name<'a>;
+            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*> where #(#static_bounds),* {
+                type Output = #name<'a, #(#typarams),*>;
                 fn transform(&'a self) -> &'a Self::Output {
                     self
                 }
@@ -162,7 +190,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
             // This is safe because it is in the same block as the above impl, which only compiles
             // if 'a is a covariant lifetime.
-            unsafe impl<'a> yoke::IsCovariant<'a> for #name<'a> {}
+            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<'a, #(#typarams),*> where #(#static_bounds),* {}
         }
     }
 }
@@ -182,14 +210,11 @@ pub fn zcf_derive(input: TokenStream) -> TokenStream {
 }
 
 fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let typarams = input.generics.type_params().count();
-    if typarams != 0 {
-        return syn::Error::new(
-            input.generics.span(),
-            "derive(ZeroCopyFrom) does not support type parameters",
-        )
-        .to_compile_error();
-    }
+    let tybounds = input.generics.type_params().collect::<Vec<_>>();
+    let typarams = tybounds
+        .iter()
+        .map(|ty| ty.ident.clone())
+        .collect::<Vec<_>>();
     let has_clone = input.attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
             if i == "cloning_zcf" {
@@ -201,13 +226,17 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let lts = input.generics.lifetimes().count();
     let name = &input.ident;
     if lts == 0 {
-        let clone = if has_clone {
-            quote!(this.clone())
+        let (clone, clone_trait) = if has_clone {
+            (quote!(this.clone()), quote!(Clone))
         } else {
-            quote!(*this)
+            (quote!(*this), quote!(Copy))
         };
+        let bounds: Vec<WherePredicate> = typarams
+            .iter()
+            .map(|ty| parse_quote!(#ty: #clone_trait + 'static))
+            .collect();
         quote! {
-            impl ZeroCopyFrom<#name> for #name {
+            impl<#(#tybounds),*> ZeroCopyFrom<#name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
                 fn zero_copy_from(this: &Self) -> Self {
                     #clone
                 }
@@ -232,22 +261,50 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         }
 
         let structure = Structure::new(input);
+        let generics_env = typarams.iter().cloned().collect();
+        let static_bounds: Vec<WherePredicate> = typarams
+            .iter()
+            .map(|ty| parse_quote!(#ty: 'static))
+            .collect();
+
+        let mut zcf_bounds: Vec<WherePredicate> = vec![];
         let body = structure.each_variant(|vi| {
             vi.construct(|f, i| {
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
                 let fty = replace_lifetime(&f.ty, static_lt());
+                let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'data"));
+
+                let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
+                if has_ty {
+                    // For types without type parameters, the compiler can figure out that the field implements
+                    // ZeroCopyFrom on its own. However, if there are type parameters, there may be complex preconditions
+                    // to `FieldTy: ZeroCopyFrom` that need to be satisfied. We get them to be satisfied by requiring
+                    // `FieldTy<'static>: ZeroCopyFrom<FieldTy<'data>>` as well as
+                    // `for<'data_hrtb> FieldTy<'static>: Yokeable<'data_hrtb, Output = FieldTy<'data_hrtb>>`
+                    if has_lt {
+                        let hrtb_ty = replace_lifetime(&f.ty, custom_lt("'data_hrtb"));
+                        zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#lifetime_ty>));
+                        zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #hrtb_ty>));
+                    } else {
+                        zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#fty>));
+                        zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #fty>));
+                    }
+                }
+
                 // By doing this we essentially require ZCF to be implemented
                 // on all fields
                 quote! {
-                    <#fty as yoke::ZeroCopyFrom<_>>::zero_copy_from(#field)
+                    <#fty as yoke::ZeroCopyFrom<#lifetime_ty>>::zero_copy_from(#field)
                 }
             })
         });
 
         quote! {
-            impl<'data> yoke::ZeroCopyFrom<#name<'data>> for #name<'static> {
-                fn zero_copy_from<'b>(this: &'b #name<'data>) -> #name<'b> {
+            impl<'data, #(#tybounds),*> yoke::ZeroCopyFrom<#name<'data, #(#typarams),*>> for #name<'static, #(#typarams),*>
+                where #(#static_bounds,)*
+                #(#zcf_bounds,)* {
+                fn zero_copy_from<'b>(this: &'b #name<'data, #(#typarams),*>) -> #name<'b, #(#typarams),*> {
                     match *this { #body }
                 }
             }
@@ -257,6 +314,10 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
 fn static_lt() -> Lifetime {
     Lifetime::new("'static", Span::call_site())
+}
+
+fn custom_lt(s: &str) -> Lifetime {
+    Lifetime::new(s, Span::call_site())
 }
 
 fn replace_lifetime(x: &Type, lt: Lifetime) -> Type {
