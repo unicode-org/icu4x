@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633710249124,
+  "lastUpdate": 1633715920783,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9671,6 +9671,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 277161,
             "range": "± 3146",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f0332973d5b685ce81b1172b1cf9dd2d121994f5",
+          "message": "Add support for generics in derive(Yokeable, ZeroCopyFrom) (#1162)\n\n* Add ability to use generics with derive(Yokeable) for non-lifetime types\n\n* Start testing ZeroCopyFrom on types without lifetime parameters\n\n* Add ability to use derive(ZCF) for non-lifetime types with generics\n\n* Support generics for non-manually-proven Yokeable covariance\n\n* Support type param bounds on derive(Yokeable)\n\n* Add check_type_for_parameters\n\n* Allow generics on derive(ZCF) with lifetimes\n\n* Add tests for yokeability\n\n* Support generics in prove_covariance_manually\n\n* Also make sure ZCF works\n\n* Support non-lifetimed fields better\n\n* Add comments",
+          "timestamp": "2021-10-08T10:51:10-07:00",
+          "tree_id": "6b5628b11b306939c2e883b260998000dc89f5d3",
+          "url": "https://github.com/unicode-org/icu4x/commit/f0332973d5b685ce81b1172b1cf9dd2d121994f5"
+        },
+        "date": 1633715916022,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 112234,
+            "range": "± 12230",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1548581,
+            "range": "± 58168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 314284,
+            "range": "± 11928",
             "unit": "ns/iter"
           }
         ]
