@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633715920783,
+  "lastUpdate": 1633720291586,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9713,6 +9713,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 314284,
             "range": "± 11928",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c0c1380a7cf4ab82fe0dd952c86b16606e95e247",
+          "message": "Reorganize skeleton and separate runtime (#1156)\n\n* Reorganize skeleton and separate runtime\r\n\r\n* Update based on the design from Pattern serde",
+          "timestamp": "2021-10-08T12:04:06-07:00",
+          "tree_id": "93bfcd68c3680c4a92255bf18d27fa5947b11a8f",
+          "url": "https://github.com/unicode-org/icu4x/commit/c0c1380a7cf4ab82fe0dd952c86b16606e95e247"
+        },
+        "date": 1633720287235,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 116398,
+            "range": "± 6614",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1698073,
+            "range": "± 36034",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 331416,
+            "range": "± 2189",
             "unit": "ns/iter"
           }
         ]
