@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(feature = "serde")]
-mod serde;
+pub mod serde;
 
 use crate::ule::*;
 use alloc::vec::Vec;

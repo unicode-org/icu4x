@@ -10,17 +10,26 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::{vec, vec::Vec};
 #[cfg(feature = "provider_serde")]
-use serde::{
-    de,
-    ser::{self, SerializeSeq},
-    Deserialize, Deserializer, Serialize,
-};
+use serde::{de, ser, Deserialize, Deserializer, Serialize};
 use zerovec::ZeroVec;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
     pub(crate) time_granularity: TimeGranularity,
+}
+
+impl<'data> From<ZeroVec<'data, PatternItem>> for Pattern<'data> {
+    fn from(items: ZeroVec<'data, PatternItem>) -> Self {
+        Self {
+            time_granularity: items
+                .iter()
+                .map(|pi| (&pi).into())
+                .max()
+                .unwrap_or_default(),
+            items,
+        }
+    }
 }
 
 impl From<Vec<PatternItem>> for Pattern<'_> {
@@ -96,33 +105,11 @@ impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
         E: de::Error,
     {
         // Parse a string into a list of fields.
-        let reference_deserializer = crate::pattern::reference::pattern::DeserializePatternUTS35String;
+        let reference_deserializer =
+            crate::pattern::reference::pattern::DeserializePatternUTS35String;
         let pattern = reference_deserializer.visit_str(pattern_string)?;
 
         Ok(pattern.into())
-    }
-}
-
-#[cfg(feature = "provider_serde")]
-struct DeserializePatternBincode;
-
-#[cfg(feature = "provider_serde")]
-impl<'de> de::Visitor<'de> for DeserializePatternBincode {
-    type Value = Pattern<'de>;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "Unable to deserialize a bincode Pattern.")
-    }
-
-    fn visit_seq<V>(self, mut seq: V) -> Result<Pattern<'de>, V::Error>
-    where
-        V: de::SeqAccess<'de>,
-    {
-        let mut items = Vec::new();
-        while let Some(item) = seq.next_element()? {
-            items.push(item)
-        }
-        Ok(Pattern::from(items))
     }
 }
 
@@ -135,7 +122,9 @@ impl<'de> Deserialize<'de> for Pattern<'de> {
         if deserializer.is_human_readable() {
             deserializer.deserialize_str(DeserializePatternUTS35String)
         } else {
-            deserializer.deserialize_seq(DeserializePatternBincode)
+            let visitor = zerovec::zerovec::serde::ZeroVecVisitor::default();
+            let zv = deserializer.deserialize_bytes(visitor)?;
+            Ok(Pattern::from(zv))
         }
     }
 }
@@ -151,13 +140,7 @@ impl Serialize for Pattern<'_> {
             let string: String = self.to_string();
             serializer.serialize_str(&string)
         } else {
-            // Serialize into a bincode-friendly representation. This means that pattern parsing
-            // will not be needed when deserializing.
-            let mut seq = serializer.serialize_seq(Some(self.items.len()))?;
-            for item in self.items.iter() {
-                seq.serialize_element(&item)?;
-            }
-            seq.end()
+            self.items.serialize(serializer)
         }
     }
 }
