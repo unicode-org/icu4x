@@ -52,7 +52,6 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
 		* [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
 		* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
-		* [ ] Mentor team of 20%ers
 		* [ ] UnicodeSet L3b (#168)
 * [ ] 2022
 	* [ ] Q1
