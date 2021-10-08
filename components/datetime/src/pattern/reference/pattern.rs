@@ -155,7 +155,7 @@ impl fmt::Display for Pattern {
 
 #[cfg(feature = "provider_serde")]
 #[allow(clippy::upper_case_acronyms)]
-struct DeserializePatternUTS35String;
+pub(crate) struct DeserializePatternUTS35String;
 
 #[cfg(feature = "provider_serde")]
 impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
@@ -180,10 +180,10 @@ impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
 }
 
 #[cfg(feature = "provider_serde")]
-struct DeserializePatternBincode;
+pub(crate) struct DeserializePatternBinary;
 
 #[cfg(feature = "provider_serde")]
-impl<'de> de::Visitor<'de> for DeserializePatternBincode {
+impl<'de> de::Visitor<'de> for DeserializePatternBinary {
     type Value = Pattern;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -211,7 +211,7 @@ impl<'de> Deserialize<'de> for Pattern {
         if deserializer.is_human_readable() {
             deserializer.deserialize_str(DeserializePatternUTS35String)
         } else {
-            deserializer.deserialize_seq(DeserializePatternBincode)
+            deserializer.deserialize_seq(DeserializePatternBinary)
         }
     }
 }
