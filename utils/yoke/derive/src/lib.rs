@@ -100,9 +100,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     let field = Ident::new(&binding, Span::call_site());
                     let fty = replace_lifetime(&f.ty, static_lt());
 
-                    if visitor::check_type_for_parameters(&f.ty, &generics_env) == (true, true) {
-                        let a_ty = replace_lifetime(&f.ty, custom_lt("'a"));
-                        yoke_bounds.push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #a_ty>));
+                    let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
+                    if has_ty {
+                        if has_lt {
+                            let a_ty = replace_lifetime(&f.ty, custom_lt("'a"));
+                            yoke_bounds
+                                .push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #a_ty>));
+                        } else {
+                            yoke_bounds.push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #fty>));
+                        }
                     }
                     // By calling transform_owned on all fields, we manually prove
                     // that the lifetimes are covariant, since this requirement
@@ -263,10 +269,16 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 let fty = replace_lifetime(&f.ty, static_lt());
                 let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'data"));
 
-                if visitor::check_type_for_parameters(&f.ty, &generics_env) == (true, true) {
-                    let hrtb_ty = replace_lifetime(&f.ty, custom_lt("'data_hrtb"));
-                    zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#lifetime_ty>));
-                    zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #hrtb_ty>));
+                let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
+                if has_ty {
+                    if has_lt {
+                        let hrtb_ty = replace_lifetime(&f.ty, custom_lt("'data_hrtb"));
+                        zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#lifetime_ty>));
+                        zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #hrtb_ty>));
+                    } else {
+                        zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#fty>));
+                        zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #fty>));
+                    }
                 }
 
                 // By doing this we essentially require ZCF to be implemented

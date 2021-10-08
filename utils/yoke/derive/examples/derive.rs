@@ -42,6 +42,7 @@ pub struct ZeroVecExample<'a> {
 pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
     gen: ZeroVec<'a, T>,
     vec: ZeroVec<'a, u16>,
+    bare: T,
 }
 
 pub fn assert_zcf_generics<'a, 'b>(
