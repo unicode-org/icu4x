@@ -315,7 +315,30 @@ impl PluralPattern {
     }
 
     /// Adds `pattern` associated with `plural_category` to this pattern collection.
+    ///
+    /// Redundant patterns that are the same as any [icu_plurals::PluralCategory::Other] pattern are elided.
     pub fn add_variant(&mut self, plural_category: PluralCategory, pattern: Pattern) {
+        if plural_category != PluralCategory::Other {
+            if *self
+                .get(PluralCategory::Other)
+                .map(|p| *p == pattern)
+                .get_or_insert(false)
+            {
+                return;
+            }
+        } else {
+            let duplicate_indices: Vec<usize> = self
+                .variants
+                .iter()
+                .enumerate()
+                .filter_map(|(i, (_, p))| if *p == pattern { Some(i) } else { None })
+                .rev()
+                .collect();
+            for index in duplicate_indices {
+                self.variants.swap_remove(index);
+            }
+        }
+
         self.variants.push((plural_category, pattern));
     }
 
@@ -337,6 +360,30 @@ impl PluralPattern {
             .reduce(|a, b| if a.0 == PluralCategory::Other { b } else { a })
             .map(|(_, v)| v)
     }
+}
+
+#[test]
+fn build_plural_pattern() {
+    let red_pattern = Pattern::from_bytes("'red' w").unwrap();
+    let blue_pattern = Pattern::from_bytes("'blue' w").unwrap();
+    let mut patterns = PluralPattern::new(PluralCategory::Zero, red_pattern.clone())
+        .expect("PluralPattern::new failed");
+    patterns.add_variant(PluralCategory::One, blue_pattern.clone());
+    patterns.add_variant(PluralCategory::Two, red_pattern.clone());
+    patterns.add_variant(PluralCategory::Other, blue_pattern.clone());
+    patterns.add_variant(PluralCategory::Few, red_pattern.clone());
+    patterns.add_variant(PluralCategory::Many, blue_pattern.clone());
+
+    assert_eq!(patterns.pivot_field, Week::WeekOfYear);
+    assert_eq!(
+        patterns.variants,
+        vec![
+            (PluralCategory::Zero, red_pattern.clone()),
+            (PluralCategory::Two, red_pattern.clone()),
+            (PluralCategory::Other, blue_pattern.clone()),
+            (PluralCategory::Few, red_pattern.clone())
+        ]
+    )
 }
 
 /// Either a single Pattern or a collection of pattern when there are plural variants.
