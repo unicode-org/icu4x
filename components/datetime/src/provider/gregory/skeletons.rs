@@ -5,7 +5,7 @@
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
 use super::patterns::PatternV1;
-use crate::skeleton::{Skeleton, SkeletonError};
+use crate::skeleton::{reference::Skeleton, SkeletonError};
 use core::convert::TryFrom;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;

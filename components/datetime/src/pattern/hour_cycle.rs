@@ -88,7 +88,7 @@ impl CoarseHourCycle {
             }
         }
 
-        let skeleton = skeleton::Skeleton::from(&pattern);
+        let skeleton = skeleton::reference::Skeleton::from(&pattern);
 
         match skeleton::create_best_pattern_for_fields(
             skeletons,
