@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633641061967,
+  "lastUpdate": 1633709910279,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1463,6 +1463,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a289b6a80fc83817bf6e1ab0323e55a5a8fad7c1"
         },
         "date": 1633641057594,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583691,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9dfd3d5a50eb6cf6cc557959b6a9ab57bd41d6dd",
+          "message": "Add humanized serde serialization to DTF runtime pattern (#1157)\n\n* Add humanized serde serialization to DTF runtime pattern\r\n\r\n* Switch to use ZeroVec serialize/deserialize for binary path\r\n\r\n* Use helper struct\r\n\r\n* Put serde into module",
+          "timestamp": "2021-10-08T09:17:06-07:00",
+          "tree_id": "3f7a2eddcf6782ea0215a0f4cff730f58b2fb562",
+          "url": "https://github.com/unicode-org/icu4x/commit/9dfd3d5a50eb6cf6cc557959b6a9ab57bd41d6dd"
+        },
+        "date": 1633709905525,
         "tool": "ndjson",
         "benches": [
           {
