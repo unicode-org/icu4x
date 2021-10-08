@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633720291586,
+  "lastUpdate": 1633735804776,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9755,6 +9755,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 331416,
             "range": "± 2189",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "alansliu@gmail.com",
+            "name": "Alan Liu",
+            "username": "poulsbo"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "317a263fcd60805bc5c4c468eab2513e3087fd33",
+          "message": "Add benches for ZeroMap::get, also litemap/HashMap for comparison (#1087)",
+          "timestamp": "2021-10-08T16:22:50-07:00",
+          "tree_id": "64f429b38d3eef556294ec7e2a7c5e20091ef267",
+          "url": "https://github.com/unicode-org/icu4x/commit/317a263fcd60805bc5c4c468eab2513e3087fd33"
+        },
+        "date": 1633735799345,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 115117,
+            "range": "± 3472",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1685714,
+            "range": "± 50647",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 323129,
+            "range": "± 6229",
             "unit": "ns/iter"
           }
         ]
