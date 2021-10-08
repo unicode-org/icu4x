@@ -11,14 +11,14 @@ use icu_uniset::UnicodeSetBuilder;
 use std::fs;
 use std::path::PathBuf;
 
-pub struct EnumeratedPropertiesDataProvider {
+pub struct EnumeratedPropertyUnicodeSetDataProvider {
     root_dir: PathBuf,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
-impl EnumeratedPropertiesDataProvider {
+impl EnumeratedPropertyUnicodeSetDataProvider {
     pub fn new(root_dir: PathBuf) -> Self {
-        EnumeratedPropertiesDataProvider { root_dir }
+        EnumeratedPropertyUnicodeSetDataProvider { root_dir }
     }
     fn get_toml_data(&self, name: &str) -> Result<uprops_serde::enumerated::Main, Error> {
         let mut path: PathBuf = self.root_dir.clone().join(name);
@@ -61,7 +61,9 @@ fn expand_groupings<'a>(prop_name: &str, prop_val: &'a str) -> Vec<&'a str> {
     }
 }
 
-impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for EnumeratedPropertiesDataProvider {
+impl<'data> DataProvider<'data, UnicodePropertyV1Marker>
+    for EnumeratedPropertyUnicodeSetDataProvider
+{
     fn load_payload(
         &self,
         req: &DataRequest,
@@ -104,11 +106,11 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for EnumeratedPropertie
     }
 }
 
-icu_provider::impl_dyn_provider!(EnumeratedPropertiesDataProvider, {
+icu_provider::impl_dyn_provider!(EnumeratedPropertyUnicodeSetDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE, 'data);
 
-impl IterableDataProviderCore for EnumeratedPropertiesDataProvider {
+impl IterableDataProviderCore for EnumeratedPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -124,7 +126,7 @@ fn test_general_category() {
     use std::convert::TryInto;
 
     let root_dir = icu_testdata::paths::data_root().join("uprops");
-    let provider = EnumeratedPropertiesDataProvider::new(root_dir);
+    let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
 
     let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
         .load_payload(&DataRequest {
@@ -152,7 +154,7 @@ fn test_script() {
     use std::convert::TryInto;
 
     let root_dir = icu_testdata::paths::data_root().join("uprops");
-    let provider = EnumeratedPropertiesDataProvider::new(root_dir);
+    let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
 
     let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
         .load_payload(&DataRequest {
@@ -181,7 +183,7 @@ fn test_gc_groupings() {
 
     fn get_uniset_payload<'data>(key: ResourceKey) -> DataPayload<'data, UnicodePropertyV1Marker> {
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertiesDataProvider::new(root_dir);
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
@@ -293,7 +295,7 @@ fn test_gc_surrogate() {
     use std::convert::TryInto;
 
     let root_dir = icu_testdata::paths::data_root().join("uprops");
-    let provider = EnumeratedPropertiesDataProvider::new(root_dir);
+    let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
 
     let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
         .load_payload(&DataRequest {

@@ -18,10 +18,10 @@
 //! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 //! [`PropertiesDataProvider`]: binary::PropertiesDataProvider
 
-mod binary;
-mod enumerated;
+mod bin_uniset;
+mod enum_uniset;
 mod error;
-mod provider;
 mod uprops_serde;
 
-pub use provider::PropertiesDataProvider;
+pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
+pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
