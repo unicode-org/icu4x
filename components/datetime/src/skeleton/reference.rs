@@ -8,6 +8,7 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::pattern::reference::Pattern;
 use alloc::vec::Vec;
 use core::convert::TryFrom;
+use core::fmt::{self, Write};
 use smallvec::SmallVec;
 
 /// A [`Skeleton`] is used to represent what types of `Field`s are present in a [`Pattern`]. The
@@ -23,7 +24,7 @@ use smallvec::SmallVec;
 /// The `Field`s are only sorted in the [`Skeleton`] in order to provide a deterministic
 /// serialization strategy, and to provide a faster [`Skeleton`] matching operation.
 #[derive(Debug, Eq, PartialEq, Clone, Ord, PartialOrd)]
-pub struct Skeleton(SmallVec<[fields::Field; 5]>);
+pub struct Skeleton(pub(crate) SmallVec<[fields::Field; 5]>);
 
 impl Skeleton {
     pub(crate) fn fields_iter<'a>(&'a self) -> impl Iterator<Item = &Field> + 'a {
@@ -144,5 +145,17 @@ impl TryFrom<&str> for Skeleton {
         }
 
         Ok(Self::from(fields))
+    }
+}
+
+impl fmt::Display for Skeleton {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        for field in self.fields_iter() {
+            let ch: char = field.symbol.into();
+            for _ in 0..field.length as usize {
+                formatter.write_char(ch)?;
+            }
+        }
+        Ok(())
     }
 }

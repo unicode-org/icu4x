@@ -8,6 +8,7 @@ mod error;
 mod helpers;
 pub mod reference;
 pub mod runtime;
+#[cfg(feature = "provider_serde")]
 mod serde;
 pub use error::*;
 pub use helpers::*;
@@ -21,7 +22,7 @@ mod test {
     use icu_provider::prelude::*;
 
     use crate::{
-        fields::{Day, Field, FieldLength, FieldSymbol, Month, Weekday},
+        fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
         provider::{
             gregory::DatePatternsV1Marker, gregory::DateSkeletonPatternsV1Marker,
@@ -343,47 +344,6 @@ mod test {
             }
             seq.end()
         }
-    }
-
-    #[test]
-    fn test_skeleton_bincode_reordering() {
-        let unordered_skeleton = TestInvalidSkeleton(vec![
-            Field::from((FieldSymbol::Day(Day::DayOfMonth), FieldLength::One)),
-            Field::from((FieldSymbol::Month(Month::Format), FieldLength::One)),
-        ]);
-
-        let mut buffer: Vec<u8> = Vec::new();
-
-        bincode::serialize_into(&mut buffer, &unordered_skeleton).unwrap();
-
-        let err =
-            bincode::deserialize::<Skeleton>(&buffer).expect_err("Expected an unordered error");
-
-        assert_eq!(
-            format!("{}", err),
-            "invalid value: field item out of order or duplicate: Field { symbol: Month(Format), length: One }, expected ordered field symbols representing a skeleton"
-        );
-    }
-
-    #[test]
-    fn test_skeleton_bincode_duplicate_field() {
-        let unordered_skeleton = TestInvalidSkeleton(vec![
-            Field::from((FieldSymbol::Month(Month::Format), FieldLength::One)),
-            Field::from((FieldSymbol::Day(Day::DayOfMonth), FieldLength::One)),
-            Field::from((FieldSymbol::Day(Day::DayOfMonth), FieldLength::One)),
-        ]);
-
-        let mut buffer: Vec<u8> = Vec::new();
-
-        bincode::serialize_into(&mut buffer, &unordered_skeleton).unwrap();
-
-        let err = bincode::deserialize::<Skeleton>(&buffer)
-            .expect_err("Expected a duplicate field error");
-
-        assert_eq!(
-            format!("{}", err),
-            "invalid value: field item out of order or duplicate: Field { symbol: Day(DayOfMonth), length: One }, expected ordered field symbols representing a skeleton"
-        );
     }
 
     #[cfg(feature = "provider_transform_internals")]
