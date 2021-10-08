@@ -60,10 +60,16 @@ pub struct ZeroMapExample<'a> {
     map: ZeroMap<'a, str, u16>,
 }
 
-#[derive(Yokeable)]
+#[derive(Yokeable, ZeroCopyFrom)]
 #[yoke(prove_covariance_manually)]
 pub struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
     map: ZeroMap<'a, str, T>,
+}
+
+pub fn assert_zcf_map<'a, 'b>(
+    x: &'b ZeroMapGenericExample<'a, str>,
+) -> ZeroMapGenericExample<'b, str> {
+    ZeroMapGenericExample::<'static, str>::zero_copy_from(x)
 }
 
 pub struct AssertYokeable {
