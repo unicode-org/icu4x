@@ -39,6 +39,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .iter()
         .map(|ty| ty.ident.clone())
         .collect::<Vec<_>>();
+    // We require all type parameters be 'static, otherwise
+    // the Yokeable impl becomes really unweildy to generate safely
     let static_bounds: Vec<WherePredicate> = typarams
         .iter()
         .map(|ty| parse_quote!(#ty: 'static))
@@ -102,6 +104,10 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
                     let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
                     if has_ty {
+                        // For types without type parameters, the compiler can figure out that the field implements
+                        // Yokeable on its own. However, if there are type parameters, there may be complex preconditions
+                        // to `FieldTy: Yokeable` that need to be satisfied. We get them to be satisfied by requiring
+                        // `FieldTy<'static>: Yokeable<FieldTy<'a>>`
                         if has_lt {
                             let a_ty = replace_lifetime(&f.ty, custom_lt("'a"));
                             yoke_bounds
@@ -271,6 +277,11 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
                 let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
                 if has_ty {
+                    // For types without type parameters, the compiler can figure out that the field implements
+                    // ZeroCopyFrom on its own. However, if there are type parameters, there may be complex preconditions
+                    // to `FieldTy: ZeroCopyFrom` that need to be satisfied. We get them to be satisfied by requiring
+                    // `FieldTy<'static>: ZeroCopyFrom<FieldTy<'data>>` as well as
+                    // `for<'data_hrtb> FieldTy<'static>: Yokeable<'data_hrtb, Output = FieldTy<'data_hrtb>>`
                     if has_lt {
                         let hrtb_ty = replace_lifetime(&f.ty, custom_lt("'data_hrtb"));
                         zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#lifetime_ty>));
