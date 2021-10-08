@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633715550368,
+  "lastUpdate": 1633719920230,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1523,6 +1523,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f0332973d5b685ce81b1172b1cf9dd2d121994f5"
         },
         "date": 1633715546012,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583691,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c0c1380a7cf4ab82fe0dd952c86b16606e95e247",
+          "message": "Reorganize skeleton and separate runtime (#1156)\n\n* Reorganize skeleton and separate runtime\r\n\r\n* Update based on the design from Pattern serde",
+          "timestamp": "2021-10-08T12:04:06-07:00",
+          "tree_id": "93bfcd68c3680c4a92255bf18d27fa5947b11a8f",
+          "url": "https://github.com/unicode-org/icu4x/commit/c0c1380a7cf4ab82fe0dd952c86b16606e95e247"
+        },
+        "date": 1633719916517,
         "tool": "ndjson",
         "benches": [
           {
