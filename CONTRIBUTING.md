@@ -64,7 +64,7 @@ It's recommended to run `cargo test` in crates you're modifying to ensure that n
      + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
      + [`Sphinx`](https://www.sphinx-doc.org/en/master/) on Python3: `pip3 install sphinx sphinx-rtd-theme`
  - `cargo make ci-job-wasm`: Runs WASM tests; mostly important if you're changing the FFI interface. This also has a couple additional dependencies:
-     + A _recent_ `npm`/`node` install. This is typically not the one offered by the package manager, get it from the NodeJS website.
+     + `npm`/`node` version 14. This is typically not the one offered by the package manager, get it from the NodeJS website or `nvm`.
      + Rust toolchain `nightly-2021-09-22`: `rustup install nightly-2021-09-22`
          * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2021-09-22 rust-src`
          * Various WASM targets for that toolchain: `rustup target add wasm32-unknown-unknown --toolchain nightly-2021-09-22`, `rustup target add wasm32-unknown-emscripten --toolchain nightly-2021-09-22`
