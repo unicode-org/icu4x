@@ -505,6 +505,32 @@ where
             }
         }
     }
+
+    pub fn maybe_replace_first(&mut self, f: impl Fn(&T) -> Option<T>) {
+        match self {
+            Self::Owned(ref mut vec) => {
+                for item in vec {
+                    let aligned = T::from_unaligned(item);
+                    if let Some(new_item) = f(&aligned) {
+                        *item = new_item.as_unaligned();
+                    }
+                }
+            }
+            Self::Borrowed(..) => {
+                let mut result = None;
+                for (idx, item) in self.iter().enumerate() {
+                    if let Some(new_item) = f(&item) {
+                        result = Some((idx, new_item));
+                    }
+                }
+                if let Some((idx, new_item)) = result {
+                    let owned = self.to_mut();
+                    let item = owned.get_mut(idx).unwrap();
+                    *item = new_item.as_unaligned();
+                }
+            }
+        }
+    }
 }
 
 impl<T> ZeroVec<'_, T>
@@ -644,5 +670,31 @@ mod tests {
                 .unwrap()
                 .get(19)
         );
+    }
+
+    #[test]
+    fn test_maybe_replace_first() {
+        {
+            let mut zerovec = ZeroVec::from_slice(TEST_SLICE);
+            zerovec.maybe_replace_first(|item| {
+                // Random value not matching anything
+                if *item == 131321_u32 {
+                    Some(0)
+                } else {
+                    None
+                }
+            });
+            assert!(matches!(zerovec, ZeroVec::Borrowed(..)));
+            zerovec.maybe_replace_first(|item| {
+                // Value matching an item in the array
+                if *item == 131328_u32 {
+                    Some(121212_u32)
+                } else {
+                    None
+                }
+            });
+            assert!(matches!(zerovec, ZeroVec::Owned(..)));
+            assert_eq!(zerovec.first(), Some(121212_u32));
+        }
     }
 }
