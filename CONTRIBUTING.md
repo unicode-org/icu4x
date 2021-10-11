@@ -51,9 +51,11 @@ See the [Testing](#testing) section below for more information on the various te
 
 ### Testing
 
-It's recommended to run `cargo test` in crates you're modifying to ensure that nothing is breaking. Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to each GitHub Actions CI job, and it is preferred to run any testsuites you find relevant:
+It's recommended to run `cargo test` in crates you're modifying to ensure that nothing is breaking, and `cargo quick` to get a reasonable check that everything still builds and lint checks pass.
 
- - `cargo make ci-job-check`: Runs `cargo check` on all the crates.
+Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to each GitHub Actions CI job, and you can run any testsuites you consider relevant:
+
+ - `cargo make ci-job-check`: Runs `cargo check` on all the crates. It's usually better to just use `cargo quick`.
  - `cargo make tidy`: A quick test that ensures that `cargo fmt` has been run, that code has the appropriate license headers and files and that READMEs are in sync. This is run as two separate tasks on CI (`ci-job-fmt` and `ci-job-tidy`) to ensure early results.
  - `cargo make ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
  - `cargo make ci-job-clippy`: Runs `cargo clippy` on all the crates.
