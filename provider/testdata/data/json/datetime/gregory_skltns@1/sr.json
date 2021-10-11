@@ -33,7 +33,7 @@
     "plural_patterns": {
       "pivot_field": "w",
       "variants": {
-        "other": "w. седмица у Y."
+        "Other": "w. седмица у Y."
       }
     }
   },

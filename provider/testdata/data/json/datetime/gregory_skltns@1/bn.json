@@ -30,7 +30,7 @@
     "plural_patterns": {
       "pivot_field": "w",
       "variants": {
-        "other": "Y এর wতম সপ্তাহ"
+        "Other": "Y এর wতম সপ্তাহ"
       }
     }
   },

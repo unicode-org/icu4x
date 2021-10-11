@@ -30,7 +30,7 @@
     "plural_patterns": {
       "pivot_field": "w",
       "variants": {
-        "other": "w-я неделя Y г."
+        "Other": "w-я неделя Y г."
       }
     }
   },

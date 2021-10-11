@@ -30,8 +30,8 @@
     "plural_patterns": {
       "pivot_field": "w",
       "variants": {
-        "one": "'ika-'w 'linggo ng' Y",
-        "other": "'linggo' w 'ng' Y"
+        "One": "'ika-'w 'linggo ng' Y",
+        "Other": "'linggo' w 'ng' Y"
       }
     }
   },

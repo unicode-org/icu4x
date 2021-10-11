@@ -27,7 +27,7 @@
     "plural_patterns": {
       "pivot_field": "w",
       "variants": {
-        "other": "'semaine' w 'de' Y"
+        "Other": "'semaine' w 'de' Y"
       }
     }
   },

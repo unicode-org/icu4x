@@ -30,7 +30,7 @@
     "plural_patterns": {
       "pivot_field": "w",
       "variants": {
-        "other": "Y 'yılının' w'. haftası'"
+        "Other": "Y 'yılının' w'. haftası'"
       }
     }
   },

@@ -30,7 +30,7 @@
     "plural_patterns": {
       "pivot_field": "w",
       "variants": {
-        "other": "الأسبوع w من سنة Y"
+        "Other": "الأسبوع w من سنة Y"
       }
     }
   },

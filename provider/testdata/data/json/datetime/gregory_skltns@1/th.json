@@ -39,7 +39,7 @@
     "plural_patterns": {
       "pivot_field": "w",
       "variants": {
-        "other": "สัปดาห์ที่ w ของปี Y"
+        "Other": "สัปดาห์ที่ w ของปี Y"
       }
     }
   },
