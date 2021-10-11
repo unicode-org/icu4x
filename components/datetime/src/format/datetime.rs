@@ -124,32 +124,6 @@ where
     Ok(())
 }
 
-// Returns the pattern to use according to loc_datetime and ordinal_rules.
-pub fn select_pattern<'a, T>(
-    patterns: &'a PatternPlurals,
-    loc_datetime: &impl LocalizedDateTimeInput<T>,
-    ordinal_rules: Option<&PluralRules>,
-) -> Result<&'a Pattern, Error>
-where
-    T: DateTimeInput,
-{
-    match patterns {
-        PatternPlurals::SinglePattern(pattern) => Ok(pattern),
-        PatternPlurals::MultipleVariants(plural_pattern) => {
-            let week_number = match plural_pattern.pivot_field() {
-                Week::WeekOfMonth => loc_datetime.week_of_month().0,
-                Week::WeekOfYear => loc_datetime.week_of_year()?.0,
-            };
-            let category = ordinal_rules
-                .expect("ordinal_rules must be set with PluralPatterns")
-                .select(week_number);
-            Ok(plural_pattern
-                .get(category)
-                .expect("Missing pattern for category"))
-        }
-    }
-}
-
 pub fn write_pattern_plurals<T, W>(
     patterns: &PatternPlurals,
     symbols: Option<&provider::gregory::DateSymbolsV1>,
@@ -163,7 +137,7 @@ where
     W: fmt::Write + ?Sized,
 {
     let loc_datetime = DateTimeInputWithLocale::new(datetime, locale);
-    let pattern = select_pattern(patterns, &loc_datetime, ordinal_rules)?;
+    let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(pattern, symbols, &loc_datetime, w)
 }
 

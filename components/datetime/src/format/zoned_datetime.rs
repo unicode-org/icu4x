@@ -59,8 +59,7 @@ where
     let patterns = &zoned_datetime_format.datetime_format.patterns;
     let loc_datetime = ZonedDateTimeInputWithLocale::new(zoned_datetime, locale);
 
-    let pattern = datetime::select_pattern(
-        patterns,
+    let pattern = patterns.select(
         &loc_datetime,
         zoned_datetime_format.datetime_format.ordinal_rules.as_ref(),
     )?;

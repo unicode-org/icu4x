@@ -6,7 +6,11 @@ use super::{
     super::{PatternError, PatternItem, TimeGranularity},
     Parser,
 };
-use crate::fields::{Field, FieldSymbol, Week};
+use crate::error::DateTimeFormatError as Error;
+use crate::{
+    date::{DateTimeInput, LocalizedDateTimeInput},
+    fields::{Field, FieldSymbol, Week},
+};
 use alloc::fmt::{self, Write};
 #[cfg(feature = "provider_serde")]
 use alloc::format;
@@ -16,8 +20,9 @@ use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
 use either::Either;
-use icu_plurals::PluralCategory;
+use icu_plurals::{PluralCategory, PluralRules};
 use litemap::LiteMap;
+
 #[cfg(feature = "provider_serde")]
 use serde::{
     de,
@@ -444,6 +449,32 @@ impl PatternPlurals {
         match self {
             PatternPlurals::SinglePattern(pattern) => pattern,
             _ => panic!("expect_pattern failed: {}", msg),
+        }
+    }
+
+    // Returns the pattern to use according to loc_datetime and ordinal_rules.
+    pub fn select<T>(
+        &self,
+        loc_datetime: &impl LocalizedDateTimeInput<T>,
+        ordinal_rules: Option<&PluralRules>,
+    ) -> Result<&Pattern, Error>
+    where
+        T: DateTimeInput,
+    {
+        match self {
+            PatternPlurals::SinglePattern(pattern) => Ok(pattern),
+            PatternPlurals::MultipleVariants(plural_pattern) => {
+                let week_number = match plural_pattern.pivot_field() {
+                    Week::WeekOfMonth => loc_datetime.week_of_month().0,
+                    Week::WeekOfYear => loc_datetime.week_of_year()?.0,
+                };
+                let category = ordinal_rules
+                    .expect("ordinal_rules must be set with PluralPatterns")
+                    .select(week_number);
+                Ok(plural_pattern
+                    .get(category)
+                    .expect("Missing pattern for category"))
+            }
         }
     }
 }
