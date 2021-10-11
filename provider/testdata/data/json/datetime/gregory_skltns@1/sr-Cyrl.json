@@ -1,124 +1,46 @@
 {
-  "y": {
-    "pattern": "y."
-  },
-  "yM": {
-    "pattern": "M.y."
-  },
-  "yMd": {
-    "pattern": "d.M.y."
-  },
-  "yMdE": {
-    "pattern": "E, d.M.y."
-  },
-  "yMM": {
-    "pattern": "MM.y."
-  },
-  "yMMdd": {
-    "pattern": "dd.MM.y."
-  },
-  "yMMM": {
-    "pattern": "MMM y."
-  },
-  "yMMMd": {
-    "pattern": "d. MMM y."
-  },
-  "yMMMdE": {
-    "pattern": "E, d. MMM y."
-  },
-  "yMMMM": {
-    "pattern": "MMMM y."
-  },
+  "y": "y.",
+  "yM": "M.y.",
+  "yMd": "d.M.y.",
+  "yMdE": "E, d.M.y.",
+  "yMM": "MM.y.",
+  "yMMdd": "dd.MM.y.",
+  "yMMM": "MMM y.",
+  "yMMMd": "d. MMM y.",
+  "yMMMdE": "E, d. MMM y.",
+  "yMMMM": "MMMM y.",
   "yw": {
-    "plural_patterns": {
-      "pivot_field": "w",
-      "variants": {
-        "Other": "w. седмица у Y."
-      }
+    "pivot_field": "w",
+    "variants": {
+      "Other": "w. седмица у Y."
     }
   },
-  "M": {
-    "pattern": "L"
-  },
-  "Md": {
-    "pattern": "d.M."
-  },
-  "MdE": {
-    "pattern": "E, d.M."
-  },
-  "MMdd": {
-    "pattern": "dd.MM."
-  },
-  "MMM": {
-    "pattern": "LLL"
-  },
-  "MMMd": {
-    "pattern": "d. MMM"
-  },
-  "MMMdE": {
-    "pattern": "E d. MMM"
-  },
-  "MMMdd": {
-    "pattern": "dd.MMM"
-  },
-  "MMMMd": {
-    "pattern": "d. MMMM"
-  },
-  "MMMMdE": {
-    "pattern": "E, d. MMMM"
-  },
-  "d": {
-    "pattern": "d"
-  },
-  "dE": {
-    "pattern": "E d."
-  },
-  "E": {
-    "pattern": "E"
-  },
-  "Ehm": {
-    "pattern": "E h:mm a"
-  },
-  "Ehms": {
-    "pattern": "E h:mm:ss a"
-  },
-  "EHm": {
-    "pattern": "E HH:mm"
-  },
-  "EHms": {
-    "pattern": "E HH:mm:ss"
-  },
-  "h": {
-    "pattern": "h a"
-  },
-  "hm": {
-    "pattern": "h:mm a"
-  },
-  "hms": {
-    "pattern": "h:mm:ss a"
-  },
-  "hmsv": {
-    "pattern": "h:mm:ss a v"
-  },
-  "hmv": {
-    "pattern": "h:mm a v"
-  },
-  "H": {
-    "pattern": "HH"
-  },
-  "Hm": {
-    "pattern": "HH:mm"
-  },
-  "Hms": {
-    "pattern": "HH:mm:ss"
-  },
-  "Hmsv": {
-    "pattern": "HH:mm:ss v"
-  },
-  "Hmv": {
-    "pattern": "HH:mm v"
-  },
-  "ms": {
-    "pattern": "mm:ss"
-  }
+  "M": "L",
+  "Md": "d.M.",
+  "MdE": "E, d.M.",
+  "MMdd": "dd.MM.",
+  "MMM": "LLL",
+  "MMMd": "d. MMM",
+  "MMMdE": "E d. MMM",
+  "MMMdd": "dd.MMM",
+  "MMMMd": "d. MMMM",
+  "MMMMdE": "E, d. MMMM",
+  "d": "d",
+  "dE": "E d.",
+  "E": "E",
+  "Ehm": "E h:mm a",
+  "Ehms": "E h:mm:ss a",
+  "EHm": "E HH:mm",
+  "EHms": "E HH:mm:ss",
+  "h": "h a",
+  "hm": "h:mm a",
+  "hms": "h:mm:ss a",
+  "hmsv": "h:mm:ss a v",
+  "hmv": "h:mm a v",
+  "H": "HH",
+  "Hm": "HH:mm",
+  "Hms": "HH:mm:ss",
+  "Hmsv": "HH:mm:ss v",
+  "Hmv": "HH:mm v",
+  "ms": "mm:ss"
 }

@@ -1,118 +1,44 @@
 {
-  "y": {
-    "pattern": "y"
-  },
-  "yM": {
-    "pattern": "MM/y"
-  },
-  "yMd": {
-    "pattern": "dd.MM.y"
-  },
-  "yMdE": {
-    "pattern": "d.M.y E"
-  },
-  "yMM": {
-    "pattern": "MM.y"
-  },
-  "yMMM": {
-    "pattern": "MMM y"
-  },
-  "yMMMd": {
-    "pattern": "d MMM y"
-  },
-  "yMMMdE": {
-    "pattern": "d MMM y E"
-  },
-  "yMMMM": {
-    "pattern": "MMMM y"
-  },
+  "y": "y",
+  "yM": "MM/y",
+  "yMd": "dd.MM.y",
+  "yMdE": "d.M.y E",
+  "yMM": "MM.y",
+  "yMMM": "MMM y",
+  "yMMMd": "d MMM y",
+  "yMMMdE": "d MMM y E",
+  "yMMMM": "MMMM y",
   "yw": {
-    "plural_patterns": {
-      "pivot_field": "w",
-      "variants": {
-        "Other": "Y 'yılının' w'. haftası'"
-      }
+    "pivot_field": "w",
+    "variants": {
+      "Other": "Y 'yılının' w'. haftası'"
     }
   },
-  "M": {
-    "pattern": "L"
-  },
-  "Md": {
-    "pattern": "d/M"
-  },
-  "MdE": {
-    "pattern": "d/MM E"
-  },
-  "MMM": {
-    "pattern": "LLL"
-  },
-  "MMMd": {
-    "pattern": "d MMM"
-  },
-  "MMMdE": {
-    "pattern": "d MMMM E"
-  },
-  "MMMMd": {
-    "pattern": "d MMMM"
-  },
-  "MMMMdE": {
-    "pattern": "d MMMM E"
-  },
-  "d": {
-    "pattern": "d"
-  },
-  "dE": {
-    "pattern": "d E"
-  },
-  "E": {
-    "pattern": "ccc"
-  },
-  "Ehm": {
-    "pattern": "E a h:mm"
-  },
-  "Ehms": {
-    "pattern": "E a h:mm:ss"
-  },
-  "EHm": {
-    "pattern": "E HH:mm"
-  },
-  "EHms": {
-    "pattern": "E HH:mm:ss"
-  },
-  "h": {
-    "pattern": "a h"
-  },
-  "hm": {
-    "pattern": "a h:mm"
-  },
-  "hms": {
-    "pattern": "a h:mm:ss"
-  },
-  "hmsv": {
-    "pattern": "a h:mm:ss v"
-  },
-  "hmv": {
-    "pattern": "a h:mm v"
-  },
-  "H": {
-    "pattern": "HH"
-  },
-  "Hm": {
-    "pattern": "HH:mm"
-  },
-  "Hms": {
-    "pattern": "HH:mm:ss"
-  },
-  "Hmsv": {
-    "pattern": "HH:mm:ss v"
-  },
-  "Hmv": {
-    "pattern": "HH:mm v"
-  },
-  "ms": {
-    "pattern": "mm:ss"
-  },
-  "mmss": {
-    "pattern": "mm:ss"
-  }
+  "M": "L",
+  "Md": "d/M",
+  "MdE": "d/MM E",
+  "MMM": "LLL",
+  "MMMd": "d MMM",
+  "MMMdE": "d MMMM E",
+  "MMMMd": "d MMMM",
+  "MMMMdE": "d MMMM E",
+  "d": "d",
+  "dE": "d E",
+  "E": "ccc",
+  "Ehm": "E a h:mm",
+  "Ehms": "E a h:mm:ss",
+  "EHm": "E HH:mm",
+  "EHms": "E HH:mm:ss",
+  "h": "a h",
+  "hm": "a h:mm",
+  "hms": "a h:mm:ss",
+  "hmsv": "a h:mm:ss v",
+  "hmv": "a h:mm v",
+  "H": "HH",
+  "Hm": "HH:mm",
+  "Hms": "HH:mm:ss",
+  "Hmsv": "HH:mm:ss v",
+  "Hmv": "HH:mm v",
+  "ms": "mm:ss",
+  "mmss": "mm:ss"
 }

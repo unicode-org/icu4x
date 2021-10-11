@@ -45,6 +45,14 @@ pub mod patterns {
     use crate::pattern::reference::{Pattern, PatternPlurals, PluralPattern};
     use core::convert::TryFrom;
 
+    #[cfg(feature = "provider_serde")]
+    use alloc::string::ToString;
+    #[cfg(feature = "provider_serde")]
+    use serde::{
+        de::{self, IntoDeserializer},
+        ser, Deserialize, Deserializer, Serialize,
+    };
+
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(
         feature = "provider_serde",
@@ -92,10 +100,6 @@ pub mod patterns {
     /// struct. This allows access to the serialization and deserialization
     /// capabilities, without exposing the internals of the pattern machinery.
     #[derive(Debug, PartialEq, Clone)]
-    #[cfg_attr(
-        feature = "provider_serde",
-        derive(serde::Serialize, serde::Deserialize)
-    )]
     pub struct PatternPluralsV1(pub PatternPlurals);
 
     impl From<Pattern> for PatternPluralsV1 {
@@ -107,6 +111,64 @@ pub mod patterns {
     impl From<PluralPattern> for PatternPluralsV1 {
         fn from(plural_pattern: PluralPattern) -> Self {
             Self(PatternPlurals::MultipleVariants(plural_pattern))
+        }
+    }
+
+    #[cfg(feature = "provider_serde")]
+    impl Serialize for PatternPluralsV1 {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: ser::Serializer,
+        {
+            if serializer.is_human_readable() {
+                match &self.0 {
+                    PatternPlurals::SinglePattern(pattern) => {
+                        serializer.serialize_str(&pattern.to_string())
+                    }
+                    PatternPlurals::MultipleVariants(patterns) => patterns.serialize(serializer),
+                }
+            } else {
+                serializer.serialize_newtype_struct("PatternPluralsV1", &self.0)
+            }
+        }
+    }
+    #[cfg(feature = "provider_serde")]
+    struct DeserializeHumanReadablePatternPlurals;
+
+    #[cfg(feature = "provider_serde")]
+    impl<'de> de::Visitor<'de> for DeserializeHumanReadablePatternPlurals {
+        type Value = PatternPlurals;
+
+        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            formatter.write_str("A valid PatternPlurals")
+        }
+
+        fn visit_map<A: de::MapAccess<'de>>(self, map: A) -> Result<Self::Value, A::Error> {
+            de::Deserialize::deserialize(de::value::MapAccessDeserializer::new(map))
+                .map(PatternPlurals::MultipleVariants)
+        }
+
+        fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            de::Deserialize::deserialize(s.into_deserializer()).map(PatternPlurals::SinglePattern)
+        }
+    }
+
+    #[cfg(feature = "provider_serde")]
+    impl<'de> Deserialize<'de> for PatternPluralsV1 {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            if deserializer.is_human_readable() {
+                deserializer
+                    .deserialize_any(DeserializeHumanReadablePatternPlurals)
+                    .map(PatternPluralsV1)
+            } else {
+                Deserialize::deserialize(deserializer).map(PatternPluralsV1)
+            }
         }
     }
 }

@@ -398,10 +398,8 @@ fn build_plural_pattern() {
 )]
 pub enum PatternPlurals {
     /// A collection of pattern variants for when plurals differ.
-    #[cfg_attr(feature = "provider_serde", serde(rename = "plural_patterns"))]
     MultipleVariants(PluralPattern),
     /// A single pattern.
-    #[cfg_attr(feature = "provider_serde", serde(rename = "pattern"))]
     SinglePattern(Pattern),
 }
 
