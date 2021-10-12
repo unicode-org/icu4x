@@ -8,6 +8,7 @@ mod serde;
 use crate::ule::*;
 use alloc::vec::Vec;
 use core::fmt;
+use core::iter::FromIterator;
 
 /// A zero-copy vector for fixed-width types.
 ///
@@ -534,6 +535,14 @@ where
     }
 }
 
+impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = T>,
+    {
+        ZeroVec::Owned(iter.into_iter().map(|t| t.as_unaligned()).collect())
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
