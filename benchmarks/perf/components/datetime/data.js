@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634076603799,
+  "lastUpdate": 1634082779176,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9881,6 +9881,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 329360,
             "range": "± 5899",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9c8afa504fed91f346a256ab216079663208c6bb",
+          "message": "Move Latin1Indices and Utf16Indices to its own file (#1165)\n\n* Move *Indices to own file to use other segmenter.\r\n\r\n* Fix per review comment.\r\n\r\n* Add comment for surrogate pair.",
+          "timestamp": "2021-10-13T08:45:17+09:00",
+          "tree_id": "70e3d274a5ab85bf9be4d4e9e47e0c86ee7285c7",
+          "url": "https://github.com/unicode-org/icu4x/commit/9c8afa504fed91f346a256ab216079663208c6bb"
+        },
+        "date": 1634082774330,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 111866,
+            "range": "± 2335",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1761548,
+            "range": "± 35783",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 338486,
+            "range": "± 9117",
             "unit": "ns/iter"
           }
         ]
