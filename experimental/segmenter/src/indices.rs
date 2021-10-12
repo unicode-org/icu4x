@@ -64,6 +64,7 @@ impl<'a> Iterator for Utf16Indices<'a> {
         if let Some(next) = self.iter.get(self.front_offset) {
             let next = *next as u32;
             if (next & 0xfc00) == 0xdc00 {
+                // Combine low and high surrogates to UTF-32 code point.
                 ch = ((ch & 0x3ff) << 10) + (next & 0x3ff) + 0x10000;
                 self.front_offset += 1;
             }
