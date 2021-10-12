@@ -4,7 +4,7 @@
 
 #![cfg(all(test, feature = "provider_serde"))]
 
-use icu_datetime::skeleton::Skeleton;
+use icu_datetime::skeleton::reference::Skeleton;
 use std::{fs::File, io::BufReader};
 
 /// Note that this file tests only valid skeleton cases for the stability of the serialization

@@ -2,7 +2,6 @@
     {
         "description": "Width difference: y vs yy",
         "input": {
-            "locale": "en",
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
@@ -11,13 +10,14 @@
             }
         },
         "output": {
-            "value": "20"
+            "values": {
+                "en": "20"
+            }
         }
     },
     {
         "description": "Enumerate month lengths which may need expansion: yMd => M/d/y",
         "input": {
-            "locale": "en",
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
@@ -28,13 +28,14 @@
             }
         },
         "output": {
-            "value": "1/7/2020"
+            "values": {
+                "en": "1/7/2020"
+            }
         }
     },
     {
         "description": "Enumerate month lengths which may need expansion: yMMd => MM/d/y",
         "input": {
-            "locale": "en",
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
@@ -45,13 +46,14 @@
             }
         },
         "output": {
-            "value": "01/7/2020"
+            "values": {
+                "en": "01/7/2020"
+            }
         }
     },
     {
         "description": "Enumerate month lengths which may need expansion: yMMMd => MMM d, y",
         "input": {
-            "locale": "en",
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
@@ -62,13 +64,14 @@
             }
         },
         "output": {
-            "value": "Jan 7, 2020"
+            "values": {
+                "en": "Jan 7, 2020"
+            }
         }
     },
     {
         "description": "Enumerate month lengths which may need expansion: yMMMMd => MMMM d, y",
         "input": {
-            "locale": "en",
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
@@ -79,13 +82,14 @@
             }
         },
         "output": {
-            "value": "January 7, 2020"
+            "values": {
+                "en": "January 7, 2020"
+            }
         }
     },
     {
         "description": "Enumerate month lengths which may need expansion: yMMMMMd => MMMMM d, y",
         "input": {
-            "locale": "en",
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
@@ -96,7 +100,9 @@
             }
         },
         "output": {
-            "value": "J 7, 2020"
+            "values": {
+                "en": "J 7, 2020"
+            }
         }
     }
 ]

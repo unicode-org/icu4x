@@ -40,7 +40,18 @@
 //!
 //! \* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to `Vec<&str>`; this gives 1.8420 μs, much faster than `Vec<String>` but a bit slower than `zerovec`.*
 //!
+//! | Operation | `HashMap<K,V>`  | `LiteMap<K,V>` | `ZeroMap<K,V>` |
+//! |---|---|---|---|
+//! | Deserialize a small map | 2.72 μs | 1.28 μs | 480 ns |
+//! | Deserialize a large map | 50.5 ms | 18.3 ms | 3.74 ms |
+//! | Look up from a small deserialized map | 49 ns | 42 ns | 54 ns |
+//! | Look up from a large deserialized map | 51 ns | 155 ns | 213 ns |
+//!
+//! Small = 16 elements, large = 131,072 elements. Maps contain `<String, String>`.
+//!
 //! The benches used to generate the above table can be found in the `benches` directory in the project repository.
+//! `zeromap` benches are named by convention, e.g. `zeromap/deserialize/small`, `zeromap/lookup/large`. The type
+//! is appended for baseline comparisons, e.g. `zeromap/lookup/small/hashmap`.
 //!
 //! # Features
 //!
