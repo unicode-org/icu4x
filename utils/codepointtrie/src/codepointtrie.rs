@@ -5,7 +5,7 @@
 use crate::error::Error;
 use crate::impl_const::*;
 
-use core::convert::{TryFrom, TryInto};
+use core::convert::TryFrom;
 use icu_provider::yoke::ZeroCopyFrom;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -53,7 +53,7 @@ impl TrieValue for u16 {
 impl TrieValue for u32 {
     const DATA_GET_ERROR_VALUE: u32 = u32::MAX;
     fn parse_from_u32(i: u32) -> Result<Self, String> {
-        Self::try_from(i).map_err(|e| e.to_string())
+        Ok(i)
     }
 }
 

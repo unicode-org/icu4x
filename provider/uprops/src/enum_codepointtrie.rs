@@ -9,7 +9,6 @@ use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_codepointtrie::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_provider::prelude::*;
-use icu_uniset::enum_props::EnumeratedProperty; // TODO(#1160) - Refactor property definitions out of UnicodeSet
 use zerovec::ZeroVec;
 
 use core::convert::TryFrom;
@@ -22,7 +21,7 @@ pub struct EnumeratedPropertyCodePointTrieProvider {
 }
 
 impl EnumeratedPropertyCodePointTrieProvider {
-    pub fn new(root_dir: PathBuf) -> Self {
+    pub fn _new(root_dir: PathBuf) -> Self {
         EnumeratedPropertyCodePointTrieProvider { root_dir }
     }
 
@@ -53,25 +52,20 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
             trie_type: trie_type_enum,
         };
         let index: ZeroVec<u16> = ZeroVec::clone_from_slice(&cpt_data.index);
-        // TODO: make data have type ZeroVec<T>
-        //
-        let data: Result<Vec<T::ULE>, String> = if let Some(data_8) = cpt_data.data_8 {
+        let data: Result<ZeroVec<'static, T>, String> = if let Some(data_8) = cpt_data.data_8 {
             data_8
                 .iter()
-                .map(|i| *i as u32)
-                .map(|i| T::parse_from_u32(i).map(|i| i.as_unaligned()))
+                .map(|i| T::parse_from_u32(*i as u32))
                 .collect()
         } else if let Some(data_16) = cpt_data.data_16 {
             data_16
                 .iter()
-                .map(|i| *i as u32)
-                .map(|i| T::parse_from_u32(i).map(|i| i.as_unaligned()))
+                .map(|i| T::parse_from_u32(*i as u32))
                 .collect()
         } else if let Some(data_32) = cpt_data.data_32 {
             data_32
                 .iter()
-                .map(|i| *i as u32)
-                .map(|i| T::parse_from_u32(i).map(|i| i.as_unaligned()))
+                .map(|i| T::parse_from_u32(*i as u32))
                 .collect()
         } else {
             return Err(DataError::new_resc_error(
@@ -81,9 +75,9 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
             ));
         };
 
-        let data = ZeroVec::Owned(data.map_err(DataError::new_resc_error)?);
-        let trie = CodePointTrie::<T>::try_new(header, index, data)
-            .map_err(DataError::new_resc_error);
+        let data = data.map_err(DataError::new_resc_error)?;
+        let trie =
+            CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error);
         trie.map(|t| UnicodePropertyMapV1 { codepoint_trie: t })
     }
 }
@@ -103,8 +97,6 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
         let toml_data: uprops_serde::enumerated::Main = self
             .get_toml_data(prop_name)
             .map_err(DataError::new_resc_error)?;
-
-        let prop_enum: EnumeratedProperty = EnumeratedProperty::from(prop_name);
 
         let source_cpt_data: uprops_serde::enumerated::EnumeratedPropertyCodePointTrie =
             toml_data.enum_property.data.code_point_trie;
