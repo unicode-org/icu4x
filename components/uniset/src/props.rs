@@ -2,6 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! The functions in this module return a [`UnicodeSet`] containing
+//! the set of characters with a particular Unicode property.
+//!
+//! The descriptions of most properties are taken from [`TR44`], the documentation for the
+//! Unicode Character Database.  Some properties are instead defined in [`TR18`], the
+//! documentation for Unicode regular expressions. In particular, Annex C of this document
+//! defines properties for POSIX compatibility.
+//!
+//! [`TR44`]: https://www.unicode.org/reports/tr44
+//! [`TR18`]: https://www.unicode.org/reports/tr18
+
 use crate::enum_props::*;
 use crate::provider::*;
 use crate::UnicodeSetError;
@@ -34,6 +45,7 @@ where
 // Binary property getter fns
 //
 
+/// ASCII characters commonly used for the representation of hexadecimal numbers
 pub fn get_ascii_hex_digit_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -41,6 +53,8 @@ where
     get_prop(provider, key::ASCII_HEX_DIGIT_V1)
 }
 
+/// Characters with the Alphabetic or Decimal_Number property
+/// This is defined for POSIX compatibility.
 pub fn get_alnum_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -48,6 +62,7 @@ where
     get_prop(provider, key::ALNUM_V1)
 }
 
+/// Alphabetic characters
 pub fn get_alphabetic_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -55,6 +70,8 @@ where
     get_prop(provider, key::ALPHABETIC_V1)
 }
 
+/// Format control characters which have specific functions in the Unicode Bidirectional
+/// Algorithm
 pub fn get_bidi_control_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -62,6 +79,7 @@ where
     get_prop(provider, key::BIDI_CONTROL_V1)
 }
 
+/// Characters that are mirrored in bidirectional text
 pub fn get_bidi_mirrored_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -69,6 +87,7 @@ where
     get_prop(provider, key::BIDI_MIRRORED_V1)
 }
 
+/// Horizontal whitespace characters
 pub fn get_blank_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -76,6 +95,7 @@ where
     get_prop(provider, key::BLANK_V1)
 }
 
+/// Uppercase, lowercase, and titlecase characters
 pub fn get_cased_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -83,6 +103,7 @@ where
     get_prop(provider, key::CASED_V1)
 }
 
+/// Characters which are ignored for casing purposes
 pub fn get_case_ignorable_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -90,6 +111,8 @@ where
     get_prop(provider, key::CASE_IGNORABLE_V1)
 }
 
+/// Characters that are excluded from composition
+/// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
 pub fn get_full_composition_exclusion_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -97,6 +120,7 @@ where
     get_prop(provider, key::FULL_COMPOSITION_EXCLUSION_V1)
 }
 
+/// Characters whose normalized forms are not stable under case folding
 pub fn get_changes_when_casefolded_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -104,6 +128,7 @@ where
     get_prop(provider, key::CHANGES_WHEN_CASEFOLDED_V1)
 }
 
+/// Characters which may change when they undergo case mapping
 pub fn get_changes_when_casemapped_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -111,6 +136,7 @@ where
     get_prop(provider, key::CHANGES_WHEN_CASEMAPPED_V1)
 }
 
+/// Characters which are not identical to their NFKC_Casefold mapping
 pub fn get_changes_when_nfkc_casefolded_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -118,6 +144,7 @@ where
     get_prop(provider, key::CHANGES_WHEN_NFKC_CASEFOLDED_V1)
 }
 
+/// Characters whose normalized forms are not stable under a toLowercase mapping
 pub fn get_changes_when_lowercased_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -125,6 +152,7 @@ where
     get_prop(provider, key::CHANGES_WHEN_LOWERCASED_V1)
 }
 
+/// Characters whose normalized forms are not stable under a toTitlecase mapping
 pub fn get_changes_when_titlecased_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -132,6 +160,7 @@ where
     get_prop(provider, key::CHANGES_WHEN_TITLECASED_V1)
 }
 
+/// Characters whose normalized forms are not stable under a toUppercase mapping
 pub fn get_changes_when_uppercased_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -139,6 +168,8 @@ where
     get_prop(provider, key::CHANGES_WHEN_UPPERCASED_V1)
 }
 
+/// Punctuation characters explicitly called out as dashes in the Unicode Standard, plus
+/// their compatibility equivalents
 pub fn get_dash_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -146,6 +177,8 @@ where
     get_prop(provider, key::DASH_V1)
 }
 
+/// Deprecated characters. No characters will ever be removed from the standard, but the
+/// usage of deprecated characters is strongly discouraged.
 pub fn get_deprecated_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -153,6 +186,10 @@ where
     get_prop(provider, key::DEPRECATED_V1)
 }
 
+/// For programmatic determination of default ignorable code points.  New characters that
+/// should be ignored in rendering (unless explicitly supported) will be assigned in these
+/// ranges, permitting programs to correctly handle the default rendering of such
+/// characters when not otherwise supported.
 pub fn get_default_ignorable_code_point_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -160,6 +197,7 @@ where
     get_prop(provider, key::DEFAULT_IGNORABLE_CODE_POINT_V1)
 }
 
+/// Characters that linguistically modify the meaning of another character to which they apply
 pub fn get_diacritic_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -167,6 +205,7 @@ where
     get_prop(provider, key::DIACRITIC_V1)
 }
 
+/// Characters that can serve as a base for emoji modifiers
 pub fn get_emoji_modifier_base_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -174,6 +213,8 @@ where
     get_prop(provider, key::EMOJI_MODIFIER_BASE_V1)
 }
 
+/// Characters used in emoji sequences that normally do not appear on emoji keyboards as
+/// separate choices, such as base characters for emoji keycaps
 pub fn get_emoji_component_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -181,6 +222,7 @@ where
     get_prop(provider, key::EMOJI_COMPONENT_V1)
 }
 
+/// Characters that are emoji modifiers
 pub fn get_emoji_modifier_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -188,6 +230,7 @@ where
     get_prop(provider, key::EMOJI_MODIFIER_V1)
 }
 
+/// Characters that are emoji
 pub fn get_emoji_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -195,6 +238,7 @@ where
     get_prop(provider, key::EMOJI_V1)
 }
 
+/// Characters that have emoji presentation by default
 pub fn get_emoji_presentation_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -202,6 +246,8 @@ where
     get_prop(provider, key::EMOJI_PRESENTATION_V1)
 }
 
+/// Characters whose principal function is to extend the value of a preceding alphabetic
+/// character or to extend the shape of adjacent characters.
 pub fn get_extender_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -209,6 +255,8 @@ where
     get_prop(provider, key::EXTENDER_V1)
 }
 
+/// Pictographic symbols, as well as reserved ranges in blocks largely associated with
+/// emoji characters
 pub fn get_extended_pictographic_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -216,6 +264,8 @@ where
     get_prop(provider, key::EXTENDED_PICTOGRAPHIC_V1)
 }
 
+/// Visible characters.
+/// This is defined for POSIX compatibility.
 pub fn get_graph_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -223,6 +273,8 @@ where
     get_prop(provider, key::GRAPH_V1)
 }
 
+/// Property used together with the definition of Standard Korean Syllable Block to define
+/// "Grapheme base". See D58 in Chapter 3, Conformance in the Unicode Standard.
 pub fn get_grapheme_base_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -230,6 +282,8 @@ where
     get_prop(provider, key::GRAPHEME_BASE_V1)
 }
 
+/// Property used to define "Grapheme extender". See D59 in Chapter 3, Conformance in the
+/// Unicode Standard.
 pub fn get_grapheme_extend_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -237,6 +291,8 @@ where
     get_prop(provider, key::GRAPHEME_EXTEND_V1)
 }
 
+/// Deprecated property. Formerly proposed for programmatic determination of grapheme
+/// cluster boundaries.
 pub fn get_grapheme_link_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -244,6 +300,8 @@ where
     get_prop(provider, key::GRAPHEME_LINK_V1)
 }
 
+/// Characters commonly used for the representation of hexadecimal numbers, plus their
+/// compatibility equivalents
 pub fn get_hex_digit_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -251,6 +309,8 @@ where
     get_prop(provider, key::HEX_DIGIT_V1)
 }
 
+/// Deprecated property. Dashes which are used to mark connections between pieces of
+/// words, plus the Katakana middle dot.
 pub fn get_hyphen_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -258,6 +318,10 @@ where
     get_prop(provider, key::HYPHEN_V1)
 }
 
+/// Characters that can come after the first character in an identifier. If using NFKC to
+/// fold differences between characters, use [`get_xid_continue_property`] instead.  See
+/// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
+/// more details.
 pub fn get_id_continue_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -265,6 +329,8 @@ where
     get_prop(provider, key::ID_CONTINUE_V1)
 }
 
+/// Characters considered to be CJKV (Chinese, Japanese, Korean, and Vietnamese)
+/// ideographs, or related siniform ideographs
 pub fn get_ideographic_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -272,6 +338,9 @@ where
     get_prop(provider, key::IDEOGRAPHIC_V1)
 }
 
+/// Characters that can begin an identifier. If using NFKC to fold differences between
+/// characters, use [`get_xid_start_property`] instead.  See [`Unicode Standard Annex
+/// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
 pub fn get_id_start_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -279,6 +348,7 @@ where
     get_prop(provider, key::ID_START_V1)
 }
 
+/// Characters used in Ideographic Description Sequences
 pub fn get_ids_binary_operator_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -286,6 +356,7 @@ where
     get_prop(provider, key::IDS_BINARY_OPERATOR_V1)
 }
 
+/// Characters used in Ideographic Description Sequences
 pub fn get_ids_trinary_operator_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -293,6 +364,8 @@ where
     get_prop(provider, key::IDS_TRINARY_OPERATOR_V1)
 }
 
+/// Format control characters which have specific functions for control of cursive joining
+/// and ligation
 pub fn get_join_control_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -300,6 +373,7 @@ where
     get_prop(provider, key::JOIN_CONTROL_V1)
 }
 
+/// A small number of spacing vowel letters occurring in certain Southeast Asian scripts such as Thai and Lao
 pub fn get_logical_order_exception_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -307,6 +381,7 @@ where
     get_prop(provider, key::LOGICAL_ORDER_EXCEPTION_V1)
 }
 
+/// Lowercase characters
 pub fn get_lowercase_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -314,6 +389,7 @@ where
     get_prop(provider, key::LOWERCASE_V1)
 }
 
+/// Characters used in mathematical notation
 pub fn get_math_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -321,6 +397,7 @@ where
     get_prop(provider, key::MATH_V1)
 }
 
+/// Code points permanently reserved for internal use
 pub fn get_noncharacter_code_point_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -328,6 +405,7 @@ where
     get_prop(provider, key::NONCHARACTER_CODE_POINT_V1)
 }
 
+/// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
 pub fn get_nfc_inert_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -335,6 +413,7 @@ where
     get_prop(provider, key::NFC_INERT_V1)
 }
 
+/// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
 pub fn get_nfd_inert_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -342,6 +421,7 @@ where
     get_prop(provider, key::NFD_INERT_V1)
 }
 
+/// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
 pub fn get_nfkc_inert_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -349,6 +429,7 @@ where
     get_prop(provider, key::NFKC_INERT_V1)
 }
 
+/// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
 pub fn get_nfkd_inert_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -356,6 +437,9 @@ where
     get_prop(provider, key::NFKD_INERT_V1)
 }
 
+/// Characters used as syntax in patterns (such as regular expressions). See [`Unicode
+/// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
+/// details.
 pub fn get_pattern_syntax_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -363,6 +447,9 @@ where
     get_prop(provider, key::PATTERN_SYNTAX_V1)
 }
 
+/// Characters used as whitespace in patterns (such as regular expressions).  See
+/// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
+/// more details.
 pub fn get_pattern_white_space_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -370,6 +457,8 @@ where
     get_prop(provider, key::PATTERN_WHITE_SPACE_V1)
 }
 
+/// A small class of visible format controls, which precede and then span a sequence of
+/// other characters, usually digits.
 pub fn get_prepended_concatenation_mark_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -377,6 +466,8 @@ where
     get_prop(provider, key::PREPENDED_CONCATENATION_MARK_V1)
 }
 
+/// Printable characters (visible characters and whitespace).
+/// This is defined for POSIX compatibility.
 pub fn get_print_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -384,6 +475,7 @@ where
     get_prop(provider, key::PRINT_V1)
 }
 
+/// Punctuation characters that function as quotation marks.
 pub fn get_quotation_mark_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -391,6 +483,7 @@ where
     get_prop(provider, key::QUOTATION_MARK_V1)
 }
 
+/// Characters used in the definition of Ideographic Description Sequences
 pub fn get_radical_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -398,6 +491,7 @@ where
     get_prop(provider, key::RADICAL_V1)
 }
 
+/// Regional indicator characters, U+1F1E6..U+1F1FF
 pub fn get_regional_indicator_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -405,6 +499,8 @@ where
     get_prop(provider, key::REGIONAL_INDICATOR_V1)
 }
 
+/// Characters with a "soft dot", like i or j. An accent placed on these characters causes
+/// the dot to disappear.
 pub fn get_soft_dotted_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -412,6 +508,8 @@ where
     get_prop(provider, key::SOFT_DOTTED_V1)
 }
 
+/// Characters that are starters in terms of Unicode normalization and combining character
+/// sequences
 pub fn get_segment_starter_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -419,6 +517,8 @@ where
     get_prop(provider, key::SEGMENT_STARTER_V1)
 }
 
+/// Characters that are either the source of a case mapping or in the target of a case
+/// mapping
 pub fn get_case_sensitive_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -426,6 +526,7 @@ where
     get_prop(provider, key::CASE_SENSITIVE_V1)
 }
 
+/// Punctuation characters that generally mark the end of sentences
 pub fn get_sentence_terminal_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -433,6 +534,7 @@ where
     get_prop(provider, key::SENTENCE_TERMINAL_V1)
 }
 
+/// Punctuation characters that generally mark the end of textual units
 pub fn get_terminal_punctuation_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -440,6 +542,7 @@ where
     get_prop(provider, key::TERMINAL_PUNCTUATION_V1)
 }
 
+/// A property which specifies the exact set of Unified CJK Ideographs in the standard
 pub fn get_unified_ideograph_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -447,6 +550,7 @@ where
     get_prop(provider, key::UNIFIED_IDEOGRAPH_V1)
 }
 
+/// Uppercase characters
 pub fn get_uppercase_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -454,6 +558,7 @@ where
     get_prop(provider, key::UPPERCASE_V1)
 }
 
+/// Characters that are Variation Selectors.
 pub fn get_variation_selector_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -461,6 +566,8 @@ where
     get_prop(provider, key::VARIATION_SELECTOR_V1)
 }
 
+/// Spaces, separator characters and other control characters which should be treated by
+/// programming languages as "white space" for the purpose of parsing elements
 pub fn get_white_space_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -468,6 +575,8 @@ where
     get_prop(provider, key::WHITE_SPACE_V1)
 }
 
+/// Hexadecimal digits
+/// This is defined for POSIX compatibility.
 pub fn get_xdigit_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -475,6 +584,8 @@ where
     get_prop(provider, key::XDIGIT_V1)
 }
 
+/// Characters that can begin an identifier.  See [`Unicode Standard Annex
+/// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
 pub fn get_xid_continue_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -482,6 +593,9 @@ where
     get_prop(provider, key::XID_CONTINUE_V1)
 }
 
+/// Characters that can come after the first character in an identifier. See [`Unicode
+/// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
+/// details.
 pub fn get_xid_start_property<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
