@@ -538,10 +538,10 @@ where
 impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
     fn from_iter<I>(iter: I) -> Self
     where
-        I: IntoIterator<Item = T> {
-            ZeroVec::Owned(iter.into_iter().map(|t| t.as_unaligned()).collect())
+        I: IntoIterator<Item = T>,
+    {
+        ZeroVec::Owned(iter.into_iter().map(|t| t.as_unaligned()).collect())
     }
-
 }
 #[cfg(test)]
 mod tests {
