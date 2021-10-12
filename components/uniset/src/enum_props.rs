@@ -17,8 +17,8 @@ use tinystr::TinyStr16;
 pub enum EnumeratedProperty {
     GeneralCategory = 0x1005,
     Script = 0x100A,
-    ScriptExtensions = 0x7000,  // TODO(#1160) - this is a Miscellaneous property, not Enumerated
-    InvalidCode = -1,           // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
+    ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
+    InvalidCode = -1,          // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
 }
 
 impl From<&TinyStr16> for EnumeratedProperty {

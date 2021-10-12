@@ -6,10 +6,13 @@ use crate::error::Error;
 use crate::uprops_serde;
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 
-use icu_codepointtrie::codepointtrie::{CodePointTrie, TrieValue};
+use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_codepointtrie::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_provider::prelude::*;
-use icu_uniset::enum_props::EnumeratedProperty;  // TODO(#1160) - Refactor property definitions out of UnicodeSet
+use icu_uniset::enum_props::EnumeratedProperty; // TODO(#1160) - Refactor property definitions out of UnicodeSet
+use zerovec::ZeroVec;
+
+use core::convert::TryFrom;
 
 use std::fs;
 use std::path::PathBuf;
@@ -31,15 +34,46 @@ impl EnumeratedPropertyCodePointTrieProvider {
     }
 }
 
-impl<T: TrieValue> From<uprops_serde::enumerated::EnumeratedPropertyCodePointTrie> for UnicodePropertyMapV1<'static, T> {
-    fn from(cpt_data: EnumeratedPropertyCodePointTrie) -> UnicodePropertyMapV1<'static, T> {
-        let trie = CodePointTrie::<T>::try_new(
-            // TODO
-        );
+impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePointTrie>
+    for UnicodePropertyMapV1<'static, T>
+{
+    type Error = DataError;
+
+    fn try_from(
+        cpt_data: EnumeratedPropertyCodePointTrie,
+    ) -> Result<UnicodePropertyMapV1<'static, T>, DataError> {
+        let trie_type_enum: TrieType =
+            TrieType::try_from(cpt_data.trie_type_enum_val).map_err(DataError::new_resc_error)?;
+        let header = CodePointTrieHeader {
+            high_start: cpt_data.high_start,
+            shifted12_high_start: cpt_data.shifted12_high_start,
+            index3_null_offset: cpt_data.index3_null_offset,
+            data_null_offset: cpt_data.data_null_offset,
+            null_value: cpt_data.null_value,
+            trie_type: trie_type_enum,
+        };
+        let index: ZeroVec<u16> = ZeroVec::from_slice(&cpt_data.index);
+        // TODO: make data have type ZeroVec<T>
+        let data = if let Some(data_8) = cpt_data.data_8 {
+            ZeroVec::from_slice(data_8.as_slice())
+        } else if let Some(data_16) = cpt_data.data_16 {
+            ZeroVec::from_slice(data_16.as_slice())
+        } else if let Some(data_32) = cpt_data.data_32 {
+            ZeroVec::from_slice(data_32.as_slice())
+        } else {
+            return Err(DataError::new_resc_error(
+                icu_codepointtrie::error::Error::FromDeserialized {
+                    reason: "Cannot deserialize data array for CodePointTrie in TOML",
+                },
+            ));
+        };
+        let trie =
+            CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error);
+        trie.map(|t| UnicodePropertyMapV1 { codepoint_trie: t })
     }
 }
 
-impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>> 
+impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
     for EnumeratedPropertyCodePointTrieProvider
 {
     fn load_payload(
@@ -52,13 +86,21 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
         let prop_name = &req.resource_path.key.sub_category;
 
         let toml_data: uprops_serde::enumerated::Main = self
-        .get_toml_data(prop_name)
-        .map_err(DataError::new_resc_error)?;
+            .get_toml_data(prop_name)
+            .map_err(DataError::new_resc_error)?;
 
         let prop_enum: EnumeratedProperty = EnumeratedProperty::from(prop_name);
 
-        let source_cpt_data: uprops_serde::enumerated::EnumeratedPropertyCodePointTrie = 
+        let source_cpt_data: uprops_serde::enumerated::EnumeratedPropertyCodePointTrie =
             toml_data.enum_property.data.code_point_trie;
 
+        let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
+
+        Ok(DataResponse {
+            metadata: DataResponseMetadata {
+                data_langid: req.resource_path.options.langid.clone(),
+            },
+            payload: Some(DataPayload::from_owned(data_struct)),
+        })
     }
 }

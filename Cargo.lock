@@ -1072,6 +1072,7 @@ dependencies = [
 name = "icu_codepointtrie"
 version = "0.3.0"
 dependencies = [
+ "displaydoc",
  "icu_provider",
  "postcard",
  "serde",
@@ -1317,6 +1318,7 @@ dependencies = [
  "icu_uniset",
  "serde",
  "toml",
+ "zerovec",
 ]
 
 [[package]]
