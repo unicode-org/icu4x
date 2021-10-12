@@ -52,14 +52,27 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
             null_value: cpt_data.null_value,
             trie_type: trie_type_enum,
         };
-        let index: ZeroVec<u16> = ZeroVec::from_slice(&cpt_data.index);
+        let index: ZeroVec<u16> = ZeroVec::clone_from_slice(&cpt_data.index);
         // TODO: make data have type ZeroVec<T>
-        let data = if let Some(data_8) = cpt_data.data_8 {
-            ZeroVec::from_slice(data_8.as_slice())
+        //
+        let data: Result<Vec<T::ULE>, String> = if let Some(data_8) = cpt_data.data_8 {
+            data_8
+                .iter()
+                .map(|i| *i as u32)
+                .map(|i| T::parse_from_u32(i).map(|i| i.as_unaligned()))
+                .collect()
         } else if let Some(data_16) = cpt_data.data_16 {
-            ZeroVec::from_slice(data_16.as_slice())
+            data_16
+                .iter()
+                .map(|i| *i as u32)
+                .map(|i| T::parse_from_u32(i).map(|i| i.as_unaligned()))
+                .collect()
         } else if let Some(data_32) = cpt_data.data_32 {
-            ZeroVec::from_slice(data_32.as_slice())
+            data_32
+                .iter()
+                .map(|i| *i as u32)
+                .map(|i| T::parse_from_u32(i).map(|i| i.as_unaligned()))
+                .collect()
         } else {
             return Err(DataError::new_resc_error(
                 icu_codepointtrie::error::Error::FromDeserialized {
@@ -67,8 +80,10 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
                 },
             ));
         };
-        let trie =
-            CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error);
+
+        let data = ZeroVec::Owned(data.map_err(DataError::new_resc_error)?);
+        let trie = CodePointTrie::<T>::try_new(header, index, data)
+            .map_err(DataError::new_resc_error);
         trie.map(|t| UnicodePropertyMapV1 { codepoint_trie: t })
     }
 }

@@ -5,7 +5,7 @@
 use crate::error::Error;
 use crate::impl_const::*;
 
-use core::convert::TryFrom;
+use core::convert::{TryFrom, TryInto};
 use icu_provider::yoke::ZeroCopyFrom;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -33,18 +33,28 @@ pub enum TrieType {
 /// This trait is used as a type parameter in constructing a `CodePointTrie`.
 pub trait TrieValue: Copy + zerovec::ule::AsULE + 'static {
     const DATA_GET_ERROR_VALUE: Self;
+    fn parse_from_u32(i: u32) -> Result<Self, String>;
 }
 
 impl TrieValue for u8 {
     const DATA_GET_ERROR_VALUE: u8 = u8::MAX;
+    fn parse_from_u32(i: u32) -> Result<Self, String> {
+        Self::try_from(i).map_err(|e| e.to_string())
+    }
 }
 
 impl TrieValue for u16 {
     const DATA_GET_ERROR_VALUE: u16 = u16::MAX;
+    fn parse_from_u32(i: u32) -> Result<Self, String> {
+        Self::try_from(i).map_err(|e| e.to_string())
+    }
 }
 
 impl TrieValue for u32 {
     const DATA_GET_ERROR_VALUE: u32 = u32::MAX;
+    fn parse_from_u32(i: u32) -> Result<Self, String> {
+        Self::try_from(i).map_err(|e| e.to_string())
+    }
 }
 
 /// This struct represents a de-serialized CodePointTrie that was exported from
