@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634069570223,
+  "lastUpdate": 1634076555036,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11579,6 +11579,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 127911,
             "range": "± 6891",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "651f113cdcf85f620b56793f6b5c8b5c865a9a53",
+          "message": "Add doc comments to icu_uniset (#1154)\n\n* Add doc comments to icu_uniset\r\n\r\n* More detailed doc comments for UnicodeSetError",
+          "timestamp": "2021-10-12T15:02:45-07:00",
+          "tree_id": "b0ce9939c014e7921227ed0a22f8cfa2496b280c",
+          "url": "https://github.com/unicode-org/icu4x/commit/651f113cdcf85f620b56793f6b5c8b5c865a9a53"
+        },
+        "date": 1634076549089,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 139502,
+            "range": "± 537",
             "unit": "ns/iter"
           }
         ]
