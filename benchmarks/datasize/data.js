@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633735446596,
+  "lastUpdate": 1634069258527,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1583,6 +1583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/317a263fcd60805bc5c4c468eab2513e3087fd33"
         },
         "date": 1633735441416,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583691,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a3ef861aa8531297b04b93104b8e774e0ed0d1f5",
+          "message": "Add FromIterator impl for ZeroVec (#1169)\n\n* Add FromIterator impl for ZeroVec\r\n\r\n* fmt",
+          "timestamp": "2021-10-12T13:06:11-07:00",
+          "tree_id": "4c5d61e4adde2ac1da042e1e25cd3cba1229a627",
+          "url": "https://github.com/unicode-org/icu4x/commit/a3ef861aa8531297b04b93104b8e774e0ed0d1f5"
+        },
+        "date": 1634069254010,
         "tool": "ndjson",
         "benches": [
           {
