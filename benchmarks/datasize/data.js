@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634076254697,
+  "lastUpdate": 1634082401275,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1643,6 +1643,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/651f113cdcf85f620b56793f6b5c8b5c865a9a53"
         },
         "date": 1634076250205,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 583691,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9c8afa504fed91f346a256ab216079663208c6bb",
+          "message": "Move Latin1Indices and Utf16Indices to its own file (#1165)\n\n* Move *Indices to own file to use other segmenter.\r\n\r\n* Fix per review comment.\r\n\r\n* Add comment for surrogate pair.",
+          "timestamp": "2021-10-13T08:45:17+09:00",
+          "tree_id": "70e3d274a5ab85bf9be4d4e9e47e0c86ee7285c7",
+          "url": "https://github.com/unicode-org/icu4x/commit/9c8afa504fed91f346a256ab216079663208c6bb"
+        },
+        "date": 1634082397154,
         "tool": "ndjson",
         "benches": [
           {
