@@ -174,5 +174,9 @@
   {
     "input": "zh-hant-u-nu-Chinese-hc-h24",
     "output": "zh-Hant-TW-u-hc-h24-nu-chinese"
+  },
+  {
+    "input": "und-latn-AQ",
+    "output": "und-Latn-AQ"
   }
 ]

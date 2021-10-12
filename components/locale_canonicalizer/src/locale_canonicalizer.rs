@@ -186,11 +186,19 @@ fn update_langid(
     entry: &LanguageIdentifier,
     langid: &mut LanguageIdentifier,
 ) -> CanonicalizationResult {
+
+    let unmodified = langid.clone();
+
     if langid.language.is_empty() {
         langid.language = entry.language;
     }
     langid.script = langid.script.or(entry.script);
     langid.region = langid.region.or(entry.region);
+
+    if unmodified.language == langid.language && unmodified.script == langid.script && unmodified.region == langid.region {
+        return CanonicalizationResult::Unmodified;
+    }
+
     CanonicalizationResult::Modified
 }
 
@@ -533,12 +541,14 @@ impl<'data> LocaleCanonicalizer<'data> {
                 maximize_locale!(langid, data.language_script, language, script.into());
             }
             maximize_locale!(langid, data.language, language);
-        } else if let Some(script) = langid.script {
+        }
+        if let Some(script) = langid.script {
             if let Some(region) = langid.region {
                 maximize_locale!(langid, data.script_region, script.into(), region.into());
             }
             maximize_locale!(langid, data.script, script.into());
-        } else if let Some(region) = langid.region {
+        }
+        if let Some(region) = langid.region {
             maximize_locale!(langid, data.region, region.into());
         }
         update_langid(&data.und, langid)
