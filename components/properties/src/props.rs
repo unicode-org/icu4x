@@ -38,7 +38,7 @@ impl From<&TinyStr16> for EnumeratedProperty {
 /// Enumerated Unicode general category types.
 /// GeneralSubcategory only supports specific subcategories (eg `UppercaseLetter`).
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategory`].
-#[derive(Copy, Clone, PartialEq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
 #[repr(u8)]
 pub enum GeneralSubcategory {
     /// A reserved unassigned code point or a noncharacter

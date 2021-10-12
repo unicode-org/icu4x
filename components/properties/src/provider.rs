@@ -32,10 +32,10 @@ pub mod key {
         };
     }
 
-    define_resource_keys!(265;
+    define_resource_keys!(267;
 
         //
-        // Binary properties
+        // Binary property UnicodeSets
         //
 
         (ASCII_HEX_DIGIT_V1, "AHex"),
@@ -105,7 +105,7 @@ pub mod key {
         (XID_START_V1, "XIDS"),
 
         //
-        // Enumerated properties
+        // Enumerated property prop=val UnicodeSets
         //
 
         // Note: The ResourceKey subcategory strings are determined from the
@@ -312,6 +312,16 @@ pub mod key {
         (SCRIPT_YEZIDI_V1, "sc=Yezi"),
         (SCRIPT_YI_V1, "sc=Yiii"),
         (SCRIPT_ZANABAZAR_SQUARE_V1, "sc=Zanb"),
+
+        //
+        // Enumerated property CodePointMaps
+        //
+
+        // ResourceKey subcategory string is the short alias of the property
+
+        (GENERAL_CATEGORY_V1, "gc"),
+        (SCRIPT_V1, "sc"),
+
     );
 }
 

@@ -6,9 +6,11 @@ use crate::error::Error;
 use crate::impl_const::*;
 
 use core::convert::TryFrom;
+use core::fmt::Display;
 use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use core::num::TryFromIntError;
 use zerovec::ZeroVec;
 
 /// The type of trie represents whether the trie has an optimization that
@@ -36,29 +38,34 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     ///
     /// In most cases, the error value is read from the last element of the `data` array.
     const DATA_GET_ERROR_VALUE: Self;
+    // TODO: comment
+    type Error: Display;
     /// A parsing function that is primarily motivated by deserialization contexts.
     /// When the serialization type width is smaller than 32 bits, then it is expected
     /// that the call site will widen the value to a `u32` first.
-    fn parse_from_u32(i: u32) -> Result<Self, String>;
+    fn parse_from_u32(i: u32) -> Result<Self, Self::Error>;
 }
 
 impl TrieValue for u8 {
     const DATA_GET_ERROR_VALUE: u8 = u8::MAX;
-    fn parse_from_u32(i: u32) -> Result<Self, String> {
-        Self::try_from(i).map_err(|e| e.to_string())
+    type Error = TryFromIntError;
+    fn parse_from_u32(i: u32) -> Result<Self, Self::Error> {
+        Self::try_from(i)
     }
 }
 
 impl TrieValue for u16 {
     const DATA_GET_ERROR_VALUE: u16 = u16::MAX;
-    fn parse_from_u32(i: u32) -> Result<Self, String> {
-        Self::try_from(i).map_err(|e| e.to_string())
+    type Error = TryFromIntError;
+    fn parse_from_u32(i: u32) -> Result<Self, Self::Error> {
+        Self::try_from(i)
     }
 }
 
 impl TrieValue for u32 {
     const DATA_GET_ERROR_VALUE: u32 = u32::MAX;
-    fn parse_from_u32(i: u32) -> Result<Self, String> {
+    type Error = TryFromIntError;
+    fn parse_from_u32(i: u32) -> Result<Self, Self::Error> {
         Ok(i)
     }
 }

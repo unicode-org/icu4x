@@ -21,7 +21,7 @@ pub struct EnumeratedPropertyCodePointTrieProvider {
 }
 
 impl EnumeratedPropertyCodePointTrieProvider {
-    pub fn _new(root_dir: PathBuf) -> Self {
+    pub fn new(root_dir: PathBuf) -> Self {
         EnumeratedPropertyCodePointTrieProvider { root_dir }
     }
 
@@ -52,7 +52,7 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
             trie_type: trie_type_enum,
         };
         let index: ZeroVec<u16> = ZeroVec::clone_from_slice(&cpt_data.index);
-        let data: Result<ZeroVec<'static, T>, String> = if let Some(data_8) = cpt_data.data_8 {
+        let data: Result<ZeroVec<'static, T>, T::Error> = if let Some(data_8) = cpt_data.data_8 {
             data_8
                 .iter()
                 .map(|i| T::parse_from_u32(*i as u32))
@@ -109,5 +109,39 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
             },
             payload: Some(DataPayload::from_owned(data_struct)),
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_codepointtrie::codepointtrie::CodePointTrie;
+    use icu_properties::GeneralSubcategory;
+    use icu_properties::provider::key;
+
+    // A test of the UnicodeProperty General_Category is truly a test of the
+    // `GeneralSubcategory` Rust enum, not the `GeneralCategory` Rust enum,
+    // since we must match the representation and value width of the data from
+    // the ICU CodePointTrie that ICU4X is reading from.
+    #[test]
+    fn test_general_category() {
+        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
+
+        let payload: DataPayload<'_, UnicodePropertyMapV1Marker<GeneralSubcategory>> = provider
+        .load_payload(&DataRequest {
+            resource_path: ResourcePath {
+                key: key::GENERAL_CATEGORY_V1,
+                options: ResourceOptions::default(),
+            },
+        })
+        .expect("The data should be valid")
+        .take_payload()
+        .expect("Loading was successful");
+
+        let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().codepoint_trie;
+
+        assert_eq!(trie.get('꣓' as u32), GeneralSubcategory::Digit);
+        assert_eq!(trie.get('≈' as u32), GeneralSubcategory::MathSymbol);
     }
 }
