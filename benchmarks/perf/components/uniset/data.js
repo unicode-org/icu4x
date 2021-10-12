@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1633735745895,
+  "lastUpdate": 1634069612164,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12569,6 +12569,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 42932682,
             "range": "± 1493361",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a3ef861aa8531297b04b93104b8e774e0ed0d1f5",
+          "message": "Add FromIterator impl for ZeroVec (#1169)\n\n* Add FromIterator impl for ZeroVec\r\n\r\n* fmt",
+          "timestamp": "2021-10-12T13:06:11-07:00",
+          "tree_id": "4c5d61e4adde2ac1da042e1e25cd3cba1229a627",
+          "url": "https://github.com/unicode-org/icu4x/commit/a3ef861aa8531297b04b93104b8e774e0ed0d1f5"
+        },
+        "date": 1634069607074,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36780957,
+            "range": "± 1946845",
             "unit": "ns/iter"
           }
         ]
