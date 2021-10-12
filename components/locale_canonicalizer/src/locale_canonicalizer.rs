@@ -588,7 +588,8 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language || langid.script.is_some() || langid.region.is_some() {
+            if langid.language != max.language || langid.script.is_some() || langid.region.is_some()
+            {
                 if langid.language != max.language {
                     langid.language = max.language
                 }
@@ -609,7 +610,10 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = max.region;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language || langid.script.is_some() || langid.region != max.region {
+            if langid.language != max.language
+                || langid.script.is_some()
+                || langid.region != max.region
+            {
                 if langid.language != max.language {
                     langid.language = max.language
                 }
@@ -630,7 +634,10 @@ impl<'data> LocaleCanonicalizer<'data> {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if langid.language != max.language || langid.script != max.script || langid.region.is_some() {
+            if langid.language != max.language
+                || langid.script != max.script
+                || langid.region.is_some()
+            {
                 if langid.language != max.language {
                     langid.language = max.language
                 }
@@ -647,7 +654,10 @@ impl<'data> LocaleCanonicalizer<'data> {
             }
         }
 
-        if langid.language != max.language || langid.script != max.script || langid.region != max.region {
+        if langid.language != max.language
+            || langid.script != max.script
+            || langid.region != max.region
+        {
             if langid.language != max.language {
                 langid.language = max.language
             }
