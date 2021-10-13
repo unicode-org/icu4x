@@ -182,41 +182,41 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
     }
 
     fn internal_small_index(&self, code_point: u32) -> u32 {
-        let mut index1_pos: u32 = code_point >> SHIFT_1;
+        let mut index1_pos: usize = usize::try_from(code_point >> SHIFT_1).unwrap();
         if self.header.trie_type == TrieTypeEnum::Fast {
             debug_assert!(
                 FAST_TYPE_FAST_INDEXING_MAX < code_point && code_point < self.header.high_start
             );
-            index1_pos = index1_pos + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
+            index1_pos = index1_pos + usize::try_from(BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH).unwrap();
         } else {
             assert!(code_point < self.header.high_start && self.header.high_start > SMALL_LIMIT);
-            index1_pos += SMALL_INDEX_LENGTH;
+            index1_pos += usize::try_from(SMALL_INDEX_LENGTH).unwrap();
         }
-        let index1_val = if let Some(index1_val) = self.index.get(index1_pos as usize) {
+        let index1_val = if let Some(index1_val) = self.index.get(index1_pos) {
             index1_val
         } else {
             return self.trie_error_val_index();
         };
-        let index3_block_idx: u32 = (index1_val as u32) + ((code_point >> SHIFT_2) & INDEX_2_MASK);
+        let index3_block_idx: usize = usize::try_from((index1_val as u32) + ((code_point >> SHIFT_2) & INDEX_2_MASK)).unwrap();
         let mut index3_block: u32 =
-            if let Some(index3_block) = self.index.get(index3_block_idx as usize) {
+            if let Some(index3_block) = self.index.get(index3_block_idx) {
                 index3_block as u32
             } else {
                 return self.trie_error_val_index();
             };
-        let mut index3_pos: u32 = (code_point >> SHIFT_3) & INDEX_3_MASK;
+        let mut index3_pos: usize = usize::try_from((code_point >> SHIFT_3) & INDEX_3_MASK).unwrap();
         let mut data_block: u32;
         if index3_block & 0x8000 == 0 {
             // 16-bit indexes
             data_block =
-                if let Some(data_block) = self.index.get((index3_block + index3_pos) as usize) {
+                if let Some(data_block) = self.index.get((index3_block as usize) + index3_pos) {
                     data_block as u32
                 } else {
                     return self.trie_error_val_index();
                 };
         } else {
             // 18-bit indexes stored in groups of 9 entries per 8 indexes.
-            index3_block = (index3_block & 0x7fff) + (index3_pos & !7) + (index3_pos >> 3);
+            index3_block = (index3_block & 0x7fff) + ((index3_pos as u32) & !7) + ((index3_pos as u32) >> 3);
             index3_pos &= 7;
             data_block = if let Some(data_block) = self.index.get(index3_block as usize) {
                 data_block as u32
@@ -226,7 +226,7 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W> {
             data_block = ((data_block << (2 + (2 * index3_pos))) as u32 & 0x30000) as u32;
             index3_block += 1;
             data_block =
-                if let Some(index3_val) = self.index.get((index3_block + index3_pos) as usize) {
+                if let Some(index3_val) = self.index.get((index3_block as usize) + index3_pos) {
                     data_block | (index3_val as u32)
                 } else {
                     return self.trie_error_val_index();
