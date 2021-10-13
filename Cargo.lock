@@ -1234,6 +1234,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
+ "zerovec",
 ]
 
 [[package]]

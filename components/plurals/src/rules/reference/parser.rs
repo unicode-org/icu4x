@@ -48,7 +48,7 @@ impl std::error::Error for ParserError {}
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::parse;
+/// use icu::plurals::rules::reference::parse;
 ///
 /// let input = b"i = 0 or n = 1 @integer 0, 1 @decimal 0.0~1.0, 0.00~0.04";
 /// assert_eq!(parse(input).is_ok(), true);
@@ -76,7 +76,7 @@ pub fn parse(input: &[u8]) -> Result<ast::Rule, ParserError> {
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::parse_condition;
+/// use icu::plurals::rules::reference::parse_condition;
 ///
 /// let input = b"i = 0 or n = 1";
 /// assert_eq!(parse_condition(input).is_ok(), true);

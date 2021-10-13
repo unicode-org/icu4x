@@ -37,6 +37,7 @@ icu_provider = { version = "0.4", path = "../../provider/core", features = ["mac
 icu_locid = { version = "0.4", path = "../locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
+zerovec = { version = "0.3", path = "../../utils/zerovec" }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -57,7 +58,7 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_locid/std", "icu_provider/std"]
 default = ["provider_serde"]
 bench = []
-provider_serde = ["serde"]
+provider_serde = ["serde", "zerovec/serde"]
 
 [[bench]]
 name = "operands"

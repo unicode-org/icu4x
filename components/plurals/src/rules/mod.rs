@@ -55,8 +55,8 @@
 //! When parsed, the resulting [`AST`] will look like this:
 //!
 //! ```
-//! use icu::plurals::rules::parse_condition;
-//! use icu::plurals::rules::ast::*;
+//! use icu::plurals::rules::reference::parse_condition;
+//! use icu::plurals::rules::reference::ast::*;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
@@ -97,7 +97,8 @@
 //! matches:
 //!
 //! ```
-//! use icu::plurals::rules::{test_condition, parse_condition};
+//! use icu::plurals::rules::reference::test_condition;
+//! use icu::plurals::rules::reference::parse_condition;
 //! use icu::plurals::PluralOperands;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
@@ -143,13 +144,5 @@
 //! [`Condition`]: super::rules::ast::Condition
 //! [`Sample`]: super::rules::ast::Samples
 //! [`AST`]: super::rules::ast
-pub mod ast;
-pub(crate) mod lexer;
-pub(crate) mod parser;
-pub(crate) mod resolver;
-pub(crate) mod serializer;
-
-pub use lexer::Lexer;
-pub use parser::{parse, parse_condition};
-pub use resolver::test_condition;
-pub use serializer::serialize;
+pub mod reference;
+pub mod runtime;

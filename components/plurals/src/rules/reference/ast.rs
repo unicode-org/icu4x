@@ -9,8 +9,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::plurals::rules::parse_condition;
-//! use icu::plurals::rules::ast::*;
+//! use icu::plurals::rules::reference::parse_condition;
+//! use icu::plurals::rules::reference::ast::*;
 //!
 //! let input = "i = 1";
 //!
@@ -48,8 +48,8 @@ use core::ops::RangeInclusive;
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
-/// use icu::plurals::rules::{parse, parse_condition};
+/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::rules::reference::{parse, parse_condition};
 ///
 /// let condition = parse_condition(b"i = 5 or v = 2")
 ///     .expect("Parsing failed.");
@@ -96,8 +96,8 @@ pub struct Rule {
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
-/// use icu::plurals::rules::parse_condition;
+/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::rules::reference::parse_condition;
 ///
 /// let condition = Condition(Box::new([
 ///     AndCondition(Box::new([Relation {
@@ -143,7 +143,7 @@ pub struct Condition(pub Box<[AndCondition]>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// AndCondition(Box::new([
 ///     Relation {
@@ -184,7 +184,7 @@ pub struct AndCondition(pub Box<[Relation]>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// Relation {
 ///     expression: Expression {
@@ -234,7 +234,7 @@ pub enum Operator {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// Expression {
 ///     operand: Operand::I,
@@ -263,7 +263,7 @@ pub struct Expression {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::Operand;
+/// use icu::plurals::rules::reference::ast::Operand;
 ///
 /// Operand::I;
 /// ```
@@ -303,7 +303,7 @@ pub enum Operand {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// RangeList(Box::new([
 ///     RangeListItem::Value(Value(5)),
@@ -331,7 +331,7 @@ pub struct RangeList(pub Box<[RangeListItem]>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// let _ = RangeListItem::Value(Value(5));
 /// let _ = RangeListItem::Range(Value(11)..=Value(15));
@@ -357,7 +357,7 @@ pub enum RangeListItem {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// RangeListItem::Value(Value(99));
 /// ```
@@ -373,7 +373,7 @@ pub struct Value(pub u64);
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 /// Samples {
 ///     integer: Some(SampleList {
 ///         sample_ranges: Box::new([SampleRange {
@@ -407,7 +407,7 @@ pub struct Samples {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 /// SampleList {
 ///     sample_ranges: Box::new([
 ///         SampleRange {
@@ -434,7 +434,7 @@ pub struct SampleList {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 /// SampleRange {
 ///     lower_val: DecimalValue("0.0".to_string()),
 ///     upper_val: Some(DecimalValue("1.5".to_string())),
@@ -456,7 +456,7 @@ pub struct SampleRange {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 /// DecimalValue("1.00".to_string());
 /// ```
 #[derive(Debug, Clone, PartialEq)]

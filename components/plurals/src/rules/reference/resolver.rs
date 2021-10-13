@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::ast;
 use crate::operands::PluralOperands;
+use crate::rules::reference::ast;
 
 /// Function used to test [`Condition`] against [`PluralOperands`] to identify
 /// the appropriate [`PluralCategory`].
@@ -12,7 +12,8 @@ use crate::operands::PluralOperands;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
-/// use icu::plurals::rules::{parse_condition, test_condition};
+/// use icu::plurals::rules::reference::parse_condition;
+/// use icu::plurals::rules::reference::test_condition;
 ///
 /// let operands = PluralOperands::from(5_usize);
 /// let condition = parse_condition(b"i = 4..6")

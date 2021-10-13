@@ -5,7 +5,7 @@
 use crate::operands::PluralOperands;
 use crate::provider::PluralRuleStringsV1;
 use crate::rules;
-use crate::rules::ast;
+use crate::rules::reference::ast;
 use crate::{PluralCategory, PluralRulesError};
 use alloc::borrow::Cow;
 use core::convert::TryInto;
@@ -53,7 +53,9 @@ impl PluralRuleList {
 
 fn parse_rule(input: &Option<Cow<str>>) -> Result<Option<ast::Condition>, PluralRulesError> {
     Ok(if let Some(input) = input {
-        Some(rules::parse_condition((input).as_bytes())?)
+        Some(rules::reference::parser::parse_condition(
+            (input).as_bytes(),
+        )?)
     } else {
         None
     })
@@ -97,7 +99,7 @@ impl RulesSelector {
                 .find_map(|category| {
                     conditions
                         .get(*category)
-                        .filter(|cond| rules::test_condition(cond, operands))
+                        .filter(|cond| rules::reference::resolver::test_condition(cond, operands))
                         .map(|_| *category)
                 })
                 .unwrap_or(PluralCategory::Other),
