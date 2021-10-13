@@ -1210,6 +1210,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_properties"
+version = "0.3.0"
+dependencies = [
+ "num_enum",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_provider"
 version = "0.3.0"
 dependencies = [
@@ -1364,6 +1372,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "icu_properties",
  "icu_provider",
  "litemap",
  "num_enum",

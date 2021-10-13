@@ -13,9 +13,9 @@
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 //! [`TR18`]: https://www.unicode.org/reports/tr18
 
-use crate::enum_props::*;
 use crate::provider::*;
 use crate::UnicodeSetError;
+use icu_properties::*;
 use icu_provider::prelude::*;
 
 type UnisetResult<'data> = Result<DataPayload<'data, UnicodePropertyV1Marker>, UnicodeSetError>;

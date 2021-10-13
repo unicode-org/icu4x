@@ -103,7 +103,7 @@ pub enum GeneralSubcategory {
 /// See UCharCategory and U_GET_GC_MASK in ICU4C.
 #[derive(Copy, Clone, PartialEq, Debug, Eq)]
 #[repr(transparent)]
-pub struct GeneralCategory(pub(crate) u32);
+pub struct GeneralCategory(pub u32);
 
 use GeneralCategory as GC;
 use GeneralSubcategory as GS;
@@ -235,7 +235,7 @@ impl From<GeneralSubcategory> for GeneralCategory {
 /// See UScriptCode in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(transparent)]
-pub struct Script(pub(crate) u16);
+pub struct Script(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
