@@ -580,7 +580,7 @@ impl<'data> LocaleCanonicalizer<'data> {
 
         let mut max = langid.clone();
         self.maximize(&mut max);
-        let variants = mem::replace(&mut max.variants, Default::default());
+        let variants = mem::take(&mut max.variants);
         max.variants.clear();
         let mut trial = max.clone();
 
