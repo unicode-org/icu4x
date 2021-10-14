@@ -32,6 +32,7 @@ pub enum TrieType {
 /// A trait representing the values stored in the data array of a [`CodePointTrie`].
 /// This trait is used as a type parameter in constructing a `CodePointTrie`.
 pub trait TrieValue: Copy + zerovec::ule::AsULE + 'static {
+    /// The value to return if we cannot read data from the trie.
     const DATA_GET_ERROR_VALUE: Self;
 }
 
