@@ -44,7 +44,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<A: AsRef<T>>(elements: &[A]) -> Self {
+    pub fn from_elements<A: encode::EncodeAsVarULE<VarULE = T>>(elements: &[A]) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: components::get_serializable_bytes(elements).expect(
