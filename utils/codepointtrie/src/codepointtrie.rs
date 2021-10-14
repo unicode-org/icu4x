@@ -6,7 +6,7 @@ use crate::error::Error;
 use crate::impl_const::*;
 
 use core::convert::TryFrom;
-use icu_provider::yoke::ZeroCopyFrom;
+use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::ZeroVec;
@@ -54,6 +54,7 @@ impl TrieValue for u32 {
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Yokeable, ZeroCopyFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
     header: CodePointTrieHeader,
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -64,7 +65,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Yokeable, ZeroCopyFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -304,15 +305,15 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     }
 }
 
-impl<'a, T: TrieValue> ZeroCopyFrom<CodePointTrie<'a, T>> for CodePointTrie<'static, T> {
-    fn zero_copy_from<'b>(cart: &'b CodePointTrie<'a, T>) -> CodePointTrie<'b, T> {
-        CodePointTrie {
-            header: cart.header,
-            index: ZeroVec::<'static, u16>::zero_copy_from(&cart.index),
-            data: ZeroVec::<'static, T>::zero_copy_from(&cart.data),
-        }
-    }
-}
+// impl<'a, T: TrieValue> ZeroCopyFrom<CodePointTrie<'a, T>> for CodePointTrie<'static, T> {
+//     fn zero_copy_from<'b>(cart: &'b CodePointTrie<'a, T>) -> CodePointTrie<'b, T> {
+//         CodePointTrie {
+//             header: cart.header,
+//             index: ZeroVec::<'static, u16>::zero_copy_from(&cart.index),
+//             data: ZeroVec::<'static, T>::zero_copy_from(&cart.data),
+//         }
+//     }
+// }
 
 #[cfg(test)]
 mod tests {
