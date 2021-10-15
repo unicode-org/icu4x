@@ -145,7 +145,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
 
             match variant_parts.as_slice() {
                 // A single pattern for a skeleton.
-                // i.e. <dateFormatItem id=${skeleton_str}>${pattern}</dateFormatItem>
+                // i.e. "${skeleton_str}" : "${pattern}",
                 [] => {
                     skeletons.insert(skeleton_fields_v1, pattern.into());
                 }
