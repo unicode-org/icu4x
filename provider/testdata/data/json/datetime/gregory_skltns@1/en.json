@@ -7,6 +7,7 @@
   "yMMMd": "MMM d, y",
   "yMMMdE": "E, MMM d, y",
   "yMMMM": "MMMM y",
+  "yw": "'week' w 'of' Y",
   "M": "L",
   "Md": "M/d",
   "MdE": "E, M/d",

@@ -6,7 +6,10 @@ use crate::date;
 use crate::error::DateTimeFormatError;
 use crate::fields;
 use crate::options::{components, length, preferences, DateTimeFormatOptions};
-use crate::pattern::{hour_cycle, reference::Pattern};
+use crate::pattern::{
+    hour_cycle,
+    reference::{Pattern, PatternPlurals},
+};
 use crate::provider;
 use crate::provider::gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker};
 use crate::skeleton;
@@ -21,17 +24,17 @@ type Result<T> = core::result::Result<T, DateTimeFormatError>;
 ///
 /// It uses a temporary structure `PatternSelector` to lazily load data as needed
 /// as it traverses the decision tree based on the provided options.
-pub(crate) fn pattern_for_options<'data, D>(
+pub(crate) fn patterns_for_options<'data, D>(
     data_provider: &D,
     locale: &Locale,
     options: &DateTimeFormatOptions,
-) -> Result<Option<Pattern>>
+) -> Result<Option<PatternPlurals>>
 where
     D: DataProvider<'data, DatePatternsV1Marker>
         + DataProvider<'data, DateSkeletonPatternsV1Marker>,
 {
     let mut selector = PatternSelector::new(data_provider, locale);
-    selector.pattern_for_options(options)
+    selector.patterns_for_options(options)
 }
 
 /// Private temporary structure used to cache lazily loaded data from the data provider.
@@ -138,11 +141,16 @@ where
         }
     }
 
-    /// Determine the appropriate `Pattern` for the given options and data from the data provider.
-    fn pattern_for_options(&mut self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>> {
+    /// Determine the appropriate `PatternPlurals` for the given options and data from the data provider.
+    fn patterns_for_options(
+        &mut self,
+        options: &DateTimeFormatOptions,
+    ) -> Result<Option<PatternPlurals>> {
         match options {
-            DateTimeFormatOptions::Length(bag) => self.pattern_for_length_bag(bag),
-            DateTimeFormatOptions::Components(bag) => self.pattern_for_components_bag(bag),
+            DateTimeFormatOptions::Length(bag) => self
+                .pattern_for_length_bag(bag)
+                .map(|opt_pattern| opt_pattern.map(|pattern| pattern.into())),
+            DateTimeFormatOptions::Components(bag) => self.patterns_for_components_bag(bag),
         }
     }
 
@@ -242,11 +250,11 @@ where
         Ok(Pattern::from_bytes_combination(s, date, time)?)
     }
 
-    /// Determine the appropriate `Pattern` for a given `options::components::Bag`.
-    fn pattern_for_components_bag(
+    /// Determine the appropriate `PatternPlurals` for a given `options::components::Bag`.
+    fn patterns_for_components_bag(
         &mut self,
         components: &components::Bag,
-    ) -> Result<Option<Pattern>> {
+    ) -> Result<Option<PatternPlurals>> {
         let patterns = &self
             .date_patterns
             .retrieve(self.data_provider, self.locale)?

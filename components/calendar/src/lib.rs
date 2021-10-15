@@ -16,6 +16,7 @@
 //! Gregorian calendars respectively.
 extern crate alloc;
 
+pub mod arithmetic;
 mod calendar;
 mod date;
 mod datetime;

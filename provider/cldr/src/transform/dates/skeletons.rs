@@ -8,6 +8,7 @@ use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::{provider::*, skeleton::SkeletonError};
+use icu_plurals::PluralCategory;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -107,8 +108,8 @@ impl<'data> IterableDataProviderCore for DateSkeletonPatternsProvider<'data> {
 
 impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use gregory::patterns::PatternV1;
-        use gregory::SkeletonV1;
+        use gregory::{patterns::PatternPluralsV1, SkeletonV1};
+        use icu_datetime::pattern::reference::{Pattern, PatternPlurals, PluralPattern};
         use litemap::LiteMap;
 
         let mut skeletons = LiteMap::new();
@@ -139,18 +140,48 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
                 },
             };
 
-            if !variant_parts.is_empty() {
-                eprintln!(
+            let pattern =
+                Pattern::from_bytes(pattern_str as &str).expect("Unable to parse a pattern");
+
+            match variant_parts.as_slice() {
+                // A single pattern for a skeleton.
+                // i.e. "${skeleton_str}" : "${pattern}",
+                [] => {
+                    skeletons.insert(skeleton_fields_v1, pattern.into());
+                }
+                // One of several pattern plural variants for a given skeleton.
+                // i.e. "${skeleton_str}-count-${plural_category_str}" : "${pattern}",
+                ["count", plural_category_str] => {
+                    let plural_category = PluralCategory::from_tr35_string(plural_category_str)
+                        .expect("Unable to parse a plural category");
+
+                    match skeletons.get_mut(&skeleton_fields_v1) {
+                        Some(PatternPluralsV1(PatternPlurals::MultipleVariants(v))) => {
+                            v.add_variant(plural_category, pattern)
+                        }
+                        Some(PatternPluralsV1(PatternPlurals::SinglePattern(_))) => panic!(
+                            "Skeleton {:?} has a mix of plural & non-plural variants",
+                            skeleton_str
+                        ),
+                        None => {
+                            skeletons.insert(
+                                skeleton_fields_v1,
+                                PluralPattern::new(plural_category, pattern)
+                                    .expect("Unable to create a PluralPattern")
+                                    .into(),
+                            );
+                        }
+                    };
+                }
+                _ => eprintln!(
                     "This skeleton string is not yet supported: {:?}",
                     skeleton_str
-                );
-                continue;
-            }
+                ),
+            };
+        }
 
-            let pattern_v1 =
-                PatternV1::try_from(pattern_str as &str).expect("Unable to parse a pattern");
-
-            skeletons.insert(skeleton_fields_v1, pattern_v1);
+        for (_, patterns) in skeletons.iter_mut() {
+            patterns.0.normalize()
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -160,9 +191,10 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
 
 #[test]
 fn test_datetime_skeletons() {
-    use gregory::patterns::PatternV1;
     use gregory::SkeletonV1;
+    use icu_datetime::pattern::reference::{Pattern, PluralPattern};
     use icu_locid_macros::langid;
+    use icu_plurals::PluralCategory;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DateSkeletonPatternsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
@@ -173,19 +205,35 @@ fn test_datetime_skeletons() {
                 key: key::GREGORY_DATE_SKELETON_PATTERNS_V1,
                 options: ResourceOptions {
                     variant: None,
-                    langid: Some(langid!("haw")),
+                    langid: Some(langid!("fil")),
                 },
             },
         })
         .unwrap()
         .take_payload()
         .unwrap();
-    let skeletons = skeletons.get();
+    let skeletons = &skeletons.get().0;
 
     assert_eq!(
-        Some(&PatternV1::try_from("L").expect("Failed to create pattern")),
-        skeletons
-            .0
-            .get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))
+        Some(
+            &Pattern::from_bytes("L")
+                .expect("Failed to create pattern")
+                .into()
+        ),
+        skeletons.get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))
+    );
+
+    let mut expected = PluralPattern::new(
+        PluralCategory::One,
+        Pattern::from_bytes("'ika'-w 'linggo' 'ng' Y").expect("Failed to create pattern"),
+    )
+    .expect("Failed to create PatternPlurals");
+    expected.add_variant(
+        PluralCategory::Other,
+        Pattern::from_bytes("'linggo' w 'ng' Y").expect("Failed to create pattern"),
+    );
+    assert_eq!(
+        Some(&expected.into()),
+        skeletons.get(&SkeletonV1::try_from("yw").expect("Failed to create Skeleton"))
     );
 }

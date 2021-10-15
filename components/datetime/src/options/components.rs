@@ -90,6 +90,10 @@ pub struct Bag {
     pub year: Option<Numeric>,
     /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
+    /// Include the week, such as "1st" or "1".
+    #[doc(hidden)]
+    // TODO(#488): make visible once fully supported.
+    pub week: Option<Week>,
     /// Include the day, such as "07" or "7".
     pub day: Option<Numeric>,
     /// Include the weekday, such as "Wednesday" or "Wed".
@@ -164,9 +168,18 @@ impl Bag {
             });
         }
 
-        // TODO(#502) - Unimplemented week fields:
-        // w - Week of year
-        // W - Week of month
+        if let Some(week) = self.week {
+            fields.push(Field {
+                symbol: FieldSymbol::Week(match week {
+                    Week::WeekOfMonth => fields::Week::WeekOfMonth,
+                    Week::NumericWeekOfYear | Week::TwoDigitWeekOfYear => fields::Week::WeekOfYear,
+                }),
+                length: match week {
+                    Week::WeekOfMonth | Week::NumericWeekOfYear => FieldLength::One,
+                    Week::TwoDigitWeekOfYear => FieldLength::TwoDigit,
+                },
+            });
+        }
 
         if let Some(day) = self.day {
             // TODO(#591,#592) Unimplemented day fields:
@@ -302,6 +315,7 @@ impl Default for Bag {
             era: None,
             year: None,
             month: None,
+            week: None,
             day: None,
             weekday: None,
 
@@ -368,6 +382,20 @@ pub enum Month {
 // Each enum variant is documented with the UTS 35 field information from:
 // https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
 //
+/// Options for displaying the current week for the `components::`[`Bag`].
+#[doc(hidden)]
+// TODO(#488): make visible once fully supported.
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub enum Week {
+    /// The week of the month, such as "3".
+    WeekOfMonth,
+    /// The numeric value of the week of the year, such as "8".
+    NumericWeekOfYear,
+    /// The two-digit value of the week of the year, such as "08".
+    TwoDigitWeekOfYear,
+}
+
 /// Options for displaying a time zone for the `components::`[`Bag`].
 ///
 /// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
@@ -455,6 +483,7 @@ mod test {
         let bag = Bag {
             year: Some(Numeric::Numeric),
             month: Some(Month::Long),
+            week: Some(Week::WeekOfMonth),
             day: Some(Numeric::Numeric),
 
             hour: Some(Numeric::Numeric),
@@ -468,6 +497,7 @@ mod test {
             vec![
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
+                (Symbol::Week(fields::Week::WeekOfMonth), Length::One).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),

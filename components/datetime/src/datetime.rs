@@ -12,10 +12,11 @@ use crate::{
 };
 use alloc::string::String;
 use icu_locid::Locale;
+use icu_plurals::{provider::PluralRuleStringsV1Marker, PluralRuleType, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
-    date::DateTimeInput, pattern::reference::Pattern, provider, DateTimeFormatError,
+    date::DateTimeInput, pattern::reference::PatternPlurals, provider, DateTimeFormatError,
     FormattedDateTime,
 };
 
@@ -61,8 +62,9 @@ use crate::{
 /// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
 pub struct DateTimeFormat<'data> {
     pub(super) locale: Locale,
-    pub(super) pattern: Pattern,
+    pub(super) patterns: PatternPlurals,
     pub(super) symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
+    pub(super) ordinal_rules: Option<PluralRules>,
 }
 
 impl<'data> DateTimeFormat<'data> {
@@ -95,15 +97,28 @@ impl<'data> DateTimeFormat<'data> {
     where
         D: DataProvider<'data, DateSymbolsV1Marker>
             + DataProvider<'data, DatePatternsV1Marker>
-            + DataProvider<'data, DateSkeletonPatternsV1Marker>,
+            + DataProvider<'data, DateSkeletonPatternsV1Marker>
+            + DataProvider<'data, PluralRuleStringsV1Marker>,
     {
         let locale = locale.into();
 
-        let pattern = provider::date_time::pattern_for_options(data_provider, &locale, options)?
+        let patterns = provider::date_time::patterns_for_options(data_provider, &locale, options)?
             .unwrap_or_default();
 
-        let requires_data = datetime::analyze_pattern(&pattern, false)
+        let requires_data = datetime::analyze_patterns(&patterns, false)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
+
+        let langid: icu_locid::LanguageIdentifier = locale.clone().into();
+
+        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns {
+            Some(PluralRules::try_new(
+                langid.clone(),
+                data_provider,
+                PluralRuleType::Ordinal,
+            )?)
+        } else {
+            None
+        };
 
         let symbols_data = if requires_data {
             Some(
@@ -113,7 +128,7 @@ impl<'data> DateTimeFormat<'data> {
                             key: provider::key::GREGORY_DATE_SYMBOLS_V1,
                             options: ResourceOptions {
                                 variant: None,
-                                langid: Some(locale.clone().into()),
+                                langid: Some(langid),
                             },
                         },
                     })?
@@ -123,7 +138,7 @@ impl<'data> DateTimeFormat<'data> {
             None
         };
 
-        Ok(Self::new(locale, pattern, symbols_data))
+        Ok(Self::new(locale, patterns, symbols_data, ordinal_rules))
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
@@ -141,15 +156,17 @@ impl<'data> DateTimeFormat<'data> {
     /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
-        pattern: Pattern,
+        patterns: PatternPlurals,
         symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
+        ordinal_rules: Option<PluralRules>,
     ) -> Self {
         let locale = locale.into();
 
         Self {
             locale,
-            pattern,
+            patterns,
             symbols,
+            ordinal_rules,
         }
     }
 
@@ -186,10 +203,11 @@ impl<'data> DateTimeFormat<'data> {
         T: DateTimeInput,
     {
         FormattedDateTime {
-            pattern: &self.pattern,
+            patterns: &self.patterns,
             symbols: self.symbols.as_ref().map(|s| s.get()),
             datetime: value,
             locale: &self.locale,
+            ordinal_rules: self.ordinal_rules.as_ref(),
         }
     }
 
@@ -224,10 +242,11 @@ impl<'data> DateTimeFormat<'data> {
         w: &mut impl core::fmt::Write,
         value: &impl DateTimeInput,
     ) -> core::fmt::Result {
-        datetime::write_pattern(
-            &self.pattern,
+        datetime::write_pattern_plurals(
+            &self.patterns,
             self.symbols.as_ref().map(|s| s.get()),
             value,
+            self.ordinal_rules.as_ref(),
             &self.locale,
             w,
         )
