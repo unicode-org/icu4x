@@ -386,8 +386,8 @@ fn build_plural_pattern() {
         vec![
             (PluralCategory::Zero, red_pattern.clone()),
             (PluralCategory::Two, red_pattern.clone()),
-            (PluralCategory::Few, red_pattern.clone()),
-            (PluralCategory::Other, blue_pattern.clone())
+            (PluralCategory::Few, red_pattern),
+            (PluralCategory::Other, blue_pattern)
         ]
     )
 }
@@ -498,8 +498,8 @@ fn normalize_pattern_plurals_normalizes_plural_patterns() {
     let mut patterns = PluralPattern::new(PluralCategory::Zero, red_pattern.clone())
         .expect("PluralPattern::new failed");
     patterns.add_variant(PluralCategory::One, blue_pattern.clone());
-    patterns.add_variant(PluralCategory::Two, red_pattern.clone());
-    patterns.add_variant(PluralCategory::Other, blue_pattern.clone());
+    patterns.add_variant(PluralCategory::Two, red_pattern);
+    patterns.add_variant(PluralCategory::Other, blue_pattern);
     let mut normalized_patterns = patterns.clone();
     normalized_patterns.normalize();
     let mut plural_patterns: PatternPlurals = PatternPlurals::MultipleVariants(patterns);
