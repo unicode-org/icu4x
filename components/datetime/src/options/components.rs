@@ -400,6 +400,10 @@ pub enum Week {
     TwoDigitWeekOfYear,
 }
 
+/// Options for displaying a time zone for the `components::`[`Bag`].
+///
+/// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
+/// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum TimeZoneName {
