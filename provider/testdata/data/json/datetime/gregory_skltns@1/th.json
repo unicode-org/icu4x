@@ -11,12 +11,7 @@
   "yMMMMd": "d MMMM 'G' y",
   "yMMMMdE": "E d MMMM 'G' y",
   "yMMMMdEEEE": "EEEEที่ d MMMM 'G' y",
-  "yw": {
-    "pivot_field": "w",
-    "variants": {
-      "Other": "สัปดาห์ที่ w ของปี Y"
-    }
-  },
+  "yw": "สัปดาห์ที่ w ของปี Y",
   "M": "L",
   "Md": "d/M",
   "MdE": "E d/M",

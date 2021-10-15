@@ -9,12 +9,7 @@
   "yMMMd": "d. MMM y.",
   "yMMMdE": "E, d. MMM y.",
   "yMMMM": "MMMM y.",
-  "yw": {
-    "pivot_field": "w",
-    "variants": {
-      "Other": "w. седмица у Y."
-    }
-  },
+  "yw": "w. седмица у Y.",
   "M": "L",
   "Md": "d.M.",
   "MdE": "E, d.M.",

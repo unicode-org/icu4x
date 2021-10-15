@@ -8,12 +8,7 @@
   "yMMMd": "d MMM y",
   "yMMMdE": "E، d MMM y",
   "yMMMM": "MMMM y",
-  "yw": {
-    "pivot_field": "w",
-    "variants": {
-      "Other": "الأسبوع w من سنة Y"
-    }
-  },
+  "yw": "الأسبوع w من سنة Y",
   "M": "L",
   "Md": "d/‏M",
   "MdE": "E، d/‏M",

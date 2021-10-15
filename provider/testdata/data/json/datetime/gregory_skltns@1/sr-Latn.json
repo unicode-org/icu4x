@@ -9,12 +9,7 @@
   "yMMMd": "d. MMM y.",
   "yMMMdE": "E, d. MMM y.",
   "yMMMM": "MMMM y.",
-  "yw": {
-    "pivot_field": "w",
-    "variants": {
-      "Other": "w'. sedmica u' Y."
-    }
-  },
+  "yw": "w'. sedmica u' Y.",
   "M": "L",
   "Md": "d.M.",
   "MdE": "E, d.M.",

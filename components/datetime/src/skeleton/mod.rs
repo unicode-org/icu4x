@@ -23,7 +23,6 @@ mod test {
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
-        pattern::reference::Pattern,
         provider::{
             gregory::DatePatternsV1Marker, gregory::DateSkeletonPatternsV1Marker,
             key::GREGORY_DATE_PATTERNS_V1, key::GREGORY_DATE_SKELETON_PATTERNS_V1,
@@ -361,7 +360,8 @@ mod test {
         assert_eq!(
             serde_json::to_string(skeleton).expect("Failed to transform skeleton to string."),
             serde_json::to_string(&Skeleton::from(
-                &Pattern::from_bytes(pattern).expect("Failed to create pattern from bytes.")
+                &crate::pattern::reference::Pattern::from_bytes(pattern)
+                    .expect("Failed to create pattern from bytes.")
             ))
             .expect("Failed to transform skeleton to string."),
             "{}",

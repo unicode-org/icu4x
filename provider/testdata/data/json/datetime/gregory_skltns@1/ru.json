@@ -8,12 +8,7 @@
   "yMMMd": "d MMM y г.",
   "yMMMdE": "E, d MMM y г.",
   "yMMMM": "LLLL y г.",
-  "yw": {
-    "pivot_field": "w",
-    "variants": {
-      "Other": "w-я неделя Y г."
-    }
-  },
+  "yw": "w-я неделя Y г.",
   "M": "L",
   "Md": "dd.MM",
   "MdE": "E, dd.MM",

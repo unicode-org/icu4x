@@ -7,12 +7,7 @@
   "yMMMd": "MMM d, y",
   "yMMMdE": "E, MMM d, y",
   "yMMMM": "MMMM y",
-  "yw": {
-    "pivot_field": "w",
-    "variants": {
-      "Other": "'week' w 'of' Y"
-    }
-  },
+  "yw": "'week' w 'of' Y",
   "M": "L",
   "Md": "M/d",
   "MdE": "E, M/d",

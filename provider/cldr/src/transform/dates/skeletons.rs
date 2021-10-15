@@ -180,6 +180,10 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
             };
         }
 
+        for (_, patterns) in skeletons.iter_mut() {
+            patterns.0.normalize()
+        }
+
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self(skeletons)
     }

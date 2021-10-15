@@ -320,29 +320,7 @@ impl PluralPattern {
     }
 
     /// Adds `pattern` associated with `plural_category` to this pattern collection.
-    ///
-    /// Redundant patterns that are the same as any [icu_plurals::PluralCategory::Other] pattern are elided.
     pub fn add_variant(&mut self, plural_category: PluralCategory, pattern: Pattern) {
-        if plural_category != PluralCategory::Other {
-            if *self
-                .variants
-                .get(&PluralCategory::Other)
-                .map(|p| *p == pattern)
-                .get_or_insert(false)
-            {
-                return;
-            }
-        } else {
-            let duplicates: Vec<PluralCategory> = self
-                .variants
-                .iter()
-                .filter_map(|(c, p)| if *p == pattern { Some(*c) } else { None })
-                .collect();
-            for category in duplicates {
-                self.variants.remove(&category);
-            }
-        }
-
         self.variants.insert(plural_category, pattern);
     }
 
@@ -364,6 +342,26 @@ impl PluralPattern {
         }
         self.variants.get(&PluralCategory::Other)
     }
+
+    /// Removes any patterns that are redundant with [icu_plurals::PluralCategory::Other].
+    fn normalize(&mut self) {
+        if let Some(other_pattern) = self.variants.get(&PluralCategory::Other) {
+            let duplicates: Vec<PluralCategory> = self
+                .variants
+                .iter()
+                .filter_map(|(c, p)| {
+                    if c != &PluralCategory::Other && p == other_pattern {
+                        Some(*c)
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+            for category in duplicates {
+                self.variants.remove(&category);
+            }
+        }
+    }
 }
 
 #[test]
@@ -377,6 +375,7 @@ fn build_plural_pattern() {
     patterns.add_variant(PluralCategory::Other, blue_pattern.clone());
     patterns.add_variant(PluralCategory::Few, red_pattern.clone());
     patterns.add_variant(PluralCategory::Many, blue_pattern.clone());
+    patterns.normalize();
 
     assert_eq!(patterns.pivot_field, Week::WeekOfYear);
     assert_eq!(
@@ -404,6 +403,20 @@ pub enum PatternPlurals {
 }
 
 impl PatternPlurals {
+    // Removes redundant patterns & transforms singleton [PatternPlurals::MultipleVariants] into a [PatternPlurals::SinglePattern].
+    pub fn normalize(&mut self) {
+        if let PatternPlurals::MultipleVariants(patterns) = self {
+            patterns.normalize();
+            if patterns.variants.len() == 1 {
+                let (_, pattern) = core::mem::take(&mut patterns.variants)
+                    .into_tuple_vec()
+                    .pop()
+                    .unwrap();
+                *self = PatternPlurals::SinglePattern(pattern);
+            }
+        }
+    }
+
     /// Returns an iterator over all of this collection's patterns.
     pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern> {
         match self {
@@ -467,7 +480,7 @@ impl PatternPlurals {
                     Week::WeekOfYear => loc_datetime.week_of_year()?.0,
                 };
                 let category = ordinal_rules
-                    .expect("ordinal_rules must be set with PluralPatterns")
+                    .expect("ordinal_rules must be set with PatternPlurals::MultipleVariants")
                     .select(week_number);
                 Ok(plural_pattern
                     .get(category)
@@ -475,6 +488,39 @@ impl PatternPlurals {
             }
         }
     }
+}
+
+#[test]
+fn normalize_pattern_plurals_normalizes_plural_patterns() {
+    let red_pattern = Pattern::from_bytes("'red' w").unwrap();
+    let blue_pattern = Pattern::from_bytes("'blue' w").unwrap();
+    let mut patterns = PluralPattern::new(PluralCategory::Zero, red_pattern.clone())
+        .expect("PluralPattern::new failed");
+    patterns.add_variant(PluralCategory::One, blue_pattern.clone());
+    patterns.add_variant(PluralCategory::Two, red_pattern.clone());
+    patterns.add_variant(PluralCategory::Other, blue_pattern.clone());
+    let mut normalized_patterns = patterns.clone();
+    normalized_patterns.normalize();
+    let mut plural_patterns: PatternPlurals = PatternPlurals::MultipleVariants(patterns);
+
+    plural_patterns.normalize();
+
+    assert_eq!(
+        plural_patterns,
+        PatternPlurals::MultipleVariants(normalized_patterns)
+    );
+}
+
+#[test]
+fn normalize_pattern_plurals_switches_singletons_to_single_pattern() {
+    let pattern = Pattern::from_bytes("'red' w").unwrap();
+    let patterns = PluralPattern::new(PluralCategory::Zero, pattern.clone())
+        .expect("PluralPattern::new failed");
+    let mut plural_patterns: PatternPlurals = PatternPlurals::MultipleVariants(patterns);
+
+    plural_patterns.normalize();
+
+    assert_eq!(plural_patterns, PatternPlurals::SinglePattern(pattern));
 }
 
 impl From<Pattern> for PatternPlurals {
