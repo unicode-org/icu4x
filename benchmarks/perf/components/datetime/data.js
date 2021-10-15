@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634082779176,
+  "lastUpdate": 1634309468804,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9923,6 +9923,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 338486,
             "range": "± 9117",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "42a820bbfd30971156674121e28ee29b7422e5d6",
+          "message": "Week of month/year arithmetic & plural patterns for datetime (#918)\n\n* Add test data for the filipino locale.\r\n\r\nOnly fil, hy & ps have different patterns for singular vs plural week of month/year.\r\n\r\n* Add FieldSymbol::Week.\r\n\r\nThis is wired into skeleton parsing but not date formatting.\r\n\r\n* Define plural variants for Pattern.\r\n\r\n* Change SkeletonsV1 to support plural variants for patterns.\r\n\r\n* Plural dateFormatItem variant parsing for CLDR.\r\n\r\n* Arithmetic for computing the week of month/week of year.\r\n\r\n* Add partial week of year support to LocalizedDateTimeInput.\r\n\r\nThe latter is still missing a means to inject calendar information for\r\ne.g. min_days.\r\n\r\n* Propagate PatternPlurals throughout datetime.\r\n\r\nThis has the side effect of cursory week-of-year support since the\r\nplural code cannot be tested without it.\r\n\r\nCalendar integration is needed for full (non-ISO week counting)\r\nweek-of-x support.\r\n\r\n* fix(datetime): benchmark build (missing plural provider).\r\n\r\n* chore: Make parse_plural_category() an associated function of PluralCategory.\r\n\r\n* refactor(datetime): Use serde's kebab-case feature rather than manual names for Week serialization.\r\n\r\n* docs(datetime): document PluralPattern & PatternPlurals methods.\r\n\r\n* refactor: Directly (de)serialize Week for PluralPattern::pivot_week rather than go through FieldSymbol.\r\n\r\n* refactor(datetime): use Either instead of custom iterators for datetime's PatternPlurals iterators.\r\n\r\n* fix(datetime): add context to expect_pattern & expect_pattern_ref's error messages.\r\n\r\n* docs(cldr): explain plural variant parsing.\r\n\r\n* docs(arithmetic): Add docstrings for week_of types.\r\n\r\n* refactor(datetime): use for x in y {} rather than for_each in a few places.\r\n\r\n* perf: In PluralPatterns elide patterns that are duplicates of the 'Other' pattern.\r\n\r\nThis improves the datetime_lengths bench by decreasing deserialization time.\r\n\r\n* refactor(arithmetic): rename utils.rs to arithmetic.rs & add comments\r\n\r\n* refactor(datetime): Use a LiteMap rather than a tuple vec for PatternPlural::variants\r\n\r\n* fix: cleanup clippy linter warnings\r\n\r\n* fix(datetime): use default-features = false for the either dependency\r\n\r\n* refactor(datetime): make select_pattern a method of PatternPlurals.\r\n\r\n* fix(plurals): remove serde renames from PluralCategory.\r\n\r\nThese were added to make json dumps look more like TR35 but are\r\notherwise non-functional.\r\n\r\n* fix(datetime): add custom serialization to PatternPluralsV1 to make json dumps more readable.\r\n\r\n* doces(cldr): use json rather than xml in the example\r\n\r\n* perf(datetime): Normalize singleton PatternPlurals::MultipleVariants into PatternPlurals::SinglePatterns.\r\n\r\n* refactor(datetime): Make PluralPattern::get infaillable & check that PluralPatterns have a Other pattern in PluralPattern::normalize.\r\n\r\n* docs(cldr): use json rather than xml in the example\r\n\r\n* docs(datetime): restore the unintentionally removed docs for TimeZoneName.\r\n\r\n* style(calendar): fix clippy linter error\r\n\r\n* style(datetime): fix clippy linter warnings\r\n\r\n* refactor: remove unused serde renames & explicit enum values.",
+          "timestamp": "2021-10-15T07:43:33-07:00",
+          "tree_id": "13ba0ee9c979ae2dd518f7d1d69952977c4def28",
+          "url": "https://github.com/unicode-org/icu4x/commit/42a820bbfd30971156674121e28ee29b7422e5d6"
+        },
+        "date": 1634309462895,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 113285,
+            "range": "± 3083",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1815342,
+            "range": "± 56860",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 328466,
+            "range": "± 3379",
             "unit": "ns/iter"
           }
         ]
