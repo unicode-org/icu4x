@@ -135,10 +135,10 @@ pub fn create_best_pattern_for_fields<'a>(
 
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(mut pattern_plurals) = first_pattern_match {
-        for pattern in pattern_plurals.0.patterns_iter_mut() {
+        pattern_plurals.0.for_each_mut(|pattern| {
             hour_cycle::naively_apply_preferences(pattern, &components.preferences);
             naively_apply_time_zone_name(pattern, &components.time_zone_name);
-        }
+        });
         return BestSkeleton::AllFieldsMatch(pattern_plurals);
     }
 
@@ -151,10 +151,10 @@ pub fn create_best_pattern_for_fields<'a>(
             }
             BestSkeleton::MissingOrExtraFields(mut pattern_plurals) => {
                 if date.is_empty() {
-                    for pattern in pattern_plurals.0.patterns_iter_mut() {
+                    pattern_plurals.0.for_each_mut(|pattern| {
                         hour_cycle::naively_apply_preferences(pattern, &components.preferences);
                         naively_apply_time_zone_name(pattern, &components.time_zone_name);
-                    }
+                    });
                 }
                 BestSkeleton::MissingOrExtraFields(pattern_plurals)
             }
@@ -188,7 +188,7 @@ pub fn create_best_pattern_for_fields<'a>(
 
     // Determine how to combine the date and time.
     let patterns: Option<PatternPlurals> = match (date_patterns, time_pattern) {
-        (Some(date_patterns), Some(time_pattern)) => {
+        (Some(mut date_patterns), Some(time_pattern)) => {
             let month_field = fields
                 .iter()
                 .find(|f| matches!(f.symbol, FieldSymbol::Month(_)));
@@ -226,23 +226,11 @@ pub fn create_best_pattern_for_fields<'a>(
                 length::Date::Short => &length_patterns.short,
             };
 
-            let date_patterns = match date_patterns {
-                PatternPlurals::MultipleVariants(mut date_patterns) => {
-                    for date_pattern in date_patterns.patterns_iter_mut() {
-                        *date_pattern = Pattern::from_bytes_combination(
-                            bytes,
-                            date_pattern.clone(),
-                            time_pattern.clone(),
-                        )
+            date_patterns.for_each_mut(|pattern| {
+                *pattern =
+                    Pattern::from_bytes_combination(bytes, pattern.clone(), time_pattern.clone())
                         .expect("Failed to create a Pattern from bytes");
-                    }
-                    PatternPlurals::MultipleVariants(date_patterns)
-                }
-                PatternPlurals::SinglePattern(date_pattern) => PatternPlurals::SinglePattern(
-                    Pattern::from_bytes_combination(bytes, date_pattern, time_pattern)
-                        .expect("Failed to create a Pattern from bytes"),
-                ),
-            };
+            });
             Some(date_patterns)
         }
         (None, Some(pattern)) => Some(pattern.into()),
@@ -440,9 +428,9 @@ pub fn get_best_available_format_pattern(
         #[cfg(not(feature = "provider_transform_internals"))]
         panic!("This code branch should only be run when transforming provider code.");
     } else {
-        for pattern in closest_format_pattern.0.patterns_iter_mut() {
+        closest_format_pattern.0.for_each_mut(|pattern| {
             adjust_pattern_field_lengths(fields, pattern);
-        }
+        });
     }
 
     if closest_distance >= SKELETON_EXTRA_SYMBOL {
