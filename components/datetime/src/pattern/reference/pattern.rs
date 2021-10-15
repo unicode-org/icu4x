@@ -326,7 +326,7 @@ impl PluralPattern {
 
     /// Returns an iterator over all of this collection's patterns.
     pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern> {
-        self.variants.iter().map(|(_, pattern)| pattern)
+        self.variants.iter_values()
     }
 
     /// Returns a mutable iterator over all of this collection's patterns.
@@ -335,31 +335,34 @@ impl PluralPattern {
     }
 
     // Returns the pattern with given category, falling back to the pattern with the Other category if not present.
-    pub fn get(&self, category: PluralCategory) -> Option<&Pattern> {
-        let pattern = self.variants.get(&category);
-        if pattern.is_some() {
-            return pattern;
-        }
-        self.variants.get(&PluralCategory::Other)
+    fn get(&self, category: PluralCategory) -> &Pattern {
+        self.variants
+            .get(&category)
+            .or_else(|| self.variants.get(&PluralCategory::Other))
+            .expect("Category 'other' must be present.")
     }
 
     /// Removes any patterns that are redundant with [icu_plurals::PluralCategory::Other].
+    ///
+    /// Panics if no [PluralCategory::Other] pattern is present.
     fn normalize(&mut self) {
-        if let Some(other_pattern) = self.variants.get(&PluralCategory::Other) {
-            let duplicates: Vec<PluralCategory> = self
-                .variants
-                .iter()
-                .filter_map(|(c, p)| {
-                    if c != &PluralCategory::Other && p == other_pattern {
-                        Some(*c)
-                    } else {
-                        None
-                    }
-                })
-                .collect();
-            for category in duplicates {
-                self.variants.remove(&category);
-            }
+        let other_pattern = self
+            .variants
+            .get(&PluralCategory::Other)
+            .expect("PluralPatterns must have an PluralCategory::Other pattern");
+        let duplicates: Vec<PluralCategory> = self
+            .variants
+            .iter()
+            .filter_map(|(c, p)| {
+                if c != &PluralCategory::Other && p == other_pattern {
+                    Some(*c)
+                } else {
+                    None
+                }
+            })
+            .collect();
+        for category in duplicates {
+            self.variants.remove(&category);
         }
     }
 }
@@ -482,9 +485,7 @@ impl PatternPlurals {
                 let category = ordinal_rules
                     .expect("ordinal_rules must be set with PatternPlurals::MultipleVariants")
                     .select(week_number);
-                Ok(plural_pattern
-                    .get(category)
-                    .expect("Missing pattern for category"))
+                Ok(plural_pattern.get(category))
             }
         }
     }
@@ -514,7 +515,7 @@ fn normalize_pattern_plurals_normalizes_plural_patterns() {
 #[test]
 fn normalize_pattern_plurals_switches_singletons_to_single_pattern() {
     let pattern = Pattern::from_bytes("'red' w").unwrap();
-    let patterns = PluralPattern::new(PluralCategory::Zero, pattern.clone())
+    let patterns = PluralPattern::new(PluralCategory::Other, pattern.clone())
         .expect("PluralPattern::new failed");
     let mut plural_patterns: PatternPlurals = PatternPlurals::MultipleVariants(patterns);
 
