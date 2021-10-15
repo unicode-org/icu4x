@@ -519,7 +519,7 @@
             "options": {
                 "components": {
                     "year": "numeric",
-                    "week": "numeric-week-of-year"
+                    "week": "NumericWeekOfYear"
                 }
             }
         },

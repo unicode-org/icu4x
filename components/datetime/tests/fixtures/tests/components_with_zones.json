@@ -122,7 +122,7 @@
             "options": {
                 "components": {
                     "year": "numeric",
-                    "week": "numeric-week-of-year",
+                    "week": "NumericWeekOfYear",
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",

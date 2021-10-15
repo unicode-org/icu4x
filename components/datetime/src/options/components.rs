@@ -386,11 +386,7 @@ pub enum Month {
 #[doc(hidden)]
 // TODO(#488): make visible once fully supported.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(
-    feature = "serde",
-    derive(Serialize, Deserialize),
-    serde(rename_all = "kebab-case")
-)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Week {
     /// The week of the month, such as "3".
     WeekOfMonth,
