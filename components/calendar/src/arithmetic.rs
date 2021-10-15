@@ -294,7 +294,7 @@ pub mod week_of {
                 for start_of_week in 1..7 {
                     let calendar = CalendarInfo {
                         first_weekday: IsoWeekday::from(start_of_week),
-                        min_week_days: min_week_days,
+                        min_week_days,
                     };
                     for unit_duration in super::MIN_UNIT_DAYS..400 {
                         for start_of_unit in 1..7 {
