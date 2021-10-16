@@ -8,8 +8,11 @@ use super::{
     Pattern,
 };
 use alloc::vec::Vec;
-use zerovec::{ule::AsULE, ZeroVec};
+use core::{fmt, str::FromStr};
+use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
+use zerovec::ZeroVec;
 
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
@@ -21,41 +24,42 @@ impl<'data> GenericPattern<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::pattern::{runtime, reference};
+    /// use icu_datetime::pattern::runtime::{GenericPattern, Pattern};
     ///
-    /// let date: runtime::Pattern =
-    ///     reference::Pattern::from_bytes("Y-m-d")
-    ///         .expect("Failed to parse pattern")
-    ///         .into();
-    /// let time: runtime::Pattern =
-    ///     reference::Pattern::from_bytes("HH:mm")
-    ///         .expect("Failed to parse pattern")
-    ///         .into();
+    /// let date: Pattern = "Y-m-d".parse()
+    ///         .expect("Failed to parse pattern");
+    /// let time: Pattern = "HH:mm".parse()
+    ///         .expect("Failed to parse pattern");
     ///
-    /// let glue: runtime::GenericPattern =
-    ///     reference::GenericPattern::from_bytes("{0} 'at' {1}")
-    ///         .expect("Failed to parse generic pattern")
-    ///         .into();
+    /// let glue: GenericPattern = "{1} 'at' {0}".parse()
+    ///         .expect("Failed to parse generic pattern");
     /// assert_eq!(
-    ///     glue.combined(vec![date, time])
+    ///     glue.combined(date, time)
     ///         .expect("Failed to combine patterns")
     ///         .to_string(),
     ///     "Y-m-d 'at' HH:mm"
     /// );
     /// ```
-    pub fn combined(self, replacements: Vec<Pattern>) -> Result<Pattern, PatternError> {
-        let size = replacements.iter().fold(0, |acc, r| acc + r.items.len());
+    pub fn combined(
+        self,
+        date: Pattern<'data>,
+        time: Pattern<'data>,
+    ) -> Result<Pattern<'data>, PatternError> {
+        let size = date.items.len() + time.items.len();
         let mut result = Vec::with_capacity(self.items.len() + size);
 
         for item in self.items.iter() {
             match item {
+                GenericPatternItem::Placeholder(0) => {
+                    result.extend(time.items.iter());
+                }
+                GenericPatternItem::Placeholder(1) => {
+                    result.extend(date.items.iter());
+                }
                 GenericPatternItem::Placeholder(idx) => {
-                    let replacement = replacements.get(idx as usize).ok_or_else(|| {
-                        let idx = char::from_digit(idx as u32, 10)
-                            .expect("Failed to convert placeholder idx to char");
-                        PatternError::UnknownSubstitution(idx)
-                    })?;
-                    result.extend(replacement.items.iter());
+                    let idx = char::from_digit(idx as u32, 10)
+                        .expect("Failed to convert placeholder idx to char");
+                    return Err(PatternError::UnknownSubstitution(idx));
                 }
                 GenericPatternItem::Literal(ch) => result.push(PatternItem::Literal(ch)),
             }
@@ -65,34 +69,62 @@ impl<'data> GenericPattern<'data> {
     }
 }
 
-impl From<reference::GenericPattern> for GenericPattern<'_> {
-    fn from(input: reference::GenericPattern) -> Self {
+impl Default for GenericPattern<'_> {
+    fn default() -> Self {
         Self {
-            items: ZeroVec::Owned(input.items.into_iter().map(|i| i.as_unaligned()).collect()),
+            items: ZeroVec::clone_from_slice(&[]),
         }
+    }
+}
+
+impl From<&reference::GenericPattern> for GenericPattern<'_> {
+    fn from(input: &reference::GenericPattern) -> Self {
+        Self {
+            items: ZeroVec::clone_from_slice(&input.items),
+        }
+    }
+}
+
+impl From<&GenericPattern<'_>> for reference::GenericPattern {
+    fn from(input: &GenericPattern<'_>) -> Self {
+        Self {
+            items: input.items.to_vec(),
+        }
+    }
+}
+
+impl fmt::Display for GenericPattern<'_> {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        let reference = crate::pattern::reference::GenericPattern::from(self);
+        reference.fmt(formatter)
+    }
+}
+
+impl FromStr for GenericPattern<'_> {
+    type Err = PatternError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let reference = crate::pattern::reference::GenericPattern::from_str(s)?;
+        Ok(Self::from(&reference))
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::pattern::{reference, runtime};
+    use super::*;
 
     #[test]
     fn test_runtime_generic_pattern_combine() {
-        let pattern = reference::GenericPattern::from_bytes("{0} 'at' {1}")
+        let pattern: GenericPattern = "{1} 'at' {0}"
+            .parse()
             .expect("Failed to parse a generic pattern.");
-        let pattern: runtime::GenericPattern = pattern.into();
 
-        let date =
-            reference::Pattern::from_bytes("Y/m/d").expect("Failed to parse a date pattern.");
-        let date: runtime::Pattern = date.into();
+        let date = "Y/m/d".parse().expect("Failed to parse a date pattern.");
 
-        let time =
-            reference::Pattern::from_bytes("HH:mm").expect("Failed to parse a time pattern.");
-        let time: runtime::Pattern = time.into();
+        let time = "HH:mm".parse().expect("Failed to parse a time pattern.");
 
         let pattern = pattern
-            .combined(vec![date, time])
+            .combined(date, time)
             .expect("Failed to combine date and time.");
         let pattern = reference::Pattern::from(pattern.items.to_vec());
 

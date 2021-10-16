@@ -2,11 +2,5 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod generic;
-pub mod helpers;
-mod pattern;
-mod plural;
-
-pub use generic::GenericPattern;
-pub use pattern::Pattern;
-pub use plural::{PatternPlurals, PluralPattern};
+#[cfg(feature = "provider_serde")]
+mod serde;

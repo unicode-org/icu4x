@@ -6,16 +6,18 @@ use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Week};
 use crate::pattern::{
-    reference::{Pattern, PatternPlurals},
+    runtime::{Pattern, PatternPlurals},
     PatternItem,
 };
 use crate::provider;
 use crate::provider::date_time::DateTimeSymbols;
+use crate::provider::gregory::patterns::PatternPluralsFromPatternsV1Marker;
 
 use alloc::string::ToString;
 use core::fmt;
 use icu_locid::Locale;
 use icu_plurals::PluralRules;
+use icu_provider::DataPayload;
 use writeable::Writeable;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -46,24 +48,24 @@ use writeable::Writeable;
 ///
 /// let _ = format!("Date: {}", formatted_date);
 /// ```
-pub struct FormattedDateTime<'l, T>
+pub struct FormattedDateTime<'l, 'data, T>
 where
     T: DateTimeInput,
 {
-    pub(crate) patterns: &'l PatternPlurals,
+    pub(crate) patterns: &'l DataPayload<'data, PatternPluralsFromPatternsV1Marker>,
     pub(crate) symbols: Option<&'l provider::gregory::DateSymbolsV1>,
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
 }
 
-impl<'l, T> Writeable for FormattedDateTime<'l, T>
+impl<'l, 'data, T> Writeable for FormattedDateTime<'l, 'data, T>
 where
     T: DateTimeInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         write_pattern_plurals(
-            self.patterns,
+            &self.patterns.get().0,
             self.symbols,
             self.datetime,
             self.ordinal_rules,
@@ -76,7 +78,7 @@ where
     // TODO(#489): Implement write_len
 }
 
-impl<'l, T> fmt::Display for FormattedDateTime<'l, T>
+impl<'l, 'data, T> fmt::Display for FormattedDateTime<'l, 'data, T>
 where
     T: DateTimeInput,
 {
@@ -106,7 +108,7 @@ where
 }
 
 fn write_pattern<T, W>(
-    pattern: &crate::pattern::reference::Pattern,
+    pattern: &crate::pattern::runtime::Pattern,
     symbols: Option<&provider::gregory::DateSymbolsV1>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
@@ -115,10 +117,10 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    for item in pattern.items() {
+    for item in pattern.items.iter() {
         match item {
             PatternItem::Field(field) => write_field(pattern, field, symbols, loc_datetime, w)?,
-            PatternItem::Literal(ch) => w.write_char(*ch)?,
+            PatternItem::Literal(ch) => w.write_char(ch)?,
         }
     }
     Ok(())
@@ -147,8 +149,8 @@ where
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 pub(super) fn write_field<T, W>(
-    pattern: &crate::pattern::reference::Pattern,
-    field: &fields::Field,
+    pattern: &crate::pattern::runtime::Pattern,
+    field: fields::Field,
     symbols: Option<&crate::provider::gregory::DateSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
@@ -281,8 +283,8 @@ where
 
 // This function determins whether the struct will load symbols data.
 // Keep it in sync with the `write_field` use of symbols.
-pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<bool, &Field> {
-    let fields = pattern.items().iter().filter_map(|p| match p {
+pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<bool, Field> {
+    let fields = pattern.items.iter().filter_map(|p| match p {
         PatternItem::Field(field) => Some(field),
         _ => None,
     });
@@ -320,7 +322,7 @@ pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<b
 pub fn analyze_patterns(
     patterns: &PatternPlurals,
     supports_time_zones: bool,
-) -> Result<bool, &Field> {
+) -> Result<bool, Field> {
     patterns.patterns_iter().try_fold(false, |a, pattern| {
         analyze_pattern(pattern, supports_time_zones).map(|b| a || b)
     })
@@ -351,7 +353,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let pattern = crate::pattern::reference::Pattern::from_bytes("MMM").unwrap();
+        let pattern = "MMM".parse().unwrap();
         let datetime =
             DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
