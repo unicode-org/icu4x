@@ -12,7 +12,7 @@ In most cases, the first step is to find or file a new issue related to your pla
 
 ## Installing dependencies
 
-To hack on ICU4X, you will need the following dependencies:
+To build ICU4X, you will need the following dependencies:
 
  - Rust installed via `rustup`
  - `cargo-make` installed via `cargo install cargo-make`
