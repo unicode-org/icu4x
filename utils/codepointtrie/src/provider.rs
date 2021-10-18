@@ -22,7 +22,9 @@ pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
 }
 
 impl<'data, T: TrieValue> Clone for UnicodePropertyMapV1<'data, T>
-where <T as zerovec::ule::AsULE>::ULE: Clone {
+where
+    <T as zerovec::ule::AsULE>::ULE: Clone,
+{
     fn clone(&self) -> Self {
         UnicodePropertyMapV1 {
             codepoint_trie: self.codepoint_trie.clone(),

@@ -309,7 +309,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
 }
 
 impl<'trie, T: TrieValue> Clone for CodePointTrie<'trie, T>
-where <T as zerovec::ule::AsULE>::ULE: Clone {
+where
+    <T as zerovec::ule::AsULE>::ULE: Clone,
+{
     fn clone(&self) -> Self {
         CodePointTrie {
             header: self.header,
