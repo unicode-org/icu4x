@@ -14,7 +14,7 @@ In most cases, the first step is to find or file a new issue related to your pla
 
 To build ICU4X, you will need the following dependencies:
 
- - Rust installed via `rustup`
+ - Rust (and Cargo) installed [via `rustup`](https://doc.rust-lang.org/book/ch01-01-installation.html)
  - `cargo-make` installed via `cargo install cargo-make`
  - `cargo-readme` installed via `cargo install cargo-readme`
 
