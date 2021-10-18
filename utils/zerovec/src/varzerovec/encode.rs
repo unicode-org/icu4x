@@ -48,6 +48,12 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
     fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R;
 }
 
+unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for T {
+    fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+        cb(&[T::as_byte_slice(self)])
+    }
+}
+
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ T {
     fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[T::as_byte_slice(self)])
