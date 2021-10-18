@@ -9,6 +9,7 @@ pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {
     let mut left = true;
 
     for condition in rule.0.iter() {
+        let condition = condition.as_relation();
         if condition.conjunction {
         }
     }

@@ -30,6 +30,16 @@ pub struct RelationULE {
     range_list: [RangeOrValueULE],
 }
 
+impl RelationULE {
+    pub fn as_relation<'a>(&'a self) -> Relation<'a> {
+        Relation {
+            conjunction: self.conjunction,
+            modulo: u32::from_unaligned(&self.modulo),
+            range_list: ZeroVec::borrowed_from_slice(&self.range_list),
+        }
+    }
+}
+
 unsafe impl VarULE for RelationULE {
     type Error = &'static str;
 
