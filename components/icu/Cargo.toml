@@ -68,7 +68,7 @@ default-features = false
 
 [dependencies.icu_uniset]
 version = "0.3"
-path = "../uniset"
+path = "../../utils/uniset"
 default-features = false
 
 [dependencies.fixed_decimal]
