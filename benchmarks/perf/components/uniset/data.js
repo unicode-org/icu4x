@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634593937418,
+  "lastUpdate": 1634595783066,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12719,6 +12719,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44531387,
             "range": "± 63934",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b09e5ea677f74c241dad129a305a05bc2dc3eead",
+          "message": "Add testing section to CONTRIBUTING.md (#1164)\n\n* Add ci-job-clippy\n\n* Add testing section to CONTRIBUTING.md\n\n* node 14\n\n* review fix\n\n* Update CONTRIBUTING.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update CONTRIBUTING.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update CONTRIBUTING.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update Makefile.toml\n\nCo-authored-by: Elango <elango@unicode.org>\n\n* Update CONTRIBUTING.md\n\nCo-authored-by: Elango <elango@unicode.org>\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\nCo-authored-by: Elango <elango@unicode.org>",
+          "timestamp": "2021-10-18T15:16:26-07:00",
+          "tree_id": "9932d4ce0b08bd9417f74d638c04eec088480e5f",
+          "url": "https://github.com/unicode-org/icu4x/commit/b09e5ea677f74c241dad129a305a05bc2dc3eead"
+        },
+        "date": 1634595778486,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 53169196,
+            "range": "± 105590",
             "unit": "ns/iter"
           }
         ]
