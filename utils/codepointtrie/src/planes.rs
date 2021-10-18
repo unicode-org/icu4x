@@ -176,7 +176,7 @@ pub fn get_planes_trie() -> CodePointTrie<'static, u8> {
     let index3_null_offset = 0x2;
     let data_null_offset = 0x0;
     let null_value = 0x0;
-    let trie_type = TrieTypeEnum::Small;
+    let trie_type = TrieType::Small;
 
     let trie_header = CodePointTrieHeader {
         high_start,

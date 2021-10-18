@@ -6,12 +6,24 @@ use icu_codepointtrie::codepointtrie::*;
 use icu_codepointtrie::error::Error;
 
 use core::convert::TryFrom;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use zerovec::ZeroVec;
 
-pub fn check_trie<W: ValueWidth>(trie: &CodePointTrie<W>, check_ranges: &[u32]) {
+/// The width of the elements in the data array of a [`CodePointTrie`].
+/// See [`UCPTrieValueWidth`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
+#[derive(Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub enum ValueWidthEnum {
+    Bits16 = 0,
+    Bits32 = 1,
+    Bits8 = 2,
+}
+
+pub fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
     assert_eq!(
         0,
         check_ranges.len() % 2,
@@ -152,7 +164,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         test_struct.name
     );
 
-    let trie_type_enum = match TrieTypeEnum::try_from(test_struct.trie_type_enum_val) {
+    let trie_type_enum = match TrieType::try_from(test_struct.trie_type_enum_val) {
         Ok(enum_val) => enum_val,
         _ => {
             panic!(
