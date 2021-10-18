@@ -32,7 +32,7 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_properties = { version = "0.3", path = "../../utils/properties" }
+icu_properties = { version = "0.3", path = "../../components/properties" }
 icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
 litemap = { version = "0.2", path = "../../utils/litemap" }
 num_enum = { version = "0.5.4", default-features = false }
