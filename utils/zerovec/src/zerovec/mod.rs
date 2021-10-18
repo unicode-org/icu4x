@@ -61,7 +61,7 @@ where
     T: AsULE + ?Sized,
 {
     /// An owned `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::clone_from_slice()`]
-    /// or by calling [`ZeroVec::to_mut()`]/[`ZeroVec::for_each_mut()`]/etc on a `Borrowed` `ZeroVec`.
+    /// or by calling [`ZeroVec::to_mut()`]/[`ZeroVec::for_each_mut()`]/etc on [`ZeroVec::Borrowed`].
     Owned(Vec<T::ULE>),
 
     /// A borrowed `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::parse_byte_slice()`],
