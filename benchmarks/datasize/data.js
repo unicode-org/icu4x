@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634595466512,
+  "lastUpdate": 1634597150733,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1763,6 +1763,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b09e5ea677f74c241dad129a305a05bc2dc3eead"
         },
         "date": 1634595457805,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610328,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1579874c154691fb2232fdd13ef178f833f313d6",
+          "message": "Document ZeroVec's variants (#1182)\n\n* Add ZeroVec::borrowed_from_slice()\r\n\r\n* move docs to borrowed\r\n\r\n* review comment\r\n\r\n* Update utils/zerovec/src/zerovec/mod.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update utils/zerovec/src/zerovec/mod.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2021-10-18T15:44:27-07:00",
+          "tree_id": "2dfcaeb172ad4dd7603626c64b2b1227da65558b",
+          "url": "https://github.com/unicode-org/icu4x/commit/1579874c154691fb2232fdd13ef178f833f313d6"
+        },
+        "date": 1634597145813,
         "tool": "ndjson",
         "benches": [
           {
