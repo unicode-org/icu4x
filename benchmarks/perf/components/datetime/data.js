@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634309468804,
+  "lastUpdate": 1634594006905,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9965,6 +9965,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 328466,
             "range": "± 3379",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a430f66c32040c3ac1e055620ee3f5c6515ab1e8",
+          "message": "Adds UnicodePropertyMapV1 data struct for enumerated properties (#1161)\n\n* Rename TrieTypeEnum to TrieType\r\n\r\nTrieType no longer exists, so we don't need an awkward name for TrieTypeEnum.\r\n\r\n* Implement Yokeable/ZeroCopyFrom for CodePointTrie and data struct\r\n\r\n* Cargo fmt + minor fixes\r\n\r\n* Rebase on yoke-generics\r\n\r\n* Add doc comments\r\n\r\n* Address feedback\r\nFunny how everyone is talking about C9 having an easy route and not GenG lmao.\r\n\r\n* Add additional derives\r\n\r\n* Update comment on DATA_GET_ERROR_VALUE\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Cargo fmt\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2021-10-18T14:43:18-07:00",
+          "tree_id": "b35ea471e60581d01924e11d6dd7d1f10d642fcc",
+          "url": "https://github.com/unicode-org/icu4x/commit/a430f66c32040c3ac1e055620ee3f5c6515ab1e8"
+        },
+        "date": 1634594002188,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 117478,
+            "range": "± 5137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1763033,
+            "range": "± 78028",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 344504,
+            "range": "± 16710",
             "unit": "ns/iter"
           }
         ]
