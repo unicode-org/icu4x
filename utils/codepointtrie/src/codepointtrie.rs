@@ -306,16 +306,6 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     }
 }
 
-// impl<'a, T: TrieValue> ZeroCopyFrom<CodePointTrie<'a, T>> for CodePointTrie<'static, T> {
-//     fn zero_copy_from<'b>(cart: &'b CodePointTrie<'a, T>) -> CodePointTrie<'b, T> {
-//         CodePointTrie {
-//             header: cart.header,
-//             index: ZeroVec::<'static, u16>::zero_copy_from(&cart.index),
-//             data: ZeroVec::<'static, T>::zero_copy_from(&cart.data),
-//         }
-//     }
-// }
-
 #[cfg(test)]
 mod tests {
     #[cfg(feature = "serde")]
