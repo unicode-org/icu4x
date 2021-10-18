@@ -44,34 +44,29 @@ use alloc::vec::Vec;
 ///        cb(&[field1.as_unaligned().as_byte_slice(), field2.as_unaligned.as_byte_slice(), field3.as_slice()])
 ///    }
 /// ```
-pub unsafe trait EncodeAsVarULE {
-    type VarULE: VarULE + ?Sized;
+pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
     fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R;
 }
 
-unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE for &'_ T {
-    type VarULE = T;
+unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ T {
     fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[T::as_byte_slice(self)])
     }
 }
 
-unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE for Box<T> {
-    type VarULE = T;
+unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Box<T> {
     fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[T::as_byte_slice(&*self)])
     }
 }
 
-unsafe impl EncodeAsVarULE for String {
-    type VarULE = str;
+unsafe impl EncodeAsVarULE<str> for String {
     fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[self.as_bytes()])
     }
 }
 
-unsafe impl<T: ULE> EncodeAsVarULE for Vec<T> {
-    type VarULE = [T];
+unsafe impl<T: ULE> EncodeAsVarULE<[T]> for Vec<T> {
     fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[<[T] as VarULE>::as_byte_slice(self)])
     }
