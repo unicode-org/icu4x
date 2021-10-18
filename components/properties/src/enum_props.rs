@@ -103,7 +103,7 @@ pub enum GeneralSubcategory {
 /// See UCharCategory and U_GET_GC_MASK in ICU4C.
 #[derive(Copy, Clone, PartialEq, Debug, Eq)]
 #[repr(transparent)]
-pub struct GeneralCategory(pub u32);
+pub struct GeneralCategory(pub(crate) u32);
 
 use GeneralCategory as GC;
 use GeneralSubcategory as GS;
