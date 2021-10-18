@@ -52,26 +52,22 @@ impl Iterator for TestContentIterator {
 
             let mut r = line.split('#');
             let r = r.next();
-            let v: Vec<_> = r.unwrap().split_ascii_whitespace().collect();
+            let v = r.unwrap().split_ascii_whitespace();
             let mut char_break: Vec<_> = Vec::new();
             let mut u8_break: Vec<_> = Vec::new();
             let mut u16_break: Vec<_> = Vec::new();
             let mut char_vec: Vec<_> = Vec::new();
             let mut u8_vec: Vec<_> = Vec::new();
             let mut u16_vec: Vec<_> = Vec::new();
-            let mut count = 0;
 
             let mut char_len = 0;
             let mut u8_len = 0;
             let mut u16_len = 0;
 
             let mut ascii_only = true;
-            loop {
-                if count >= v.len() {
-                    break;
-                }
+            for (count, item) in v.enumerate() {
                 if count % 2 == 1 {
-                    let ch = char::from_u32(u32::from_str_radix(v[count], 16).unwrap()).unwrap();
+                    let ch = char::from_u32(u32::from_str_radix(item, 16).unwrap()).unwrap();
                     char_vec.push(ch);
                     char_len += ch.len_utf8();
 
@@ -82,21 +78,16 @@ impl Iterator for TestContentIterator {
                         u8_len += 1;
                     }
 
-                    if ch as u32 >= 0x10000 {
-                        u16_vec.push((((ch as u32 - 0x10000) >> 10) | 0xd800) as u16);
-                        u16_vec.push((((ch as u32) & 0x3ff) | 0xdc00) as u16);
-                        u16_len += 2;
-                    } else {
-                        u16_vec.push(ch as u16);
-                        u16_len += 1;
-                    }
-                } else if v[count] != "\u{00d7}" {
-                    assert_eq!(v[count], "\u{00f7}");
+                    let mut u16_buf = [0; 2];
+                    let ch_u16 = ch.encode_utf16(&mut u16_buf);
+                    u16_vec.extend_from_slice(ch_u16);
+                    u16_len += ch_u16.len();
+                } else if item != "\u{00d7}" {
+                    assert_eq!(item, "\u{00f7}");
                     char_break.push(char_len);
                     u8_break.push(u8_len);
                     u16_break.push(u16_len);
                 }
-                count += 1
             }
             return Some(Self::Item {
                 original_line: line,
