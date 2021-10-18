@@ -10,10 +10,24 @@ use crate::codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 
 /// A map efficiently storing data about individual characters.
-#[derive(Yokeable, ZeroCopyFrom)]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub codepoint_trie: CodePointTrie<'data, T>,
+}
+
+impl<'data, T: TrieValue> Clone for UnicodePropertyMapV1<'data, T>
+where <T as zerovec::ule::AsULE>::ULE: Clone {
+    fn clone(&self) -> Self {
+        UnicodePropertyMapV1 {
+            codepoint_trie: self.codepoint_trie.clone(),
+        }
+    }
 }
 
 /// Marker type for UnicodePropertyMapV1.

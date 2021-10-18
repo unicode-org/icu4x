@@ -14,7 +14,7 @@ use zerovec::ZeroVec;
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
 /// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
@@ -31,7 +31,7 @@ pub enum TrieType {
 
 /// A trait representing the values stored in the data array of a [`CodePointTrie`].
 /// This trait is used as a type parameter in constructing a `CodePointTrie`.
-pub trait TrieValue: Copy + zerovec::ule::AsULE + 'static {
+pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     /// The value to return if we cannot read data from the trie.
     const DATA_GET_ERROR_VALUE: Self;
 }
@@ -55,7 +55,7 @@ impl TrieValue for u32 {
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Yokeable, ZeroCopyFrom)]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
     header: CodePointTrieHeader,
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -66,7 +66,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -303,6 +303,17 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     // original ICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
         self.get(code_point).into()
+    }
+}
+
+impl<'trie, T: TrieValue> Clone for CodePointTrie<'trie, T>
+where <T as zerovec::ule::AsULE>::ULE: Clone {
+    fn clone(&self) -> Self {
+        CodePointTrie {
+            header: self.header,
+            index: self.index.clone(),
+            data: self.data.clone(),
+        }
     }
 }
 
