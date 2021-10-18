@@ -230,7 +230,7 @@ where
     }
 }
 
-impl<'a, T> ZeroVec<'a, T>
+impl<T> ZeroVec<'_, T>
 where
     T: AsULE,
 {
