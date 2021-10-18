@@ -418,7 +418,7 @@ impl<'a> ZeroVec<'a, u8> {
     }
 }
 
-impl<T> ZeroVec<'_, T>
+impl<'a, T> ZeroVec<'a, T>
 where
     T: AsULE,
 {
@@ -443,6 +443,31 @@ where
     #[inline]
     pub fn clone_from_slice(other: &[T]) -> Self {
         Self::Owned(other.iter().copied().map(T::as_unaligned).collect())
+    }
+
+    /// Creates a `ZeroVec<T>` from a `&[T::ULE]` by borrowing from it.
+    ///
+    /// This function results in a `Borrowed` instance of `ZeroVec<T>`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    /// use zerovec::ule::*;
+    ///
+    /// // The little-endian bytes correspond to the numbers on the following line.
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let nums: &[PlainOldULE<2>] = &[211_u16.as_unaligned(), 281_u16.as_unaligned(),
+    ///                                 421_u16.as_unaligned(), 461_u16.as_unaligned()];
+    ///
+    /// let zerovec = ZeroVec::<u16>::borrowed_from_slice(nums);
+    ///
+    /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
+    /// assert_eq!(bytes, zerovec.as_bytes());
+    /// ```
+    #[inline]
+    pub fn borrowed_from_slice(other: &'a [T::ULE]) -> Self {
+        Self::Borrowed(other)
     }
 
     /// Creates a `Vec<T>` from a `ZeroVec<T>`.
