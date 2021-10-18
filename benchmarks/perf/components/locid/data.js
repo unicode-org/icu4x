@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634595826587,
+  "lastUpdate": 1634597471371,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14681,6 +14681,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5370,
             "range": "± 230",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1579874c154691fb2232fdd13ef178f833f313d6",
+          "message": "Document ZeroVec's variants (#1182)\n\n* Add ZeroVec::borrowed_from_slice()\r\n\r\n* move docs to borrowed\r\n\r\n* review comment\r\n\r\n* Update utils/zerovec/src/zerovec/mod.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update utils/zerovec/src/zerovec/mod.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2021-10-18T15:44:27-07:00",
+          "tree_id": "2dfcaeb172ad4dd7603626c64b2b1227da65558b",
+          "url": "https://github.com/unicode-org/icu4x/commit/1579874c154691fb2232fdd13ef178f833f313d6"
+        },
+        "date": 1634597467738,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2499,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4186,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
