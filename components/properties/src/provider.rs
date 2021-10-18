@@ -6,9 +6,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::builder::UnicodeSetBuilder;
-use crate::uniset::UnicodeSet;
 use icu_provider::yoke::{self, *};
+use icu_uniset::UnicodeSet;
+use icu_uniset::UnicodeSetBuilder;
 
 //
 // resource key structs - the structs used directly by users of data provider

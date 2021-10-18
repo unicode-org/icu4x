@@ -412,5 +412,5 @@ pub mod uniset {
     //! assert!(set.contains_range(&('A'..='C')));
     //! assert_eq!(set.iter_chars().next(), Some('A'));
     //! ```
-    pub use icu_uniset::*;
+    pub use icu_properties::*;
 }

@@ -10,8 +10,8 @@
 use icu::datetime::DateTimeFormatOptions;
 use icu::locid::{macros::langid, Locale};
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-use icu::uniset::UnicodeSetBuilder;
 use icu_datetime::{mock::zoned_datetime::MockZonedDateTime, ZonedDateTimeFormat};
+use icu_uniset::UnicodeSetBuilder;
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {

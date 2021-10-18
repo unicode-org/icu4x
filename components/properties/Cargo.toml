@@ -32,11 +32,20 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
+icu_uniset = { version = "0.3", path = "../../utils/uniset", features = ["serde"] }
 num_enum = { version = "0.5.4", default-features = false }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde"] }
 
 [dev-dependencies]
+icu = { path = "../../components/icu", default-features = false }
 
 [lib]
 bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
+
+[features]
+std = ["icu_provider/std"]
+default = ["provider_serde"]
+provider_serde = ["serde"]

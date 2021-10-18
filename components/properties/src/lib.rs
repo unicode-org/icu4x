@@ -9,6 +9,9 @@
 //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
 
 mod enum_props;
+#[allow(unused)]
+mod props;
+pub mod provider;
 mod ule;
 
 pub use enum_props::*;
