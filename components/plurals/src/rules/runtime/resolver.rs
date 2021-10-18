@@ -10,8 +10,7 @@ pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {
 
     for condition in rule.0.iter() {
         let condition = condition.as_relation();
-        if condition.conjunction {
-        }
+        if condition.and_or == ast::AndOr::And {}
     }
     true
 }
