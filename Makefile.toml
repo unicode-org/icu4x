@@ -94,6 +94,16 @@ dependencies = [
     "wasm-cpp-emscripten",
 ]
 
+[tasks.ci-job-clippy]
+# Note: ci-job-clippy is not actually invoked by CI and instead exists
+# for symmetry and predictability. CI instead uses a special GitHub action
+# that allows it to integrate better with GitHub annotations
+description = "Run all tests for the CI 'clippy' job"
+category = "CI"
+dependencies = [
+    "clippy-all",
+]
+
 [tasks.ci-all]
 # Note that updating this list will not update what is run on CI,
 # it simply exists as a shortcut to run everything locally
@@ -107,9 +117,8 @@ dependencies = [
     "ci-job-test",
     "ci-job-wasm",
 
-    # CI runs this a little differently to allow for lint failures to show
-    # up on PRs
-    "clippy-all",
+    # Note: CI doesn't call this directly
+    "ci-job-clippy",
 
     # benchmarking and coverage jobs not included
 ]

@@ -10,6 +10,16 @@ Issues are open to everyone to discuss and can be used to jump-start Pull Reques
 
 In most cases, the first step is to find or file a new issue related to your planned contribution, discuss it, and once you received a feedback indicating that the pull request would be welcomed you can start working on it.
 
+## Installing dependencies
+
+To build ICU4X, you will need the following dependencies:
+
+ - Rust (and Cargo) installed [via `rustup`](https://doc.rust-lang.org/book/ch01-01-installation.html)
+ - `cargo-make` installed via `cargo install cargo-make`
+ - `cargo-readme` installed via `cargo install cargo-readme`
+
+Certain tests may need further dependencies, these are documented below in the [Testing](#testing) section.
+
 ## Contributing a Pull Request
 
 The first step is to fork the repository to your namespace and create a branch off of the `main` branch to work with.
@@ -36,7 +46,36 @@ Handy commands (run from the root directory):
 
 - `cargo tidy` runs tidy-checks (license, fmt, readmes)
 - `cargo quick` runs the fastest tests and lints.
-- `cargo make ci-all` runs all tests and lints
+
+See the [Testing](#testing) section below for more information on the various testsuites available.
+
+### Testing
+
+It's recommended to run `cargo test` in crates you're modifying to ensure that nothing is breaking, and `cargo quick` to get a reasonable check that everything still builds and lint checks pass.
+
+Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to each GitHub Actions CI job, and you can run any testsuites you consider relevant:
+
+ - `cargo make ci-job-check`: Runs `cargo check` on all the crates. It's usually better to just use `cargo quick`.
+ - `cargo make tidy`: A quick test that ensures that `cargo fmt` has been run, that code has the appropriate license headers and files and that READMEs are in sync. This is run as two separate tasks on CI (`ci-job-fmt` and `ci-job-tidy`) to ensure early results.
+ - `cargo make ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
+ - `cargo make ci-job-clippy`: Runs `cargo clippy` on all the crates.
+ - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
+     + Rust toolchain `nightly-2021-09-22`: `rustup install nightly-2021-09-22`
+         * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2021-09-22 rust-src`
+         * Various targets for that toolchain: `rustup target add thumbv7m-none-eabi --toolchain nightly-2021-09-22`, `rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2021-09-22`, `rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2021-09-22`
+     + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
+     + [`Sphinx`](https://www.sphinx-doc.org/en/master/) on Python3: `pip3 install sphinx sphinx-rtd-theme`
+ - `cargo make ci-job-wasm`: Runs WASM tests; mostly important if you're changing the FFI interface. This also has a couple additional dependencies:
+     + Node.js version 14. This is typically not the one offered by the package manager; get it from the NodeJS website or `nvm`.
+     + Rust toolchain `nightly-2021-09-22`: `rustup install nightly-2021-09-22`
+         * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2021-09-22 rust-src`
+         * Various WASM targets for that toolchain: `rustup target add wasm32-unknown-unknown --toolchain nightly-2021-09-22`, `rustup target add wasm32-unknown-emscripten --toolchain nightly-2021-09-22`
+     + [`Twiggy`](https://github.com/rustwasm/twiggy) (at least 0.7.0: `cargo install twiggy`
+     + [`emsdk`](https://github.com/emscripten-core/emsdk): Make sure to `./emsdk activate latest` it into your shell
+ - `cargo make ci-job-features`: This is a pretty slow test that tries to build all ICU4X crates with all feature combinations. It has an additional dependency:
+     + `cargo-all-features`: `cargo install cargo-all-features`
+ - `cargo make ci-all`: This runs all of the tests above, and takes quite a while. It is usually preferred to run specific tests you think are relevant and let GitHub Actions run the full suite to uncover additional failures.
+
 
 ### Structure of commits in a Pull Request
 
