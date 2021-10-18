@@ -64,9 +64,8 @@ where
     /// or by calling [`ZeroVec::to_mut()`]/[`ZeroVec::for_each_mut()`]/etc on a `Borrowed` `ZeroVec`.
     Owned(Vec<T::ULE>),
 
-    /// A borrowed `ZeroVec<T>`. This will typically be constructed by
-    /// [`ZeroVec::parse_byte_slice()`] or deserializers capable of doing zero-copy
-    /// deserialization.
+    /// A borrowed `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::parse_byte_slice()`],
+    /// [`ZeroVec::from_slice()`], or deserializers capable of doing zero-copy deserialization.
     ///
     /// If you already have a slice of `[T::ULE]`s, you can directly construct one of these.
     ///
