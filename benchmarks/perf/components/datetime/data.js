@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634594006905,
+  "lastUpdate": 1634595842745,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10007,6 +10007,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 344504,
             "range": "± 16710",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b09e5ea677f74c241dad129a305a05bc2dc3eead",
+          "message": "Add testing section to CONTRIBUTING.md (#1164)\n\n* Add ci-job-clippy\n\n* Add testing section to CONTRIBUTING.md\n\n* node 14\n\n* review fix\n\n* Update CONTRIBUTING.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update CONTRIBUTING.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update CONTRIBUTING.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update Makefile.toml\n\nCo-authored-by: Elango <elango@unicode.org>\n\n* Update CONTRIBUTING.md\n\nCo-authored-by: Elango <elango@unicode.org>\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\nCo-authored-by: Elango <elango@unicode.org>",
+          "timestamp": "2021-10-18T15:16:26-07:00",
+          "tree_id": "9932d4ce0b08bd9417f74d638c04eec088480e5f",
+          "url": "https://github.com/unicode-org/icu4x/commit/b09e5ea677f74c241dad129a305a05bc2dc3eead"
+        },
+        "date": 1634595837483,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 115905,
+            "range": "± 3862",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1783284,
+            "range": "± 76401",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 351005,
+            "range": "± 14636",
             "unit": "ns/iter"
           }
         ]
