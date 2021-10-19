@@ -57,6 +57,7 @@
 //!         // subtract the length of the char and u32 to get the length of the array
 //!         let len_new = (len - 8) / 4;
 //!         // it's hard constructing custom DSTs, we fake a pointer/length construction
+//!         // eventually we can use the Pointer::Metadata APIs when they stabilize
 //!         let fake_slice = core::ptr::slice_from_raw_parts(ptr as *const <u32 as AsULE>::ULE, len_new);
 //!         &*(fake_slice as *const Self)
 //!     }
