@@ -15,6 +15,8 @@
 //! [`UnicodeSet`]: ../icu_uniset/struct.UnicodeSet.html
 //! [`sets`]: crate::sets
 
+#![no_std]
+
 mod props;
 #[allow(unused)]
 pub mod provider;
