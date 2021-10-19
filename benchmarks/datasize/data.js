@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634597150733,
+  "lastUpdate": 1634616407602,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1793,6 +1793,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1579874c154691fb2232fdd13ef178f833f313d6"
         },
         "date": 1634597145813,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610328,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8a016a0398676d1d7316cab83667a92983f903f7",
+          "message": "Cleanup linebreak segmenter specification test to use other segmenters (#1168)\n\n* Cleanup specification test for linebreak since other specification tests will use same test format.\r\n\r\nUAX#29 test data uses same format for UAX#14. So I would like to clean up it\r\nto use other tests for UAX#29.\r\n\r\n* Fix per review comment.",
+          "timestamp": "2021-10-19T13:05:29+09:00",
+          "tree_id": "58ea476df51df851563e4c8d874194ddd6ccc018",
+          "url": "https://github.com/unicode-org/icu4x/commit/8a016a0398676d1d7316cab83667a92983f903f7"
+        },
+        "date": 1634616403140,
         "tool": "ndjson",
         "benches": [
           {
