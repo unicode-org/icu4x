@@ -460,9 +460,9 @@ jobs:
       matrix:
         component:
           - components/locid
-          - components/uniset
           - components/plurals
           - components/datetime
+          - utils/uniset
           - utils/fixed_decimal
 
 
