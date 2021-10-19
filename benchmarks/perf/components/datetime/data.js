@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634630196784,
+  "lastUpdate": 1634657218046,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10175,6 +10175,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 332657,
             "range": "± 941",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c7c9535f18567ff6b32b02c8c3b042fe9aec6680",
+          "message": "Likely subtags minimization of und should be en (#1170)",
+          "timestamp": "2021-10-19T10:20:00-05:00",
+          "tree_id": "8f35470d047227f9e1dd61a99f0763ff54b7bae3",
+          "url": "https://github.com/unicode-org/icu4x/commit/c7c9535f18567ff6b32b02c8c3b042fe9aec6680"
+        },
+        "date": 1634657213160,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 112027,
+            "range": "± 4323",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1727844,
+            "range": "± 30811",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 323076,
+            "range": "± 5277",
             "unit": "ns/iter"
           }
         ]
