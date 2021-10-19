@@ -63,9 +63,9 @@ use alloc::vec::Vec;
 ///         let len = bytes.len();
 ///         // subtract the length of the char and u32 to get the length of the array
 ///         let len_new = (len - 8) / 4;
-///         let fake_slice = core::ptr::slice_from_raw_parts(ptr as *const u8, len_new);
 ///         // it's hard constructing custom DSTs, we fake a pointer/length construction
-///         mem::transmute(fake_slice)
+///         let fake_slice = core::ptr::slice_from_raw_parts(ptr as *const <u32 as AsULE>::ULE, len_new);
+///         &*(fake_slice as *const Self)
 ///     }
 /// }
 ///
