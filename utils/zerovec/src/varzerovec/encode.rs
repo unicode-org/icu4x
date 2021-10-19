@@ -14,6 +14,16 @@ use alloc::vec::Vec;
 /// of the VarULE type to the callback, in order. For an implementation to be safe, the slices
 /// to the callback must, when concatenated, be a valid instance of the VarULE type.
 ///
+/// # Safety
+///
+/// The safety invariants of this function are:
+/// - It must call `cb` (only once)
+/// - The slices passed to `cb`, if concatenated, should be a valid instance of the `T` [`VarULE`] type
+///   (i.e. if fed to [`VarULE::validate_byte_slice()`] they must produce a successful result)
+/// - It must return the return value of `cb` to the caller
+///
+/// # Implementation example
+///
 /// For example, if your regular stack type is:
 ///
 /// ```rust
