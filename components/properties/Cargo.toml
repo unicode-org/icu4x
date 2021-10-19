@@ -1,0 +1,52 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_properties"
+description = "Definitions for Unicode properties"
+version = "0.3.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
+icu_uniset = { version = "0.3", path = "../../utils/uniset", features = ["serde"] }
+num_enum = { version = "0.5.4", default-features = false }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features = false }
+zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde"] }
+
+[dev-dependencies]
+icu = { path = "../../components/icu", default-features = false }
+
+[lib]
+bench = false  # This option is required for Benchmark CI
+path = "src/lib.rs"
+
+[features]
+std = ["icu_provider/std"]
+default = ["provider_serde"]
+provider_serde = ["serde"]

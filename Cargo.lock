@@ -986,6 +986,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
+ "icu_properties",
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
@@ -1215,6 +1216,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_properties"
+version = "0.3.0"
+dependencies = [
+ "icu",
+ "icu_provider",
+ "icu_uniset",
+ "num_enum",
+ "serde",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_provider"
 version = "0.3.0"
 dependencies = [
@@ -1316,6 +1330,7 @@ version = "0.3.0"
 dependencies = [
  "displaydoc",
  "icu_codepointtrie",
+ "icu_properties",
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
@@ -1369,11 +1384,9 @@ version = "0.3.0"
 dependencies = [
  "criterion",
  "displaydoc",
- "icu",
  "icu_benchmark_macros",
  "icu_provider",
  "litemap",
- "num_enum",
  "postcard",
  "serde",
  "serde_json",

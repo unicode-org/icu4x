@@ -9,7 +9,7 @@ use tinystr::TinyStr16;
 
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
-/// See UProperty in ICU4C.
+/// See `UProperty` in ICU4C.
 #[derive(Clone, PartialEq, Debug, TryFromPrimitive)]
 #[non_exhaustive]
 #[repr(i32)]
@@ -36,8 +36,8 @@ impl From<&TinyStr16> for EnumeratedProperty {
 }
 
 /// Enumerated Unicode general category types.
-/// GeneralSubcategory only supports specific subcategories (eg UppercaseLetter).
-/// It does not support grouped categories (eg Letter). For grouped categories, use GeneralCategory.
+/// GeneralSubcategory only supports specific subcategories (eg `UppercaseLetter`).
+/// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategory`].
 #[derive(Copy, Clone, PartialEq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
 #[repr(u8)]
 pub enum GeneralSubcategory {
@@ -114,8 +114,8 @@ pub enum GeneralSubcategory {
 /// The discriminants correspond to the U_GC_XX_MASK constants in ICU4C.
 /// Unlike GeneralSubcategory, this supports groups of general categories: for example, `Letter`
 /// is the union of `UppercaseLetter`, `LowercaseLetter`, etc...
-/// See https://www.unicode.org/reports/tr44/ .
-/// See UCharCategory and U_GET_GC_MASK in ICU4C.
+/// See <https://www.unicode.org/reports/tr44/> .
+/// See `UCharCategory` and `U_GET_GC_MASK` in ICU4C.
 #[derive(Copy, Clone, PartialEq, Debug, Eq)]
 #[repr(transparent)]
 pub struct GeneralCategory(pub(crate) u32);
