@@ -10,6 +10,7 @@
 //! documentation for Unicode regular expressions. In particular, Annex C of this document
 //! defines properties for POSIX compatibility.
 //!
+//! [`UnicodeSet`]: icu_uniset::UnicodeSet
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 //! [`TR18`]: https://www.unicode.org/reports/tr18
 

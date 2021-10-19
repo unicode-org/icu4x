@@ -16,7 +16,6 @@
 //! [`DataProvider`]: icu_provider::prelude::DataProvider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
-//! [`PropertiesDataProvider`]: binary::PropertiesDataProvider
 
 mod binary;
 mod enumerated;
