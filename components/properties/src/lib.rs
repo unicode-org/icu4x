@@ -8,17 +8,17 @@
 //! retrieving property data in an appropriate data structure.
 //!
 //! Currently, only binary property APIs are supported, with APIs that return
-//! a [`UnicodeSet`]. See the [`props`] module for more details.
+//! a [`UnicodeSet`]. See the [`sets`] module for more details.
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
 //! [`UnicodeSet`]: icu_uniset::UnicodeSet
-//! [`props`]: crate::props
+//! [`sets`]: crate::sets
 
-pub mod enum_props;
+mod props;
 #[allow(unused)]
-pub mod props;
 pub mod provider;
+pub mod sets;
 mod ule;
 
-pub use enum_props::*;
+pub use props::*;
