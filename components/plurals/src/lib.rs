@@ -76,6 +76,7 @@ mod operands;
 pub mod provider;
 pub mod rules;
 
+use core::cmp::{Ord, PartialOrd};
 use core::convert::TryInto;
 pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
@@ -137,7 +138,11 @@ pub enum PluralRuleType {
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum PluralCategory {
     /// CLDR "zero" plural category. Used in Arabic and Latvian, among others.
     ///
@@ -226,6 +231,19 @@ impl PluralCategory {
             Self::Zero,
         ]
         .iter()
+    }
+
+    /// Returns the PluralCategory coresponding to given TR35 string.
+    pub fn from_tr35_string(category: &str) -> Option<PluralCategory> {
+        match category {
+            "zero" => Some(PluralCategory::Zero),
+            "one" => Some(PluralCategory::One),
+            "two" => Some(PluralCategory::Two),
+            "few" => Some(PluralCategory::Few),
+            "many" => Some(PluralCategory::Many),
+            "other" => Some(PluralCategory::Other),
+            _ => None,
+        }
     }
 }
 

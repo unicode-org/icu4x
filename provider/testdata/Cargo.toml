@@ -67,6 +67,10 @@ locales = [
     # - Often the first non-English locale to receive new data in CLDR
     "fr",
 
+    # Filipino:
+    # - Week of month/year have plural variants.
+    "fil",
+
     # Japanese:
     # - Four scripts
     # - Complex date patterns

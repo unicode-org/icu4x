@@ -60,7 +60,31 @@ pub enum ZeroVec<'a, T>
 where
     T: AsULE + ?Sized,
 {
+    /// An owned `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::clone_from_slice()`]
+    /// or by calling [`ZeroVec::to_mut()`]/[`ZeroVec::for_each_mut()`]/etc on [`ZeroVec::Borrowed`].
     Owned(Vec<T::ULE>),
+
+    /// A borrowed `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::parse_byte_slice()`],
+    /// [`ZeroVec::from_slice()`], or deserializers capable of doing zero-copy deserialization.
+    ///
+    /// If you already have a slice of `[T::ULE]`s, you can directly construct one of these.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    /// use zerovec::ule::*;
+    ///
+    /// // The little-endian bytes correspond to the numbers on the following line.
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let nums: &[PlainOldULE<2>] = &[211_u16.as_unaligned(), 281_u16.as_unaligned(),
+    ///                                 421_u16.as_unaligned(), 461_u16.as_unaligned()];
+    ///
+    /// let zerovec = ZeroVec::<u16>::Borrowed(nums);
+    ///
+    /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
+    /// assert_eq!(bytes, zerovec.as_bytes());
+    /// ```
     Borrowed(&'a [T::ULE]),
 }
 
@@ -536,6 +560,7 @@ where
 }
 
 impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
+    /// Creates a [`ZeroVec::Owned`] from an iterator of values.
     fn from_iter<I>(iter: I) -> Self
     where
         I: IntoIterator<Item = T>,
@@ -543,6 +568,7 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
         ZeroVec::Owned(iter.into_iter().map(|t| t.as_unaligned()).collect())
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;

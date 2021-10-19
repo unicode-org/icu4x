@@ -22,6 +22,8 @@ pub enum PatternError {
     UnclosedLiteral,
     #[displaydoc("unclosed placeholder in pattern")]
     UnclosedPlaceholder,
+    #[displaydoc("plural pattern variants are only supported for week-of-month and week-of-year")]
+    UnsupportedPluralPivot,
 }
 
 #[cfg(feature = "std")]

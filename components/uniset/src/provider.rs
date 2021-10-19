@@ -14,15 +14,20 @@ use icu_provider::yoke::{self, *};
 // resource key structs - the structs used directly by users of data provider
 //
 
-#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 pub mod key {
+    //! Resource keys for [`icu_uniset`](crate)
     use icu_provider::resource_key;
     use icu_provider::ResourceKey;
 
     /// Macro to help define resource keys and store them in a list.
     macro_rules! define_resource_keys {
         ($count:expr; $(($k:ident, $s:literal)),+,) => {
-            $( pub const $k: ResourceKey = resource_key!(UnicodeSet, $s, 1); )+
+            $(
+                #[allow(missing_docs)] // These constants don't need individual documentation.
+                pub const $k: ResourceKey = resource_key!(UnicodeSet, $s, 1);
+            )+
+
+            /// The set of all resource keys supported by [`icu_uniset`](crate).
             pub const ALL_KEYS: [ResourceKey; $count] = [$($k,)+];
         };
     }
@@ -310,14 +315,15 @@ pub mod key {
     );
 }
 
+/// A set of characters with a particular property.
 #[icu_provider::data_struct]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct UnicodePropertyV1<'data> {
+    /// The set of characters, represented as an inversion list
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub inv_list: UnicodeSet<'data>,
 }
@@ -332,7 +338,7 @@ impl Default for UnicodePropertyV1<'static> {
 }
 
 impl<'data> UnicodePropertyV1<'data> {
-    #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
+    /// Creates a [`UnicodePropertyV1`] for the given [`UnicodeSet`].
     pub fn from_owned_uniset(set: UnicodeSet<'data>) -> UnicodePropertyV1<'data> {
         UnicodePropertyV1 { inv_list: set }
     }

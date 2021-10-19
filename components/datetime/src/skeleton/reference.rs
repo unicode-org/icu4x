@@ -99,6 +99,7 @@ impl From<&Pattern> for Skeleton {
                     | FieldSymbol::Second(_)
                     | FieldSymbol::TimeZone(_)
                     | FieldSymbol::Year(_)
+                    | FieldSymbol::Week(_)
                     | FieldSymbol::Day(_) => field.symbol,
                 };
 

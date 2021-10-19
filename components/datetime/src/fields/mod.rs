@@ -41,6 +41,7 @@ impl Field {
         match self.symbol {
             FieldSymbol::Year(year) => year.get_length_type(self.length),
             FieldSymbol::Month(month) => month.get_length_type(self.length),
+            FieldSymbol::Week(week) => week.get_length_type(self.length),
             FieldSymbol::Day(day) => day.get_length_type(self.length),
             FieldSymbol::Weekday(weekday) => weekday.get_length_type(self.length),
             FieldSymbol::DayPeriod(day_period) => day_period.get_length_type(self.length),

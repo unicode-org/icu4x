@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::date::DateTimeError;
 use crate::fields::FieldSymbol;
 use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
+use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
@@ -30,6 +32,12 @@ pub enum DateTimeFormatError {
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
+    /// An error originating from [`PluralRules`][icu_plural::PluralRules].
+    #[displaydoc("{0}")]
+    PluralRules(PluralRulesError),
+    /// An error originating from [`DateTimeInput`][icu_datetime::date::DateTimeInput].
+    #[displaydoc("{0}")]
+    DateTimeInput(DateTimeError),
 }
 
 #[cfg(feature = "std")]
@@ -56,5 +64,17 @@ impl From<core::fmt::Error> for DateTimeFormatError {
 impl From<SkeletonError> for DateTimeFormatError {
     fn from(e: SkeletonError) -> Self {
         DateTimeFormatError::Skeleton(e)
+    }
+}
+
+impl From<PluralRulesError> for DateTimeFormatError {
+    fn from(e: PluralRulesError) -> Self {
+        DateTimeFormatError::PluralRules(e)
+    }
+}
+
+impl From<DateTimeError> for DateTimeFormatError {
+    fn from(e: DateTimeError) -> Self {
+        DateTimeFormatError::DateTimeInput(e)
     }
 }

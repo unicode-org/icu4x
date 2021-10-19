@@ -63,6 +63,8 @@ pub struct DayOfYearInfo {
     pub days_in_year: u32,
     /// The previous year.
     pub prev_year: Year,
+    /// The number of days in the previous year.
+    pub days_in_prev_year: u32,
     /// The next year.
     pub next_year: Year,
 }

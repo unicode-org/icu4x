@@ -78,6 +78,7 @@ impl Calendar for Gregorian {
             day_of_year: Iso::day_of_year(date.0),
             days_in_year: Iso::days_in_year(date.0.year),
             prev_year: iso_year_as_gregorian(prev_year),
+            days_in_prev_year: Iso::days_in_year(prev_year),
             next_year: iso_year_as_gregorian(next_year),
         }
     }

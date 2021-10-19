@@ -267,6 +267,7 @@ impl Calendar for Iso {
             day_of_year: Iso::day_of_year(*date),
             days_in_year: Iso::days_in_year(date.year),
             prev_year: prev_year.into(),
+            days_in_prev_year: Iso::days_in_year(prev_year),
             next_year: next_year.into(),
         }
     }

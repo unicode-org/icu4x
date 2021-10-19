@@ -6,7 +6,7 @@ use crate::error::Error;
 use crate::impl_const::*;
 
 use core::convert::TryFrom;
-use icu_provider::yoke::ZeroCopyFrom;
+use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::ZeroVec;
@@ -14,7 +14,7 @@ use zerovec::ZeroVec;
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
 /// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
@@ -31,8 +31,14 @@ pub enum TrieType {
 
 /// A trait representing the values stored in the data array of a [`CodePointTrie`].
 /// This trait is used as a type parameter in constructing a `CodePointTrie`.
-pub trait TrieValue: Copy + zerovec::ule::AsULE + 'static {
+pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
+    /// Last-resort fallback value to return if we cannot read data from the trie.
+    ///
+    /// In most cases, the error value is read from the last element of the `data` array.
     const DATA_GET_ERROR_VALUE: Self;
+    /// A parsing function that is primarily motivated by deserialization contexts.
+    /// When the serialization type width is smaller than 32 bits, then it is expected
+    /// that the call site will widen the value to a `u32` first.
     fn parse_from_u32(i: u32) -> Result<Self, String>;
 }
 
@@ -64,6 +70,7 @@ impl TrieValue for u32 {
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
     header: CodePointTrieHeader,
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -74,7 +81,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the
@@ -314,12 +321,15 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     }
 }
 
-impl<'a, T: TrieValue> ZeroCopyFrom<CodePointTrie<'a, T>> for CodePointTrie<'static, T> {
-    fn zero_copy_from<'b>(cart: &'b CodePointTrie<'a, T>) -> CodePointTrie<'b, T> {
+impl<'trie, T: TrieValue> Clone for CodePointTrie<'trie, T>
+where
+    <T as zerovec::ule::AsULE>::ULE: Clone,
+{
+    fn clone(&self) -> Self {
         CodePointTrie {
-            header: cart.header,
-            index: ZeroVec::<'static, u16>::zero_copy_from(&cart.index),
-            data: ZeroVec::<'static, T>::zero_copy_from(&cart.data),
+            header: self.header,
+            index: self.index.clone(),
+            data: self.data.clone(),
         }
     }
 }

@@ -99,10 +99,13 @@ impl CoarseHourCycle {
             // requested fields.
             true,
         ) {
-            skeleton::BestSkeleton::AllFieldsMatch(pattern)
-            | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => {
-                Some(format!("{}", pattern.0))
-            }
+            skeleton::BestSkeleton::AllFieldsMatch(patterns)
+            | skeleton::BestSkeleton::MissingOrExtraFields(patterns) => Some(format!(
+                "{}",
+                patterns
+                    .0
+                    .expect_pattern("Only week-of patterns have plural variants")
+            )),
             skeleton::BestSkeleton::NoMatch => None,
         }
     }

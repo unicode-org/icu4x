@@ -4,14 +4,18 @@
 
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
-use crate::pattern::{reference::Pattern, PatternItem};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, Week};
+use crate::pattern::{
+    reference::{Pattern, PatternPlurals},
+    PatternItem,
+};
 use crate::provider;
 use crate::provider::date_time::DateTimeSymbols;
 
 use alloc::string::ToString;
 use core::fmt;
 use icu_locid::Locale;
+use icu_plurals::PluralRules;
 use writeable::Writeable;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -46,10 +50,11 @@ pub struct FormattedDateTime<'l, T>
 where
     T: DateTimeInput,
 {
-    pub(crate) pattern: &'l Pattern,
+    pub(crate) patterns: &'l PatternPlurals,
     pub(crate) symbols: Option<&'l provider::gregory::DateSymbolsV1>,
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
+    pub(crate) ordinal_rules: Option<&'l PluralRules>,
 }
 
 impl<'l, T> Writeable for FormattedDateTime<'l, T>
@@ -57,8 +62,15 @@ where
     T: DateTimeInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(self.pattern, self.symbols, self.datetime, self.locale, sink)
-            .map_err(|_| core::fmt::Error)
+        write_pattern_plurals(
+            self.patterns,
+            self.symbols,
+            self.datetime,
+            self.ordinal_rules,
+            self.locale,
+            sink,
+        )
+        .map_err(|_| core::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -69,8 +81,7 @@ where
     T: DateTimeInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.pattern, self.symbols, self.datetime, self.locale, f)
-            .map_err(|_| core::fmt::Error)
+        self.write_to(f)
     }
 }
 
@@ -94,10 +105,30 @@ where
     }
 }
 
-pub fn write_pattern<T, W>(
+fn write_pattern<T, W>(
     pattern: &crate::pattern::reference::Pattern,
     symbols: Option<&provider::gregory::DateSymbolsV1>,
+    loc_datetime: &impl LocalizedDateTimeInput<T>,
+    w: &mut W,
+) -> Result<(), Error>
+where
+    T: DateTimeInput,
+    W: fmt::Write + ?Sized,
+{
+    for item in pattern.items() {
+        match item {
+            PatternItem::Field(field) => write_field(pattern, field, symbols, loc_datetime, w)?,
+            PatternItem::Literal(ch) => w.write_char(*ch)?,
+        }
+    }
+    Ok(())
+}
+
+pub fn write_pattern_plurals<T, W>(
+    patterns: &PatternPlurals,
+    symbols: Option<&provider::gregory::DateSymbolsV1>,
     datetime: &T,
+    ordinal_rules: Option<&PluralRules>,
     locale: &Locale,
     w: &mut W,
 ) -> Result<(), Error>
@@ -106,13 +137,8 @@ where
     W: fmt::Write + ?Sized,
 {
     let loc_datetime = DateTimeInputWithLocale::new(datetime, locale);
-    for item in pattern.items() {
-        match item {
-            PatternItem::Field(field) => write_field(pattern, field, symbols, &loc_datetime, w)?,
-            PatternItem::Literal(ch) => w.write_char(*ch)?,
-        }
-    }
-    Ok(())
+    let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
+    write_pattern(pattern, symbols, &loc_datetime, w)
 }
 
 // This function assumes that the correct decision has been
@@ -167,6 +193,10 @@ where
                 w.write_str(symbol)?
             }
         },
+        FieldSymbol::Week(Week::WeekOfYear) => {
+            format_number(w, datetime.week_of_year()?.0 as isize, field.length)?
+        }
+        field @ FieldSymbol::Week(_) => return Err(Error::UnsupportedField(field)),
         FieldSymbol::Weekday(weekday) => {
             let dow = datetime
                 .datetime()
@@ -286,6 +316,16 @@ pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<b
     Ok(requires_symbols)
 }
 
+// This function determines whether any patterns will load symbols data.
+pub fn analyze_patterns(
+    patterns: &PatternPlurals,
+    supports_time_zones: bool,
+) -> Result<bool, &Field> {
+    patterns.patterns_iter().try_fold(false, |a, pattern| {
+        analyze_pattern(pattern, supports_time_zones).map(|b| a || b)
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -315,14 +355,8 @@ mod tests {
         let datetime =
             DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
-        write_pattern(
-            &pattern,
-            Some(data.get()),
-            &datetime,
-            &"und".parse().unwrap(),
-            &mut sink,
-        )
-        .unwrap();
+        let loc_datetime = DateTimeInputWithLocale::new(&datetime, &"und".parse().unwrap());
+        write_pattern(&pattern, Some(data.get()), &loc_datetime, &mut sink).unwrap();
         println!("{}", sink);
     }
 

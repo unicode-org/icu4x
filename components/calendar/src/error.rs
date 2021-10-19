@@ -36,6 +36,9 @@ pub enum DateTimeError {
     /// Out of range
     // TODO(Manishearth) turn this into a proper variant
     OutOfRange,
+    /// An input was missing.
+    #[displaydoc("No value for {0}")]
+    MissingInput(&'static str),
 }
 
 impl From<core::num::ParseIntError> for DateTimeError {

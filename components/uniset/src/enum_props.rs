@@ -11,14 +11,17 @@ use tinystr::TinyStr16;
 /// These constants are used to select one of the Unicode properties.
 /// See UProperty in ICU4C.
 #[derive(Clone, PartialEq, Debug, TryFromPrimitive)]
-#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[non_exhaustive]
 #[repr(i32)]
 pub enum EnumeratedProperty {
+    /// The General Category property.
     GeneralCategory = 0x1005,
+    /// The Script property. See [`Script`].
     Script = 0x100A,
+    /// The Script_Extensions property. See [`Script`].
     ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
-    InvalidCode = -1,          // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
+    /// Represents an invalid or unknown Unicode property.
+    InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
 }
 
 impl From<&TinyStr16> for EnumeratedProperty {
@@ -36,45 +39,74 @@ impl From<&TinyStr16> for EnumeratedProperty {
 /// GeneralSubcategory only supports specific subcategories (eg UppercaseLetter).
 /// It does not support grouped categories (eg Letter). For grouped categories, use GeneralCategory.
 #[derive(Copy, Clone, PartialEq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
-#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[repr(u8)]
 pub enum GeneralSubcategory {
+    /// A reserved unassigned code point or a noncharacter
     Unassigned = 0,
 
+    /// An uppercase letter
     UppercaseLetter = 1,
+    /// A lowercase letter
     LowercaseLetter = 2,
+    /// A digraphic letter, with first part uppercase
     TitlecaseLetter = 3,
+    /// A modifier letter
     ModifierLetter = 4,
+    /// Other letters, including syllables and ideographs
     OtherLetter = 5,
 
+    /// A nonspacing combining mark (zero advance width)
     NonspacingMark = 6,
-    EnclosingMark = 7,
+    /// A spacing combining mark (positive advance width)
     SpacingMark = 8,
+    /// An enclosing combining mark
+    EnclosingMark = 7,
 
+    /// A decimal digit
     Digit = 9,
+    /// A letterlike numeric character
     LetterNumber = 10,
+    /// A numeric character of other type
     OtherNumber = 11,
 
+    /// A space character (of various non-zero widths)
     SpaceSeparator = 12,
+    /// U+2028 LINE SEPARATOR only
     LineSeparator = 13,
+    /// U+2029 PARAGRAPH SEPARATOR only
     ParagraphSeparator = 14,
 
+    /// A C0 or C1 control code
     Control = 15,
+    /// A format control character
     Format = 16,
+    /// A private-use character
     PrivateUse = 17,
+    /// A surrogate code point
     Surrogate = 18,
 
+    /// A dash or hyphen punctuation mark
     DashPunctuation = 19,
+    /// An opening punctuation mark (of a pair)
     OpenPunctuation = 20,
+    /// A closing punctuation mark (of a pair)
     ClosePunctuation = 21,
+    /// A connecting punctuation mark, like a tie
     ConnectorPunctuation = 22,
-    OtherPunctuation = 23,
+    /// An initial quotation mark
     InitialPunctuation = 28,
+    /// A final quotation mark
     FinalPunctuation = 29,
+    /// A punctuation mark of other type
+    OtherPunctuation = 23,
 
+    /// A symbol of mathematical use
     MathSymbol = 24,
+    /// A currency sign
     CurrencySymbol = 25,
+    /// A non-letterlike modifier symbol
     ModifierSymbol = 26,
+    /// A symbol of other type
     OtherSymbol = 27,
 }
 
@@ -85,68 +117,99 @@ pub enum GeneralSubcategory {
 /// See https://www.unicode.org/reports/tr44/ .
 /// See UCharCategory and U_GET_GC_MASK in ICU4C.
 #[derive(Copy, Clone, PartialEq, Debug, Eq)]
-#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[repr(transparent)]
 pub struct GeneralCategory(pub(crate) u32);
 
 use GeneralCategory as GC;
 use GeneralSubcategory as GS;
 
-#[allow(missing_docs)] // These constants don't need documentation.
 #[allow(non_upper_case_globals)]
 impl GeneralCategory {
+    /// A reserved unassigned code point or a noncharacter
     pub const Unassigned: GeneralCategory = GC(1 << (GS::Unassigned as u32));
+    /// An uppercase letter
     pub const UppercaseLetter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32));
+    /// A lowercase letter
     pub const LowercaseLetter: GeneralCategory = GC(1 << (GS::LowercaseLetter as u32));
+    /// A digraphic letter, with first part uppercase
     pub const TitlecaseLetter: GeneralCategory = GC(1 << (GS::TitlecaseLetter as u32));
+    /// A modifier letter
     pub const ModifierLetter: GeneralCategory = GC(1 << (GS::ModifierLetter as u32));
+    /// Other letters, including syllables and ideographs
     pub const OtherLetter: GeneralCategory = GC(1 << (GS::OtherLetter as u32));
+    /// The union of UppercaseLetter, LowercaseLetter, and TitlecaseLetter
     pub const CasedLetter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32)
         | 1 << (GS::LowercaseLetter as u32)
         | 1 << (GS::TitlecaseLetter as u32));
+    /// The union of all letter categories
     pub const Letter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32)
         | 1 << (GS::LowercaseLetter as u32)
         | 1 << (GS::TitlecaseLetter as u32)
         | 1 << (GS::ModifierLetter as u32)
         | 1 << (GS::OtherLetter as u32));
 
+    /// A nonspacing combining mark (zero advance width)
     pub const NonspacingMark: GeneralCategory = GC(1 << (GS::NonspacingMark as u32));
+    /// A spacing combining mark (positive advance width)
     pub const EnclosingMark: GeneralCategory = GC(1 << (GS::EnclosingMark as u32));
+    /// An enclosing combining mark
     pub const SpacingMark: GeneralCategory = GC(1 << (GS::SpacingMark as u32));
+    /// The union of all mark categories
     pub const Mark: GeneralCategory = GC(1 << (GS::NonspacingMark as u32)
         | 1 << (GS::EnclosingMark as u32)
         | 1 << (GS::SpacingMark as u32));
 
+    /// A decimal digit
     pub const Digit: GeneralCategory = GC(1 << (GS::Digit as u32));
+    /// A letterlike numeric character
     pub const LetterNumber: GeneralCategory = GC(1 << (GS::LetterNumber as u32));
+    /// A numeric character of other type
     pub const OtherNumber: GeneralCategory = GC(1 << (GS::OtherNumber as u32));
+    /// The union of all number categories
     pub const Number: GeneralCategory = GC(1 << (GS::Digit as u32)
         | 1 << (GS::LetterNumber as u32)
         | 1 << (GS::OtherNumber as u32));
 
+    /// A space character (of various non-zero widths)
     pub const SpaceSeparator: GeneralCategory = GC(1 << (GS::SpaceSeparator as u32));
+    /// U+2028 LINE SEPARATOR only
     pub const LineSeparator: GeneralCategory = GC(1 << (GS::LineSeparator as u32));
+    /// U+2029 PARAGRAPH SEPARATOR only
     pub const ParagraphSeparator: GeneralCategory = GC(1 << (GS::ParagraphSeparator as u32));
+    /// The union of all separator categories
     pub const Separator: GeneralCategory = GC(1 << (GS::SpaceSeparator as u32)
         | 1 << (GS::LineSeparator as u32)
         | 1 << (GS::ParagraphSeparator as u32));
 
+    /// A C0 or C1 control code
     pub const Control: GeneralCategory = GC(1 << (GS::Control as u32));
+    /// A format control character
     pub const Format: GeneralCategory = GC(1 << (GS::Format as u32));
+    /// A private-use character
     pub const PrivateUse: GeneralCategory = GC(1 << (GS::PrivateUse as u32));
+    /// A surrogate code point
     pub const Surrogate: GeneralCategory = GC(1 << (GS::Surrogate as u32));
+    /// The union of all other categories
     pub const Other: GeneralCategory = GC(1 << (GS::Control as u32)
         | 1 << (GS::Format as u32)
         | 1 << (GS::PrivateUse as u32)
         | 1 << (GS::Surrogate as u32));
 
+    /// A dash or hyphen punctuation mark
     pub const DashPunctuation: GeneralCategory = GC(1 << (GS::DashPunctuation as u32));
+    /// An opening punctuation mark (of a pair)
     pub const OpenPunctuation: GeneralCategory = GC(1 << (GS::OpenPunctuation as u32));
+    /// A closing punctuation mark (of a pair)
     pub const ClosePunctuation: GeneralCategory = GC(1 << (GS::ClosePunctuation as u32));
+    /// A connecting punctuation mark, like a tie
     pub const ConnectorPunctuation: GeneralCategory = GC(1 << (GS::ConnectorPunctuation as u32));
-    pub const OtherPunctuation: GeneralCategory = GC(1 << (GS::OtherPunctuation as u32));
+    /// An initial quotation mark
     pub const InitialPunctuation: GeneralCategory = GC(1 << (GS::InitialPunctuation as u32));
+    /// A final quotation mark
     pub const FinalPunctuation: GeneralCategory = GC(1 << (GS::FinalPunctuation as u32));
+    /// A punctuation mark of other type
+    pub const OtherPunctuation: GeneralCategory = GC(1 << (GS::OtherPunctuation as u32));
+    /// The union of all punctuation categories
     pub const Punctuation: GeneralCategory = GC(1 << (GS::DashPunctuation as u32)
         | 1 << (GS::OpenPunctuation as u32)
         | 1 << (GS::ClosePunctuation as u32)
@@ -155,10 +218,15 @@ impl GeneralCategory {
         | 1 << (GS::InitialPunctuation as u32)
         | 1 << (GS::FinalPunctuation as u32));
 
+    /// A symbol of mathematical use
     pub const MathSymbol: GeneralCategory = GC(1 << (GS::MathSymbol as u32));
+    /// A currency sign
     pub const CurrencySymbol: GeneralCategory = GC(1 << (GS::CurrencySymbol as u32));
+    /// A non-letterlike modifier symbol
     pub const ModifierSymbol: GeneralCategory = GC(1 << (GS::ModifierSymbol as u32));
+    /// A symbol of other type
     pub const OtherSymbol: GeneralCategory = GC(1 << (GS::OtherSymbol as u32));
+    /// The union of all symbol categories
     pub const Symbol: GeneralCategory = GC(1 << (GS::MathSymbol as u32)
         | 1 << (GS::CurrencySymbol as u32)
         | 1 << (GS::ModifierSymbol as u32)
@@ -173,13 +241,18 @@ impl From<GeneralSubcategory> for GeneralCategory {
 
 /// Enumerated property Script.
 ///
+/// This is used with both the Script and Script_Extensions Unicode properties.
+/// Each character is assigned a single Script, but characters that are used in
+/// a particular subset of scripts will be in more than one Script_Extensions set.
+/// For example, DEVANAGARI DIGIT NINE has Script=Devanagari, but is also in the
+/// Script_Extensions set for Dogra, Kaithi, and Mahajani.
 /// For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
 /// See UScriptCode in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(transparent)]
 pub struct Script(pub(crate) u16);
 
-#[allow(missing_docs)] // These constants don't need documentation.
+#[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl Script {
     pub const Adlam: Script = Script(167);

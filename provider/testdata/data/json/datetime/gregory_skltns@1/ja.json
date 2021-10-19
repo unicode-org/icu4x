@@ -10,6 +10,7 @@
   "yMMMdE": "y年M月d日(E)",
   "yMMMdEEEE": "y年M月d日EEEE",
   "yMMMM": "y年M月",
+  "yw": "Y年第w週",
   "M": "M月",
   "Md": "M/d",
   "MdE": "M/d(E)",

@@ -8,4 +8,4 @@ pub(crate) mod pattern;
 
 pub use generic::GenericPattern;
 pub use parser::Parser;
-pub use pattern::Pattern;
+pub use pattern::{Pattern, PatternPlurals, PluralPattern};

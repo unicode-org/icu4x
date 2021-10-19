@@ -10,6 +10,7 @@
   "yMMMM": "MMMM 'de' y",
   "yMMMMd": "d 'de' MMMM 'de' y",
   "yMMMMdE": "EEE, d 'de' MMMM 'de' y",
+  "yw": "'semana' w 'de' Y",
   "M": "L",
   "Md": "d/M",
   "MdE": "E d-M",
