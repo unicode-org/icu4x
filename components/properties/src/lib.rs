@@ -12,7 +12,7 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
-//! [`UnicodeSet`]: icu_uniset::UnicodeSet
+//! [`UnicodeSet`]: ../icu_uniset/struct.UnicodeSet.html
 //! [`sets`]: crate::sets
 
 mod props;
