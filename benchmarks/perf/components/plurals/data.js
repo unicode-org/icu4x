@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634630206370,
+  "lastUpdate": 1634657251770,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16547,6 +16547,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 23735,
             "range": "± 1594",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c7c9535f18567ff6b32b02c8c3b042fe9aec6680",
+          "message": "Likely subtags minimization of und should be en (#1170)",
+          "timestamp": "2021-10-19T10:20:00-05:00",
+          "tree_id": "8f35470d047227f9e1dd61a99f0763ff54b7bae3",
+          "url": "https://github.com/unicode-org/icu4x/commit/c7c9535f18567ff6b32b02c8c3b042fe9aec6680"
+        },
+        "date": 1634657246546,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1370,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8038,
+            "range": "± 280",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25902,
+            "range": "± 3792",
             "unit": "ns/iter"
           }
         ]
