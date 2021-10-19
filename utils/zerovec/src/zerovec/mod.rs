@@ -560,6 +560,7 @@ where
 }
 
 impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
+    /// Creates a [`ZeroVec::Owned`] from an iterator of values.
     fn from_iter<I>(iter: I) -> Self
     where
         I: IntoIterator<Item = T>,
@@ -567,6 +568,7 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
         ZeroVec::Owned(iter.into_iter().map(|t| t.as_unaligned()).collect())
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
