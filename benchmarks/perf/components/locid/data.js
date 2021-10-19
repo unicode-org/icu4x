@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634630169709,
+  "lastUpdate": 1634657201271,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14789,6 +14789,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4589,
             "range": "± 173",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c7c9535f18567ff6b32b02c8c3b042fe9aec6680",
+          "message": "Likely subtags minimization of und should be en (#1170)",
+          "timestamp": "2021-10-19T10:20:00-05:00",
+          "tree_id": "8f35470d047227f9e1dd61a99f0763ff54b7bae3",
+          "url": "https://github.com/unicode-org/icu4x/commit/c7c9535f18567ff6b32b02c8c3b042fe9aec6680"
+        },
+        "date": 1634657196560,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2924,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4974,
+            "range": "± 320",
             "unit": "ns/iter"
           }
         ]
