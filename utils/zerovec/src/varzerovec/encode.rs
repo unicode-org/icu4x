@@ -59,7 +59,7 @@ use alloc::vec::Vec;
 ///         Ok(())
 ///     }
 ///     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-///         let ptr = bytes as *const [u8] as *const u8;
+///         let ptr = bytes.as_ptr();
 ///         let len = bytes.len();
 ///         // subtract the length of the char and u32 to get the length of the array
 ///         let len_new = (len - 8) / 4;
