@@ -16,6 +16,11 @@ use alloc::vec::Vec;
 ///
 /// See the [module level documentation](crate::ule::custom) for examples.
 ///
+/// A typical implementation will take each field in the order found in the [`VarULE`] type,
+/// convert it to ULE, call [`ULE::as_byte_slice()`] on them, and pass the slices to `cb` in order.
+/// A trailing [`ZeroVec`](crate::ZeroVec) or [`VarZeroVec`](crate::VarZeroVec) can have their underlying
+/// byte representation passed through.
+///
 /// # Safety
 ///
 /// The safety invariants of this function are:

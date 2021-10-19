@@ -35,7 +35,8 @@
 //!#    field3: ZeroVec<'a, u32>   
 //!# }
 //!
-//! // must be repr(packed) for safety of VarULE!
+//! // Must be repr(packed) for safety of VarULE!
+//! // Must also only contain ULE types
 //! #[repr(packed)]
 //! struct FooULE {
 //!     field1: <char as AsULE>::ULE,   
@@ -46,6 +47,7 @@
 //! unsafe impl VarULE for FooULE {
 //!     type Error = &'static str; // use strings for simplicity
 //!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+//!         // validate each field
 //!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..4]).map_err(|_| "validating char failed")?;
 //!         <char as AsULE>::ULE::validate_byte_slice(&bytes[4..8]).map_err(|_| "validating u32 failed")?;
 //!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[8..]).map_err(|_| "validating ZeroVec failed")?;
@@ -65,8 +67,10 @@
 //!
 //! unsafe impl EncodeAsVarULE<FooULE> for Foo<'_> {
 //!    fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+//!        // take each field, convert to ULE byte slices, and pass them through
 //!        cb(&[<char as AsULE>::ULE::as_byte_slice(&[self.field1.as_unaligned()]),
 //!             <u32 as AsULE>::ULE::as_byte_slice(&[self.field2.as_unaligned()]),
+//!             // the ZeroVec is already in the correct slice format
 //!             self.field3.as_bytes()])
 //!    }
 //! }
