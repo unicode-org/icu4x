@@ -6,6 +6,7 @@
 //! Traits over unaligned little-endian data (ULE, pronounced "yule").
 
 mod chars;
+pub mod custom;
 mod error;
 mod plain;
 mod string;

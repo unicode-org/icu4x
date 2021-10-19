@@ -44,7 +44,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<A: encode::EncodeAsVarULE<T>>(elements: &[A]) -> Self {
+    pub fn from_elements<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: components::get_serializable_bytes(elements).expect(
@@ -373,7 +373,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Insert an element at index `idx`
-    pub fn insert<A: encode::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
+    pub fn insert<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index > len {
             panic!(
@@ -430,7 +430,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
-    pub fn replace<A: encode::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
+    pub fn replace<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index >= len {
             panic!(

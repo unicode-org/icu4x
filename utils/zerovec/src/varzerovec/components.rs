@@ -286,7 +286,7 @@ where
     }
 }
 
-pub fn get_serializable_bytes<T: VarULE + ?Sized, A: encode::EncodeAsVarULE<T>>(
+pub fn get_serializable_bytes<T: VarULE + ?Sized, A: custom::EncodeAsVarULE<T>>(
     elements: &[A],
 ) -> Option<Vec<u8>> {
     // Assume each element is probably around 4 bytes long when estimating the
