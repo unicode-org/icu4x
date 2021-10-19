@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634616703495,
+  "lastUpdate": 1634630145249,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12809,6 +12809,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34441150,
             "range": "± 1498142",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dddfb63ad54ad7fc32fea8e728e487415d955caa",
+          "message": "Add small comment to ZeroVec::from_iter (#1185)",
+          "timestamp": "2021-10-19T00:49:42-07:00",
+          "tree_id": "872018bb3b34ce9e8dedd10014cb143fc624f4e7",
+          "url": "https://github.com/unicode-org/icu4x/commit/dddfb63ad54ad7fc32fea8e728e487415d955caa"
+        },
+        "date": 1634630140555,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 50247470,
+            "range": "± 1022310",
             "unit": "ns/iter"
           }
         ]
