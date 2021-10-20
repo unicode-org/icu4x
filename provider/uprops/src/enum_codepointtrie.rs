@@ -52,20 +52,20 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
             trie_type: trie_type_enum,
         };
         let index: ZeroVec<u16> = ZeroVec::clone_from_slice(&cpt_data.index);
-        let data: Result<ZeroVec<'static, T>, T::Error> = if let Some(data_8) = cpt_data.data_8 {
+        let data: Result<ZeroVec<'static, T>, T::TryFromU32Error> = if let Some(data_8) = cpt_data.data_8 {
             data_8
                 .iter()
-                .map(|i| T::parse_from_u32(*i as u32))
+                .map(|i| T::try_from_u32(*i as u32))
                 .collect()
         } else if let Some(data_16) = cpt_data.data_16 {
             data_16
                 .iter()
-                .map(|i| T::parse_from_u32(*i as u32))
+                .map(|i| T::try_from_u32(*i as u32))
                 .collect()
         } else if let Some(data_32) = cpt_data.data_32 {
             data_32
                 .iter()
-                .map(|i| T::parse_from_u32(*i as u32))
+                .map(|i| T::try_from_u32(*i as u32))
                 .collect()
         } else {
             return Err(DataError::new_resc_error(

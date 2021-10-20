@@ -38,34 +38,34 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     ///
     /// In most cases, the error value is read from the last element of the `data` array.
     const DATA_GET_ERROR_VALUE: Self;
-    // TODO: comment
-    type Error: Display;
+    /// Error type when converting from a u32 to this TrieValue.
+    type TryFromU32Error: Display;
     /// A parsing function that is primarily motivated by deserialization contexts.
     /// When the serialization type width is smaller than 32 bits, then it is expected
     /// that the call site will widen the value to a `u32` first.
-    fn parse_from_u32(i: u32) -> Result<Self, Self::Error>;
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error>;
 }
 
 impl TrieValue for u8 {
     const DATA_GET_ERROR_VALUE: u8 = u8::MAX;
-    type Error = TryFromIntError;
-    fn parse_from_u32(i: u32) -> Result<Self, Self::Error> {
+    type TryFromU32Error = TryFromIntError;
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
     }
 }
 
 impl TrieValue for u16 {
     const DATA_GET_ERROR_VALUE: u16 = u16::MAX;
-    type Error = TryFromIntError;
-    fn parse_from_u32(i: u32) -> Result<Self, Self::Error> {
+    type TryFromU32Error = TryFromIntError;
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
     }
 }
 
 impl TrieValue for u32 {
     const DATA_GET_ERROR_VALUE: u32 = u32::MAX;
-    type Error = TryFromIntError;
-    fn parse_from_u32(i: u32) -> Result<Self, Self::Error> {
+    type TryFromU32Error = TryFromIntError;
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Ok(i)
     }
 }
