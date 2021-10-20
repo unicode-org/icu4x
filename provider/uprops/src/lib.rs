@@ -21,7 +21,7 @@ mod bin_uniset;
 mod enum_codepointtrie;
 mod enum_uniset;
 mod error;
+mod provider;
 mod uprops_serde;
 
-pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
-pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
+pub use provider::PropertiesDataProvider;

@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::binary::BinaryPropertiesDataProvider;
-use crate::enumerated::EnumeratedPropertiesDataProvider;
+use crate::bin_uniset::BinaryPropertyUnicodeSetDataProvider;
+use crate::enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
@@ -11,14 +11,14 @@ use icu_provider::prelude::*;
 use std::path::PathBuf;
 
 pub struct PropertiesDataProvider {
-    binary: BinaryPropertiesDataProvider,
-    enumerated: EnumeratedPropertiesDataProvider,
+    binary: BinaryPropertyUnicodeSetDataProvider,
+    enumerated: EnumeratedPropertyUnicodeSetDataProvider,
 }
 
 impl PropertiesDataProvider {
     pub fn new(root_dir: PathBuf) -> Self {
-        let binary = BinaryPropertiesDataProvider::new(root_dir.clone());
-        let enumerated = EnumeratedPropertiesDataProvider::new(root_dir);
+        let binary = BinaryPropertyUnicodeSetDataProvider::new(root_dir.clone());
+        let enumerated = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
         Self { binary, enumerated }
     }
 }
