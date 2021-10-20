@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634760234375,
+  "lastUpdate": 1634761712820,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12959,6 +12959,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44933761,
             "range": "± 1564912",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2611e3a833eda73f77fdf394c5a932e6821f236c",
+          "message": "Bump ZeroVec to 0.4 (#1194)",
+          "timestamp": "2021-10-20T13:22:39-07:00",
+          "tree_id": "0f0f19f8632fec2e3b253385e435861422bc4109",
+          "url": "https://github.com/unicode-org/icu4x/commit/2611e3a833eda73f77fdf394c5a932e6821f236c"
+        },
+        "date": 1634761708314,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 41149745,
+            "range": "± 673642",
             "unit": "ns/iter"
           }
         ]
