@@ -115,7 +115,7 @@ mod tests {
     use super::*;
     use icu_codepointtrie::codepointtrie::CodePointTrie;
     use icu_properties::provider::key;
-    use icu_properties::GeneralSubcategory;
+    use icu_properties::{GeneralSubcategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
     // `GeneralSubcategory` Rust enum, not the `GeneralCategory` Rust enum,
@@ -141,5 +141,27 @@ mod tests {
 
         assert_eq!(trie.get('꣓' as u32), GeneralSubcategory::Digit);
         assert_eq!(trie.get('≈' as u32), GeneralSubcategory::MathSymbol);
+    }
+
+    #[test]
+    fn test_script() {
+        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
+
+        let payload: DataPayload<'_, UnicodePropertyMapV1Marker<Script>> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: key::SCRIPT_V1,
+                    options: ResourceOptions::default(),
+                },
+            })
+            .expect("The data should be valid")
+            .take_payload()
+            .expect("Loading was successful");
+
+        let trie: &CodePointTrie<Script> = &payload.get().codepoint_trie;
+
+        assert_eq!(trie.get('꣓' as u32), Script::Saurashtra);
+        assert_eq!(trie.get('≈' as u32), Script::Common);
     }
 }
