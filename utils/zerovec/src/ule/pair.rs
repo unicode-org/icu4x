@@ -58,3 +58,16 @@ impl<E: fmt::Display, F: fmt::Display> fmt::Display for PairULEError<E, F> {
         }
     }
 }
+
+// We need manual impls since `#[derive()]` is disallowed on packed types
+impl<A: ULE, B: ULE> Clone for PairULE<A, B> {
+    fn clone(&self) -> Self {
+        // copy to the stack to avoid hitting a future incompat error
+        // https://github.com/rust-lang/rust/issues/82523#issuecomment-947900712
+        let zero = self.0;
+        let one = self.1;
+        PairULE(zero, one)
+    }
+}
+
+impl<A: ULE + Copy, B: ULE + Copy> Copy for PairULE<A, B> {}

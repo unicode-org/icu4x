@@ -58,7 +58,7 @@ use core::{fmt, mem, slice};
 pub unsafe trait ULE
 where
     Self: Sized,
-    Self: 'static,
+    Self: Copy + 'static,
 {
     /// The error that occurs if a byte array is not valid for this ULE.
     type Error: fmt::Display;
@@ -138,7 +138,7 @@ where
 }
 
 /// A trait for any type that has a 1:1 mapping with an unaligned little-endian (ULE) type.
-pub trait AsULE {
+pub trait AsULE: Copy {
     /// The ULE type corresponding to `Self`.
     ///
     /// Types having infallible conversions from all bit values (Plain Old Data) can use
