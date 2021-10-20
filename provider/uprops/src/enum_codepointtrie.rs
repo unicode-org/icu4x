@@ -62,7 +62,7 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
             } else {
                 return Err(DataError::new_resc_error(
                     icu_codepointtrie::error::Error::FromDeserialized {
-                        reason: "Cannot deserialize data array for CodePointTrie in TOML",
+                        reason: "Did not find data array for CodePointTrie in TOML",
                     },
                 ));
             };
