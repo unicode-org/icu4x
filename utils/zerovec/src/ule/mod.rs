@@ -8,12 +8,14 @@
 mod chars;
 pub mod custom;
 mod error;
+mod pair;
 mod plain;
 mod string;
 mod vec;
 
 pub use chars::CharULE;
 pub use error::ULEError;
+pub use pair::{PairULE, PairULEError};
 pub use plain::PlainOldULE;
 
 use alloc::alloc::Layout;
