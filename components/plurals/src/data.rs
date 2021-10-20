@@ -64,13 +64,14 @@ fn parse_rule(input: &Option<Cow<str>>) -> Result<Option<ast::Condition>, Plural
 impl<'data> TryInto<PluralRuleList> for &PluralRuleStringsV1<'data> {
     type Error = PluralRulesError;
     fn try_into(self) -> Result<PluralRuleList, Self::Error> {
-        Ok(PluralRuleList {
-            zero: parse_rule(&self.zero)?,
-            one: parse_rule(&self.one)?,
-            two: parse_rule(&self.two)?,
-            few: parse_rule(&self.few)?,
-            many: parse_rule(&self.many)?,
-        })
+        todo!()
+        // Ok(PluralRuleList {
+        //     zero: parse_rule(&self.zero)?,
+        //     one: parse_rule(&self.one)?,
+        //     two: parse_rule(&self.two)?,
+        //     few: parse_rule(&self.few)?,
+        //     many: parse_rule(&self.many)?,
+        // })
     }
 }
 

@@ -123,7 +123,7 @@ impl<'p> Parser<'p> {
         if let Some(cond) = self.get_and_condition()? {
             result.push(cond);
         } else {
-            return Ok(ast::Condition(result.into_boxed_slice()));
+            return Ok(ast::Condition(result));
         }
 
         while self.take_if(Token::Or) {
@@ -134,7 +134,7 @@ impl<'p> Parser<'p> {
             }
         }
         // If lexer is not done, error?
-        Ok(ast::Condition(result.into_boxed_slice()))
+        Ok(ast::Condition(result))
     }
 
     fn get_and_condition(&mut self) -> Result<Option<ast::AndCondition>, ParserError> {
@@ -148,7 +148,7 @@ impl<'p> Parser<'p> {
                     return Err(ParserError::ExpectedRelation);
                 }
             }
-            Ok(Some(ast::AndCondition(rel.into_boxed_slice())))
+            Ok(Some(ast::AndCondition(rel)))
         } else {
             Ok(None)
         }
@@ -195,7 +195,7 @@ impl<'p> Parser<'p> {
                 break;
             }
         }
-        Ok(ast::RangeList(range_list.into_boxed_slice()))
+        Ok(ast::RangeList(range_list))
     }
 
     fn take_if(&mut self, token: Token) -> bool {
@@ -255,7 +255,7 @@ impl<'p> Parser<'p> {
             ranges.push(self.get_sample_range()?);
         }
         Ok(ast::SampleList {
-            sample_ranges: ranges.into_boxed_slice(),
+            sample_ranges: ranges,
             ellipsis,
         })
     }

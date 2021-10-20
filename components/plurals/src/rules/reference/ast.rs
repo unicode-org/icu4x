@@ -38,8 +38,8 @@
 //! [`PluralCategory`]: crate::PluralCategory
 //! [`parse`]: super::parse()
 //! [`test_condition`]: super::test_condition()
-use alloc::boxed::Box;
 use alloc::string::String;
+use alloc::vec::Vec;
 use core::ops::RangeInclusive;
 
 /// A complete AST representation of a plural rule.
@@ -127,7 +127,7 @@ pub struct Rule {
 ///
 /// [`AndConditions`]: AndCondition
 #[derive(Debug, Clone, PartialEq)]
-pub struct Condition(pub Box<[AndCondition]>);
+pub struct Condition(pub Vec<AndCondition>);
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of [`Relations`].
 ///
@@ -168,7 +168,7 @@ pub struct Condition(pub Box<[AndCondition]>);
 ///
 /// [`Relations`]: Relation
 #[derive(Debug, Clone, PartialEq)]
-pub struct AndCondition(pub Box<[Relation]>);
+pub struct AndCondition(pub Vec<Relation>);
 
 /// An incomplete AST representation of a plural rule. Comprises an [`Expression`], an [`Operator`], and a [`RangeList`].
 ///
@@ -314,7 +314,7 @@ pub enum Operand {
 ///
 /// [`RangeListItems`]: RangeListItem
 #[derive(Debug, Clone, PartialEq)]
-pub struct RangeList(pub Box<[RangeListItem]>);
+pub struct RangeList(pub Vec<RangeListItem>);
 
 /// An enum of items that appear in a [`RangeList`]: `Range` or a `Value`.
 ///
@@ -421,7 +421,7 @@ pub struct Samples {
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub struct SampleList {
-    pub sample_ranges: Box<[SampleRange]>,
+    pub sample_ranges: Vec<SampleRange>,
     pub ellipsis: bool,
 }
 

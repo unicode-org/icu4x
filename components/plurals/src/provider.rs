@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::rules::runtime::ast::Rule;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 
@@ -23,16 +24,18 @@ pub mod resolver;
 ///
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
 #[icu_provider::data_struct]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub struct PluralRuleStringsV1<'data> {
-    pub zero: Option<Cow<'data, str>>,
-    pub one: Option<Cow<'data, str>>,
-    pub two: Option<Cow<'data, str>>,
-    pub few: Option<Cow<'data, str>>,
-    pub many: Option<Cow<'data, str>>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub zero: Option<Rule<'data>>,
+    // pub zero: Option<Cow<'data, str>>,
+    // pub one: Option<Cow<'data, str>>,
+    // pub two: Option<Cow<'data, str>>,
+    // pub few: Option<Cow<'data, str>>,
+    // pub many: Option<Cow<'data, str>>,
 }
