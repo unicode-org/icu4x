@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634656873415,
+  "lastUpdate": 1634691517334,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -1883,6 +1883,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c7c9535f18567ff6b32b02c8c3b042fe9aec6680"
         },
         "date": 1634656869425,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610328,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30f0687631686e6b2d0a2dd3796ef34b06d5d08f",
+          "message": "Refactor properties to separate crate (#1153)",
+          "timestamp": "2021-10-19T17:57:17-07:00",
+          "tree_id": "3e662d624ef229e9abd9c6d37a43796578f1861e",
+          "url": "https://github.com/unicode-org/icu4x/commit/30f0687631686e6b2d0a2dd3796ef34b06d5d08f"
+        },
+        "date": 1634691512741,
         "tool": "ndjson",
         "benches": [
           {
