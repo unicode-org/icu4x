@@ -5,7 +5,7 @@
 #![allow(missing_docs)]
 
 use zerovec::ule::{AsULE, PlainOldULE, VarULE, ULE};
-use zerovec::varzerovec::encode::EncodeAsVarULE;
+use zerovec::ule::custom::EncodeAsVarULE;
 use zerovec::VarZeroVec;
 use zerovec::ZeroVec;
 
@@ -141,8 +141,7 @@ pub struct Relation<'data> {
     pub(crate) range_list: ZeroVec<'data, RangeOrValue>,
 }
 
-unsafe impl EncodeAsVarULE for Relation<'_> {
-    type VarULE = RelationULE;
+unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
     fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         let encoded =
             RelationULE::encode_andor_polarity_operand(self.and_or, self.polarity, self.operand);
