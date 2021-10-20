@@ -4,9 +4,9 @@
 
 use crate::binary::BinaryPropertiesDataProvider;
 use crate::enumerated::EnumeratedPropertiesDataProvider;
+use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
-use icu_uniset::provider::UnicodePropertyV1Marker;
 
 use std::path::PathBuf;
 

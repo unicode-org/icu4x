@@ -66,9 +66,9 @@ version = "0.3"
 path = "../plurals"
 default-features = false
 
-[dependencies.icu_uniset]
+[dependencies.icu_properties]
 version = "0.3"
-path = "../uniset"
+path = "../../components/properties"
 default-features = false
 
 [dependencies.fixed_decimal]
@@ -79,10 +79,11 @@ default-features = false
 [dev-dependencies]
 icu_provider = { version = "0.3", path = "../../provider/core" }
 icu_testdata = { version = "0.3", path = "../../provider/testdata" }
+icu_uniset = { version = "0.3", path = "../../utils/uniset" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [features]
-std = ["icu_datetime/std", "icu_locid/std", "icu_plurals/std", "icu_uniset/std", "fixed_decimal/std"]
+std = ["icu_datetime/std", "icu_locid/std", "icu_plurals/std", "icu_properties/std", "fixed_decimal/std"]
 default = ["provider_serde"]
 serde = [
     "icu_locid/serde"
@@ -92,5 +93,5 @@ provider_serde = [
     "icu_decimal/provider_serde",
     "icu_locale_canonicalizer/provider_serde",
     "icu_plurals/provider_serde",
-    "icu_uniset/provider_serde",
+    "icu_properties/provider_serde",
 ]

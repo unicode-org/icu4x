@@ -37,7 +37,7 @@ pub struct UnicodeSet<'data> {
     size: usize,
 }
 
-#[cfg(feature = "serde")]
+#[cfg(any(feature = "serde", test))]
 impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -59,7 +59,7 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
-#[cfg(feature = "serde")]
+#[cfg(any(feature = "serde", test))]
 impl<'data> serde::Serialize for UnicodeSet<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -79,8 +79,8 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
-    /// use icu::uniset::UnicodeSetError;
+    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
     /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&valid);
@@ -122,8 +122,8 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
-    /// use icu::uniset::UnicodeSetError;
+    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
     /// let result = UnicodeSet::from_inversion_list_slice(&valid);
@@ -150,8 +150,8 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
-    /// use icu::uniset::UnicodeSetError;
+    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
     ///
     /// use std::vec::Vec;
@@ -195,7 +195,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// use zerovec::ZeroVec;
     ///
     /// let expected = vec![0x0, (char::MAX as u32) + 1];
@@ -219,7 +219,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// use zerovec::ZeroVec;
     ///
     /// const BMP_MAX: u32 = 0xFFFF;
@@ -250,7 +250,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = [0x41, 0x44, 0x45, 0x46];
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// let mut ex_iter_chars = example.iter_chars();
@@ -278,7 +278,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Example
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = [0x41, 0x44, 0x45, 0x46];
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// let mut example_iter_ranges = example.iter_ranges();
@@ -353,7 +353,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains('A'));
@@ -376,7 +376,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains_u32(0x41));
@@ -395,7 +395,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains_range(&('A'..'C')));
@@ -414,7 +414,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// use std::char;
     /// let check = char::from_u32(0xD7FE).unwrap() .. char::from_u32(0xE001).unwrap();
     /// let example_list = [0xD7FE, 0xD7FF, 0xE000, 0xE001];
@@ -447,7 +447,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = [0x41, 0x46, 0x55, 0x5B]; // A - E, U - Z
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// let a_to_d = UnicodeSet::from_inversion_list_slice(&[0x41, 0x45]).unwrap();
@@ -487,7 +487,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = [0x41, 0x44]; // {A, B, C}
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// assert_eq!(example.span("CABXYZ", true), 3);
@@ -508,7 +508,7 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu::uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = [0x41, 0x44]; // {A, B, C}
     /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
     /// assert_eq!(example.span_back("XYZCAB", true), 3);

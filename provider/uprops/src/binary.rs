@@ -4,9 +4,10 @@
 
 use crate::error::Error;
 use crate::uprops_serde;
+use icu_properties::provider::UnicodePropertyV1;
+use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
-use icu_uniset::provider::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::fs;
 use std::path::PathBuf;
@@ -70,6 +71,7 @@ impl IterableDataProviderCore for BinaryPropertiesDataProvider {
 
 #[test]
 fn test_basic() {
+    use icu_properties::provider::key;
     use icu_uniset::UnicodeSet;
     use std::convert::TryInto;
 

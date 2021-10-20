@@ -367,50 +367,18 @@ pub mod plurals {
     pub use icu_plurals::*;
 }
 
-pub mod uniset {
-    //! Unicode Set operations
+pub mod properties {
+    //! `icu_properties` is a utility crate of the [`ICU4X`] project.
     //!
-    //! This API provides necessary functionality for highly efficient querying of sets of Unicode characters.
+    //! This component provides definitions of [Unicode Properties] and APIs for
+    //! retrieving property data in an appropriate data structure.
     //!
-    //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
+    //! Currently, only binary property APIs are supported, with APIs that return
+    //! a [`UnicodeSet`]. See the [`sets`] module for more details.
     //!
-    //! # Architecture
-    //! ICU4X `UnicodeSet` is split up into independent levels, with [`UnicodeSet`] representing the membership/query API,
-    //! and [`UnicodeSetBuilder`] representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
-    //! is in future works.
-    //!
-    //! # Examples:
-    //!
-    //! ## Creating a `UnicodeSet`
-    //!
-    //! UnicodeSets are created from either serialized UnicodeSets,
-    //! represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
-    //! the [`UnicodeSetBuilder`], or from the TBA Properties API.
-    //!
-    //! ```
-    //! use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
-    //!
-    //! let mut builder = UnicodeSetBuilder::new();
-    //! builder.add_range(&('A'..'Z'));
-    //! let set: UnicodeSet = builder.build();
-    //!
-    //! assert!(set.contains('A'));
-    //! ```
-    //!
-    //! ## Querying a `UnicodeSet`
-    //!
-    //! Currently, you can check if a character/range of characters exists in the UnicodeSet, or iterate through the characters.
-    //!
-    //! ```
-    //! use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
-    //!
-    //! let mut builder = UnicodeSetBuilder::new();
-    //! builder.add_range(&('A'..'Z'));
-    //! let set: UnicodeSet = builder.build();
-    //!
-    //! assert!(set.contains('A'));
-    //! assert!(set.contains_range(&('A'..='C')));
-    //! assert_eq!(set.iter_chars().next(), Some('A'));
-    //! ```
-    pub use icu_uniset::*;
+    //! [`ICU4X`]: ../icu/index.html
+    //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
+    //! [`UnicodeSet`]: ../../icu_uniset/struct.UnicodeSet.html
+    //! [`sets`]: sets
+    pub use icu_properties::*;
 }
