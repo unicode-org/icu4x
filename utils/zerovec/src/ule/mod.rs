@@ -152,7 +152,7 @@ pub trait AsULE: Copy {
     /// This function may involve byte order swapping (native-endian to little-endian).
     ///
     /// For best performance, mark your implementation of this function `#[inline]`.
-    fn as_unaligned(&self) -> Self::ULE;
+    fn as_unaligned(self) -> Self::ULE;
 
     /// Converts from `&Self::ULE` to `Self`.
     ///
@@ -165,7 +165,7 @@ pub trait AsULE: Copy {
     /// This function is infallible because bit validation should have occurred when `Self::ULE`
     /// was first constructed. An implementation may therefore involve an `unsafe{}` block, like
     /// `from_bytes_unchecked()`.
-    fn from_unaligned(unaligned: &Self::ULE) -> Self;
+    fn from_unaligned(unaligned: Self::ULE) -> Self;
 }
 
 /// An [`EqULE`] type is one whose byte sequence equals the byte sequence of its ULE type on
