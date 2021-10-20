@@ -320,7 +320,7 @@ where
 }
 
 /// Characters that can come after the first character in an identifier. If using NFKC to
-/// fold differences between characters, use [`get_xid_continue_property`] instead.  See
+/// fold differences between characters, use [`get_xid_continue`] instead.  See
 /// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
 /// more details.
 pub fn get_id_continue<'data, D>(provider: &D) -> UnisetResult<'data>
@@ -340,7 +340,7 @@ where
 }
 
 /// Characters that can begin an identifier. If using NFKC to fold differences between
-/// characters, use [`get_xid_start_property`] instead.  See [`Unicode Standard Annex
+/// characters, use [`get_xid_start`] instead.  See [`Unicode Standard Annex
 /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
 pub fn get_id_start<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -610,8 +610,10 @@ where
 
 /// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property
 /// General_Category specifies enumerated Unicode general category types.
-/// See https://www.unicode.org/reports/tr44/ .
-pub fn get_general_category_val_set<'data, D>(
+/// See <https://www.unicode.org/reports/tr44/> .
+///
+/// [`UnicodeSet`]: icu_uniset::UnicodeSet
+pub fn get_for_general_category<'data, D>(
     provider: &'data D,
     enum_val: GeneralCategory,
 ) -> UnisetResult
@@ -663,8 +665,10 @@ where
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Script Unicode enumerated property
-/// See https://www.unicode.org/reports/tr44/ .
-pub fn get_script_val_set<'data, D>(provider: &'data D, enum_val: Script) -> UnisetResult
+/// See <https://www.unicode.org/reports/tr44/> .
+///
+/// [`UnicodeSet`]: icu_uniset::UnicodeSet
+pub fn get_for_script<'data, D>(provider: &'data D, enum_val: Script) -> UnisetResult
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
 {

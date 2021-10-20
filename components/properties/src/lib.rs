@@ -12,13 +12,12 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
-//! [`UnicodeSet`]: ../icu_uniset/struct.UnicodeSet.html
+//! [`UnicodeSet`]: icu_uniset::UnicodeSet
 //! [`sets`]: crate::sets
 
 #![no_std]
 
 mod props;
-#[allow(unused)]
 pub mod provider;
 pub mod sets;
 mod ule;

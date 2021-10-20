@@ -231,7 +231,7 @@ impl From<GeneralSubcategory> for GeneralCategory {
 /// a particular subset of scripts will be in more than one Script_Extensions set.
 /// For example, DEVANAGARI DIGIT NINE has Script=Devanagari, but is also in the
 /// Script_Extensions set for Dogra, Kaithi, and Mahajani.
-/// For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
+/// For more information, see UAX #24: <http://www.unicode.org/reports/tr24/>.
 /// See UScriptCode in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(transparent)]
