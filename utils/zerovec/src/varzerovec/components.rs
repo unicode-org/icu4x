@@ -12,7 +12,7 @@ use core::marker::PhantomData;
 use core::{iter, mem};
 
 fn usizeify(x: PlainOldULE<4>) -> usize {
-    u32::from_unaligned(&x) as usize
+    u32::from_unaligned(x) as usize
 }
 
 /// A logical representation of the backing `&[u8]` buffer.
@@ -67,7 +67,8 @@ impl<'a, T: VarULE + ?Sized> SliceComponents<'a, T> {
         let len_ule = PlainOldULE::<4>::parse_byte_slice(len_bytes)
             .map_err(|_| VarZeroVecError::FormatError)?;
 
-        let len = u32::from_unaligned(len_ule.get(0).ok_or(VarZeroVecError::FormatError)?) as usize;
+        let len =
+            u32::from_unaligned(*len_ule.get(0).ok_or(VarZeroVecError::FormatError)?) as usize;
         let indices_bytes = slice
             .get(4..4 * len + 4)
             .ok_or(VarZeroVecError::FormatError)?;
@@ -111,7 +112,7 @@ impl<'a, T: VarULE + ?Sized> SliceComponents<'a, T> {
         let len_bytes = slice.get_unchecked(0..4);
         let len_ule = PlainOldULE::<4>::from_byte_slice_unchecked(len_bytes);
 
-        let len = u32::from_unaligned(len_ule.get_unchecked(0)) as usize;
+        let len = u32::from_unaligned(*len_ule.get_unchecked(0)) as usize;
         let indices_bytes = slice.get_unchecked(4..4 * len + 4);
         let indices = PlainOldULE::<4>::from_byte_slice_unchecked(indices_bytes);
         let things = slice.get_unchecked(4 * len + 4..);
@@ -239,6 +240,7 @@ impl<'a, T: VarULE + ?Sized> SliceComponents<'a, T> {
         let indices = self
             .indices
             .iter()
+            .copied()
             .map(u32::from_unaligned)
             .collect::<Vec<_>>();
         format!("SliceComponents {{ indices: {:?} }}", indices)

@@ -253,7 +253,7 @@ where
     /// ```
     #[inline]
     pub fn clone_from_slice(other: &[T]) -> Self {
-        Self::Owned(other.iter().map(T::as_unaligned).collect())
+        Self::Owned(other.iter().copied().map(T::as_unaligned).collect())
     }
 
     /// Creates a `Vec<T>` from a `ZeroVec<T>`.
@@ -270,7 +270,11 @@ where
     /// ```
     #[inline]
     pub fn to_vec(&self) -> Vec<T> {
-        self.as_slice().iter().map(T::from_unaligned).collect()
+        self.as_slice()
+            .iter()
+            .copied()
+            .map(T::from_unaligned)
+            .collect()
     }
 }
 
@@ -348,7 +352,7 @@ where
     /// ```
     #[inline]
     pub fn get(&self, index: usize) -> Option<T> {
-        self.as_slice().get(index).map(T::from_unaligned)
+        self.as_slice().get(index).copied().map(T::from_unaligned)
     }
 
     pub(crate) fn get_ule_ref(&self, index: usize) -> Option<&T::ULE> {
@@ -371,7 +375,7 @@ where
     /// ```
     #[inline]
     pub fn first(&self) -> Option<T> {
-        self.as_slice().first().map(T::from_unaligned)
+        self.as_slice().first().copied().map(T::from_unaligned)
     }
 
     /// Gets the last element. Returns None if empty.
@@ -390,7 +394,7 @@ where
     /// ```
     #[inline]
     pub fn last(&self) -> Option<T> {
-        self.as_slice().last().map(T::from_unaligned)
+        self.as_slice().last().copied().map(T::from_unaligned)
     }
 
     /// Gets an iterator over the elements.
@@ -414,7 +418,7 @@ where
     /// ```
     #[inline]
     pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
-        self.as_slice().iter().map(T::from_unaligned)
+        self.as_slice().iter().copied().map(T::from_unaligned)
     }
 
     /// Mutates each element according to a given function, meant to be
@@ -439,7 +443,7 @@ where
     #[inline]
     pub fn for_each_mut(&mut self, mut f: impl FnMut(&mut T)) {
         self.to_mut().iter_mut().for_each(|item| {
-            let mut aligned = T::from_unaligned(item);
+            let mut aligned = T::from_unaligned(*item);
             f(&mut aligned);
             *item = aligned.as_unaligned()
         });
@@ -471,7 +475,7 @@ where
         mut f: impl FnMut(&mut T) -> Result<(), E>,
     ) -> Result<(), E> {
         self.to_mut().iter_mut().try_for_each(|item| {
-            let mut aligned = T::from_unaligned(item);
+            let mut aligned = T::from_unaligned(*item);
             f(&mut aligned)?;
             *item = aligned.as_unaligned();
             Ok(())
@@ -496,7 +500,7 @@ where
         match self {
             Self::Owned(vec) => ZeroVec::Owned(vec),
             Self::Borrowed(_) => {
-                let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(&ule)).collect();
+                let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(ule)).collect();
                 ZeroVec::Owned(vec)
             }
         }
@@ -522,7 +526,7 @@ where
         match self {
             ZeroVec::Owned(ref mut vec) => vec,
             ZeroVec::Borrowed(_) => {
-                let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(&ule)).collect();
+                let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(ule)).collect();
                 let new_self = ZeroVec::Owned(vec);
                 *self = new_self;
                 // recursion is limited since we are guaranteed to hit the Owned branch
@@ -555,7 +559,7 @@ where
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
         self.as_slice()
-            .binary_search_by(|probe| T::from_unaligned(probe).cmp(x))
+            .binary_search_by(|probe| T::from_unaligned(*probe).cmp(x))
     }
 }
 

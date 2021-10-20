@@ -28,13 +28,15 @@ unsafe impl<A: ULE, B: ULE> ULE for PairULE<A, B> {
 
 impl<A: AsULE, B: AsULE> AsULE for (A, B) {
     type ULE = PairULE<A::ULE, B::ULE>;
-    fn as_unaligned(&self) -> Self::ULE {
+    fn as_unaligned(self) -> Self::ULE {
         PairULE(self.0.as_unaligned(), self.1.as_unaligned())
     }
 
-    fn from_unaligned(unaligned: &Self::ULE) -> Self {
-        // This warns due to https://github.com/rust-lang/rust/issues/82523#issuecomment-947900712
-        (A::from_unaligned(&unaligned.0), B::from_unaligned(&unaligned.1))
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        (
+            A::from_unaligned(unaligned.0),
+            B::from_unaligned(unaligned.1),
+        )
     }
 }
 

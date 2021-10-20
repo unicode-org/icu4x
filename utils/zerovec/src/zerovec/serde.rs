@@ -49,7 +49,7 @@ where
             Vec::new()
         };
         while let Some(value) = seq.next_element::<T>()? {
-            vec.push(T::as_unaligned(&value));
+            vec.push(T::as_unaligned(value));
         }
         Ok(ZeroVec::Owned(vec))
     }
