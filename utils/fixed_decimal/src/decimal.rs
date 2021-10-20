@@ -340,6 +340,51 @@ impl FixedDecimal {
         self
     }
 
+    /// Add zero digits to the magnitude, either negative (trailing zeros) or positive (leading zeros).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(42);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// dec.pad(2);
+    /// assert_eq!("042", dec.to_string());
+    ///
+    /// dec.pad(-2);
+    /// assert_eq!("042.00", dec.to_string());
+    /// ```
+    pub fn pad(&mut self, magnitude: i16) {
+        match magnitude.cmp(&0) {
+            Ordering::Less => self.lower_magnitude = magnitude,
+            Ordering::Greater => self.upper_magnitude = magnitude,
+            _ => (),
+        }
+    }
+
+    /// Add zero digits to the magnitude, either negative (trailing zeros) or positive (leading zeros).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(42);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// let dec = dec.padded(2);
+    /// assert_eq!("042", dec.to_string());
+    ///
+    /// let dec = dec.padded(-2);
+    /// assert_eq!("042.00", dec.to_string());
+    /// ```
+    pub fn padded(mut self, magnitude: i16) -> Self {
+        self.pad(magnitude);
+        self
+    }
+
     /// Returns the [Signum][Signum] of this FixedDecimal.
     ///
     /// # Examples
