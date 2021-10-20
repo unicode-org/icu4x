@@ -77,7 +77,7 @@ where
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<T> Serialize for ZeroVec<'_, T>
 where
-    T: Serialize + AsULE + Copy,
+    T: Serialize + AsULE,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

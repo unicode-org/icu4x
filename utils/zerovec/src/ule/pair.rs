@@ -28,10 +28,13 @@ unsafe impl<A: ULE, B: ULE> ULE for PairULE<A, B> {
 
 impl<A: AsULE, B: AsULE> AsULE for (A, B) {
     type ULE = PairULE<A::ULE, B::ULE>;
+
+    #[inline]
     fn as_unaligned(self) -> Self::ULE {
         PairULE(self.0.as_unaligned(), self.1.as_unaligned())
     }
 
+    #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         (
             A::from_unaligned(unaligned.0),
@@ -72,4 +75,4 @@ impl<A: ULE, B: ULE> Clone for PairULE<A, B> {
     }
 }
 
-impl<A: ULE + Copy, B: ULE + Copy> Copy for PairULE<A, B> {}
+impl<A: ULE, B: ULE> Copy for PairULE<A, B> {}

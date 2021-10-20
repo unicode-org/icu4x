@@ -100,11 +100,11 @@ where
     }
 }
 
-impl<T> Eq for ZeroVec<'_, T> where T: AsULE + Copy + Eq + ?Sized {}
+impl<T> Eq for ZeroVec<'_, T> where T: AsULE + Eq + ?Sized {}
 
 impl<'a, 'b, T> PartialEq<ZeroVec<'b, T>> for ZeroVec<'a, T>
 where
-    T: AsULE + Copy + PartialEq + ?Sized,
+    T: AsULE + PartialEq + ?Sized,
 {
     #[inline]
     fn eq(&self, other: &ZeroVec<'b, T>) -> bool {
@@ -115,7 +115,7 @@ where
 
 impl<T> PartialEq<&[T]> for ZeroVec<'_, T>
 where
-    T: AsULE + Copy + PartialEq + ?Sized,
+    T: AsULE + PartialEq + ?Sized,
 {
     #[inline]
     fn eq(&self, other: &&[T]) -> bool {
@@ -333,11 +333,9 @@ where
 
 impl<T> ZeroVec<'_, T>
 where
-    T: AsULE + Copy + ?Sized,
+    T: AsULE,
 {
     /// Gets the element at the specified index. Returns None if out of range.
-    ///
-    /// The element is returned by value, so `T` must implement `Copy`.
     ///
     /// # Example
     ///
@@ -361,8 +359,6 @@ where
 
     /// Gets the first element. Returns None if empty.
     ///
-    /// The element is returned by value, so `T` must implement `Copy`.
-    ///
     /// # Example
     ///
     /// ```
@@ -380,8 +376,6 @@ where
 
     /// Gets the last element. Returns None if empty.
     ///
-    /// The element is returned by value, so `T` must implement `Copy`.
-    ///
     /// # Example
     ///
     /// ```
@@ -398,8 +392,6 @@ where
     }
 
     /// Gets an iterator over the elements.
-    ///
-    /// The elements are returned by value, so `T` must implement `Copy`.
     ///
     /// # Example
     ///
