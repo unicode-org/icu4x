@@ -250,7 +250,7 @@ impl From<GeneralSubcategory> for GeneralCategory {
 /// See UScriptCode in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(transparent)]
-pub struct Script(pub(crate) u16);
+pub struct Script(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
