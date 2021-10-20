@@ -23,7 +23,7 @@ use core::convert::TryFrom;
 /// let c1 = '𑄃';
 /// let ule = c1.as_unaligned();
 /// assert_eq!(CharULE::as_byte_slice(&[ule]), &[0x03, 0x11, 0x01, 0x00]);
-/// let c2 = char::from_unaligned(&ule);
+/// let c2 = char::from_unaligned(ule);
 /// assert_eq!(c1, c2);
 /// ```
 ///
@@ -66,13 +66,13 @@ impl AsULE for char {
     type ULE = CharULE;
 
     #[inline]
-    fn as_unaligned(&self) -> Self::ULE {
-        let u = u32::from(*self);
+    fn as_unaligned(self) -> Self::ULE {
+        let u = u32::from(self);
         CharULE(u.to_le_bytes())
     }
 
     #[inline]
-    fn from_unaligned(unaligned: &Self::ULE) -> Self {
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
         let u = u32::from_le_bytes(unaligned.0);
         // Safe because the bytes of CharULE are defined to represent a valid Unicode code point.
         // TODO: Use char::from_u32_unchecked() when stabilized
@@ -92,13 +92,17 @@ mod test {
     fn test_parse() {
         // 1-byte, 2-byte, 3-byte, and 4-byte character in UTF-8 (not as relevant in UTF-32)
         let chars = ['w', 'ω', '文', '𑄃'];
-        let char_ules: Vec<CharULE> = chars.iter().map(char::as_unaligned).collect();
+        let char_ules: Vec<CharULE> = chars.iter().copied().map(char::as_unaligned).collect();
         let char_bytes: &[u8] = CharULE::as_byte_slice(&char_ules);
 
         // Check parsing
         let parsed_ules: &[CharULE] = CharULE::parse_byte_slice(char_bytes).unwrap();
         assert_eq!(char_ules, parsed_ules);
-        let parsed_chars: Vec<char> = parsed_ules.iter().map(char::from_unaligned).collect();
+        let parsed_chars: Vec<char> = parsed_ules
+            .iter()
+            .copied()
+            .map(char::from_unaligned)
+            .collect();
         assert_eq!(&chars, parsed_chars.as_slice());
 
         // Check EqULE
@@ -110,7 +114,11 @@ mod test {
 
         // Compare to u32
         let u32s: Vec<u32> = chars.iter().copied().map(u32::from).collect();
-        let u32_ules: Vec<PlainOldULE<4>> = u32s.iter().map(<u32 as AsULE>::as_unaligned).collect();
+        let u32_ules: Vec<PlainOldULE<4>> = u32s
+            .iter()
+            .copied()
+            .map(<u32 as AsULE>::as_unaligned)
+            .collect();
         let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
         assert_eq!(char_bytes, u32_bytes);
 
@@ -125,14 +133,22 @@ mod test {
     fn test_failures() {
         // 119 and 120 are valid, but not 0xD800 (high surrogate)
         let u32s = [119, 0xD800, 120];
-        let u32_ules: Vec<PlainOldULE<4>> = u32s.iter().map(<u32 as AsULE>::as_unaligned).collect();
+        let u32_ules: Vec<PlainOldULE<4>> = u32s
+            .iter()
+            .copied()
+            .map(<u32 as AsULE>::as_unaligned)
+            .collect();
         let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(matches!(parsed_ules_result, Err(_)));
 
         // 0x20FFFF is out of range for a char
         let u32s = [0x20FFFF];
-        let u32_ules: Vec<PlainOldULE<4>> = u32s.iter().map(<u32 as AsULE>::as_unaligned).collect();
+        let u32_ules: Vec<PlainOldULE<4>> = u32s
+            .iter()
+            .copied()
+            .map(<u32 as AsULE>::as_unaligned)
+            .collect();
         let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(matches!(parsed_ules_result, Err(_)));

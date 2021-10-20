@@ -110,7 +110,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         let out = if idx == len {
             self.entire_slice.len() - 4 - (4 * len)
         } else {
-            u32::from_unaligned(self.index_data(idx)) as usize
+            u32::from_unaligned(*self.index_data(idx)) as usize
         };
         debug_assert!(out + 4 + len * 4 <= self.entire_slice.len());
         out
@@ -177,7 +177,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         let indices =
             PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[4..4 + 4 * len]);
         for idx in &mut indices[starting_index..] {
-            *idx = (u32::from_unaligned(idx).wrapping_add(amount as u32)).into();
+            *idx = (u32::from_unaligned(*idx).wrapping_add(amount as u32)).into();
         }
     }
 
@@ -335,7 +335,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
         let len = unsafe {
             u32::from_unaligned(
-                &PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
+                PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
             )
         };
         if len == 0 {
@@ -358,13 +358,13 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[4..4 + len as usize * 4])
         };
         for idx in indices {
-            if u32::from_unaligned(idx) > data_len {
+            if u32::from_unaligned(*idx) > data_len {
                 // Indices must not point past the data segment.
                 return false;
             }
         }
         for window in indices.windows(2) {
-            if u32::from_unaligned(&window[0]) > u32::from_unaligned(&window[1]) {
+            if u32::from_unaligned(window[0]) > u32::from_unaligned(window[1]) {
                 // Indices must be in non-decreasing order.
                 return false;
             }
