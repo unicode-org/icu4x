@@ -7,7 +7,7 @@ use crate::uprops_serde;
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
-use icu_codepointtrie::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
+use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
@@ -52,28 +52,20 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
             trie_type: trie_type_enum,
         };
         let index: ZeroVec<u16> = ZeroVec::clone_from_slice(&cpt_data.index);
-        let data: Result<ZeroVec<'static, T>, T::TryFromU32Error> = if let Some(data_8) = cpt_data.data_8 {
-            data_8
-                .iter()
-                .map(|i| T::try_from_u32(*i as u32))
-                .collect()
-        } else if let Some(data_16) = cpt_data.data_16 {
-            data_16
-                .iter()
-                .map(|i| T::try_from_u32(*i as u32))
-                .collect()
-        } else if let Some(data_32) = cpt_data.data_32 {
-            data_32
-                .iter()
-                .map(|i| T::try_from_u32(*i as u32))
-                .collect()
-        } else {
-            return Err(DataError::new_resc_error(
-                icu_codepointtrie::error::Error::FromDeserialized {
-                    reason: "Cannot deserialize data array for CodePointTrie in TOML",
-                },
-            ));
-        };
+        let data: Result<ZeroVec<'static, T>, T::TryFromU32Error> =
+            if let Some(data_8) = cpt_data.data_8 {
+                data_8.iter().map(|i| T::try_from_u32(*i as u32)).collect()
+            } else if let Some(data_16) = cpt_data.data_16 {
+                data_16.iter().map(|i| T::try_from_u32(*i as u32)).collect()
+            } else if let Some(data_32) = cpt_data.data_32 {
+                data_32.iter().map(|i| T::try_from_u32(*i as u32)).collect()
+            } else {
+                return Err(DataError::new_resc_error(
+                    icu_codepointtrie::error::Error::FromDeserialized {
+                        reason: "Cannot deserialize data array for CodePointTrie in TOML",
+                    },
+                ));
+            };
 
         let data = data.map_err(DataError::new_resc_error)?;
         let trie =
@@ -116,8 +108,8 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
 mod tests {
     use super::*;
     use icu_codepointtrie::codepointtrie::CodePointTrie;
-    use icu_properties::GeneralSubcategory;
     use icu_properties::provider::key;
+    use icu_properties::GeneralSubcategory;
 
     // A test of the UnicodeProperty General_Category is truly a test of the
     // `GeneralSubcategory` Rust enum, not the `GeneralCategory` Rust enum,
@@ -129,15 +121,15 @@ mod tests {
         let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
 
         let payload: DataPayload<'_, UnicodePropertyMapV1Marker<GeneralSubcategory>> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::GENERAL_CATEGORY_V1,
-                options: ResourceOptions::default(),
-            },
-        })
-        .expect("The data should be valid")
-        .take_payload()
-        .expect("Loading was successful");
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: key::GENERAL_CATEGORY_V1,
+                    options: ResourceOptions::default(),
+                },
+            })
+            .expect("The data should be valid")
+            .take_payload()
+            .expect("Loading was successful");
 
         let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().codepoint_trie;
 
