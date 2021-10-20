@@ -437,7 +437,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     ///
-    pub fn get_serializable_bytes<A: AsRef<T>>(elements: &[A]) -> Option<Vec<u8>> {
+    pub fn get_serializable_bytes<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Option<Vec<u8>> {
         components::get_serializable_bytes(elements)
     }
 
@@ -496,7 +496,7 @@ impl<'a, A, T> From<&'_ [A]> for VarZeroVec<'a, T>
 where
     T: VarULE,
     T: ?Sized,
-    A: AsRef<T>,
+    A: custom::EncodeAsVarULE<T>,
 {
     fn from(other: &'_ [A]) -> Self {
         VarZeroVecOwned::from_elements(other).into()

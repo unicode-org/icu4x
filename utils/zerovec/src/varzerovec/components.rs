@@ -286,22 +286,34 @@ where
     }
 }
 
-pub fn get_serializable_bytes<T: VarULE + ?Sized, A: AsRef<T>>(elements: &[A]) -> Option<Vec<u8>> {
-    let mut vec = Vec::with_capacity(4 + 4 * elements.len());
+pub fn get_serializable_bytes<T: VarULE + ?Sized, A: custom::EncodeAsVarULE<T>>(
+    elements: &[A],
+) -> Option<Vec<u8>> {
+    // Assume each element is probably around 4 bytes long when estimating the
+    // initial size. Performance of this function does not matter *too* much since
+    // VarZeroVec mutation is not intended to be performant.
+    let mut vec = Vec::with_capacity(4 + 8 * elements.len());
     let len_u32: u32 = elements.len().try_into().ok()?;
     vec.extend(&len_u32.as_unaligned().0);
+    // Make space for indices
+    vec.resize(4 + 4 * elements.len(), 0);
     let mut offset: u32 = 0;
-    for element in elements {
-        vec.extend(&offset.as_unaligned().0);
-        let ule = element.as_ref();
-        let slice = ule.as_byte_slice();
-        debug_assert_eq!(mem::size_of_val(ule), mem::size_of_val(slice));
-        let len_u32: u32 = slice.len().try_into().ok()?;
-        offset = offset.checked_add(len_u32)?;
+    for (idx, element) in elements.iter().enumerate() {
+        element.encode_var_ule(|slices| {
+            let indices = &mut vec[(4 + 4 * idx)..(4 + 4 * idx + 4)];
+            indices.clone_from_slice(&offset.as_unaligned().0);
+            let element_start = vec.len();
+            let mut len = 0;
+            for bytes in slices {
+                vec.extend_from_slice(bytes);
+                len += bytes.len();
+            }
+            let len_u32: u32 = len.try_into().ok()?;
+            offset = offset.checked_add(len_u32)?;
+            debug_assert!(T::validate_byte_slice(&vec[element_start..]).is_ok());
+            Some(())
+        })?;
     }
-    vec.reserve(offset as usize);
-    for element in elements {
-        vec.extend(element.as_ref().as_byte_slice())
-    }
+
     Some(vec)
 }

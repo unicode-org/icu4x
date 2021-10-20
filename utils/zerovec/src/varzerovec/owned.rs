@@ -44,7 +44,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<A: AsRef<T>>(elements: &[A]) -> Self {
+    pub fn from_elements<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: components::get_serializable_bytes(elements).expect(
@@ -373,7 +373,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Insert an element at index `idx`
-    pub fn insert(&mut self, index: usize, element: &T) {
+    pub fn insert<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index > len {
             panic!(
@@ -382,23 +382,33 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             );
         }
 
-        let value = element.as_byte_slice();
+        let value_len: usize =
+            element.encode_var_ule(|slices| slices.iter().map(|s| s.len()).sum());
 
         if len == 0 {
             // 4 bytes for length, 4 bytes for the index, remaining for element
-            self.reserve(8 + value.len());
+            self.reserve(8 + value_len);
             let len_u32 = 1u32;
             let index_u32 = 0u32;
             self.entire_slice.extend(&len_u32.as_unaligned().0);
             self.entire_slice.extend(&index_u32.as_unaligned().0);
-            self.entire_slice.extend(value);
+            element.encode_var_ule(|slices| {
+                for slice in slices {
+                    self.entire_slice.extend(*slice)
+                }
+            });
             return;
         }
 
-        assert!(value.len() < u32::MAX as usize);
+        assert!(value_len < u32::MAX as usize);
         unsafe {
-            self.shift(index, value.len() as u32, ShiftType::Insert)
-                .copy_from_slice(value)
+            let mut place = self.shift(index, value_len as u32, ShiftType::Insert);
+            element.encode_var_ule(|slices| {
+                for slice in slices {
+                    place[..slice.len()].copy_from_slice(slice);
+                    place = &mut place[slice.len()..];
+                }
+            });
         }
     }
 
@@ -420,7 +430,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
-    pub fn replace(&mut self, index: usize, value: &T) {
+    pub fn replace<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index >= len {
             panic!(
@@ -429,11 +439,18 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             );
         }
 
-        let value = value.as_byte_slice();
-        assert!(value.len() < u32::MAX as usize);
+        let value_len: usize =
+            element.encode_var_ule(|slices| slices.iter().map(|s| s.len()).sum());
+
+        assert!(value_len < u32::MAX as usize);
         unsafe {
-            self.shift(index, value.len() as u32, ShiftType::Replace)
-                .copy_from_slice(value);
+            let mut place = self.shift(index, value_len as u32, ShiftType::Replace);
+            element.encode_var_ule(|slices| {
+                for slice in slices {
+                    place[..slice.len()].copy_from_slice(slice);
+                    place = &mut place[slice.len()..];
+                }
+            });
         }
     }
 }
