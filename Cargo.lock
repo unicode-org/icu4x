@@ -1071,7 +1071,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie"
-version = "0.3.0"
+version = "0.2.0"
 dependencies = [
  "displaydoc",
  "icu_provider",
