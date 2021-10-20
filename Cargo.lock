@@ -1077,7 +1077,6 @@ dependencies = [
  "icu_provider",
  "postcard",
  "serde",
- "thiserror",
  "toml",
  "zerovec",
 ]

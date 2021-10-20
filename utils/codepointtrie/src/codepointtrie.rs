@@ -347,6 +347,7 @@ mod tests {
     use super::CodePointTrie;
     #[cfg(feature = "serde")]
     use zerovec::ZeroVec;
+    use alloc::vec::Vec;
 
     #[test]
     #[cfg(feature = "serde")]

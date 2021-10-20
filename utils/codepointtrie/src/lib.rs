@@ -31,6 +31,8 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#![no_std]
+
 // Workaround for https://github.com/rust-lang/rust/issues/87932
 #[cfg(feature = "serde")]
 extern crate serde;

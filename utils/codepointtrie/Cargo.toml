@@ -35,7 +35,6 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-thiserror = "1.0"
 zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 [dev-dependencies]
@@ -48,5 +47,6 @@ bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
 
 [features]
+std = ["icu_provider/std"]
 default = ["provider_serde"]
 provider_serde = ["serde"]
