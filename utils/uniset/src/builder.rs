@@ -450,7 +450,7 @@ impl UnicodeSetBuilder {
             .as_slice()
             .iter()
             .copied()
-            .map(|cp| <u32 as AsULE>::from_unaligned(cp));
+            .map(<u32 as AsULE>::from_unaligned);
         self.complement_list(inv_list_iter_owned);
     }
 

@@ -500,7 +500,7 @@ where
         match self {
             Self::Owned(vec) => ZeroVec::Owned(vec),
             Self::Borrowed(_) => {
-                let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(ule)).collect();
+                let vec: Vec<T::ULE> = self.iter().map(T::as_unaligned).collect();
                 ZeroVec::Owned(vec)
             }
         }
@@ -526,7 +526,7 @@ where
         match self {
             ZeroVec::Owned(ref mut vec) => vec,
             ZeroVec::Borrowed(_) => {
-                let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(ule)).collect();
+                let vec: Vec<T::ULE> = self.iter().map(T::as_unaligned).collect();
                 let new_self = ZeroVec::Owned(vec);
                 *self = new_self;
                 // recursion is limited since we are guaranteed to hit the Owned branch
