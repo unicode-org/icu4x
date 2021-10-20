@@ -24,4 +24,5 @@ mod error;
 mod provider;
 mod uprops_serde;
 
+pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use provider::PropertiesDataProvider;
