@@ -345,9 +345,9 @@ where
 mod tests {
     #[cfg(feature = "serde")]
     use super::CodePointTrie;
+    use alloc::vec::Vec;
     #[cfg(feature = "serde")]
     use zerovec::ZeroVec;
-    use alloc::vec::Vec;
 
     #[test]
     #[cfg(feature = "serde")]

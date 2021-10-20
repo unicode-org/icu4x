@@ -31,7 +31,9 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![no_std]
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
 
 // Workaround for https://github.com/rust-lang/rust/issues/87932
 #[cfg(feature = "serde")]
