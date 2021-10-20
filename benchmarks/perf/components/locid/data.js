@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634657201271,
+  "lastUpdate": 1634691936355,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14825,6 +14825,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4974,
             "range": "± 320",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30f0687631686e6b2d0a2dd3796ef34b06d5d08f",
+          "message": "Refactor properties to separate crate (#1153)",
+          "timestamp": "2021-10-19T17:57:17-07:00",
+          "tree_id": "3e662d624ef229e9abd9c6d37a43796578f1861e",
+          "url": "https://github.com/unicode-org/icu4x/commit/30f0687631686e6b2d0a2dd3796ef34b06d5d08f"
+        },
+        "date": 1634691931408,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3146,
+            "range": "± 124",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5588,
+            "range": "± 298",
             "unit": "ns/iter"
           }
         ]
