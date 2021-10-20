@@ -10,7 +10,7 @@ a [`UnicodeSet`]. See the [`sets`] module for more details.
 
 [`ICU4X`]: ../icu/index.html
 [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
-[`UnicodeSet`]: ../icu_uniset/struct.UnicodeSet.html
+[`UnicodeSet`]: icu_uniset::UnicodeSet
 [`sets`]: crate::sets
 
 ## More Information
