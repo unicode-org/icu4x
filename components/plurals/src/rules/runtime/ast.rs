@@ -97,9 +97,11 @@ unsafe impl VarULE for RelationULE {
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         let ptr = bytes as *const [u8] as *const u8;
         let len = bytes.len();
-        let len_new = len / 8;
+        let len_new = (len - 5) / 8;
         let fake_slice = core::ptr::slice_from_raw_parts(ptr as *const RangeOrValueULE, len_new);
-        &*(fake_slice as *const Self)
+        let ret = &*(fake_slice as *const Self);
+        debug_assert_eq!(core::mem::size_of_val(ret), core::mem::size_of_val(bytes));
+        ret
     }
 
     #[inline]
