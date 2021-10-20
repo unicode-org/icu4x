@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634739873958,
+  "lastUpdate": 1634760234375,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12929,6 +12929,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 29045494,
             "range": "± 1977903",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "81aaa42a07cc1a9342dbdeb8014012f96e542acc",
+          "message": "Make ULE types Copy, add PairULE (#1193)\n\n* Add PairULE\r\n\r\n* Make ULE Copy\r\n\r\n* take AsULE values by-copy",
+          "timestamp": "2021-10-20T12:57:06-07:00",
+          "tree_id": "7b0bc17f0356b6545d9995af465d04c7d8ec89d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/81aaa42a07cc1a9342dbdeb8014012f96e542acc"
+        },
+        "date": 1634760228954,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44933761,
+            "range": "± 1564912",
             "unit": "ns/iter"
           }
         ]
