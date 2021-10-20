@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634691864590,
+  "lastUpdate": 1634739880754,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11879,6 +11879,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 137109,
             "range": "± 2032",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "82ea03a765305fdf75af1974ba7251562c81a499",
+          "message": "Basic impl of EncodeAsVarULE (#1173)",
+          "timestamp": "2021-10-20T07:18:12-07:00",
+          "tree_id": "dc92259200a2dd9ec9ac4e358390c98fe3832fc6",
+          "url": "https://github.com/unicode-org/icu4x/commit/82ea03a765305fdf75af1974ba7251562c81a499"
+        },
+        "date": 1634739876150,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 145038,
+            "range": "± 636",
             "unit": "ns/iter"
           }
         ]
