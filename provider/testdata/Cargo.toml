@@ -98,6 +98,12 @@ locales = [
     # - Interesting case-mappings
     "tr",
 
+    # Chinese:
+    # - Multiple scripts
+    # - Complex date patterns
+    "zh",
+    "zh-Hant",
+
     # Root data
     "und",
 ]
