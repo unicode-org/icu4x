@@ -49,7 +49,7 @@ where
             Vec::new()
         };
         while let Some(value) = seq.next_element::<T>()? {
-            vec.push(T::as_unaligned(&value));
+            vec.push(T::as_unaligned(value));
         }
         Ok(ZeroVec::Owned(vec))
     }
@@ -77,7 +77,7 @@ where
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<T> Serialize for ZeroVec<'_, T>
 where
-    T: Serialize + AsULE + Copy,
+    T: Serialize + AsULE,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

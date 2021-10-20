@@ -12,7 +12,7 @@ use core::marker::PhantomData;
 use core::{iter, mem};
 
 fn usizeify(x: PlainOldULE<4>) -> usize {
-    u32::from_unaligned(&x) as usize
+    u32::from_unaligned(x) as usize
 }
 
 /// A logical representation of the backing `&[u8]` buffer.
@@ -67,7 +67,8 @@ impl<'a, T: VarULE + ?Sized> SliceComponents<'a, T> {
         let len_ule = PlainOldULE::<4>::parse_byte_slice(len_bytes)
             .map_err(|_| VarZeroVecError::FormatError)?;
 
-        let len = u32::from_unaligned(len_ule.get(0).ok_or(VarZeroVecError::FormatError)?) as usize;
+        let len =
+            u32::from_unaligned(*len_ule.get(0).ok_or(VarZeroVecError::FormatError)?) as usize;
         let indices_bytes = slice
             .get(4..4 * len + 4)
             .ok_or(VarZeroVecError::FormatError)?;
@@ -111,7 +112,7 @@ impl<'a, T: VarULE + ?Sized> SliceComponents<'a, T> {
         let len_bytes = slice.get_unchecked(0..4);
         let len_ule = PlainOldULE::<4>::from_byte_slice_unchecked(len_bytes);
 
-        let len = u32::from_unaligned(len_ule.get_unchecked(0)) as usize;
+        let len = u32::from_unaligned(*len_ule.get_unchecked(0)) as usize;
         let indices_bytes = slice.get_unchecked(4..4 * len + 4);
         let indices = PlainOldULE::<4>::from_byte_slice_unchecked(indices_bytes);
         let things = slice.get_unchecked(4 * len + 4..);
@@ -239,6 +240,7 @@ impl<'a, T: VarULE + ?Sized> SliceComponents<'a, T> {
         let indices = self
             .indices
             .iter()
+            .copied()
             .map(u32::from_unaligned)
             .collect::<Vec<_>>();
         format!("SliceComponents {{ indices: {:?} }}", indices)
@@ -286,22 +288,34 @@ where
     }
 }
 
-pub fn get_serializable_bytes<T: VarULE + ?Sized, A: AsRef<T>>(elements: &[A]) -> Option<Vec<u8>> {
-    let mut vec = Vec::with_capacity(4 + 4 * elements.len());
+pub fn get_serializable_bytes<T: VarULE + ?Sized, A: custom::EncodeAsVarULE<T>>(
+    elements: &[A],
+) -> Option<Vec<u8>> {
+    // Assume each element is probably around 4 bytes long when estimating the
+    // initial size. Performance of this function does not matter *too* much since
+    // VarZeroVec mutation is not intended to be performant.
+    let mut vec = Vec::with_capacity(4 + 8 * elements.len());
     let len_u32: u32 = elements.len().try_into().ok()?;
     vec.extend(&len_u32.as_unaligned().0);
+    // Make space for indices
+    vec.resize(4 + 4 * elements.len(), 0);
     let mut offset: u32 = 0;
-    for element in elements {
-        vec.extend(&offset.as_unaligned().0);
-        let ule = element.as_ref();
-        let slice = ule.as_byte_slice();
-        debug_assert_eq!(mem::size_of_val(ule), mem::size_of_val(slice));
-        let len_u32: u32 = slice.len().try_into().ok()?;
-        offset = offset.checked_add(len_u32)?;
+    for (idx, element) in elements.iter().enumerate() {
+        element.encode_var_ule(|slices| {
+            let indices = &mut vec[(4 + 4 * idx)..(4 + 4 * idx + 4)];
+            indices.clone_from_slice(&offset.as_unaligned().0);
+            let element_start = vec.len();
+            let mut len = 0;
+            for bytes in slices {
+                vec.extend_from_slice(bytes);
+                len += bytes.len();
+            }
+            let len_u32: u32 = len.try_into().ok()?;
+            offset = offset.checked_add(len_u32)?;
+            debug_assert!(T::validate_byte_slice(&vec[element_start..]).is_ok());
+            Some(())
+        })?;
     }
-    vec.reserve(offset as usize);
-    for element in elements {
-        vec.extend(element.as_ref().as_byte_slice())
-    }
+
     Some(vec)
 }

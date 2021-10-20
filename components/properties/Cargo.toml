@@ -38,7 +38,7 @@ icu_uniset = { version = "0.3", path = "../../utils/uniset", features = ["serde"
 num_enum = { version = "0.5.4", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features = false }
-zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde"] }
+zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["serde"] }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }

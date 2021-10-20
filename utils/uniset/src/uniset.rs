@@ -101,8 +101,8 @@ impl<'data> UnicodeSet<'data> {
                 .as_slice()
                 .chunks(2)
                 .map(|end_points| {
-                    <u32 as AsULE>::from_unaligned(&end_points[1])
-                        - <u32 as AsULE>::from_unaligned(&end_points[0])
+                    <u32 as AsULE>::from_unaligned(end_points[1])
+                        - <u32 as AsULE>::from_unaligned(end_points[0])
                 })
                 .sum::<u32>() as usize;
             Ok(Self { inv_list, size })
@@ -264,7 +264,7 @@ impl<'data> UnicodeSet<'data> {
         self.inv_list
             .as_slice()
             .chunks(2)
-            .flat_map(|pair| (AsULE::from_unaligned(&pair[0])..AsULE::from_unaligned(&pair[1])))
+            .flat_map(|pair| (AsULE::from_unaligned(pair[0])..AsULE::from_unaligned(pair[1])))
             .filter_map(char::from_u32)
     }
 
@@ -288,8 +288,8 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     pub fn iter_ranges(&self) -> impl ExactSizeIterator<Item = RangeInclusive<u32>> + '_ {
         self.inv_list.as_slice().chunks(2).map(|pair| {
-            let range_start: u32 = AsULE::from_unaligned(&pair[0]);
-            let range_limit: u32 = AsULE::from_unaligned(&pair[1]);
+            let range_start: u32 = AsULE::from_unaligned(pair[0]);
+            let range_limit: u32 = AsULE::from_unaligned(pair[1]);
             RangeInclusive::new(range_start, range_limit - 1)
         })
     }

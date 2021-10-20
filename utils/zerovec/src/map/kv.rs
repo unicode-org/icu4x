@@ -72,12 +72,12 @@ macro_rules! impl_sized_kv {
 
             #[inline]
             fn cmp_get(&self, g: &Self::GetType) -> Ordering {
-                self.cmp(&$ty::from_unaligned(g))
+                self.cmp(&$ty::from_unaligned(*g))
             }
 
             #[inline]
             fn with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self) -> R) -> R {
-                f(&Self::from_unaligned(g))
+                f(&Self::from_unaligned(*g))
             }
 
             #[inline]
