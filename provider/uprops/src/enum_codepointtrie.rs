@@ -16,7 +16,13 @@ use core::convert::TryFrom;
 use std::fs;
 use std::path::PathBuf;
 
+/// This data provider returns `CodePointTrie` data inside a
+/// `UnicodePropertyMap` data struct. The source data is the same as that of
+/// [crate::provider::PropertiesDataProvider], which is a TOML file of data
+/// for the property(-ies) desired, as given by the ICU4C property data
+/// exporter tool.
 pub struct EnumeratedPropertyCodePointTrieProvider {
+    /// Path to the root directory containing the property data TOML files.
     root_dir: PathBuf,
 }
 

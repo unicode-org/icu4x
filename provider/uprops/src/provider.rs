@@ -10,12 +10,18 @@ use icu_provider::prelude::*;
 
 use std::path::PathBuf;
 
+/// This data provider returns `UnicodeSet` data inside a `UnicodeProperty`
+/// data struct. The source data is in the form of a directory of TOML file(s)
+/// of data for the property(-ies) desired, as given by the ICU4C property data
+/// exporter tool.
 pub struct PropertiesDataProvider {
     binary: BinaryPropertyUnicodeSetDataProvider,
     enumerated: EnumeratedPropertyUnicodeSetDataProvider,
 }
 
 impl PropertiesDataProvider {
+    /// Construct a new data provider instance. `root_dir` is the path to the
+    /// root directory containing the property data TOML files.
     pub fn new(root_dir: PathBuf) -> Self {
         let binary = BinaryPropertyUnicodeSetDataProvider::new(root_dir.clone());
         let enumerated = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
