@@ -1224,7 +1224,6 @@ dependencies = [
  "icu_uniset",
  "num_enum",
  "serde",
- "tinystr",
  "zerovec",
 ]
 

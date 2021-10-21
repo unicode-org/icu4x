@@ -5,7 +5,6 @@
 //! A collection of enums for enumerated properties.
 
 use num_enum::{TryFromPrimitive, UnsafeFromPrimitive};
-use tinystr::TinyStr16;
 
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
@@ -22,17 +21,6 @@ pub enum EnumeratedProperty {
     ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
     /// Represents an invalid or unknown Unicode property.
     InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
-}
-
-impl From<&TinyStr16> for EnumeratedProperty {
-    fn from(prop_short_alias: &TinyStr16) -> Self {
-        match prop_short_alias.as_str() {
-            "gc" => EnumeratedProperty::GeneralCategory,
-            "sc" => EnumeratedProperty::Script,
-            "scx" => EnumeratedProperty::ScriptExtensions,
-            _ => EnumeratedProperty::InvalidCode,
-        }
-    }
 }
 
 /// Enumerated Unicode general category types.
