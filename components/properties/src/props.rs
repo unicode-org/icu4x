@@ -11,19 +11,22 @@ use num_enum::{TryFromPrimitive, UnsafeFromPrimitive};
 /// See `UProperty` in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 #[non_exhaustive]
+#[repr(i32)]
 pub enum EnumeratedProperty {
     /// The General Category property.
     GeneralCategory = 0x1005,
     /// The Script property. See [`Script`].
     Script = 0x100A,
     /// The Script_Extensions property. See [`Script`].
-    ScriptExtensions = 0x7000,
+    ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
+    /// Represents an invalid or unknown Unicode property.
+    InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
 }
 
 /// Enumerated Unicode general category types.
 /// GeneralSubcategory only supports specific subcategories (eg `UppercaseLetter`).
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategory`].
-#[derive(Copy, Clone, PartialEq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
 #[repr(u8)]
 pub enum GeneralSubcategory {
     /// A reserved unassigned code point or a noncharacter
@@ -235,7 +238,7 @@ impl From<GeneralSubcategory> for GeneralCategory {
 /// See UScriptCode in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[repr(transparent)]
-pub struct Script(pub(crate) u16);
+pub struct Script(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]

@@ -17,10 +17,12 @@
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 
-mod binary;
-mod enumerated;
+mod bin_uniset;
+mod enum_codepointtrie;
+mod enum_uniset;
 mod error;
 mod provider;
 mod uprops_serde;
 
+pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use provider::PropertiesDataProvider;

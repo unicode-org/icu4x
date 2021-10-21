@@ -15,11 +15,12 @@
 //! [`UnicodeSet`]: icu_uniset::UnicodeSet
 //! [`sets`]: crate::sets
 
-#![no_std]
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 
 mod props;
 pub mod provider;
 pub mod sets;
+mod trievalue;
 mod ule;
 
 pub use props::*;

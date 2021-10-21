@@ -12,14 +12,14 @@ use icu_uniset::UnicodeSetBuilder;
 use std::fs;
 use std::path::PathBuf;
 
-pub struct BinaryPropertiesDataProvider {
+pub struct BinaryPropertyUnicodeSetDataProvider {
     root_dir: PathBuf,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
-impl BinaryPropertiesDataProvider {
+impl BinaryPropertyUnicodeSetDataProvider {
     pub fn new(root_dir: PathBuf) -> Self {
-        BinaryPropertiesDataProvider { root_dir }
+        BinaryPropertyUnicodeSetDataProvider { root_dir }
     }
     fn get_toml_data(&self, name: &str) -> Result<uprops_serde::binary::Main, Error> {
         let mut path: PathBuf = self.root_dir.clone().join(name);
@@ -29,7 +29,7 @@ impl BinaryPropertiesDataProvider {
     }
 }
 
-impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertiesDataProvider {
+impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
@@ -55,11 +55,11 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertiesDat
     }
 }
 
-icu_provider::impl_dyn_provider!(BinaryPropertiesDataProvider, {
+icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE, 'data);
 
-impl IterableDataProviderCore for BinaryPropertiesDataProvider {
+impl IterableDataProviderCore for BinaryPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -76,7 +76,7 @@ fn test_basic() {
     use std::convert::TryInto;
 
     let root_dir = icu_testdata::paths::data_root().join("uprops");
-    let provider = BinaryPropertiesDataProvider::new(root_dir);
+    let provider = BinaryPropertyUnicodeSetDataProvider::new(root_dir);
 
     let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
         .load_payload(&DataRequest {

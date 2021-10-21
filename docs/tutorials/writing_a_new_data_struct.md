@@ -60,7 +60,7 @@ Examples of source data providers include:
     - [`PluralsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.PluralsProvider.html)
     - [`DateSymbolsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.DateSymbolsProvider.html)
     - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/index.html)
-- `BinaryPropertiesDataProvider`
+- `BinaryPropertyUnicodeSetDataProvider`
 - [`HelloWorldProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/hello_world/struct.HelloWorldProvider.html)
 
 Source data providers must implement the following traits:

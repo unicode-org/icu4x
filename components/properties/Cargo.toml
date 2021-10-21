@@ -32,6 +32,7 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
+icu_codepointtrie = { version = "0.2", path = "../../utils/codepointtrie", features = ["serde"] }
 icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
 icu_uniset = { version = "0.3", path = "../../utils/uniset", features = ["serde"] }
 num_enum = { version = "0.5.4", default-features = false }
