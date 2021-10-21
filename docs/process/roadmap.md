@@ -44,15 +44,15 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109)) 
 			* [ ] Finish full-stack Script_Extensions property
 			* [ ] User-Friendly Data Slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
-			* [ ] User-friendly data tooling (multi-blob, source data downloader)([#1110](https://github.com/unicode-org/icu4x/issues/1110)
+			* [ ] User-friendly data tooling (multi-blob, source data downloader)([#1110](https://github.com/unicode-org/icu4x/issues/1110))
 			* [ ] Migration to ICU4X is enabled
 			* [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
-			* [ ] Normalizer ([#972](https://github.com/unicode-org/icu4x/issues/972)
+			* [ ] Normalizer ([#972](https://github.com/unicode-org/icu4x/issues/972))
 		 * [ ] Work in Progress (WIP)
 		 	* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
 		 	* [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))
 		 	* [ ] High-fidelity code size reduction ([#874](https://github.com/unicode-org/icu4x/issues/874))
-		 	* [ ] Collator ([#971](https://github.com/unicode-org/icu4x/issues/971)
+		 	* [ ] Collator ([#971](https://github.com/unicode-org/icu4x/issues/971))
 * [ ] 2022
 	* [ ] January-March
 		* [ ] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
