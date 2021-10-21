@@ -56,7 +56,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 * [ ] 2022
 	* [ ] January-March
 		* [ ] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
-		       * [ ] Data + API stability
+			* [ ] Data + API stability
 	* [ ] April-June
 		* [ ] 1.0 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/16))
 		
