@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634833064894,
+  "lastUpdate": 1634835569329,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15077,6 +15077,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4394,
             "range": "± 283",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7256f16612e3bdf24e034102d6aab78e40d86440",
+          "message": "Update Rust version to 1.56 stable (#1201)\n\n* Remove Rust version lock\r\n\r\n* Readd rust-toolchain",
+          "timestamp": "2021-10-21T09:51:49-07:00",
+          "tree_id": "29c1a9f8519ccb69bd260a83355a99afd2bf10f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/7256f16612e3bdf24e034102d6aab78e40d86440"
+        },
+        "date": 1634835564179,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2946,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5052,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
