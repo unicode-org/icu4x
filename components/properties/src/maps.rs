@@ -43,11 +43,11 @@ where
 }
 
 /// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property.
-/// General_Category specifies the most general classification of a code point, usually 
+/// General_Category specifies the most general classification of a code point, usually
 /// determined based on the primary characteristic of the assigned character. For example, is the
 /// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
 /// /// See <https://www.unicode.org/reports/tr44/> .
-/// 
+///
 /// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 pub fn get_general_category<'data, D>(provider: &D) -> CodePointMapResult<'data, GeneralSubcategory>
 where
