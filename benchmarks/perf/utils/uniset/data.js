@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634778482109,
+  "lastUpdate": 1634783369219,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13019,6 +13019,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40376721,
             "range": "± 1830061",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40817d26fc0f58b71d03c5a23d20045c77c09bf9",
+          "message": "Tidy up DTF PluralPatterns for ZeroVec runtime data (#1178)",
+          "timestamp": "2021-10-20T19:23:18-07:00",
+          "tree_id": "d2e92f61a8aed3cef4b2211697a005676c880f5d",
+          "url": "https://github.com/unicode-org/icu4x/commit/40817d26fc0f58b71d03c5a23d20045c77c09bf9"
+        },
+        "date": 1634783364360,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39482918,
+            "range": "± 1622595",
             "unit": "ns/iter"
           }
         ]
