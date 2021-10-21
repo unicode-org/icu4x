@@ -31,7 +31,7 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![no_std]
 
 extern crate alloc;
 

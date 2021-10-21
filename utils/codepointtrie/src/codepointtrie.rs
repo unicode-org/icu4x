@@ -8,9 +8,9 @@ use crate::impl_const::*;
 use core::convert::TryFrom;
 use core::fmt::Display;
 use core::num::TryFromIntError;
-use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ZeroVec;
 
 /// The type of trie represents whether the trie has an optimization that

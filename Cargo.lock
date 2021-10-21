@@ -1074,10 +1074,10 @@ name = "icu_codepointtrie"
 version = "0.2.0"
 dependencies = [
  "displaydoc",
- "icu_provider",
  "postcard",
  "serde",
  "toml",
+ "yoke",
  "zerovec",
 ]
 
