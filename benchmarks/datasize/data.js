@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634761439062,
+  "lastUpdate": 1634778148166,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2003,6 +2003,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2611e3a833eda73f77fdf394c5a932e6821f236c"
         },
         "date": 1634761434489,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610328,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3ea4f805888821d2ca52d821a868806ae2fa8abb",
+          "message": "CodePointTrie data provider  (#1167)",
+          "timestamp": "2021-10-20T18:01:02-07:00",
+          "tree_id": "5719596148d5f910e042100cf339eee2626add21",
+          "url": "https://github.com/unicode-org/icu4x/commit/3ea4f805888821d2ca52d821a868806ae2fa8abb"
+        },
+        "date": 1634778143228,
         "tool": "ndjson",
         "benches": [
           {
