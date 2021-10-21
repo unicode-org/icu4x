@@ -41,9 +41,9 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		        * [ ] Finish full-stack enumerated Unicode properties ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
 		        * [ ] ZeroVec improvements ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
 	        * [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
-	                * [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109)) 
-	                * [ ] Finish full-stack Script_Extensions property
-	                * [ ] User-Friendly Data Slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
+	        	* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109)) 
+	        	* [ ] Finish full-stack Script_Extensions property
+	        	* [ ] User-Friendly Data Slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
 		        * [ ] User-friendly data tooling (multi-blob, source data downloader)([#1110](https://github.com/unicode-org/icu4x/issues/1110))
 		        * [ ] Migration to ICU4X is enabled
 		        * [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
