@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634778546094,
+  "lastUpdate": 1634783461407,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16799,6 +16799,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24083,
             "range": "± 404",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40817d26fc0f58b71d03c5a23d20045c77c09bf9",
+          "message": "Tidy up DTF PluralPatterns for ZeroVec runtime data (#1178)",
+          "timestamp": "2021-10-20T19:23:18-07:00",
+          "tree_id": "d2e92f61a8aed3cef4b2211697a005676c880f5d",
+          "url": "https://github.com/unicode-org/icu4x/commit/40817d26fc0f58b71d03c5a23d20045c77c09bf9"
+        },
+        "date": 1634783455721,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1387,
+            "range": "± 92",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8120,
+            "range": "± 658",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 26253,
+            "range": "± 2495",
             "unit": "ns/iter"
           }
         ]
