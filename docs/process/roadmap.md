@@ -1,5 +1,5 @@
 # ICU4X 1.0 Roadmap
-The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimized to provide maximal alignment and synergy between progressive feature extension, technical advancements and business evaluations.
+The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimized to provide maximal alignment and synergy between progressive feature extension, technical advancements and business evaluations. This is a prememble view. The ICU4X team is focused to deliver quality work in a way that benefits the customers and the team itself in a measurable way. We are using agile project management methodologies and our detailed work is organized in ([milestones and sprints](https://github.com/unicode-org/icu4x/milestones)). 
 
 * [x] 2020
   * [x] October
@@ -54,9 +54,9 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		      * [ ] High-fidelity code size reduction ([#874](https://github.com/unicode-org/icu4x/issues/874))
 		      * [ ] Collator ([#971](https://github.com/unicode-org/icu4x/issues/971)
 * [ ] 2022
-	* [ ] Q1
+	* [ ] January-March
 		* [ ] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
 		* [ ] Data + API stability
-	* [ ] Q2
+	* [ ] April-June
 		* [ ] 1.0 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/16))
 		
