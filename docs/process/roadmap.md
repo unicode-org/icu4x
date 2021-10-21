@@ -48,7 +48,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		        * [ ] Migration to ICU4X is enabled
 		        * [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
 		        * [ ] Normalizer ([#972](https://github.com/unicode-org/icu4x/issues/972))
-	        * [ ] WIP
+	        * [ ] Work in Progress (WIP)
 		        * [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
 		        * [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))	
 		        * [ ] High-fidelity code size reduction ([#874](https://github.com/unicode-org/icu4x/issues/874))
