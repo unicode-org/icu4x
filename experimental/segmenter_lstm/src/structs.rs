@@ -5,8 +5,9 @@
 use ndarray::Array1;
 use ndarray::Array2;
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 use std::collections::HashMap;
-use yoke::Yokeable;
+use yoke::{Yokeable, ZeroCopyFrom};
 
 /// 'LstmData' is a struct that store a LSTM model. Its attributes are:
 /// `model`: name of the model
@@ -15,17 +16,18 @@ use yoke::Yokeable;
 /// `mat2` - `mat4`: the matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
 /// `mat5` - `mat7`: the matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
 /// `mat8` - `mat9`: the matrices associated with output layer (weight and bias term respectiely)
-#[derive(PartialEq, Debug, Serialize, Deserialize, Yokeable, Clone)]
-pub struct LstmData {
-    pub model: String,
-    pub dic: HashMap<String, i16>,
-    pub mat1: Array2<f32>,
-    pub mat2: Array2<f32>,
-    pub mat3: Array2<f32>,
-    pub mat4: Array1<f32>,
-    pub mat5: Array2<f32>,
-    pub mat6: Array2<f32>,
-    pub mat7: Array1<f32>,
-    pub mat8: Array2<f32>,
-    pub mat9: Array1<f32>,
+#[icu_provider::data_struct]
+#[derive(PartialEq, Debug, Serialize, Deserialize, Clone)]
+pub struct LstmData<'data> {
+    pub model: Cow<'data, String>,
+    pub dic: Cow<'data, HashMap<String, i16>>,
+    pub mat1: Cow<'data, Array2<f32>>,
+    pub mat2: Cow<'data, Array2<f32>>,
+    pub mat3: Cow<'data, Array2<f32>>,
+    pub mat4: Cow<'data, Array1<f32>>,
+    pub mat5: Cow<'data, Array2<f32>>,
+    pub mat6: Cow<'data, Array2<f32>>,
+    pub mat7: Cow<'data, Array1<f32>>,
+    pub mat8: Cow<'data, Array2<f32>>,
+    pub mat9: Cow<'data, Array1<f32>>,
 }

@@ -17,18 +17,18 @@ const BURMESE_MODEL: &[u8; 475209] =
     include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
 
 lazy_static! {
-    static ref THAI_LSTM: Lstm = {
+    static ref THAI_LSTM: Lstm<'static> = {
         let lstm_data = serde_json::from_slice(THAI_MODEL).expect("JSON syntax error");
         Lstm::try_new(lstm_data).unwrap()
     };
-    static ref BURMESE_LSTM: Lstm = {
+    static ref BURMESE_LSTM: Lstm<'static> = {
         let lstm_data = serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
         Lstm::try_new(lstm_data).unwrap()
     };
 }
 
 // LSTM model depends on language, So we have to switch models per language.
-fn get_best_lstm_model(codepoint: u32) -> &'static Lstm {
+fn get_best_lstm_model(codepoint: u32) -> &'static Lstm<'static> {
     let lang = get_language(codepoint);
     match lang {
         Language::Thai => &*THAI_LSTM,

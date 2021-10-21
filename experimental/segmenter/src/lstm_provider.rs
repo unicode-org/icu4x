@@ -4,9 +4,6 @@
 
 //! Data provider struct defines for ICU4X component.
 
-use icu_provider::prelude::*;
-use icu_segmenter_lstm::structs;
-
 pub mod key {
     use icu_provider::ResourceKey;
 
@@ -15,25 +12,18 @@ pub mod key {
         icu_provider::resource_key!(Core, "segmenter_lstm", 1);
 }
 
-/// Marker type for LstmData.
-pub struct LstmDataV1Marker;
-
-impl<'data> DataMarker<'data> for LstmDataV1Marker {
-    type Yokeable = structs::LstmData;
-    type Cart = structs::LstmData;
-}
-
 #[cfg(test)]
 mod tests {
+    use std::borrow::Cow;
     use icu_locid::LanguageIdentifier;
     use icu_locid_macros::langid;
     use icu_provider::prelude::*;
     use icu_provider::serde::*;
     use icu_provider_fs::FsDataProvider;
     use icu_segmenter_lstm::lstm::Lstm;
+    use icu_segmenter_lstm::structs::LstmDataMarker;
 
     use super::key;
-    use super::LstmDataV1Marker;
 
     fn get_request_v1(langid: LanguageIdentifier) -> DataRequest {
         DataRequest {
@@ -52,7 +42,7 @@ mod tests {
         let provider = FsDataProvider::try_new("./tests/testdata/json")
             .expect("Loading file from testdata directory");
 
-        let lstm_data: DataPayload<LstmDataV1Marker> = (&provider as &dyn SerdeDeDataProvider)
+        let lstm_data: DataPayload<LstmDataMarker> = (&provider as &dyn SerdeDeDataProvider)
             .load_payload(&get_request_v1(langid!("th")))
             .expect("The data should be valid")
             .take_payload()
@@ -60,7 +50,7 @@ mod tests {
 
         assert_eq!(
             lstm_data.get().model,
-            "Thai_codepoints_exclusive_model4_heavy",
+            Cow::<String>::Owned("Thai_codepoints_exclusive_model4_heavy".to_string()),
             "Thai's LSTM data reads correctly"
         );
 
