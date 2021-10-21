@@ -6,7 +6,7 @@
 use alloc::format;
 use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
-use icu_provider::yoke::{self, *};
+use yoke::{self, *};
 use zerovec::{ule::AsULE, ZeroVec};
 
 use super::UnicodeSetError;

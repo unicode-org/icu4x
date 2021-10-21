@@ -17,6 +17,7 @@
 
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
+mod error;
 mod props;
 pub mod provider;
 pub mod sets;
