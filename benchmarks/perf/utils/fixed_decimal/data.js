@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634761726570,
+  "lastUpdate": 1634778479876,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11969,6 +11969,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 136621,
             "range": "± 7636",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3ea4f805888821d2ca52d821a868806ae2fa8abb",
+          "message": "CodePointTrie data provider  (#1167)",
+          "timestamp": "2021-10-20T18:01:02-07:00",
+          "tree_id": "5719596148d5f910e042100cf339eee2626add21",
+          "url": "https://github.com/unicode-org/icu4x/commit/3ea4f805888821d2ca52d821a868806ae2fa8abb"
+        },
+        "date": 1634778475283,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123181,
+            "range": "± 9221",
             "unit": "ns/iter"
           }
         ]
