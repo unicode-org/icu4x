@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634783369219,
+  "lastUpdate": 1634833052389,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13049,6 +13049,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39482918,
             "range": "± 1622595",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8aa98be2e3cb650a89d36361ebd516cb9e973b57",
+          "message": "Fix clippy warnings in yoke (#1200)",
+          "timestamp": "2021-10-21T09:10:36-07:00",
+          "tree_id": "da46d6df50c611035cd82c45bba2dc544a9ba192",
+          "url": "https://github.com/unicode-org/icu4x/commit/8aa98be2e3cb650a89d36361ebd516cb9e973b57"
+        },
+        "date": 1634833047232,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 45229406,
+            "range": "± 1791376",
             "unit": "ns/iter"
           }
         ]
