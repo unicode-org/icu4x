@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634783461407,
+  "lastUpdate": 1634833113679,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16841,6 +16841,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 26253,
             "range": "± 2495",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8aa98be2e3cb650a89d36361ebd516cb9e973b57",
+          "message": "Fix clippy warnings in yoke (#1200)",
+          "timestamp": "2021-10-21T09:10:36-07:00",
+          "tree_id": "da46d6df50c611035cd82c45bba2dc544a9ba192",
+          "url": "https://github.com/unicode-org/icu4x/commit/8aa98be2e3cb650a89d36361ebd516cb9e973b57"
+        },
+        "date": 1634833108997,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1298,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7735,
+            "range": "± 326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24592,
+            "range": "± 1043",
             "unit": "ns/iter"
           }
         ]
