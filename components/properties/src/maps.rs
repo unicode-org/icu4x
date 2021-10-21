@@ -2,10 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! TODO
+//! The functions in this module return a [`CodePointTrie`] representing, for
+//! each code point in the entire range of code points, the property values
+//! for a particular Unicode property.
 //!
+//! The descriptions of most properties are taken from [`TR44`], the documentation for the
+//! Unicode Character Database.
 //!
-//!
+//! [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+//! [`TR44`]: https://www.unicode.org/reports/tr44
 
 use crate::error::PropertiesError;
 use crate::provider::*;
@@ -37,6 +42,13 @@ where
     Ok(property_payload)
 }
 
+/// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property.
+/// General_Category specifies the most general classification of a code point, usually 
+/// determined based on the primary characteristic of the assigned character. For example, is the
+/// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
+/// /// See <https://www.unicode.org/reports/tr44/> .
+/// 
+/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 pub fn get_general_category<'data, D>(provider: &D) -> CodePointMapResult<'data, GeneralSubcategory>
 where
     D: DataProvider<'data, UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
@@ -44,6 +56,10 @@ where
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }
 
+/// Return a [`CodePointTrie`] for the Script Unicode enumerated property.
+/// See <https://www.unicode.org/reports/tr44/> .
+///
+/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 pub fn get_script<'data, D>(provider: &D) -> CodePointMapResult<'data, Script>
 where
     D: DataProvider<'data, UnicodePropertyMapV1Marker<Script>> + ?Sized,
