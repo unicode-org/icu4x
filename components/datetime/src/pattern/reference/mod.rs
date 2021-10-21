@@ -5,7 +5,9 @@
 mod generic;
 mod parser;
 pub(crate) mod pattern;
+mod plural;
 
 pub use generic::GenericPattern;
 pub use parser::Parser;
-pub use pattern::{Pattern, PatternPlurals, PluralPattern};
+pub use pattern::Pattern;
+pub use plural::{PatternPlurals, PluralPattern};
