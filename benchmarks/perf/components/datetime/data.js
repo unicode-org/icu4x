@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634761778162,
+  "lastUpdate": 1634778543048,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10385,6 +10385,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 318042,
             "range": "± 21124",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3ea4f805888821d2ca52d821a868806ae2fa8abb",
+          "message": "CodePointTrie data provider  (#1167)",
+          "timestamp": "2021-10-20T18:01:02-07:00",
+          "tree_id": "5719596148d5f910e042100cf339eee2626add21",
+          "url": "https://github.com/unicode-org/icu4x/commit/3ea4f805888821d2ca52d821a868806ae2fa8abb"
+        },
+        "date": 1634778538159,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 113317,
+            "range": "± 4381",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1650645,
+            "range": "± 79701",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 337313,
+            "range": "± 17347",
             "unit": "ns/iter"
           }
         ]
