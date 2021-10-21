@@ -340,7 +340,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Add zero digits to the magnitude, either negative (trailing zeros) or positive (leading zeros).
+    /// Add or remove digits from the left side of the decimal (before the decimal point).
     ///
     /// # Examples
     ///
@@ -350,21 +350,37 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.pad(2);
-    /// assert_eq!("042", dec.to_string());
+    /// dec.pad_or_trunc_left(2);
+    /// assert_eq!("0042", dec.to_string());
     ///
-    /// dec.pad(-2);
-    /// assert_eq!("042.00", dec.to_string());
+    /// dec.pad_or_trunc_left(-2);
+    /// assert_eq!("42", dec.to_string());    
+    ///
+    /// dec.pad_or_trunc_left(-1);
+    /// assert_eq!("2", dec.to_string());
     /// ```
-    pub fn pad(&mut self, magnitude: i16) {
-        match magnitude.cmp(&0) {
-            Ordering::Less => self.lower_magnitude = magnitude,
-            Ordering::Greater => self.upper_magnitude = magnitude,
-            _ => (),
+    pub fn pad_or_trunc_left(&mut self, shift: i16) {
+        self.upper_magnitude = match self.upper_magnitude + shift >= 0 {
+            true => self.upper_magnitude + shift,
+            false => 0,
+        };
+
+        if self.upper_magnitude >= self.magnitude {
+            return;
+        }
+
+        // how many digits need to be deleted from the start.
+        let cut = self.magnitude - self.upper_magnitude;
+
+        self.magnitude = self.upper_magnitude;
+        self.digits.drain(0..(cut as usize));
+
+        if self.digits.is_empty() {
+            self.magnitude = 0;
         }
     }
 
-    /// Add zero digits to the magnitude, either negative (trailing zeros) or positive (leading zeros).
+    /// Add or remove digits from the left side of the decimal (before the decimal point).
     ///
     /// # Examples
     ///
@@ -374,14 +390,17 @@ impl FixedDecimal {
     /// let dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// let dec = dec.padded(2);
-    /// assert_eq!("042", dec.to_string());
+    /// let dec = dec.padded_or_trunced_left(2);
+    /// assert_eq!("0042", dec.to_string());
     ///
-    /// let dec = dec.padded(-2);
-    /// assert_eq!("042.00", dec.to_string());
+    /// let dec = dec.padded_or_trunced_left(-2);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// let dec = dec.padded_or_trunced_left(-1);
+    /// assert_eq!("2", dec.to_string());
     /// ```
-    pub fn padded(mut self, magnitude: i16) -> Self {
-        self.pad(magnitude);
+    pub fn padded_or_trunced_left(mut self, magnitude: i16) -> Self {
+        self.pad_or_trunc_left(magnitude);
         self
     }
 
