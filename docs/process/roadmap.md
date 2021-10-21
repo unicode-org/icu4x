@@ -1,5 +1,5 @@
 # ICU4X 1.0 Roadmap
-The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimized to provide maximal alignment and synergy between progressive feature extension, technical advancements and business evaluations. This is a prememble view. The ICU4X team is focused to deliver quality work in a way that benefits the customers and the team itself in a measurable way. We are using agile project management methodologies and our detailed work is organized in ([milestones and sprints](https://github.com/unicode-org/icu4x/milestones)). 
+The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimized to provide maximal alignment and synergy between progressive feature extension, technical advancements and business evaluations. This is a preamble view. The ICU4X team is focused to deliver quality work in a way that benefits the customers and the team itself in a measurable way. We are using agile project management methodologies and our detailed work is organized in ([milestones and sprints](https://github.com/unicode-org/icu4x/milestones)). 
 
 * [x] 2020
   * [x] October
@@ -34,25 +34,25 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 	* [ ] October-December
 		* [ ] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 			* [x] DateTime performance (#603)
-		        * [ ] Finish full-stack enumerated Unicode properties ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
-		        * [ ] ZeroVec improvements ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
-	        * [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
+			* [ ] Finish full-stack enumerated Unicode properties ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
+			* [ ] ZeroVec improvements ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
+		* [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
 			* [ ] UnicodeSet L3b (#168)
-		        * [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
-		        * [ ] Full support for enumerated properties ([#148](https://github.com/unicode-org/icu4x/issues/148))
-		        * [ ] Implement full-stack properties of strings
-	        	* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109)) 
-	        	* [ ] Finish full-stack Script_Extensions property
-	        	* [ ] User-Friendly Data Slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
-		        * [ ] User-friendly data tooling (multi-blob, source data downloader)([#1110](https://github.com/unicode-org/icu4x/issues/1110))
-		        * [ ] Migration to ICU4X is enabled
-		        * [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
-		        * [ ] Normalizer ([#972](https://github.com/unicode-org/icu4x/issues/972))
-	        * [ ] Work in Progress (WIP)
-		        * [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
-		        * [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))	
-		        * [ ] High-fidelity code size reduction ([#874](https://github.com/unicode-org/icu4x/issues/874))
-		        * [ ] Collator ([#971](https://github.com/unicode-org/icu4x/issues/971)
+			* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
+			* [ ] Full support for enumerated properties ([#148](https://github.com/unicode-org/icu4x/issues/148))
+			* [ ] Implement full-stack properties of strings
+			* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109)) 
+			* [ ] Finish full-stack Script_Extensions property
+			* [ ] User-Friendly Data Slicing([#1110](https://github.com/unicode-org/icu4x/issues/1110))
+			* [ ] User-friendly data tooling (multi-blob, source data downloader)([#1110](https://github.com/unicode-org/icu4x/issues/1110)
+			* [ ] Migration to ICU4X is enabled
+			* [ ] Implement locale fallbacking in data loading([#1109](https://github.com/unicode-org/icu4x/issues/1109))
+			* [ ] Normalizer ([#972](https://github.com/unicode-org/icu4x/issues/972)
+		 * [ ] Work in Progress (WIP)
+		 	* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
+		 	* [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))
+		 	* [ ] High-fidelity code size reduction ([#874](https://github.com/unicode-org/icu4x/issues/874))
+		 	* [ ] Collator ([#971](https://github.com/unicode-org/icu4x/issues/971)
 * [ ] 2022
 	* [ ] January-March
 		* [ ] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
