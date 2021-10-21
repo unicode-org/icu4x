@@ -45,7 +45,7 @@
 //! use icu::datetime::options::components;
 //!
 //! let bag = components::Bag {
-//!     year: Some(components::Numeric::Numeric),
+//!     year: Some(components::Year::Numeric),
 //!     month: Some(components::Month::Long),
 //!     day: Some(components::Numeric::Numeric),
 //!
@@ -87,7 +87,7 @@ pub struct Bag {
     /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
     /// Include the year, such as "1970" or "70".
-    pub year: Option<Numeric>,
+    pub year: Option<Year>,
     /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
     /// Include the week, such as "1st" or "1".
@@ -138,12 +138,14 @@ impl Bag {
 
         if let Some(year) = self.year {
             // Unimplemented year fields:
-            // Y - Week of Year
             // u - Extended year
             // U - Cyclic year name
             // r - Related Gregorian year
             fields.push(Field {
-                symbol: FieldSymbol::Year(fields::Year::Calendar),
+                symbol: FieldSymbol::Year(match year {
+                    Year::Numeric | Year::TwoDigit => fields::Year::Calendar,
+                    Year::NumericWeekOf | Year::TwoDigitWeekOf => fields::Year::WeekOf,
+                }),
                 length: match year {
                     // Calendar year (numeric).
                     // y       2, 20, 201, 2017, 20173
@@ -151,8 +153,8 @@ impl Bag {
                     // yyy     002, 020, 201, 2017, 20173    (not implemented)
                     // yyyy    0002, 0020, 0201, 2017, 20173 (not implemented)
                     // yyyyy+  ...                           (not implemented)
-                    Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Year::Numeric | Year::NumericWeekOf => FieldLength::One,
+                    Year::TwoDigit | Year::TwoDigitWeekOf => FieldLength::TwoDigit,
                 },
             });
         }
@@ -350,6 +352,22 @@ pub enum Text {
     Narrow,
 }
 
+/// Options for displaying a Year for the `components::`[`Bag`].
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub enum Year {
+    /// The numeric value of the year, such as "2021".
+    #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
+    Numeric,
+    /// The two-digit value of the year, such as "21".
+    #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
+    TwoDigit,
+    /// The numeric value of the year in "week-of-year", such as "2021".
+    NumericWeekOf,
+    /// The two-digit value of the year in "week-of-year", such as "21".
+    TwoDigitWeekOf,
+}
+
 /// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -473,7 +491,7 @@ mod test {
     #[test]
     fn test_component_bag_to_vec_field() {
         let bag = Bag {
-            year: Some(Numeric::Numeric),
+            year: Some(Year::Numeric),
             month: Some(Month::Long),
             week: Some(Week::WeekOfMonth),
             day: Some(Numeric::Numeric),
@@ -501,7 +519,7 @@ mod test {
     #[test]
     fn test_component_bag_to_vec_field2() {
         let bag = Bag {
-            year: Some(Numeric::Numeric),
+            year: Some(Year::Numeric),
             month: Some(Month::TwoDigit),
             day: Some(Numeric::Numeric),
             ..Default::default()

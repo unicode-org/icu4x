@@ -518,7 +518,7 @@
             "value": "2016-04-13T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "NumericWeekOf",
                     "week": "NumericWeekOfYear"
                 }
             }
@@ -536,7 +536,7 @@
             "value": "2022-01-01T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "NumericWeekOf",
                     "week": "NumericWeekOfYear"
                 }
             }

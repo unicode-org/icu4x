@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::vec::Vec;
+use core::cmp::Ordering;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
@@ -298,10 +299,9 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut Pattern) {
     runtime::helpers::maybe_replace(pattern, |item| {
         if let PatternItem::Field(pattern_field) = item {
-            if let Some(requested_field) = fields
-                .iter()
-                .find(|field| field.symbol == pattern_field.symbol)
-            {
+            if let Some(requested_field) = fields.iter().find(|field| {
+                field.symbol.discriminant_cmp(&pattern_field.symbol) == Ordering::Equal
+            }) {
                 if requested_field.length != pattern_field.length
                     && requested_field.get_length_type() == pattern_field.get_length_type()
                 {
@@ -363,19 +363,24 @@ pub fn get_best_available_format_pattern<'data>(
                         skeleton_field.symbol != FieldSymbol::Month(fields::Month::StandAlone)
                     );
 
-                    if skeleton_field.symbol > requested_field.symbol {
-                        // Keep searching for a matching skeleton field.
-                        skeleton_fields.next();
-                        distance += SKELETON_EXTRA_SYMBOL;
-                        continue;
-                    }
-
-                    if skeleton_field.symbol < requested_field.symbol {
-                        // The requested field symbol is missing from the skeleton.
-                        distance += REQUESTED_SYMBOL_MISSING;
-                        missing_fields += 1;
-                        requested_fields.next();
-                        continue;
+                    match skeleton_field
+                        .symbol
+                        .discriminant_cmp(&requested_field.symbol)
+                    {
+                        Ordering::Greater => {
+                            // Keep searching for a matching skeleton field.
+                            skeleton_fields.next();
+                            distance += SKELETON_EXTRA_SYMBOL;
+                            continue;
+                        }
+                        Ordering::Less => {
+                            // The requested field symbol is missing from the skeleton.
+                            distance += REQUESTED_SYMBOL_MISSING;
+                            missing_fields += 1;
+                            requested_fields.next();
+                            continue;
+                        }
+                        _ => (),
                     }
 
                     distance += if requested_field == skeleton_field {

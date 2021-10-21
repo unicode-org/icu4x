@@ -34,6 +34,40 @@
         }
     },
     {
+        "description": "Width difference: Y vs YY",
+        "input": {
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "TwoDigitWeekOf",
+                    "week": "NumericWeekOfYear"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "week 2 of 20"
+            }
+        }
+    },
+    {
+        "description": "Width and symbol difference: y vs YY",
+        "input": {
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "two-digit",
+                    "week": "NumericWeekOfYear"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "week 2 of 20"
+            }
+        }
+    },
+    {
         "description": "Enumerate month lengths which may need expansion: yMd => M/d/y",
         "input": {
             "value": "2020-01-07T08:25:07.000",
