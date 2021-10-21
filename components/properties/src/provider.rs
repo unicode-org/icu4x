@@ -22,19 +22,18 @@ pub mod key {
 
     /// Macro to help define resource keys and store them in a list.
     macro_rules! define_resource_keys {
-        ($count:expr; $(($k:ident, $s:literal)),+,) => {
+        ($allkeys:ident; $count:expr; $(($k:ident, $s:literal)),+,) => {
             $(
                 #[allow(missing_docs)] // These constants don't need individual documentation.
                 pub const $k: ResourceKey = resource_key!(UnicodeSet, $s, 1);
             )+
 
             /// The set of all resource keys supported by [`icu_uniset`](crate).
-            pub const ALL_KEYS: [ResourceKey; $count] = [$($k,)+];
+            pub const $allkeys: [ResourceKey; $count] = [$($k,)+];
         };
     }
 
-    define_resource_keys!(267;
-
+    define_resource_keys!(ALL_SET_KEYS; 265;
         //
         // Binary property UnicodeSets
         //
@@ -313,7 +312,9 @@ pub mod key {
         (SCRIPT_YEZIDI_V1, "sc=Yezi"),
         (SCRIPT_YI_V1, "sc=Yiii"),
         (SCRIPT_ZANABAZAR_SQUARE_V1, "sc=Zanb"),
+    );
 
+    define_resource_keys!(ALL_MAP_KEYS; 2;
         //
         // Enumerated property CodePointMaps
         //
@@ -322,7 +323,6 @@ pub mod key {
 
         (GENERAL_CATEGORY_V1, "gc"),
         (SCRIPT_V1, "sc"),
-
     );
 }
 

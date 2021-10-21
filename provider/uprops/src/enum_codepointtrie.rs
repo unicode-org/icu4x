@@ -7,7 +7,10 @@ use crate::uprops_serde;
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
+use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
+use icu_properties::{GeneralSubcategory, Script};
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
@@ -107,6 +110,21 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
             },
             payload: Some(DataPayload::from_owned(data_struct)),
         })
+    }
+}
+
+icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
+    key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralSubcategory>,
+    key::SCRIPT_V1 => UnicodePropertyMapV1Marker<Script>,
+}, SERDE_SE, 'data);
+
+impl IterableDataProviderCore for EnumeratedPropertyCodePointTrieProvider {
+    fn supported_options_for_key(
+        &self,
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
+        Ok(Box::new(list.into_iter()))
     }
 }
 

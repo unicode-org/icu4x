@@ -5,6 +5,7 @@
 //! A collection of enums for enumerated properties.
 
 use num_enum::{TryFromPrimitive, UnsafeFromPrimitive};
+use serde::Serialize;
 
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
@@ -26,7 +27,7 @@ pub enum EnumeratedProperty {
 /// Enumerated Unicode general category types.
 /// GeneralSubcategory only supports specific subcategories (eg `UppercaseLetter`).
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategory`].
-#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive, Serialize)]
 #[repr(u8)]
 pub enum GeneralSubcategory {
     /// A reserved unassigned code point or a noncharacter
@@ -236,7 +237,7 @@ impl From<GeneralSubcategory> for GeneralCategory {
 /// Script_Extensions set for Dogra, Kaithi, and Mahajani.
 /// For more information, see UAX #24: <http://www.unicode.org/reports/tr24/>.
 /// See UScriptCode in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Serialize)]
 #[repr(transparent)]
 pub struct Script(pub u16);
 

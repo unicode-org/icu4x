@@ -5,10 +5,12 @@
 use anyhow::Context;
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use icu_locid::LanguageIdentifier;
+use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SET_KEYS};
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
 use icu_provider::hello_world::{self, HelloWorldProvider};
 use icu_provider::iter::IterableDataProvider;
+use icu_provider::prelude::*;
 use icu_provider::serde::SerdeSeDataStructMarker;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
@@ -20,6 +22,7 @@ use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
+use icu_provider_uprops::{EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider};
 use simple_logger::SimpleLogger;
 use std::collections::HashSet;
 use std::path::PathBuf;
@@ -261,6 +264,8 @@ fn main() -> anyhow::Result<()> {
     if matches.is_present("ALL_KEYS") || matches.is_present("KEYS") {
         let keys = matches.values_of("KEYS").map(|values| values.collect());
         export_cldr(&matches, exporter, locales_vec.as_deref(), keys.as_ref())?;
+        export_set_props(&matches, exporter, keys.as_ref())?;
+        export_map_props(&matches, exporter, keys.as_ref())?;
     }
 
     if matches.is_present("HELLO_WORLD") {
@@ -397,6 +402,64 @@ fn export_cldr<'data>(
     for key in keys.iter() {
         log::info!("Writing key: {}", key);
         icu_provider::export::export_from_iterable(key, provider, exporter)?;
+    }
+
+    Ok(())
+}
+
+fn export_set_props<'data>(
+    matches: &ArgMatches,
+    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    allowed_keys: Option<&HashSet<&str>>,
+) -> anyhow::Result<()> {
+    let provider = if let Some(path) = matches.value_of("CLDR_ROOT") {
+        PropertiesDataProvider::new(PathBuf::from(path))
+    } else {
+        anyhow::bail!("Value for --cldr-root must be specified",)
+    };
+
+    let keys = ALL_SET_KEYS;
+    let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
+        keys.iter()
+            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
+            .copied()
+            .collect()
+    } else {
+        keys.to_vec()
+    };
+
+    for key in keys.iter() {
+        log::info!("Writing key: {}", key);
+        icu_provider::export::export_from_iterable(key, &provider, exporter)?;
+    }
+
+    Ok(())
+}
+
+fn export_map_props<'data>(
+    matches: &ArgMatches,
+    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    allowed_keys: Option<&HashSet<&str>>,
+) -> anyhow::Result<()> {
+    let provider = if let Some(path) = matches.value_of("CLDR_ROOT") {
+        EnumeratedPropertyCodePointTrieProvider::new(PathBuf::from(path))
+    } else {
+        anyhow::bail!("Value for --cldr-root must be specified",)
+    };
+
+    let keys = ALL_MAP_KEYS;
+    let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
+        keys.iter()
+            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
+            .copied()
+            .collect()
+    } else {
+        keys.to_vec()
+    };
+
+    for key in keys.iter() {
+        log::info!("Writing key: {}", key);
+        icu_provider::export::export_from_iterable(key, &provider, exporter)?;
     }
 
     Ok(())
