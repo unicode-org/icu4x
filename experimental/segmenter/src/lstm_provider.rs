@@ -14,7 +14,6 @@ pub mod key {
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::Cow;
     use icu_locid::LanguageIdentifier;
     use icu_locid_macros::langid;
     use icu_provider::prelude::*;
@@ -22,6 +21,7 @@ mod tests {
     use icu_provider_fs::FsDataProvider;
     use icu_segmenter_lstm::lstm::Lstm;
     use icu_segmenter_lstm::structs::LstmDataMarker;
+    use std::borrow::Cow;
 
     use super::key;
 
