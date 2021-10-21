@@ -180,7 +180,7 @@ mod runtime {
         use alloc::string::ToString;
         use core::fmt;
 
-        /// A helper struct that is shaped exactly like `runtime::Pattern`
+        /// A helper struct that is shaped exactly like `runtime::PatternPlurals`
         /// and is used to aid in quick deserialization.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
         enum PatternPluralsForSerde<'data> {

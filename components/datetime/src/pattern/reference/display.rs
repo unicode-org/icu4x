@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Set of `Display` implementations for reference and runtime `Pattern`.
+
 use super::{
     super::{GenericPatternItem, PatternItem},
     GenericPattern, Pattern,
@@ -9,6 +11,9 @@ use super::{
 use alloc::string::String;
 use core::fmt::{self, Write};
 
+/// A helper function optimized to dump string buffers into `Pattern`
+/// serialization wrapping minimal chunks of the buffer in escaping `'`
+/// literals to produce valid UTF35 pattern string.
 pub(crate) fn dump_buffer_into_formatter(
     literal: &str,
     formatter: &mut fmt::Formatter,
