@@ -25,7 +25,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		* [x] Gecko integration experiment
 	 	* [x] Test262 evaluation	
 	* [x] June-September
-	        * [x] 0.3 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/12))
+		* [x] 0.3 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/12))
 		* [x] Unicode Regular Expressions ([#168](https://github.com/unicode-org/icu4x/issues/168))
 		* [x] C++ FFI ([#674](https://github.com/unicode-org/icu4x/issues/674))
 		* [x] Data provider productionization ([#873](https://github.com/unicode-org/icu4x/issues/873))
