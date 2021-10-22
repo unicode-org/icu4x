@@ -38,14 +38,14 @@ use alloc::vec::Vec;
 ///   (i.e. if fed to [`VarULE::validate_byte_slice()`] they must produce a successful result)
 /// - It must return the return value of `cb` to the caller
 ///
-/// One or more of [`Self::encoded_var_ule_length()`] and [`Self::encode_var_ule_to()`] may be provided.
+/// One or more of [`Self::encoded_var_ule_length()`] and [`Self::encode_var_ule_write()`] may be provided.
 /// If both are, then `zerovec` code is guaranteed to not call [`Self::encode_var_ule_as_slices()`], and it may be replaced
 /// with `unreachable!()`.
 ///
 /// The safety invariants of [`Self::encoded_var_ule_length()`] are:
 /// - It must return the length of the corresponding VarULE type
 ///
-/// The safety invariants of [`Self::encode_var_ule_to()`] are:
+/// The safety invariants of [`Self::encode_var_ule_write()`] are:
 /// - The slice written to `dst` must be a valid instance of the `T` [`VarULE`] type
 ///
 ///
@@ -64,7 +64,7 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
 
     /// Write the corresponding [`VarULE`] type to the `dst` buffer. `dst` should
     /// be the size of [`Self::encoded_var_ule_length()`]
-    fn encode_var_ule_to(&self, mut dst: &mut [u8]) {
+    fn encode_var_ule_write(&self, mut dst: &mut [u8]) {
         debug_assert_eq!(self.encoded_var_ule_length(), dst.len());
         self.encode_var_ule_as_slices(move |slices| {
             for slice in slices {

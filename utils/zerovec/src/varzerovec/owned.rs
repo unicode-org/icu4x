@@ -402,7 +402,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         assert!(value_len < u32::MAX as usize);
         unsafe {
             let place = self.shift(index, value_len as u32, ShiftType::Insert);
-            element.encode_var_ule_to(place);
+            element.encode_var_ule_write(place);
         }
     }
 
@@ -438,7 +438,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         assert!(value_len < u32::MAX as usize);
         unsafe {
             let place = self.shift(index, value_len as u32, ShiftType::Replace);
-            element.encode_var_ule_to(place);
+            element.encode_var_ule_write(place);
         }
     }
 }
