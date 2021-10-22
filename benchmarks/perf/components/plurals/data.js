@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634835596616,
+  "lastUpdate": 1634861493547,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16925,6 +16925,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24014,
             "range": "± 1163",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "91630072+sapriyag@users.noreply.github.com",
+            "name": "sapriyag",
+            "username": "sapriyag"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8e8b1cc83052c14a445487a88b995e680276a332",
+          "message": "Updates to roadmap.md (#1140)\n\n* Work in progress to update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Updated roadmap.md\r\n\r\nReady for review.\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\nFixed indentation.\r\n\r\n* Update docs/process/roadmap.md\r\n\r\nCo-authored-by: Shane F. Carr <sffc@google.com>\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Updated roadmap.md\r\n\r\nFixed indentation.\r\n\r\nCo-authored-by: Shane F. Carr <sffc@google.com>",
+          "timestamp": "2021-10-21T17:04:31-07:00",
+          "tree_id": "11e792c36f9901c0207d9014bc43ff168c24cb25",
+          "url": "https://github.com/unicode-org/icu4x/commit/8e8b1cc83052c14a445487a88b995e680276a332"
+        },
+        "date": 1634861489092,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1021,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5965,
+            "range": "± 383",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 19223,
+            "range": "± 1550",
             "unit": "ns/iter"
           }
         ]
