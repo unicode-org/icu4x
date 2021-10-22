@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634835580192,
+  "lastUpdate": 1634861482953,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10553,6 +10553,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 311122,
             "range": "± 12799",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "91630072+sapriyag@users.noreply.github.com",
+            "name": "sapriyag",
+            "username": "sapriyag"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8e8b1cc83052c14a445487a88b995e680276a332",
+          "message": "Updates to roadmap.md (#1140)\n\n* Work in progress to update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Updated roadmap.md\r\n\r\nReady for review.\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\nFixed indentation.\r\n\r\n* Update docs/process/roadmap.md\r\n\r\nCo-authored-by: Shane F. Carr <sffc@google.com>\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Updated roadmap.md\r\n\r\nFixed indentation.\r\n\r\nCo-authored-by: Shane F. Carr <sffc@google.com>",
+          "timestamp": "2021-10-21T17:04:31-07:00",
+          "tree_id": "11e792c36f9901c0207d9014bc43ff168c24cb25",
+          "url": "https://github.com/unicode-org/icu4x/commit/8e8b1cc83052c14a445487a88b995e680276a332"
+        },
+        "date": 1634861479325,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 89839,
+            "range": "± 3168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1370845,
+            "range": "± 22269",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 283681,
+            "range": "± 9143",
             "unit": "ns/iter"
           }
         ]
