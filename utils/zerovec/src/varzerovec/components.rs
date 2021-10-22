@@ -303,7 +303,7 @@ pub fn get_serializable_bytes<T: VarULE + ?Sized, A: custom::EncodeAsVarULE<T>>(
     for (idx, element) in elements.iter().enumerate() {
         let element_len = element.encoded_var_ule_length();
         let indices = &mut vec[(4 + 4 * idx)..(4 + 4 * idx + 4)];
-        indices.clone_from_slice(&offset.as_unaligned().0);
+        indices.copy_from_slice(&offset.as_unaligned().0);
         let element_start = vec.len();
         vec.resize(element_len + element_start, 0);
         element.encode_var_ule_to(&mut vec[element_start..]);
