@@ -43,7 +43,7 @@ use alloc::vec::Vec;
 /// with `unreachable!()`.
 ///
 /// The safety invariants of [`Self::encoded_var_ule_length()`] are:
-/// - It must return the length of the corresponding ULE type
+/// - It must return the length of the corresponding VarULE type
 ///
 /// The safety invariants of [`Self::encode_var_ule_to()`] are:
 /// - The slice written to `dst` must be a valid instance of the `T` [`VarULE`] type
