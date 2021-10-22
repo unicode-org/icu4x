@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634835348482,
+  "lastUpdate": 1634861379487,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -12959,6 +12959,144 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7256f16612e3bdf24e034102d6aab78e40d86440"
         },
         "date": 1634835344215,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 8840,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13539,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 8740,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 7259,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 6587,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12313,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple+opt.wasm",
+            "value": 637208,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 9103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13379,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 16201,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 6633,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 7964,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 6587,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30549,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10134,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 6633,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 6625,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "91630072+sapriyag@users.noreply.github.com",
+            "name": "sapriyag",
+            "username": "sapriyag"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8e8b1cc83052c14a445487a88b995e680276a332",
+          "message": "Updates to roadmap.md (#1140)\n\n* Work in progress to update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Updated roadmap.md\r\n\r\nReady for review.\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\nFixed indentation.\r\n\r\n* Update docs/process/roadmap.md\r\n\r\nCo-authored-by: Shane F. Carr <sffc@google.com>\r\n\r\n* Update roadmap.md\r\n\r\n* Update roadmap.md\r\n\r\n* Updated roadmap.md\r\n\r\nFixed indentation.\r\n\r\nCo-authored-by: Shane F. Carr <sffc@google.com>",
+          "timestamp": "2021-10-21T17:04:31-07:00",
+          "tree_id": "11e792c36f9901c0207d9014bc43ff168c24cb25",
+          "url": "https://github.com/unicode-org/icu4x/commit/8e8b1cc83052c14a445487a88b995e680276a332"
+        },
+        "date": 1634861374208,
         "tool": "ndjson",
         "benches": [
           {
