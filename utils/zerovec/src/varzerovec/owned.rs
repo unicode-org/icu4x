@@ -382,7 +382,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             );
         }
 
-        let value_len = element.encoded_var_ule_length();
+        let value_len = element.encode_var_ule_len();
 
         if len == 0 {
             // 4 bytes for length, 4 bytes for the index, remaining for element
@@ -433,7 +433,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             );
         }
 
-        let value_len = element.encoded_var_ule_length();
+        let value_len = element.encode_var_ule_len();
 
         assert!(value_len < u32::MAX as usize);
         unsafe {

@@ -26,7 +26,7 @@ use alloc::vec::Vec;
 /// A trailing [`ZeroVec`](crate::ZeroVec) or [`VarZeroVec`](crate::VarZeroVec) can have their underlying
 /// byte representation passed through.
 ///
-/// In case the compiler is not optimizing [`Self::encoded_var_ule_length()`], it can be overridden. A typical
+/// In case the compiler is not optimizing [`Self::encode_var_ule_len()`], it can be overridden. A typical
 /// implementation will add up the sizes of each field on the [`VarULE`] type and then add in the byte length of the
 /// dynamically-sized part.
 ///
@@ -38,11 +38,11 @@ use alloc::vec::Vec;
 ///   (i.e. if fed to [`VarULE::validate_byte_slice()`] they must produce a successful result)
 /// - It must return the return value of `cb` to the caller
 ///
-/// One or more of [`Self::encoded_var_ule_length()`] and [`Self::encode_var_ule_write()`] may be provided.
+/// One or more of [`Self::encode_var_ule_len()`] and [`Self::encode_var_ule_write()`] may be provided.
 /// If both are, then `zerovec` code is guaranteed to not call [`Self::encode_var_ule_as_slices()`], and it may be replaced
 /// with `unreachable!()`.
 ///
-/// The safety invariants of [`Self::encoded_var_ule_length()`] are:
+/// The safety invariants of [`Self::encode_var_ule_len()`] are:
 /// - It must return the length of the corresponding VarULE type
 ///
 /// The safety invariants of [`Self::encode_var_ule_write()`] are:
@@ -58,14 +58,14 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R;
 
     /// Return the length, in bytes, of the corresponding [`VarULE`] type
-    fn encoded_var_ule_length(&self) -> usize {
+    fn encode_var_ule_len(&self) -> usize {
         self.encode_var_ule_as_slices(|slices| slices.iter().map(|s| s.len()).sum())
     }
 
     /// Write the corresponding [`VarULE`] type to the `dst` buffer. `dst` should
-    /// be the size of [`Self::encoded_var_ule_length()`]
+    /// be the size of [`Self::encode_var_ule_len()`]
     fn encode_var_ule_write(&self, mut dst: &mut [u8]) {
-        debug_assert_eq!(self.encoded_var_ule_length(), dst.len());
+        debug_assert_eq!(self.encode_var_ule_len(), dst.len());
         self.encode_var_ule_as_slices(move |slices| {
             for slice in slices {
                 dst[..slice.len()].copy_from_slice(slice);
