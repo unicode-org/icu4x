@@ -4,7 +4,11 @@
 
 use crate::language::*;
 
+use icu_provider::DataPayload;
+use icu_provider::serde::SerdeDeDataReceiver;
 use icu_segmenter_lstm::lstm::Lstm;
+use icu_segmenter_lstm::structs;
+use icu_segmenter_lstm::structs::*;
 use std::char::decode_utf16;
 use std::str::Chars;
 
@@ -16,23 +20,23 @@ const THAI_MODEL: &[u8; 373466] =
 const BURMESE_MODEL: &[u8; 475209] =
     include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
 
-lazy_static! {
-    static ref THAI_LSTM: Lstm<'static> = {
-        let lstm_data = serde_json::from_slice(THAI_MODEL).expect("JSON syntax error");
-        Lstm::try_new(lstm_data).unwrap()
-    };
-    static ref BURMESE_LSTM: Lstm<'static> = {
-        let lstm_data = serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
-        Lstm::try_new(lstm_data).unwrap()
-    };
+fn load_lstm_data(buf: &'static [u8]) -> DataPayload<structs::LstmDataMarker> {
+    let mut d = serde_json::Deserializer::from_slice(buf);
+    let mut receiver: Option<DataPayload<LstmDataMarker>> = None;
+    receiver
+        .receive_static(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
+        .expect("Well-formed data");
+    receiver.expect("Data is present")
 }
 
 // LSTM model depends on language, So we have to switch models per language.
-fn get_best_lstm_model(codepoint: u32) -> &'static Lstm<'static> {
+fn get_best_lstm_model(codepoint: u32) -> Lstm<'static> {
+    // TODO:
+    // DataPayLoad isn't thread safe. We need anything static version.
     let lang = get_language(codepoint);
     match lang {
-        Language::Thai => &*THAI_LSTM,
-        Language::Burmese => &*BURMESE_LSTM,
+        Language::Thai => Lstm::try_new(load_lstm_data(THAI_MODEL)).unwrap(),
+        Language::Burmese => Lstm::try_new(load_lstm_data(BURMESE_MODEL)).unwrap(),
         _ => panic!("Unsupported"),
     }
 }
@@ -163,7 +167,7 @@ pub fn get_line_break_utf8(input: &str) -> Option<Vec<usize>> {
 
         let str_per_lang = str_per_lang.unwrap();
         let lstm = get_best_lstm_model(str_per_lang.chars().next().unwrap() as u32);
-        let lstm_iter = LstmSegmenterIterator::new(lstm, &str_per_lang);
+        let lstm_iter = LstmSegmenterIterator::new(&lstm, &str_per_lang);
         let mut r: Vec<usize> = lstm_iter.map(|n| offset + n).collect();
         result.append(&mut r);
         offset += str_per_lang.len();
@@ -187,7 +191,7 @@ pub fn get_line_break_utf16(input: &[u16]) -> Option<Vec<usize>> {
         }
 
         let lstm = get_best_lstm_model(str_per_lang.chars().next().unwrap() as u32);
-        let lstm_iter = LstmSegmenterIteratorUtf16::new(lstm, &str_per_lang);
+        let lstm_iter = LstmSegmenterIteratorUtf16::new(&lstm, &str_per_lang);
         let mut r: Vec<usize> = lstm_iter.map(|n| offset + n).collect();
         result.append(&mut r);
         offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf16());

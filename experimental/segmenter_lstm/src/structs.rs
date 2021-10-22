@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use litemap::LiteMap;
 use ndarray::Array1;
 use ndarray::Array2;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use std::collections::HashMap;
 use yoke::{Yokeable, ZeroCopyFrom};
 
 /// 'LstmData' is a struct that store a LSTM model. Its attributes are:
@@ -18,16 +18,20 @@ use yoke::{Yokeable, ZeroCopyFrom};
 /// `mat8` - `mat9`: the matrices associated with output layer (weight and bias term respectiely)
 #[icu_provider::data_struct]
 #[derive(PartialEq, Debug, Serialize, Deserialize, Clone)]
+#[yoke(cloning_zcf)]
 pub struct LstmData<'data> {
-    pub model: Cow<'data, String>,
-    pub dic: Cow<'data, HashMap<String, i16>>,
-    pub mat1: Cow<'data, Array2<f32>>,
-    pub mat2: Cow<'data, Array2<f32>>,
-    pub mat3: Cow<'data, Array2<f32>>,
-    pub mat4: Cow<'data, Array1<f32>>,
-    pub mat5: Cow<'data, Array2<f32>>,
-    pub mat6: Cow<'data, Array2<f32>>,
-    pub mat7: Cow<'data, Array1<f32>>,
-    pub mat8: Cow<'data, Array2<f32>>,
-    pub mat9: Cow<'data, Array1<f32>>,
+    #[serde(borrow)]
+    pub model: Cow<'data, str>,
+    // TODO: replacing LiteMap with ZeroMap if possible
+    #[serde(borrow)]
+    pub dic: LiteMap<Cow<'data, str>, i16>,
+    pub mat1: Array2<f32>,
+    pub mat2: Array2<f32>,
+    pub mat3: Array2<f32>,
+    pub mat4: Array1<f32>,
+    pub mat5: Array2<f32>,
+    pub mat6: Array2<f32>,
+    pub mat7: Array1<f32>,
+    pub mat8: Array2<f32>,
+    pub mat9: Array1<f32>,
 }
