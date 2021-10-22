@@ -39,7 +39,7 @@ use alloc::vec::Vec;
 /// - It must return the return value of `cb` to the caller
 ///
 /// One or more of [`Self::encoded_var_ule_length()`] and [`Self::encode_var_ule_to()`] may be provided.
-/// If both are, then `zerovec` code is guaranteed to not call [`Self::encode_var_ule()`] (and it may be replaced)
+/// If both are, then `zerovec` code is guaranteed to not call [`Self::encode_var_ule()`], and it may be replaced
 /// with `unreachable!()`.
 ///
 /// The safety invariants of [`Self::encoded_var_ule_length()`] are:
