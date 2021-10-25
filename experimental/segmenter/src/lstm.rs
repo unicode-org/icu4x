@@ -4,8 +4,8 @@
 
 use crate::language::*;
 
-use icu_provider::DataPayload;
 use icu_provider::serde::SerdeDeDataReceiver;
+use icu_provider::DataPayload;
 use icu_segmenter_lstm::lstm::Lstm;
 use icu_segmenter_lstm::structs;
 use icu_segmenter_lstm::structs::*;
