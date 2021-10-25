@@ -151,7 +151,7 @@ jobs:
     - name: Get Diplomat version
       id: diplomat-version
       run: |
-        echo "::set-output name=rev::$(cargo make diplomat-get-rev --loglevel error |  tr -d '[:space:]')"
+        echo "::set-output name=rev::$(cargo make --loglevel error diplomat-get-rev |  tr -d '[:space:]')"
       shell: bash
     - name: Attempt to load cached Diplomat
       uses: actions/cache@v2
@@ -296,7 +296,7 @@ jobs:
       - name: Get Diplomat version
         id: diplomat-version
         run: |
-          echo "::set-output name=rev::$(cargo make diplomat-get-rev --loglevel error |  tr -d '[:space:]')"
+          echo "::set-output name=rev::$(cargo make --loglevel error diplomat-get-rev |  tr -d '[:space:]')"
         shell: bash
       - name: Attempt to load cached Diplomat
         uses: actions/cache@v2
