@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635188293886,
+  "lastUpdate": 1635188850367,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17009,6 +17009,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24246,
             "range": "± 1895",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3920ad263ca5d63d1cc206bde3266cf5e013318c",
+          "message": "Add more methods to EncodeAsVarULE (#1199)",
+          "timestamp": "2021-10-25T11:59:29-07:00",
+          "tree_id": "441529dd6dc23bf43b0ca4923d22acf95448bbbd",
+          "url": "https://github.com/unicode-org/icu4x/commit/3920ad263ca5d63d1cc206bde3266cf5e013318c"
+        },
+        "date": 1635188845064,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1305,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7798,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25309,
+            "range": "± 264",
             "unit": "ns/iter"
           }
         ]
