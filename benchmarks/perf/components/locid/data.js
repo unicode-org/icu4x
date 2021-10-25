@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635188246566,
+  "lastUpdate": 1635188795274,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15185,6 +15185,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4250,
             "range": "± 258",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3920ad263ca5d63d1cc206bde3266cf5e013318c",
+          "message": "Add more methods to EncodeAsVarULE (#1199)",
+          "timestamp": "2021-10-25T11:59:29-07:00",
+          "tree_id": "441529dd6dc23bf43b0ca4923d22acf95448bbbd",
+          "url": "https://github.com/unicode-org/icu4x/commit/3920ad263ca5d63d1cc206bde3266cf5e013318c"
+        },
+        "date": 1635188790891,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2428,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4208,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
