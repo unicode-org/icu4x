@@ -52,7 +52,7 @@ where
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }
 
-/// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`] .
+/// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 pub fn get_script<'data, D>(provider: &D) -> CodePointMapResult<'data, Script>
