@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634861482953,
+  "lastUpdate": 1635188296979,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10595,6 +10595,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 283681,
             "range": "± 9143",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ea6dd3c16de4963493f20fb1f831ecac2d4f27e0",
+          "message": "Fix CI (#1207)\n\n* Make diplomat-get-rev fail early on CI\r\n\r\n* Fix loglevel argument ordering\r\n\r\n* include loglevel in the getrev check",
+          "timestamp": "2021-10-25T11:46:41-07:00",
+          "tree_id": "c57b3490614ddcc9138704321616846704a1046b",
+          "url": "https://github.com/unicode-org/icu4x/commit/ea6dd3c16de4963493f20fb1f831ecac2d4f27e0"
+        },
+        "date": 1635188291341,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 118063,
+            "range": "± 3967",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1838841,
+            "range": "± 61428",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 365076,
+            "range": "± 15725",
             "unit": "ns/iter"
           }
         ]
