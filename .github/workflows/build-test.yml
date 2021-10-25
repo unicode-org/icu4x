@@ -147,7 +147,7 @@ jobs:
           sphinx-rtd-theme
     - name: Run diplomat-get-rev to ensure it works
       id: diplomat-getrev-check
-      run: cargo make diplomat-get-rev
+      run: cargo make --loglevel error diplomat-get-rev
     - name: Get Diplomat version
       id: diplomat-version
       run: |
@@ -292,7 +292,7 @@ jobs:
           ./emsdk activate latest
       - name: Run diplomat-get-rev to ensure it works
         id: diplomat-getrev-check
-        run: cargo make diplomat-get-rev
+        run: cargo make --loglevel error diplomat-get-rev
       - name: Get Diplomat version
         id: diplomat-version
         run: |
