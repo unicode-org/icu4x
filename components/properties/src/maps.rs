@@ -42,11 +42,7 @@ where
     Ok(property_payload)
 }
 
-/// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property.
-/// General_Category specifies the most general classification of a code point, usually
-/// determined based on the primary characteristic of the assigned character. For example, is the
-/// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
-/// /// See <https://www.unicode.org/reports/tr44/> .
+/// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 pub fn get_general_category<'data, D>(provider: &D) -> CodePointMapResult<'data, GeneralSubcategory>
@@ -56,8 +52,7 @@ where
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }
 
-/// Return a [`CodePointTrie`] for the Script Unicode enumerated property.
-/// See <https://www.unicode.org/reports/tr44/> .
+/// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`] .
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 pub fn get_script<'data, D>(provider: &D) -> CodePointMapResult<'data, Script>

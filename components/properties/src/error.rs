@@ -13,7 +13,6 @@ pub enum PropertiesError {
     /// An error occurred while loading data
     #[displaydoc("{0}")]
     PropDataLoad(DataError),
-
     /// An unknown value was used for the [`Script`] property
     #[displaydoc("Unknown script id: {0}")]
     UnknownScriptId(u16),
