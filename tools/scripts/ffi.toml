@@ -197,7 +197,7 @@ dependencies = [ "cargo-make-min-version" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-rev = exec cargo make diplomat-get-rev --loglevel error
+rev = exec cargo make --loglevel error diplomat-get-rev
 rev = trim ${rev.stdout}
 echo "Installing Diplomat rev ${rev}"
 exec cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f

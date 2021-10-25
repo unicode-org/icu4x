@@ -382,8 +382,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             );
         }
 
-        let value_len: usize =
-            element.encode_var_ule(|slices| slices.iter().map(|s| s.len()).sum());
+        let value_len = element.encode_var_ule_len();
 
         if len == 0 {
             // 4 bytes for length, 4 bytes for the index, remaining for element
@@ -392,7 +391,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             let index_u32 = 0u32;
             self.entire_slice.extend(&len_u32.as_unaligned().0);
             self.entire_slice.extend(&index_u32.as_unaligned().0);
-            element.encode_var_ule(|slices| {
+            element.encode_var_ule_as_slices(|slices| {
                 for slice in slices {
                     self.entire_slice.extend(*slice)
                 }
@@ -402,13 +401,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         assert!(value_len < u32::MAX as usize);
         unsafe {
-            let mut place = self.shift(index, value_len as u32, ShiftType::Insert);
-            element.encode_var_ule(|slices| {
-                for slice in slices {
-                    place[..slice.len()].copy_from_slice(slice);
-                    place = &mut place[slice.len()..];
-                }
-            });
+            let place = self.shift(index, value_len as u32, ShiftType::Insert);
+            element.encode_var_ule_write(place);
         }
     }
 
@@ -439,18 +433,12 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             );
         }
 
-        let value_len: usize =
-            element.encode_var_ule(|slices| slices.iter().map(|s| s.len()).sum());
+        let value_len = element.encode_var_ule_len();
 
         assert!(value_len < u32::MAX as usize);
         unsafe {
-            let mut place = self.shift(index, value_len as u32, ShiftType::Replace);
-            element.encode_var_ule(|slices| {
-                for slice in slices {
-                    place[..slice.len()].copy_from_slice(slice);
-                    place = &mut place[slice.len()..];
-                }
-            });
+            let place = self.shift(index, value_len as u32, ShiftType::Replace);
+            element.encode_var_ule_write(place);
         }
     }
 }
