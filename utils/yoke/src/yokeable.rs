@@ -18,7 +18,7 @@ use core::mem;
 /// This is useful for turning covariant lifetimes to _dynamic_ lifetimes, where `'static` is
 /// used as a way to "erase" the lifetime.
 ///
-/// # Implementation safety
+/// # Safety
 ///
 /// This trait is safe to implement on types with a _covariant_ lifetime parameter, i.e. one where
 /// [`Self::transform()`]'s body can simply be `{ self }`. This will occur when the lifetime

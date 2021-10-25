@@ -463,6 +463,12 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 /// implemented on [`Option`] (since it's not [`Deref`]). [`CloneableCart`] essentially is
 /// "if there _is_ data to borrow from here, cloning the cart gives you an additional
 /// handle to the same data".
+///
+/// # Safety
+/// This trait is safe to implement `StableDeref` types which, once `Clone`d, point to the same underlying data.
+///
+/// (This trait is also implemented on `Option<T>` and `()`, which are the two non-`StableDeref` cart types that
+/// Yokes can be constructed for)
 pub unsafe trait CloneableCart: Clone {}
 
 #[cfg(feature = "alloc")]

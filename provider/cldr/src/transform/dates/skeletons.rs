@@ -109,79 +109,74 @@ impl<'data> IterableDataProviderCore for DateSkeletonPatternsProvider<'data> {
 impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
         use gregory::{patterns::PatternPluralsV1, SkeletonV1};
-        use icu_datetime::pattern::reference::{Pattern, PatternPlurals, PluralPattern};
+        use icu_datetime::{
+            pattern::reference::{Pattern, PatternPlurals, PluralPattern},
+            skeleton::reference::Skeleton,
+        };
         use litemap::LiteMap;
+        use std::collections::HashMap;
 
-        let mut skeletons = LiteMap::new();
+        let mut patterns: HashMap<String, HashMap<String, String>> = HashMap::new();
 
         // The CLDR keys for available_formats can have duplicate skeletons with either
         // an additional variant, or with multiple variants for different plurals.
         for (skeleton_str, pattern_str) in other.available_formats.0.iter() {
-            let mut unique_skeleton = None;
-            let mut variant_parts = Vec::new();
-
-            for part in skeleton_str.split('-') {
-                match unique_skeleton {
-                    None => {
-                        unique_skeleton = Some(part);
-                    }
-                    Some(_) => variant_parts.push(part),
-                }
-            }
-
-            let unique_skeleton = unique_skeleton.expect("Expected to find a skeleton.");
-
-            let skeleton_fields_v1 = match SkeletonV1::try_from(unique_skeleton) {
-                Ok(s) => s,
-                Err(err) => match err {
-                    // Ignore unimplemented fields for now.
-                    SkeletonError::SymbolUnimplemented(_) => continue,
-                    _ => panic!("{:?} {}", unique_skeleton, err),
-                },
+            let (skeleton_str, variant_str) = match skeleton_str.split_once("-count-") {
+                Some((s, v)) => (s, v),
+                None => (skeleton_str.as_ref(), "other"),
             };
 
-            let pattern =
-                Pattern::from_bytes(pattern_str as &str).expect("Unable to parse a pattern");
-
-            match variant_parts.as_slice() {
-                // A single pattern for a skeleton.
-                // i.e. "${skeleton_str}" : "${pattern}",
-                [] => {
-                    skeletons.insert(skeleton_fields_v1, pattern.into());
-                }
-                // One of several pattern plural variants for a given skeleton.
-                // i.e. "${skeleton_str}-count-${plural_category_str}" : "${pattern}",
-                ["count", plural_category_str] => {
-                    let plural_category = PluralCategory::from_tr35_string(plural_category_str)
-                        .expect("Unable to parse a plural category");
-
-                    match skeletons.get_mut(&skeleton_fields_v1) {
-                        Some(PatternPluralsV1(PatternPlurals::MultipleVariants(v))) => {
-                            v.add_variant(plural_category, pattern)
-                        }
-                        Some(PatternPluralsV1(PatternPlurals::SinglePattern(_))) => panic!(
-                            "Skeleton {:?} has a mix of plural & non-plural variants",
-                            skeleton_str
-                        ),
-                        None => {
-                            skeletons.insert(
-                                skeleton_fields_v1,
-                                PluralPattern::new(plural_category, pattern)
-                                    .expect("Unable to create a PluralPattern")
-                                    .into(),
-                            );
-                        }
-                    };
-                }
-                _ => eprintln!(
-                    "This skeleton string is not yet supported: {:?}",
-                    skeleton_str
-                ),
-            };
+            patterns
+                .entry(skeleton_str.to_string())
+                .and_modify(|map| {
+                    map.insert(variant_str.to_string(), pattern_str.to_string());
+                })
+                .or_insert_with(|| {
+                    let mut map = HashMap::new();
+                    map.insert(variant_str.to_string(), pattern_str.to_string());
+                    map
+                });
         }
 
-        for (_, patterns) in skeletons.iter_mut() {
-            patterns.0.normalize()
+        let mut skeletons = LiteMap::new();
+
+        for (skeleton_str, patterns) in patterns {
+            let skeleton = match Skeleton::try_from(skeleton_str.as_str()) {
+                Ok(s) => s,
+                Err(SkeletonError::SymbolUnimplemented(_)) => continue,
+                Err(err) => panic!(
+                    "Unexpected skeleton error while parsing skeleton {:?} {}",
+                    skeleton_str, err
+                ),
+            };
+
+            let pattern_str = patterns.get("other").expect("Other variant must exist");
+            let pattern = Pattern::from_bytes(pattern_str).expect("Unable to parse a pattern");
+
+            let mut pattern_plurals = if patterns.len() == 1 {
+                PatternPlurals::SinglePattern(pattern)
+            } else {
+                let mut plural_pattern =
+                    PluralPattern::new(pattern).expect("Unable to construct PluralPattern");
+
+                for (key, pattern_str) in patterns {
+                    if key == "other" {
+                        continue;
+                    }
+                    let cat = PluralCategory::from_tr35_string(&key)
+                        .expect("Failed to retrieve plural category");
+                    let pattern =
+                        Pattern::from_bytes(&pattern_str).expect("Unable to parse a pattern");
+                    plural_pattern.maybe_set_variant(cat, pattern);
+                }
+                PatternPlurals::MultipleVariants(plural_pattern)
+            };
+            // In some cases we may encounter duplicated patterns, which will
+            // get deduplicated and result in a single-variant `MultiVariant` branch
+            // here. The following `normalize` will turn those cases to `SingleVariant`.
+            pattern_plurals.normalize();
+
+            skeletons.insert(SkeletonV1(skeleton), PatternPluralsV1(pattern_plurals));
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -224,13 +219,12 @@ fn test_datetime_skeletons() {
     );
 
     let mut expected = PluralPattern::new(
-        PluralCategory::One,
-        Pattern::from_bytes("'ika'-w 'linggo' 'ng' Y").expect("Failed to create pattern"),
+        Pattern::from_bytes("'linggo' w 'ng' Y").expect("Failed to create pattern"),
     )
     .expect("Failed to create PatternPlurals");
-    expected.add_variant(
-        PluralCategory::Other,
-        Pattern::from_bytes("'linggo' w 'ng' Y").expect("Failed to create pattern"),
+    expected.maybe_set_variant(
+        PluralCategory::One,
+        Pattern::from_bytes("'ika'-w 'linggo' 'ng' Y").expect("Failed to create pattern"),
     );
     assert_eq!(
         Some(&expected.into()),
