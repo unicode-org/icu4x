@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1634861148441,
+  "lastUpdate": 1635187695077,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2153,6 +2153,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8e8b1cc83052c14a445487a88b995e680276a332"
         },
         "date": 1634861144196,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610329,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ea6dd3c16de4963493f20fb1f831ecac2d4f27e0",
+          "message": "Fix CI (#1207)\n\n* Make diplomat-get-rev fail early on CI\r\n\r\n* Fix loglevel argument ordering\r\n\r\n* include loglevel in the getrev check",
+          "timestamp": "2021-10-25T11:46:41-07:00",
+          "tree_id": "c57b3490614ddcc9138704321616846704a1046b",
+          "url": "https://github.com/unicode-org/icu4x/commit/ea6dd3c16de4963493f20fb1f831ecac2d4f27e0"
+        },
+        "date": 1635187689755,
         "tool": "ndjson",
         "benches": [
           {
