@@ -145,6 +145,9 @@ jobs:
         packages: |
           sphinx
           sphinx-rtd-theme
+    - name: Run diplomat-get-rev to ensure it works
+      id: diplomat-getrev-check
+      run: cargo make diplomat-get-rev
     - name: Get Diplomat version
       id: diplomat-version
       run: |
@@ -287,6 +290,9 @@ jobs:
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
+      - name: Run diplomat-get-rev to ensure it works
+        id: diplomat-getrev-check
+        run: cargo make diplomat-get-rev
       - name: Get Diplomat version
         id: diplomat-version
         run: |
