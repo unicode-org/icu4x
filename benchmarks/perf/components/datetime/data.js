@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635259793980,
+  "lastUpdate": 1635289546694,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10721,6 +10721,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 363550,
             "range": "± 20669",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e85321359b9d66425388bedd7e24875888a1f955",
+          "message": "Make Bincode makefile commands equal to JSON and Blob ones (#1211)",
+          "timestamp": "2021-10-26T15:58:22-07:00",
+          "tree_id": "f47976ab570824a6ce1e3b6e8102ea94785cfb86",
+          "url": "https://github.com/unicode-org/icu4x/commit/e85321359b9d66425388bedd7e24875888a1f955"
+        },
+        "date": 1635289538075,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 113352,
+            "range": "± 1426",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1812172,
+            "range": "± 13048",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 348157,
+            "range": "± 2140",
             "unit": "ns/iter"
           }
         ]
