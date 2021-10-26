@@ -88,13 +88,14 @@ where
     get_uniset(provider, key::BIDI_MIRRORED_V1)
 }
 
-/// Horizontal whitespace characters
-pub fn get_blank<'data, D>(provider: &D) -> UnisetResult<'data>
-where
-    D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
-{
-    get_uniset(provider, key::BLANK_V1)
-}
+// TODO(#1210) - Uncomment or remove
+// /// Horizontal whitespace characters
+// pub fn get_blank<'data, D>(provider: &D) -> UnisetResult<'data>
+// where
+//     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
+// {
+//     get_uniset(provider, key::BLANK_V1)
+// }
 
 /// Uppercase, lowercase, and titlecase characters
 pub fn get_cased<'data, D>(provider: &D) -> UnisetResult<'data>
@@ -265,14 +266,15 @@ where
     get_uniset(provider, key::EXTENDED_PICTOGRAPHIC_V1)
 }
 
-/// Visible characters.
-/// This is defined for POSIX compatibility.
-pub fn get_graph<'data, D>(provider: &D) -> UnisetResult<'data>
-where
-    D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
-{
-    get_uniset(provider, key::GRAPH_V1)
-}
+// TODO(#1210) - Uncomment or remove
+// /// Visible characters.
+// /// This is defined for POSIX compatibility.
+// pub fn get_graph<'data, D>(provider: &D) -> UnisetResult<'data>
+// where
+//     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
+// {
+//     get_uniset(provider, key::GRAPH_V1)
+// }
 
 /// Property used together with the definition of Standard Korean Syllable Block to define
 /// "Grapheme base". See D58 in Chapter 3, Conformance in the Unicode Standard.
