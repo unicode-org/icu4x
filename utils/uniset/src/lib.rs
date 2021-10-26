@@ -69,7 +69,6 @@ use alloc::vec::Vec;
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
 use displaydoc::Display;
-use icu_provider::DataError;
 pub use uniset::UnicodeSet;
 pub use utils::*;
 
@@ -82,22 +81,7 @@ pub enum UnicodeSetError {
     /// A UnicodeSet was constructed containing an invalid range
     #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
-    /// An unknown value was used for the [`Script`] property
-    #[displaydoc("Unknown script id: {0}")]
-    UnknownScriptId(u16),
-    /// An unknown value was used for the [`GeneralCategory`] property
-    #[displaydoc("Unknown general category set: {0}")]
-    UnknownGeneralCategorySet(u32),
-    /// An error occurred while loading data
-    #[displaydoc("{0}")]
-    PropDataLoad(DataError),
 }
 
 #[cfg(feature = "std")]
 impl std::error::Error for UnicodeSetError {}
-
-impl From<DataError> for UnicodeSetError {
-    fn from(e: DataError) -> Self {
-        UnicodeSetError::PropDataLoad(e)
-    }
-}

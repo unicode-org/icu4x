@@ -1218,6 +1218,7 @@ dependencies = [
 name = "icu_properties"
 version = "0.3.0"
 dependencies = [
+ "displaydoc",
  "icu",
  "icu_codepointtrie",
  "icu_provider",
@@ -1384,12 +1385,12 @@ dependencies = [
  "criterion",
  "displaydoc",
  "icu_benchmark_macros",
- "icu_provider",
  "litemap",
  "postcard",
  "serde",
  "serde_json",
  "tinystr",
+ "yoke",
  "zerovec",
 ]
 
