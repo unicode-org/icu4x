@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635259405953,
+  "lastUpdate": 1635289191259,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2243,6 +2243,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b362fd7878841f27a375083dc880103b84a1bd1d"
         },
         "date": 1635259400252,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610329,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e85321359b9d66425388bedd7e24875888a1f955",
+          "message": "Make Bincode makefile commands equal to JSON and Blob ones (#1211)",
+          "timestamp": "2021-10-26T15:58:22-07:00",
+          "tree_id": "f47976ab570824a6ce1e3b6e8102ea94785cfb86",
+          "url": "https://github.com/unicode-org/icu4x/commit/e85321359b9d66425388bedd7e24875888a1f955"
+        },
+        "date": 1635289186446,
         "tool": "ndjson",
         "benches": [
           {
