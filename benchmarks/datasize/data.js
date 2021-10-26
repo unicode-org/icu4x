@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635188457552,
+  "lastUpdate": 1635259405953,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2213,6 +2213,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3920ad263ca5d63d1cc206bde3266cf5e013318c"
         },
         "date": 1635188452515,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610329,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b362fd7878841f27a375083dc880103b84a1bd1d",
+          "message": "Add enumerated property APIs returning DataPayload of CodePointTrie (#1197)",
+          "timestamp": "2021-10-26T07:42:00-07:00",
+          "tree_id": "cb38195d0feee1ab2304bfb99e7d6da78eacbd55",
+          "url": "https://github.com/unicode-org/icu4x/commit/b362fd7878841f27a375083dc880103b84a1bd1d"
+        },
+        "date": 1635259400252,
         "tool": "ndjson",
         "benches": [
           {
