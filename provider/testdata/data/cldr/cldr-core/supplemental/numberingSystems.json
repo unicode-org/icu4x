@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "13.0.0",
-      "_cldrVersion": "39"
+      "_unicodeVersion": "14.0.0",
+      "_cldrVersion": "40"
     },
     "numberingSystems": {
       "adlm": {
@@ -331,6 +331,10 @@
       },
       "tirh": {
         "_digits": "𑓐𑓑𑓒𑓓𑓔𑓕𑓖𑓗𑓘𑓙",
+        "_type": "numeric"
+      },
+      "tnsa": {
+        "_digits": "𖫀𖫁𖫂𖫃𖫄𖫅𖫆𖫇𖫈𖫉",
         "_type": "numeric"
       },
       "vaii": {

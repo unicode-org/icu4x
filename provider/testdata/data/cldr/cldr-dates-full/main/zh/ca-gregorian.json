@@ -3,7 +3,7 @@
     "zh": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "zh"
       },
@@ -318,11 +318,23 @@
               "medium": "y年M月d日",
               "short": "y/M/d"
             },
+            "dateSkeletons": {
+              "full": "yMEEEEd",
+              "long": "yMd",
+              "medium": "yMd",
+              "short": "yMd"
+            },
             "timeFormats": {
-              "full": "zzzz ah:mm:ss",
-              "long": "z ah:mm:ss",
-              "medium": "ah:mm:ss",
-              "short": "ah:mm"
+              "full": "zzzz HH:mm:ss",
+              "long": "z HH:mm:ss",
+              "medium": "HH:mm:ss",
+              "short": "HH:mm"
+            },
+            "timeSkeletons": {
+              "full": "HHmmsszzzz",
+              "long": "HHmmssz",
+              "medium": "HHmmss",
+              "short": "HHmm"
             },
             "dateTimeFormats": {
               "full": "{1} {0}",
@@ -343,6 +355,7 @@
                 "Ehms": "Eah:mm:ss",
                 "EHms": "EHH:mm:ss",
                 "Gy": "Gy年",
+                "GyMd": "GGGGG y-MM-dd",
                 "GyMMM": "Gy年M月",
                 "GyMMMd": "Gy年M月d日",
                 "GyMMMEd": "Gy年M月d日E",
@@ -370,6 +383,7 @@
                 "yM": "y年M月",
                 "yMd": "y/M/d",
                 "yMEd": "y/M/dE",
+                "yMEEEEd": "y年M月d日EEEE",
                 "yMM": "y年M月",
                 "yMMM": "y年M月",
                 "yMMMd": "y年M月d日",

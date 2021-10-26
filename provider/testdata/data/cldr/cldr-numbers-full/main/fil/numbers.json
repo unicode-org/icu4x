@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "fil"
       },
@@ -148,7 +148,7 @@
         "minimalPairs": {
           "pluralMinimalPairs-count-one": "{0} mansanas",
           "pluralMinimalPairs-count-other": "{0} na mansanas",
-          "other": "{0}?"
+          "other": "Kunin ang ika-{0} (na) kanan."
         }
       }
     }

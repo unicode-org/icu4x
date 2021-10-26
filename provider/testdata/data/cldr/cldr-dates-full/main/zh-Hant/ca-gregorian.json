@@ -3,7 +3,7 @@
     "zh-Hant": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "zh",
         "script": "Hant"
@@ -319,11 +319,23 @@
               "medium": "y年M月d日",
               "short": "y/M/d"
             },
+            "dateSkeletons": {
+              "full": "yMEEEEd",
+              "long": "yMd",
+              "medium": "yMd",
+              "short": "yMd"
+            },
             "timeFormats": {
-              "full": "ah:mm:ss [zzzz]",
-              "long": "ah:mm:ss [z]",
-              "medium": "ah:mm:ss",
-              "short": "ah:mm"
+              "full": "Bh:mm:ss [zzzz]",
+              "long": "Bh:mm:ss [z]",
+              "medium": "Bh:mm:ss",
+              "short": "Bh:mm"
+            },
+            "timeSkeletons": {
+              "full": "Bhmmsszzzz",
+              "long": "Bhmmssz",
+              "medium": "Bhmmss",
+              "short": "Bhmm"
             },
             "dateTimeFormats": {
               "full": "{1} {0}",
@@ -339,23 +351,24 @@
                 "EBhm": "E Bh:mm",
                 "EBhms": "E Bh:mm:ss",
                 "Ed": "d E",
-                "Ehm": "E ah:mm",
+                "Ehm": "E Bh:mm",
                 "EHm": "E HH:mm",
-                "Ehms": "E ah:mm:ss",
+                "Ehms": "E Bh:mm:ss",
                 "EHms": "E HH:mm:ss",
                 "Gy": "Gy年",
+                "GyMd": "G y/M/d",
                 "GyMMM": "Gy年M月",
                 "GyMMMd": "Gy年M月d日",
                 "GyMMMEd": "Gy年M月d日 E",
-                "h": "ah時",
+                "h": "Bh時",
                 "H": "H時",
-                "hm": "ah:mm",
+                "hm": "Bh:mm",
                 "Hm": "HH:mm",
-                "hms": "ah:mm:ss",
+                "hms": "Bh:mm:ss",
                 "Hms": "HH:mm:ss",
-                "hmsv": "ah:mm:ss [v]",
+                "hmsv": "Bh:mm:ss [v]",
                 "Hmsv": "HH:mm:ss [v]",
-                "hmv": "ah:mm [v]",
+                "hmv": "Bh:mm [v]",
                 "Hmv": "HH:mm [v]",
                 "M": "M月",
                 "Md": "M/d",
@@ -371,6 +384,7 @@
                 "yM": "y/M",
                 "yMd": "y/M/d",
                 "yMEd": "y/M/d（E）",
+                "yMEEEEd": "y年M月d日 EEEE",
                 "yMM": "y/MM",
                 "yMMM": "y年M月",
                 "yMMMd": "y年M月d日",
@@ -447,15 +461,17 @@
                 },
                 "h": {
                   "a": "ah時至ah時",
-                  "h": "ah時至h時"
+                  "B": "Bh時至Bh時",
+                  "h": "Bh時至h時"
                 },
                 "H": {
                   "H": "HH – HH"
                 },
                 "hm": {
                   "a": "ah:mm至ah:mm",
-                  "h": "ah:mm至h:mm",
-                  "m": "ah:mm至h:mm"
+                  "B": "Bh:mm至Bh:mm",
+                  "h": "Bh:mm至h:mm",
+                  "m": "Bh:mm至h:mm"
                 },
                 "Hm": {
                   "H": "HH:mm – HH:mm",
@@ -463,8 +479,9 @@
                 },
                 "hmv": {
                   "a": "ah:mm至ah:mm [v]",
-                  "h": "ah:mm至h:mm [v]",
-                  "m": "ah:mm至h:mm [v]"
+                  "B": "Bh:mm至Bh:mm [v]",
+                  "h": "Bh:mm至h:mm [v]",
+                  "m": "Bh:mm至h:mm [v]"
                 },
                 "Hmv": {
                   "H": "HH:mm – HH:mm [v]",
@@ -472,7 +489,8 @@
                 },
                 "hv": {
                   "a": "ah時至ah時 [v]",
-                  "h": "ah時至h時 [v]"
+                  "B": "Bh時至Bh時 [v]",
+                  "h": "Bh時至h時 [v]"
                 },
                 "Hv": {
                   "H": "HH – HH [v]"

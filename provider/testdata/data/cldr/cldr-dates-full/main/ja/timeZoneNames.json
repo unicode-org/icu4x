@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "ja"
       },
@@ -2313,6 +2313,11 @@
                 "generic": "エカテリンブルグ時間",
                 "standard": "エカテリンブルグ標準時",
                 "daylight": "エカテリンブルグ夏時間"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "ユーコン時間"
               }
             }
           }

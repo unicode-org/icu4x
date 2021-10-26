@@ -3,7 +3,7 @@
     "ar": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "ar"
       },
@@ -2260,6 +2260,11 @@
                 "generic": "توقيت يكاترينبورغ",
                 "standard": "توقيت يكاترينبورغ الرسمي",
                 "daylight": "توقيت يكاترينبورغ الصيفي"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "توقيت يوكون"
               }
             }
           }

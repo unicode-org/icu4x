@@ -3,7 +3,7 @@
     "zh": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "zh"
       },
@@ -2309,6 +2309,11 @@
                 "generic": "叶卡捷琳堡时间",
                 "standard": "叶卡捷琳堡标准时间",
                 "daylight": "叶卡捷琳堡夏令时间"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "育空时间"
               }
             }
           }
