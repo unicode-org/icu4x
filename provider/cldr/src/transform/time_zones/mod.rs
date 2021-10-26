@@ -90,7 +90,7 @@ impl<'data> IterableDataProviderCore for TimeZonesProvider<'data> {
             .iter()
             .map(|(l, _)| ResourceOptions {
                 variant: None,
-                langid: Some(l.langid.clone()),
+                langid: Some(l.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))

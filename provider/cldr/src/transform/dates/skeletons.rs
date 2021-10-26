@@ -99,7 +99,7 @@ impl<'data> IterableDataProviderCore for DateSkeletonPatternsProvider<'data> {
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO: Avoid the clone
-                langid: Some(l.langid.clone()),
+                langid: Some(l.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))

@@ -20,7 +20,7 @@
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 
-mod cldr_langid;
+// mod cldr_langid;
 mod cldr_paths;
 mod error;
 mod reader;
@@ -30,6 +30,10 @@ pub mod transform;
 
 #[cfg(feature = "download")]
 pub mod download;
+
+mod cldr_langid {
+    pub use icu_locid::LanguageIdentifier as CldrLangID;
+}
 
 pub use cldr_paths::CldrPaths;
 pub use cldr_paths::CldrPathsAllInOne;

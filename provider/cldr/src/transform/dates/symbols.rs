@@ -5,7 +5,7 @@
 use super::cldr_json;
 use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
-use crate::reader::{get_subdirectories, open_reader};
+use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::provider::*;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
@@ -33,7 +33,7 @@ impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider<'_> {
 
         let path = cldr_paths.cldr_dates()?.join("main");
 
-        let locale_dirs = get_subdirectories(&path)?;
+        let locale_dirs = get_langid_subdirectories(&path)?;
 
         for dir in locale_dirs {
             let path = dir.join("ca-gregorian.json");
@@ -62,13 +62,19 @@ impl<'data> DataProvider<'data, gregory::DateSymbolsV1Marker> for DateSymbolsPro
         req: &DataRequest,
     ) -> Result<DataResponse<'data, gregory::DateSymbolsV1Marker>, DataError> {
         DateSymbolsProvider::supports_key(&req.resource_path.key)?;
-        let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
+        let langid = req.try_langid()?;
+        use icu_locid::LanguageIdentifier;
+        let lids: Vec<&LanguageIdentifier> = self.data.iter().map(|(lid, _)| lid).collect();
+        println!("{:?}, {:?}, {:?}", langid, lids, langid == lids[19]);
         let dates = match self
             .data
-            .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
+            .binary_search_by_key(&langid, |(lid, _)| lid)
         {
             Ok(idx) => &self.data[idx].1.dates,
-            Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
+            Err(idx) => {
+                println!("here: {}", idx);
+                return Err(DataError::MissingResourceOptions(req.clone()))
+            }
         };
         Ok(DataResponse {
             metadata: DataResponseMetadata {
@@ -95,7 +101,7 @@ impl<'data> IterableDataProviderCore for DateSymbolsProvider<'data> {
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO: Avoid the clone
-                langid: Some(l.langid.clone()),
+                langid: Some(l.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))

@@ -154,7 +154,7 @@ impl<'data> IterableDataProviderCore for NumbersProvider {
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO(#568): Avoid the clone
-                langid: Some(l.langid.clone()),
+                langid: Some(l.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))
