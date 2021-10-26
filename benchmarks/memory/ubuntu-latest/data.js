@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635289757838,
+  "lastUpdate": 1635292275560,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Heap – ubuntu-latest": [
@@ -62249,6 +62249,192 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e85321359b9d66425388bedd7e24875888a1f955"
         },
         "date": 1635289752482,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "icu_datetime/work_log – Total Heap Allocations",
+            "value": 29038,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at Global Memory Max",
+            "value": 12691,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at End of Program Execution",
+            "value": 1024,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Total Heap Allocations",
+            "value": 514,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at Global Memory Max",
+            "value": 305,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Total Heap Allocations",
+            "value": 295,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at Global Memory Max",
+            "value": 214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Total Heap Allocations",
+            "value": 10187,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at Global Memory Max",
+            "value": 8603,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Total Heap Allocations",
+            "value": 11533,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at Global Memory Max",
+            "value": 8795,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Total Heap Allocations",
+            "value": 1008,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at Global Memory Max",
+            "value": 388,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Total Heap Allocations",
+            "value": 15,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at Global Memory Max",
+            "value": 15,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Total Heap Allocations",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at Global Memory Max",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Total Heap Allocations",
+            "value": 448,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Heap at Global Memory Max",
+            "value": 256,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "131b84548c7a7a204c91dbfaa8d57b647199c4d5",
+          "message": "Implement DataMarker to use DataProvider for LstmData. (#1142)\n\n* Implement DataMarker to use DataProvider for LstmData.\r\n\r\n* Fix cargo wasm-build-release\r\n\r\n* Fix per review comment.\r\n\r\n* Use icu_provider::data_struct.\r\n\r\n* Fix fmt error\r\n\r\n* Use DataPayload for Lstm struct.\r\n\r\n* Fix fmt.\r\n\r\n* Use DataPayload methods instead of receiver.\r\n\r\n* Don't panic key isn't found.",
+          "timestamp": "2021-10-27T08:40:02+09:00",
+          "tree_id": "07787927fab2faddd9d72fbf0b7e6fbc277bb2b0",
+          "url": "https://github.com/unicode-org/icu4x/commit/131b84548c7a7a204c91dbfaa8d57b647199c4d5"
+        },
+        "date": 1635292270155,
         "tool": "ndjson",
         "benches": [
           {
