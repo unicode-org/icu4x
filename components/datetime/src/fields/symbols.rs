@@ -234,14 +234,7 @@ impl TryFrom<char> for FieldSymbol {
         })
         .or_else(|_| Year::try_from(ch).map(Self::Year))
         .or_else(|_| Month::try_from(ch).map(Self::Month))
-        .or_else(|_| {
-            if ch == 'w' {
-                Week::try_from(ch).map(Self::Week)
-            } else {
-                // TODO(#488): Add support for 'W'.
-                Err(SymbolError::Unknown(ch))
-            }
-        })
+        .or_else(|_| Week::try_from(ch).map(Self::Week))
         .or_else(|_| Day::try_from(ch).map(Self::Day))
         .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
         .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))

@@ -94,8 +94,6 @@ pub struct Bag {
     /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
     /// Include the week, such as "1st" or "1".
-    #[doc(hidden)]
-    // TODO(#488): make visible once fully supported.
     pub week: Option<Week>,
     /// Include the day, such as "07" or "7".
     pub day: Option<Numeric>,
@@ -390,7 +388,7 @@ pub enum Month {
     Numeric,
     /// The two-digit value of the month, such as "04".
     TwoDigit,
-    /// The two-digit value of the month, such as "April".
+    /// The long value of the month, such as "April".
     Long,
     /// The short value of the month, such as "Apr".
     Short,
@@ -402,8 +400,6 @@ pub enum Month {
 // https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
 //
 /// Options for displaying the current week for the `components::`[`Bag`].
-#[doc(hidden)]
-// TODO(#488): make visible once fully supported.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
     feature = "serde",

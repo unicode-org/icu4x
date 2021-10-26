@@ -152,7 +152,7 @@ impl<'data> PatternPlurals<'data> {
             Self::SinglePattern(pattern) => Ok(pattern),
             Self::MultipleVariants(plural_pattern) => {
                 let week_number = match plural_pattern.pivot_field() {
-                    Week::WeekOfMonth => loc_datetime.week_of_month().0,
+                    Week::WeekOfMonth => loc_datetime.week_of_month()?.0,
                     Week::WeekOfYear => loc_datetime.week_of_year()?.0,
                 };
                 let category = ordinal_rules

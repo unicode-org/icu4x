@@ -215,10 +215,14 @@ where
                 w.write_str(symbol)?
             }
         },
-        FieldSymbol::Week(Week::WeekOfYear) => {
-            format_number(w, datetime.week_of_year()?.0 as isize, field.length)?
-        }
-        field @ FieldSymbol::Week(_) => return Err(Error::UnsupportedField(field)),
+        FieldSymbol::Week(week) => match week {
+            Week::WeekOfYear => {
+                format_number(w, datetime.week_of_year()?.0 as isize, field.length)?
+            }
+            Week::WeekOfMonth => {
+                format_number(w, datetime.week_of_month()?.0 as isize, field.length)?
+            }
+        },
         FieldSymbol::Weekday(weekday) => {
             let dow = datetime
                 .datetime()
