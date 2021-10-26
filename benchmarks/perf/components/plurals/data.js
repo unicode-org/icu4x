@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635188850367,
+  "lastUpdate": 1635259788755,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17051,6 +17051,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25309,
             "range": "± 264",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b362fd7878841f27a375083dc880103b84a1bd1d",
+          "message": "Add enumerated property APIs returning DataPayload of CodePointTrie (#1197)",
+          "timestamp": "2021-10-26T07:42:00-07:00",
+          "tree_id": "cb38195d0feee1ab2304bfb99e7d6da78eacbd55",
+          "url": "https://github.com/unicode-org/icu4x/commit/b362fd7878841f27a375083dc880103b84a1bd1d"
+        },
+        "date": 1635259781216,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1179,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7103,
+            "range": "± 392",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22657,
+            "range": "± 1429",
             "unit": "ns/iter"
           }
         ]
