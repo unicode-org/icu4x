@@ -19,7 +19,7 @@ use alloc::{
 ///
 /// `IsCovariant` is auto-implemented in [`#[derive(Yokeable)]`](yoke_derive::Yokeable).
 ///
-/// # Implementation safety
+/// # Safety
 ///
 /// This trait is safe to implement on types with a _covariant_ lifetime parameter. This will
 /// occur when the lifetime parameter is used within references, but not in the arguments of

@@ -16,13 +16,13 @@ impl AsULE for GeneralSubcategory {
     type ULE = GeneralSubcategoryULE;
 
     #[inline]
-    fn as_unaligned(&self) -> Self::ULE {
-        let u = *self as u8;
+    fn as_unaligned(self) -> Self::ULE {
+        let u = self as u8;
         GeneralSubcategoryULE(u)
     }
 
     #[inline]
-    fn from_unaligned(unaligned: &Self::ULE) -> Self {
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
         // Safe because the contents of GeneralSubcategoryULE are required to be valid.
         unsafe { Self::from_unchecked(unaligned.0) }
     }
@@ -50,12 +50,12 @@ impl AsULE for Script {
     type ULE = PlainOldULE<2>;
 
     #[inline]
-    fn as_unaligned(&self) -> Self::ULE {
+    fn as_unaligned(self) -> Self::ULE {
         PlainOldULE(self.0.to_le_bytes())
     }
 
     #[inline]
-    fn from_unaligned(unaligned: &Self::ULE) -> Self {
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
         Script(u16::from_le_bytes(unaligned.0))
     }
 }

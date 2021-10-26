@@ -66,7 +66,7 @@
 //! }
 //!
 //! unsafe impl EncodeAsVarULE<FooULE> for Foo<'_> {
-//!    fn encode_var_ule<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+//!    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
 //!        // take each field, convert to ULE byte slices, and pass them through
 //!        cb(&[<char as AsULE>::ULE::as_byte_slice(&[self.field1.as_unaligned()]),
 //!             <u32 as AsULE>::ULE::as_byte_slice(&[self.field2.as_unaligned()]),
@@ -81,12 +81,12 @@
 //!
 //!     let vzv = VarZeroVec::from(&*foos);
 //!
-//!     assert_eq!(char::from_unaligned(&vzv.get(0).unwrap().field1), 'u');
-//!     assert_eq!(u32::from_unaligned(&vzv.get(0).unwrap().field2), 983);
+//!     assert_eq!(char::from_unaligned(vzv.get(0).unwrap().field1), 'u');
+//!     assert_eq!(u32::from_unaligned(vzv.get(0).unwrap().field2), 983);
 //!     assert_eq!(&vzv.get(0).unwrap().field3, ZeroVec::clone_from_slice(&[1212,2309,500,7000]).as_slice());
 //!
-//!     assert_eq!(char::from_unaligned(&vzv.get(1).unwrap().field1), 'l');
-//!     assert_eq!(u32::from_unaligned(&vzv.get(1).unwrap().field2), 1010);
+//!     assert_eq!(char::from_unaligned(vzv.get(1).unwrap().field1), 'l');
+//!     assert_eq!(u32::from_unaligned(vzv.get(1).unwrap().field2), 1010);
 //!     assert_eq!(&vzv.get(1).unwrap().field3, ZeroVec::clone_from_slice(&[1932, 0, 8888, 91237]).as_slice());
 //! }
 //! ```

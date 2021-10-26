@@ -31,6 +31,10 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#![no_std]
+
+extern crate alloc;
+
 // Workaround for https://github.com/rust-lang/rust/issues/87932
 #[cfg(feature = "serde")]
 extern crate serde;
@@ -39,4 +43,3 @@ pub mod codepointtrie;
 pub mod error;
 mod impl_const;
 pub mod planes;
-pub mod provider;

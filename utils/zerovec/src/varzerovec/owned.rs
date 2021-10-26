@@ -110,7 +110,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         let out = if idx == len {
             self.entire_slice.len() - 4 - (4 * len)
         } else {
-            u32::from_unaligned(self.index_data(idx)) as usize
+            u32::from_unaligned(*self.index_data(idx)) as usize
         };
         debug_assert!(out + 4 + len * 4 <= self.entire_slice.len());
         out
@@ -177,7 +177,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         let indices =
             PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[4..4 + 4 * len]);
         for idx in &mut indices[starting_index..] {
-            *idx = (u32::from_unaligned(idx).wrapping_add(amount as u32)).into();
+            *idx = (u32::from_unaligned(*idx).wrapping_add(amount as u32)).into();
         }
     }
 
@@ -335,7 +335,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
         let len = unsafe {
             u32::from_unaligned(
-                &PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
+                PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
             )
         };
         if len == 0 {
@@ -358,13 +358,13 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[4..4 + len as usize * 4])
         };
         for idx in indices {
-            if u32::from_unaligned(idx) > data_len {
+            if u32::from_unaligned(*idx) > data_len {
                 // Indices must not point past the data segment.
                 return false;
             }
         }
         for window in indices.windows(2) {
-            if u32::from_unaligned(&window[0]) > u32::from_unaligned(&window[1]) {
+            if u32::from_unaligned(window[0]) > u32::from_unaligned(window[1]) {
                 // Indices must be in non-decreasing order.
                 return false;
             }
@@ -382,8 +382,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             );
         }
 
-        let value_len: usize =
-            element.encode_var_ule(|slices| slices.iter().map(|s| s.len()).sum());
+        let value_len = element.encode_var_ule_len();
 
         if len == 0 {
             // 4 bytes for length, 4 bytes for the index, remaining for element
@@ -392,7 +391,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             let index_u32 = 0u32;
             self.entire_slice.extend(&len_u32.as_unaligned().0);
             self.entire_slice.extend(&index_u32.as_unaligned().0);
-            element.encode_var_ule(|slices| {
+            element.encode_var_ule_as_slices(|slices| {
                 for slice in slices {
                     self.entire_slice.extend(*slice)
                 }
@@ -402,13 +401,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         assert!(value_len < u32::MAX as usize);
         unsafe {
-            let mut place = self.shift(index, value_len as u32, ShiftType::Insert);
-            element.encode_var_ule(|slices| {
-                for slice in slices {
-                    place[..slice.len()].copy_from_slice(slice);
-                    place = &mut place[slice.len()..];
-                }
-            });
+            let place = self.shift(index, value_len as u32, ShiftType::Insert);
+            element.encode_var_ule_write(place);
         }
     }
 
@@ -439,18 +433,12 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             );
         }
 
-        let value_len: usize =
-            element.encode_var_ule(|slices| slices.iter().map(|s| s.len()).sum());
+        let value_len = element.encode_var_ule_len();
 
         assert!(value_len < u32::MAX as usize);
         unsafe {
-            let mut place = self.shift(index, value_len as u32, ShiftType::Replace);
-            element.encode_var_ule(|slices| {
-                for slice in slices {
-                    place[..slice.len()].copy_from_slice(slice);
-                    place = &mut place[slice.len()..];
-                }
-            });
+            let place = self.shift(index, value_len as u32, ShiftType::Replace);
+            element.encode_var_ule_write(place);
         }
     }
 }

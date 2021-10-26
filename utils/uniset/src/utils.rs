@@ -16,11 +16,10 @@ pub fn is_valid_zv(inv_list_zv: &ZeroVec<'_, u32>) -> bool {
     slice.is_empty()
         || (slice.len() % 2 == 0
             && slice.windows(2).all(|chunk| {
-                <u32 as AsULE>::from_unaligned(&chunk[0])
-                    < <u32 as AsULE>::from_unaligned(&chunk[1])
+                <u32 as AsULE>::from_unaligned(chunk[0]) < <u32 as AsULE>::from_unaligned(chunk[1])
             })
             && slice.last().map_or(false, |e| {
-                <u32 as AsULE>::from_unaligned(e) <= ((char::MAX as u32) + 1)
+                <u32 as AsULE>::from_unaligned(*e) <= ((char::MAX as u32) + 1)
             }))
 }
 

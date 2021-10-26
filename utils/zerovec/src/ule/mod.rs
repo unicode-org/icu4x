@@ -8,12 +8,14 @@
 mod chars;
 pub mod custom;
 mod error;
+mod pair;
 mod plain;
 mod string;
 mod vec;
 
 pub use chars::CharULE;
 pub use error::ULEError;
+pub use pair::{PairULE, PairULEError};
 pub use plain::PlainOldULE;
 
 use alloc::alloc::Layout;
@@ -56,7 +58,7 @@ use core::{fmt, mem, slice};
 pub unsafe trait ULE
 where
     Self: Sized,
-    Self: 'static,
+    Self: Copy + 'static,
 {
     /// The error that occurs if a byte array is not valid for this ULE.
     type Error: fmt::Display;
@@ -136,7 +138,7 @@ where
 }
 
 /// A trait for any type that has a 1:1 mapping with an unaligned little-endian (ULE) type.
-pub trait AsULE {
+pub trait AsULE: Copy {
     /// The ULE type corresponding to `Self`.
     ///
     /// Types having infallible conversions from all bit values (Plain Old Data) can use
@@ -150,7 +152,7 @@ pub trait AsULE {
     /// This function may involve byte order swapping (native-endian to little-endian).
     ///
     /// For best performance, mark your implementation of this function `#[inline]`.
-    fn as_unaligned(&self) -> Self::ULE;
+    fn as_unaligned(self) -> Self::ULE;
 
     /// Converts from `&Self::ULE` to `Self`.
     ///
@@ -163,7 +165,7 @@ pub trait AsULE {
     /// This function is infallible because bit validation should have occurred when `Self::ULE`
     /// was first constructed. An implementation may therefore involve an `unsafe{}` block, like
     /// `from_bytes_unchecked()`.
-    fn from_unaligned(unaligned: &Self::ULE) -> Self;
+    fn from_unaligned(unaligned: Self::ULE) -> Self;
 }
 
 /// An [`EqULE`] type is one whose byte sequence equals the byte sequence of its ULE type on

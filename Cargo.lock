@@ -1073,11 +1073,11 @@ dependencies = [
 name = "icu_codepointtrie"
 version = "0.2.0"
 dependencies = [
- "icu_provider",
+ "displaydoc",
  "postcard",
  "serde",
- "thiserror",
  "toml",
+ "yoke",
  "zerovec",
 ]
 
@@ -1218,7 +1218,9 @@ dependencies = [
 name = "icu_properties"
 version = "0.3.0"
 dependencies = [
+ "displaydoc",
  "icu",
+ "icu_codepointtrie",
  "icu_provider",
  "icu_uniset",
  "num_enum",
@@ -1327,12 +1329,14 @@ name = "icu_provider_uprops"
 version = "0.3.0"
 dependencies = [
  "displaydoc",
+ "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
  "serde",
  "toml",
+ "zerovec",
 ]
 
 [[package]]
@@ -1381,12 +1385,12 @@ dependencies = [
  "criterion",
  "displaydoc",
  "icu_benchmark_macros",
- "icu_provider",
  "litemap",
  "postcard",
  "serde",
  "serde_json",
  "tinystr",
+ "yoke",
  "zerovec",
 ]
 
@@ -2999,7 +3003,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "bincode",
  "criterion",

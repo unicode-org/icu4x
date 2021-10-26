@@ -9,11 +9,13 @@
   "yMMMdE": "E, MMM d, y",
   "yMMMM": "MMMM y",
   "yw": {
-    "pivot_field": "w",
-    "variants": {
-      "One": "'ika-'w 'linggo ng' Y",
-      "Other": "'linggo' w 'ng' Y"
-    }
+    "pivot_field": "WeekOfYear",
+    "zero": null,
+    "one": "'ika-'w 'linggo ng' Y",
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": "'linggo' w 'ng' Y"
   },
   "M": "L",
   "Md": "M/d",

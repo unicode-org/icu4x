@@ -69,11 +69,11 @@ where
         self.to_mut().insert(index, value.as_unaligned())
     }
     fn remove(&mut self, index: usize) -> T {
-        T::from_unaligned(&self.to_mut().remove(index))
+        T::from_unaligned(self.to_mut().remove(index))
     }
     fn replace(&mut self, index: usize, value: &T) -> T {
         let vec = self.to_mut();
-        T::from_unaligned(&mem::replace(&mut vec[index], value.as_unaligned()))
+        T::from_unaligned(mem::replace(&mut vec[index], value.as_unaligned()))
     }
     fn push(&mut self, value: &T) {
         self.to_mut().push(value.as_unaligned())
@@ -96,7 +96,7 @@ where
     fn is_ascending(&self) -> bool {
         self.as_slice()
             .windows(2)
-            .all(|w| T::from_unaligned(&w[1]).cmp(&T::from_unaligned(&w[0])) == Ordering::Greater)
+            .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
 }
 

@@ -40,7 +40,7 @@ pub struct LocaleExtensions {
     transform: Option<LocaleExtensionTransform>,
     #[serde(default)]
     private: Vec<String>,
-    other: Option<String>,
+    _other: Option<String>,
 }
 
 impl TryFrom<LocaleExtensions> for Extensions {

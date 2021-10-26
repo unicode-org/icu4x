@@ -32,16 +32,15 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
+displaydoc = { version = "0.2.3", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-thiserror = "1.0"
-zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+yoke = { path = "../yoke", version = "0.2.0", features = ["derive"] }
+zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 [dev-dependencies]
 postcard = { version = "0.7", features = ["alloc"] }
 toml = "0.5"
 serde = { version = "1.0", features = ["derive"] }
-zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde"] }
 
 [lib]
 bench = false  # This option is required for Benchmark CI
