@@ -1344,9 +1344,11 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu_provider",
  "icu_segmenter_lstm",
  "lazy_static",
  "serde",
+ "serde-json-core",
  "serde_json",
  "unicode-width",
 ]
@@ -1355,10 +1357,13 @@ dependencies = [
 name = "icu_segmenter_lstm"
 version = "0.1.0"
 dependencies = [
+ "icu_provider",
+ "litemap",
  "ndarray",
  "serde",
  "serde_json",
  "unicode-segmentation",
+ "yoke",
 ]
 
 [[package]]
