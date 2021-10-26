@@ -4,11 +4,9 @@
 
 use crate::language::*;
 
-use icu_provider::serde::SerdeDeDataReceiver;
 use icu_provider::DataPayload;
 use icu_segmenter_lstm::lstm::Lstm;
 use icu_segmenter_lstm::structs;
-use icu_segmenter_lstm::structs::*;
 use std::char::decode_utf16;
 use std::str::Chars;
 
@@ -20,13 +18,11 @@ const THAI_MODEL: &[u8; 373466] =
 const BURMESE_MODEL: &[u8; 475209] =
     include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
 
-fn load_lstm_data(buf: &'static [u8]) -> DataPayload<structs::LstmDataMarker> {
-    let mut d = serde_json::Deserializer::from_slice(buf);
-    let mut receiver: Option<DataPayload<LstmDataMarker>> = None;
-    receiver
-        .receive_static(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
-        .expect("Well-formed data");
-    receiver.expect("Data is present")
+lazy_static! {
+    static ref THAI_LSTM: structs::LstmData<'static> =
+        serde_json::from_slice(THAI_MODEL).expect("JSON syntax error");
+    static ref BURMESE_LSTM: structs::LstmData<'static> =
+        serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
 }
 
 // LSTM model depends on language, So we have to switch models per language.
@@ -35,8 +31,8 @@ fn get_best_lstm_model(codepoint: u32) -> Lstm<'static> {
     // DataPayLoad isn't thread safe. We need anything static version.
     let lang = get_language(codepoint);
     match lang {
-        Language::Thai => Lstm::try_new(load_lstm_data(THAI_MODEL)).unwrap(),
-        Language::Burmese => Lstm::try_new(load_lstm_data(BURMESE_MODEL)).unwrap(),
+        Language::Thai => Lstm::try_new(DataPayload::from_owned(THAI_LSTM.clone())).unwrap(),
+        Language::Burmese => Lstm::try_new(DataPayload::from_owned(BURMESE_LSTM.clone())).unwrap(),
         _ => panic!("Unsupported"),
     }
 }

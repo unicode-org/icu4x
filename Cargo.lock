@@ -1305,12 +1305,9 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
- "erased-serde",
- "icu_locid",
- "icu_locid_macros",
  "icu_provider",
- "icu_provider_fs",
  "icu_segmenter_lstm",
+ "lazy_static",
  "serde",
  "serde-json-core",
  "serde_json",
@@ -1321,7 +1318,6 @@ dependencies = [
 name = "icu_segmenter_lstm"
 version = "0.1.0"
 dependencies = [
- "erased-serde",
  "icu_provider",
  "litemap",
  "ndarray",

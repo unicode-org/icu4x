@@ -56,4 +56,7 @@ mod properties_other;
 mod property_table;
 mod rule_table;
 
+#[macro_use]
+extern crate lazy_static;
+
 pub use crate::line_breaker::*;

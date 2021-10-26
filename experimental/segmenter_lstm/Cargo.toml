@@ -24,7 +24,7 @@ include = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros", "provider_serde"] }
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
 litemap = { version = "0.2", path = "../../utils/litemap", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
 ndarray = { version = "0.15", features = ["serde"] }
@@ -33,7 +33,6 @@ yoke = { path = "../../utils/yoke", features = ["serde", "derive"] }
 
 [dev-dependencies]
 serde_json = "1.0"
-erased-serde = { version = "0.3" }
 # criterion = "0.3.3"
 
 [lib]
