@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635289191259,
+  "lastUpdate": 1635291690895,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2273,6 +2273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e85321359b9d66425388bedd7e24875888a1f955"
         },
         "date": 1635289186446,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610329,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "131b84548c7a7a204c91dbfaa8d57b647199c4d5",
+          "message": "Implement DataMarker to use DataProvider for LstmData. (#1142)\n\n* Implement DataMarker to use DataProvider for LstmData.\r\n\r\n* Fix cargo wasm-build-release\r\n\r\n* Fix per review comment.\r\n\r\n* Use icu_provider::data_struct.\r\n\r\n* Fix fmt error\r\n\r\n* Use DataPayload for Lstm struct.\r\n\r\n* Fix fmt.\r\n\r\n* Use DataPayload methods instead of receiver.\r\n\r\n* Don't panic key isn't found.",
+          "timestamp": "2021-10-27T08:40:02+09:00",
+          "tree_id": "07787927fab2faddd9d72fbf0b7e6fbc277bb2b0",
+          "url": "https://github.com/unicode-org/icu4x/commit/131b84548c7a7a204c91dbfaa8d57b647199c4d5"
+        },
+        "date": 1635291684193,
         "tool": "ndjson",
         "benches": [
           {
