@@ -6,18 +6,18 @@
     "short": "y/M/d"
   },
   "time_h11_h12": {
-    "full": "zzzz ah:mm:ss",
-    "long": "z ah:mm:ss",
+    "full": "ah:mm:ss",
+    "long": "ah:mm:ss",
     "medium": "ah:mm:ss",
     "short": "ah:mm"
   },
   "time_h23_h24": {
-    "full": "HH:mm:ss",
-    "long": "HH:mm:ss",
+    "full": "zzzz HH:mm:ss",
+    "long": "z HH:mm:ss",
     "medium": "HH:mm:ss",
     "short": "HH:mm"
   },
-  "preferred_hour_cycle": "H11H12",
+  "preferred_hour_cycle": "H23H24",
   "length_combinations": {
     "full": "{1} {0}",
     "long": "{1} {0}",

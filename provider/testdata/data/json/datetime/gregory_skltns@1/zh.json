@@ -3,6 +3,7 @@
   "yM": "y年M月",
   "yMd": "y/M/d",
   "yMdE": "y/M/dE",
+  "yMdEEEE": "y年M月d日EEEE",
   "yMM": "y年M月",
   "yMMM": "y年M月",
   "yMMMd": "y年M月d日",

@@ -6,10 +6,10 @@
     "short": "y/M/d"
   },
   "time_h11_h12": {
-    "full": "ah:mm:ss [zzzz]",
-    "long": "ah:mm:ss [z]",
-    "medium": "ah:mm:ss",
-    "short": "ah:mm"
+    "full": "Bh:mm:ss [zzzz]",
+    "long": "Bh:mm:ss [z]",
+    "medium": "Bh:mm:ss",
+    "short": "Bh:mm"
   },
   "time_h23_h24": {
     "full": "HH:mm:ss",

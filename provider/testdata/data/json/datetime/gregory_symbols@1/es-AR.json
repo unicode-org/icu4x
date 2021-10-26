@@ -2,18 +2,18 @@
   "months": {
     "format": {
       "abbreviated": [
-        "ene.",
-        "feb.",
-        "mar.",
-        "abr.",
-        "may.",
-        "jun.",
-        "jul.",
-        "ago.",
-        "sep.",
-        "oct.",
-        "nov.",
-        "dic."
+        "ene",
+        "feb",
+        "mar",
+        "abr",
+        "may",
+        "jun",
+        "jul",
+        "ago",
+        "sept",
+        "oct",
+        "nov",
+        "dic"
       ],
       "narrow": [
         "E",
@@ -86,20 +86,7 @@
         "sábado"
       ]
     },
-    "stand_alone": {
-      "abbreviated": [
-        "dom.",
-        "lun.",
-        "mar.",
-        "mié.",
-        "jue.",
-        "vie.",
-        "sáb."
-      ],
-      "narrow": null,
-      "short": null,
-      "wide": null
-    }
+    "stand_alone": null
   },
   "day_periods": {
     "format": {
