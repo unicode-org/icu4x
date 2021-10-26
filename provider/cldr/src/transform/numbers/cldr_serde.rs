@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_langid::CldrLangID;
+use icu_locid::LanguageIdentifier;
 use itertools::Itertools;
 use serde::Deserialize;
 use serde_aux::prelude::*;
@@ -112,7 +112,9 @@ pub mod numbers_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct LangData(#[serde(with = "tuple_vec_map")] pub(crate) Vec<(CldrLangID, LangNumbers)>);
+    pub struct LangData(
+        #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LangNumbers)>,
+    );
 
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct Resource {

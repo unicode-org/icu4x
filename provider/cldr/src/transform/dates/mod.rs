@@ -8,7 +8,7 @@ pub mod symbols;
 
 /// Serde structs for the CLDR JSON dates files.
 pub(self) mod cldr_json {
-    use crate::cldr_langid::CldrLangID;
+    use icu_locid::LanguageIdentifier;
     use serde::Deserialize;
     use std::borrow::Cow;
 
@@ -183,7 +183,9 @@ pub(self) mod cldr_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct LangData(#[serde(with = "tuple_vec_map")] pub(crate) Vec<(CldrLangID, LangDates)>);
+    pub struct LangData(
+        #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LangDates)>,
+    );
 
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct Resource {

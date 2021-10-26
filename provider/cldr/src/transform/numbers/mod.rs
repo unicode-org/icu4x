@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_decimal::provider::*;
+use icu_locid::LanguageIdentifier;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -25,7 +25,7 @@ pub const ALL_KEYS: [ResourceKey; 1] = [
 #[derive(PartialEq, Debug)]
 pub struct NumbersProvider {
     cldr_numbering_systems_data: cldr_serde::numbering_systems_json::Resource,
-    cldr_numbers_data: Vec<(CldrLangID, cldr_serde::numbers_json::LangNumbers)>,
+    cldr_numbers_data: Vec<(LanguageIdentifier, cldr_serde::numbers_json::LangNumbers)>,
 }
 
 impl TryFrom<&dyn CldrPaths> for NumbersProvider {
@@ -106,10 +106,9 @@ impl<'data> DataProvider<'data, DecimalSymbolsV1Marker> for NumbersProvider {
     ) -> Result<DataResponse<'data, DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
-        let cldr_langid: CldrLangID = langid.clone().into();
         let numbers = match self
             .cldr_numbers_data
-            .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
+            .binary_search_by_key(&langid, |(lid, _)| lid)
         {
             Ok(idx) => &self.cldr_numbers_data[idx].1.numbers,
             Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
