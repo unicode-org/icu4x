@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635259788755,
+  "lastUpdate": 1635289544212,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17093,6 +17093,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22657,
             "range": "± 1429",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e85321359b9d66425388bedd7e24875888a1f955",
+          "message": "Make Bincode makefile commands equal to JSON and Blob ones (#1211)",
+          "timestamp": "2021-10-26T15:58:22-07:00",
+          "tree_id": "f47976ab570824a6ce1e3b6e8102ea94785cfb86",
+          "url": "https://github.com/unicode-org/icu4x/commit/e85321359b9d66425388bedd7e24875888a1f955"
+        },
+        "date": 1635289538510,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1303,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7694,
+            "range": "± 305",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24845,
+            "range": "± 1236",
             "unit": "ns/iter"
           }
         ]
