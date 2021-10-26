@@ -33,7 +33,7 @@ pub mod key {
         };
     }
 
-    define_resource_keys!(267;
+    define_resource_keys!(270;
 
         //
         // Binary property UnicodeSets
@@ -322,6 +322,9 @@ pub mod key {
 
         (GENERAL_CATEGORY_V1, "gc"),
         (SCRIPT_V1, "sc"),
+        (GRAPHEME_CLUSTER_BREAK_V1, "GCB"),
+        (WORD_BREAK_V1, "WB"),
+        (SENTENCE_BREAK_V1, "SB"),
 
     );
 }

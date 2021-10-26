@@ -61,3 +61,38 @@ where
 {
     get_cp_map(provider, key::SCRIPT_V1)
 }
+
+/// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
+/// property. See [`GraphemeClusterBreak`].
+///
+/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+pub fn get_grapheme_cluster_break<'data, D>(
+    provider: &D,
+) -> CodePointMapResult<'data, GraphemeClusterBreak>
+where
+    D: DataProvider<'data, UnicodePropertyMapV1Marker<GraphemeClusterBreak>> + ?Sized,
+{
+    get_cp_map(provider, key::GRAPHEME_CLUSTER_BREAK_V1)
+}
+
+/// Return a [`CodePointTrie`] for the Word_Break Unicode enumerated
+/// property. See [`WordBreak`].
+///
+/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+pub fn get_word_break<'data, D>(provider: &D) -> CodePointMapResult<'data, WordBreak>
+where
+    D: DataProvider<'data, UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
+{
+    get_cp_map(provider, key::WORD_BREAK_V1)
+}
+
+/// Return a [`CodePointTrie`] for the Sentence_Break Unicode enumerated
+/// property. See [`SentenceBreak`].
+///
+/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+pub fn get_sentence_break<'data, D>(provider: &D) -> CodePointMapResult<'data, SentenceBreak>
+where
+    D: DataProvider<'data, UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
+{
+    get_cp_map(provider, key::SENTENCE_BREAK_V1)
+}

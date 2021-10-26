@@ -17,6 +17,12 @@ pub enum EnumeratedProperty {
     GeneralCategory = 0x1005,
     /// The Script property. See [`Script`].
     Script = 0x100A,
+    /// The Grapheme_Cluster_Break enumerated property. See [`GraphemeClusterBreak`].
+    GraphemeClusterBreak = 0x1012,
+    /// The Sentence_Break enumerated property. See [`SentenceBreak`].
+    SentenceBreak = 0x1013,
+    /// The Word_Break enumerated property. See [`WordBreak`].
+    WordBreak = 0x1014,
     /// The Script_Extensions property. See [`Script`].
     ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
     /// Represents an invalid or unknown Unicode property.
@@ -415,4 +421,99 @@ impl Script {
     pub const Yezidi: Script = Script(192);
     pub const Yi: Script = Script(41);
     pub const ZanabazarSquare: Script = Script(177);
+}
+
+/// Enumerated property Grapheme_Cluster_Break.
+///
+/// See "Default Grapheme Cluster Boundary Specification" in UAX #29 for the
+/// summary of each property value:
+/// <https://www.unicode.org/reports/tr29/#Default_Grapheme_Cluster_Table>
+///
+/// The numeric value is compatible with `UGraphemeClusterBreak` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[repr(transparent)]
+pub struct GraphemeClusterBreak(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl GraphemeClusterBreak {
+    pub const Other: GraphemeClusterBreak = GraphemeClusterBreak(0); // name="XX"
+    pub const Control: GraphemeClusterBreak = GraphemeClusterBreak(1); // name="CN"
+    pub const CR: GraphemeClusterBreak = GraphemeClusterBreak(2); // name="CR"
+    pub const Extend: GraphemeClusterBreak = GraphemeClusterBreak(3); // name="EX"
+    pub const L: GraphemeClusterBreak = GraphemeClusterBreak(4); // name="L"
+    pub const LF: GraphemeClusterBreak = GraphemeClusterBreak(5); // name="LF"
+    pub const LV: GraphemeClusterBreak = GraphemeClusterBreak(6); // name="LV"
+    pub const LVT: GraphemeClusterBreak = GraphemeClusterBreak(7); // name="LVT"
+    pub const T: GraphemeClusterBreak = GraphemeClusterBreak(8); // name="T"
+    pub const V: GraphemeClusterBreak = GraphemeClusterBreak(9); // name="V"
+    pub const SpacingMark: GraphemeClusterBreak = GraphemeClusterBreak(10); // name="SM"
+    pub const Prepend: GraphemeClusterBreak = GraphemeClusterBreak(11); // name="PP"
+    pub const RegionalIndicator: GraphemeClusterBreak = GraphemeClusterBreak(12); // name="RI"
+    pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); // name="ZWJ"
+}
+
+/// Enumerated property Word_Break.
+///
+/// See "Default Word Boundary Specification" in UAX #29 for the summary of
+/// each property value:
+/// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
+///
+/// The numeric value is compatible with `UWordBreakValues` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[repr(transparent)]
+pub struct WordBreak(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl WordBreak {
+    pub const Other: WordBreak = WordBreak(0); // name="XX"
+    pub const ALetter: WordBreak = WordBreak(1); // name="LE"
+    pub const Format: WordBreak = WordBreak(2); // name="FO"
+    pub const Katakana: WordBreak = WordBreak(3); // name="KA"
+    pub const MidLetter: WordBreak = WordBreak(4); // name="ML"
+    pub const MidNum: WordBreak = WordBreak(5); // name="MN"
+    pub const Numeric: WordBreak = WordBreak(6); // name="NU"
+    pub const ExtendNumLet: WordBreak = WordBreak(7); // name="EX"
+    pub const CR: WordBreak = WordBreak(8); // name="CR"
+    pub const Extend: WordBreak = WordBreak(9); // name="Extend"
+    pub const LF: WordBreak = WordBreak(10); // name="LF"
+    pub const MidNumLet: WordBreak = WordBreak(11); // name="MB"
+    pub const Newline: WordBreak = WordBreak(12); // name="NL"
+    pub const RegionalIndicator: WordBreak = WordBreak(13); // name="RI"
+    pub const HebrewLetter: WordBreak = WordBreak(14); // name="HL"
+    pub const SingleQuote: WordBreak = WordBreak(15); // name="SQ"
+    pub const DoubleQuote: WordBreak = WordBreak(16); // name=DQ
+    pub const ZWJ: WordBreak = WordBreak(21); // name="ZWJ"
+    pub const WSegSpace: WordBreak = WordBreak(22); // name="WSegSpace"
+}
+
+/// Enumerated property Sentence_Break.
+/// See "Default Sentence Boundary Specification" in UAX #29 for the summary of
+/// each property value:
+/// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
+///
+/// The numeric value is compatible with `USentenceBreak` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[repr(transparent)]
+pub struct SentenceBreak(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl SentenceBreak {
+    pub const Other: SentenceBreak = SentenceBreak(0); // name="XX"
+    pub const ATerm: SentenceBreak = SentenceBreak(1); // name="AT"
+    pub const Close: SentenceBreak = SentenceBreak(2); // name="CL"
+    pub const Format: SentenceBreak = SentenceBreak(3); // name="FO"
+    pub const Lower: SentenceBreak = SentenceBreak(4); // name="LO"
+    pub const Numeric: SentenceBreak = SentenceBreak(5); // name="NU"
+    pub const OLetter: SentenceBreak = SentenceBreak(6); // name="LE"
+    pub const Sep: SentenceBreak = SentenceBreak(7); // name="SE"
+    pub const Sp: SentenceBreak = SentenceBreak(8); // name="SP"
+    pub const STerm: SentenceBreak = SentenceBreak(9); // name="ST"
+    pub const Upper: SentenceBreak = SentenceBreak(10); // name="UP"
+    pub const CR: SentenceBreak = SentenceBreak(11); // name="CR"
+    pub const Extend: SentenceBreak = SentenceBreak(12); // name="EX"
+    pub const LF: SentenceBreak = SentenceBreak(13); // name="LF"
+    pub const SContinue: SentenceBreak = SentenceBreak(14); // name="SC"
 }

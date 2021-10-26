@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{GeneralSubcategory, Script};
+use crate::{GeneralSubcategory, GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
 
 use core::convert::TryFrom;
 use num_enum::TryFromPrimitiveError;
@@ -57,5 +57,47 @@ impl AsULE for Script {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         Script(u16::from_le_bytes(unaligned.0))
+    }
+}
+
+impl AsULE for GraphemeClusterBreak {
+    type ULE = u8;
+
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        self.0
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(unaligned)
+    }
+}
+
+impl AsULE for WordBreak {
+    type ULE = u8;
+
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        self.0
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(unaligned)
+    }
+}
+
+impl AsULE for SentenceBreak {
+    type ULE = u8;
+
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        self.0
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(unaligned)
     }
 }
