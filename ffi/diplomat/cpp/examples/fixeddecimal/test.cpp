@@ -39,5 +39,19 @@ int main() {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    auto result = ICU4XFixedDecimal::create_from_f32(1234.5678);
+    if (!result.success) {
+        std::cout << "Constructing ICU4XFixedDecimal from float failed" << std::endl;
+        return 1;
+    }
+    // std::move necessary since ICU4XFixedDecimal doesn't have copy constructors
+    ICU4XFixedDecimal decimal2 = std::move(result.fd.value());
+    out = fdf.format(decimal2).ok().value();
+    std::cout << "Formatted value is " << out << std::endl;
+    if (out != "১,২৩৪.৫৬৭৭") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
     return 0;
 }
