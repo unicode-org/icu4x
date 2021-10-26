@@ -301,20 +301,15 @@ pub fn get_serializable_bytes<T: VarULE + ?Sized, A: custom::EncodeAsVarULE<T>>(
     vec.resize(4 + 4 * elements.len(), 0);
     let mut offset: u32 = 0;
     for (idx, element) in elements.iter().enumerate() {
-        element.encode_var_ule(|slices| {
-            let indices = &mut vec[(4 + 4 * idx)..(4 + 4 * idx + 4)];
-            indices.clone_from_slice(&offset.as_unaligned().0);
-            let element_start = vec.len();
-            let mut len = 0;
-            for bytes in slices {
-                vec.extend_from_slice(bytes);
-                len += bytes.len();
-            }
-            let len_u32: u32 = len.try_into().ok()?;
-            offset = offset.checked_add(len_u32)?;
-            debug_assert!(T::validate_byte_slice(&vec[element_start..]).is_ok());
-            Some(())
-        })?;
+        let element_len = element.encode_var_ule_len();
+        let indices = &mut vec[(4 + 4 * idx)..(4 + 4 * idx + 4)];
+        indices.copy_from_slice(&offset.as_unaligned().0);
+        let element_start = vec.len();
+        vec.resize(element_len + element_start, 0);
+        element.encode_var_ule_write(&mut vec[element_start..]);
+        let len_u32: u32 = element_len.try_into().ok()?;
+        offset = offset.checked_add(len_u32)?;
+        debug_assert!(T::validate_byte_slice(&vec[element_start..]).is_ok());
     }
 
     Some(vec)

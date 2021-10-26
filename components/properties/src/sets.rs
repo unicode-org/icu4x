@@ -14,12 +14,12 @@
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 //! [`TR18`]: https://www.unicode.org/reports/tr18
 
+use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSetError;
 
-type UnisetResult<'data> = Result<DataPayload<'data, UnicodePropertyV1Marker>, UnicodeSetError>;
+type UnisetResult<'data> = Result<DataPayload<'data, UnicodePropertyV1Marker>, PropertiesError>;
 
 // helper fn
 fn get_uniset<'data, D>(provider: &D, resc_key: ResourceKey) -> UnisetResult<'data>
@@ -610,9 +610,7 @@ where
 // Enumerated property getter fns
 //
 
-/// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property
-/// General_Category specifies enumerated Unicode general category types.
-/// See <https://www.unicode.org/reports/tr44/> .
+/// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property. See [`GeneralCategory`].
 ///
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
 pub fn get_for_general_category<'data, D>(
@@ -661,13 +659,12 @@ where
         GeneralCategory::LineSeparator => key::GENERAL_CATEGORY_LINE_SEPARATOR_V1,
         GeneralCategory::ParagraphSeparator => key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1,
         GeneralCategory::SpaceSeparator => key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1,
-        _ => return Err(UnicodeSetError::UnknownGeneralCategorySet(enum_val.0)),
+        _ => return Err(PropertiesError::UnknownGeneralCategorySet(enum_val.0)),
     };
     get_uniset(provider, key)
 }
 
-/// Return a [`UnicodeSet`] for a particular value of the Script Unicode enumerated property
-/// See <https://www.unicode.org/reports/tr44/> .
+/// Return a [`UnicodeSet`] for a particular value of the Script Unicode enumerated property. See [`Script`].
 ///
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
 pub fn get_for_script<'data, D>(provider: &'data D, enum_val: Script) -> UnisetResult
@@ -837,7 +834,7 @@ where
         Script::Yezidi => key::SCRIPT_YEZIDI_V1,
         Script::Yi => key::SCRIPT_YI_V1,
         Script::ZanabazarSquare => key::SCRIPT_ZANABAZAR_SQUARE_V1,
-        _ => return Err(UnicodeSetError::UnknownScriptId(enum_val.0)),
+        _ => return Err(PropertiesError::UnknownScriptId(enum_val.0)),
     };
     get_uniset(provider, key)
 }

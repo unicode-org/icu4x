@@ -145,10 +145,13 @@ jobs:
         packages: |
           sphinx
           sphinx-rtd-theme
+    - name: Run diplomat-get-rev to ensure it works
+      id: diplomat-getrev-check
+      run: cargo make --loglevel error diplomat-get-rev
     - name: Get Diplomat version
       id: diplomat-version
       run: |
-        echo "::set-output name=rev::$(cargo make diplomat-get-rev --loglevel error |  tr -d '[:space:]')"
+        echo "::set-output name=rev::$(cargo make --loglevel error diplomat-get-rev |  tr -d '[:space:]')"
       shell: bash
     - name: Attempt to load cached Diplomat
       uses: actions/cache@v2
@@ -287,10 +290,13 @@ jobs:
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
+      - name: Run diplomat-get-rev to ensure it works
+        id: diplomat-getrev-check
+        run: cargo make --loglevel error diplomat-get-rev
       - name: Get Diplomat version
         id: diplomat-version
         run: |
-          echo "::set-output name=rev::$(cargo make diplomat-get-rev --loglevel error |  tr -d '[:space:]')"
+          echo "::set-output name=rev::$(cargo make --loglevel error diplomat-get-rev |  tr -d '[:space:]')"
         shell: bash
       - name: Attempt to load cached Diplomat
         uses: actions/cache@v2
