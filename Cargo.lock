@@ -644,6 +644,7 @@ dependencies = [
  "rand",
  "rand_distr",
  "rand_pcg",
+ "ryu",
  "smallvec",
  "static_assertions",
  "writeable",

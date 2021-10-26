@@ -697,6 +697,71 @@ impl FromStr for FixedDecimal {
     }
 }
 
+#[cfg(feature = "ryu")]
+impl FixedDecimal {
+    /// Construct a [`FixedDecimal`] from an f32. This uses `ryu` and
+    /// goes through an intermediate string representation, so is not
+    /// fully efficient. See https://github.com/unicode-org/icu4x/issues/166 for
+    /// more details.
+    ///
+    /// This function can be made available with the `"ryu"` feature.
+    ///
+    /// ```rust
+    /// use fixed_decimal::FixedDecimal;
+    /// use writeable::Writeable;
+    ///
+    /// let decimal = FixedDecimal::new_from_f32(0.012345678).unwrap();
+    /// assert_eq!(decimal.writeable_to_string(), "0.012345678");
+    ///
+    /// let decimal = FixedDecimal::new_from_f32(-123456.78).unwrap();
+    /// assert_eq!(decimal.writeable_to_string(), "-123456.78");
+    ///
+    /// let decimal = FixedDecimal::new_from_f32(12345678000.).unwrap();
+    /// assert_eq!(decimal.writeable_to_string(), "12345678000.0");
+    /// ```
+    pub fn new_from_f32(float: f32) -> Result<Self, Error> {
+        if !float.is_finite() {
+            return Err(Error::Limit)
+        }
+        // note: this does not heap allocate
+        let mut buf = ryu::Buffer::new();
+        let formatted = buf.format_finite(float);
+        Self::from_str(formatted)
+
+    }
+
+    /// Construct a [`FixedDecimal`] from an f64. This uses `ryu` and
+    /// goes through an intermediate string representation, so is not
+    /// fully efficient. See https://github.com/unicode-org/icu4x/issues/166 for
+    /// more details.
+    ///
+    /// This function can be made available with the `"ryu"` feature.
+    ///
+    /// ```rust
+    /// use fixed_decimal::FixedDecimal;
+    /// use writeable::Writeable;
+    ///
+    /// let decimal = FixedDecimal::new_from_f64(0.012345678).unwrap();
+    /// assert_eq!(decimal.writeable_to_string(), "0.012345678");
+    ///
+    /// let decimal = FixedDecimal::new_from_f64(-123456.78).unwrap();
+    /// assert_eq!(decimal.writeable_to_string(), "-123456.78");
+    ///
+    /// let decimal = FixedDecimal::new_from_f64(12345678000.).unwrap();
+    /// assert_eq!(decimal.writeable_to_string(), "12345678000.0");
+    /// ```
+    pub fn new_from_f64(float: f64) -> Result<Self, Error> {
+        if !float.is_finite() {
+            return Err(Error::Limit)
+        }
+        // note: this does not heap allocate
+        let mut buf = ryu::Buffer::new();
+        let formatted = buf.format_finite(float);
+        Self::from_str(formatted)
+
+    }
+}
+
 #[test]
 fn test_basic() {
     #[derive(Debug)]
