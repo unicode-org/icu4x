@@ -60,12 +60,12 @@ impl<'data> Lstm<'data> {
 
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
     fn return_id(&self, g: &str) -> i16 {
-        let g_id: i16 = if self.data.get().dic.contains_key(g) {
-            *self.data.get().dic.get(g).unwrap()
-        } else {
-            self.data.get().dic.len() as i16
-        };
-        g_id
+        *self
+            .data
+            .get()
+            .dic
+            .get(g)
+            .unwrap_or(&(self.data.get().dic.len() as i16))
     }
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
