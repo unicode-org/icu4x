@@ -63,16 +63,12 @@ impl<'data> DataProvider<'data, gregory::DateSymbolsV1Marker> for DateSymbolsPro
     ) -> Result<DataResponse<'data, gregory::DateSymbolsV1Marker>, DataError> {
         DateSymbolsProvider::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
-        use icu_locid::LanguageIdentifier;
-        let lids: Vec<&LanguageIdentifier> = self.data.iter().map(|(lid, _)| lid).collect();
-        println!("{:?}, {:?}, {:?}", langid, lids, langid == lids[19]);
         let dates = match self
             .data
             .binary_search_by_key(&langid, |(lid, _)| lid)
         {
             Ok(idx) => &self.data[idx].1.dates,
-            Err(idx) => {
-                println!("here: {}", idx);
+            Err(_) => {
                 return Err(DataError::MissingResourceOptions(req.clone()))
             }
         };

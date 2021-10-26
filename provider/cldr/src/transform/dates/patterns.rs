@@ -5,7 +5,7 @@
 use super::cldr_json;
 use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
-use crate::reader::{get_subdirectories, open_reader};
+use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::{pattern, provider::*};
@@ -34,7 +34,7 @@ impl TryFrom<&dyn CldrPaths> for DatePatternsProvider<'_> {
 
         let path = cldr_paths.cldr_dates()?.join("main");
 
-        let locale_dirs = get_subdirectories(&path)?;
+        let locale_dirs = get_langid_subdirectories(&path)?;
 
         for dir in locale_dirs {
             let path = dir.join("ca-gregorian.json");

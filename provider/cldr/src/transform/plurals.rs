@@ -37,7 +37,9 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
                 .join("plurals.json");
             let data: cldr_json::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.supplemental.plurals_type_cardinal
+            let mut rules = data.supplemental.plurals_type_cardinal;
+            rules.as_mut().map(|v| v.0.sort());
+            rules
         };
         let ordinal_rules = {
             let path = cldr_paths
@@ -46,7 +48,9 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
                 .join("ordinals.json");
             let data: cldr_json::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.supplemental.plurals_type_ordinal
+            let mut rules = data.supplemental.plurals_type_ordinal;
+            rules.as_mut().map(|v| v.0.sort());
+            rules
         };
         Ok(PluralsProvider {
             cardinal_rules,
@@ -152,7 +156,7 @@ pub(self) mod cldr_json {
     // TODO: Use Serde Borrow throughout these structs. Blocked by:
     // https://stackoverflow.com/q/63201624/1407170
 
-    #[derive(PartialEq, Debug, Deserialize)]
+    #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
     pub struct LocalePluralRules {
         #[serde(rename = "pluralRule-count-zero")]
         pub zero: Option<String>,

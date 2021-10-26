@@ -4,7 +4,7 @@
 
 use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
-use crate::reader::{get_subdirectories, open_reader};
+use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_decimal::provider::*;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
@@ -43,7 +43,7 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
         // Load data for each locale:
         let mut cldr_numbers_data = vec![];
         let path = cldr_paths.cldr_numbers()?.join("main");
-        let locale_dirs = get_subdirectories(&path)?;
+        let locale_dirs = get_langid_subdirectories(&path)?;
         for dir in locale_dirs {
             let path = dir.join("numbers.json");
             let mut resource: cldr_serde::numbers_json::Resource =
