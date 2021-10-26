@@ -721,13 +721,12 @@ impl FixedDecimal {
     /// ```
     pub fn new_from_f32(float: f32) -> Result<Self, Error> {
         if !float.is_finite() {
-            return Err(Error::Limit)
+            return Err(Error::Limit);
         }
         // note: this does not heap allocate
         let mut buf = ryu::Buffer::new();
         let formatted = buf.format_finite(float);
         Self::from_str(formatted)
-
     }
 
     /// Construct a [`FixedDecimal`] from an f64. This uses `ryu` and
@@ -752,13 +751,12 @@ impl FixedDecimal {
     /// ```
     pub fn new_from_f64(float: f64) -> Result<Self, Error> {
         if !float.is_finite() {
-            return Err(Error::Limit)
+            return Err(Error::Limit);
         }
         // note: this does not heap allocate
         let mut buf = ryu::Buffer::new();
         let formatted = buf.format_finite(float);
         Self::from_str(formatted)
-
     }
 }
 
