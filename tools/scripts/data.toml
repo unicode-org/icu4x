@@ -96,17 +96,8 @@ if greater_than ${output_length} 0
 end
 '''
 
-[tasks.bincode-clean]
-description = "Clean out the bincode data."
-category = "ICU4X Data"
-script_runner = "@duckscript"
-script = '''
-# Use duckscript, rather than a unix command, so that this works on Windows.
-rm -r ./provider/testdata/data/bincode
-'''
-
-[tasks.bincode-gen-testdata-no-clean]
-description = "Generate bincode testdata without removing the old data"
+[tasks.testdata-build-bincode]
+description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, overwriting the existing ICU4X Bincode if present."
 category = "ICU4X Data"
 command = "cargo"
 args = [
@@ -119,13 +110,5 @@ args = [
     "--all-keys",
     "--test-locales",
     "--syntax=bincode",
-]
-
-[tasks.bincode-gen-testdata]
-description = "Generate bincode for the testdata"
-category = "ICU4X Data"
-run_task = [
-    # Running "bincode-clean" first ensures that this command won't fail because the data
-    # already exists at that location.
-    { name = ["bincode-clean", "bincode-gen-testdata-no-clean"] },
+    "--overwrite",
 ]
