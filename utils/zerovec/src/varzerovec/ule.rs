@@ -53,7 +53,7 @@ pub struct VarZeroVecULE<T: ?Sized> {
 
 impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
     #[inline]
-    fn get_components<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
+    fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
             // safety: VarZeroVecULE is guaranteed to parse here
             VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
@@ -62,22 +62,22 @@ impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
 
     /// Get the number of elements in this vector
     pub fn len(&self) -> usize {
-        self.get_components().len()
+        self.as_borrowed().len()
     }
 
     /// Returns `true` if the vector contains no elements.
     pub fn is_empty(&self) -> bool {
-        self.get_components().is_empty()
+        self.as_borrowed().is_empty()
     }
 
     /// Obtain an iterator over VarZeroVecULE's elements
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.get_components().iter()
+        self.as_borrowed().iter()
     }
 
     /// Get one of VarZeroVecULE's elements, returning None if the index is out of bounds
     pub fn get(&self, idx: usize) -> Option<&T> {
-        self.get_components().get(idx)
+        self.as_borrowed().get(idx)
     }
 
     /// Get this [`VarZeroVecULE`] as a borrowed [`VarZeroVec`]
@@ -85,7 +85,7 @@ impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroVecULE`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        VarZeroVec(VarZeroVecInner::Borrowed(self.get_components()))
+        VarZeroVec(VarZeroVecInner::Borrowed(self.as_borrowed()))
     }
 }
 
@@ -101,7 +101,7 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.get_components().binary_search(x)
+        self.as_borrowed().binary_search(x)
     }
 }
 unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroVecULE<T> {

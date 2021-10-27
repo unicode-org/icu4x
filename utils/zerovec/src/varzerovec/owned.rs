@@ -72,7 +72,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     #[inline]
-    pub(crate) fn get_components<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
+    pub(crate) fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
             // safety: VarZeroVecOwned is guaranteed to parse here
             VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
@@ -81,22 +81,22 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
     /// Get the number of elements in this vector
     pub fn len(&self) -> usize {
-        self.get_components().len()
+        self.as_borrowed().len()
     }
 
     /// Returns `true` if the vector contains no elements.
     pub fn is_empty(&self) -> bool {
-        self.get_components().is_empty()
+        self.as_borrowed().is_empty()
     }
 
     /// Obtain an iterator over VarZeroVecOwned's elements
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.get_components().iter()
+        self.as_borrowed().iter()
     }
 
     /// Get one of VarZeroVecOwned's elements, returning None if the index is out of bounds
     pub fn get(&self, idx: usize) -> Option<&T> {
-        self.get_components().get(idx)
+        self.as_borrowed().get(idx)
     }
 
     /// Get the position of a specific element in the data segment.
@@ -186,7 +186,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroVecOwned`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        VarZeroVec(VarZeroVecInner::Borrowed(self.get_components()))
+        VarZeroVec(VarZeroVecInner::Borrowed(self.as_borrowed()))
     }
 
     /// Empty the vector
@@ -195,7 +195,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     pub fn to_vec(&self) -> Vec<Box<T>> {
-        self.get_components().to_vec()
+        self.as_borrowed().to_vec()
     }
 
     #[inline]
@@ -455,7 +455,7 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.get_components().binary_search(x)
+        self.as_borrowed().binary_search(x)
     }
 }
 
@@ -570,9 +570,9 @@ mod test {
     #[test]
     fn test_removing_last_element_clears() {
         let mut zerovec = VarZeroVecOwned::<str>::from_elements(&["buy some apples".to_string()]);
-        assert!(!zerovec.get_components().entire_slice().is_empty());
+        assert!(!zerovec.as_borrowed().entire_slice().is_empty());
         zerovec.remove(0);
-        assert!(zerovec.get_components().entire_slice().is_empty());
+        assert!(zerovec.as_borrowed().entire_slice().is_empty());
     }
 
     #[test]

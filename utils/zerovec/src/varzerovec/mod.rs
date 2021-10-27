@@ -185,9 +185,9 @@ impl<'a, T: ?Sized> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
 }
 
 impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
-    fn get_components<'b>(&'b self) -> VarZeroVecBorrowed<'b, T> {
+    fn as_borrowed<'b>(&'b self) -> VarZeroVecBorrowed<'b, T> {
         match self.0 {
-            VarZeroVecInner::Owned(ref owned) => owned.get_components(),
+            VarZeroVecInner::Owned(ref owned) => owned.as_borrowed(),
             VarZeroVecInner::Borrowed(components) => components,
         }
     }
@@ -210,7 +210,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn len(&self) -> usize {
-        self.get_components().len()
+        self.as_borrowed().len()
     }
 
     /// Returns `true` if the vector contains no elements.
@@ -230,7 +230,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn is_empty(&self) -> bool {
-        self.get_components().is_empty()
+        self.as_borrowed().is_empty()
     }
 
     /// Parse a VarZeroVec from a slice of the appropriate format
@@ -289,7 +289,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn iter<'b: 'a>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.get_components().iter()
+        self.as_borrowed().iter()
     }
 
     /// Get one of VarZeroVec's elements, returning None if the index is out of bounds
@@ -315,7 +315,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn get(&self, idx: usize) -> Option<&T> {
-        self.get_components().get(idx)
+        self.as_borrowed().get(idx)
     }
 
     /// Convert this into a mutable vector of the owned `T` type, cloning if necessary.
@@ -397,12 +397,12 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
 
     /// Obtain an owned `Vec<Box<T>>` out of this
     pub fn to_vec(&self) -> Vec<Box<T>> {
-        self.get_components().to_vec()
+        self.as_borrowed().to_vec()
     }
 
     /// Get a [`VarZeroVec`] that borrows from this one
     pub fn as_borrowed<'b>(&'b self) -> VarZeroVec<'b, T> {
-        VarZeroVecInner::Borrowed(self.get_components()).into()
+        VarZeroVecInner::Borrowed(self.as_borrowed()).into()
     }
 
     /// Obtain the internal encoded slice
@@ -481,7 +481,7 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.get_components().binary_search(x)
+        self.as_borrowed().binary_search(x)
     }
 }
 
