@@ -126,17 +126,17 @@ mod tests {
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
                 .unwrap(),
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
                 .unwrap(),
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
                 .unwrap(),
         ]);
 

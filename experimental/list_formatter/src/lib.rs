@@ -14,3 +14,4 @@ mod deduplicating_array;
 pub mod error;
 pub mod options;
 pub mod provider;
+mod string_matcher;
