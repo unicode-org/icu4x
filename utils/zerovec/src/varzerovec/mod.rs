@@ -184,8 +184,14 @@ impl<'a, T: ?Sized> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
     }
 }
 
+impl<'a, T: ?Sized> From<VarZeroVecBorrowed<'a, T>> for VarZeroVec<'a, T> {
+    fn from(other: VarZeroVecBorrowed<'a, T>) -> Self {
+        VarZeroVec(VarZeroVecInner::Borrowed(other))
+    }
+}
+
 impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
-    fn as_borrowed<'b>(&'b self) -> VarZeroVecBorrowed<'b, T> {
+    pub(crate) fn as_borrowed<'b>(&'b self) -> VarZeroVecBorrowed<'b, T> {
         match self.0 {
             VarZeroVecInner::Owned(ref owned) => owned.as_borrowed(),
             VarZeroVecInner::Borrowed(components) => components,
