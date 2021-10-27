@@ -502,6 +502,12 @@ where
     }
 }
 
+impl<'a, T: ?Sized + VarULE> From<VarZeroVecBorrowed<'a, T>> for VarZeroVecOwned<T> {
+    fn from(other: VarZeroVecBorrowed<'a, T>) -> Self {
+        Self::from_borrowed(other)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::VarZeroVecOwned;
