@@ -5,9 +5,9 @@
 #include <stdbool.h>
 #include <algorithm>
 #include <memory>
+#include <variant>
 #include <optional>
 #include <span>
-#include <variant>
 #include "diplomat_runtime.hpp"
 
 namespace capi {
@@ -48,7 +48,7 @@ struct ICU4XPluralOperands {
 #include "ICU4XCreatePluralOperandsResult.hpp"
 
 inline ICU4XCreatePluralOperandsResult ICU4XPluralOperands::create(const std::string_view s) {
-  capi::ICU4XCreatePluralOperandsResult diplomat_raw_struct_out_value = capi::ICU4XPluralOperands_create(s.data(), s.length());
+  capi::ICU4XCreatePluralOperandsResult diplomat_raw_struct_out_value = capi::ICU4XPluralOperands_create(s.data(), s.size());
   capi::ICU4XPluralOperands diplomat_raw_struct_out_value_operands = diplomat_raw_struct_out_value.operands;
   return ICU4XCreatePluralOperandsResult{ .operands = std::move(ICU4XPluralOperands{ .i = std::move(diplomat_raw_struct_out_value_operands.i), .v = std::move(diplomat_raw_struct_out_value_operands.v), .w = std::move(diplomat_raw_struct_out_value_operands.w), .f = std::move(diplomat_raw_struct_out_value_operands.f), .t = std::move(diplomat_raw_struct_out_value_operands.t), .c = std::move(diplomat_raw_struct_out_value_operands.c) }), .success = std::move(diplomat_raw_struct_out_value.success) };
 }
