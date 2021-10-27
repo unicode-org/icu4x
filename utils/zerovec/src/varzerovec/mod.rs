@@ -147,11 +147,10 @@ impl<E> From<E> for VarZeroVecError<E> {
     }
 }
 
-
 impl<'a, T: ?Sized> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
     #[inline]
     fn from(other: VarZeroVecOwned<T>) -> Self {
-        VarZeroVec::Owned(other).into()
+        VarZeroVec::Owned(other)
     }
 }
 
