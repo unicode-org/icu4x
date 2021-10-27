@@ -107,11 +107,8 @@ pub use ule::VarZeroVecULE;
 /// [`ule`]: crate::ule
 #[derive(Clone)]
 pub enum VarZeroVec<'a, T: ?Sized> {
+    // See the docs of VarZeroVecBorrowed for details on the internal format
     Owned(VarZeroVecOwned<T>),
-    /// This is *basically* an `&'a [u8]` to a zero copy buffer, but split out into
-    /// the buffer components. Logically this is capable of behaving as
-    /// a `&'a [T::VarULE]`, but since `T::VarULE` is unsized that type does not actually
-    /// exist
     Borrowed(VarZeroVecBorrowed<'a, T>),
 }
 

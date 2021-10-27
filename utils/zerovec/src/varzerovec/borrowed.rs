@@ -19,6 +19,11 @@ fn usizeify(x: PlainOldULE<4>) -> usize {
 /// of [`VarZeroVec`], making it cheaply convertible to [`VarZeroVec`] and [`VarZeroVecOwned`],
 /// however, unlike those two it cannot be mutated.
 ///
+/// This is *basically* an `&'a [u8]` to a zero copy buffer, but split out into
+/// the buffer components. Logically this is capable of behaving as
+/// a `&'a [T::VarULE]`, but since `T::VarULE` is unsized that type does not actually
+/// exist.
+///
 /// See [`VarZeroVecBorrowed::parse_byte_slice()`] for information on the internal invariants involved
 pub struct VarZeroVecBorrowed<'a, T: ?Sized> {
     /// The list of indices into the `things` slice
