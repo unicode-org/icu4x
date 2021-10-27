@@ -400,11 +400,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         self.as_borrowed().to_vec()
     }
 
-    /// Get a [`VarZeroVec`] that borrows from this one
-    pub fn as_borrowed<'b>(&'b self) -> VarZeroVec<'b, T> {
-        VarZeroVecInner::Borrowed(self.as_borrowed()).into()
-    }
-
     /// Obtain the internal encoded slice
     ///
     /// This can be passed back to [`Self::parse_byte_slice()`]
