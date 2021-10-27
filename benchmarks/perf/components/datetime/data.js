@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635360528864,
+  "lastUpdate": 1635372304587,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10847,6 +10847,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 310735,
             "range": "± 19862",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "91630072+sapriyag@users.noreply.github.com",
+            "name": "sapriyag",
+            "username": "sapriyag"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5338437ef9ecc5f83cb92d9fb2c0350989892e2d",
+          "message": "Fixed broken link [Data Management] (#1221)\n\nReplaced \r\nhttps://github.com/unicode-org/icu4x/blob/main/docs/data-pipeline.md with \r\nhttps://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md",
+          "timestamp": "2021-10-27T14:57:06-07:00",
+          "tree_id": "f2b961629e5d6790a8672139d79ff915bb1828a1",
+          "url": "https://github.com/unicode-org/icu4x/commit/5338437ef9ecc5f83cb92d9fb2c0350989892e2d"
+        },
+        "date": 1635372300004,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 107675,
+            "range": "± 7849",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1623672,
+            "range": "± 103710",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 325863,
+            "range": "± 20868",
             "unit": "ns/iter"
           }
         ]
