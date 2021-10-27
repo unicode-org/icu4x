@@ -78,18 +78,18 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
             .get(4 * len + 4..)
             .ok_or(VarZeroVecError::FormatError)?;
 
-        let components = VarZeroVecBorrowed {
+        let borrowed = VarZeroVecBorrowed {
             indices,
             things,
             entire_slice: slice,
             marker: PhantomData,
         };
 
-        for thing in components.iter_checked() {
+        for thing in borrowed.iter_checked() {
             let _ = thing?;
         }
 
-        Ok(components)
+        Ok(borrowed)
     }
 
     /// Construct a [`VarZeroVecBorrowed`] from a byte slice that has previously

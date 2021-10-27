@@ -36,10 +36,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
-    pub fn from_components(components: VarZeroVecBorrowed<T>) -> Self {
+    pub fn from_borrowed(borrowed: VarZeroVecBorrowed<T>) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: components.entire_slice().into(),
+            entire_slice: borrowed.entire_slice().into(),
         }
     }
 
@@ -47,7 +47,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     pub fn from_elements<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: components::get_serializable_bytes(elements).expect(
+            entire_slice: borrowed::get_serializable_bytes(elements).expect(
                 "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u32 in size",
             ),

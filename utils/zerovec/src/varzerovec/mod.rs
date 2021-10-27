@@ -5,11 +5,11 @@
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-use components::VarZeroVecBorrowed;
+use borrowed::VarZeroVecBorrowed;
 use core::fmt::{self, Display};
 use core::ops::Index;
 
-pub(crate) mod components;
+pub(crate) mod borrowed;
 pub(crate) mod owned;
 #[cfg(feature = "serde")]
 mod serde;
@@ -127,7 +127,7 @@ pub struct VarZeroVec<'a, T: ?Sized>(VarZeroVecInner<'a, T>);
 /// `len` is the length of `lens`, and each element of `lens` is the starting
 /// index of the thing in `things`.
 ///
-/// The actual implementation details of this can be found in the `components` module
+/// The actual implementation details of this can be found in the `borrowed` module
 #[derive(Clone)]
 enum VarZeroVecInner<'a, T: ?Sized> {
     Owned(VarZeroVecOwned<T>),
@@ -194,7 +194,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     pub(crate) fn as_borrowed<'b>(&'b self) -> VarZeroVecBorrowed<'b, T> {
         match self.0 {
             VarZeroVecInner::Owned(ref owned) => owned.as_borrowed(),
-            VarZeroVecInner::Borrowed(components) => components,
+            VarZeroVecInner::Borrowed(borrowed) => borrowed,
         }
     }
 
@@ -268,9 +268,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
             return Ok(VarZeroVecInner::Owned(VarZeroVecOwned::new()).into());
         }
 
-        let components = VarZeroVecBorrowed::<T>::parse_byte_slice(slice)?;
+        let borrowed = VarZeroVecBorrowed::<T>::parse_byte_slice(slice)?;
 
-        Ok(VarZeroVecInner::Borrowed(components).into())
+        Ok(VarZeroVecInner::Borrowed(borrowed).into())
     }
 
     /// Obtain an iterator over VarZeroVec's elements
@@ -356,8 +356,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     pub(crate) fn make_mut(&mut self) -> &mut VarZeroVecOwned<T> {
         match self.0 {
             VarZeroVecInner::Owned(ref mut vec) => vec,
-            VarZeroVecInner::Borrowed(components) => {
-                let new_self = VarZeroVecOwned::from_components(components).into();
+            VarZeroVecInner::Borrowed(borrowed) => {
+                let new_self = VarZeroVecOwned::from_borrowed(borrowed).into();
                 *self = new_self;
                 // recursion is limited since we are guaranteed to hit the Owned branch
                 self.make_mut()
@@ -439,7 +439,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// ```
     ///
     pub fn get_serializable_bytes<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Option<Vec<u8>> {
-        components::get_serializable_bytes(elements)
+        borrowed::get_serializable_bytes(elements)
     }
 
     /// Return whether the [`VarZeroVec`] is operating on owned or borrowed
