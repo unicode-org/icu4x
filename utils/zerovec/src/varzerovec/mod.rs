@@ -109,6 +109,16 @@ pub use ule::VarZeroVecULE;
 pub enum VarZeroVec<'a, T: ?Sized> {
     // See the docs of VarZeroVecBorrowed for details on the internal format
     Owned(VarZeroVecOwned<T>),
+    /// A borrowed VarZeroVec, requiring no allocations.
+    ///
+    /// If a mutating operation is invoked on VarZeroVec, the Borrowed is converted to Owned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let vzv = // something that makes an Owned VZV
+    /// assert!(matches!(vzv, VarZeroVec::Owned(_)));
+    /// ```
     Borrowed(VarZeroVecBorrowed<'a, T>),
 }
 
