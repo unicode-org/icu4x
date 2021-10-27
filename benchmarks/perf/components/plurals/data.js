@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635292019654,
+  "lastUpdate": 1635360520816,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17177,6 +17177,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22598,
             "range": "± 1831",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e98e933b07cf21248e9b117ddbed0a37533897f",
+          "message": "Update Diplomat; pin tests to C++17 (#1220)\n\n* Update diplomat\r\n\r\n* Regen\r\n\r\n* Update tests to pin C++17",
+          "timestamp": "2021-10-27T11:41:05-07:00",
+          "tree_id": "fe4106a3229ec934d6c8df21508207edca093540",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e98e933b07cf21248e9b117ddbed0a37533897f"
+        },
+        "date": 1635360516243,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1258,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6796,
+            "range": "± 337",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21658,
+            "range": "± 1415",
             "unit": "ns/iter"
           }
         ]
