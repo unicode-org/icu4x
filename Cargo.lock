@@ -980,6 +980,7 @@ version = "0.3.0"
 dependencies = [
  "fixed_decimal",
  "icu_calendar",
+ "icu_codepointtrie",
  "icu_datetime",
  "icu_decimal",
  "icu_locale_canonicalizer",
