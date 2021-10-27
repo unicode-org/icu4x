@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::components::SliceComponents;
+use super::components::VarZeroVecBorrowed;
 use super::*;
 use core::marker::PhantomData;
 use core::mem;
@@ -43,7 +43,7 @@ use core::mem;
 /// ```
 //
 // safety invariant: The slice MUST be one which parses to
-// a valid SliceComponents<T>
+// a valid VarZeroVecBorrowed<T>
 #[repr(transparent)]
 pub struct VarZeroVecULE<T: ?Sized> {
     marker: PhantomData<T>,
@@ -53,10 +53,10 @@ pub struct VarZeroVecULE<T: ?Sized> {
 
 impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
     #[inline]
-    fn get_components<'a>(&'a self) -> SliceComponents<'a, T> {
+    fn get_components<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
             // safety: VarZeroVecULE is guaranteed to parse here
-            SliceComponents::from_bytes_unchecked(&self.entire_slice)
+            VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
         }
     }
 
@@ -108,7 +108,7 @@ unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroVecULE<T> {
     type Error = ParseErrorFor<T>;
 
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
-        let _: SliceComponents<T> = SliceComponents::parse_byte_slice(bytes)?;
+        let _: VarZeroVecBorrowed<T> = VarZeroVecBorrowed::parse_byte_slice(bytes)?;
         Ok(())
     }
 

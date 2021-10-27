@@ -15,7 +15,7 @@ use core::slice;
 #[derive(Clone)]
 pub struct VarZeroVecOwned<T: ?Sized> {
     marker: PhantomData<Box<T>>,
-    // safety invariant: must parse into a valid SliceComponents
+    // safety invariant: must parse into a valid VarZeroVecBorrowed
     entire_slice: Vec<u8>,
 }
 
@@ -36,7 +36,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
-    pub fn from_components(components: SliceComponents<T>) -> Self {
+    pub fn from_components(components: VarZeroVecBorrowed<T>) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: components.entire_slice().into(),
@@ -72,10 +72,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     #[inline]
-    pub(crate) fn get_components<'a>(&'a self) -> SliceComponents<'a, T> {
+    pub(crate) fn get_components<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
             // safety: VarZeroVecOwned is guaranteed to parse here
-            SliceComponents::from_bytes_unchecked(&self.entire_slice)
+            VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
         }
     }
 

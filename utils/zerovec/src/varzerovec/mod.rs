@@ -5,7 +5,7 @@
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-use components::SliceComponents;
+use components::VarZeroVecBorrowed;
 use core::fmt::{self, Display};
 use core::ops::Index;
 
@@ -135,7 +135,7 @@ enum VarZeroVecInner<'a, T: ?Sized> {
     /// the buffer components. Logically this is capable of behaving as
     /// a `&'a [T::VarULE]`, but since `T::VarULE` is unsized that type does not actually
     /// exist
-    Borrowed(SliceComponents<'a, T>),
+    Borrowed(VarZeroVecBorrowed<'a, T>),
 }
 
 #[derive(Clone, Debug)]
@@ -185,7 +185,7 @@ impl<'a, T: ?Sized> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
 }
 
 impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
-    fn get_components<'b>(&'b self) -> SliceComponents<'b, T> {
+    fn get_components<'b>(&'b self) -> VarZeroVecBorrowed<'b, T> {
         match self.0 {
             VarZeroVecInner::Owned(ref owned) => owned.get_components(),
             VarZeroVecInner::Borrowed(components) => components,
@@ -262,7 +262,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
             return Ok(VarZeroVecInner::Owned(VarZeroVecOwned::new()).into());
         }
 
-        let components = SliceComponents::<T>::parse_byte_slice(slice)?;
+        let components = VarZeroVecBorrowed::<T>::parse_byte_slice(slice)?;
 
         Ok(VarZeroVecInner::Borrowed(components).into())
     }
