@@ -15,9 +15,9 @@ fn usizeify(x: PlainOldULE<4>) -> usize {
     u32::from_unaligned(x) as usize
 }
 
-/// A logical representation of the backing `&[u8]` buffer.
-///
-/// This is where the actual work involved in VarZeroVec happens
+/// A fully-borrowed [`VarZeroVec`]. This type has the same internal buffer representation
+/// of [`VarZeroVec`], making it cheaply convertible to [`VarZeroVec`] and [`VarZeroVecOwned`],
+/// however, unlike those two it cannot be mutated.
 ///
 /// See [`VarZeroVecBorrowed::parse_byte_slice()`] for information on the internal invariants involved
 pub struct VarZeroVecBorrowed<'a, T: ?Sized> {
@@ -137,7 +137,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         self.indices.is_empty()
     }
 
-    /// Get the entire backing buffer of this vector
+    /// Get a reference to the entire backing buffer of this vector
     #[inline]
     pub fn entire_slice(self) -> &'a [u8] {
         self.entire_slice

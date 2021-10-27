@@ -12,6 +12,9 @@ use core::ops::Range;
 use core::ptr;
 use core::slice;
 
+/// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
+/// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
+/// [`VarZeroVec`] and [`VarZeroVecBorrowed`].
 #[derive(Clone)]
 pub struct VarZeroVecOwned<T: ?Sized> {
     marker: PhantomData<Box<T>>,
@@ -36,6 +39,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
+    /// Construct a VarZeroVecOwned from a [`VarZeroVecBorrowed`] by cloning the internal data
     pub fn from_borrowed(borrowed: VarZeroVecBorrowed<T>) -> Self {
         Self {
             marker: PhantomData,
@@ -71,8 +75,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         self.entire_slice.reserve(capacity * 8)
     }
 
+    /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
     #[inline]
-    pub(crate) fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
+    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
             // safety: VarZeroVecOwned is guaranteed to parse here
             VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
@@ -194,10 +199,12 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         self.entire_slice.clear()
     }
 
+    /// Convert this vector to a regular vector of boxed DSTs
     pub fn to_vec(&self) -> Vec<Box<T>> {
         self.as_borrowed().to_vec()
     }
 
+    /// Get a reference to the entire backing buffer of this vector
     #[inline]
     pub fn entire_slice(&self) -> &[u8] {
         &self.entire_slice
@@ -406,6 +413,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
+    /// Remove the element at index `idx`
     pub fn remove(&mut self, index: usize) {
         let len = self.len();
         if index >= len {
@@ -424,6 +432,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
+    /// Replace the element at index `idx` with another
     pub fn replace<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index >= len {

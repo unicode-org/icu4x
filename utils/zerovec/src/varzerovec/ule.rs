@@ -52,8 +52,9 @@ pub struct VarZeroVecULE<T: ?Sized> {
 }
 
 impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
+    /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
     #[inline]
-    fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
+    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
             // safety: VarZeroVecULE is guaranteed to parse here
             VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
