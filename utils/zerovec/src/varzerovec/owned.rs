@@ -191,7 +191,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroVecOwned`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        VarZeroVec(VarZeroVecInner::Borrowed(self.as_borrowed()))
+        self.as_borrowed().into()
     }
 
     /// Empty the vector
