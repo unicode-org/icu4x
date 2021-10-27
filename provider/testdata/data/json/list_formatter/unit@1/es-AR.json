@@ -1,0 +1,44 @@
+{
+  "start": null,
+  "middle": null,
+  "end": {
+    "default": {
+      "string": " y ",
+      "index_1": 3
+    },
+    "special_case": null
+  },
+  "pair": null,
+  "short_start": null,
+  "short_middle": null,
+  "short_end": {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  "short_pair": {
+    "default": {
+      "string": " y ",
+      "index_1": 3
+    },
+    "special_case": null
+  },
+  "narrow_start": {
+    "default": {
+      "string": " ",
+      "index_1": 1
+    },
+    "special_case": null
+  },
+  "narrow_middle": null,
+  "narrow_end": {
+    "default": {
+      "string": " ",
+      "index_1": 1
+    },
+    "special_case": null
+  },
+  "narrow_pair": null
+}

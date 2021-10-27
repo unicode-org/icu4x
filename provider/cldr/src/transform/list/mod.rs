@@ -15,7 +15,11 @@ use std::marker::PhantomData;
 mod cldr_serde;
 
 /// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [key::LIST_FORMAT_V1];
+pub const ALL_KEYS: [ResourceKey; 3] = [
+    key::LIST_FORMAT_AND_V1,
+    key::LIST_FORMAT_OR_V1,
+    key::LIST_FORMAT_UNIT_V1,
+];
 
 /// A data provider reading from CLDR JSON list rule files.
 #[derive(PartialEq, Debug)]
@@ -46,7 +50,10 @@ impl<'data> TryFrom<&dyn CldrPaths> for ListProvider<'data> {
 
 impl<'data> KeyedDataProvider for ListProvider<'data> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::LIST_FORMAT_V1.match_key(*resc_key)
+        key::LIST_FORMAT_AND_V1
+            .match_key(*resc_key)
+            .or_else(|_| key::LIST_FORMAT_OR_V1.match_key(*resc_key))
+            .or_else(|_| key::LIST_FORMAT_UNIT_V1.match_key(*resc_key))
     }
 }
 
@@ -57,18 +64,24 @@ impl<'data> DataProvider<'data, ListFormatterPatternsV1Marker> for ListProvider<
     ) -> Result<DataResponse<'data, ListFormatterPatternsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
-        let patterns = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
+        let data = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
             Ok(idx) => &self.data[idx].1.list_patterns,
             Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
         };
+
+        let patterns = match req.resource_path.key {
+            key::LIST_FORMAT_AND_V1 => parse_and_patterns(data),
+            key::LIST_FORMAT_OR_V1 => parse_or_patterns(data),
+            key::LIST_FORMAT_UNIT_V1 => parse_unit_patterns(data),
+            _ => panic!("Cannot happen due to check in supports_key"),
+        }
+        .map_err(DataError::new_resc_error)?;
 
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_owned(
-                ListFormatterPatternsV1::try_from(patterns).unwrap(),
-            )),
+            payload: Some(DataPayload::from_owned(patterns)),
         })
     }
 }
@@ -86,6 +99,10 @@ impl<'data> IterableDataProviderCore for ListProvider<'data> {
         let list: Vec<ResourceOptions> = self
             .data
             .iter()
+            // ur-IN has a buggy pattern ("{1}, {0}") which violates
+            // our invariant that {0} is at index 0 (and rotates the output).
+            // See https://github.com/unicode-org/icu4x/issues/1282
+            .filter(|(l, _)| l != &icu_locid_macros::langid!("ur-IN"))
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 langid: Some(l.clone()),
@@ -95,56 +112,75 @@ impl<'data> IterableDataProviderCore for ListProvider<'data> {
     }
 }
 
-impl<'a> TryFrom<&cldr_serde::list_patterns_json::ListPattern> for ListFormatterPattern<'a> {
-    type Error = icu_list::error::Error;
-
-    fn try_from(other: &cldr_serde::list_patterns_json::ListPattern) -> Result<Self, Self::Error> {
-        Ok(Self {
-            start: other.start.parse()?,
-            middle: other.middle.parse()?,
-            end: other.end.parse()?,
-            pair: other.pair.parse()?,
-        })
-    }
+fn parse_and_patterns<'a>(
+    raw: &cldr_serde::list_patterns_json::ListPatterns,
+) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
+    Ok(ListFormatterPatternsV1::new(
+        raw.standard.start.parse()?,
+        raw.standard.middle.parse()?,
+        raw.standard.end.parse()?,
+        raw.standard.pair.parse()?,
+        raw.standard_short.start.parse()?,
+        raw.standard_short.middle.parse()?,
+        raw.standard_short.end.parse()?,
+        raw.standard_short.pair.parse()?,
+        raw.standard_narrow.start.parse()?,
+        raw.standard_narrow.middle.parse()?,
+        raw.standard_narrow.end.parse()?,
+        raw.standard_narrow.pair.parse()?,
+    ))
 }
 
-impl<'a> TryFrom<&cldr_serde::list_patterns_json::ListPatterns> for ListFormatterPatternsV1<'a> {
-    type Error = icu_list::error::Error;
+fn parse_or_patterns<'a>(
+    raw: &cldr_serde::list_patterns_json::ListPatterns,
+) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
+    Ok(ListFormatterPatternsV1::new(
+        raw.or.start.parse()?,
+        raw.or.middle.parse()?,
+        raw.or.end.parse()?,
+        raw.or.pair.parse()?,
+        raw.or_short.start.parse()?,
+        raw.or_short.middle.parse()?,
+        raw.or_short.end.parse()?,
+        raw.or_short.pair.parse()?,
+        raw.or_narrow.start.parse()?,
+        raw.or_narrow.middle.parse()?,
+        raw.or_narrow.end.parse()?,
+        raw.or_narrow.pair.parse()?,
+    ))
+}
 
-    fn try_from(other: &cldr_serde::list_patterns_json::ListPatterns) -> Result<Self, Self::Error> {
-        Ok(ListFormatterPatternsV1 {
-            patterns: PatternTypes {
-                and: PatternSizes {
-                    wide: ListFormatterPattern::try_from(&other.standard)?,
-                    short: ListFormatterPattern::try_from(&other.standard_short)?,
-                    narrow: ListFormatterPattern::try_from(&other.standard_narrow)?,
-                },
-                or: PatternSizes {
-                    wide: ListFormatterPattern::try_from(&other.or)?,
-                    short: ListFormatterPattern::try_from(&other.or_short)?,
-                    narrow: ListFormatterPattern::try_from(&other.or_narrow)?,
-                },
-                unit: PatternSizes {
-                    wide: ListFormatterPattern::try_from(&other.unit)?,
-                    short: ListFormatterPattern::try_from(&other.unit_short)?,
-                    narrow: ListFormatterPattern::try_from(&other.unit_narrow)?,
-                },
-            },
-        })
-    }
+fn parse_unit_patterns<'a>(
+    raw: &cldr_serde::list_patterns_json::ListPatterns,
+) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
+    Ok(ListFormatterPatternsV1::new(
+        raw.unit.start.parse()?,
+        raw.unit.middle.parse()?,
+        raw.unit.end.parse()?,
+        raw.unit.pair.parse()?,
+        raw.unit_short.start.parse()?,
+        raw.unit_short.middle.parse()?,
+        raw.unit_short.end.parse()?,
+        raw.unit_short.pair.parse()?,
+        raw.unit_narrow.start.parse()?,
+        raw.unit_narrow.middle.parse()?,
+        raw.unit_narrow.end.parse()?,
+        raw.unit_narrow.pair.parse()?,
+    ))
 }
 
 #[test]
 fn test_basic() {
+    use icu_list::options::Width;
     use icu_locid_macros::langid;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = ListProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let fr_list: DataPayload<ListFormatterPatternsV1Marker> = provider
+    let fr_and_list: DataPayload<ListFormatterPatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: key::LIST_FORMAT_V1,
+                key: key::LIST_FORMAT_AND_V1,
                 options: ResourceOptions {
                     variant: None,
                     langid: Some(langid!("fr")),
@@ -156,7 +192,25 @@ fn test_basic() {
         .unwrap();
 
     assert_eq!(
-        fr_list.get().patterns.and.wide.end,
-        "{0} et {1}".parse().unwrap()
+        fr_and_list.get().pair(Width::Wide),
+        &"{0} et {1}".parse().unwrap()
+    );
+
+    let es_or_list: DataPayload<ListFormatterPatternsV1Marker> = provider
+        .load_payload(&DataRequest {
+            resource_path: ResourcePath {
+                key: key::LIST_FORMAT_OR_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: Some(langid!("es")),
+                },
+            },
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+    assert_eq!(
+        es_or_list.get().middle(Width::Wide),
+        &"{0}, {1}".parse().unwrap()
     );
 }
