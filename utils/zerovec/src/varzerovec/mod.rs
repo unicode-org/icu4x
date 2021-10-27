@@ -5,7 +5,6 @@
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-use borrowed::VarZeroVecBorrowed;
 use core::fmt::{self, Display};
 use core::ops::Index;
 
@@ -17,6 +16,8 @@ mod ule;
 
 use owned::VarZeroVecOwned;
 pub use ule::VarZeroVecULE;
+pub use borrowed::VarZeroVecBorrowed;
+
 
 /// A zero-copy vector for variable-width types.
 ///

@@ -125,16 +125,19 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         }
     }
 
+    /// Get the number of elements in this vector
     #[inline]
     pub fn len(self) -> usize {
         self.indices.len()
     }
 
+    /// Returns `true` if the vector contains no elements.
     #[inline]
     pub fn is_empty(self) -> bool {
         self.indices.is_empty()
     }
 
+    /// Get the entire backing buffer of this vector
     #[inline]
     pub fn entire_slice(self) -> &'a [u8] {
         self.entire_slice
@@ -253,6 +256,8 @@ where
     T: ?Sized,
     T: Ord,
 {
+    /// Binary searches a sorted `VarZeroVecBorrowed<T>` for the given element. For more information, see
+    /// the primitive function [`binary_search`](slice::binary_search).
     pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
         // code is known to the State of California to cause cancer.
