@@ -107,7 +107,14 @@ pub use ule::VarZeroVecULE;
 /// [`ule`]: crate::ule
 #[derive(Clone)]
 pub enum VarZeroVec<'a, T: ?Sized> {
-    // See the docs of VarZeroVecBorrowed for details on the internal format
+    /// An allocated VarZeroVec, allowing for mutations.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let vzv = // something that makes an Owned VZV
+    /// assert!(matches!(vzv, VarZeroVec::Owned(_)));
+    /// ```
     Owned(VarZeroVecOwned<T>),
     /// A borrowed VarZeroVec, requiring no allocations.
     ///
