@@ -14,7 +14,7 @@ pub(crate) mod owned;
 mod serde;
 mod ule;
 
-use owned::VarZeroVecOwned;
+pub use owned::VarZeroVecOwned;
 pub use ule::VarZeroVecULE;
 pub use borrowed::VarZeroVecBorrowed;
 
@@ -365,7 +365,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     //
     // This function is crate-public for now since we don't yet want to stabilize
     // the internal implementation details
-    pub(crate) fn make_mut(&mut self) -> &mut VarZeroVecOwned<T> {
+    pub fn make_mut(&mut self) -> &mut VarZeroVecOwned<T> {
         match self.0 {
             VarZeroVecInner::Owned(ref mut vec) => vec,
             VarZeroVecInner::Borrowed(borrowed) => {
