@@ -47,6 +47,25 @@ where
 //
 
 /// ASCII characters commonly used for the representation of hexadecimal numbers
+///
+/// # Example
+///
+/// ```
+/// use icu_uniset::UnicodeSet;
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_ascii_hex_digit(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let ascii_hex_digit = &data_struct.inv_list;
+///
+/// assert!(ascii_hex_digit.contains('3'));
+/// assert!(!ascii_hex_digit.contains('੩'));  // U+0A69
+/// assert!(ascii_hex_digit.contains('A'));
+/// assert!(!ascii_hex_digit.contains('Ä'));  // U+00C4
+/// ```
 pub fn get_ascii_hex_digit<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,

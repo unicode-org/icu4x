@@ -44,6 +44,23 @@ where
 
 /// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
 ///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, GeneralSubcategory};
+/// use icu_codepointtrie::codepointtrie::CodePointTrie;
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let payload =
+///     maps::get_general_category(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let gc = &data_struct.codepoint_trie;
+/// assert_eq!(gc.get('木' as u32), GeneralSubcategory::OtherLetter);  // U+6728
+/// assert_eq!(gc.get('🎃' as u32), GeneralSubcategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+/// ```
+///
 /// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 pub fn get_general_category<'data, D>(provider: &D) -> CodePointMapResult<'data, GeneralSubcategory>
 where
@@ -53,6 +70,23 @@ where
 }
 
 /// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, Script};
+/// use icu_codepointtrie::codepointtrie::CodePointTrie;
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let payload =
+///     maps::get_script(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let script = &data_struct.codepoint_trie;
+/// assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
+/// assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
+/// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 pub fn get_script<'data, D>(provider: &D) -> CodePointMapResult<'data, Script>

@@ -18,35 +18,50 @@
 //! ## Property data as `UnicodeSet`s
 //!
 //! ```
-//! use icu::properties::sets;
 //! use icu_uniset::UnicodeSet;
+//! use icu::properties::{sets, GeneralCategory};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let emoji_payload =
+//! // A binary property as a `UnicodeSet`
+//!
+//! let payload =
 //!     sets::get_emoji(&provider)
 //!         .expect("The data should be valid");
-//! let emoji_data_struct = emoji_payload.get();
-//! let emoji = &emoji_data_struct.inv_list;
-//! assert!(!emoji.contains_u32('木' as u32));  // U+6728
-//! assert!(emoji.contains_u32('🎃' as u32));  // U+1F383 JACK-O-LANTERN
+//! let data_struct = payload.get();
+//! let emoji = &data_struct.inv_list;
+//!
+//! assert!(emoji.contains('🎃'));  // U+1F383 JACK-O-LANTERN
+//! assert!(!emoji.contains('木'));  // U+6728
+//!
+//! // An individual enumerated property value as a `UnicodeSet`
+//!
+//! let payload =
+//!     sets::get_for_general_category(&provider, GeneralCategory::LineSeparator)
+//!         .expect("The data should be valid");
+//! let data_struct = payload.get();
+//! let line_sep = &data_struct.inv_list;
+//!
+//! assert!(line_sep.contains_u32(0x2028));
+//! assert!(!line_sep.contains_u32(0x2029));
 //! ```
 //!
 //! ## Property data as `CodePointTrie`s
 //!
 //! ```
-//! use icu::properties::{maps, Script};
 //! use icu_codepointtrie::codepointtrie::CodePointTrie;
+//! use icu::properties::{maps, Script};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let script_payload =
+//! let payload =
 //!     maps::get_script(&provider)
 //!         .expect("The data should be valid");
-//! let script_data_struct = script_payload.get();
-//! let script = &script_data_struct.codepoint_trie;
-//! assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
+//! let data_struct = payload.get();
+//! let script = &data_struct.codepoint_trie;
+//!
 //! assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
+//! assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
