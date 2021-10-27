@@ -5,9 +5,9 @@
 #include <stdbool.h>
 #include <algorithm>
 #include <memory>
+#include <variant>
 #include <optional>
 #include <span>
-#include <variant>
 #include "diplomat_runtime.hpp"
 
 namespace capi {
