@@ -1,4 +1,4 @@
-# icu_datetime [![crates.io](http://meritbadge.herokuapp.com/icu_datetime)](https://crates.io/crates/icu_datetime)
+# icu_datetime [![crates.io](https://img.shields.io/crates/v/icu_datetime)](https://crates.io/crates/icu_datetime)
 
 `icu_datetime` is one of the [`ICU4X`] components.
 
