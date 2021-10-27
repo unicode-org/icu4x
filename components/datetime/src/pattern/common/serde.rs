@@ -43,7 +43,7 @@ mod reference {
         type Value = Pattern;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-            write!(formatter, "Expected to find a valid pattern.")
+            write!(formatter, "a valid pattern.")
         }
 
         fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>
@@ -129,7 +129,7 @@ mod runtime {
         type Value = Pattern<'de>;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-            write!(formatter, "Expected to find a valid pattern.")
+            write!(formatter, "a valid pattern.")
         }
 
         fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>
@@ -216,7 +216,7 @@ mod runtime {
             type Value = PatternPlurals<'de>;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                write!(formatter, "Expected to find a valid pattern.")
+                write!(formatter, "a valid pattern.")
             }
 
             fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>
@@ -245,6 +245,7 @@ mod runtime {
                 D: Deserializer<'de>,
             {
                 if deserializer.is_human_readable() {
+                    // deserializer.deserialize_enum("PatternPlurals", &["Single", "Multiple"], DeserializePatternPlurals)
                     deserializer.deserialize_any(DeserializePatternPlurals)
                 } else {
                     let pattern = PatternPluralsForSerde::deserialize(deserializer)?;
@@ -259,6 +260,10 @@ mod runtime {
                 S: ser::Serializer,
             {
                 if serializer.is_human_readable() {
+                    // match self {
+                    //     Self::SinglePattern(pattern) => serializer.serialize_newtype_variant("PatternPlurals", 0, "Single", pattern),
+                    //     Self::MultipleVariants(variants) => serializer.serialize_newtype_variant("PatternPlurals", 1, "Multiple", variants),
+                    // }
                     match self {
                         Self::SinglePattern(pattern) => {
                             serializer.serialize_str(&pattern.to_string())
@@ -284,7 +289,7 @@ mod runtime {
             type Value = GenericPattern<'de>;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                write!(formatter, "Expected to find a valid pattern.")
+                write!(formatter, "a valid pattern.")
             }
 
             fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>

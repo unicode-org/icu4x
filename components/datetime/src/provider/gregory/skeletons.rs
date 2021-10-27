@@ -9,10 +9,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::{
-    yoke::{self, *},
-    DataMarker,
-};
+use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 
 #[icu_provider::data_struct]
@@ -49,13 +46,4 @@ impl TryFrom<&str> for SkeletonV1 {
             Err(err) => Err(err),
         }
     }
-}
-
-/// Helper struct used to allow for projection of `DataPayload<DateSkeletonsV1>` to
-/// `DataPayload<PatternPluralsV1>`.
-pub struct PatternPluralsFromSkeletonsV1Marker;
-
-impl<'data> DataMarker<'data> for PatternPluralsFromSkeletonsV1Marker {
-    type Yokeable = super::patterns::PatternPluralsV1<'static>;
-    type Cart = DateSkeletonPatternsV1<'data>;
 }

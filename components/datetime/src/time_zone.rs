@@ -188,8 +188,7 @@ impl<'data> TimeZoneFormat<'data> {
             .filter_map(|field| match field.symbol {
                 FieldSymbol::TimeZone(zone) => Some((field.length.idx(), zone)),
                 _ => None,
-            })
-            .collect::<alloc::vec::Vec<_>>();
+            });
 
         for (length, symbol) in zone_symbols {
             match symbol {

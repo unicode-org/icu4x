@@ -10,7 +10,7 @@
 //!
 //! For all spec compliant behaviors see `reference::Pattern` equivalent.
 mod generic;
-pub mod helpers;
+pub(crate) mod helpers;
 mod pattern;
 mod plural;
 
