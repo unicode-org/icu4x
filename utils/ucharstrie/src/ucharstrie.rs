@@ -1,4 +1,6 @@
-use crate::trie::*;
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // 00..0f: Branch node. If node!=0 then the length is node+1, otherwise
 // the length is one more than the next byte.
@@ -48,7 +50,7 @@ pub struct UCharsTrie {
     remaining_match_length_: Option<usize>,
 }
 
-impl Trie for UCharsTrie {
+impl UCharsTrie {
     // Traverses the trie from the initial state for this input char.
     // Equivalent to reset() then next(inUnit)
     fn first(&mut self, trie_data: &[u8], c: i32) -> TrieResult {
