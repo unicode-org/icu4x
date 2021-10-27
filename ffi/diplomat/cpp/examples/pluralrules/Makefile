@@ -19,7 +19,7 @@ $(ALL_HEADERS):
 	cargo build -p icu_capi
 
 a.out: ../../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.cpp
-	$(CXX) -std=c++20 test.cpp ../../../../../target/debug/libicu_capi.a -ldl -lpthread -lm -g
+	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi.a -ldl -lpthread -lm -g
 
 build: a.out
 
