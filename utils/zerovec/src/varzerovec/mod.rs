@@ -14,10 +14,9 @@ pub(crate) mod owned;
 mod serde;
 mod ule;
 
+pub use borrowed::VarZeroVecBorrowed;
 pub use owned::VarZeroVecOwned;
 pub use ule::VarZeroVecULE;
-pub use borrowed::VarZeroVecBorrowed;
-
 
 /// A zero-copy vector for variable-width types.
 ///
@@ -28,7 +27,7 @@ pub use borrowed::VarZeroVecBorrowed;
 /// `T` must implement [`VarULE`], which is already implemented for [`str`] and `[T]` where
 /// `T` implements [`ULE`]. It is also implemented on `VarZeroVecULE<T>` for nesting.
 ///
-/// `VarZeroVec<T>` behaves much like [`std::borrow::Cow`], where it can be constructed from owned data
+/// `VarZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from owned data
 /// but can also borrow from some buffer.
 ///
 /// # How it Works
