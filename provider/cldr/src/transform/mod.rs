@@ -5,6 +5,7 @@
 mod aliases;
 mod dates;
 mod likelysubtags;
+mod list;
 mod numbers;
 mod plurals;
 mod time_zones;
@@ -15,6 +16,7 @@ pub use dates::{
     symbols::DateSymbolsProvider,
 };
 pub use likelysubtags::LikelySubtagsProvider;
+pub use list::ListProvider;
 pub use numbers::NumbersProvider;
 pub use plurals::PluralsProvider;
 
@@ -37,6 +39,7 @@ pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     result.extend(&numbers::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
     result.extend(&time_zones::ALL_KEYS);
+    result.extend(&list::ALL_KEYS);
     result
 }
 
@@ -51,6 +54,7 @@ pub struct CldrJsonDataProvider<'a, 'data> {
     numbers: LazyCldrProvider<NumbersProvider>,
     plurals: LazyCldrProvider<PluralsProvider<'data>>,
     time_zones: LazyCldrProvider<TimeZonesProvider<'data>>,
+    list: LazyCldrProvider<ListProvider<'data>>,
 }
 
 impl<'a> CldrJsonDataProvider<'a, '_> {
@@ -65,6 +69,7 @@ impl<'a> CldrJsonDataProvider<'a, '_> {
             numbers: Default::default(),
             plurals: Default::default(),
             time_zones: Default::default(),
+            list: Default::default(),
         }
     }
 }
@@ -96,6 +101,9 @@ impl<'a, 'data> DataProvider<'data, SerdeSeDataStructMarker> for CldrJsonDataPro
             return Ok(result);
         }
         if let Some(result) = self.time_zones.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
+        if let Some(result) = self.list.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
         Err(DataError::MissingResourceKey(req.resource_path.key))
@@ -153,6 +161,9 @@ impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a, '_> {
             .time_zones
             .try_supported_options(resc_key, self.cldr_paths)?
         {
+            return Ok(Box::new(resp.into_iter()));
+        }
+        if let Some(resp) = self.list.try_supported_options(resc_key, self.cldr_paths)? {
             return Ok(Box::new(resp.into_iter()));
         }
         Err(DataError::MissingResourceKey(*resc_key))
