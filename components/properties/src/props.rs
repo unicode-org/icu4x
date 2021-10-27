@@ -5,6 +5,7 @@
 //! A collection of enums for enumerated properties.
 
 use num_enum::{TryFromPrimitive, UnsafeFromPrimitive};
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Selection constants for Unicode properties.
@@ -27,9 +28,8 @@ pub enum EnumeratedProperty {
 /// Enumerated Unicode general category types.
 /// GeneralSubcategory only supports specific subcategories (eg `UppercaseLetter`).
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategory`].
-#[derive(
-    Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive, Serialize, Deserialize,
-)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(u8)]
 pub enum GeneralSubcategory {
     /// A reserved unassigned code point or a noncharacter
@@ -248,7 +248,8 @@ impl From<GeneralSubcategory> for GeneralCategory {
 ///
 /// For more information, see UAX #24: <http://www.unicode.org/reports/tr24/>.
 /// See `UScriptCode` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
 pub struct Script(pub u16);
 
