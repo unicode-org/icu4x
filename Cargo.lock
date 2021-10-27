@@ -1176,7 +1176,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "postcard",
- "regex",
+ "regex-automata",
  "serde",
  "serde_json",
  "zerovec",
@@ -2109,6 +2109,9 @@ name = "regex-automata"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c230d73fb8d8c1b9c0b3135c5142a8acee3a0558fb8db5cf1cb65f8d7862132"
+dependencies = [
+ "regex-syntax",
+]
 
 [[package]]
 name = "regex-syntax"

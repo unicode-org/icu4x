@@ -27,7 +27,7 @@ icu_provider = { version = "0.4", path = "../../provider/core", features = ["mac
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["yoke"] }
 deduplicating_array = { version = "0.5", path = "../../utils/deduplicating_array", optional = true }
-regex = "1.5"
+regex-automata = "0.1"
 
 [dev-dependencies]
 criterion = "0.3.3"
