@@ -218,13 +218,12 @@ pub fn create_best_pattern_for_fields<'data>(
             };
 
             use crate::pattern::runtime::GenericPattern;
-            let dt_pattern: GenericPattern<'data> = match length {
+            let dt_pattern: &GenericPattern<'data> = match length {
                 length::Date::Full => &length_patterns.full,
                 length::Date::Long => &length_patterns.long,
                 length::Date::Medium => &length_patterns.medium,
                 length::Date::Short => &length_patterns.short,
-            }
-            .clone();
+            };
 
             date_patterns.for_each_mut(|pattern| {
                 let date = pattern.clone();
