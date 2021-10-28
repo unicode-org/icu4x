@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635445559756,
+  "lastUpdate": 1635450822311,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11015,6 +11015,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 285769,
             "range": "± 323",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0e5084a8f41ae28fbfc1c27c5a080fab6e62b22e",
+          "message": "Properly fold lifetimes in zcf/yoke custom derives (#1231)\n\n* Properly fold lifetimes in zcf/yoke custom derives\n\n* fix test\n\n* fmt",
+          "timestamp": "2021-10-28T12:45:47-07:00",
+          "tree_id": "da8c4f42decc761d4cdbb6014c8325bb0b9650f0",
+          "url": "https://github.com/unicode-org/icu4x/commit/0e5084a8f41ae28fbfc1c27c5a080fab6e62b22e"
+        },
+        "date": 1635450817125,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 115965,
+            "range": "± 8844",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1715702,
+            "range": "± 97779",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 357172,
+            "range": "± 39371",
             "unit": "ns/iter"
           }
         ]
