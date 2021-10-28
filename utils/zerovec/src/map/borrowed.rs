@@ -4,12 +4,16 @@
 
 use crate::ule::AsULE;
 use crate::ZeroVec;
-use core::cmp::Ordering;
 
 pub use super::kv::ZeroMapKV;
 pub use super::vecs::{BorrowedZeroVecLike, ZeroVecLike};
 
-/// A borrowed-only version of [`ZeroMapBorrowed`](super::ZeroMapBorrowed)
+/// A borrowed-only version of [`ZeroMap`](super::ZeroMap)
+///
+/// This is useful for fully-zero-copy deserialization from non-human-readable
+/// serialization formats.
+///
+/// This can be obtained from a [`ZeroMap`](super::ZeroMap) via [`ZeroMap::as_borrowed`](super::ZeroMap::as_borrowed)
 pub struct ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a>,
@@ -41,13 +45,15 @@ where
     /// Get the value associated with `key`, if it exists.
     ///
     /// ```rust
-    /// use zerovec::ZeroMapBorrowed;
+    /// use zerovec::ZeroMap;
+    /// use zerovec::map::ZeroMapBorrowed;
     ///
-    /// let mut map = ZeroMapBorrowed::new();
+    /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
-    /// assert_eq!(map.get(&1), Some("one"));
-    /// assert_eq!(map.get(&3), None);
+    /// let borrowed = map.as_borrowed();
+    /// assert_eq!(borrowed.get(&1), Some("one"));
+    /// assert_eq!(borrowed.get(&3), None);
     /// ```
     pub fn get(&self, key: &K::NeedleType) -> Option<&V::GetType> {
         let index = self.keys.binary_search(key).ok()?;
@@ -57,13 +63,15 @@ where
     /// Returns whether `key` is contained in this map
     ///
     /// ```rust
-    /// use zerovec::ZeroMapBorrowed;
+    /// use zerovec::ZeroMap;
+    /// use zerovec::map::ZeroMapBorrowed;
     ///
-    /// let mut map = ZeroMapBorrowed::new();
+    /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
-    /// assert_eq!(map.contains_key(&1), true);
-    /// assert_eq!(map.contains_key(&3), false);
+    /// let borrowed = map.as_borrowed();
+    /// assert_eq!(borrowed.contains_key(&1), true);
+    /// assert_eq!(borrowed.contains_key(&3), false);
     /// ```
     pub fn contains_key(&self, key: &K::NeedleType) -> bool {
         self.keys.binary_search(key).is_ok()

@@ -14,6 +14,7 @@ mod kv;
 mod serde;
 mod vecs;
 
+pub use borrowed::ZeroMapBorrowed;
 pub use kv::ZeroMapKV;
 pub use vecs::{BorrowedZeroVecLike, ZeroVecLike};
 
@@ -89,6 +90,14 @@ where
         Self {
             keys: K::Container::with_capacity(capacity),
             values: V::Container::with_capacity(capacity),
+        }
+    }
+
+    /// Obtain a borrowed version of this map
+    pub fn as_borrowed(&'a self) -> ZeroMapBorrowed<'a, K, V> {
+        ZeroMapBorrowed {
+            keys: self.keys.as_borrowed(),
+            values: self.values.as_borrowed(),
         }
     }
 

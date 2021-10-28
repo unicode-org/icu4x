@@ -63,6 +63,13 @@ pub trait ZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
     fn clear(&mut self);
     /// Reserve space for `addl` additional elements
     fn reserve(&mut self, addl: usize);
+    /// Construct a borrowed version from this
+    ///
+    /// Note: This really should be `&'b self -> Self::BorrowedVersion<'b>`
+    /// but doing that requires complicated `for<'b>` code that will likely trigger
+    /// compiler bugs. Instead, we hope that `self` is covariant so this cast will
+    /// just work in the implementation.
+    fn as_borrowed(&'a self) -> Self::BorrowedVersion;
 }
 
 impl<'a, T> BorrowedZeroVecLike<'a, T> for ZeroVec<'a, T>
@@ -140,6 +147,10 @@ where
     }
     fn reserve(&mut self, addl: usize) {
         self.to_mut().reserve(addl)
+    }
+
+    fn as_borrowed(&'a self) -> &'a [T::ULE] {
+        self.as_slice()
     }
 }
 
@@ -244,5 +255,8 @@ where
     }
     fn reserve(&mut self, addl: usize) {
         self.make_mut().reserve(addl)
+    }
+    fn as_borrowed(&'a self) -> VarZeroVecBorrowed<'a, T> {
+        self.as_borrowed()
     }
 }
