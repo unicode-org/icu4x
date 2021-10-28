@@ -48,11 +48,10 @@ fn skip_value(pos: usize, lead: u16) -> usize {
     }
 }
 
-#[derive(Clone)]
-pub struct UCharsTrie {
-    pos_: Option<usize>,
-    root_: usize,
-    remaining_match_length_: Option<usize>,
+pub struct UCharsTrieIterator<'a> {
+    trie: &'a [u16],
+    pos: Option<usize>,
+    remaining_match_length: Option<usize>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -76,65 +75,50 @@ pub enum TrieResult {
     Intermediate,
 }
 
-impl UCharsTrie {
-    // Traverses the trie from the initial state for this input char.
-    // Equivalent to reset() then next(inUnit)
-    pub fn first(&mut self, trie_data: &[u8], c: i32) -> TrieResult {
-        let uchars = unsafe { &*(trie_data as *const [u8] as *const [u16]) };
-        self.remaining_match_length_ = None;
-        self.next_impl(uchars, self.root_, c as u16)
+impl<'a> UCharsTrieIterator<'a> {
+    pub fn new(trie: &'a [u16], offset: usize) -> Self {
+        Self {
+            trie,
+            pos: Some(offset / 2),
+            remaining_match_length: None,
+        }
     }
 
     // Traverses the trie from the current state for this input char.
-    pub fn next(&mut self, trie_data: &[u8], c: i32) -> TrieResult {
-        let uchars = unsafe { &*(trie_data as *const [u8] as *const [u16]) };
-        if self.pos_.is_none() {
+    pub fn next(&mut self, c: i32) -> TrieResult {
+        if self.pos.is_none() {
             return TrieResult::NoMatch;
         }
         let in_byte = c as u16;
-        let mut pos = self.pos_.unwrap();
-        if let Some(length) = self.remaining_match_length_ {
+        let mut pos = self.pos.unwrap();
+        if let Some(length) = self.remaining_match_length {
             // Remaining part of a linear-match node
-            if in_byte == uchars[pos] {
+            if in_byte == self.trie[pos] {
                 pos += 1;
-                self.pos_ = Some(pos);
+                self.pos = Some(pos);
                 if length == 0 {
-                    self.remaining_match_length_ = None;
-                    let node = uchars[pos];
+                    self.remaining_match_length = None;
+                    let node = self.trie[pos];
                     if node >= MIN_VALUE_LEAD {
                         return Self::value_result(node);
                     }
                 } else {
-                    self.remaining_match_length_ = Some(length);
+                    self.remaining_match_length = Some(length);
                 }
                 return TrieResult::NoValue;
             }
             self.stop();
             TrieResult::NoMatch
         } else {
-            self.next_impl(uchars, pos, in_byte)
+            self.next_impl(pos, in_byte)
         }
     }
 
-    pub fn new(offset: usize) -> Self {
-        Self {
-            pos_: Some(offset / 2),
-            root_: offset / 2,
-            remaining_match_length_: None,
-        }
-    }
-
-    fn branch_next(
-        &mut self,
-        uchars: &[u16],
-        pos: usize,
-        length: usize,
-        in_unit: u16,
-    ) -> TrieResult {
+    fn branch_next(&mut self, pos: usize, length: usize, in_unit: u16) -> TrieResult {
         let mut pos = pos;
         let mut length = length;
         if length == 0 {
-            length = uchars[pos] as usize;
+            length = self.trie[pos] as usize;
             pos += 1;
         }
         length += 1;
@@ -142,24 +126,24 @@ impl UCharsTrie {
         // The length of the branch is the number of units to select from.
         // The data structure encodes a binary search.
         while length > MAX_BRANCH_LINEAR_SUB_NODE_LENGTH {
-            if in_unit < uchars[pos] {
+            if in_unit < self.trie[pos] {
                 length >>= 1;
-                pos = self.jump_by_delta(uchars, pos + 1);
+                pos = self.jump_by_delta(pos + 1);
             } else {
                 length = length - (length >> 1);
-                pos = self.skip_delta(uchars, pos + 1);
+                pos = self.skip_delta(pos + 1);
             }
         }
         // Drop down to linear search for the last few bytes.
         // length>=2 because the loop body above sees length>kMaxBranchLinearSubNodeLength>=3
         // and divides length by 2.
         loop {
-            if in_unit == uchars[pos] {
+            if in_unit == self.trie[pos] {
                 pos += 1;
-                let mut node = uchars[pos];
+                let mut node = self.trie[pos];
                 if node & VALUE_IS_FINAL != 0 {
                     // Leave the final value for get_value() to read.
-                    self.pos_ = Some(pos);
+                    self.pos = Some(pos);
                     return TrieResult::FinalValue;
                 }
                 // Use the non-final value as the jump delta.
@@ -169,31 +153,31 @@ impl UCharsTrie {
                     pos += node as usize;
                 } else if node < THREE_UNIT_VALUE_LEAD {
                     pos += (((node - MIN_TWO_UNIT_VALUE_LEAD) as u32) << 16) as usize
-                        | uchars[pos] as usize;
+                        | self.trie[pos] as usize;
                     pos += 1;
                 } else {
-                    pos += (uchars[pos] as usize) << 16 | uchars[pos + 1] as usize;
+                    pos += (self.trie[pos] as usize) << 16 | self.trie[pos + 1] as usize;
                     pos += 2;
                 }
-                node = uchars[pos];
-                self.pos_ = Some(pos);
+                node = self.trie[pos];
+                self.pos = Some(pos);
 
                 if node >= MIN_VALUE_LEAD {
-                    return UCharsTrie::value_result(node);
+                    return Self::value_result(node);
                 }
                 return TrieResult::NoValue;
             }
             length -= 1;
-            pos = self.skip_value(uchars, pos + 1);
+            pos = self.skip_value(pos + 1);
             if length <= 1 {
                 break;
             }
         }
 
-        if in_unit == uchars[pos] {
+        if in_unit == self.trie[pos] {
             pos += 1;
-            self.pos_ = Some(pos);
-            let node = uchars[pos];
+            self.pos = Some(pos);
+            let node = self.trie[pos];
             if node >= MIN_VALUE_LEAD {
                 return Self::value_result(node);
             }
@@ -204,28 +188,28 @@ impl UCharsTrie {
         }
     }
 
-    fn next_impl(&mut self, uchars: &[u16], pos: usize, in_unit: u16) -> TrieResult {
-        let mut node = uchars[pos];
+    fn next_impl(&mut self, pos: usize, in_unit: u16) -> TrieResult {
+        let mut node = self.trie[pos];
         let mut pos = pos + 1;
         loop {
             if node < MIN_LINEAR_MATCH {
-                return self.branch_next(uchars, pos, node as usize, in_unit);
+                return self.branch_next(pos, node as usize, in_unit);
             } else if node < MIN_VALUE_LEAD {
                 // Match the first of length+1 units.
                 let length = node - MIN_LINEAR_MATCH;
-                if in_unit == uchars[pos] {
+                if in_unit == self.trie[pos] {
                     pos += 1;
                     if length == 0 {
-                        self.remaining_match_length_ = None;
-                        self.pos_ = Some(pos);
-                        node = uchars[pos];
+                        self.remaining_match_length = None;
+                        self.pos = Some(pos);
+                        node = self.trie[pos];
                         if node >= MIN_VALUE_LEAD {
                             return Self::value_result(node);
                         }
                         return TrieResult::NoValue;
                     }
-                    self.remaining_match_length_ = Some(length as usize - 1);
-                    self.pos_ = Some(pos);
+                    self.remaining_match_length = Some(length as usize - 1);
+                    self.pos = Some(pos);
                     return TrieResult::NoValue;
                 }
                 // No match
@@ -244,31 +228,31 @@ impl UCharsTrie {
     }
 
     fn stop(&mut self) {
-        self.pos_ = None;
+        self.pos = None;
     }
 
-    fn jump_by_delta(&self, uchars: &[u16], pos: usize) -> usize {
-        let delta = uchars[pos];
+    fn jump_by_delta(&self, pos: usize) -> usize {
+        let delta = self.trie[pos];
         if delta < MIN_TWO_UNIT_DELTA_LEAD {
             // nothing to do
             pos + 1 + delta as usize
         } else if delta == THREE_UNIT_DELTA_LEAD {
-            let delta = ((uchars[pos + 1] as usize) << 16) | (uchars[pos + 2] as usize);
+            let delta = ((self.trie[pos + 1] as usize) << 16) | (self.trie[pos + 2] as usize);
             pos + delta + 3
         } else {
             let delta =
-                ((delta - MIN_TWO_UNIT_DELTA_LEAD) as usize) << 16 | (uchars[pos + 1] as usize);
+                ((delta - MIN_TWO_UNIT_DELTA_LEAD) as usize) << 16 | (self.trie[pos + 1] as usize);
             pos + delta + 2
         }
     }
 
-    fn skip_value(&self, uchars: &[u16], pos: usize) -> usize {
-        let lead_byte = uchars[pos];
+    fn skip_value(&self, pos: usize) -> usize {
+        let lead_byte = self.trie[pos];
         skip_value(pos + 1, lead_byte & 0x7fff)
     }
 
-    fn skip_delta(&self, uchars: &[u16], pos: usize) -> usize {
-        let delta = uchars[pos];
+    fn skip_delta(&self, pos: usize) -> usize {
+        let delta = self.trie[pos];
         if delta < MIN_TWO_UNIT_DELTA_LEAD {
             pos + 1
         } else if delta == THREE_UNIT_DELTA_LEAD {
@@ -286,38 +270,38 @@ impl UCharsTrie {
         }
     }
 
-    pub fn get_value(&self, uchars: &[u16]) -> Option<i32> {
-        if self.pos_.is_none() {
+    pub fn get_value(&self) -> Option<i32> {
+        if self.pos.is_none() {
             return None;
         }
-        let mut pos = self.pos_.unwrap();
-        let lead_unit = uchars[pos];
+        let mut pos = self.pos.unwrap();
+        let lead_unit = self.trie[pos];
         pos += 1;
         if lead_unit & VALUE_IS_FINAL == VALUE_IS_FINAL {
-            Some(self.read_value(uchars, pos, lead_unit & 0x7fff))
+            Some(self.read_value(pos, lead_unit & 0x7fff))
         } else {
-            Some(self.read_node_value(uchars, pos, lead_unit))
+            Some(self.read_node_value(pos, lead_unit))
         }
     }
 
-    fn read_value(&self, uchars: &[u16], pos: usize, lead_unit: u16) -> i32 {
+    fn read_value(&self, pos: usize, lead_unit: u16) -> i32 {
         if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
             lead_unit.into()
         } else if lead_unit < THREE_UNIT_VALUE_LEAD {
-            ((lead_unit - MIN_TWO_UNIT_VALUE_LEAD) as i32) << 16 | uchars[pos] as i32
+            ((lead_unit - MIN_TWO_UNIT_VALUE_LEAD) as i32) << 16 | self.trie[pos] as i32
         } else {
-            ((uchars[pos] as i32) << 16) | uchars[pos + 1] as i32
+            ((self.trie[pos] as i32) << 16) | self.trie[pos + 1] as i32
         }
     }
 
-    fn read_node_value(&self, uchars: &[u16], pos: usize, lead_unit: u16) -> i32 {
+    fn read_node_value(&self, pos: usize, lead_unit: u16) -> i32 {
         if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
             ((lead_unit >> 6) - 1).into()
         } else if lead_unit < THREE_UNIT_VALUE_LEAD {
             ((((lead_unit & 0x7fc0) - MIN_TWO_UNIT_NODE_VALUE_LEAD) as i32) << 10)
-                | uchars[pos] as i32
+                | self.trie[pos] as i32
         } else {
-            ((uchars[pos] as i32) << 16) | uchars[pos + 1] as i32
+            ((self.trie[pos] as i32) << 16) | self.trie[pos + 1] as i32
         }
     }
 }
