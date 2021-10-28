@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_plurals::{provider::PluralRuleStringsV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
 use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
 
 use crate::{
@@ -118,7 +118,7 @@ impl<'data> ZonedDateTimeFormat<'data> {
             + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: DataProvider<'data, PluralRuleStringsV1Marker> + ?Sized,
+        PP: DataProvider<'data, PluralRulesV1Marker>,
     {
         let locale = locale.into();
         let langid: LanguageIdentifier = locale.clone().into();
@@ -131,7 +131,7 @@ impl<'data> ZonedDateTimeFormat<'data> {
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new(
-                langid.clone(),
+                locale.clone(),
                 plural_provider,
                 PluralRuleType::Ordinal,
             )?)

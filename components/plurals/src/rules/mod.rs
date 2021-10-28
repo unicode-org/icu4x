@@ -62,19 +62,19 @@
 //!
 //! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
-//! assert_eq!(ast, Condition(Box::new([
-//!     AndCondition(Box::new([
+//! assert_eq!(ast, Condition(vec![
+//!     AndCondition(vec![
 //!         Relation {
 //!             expression: Expression {
 //!                 operand: Operand::I,
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(vec![
 //!                 RangeListItem::Value(
 //!                     Value(1)
 //!                 )
-//!             ]))
+//!             ])
 //!         },
 //!         Relation {
 //!             expression: Expression {
@@ -82,14 +82,14 @@
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(vec![
 //!                 RangeListItem::Value(
 //!                     Value(0)
 //!                 )
-//!             ]))
+//!             ])
 //!         },
-//!     ])),
-//! ])));
+//!     ]),
+//! ]));
 //! ```
 //!
 //! Finally, we can pass this [`AST`] (in fact, just the [`Condition`] node),

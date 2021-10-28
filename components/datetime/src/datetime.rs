@@ -13,7 +13,7 @@ use crate::{
 };
 use alloc::string::String;
 use icu_locid::Locale;
-use icu_plurals::{provider::PluralRuleStringsV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
@@ -65,7 +65,7 @@ pub struct DateTimeFormat<'data> {
     pub(super) locale: Locale,
     pub(super) patterns: DataPayload<'data, PatternPluralsFromPatternsV1Marker>,
     pub(super) symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
-    pub(super) ordinal_rules: Option<PluralRules>,
+    pub(super) ordinal_rules: Option<PluralRules<'data>>,
 }
 
 impl<'data> DateTimeFormat<'data> {
@@ -99,7 +99,7 @@ impl<'data> DateTimeFormat<'data> {
         D: DataProvider<'data, DateSymbolsV1Marker>
             + DataProvider<'data, DatePatternsV1Marker>
             + DataProvider<'data, DateSkeletonPatternsV1Marker>
-            + DataProvider<'data, PluralRuleStringsV1Marker>,
+            + DataProvider<'data, PluralRulesV1Marker>,
     {
         let locale = locale.into();
 
@@ -113,7 +113,7 @@ impl<'data> DateTimeFormat<'data> {
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new(
-                langid.clone(),
+                locale.clone(),
                 data_provider,
                 PluralRuleType::Ordinal,
             )?)
@@ -159,7 +159,7 @@ impl<'data> DateTimeFormat<'data> {
         locale: T,
         patterns: DataPayload<'data, PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
-        ordinal_rules: Option<PluralRules>,
+        ordinal_rules: Option<PluralRules<'data>>,
     ) -> Self {
         let locale = locale.into();
 

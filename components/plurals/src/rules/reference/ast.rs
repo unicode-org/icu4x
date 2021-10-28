@@ -17,22 +17,22 @@
 //! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
 //!
-//! assert_eq!(ast, Condition(Box::new([
-//!     AndCondition(Box::new([
+//! assert_eq!(ast, Condition(vec![
+//!     AndCondition(vec![
 //!         Relation {
 //!             expression: Expression {
 //!                 operand: Operand::I,
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(vec![
 //!                 RangeListItem::Value(
 //!                     Value(1)
 //!                 )
-//!             ]))
+//!             ])
 //!         }
-//!     ]))
-//! ])));
+//!     ])
+//! ]));
 //! ```
 //!
 //! [`PluralCategory`]: crate::PluralCategory
@@ -56,17 +56,17 @@ use core::ops::RangeInclusive;
 ///
 /// let samples = Samples {
 ///     integer: Some(SampleList {
-///         sample_ranges: Box::new([SampleRange {
+///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2".to_string()),
 ///             upper_val: None,
-///         }]),
+///         }],
 ///         ellipsis: true
 ///     }),
 ///     decimal: Some(SampleList {
-///         sample_ranges: Box::new([SampleRange {
+///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2.5".to_string()),
 ///             upper_val: None,
-///         }]),
+///         }],
 ///         ellipsis: false
 ///     }),
 /// };
@@ -99,24 +99,24 @@ pub struct Rule {
 /// use icu::plurals::rules::reference::ast::*;
 /// use icu::plurals::rules::reference::parse_condition;
 ///
-/// let condition = Condition(Box::new([
-///     AndCondition(Box::new([Relation {
+/// let condition = Condition(vec![
+///     AndCondition(vec![Relation {
 ///         expression: Expression {
 ///             operand: Operand::I,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(5))])),
-///     }])),
-///     AndCondition(Box::new([Relation {
+///         range_list: RangeList(vec![RangeListItem::Value(Value(5))]),
+///     }]),
+///     AndCondition(vec![Relation {
 ///         expression: Expression {
 ///             operand: Operand::V,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(2))])),
-///     }])),
-/// ]));
+///         range_list: RangeList(vec![RangeListItem::Value(Value(2))]),
+///     }]),
+/// ]);
 ///
 /// assert_eq!(
 ///     condition,
@@ -145,14 +145,14 @@ pub struct Condition(pub Vec<AndCondition>);
 /// ```
 /// use icu::plurals::rules::reference::ast::*;
 ///
-/// AndCondition(Box::new([
+/// AndCondition(vec![
 ///     Relation {
 ///         expression: Expression {
 ///             operand: Operand::I,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(5))])),
+///         range_list: RangeList(vec![RangeListItem::Value(Value(5))]),
 ///     },
 ///     Relation {
 ///         expression: Expression {
@@ -160,9 +160,9 @@ pub struct Condition(pub Vec<AndCondition>);
 ///             modulus: None,
 ///         },
 ///         operator: Operator::NotEq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(2))])),
+///         range_list: RangeList(vec![RangeListItem::Value(Value(2))]),
 ///     },
-/// ]));
+/// ]);
 ///
 /// ```
 ///
@@ -192,7 +192,7 @@ pub struct AndCondition(pub Vec<Relation>);
 ///         modulus: None,
 ///     },
 ///     operator: Operator::Eq,
-///     range_list: RangeList(Box::new([RangeListItem::Value(Value(3))])),
+///     range_list: RangeList(vec![RangeListItem::Value(Value(3))]),
 /// };
 ///
 /// ```
@@ -305,11 +305,11 @@ pub enum Operand {
 /// ```
 /// use icu::plurals::rules::reference::ast::*;
 ///
-/// RangeList(Box::new([
+/// RangeList(vec![
 ///     RangeListItem::Value(Value(5)),
 ///     RangeListItem::Value(Value(7)),
 ///     RangeListItem::Value(Value(9)),
-/// ]));
+/// ]);
 /// ```
 ///
 /// [`RangeListItems`]: RangeListItem
@@ -376,17 +376,17 @@ pub struct Value(pub u64);
 /// use icu::plurals::rules::reference::ast::*;
 /// Samples {
 ///     integer: Some(SampleList {
-///         sample_ranges: Box::new([SampleRange {
+///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2".to_string()),
 ///             upper_val: None,
-///         }]),
+///         }],
 ///         ellipsis: true
 ///     }),
 ///     decimal: Some(SampleList {
-///         sample_ranges: Box::new([SampleRange {
+///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2.5".to_string()),
 ///             upper_val: None,
-///         }]),
+///         }],
 ///         ellipsis: false
 ///     }),
 /// };
@@ -409,12 +409,12 @@ pub struct Samples {
 /// ```
 /// use icu::plurals::rules::reference::ast::*;
 /// SampleList {
-///     sample_ranges: Box::new([
+///     sample_ranges: vec![
 ///         SampleRange {
 ///             lower_val: DecimalValue("0.0".to_string()),
 ///             upper_val: Some(DecimalValue("1.5".to_string())),
 ///         }
-///     ]),
+///     ],
 ///     ellipsis: true
 /// };
 /// ```

@@ -1,4 +1,4 @@
-// This file is part of ICU4X. For terms of use, please see the file
+// This file is part of ICU4 and_or: todo!(), polarity: todo!(), operand: todo!(), modulo: todo!(), range_list: todo!()  and_or: todo!(), polarity: todo!(), operand: todo!(), modulo: todo!(), range_list: todo!() X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
@@ -12,7 +12,7 @@ use zerovec::{
     {VarZeroVec, ZeroVec},
 };
 
-#[derive(Yokeable, ZeroCopyFrom)]
+#[derive(Debug, Yokeable, ZeroCopyFrom)]
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
@@ -259,6 +259,7 @@ impl fmt::Display for Rule<'_> {
 
 /////////////////
 
+#[derive(Debug)]
 #[repr(packed)]
 pub struct RelationULE {
     /// This maps to (AndOr, Polarity, Operand),
@@ -286,6 +287,7 @@ impl RelationULE {
     }
 
     fn encode_andor_polarity_operand(and_or: AndOr, polarity: Polarity, operand: Operand) -> u8 {
+        // XXX: Ensure and_or is one bit, polarity is one bit, and operand is max 6 bits
         (((and_or == AndOr::And) as u8) << 7)
             + (((polarity == Polarity::Positive) as u8) << 6)
             + operand.idx()
@@ -306,7 +308,7 @@ impl RelationULE {
             Polarity::Negative
         };
 
-        let operand = Operand::from_idx(encoded & 0b0010_0000);
+        let operand = Operand::from_idx(encoded & 0b0011_1111);
         (and_or, polarity, operand)
     }
 }
@@ -340,7 +342,7 @@ unsafe impl VarULE for RelationULE {
 
     //     what it should do is attempt to parse the first 4 bytes as a u32::ULE (POU<4>), and the remaining bytes as a ZV<RangeOrValueULE>
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
-        let bits = bytes[0];
+        let bits = bytes[0]; // XXX: Validate those bits
         <PlainOldULE<4> as ULE>::validate_byte_slice(&bytes[1..5]).map_err(|_| "foo")?;
         let remaining = &bytes[5..];
         RangeOrValueULE::validate_byte_slice(remaining).map_err(|_| "foo")?;
@@ -360,7 +362,7 @@ unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 #[repr(transparent)]
 pub struct RangeOrValueULE(PlainOldULE<8>);
 
@@ -490,29 +492,40 @@ mod test {
 
     #[test]
     fn simple_rule_test() {
-        // let input = "n % 10 = 3..4,9 and n % 100 != 10..19,70..79,90..99 or n = 0";
-        let input = "n = 1";
+        let input = "i = 1";
         let full_ast = parse(input.as_bytes()).unwrap();
         assert_eq!(
             full_ast,
             ast::Rule {
-                condition: ast::Condition(Box::new([ast::AndCondition(Box::new([
-                    ast::Relation {
-                        expression: ast::Expression {
-                            operand: ast::Operand::N,
-                            modulus: None,
-                        },
-                        operator: ast::Operator::Eq,
-                        range_list: ast::RangeList(Box::new([ast::RangeListItem::Value(
-                            ast::Value(1)
-                        )]))
-                    }
-                ]))])),
+                condition: ast::Condition(vec![ast::AndCondition(vec![ast::Relation {
+                    expression: ast::Expression {
+                        operand: ast::Operand::I,
+                        modulus: None,
+                    },
+                    operator: ast::Operator::Eq,
+                    range_list: ast::RangeList(vec![ast::RangeListItem::Value(ast::Value(1))])
+                }])]),
                 samples: None,
             }
         );
 
         let rule = Rule::from(&full_ast);
+        let relation = rule
+            .0
+            .iter()
+            .next()
+            .expect("Should have a relation")
+            .as_relation();
+        assert_eq!(
+            relation,
+            Relation {
+                and_or: AndOr::And,
+                polarity: Polarity::Positive,
+                operand: Operand::I,
+                modulo: 0,
+                range_list: ZeroVec::Borrowed(&[RangeOrValue::Value(1).as_unaligned()])
+            }
+        );
 
         let fd = fixed_decimal::decimal::FixedDecimal::from(1);
         let operands = PluralOperands::from(&fd);
@@ -525,7 +538,23 @@ mod test {
         let full_ast = parse(input.as_bytes()).unwrap();
         let rule = Rule::from(&full_ast);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(110);
+        let fd = fixed_decimal::decimal::FixedDecimal::from(0);
+        let operands = PluralOperands::from(&fd);
+        assert!(test_rule(&rule, &operands),);
+
+        let fd = fixed_decimal::decimal::FixedDecimal::from(13);
+        let operands = PluralOperands::from(&fd);
+        assert!(test_rule(&rule, &operands),);
+
+        let fd = fixed_decimal::decimal::FixedDecimal::from(103);
+        let operands = PluralOperands::from(&fd);
+        assert!(test_rule(&rule, &operands),);
+
+        let fd = fixed_decimal::decimal::FixedDecimal::from(178);
+        let operands = PluralOperands::from(&fd);
+        assert!(!test_rule(&rule, &operands),);
+
+        let fd = fixed_decimal::decimal::FixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }

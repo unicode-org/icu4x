@@ -56,7 +56,7 @@ where
     pub(crate) symbols: Option<&'l provider::gregory::DateSymbolsV1>,
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
-    pub(crate) ordinal_rules: Option<&'l PluralRules>,
+    pub(crate) ordinal_rules: Option<&'l PluralRules<'data>>,
 }
 
 impl<'l, 'data, T> Writeable for FormattedDateTime<'l, 'data, T>

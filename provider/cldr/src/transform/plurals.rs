@@ -6,10 +6,9 @@ use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
-use icu_plurals::rules::{parse, serialize};
+use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 
@@ -85,11 +84,11 @@ impl<'data> PluralsProvider<'data> {
     }
 }
 
-impl<'data> DataProvider<'data, PluralRuleStringsV1Marker> for PluralsProvider<'data> {
+impl<'data> DataProvider<'data, PluralRulesV1Marker> for PluralsProvider<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, PluralRuleStringsV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, PluralRulesV1Marker>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let langid = req.try_langid()?;
@@ -101,13 +100,13 @@ impl<'data> DataProvider<'data, PluralRuleStringsV1Marker> for PluralsProvider<'
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_owned(PluralRuleStringsV1::from(r))),
+            payload: Some(DataPayload::from_owned(PluralRulesV1::from(r))),
         })
     }
 }
 
 icu_provider::impl_dyn_provider!(PluralsProvider<'data>, {
-    _ => PluralRuleStringsV1Marker,
+    _ => PluralRulesV1Marker,
 }, SERDE_SE, 'data);
 
 impl<'data> IterableDataProviderCore for PluralsProvider<'data> {
@@ -130,17 +129,13 @@ impl<'data> IterableDataProviderCore for PluralsProvider<'data> {
     }
 }
 
-impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1<'static> {
+impl From<&cldr_json::LocalePluralRules> for PluralRulesV1<'static> {
     fn from(other: &cldr_json::LocalePluralRules) -> Self {
         /// Removes samples from plural rule strings. Takes an owned [`String`] reference and
         /// returns a new [`String`] in a [`Cow::Owned`].
         #[allow(clippy::ptr_arg)]
-        fn convert(s: &String) -> Cow<'static, str> {
-            let mut ast = parse(s.as_bytes()).expect("Rule parsing failed.");
-            ast.samples = None;
-            let mut result = String::with_capacity(s.len());
-            serialize(&ast, &mut result).expect("Serialization failed.");
-            Cow::Owned(result)
+        fn convert(s: &String) -> Rule<'static> {
+            s.parse().expect("Rule parsing failed.")
         }
         Self {
             zero: other.zero.as_ref().map(convert),
