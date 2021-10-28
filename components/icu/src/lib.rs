@@ -384,7 +384,6 @@ pub mod properties {
     //! ## Property data as `UnicodeSet`s
     //!
     //! ```
-    //! use icu_uniset::UnicodeSet;
     //! use icu::properties::{sets, GeneralCategory};
     //!
     //! let provider = icu_testdata::get_provider();
@@ -415,7 +414,6 @@ pub mod properties {
     //! ## Property data as `CodePointTrie`s
     //!
     //! ```
-    //! use icu_codepointtrie::codepointtrie::CodePointTrie;
     //! use icu::properties::{maps, Script};
     //!
     //! let provider = icu_testdata::get_provider();

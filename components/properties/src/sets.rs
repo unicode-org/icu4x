@@ -51,7 +51,6 @@ where
 /// # Example
 ///
 /// ```
-/// use icu_uniset::UnicodeSet;
 /// use icu_properties::sets;
 ///
 /// let provider = icu_testdata::get_provider();
@@ -83,6 +82,24 @@ where
 }
 
 /// Alphabetic characters
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_alphabetic(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let alphabetic = &data_struct.inv_list;
+///
+/// assert!(!alphabetic.contains('3'));
+/// assert!(!alphabetic.contains('੩'));  // U+0A69
+/// assert!(alphabetic.contains('A'));
+/// assert!(alphabetic.contains('Ä'));  // U+00C4
+/// ```
 pub fn get_alphabetic<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -92,6 +109,22 @@ where
 
 /// Format control characters which have specific functions in the Unicode Bidirectional
 /// Algorithm
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_bidi_control(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let bidi_control = &data_struct.inv_list;
+///
+/// assert!(bidi_control.contains_u32(0x200F));
+/// assert!(!bidi_control.contains('ش'));  // U+0634
+/// ```
 pub fn get_bidi_control<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -100,6 +133,24 @@ where
 }
 
 /// Characters that are mirrored in bidirectional text
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_bidi_mirrored(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let bidi_mirrored = &data_struct.inv_list;
+///
+/// assert!(bidi_mirrored.contains('['));
+/// assert!(bidi_mirrored.contains(']'));
+/// assert!(bidi_mirrored.contains('∑'));  // U+2211
+/// assert!(!bidi_mirrored.contains('ཉ'));  // U+0F49
+/// ```
 pub fn get_bidi_mirrored<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -107,16 +158,31 @@ where
     get_uniset(provider, key::BIDI_MIRRORED_V1)
 }
 
-// TODO(#1210) - Uncomment or remove
-// /// Horizontal whitespace characters
-// pub fn get_blank<'data, D>(provider: &D) -> UnisetResult<'data>
-// where
-//     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
-// {
-//     get_uniset(provider, key::BLANK_V1)
-// }
+/// Horizontal whitespace characters
+pub fn get_blank<'data, D>(provider: &D) -> UnisetResult<'data>
+where
+    D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
+{
+    get_uniset(provider, key::BLANK_V1)
+}
 
 /// Uppercase, lowercase, and titlecase characters
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_cased(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let cased = &data_struct.inv_list;
+///
+/// assert!(cased.contains('Ꙡ'));  // U+A660
+/// assert!(!cased.contains('ދ'));  // U+078B
+/// ```
 pub fn get_cased<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -125,6 +191,22 @@ where
 }
 
 /// Characters which are ignored for casing purposes
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_case_ignorable(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let case_ignorable = &data_struct.inv_list;
+///
+/// assert!(case_ignorable.contains(':'));
+/// assert!(!case_ignorable.contains('λ'));  // U+03BB
+/// ```
 pub fn get_case_ignorable<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -142,6 +224,22 @@ where
 }
 
 /// Characters whose normalized forms are not stable under case folding
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_changes_when_casefolded(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let changes_when_casefolded = &data_struct.inv_list;
+///
+/// assert!(changes_when_casefolded.contains('ß'));
+/// assert!(!changes_when_casefolded.contains('ᜉ'));  // U+1709
+/// ```
 pub fn get_changes_when_casefolded<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -158,6 +256,22 @@ where
 }
 
 /// Characters which are not identical to their NFKC_Casefold mapping
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_changes_when_nfkc_casefolded(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let changes_when_nfkc_casefolded = &data_struct.inv_list;
+///
+/// assert!(changes_when_nfkc_casefolded.contains('🄵'));  // U+1F135
+/// assert!(!changes_when_nfkc_casefolded.contains('f'));
+/// ```
 pub fn get_changes_when_nfkc_casefolded<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -166,6 +280,22 @@ where
 }
 
 /// Characters whose normalized forms are not stable under a toLowercase mapping
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_changes_when_lowercased(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let changes_when_lowercased = &data_struct.inv_list;
+///
+/// assert!(changes_when_lowercased.contains('Ⴔ'));  // U+10B4
+/// assert!(!changes_when_lowercased.contains('ფ'));  // U+10E4
+/// ```
 pub fn get_changes_when_lowercased<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -174,6 +304,22 @@ where
 }
 
 /// Characters whose normalized forms are not stable under a toTitlecase mapping
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_changes_when_titlecased(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let changes_when_titlecased = &data_struct.inv_list;
+///
+/// assert!(changes_when_titlecased.contains('æ'));
+/// assert!(!changes_when_titlecased.contains('Æ'));
+/// ```
 pub fn get_changes_when_titlecased<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -182,6 +328,22 @@ where
 }
 
 /// Characters whose normalized forms are not stable under a toUppercase mapping
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_changes_when_uppercased(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let changes_when_uppercased = &data_struct.inv_list;
+///
+/// assert!(changes_when_uppercased.contains('ւ'));  // U+0582
+/// assert!(!changes_when_uppercased.contains('Ւ'));  // U+0552
+/// ```
 pub fn get_changes_when_uppercased<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -191,6 +353,23 @@ where
 
 /// Punctuation characters explicitly called out as dashes in the Unicode Standard, plus
 /// their compatibility equivalents
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_dash(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let dash = &data_struct.inv_list;
+///
+/// assert!(dash.contains('⸺'));  // U+2E3A
+/// assert!(dash.contains('-'));  // U+002D 
+/// assert!(!dash.contains('='));  // U+003D
+/// ```
 pub fn get_dash<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -200,6 +379,22 @@ where
 
 /// Deprecated characters. No characters will ever be removed from the standard, but the
 /// usage of deprecated characters is strongly discouraged.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_deprecated(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let deprecated = &data_struct.inv_list;
+///
+/// assert!(deprecated.contains('ឣ'));  // U+17A3
+/// assert!(!deprecated.contains('A'));
+/// ```
 pub fn get_deprecated<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -211,6 +406,22 @@ where
 /// should be ignored in rendering (unless explicitly supported) will be assigned in these
 /// ranges, permitting programs to correctly handle the default rendering of such
 /// characters when not otherwise supported.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_default_ignorable_code_point(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let default_ignorable_code_point = &data_struct.inv_list;
+///
+/// assert!(default_ignorable_code_point.contains_u32(0x180B));
+/// assert!(!default_ignorable_code_point.contains('E'));
+/// ```
 pub fn get_default_ignorable_code_point<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -219,6 +430,22 @@ where
 }
 
 /// Characters that linguistically modify the meaning of another character to which they apply
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_diacritic(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let diacritic = &data_struct.inv_list;
+///
+/// assert!(diacritic.contains('\u{05B3}'));
+/// assert!(!diacritic.contains('א'));  // U+05D0
+/// ```
 pub fn get_diacritic<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -227,6 +454,22 @@ where
 }
 
 /// Characters that can serve as a base for emoji modifiers
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_emoji_modifier_base(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let emoji_modifier_base = &data_struct.inv_list;
+///
+/// assert!(emoji_modifier_base.contains('✊'));  // U+270A RAISED FIST
+/// assert!(!emoji_modifier_base.contains('⛰'));  // U+26F0 MOUNTAIN
+/// ```
 pub fn get_emoji_modifier_base<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -236,6 +479,24 @@ where
 
 /// Characters used in emoji sequences that normally do not appear on emoji keyboards as
 /// separate choices, such as base characters for emoji keycaps
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_emoji_component(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let emoji_component = &data_struct.inv_list;
+///
+/// assert!(emoji_component.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
+/// assert!(emoji_component.contains_u32(0x20E3));  // COMBINING ENCLOSING KEYCAP
+/// assert!(emoji_component.contains('7'));
+/// assert!(!emoji_component.contains('T'));
+/// ```
 pub fn get_emoji_component<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -244,6 +505,22 @@ where
 }
 
 /// Characters that are emoji modifiers
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_emoji_modifier(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let emoji_modifier = &data_struct.inv_list;
+///
+/// assert!(emoji_modifier.contains_u32(0x1F3FD));
+/// assert!(!emoji_modifier.contains_u32(0x200C));
+/// ```
 pub fn get_emoji_modifier<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -252,6 +529,22 @@ where
 }
 
 /// Characters that are emoji
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_emoji(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let emoji = &data_struct.inv_list;
+///
+/// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
+/// assert!(!emoji.contains('V'));
+/// ```
 pub fn get_emoji<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -260,6 +553,22 @@ where
 }
 
 /// Characters that have emoji presentation by default
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_emoji_presentation(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let emoji_presentation = &data_struct.inv_list;
+///
+/// assert!(emoji_presentation.contains('🦬')); // U+1F9AC BISON
+/// assert!(!emoji_presentation.contains('♻'));  // U+267B BLACK UNIVERSAL RECYCLING SYMBOL
+/// ```
 pub fn get_emoji_presentation<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -269,6 +578,23 @@ where
 
 /// Characters whose principal function is to extend the value of a preceding alphabetic
 /// character or to extend the shape of adjacent characters.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_extender(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let extender = &data_struct.inv_list;
+///
+/// assert!(extender.contains('ヾ'));  // U+30FE KATAKANA VOICED ITERATION MARK
+/// assert!(extender.contains('ー'));  // U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK
+/// assert!(!extender.contains('・'));  // U+30FB KATAKANA MIDDLE DOT
+/// ```
 pub fn get_extender<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -278,6 +604,22 @@ where
 
 /// Pictographic symbols, as well as reserved ranges in blocks largely associated with
 /// emoji characters
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_extended_pictographic(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let extended_pictographic = &data_struct.inv_list;
+///
+/// assert!(extended_pictographic.contains('🥳')); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+/// assert!(!extended_pictographic.contains('🇪'));  // U+1F1EA REGIONAL INDICATOR SYMBOL LETTER E
+/// ```
 pub fn get_extended_pictographic<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -285,18 +627,34 @@ where
     get_uniset(provider, key::EXTENDED_PICTOGRAPHIC_V1)
 }
 
-// TODO(#1210) - Uncomment or remove
-// /// Visible characters.
-// /// This is defined for POSIX compatibility.
-// pub fn get_graph<'data, D>(provider: &D) -> UnisetResult<'data>
-// where
-//     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
-// {
-//     get_uniset(provider, key::GRAPH_V1)
-// }
+/// Visible characters.
+/// This is defined for POSIX compatibility.
+pub fn get_graph<'data, D>(provider: &D) -> UnisetResult<'data>
+where
+    D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
+{
+    get_uniset(provider, key::GRAPH_V1)
+}
 
 /// Property used together with the definition of Standard Korean Syllable Block to define
 /// "Grapheme base". See D58 in Chapter 3, Conformance in the Unicode Standard.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_grapheme_base(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let grapheme_base = &data_struct.inv_list;
+///
+/// assert!(grapheme_base.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
+/// assert!(grapheme_base.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
+/// assert!(!grapheme_base.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
+/// ```
 pub fn get_grapheme_base<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -306,6 +664,23 @@ where
 
 /// Property used to define "Grapheme extender". See D59 in Chapter 3, Conformance in the
 /// Unicode Standard.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_grapheme_extend(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let grapheme_extend = &data_struct.inv_list;
+///
+/// assert!(!grapheme_extend.contains('ക'));  // U+0D15 MALAYALAM LETTER KA
+/// assert!(!grapheme_extend.contains('\u{0D3F}'));  // U+0D3F MALAYALAM VOWEL SIGN I
+/// assert!(grapheme_extend.contains('\u{0D3E}'));  // U+0D3E MALAYALAM VOWEL SIGN AA
+/// ```
 pub fn get_grapheme_extend<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
