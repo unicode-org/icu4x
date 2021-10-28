@@ -26,5 +26,4 @@
 
 //#![no_std]
 
-pub mod trie;
 pub mod ucharstrie;

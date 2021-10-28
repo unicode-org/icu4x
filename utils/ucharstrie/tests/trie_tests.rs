@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 mod test_util;
 
-use ucharstrie::trie::{Trie, TrieResult};
-use ucharstrie::ucharstrie::UCharsTrie;
+use ucharstrie::ucharstrie::{TrieResult, UCharsTrie};
 
 #[test]
 fn ucharstrie_test_months() {

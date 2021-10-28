@@ -1,7 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-use crate::trie::*;
 
 // 00..0f: Branch node. If node!=0 then the length is node+1, otherwise
 // the length is one more than the next byte.
@@ -56,17 +55,38 @@ pub struct UCharsTrie {
     remaining_match_length_: Option<usize>,
 }
 
-impl Trie for UCharsTrie {
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum TrieResult {
+    // The input unit(s) did not continue a matching string.
+    // Once current()/next() return TrieResult::NoMatch,
+    // all further calls to current()/next() will also return TrieResult::NoMatch,
+    // until the trie is reset to its original state or to a saved state.
+    NoMatch,
+    // The input unit(s) continued a matching string
+    // but there is no value for the string so far.
+    // (It is a prefix of a longer string.)
+    NoValue,
+    // The input unit(s) continued a matching string
+    // and there is a value for the string so far.
+    // No further input byte/unit can continue a matching string.
+    FinalValue,
+    // The input unit(s) continued a matching string
+    // and there is a value for the string so far.
+    // Another input byte/unit can continue a matching string.
+    Intermediate,
+}
+
+impl UCharsTrie {
     // Traverses the trie from the initial state for this input char.
     // Equivalent to reset() then next(inUnit)
-    fn first(&mut self, trie_data: &[u8], c: i32) -> TrieResult {
+    pub fn first(&mut self, trie_data: &[u8], c: i32) -> TrieResult {
         let uchars = unsafe { &*(trie_data as *const [u8] as *const [u16]) };
         self.remaining_match_length_ = None;
         self.next_impl(uchars, self.root_, c as u16)
     }
 
     // Traverses the trie from the current state for this input char.
-    fn next(&mut self, trie_data: &[u8], c: i32) -> TrieResult {
+    pub fn next(&mut self, trie_data: &[u8], c: i32) -> TrieResult {
         let uchars = unsafe { &*(trie_data as *const [u8] as *const [u16]) };
         if self.pos_.is_none() {
             return TrieResult::NoMatch;
@@ -96,16 +116,6 @@ impl Trie for UCharsTrie {
         }
     }
 
-    fn box_clone(&self) -> Box<dyn Trie> {
-        Box::new(UCharsTrie {
-            pos_: self.pos_,
-            root_: self.root_,
-            remaining_match_length_: self.remaining_match_length_,
-        })
-    }
-}
-
-impl UCharsTrie {
     pub fn new(offset: usize) -> Self {
         Self {
             pos_: Some(offset / 2),
