@@ -105,7 +105,6 @@ pub use ule::VarZeroVecULE;
 /// for more information.
 ///
 /// [`ule`]: crate::ule
-#[derive(Clone)]
 pub enum VarZeroVec<'a, T: ?Sized> {
     /// An allocated VarZeroVec, allowing for mutations.
     ///
@@ -138,6 +137,15 @@ pub enum VarZeroVec<'a, T: ?Sized> {
     /// assert!(matches!(vzv, VarZeroVec::Borrowed(_)));
     /// ```
     Borrowed(VarZeroVecBorrowed<'a, T>),
+}
+
+impl<'a, T: ?Sized> Clone for VarZeroVec<'a, T> {
+    fn clone(&self) -> Self {
+        match *self {
+            VarZeroVec::Owned(ref o) => o.clone().into(),
+            VarZeroVec::Borrowed(b) => b.into(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
