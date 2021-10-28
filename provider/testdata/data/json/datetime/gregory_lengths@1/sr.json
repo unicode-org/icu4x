@@ -1,8 +1,8 @@
 {
   "date": {
-    "full": "EEEE, dd. MMMM y.",
-    "long": "dd. MMMM y.",
-    "medium": "dd.MM.y.",
+    "full": "EEEE, d. MMMM y.",
+    "long": "d. MMMM y.",
+    "medium": "d. M. y.",
     "short": "d.M.yy."
   },
   "time_h11_h12": {

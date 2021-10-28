@@ -91,21 +91,21 @@
   "day_periods": {
     "format": {
       "abbreviated": {
-        "am": "pre podne",
-        "pm": "po podne",
+        "am": "AM",
+        "pm": "PM",
         "noon": "podne",
         "midnight": "ponoć"
       },
       "narrow": {
-        "am": "a",
-        "pm": "p",
+        "am": "AM",
+        "pm": "PM",
         "noon": "podne",
         "midnight": "ponoć"
       },
       "short": null,
       "wide": {
-        "am": "pre podne",
-        "pm": "po podne",
+        "am": "AM",
+        "pm": "PM",
         "noon": "podne",
         "midnight": "ponoć"
       }

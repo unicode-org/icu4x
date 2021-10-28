@@ -3,7 +3,7 @@
     "fr": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "fr"
       },
@@ -1335,7 +1335,7 @@
             "Etc": {
               "UTC": {
                 "long": {
-                  "standard": "Temps universel coordonné"
+                  "standard": "temps universel coordonné"
                 },
                 "short": {
                   "standard": "UTC"
@@ -2285,6 +2285,11 @@
                 "generic": "heure d’Ekaterinbourg",
                 "standard": "heure normale d’Ekaterinbourg",
                 "daylight": "heure d’été d’Ekaterinbourg"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "heure normale du Yukon"
               }
             }
           }

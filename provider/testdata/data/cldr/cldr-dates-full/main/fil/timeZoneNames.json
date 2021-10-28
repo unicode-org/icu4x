@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "fil"
       },
@@ -1758,7 +1758,7 @@
             },
             "India": {
               "long": {
-                "standard": "Standard na Oras sa Bhutan"
+                "standard": "Standard na Oras sa India"
               }
             },
             "Indian_Ocean": {
@@ -2247,6 +2247,11 @@
                 "generic": "Oras sa Yekaterinburg",
                 "standard": "Standard na Oras sa Yekaterinburg",
                 "daylight": "Oras sa Tag-init ng Yekaterinburg"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "Yukon Time"
               }
             }
           }

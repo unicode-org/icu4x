@@ -91,21 +91,21 @@
   "day_periods": {
     "format": {
       "abbreviated": {
-        "am": "пре подне",
-        "pm": "по подне",
+        "am": "AM",
+        "pm": "PM",
         "noon": "подне",
         "midnight": "поноћ"
       },
       "narrow": {
-        "am": "a",
-        "pm": "p",
+        "am": "AM",
+        "pm": "PM",
         "noon": "подне",
         "midnight": "поноћ"
       },
       "short": null,
       "wide": {
-        "am": "пре подне",
-        "pm": "по подне",
+        "am": "AM",
+        "pm": "PM",
         "noon": "подне",
         "midnight": "поноћ"
       }

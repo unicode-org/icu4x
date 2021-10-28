@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "sr",
         "script": "Latn"
@@ -187,7 +187,14 @@
           "pluralMinimalPairs-count-one": "{0} sat",
           "pluralMinimalPairs-count-few": "{0} sata",
           "pluralMinimalPairs-count-other": "{0} sati",
-          "other": "Skrenite u {0}. desno."
+          "other": "Skrenite u {0}. desno.",
+          "accusative": "Vidim {0}",
+          "genitive": "Od {0} do ...",
+          "instrumental": "... sa {0} ...",
+          "nominative": "{0} je",
+          "feminine": "Ova {0}",
+          "inanimate": "Ovaj {0}",
+          "neuter": "Ovo {0}"
         }
       }
     }

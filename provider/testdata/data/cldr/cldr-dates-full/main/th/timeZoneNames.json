@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "th"
       },
@@ -2309,6 +2309,11 @@
                 "generic": "เวลาเยคาเตรินบูร์ก",
                 "standard": "เวลามาตรฐานเยคาเตรินบูร์ก",
                 "daylight": "เวลาฤดูร้อนเยคาเตรินบูร์ก"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "เวลายูคอน"
               }
             }
           }

@@ -36,16 +36,16 @@ macro_rules! const_expr_count {
 /// }; Text);
 /// ```
 macro_rules! field_type {
-    ($i:ident; { $($key:expr => $val:ident),* }; $length_type:ident) => (
-        field_type!($i; {$($key => $val),*});
+    ($id:ident; { $($val:ident => [ $($key:expr),* $(,)? ]),* $(,)? }; $length_type:ident) => (
+        field_type!($id; { $($val => [ $($key),* ]),* });
 
-        impl LengthType for $i {
+        impl LengthType for $id {
             fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
                 TextOrNumeric::$length_type
             }
         }
     );
-    ($i:ident; { $($key:expr => $val:ident),* }) => (
+    ($id:ident; { $($val:ident => [ $($key:expr),* $(,)? ]),* $(,)? }) => (
         #[derive(Debug, Eq, PartialEq, Clone, Copy)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
@@ -56,11 +56,11 @@ macro_rules! field_type {
         )]
         #[allow(clippy::enum_variant_names)]
         #[repr(u8)]
-        pub enum $i {
+        pub enum $id {
             $($val, )*
         }
 
-        impl $i {
+        impl $id {
             /// Retrieves an index of the field variant.
             ///
             /// # Examples
@@ -104,35 +104,39 @@ macro_rules! field_type {
 
             #[inline]
             pub(crate) fn idx_in_range(v: &u8) -> bool {
-                let count = const_expr_count!($($key);*);
+                let mut count = 0;
+                $(
+                    count += const_expr_count!($($key);*);
+                )*
                 (0..count).contains(v)
             }
         }
 
-        impl TryFrom<char> for $i {
+        impl TryFrom<char> for $id {
             type Error = SymbolError;
 
             fn try_from(ch: char) -> Result<Self, Self::Error> {
                 match ch {
                     $(
-                        $key => Ok(Self::$val),
+                        $($key => Ok(Self::$val),)?
                     )*
                     _ => Err(SymbolError::Unknown(ch)),
                 }
             }
         }
 
-        impl From<$i> for FieldSymbol {
-            fn from(input: $i) -> Self {
-                Self::$i(input)
+        impl From<$id> for FieldSymbol {
+            fn from(input: $id) -> Self {
+                Self::$id(input)
             }
         }
 
-        impl From<$i> for char {
-            fn from(input: $i) -> char {
+        impl From<$id> for char {
+            fn from(input: $id) -> char {
+                #[allow(unreachable_patterns)]
                 match input {
                     $(
-                        $i::$val => $key,
+                        $($id::$val => $key,)*
                     )*
                 }
             }

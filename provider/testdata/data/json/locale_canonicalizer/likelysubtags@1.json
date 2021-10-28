@@ -988,6 +988,10 @@
       "und-Latn-ZZ"
     ],
     [
+      "blg",
+      "und-Latn-MY"
+    ],
+    [
       "blt",
       "und-Tavt-VN"
     ],
@@ -2209,7 +2213,7 @@
     ],
     [
       "hnj",
-      "und-Hmng-LA"
+      "und-Hmnp-US"
     ],
     [
       "hnn",
@@ -2569,7 +2573,7 @@
     ],
     [
       "kdh",
-      "und-Arab-TG"
+      "und-Latn-TG"
     ],
     [
       "kdl",
@@ -3968,6 +3972,10 @@
       "und-Latn-ZZ"
     ],
     [
+      "nst",
+      "und-Tnsa-IN"
+    ],
+    [
       "ntm",
       "und-Latn-ZZ"
     ],
@@ -4090,6 +4098,10 @@
     [
       "otk",
       "und-Orkh-MN"
+    ],
+    [
+      "oui",
+      "und-Ougr-143"
     ],
     [
       "ozm",
@@ -4297,7 +4309,7 @@
     ],
     [
       "rhg",
-      "und-Arab-MM"
+      "und-Rohg-MM"
     ],
     [
       "ria",
@@ -5152,6 +5164,10 @@
       "und-Tang-CN"
     ],
     [
+      "txo",
+      "und-Toto-IN"
+    ],
+    [
       "ty",
       "und-Latn-PF"
     ],
@@ -5806,6 +5822,11 @@
       "swb"
     ],
     [
+      "Cpmn",
+      "CY",
+      "und"
+    ],
+    [
       "Cyrl",
       "AL",
       "mk"
@@ -6123,6 +6144,10 @@
       "cop-EG"
     ],
     [
+      "Cpmn",
+      "und-CY"
+    ],
+    [
       "Cprt",
       "grc-CY"
     ],
@@ -6240,7 +6265,7 @@
     ],
     [
       "Hmnp",
-      "mww-US"
+      "hnj-US"
     ],
     [
       "Hung",
@@ -6447,6 +6472,10 @@
       "so-SO"
     ],
     [
+      "Ougr",
+      "oui-143"
+    ],
+    [
       "Palm",
       "arc-SY"
     ],
@@ -6615,12 +6644,24 @@
       "mai-IN"
     ],
     [
+      "Tnsa",
+      "nst-IN"
+    ],
+    [
+      "Toto",
+      "txo-IN"
+    ],
+    [
       "Ugar",
       "uga-SY"
     ],
     [
       "Vaii",
       "vai-LR"
+    ],
+    [
+      "Vith",
+      "sq-AL"
     ],
     [
       "Wara",

@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "sr",
         "script": "Latn"
@@ -2323,6 +2323,11 @@
                 "generic": "Jekaterinburg vreme",
                 "standard": "Jekaterinburg, standardno vreme",
                 "daylight": "Jekaterinburg, letnje vreme"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "Jukon"
               }
             }
           }

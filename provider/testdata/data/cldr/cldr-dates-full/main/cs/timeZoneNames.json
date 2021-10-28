@@ -3,7 +3,7 @@
     "cs": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "cs"
       },
@@ -2349,6 +2349,11 @@
                 "generic": "Jekatěrinburský čas",
                 "standard": "Jekatěrinburský standardní čas",
                 "daylight": "Jekatěrinburský letní čas"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "Yukonský čas"
               }
             }
           }

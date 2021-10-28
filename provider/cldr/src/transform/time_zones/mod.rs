@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
-use crate::reader::{get_subdirectories, open_reader};
+use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::provider::{key, time_zones::*};
+use icu_locid::LanguageIdentifier;
 use icu_provider::{
     iter::{IterableDataProviderCore, KeyedDataProvider},
     prelude::*,
@@ -30,7 +30,7 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
 pub struct TimeZonesProvider<'data> {
-    data: Vec<(CldrLangID, cldr_json::LangTimeZones)>,
+    data: Vec<(LanguageIdentifier, cldr_json::LangTimeZones)>,
     phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
@@ -41,7 +41,7 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider<'_> {
 
         let path = cldr_paths.cldr_dates()?.join("main");
 
-        let locale_dirs = get_subdirectories(&path)?;
+        let locale_dirs = get_langid_subdirectories(&path)?;
 
         for dir in locale_dirs {
             let path = dir.join("timeZoneNames.json");
@@ -90,7 +90,7 @@ impl<'data> IterableDataProviderCore for TimeZonesProvider<'data> {
             .iter()
             .map(|(l, _)| ResourceOptions {
                 variant: None,
-                langid: Some(l.langid.clone()),
+                langid: Some(l.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))
@@ -105,11 +105,8 @@ macro_rules! impl_data_provider {
                 req: &DataRequest,
             ) -> Result<DataResponse<$lt, $marker>, DataError> {
                 TimeZonesProvider::supports_key(&req.resource_path.key)?;
-                let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
-                let time_zones = match self
-                    .data
-                    .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
-                {
+                let langid = req.try_langid()?;
+                let time_zones = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
                     Ok(idx) => &self.data[idx].1.dates.time_zone_names,
                     Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
                 };

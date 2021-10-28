@@ -3,7 +3,7 @@
     "ar-EG": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "ar",
         "territory": "EG"
@@ -506,7 +506,9 @@
           "pluralMinimalPairs-count-few": "{0} أولاد حضروا",
           "pluralMinimalPairs-count-many": "{0} ولدًا حضروا",
           "pluralMinimalPairs-count-other": "{0} ولد حضروا",
-          "other": "اتجه إلى المنعطف الـ {0} يمينًا."
+          "other": "اتجه إلى المنعطف الـ {0} يمينًا.",
+          "feminine": "{0} واحدة",
+          "masculine": "{0} واحد"
         }
       }
     }

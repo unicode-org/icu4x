@@ -3,7 +3,7 @@
     "sr": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "sr"
       },
@@ -2322,6 +2322,11 @@
                 "generic": "Јекатеринбург време",
                 "standard": "Јекатеринбург, стандардно време",
                 "daylight": "Јекатеринбург, летње време"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "Јукон"
               }
             }
           }

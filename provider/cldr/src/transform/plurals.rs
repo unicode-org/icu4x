@@ -37,7 +37,11 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
                 .join("plurals.json");
             let data: cldr_json::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.supplemental.plurals_type_cardinal
+            let mut rules = data.supplemental.plurals_type_cardinal;
+            if let Some(v) = rules.as_mut() {
+                v.0.sort()
+            }
+            rules
         };
         let ordinal_rules = {
             let path = cldr_paths
@@ -46,7 +50,11 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
                 .join("ordinals.json");
             let data: cldr_json::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.supplemental.plurals_type_ordinal
+            let mut rules = data.supplemental.plurals_type_ordinal;
+            if let Some(v) = rules.as_mut() {
+                v.0.sort()
+            }
+            rules
         };
         Ok(PluralsProvider {
             cardinal_rules,
@@ -84,8 +92,8 @@ impl<'data> DataProvider<'data, PluralRuleStringsV1Marker> for PluralsProvider<'
     ) -> Result<DataResponse<'data, PluralRuleStringsV1Marker>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
-        let cldr_langid = req.try_langid()?.clone().into();
-        let (_, r) = match cldr_rules.0.binary_search_by_key(&&cldr_langid, |(l, _)| l) {
+        let langid = req.try_langid()?;
+        let (_, r) = match cldr_rules.0.binary_search_by_key(&langid, |(l, _)| l) {
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.clone().into()),
         };
@@ -115,7 +123,7 @@ impl<'data> IterableDataProviderCore for PluralsProvider<'data> {
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO: Avoid the clone
-                langid: Some(l.langid.clone()),
+                langid: Some(l.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))
@@ -146,13 +154,13 @@ impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1<'static> {
 
 /// Serde structs for the CLDR JSON plurals files.
 pub(self) mod cldr_json {
-    use crate::cldr_langid::CldrLangID;
+    use icu_locid::LanguageIdentifier;
     use serde::Deserialize;
 
     // TODO: Use Serde Borrow throughout these structs. Blocked by:
     // https://stackoverflow.com/q/63201624/1407170
 
-    #[derive(PartialEq, Debug, Deserialize)]
+    #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
     pub struct LocalePluralRules {
         #[serde(rename = "pluralRule-count-zero")]
         pub zero: Option<String>,
@@ -168,7 +176,7 @@ pub(self) mod cldr_json {
 
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct Rules(
-        #[serde(with = "tuple_vec_map")] pub(crate) Vec<(CldrLangID, LocalePluralRules)>,
+        #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LocalePluralRules)>,
     );
 
     #[derive(PartialEq, Debug, Deserialize)]

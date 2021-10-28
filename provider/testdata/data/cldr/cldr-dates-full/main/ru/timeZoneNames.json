@@ -3,7 +3,7 @@
     "ru": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "ru"
       },
@@ -2309,6 +2309,11 @@
                 "generic": "Екатеринбург",
                 "standard": "Екатеринбург, стандартное время",
                 "daylight": "Екатеринбург, летнее время"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "Юкон"
               }
             }
           }
