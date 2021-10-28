@@ -40,7 +40,7 @@ use serde::{Deserialize, Serialize};
 ///     hour_cycle: Some(preferences::HourCycle::H23)
 /// };
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
     /// The hour cycle can be adjusts according to user preferences, for instance at the OS-level.

@@ -8,8 +8,10 @@ mod skeletons;
 mod symbols;
 
 use crate::pattern;
-use alloc::borrow::Cow;
-use icu_provider::yoke::{self, *};
+use icu_provider::{
+    yoke::{self, *},
+    DataMarker,
+};
 pub use skeletons::*;
 pub use symbols::*;
 
@@ -19,156 +21,105 @@ pub use symbols::*;
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(cloning_zcf)]
-pub struct DatePatternsV1 {
-    pub date: patterns::LengthPatternsV1,
+pub struct DatePatternsV1<'data> {
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub date: patterns::LengthPatternsV1<'data>,
 
     /// These patterns are common uses of time formatting, broken down by the length of the
     /// pattern. Users can override the hour cycle with a preference, so there are two
     /// pattern groups stored here. Note that the pattern will contain either h11 or h12.
-    pub time_h11_h12: patterns::LengthPatternsV1,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub time_h11_h12: patterns::LengthPatternsV1<'data>,
 
     /// These patterns are common uses of time formatting, broken down by the length of the
     /// pattern. Users can override the hour cycle with a preference, so there are two
     /// pattern groups stored here. Note that the pattern will contain either h23 or h24.
-    pub time_h23_h24: patterns::LengthPatternsV1,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub time_h23_h24: patterns::LengthPatternsV1<'data>,
 
     /// By default a locale will prefer one hour cycle type over another.
     pub preferred_hour_cycle: pattern::CoarseHourCycle,
 
     /// Patterns used to combine date and time length patterns into full date_time patterns.
-    pub length_combinations: patterns::LengthPatternsV1,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
 }
 
 pub mod patterns {
     use super::*;
-    use crate::pattern::reference::{Pattern, PatternPlurals, PluralPattern};
-    use core::convert::TryFrom;
+    use crate::pattern::runtime::{GenericPattern, Pattern, PatternPlurals};
+    use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 
-    #[cfg(feature = "provider_serde")]
-    use alloc::string::ToString;
-    #[cfg(feature = "provider_serde")]
-    use serde::{
-        de::{self, IntoDeserializer},
-        ser, Deserialize, Deserializer, Serialize,
-    };
-
-    #[derive(Debug, PartialEq, Clone, Default)]
+    #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
     #[cfg_attr(
         feature = "provider_serde",
         derive(serde::Serialize, serde::Deserialize)
     )]
-    pub struct LengthPatternsV1 {
-        pub full: Cow<'static, str>,
-        pub long: Cow<'static, str>,
-        pub medium: Cow<'static, str>,
-        pub short: Cow<'static, str>,
+    pub struct LengthPatternsV1<'data> {
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub full: Pattern<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub long: Pattern<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub medium: Pattern<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub short: Pattern<'data>,
     }
 
-    /// This struct is a public wrapper around the internal [`Pattern`] struct. This allows
-    /// access to the serialization and deserialization capabilities, without exposing the
-    /// internals of the pattern machinery.
-    ///
-    /// The [`Pattern`] is an "exotic type" in the serialization process, and handles its own
-    /// custom serialization practices.
+    #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+    #[cfg_attr(
+        feature = "provider_serde",
+        derive(serde::Serialize, serde::Deserialize)
+    )]
+    pub struct LengthPatternPluralsV1<'data> {
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub full: PatternPlurals<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub long: PatternPlurals<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub medium: PatternPlurals<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub short: PatternPlurals<'data>,
+    }
+
+    #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+    #[cfg_attr(
+        feature = "provider_serde",
+        derive(serde::Serialize, serde::Deserialize)
+    )]
+    pub struct GenericLengthPatternsV1<'data> {
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub full: GenericPattern<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub long: GenericPattern<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub medium: GenericPattern<'data>,
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        pub short: GenericPattern<'data>,
+    }
+
+    #[icu_provider::data_struct]
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(
         feature = "provider_serde",
         derive(serde::Serialize, serde::Deserialize)
     )]
-    pub struct PatternV1(pub Pattern);
+    pub struct PatternPluralsV1<'data>(
+        #[cfg_attr(feature = "provider_serde", serde(borrow))] pub PatternPlurals<'data>,
+    );
 
-    impl From<Pattern> for PatternV1 {
-        fn from(pattern: Pattern) -> Self {
+    impl<'data> From<PatternPlurals<'data>> for PatternPluralsV1<'data> {
+        fn from(pattern: PatternPlurals<'data>) -> Self {
             Self(pattern)
         }
     }
 
-    impl TryFrom<&str> for PatternV1 {
-        type Error = pattern::PatternError;
+    /// Helper struct used to allow for projection of `DataPayload<DatePatternsV1>` to
+    /// `DataPayload<PatternPluralsV1>`.
+    pub(crate) struct PatternPluralsFromPatternsV1Marker;
 
-        fn try_from(pattern_string: &str) -> Result<Self, Self::Error> {
-            let pattern = Pattern::from_bytes(pattern_string);
-            match pattern {
-                Ok(pattern) => Ok(Self::from(pattern)),
-                Err(err) => Err(err),
-            }
-        }
-    }
-
-    /// This struct is a public wrapper around the internal [`PatternPlurals`]
-    /// struct. This allows access to the serialization and deserialization
-    /// capabilities, without exposing the internals of the pattern machinery.
-    #[derive(Debug, PartialEq, Clone)]
-    pub struct PatternPluralsV1(pub PatternPlurals);
-
-    impl From<Pattern> for PatternPluralsV1 {
-        fn from(pattern: Pattern) -> Self {
-            Self(PatternPlurals::SinglePattern(pattern))
-        }
-    }
-
-    impl From<PluralPattern> for PatternPluralsV1 {
-        fn from(plural_pattern: PluralPattern) -> Self {
-            Self(PatternPlurals::MultipleVariants(plural_pattern))
-        }
-    }
-
-    #[cfg(feature = "provider_serde")]
-    impl Serialize for PatternPluralsV1 {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: ser::Serializer,
-        {
-            if serializer.is_human_readable() {
-                match &self.0 {
-                    PatternPlurals::SinglePattern(pattern) => {
-                        serializer.serialize_str(&pattern.to_string())
-                    }
-                    PatternPlurals::MultipleVariants(patterns) => patterns.serialize(serializer),
-                }
-            } else {
-                serializer.serialize_newtype_struct("PatternPluralsV1", &self.0)
-            }
-        }
-    }
-    #[cfg(feature = "provider_serde")]
-    struct DeserializeHumanReadablePatternPlurals;
-
-    #[cfg(feature = "provider_serde")]
-    impl<'de> de::Visitor<'de> for DeserializeHumanReadablePatternPlurals {
-        type Value = PatternPlurals;
-
-        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-            formatter.write_str("A valid PatternPlurals")
-        }
-
-        fn visit_map<A: de::MapAccess<'de>>(self, map: A) -> Result<Self::Value, A::Error> {
-            de::Deserialize::deserialize(de::value::MapAccessDeserializer::new(map))
-                .map(PatternPlurals::MultipleVariants)
-        }
-
-        fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-        where
-            E: de::Error,
-        {
-            de::Deserialize::deserialize(s.into_deserializer()).map(PatternPlurals::SinglePattern)
-        }
-    }
-
-    #[cfg(feature = "provider_serde")]
-    impl<'de> Deserialize<'de> for PatternPluralsV1 {
-        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            if deserializer.is_human_readable() {
-                deserializer
-                    .deserialize_any(DeserializeHumanReadablePatternPlurals)
-                    .map(PatternPluralsV1)
-            } else {
-                Deserialize::deserialize(deserializer).map(PatternPluralsV1)
-            }
-        }
+    impl<'data> DataMarker<'data> for PatternPluralsFromPatternsV1Marker {
+        type Yokeable = PatternPluralsV1<'static>;
+        type Cart = DatePatternsV1<'data>;
     }
 }

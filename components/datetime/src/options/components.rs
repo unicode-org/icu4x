@@ -81,7 +81,7 @@ use super::preferences;
 use serde::{Deserialize, Serialize};
 
 /// See the [module-level](./index.html) docs for more information.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default, Copy)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
     /// Include the era, such as "AD" or "CE".
@@ -114,6 +114,7 @@ pub struct Bag {
 }
 
 impl Bag {
+    #[allow(clippy::wrong_self_convention)]
     /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
@@ -306,27 +307,6 @@ impl Bag {
         );
 
         fields
-    }
-}
-
-impl Default for Bag {
-    fn default() -> Self {
-        Self {
-            era: None,
-            year: None,
-            month: None,
-            week: None,
-            day: None,
-            weekday: None,
-
-            hour: None,
-            minute: None,
-            second: None,
-
-            time_zone_name: None,
-
-            preferences: None,
-        }
     }
 }
 
