@@ -61,9 +61,9 @@ where
 /// let ascii_hex_digit = &data_struct.inv_list;
 ///
 /// assert!(ascii_hex_digit.contains('3'));
-/// assert!(!ascii_hex_digit.contains('੩'));  // U+0A69
+/// assert!(!ascii_hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
 /// assert!(ascii_hex_digit.contains('A'));
-/// assert!(!ascii_hex_digit.contains('Ä'));  // U+00C4
+/// assert!(!ascii_hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
 /// ```
 pub fn get_ascii_hex_digit<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -96,9 +96,9 @@ where
 /// let alphabetic = &data_struct.inv_list;
 ///
 /// assert!(!alphabetic.contains('3'));
-/// assert!(!alphabetic.contains('੩'));  // U+0A69
+/// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
 /// assert!(alphabetic.contains('A'));
-/// assert!(alphabetic.contains('Ä'));  // U+00C4
+/// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
 /// ```
 pub fn get_alphabetic<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -122,8 +122,8 @@ where
 /// let data_struct = payload.get();
 /// let bidi_control = &data_struct.inv_list;
 ///
-/// assert!(bidi_control.contains_u32(0x200F));
-/// assert!(!bidi_control.contains('ش'));  // U+0634
+/// assert!(bidi_control.contains_u32(0x200F));  // RIGHT-TO-LEFT MARK
+/// assert!(!bidi_control.contains('ش'));  // U+0634 ARABIC LETTER SHEEN
 /// ```
 pub fn get_bidi_control<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -148,8 +148,8 @@ where
 ///
 /// assert!(bidi_mirrored.contains('['));
 /// assert!(bidi_mirrored.contains(']'));
-/// assert!(bidi_mirrored.contains('∑'));  // U+2211
-/// assert!(!bidi_mirrored.contains('ཉ'));  // U+0F49
+/// assert!(bidi_mirrored.contains('∑'));  // U+2211 N-ARY SUMMATION
+/// assert!(!bidi_mirrored.contains('ཉ'));  // U+0F49 TIBETAN LETTER NYA
 /// ```
 pub fn get_bidi_mirrored<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -180,8 +180,8 @@ where
 /// let data_struct = payload.get();
 /// let cased = &data_struct.inv_list;
 ///
-/// assert!(cased.contains('Ꙡ'));  // U+A660
-/// assert!(!cased.contains('ދ'));  // U+078B
+/// assert!(cased.contains('Ꙡ'));  // U+A660 CYRILLIC CAPITAL LETTER REVERSED TSE
+/// assert!(!cased.contains('ދ'));  // U+078B THAANA LETTER DHAALU
 /// ```
 pub fn get_cased<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -205,7 +205,7 @@ where
 /// let case_ignorable = &data_struct.inv_list;
 ///
 /// assert!(case_ignorable.contains(':'));
-/// assert!(!case_ignorable.contains('λ'));  // U+03BB
+/// assert!(!case_ignorable.contains('λ'));  // U+03BB GREEK SMALL LETTER LAMDA
 /// ```
 pub fn get_case_ignorable<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -237,8 +237,8 @@ where
 /// let data_struct = payload.get();
 /// let changes_when_casefolded = &data_struct.inv_list;
 ///
-/// assert!(changes_when_casefolded.contains('ß'));
-/// assert!(!changes_when_casefolded.contains('ᜉ'));  // U+1709
+/// assert!(changes_when_casefolded.contains('ß'));  // U+00DF LATIN SMALL LETTER SHARP S
+/// assert!(!changes_when_casefolded.contains('ᜉ'));  // U+1709 TAGALOG LETTER PA
 /// ```
 pub fn get_changes_when_casefolded<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -269,7 +269,7 @@ where
 /// let data_struct = payload.get();
 /// let changes_when_nfkc_casefolded = &data_struct.inv_list;
 ///
-/// assert!(changes_when_nfkc_casefolded.contains('🄵'));  // U+1F135
+/// assert!(changes_when_nfkc_casefolded.contains('🄵'));  // U+1F135 SQUARED LATIN CAPITAL LETTER F
 /// assert!(!changes_when_nfkc_casefolded.contains('f'));
 /// ```
 pub fn get_changes_when_nfkc_casefolded<'data, D>(provider: &D) -> UnisetResult<'data>
@@ -293,8 +293,8 @@ where
 /// let data_struct = payload.get();
 /// let changes_when_lowercased = &data_struct.inv_list;
 ///
-/// assert!(changes_when_lowercased.contains('Ⴔ'));  // U+10B4
-/// assert!(!changes_when_lowercased.contains('ფ'));  // U+10E4
+/// assert!(changes_when_lowercased.contains('Ⴔ'));  // U+10B4 GEORGIAN CAPITAL LETTER PHAR
+/// assert!(!changes_when_lowercased.contains('ფ'));  // U+10E4 GEORGIAN LETTER PHAR
 /// ```
 pub fn get_changes_when_lowercased<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -317,8 +317,8 @@ where
 /// let data_struct = payload.get();
 /// let changes_when_titlecased = &data_struct.inv_list;
 ///
-/// assert!(changes_when_titlecased.contains('æ'));
-/// assert!(!changes_when_titlecased.contains('Æ'));
+/// assert!(changes_when_titlecased.contains('æ'));  // U+00E6 LATIN SMALL LETTER AE
+/// assert!(!changes_when_titlecased.contains('Æ'));  // U+00E6 LATIN CAPITAL LETTER AE
 /// ```
 pub fn get_changes_when_titlecased<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -341,8 +341,8 @@ where
 /// let data_struct = payload.get();
 /// let changes_when_uppercased = &data_struct.inv_list;
 ///
-/// assert!(changes_when_uppercased.contains('ւ'));  // U+0582
-/// assert!(!changes_when_uppercased.contains('Ւ'));  // U+0552
+/// assert!(changes_when_uppercased.contains('ւ'));  // U+0582 ARMENIAN SMALL LETTER YIWN
+/// assert!(!changes_when_uppercased.contains('Ւ'));  // U+0552 ARMENIAN CAPITAL LETTER YIWN
 /// ```
 pub fn get_changes_when_uppercased<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -366,7 +366,7 @@ where
 /// let data_struct = payload.get();
 /// let dash = &data_struct.inv_list;
 ///
-/// assert!(dash.contains('⸺'));  // U+2E3A
+/// assert!(dash.contains('⸺'));  // U+2E3A TWO-EM DASH
 /// assert!(dash.contains('-'));  // U+002D 
 /// assert!(!dash.contains('='));  // U+003D
 /// ```
@@ -392,7 +392,7 @@ where
 /// let data_struct = payload.get();
 /// let deprecated = &data_struct.inv_list;
 ///
-/// assert!(deprecated.contains('ឣ'));  // U+17A3
+/// assert!(deprecated.contains('ឣ'));  // U+17A3 KHMER INDEPENDENT VOWEL QAQ
 /// assert!(!deprecated.contains('A'));
 /// ```
 pub fn get_deprecated<'data, D>(provider: &D) -> UnisetResult<'data>
@@ -419,7 +419,7 @@ where
 /// let data_struct = payload.get();
 /// let default_ignorable_code_point = &data_struct.inv_list;
 ///
-/// assert!(default_ignorable_code_point.contains_u32(0x180B));
+/// assert!(default_ignorable_code_point.contains_u32(0x180B));  // MONGOLIAN FREE VARIATION SELECTOR ONE
 /// assert!(!default_ignorable_code_point.contains('E'));
 /// ```
 pub fn get_default_ignorable_code_point<'data, D>(provider: &D) -> UnisetResult<'data>
@@ -443,8 +443,8 @@ where
 /// let data_struct = payload.get();
 /// let diacritic = &data_struct.inv_list;
 ///
-/// assert!(diacritic.contains('\u{05B3}'));
-/// assert!(!diacritic.contains('א'));  // U+05D0
+/// assert!(diacritic.contains('\u{05B3}'));  // HEBREW POINT HATAF QAMATS
+/// assert!(!diacritic.contains('א'));  // U+05D0 HEBREW LETTER ALEF
 /// ```
 pub fn get_diacritic<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -518,8 +518,8 @@ where
 /// let data_struct = payload.get();
 /// let emoji_modifier = &data_struct.inv_list;
 ///
-/// assert!(emoji_modifier.contains_u32(0x1F3FD));
-/// assert!(!emoji_modifier.contains_u32(0x200C));
+/// assert!(emoji_modifier.contains_u32(0x1F3FD));  // EMOJI MODIFIER FITZPATRICK TYPE-4
+/// assert!(!emoji_modifier.contains_u32(0x200C));  // ZERO WIDTH NON-JOINER
 /// ```
 pub fn get_emoji_modifier<'data, D>(provider: &D) -> UnisetResult<'data>
 where
@@ -699,6 +699,26 @@ where
 
 /// Characters commonly used for the representation of hexadecimal numbers, plus their
 /// compatibility equivalents
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_hex_digit(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let hex_digit = &data_struct.inv_list;
+///
+/// assert!(hex_digit.contains('0'));
+/// assert!(!hex_digit.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
+/// assert!(hex_digit.contains('f'));
+/// assert!(hex_digit.contains('ｆ'));  // U+FF46 FULLWIDTH LATIN SMALL LETTER F
+/// assert!(hex_digit.contains('Ｆ'));  // U+FF26 FULLWIDTH LATIN CAPITAL LETTER F
+/// assert!(!hex_digit.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+/// ```
 pub fn get_hex_digit<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -719,6 +739,26 @@ where
 /// fold differences between characters, use [`get_xid_continue`] instead.  See
 /// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
 /// more details.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_id_continue(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let id_continue = &data_struct.inv_list;
+///
+/// assert!(id_continue.contains('x'));
+/// assert!(id_continue.contains('1'));
+/// assert!(id_continue.contains('_'));
+/// assert!(id_continue.contains('ߝ'));  // U+07DD NKO LETTER FA
+/// assert!(!id_continue.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
+/// assert!(id_continue.contains_u32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+/// ```
 pub fn get_id_continue<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -728,6 +768,22 @@ where
 
 /// Characters considered to be CJKV (Chinese, Japanese, Korean, and Vietnamese)
 /// ideographs, or related siniform ideographs
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_ideographic(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let ideographic = &data_struct.inv_list;
+///
+/// assert!(ideographic.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
+/// assert!(!ideographic.contains('밥'));  // U+BC25 HANGUL SYLLABLE BAB
+/// ```
 pub fn get_ideographic<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -738,6 +794,26 @@ where
 /// Characters that can begin an identifier. If using NFKC to fold differences between
 /// characters, use [`get_xid_start`] instead.  See [`Unicode Standard Annex
 /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_id_start(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let id_start = &data_struct.inv_list;
+///
+/// assert!(id_start.contains('x'));
+/// assert!(!id_start.contains('1'));
+/// assert!(!id_start.contains('_'));
+/// assert!(id_start.contains('ߝ'));  // U+07DD NKO LETTER FA
+/// assert!(!id_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
+/// assert!(id_start.contains_u32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+/// ```
 pub fn get_id_start<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -746,6 +822,22 @@ where
 }
 
 /// Characters used in Ideographic Description Sequences
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_ids_binary_operator(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let ids_binary_operator = &data_struct.inv_list;
+///
+/// assert!(ids_binary_operator.contains_u32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
+/// assert!(!ids_binary_operator.contains_u32(0x3006));  // IDEOGRAPHIC CLOSING MARK
+/// ```
 pub fn get_ids_binary_operator<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -754,6 +846,25 @@ where
 }
 
 /// Characters used in Ideographic Description Sequences
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_ids_trinary_operator(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let ids_trinary_operator = &data_struct.inv_list;
+///
+/// assert!(ids_trinary_operator.contains_u32(0x2FF2));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
+/// assert!(ids_trinary_operator.contains_u32(0x2FF3));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
+/// assert!(!ids_trinary_operator.contains_u32(0x2FF4));
+/// assert!(!ids_trinary_operator.contains_u32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
+/// assert!(!ids_trinary_operator.contains_u32(0x3006));  // IDEOGRAPHIC CLOSING MARK
+/// ```
 pub fn get_ids_trinary_operator<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -763,6 +874,23 @@ where
 
 /// Format control characters which have specific functions for control of cursive joining
 /// and ligation
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_join_control(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let join_control = &data_struct.inv_list;
+///
+/// assert!(join_control.contains_u32(0x200C));  // ZERO WIDTH NON-JOINER
+/// assert!(join_control.contains_u32(0x200D));  // ZERO WIDTH JOINER
+/// assert!(!join_control.contains_u32(0x200E));
+/// ```
 pub fn get_join_control<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -771,6 +899,22 @@ where
 }
 
 /// A small number of spacing vowel letters occurring in certain Southeast Asian scripts such as Thai and Lao
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_logical_order_exception(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let logical_order_exception = &data_struct.inv_list;
+///
+/// assert!(logical_order_exception.contains('ແ'));  // U+0EC1 LAO VOWEL SIGN EI
+/// assert!(!logical_order_exception.contains('ະ'));  // U+0EB0 LAO VOWEL SIGN A
+/// ```
 pub fn get_logical_order_exception<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -779,6 +923,22 @@ where
 }
 
 /// Lowercase characters
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_lowercase(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let lowercase = &data_struct.inv_list;
+///
+/// assert!(lowercase.contains('a'));
+/// assert!(!lowercase.contains('A'));
+/// ```
 pub fn get_lowercase<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -787,6 +947,26 @@ where
 }
 
 /// Characters used in mathematical notation
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_math(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let math = &data_struct.inv_list;
+///
+/// assert!(math.contains('='));
+/// assert!(math.contains('+'));
+/// assert!(!math.contains('-'));
+/// assert!(math.contains('−'));  // U+2212 MINUS SIGN
+/// assert!(!math.contains('/'));
+/// assert!(math.contains('∕'));  // U+2215 DIVISION SLASH
+/// ```
 pub fn get_math<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -795,6 +975,23 @@ where
 }
 
 /// Code points permanently reserved for internal use
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_noncharacter_code_point(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let noncharacter_code_point = &data_struct.inv_list;
+///
+/// assert!(noncharacter_code_point.contains_u32(0xFDD0));
+/// assert!(noncharacter_code_point.contains_u32(0xFFFF));
+/// assert!(!noncharacter_code_point.contains_u32(0x10000));
+/// ```
 pub fn get_noncharacter_code_point<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -837,6 +1034,23 @@ where
 /// Characters used as syntax in patterns (such as regular expressions). See [`Unicode
 /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
 /// details.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_pattern_syntax(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let pattern_syntax = &data_struct.inv_list;
+///
+/// assert!(pattern_syntax.contains('{'));
+/// assert!(pattern_syntax.contains('⇒'));  // U+21D2 RIGHTWARDS DOUBLE ARROW
+/// assert!(!pattern_syntax.contains('0'));
+/// ```
 pub fn get_pattern_syntax<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -847,6 +1061,24 @@ where
 /// Characters used as whitespace in patterns (such as regular expressions).  See
 /// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
 /// more details.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_pattern_white_space(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let pattern_white_space = &data_struct.inv_list;
+///
+/// assert!(pattern_white_space.contains(' '));
+/// assert!(pattern_white_space.contains_u32(0x2029));  // PARAGRAPH SEPARATOR
+/// assert!(pattern_white_space.contains_u32(0x000A));  // NEW LINE
+/// assert!(!pattern_white_space.contains_u32(0x00A0));  // NO-BREAK SPACE
+/// ```
 pub fn get_pattern_white_space<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -873,6 +1105,23 @@ where
 }
 
 /// Punctuation characters that function as quotation marks.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_quotation_mark(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let quotation_mark = &data_struct.inv_list;
+///
+/// assert!(quotation_mark.contains('\''));
+/// assert!(quotation_mark.contains('„'));  // U+201E DOUBLE LOW-9 QUOTATION MARK
+/// assert!(!quotation_mark.contains('<'));
+/// ```
 pub fn get_quotation_mark<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -881,6 +1130,22 @@ where
 }
 
 /// Characters used in the definition of Ideographic Description Sequences
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_radical(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let radical = &data_struct.inv_list;
+///
+/// assert!(radical.contains('⺆'));  // U+2E86 CJK RADICAL BOX
+/// assert!(!radical.contains('丹'));  // U+F95E CJK COMPATIBILITY IDEOGRAPH-F95E
+/// ```
 pub fn get_radical<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -889,6 +1154,23 @@ where
 }
 
 /// Regional indicator characters, U+1F1E6..U+1F1FF
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_regional_indicator(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let regional_indicator = &data_struct.inv_list;
+///
+/// assert!(regional_indicator.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
+/// assert!(!regional_indicator.contains('Ⓣ'));  // U+24C9 CIRCLED LATIN CAPITAL LETTER T
+/// assert!(!regional_indicator.contains('T'));
+/// ```
 pub fn get_regional_indicator<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -898,6 +1180,22 @@ where
 
 /// Characters with a "soft dot", like i or j. An accent placed on these characters causes
 /// the dot to disappear.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_soft_dotted(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let soft_dotted = &data_struct.inv_list;
+///
+/// assert!(soft_dotted.contains('і'));  //U+0456 CYRILLIC SMALL LETTER BYELORUSSIAN-UKRAINIAN I
+/// assert!(!soft_dotted.contains('ı'));  // U+0131 LATIN SMALL LETTER DOTLESS I
+/// ```
 pub fn get_soft_dotted<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -924,6 +1222,25 @@ where
 }
 
 /// Punctuation characters that generally mark the end of sentences
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_sentence_terminal(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let sentence_terminal = &data_struct.inv_list;
+///
+/// assert!(sentence_terminal.contains('.'));
+/// assert!(sentence_terminal.contains('?'));
+/// assert!(sentence_terminal.contains('᪨'));  // U+1AA8 TAI THAM SIGN KAAN
+/// assert!(!sentence_terminal.contains(','));
+/// assert!(!sentence_terminal.contains('¿'));  // U+00BF INVERTED QUESTION MARK
+/// ```
 pub fn get_sentence_terminal<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -932,6 +1249,25 @@ where
 }
 
 /// Punctuation characters that generally mark the end of textual units
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_terminal_punctuation(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let terminal_punctuation = &data_struct.inv_list;
+///
+/// assert!(terminal_punctuation.contains('.'));
+/// assert!(terminal_punctuation.contains('?'));
+/// assert!(terminal_punctuation.contains('᪨'));  // U+1AA8 TAI THAM SIGN KAAN
+/// assert!(terminal_punctuation.contains(','));
+/// assert!(!terminal_punctuation.contains('¿'));  // U+00BF INVERTED QUESTION MARK
+/// ```
 pub fn get_terminal_punctuation<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -940,6 +1276,23 @@ where
 }
 
 /// A property which specifies the exact set of Unified CJK Ideographs in the standard
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_unified_ideograph(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let unified_ideograph = &data_struct.inv_list;
+///
+/// assert!(unified_ideograph.contains('川'));  // U+5DDD CJK UNIFIED IDEOGRAPH-5DDD
+/// assert!(unified_ideograph.contains('木'));  // U+6728 CJK UNIFIED IDEOGRAPH-6728
+/// assert!(!unified_ideograph.contains('𛅸'));  // U+1B178 NUSHU CHARACTER-1B178
+/// ```
 pub fn get_unified_ideograph<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -948,6 +1301,22 @@ where
 }
 
 /// Uppercase characters
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_uppercase(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let uppercase = &data_struct.inv_list;
+///
+/// assert!(uppercase.contains('U'));
+/// assert!(!uppercase.contains('u'));
+/// ```
 pub fn get_uppercase<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -956,6 +1325,25 @@ where
 }
 
 /// Characters that are Variation Selectors.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_variation_selector(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let variation_selector = &data_struct.inv_list;
+///
+/// assert!(variation_selector.contains_u32(0x180D));  // MONGOLIAN FREE VARIATION SELECTOR THREE
+/// assert!(!variation_selector.contains_u32(0x303E));  // IDEOGRAPHIC VARIATION INDICATOR
+/// assert!(variation_selector.contains_u32(0xFE0F));  // VARIATION SELECTOR-16
+/// assert!(!variation_selector.contains_u32(0xFE10));  // PRESENTATION FORM FOR VERTICAL COMMA
+/// assert!(variation_selector.contains_u32(0xE01EF));  // VARIATION SELECTOR-256
+/// ```
 pub fn get_variation_selector<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -965,6 +1353,24 @@ where
 
 /// Spaces, separator characters and other control characters which should be treated by
 /// programming languages as "white space" for the purpose of parsing elements
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_white_space(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let white_space = &data_struct.inv_list;
+///
+/// assert!(white_space.contains(' '));
+/// assert!(white_space.contains_u32(0x000A));  // NEW LINE
+/// assert!(white_space.contains_u32(0x00A0));  // NO-BREAK SPACE
+/// assert!(!white_space.contains_u32(0x200B));  // ZERO WIDTH SPACE
+/// ```
 pub fn get_white_space<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -983,6 +1389,26 @@ where
 
 /// Characters that can begin an identifier.  See [`Unicode Standard Annex
 /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_xid_continue(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let xid_continue = &data_struct.inv_list;
+///
+/// assert!(xid_continue.contains('x'));
+/// assert!(xid_continue.contains('1'));
+/// assert!(xid_continue.contains('_'));
+/// assert!(xid_continue.contains('ߝ'));  // U+07DD NKO LETTER FA
+/// assert!(!xid_continue.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
+/// assert!(!xid_continue.contains_u32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+/// ```
 pub fn get_xid_continue<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
@@ -993,6 +1419,26 @@ where
 /// Characters that can come after the first character in an identifier. See [`Unicode
 /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
 /// details.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::sets;
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload =
+///     sets::get_xid_start(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let xid_start = &data_struct.inv_list;
+///
+/// assert!(xid_start.contains('x'));
+/// assert!(!xid_start.contains('1'));
+/// assert!(!xid_start.contains('_'));
+/// assert!(xid_start.contains('ߝ'));  // U+07DD NKO LETTER FA
+/// assert!(!xid_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
+/// assert!(!xid_start.contains_u32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+/// ```
 pub fn get_xid_start<'data, D>(provider: &D) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
