@@ -87,6 +87,29 @@ mod reference {
             }
         }
     }
+
+    #[cfg(test)]
+    mod test {
+        use super::*;
+
+        #[test]
+        fn reference_pattern_serde_human_readable_test() {
+            let pattern: Pattern = "Y-m-d HH:mm".parse().expect("Failed to parse pattern");
+            let json = serde_json::to_string(&pattern).expect("Failed to serialize pattern");
+            let result: Pattern =
+                serde_json::from_str(&json).expect("Failed to deserialize pattern");
+            assert_eq!(pattern, result);
+        }
+
+        #[test]
+        fn reference_pattern_serde_bincode_test() {
+            let pattern: Pattern = "Y-m-d HH:mm".parse().expect("Failed to parse pattern");
+            let bytes = bincode::serialize(&pattern).expect("Failed to serialize pattern");
+            let result: Pattern =
+                bincode::deserialize(&bytes).expect("Failed to deserialize pattern");
+            assert_eq!(pattern, result);
+        }
+    }
 }
 
 mod runtime {
@@ -169,6 +192,29 @@ mod runtime {
                 let pfs = PatternForSerde::from(self);
                 pfs.serialize(serializer)
             }
+        }
+    }
+
+    #[cfg(test)]
+    mod test {
+        use super::*;
+
+        #[test]
+        fn runtime_pattern_serde_human_readable_test() {
+            let pattern: Pattern = "Y-m-d HH:mm".parse().expect("Failed to parse pattern");
+            let json = serde_json::to_string(&pattern).expect("Failed to serialize pattern");
+            let result: Pattern =
+                serde_json::from_str(&json).expect("Failed to deserialize pattern");
+            assert_eq!(pattern, result);
+        }
+
+        #[test]
+        fn runtime_pattern_serde_bincode_test() {
+            let pattern: Pattern = "Y-m-d HH:mm".parse().expect("Failed to parse pattern");
+            let bytes = bincode::serialize(&pattern).expect("Failed to serialize pattern");
+            let result: Pattern =
+                bincode::deserialize(&bytes).expect("Failed to deserialize pattern");
+            assert_eq!(pattern, result);
         }
     }
 
@@ -276,6 +322,58 @@ mod runtime {
                 }
             }
         }
+
+        #[cfg(test)]
+        mod test {
+            use super::*;
+            use icu_plurals::PluralCategory;
+
+            #[test]
+            fn runtime_pattern_plurals_serde_human_readable_test() {
+                let pattern_other: Pattern = "Y-m-d w 'other' HH:mm"
+                    .parse()
+                    .expect("Failed to parse pattern");
+                let pattern_two: Pattern = "Y-m-d w 'two' HH:mm"
+                    .parse()
+                    .expect("Failed to parse pattern");
+
+                let mut plural_pattern =
+                    PluralPattern::new(pattern_other).expect("Failed to create PluralPattern");
+
+                plural_pattern.maybe_set_variant(PluralCategory::Two, pattern_two);
+
+                let pattern_plurals = PatternPlurals::from(plural_pattern);
+
+                let json = serde_json::to_string(&pattern_plurals)
+                    .expect("Failed to serialize pattern plurals");
+                let result: PatternPlurals =
+                    serde_json::from_str(&json).expect("Failed to deserialize pattern plurals");
+                assert_eq!(pattern_plurals, result);
+            }
+
+            #[test]
+            fn runtime_pattern_plurals_serde_bincode_test() {
+                let pattern_other: Pattern = "Y-m-d w 'other' HH:mm"
+                    .parse()
+                    .expect("Failed to parse pattern");
+                let pattern_two: Pattern = "Y-m-d w 'two' HH:mm"
+                    .parse()
+                    .expect("Failed to parse pattern");
+
+                let mut plural_pattern =
+                    PluralPattern::new(pattern_other).expect("Failed to create PluralPattern");
+
+                plural_pattern.maybe_set_variant(PluralCategory::Two, pattern_two);
+
+                let pattern_plurals = PatternPlurals::from(plural_pattern);
+
+                let bytes = bincode::serialize(&pattern_plurals)
+                    .expect("Failed to serialize pattern plurals");
+                let result: PatternPlurals =
+                    bincode::deserialize(&bytes).expect("Failed to deserialize pattern plurals");
+                assert_eq!(pattern_plurals, result);
+            }
+        }
     }
 
     mod generic {
@@ -328,6 +426,31 @@ mod runtime {
                 } else {
                     self.items.serialize(serializer)
                 }
+            }
+        }
+
+        #[cfg(test)]
+        mod test {
+            use super::*;
+
+            #[test]
+            fn runtime_generic_pattern_serde_human_readable_test() {
+                let pattern: GenericPattern =
+                    "{0} 'and' {1}".parse().expect("Failed to parse pattern");
+                let json = serde_json::to_string(&pattern).expect("Failed to serialize pattern");
+                let result: GenericPattern =
+                    serde_json::from_str(&json).expect("Failed to deserialize pattern");
+                assert_eq!(pattern, result);
+            }
+
+            #[test]
+            fn runtime_generic_pattern_serde_bincode_test() {
+                let pattern: GenericPattern =
+                    "{0} 'and' {1}".parse().expect("Failed to parse pattern");
+                let bytes = bincode::serialize(&pattern).expect("Failed to serialize pattern");
+                let result: GenericPattern =
+                    bincode::deserialize(&bytes).expect("Failed to deserialize pattern");
+                assert_eq!(pattern, result);
             }
         }
     }

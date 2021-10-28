@@ -44,7 +44,7 @@ impl<'data> GenericPattern<'data> {
         self,
         date: Pattern<'data>,
         time: Pattern<'data>,
-    ) -> Result<Pattern<'data>, PatternError> {
+    ) -> Result<Pattern<'static>, PatternError> {
         let size = date.items.len() + time.items.len();
         let mut result = Vec::with_capacity(self.items.len() + size);
 
