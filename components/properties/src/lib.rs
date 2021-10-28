@@ -65,6 +65,7 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
 //! [`UnicodeSet`]: icu_uniset::UnicodeSet
+//! [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 //! [`sets`]: crate::sets
 
 #![cfg_attr(not(any(test, feature = "std")), no_std)]

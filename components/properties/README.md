@@ -63,6 +63,7 @@ assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
 [`ICU4X`]: ../icu/index.html
 [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
 [`UnicodeSet`]: icu_uniset::UnicodeSet
+[`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
 [`sets`]: crate::sets
 
 ## More Information
