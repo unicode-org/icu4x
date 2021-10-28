@@ -40,6 +40,8 @@ pub trait BorrowedZeroVecLike<'a, T: ?Sized> {
 pub trait ZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
+    /// A fully borrowed version of this
+    type BorrowedVersion: BorrowedZeroVecLike<'a, T>;
     /// Insert an element at `index`
     fn insert(&mut self, index: usize, value: &T);
     /// Remove the element at `index` (panicking if nonexistant)
@@ -108,6 +110,7 @@ where
     T: AsULE + Ord + Copy,
 {
     type OwnedType = T;
+    type BorrowedVersion = &'a [T::ULE];
     fn insert(&mut self, index: usize, value: &T) {
         self.to_mut().insert(index, value.as_unaligned())
     }
@@ -205,6 +208,7 @@ where
     T: ?Sized,
 {
     type OwnedType = Box<T>;
+    type BorrowedVersion = VarZeroVecBorrowed<'a, T>;
     fn insert(&mut self, index: usize, value: &T) {
         self.make_mut().insert(index, value)
     }
