@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635463831507,
+  "lastUpdate": 1635463874917,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2548,6 +2548,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 610329,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7e3fc02556b180a687e0d9fa3566b5bbfdd419cf",
+          "message": "Move DTF to runtime patterns (#1198)\n\n* Move DTF to runtime patterns\r\n\r\n* Apply reviewers feedback\r\n\r\n* Apply reviewers feedback\r\n\r\n* Apply feedback\r\n\r\n* Apply feedback\r\n\r\n* Apply feedback",
+          "timestamp": "2021-10-28T16:29:48-07:00",
+          "tree_id": "f5ec35332ec40c41ff3330d295c66f599455429e",
+          "url": "https://github.com/unicode-org/icu4x/commit/7e3fc02556b180a687e0d9fa3566b5bbfdd419cf"
+        },
+        "date": 1635463869119,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 611752,
             "unit": "bytes",
             "biggerIsBetter": false
           }
