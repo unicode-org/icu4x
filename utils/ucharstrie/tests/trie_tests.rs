@@ -13,23 +13,21 @@ fn ucharstrie_test_months() {
     for (chr, expected) in [
         ('j', TrieResult::NoValue),
         ('u', TrieResult::NoValue),
-        ('n', TrieResult::Intermediate),
-        ('e', TrieResult::FinalValue),
+        ('n', TrieResult::Intermediate(6)),
+        ('e', TrieResult::FinalValue(6)),
     ] {
         let res = trie.next(chr as i32);
         assert_eq!(res, expected);
     }
-    assert_eq!(trie.get_value(), Some(6));
 
     let mut trie = UCharsTrieIterator::new(data.as_slice(), 0);
     for (chr, expected) in [
         ('j', TrieResult::NoValue),
         ('u', TrieResult::NoValue),
         ('l', TrieResult::NoValue),
-        ('y', TrieResult::FinalValue),
+        ('y', TrieResult::FinalValue(7)),
     ] {
         let res = trie.next(chr as i32);
         assert_eq!(res, expected);
     }
-    assert_eq!(trie.get_value(), Some(7));
 }

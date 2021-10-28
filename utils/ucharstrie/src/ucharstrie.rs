@@ -68,11 +68,11 @@ pub enum TrieResult {
     // The input unit(s) continued a matching string
     // and there is a value for the string so far.
     // No further input byte/unit can continue a matching string.
-    FinalValue,
+    FinalValue(i32),
     // The input unit(s) continued a matching string
     // and there is a value for the string so far.
     // Another input byte/unit can continue a matching string.
-    Intermediate,
+    Intermediate(i32),
 }
 
 impl<'a> UCharsTrieIterator<'a> {
@@ -100,7 +100,7 @@ impl<'a> UCharsTrieIterator<'a> {
                     self.remaining_match_length = None;
                     let node = self.trie[pos];
                     if node >= MIN_VALUE_LEAD {
-                        return Self::value_result(node);
+                        return self.value_result(pos);
                     }
                 } else {
                     self.remaining_match_length = Some(length);
@@ -142,9 +142,8 @@ impl<'a> UCharsTrieIterator<'a> {
                 pos += 1;
                 let mut node = self.trie[pos];
                 if node & VALUE_IS_FINAL != 0 {
-                    // Leave the final value for get_value() to read.
                     self.pos = Some(pos);
-                    return TrieResult::FinalValue;
+                    return self.value_result(pos);
                 }
                 // Use the non-final value as the jump delta.
                 pos += 1;
@@ -163,7 +162,7 @@ impl<'a> UCharsTrieIterator<'a> {
                 self.pos = Some(pos);
 
                 if node >= MIN_VALUE_LEAD {
-                    return Self::value_result(node);
+                    return self.value_result(pos);
                 }
                 return TrieResult::NoValue;
             }
@@ -179,7 +178,7 @@ impl<'a> UCharsTrieIterator<'a> {
             self.pos = Some(pos);
             let node = self.trie[pos];
             if node >= MIN_VALUE_LEAD {
-                return Self::value_result(node);
+                return self.value_result(pos);
             }
             TrieResult::NoValue
         } else {
@@ -204,7 +203,7 @@ impl<'a> UCharsTrieIterator<'a> {
                         self.pos = Some(pos);
                         node = self.trie[pos];
                         if node >= MIN_VALUE_LEAD {
-                            return Self::value_result(node);
+                            return self.value_result(pos);
                         }
                         return TrieResult::NoValue;
                     }
@@ -262,25 +261,21 @@ impl<'a> UCharsTrieIterator<'a> {
         }
     }
 
-    fn value_result(node: u16) -> TrieResult {
-        let node = node & VALUE_IS_FINAL;
+    fn value_result(&self, pos: usize) -> TrieResult {
+        let node = self.trie[pos] & VALUE_IS_FINAL;
+        let value = self.get_value(pos);
         match node {
-            VALUE_IS_FINAL => TrieResult::FinalValue,
-            _ => TrieResult::Intermediate,
+            VALUE_IS_FINAL => TrieResult::FinalValue(value),
+            _ => TrieResult::Intermediate(value),
         }
     }
 
-    pub fn get_value(&self) -> Option<i32> {
-        if self.pos.is_none() {
-            return None;
-        }
-        let mut pos = self.pos.unwrap();
+    pub fn get_value(&self, pos: usize) -> i32 {
         let lead_unit = self.trie[pos];
-        pos += 1;
         if lead_unit & VALUE_IS_FINAL == VALUE_IS_FINAL {
-            Some(self.read_value(pos, lead_unit & 0x7fff))
+            self.read_value(pos + 1, lead_unit & 0x7fff)
         } else {
-            Some(self.read_node_value(pos, lead_unit))
+            self.read_node_value(pos + 1, lead_unit)
         }
     }
 
