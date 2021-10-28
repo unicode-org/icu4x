@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+use crate::trie::*;
 
 // 00..0f: Branch node. If node!=0 then the length is node+1, otherwise
 // the length is one more than the next byte.
@@ -26,6 +27,11 @@ const VALUE_IS_FINAL: u16 = 0x8000;
 const MAX_ONE_UNIT_VALUE: u16 = 0x3fff;
 
 const MIN_TWO_UNIT_VALUE_LEAD: u16 = MAX_ONE_UNIT_VALUE + 1; // 0x4000
+
+const MAX_ONE_UNIT_NODE_VALUE: u16 = 0xff;
+
+const MIN_TWO_UNIT_NODE_VALUE_LEAD: u16 = MIN_VALUE_LEAD + ((MAX_ONE_UNIT_NODE_VALUE + 1) << 6); // 0x4040
+
 const THREE_UNIT_VALUE_LEAD: u16 = 0x7fff;
 
 // Compact delta integers.
@@ -50,7 +56,7 @@ pub struct UCharsTrie {
     remaining_match_length_: Option<usize>,
 }
 
-impl UCharsTrie {
+impl Trie for UCharsTrie {
     // Traverses the trie from the initial state for this input char.
     // Equivalent to reset() then next(inUnit)
     fn first(&mut self, trie_data: &[u8], c: i32) -> TrieResult {
@@ -142,7 +148,7 @@ impl UCharsTrie {
                 pos += 1;
                 let mut node = uchars[pos];
                 if node & VALUE_IS_FINAL != 0 {
-                    // Leave the final value for getValue() to read.
+                    // Leave the final value for get_value() to read.
                     self.pos_ = Some(pos);
                     return TrieResult::FinalValue;
                 }
@@ -267,6 +273,41 @@ impl UCharsTrie {
         match node {
             VALUE_IS_FINAL => TrieResult::FinalValue,
             _ => TrieResult::Intermediate,
+        }
+    }
+
+    pub fn get_value(&self, uchars: &[u16]) -> Option<i32> {
+        if self.pos_.is_none() {
+            return None;
+        }
+        let mut pos = self.pos_.unwrap();
+        let lead_unit = uchars[pos];
+        pos += 1;
+        if lead_unit & VALUE_IS_FINAL == VALUE_IS_FINAL {
+            Some(self.read_value(uchars, pos, lead_unit & 0x7fff))
+        } else {
+            Some(self.read_node_value(uchars, pos, lead_unit))
+        }
+    }
+
+    fn read_value(&self, uchars: &[u16], pos: usize, lead_unit: u16) -> i32 {
+        if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
+            lead_unit.into()
+        } else if lead_unit < THREE_UNIT_VALUE_LEAD {
+            ((lead_unit - MIN_TWO_UNIT_VALUE_LEAD) as i32) << 16 | uchars[pos] as i32
+        } else {
+            ((uchars[pos] as i32) << 16) | uchars[pos + 1] as i32
+        }
+    }
+
+    fn read_node_value(&self, uchars: &[u16], pos: usize, lead_unit: u16) -> i32 {
+        if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
+            ((lead_unit >> 6) - 1).into()
+        } else if lead_unit < THREE_UNIT_VALUE_LEAD {
+            ((((lead_unit & 0x7fc0) - MIN_TWO_UNIT_NODE_VALUE_LEAD) as i32) << 10)
+                | uchars[pos] as i32
+        } else {
+            ((uchars[pos] as i32) << 16) | uchars[pos + 1] as i32
         }
     }
 }
