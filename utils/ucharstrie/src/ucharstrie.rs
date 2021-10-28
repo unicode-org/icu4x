@@ -89,11 +89,10 @@ impl<'a> UCharsTrieIterator<'a> {
         if self.pos.is_none() {
             return TrieResult::NoMatch;
         }
-        let in_byte = c as u16;
         let mut pos = self.pos.unwrap();
         if let Some(length) = self.remaining_match_length {
             // Remaining part of a linear-match node
-            if in_byte == self.trie[pos] {
+            if c == self.trie[pos].into() {
                 pos += 1;
                 self.pos = Some(pos);
                 if length == 0 {
@@ -110,11 +109,11 @@ impl<'a> UCharsTrieIterator<'a> {
             self.stop();
             TrieResult::NoMatch
         } else {
-            self.next_impl(pos, in_byte)
+            self.next_impl(pos, c)
         }
     }
 
-    fn branch_next(&mut self, pos: usize, length: usize, in_unit: u16) -> TrieResult {
+    fn branch_next(&mut self, pos: usize, length: usize, in_unit: i32) -> TrieResult {
         let mut pos = pos;
         let mut length = length;
         if length == 0 {
@@ -126,7 +125,7 @@ impl<'a> UCharsTrieIterator<'a> {
         // The length of the branch is the number of units to select from.
         // The data structure encodes a binary search.
         while length > MAX_BRANCH_LINEAR_SUB_NODE_LENGTH {
-            if in_unit < self.trie[pos] {
+            if in_unit < self.trie[pos].into() {
                 length >>= 1;
                 pos = self.jump_by_delta(pos + 1);
             } else {
@@ -138,7 +137,7 @@ impl<'a> UCharsTrieIterator<'a> {
         // length>=2 because the loop body above sees length>kMaxBranchLinearSubNodeLength>=3
         // and divides length by 2.
         loop {
-            if in_unit == self.trie[pos] {
+            if in_unit == self.trie[pos].into() {
                 pos += 1;
                 let mut node = self.trie[pos];
                 if node & VALUE_IS_FINAL != 0 {
@@ -173,7 +172,7 @@ impl<'a> UCharsTrieIterator<'a> {
             }
         }
 
-        if in_unit == self.trie[pos] {
+        if in_unit == self.trie[pos].into() {
             pos += 1;
             self.pos = Some(pos);
             let node = self.trie[pos];
@@ -187,7 +186,7 @@ impl<'a> UCharsTrieIterator<'a> {
         }
     }
 
-    fn next_impl(&mut self, pos: usize, in_unit: u16) -> TrieResult {
+    fn next_impl(&mut self, pos: usize, in_unit: i32) -> TrieResult {
         let mut node = self.trie[pos];
         let mut pos = pos + 1;
         loop {
@@ -196,7 +195,7 @@ impl<'a> UCharsTrieIterator<'a> {
             } else if node < MIN_VALUE_LEAD {
                 // Match the first of length+1 units.
                 let length = node - MIN_LINEAR_MATCH;
-                if in_unit == self.trie[pos] {
+                if in_unit == self.trie[pos].into() {
                     pos += 1;
                     if length == 0 {
                         self.remaining_match_length = None;
