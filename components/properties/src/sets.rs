@@ -367,7 +367,7 @@ where
 /// let dash = &data_struct.inv_list;
 ///
 /// assert!(dash.contains('⸺'));  // U+2E3A TWO-EM DASH
-/// assert!(dash.contains('-'));  // U+002D 
+/// assert!(dash.contains('-'));  // U+002D
 /// assert!(!dash.contains('='));  // U+003D
 /// ```
 pub fn get_dash<'data, D>(provider: &D) -> UnisetResult<'data>

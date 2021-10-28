@@ -16,7 +16,6 @@ APIs that return a [`CodePointTrie`] exist for certain enumerated properties. Se
 ### Property data as `UnicodeSet`s
 
 ```rust
-use icu_uniset::UnicodeSet;
 use icu::properties::{sets, GeneralCategory};
 
 let provider = icu_testdata::get_provider();
@@ -47,7 +46,6 @@ assert!(!line_sep.contains_u32(0x2029));
 ### Property data as `CodePointTrie`s
 
 ```rust
-use icu_codepointtrie::codepointtrie::CodePointTrie;
 use icu::properties::{maps, Script};
 
 let provider = icu_testdata::get_provider();
