@@ -45,6 +45,14 @@ pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
     bare: T,
 }
 
+#[derive(Yokeable, ZeroCopyFrom)]
+pub struct HasTuples<'data> {
+    pub bar: (&'data str, &'data str),
+}
+
+pub fn assert_zcf_tuples<'b, 'data>(x: &'b HasTuples<'data>) -> HasTuples<'b> {
+    HasTuples::<'static>::zero_copy_from(x)
+}
 pub fn assert_zcf_generics<'a, 'b>(
     x: &'b ZeroVecExampleWithGenerics<'a, u8>,
 ) -> ZeroVecExampleWithGenerics<'b, u8> {
