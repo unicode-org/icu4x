@@ -216,9 +216,7 @@ mod test {
     //       and then regenerate the test data.
     //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
     #[rustfmt::skip]
-    const UNSUPPORTED_STRING_SKELETONS: [&str; 18] = [
-        // TODO(#487) - Flexible day periods
-        "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
+    const UNSUPPORTED_STRING_SKELETONS: [&str; 13] = [
         // TODO(#486) - Era
         "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
         // TODO(#502) - Week of month

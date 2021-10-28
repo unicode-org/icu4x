@@ -254,13 +254,13 @@ impl Ord for FieldSymbol {
 }
 
 field_type!(Year; {
-    'y' => Calendar,
-    'Y' => WeekOf
+    Calendar => [ 'y' ],
+    WeekOf => [ 'Y' ],
 }; Numeric);
 
 field_type!(Month; {
-    'M' => Format,
-    'L' => StandAlone
+    Format => [ 'M' ],
+    StandAlone => [ 'L' ],
 });
 
 impl LengthType for Month {
@@ -277,34 +277,34 @@ impl LengthType for Month {
 }
 
 field_type!(Day; {
-    'd' => DayOfMonth,
-    'D' => DayOfYear,
-    'F' => DayOfWeekInMonth,
-    'g' => ModifiedJulianDay
+    DayOfMonth => [ 'd' ],
+    DayOfYear => [ 'D' ],
+    DayOfWeekInMonth => [ 'F' ],
+    ModifiedJulianDay => [ 'g' ],
 }; Numeric);
 
 field_type!(Hour; {
-    'K' => H11,
-    'h' => H12,
-    'H' => H23,
-    'k' => H24
+    H11 => [ 'K' ],
+    H12 => [ 'h' ],
+    H23 => [ 'H' ],
+    H24 => [ 'k' ],
 }; Numeric);
 
 field_type!(Second; {
-    's' => Second,
-    'S' => FractionalSecond,
-    'A' => Millisecond
+    Second => [ 's' ],
+    FractionalSecond => [ 'S' ],
+    Millisecond => [ 'A' ],
 }; Numeric);
 
 field_type!(Week; {
-    'w' => WeekOfYear,
-    'W' => WeekOfMonth
+    WeekOfYear => [ 'w' ],
+    WeekOfMonth => [ 'W' ],
 }; Numeric);
 
 field_type!(Weekday; {
-    'E' => Format,
-    'e' => Local,
-    'c' => StandAlone
+    Format => [ 'E' ],
+    Local => [ 'e' ],
+    StandAlone => [ 'c' ],
 });
 
 impl LengthType for Weekday {
@@ -320,18 +320,18 @@ impl LengthType for Weekday {
 }
 
 field_type!(DayPeriod; {
-    'a' => AmPm,
-    'b' => NoonMidnight
+    AmPm => [ 'a' ],
+    NoonMidnight => [ 'b', 'B' ],
 }; Text);
 
 field_type!(TimeZone; {
-    'z' => LowerZ,
-    'Z' => UpperZ,
-    'O' => UpperO,
-    'v' => LowerV,
-    'V' => UpperV,
-    'x' => LowerX,
-    'X' => UpperX
+    LowerZ => [ 'z' ],
+    UpperZ => [ 'Z' ],
+    UpperO => [ 'O' ],
+    LowerV => [ 'v' ],
+    UpperV => [ 'V' ],
+    LowerX => [ 'x' ],
+    UpperX => [ 'X' ],
 });
 
 impl LengthType for TimeZone {
