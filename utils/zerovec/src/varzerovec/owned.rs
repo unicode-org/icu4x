@@ -379,6 +379,11 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         true
     }
 
+    /// Insert an element at the end of this vector
+    pub fn push<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, element: &A) {
+        self.insert(self.len(), element)
+    }
+
     /// Insert an element at index `idx`
     pub fn insert<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();

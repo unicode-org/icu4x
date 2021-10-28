@@ -112,7 +112,11 @@ pub enum VarZeroVec<'a, T: ?Sized> {
     /// # Examples
     ///
     /// ```
-    /// let vzv = // something that makes an Owned VZV
+    /// use zerovec::VarZeroVec;
+    ///
+    /// let mut vzv = VarZeroVec::<str>::default();
+    /// vzv.make_mut().push("foo");
+    /// vzv.make_mut().push("bar");
     /// assert!(matches!(vzv, VarZeroVec::Owned(_)));
     /// ```
     Owned(VarZeroVecOwned<T>),
@@ -123,8 +127,15 @@ pub enum VarZeroVec<'a, T: ?Sized> {
     /// # Examples
     ///
     /// ```
-    /// let vzv = // something that makes an Owned VZV
-    /// assert!(matches!(vzv, VarZeroVec::Owned(_)));
+    /// use zerovec::VarZeroVec;
+    ///
+    /// let bytes = &[
+    ///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,  3, 0, 0, 0,
+    ///     6, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240, 145, 132, 131,
+    /// ];
+    ///
+    /// let vzv: VarZeroVec<str> = VarZeroVec::parse_byte_slice(bytes).unwrap();
+    /// assert!(matches!(vzv, VarZeroVec::Borrowed(_)));
     /// ```
     Borrowed(VarZeroVecBorrowed<'a, T>),
 }
@@ -184,7 +195,19 @@ impl<'a, T: ?Sized + VarULE> From<VarZeroVec<'a, T>> for VarZeroVecOwned<T> {
     }
 }
 
+impl<T: VarULE + ?Sized> Default for VarZeroVec<'_, T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
+    /// Construct a new empty [`VarZeroVec`]
+    #[inline]
+    pub fn new() -> Self {
+        VarZeroVecOwned::new().into()
+    }
+
     /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
     pub fn as_borrowed<'b>(&'b self) -> VarZeroVecBorrowed<'b, T> {
         match self {
