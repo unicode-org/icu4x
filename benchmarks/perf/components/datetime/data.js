@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635464194961,
+  "lastUpdate": 1635464227453,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11141,6 +11141,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 365247,
             "range": "± 19189",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7e3fc02556b180a687e0d9fa3566b5bbfdd419cf",
+          "message": "Move DTF to runtime patterns (#1198)\n\n* Move DTF to runtime patterns\r\n\r\n* Apply reviewers feedback\r\n\r\n* Apply reviewers feedback\r\n\r\n* Apply feedback\r\n\r\n* Apply feedback\r\n\r\n* Apply feedback",
+          "timestamp": "2021-10-28T16:29:48-07:00",
+          "tree_id": "f5ec35332ec40c41ff3330d295c66f599455429e",
+          "url": "https://github.com/unicode-org/icu4x/commit/7e3fc02556b180a687e0d9fa3566b5bbfdd419cf"
+        },
+        "date": 1635464221513,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 126902,
+            "range": "± 5654",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1404520,
+            "range": "± 46920",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 353850,
+            "range": "± 29426",
             "unit": "ns/iter"
           }
         ]
