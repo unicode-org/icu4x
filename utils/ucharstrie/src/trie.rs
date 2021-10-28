@@ -1,4 +1,4 @@
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TrieResult {
     // The input unit(s) did not continue a matching string.
     // Once current()/next() return TrieResult::NoMatch,

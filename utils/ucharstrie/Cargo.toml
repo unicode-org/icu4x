@@ -6,3 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+[dev-dependencies]
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
+toml = "0.5"
