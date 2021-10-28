@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635382514582,
+  "lastUpdate": 1635437053949,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12359,6 +12359,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 114793,
             "range": "± 659",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nmihai_2000@yahoo.com",
+            "name": "Mihai Nita",
+            "username": "mihnita"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "26d779ac767f613aace34a2031d9d474b11c913a",
+          "message": "Fix crates.io badges no longer loading (#1036) (#1219)\n\n* Fix crates.io badges no longer loading (#1036)\r\n\r\n* Don't try to fix the diplomat link, just the badge",
+          "timestamp": "2021-10-28T08:57:56-07:00",
+          "tree_id": "95ec2ad4fde73e130f5600e70bac200e43788cac",
+          "url": "https://github.com/unicode-org/icu4x/commit/26d779ac767f613aace34a2031d9d474b11c913a"
+        },
+        "date": 1635437049605,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115143,
+            "range": "± 524",
             "unit": "ns/iter"
           }
         ]
