@@ -150,7 +150,7 @@ where
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K::NeedleType) -> Option<V> {
         let index = self.keys.binary_search(key).ok()?;
-        <[V::ULE]>::get(&self.values, index)
+        <[V::ULE]>::get(self.values, index)
             .copied()
             .map(V::from_unaligned)
     }
@@ -163,7 +163,7 @@ where
         (0..self.keys.len()).map(move |idx| {
             (
                 self.keys.get(idx).unwrap(),
-                <[V::ULE]>::get(&self.values, idx)
+                <[V::ULE]>::get(self.values, idx)
                     .copied()
                     .map(V::from_unaligned)
                     .unwrap(),
