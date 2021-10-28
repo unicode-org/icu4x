@@ -13,7 +13,7 @@ use core::mem;
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
-pub trait ZeroVecLike<'a, T: ?Sized> {
+pub trait BorrowedZeroVecLike<'a, T: ?Sized> {
     /// The type received by `Self::binary_search()`
     type NeedleType: ?Sized;
     /// The type returned by `Self::get()`
@@ -52,7 +52,11 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
+/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
+/// should not be implementing or calling this trait directly.
+pub trait ZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {}
+
+impl<'a, T> BorrowedZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
     T: AsULE + Ord + Copy,
 {
@@ -100,7 +104,9 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for VarZeroVec<'a, T>
+impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T> where T: AsULE + Ord + Copy {}
+
+impl<'a, T> BorrowedZeroVecLike<'a, T> for VarZeroVec<'a, T>
 where
     T: VarULE,
     T: Ord,
@@ -161,4 +167,12 @@ where
         }
         true
     }
+}
+
+impl<'a, T> ZeroVecLike<'a, T> for VarZeroVec<'a, T>
+where
+    T: VarULE,
+    T: Ord,
+    T: ?Sized,
+{
 }
