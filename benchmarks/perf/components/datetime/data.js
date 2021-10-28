@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635450822311,
+  "lastUpdate": 1635454845628,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11057,6 +11057,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 357172,
             "range": "± 39371",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6621c4078b4c2433bda882cd631c3a639369e656",
+          "message": "Likely subtags should minimize es-ES-preeuro to es-preeuro (#1189)",
+          "timestamp": "2021-10-28T13:52:40-07:00",
+          "tree_id": "0366501958c72e6a917e91a78c0e5af51f9e64ce",
+          "url": "https://github.com/unicode-org/icu4x/commit/6621c4078b4c2433bda882cd631c3a639369e656"
+        },
+        "date": 1635454839675,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 123994,
+            "range": "± 13284",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1926262,
+            "range": "± 100401",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 378314,
+            "range": "± 36598",
             "unit": "ns/iter"
           }
         ]
