@@ -15,11 +15,19 @@ use core::slice;
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
 /// [`VarZeroVec`] and [`VarZeroVecBorrowed`].
-#[derive(Clone)]
 pub struct VarZeroVecOwned<T: ?Sized> {
     marker: PhantomData<Box<T>>,
     // safety invariant: must parse into a valid VarZeroVecBorrowed
     entire_slice: Vec<u8>,
+}
+
+impl<T: ?Sized> Clone for VarZeroVecOwned<T> {
+    fn clone(&self) -> Self {
+        VarZeroVecOwned {
+            marker: self.marker,
+            entire_slice: self.entire_slice.clone(),
+        }
+    }
 }
 
 // The effect of a shift on the indices in the varzerovec.
