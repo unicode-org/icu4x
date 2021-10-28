@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635454845628,
+  "lastUpdate": 1635464194961,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11099,6 +11099,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 378314,
             "range": "± 36598",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40dff703ca88306047c47d1187a8a6880e8c4b58",
+          "message": "Switch examples to use static provider to better measure memory impact. (#1241)",
+          "timestamp": "2021-10-28T16:29:17-07:00",
+          "tree_id": "5d17c95204aa764ea02a0247bb3a4dc7a450637e",
+          "url": "https://github.com/unicode-org/icu4x/commit/40dff703ca88306047c47d1187a8a6880e8c4b58"
+        },
+        "date": 1635464189461,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 118453,
+            "range": "± 7378",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1969753,
+            "range": "± 51451",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 365247,
+            "range": "± 19189",
             "unit": "ns/iter"
           }
         ]
