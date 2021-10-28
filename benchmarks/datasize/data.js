@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635436748428,
+  "lastUpdate": 1635445224158,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2423,6 +2423,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/26d779ac767f613aace34a2031d9d474b11c913a"
         },
         "date": 1635436744282,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610329,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9aaf98424fed0a14f37ce6f8962229967eb0a77a",
+          "message": "Add manual clone impl for VZV (#1230)",
+          "timestamp": "2021-10-28T11:19:02-07:00",
+          "tree_id": "26d2ba782f7fad66471d105f5d0d382cf7f21ea4",
+          "url": "https://github.com/unicode-org/icu4x/commit/9aaf98424fed0a14f37ce6f8962229967eb0a77a"
+        },
+        "date": 1635445217794,
         "tool": "ndjson",
         "benches": [
           {
