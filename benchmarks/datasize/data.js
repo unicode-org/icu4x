@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635454449129,
+  "lastUpdate": 1635463831507,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2513,6 +2513,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6621c4078b4c2433bda882cd631c3a639369e656"
         },
         "date": 1635454443060,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610329,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40dff703ca88306047c47d1187a8a6880e8c4b58",
+          "message": "Switch examples to use static provider to better measure memory impact. (#1241)",
+          "timestamp": "2021-10-28T16:29:17-07:00",
+          "tree_id": "5d17c95204aa764ea02a0247bb3a4dc7a450637e",
+          "url": "https://github.com/unicode-org/icu4x/commit/40dff703ca88306047c47d1187a8a6880e8c4b58"
+        },
+        "date": 1635463827128,
         "tool": "ndjson",
         "benches": [
           {
