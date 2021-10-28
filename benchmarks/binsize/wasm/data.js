@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635372157377,
+  "lastUpdate": 1635382430346,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -14063,6 +14063,144 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5338437ef9ecc5f83cb92d9fb2c0350989892e2d"
         },
         "date": 1635372151720,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 8840,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13539,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 8740,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 7259,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 6587,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12313,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple+opt.wasm",
+            "value": 637208,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 9103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 16201,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 6633,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 7964,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 6587,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30553,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10134,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 6633,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 6625,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3a63e2d49c1d8c7700289bd60bfe4145a559af41",
+          "message": "Make VarZeroVecBorrowed/VarZeroVecOwned public (#1223)\n\n* SliceComponents -> VZVBorrowed\n\n* get_components() -> as_borrowed()\n\n* Remove duplicate method\n\n* make compile again\n\n* components -> borrowed\n\n* Add docs, make VZVBorrowed public\n\n* more docs\n\n* more docs etc\n\n* Make VZVOwned public\n\n* Fixup doc warnings and fmt\n\n* Make VZV a publicly inspectable enum of VZVO/VZVB\n\n* clippy\n\n* move docs\n\n* Update utils/zerovec/src/varzerovec/borrowed.rs\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/src/varzerovec/mod.rs\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/src/varzerovec/mod.rs\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Add examples to docs; add VZVO::push() and VZV::new()\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2021-10-27T17:48:58-07:00",
+          "tree_id": "b8ae9b8419d77c1ad679cdb53612405634143950",
+          "url": "https://github.com/unicode-org/icu4x/commit/3a63e2d49c1d8c7700289bd60bfe4145a559af41"
+        },
+        "date": 1635382425668,
         "tool": "ndjson",
         "benches": [
           {
