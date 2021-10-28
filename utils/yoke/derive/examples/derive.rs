@@ -45,6 +45,49 @@ pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
     bare: T,
 }
 
+#[derive(Yokeable, ZeroCopyFrom)]
+pub struct HasTuples<'data> {
+    pub bar: (&'data str, &'data str),
+}
+
+// unsafe impl <'a> yoke::Yokeable<'a> for HasTuples<'static> where  {
+//     type Output = HasTuples<'a>;
+//     fn transform(&'a self) -> &'a Self::Output { self }
+//     fn transform_owned(self) -> Self::Output { self }
+//     unsafe fn make(this: Self::Output) -> Self {
+//         use core::{mem, ptr};
+//         if true {
+//             if !(mem::size_of::<Self::Output>() == mem::size_of::<Self>()) {
+//                 panic!("assertion failed: mem::size_of::<Self::Output>() == mem::size_of::<Self>()")
+//             };
+//         };
+//         let ptr: *const Self = (&this as *const Self::Output).cast();
+//         mem::forget(this);
+//         ptr::read(ptr)
+//     }
+//     fn transform_mut<F>(&'a mut self, f: F) where F: 'static +
+//      for<'b> FnOnce(&'b mut Self::Output) {
+//         unsafe {
+//             f(core::mem::transmute::<&'a mut Self,
+//                                      &'a mut Self::Output>(self))
+//         }
+//     }
+// }
+// unsafe impl <'a> yoke::IsCovariant<'a> for HasTuples<'a> where  { }
+// impl <'data> yoke::ZeroCopyFrom<HasTuples<'data>> for HasTuples<'static> where
+//   {
+//     fn zero_copy_from<'b>(this: &'b HasTuples<'data>) -> HasTuples<'b> {
+//         match *this {
+//             HasTuples { bar: ref __binding_0 } => {
+//                 HasTuples{bar:
+//                               <(&'data str, &'data str) as
+//                                   yoke::ZeroCopyFrom<(&'data str,
+//                                                       &'data str)>>::zero_copy_from(__binding_0),}
+//             }
+//         }
+//     }
+// }
+
 pub fn assert_zcf_generics<'a, 'b>(
     x: &'b ZeroVecExampleWithGenerics<'a, u8>,
 ) -> ZeroVecExampleWithGenerics<'b, u8> {
