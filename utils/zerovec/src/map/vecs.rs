@@ -4,6 +4,7 @@
 
 use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
+use crate::varzerovec::VarZeroVecBorrowed;
 use crate::VarZeroVec;
 use crate::ZeroVec;
 use alloc::boxed::Box;
@@ -79,6 +80,29 @@ where
     }
 }
 
+impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a [T::ULE]
+where
+    T: AsULE + Ord + Copy,
+{
+    type NeedleType = T;
+    type GetType = T::ULE;
+    fn binary_search(&self, k: &T) -> Result<usize, usize> {
+        ZeroVec::<T>::Borrowed(self).binary_search(k)
+    }
+    fn get(&self, index: usize) -> Option<&T::ULE> {
+        <[T::ULE]>::get(self, index)
+    }
+    fn len(&self) -> usize {
+        <[T::ULE]>::len(self)
+    }
+    fn is_ascending(&self) -> bool {
+        ZeroVec::<T>::Borrowed(self)
+            .as_slice()
+            .windows(2)
+            .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
+    }
+}
+
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
     T: AsULE + Ord + Copy,
@@ -127,6 +151,38 @@ where
     }
     fn len(&self) -> usize {
         self.len()
+    }
+    fn is_ascending(&self) -> bool {
+        if !self.is_empty() {
+            let mut prev = self.get(0).unwrap();
+            for element in self.iter().skip(1) {
+                if element.cmp(prev) != Ordering::Greater {
+                    return false;
+                }
+                prev = element;
+            }
+        }
+        true
+    }
+}
+
+impl<'a, T> BorrowedZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
+where
+    T: VarULE,
+    T: Ord,
+    T: ?Sized,
+{
+    type NeedleType = T;
+    type GetType = T;
+    fn binary_search(&self, k: &T) -> Result<usize, usize> {
+        Self::binary_search(self, k)
+    }
+    fn get(&self, index: usize) -> Option<&T> {
+        // using UFCS to avoid accidental recursion
+        Self::get(*self, index)
+    }
+    fn len(&self) -> usize {
+        Self::len(*self)
     }
     fn is_ascending(&self) -> bool {
         if !self.is_empty() {
