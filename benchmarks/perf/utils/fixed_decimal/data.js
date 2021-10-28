@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635437053949,
+  "lastUpdate": 1635445532464,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12389,6 +12389,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 115143,
             "range": "± 524",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9aaf98424fed0a14f37ce6f8962229967eb0a77a",
+          "message": "Add manual clone impl for VZV (#1230)",
+          "timestamp": "2021-10-28T11:19:02-07:00",
+          "tree_id": "26d2ba782f7fad66471d105f5d0d382cf7f21ea4",
+          "url": "https://github.com/unicode-org/icu4x/commit/9aaf98424fed0a14f37ce6f8962229967eb0a77a"
+        },
+        "date": 1635445526996,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 118083,
+            "range": "± 3654",
             "unit": "ns/iter"
           }
         ]
