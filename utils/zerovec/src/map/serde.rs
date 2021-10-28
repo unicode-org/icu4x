@@ -162,9 +162,9 @@ where
         D: Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            return Err(de::Error::custom(
+            Err(de::Error::custom(
                 "ZeroMapBorrowed cannot be deserialized from human-readable formats",
-            ));
+            ))
         } else {
             let deserialized: ZeroMap<'de, K, V> = ZeroMap::deserialize(deserializer)?;
             let keys = if let Some(keys) = deserialized.keys.maybe_as_borrowed() {
