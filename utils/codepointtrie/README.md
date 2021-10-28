@@ -1,4 +1,4 @@
-# icu_codepointtrie [![crates.io](http://meritbadge.herokuapp.com/icu_codepointtrie)](https://crates.io/crates/icu_codepointtrie)
+# icu_codepointtrie [![crates.io](https://img.shields.io/crates/v/icu_codepointtrie)](https://crates.io/crates/icu_codepointtrie)
 
 `icu_codepointtrie` is a utility crate of the [`ICU4X`] project.
 

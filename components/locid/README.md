@@ -1,4 +1,4 @@
-# icu_locid [![crates.io](http://meritbadge.herokuapp.com/icu_locid)](https://crates.io/crates/icu_locid)
+# icu_locid [![crates.io](https://img.shields.io/crates/v/icu_locid)](https://crates.io/crates/icu_locid)
 
 `icu_locid` is one of the [`ICU4X`] components.
 

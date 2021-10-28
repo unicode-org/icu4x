@@ -1,4 +1,4 @@
-# icu_uniset [![crates.io](http://meritbadge.herokuapp.com/icu_uniset)](https://crates.io/crates/icu_uniset)
+# icu_uniset [![crates.io](https://img.shields.io/crates/v/icu_uniset)](https://crates.io/crates/icu_uniset)
 
 `icu_uniset` is one of the [`ICU4X`] components.
 

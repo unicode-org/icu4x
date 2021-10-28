@@ -1,4 +1,4 @@
-# icu [![crates.io](http://meritbadge.herokuapp.com/icu)](https://crates.io/crates/icu)
+# icu [![crates.io](https://img.shields.io/crates/v/icu)](https://crates.io/crates/icu)
 
 `icu` is the main meta-package of the `ICU4X` project.
 

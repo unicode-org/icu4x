@@ -1,4 +1,4 @@
-# icu_provider_blob [![crates.io](http://meritbadge.herokuapp.com/icu_provider_blob)](https://crates.io/crates/icu_provider_blob)
+# icu_provider_blob [![crates.io](https://img.shields.io/crates/v/icu_provider_blob)](https://crates.io/crates/icu_provider_blob)
 
 `icu_provider_blob` contains implementations of the [`ICU4X`] [`DataProvider`] interface
 that load data from a single blob.
