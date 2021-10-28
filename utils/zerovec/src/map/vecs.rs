@@ -41,7 +41,12 @@ pub trait ZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
     /// A fully borrowed version of this
-    type BorrowedVersion: BorrowedZeroVecLike<'a, T>;
+    type BorrowedVersion: BorrowedZeroVecLike<
+        'a,
+        T,
+        NeedleType = Self::NeedleType,
+        GetType = Self::GetType,
+    >;
     /// Insert an element at `index`
     fn insert(&mut self, index: usize, value: &T);
     /// Remove the element at `index` (panicking if nonexistant)

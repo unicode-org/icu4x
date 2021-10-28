@@ -8,6 +8,7 @@ use crate::ule::AsULE;
 use crate::ZeroVec;
 use core::cmp::Ordering;
 
+mod borrowed;
 mod kv;
 #[cfg(feature = "serde")]
 mod serde;
