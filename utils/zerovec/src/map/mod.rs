@@ -307,3 +307,18 @@ where
         })
     }
 }
+
+impl<'a, K, V> From<ZeroMapBorrowed<'a, K, V>> for ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+{
+    fn from(other: ZeroMapBorrowed<'a, K, V>) -> Self {
+        Self {
+            keys: K::Container::from_borrowed(other.keys),
+            values: V::Container::from_borrowed(other.values),
+        }
+    }
+}

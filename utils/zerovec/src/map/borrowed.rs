@@ -13,6 +13,23 @@ pub use super::vecs::{BorrowedZeroVecLike, ZeroVecLike};
 /// This is useful for fully-zero-copy deserialization from non-human-readable
 /// serialization formats.
 ///
+/// # Examples
+///
+/// ```
+/// use zerovec::map::ZeroMapBorrowed;
+///
+/// // Example byte buffer representing the map { 1: "one" }
+/// let BINCODE_BYTES: &[u8; 31] = &[
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
+///     1, 0, 0, 0, 0, 0, 0, 0, 111, 110, 101
+/// ];
+///
+/// // Deserializing to ZeroMap requires no heap allocations.
+/// let zero_map: ZeroMapBorrowed<u32, str> = bincode::deserialize(BINCODE_BYTES)
+///     .expect("Should deserialize successfully");
+/// assert_eq!(zero_map.get(&1), Some("one"));
+/// ```
+///
 /// This can be obtained from a [`ZeroMap`](super::ZeroMap) via [`ZeroMap::as_borrowed`](super::ZeroMap::as_borrowed)
 pub struct ZeroMapBorrowed<'a, K, V>
 where
@@ -23,6 +40,29 @@ where
 {
     pub(crate) keys: <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVersion,
     pub(crate) values: <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVersion,
+}
+
+impl<'a, K, V> Copy for ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+{
+}
+impl<'a, K, V> Clone for ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+{
+    fn clone(&self) -> Self {
+        ZeroMapBorrowed {
+            keys: self.keys,
+            values: self.values,
+        }
+    }
 }
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>

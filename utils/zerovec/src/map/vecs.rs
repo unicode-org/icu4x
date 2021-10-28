@@ -41,12 +41,8 @@ pub trait ZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
     /// A fully borrowed version of this
-    type BorrowedVersion: BorrowedZeroVecLike<
-        'a,
-        T,
-        NeedleType = Self::NeedleType,
-        GetType = Self::GetType,
-    >;
+    type BorrowedVersion: BorrowedZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
+        + Copy;
     /// Insert an element at `index`
     fn insert(&mut self, index: usize, value: &T);
     /// Remove the element at `index` (panicking if nonexistant)
@@ -68,8 +64,26 @@ pub trait ZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
     /// Note: This really should be `&'b self -> Self::BorrowedVersion<'b>`
     /// but doing that requires complicated `for<'b>` code that will likely trigger
     /// compiler bugs. Instead, we hope that `self` is covariant so this cast will
-    /// just work in the implementation.
+    /// just work in the implementation. Basically, we rely on the compiler
+    /// casting `&'b Self<'a>` to `&'b Self<'b>` when this gets called, which works
+    /// out for `ZeroVec` and `VarZeroVec` containers just fine.
     fn as_borrowed(&'a self) -> Self::BorrowedVersion;
+
+    /// If this type *contains* its borrowed version, return that. Returns `None`
+    /// when this contains owned data.
+    ///
+    /// This is subtly different from the [`Self::as_borrowed()`] since the returned type does
+    /// is not tied to the lifetime of the reference `&self`. The tradeoff here is that this
+    /// returns `None` when owned data is encountered, while we gain the ability to refer to the
+    /// wider lifetime when we *know* for a fact that it is borrowed data.
+    ///
+    /// These are useful to ensure serialization parity between borrowed and owned versions
+    fn maybe_as_borrowed(&self) -> Option<Self::BorrowedVersion>;
+
+    /// Construct from the borrowed version of the type
+    ///
+    /// These are useful to ensure serialization parity between borrowed and owned versions
+    fn from_borrowed(b: Self::BorrowedVersion) -> Self;
 }
 
 impl<'a, T> BorrowedZeroVecLike<'a, T> for ZeroVec<'a, T>
@@ -151,6 +165,16 @@ where
 
     fn as_borrowed(&'a self) -> &'a [T::ULE] {
         self.as_slice()
+    }
+    fn maybe_as_borrowed(&self) -> Option<&'a [T::ULE]> {
+        if let ZeroVec::Borrowed(b) = *self {
+            Some(b)
+        } else {
+            None
+        }
+    }
+    fn from_borrowed(b: &'a [T::ULE]) -> Self {
+        ZeroVec::Borrowed(b)
     }
 }
 
@@ -258,5 +282,15 @@ where
     }
     fn as_borrowed(&'a self) -> VarZeroVecBorrowed<'a, T> {
         self.as_borrowed()
+    }
+    fn maybe_as_borrowed(&self) -> Option<VarZeroVecBorrowed<'a, T>> {
+        if let VarZeroVec::Borrowed(b) = *self {
+            Some(b)
+        } else {
+            None
+        }
+    }
+    fn from_borrowed(b: VarZeroVecBorrowed<'a, T>) -> Self {
+        VarZeroVec::Borrowed(b)
     }
 }
