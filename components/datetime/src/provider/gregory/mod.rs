@@ -116,7 +116,7 @@ pub mod patterns {
 
     /// Helper struct used to allow for projection of `DataPayload<DatePatternsV1>` to
     /// `DataPayload<PatternPluralsV1>`.
-    pub struct PatternPluralsFromPatternsV1Marker;
+    pub(crate) struct PatternPluralsFromPatternsV1Marker;
 
     impl<'data> DataMarker<'data> for PatternPluralsFromPatternsV1Marker {
         type Yokeable = PatternPluralsV1<'static>;

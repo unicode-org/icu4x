@@ -114,7 +114,7 @@ where
     D: DataProvider<'data, DatePatternsV1Marker>
         + DataProvider<'data, DateSkeletonPatternsV1Marker>,
 {
-    pub fn for_options(
+    pub(crate) fn for_options(
         data_provider: &D,
         locale: &Locale,
         options: &DateTimeFormatOptions,
