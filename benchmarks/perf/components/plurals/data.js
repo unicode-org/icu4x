@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635445606594,
+  "lastUpdate": 1635450850895,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17387,6 +17387,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 23752,
             "range": "± 1854",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0e5084a8f41ae28fbfc1c27c5a080fab6e62b22e",
+          "message": "Properly fold lifetimes in zcf/yoke custom derives (#1231)\n\n* Properly fold lifetimes in zcf/yoke custom derives\n\n* fix test\n\n* fmt",
+          "timestamp": "2021-10-28T12:45:47-07:00",
+          "tree_id": "da8c4f42decc761d4cdbb6014c8325bb0b9650f0",
+          "url": "https://github.com/unicode-org/icu4x/commit/0e5084a8f41ae28fbfc1c27c5a080fab6e62b22e"
+        },
+        "date": 1635450845558,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1335,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8093,
+            "range": "± 326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25520,
+            "range": "± 1493",
             "unit": "ns/iter"
           }
         ]
