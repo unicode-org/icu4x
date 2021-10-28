@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635450432573,
+  "lastUpdate": 1635454449129,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2483,6 +2483,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0e5084a8f41ae28fbfc1c27c5a080fab6e62b22e"
         },
         "date": 1635450427075,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 610329,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6621c4078b4c2433bda882cd631c3a639369e656",
+          "message": "Likely subtags should minimize es-ES-preeuro to es-preeuro (#1189)",
+          "timestamp": "2021-10-28T13:52:40-07:00",
+          "tree_id": "0366501958c72e6a917e91a78c0e5af51f9e64ce",
+          "url": "https://github.com/unicode-org/icu4x/commit/6621c4078b4c2433bda882cd631c3a639369e656"
+        },
+        "date": 1635454443060,
         "tool": "ndjson",
         "benches": [
           {
