@@ -1,6 +1,6 @@
 # icu_properties [![crates.io](http://meritbadge.herokuapp.com/icu_properties)](https://crates.io/crates/icu_properties)
 
-`icu_properties` is a utility crate of the [`ICU4X`] project.
+`icu_properties` is one of the [`ICU4X`] components.
 
 This component provides definitions of [Unicode Properties] and APIs for
 retrieving property data in an appropriate data structure.

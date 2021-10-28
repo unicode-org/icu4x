@@ -368,9 +368,9 @@ pub mod plurals {
 }
 
 pub mod properties {
-    //! `icu_properties` is a utility crate of the [`ICU4X`] project.
+    //! Unicode properties
     //!
-    //! This component provides definitions of [Unicode Properties] and APIs for
+    //! This API provides definitions of [Unicode Properties] and functions for
     //! retrieving property data in an appropriate data structure.
     //!
     //! APIs that return a [`UnicodeSet`] exist for binary properties and certain enumerated
