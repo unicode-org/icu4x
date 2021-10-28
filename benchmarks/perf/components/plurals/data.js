@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635437148449,
+  "lastUpdate": 1635445606594,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17345,6 +17345,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24697,
             "range": "± 914",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9aaf98424fed0a14f37ce6f8962229967eb0a77a",
+          "message": "Add manual clone impl for VZV (#1230)",
+          "timestamp": "2021-10-28T11:19:02-07:00",
+          "tree_id": "26d2ba782f7fad66471d105f5d0d382cf7f21ea4",
+          "url": "https://github.com/unicode-org/icu4x/commit/9aaf98424fed0a14f37ce6f8962229967eb0a77a"
+        },
+        "date": 1635445601107,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1176,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7163,
+            "range": "± 315",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23752,
+            "range": "± 1854",
             "unit": "ns/iter"
           }
         ]
