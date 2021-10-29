@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635532984394,
+  "lastUpdate": 1635540442331,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12629,6 +12629,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 118853,
             "range": "± 6529",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0df5de32e80dd283920d351cc1889d7d0b8c65f2",
+          "message": "Update to CLDR 40 (#1216)\n\n- Removes CldrLangID in favor of vanilla LanguageIdentifier",
+          "timestamp": "2021-10-29T13:24:28-07:00",
+          "tree_id": "8693b87d0fca66745b7cb13906c8b56daee4ceeb",
+          "url": "https://github.com/unicode-org/icu4x/commit/0df5de32e80dd283920d351cc1889d7d0b8c65f2"
+        },
+        "date": 1635540436355,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 129819,
+            "range": "± 5466",
             "unit": "ns/iter"
           }
         ]
