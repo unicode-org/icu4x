@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635472108227,
+  "lastUpdate": 1635530033713,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13589,6 +13589,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 42663013,
             "range": "± 1396558",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2313561b1ad423cf30574815f8e285f91f124ffd",
+          "message": "Connect properties provider to the icu4x_datagen exporter tool (#1204)",
+          "timestamp": "2021-10-29T10:47:08-07:00",
+          "tree_id": "136a34b69ef8b1d1ccea8621faf9a511d1788736",
+          "url": "https://github.com/unicode-org/icu4x/commit/2313561b1ad423cf30574815f8e285f91f124ffd"
+        },
+        "date": 1635530028311,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44722891,
+            "range": "± 1525548",
             "unit": "ns/iter"
           }
         ]
