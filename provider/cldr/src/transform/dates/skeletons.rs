@@ -121,7 +121,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
         // The CLDR keys for available_formats can have duplicate skeletons with either
         // an additional variant, or with multiple variants for different plurals.
         for (skeleton_str, pattern_str) in other.available_formats.0.iter() {
-            let (skeleton_str, variant_str) = match skeleton_str.split_once("-count-") {
+            let (skeleton_str, plural_form_str) = match skeleton_str.split_once("-count-") {
                 Some((s, v)) => (s, v),
                 None => (skeleton_str.as_ref(), "other"),
             };
@@ -129,11 +129,11 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
             patterns
                 .entry(skeleton_str.to_string())
                 .and_modify(|map| {
-                    map.insert(variant_str.to_string(), pattern_str.to_string());
+                    map.insert(plural_form_str.to_string(), pattern_str.to_string());
                 })
                 .or_insert_with(|| {
                     let mut map = HashMap::new();
-                    map.insert(variant_str.to_string(), pattern_str.to_string());
+                    map.insert(plural_form_str.to_string(), pattern_str.to_string());
                     map
                 });
         }
@@ -144,6 +144,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
             let skeleton = match Skeleton::try_from(skeleton_str.as_str()) {
                 Ok(s) => s,
                 Err(SkeletonError::SymbolUnimplemented(_)) => continue,
+                Err(SkeletonError::SkeletonHasVariant) => continue,
                 Err(err) => panic!(
                     "Unexpected skeleton error while parsing skeleton {:?} {}",
                     skeleton_str, err

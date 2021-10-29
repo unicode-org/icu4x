@@ -24,6 +24,8 @@ pub enum SkeletonError {
     SymbolUnimplemented(char),
     #[displaydoc("unimplemented field {0} in skeleton")]
     UnimplementedField(char),
+    #[displaydoc("skeleton has a variant subtag")]
+    SkeletonHasVariant,
     #[displaydoc("{0}")]
     Fields(fields::Error),
 }
@@ -46,7 +48,10 @@ impl From<fields::LengthError> for SkeletonError {
 impl From<fields::SymbolError> for SkeletonError {
     fn from(symbol_error: fields::SymbolError) -> Self {
         match symbol_error {
-            fields::SymbolError::Invalid(ch) => Self::SymbolInvalid(ch),
+            fields::SymbolError::Invalid(ch) => match ch {
+                b'-' => Self::SkeletonHasVariant,
+                _ => Self::SymbolInvalid(ch),
+            },
             fields::SymbolError::InvalidIndex(_) => unimplemented!(),
             fields::SymbolError::Unknown(ch) => {
                 // NOTE: If you remove a symbol due to it now being supported,
