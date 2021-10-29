@@ -145,9 +145,9 @@ Things “just get better” (smaller, faster), no changes required.
 
 ## Vertical fallback
 
-There are already quite a few examples on how this would work, in the “ICU4X: Handling horizontal fallbacks”(TODO) document. To the point where I think it is “kind of clear” how it works.
+There are already quite a few examples on how this would work, in the “ICU4X: Handling horizontal fallbacks”(TODO) document, which already fairly clearly illustrate how it works.
 
-But to summarize things I think our vertical fallback should:
+But to summarize things, vertical fallback should:
 
 ### Do what ICU does
 
@@ -165,7 +165,7 @@ I don’t know if it is useful to document here (in a design document) what the 
 **Note:** Improve CLDR / ICU behavior, and keep up with that behavior in ICU4X.  
 But not diverge, or invent our own algorithm.
 
-### Optional (flags?)
+### Optional functionality (via flags?)
 
 We might use the matching list returned by the locale matcher (proposed API).
 
