@@ -28,9 +28,9 @@ A common option is a very simple “cuts from the right” strategy (language + 
 More sophisticated algorithms would go from Spanish Argentina (`es-AR`) to Spanish-Latin America (`es-419`) to other Spanish locales in Latin America (`es-MX`, or `es-US`) to generic Spanish (`es`) to “OK, give me any kind of Spanish you might have,” and finally to root.
 (`es-AR` → `es-419` → `es-MX` / `es-US` → `es` → `es-*` → `root`)
 
-I’ve also heard good arguments for the fallback to the next locale in the user list before going to `root` (or ultimate fallback). This would of course mean the whole mechanism being applied to each locale in the chain (imagine so a user listing Italian Swiss + French Swiss would go through `it-CH` → `it` → `it-IT` → `it-*` → **<span style="color:red">fr-CH → fr → fr-FR → fr-*</span>** → `root`.
+There are good arguments for the fallback to the next locale in the user list before going to `root` (or ultimate fallback). This would of course mean the whole mechanism being applied to each locale in the chain (so imagine a user listing Italian Swiss + French Swiss would go through `it-CH` → `it` → `it-IT` → `it-*` → **<span style="color:red">fr-CH → fr → fr-FR → fr-*</span>** → `root`. 
 
-I’ve also heard good arguments against.
+There are also good arguments against this strategy.
 
 I think this makes a good example where we can’t make a good decision as library owners, and will have to provide an option for the developers using the library to configure the behavior.
 
