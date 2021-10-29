@@ -121,14 +121,7 @@ We don’t even save that much. The 12 long month names in English, when compres
 
 Trying to save data makes sense for big data, like collation (where there is not much horizontal fallback to do), or time zones, or country / language names, where (again) we can’t even do much horizontal fallback.
 
-So let’s go back to the older “rule of thumb”:
-
-_“Rules of Optimization:  
-Rule 1: Don't do it.  
-Rule 2 (for experts only): Don't do it yet.”_
-
-_― Michael A. Jackson  
-premature optimization is the root of all evil._
+So let’s go back to the older “rule of thumb”: “premature optimization is the root of all evil.”
 
 ### Summary
 
