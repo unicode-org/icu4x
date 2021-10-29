@@ -64,25 +64,25 @@ The user might want some flexibility, but (more often than not) does not know th
 
 Worse, when we format a date there are so many “pieces” that come together, each with its own fallback rules.
 
-Things might (potentially) interfere with the vertical fallback. For example if one cannot find a medium date pattern for English Great Britain, but there is a long date pattern (`"d MMMM y"`). Should we do a vertical fallback to “generic English (`en`, which is actually US English), and get `"MMMM d, y"` (which changes the month-day order) or alter the long pattern, algorithmically replacing `"MMMM"` with `"MMM"` and getting `"d MMM y"`?
+Things might (potentially) interfere with the vertical fallback. For example if one cannot find a medium date pattern for English Great Britain, but there is a long date pattern (`"d MMMM y"`). Should we do a vertical fallback to generic English (`en`, which is actually US English), and get `"MMMM d, y"` (which changes the month-day order) or alter the long pattern, algorithmically replacing `"MMMM"` with `"MMM"` and getting `"d MMM y"`?
 
 And some rules can influence each other. What happens if we do vertical fallback for a date pattern, but horizontal fallback for the month names? Can we do this, or should we try to use the same fallback strategy for all “pieces” that come together in the final format?
 
-So I think that the best we can do is:
+So the best we can do is:
 
 1. Let the data provider decided on when, how, and between what “pieces” to do horizontal fallback
-1. Offer some “rough knobs” for the end user for flexibility. But I don’t really see how we can give full control. So they would be there to guide the general strategy (“favour vertical fallback over horizontal fallback”), not low level (“disable genitive-to-nominative fallback”)
+1. Offer some “rough knobs” (configuration controls for high-level functionality) for the end user for flexibility. But it may not be possible to give full control. These controls would be there to guide the general strategy (“favour vertical fallback over horizontal fallback”), not low level (“disable genitive-to-nominative fallback”)
 1. Offer some “rules of thumb” for the implementers on when to do fallback, what kind, and what kind of control to expose for the end user
 
 ### Rules of thumb
 
 #### A. Favor vertical fallback (with one caveat)
 
-CLDR does vertical fallback. So in general if something is missing we can assume that the “parent” locale has the proper data. Or it is a bug.
+CLDR does vertical fallback. So in general if something is missing we can assume that the “parent” locale has the proper data. Otherwise, it should be considered a bug.
 
 So we should favor vertical fallback by default, **but only as long as that fallback does not go to root**.
 
-What do I mean by that? That between the last step of vertical fallback, from a language to root, we should “insert” a horizontal fallback.
+Specifically, what does that mean? It means that between the last step of vertical fallback, from a language to root, we should “insert” a horizontal fallback.
 
 So a Spanish-Argentina locale would try `es-AR` → `es-419` → `es` → `es-*` → `root` (or whatever level or “smartness” we put in the vertical fallback) should become `es-AR` → `es-419` → `es` → `es-*` → (horizontal to `es-AR`, `es-419`, `es`, `es-*`) → `root`.
 
@@ -90,7 +90,7 @@ So a Spanish-Argentina locale would try `es-AR` → `es-419` → `es` → `es-*`
 
 In general there is such a thing as “too smart for your own good.”
 
-I have often seen applications trying to “massage” the locale data in code in order to get the result they expected.  
+Oftentimes, applications try to “massage” the locale data in code in order to get the result they expected.  
 That risks damaging the correct results in other locales.
 
 And it is a lot easier to fix the data and download it on demand with the next opportunity, rather than fix code that tried horizontal fallback and got it wrong.
@@ -101,19 +101,17 @@ In general horizontal fallback between two numeric forms (`"d"` ↔ `"dd"` or `"
 
 Or between format / standalone forms. You can safely go from format to standalone because it is basically using sentence casing (“septembrie” → “Septembrie”, in Romanian).
 
-That is fine and works for all locales (warning: assuming you know how to do sentence casing correctly :-).
+That is fine and works for all locales. (And don't forget: you also need to perform sentence casing correctly).
 
-But you can’t algorithmically go from standalone to format, because that implies lowercasing. And not all locales do that (think English, where the formatting month name is still sentence case), and because lowercasing can be ambiguous (more than one mapping).
+But we can’t algorithmically go from standalone to format, because that implies lowercasing. And not all locales do that (ex: in English, the formatted month name is still in sentence case), and because lowercasing can be ambiguous (more than one mapping).
 
-You might note from all these examples that you actually need to know A LOT about what you are trying to fallback between. And not only about the kind of data, but also about all kinds of locales.
+From all these examples, it might seem that one actually needs to know **a lot** about what they are trying to fallback between. And not only about the kind of data, but also about all kinds of locales.
 
-So this takes me to the next rule of thumb 
+So overlaps nicely with the next rule of thumb.
 
 #### D. Don’t do horizontal fallback
 
-I know this will be controversial… :-)
-
-But in the end it is the safest option.
+Although this may be controversial, in the end, it is the safest option.
 
 There are very few safe mappings, and most of them are more on the “let’s save memory / data size” side of things, rather than “let’s fix things / get better results.”
 
@@ -134,7 +132,7 @@ premature optimization is the root of all evil._
 
 ### Summary
 
-I think that the provider should behave as if there is no fallback of any kind, vertical or horizontal.
+The provider should behave as if there is no fallback of any kind, vertical or horizontal.
 
 The implementer is free to decide if some form of fallback can save some data, and decide where to resolve it.
 
@@ -195,7 +193,7 @@ In recent years Unicode recognized the need and the complexity of the problem an
 
 For ICU4X we have already explained the three kinds of operations that requires one to go through a list of languages to find a match: vertical fallback, horizontal fallback, and language matching.
 
-The core difference between the matching described here and what I called “fallback” (vertical and horizontal) is that the matching affects big sections of the UI, and cannot be “hidden” under the cover, the way fallback can. It has to be public functionality, exposed to developers.
+The core difference between the matching described here and what is called above as “fallback” (vertical and horizontal) is that the matching affects big sections of the UI, and cannot be “hidden” under the cover, the way fallback can. It has to be public functionality, exposed to developers.
 
 It is used to determine the locale of the whole application, or just a dialog / screen / panel.
 Something composed of several UI elements (text content, labels, lists, buttons, and so on), some with locale-dependent fragments (dates / times / numbers, and so on).
@@ -230,7 +228,7 @@ The current ICU implementation is trying really hard to match languages that the
 
 For that it uses CLDR data on mutually intelligibility, and country + language data.
 
-And at the first look this gives good results: if I want Maori, there is a good chance that I understand English New Zealand, so that would be a reasonable match.
+And at the first look this gives good results: for a user that requests Maori, there is a good chance that they understand English New Zealand, so that would be a reasonable match.
 
 Similar for Cherokee → English US, or Quechua → Spanish Latin America, or Catalan → Spanish.
 
