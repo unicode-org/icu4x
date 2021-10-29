@@ -11,11 +11,11 @@ This will also clarify what we mean by “horizontal fallback”, and narrow dow
 
 ## Terminology
 
-### Language negotiation
+### Horizontal fallback
 
-At the highest level, usually application or screen (sometimes “panel”) we need to agree on what language to use. The typical requirement at this level is to take an ordered list of locales that the user wants / understands, a list of locales that the component has available, and return the best match. Similar to two people who met for the very first time and are trying to figure out what language to use for a conversation.
+Used to load similar resources from inside the same locale.
 
-At the end of this the whole application / screen / panel will end up using one language, not a mixture. There might be small “disagreements” (for example French-France, even if “we agreed” on French Canadian), but not across languages (so no German if we agreed French).
+Some examples are given in [issue #259](https://github.com/unicode-org/icu4x/issues/259). The issue also describes pretty well the options.
 
 ### Vertical fallback
 
@@ -34,11 +34,11 @@ There are also good arguments against this strategy.
 
 The case described above, with different users desiring different resolution behavior, makes a good example where we can’t make a good decision as library owners, and will have to provide an option for the developers using the library to configure the behavior.
 
-### Horizontal fallback
+### Language negotiation
 
-Used to load similar resources from inside the same locale.
+At the highest level, usually application or screen (sometimes “panel”) we need to agree on what language to use. The typical requirement at this level is to take an ordered list of locales that the user wants / understands, a list of locales that the component has available, and return the best match. Similar to two people who met for the very first time and are trying to figure out what language to use for a conversation.
 
-Some examples are given in [issue #259](https://github.com/unicode-org/icu4x/issues/259). The issue also describes pretty well the options.
+At the end of this the whole application / screen / panel will end up using one language, not a mixture. There might be small “disagreements” (for example French-France, even if “we agreed” on French Canadian), but not across languages (so no German if we agreed French).
 
 ## Horizontal fallback
 
@@ -145,7 +145,7 @@ Things “just get better” (smaller, faster), no changes required.
 
 ## Vertical fallback
 
-There are already quite a few examples on how this would work, in the “ICU4X: Handling horizontal fallbacks”(TODO) document, which already fairly clearly illustrate how it works.
+There are already quite a few examples on how this would work, in the “Horizontal fallback” section, which already fairly clearly illustrate how it works.
 
 But to summarize things, vertical fallback should:
 
