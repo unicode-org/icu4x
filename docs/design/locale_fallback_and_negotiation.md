@@ -252,7 +252,7 @@ ICU4X is designed to be reusable across operating systems and across programming
 
 But if our negotiations and fallbacks differ too much from the ones on the host environment then the users will get unexpected results: the whole application running in one locale, with one panel in a different one, or just dates and times in a different locale.
 
-So I think we should have a way to emulate OS specific matching.
+So we should have a way to emulate OS specific matching.
 
 It does not have to be there in the first implementation, and does not have to be “control knobs,” it can very well be alternate implementations. Some might even call the underlying OS.
 
