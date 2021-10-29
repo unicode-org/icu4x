@@ -44,7 +44,7 @@ Some examples are given in [issue #259](https://github.com/unicode-org/icu4x/iss
 
 Like in most situations, there is no good answer to this problem. We will need to compromise.
 
-The issue summarizes the options pretty well, and I will copy them here for convenience, with the risk of duplication / getting out of sync:
+The comment in issue #259 summarizes the options pretty well, and it is reproduced here for convenience:
 
 > The two drives that are extremes are:
 >
