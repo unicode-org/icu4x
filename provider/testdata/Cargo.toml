@@ -98,12 +98,6 @@ locales = [
     # - Interesting case-mappings
     "tr",
 
-    # Chinese:
-    # - Multiple scripts
-    # - Complex date patterns
-    "zh",
-    "zh-Hant",
-
     # Root data
     "und",
 ]
@@ -129,7 +123,7 @@ cldr_json_glob = [
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata.
-gitref = "40.0.0-BETA4d"
+gitref = "40.0.0"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
