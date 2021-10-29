@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635472176444,
+  "lastUpdate": 1635530042339,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17597,6 +17597,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22163,
             "range": "± 946",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2313561b1ad423cf30574815f8e285f91f124ffd",
+          "message": "Connect properties provider to the icu4x_datagen exporter tool (#1204)",
+          "timestamp": "2021-10-29T10:47:08-07:00",
+          "tree_id": "136a34b69ef8b1d1ccea8621faf9a511d1788736",
+          "url": "https://github.com/unicode-org/icu4x/commit/2313561b1ad423cf30574815f8e285f91f124ffd"
+        },
+        "date": 1635530037868,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 999,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5797,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18067,
+            "range": "± 107",
             "unit": "ns/iter"
           }
         ]
