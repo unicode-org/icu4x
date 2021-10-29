@@ -624,6 +624,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "eyre"
+version = "0.6.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "221239d1d5ea86bf5d6f91c9d6bc3646ffe471b08ff9b0f91c44f115ac969d2b"
+dependencies = [
+ "indenter",
+ "once_cell",
+]
+
+[[package]]
 name = "fixed_decimal"
 version = "0.2.1"
 dependencies = [
@@ -1333,12 +1343,14 @@ name = "icu_provider_uprops"
 version = "0.3.0"
 dependencies = [
  "displaydoc",
+ "eyre",
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
  "serde",
+ "tinystr",
  "toml",
  "zerovec",
 ]
@@ -1419,6 +1431,12 @@ name = "impls"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a46645bbd70538861a90d0f26c31537cdf1e44aae99a794fb75a664b70951bc"
+
+[[package]]
+name = "indenter"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce23b50ad8242c51a442f3ff322d56b02f08852c77e4c0b4d3fd684abc89c683"
 
 [[package]]
 name = "indexmap"

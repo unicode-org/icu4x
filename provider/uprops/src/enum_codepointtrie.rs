@@ -6,18 +6,22 @@ use crate::error::Error;
 use crate::uprops_serde;
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 
+use crate::reader::*;
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_properties::{GeneralSubcategory, Script};
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
-use zerovec::ZeroVec;
-
-use core::convert::TryFrom;
-
+use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::fs;
+use std::io;
 use std::path::PathBuf;
+use tinystr::TinyStr16;
+use zerovec::ZeroVec;
+use eyre::WrapErr;
+use std::convert::TryInto;
 
 /// This data provider returns `CodePointTrie` data inside a
 /// `UnicodePropertyMap` data struct. The source data is the same as that of
@@ -25,30 +29,35 @@ use std::path::PathBuf;
 /// for the property(-ies) desired, as given by the ICU4C property data
 /// exporter tool.
 pub struct EnumeratedPropertyCodePointTrieProvider {
-    /// Path to the root directory containing the property data TOML files.
-    root_dir: PathBuf,
+    data: HashMap<TinyStr16, uprops_serde::enumerated::EnumeratedPropertyMap>,
 }
 
 impl EnumeratedPropertyCodePointTrieProvider {
-    pub fn new(root_dir: PathBuf) -> Self {
-        EnumeratedPropertyCodePointTrieProvider { root_dir }
-    }
-
-    fn get_toml_data(&self, name: &str) -> Result<uprops_serde::enumerated::Main, Error> {
-        let mut path: PathBuf = self.root_dir.clone().join(name);
-        path.set_extension("toml");
-        let toml_str = fs::read_to_string(&path).map_err(|e| Error::Io(e, path.clone()))?;
-        toml::from_str(&toml_str).map_err(|e| Error::Toml(e, path))
+    pub fn try_new(root_dir: PathBuf) -> eyre::Result<Self> {
+        let mut result = Self {
+            data: HashMap::new()
+        };
+        for path in get_dir_contents(&root_dir)? {
+            let key: TinyStr16 = path.file_stem()
+                .and_then(|p| p.to_str())
+                .ok_or_else(|| eyre::eyre!("Invalid file name: {:?}", path))?
+                .parse()?;
+            let toml_str = read_path_to_string(&path)?;
+            let value = toml::from_str(&toml_str)
+                .wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
+            result.data.insert(key, value);
+        }
+        Ok(result)
     }
 }
 
-impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePointTrie>
+impl<T: TrieValue> TryFrom<&uprops_serde::enumerated::EnumeratedPropertyCodePointTrie>
     for UnicodePropertyMapV1<'static, T>
 {
     type Error = DataError;
 
     fn try_from(
-        cpt_data: EnumeratedPropertyCodePointTrie,
+        cpt_data: &EnumeratedPropertyCodePointTrie,
     ) -> Result<UnicodePropertyMapV1<'static, T>, DataError> {
         let trie_type_enum: TrieType =
             TrieType::try_from(cpt_data.trie_type_enum_val).map_err(DataError::new_resc_error)?;
@@ -62,11 +71,11 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
         };
         let index: ZeroVec<u16> = ZeroVec::clone_from_slice(&cpt_data.index);
         let data: Result<ZeroVec<'static, T>, T::TryFromU32Error> =
-            if let Some(data_8) = cpt_data.data_8 {
+            if let Some(data_8) = &cpt_data.data_8 {
                 data_8.iter().map(|i| T::try_from_u32(*i as u32)).collect()
-            } else if let Some(data_16) = cpt_data.data_16 {
+            } else if let Some(data_16) = &cpt_data.data_16 {
                 data_16.iter().map(|i| T::try_from_u32(*i as u32)).collect()
-            } else if let Some(data_32) = cpt_data.data_32 {
+            } else if let Some(data_32) = &cpt_data.data_32 {
                 data_32.iter().map(|i| T::try_from_u32(*i as u32)).collect()
             } else {
                 return Err(DataError::new_resc_error(
@@ -94,13 +103,7 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
         let prop_name = &req.resource_path.key.sub_category;
-
-        let toml_data: uprops_serde::enumerated::Main = self
-            .get_toml_data(prop_name)
-            .map_err(DataError::new_resc_error)?;
-
-        let source_cpt_data: uprops_serde::enumerated::EnumeratedPropertyCodePointTrie =
-            toml_data.enum_property.data.code_point_trie;
+        let source_cpt_data = &self.data.get(&prop_name).unwrap().code_point_trie;
 
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
 
