@@ -258,7 +258,7 @@ It does not have to be there in the first implementation, and does not have to b
 
 But we should design with this direction in mind. Working with interfaces, the ICU-style matching being just the first of several. We can implement a very flexible matcher that is mostly data driven, and create OS specific ones by swapping in / out various data “packages.”
 
-We (ICU4X) might create these customizations, and / or by the developers using ICU4X. The ability to replace the default implementation should be there.
+ICU4X might create these customizations, and / or by the developers using ICU4X. The ability to replace the default implementation should be there.
 
 #### Option to return an ordered list of all locales matching, not just the top match
 
