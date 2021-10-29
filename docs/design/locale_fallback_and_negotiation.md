@@ -60,7 +60,7 @@ The comment in issue #259 summarizes the options pretty well, and it is reproduc
 
 In most cases the provider is in the best position to decide how to do this kind of horizontal fallback, because the provider “knows” the most about all the bits and pieces of the machinery.
 
-The user might want some flexibility, but (more often than not) does not know the “internals.” If I ask for a “reasonably long date, something similar to ‘March 29, 2021’ in English” then what I can ask for is “a full month name, and numeric day / year.” But I don’t know anything about genitive month names, for example.
+The user might want some flexibility, but (more often than not) does not know the “internals.” If we ask for a “reasonably long date, something similar to ‘March 29, 2021’ in English” then what we can ask for is “a full month name, and numeric day / year.” But we won’t know anything about genitive month names, for example.
 
 Worse, when you format a date there are so many “pieces” that come together, each with its own fallback rules.
 
