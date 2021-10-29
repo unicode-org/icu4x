@@ -211,12 +211,12 @@ impl PluralCategory {
     ///
     /// let mut categories = PluralCategory::all();
     ///
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Zero));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::One));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Two));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Few));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Many));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Other));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Zero));
+    /// assert_eq!(categories.next(), Some(PluralCategory::One));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Two));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Few));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Many));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Other));
     /// assert_eq!(categories.next(), None);
     /// ```
     ///
@@ -429,9 +429,9 @@ impl<'data> PluralRules<'data> {
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let mut categories = pr.categories();
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Many));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::One));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Other));
+    /// assert_eq!(categories.next(), Some(PluralCategory::One));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Many));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Other));
     /// assert_eq!(categories.next(), None);
     /// ```
     ///

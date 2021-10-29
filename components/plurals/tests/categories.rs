@@ -36,7 +36,7 @@ fn test_categories() {
             test.langid,
             test.plural_type,
             test.categories,
-            pr.categories().collect::<Vec<&PluralCategory>>(),
+            pr.categories().collect::<Vec<PluralCategory>>(),
         );
 
         for (expected, actual) in test.categories.iter().zip(pr.categories()) {
@@ -51,7 +51,7 @@ fn test_categories() {
                 test.langid,
                 test.plural_type,
                 test.categories,
-                pr.categories().collect::<Vec<&PluralCategory>>(),
+                pr.categories().collect::<Vec<PluralCategory>>(),
             );
         }
     }

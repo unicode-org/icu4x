@@ -544,11 +544,15 @@ mod test {
 
         let fd = fixed_decimal::decimal::FixedDecimal::from(13);
         let operands = PluralOperands::from(&fd);
-        assert!(test_rule(&rule, &operands),);
+        assert!(!test_rule(&rule, &operands),);
 
         let fd = fixed_decimal::decimal::FixedDecimal::from(103);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
+
+        let fd = fixed_decimal::decimal::FixedDecimal::from(113);
+        let operands = PluralOperands::from(&fd);
+        assert!(!test_rule(&rule, &operands),);
 
         let fd = fixed_decimal::decimal::FixedDecimal::from(178);
         let operands = PluralOperands::from(&fd);

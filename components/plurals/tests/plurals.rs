@@ -34,16 +34,16 @@ fn test_plural_rules_missing() {
 
 #[test]
 fn test_plural_category_all() {
-    let categories: Vec<&PluralCategory> = PluralCategory::all().collect();
+    let categories: Vec<PluralCategory> = PluralCategory::all().collect();
 
     assert_eq!(categories.len(), 6);
 
-    assert_eq!(categories[0], &PluralCategory::Few);
-    assert_eq!(categories[1], &PluralCategory::Many);
-    assert_eq!(categories[2], &PluralCategory::One);
-    assert_eq!(categories[3], &PluralCategory::Other);
-    assert_eq!(categories[4], &PluralCategory::Two);
-    assert_eq!(categories[5], &PluralCategory::Zero);
+    assert_eq!(categories[0], PluralCategory::Zero);
+    assert_eq!(categories[1], PluralCategory::One);
+    assert_eq!(categories[2], PluralCategory::Two);
+    assert_eq!(categories[3], PluralCategory::Few);
+    assert_eq!(categories[4], PluralCategory::Many);
+    assert_eq!(categories[5], PluralCategory::Other);
 }
 
 // #[test]
