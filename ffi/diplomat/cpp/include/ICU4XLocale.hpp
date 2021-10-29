@@ -5,9 +5,9 @@
 #include <stdbool.h>
 #include <algorithm>
 #include <memory>
+#include <variant>
 #include <optional>
 #include <span>
-#include <variant>
 #include "diplomat_runtime.hpp"
 
 namespace capi {
@@ -155,7 +155,7 @@ class ICU4XLocale {
 
 
 inline std::optional<ICU4XLocale> ICU4XLocale::create(const std::string_view name) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XLocale_create(name.data(), name.length());
+  auto diplomat_optional_raw_out_value = capi::ICU4XLocale_create(name.data(), name.size());
   std::optional<ICU4XLocale> diplomat_optional_out_value;
   if (diplomat_optional_raw_out_value != nullptr) {
     diplomat_optional_out_value = ICU4XLocale(diplomat_optional_raw_out_value);
@@ -199,7 +199,7 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::basename() c
 }
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::get_unicode_extension_to_writeable(const std::string_view bytes, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XLocale_get_unicode_extension(this->inner.get(), bytes.data(), bytes.length(), &write_writer);
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_get_unicode_extension(this->inner.get(), bytes.data(), bytes.size(), &write_writer);
   diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
@@ -210,7 +210,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> I
 inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::get_unicode_extension(const std::string_view bytes) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XLocale_get_unicode_extension(this->inner.get(), bytes.data(), bytes.length(), &diplomat_writeable_out);
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_get_unicode_extension(this->inner.get(), bytes.data(), bytes.size(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
@@ -240,7 +240,7 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::language() c
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::set_language(const std::string_view bytes) {
-  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_language(this->inner.get(), bytes.data(), bytes.length());
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_language(this->inner.get(), bytes.data(), bytes.size());
   diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
@@ -270,7 +270,7 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::region() con
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::set_region(const std::string_view bytes) {
-  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_region(this->inner.get(), bytes.data(), bytes.length());
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_region(this->inner.get(), bytes.data(), bytes.size());
   diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
@@ -300,7 +300,7 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::script() con
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::set_script(const std::string_view bytes) {
-  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_script(this->inner.get(), bytes.data(), bytes.length());
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_set_script(this->inner.get(), bytes.data(), bytes.size());
   diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {

@@ -1,4 +1,4 @@
-# icu_decimal [![crates.io](http://meritbadge.herokuapp.com/icu_decimal)](https://crates.io/crates/icu_decimal)
+# icu_decimal [![crates.io](https://img.shields.io/crates/v/icu_decimal)](https://crates.io/crates/icu_decimal)
 
 [`icu_decimal`](crate) offers localized decimal number formatting.
 

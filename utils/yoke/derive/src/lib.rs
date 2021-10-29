@@ -321,45 +321,13 @@ fn custom_lt(s: &str) -> Lifetime {
 }
 
 fn replace_lifetime(x: &Type, lt: Lifetime) -> Type {
-    match *x {
-        Type::Group(ref inner) => {
-            let mut inner = inner.clone();
-            inner.elem = Box::new(replace_lifetime(&inner.elem, lt));
-            Type::Group(inner)
+    use syn::fold::Fold;
+    struct ReplaceLifetime(Lifetime);
+
+    impl Fold for ReplaceLifetime {
+        fn fold_lifetime(&mut self, _: Lifetime) -> Lifetime {
+            self.0.clone()
         }
-        Type::Array(ref inner) => {
-            let mut inner = inner.clone();
-            inner.elem = Box::new(replace_lifetime(&inner.elem, lt));
-            Type::Array(inner)
-        }
-        Type::Paren(ref inner) => {
-            let mut inner = inner.clone();
-            inner.elem = Box::new(replace_lifetime(&inner.elem, lt));
-            Type::Paren(inner)
-        }
-        Type::Reference(ref inner) => {
-            let mut inner = inner.clone();
-            inner.elem = Box::new(replace_lifetime(&inner.elem, lt.clone()));
-            inner.lifetime = inner.lifetime.as_ref().map(|_| lt);
-            Type::Reference(inner)
-        }
-        Type::Path(ref path) => {
-            let mut path = path.clone();
-            for segment in path.path.segments.iter_mut() {
-                if let syn::PathArguments::AngleBracketed(ref mut a) = segment.arguments {
-                    for arg in a.args.iter_mut() {
-                        match arg {
-                            syn::GenericArgument::Lifetime(ref mut l) => *l = lt.clone(),
-                            syn::GenericArgument::Type(ref mut t) => {
-                                *t = replace_lifetime(t, lt.clone())
-                            }
-                            _ => (),
-                        }
-                    }
-                }
-            }
-            Type::Path(path)
-        }
-        ref other => other.clone(),
     }
+    ReplaceLifetime(lt).fold_type(x.clone())
 }

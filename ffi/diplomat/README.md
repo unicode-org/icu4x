@@ -1,4 +1,4 @@
-# icu_capi [![crates.io](http://meritbadge.herokuapp.com/icu_capi)](https://crates.io/crates/icu_capi)
+# icu_capi [![crates.io](https://img.shields.io/crates/v/icu_capi)](https://crates.io/crates/icu_capi)
 
 This module contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 FFI bindings. This generates the C, C++ and Wasm bindings. This module also contains the C

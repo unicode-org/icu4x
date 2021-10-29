@@ -15,7 +15,7 @@ use crate::{
         zoned_datetime::{self, FormattedZonedDateTime},
     },
     options::DateTimeFormatOptions,
-    pattern::reference::PatternPlurals,
+    pattern::runtime::PatternPlurals,
     provider::{
         self,
         gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
@@ -123,13 +123,13 @@ impl<'data> ZonedDateTimeFormat<'data> {
         let locale = locale.into();
         let langid: LanguageIdentifier = locale.clone().into();
 
-        let patterns = provider::date_time::patterns_for_options(date_provider, &locale, options)?
-            .unwrap_or_default();
+        let patterns =
+            provider::date_time::PatternSelector::for_options(date_provider, &locale, options)?;
 
-        let requires_data = datetime::analyze_patterns(&patterns, true)
+        let requires_data = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
 
-        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns {
+        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new(
                 langid.clone(),
                 plural_provider,
@@ -163,9 +163,6 @@ impl<'data> ZonedDateTimeFormat<'data> {
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns
-                .patterns_iter()
-                .next()
-                .expect("PatternPlurals should have at least one Pattern")
                 .clone(),
             zone_provider,
         )?;

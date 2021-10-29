@@ -8,6 +8,7 @@
 use crate::{
     format::datetime,
     options::DateTimeFormatOptions,
+    provider::gregory::patterns::PatternPluralsFromPatternsV1Marker,
     provider::gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
 };
 use alloc::string::String;
@@ -16,7 +17,7 @@ use icu_plurals::{provider::PluralRuleStringsV1Marker, PluralRuleType, PluralRul
 use icu_provider::prelude::*;
 
 use crate::{
-    date::DateTimeInput, pattern::reference::PatternPlurals, provider, DateTimeFormatError,
+    date::DateTimeInput, pattern::runtime::PatternPlurals, provider, DateTimeFormatError,
     FormattedDateTime,
 };
 
@@ -62,7 +63,7 @@ use crate::{
 /// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
 pub struct DateTimeFormat<'data> {
     pub(super) locale: Locale,
-    pub(super) patterns: PatternPlurals,
+    pub(super) patterns: DataPayload<'data, PatternPluralsFromPatternsV1Marker>,
     pub(super) symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
     pub(super) ordinal_rules: Option<PluralRules>,
 }
@@ -102,15 +103,15 @@ impl<'data> DateTimeFormat<'data> {
     {
         let locale = locale.into();
 
-        let patterns = provider::date_time::patterns_for_options(data_provider, &locale, options)?
-            .unwrap_or_default();
+        let patterns =
+            provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
 
-        let requires_data = datetime::analyze_patterns(&patterns, false)
+        let requires_data = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
 
         let langid: icu_locid::LanguageIdentifier = locale.clone().into();
 
-        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns {
+        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new(
                 langid.clone(),
                 data_provider,
@@ -156,7 +157,7 @@ impl<'data> DateTimeFormat<'data> {
     /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
-        patterns: PatternPlurals,
+        patterns: DataPayload<'data, PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
         ordinal_rules: Option<PluralRules>,
     ) -> Self {
@@ -198,7 +199,7 @@ impl<'data> DateTimeFormat<'data> {
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, 'data, T>
     where
         T: DateTimeInput,
     {
@@ -243,7 +244,7 @@ impl<'data> DateTimeFormat<'data> {
         value: &impl DateTimeInput,
     ) -> core::fmt::Result {
         datetime::write_pattern_plurals(
-            &self.patterns,
+            &self.patterns.get().0,
             self.symbols.as_ref().map(|s| s.get()),
             value,
             self.ordinal_rules.as_ref(),

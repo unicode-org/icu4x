@@ -1,4 +1,4 @@
-# icu_provider_uprops [![crates.io](http://meritbadge.herokuapp.com/icu_provider_uprops)](https://crates.io/crates/icu_provider_uprops)
+# icu_provider_uprops [![crates.io](https://img.shields.io/crates/v/icu_provider_uprops)](https://crates.io/crates/icu_provider_uprops)
 
 `icu_provider_uprops` contains implementations of the [`ICU4X`]
 [`DataProvider`] interface backed by TOML files exported by the

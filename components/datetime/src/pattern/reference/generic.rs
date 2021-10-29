@@ -8,15 +8,10 @@ use super::{
     Parser, Pattern,
 };
 use alloc::vec::Vec;
+use core::str::FromStr;
 
 pub struct GenericPattern {
     pub items: Vec<GenericPatternItem>,
-}
-
-impl GenericPattern {
-    pub fn from_bytes(input: &str) -> Result<Self, PatternError> {
-        Parser::new(input).parse_generic().map(Self::from)
-    }
 }
 
 impl GenericPattern {
@@ -48,19 +43,26 @@ impl From<Vec<GenericPatternItem>> for GenericPattern {
     }
 }
 
+impl FromStr for GenericPattern {
+    type Err = PatternError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Parser::new(s).parse_generic().map(Self::from)
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use crate::pattern::reference;
+    use super::*;
 
     #[test]
     fn test_reference_generic_pattern_combine() {
-        let pattern = reference::GenericPattern::from_bytes("{0} 'at' {1}")
+        let pattern: GenericPattern = "{0} 'at' {1}"
+            .parse()
             .expect("Failed to parse a generic pattern.");
 
-        let date =
-            reference::Pattern::from_bytes("Y/m/d").expect("Failed to parse a date pattern.");
-        let time =
-            reference::Pattern::from_bytes("HH:mm").expect("Failed to parse a time pattern.");
+        let date = "Y/m/d".parse().expect("Failed to parse a date pattern.");
+        let time = "HH:mm".parse().expect("Failed to parse a time pattern.");
 
         let pattern = pattern
             .combined(vec![date, time])

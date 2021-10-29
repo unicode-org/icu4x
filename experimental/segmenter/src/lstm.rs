@@ -4,36 +4,35 @@
 
 use crate::language::*;
 
+use icu_provider::DataPayload;
 use icu_segmenter_lstm::lstm::Lstm;
+use icu_segmenter_lstm::structs;
 use std::char::decode_utf16;
 use std::str::Chars;
 
 // TODO:
 // json file is big, So I should use anoher binary format like npy.
 // But provided npy uses tensorflow dtype.
-const THAI_MODEL: &[u8; 373466] = include_bytes!(
-    "../../segmenter_lstm/tests/testdata/Thai_codepoints_exclusive_model4_heavy/weights.json"
-);
+const THAI_MODEL: &[u8; 373466] =
+    include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/th.json");
 const BURMESE_MODEL: &[u8; 475209] =
-    include_bytes!("../data/Burmese_codepoints_exclusive_model4_heavy/weights.json");
+    include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
 
 lazy_static! {
-    static ref THAI_LSTM: Lstm = {
-        let lstm_data = serde_json::from_slice(THAI_MODEL).expect("JSON syntax error");
-        Lstm::try_new(lstm_data).unwrap()
-    };
-    static ref BURMESE_LSTM: Lstm = {
-        let lstm_data = serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
-        Lstm::try_new(lstm_data).unwrap()
-    };
+    static ref THAI_LSTM: structs::LstmData<'static> =
+        serde_json::from_slice(THAI_MODEL).expect("JSON syntax error");
+    static ref BURMESE_LSTM: structs::LstmData<'static> =
+        serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
 }
 
 // LSTM model depends on language, So we have to switch models per language.
-fn get_best_lstm_model(codepoint: u32) -> &'static Lstm {
+fn get_best_lstm_model(codepoint: u32) -> Lstm<'static> {
+    // TODO:
+    // DataPayLoad isn't thread safe. We need anything static version.
     let lang = get_language(codepoint);
     match lang {
-        Language::Thai => &*THAI_LSTM,
-        Language::Burmese => &*BURMESE_LSTM,
+        Language::Thai => Lstm::try_new(DataPayload::from_owned(THAI_LSTM.clone())).unwrap(),
+        Language::Burmese => Lstm::try_new(DataPayload::from_owned(BURMESE_LSTM.clone())).unwrap(),
         _ => panic!("Unsupported"),
     }
 }
@@ -164,7 +163,7 @@ pub fn get_line_break_utf8(input: &str) -> Option<Vec<usize>> {
 
         let str_per_lang = str_per_lang.unwrap();
         let lstm = get_best_lstm_model(str_per_lang.chars().next().unwrap() as u32);
-        let lstm_iter = LstmSegmenterIterator::new(lstm, &str_per_lang);
+        let lstm_iter = LstmSegmenterIterator::new(&lstm, &str_per_lang);
         let mut r: Vec<usize> = lstm_iter.map(|n| offset + n).collect();
         result.append(&mut r);
         offset += str_per_lang.len();
@@ -188,7 +187,7 @@ pub fn get_line_break_utf16(input: &[u16]) -> Option<Vec<usize>> {
         }
 
         let lstm = get_best_lstm_model(str_per_lang.chars().next().unwrap() as u32);
-        let lstm_iter = LstmSegmenterIteratorUtf16::new(lstm, &str_per_lang);
+        let lstm_iter = LstmSegmenterIteratorUtf16::new(&lstm, &str_per_lang);
         let mut r: Vec<usize> = lstm_iter.map(|n| offset + n).collect();
         result.append(&mut r);
         offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf16());

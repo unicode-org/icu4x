@@ -11,7 +11,6 @@ use icu_datetime::{pattern, provider::*};
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 
@@ -102,34 +101,95 @@ impl<'data> IterableDataProviderCore for DatePatternsProvider<'data> {
     }
 }
 
-impl From<&cldr_json::LengthPatterns> for gregory::patterns::LengthPatternsV1 {
+impl From<&cldr_json::LengthPatterns> for gregory::patterns::LengthPatternsV1<'_> {
     fn from(other: &cldr_json::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
-            full: Cow::Owned(other.full.get_pattern().clone()),
-            long: Cow::Owned(other.long.get_pattern().clone()),
-            medium: Cow::Owned(other.medium.get_pattern().clone()),
-            short: Cow::Owned(other.short.get_pattern().clone()),
+            full: other
+                .full
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            long: other
+                .long
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            medium: other
+                .medium
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            short: other
+                .short
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
         }
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for gregory::patterns::LengthPatternsV1 {
+impl From<&cldr_json::DateTimeFormats> for gregory::patterns::LengthPatternsV1<'_> {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
-            full: Cow::Owned(other.full.get_pattern().clone()),
-            long: Cow::Owned(other.long.get_pattern().clone()),
-            medium: Cow::Owned(other.medium.get_pattern().clone()),
-            short: Cow::Owned(other.short.get_pattern().clone()),
+            full: other
+                .full
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            long: other
+                .long
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            medium: other
+                .medium
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            short: other
+                .short
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
         }
     }
 }
 
-impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
+impl From<&cldr_json::DateTimeFormats> for gregory::patterns::GenericLengthPatternsV1<'_> {
+    fn from(other: &cldr_json::DateTimeFormats) -> Self {
+        // TODO(#308): Support numbering system variations. We currently throw them away.
+        Self {
+            full: other
+                .full
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            long: other
+                .long
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            medium: other
+                .medium
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            short: other
+                .short
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+        }
+    }
+}
+
+impl From<&cldr_json::Dates> for gregory::DatePatternsV1<'_> {
     fn from(other: &cldr_json::Dates) -> Self {
-        let length_combinations_v1 =
-            gregory::patterns::LengthPatternsV1::from(&other.calendars.gregorian.datetime_formats);
+        let length_combinations_v1 = gregory::patterns::GenericLengthPatternsV1::from(
+            &other.calendars.gregorian.datetime_formats,
+        );
         let skeletons_v1 =
             gregory::DateSkeletonPatternsV1::from(&other.calendars.gregorian.datetime_formats);
 
@@ -138,15 +198,17 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
         let pattern_str_medium = other.calendars.gregorian.time_formats.medium.get_pattern();
         let pattern_str_short = other.calendars.gregorian.time_formats.short.get_pattern();
 
-        use pattern::reference::Pattern;
-
-        let pattern_full = Pattern::from_bytes(pattern_str_full)
+        let pattern_full = pattern_str_full
+            .parse()
             .expect("Failed to create a full Pattern from bytes.");
-        let pattern_long = Pattern::from_bytes(pattern_str_long)
+        let pattern_long = pattern_str_long
+            .parse()
             .expect("Failed to create a long Pattern from bytes.");
-        let pattern_medium = Pattern::from_bytes(pattern_str_medium)
+        let pattern_medium = pattern_str_medium
+            .parse()
             .expect("Failed to create a medium Pattern from bytes.");
-        let pattern_short = Pattern::from_bytes(pattern_str_short)
+        let pattern_short = pattern_str_short
+            .parse()
             .expect("Failed to create a short Pattern from bytes.");
 
         let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
@@ -186,6 +248,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                         pattern_str_full,
                         pattern_full,
                     )
+                    .as_ref()
                     .expect("Failed to apply a coarse hour cycle to a full pattern.")
                     .into(),
                 long: alt_hour_cycle
@@ -195,6 +258,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                         pattern_str_long,
                         pattern_long,
                     )
+                    .as_ref()
                     .expect("Failed to apply a coarse hour cycle to a long pattern.")
                     .into(),
                 medium: alt_hour_cycle
@@ -204,6 +268,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                         pattern_str_medium,
                         pattern_medium,
                     )
+                    .as_ref()
                     .expect("Failed to apply a coarse hour cycle to a medium pattern.")
                     .into(),
                 short: alt_hour_cycle
@@ -213,6 +278,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                         pattern_str_short,
                         pattern_short,
                     )
+                    .as_ref()
                     .expect("Failed to apply a coarse hour cycle to a short pattern.")
                     .into(),
             };
@@ -238,7 +304,8 @@ fn test_basic() {
     use icu_locid_macros::langid;
 
     let cldr_paths = crate::cldr_paths::for_test();
-    let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+    let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
+        .expect("Failed to retrieve provider");
 
     let cs_dates: DataPayload<gregory::DatePatternsV1Marker> = provider
         .load_payload(&DataRequest {
@@ -250,11 +317,11 @@ fn test_basic() {
                 },
             },
         })
-        .unwrap()
+        .expect("Failed to load payload")
         .take_payload()
-        .unwrap();
+        .expect("Failed to retrieve payload");
 
-    assert_eq!("d. M. y", cs_dates.get().date.medium);
+    assert_eq!("d. M. y", cs_dates.get().date.medium.to_string());
 }
 
 #[test]
@@ -262,7 +329,8 @@ fn test_with_numbering_system() {
     use icu_locid_macros::langid;
 
     let cldr_paths = crate::cldr_paths::for_test();
-    let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+    let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
+        .expect("Failed to retrieve provider");
 
     let cs_dates: DataPayload<gregory::DatePatternsV1Marker> = provider
         .load_payload(&DataRequest {
@@ -274,11 +342,11 @@ fn test_with_numbering_system() {
                 },
             },
         })
-        .unwrap()
+        .expect("Failed to load payload")
         .take_payload()
-        .unwrap();
+        .expect("Failed to retrieve payload");
 
-    assert_eq!("d MMM y", cs_dates.get().date.medium);
+    assert_eq!("d MMM y", cs_dates.get().date.medium.to_string());
     // TODO(#308): Support numbering system variations. We currently throw them away.
-    assert_eq!("d/M/yy", cs_dates.get().date.short);
+    assert_eq!("d/M/yy", cs_dates.get().date.short.to_string());
 }

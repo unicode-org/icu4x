@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::components::SliceComponents;
+use super::borrowed::VarZeroVecBorrowed;
 use super::*;
 use core::marker::PhantomData;
 use core::mem;
@@ -43,7 +43,7 @@ use core::mem;
 /// ```
 //
 // safety invariant: The slice MUST be one which parses to
-// a valid SliceComponents<T>
+// a valid VarZeroVecBorrowed<T>
 #[repr(transparent)]
 pub struct VarZeroVecULE<T: ?Sized> {
     marker: PhantomData<T>,
@@ -52,32 +52,33 @@ pub struct VarZeroVecULE<T: ?Sized> {
 }
 
 impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
+    /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
     #[inline]
-    fn get_components<'a>(&'a self) -> SliceComponents<'a, T> {
+    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
             // safety: VarZeroVecULE is guaranteed to parse here
-            SliceComponents::from_bytes_unchecked(&self.entire_slice)
+            VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
         }
     }
 
     /// Get the number of elements in this vector
     pub fn len(&self) -> usize {
-        self.get_components().len()
+        self.as_borrowed().len()
     }
 
     /// Returns `true` if the vector contains no elements.
     pub fn is_empty(&self) -> bool {
-        self.get_components().is_empty()
+        self.as_borrowed().is_empty()
     }
 
     /// Obtain an iterator over VarZeroVecULE's elements
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.get_components().iter()
+        self.as_borrowed().iter()
     }
 
     /// Get one of VarZeroVecULE's elements, returning None if the index is out of bounds
     pub fn get(&self, idx: usize) -> Option<&T> {
-        self.get_components().get(idx)
+        self.as_borrowed().get(idx)
     }
 
     /// Get this [`VarZeroVecULE`] as a borrowed [`VarZeroVec`]
@@ -85,7 +86,7 @@ impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroVecULE`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        VarZeroVec(VarZeroVecInner::Borrowed(self.get_components()))
+        self.as_borrowed().into()
     }
 }
 
@@ -101,14 +102,14 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.get_components().binary_search(x)
+        self.as_borrowed().binary_search(x)
     }
 }
 unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroVecULE<T> {
     type Error = ParseErrorFor<T>;
 
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
-        let _: SliceComponents<T> = SliceComponents::parse_byte_slice(bytes)?;
+        let _: VarZeroVecBorrowed<T> = VarZeroVecBorrowed::parse_byte_slice(bytes)?;
         Ok(())
     }
 

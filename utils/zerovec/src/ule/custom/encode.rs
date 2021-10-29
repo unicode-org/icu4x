@@ -16,8 +16,8 @@ use alloc::vec::Vec;
 ///
 /// See the [module level documentation](crate::ule::custom) for examples.
 ///
-/// [`Self::encode_var_ule_as_slices()`] is only used to provide default implementations for [`Self::encode_to()`]
-/// and [`Self::encoded_length()`]. If you override the default implementations it is totally valid to
+/// [`Self::encode_var_ule_as_slices()`] is only used to provide default implementations for [`Self::encode_var_ule_write()`]
+/// and [`Self::encode_var_ule_len()`]. If you override the default implementations it is totally valid to
 /// replace [`Self::encode_var_ule_as_slices()`]'s body with `unreachable!()`. This can be done for cases where
 /// it is not possible to implement [`Self::encode_var_ule_as_slices()`] but the other methods still work.
 ///

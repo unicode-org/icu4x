@@ -1,4 +1,4 @@
-# icu4x [![crates.io](http://meritbadge.herokuapp.com/icu4x)](https://crates.io/crates/icu4x)
+# icu4x [![crates.io](https://img.shields.io/crates/v/icu4x)](https://crates.io/crates/icu4x)
 
 `icu4x` is an alias to the [`icu`](../icu/index.html) package.
 

@@ -517,7 +517,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=48bb3c742eb0a186948256ac1d66569573613158#48bb3c742eb0a186948256ac1d66569573613158"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=6e01ea8f2ff053486a43e8a23628cbd00e98dfd7#6e01ea8f2ff053486a43e8a23628cbd00e98dfd7"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -528,12 +528,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=48bb3c742eb0a186948256ac1d66569573613158#48bb3c742eb0a186948256ac1d66569573613158"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=6e01ea8f2ff053486a43e8a23628cbd00e98dfd7#6e01ea8f2ff053486a43e8a23628cbd00e98dfd7"
 
 [[package]]
 name = "diplomat_core"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=48bb3c742eb0a186948256ac1d66569573613158#48bb3c742eb0a186948256ac1d66569573613158"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=6e01ea8f2ff053486a43e8a23628cbd00e98dfd7#6e01ea8f2ff053486a43e8a23628cbd00e98dfd7"
 dependencies = [
  "impls",
  "lazy_static",
@@ -980,6 +980,7 @@ version = "0.3.0"
 dependencies = [
  "fixed_decimal",
  "icu_calendar",
+ "icu_codepointtrie",
  "icu_datetime",
  "icu_decimal",
  "icu_locale_canonicalizer",
@@ -1089,10 +1090,12 @@ dependencies = [
  "clap",
  "futures",
  "icu_locid",
+ "icu_properties",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_cldr",
  "icu_provider_fs",
+ "icu_provider_uprops",
  "icu_testdata",
  "log",
  "reqwest",
@@ -1222,6 +1225,7 @@ dependencies = [
  "icu",
  "icu_codepointtrie",
  "icu_provider",
+ "icu_testdata",
  "icu_uniset",
  "num_enum",
  "serde",
@@ -1344,9 +1348,11 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu_provider",
  "icu_segmenter_lstm",
  "lazy_static",
  "serde",
+ "serde-json-core",
  "serde_json",
  "unicode-width",
 ]
@@ -1355,10 +1361,13 @@ dependencies = [
 name = "icu_segmenter_lstm"
 version = "0.1.0"
 dependencies = [
+ "icu_provider",
+ "litemap",
  "ndarray",
  "serde",
  "serde_json",
  "unicode-segmentation",
+ "yoke",
 ]
 
 [[package]]

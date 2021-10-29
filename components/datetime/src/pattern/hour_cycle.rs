@@ -2,14 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{reference::Pattern, PatternItem};
+use super::{runtime::Pattern, PatternItem};
+use crate::pattern::{reference, runtime};
 use crate::{fields, options::preferences};
 #[cfg(feature = "provider_transform_internals")]
 use crate::{provider, skeleton};
+use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -32,7 +34,7 @@ impl Default for CoarseHourCycle {
 impl CoarseHourCycle {
     /// Figure out the coarse hour cycle given a pattern, which is useful for generating the provider
     /// patterns for `length::Bag`.
-    pub fn determine(pattern: &Pattern) -> Option<Self> {
+    pub fn determine(pattern: &reference::Pattern) -> Option<Self> {
         for item in pattern.items.iter() {
             if let PatternItem::Field(fields::Field {
                 symbol: fields::FieldSymbol::Hour(pattern_hour),
@@ -53,13 +55,13 @@ impl CoarseHourCycle {
     /// a safe mapping from a h11/h12 to h23/h24 for transforms.
     #[doc(hidden)]
     #[cfg(feature = "provider_transform_internals")]
-    pub fn apply_on_pattern(
+    pub fn apply_on_pattern<'data>(
         &self,
-        date_time: &provider::gregory::patterns::LengthPatternsV1,
-        skeletons: &provider::gregory::DateSkeletonPatternsV1,
+        date_time: &provider::gregory::patterns::GenericLengthPatternsV1<'data>,
+        skeletons: &provider::gregory::DateSkeletonPatternsV1<'data>,
         pattern_str: &str,
-        mut pattern: Pattern,
-    ) -> Option<String> {
+        mut pattern: reference::Pattern,
+    ) -> Option<reference::Pattern> {
         for item in pattern.items_mut() {
             if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
                 if let fields::FieldSymbol::Hour(pattern_hour) = symbol {
@@ -100,12 +102,11 @@ impl CoarseHourCycle {
             true,
         ) {
             skeleton::BestSkeleton::AllFieldsMatch(patterns)
-            | skeleton::BestSkeleton::MissingOrExtraFields(patterns) => Some(format!(
-                "{}",
-                patterns
-                    .0
-                    .expect_pattern("Only week-of patterns have plural variants")
-            )),
+            | skeleton::BestSkeleton::MissingOrExtraFields(patterns) => {
+                Some(reference::Pattern::from(&patterns.expect_pattern(
+                    "Only week-of patterns have plural variants",
+                )))
+            }
             skeleton::BestSkeleton::NoMatch => None,
         }
     }
@@ -123,12 +124,23 @@ pub(crate) fn naively_apply_preferences(
         hour_cycle: Some(hour_cycle),
     }) = preferences
     {
-        for item in pattern.items_mut() {
-            if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
-                if let fields::FieldSymbol::Hour(_) = symbol {
-                    *symbol = fields::FieldSymbol::Hour(hour_cycle.field());
+        runtime::helpers::maybe_replace_first(pattern, |item| {
+            if let PatternItem::Field(fields::Field {
+                symbol: fields::FieldSymbol::Hour(current_hour),
+                length,
+            }) = item
+            {
+                if *current_hour != hour_cycle.field() {
+                    Some(PatternItem::from((
+                        fields::FieldSymbol::Hour(hour_cycle.field()),
+                        *length,
+                    )))
+                } else {
+                    None
                 }
+            } else {
+                None
             }
-        }
+        });
     }
 }

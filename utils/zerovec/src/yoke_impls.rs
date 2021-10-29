@@ -107,7 +107,7 @@ impl<'a, T: 'static + AsULE + ?Sized> ZeroCopyFrom<ZeroVec<'a, T>> for ZeroVec<'
 
 impl<'a, T: 'static + VarULE + ?Sized> ZeroCopyFrom<VarZeroVec<'a, T>> for VarZeroVec<'static, T> {
     fn zero_copy_from<'b>(cart: &'b VarZeroVec<'a, T>) -> VarZeroVec<'b, T> {
-        cart.as_borrowed()
+        cart.as_borrowed().into()
     }
 }
 
