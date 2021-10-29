@@ -684,7 +684,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "formatted_string_builder"
+name = "formatted_string"
 version = "0.1.0"
 dependencies = [
  "criterion",
@@ -1147,7 +1147,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "displaydoc",
- "formatted_string_builder",
+ "formatted_string",
  "icu_locid",
  "icu_provider",
  "postcard",
