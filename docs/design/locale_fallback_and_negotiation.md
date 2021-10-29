@@ -58,7 +58,7 @@ The comment in issue #259 summarizes the options pretty well, and it is reproduc
 >
 > I believe that, as in most cases, we'll be looking for the "third path" somewhere between those two extremes, and we'll need to resolve it on per-case bases, but I think that encoding in wiki (https://github.com/unicode-org/icu4x/wiki/Hooking-up-a-DataProvider) or docs some guidelines on how to generally make decisions on what is going to be expanded in Provider vs. in consumer, is in our best interest, so let's discuss it!
 
-I think that in most cases the provider is in the best position to decide how to do this kind of horizontal fallback, because the provider “knows” the most about all the bits and pieces of the machinery.
+In most cases the provider is in the best position to decide how to do this kind of horizontal fallback, because the provider “knows” the most about all the bits and pieces of the machinery.
 
 The user might want some flexibility, but (more often than not) does not know the “internals.” If I ask for a “reasonably long date, something similar to ‘March 29, 2021’ in English” then what I can ask for is “a full month name, and numeric day / year.” But I don’t know anything about genitive month names, for example.
 
