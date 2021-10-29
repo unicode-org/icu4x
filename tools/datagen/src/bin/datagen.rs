@@ -442,16 +442,9 @@ fn export_set_props<'data>(
 
     for key in keys.iter() {
         log::info!("Writing key: {}", key);
-        // If the key is unsupported, just skip it here
         let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
-        if matches.is_present("TEST_KEYS") {
-            match result {
-                Err(DataError::Resource(_)) => {}
-                Err(e) => {
-                    println!("error occurred! : {}", e);
-                }
-                _ => result?,
-            }
+        if matches.is_present("TEST_KEYS") && matches!(result, Err(DataError::Resource(_))) {
+            // Within testdata, if the data for a particular property is unavailable, skip it for now.
         } else {
             result?
         }
@@ -485,16 +478,9 @@ fn export_map_props<'data>(
 
     for key in keys.iter() {
         log::info!("Writing key: {}", key);
-        // If the key is unsupported, just skip it here
         let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
-        if matches.is_present("TEST_KEYS") {
-            match result {
-                Err(DataError::Resource(_)) => {}
-                Err(e) => {
-                    println!("error occurred! : {}", e);
-                }
-                _ => result?,
-            }
+        if matches.is_present("TEST_KEYS") && matches!(result, Err(DataError::Resource(_))) {
+            // Within testdata, if the data for a particular property is unavailable, skip it for now.
         } else {
             result?
         }
