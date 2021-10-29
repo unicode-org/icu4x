@@ -6,7 +6,7 @@ When several components / layers talk about “locales” or “locale data” w
 
 So most libraries need to somehow address these mismatches and gracefully, if possible without the user noticing.
 
-I will give a quick overview of the various levels where this can / should be addressed, with the names used. These names are not “industry standard”, or even common, but there is no commonly agreed terminology that I am aware of.
+The following is an overview of the various levels where this can / should be addressed, with the names used. These names are not “industry standard”, or even common, but there is no known commonly agreed-upon terminology.
 This will also clarify what we mean by “horizontal fallback”, and narrow down the scope of this document.
 
 ## Terminology
