@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635529719665,
+  "lastUpdate": 1635532671812,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2633,6 +2633,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2313561b1ad423cf30574815f8e285f91f124ffd"
         },
         "date": 1635529713592,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 811594,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d1d29c4aa848a5bcf9a81ef1e59d7f7034586552",
+          "message": "Skip skeletons with -alt-variant when processing CLDR JSON (#1224)",
+          "timestamp": "2021-10-29T11:36:26-07:00",
+          "tree_id": "fafab1b15d35fed8839ae3ac416bf808bc48e148",
+          "url": "https://github.com/unicode-org/icu4x/commit/d1d29c4aa848a5bcf9a81ef1e59d7f7034586552"
+        },
+        "date": 1635532666151,
         "tool": "ndjson",
         "benches": [
           {
