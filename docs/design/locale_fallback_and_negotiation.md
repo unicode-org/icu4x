@@ -394,7 +394,7 @@ The locale excluding some locales or not might be controlled with options.
 
 This does not have to be in the Language Matcher proper, but a lot of the know-how and a lot of the data is common between such functionality and the matcher.
 
-So even if we choose to expose this as a separate class instead of methods in the matcher, I look at language matcher + suggestions as one single component.
+So even if we choose to expose this as a separate class instead of methods in the matcher, we should look at language matcher + suggestions as one single component.
 
 ---
 
