@@ -56,7 +56,7 @@ where
 ///     maps::get_general_category(&provider)
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
-/// let gc = &data_struct.codepoint_trie;
+/// let gc = &data_struct.code_point_trie;
 /// assert_eq!(gc.get('木' as u32), GeneralSubcategory::OtherLetter);  // U+6728
 /// assert_eq!(gc.get('🎃' as u32), GeneralSubcategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
 /// ```
@@ -83,7 +83,7 @@ where
 ///     maps::get_script(&provider)
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
-/// let script = &data_struct.codepoint_trie;
+/// let script = &data_struct.code_point_trie;
 /// assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
 /// assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
 /// ```

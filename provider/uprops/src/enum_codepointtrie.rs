@@ -79,7 +79,7 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
         let data = data.map_err(DataError::new_resc_error)?;
         let trie =
             CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error);
-        trie.map(|t| UnicodePropertyMapV1 { codepoint_trie: t })
+        trie.map(|t| UnicodePropertyMapV1 { code_point_trie: t })
     }
 }
 
@@ -155,7 +155,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().codepoint_trie;
+        let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().code_point_trie;
 
         assert_eq!(trie.get('꣓' as u32), GeneralSubcategory::Digit);
         assert_eq!(trie.get('≈' as u32), GeneralSubcategory::MathSymbol);
@@ -177,7 +177,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let trie: &CodePointTrie<Script> = &payload.get().codepoint_trie;
+        let trie: &CodePointTrie<Script> = &payload.get().code_point_trie;
 
         assert_eq!(trie.get('꣓' as u32), Script::Saurashtra);
         assert_eq!(trie.get('≈' as u32), Script::Common);

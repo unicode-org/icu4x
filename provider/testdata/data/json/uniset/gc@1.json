@@ -1,5 +1,5 @@
 {
-  "codepoint_trie": {
+  "code_point_trie": {
     "header": {
       "high_start": 1114112,
       "shifted12_high_start": 272,

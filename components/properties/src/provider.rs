@@ -378,7 +378,7 @@ impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
 pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub codepoint_trie: CodePointTrie<'data, T>,
+    pub code_point_trie: CodePointTrie<'data, T>,
 }
 
 impl<'data, T: TrieValue> Clone for UnicodePropertyMapV1<'data, T>
@@ -387,7 +387,7 @@ where
 {
     fn clone(&self) -> Self {
         UnicodePropertyMapV1 {
-            codepoint_trie: self.codepoint_trie.clone(),
+            code_point_trie: self.code_point_trie.clone(),
         }
     }
 }
