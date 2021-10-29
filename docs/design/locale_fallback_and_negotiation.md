@@ -324,11 +324,12 @@ If you tell the resource manager to use `es-419` (the UI locale) then those coun
 
 One option would be to pass every locale that has even one resource as “Available UI”:
 
-**Available UI:** [`es-419`, `es`, `es-CL`, `es-AR`, ...]
+**Available UI:** [`es-419`, `es`, `es-CL`, `es-AR`, ...]  
 **Desired:** [`es-CL`]
 
 Then the result would be:
-**UI:** `es-CL`
+
+**UI:** `es-CL`  
 **i18n:** `es-CL`
 
 And the resource manager will do the `es-CL` → `es-419` → `es` (vertical) fallback.
@@ -349,7 +350,7 @@ By providing a filtering method, similar to the current matching one, but return
 ⇒ [ `ar`, `ar-*`, `en`, `en-*`, `es`, `es-419`, `es-AR`, …, `es-CL`, …, `es-VE`, …, `fr`, `fr-*`, …, `zh`, `zh-Hans-*` ]  
 (the order of the result does not matter, but note how `zh-Hant` is not there)
 * Use this resulted (filtered) list as supported list, with the desired user list:  
-**supported:** [ `ar`, …, `es`, `es-419`, `es-AR`, …, `es-CL`, …, `es-VE`, …, `ro`, `ro-MD`, `ro-RO`, ... ]
+**supported:** [ `ar`, …, `es`, `es-419`, `es-AR`, …, `es-CL`, …, `es-VE`, …, `ro`, `ro-MD`, `ro-RO`, ... ]  
 **desired:** [ `ro-RO`, `es-CL` ]  
 a. ⇒ [ `es-CL` ] (best match, one locale)  
 b. ⇒ or return a list ordered by match score:
