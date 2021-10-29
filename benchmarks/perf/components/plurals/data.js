@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635530042339,
+  "lastUpdate": 1635533055591,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17639,6 +17639,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18067,
             "range": "± 107",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d1d29c4aa848a5bcf9a81ef1e59d7f7034586552",
+          "message": "Skip skeletons with -alt-variant when processing CLDR JSON (#1224)",
+          "timestamp": "2021-10-29T11:36:26-07:00",
+          "tree_id": "fafab1b15d35fed8839ae3ac416bf808bc48e148",
+          "url": "https://github.com/unicode-org/icu4x/commit/d1d29c4aa848a5bcf9a81ef1e59d7f7034586552"
+        },
+        "date": 1635533049459,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1403,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8032,
+            "range": "± 298",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24628,
+            "range": "± 321",
             "unit": "ns/iter"
           }
         ]
