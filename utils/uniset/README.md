@@ -1,6 +1,6 @@
 # icu_uniset [![crates.io](https://img.shields.io/crates/v/icu_uniset)](https://crates.io/crates/icu_uniset)
 
-`icu_uniset` is one of the [`ICU4X`] components.
+`icu_uniset` is a utility crate of the [`ICU4X`] project.
 
 This API provides necessary functionality for highly efficient querying of sets of Unicode characters.
 
