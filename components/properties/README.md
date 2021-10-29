@@ -1,4 +1,4 @@
-# icu_properties [![crates.io](http://meritbadge.herokuapp.com/icu_properties)](https://crates.io/crates/icu_properties)
+# icu_properties [![crates.io](https://img.shields.io/crates/v/icu_properties)](https://crates.io/crates/icu_properties)
 
 `icu_properties` is one of the [`ICU4X`] components.
 

@@ -1,4 +1,4 @@
-# list_formatter [![crates.io](http://meritbadge.herokuapp.com/list_formatter)](https://crates.io/crates/list_formatter)
+# list_formatter [![crates.io](https://img.shields.io/crates/v/list_formatter)](https://crates.io/crates/list_formatter)
 
 
 

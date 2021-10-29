@@ -1,4 +1,4 @@
-# icu_provider_fs [![crates.io](http://meritbadge.herokuapp.com/icu_provider_fs)](https://crates.io/crates/icu_provider_fs)
+# icu_provider_fs [![crates.io](https://img.shields.io/crates/v/icu_provider_fs)](https://crates.io/crates/icu_provider_fs)
 
 `icu_fs_data_provider` is one of the [`ICU4X`] components.
 

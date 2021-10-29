@@ -1,4 +1,4 @@
-# {{crate}} [![crates.io](http://meritbadge.herokuapp.com/{{crate}})](https://crates.io/crates/{{crate}})
+# {{crate}} [![crates.io](https://img.shields.io/crates/v/{{crate}})](https://crates.io/crates/{{crate}})
 
 {{readme}}
 

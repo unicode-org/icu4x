@@ -5,33 +5,35 @@
 use crate::error::Error;
 use crate::math_helper;
 use crate::structs;
+use icu_provider::DataPayload;
 use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
 use std::str;
 use unicode_segmentation::UnicodeSegmentation;
 
-pub struct Lstm {
-    data: structs::LstmData,
+pub struct Lstm<'data> {
+    data: DataPayload<'data, structs::LstmDataMarker>,
 }
 
-impl Lstm {
+impl<'data> Lstm<'data> {
     /// `try_new` is the initiator of struct `Lstm`
-    pub fn try_new(data: structs::LstmData) -> Result<Self, Error> {
-        if data.dic.len() > std::i16::MAX as usize {
+    pub fn try_new(data: DataPayload<'data, structs::LstmDataMarker>) -> Result<Self, Error> {
+        if data.get().dic.len() > std::i16::MAX as usize {
             return Err(Error::Limit);
         }
-        if !data.model.contains("_codepoints_") && !data.model.contains("_graphclust_") {
+        if !data.get().model.contains("_codepoints_") && !data.get().model.contains("_graphclust_")
+        {
             return Err(Error::Syntax);
         }
-        let embedd_dim = data.mat1.shape()[1];
-        let hunits = data.mat3.shape()[0];
-        if data.mat2.shape() != [embedd_dim, 4 * hunits]
-            || data.mat3.shape() != [hunits, 4 * hunits]
-            || data.mat4.shape() != [4 * hunits]
-            || data.mat5.shape() != [embedd_dim, 4 * hunits]
-            || data.mat6.shape() != [hunits, 4 * hunits]
-            || data.mat7.shape() != [4 * hunits]
-            || data.mat8.shape() != [2 * hunits, 4]
-            || data.mat9.shape() != [4]
+        let embedd_dim = data.get().mat1.shape()[1];
+        let hunits = data.get().mat3.shape()[0];
+        if data.get().mat2.shape() != [embedd_dim, 4 * hunits]
+            || data.get().mat3.shape() != [hunits, 4 * hunits]
+            || data.get().mat4.shape() != [4 * hunits]
+            || data.get().mat5.shape() != [embedd_dim, 4 * hunits]
+            || data.get().mat6.shape() != [hunits, 4 * hunits]
+            || data.get().mat7.shape() != [4 * hunits]
+            || data.get().mat8.shape() != [2 * hunits, 4]
+            || data.get().mat9.shape() != [4]
         {
             return Err(Error::DimensionMismatch);
         }
@@ -40,7 +42,7 @@ impl Lstm {
 
     /// `get_model_name` returns the name of the LSTM model.
     pub fn get_model_name(&self) -> &str {
-        &self.data.model
+        &self.data.get().model
     }
 
     // TODO(#421): Use common BIES normalizer code
@@ -58,12 +60,12 @@ impl Lstm {
 
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
     fn return_id(&self, g: &str) -> i16 {
-        let g_id: i16 = if self.data.dic.contains_key(g) {
-            self.data.dic[g]
-        } else {
-            self.data.dic.len() as i16
-        };
-        g_id
+        *self
+            .data
+            .get()
+            .dic
+            .get(g)
+            .unwrap_or(&(self.data.get().dic.len() as i16))
     }
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
@@ -95,7 +97,7 @@ impl Lstm {
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
         // TODO: Avoid allocating a string for each code point
-        let input_seq: Vec<i16> = if self.data.model.contains("_codepoints_") {
+        let input_seq: Vec<i16> = if self.data.get().model.contains("_codepoints_") {
             input
                 .chars()
                 .map(|c| self.return_id(&c.to_string()))
@@ -110,20 +112,20 @@ impl Lstm {
         let input_seq_len = input_seq.len();
 
         // hunits is the number of hidden unints in each LSTM cell
-        let hunits = self.data.mat3.shape()[0];
+        let hunits = self.data.get().mat3.shape()[0];
         // Forward LSTM
         let mut c_fw = Array1::<f32>::zeros(hunits);
         let mut h_fw = Array1::<f32>::zeros(hunits);
         let mut all_h_fw = Array2::<f32>::zeros((input_seq_len, hunits));
         for (i, g_id) in input_seq.iter().enumerate() {
-            let x_t = self.data.mat1.slice(ndarray::s![*g_id as isize, ..]);
+            let x_t = self.data.get().mat1.slice(ndarray::s![*g_id as isize, ..]);
             let (new_h, new_c) = self.compute_hc(
                 x_t,
                 &h_fw,
                 &c_fw,
-                self.data.mat2.view(),
-                self.data.mat3.view(),
-                self.data.mat4.view(),
+                self.data.get().mat2.view(),
+                self.data.get().mat3.view(),
+                self.data.get().mat4.view(),
             );
             h_fw = new_h;
             c_fw = new_c;
@@ -135,14 +137,14 @@ impl Lstm {
         let mut h_bw = Array1::<f32>::zeros(hunits);
         let mut all_h_bw = Array2::<f32>::zeros((input_seq_len, hunits));
         for (i, g_id) in input_seq.iter().rev().enumerate() {
-            let x_t = self.data.mat1.slice(ndarray::s![*g_id as isize, ..]);
+            let x_t = self.data.get().mat1.slice(ndarray::s![*g_id as isize, ..]);
             let (new_h, new_c) = self.compute_hc(
                 x_t,
                 &h_bw,
                 &c_bw,
-                self.data.mat5.view(),
-                self.data.mat6.view(),
-                self.data.mat7.view(),
+                self.data.get().mat5.view(),
+                self.data.get().mat6.view(),
+                self.data.get().mat7.view(),
             );
             h_bw = new_h;
             c_bw = new_c;
@@ -150,8 +152,8 @@ impl Lstm {
         }
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
-        let timew = self.data.mat8.view();
-        let timeb = self.data.mat9.view();
+        let timew = self.data.get().mat8.view();
+        let timeb = self.data.get().mat9.view();
         let mut bies = String::from("");
         for i in 0..input_seq_len {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);

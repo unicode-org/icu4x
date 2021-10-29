@@ -12,11 +12,22 @@ use core::ops::Range;
 use core::ptr;
 use core::slice;
 
-#[derive(Clone)]
+/// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
+/// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
+/// [`VarZeroVec`] and [`VarZeroVecBorrowed`].
 pub struct VarZeroVecOwned<T: ?Sized> {
     marker: PhantomData<Box<T>>,
-    // safety invariant: must parse into a valid SliceComponents
+    // safety invariant: must parse into a valid VarZeroVecBorrowed
     entire_slice: Vec<u8>,
+}
+
+impl<T: ?Sized> Clone for VarZeroVecOwned<T> {
+    fn clone(&self) -> Self {
+        VarZeroVecOwned {
+            marker: self.marker,
+            entire_slice: self.entire_slice.clone(),
+        }
+    }
 }
 
 // The effect of a shift on the indices in the varzerovec.
@@ -36,10 +47,11 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
-    pub fn from_components(components: SliceComponents<T>) -> Self {
+    /// Construct a VarZeroVecOwned from a [`VarZeroVecBorrowed`] by cloning the internal data
+    pub fn from_borrowed(borrowed: VarZeroVecBorrowed<T>) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: components.entire_slice().into(),
+            entire_slice: borrowed.entire_slice().into(),
         }
     }
 
@@ -47,7 +59,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     pub fn from_elements<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: components::get_serializable_bytes(elements).expect(
+            entire_slice: borrowed::get_serializable_bytes(elements).expect(
                 "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u32 in size",
             ),
@@ -71,32 +83,33 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         self.entire_slice.reserve(capacity * 8)
     }
 
+    /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
     #[inline]
-    pub(crate) fn get_components<'a>(&'a self) -> SliceComponents<'a, T> {
+    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
             // safety: VarZeroVecOwned is guaranteed to parse here
-            SliceComponents::from_bytes_unchecked(&self.entire_slice)
+            VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
         }
     }
 
     /// Get the number of elements in this vector
     pub fn len(&self) -> usize {
-        self.get_components().len()
+        self.as_borrowed().len()
     }
 
     /// Returns `true` if the vector contains no elements.
     pub fn is_empty(&self) -> bool {
-        self.get_components().is_empty()
+        self.as_borrowed().is_empty()
     }
 
     /// Obtain an iterator over VarZeroVecOwned's elements
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.get_components().iter()
+        self.as_borrowed().iter()
     }
 
     /// Get one of VarZeroVecOwned's elements, returning None if the index is out of bounds
     pub fn get(&self, idx: usize) -> Option<&T> {
-        self.get_components().get(idx)
+        self.as_borrowed().get(idx)
     }
 
     /// Get the position of a specific element in the data segment.
@@ -186,7 +199,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroVecOwned`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        VarZeroVec(VarZeroVecInner::Borrowed(self.get_components()))
+        self.as_borrowed().into()
     }
 
     /// Empty the vector
@@ -194,10 +207,12 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         self.entire_slice.clear()
     }
 
+    /// Convert this vector to a regular vector of boxed DSTs
     pub fn to_vec(&self) -> Vec<Box<T>> {
-        self.get_components().to_vec()
+        self.as_borrowed().to_vec()
     }
 
+    /// Get a reference to the entire backing buffer of this vector
     #[inline]
     pub fn entire_slice(&self) -> &[u8] {
         &self.entire_slice
@@ -372,6 +387,11 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         true
     }
 
+    /// Insert an element at the end of this vector
+    pub fn push<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, element: &A) {
+        self.insert(self.len(), element)
+    }
+
     /// Insert an element at index `idx`
     pub fn insert<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
@@ -406,6 +426,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
+    /// Remove the element at index `idx`
     pub fn remove(&mut self, index: usize) {
         let len = self.len();
         if index >= len {
@@ -424,6 +445,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
+    /// Replace the element at index `idx` with another
     pub fn replace<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index >= len {
@@ -455,7 +477,7 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.get_components().binary_search(x)
+        self.as_borrowed().binary_search(x)
     }
 }
 
@@ -490,6 +512,12 @@ where
     #[inline]
     fn eq(&self, other: &&[A]) -> bool {
         self.iter().eq(other.iter().map(|t| t.as_ref()))
+    }
+}
+
+impl<'a, T: ?Sized + VarULE> From<VarZeroVecBorrowed<'a, T>> for VarZeroVecOwned<T> {
+    fn from(other: VarZeroVecBorrowed<'a, T>) -> Self {
+        Self::from_borrowed(other)
     }
 }
 
@@ -570,9 +598,9 @@ mod test {
     #[test]
     fn test_removing_last_element_clears() {
         let mut zerovec = VarZeroVecOwned::<str>::from_elements(&["buy some apples".to_string()]);
-        assert!(!zerovec.get_components().entire_slice().is_empty());
+        assert!(!zerovec.as_borrowed().entire_slice().is_empty());
         zerovec.remove(0);
-        assert!(zerovec.get_components().entire_slice().is_empty());
+        assert!(zerovec.as_borrowed().entire_slice().is_empty());
     }
 
     #[test]

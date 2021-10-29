@@ -1,4 +1,4 @@
-# zerovec [![crates.io](http://meritbadge.herokuapp.com/zerovec)](https://crates.io/crates/zerovec)
+# zerovec [![crates.io](https://img.shields.io/crates/v/zerovec)](https://crates.io/crates/zerovec)
 
 Zero-copy vector abstractions over byte arrays.
 

@@ -1,7 +1,7 @@
 {
   "date": {
-    "full": "EEEEที่ d MMMM G y",
-    "long": "d MMMM G y",
+    "full": "EEEEที่ d MMMM 'G' y",
+    "long": "d MMMM 'G' y",
     "medium": "d MMM y",
     "short": "d/M/yy"
   },

@@ -1,4 +1,4 @@
-# yoke [![crates.io](http://meritbadge.herokuapp.com/yoke)](https://crates.io/crates/yoke)
+# yoke [![crates.io](https://img.shields.io/crates/v/yoke)](https://crates.io/crates/yoke)
 
 This crate provides [`Yoke`], a data structure that allows one
 to "yoke" Cow-like borrowed data types to their backing storage,

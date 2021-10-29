@@ -9,16 +9,14 @@ mod patterns;
 
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
-    DateTimeFormatOptions, ZonedDateTimeFormat,
-};
-use icu_datetime::{
+    pattern::runtime::Pattern,
     provider::{
         gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
         key::{
             GREGORY_DATE_PATTERNS_V1, GREGORY_DATE_SKELETON_PATTERNS_V1, GREGORY_DATE_SYMBOLS_V1,
         },
     },
-    DateTimeFormat,
+    DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::provider::PluralRuleStringsV1Marker;
@@ -31,7 +29,6 @@ use patterns::{
         time_zones::{TimeZoneConfig, TimeZoneExpectation},
     },
 };
-use std::borrow::Cow;
 use std::fmt::Write;
 use tinystr::tinystr8;
 
@@ -185,7 +182,7 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         patterns_data.with_mut(|data| {
-            data.length_combinations.long = Cow::Borrowed("{0}");
+            data.length_combinations.long = "{0}".parse().unwrap();
         });
         let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
             .load_payload(&DataRequest {
@@ -218,11 +215,11 @@ fn test_dayperiod_patterns() {
                 let datetime = parse_gregorian_from_str(dt_input).unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
-                        let new_pattern_cow1 = Cow::Owned(pattern_input.to_string());
-                        let new_pattern_cow2 = Cow::Owned(pattern_input.to_string());
+                        let new_pattern1: Pattern = pattern_input.parse().unwrap();
+                        let new_pattern2: Pattern = pattern_input.parse().unwrap();
                         patterns_data.with_mut(move |data| {
-                            data.time_h11_h12.long = new_pattern_cow1;
-                            data.time_h23_h24.long = new_pattern_cow2;
+                            data.time_h11_h12.long = new_pattern1;
+                            data.time_h23_h24.long = new_pattern2;
                         });
                         let local_provider = MultiKeyStructProvider {
                             symbols: StructProvider {
@@ -318,16 +315,16 @@ fn test_time_zone_patterns() {
             .unwrap();
 
         patterns_data.with_mut(|data| {
-            data.length_combinations.long = Cow::Borrowed("{0}");
+            data.length_combinations.long = "{0}".parse().unwrap();
         });
 
         for TimeZoneExpectation { patterns, expected } in &test.expectations {
             for pattern_input in patterns {
-                let new_pattern_cow1 = Cow::Owned(pattern_input.to_string());
-                let new_pattern_cow2 = Cow::Owned(pattern_input.to_string());
+                let new_pattern1: Pattern = pattern_input.parse().unwrap();
+                let new_pattern2: Pattern = pattern_input.parse().unwrap();
                 patterns_data.with_mut(move |data| {
-                    data.time_h11_h12.long = new_pattern_cow1;
-                    data.time_h23_h24.long = new_pattern_cow2;
+                    data.time_h11_h12.long = new_pattern1;
+                    data.time_h23_h24.long = new_pattern2;
                 });
                 let local_provider = MultiKeyStructProvider {
                     symbols: StructProvider {

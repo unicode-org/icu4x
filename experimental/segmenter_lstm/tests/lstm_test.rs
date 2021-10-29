@@ -2,11 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::DataPayload;
 use icu_segmenter_lstm::lstm::Lstm;
 use icu_segmenter_lstm::structs;
+
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
+use std::io::Read;
+use std::rc::Rc;
 
 /// `TestCase` is a struct used to store a single test case.
 /// Each test case has two attributs: `unseg` which denots the unsegmented line, and `true_bies` which indicates the Bies
@@ -35,10 +39,14 @@ impl TestText {
     }
 }
 
-fn load_lstm_data(filename: &str) -> structs::LstmData {
-    let file = File::open(filename).expect("File should be present");
-    let reader = BufReader::new(file);
-    serde_json::from_reader(reader).expect("JSON syntax error")
+fn load_lstm_data(filename: &str) -> DataPayload<structs::LstmDataMarker> {
+    let mut file = File::open(filename).expect("File should be present");
+    let mut buf = Vec::new();
+    file.read_to_end(&mut buf).expect("File can read to end");
+    DataPayload::<structs::LstmDataMarker>::try_from_rc_buffer_badly(Rc::from(buf), |bytes| {
+        serde_json::from_slice(bytes)
+    })
+    .expect("JSON syntax error")
 }
 
 fn load_test_text(filename: &str) -> TestTextData {

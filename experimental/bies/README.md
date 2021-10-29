@@ -1,4 +1,4 @@
-# bies [![crates.io](http://meritbadge.herokuapp.com/bies)](https://crates.io/crates/bies)
+# bies [![crates.io](https://img.shields.io/crates/v/bies)](https://crates.io/crates/bies)
 
 The algorithms in this project convert from a BIES matrix (the output of the LSTM segmentation neural network) to concrete segment boundaries.  In BIES, B = beginning of segment; I = inside segment; E = end of segment; and S = single segment (both beginning and end).
 

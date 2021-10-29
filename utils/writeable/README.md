@@ -1,4 +1,4 @@
-# writeable [![crates.io](http://meritbadge.herokuapp.com/writeable)](https://crates.io/crates/writeable)
+# writeable [![crates.io](https://img.shields.io/crates/v/writeable)](https://crates.io/crates/writeable)
 
 `writeable` is a utility crate of the [`ICU4X`] project.
 

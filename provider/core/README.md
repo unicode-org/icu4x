@@ -1,4 +1,4 @@
-# icu_provider [![crates.io](http://meritbadge.herokuapp.com/icu_provider)](https://crates.io/crates/icu_provider)
+# icu_provider [![crates.io](https://img.shields.io/crates/v/icu_provider)](https://crates.io/crates/icu_provider)
 
 `icu_provider` is one of the [`ICU4X`] components.
 

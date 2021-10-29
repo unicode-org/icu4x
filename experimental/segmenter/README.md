@@ -1,4 +1,4 @@
-# icu_segmenter [![crates.io](http://meritbadge.herokuapp.com/icu_segmenter)](https://crates.io/crates/icu_segmenter)
+# icu_segmenter [![crates.io](https://img.shields.io/crates/v/icu_segmenter)](https://crates.io/crates/icu_segmenter)
 
 A line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
 

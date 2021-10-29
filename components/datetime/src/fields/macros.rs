@@ -46,7 +46,7 @@ macro_rules! field_type {
         }
     );
     ($i:ident; { $($key:expr => $val:ident),* }) => (
-        #[derive(Debug, Eq, PartialEq, Clone, Copy)]
+        #[derive(Debug, Eq, PartialEq, Clone, Copy, Yokeable, ZeroCopyFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
         #[derive(num_enum::IntoPrimitive, num_enum::TryFromPrimitive)]

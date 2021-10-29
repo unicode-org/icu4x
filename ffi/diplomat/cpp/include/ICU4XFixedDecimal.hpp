@@ -5,9 +5,9 @@
 #include <stdbool.h>
 #include <algorithm>
 #include <memory>
+#include <variant>
 #include <optional>
 #include <span>
-#include <variant>
 #include "diplomat_runtime.hpp"
 
 namespace capi {
@@ -76,7 +76,7 @@ inline ICU4XFixedDecimal ICU4XFixedDecimal::create(int32_t v) {
   return ICU4XFixedDecimal(capi::ICU4XFixedDecimal_create(v));
 }
 inline ICU4XCreateFixedDecimalResult ICU4XFixedDecimal::create_fromstr(const std::string_view v) {
-  capi::ICU4XCreateFixedDecimalResult diplomat_raw_struct_out_value = capi::ICU4XFixedDecimal_create_fromstr(v.data(), v.length());
+  capi::ICU4XCreateFixedDecimalResult diplomat_raw_struct_out_value = capi::ICU4XFixedDecimal_create_fromstr(v.data(), v.size());
   auto diplomat_optional_raw_out_value_fd = diplomat_raw_struct_out_value.fd;
   std::optional<ICU4XFixedDecimal> diplomat_optional_out_value_fd;
   if (diplomat_optional_raw_out_value_fd != nullptr) {
