@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635464187483,
+  "lastUpdate": 1635472176444,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17555,6 +17555,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20748,
             "range": "± 153",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6fba6e5ecdf959b41a679dab0a2eb76583b5013f",
+          "message": "Remove missing docs config flag from ICU crate. (#1242)",
+          "timestamp": "2021-10-28T18:41:44-07:00",
+          "tree_id": "ea98cf4b1cecb1a48323254c743da230d502139c",
+          "url": "https://github.com/unicode-org/icu4x/commit/6fba6e5ecdf959b41a679dab0a2eb76583b5013f"
+        },
+        "date": 1635472171162,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1185,
+            "range": "± 78",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6984,
+            "range": "± 377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22163,
+            "range": "± 946",
             "unit": "ns/iter"
           }
         ]
