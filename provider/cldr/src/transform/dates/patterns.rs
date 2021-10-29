@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::cldr_json;
-use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
-use crate::reader::{get_subdirectories, open_reader};
+use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::{pattern, provider::*};
+use icu_locid::LanguageIdentifier;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -22,7 +22,7 @@ pub const ALL_KEYS: [ResourceKey; 1] = [
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
 pub struct DatePatternsProvider<'data> {
-    data: Vec<(CldrLangID, cldr_json::LangDates)>,
+    data: Vec<(LanguageIdentifier, cldr_json::LangDates)>,
     _phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
@@ -33,7 +33,7 @@ impl TryFrom<&dyn CldrPaths> for DatePatternsProvider<'_> {
 
         let path = cldr_paths.cldr_dates()?.join("main");
 
-        let locale_dirs = get_subdirectories(&path)?;
+        let locale_dirs = get_langid_subdirectories(&path)?;
 
         for dir in locale_dirs {
             let path = dir.join("ca-gregorian.json");
@@ -62,11 +62,8 @@ impl<'data> DataProvider<'data, gregory::DatePatternsV1Marker> for DatePatternsP
         req: &DataRequest,
     ) -> Result<DataResponse<'data, gregory::DatePatternsV1Marker>, DataError> {
         DatePatternsProvider::supports_key(&req.resource_path.key)?;
-        let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
-        let dates = match self
-            .data
-            .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
-        {
+        let langid = req.try_langid()?;
+        let dates = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
             Ok(idx) => &self.data[idx].1.dates,
             Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
         };
@@ -97,7 +94,7 @@ impl<'data> IterableDataProviderCore for DatePatternsProvider<'data> {
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO: Avoid the clone
-                langid: Some(l.langid.clone()),
+                langid: Some(l.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))

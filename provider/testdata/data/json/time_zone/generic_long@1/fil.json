@@ -64,7 +64,7 @@
   "Hawaii_Aleutian": "Oras sa Hawaii-Aleutian",
   "Hong_Kong": "Oras sa Hong Kong",
   "Hovd": "Oras sa Hovd",
-  "India": "Standard na Oras sa Bhutan",
+  "India": "Standard na Oras sa India",
   "Indian_Ocean": "Oras sa Indian Ocean",
   "Indochina": "Oras sa Indochina",
   "Indonesia_Central": "Oras sa Gitnang Indonesia",
@@ -146,5 +146,6 @@
   "Wake": "Oras sa Wake Island",
   "Wallis": "Oras sa Wallis & Futuna",
   "Yakutsk": "Oras sa Yakutsk",
-  "Yekaterinburg": "Oras sa Yekaterinburg"
+  "Yekaterinburg": "Oras sa Yekaterinburg",
+  "Yukon": "Yukon Time"
 }

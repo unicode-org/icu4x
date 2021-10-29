@@ -20,7 +20,6 @@
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 
-mod cldr_langid;
 mod cldr_paths;
 mod error;
 mod reader;

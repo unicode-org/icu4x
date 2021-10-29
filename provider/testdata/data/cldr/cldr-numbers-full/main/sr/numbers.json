@@ -3,7 +3,7 @@
     "sr": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "sr"
       },
@@ -186,7 +186,14 @@
           "pluralMinimalPairs-count-one": "{0} сат",
           "pluralMinimalPairs-count-few": "{0} сата",
           "pluralMinimalPairs-count-other": "{0} сати",
-          "other": "Скрените у {0}. десно."
+          "other": "Скрените у {0}. десно.",
+          "accusative": "Видим {0}",
+          "genitive": "Од {0} до ...",
+          "instrumental": "... са {0} ...",
+          "nominative": "{0} је",
+          "feminine": "Ова {0}",
+          "inanimate": "Овај {0}",
+          "neuter": "Ово {0}"
         }
       }
     }

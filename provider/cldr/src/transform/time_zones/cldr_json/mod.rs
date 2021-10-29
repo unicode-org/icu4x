@@ -8,7 +8,7 @@
 
 mod convert;
 
-use crate::cldr_langid::CldrLangID;
+use icu_locid::LanguageIdentifier;
 use serde::{
     de::{IgnoredAny, MapAccess, Visitor},
     Deserialize, Deserializer,
@@ -160,7 +160,9 @@ pub struct LangTimeZones {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(#[serde(with = "tuple_vec_map")] pub(crate) Vec<(CldrLangID, LangTimeZones)>);
+pub struct LangData(
+    #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LangTimeZones)>,
+);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {

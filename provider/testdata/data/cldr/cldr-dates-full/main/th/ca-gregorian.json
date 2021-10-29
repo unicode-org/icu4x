@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "th"
       },
@@ -324,11 +324,23 @@
               "medium": "d MMM y",
               "short": "d/M/yy"
             },
+            "dateSkeletons": {
+              "full": "GyMMMMEEEEd",
+              "long": "GyMMMMd",
+              "medium": "yMMMd",
+              "short": "yyMd"
+            },
             "timeFormats": {
               "full": "H นาฬิกา mm นาที ss วินาที zzzz",
               "long": "H นาฬิกา mm นาที ss วินาที z",
               "medium": "HH:mm:ss",
               "short": "HH:mm"
+            },
+            "timeSkeletons": {
+              "full": "Hmmsszzzz",
+              "long": "Hmmssz",
+              "medium": "HHmmss",
+              "short": "HHmm"
             },
             "dateTimeFormats": {
               "full": "{1} {0}",
@@ -349,6 +361,7 @@
                 "Ehms": "E h:mm:ss a",
                 "EHms": "E HH:mm:ss",
                 "Gy": "G y",
+                "GyMd": "d/M/GGGGG y",
                 "GyMMM": "MMM G y",
                 "GyMMMd": "d MMM G y",
                 "GyMMMEd": "E d MMM G y",
@@ -558,12 +571,12 @@
                 "yMMMMd": {
                   "d": "d–d MMMM G y",
                   "M": "d MMMM – d MMMM G y",
-                  "y": "d MMMM G y – d MMMM y"
+                  "y": "d MMMM G y – d MMMM G y"
                 },
                 "yMMMMEd": {
                   "d": "E d – E d MMMM G y",
                   "M": "E d MMMM – E d MMMM G y",
-                  "y": "E d MMMM G y – E d MMMM y"
+                  "y": "E d MMMM G y – E d MMMM G y"
                 },
                 "yMMMMEEEEd": {
                   "d": "EEEEที่ d – EEEEที่ d MMMM G y",

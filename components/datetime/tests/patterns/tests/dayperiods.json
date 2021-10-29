@@ -53,6 +53,24 @@
     ]
   },
   {
+    "locale": "ja",
+    "test_cases": [
+      {
+        "datetimes": [
+          "2021-01-11T12:00:00"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "B"
+            ],
+            "expected": "B"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "locale": "ru",
     "test_cases": [
       {
