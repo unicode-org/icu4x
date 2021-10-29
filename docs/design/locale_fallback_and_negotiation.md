@@ -62,7 +62,7 @@ In most cases the provider is in the best position to decide how to do this kind
 
 The user might want some flexibility, but (more often than not) does not know the “internals.” If we ask for a “reasonably long date, something similar to ‘March 29, 2021’ in English” then what we can ask for is “a full month name, and numeric day / year.” But we won’t know anything about genitive month names, for example.
 
-Worse, when you format a date there are so many “pieces” that come together, each with its own fallback rules.
+Worse, when we format a date there are so many “pieces” that come together, each with its own fallback rules.
 
 Things might (potentially) interfere with the vertical fallback. For example if one cannot find a medium date pattern for English Great Britain, but there is a long date pattern (`"d MMMM y"`). Should we do a vertical fallback to “generic English (`en`, which is actually US English), and get `"MMMM d, y"` (which changes the month-day order) or alter the long pattern, algorithmically replacing `"MMMM"` with `"MMM"` and getting `"d MMM y"`?
 
