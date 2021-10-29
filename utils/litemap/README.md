@@ -1,4 +1,4 @@
-# litemap [![crates.io](http://meritbadge.herokuapp.com/litemap)](https://crates.io/crates/litemap)
+# litemap [![crates.io](https://img.shields.io/crates/v/litemap)](https://crates.io/crates/litemap)
 
 ### `litemap`
 

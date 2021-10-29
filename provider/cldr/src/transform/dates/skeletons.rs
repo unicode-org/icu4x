@@ -106,11 +106,11 @@ impl<'data> IterableDataProviderCore for DateSkeletonPatternsProvider<'data> {
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
+impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use gregory::{patterns::PatternPluralsV1, SkeletonV1};
+        use gregory::SkeletonV1;
         use icu_datetime::{
-            pattern::reference::{Pattern, PatternPlurals, PluralPattern},
+            pattern::runtime::{PatternPlurals, PluralPattern},
             skeleton::reference::Skeleton,
         };
         use litemap::LiteMap;
@@ -152,7 +152,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
             };
 
             let pattern_str = patterns.get("other").expect("Other variant must exist");
-            let pattern = Pattern::from_bytes(pattern_str).expect("Unable to parse a pattern");
+            let pattern = pattern_str.parse().expect("Unable to parse a pattern");
 
             let mut pattern_plurals = if patterns.len() == 1 {
                 PatternPlurals::SinglePattern(pattern)
@@ -166,8 +166,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
                     }
                     let cat = PluralCategory::from_tr35_string(&key)
                         .expect("Failed to retrieve plural category");
-                    let pattern =
-                        Pattern::from_bytes(&pattern_str).expect("Unable to parse a pattern");
+                    let pattern = pattern_str.parse().expect("Unable to parse a pattern");
                     plural_pattern.maybe_set_variant(cat, pattern);
                 }
                 PatternPlurals::MultipleVariants(plural_pattern)
@@ -177,7 +176,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
             // here. The following `normalize` will turn those cases to `SingleVariant`.
             pattern_plurals.normalize();
 
-            skeletons.insert(SkeletonV1(skeleton), PatternPluralsV1(pattern_plurals));
+            skeletons.insert(SkeletonV1(skeleton), pattern_plurals);
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -188,12 +187,13 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
 #[test]
 fn test_datetime_skeletons() {
     use gregory::SkeletonV1;
-    use icu_datetime::pattern::reference::{Pattern, PluralPattern};
+    use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
     use icu_locid_macros::langid;
     use icu_plurals::PluralCategory;
 
     let cldr_paths = crate::cldr_paths::for_test();
-    let provider = DateSkeletonPatternsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+    let provider = DateSkeletonPatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
+        .expect("Failed to retrieve provider");
 
     let skeletons: DataPayload<gregory::DateSkeletonPatternsV1Marker> = provider
         .load_payload(&DataRequest {
@@ -205,14 +205,14 @@ fn test_datetime_skeletons() {
                 },
             },
         })
-        .unwrap()
+        .expect("Failed to load payload")
         .take_payload()
-        .unwrap();
+        .expect("Failed to retrieve payload");
     let skeletons = &skeletons.get().0;
 
     assert_eq!(
         Some(
-            &Pattern::from_bytes("L")
+            &"L".parse::<Pattern>()
                 .expect("Failed to create pattern")
                 .into()
         ),
@@ -220,12 +220,16 @@ fn test_datetime_skeletons() {
     );
 
     let mut expected = PluralPattern::new(
-        Pattern::from_bytes("'linggo' w 'ng' Y").expect("Failed to create pattern"),
+        "'linggo' w 'ng' Y"
+            .parse()
+            .expect("Failed to create pattern"),
     )
     .expect("Failed to create PatternPlurals");
     expected.maybe_set_variant(
         PluralCategory::One,
-        Pattern::from_bytes("'ika'-w 'linggo' 'ng' Y").expect("Failed to create pattern"),
+        "'ika'-w 'linggo' 'ng' Y"
+            .parse()
+            .expect("Failed to create pattern"),
     );
     assert_eq!(
         Some(&expected.into()),

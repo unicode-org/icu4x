@@ -110,7 +110,7 @@ where
     /// Reserve capacity for `additional` more elements to be inserted into
     /// the [`ZeroMap`] to avoid frequent reallocations.
     ///
-    /// See [`Vec::reserve()`] for more information.
+    /// See [`Vec::reserve()`](alloc::vec::Vec::reserve) for more information.
     pub fn reserve(&mut self, additional: usize) {
         self.keys.reserve(additional);
         self.values.reserve(additional);

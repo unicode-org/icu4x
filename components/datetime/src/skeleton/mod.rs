@@ -51,9 +51,9 @@ mod test {
                     },
                 },
             })
-            .unwrap()
+            .expect("Failed to load payload")
             .take_payload()
-            .unwrap();
+            .expect("Failed to retrieve payload");
         let skeletons = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
@@ -64,9 +64,9 @@ mod test {
                     },
                 },
             })
-            .unwrap()
+            .expect("Failed to load payload")
             .take_payload()
-            .unwrap();
+            .expect("Failed to retrieve payload");
         (patterns, skeletons)
     }
 
@@ -93,7 +93,6 @@ mod test {
             | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(
                     available_format_pattern
-                        .0
                         .expect_pattern("pattern should not have plural variants")
                         .to_string(),
                     String::from("MMMM d, y")
@@ -119,7 +118,6 @@ mod test {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(
                     available_format_pattern
-                        .0
                         .expect_pattern("pattern should not have plural variants")
                         .to_string(),
                     String::from("L")
@@ -155,7 +153,6 @@ mod test {
                 // TODO - Append items are needed here.
                 assert_eq!(
                     available_format_pattern
-                        .0
                         .expect_pattern("pattern should not have plural variants")
                         .to_string(),
                     String::from("MMMM d, y vvvv")
@@ -360,7 +357,8 @@ mod test {
         assert_eq!(
             serde_json::to_string(skeleton).expect("Failed to transform skeleton to string."),
             serde_json::to_string(&Skeleton::from(
-                &crate::pattern::reference::Pattern::from_bytes(pattern)
+                &pattern
+                    .parse::<crate::pattern::reference::Pattern>()
                     .expect("Failed to create pattern from bytes.")
             ))
             .expect("Failed to transform skeleton to string."),

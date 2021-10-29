@@ -22,19 +22,18 @@ pub mod key {
 
     /// Macro to help define resource keys and store them in a list.
     macro_rules! define_resource_keys {
-        ($count:expr; $(($k:ident, $s:literal)),+,) => {
+        ($allkeys:ident; $count:expr; $(($k:ident, $s:literal)),+,) => {
             $(
                 #[allow(missing_docs)] // These constants don't need individual documentation.
                 pub const $k: ResourceKey = resource_key!(UnicodeSet, $s, 1);
             )+
 
             /// The set of all resource keys supported by [`icu_uniset`](crate).
-            pub const ALL_KEYS: [ResourceKey; $count] = [$($k,)+];
+            pub const $allkeys: [ResourceKey; $count] = [$($k,)+];
         };
     }
 
-    define_resource_keys!(267;
-
+    define_resource_keys!(ALL_SET_KEYS; 265;
         //
         // Binary property UnicodeSets
         //
@@ -313,7 +312,9 @@ pub mod key {
         (SCRIPT_YEZIDI_V1, "sc=Yezi"),
         (SCRIPT_YI_V1, "sc=Yiii"),
         (SCRIPT_ZANABAZAR_SQUARE_V1, "sc=Zanb"),
+    );
 
+    define_resource_keys!(ALL_MAP_KEYS; 2;
         //
         // Enumerated property CodePointMaps
         //
@@ -322,7 +323,6 @@ pub mod key {
 
         (GENERAL_CATEGORY_V1, "gc"),
         (SCRIPT_V1, "sc"),
-
     );
 }
 
@@ -378,7 +378,7 @@ impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
 pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub codepoint_trie: CodePointTrie<'data, T>,
+    pub code_point_trie: CodePointTrie<'data, T>,
 }
 
 impl<'data, T: TrieValue> Clone for UnicodePropertyMapV1<'data, T>
@@ -387,7 +387,7 @@ where
 {
     fn clone(&self) -> Self {
         UnicodePropertyMapV1 {
-            codepoint_trie: self.codepoint_trie.clone(),
+            code_point_trie: self.code_point_trie.clone(),
         }
     }
 }

@@ -28,7 +28,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
     let lid = langid!("en");
 
-    let provider = icu_testdata::get_provider();
+    let provider = icu_testdata::get_static_provider();
 
     {
         print("\n====== Elevator Floor (en) example ============", None);

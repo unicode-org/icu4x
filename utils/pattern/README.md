@@ -1,4 +1,4 @@
-# icu_pattern [![crates.io](http://meritbadge.herokuapp.com/icu_pattern)](https://crates.io/crates/icu_pattern)
+# icu_pattern [![crates.io](https://img.shields.io/crates/v/icu_pattern)](https://crates.io/crates/icu_pattern)
 
 `icu_pattern` is a utility crate of the [`ICU4X`] project.
 

@@ -5,10 +5,12 @@
 use anyhow::Context;
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use icu_locid::LanguageIdentifier;
+use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SET_KEYS};
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
 use icu_provider::hello_world::{self, HelloWorldProvider};
 use icu_provider::iter::IterableDataProvider;
+use icu_provider::prelude::*;
 use icu_provider::serde::SerdeSeDataStructMarker;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
@@ -20,6 +22,7 @@ use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
+use icu_provider_uprops::{EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider};
 use simple_logger::SimpleLogger;
 use std::collections::HashSet;
 use std::path::PathBuf;
@@ -93,19 +96,20 @@ fn main() -> anyhow::Result<()> {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("CLDR_ROOT")
-                .long("cldr-root")
+            Arg::with_name("INPUT_ROOT")
+                .long("input-root")
                 .value_name("PATH")
                 .help(
-                    "Path to CLDR JSON distribution. Ignored if '--cldr-tag' is present. \n\
-                    https://github.com/unicode-org/cldr-json/tree/master/cldr-json",
+                    "Path to input files' root directory. \n(For CLDR JSON, ignored if \
+                        '--cldr-tag' is present.\n\
+                    https://github.com/unicode-org/cldr-json/tree/master/cldr-json.)",
                 )
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("CLDR_TESTDATA")
-                .long("cldr-testdata")
-                .help("Load CLDR JSON data from the icu_testdata project."),
+            Arg::with_name("INPUT_FROM_TESTDATA")
+                .long("input-from-testdata")
+                .help("Load input data from the icu_testdata project."),
         )
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
@@ -146,12 +150,18 @@ fn main() -> anyhow::Result<()> {
                 .long("all-keys")
                 .help("Include all keys known to ICU4X."),
         )
+        .arg(
+            Arg::with_name("TEST_KEYS")
+                .long("test-keys")
+                .help("Include all keys supported by testdata."),
+        )
         .group(
             ArgGroup::with_name("KEY_MODE")
                 .arg("KEYS")
                 .arg("KEY_FILE")
                 .arg("HELLO_WORLD")
                 .arg("ALL_KEYS")
+                .arg("TEST_KEYS")
                 .required(true),
         )
         .arg(
@@ -258,9 +268,14 @@ fn main() -> anyhow::Result<()> {
         _ => unreachable!(),
     };
 
-    if matches.is_present("ALL_KEYS") || matches.is_present("KEYS") {
+    if matches.is_present("ALL_KEYS")
+        || matches.is_present("KEYS")
+        || matches.is_present("TEST_KEYS")
+    {
         let keys = matches.values_of("KEYS").map(|values| values.collect());
         export_cldr(&matches, exporter, locales_vec.as_deref(), keys.as_ref())?;
+        export_set_props(&matches, exporter, keys.as_ref())?;
+        export_map_props(&matches, exporter, keys.as_ref())?;
     }
 
     if matches.is_present("HELLO_WORLD") {
@@ -357,18 +372,18 @@ fn export_cldr<'data>(
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
         Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
-    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
+    } else if let Some(path) = matches.value_of("INPUT_ROOT") {
         Box::new(CldrPathsAllInOne {
             cldr_json_root: PathBuf::from(path),
             locale_subset: locale_subset.to_string(),
         })
-    } else if matches.is_present("CLDR_TESTDATA") {
+    } else if matches.is_present("INPUT_FROM_TESTDATA") {
         Box::new(CldrPathsAllInOne {
             cldr_json_root: icu_testdata::paths::cldr_json_root(),
             locale_subset: "full".to_string(),
         })
     } else {
-        anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
+        anyhow::bail!("Either --cldr-tag or --input-root must be specified",)
     };
 
     let keys = get_all_cldr_keys();
@@ -397,6 +412,78 @@ fn export_cldr<'data>(
     for key in keys.iter() {
         log::info!("Writing key: {}", key);
         icu_provider::export::export_from_iterable(key, provider, exporter)?;
+    }
+
+    Ok(())
+}
+
+fn export_set_props<'data>(
+    matches: &ArgMatches,
+    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    allowed_keys: Option<&HashSet<&str>>,
+) -> anyhow::Result<()> {
+    let provider = if let Some(path) = matches.value_of("INPUT_ROOT") {
+        PropertiesDataProvider::new(PathBuf::from(path))
+    } else if matches.is_present("INPUT_FROM_TESTDATA") {
+        PropertiesDataProvider::new(icu_testdata::paths::uprops_toml_root())
+    } else {
+        anyhow::bail!("Value for --input-root must be specified",)
+    };
+
+    let keys = ALL_SET_KEYS;
+    let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
+        keys.iter()
+            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
+            .copied()
+            .collect()
+    } else {
+        keys.to_vec()
+    };
+
+    for key in keys.iter() {
+        log::info!("Writing key: {}", key);
+        let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
+        if matches.is_present("TEST_KEYS") && matches!(result, Err(DataError::Resource(_))) {
+            // Within testdata, if the data for a particular property is unavailable, skip it for now.
+        } else {
+            result?
+        }
+    }
+
+    Ok(())
+}
+
+fn export_map_props<'data>(
+    matches: &ArgMatches,
+    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    allowed_keys: Option<&HashSet<&str>>,
+) -> anyhow::Result<()> {
+    let provider = if let Some(path) = matches.value_of("INPUT_ROOT") {
+        EnumeratedPropertyCodePointTrieProvider::new(PathBuf::from(path))
+    } else if matches.is_present("INPUT_FROM_TESTDATA") {
+        EnumeratedPropertyCodePointTrieProvider::new(icu_testdata::paths::uprops_toml_root())
+    } else {
+        anyhow::bail!("Value for --input-root must be specified",)
+    };
+
+    let keys = ALL_MAP_KEYS;
+    let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
+        keys.iter()
+            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
+            .copied()
+            .collect()
+    } else {
+        keys.to_vec()
+    };
+
+    for key in keys.iter() {
+        log::info!("Writing key: {}", key);
+        let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
+        if matches.is_present("TEST_KEYS") && matches!(result, Err(DataError::Resource(_))) {
+            // Within testdata, if the data for a particular property is unavailable, skip it for now.
+        } else {
+            result?
+        }
     }
 
     Ok(())

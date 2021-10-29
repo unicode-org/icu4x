@@ -1,4 +1,4 @@
-# icu_benchmark_macros [![crates.io](http://meritbadge.herokuapp.com/icu_benchmark_macros)](https://crates.io/crates/icu_benchmark_macros)
+# icu_benchmark_macros [![crates.io](https://img.shields.io/crates/v/icu_benchmark_macros)](https://crates.io/crates/icu_benchmark_macros)
 
 
 

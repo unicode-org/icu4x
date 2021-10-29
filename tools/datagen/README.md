@@ -1,4 +1,4 @@
-# icu_datagen [![crates.io](http://meritbadge.herokuapp.com/icu_datagen)](https://crates.io/crates/icu_datagen)
+# icu_datagen [![crates.io](https://img.shields.io/crates/v/icu_datagen)](https://crates.io/crates/icu_datagen)
 
 `icu_datagen` contains command-line tools to generate and process ICU4X data.
 

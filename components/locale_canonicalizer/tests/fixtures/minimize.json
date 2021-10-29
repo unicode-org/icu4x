@@ -16,6 +16,10 @@
     "output": "en"
   },
   {
+    "input": "es-ES-preeuro",
+    "output": "es-preeuro"
+  },
+  {
     "input": "zh-Hant-TW-u-hc-h24-nu-chinese",
     "output": "zh-TW-u-hc-h24-nu-chinese"
   }

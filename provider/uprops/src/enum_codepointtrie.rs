@@ -7,7 +7,10 @@ use crate::uprops_serde;
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
+use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
+use icu_properties::{GeneralSubcategory, Script};
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
@@ -76,7 +79,7 @@ impl<T: TrieValue> TryFrom<uprops_serde::enumerated::EnumeratedPropertyCodePoint
         let data = data.map_err(DataError::new_resc_error)?;
         let trie =
             CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error);
-        trie.map(|t| UnicodePropertyMapV1 { codepoint_trie: t })
+        trie.map(|t| UnicodePropertyMapV1 { code_point_trie: t })
     }
 }
 
@@ -110,6 +113,21 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
     }
 }
 
+icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
+    key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralSubcategory>,
+    key::SCRIPT_V1 => UnicodePropertyMapV1Marker<Script>,
+}, SERDE_SE, 'data);
+
+impl IterableDataProviderCore for EnumeratedPropertyCodePointTrieProvider {
+    fn supported_options_for_key(
+        &self,
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
+        Ok(Box::new(list.into_iter()))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -137,7 +155,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().codepoint_trie;
+        let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().code_point_trie;
 
         assert_eq!(trie.get('꣓' as u32), GeneralSubcategory::Digit);
         assert_eq!(trie.get('≈' as u32), GeneralSubcategory::MathSymbol);
@@ -159,7 +177,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let trie: &CodePointTrie<Script> = &payload.get().codepoint_trie;
+        let trie: &CodePointTrie<Script> = &payload.get().code_point_trie;
 
         assert_eq!(trie.get('꣓' as u32), Script::Saurashtra);
         assert_eq!(trie.get('≈' as u32), Script::Common);
