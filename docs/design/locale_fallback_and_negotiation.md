@@ -32,7 +32,7 @@ There are good arguments for the fallback to the next locale in the user list be
 
 There are also good arguments against this strategy.
 
-I think this makes a good example where we can’t make a good decision as library owners, and will have to provide an option for the developers using the library to configure the behavior.
+The case described above, with different users desiring different resolution behavior, makes a good example where we can’t make a good decision as library owners, and will have to provide an option for the developers using the library to configure the behavior.
 
 ### Horizontal fallback
 
