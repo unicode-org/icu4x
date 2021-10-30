@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635539921445,
+  "lastUpdate": 1635554810394,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -15581,6 +15581,144 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0df5de32e80dd283920d351cc1889d7d0b8c65f2"
         },
         "date": 1635539916288,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 8840,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13539,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 8740,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 7255,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 964798,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12313,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple+opt.wasm",
+            "value": 837472,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 9103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 16201,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 834818,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 7964,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 934995,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30549,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10134,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 834819,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 831292,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nmihai_2000@yahoo.com",
+            "name": "Mihai Nita",
+            "username": "mihnita"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf4b5dfc496f5580ebd8d8d5610b3e4bbacee625",
+          "message": "Design doc: locale fallback and negotiation (#1237)\n\n* Design doc: locale fallback and negotiation\r\n\r\n* Design doc: renamed file\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Fixing a couple of line breaks\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Apply suggestions from code review\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Removed double quote about optimization\r\n\r\n* Apply suggestions from code review\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Removed TODO, reordered terminology\r\n\r\nCo-authored-by: Elango <elango@unicode.org>",
+          "timestamp": "2021-10-29T17:41:55-07:00",
+          "tree_id": "0f28c05193029ab529faac34d50067ace0bcae52",
+          "url": "https://github.com/unicode-org/icu4x/commit/bf4b5dfc496f5580ebd8d8d5610b3e4bbacee625"
+        },
+        "date": 1635554805150,
         "tool": "ndjson",
         "benches": [
           {
