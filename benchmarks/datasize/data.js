@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635539733068,
+  "lastUpdate": 1635554599871,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2693,6 +2693,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0df5de32e80dd283920d351cc1889d7d0b8c65f2"
         },
         "date": 1635539727115,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 811979,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nmihai_2000@yahoo.com",
+            "name": "Mihai Nita",
+            "username": "mihnita"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf4b5dfc496f5580ebd8d8d5610b3e4bbacee625",
+          "message": "Design doc: locale fallback and negotiation (#1237)\n\n* Design doc: locale fallback and negotiation\r\n\r\n* Design doc: renamed file\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Fixing a couple of line breaks\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Apply suggestions from code review\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Removed double quote about optimization\r\n\r\n* Apply suggestions from code review\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Removed TODO, reordered terminology\r\n\r\nCo-authored-by: Elango <elango@unicode.org>",
+          "timestamp": "2021-10-29T17:41:55-07:00",
+          "tree_id": "0f28c05193029ab529faac34d50067ace0bcae52",
+          "url": "https://github.com/unicode-org/icu4x/commit/bf4b5dfc496f5580ebd8d8d5610b3e4bbacee625"
+        },
+        "date": 1635554593858,
         "tool": "ndjson",
         "benches": [
           {
