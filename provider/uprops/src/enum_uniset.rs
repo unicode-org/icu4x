@@ -148,7 +148,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
+            .expect("Should parse files successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
@@ -176,7 +177,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
+            .expect("Should parse files successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
@@ -207,7 +209,8 @@ mod tests {
             key: ResourceKey,
         ) -> DataPayload<'data, UnicodePropertyV1Marker> {
             let root_dir = icu_testdata::paths::data_root().join("uprops");
-            let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
+            let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
+                .expect("Should parse files successfully");
             let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
@@ -319,7 +322,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
+            .expect("Should parse files successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {

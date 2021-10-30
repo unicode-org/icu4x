@@ -105,7 +105,7 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
         let prop_name = &req.resource_path.key.sub_category;
-        let source_cpt_data = &self.data.get(&prop_name).unwrap().code_point_trie;
+        let source_cpt_data = &self.data.get(prop_name).unwrap().code_point_trie;
 
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
 
@@ -147,7 +147,8 @@ mod tests {
     #[test]
     fn test_general_category() {
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
+        let provider = EnumeratedPropertyCodePointTrieProvider::try_new(root_dir)
+            .expect("Should parse files successfully");
 
         let payload: DataPayload<'_, UnicodePropertyMapV1Marker<GeneralSubcategory>> = provider
             .load_payload(&DataRequest {
@@ -169,7 +170,8 @@ mod tests {
     #[test]
     fn test_script() {
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
+        let provider = EnumeratedPropertyCodePointTrieProvider::try_new(root_dir)
+            .expect("Should parse files successfully");
 
         let payload: DataPayload<'_, UnicodePropertyMapV1Marker<Script>> = provider
             .load_payload(&DataRequest {

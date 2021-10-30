@@ -20,7 +20,7 @@ pub fn open_reader(path: &Path) -> eyre::Result<BufReader<File>> {
 
 /// Read the contents of the file at `path` and return it as a `String`.
 pub fn read_path_to_string(path: &Path) -> eyre::Result<String> {
-    let mut reader = open_reader(&path)?;
+    let mut reader = open_reader(path)?;
     let mut buffer = String::new();
     reader
         .read_to_string(&mut buffer)
