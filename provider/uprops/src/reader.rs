@@ -8,7 +8,6 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::Read;
 use std::path::{Path, PathBuf};
-use std::str::FromStr;
 
 /// Helper function to open a file and return failures as a crate error.
 pub fn open_reader(path: &Path) -> eyre::Result<BufReader<File>> {

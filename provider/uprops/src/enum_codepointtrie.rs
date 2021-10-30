@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::Error;
 use crate::reader::*;
 use crate::uprops_serde;
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
@@ -16,9 +15,6 @@ use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::convert::TryFrom;
-use std::convert::TryInto;
-use std::fs;
-use std::io;
 use std::path::PathBuf;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
