@@ -3,10 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::Error;
+use crate::reader::*;
 use crate::uprops_serde;
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 
-use crate::reader::*;
+use eyre::WrapErr;
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
@@ -15,13 +16,12 @@ use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::convert::TryFrom;
+use std::convert::TryInto;
 use std::fs;
 use std::io;
 use std::path::PathBuf;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
-use eyre::WrapErr;
-use std::convert::TryInto;
 
 /// This data provider returns `CodePointTrie` data inside a
 /// `UnicodePropertyMap` data struct. The source data is the same as that of
@@ -35,10 +35,11 @@ pub struct EnumeratedPropertyCodePointTrieProvider {
 impl EnumeratedPropertyCodePointTrieProvider {
     pub fn try_new(root_dir: PathBuf) -> eyre::Result<Self> {
         let mut result = Self {
-            data: HashMap::new()
+            data: HashMap::new(),
         };
         for path in get_dir_contents(&root_dir)? {
-            let key: TinyStr16 = path.file_stem()
+            let key: TinyStr16 = path
+                .file_stem()
                 .and_then(|p| p.to_str())
                 .ok_or_else(|| eyre::eyre!("Invalid file name: {:?}", path))?
                 .parse()?;

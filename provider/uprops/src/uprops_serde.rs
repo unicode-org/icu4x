@@ -73,12 +73,9 @@ pub mod enumerated {
     }
 
     #[derive(serde::Deserialize)]
-    pub struct Level1 {
-        pub data: EnumeratedPropertyMap,
-    }
-
-    #[derive(serde::Deserialize)]
     pub struct Main {
-        pub enum_property: Level1,
+        pub enum_property: Vec<EnumeratedPropertyMap>,
+        #[serde(skip)]
+        pub binary_property: (),
     }
 }

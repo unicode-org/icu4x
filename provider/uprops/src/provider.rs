@@ -22,10 +22,10 @@ pub struct PropertiesDataProvider {
 impl PropertiesDataProvider {
     /// Construct a new data provider instance. `root_dir` is the path to the
     /// root directory containing the property data TOML files.
-    pub fn new(root_dir: PathBuf) -> Self {
+    pub fn try_new(root_dir: PathBuf) -> eyre::Result<Self> {
         let binary = BinaryPropertyUnicodeSetDataProvider::new(root_dir.clone());
-        let enumerated = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
-        Self { binary, enumerated }
+        let enumerated = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)?;
+        Ok(Self { binary, enumerated })
     }
 }
 
