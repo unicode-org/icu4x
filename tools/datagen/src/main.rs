@@ -24,7 +24,7 @@
 //!    --out /tmp/icu4x_data/json
 //!```
 //!
-//! Generate ICU4X Bincode blob (single file):
+//! Generate ICU4X Postcard blob (single file):
 //!
 //!```bash
 //!# Run from the icu4x project folder
