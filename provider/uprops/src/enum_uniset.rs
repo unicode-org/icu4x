@@ -33,18 +33,16 @@ impl EnumeratedPropertyUnicodeSetDataProvider {
                 .file_stem()
                 .and_then(|p| p.to_str())
                 .ok_or_else(|| eyre::eyre!("Invalid file name: {:?}", path))?
-                .parse()?;
+                .parse()
+                .wrap_err_with(|| format!("Not a Unicode property: {:?}", path))?;
             let toml_str = read_path_to_string(&path)?;
-            let maybe_value = toml::from_str(&toml_str);
-            let value: uprops_serde::enumerated::Main = match maybe_value {
-                Ok(v) => v,
-                Err(_) => continue,
+            let toml_obj: uprops_serde::enumerated::Main = toml::from_str(&toml_str)
+                .wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
+            let value = match toml_obj.enum_property.into_iter().next() {
+                Some(v) => v,
+                None => continue,
             };
-            // let value = toml::from_str(&toml_str)
-            //     .wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
-            result
-                .data
-                .insert(key, value.enum_property.into_iter().next().unwrap());
+            result.data.insert(key, value);
         }
         Ok(result)
     }

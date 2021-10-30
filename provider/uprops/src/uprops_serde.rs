@@ -74,6 +74,7 @@ pub mod enumerated {
 
     #[derive(serde::Deserialize)]
     pub struct Main {
+        #[serde(default)]
         pub enum_property: Vec<EnumeratedPropertyMap>,
         #[serde(skip)]
         pub binary_property: (),

@@ -42,10 +42,15 @@ impl EnumeratedPropertyCodePointTrieProvider {
                 .file_stem()
                 .and_then(|p| p.to_str())
                 .ok_or_else(|| eyre::eyre!("Invalid file name: {:?}", path))?
-                .parse()?;
+                .parse()
+                .wrap_err_with(|| format!("Not a Unicode property: {:?}", path))?;
             let toml_str = read_path_to_string(&path)?;
-            let value = toml::from_str(&toml_str)
+            let toml_obj: uprops_serde::enumerated::Main = toml::from_str(&toml_str)
                 .wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
+            let value = match toml_obj.enum_property.into_iter().next() {
+                Some(v) => v,
+                None => continue,
+            };
             result.data.insert(key, value);
         }
         Ok(result)
