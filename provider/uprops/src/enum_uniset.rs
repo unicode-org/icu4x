@@ -94,7 +94,10 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker>
             if parts.len() != 2 {
                 return Err(DataError::MissingResourceKey(req.resource_path.key));
             }
-            (parts[0].parse().unwrap(), parts[1])
+            (
+                parts[0].parse().map_err(DataError::new_resc_error)?,
+                parts[1],
+            )
         };
 
         let toml_data = &self

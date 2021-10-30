@@ -105,7 +105,11 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
         let prop_name = &req.resource_path.key.sub_category;
-        let source_cpt_data = &self.data.get(prop_name).unwrap().code_point_trie;
+        let source_cpt_data = &self
+            .data
+            .get(prop_name)
+            .ok_or(DataError::MissingResourceKey(req.resource_path.key))?
+            .code_point_trie;
 
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
 

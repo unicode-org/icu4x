@@ -429,6 +429,7 @@ fn export_set_props<'data>(
     } else {
         anyhow::bail!("Value for --input-root must be specified",)
     };
+    // TODO(#574): Remove the unwrap when this file is moved to eyre
     let provider = PropertiesDataProvider::try_new(toml_root).unwrap();
 
     let keys = ALL_SET_KEYS;
@@ -466,6 +467,7 @@ fn export_map_props<'data>(
     } else {
         anyhow::bail!("Value for --input-root must be specified",)
     };
+    // TODO(#574): Remove the unwrap when this file is moved to eyre
     let provider = EnumeratedPropertyCodePointTrieProvider::try_new(toml_root).unwrap();
 
     let keys = ALL_MAP_KEYS;
