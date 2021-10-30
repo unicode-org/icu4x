@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635540725901,
+  "lastUpdate": 1635555195073,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Heap – ubuntu-latest": [
@@ -64853,6 +64853,192 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0df5de32e80dd283920d351cc1889d7d0b8c65f2"
         },
         "date": 1635540720522,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "icu_datetime/work_log – Total Heap Allocations",
+            "value": 16834,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at Global Memory Max",
+            "value": 16466,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at End of Program Execution",
+            "value": 1024,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Total Heap Allocations",
+            "value": 514,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at Global Memory Max",
+            "value": 305,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Total Heap Allocations",
+            "value": 295,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at Global Memory Max",
+            "value": 214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Total Heap Allocations",
+            "value": 15477,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at Global Memory Max",
+            "value": 15215,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Total Heap Allocations",
+            "value": 16505,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at Global Memory Max",
+            "value": 15636,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Total Heap Allocations",
+            "value": 1008,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at Global Memory Max",
+            "value": 388,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Total Heap Allocations",
+            "value": 15,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at Global Memory Max",
+            "value": 15,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Total Heap Allocations",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at Global Memory Max",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Total Heap Allocations",
+            "value": 448,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Heap at Global Memory Max",
+            "value": 256,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nmihai_2000@yahoo.com",
+            "name": "Mihai Nita",
+            "username": "mihnita"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf4b5dfc496f5580ebd8d8d5610b3e4bbacee625",
+          "message": "Design doc: locale fallback and negotiation (#1237)\n\n* Design doc: locale fallback and negotiation\r\n\r\n* Design doc: renamed file\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Fixing a couple of line breaks\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Update docs/design/locale_fallback_and_negotiation.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Apply suggestions from code review\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Removed double quote about optimization\r\n\r\n* Apply suggestions from code review\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\n* Removed TODO, reordered terminology\r\n\r\nCo-authored-by: Elango <elango@unicode.org>",
+          "timestamp": "2021-10-29T17:41:55-07:00",
+          "tree_id": "0f28c05193029ab529faac34d50067ace0bcae52",
+          "url": "https://github.com/unicode-org/icu4x/commit/bf4b5dfc496f5580ebd8d8d5610b3e4bbacee625"
+        },
+        "date": 1635555189168,
         "tool": "ndjson",
         "benches": [
           {
