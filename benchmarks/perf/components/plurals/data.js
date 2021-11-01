@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635555013770,
+  "lastUpdate": 1635796529507,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17765,6 +17765,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 28200,
             "range": "± 1929",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e71aa54a2ed3300ee745ecca6d355af6a90955d3",
+          "message": "Speed up icu4x-datagen by pre-loading data in icu_provider_uprops (#1244)",
+          "timestamp": "2021-11-01T12:46:13-07:00",
+          "tree_id": "41a3e8e12ba95040d79668ed203b83a51df2dced",
+          "url": "https://github.com/unicode-org/icu4x/commit/e71aa54a2ed3300ee745ecca6d355af6a90955d3"
+        },
+        "date": 1635796524574,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 995,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6520,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21794,
+            "range": "± 53",
             "unit": "ns/iter"
           }
         ]
