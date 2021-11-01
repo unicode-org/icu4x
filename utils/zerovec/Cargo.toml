@@ -25,7 +25,7 @@ all-features = true
 
 [dependencies]
 serde = { version = "1.0", optional = true , default-features = false, features = ["alloc"] }
-yoke = { path = "../yoke", version = "0.2.0", optional = true }
+yoke = { version = "0.3", path = "../yoke", optional = true }
 
 [dev-dependencies]
 icu_benchmark_macros = { version = "0.3", path = "../../tools/benchmark/macros" }
