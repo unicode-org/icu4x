@@ -108,7 +108,7 @@ where
 /// let root_dir = icu_testdata::paths::uprops_toml_root();
 /// let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
 /// let payload = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
-/// let gcb = &payload.get().codepoint_trie;
+/// let gcb = &payload.get().code_point_trie;
 ///
 /// assert_eq!(gcb.get('🇦' as u32), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
 /// assert_eq!(gcb.get('ำ' as u32), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
@@ -136,7 +136,7 @@ where
 /// let root_dir = icu_testdata::paths::uprops_toml_root();
 /// let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
 /// let payload = maps::get_word_break(&provider).expect("The data should be valid!");
-/// let wb = &payload.get().codepoint_trie;
+/// let wb = &payload.get().code_point_trie;
 ///
 /// assert_eq!(wb.get('.' as u32), WordBreak::MidNumLet); // U+002E: Full Stop
 /// assert_eq!(wb.get('，' as u32), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
@@ -162,7 +162,7 @@ where
 /// let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
 ///
 /// let payload = maps::get_sentence_break(&provider).expect("The data should be valid!");
-/// let sb = &payload.get().codepoint_trie;
+/// let sb = &payload.get().code_point_trie;
 ///
 /// assert_eq!(sb.get('９' as u32), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
 /// assert_eq!(sb.get(',' as u32), SentenceBreak::SContinue); // U+002C: Comma

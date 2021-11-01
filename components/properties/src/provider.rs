@@ -314,7 +314,7 @@ pub mod key {
         (SCRIPT_ZANABAZAR_SQUARE_V1, "sc=Zanb"),
     );
 
-    define_resource_keys!(ALL_MAP_KEYS; 2;
+    define_resource_keys!(ALL_MAP_KEYS; 5;
         //
         // Enumerated property CodePointMaps
         //
