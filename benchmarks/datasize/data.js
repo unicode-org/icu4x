@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635804803933,
+  "lastUpdate": 1635805355207,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2783,6 +2783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9892697f554b36238613348b323aead3cdd75be1"
         },
         "date": 1635804799229,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 811979,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c68d73b35fb91b552f1a4b8394a8290e3588ee27",
+          "message": "Document utils release process (#1250)\n\n* Document utils release process\r\n\r\n* fix",
+          "timestamp": "2021-11-01T15:21:05-07:00",
+          "tree_id": "72f72c9c4e7679f5d612198a9974b2eb7ad84fa7",
+          "url": "https://github.com/unicode-org/icu4x/commit/c68d73b35fb91b552f1a4b8394a8290e3588ee27"
+        },
+        "date": 1635805349721,
         "tool": "ndjson",
         "benches": [
           {
