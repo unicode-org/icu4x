@@ -132,22 +132,28 @@ where
         &'b self,
     ) -> impl Iterator<
         Item = (
-            &'b <K as ZeroMapKV<'a>>::GetType,
-            &'b <V as ZeroMapKV<'a>>::GetType,
+            &'a <K as ZeroMapKV<'a>>::GetType,
+            &'a <V as ZeroMapKV<'a>>::GetType,
         ),
-    > {
-        (0..self.keys.len())
-            .map(move |idx| (self.keys.get(idx).unwrap(), self.values.get(idx).unwrap()))
+    > + 'b {
+        (0..self.keys.len()).map(move |idx| {
+            (
+                self.keys.get_lengthened(idx).unwrap(),
+                self.values.get_lengthened(idx).unwrap(),
+            )
+        })
     }
 
     /// Produce an ordered iterator over keys
-    pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
-        (0..self.keys.len()).map(move |idx| self.keys.get(idx).unwrap())
+    pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'a <K as ZeroMapKV<'a>>::GetType> + 'b {
+        (0..self.keys.len()).map(move |idx| self.keys.get_lengthened(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
-    pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        (0..self.values.len()).map(move |idx| self.values.get(idx).unwrap())
+    pub fn iter_values<'b>(
+        &'b self,
+    ) -> impl Iterator<Item = &'a <V as ZeroMapKV<'a>>::GetType> + 'b {
+        (0..self.values.len()).map(move |idx| self.values.get_lengthened(idx).unwrap())
     }
 }
 

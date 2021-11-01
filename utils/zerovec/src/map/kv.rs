@@ -32,7 +32,7 @@ pub trait ZeroMapKV<'a> {
     /// The type produced by `Container::get()`
     ///
     /// This type will be predetermined by the choice of `Self::Container`
-    type GetType: ?Sized;
+    type GetType: ?Sized + 'static;
     /// The type to use whilst serializing. This may not necessarily be `Self`, however it
     /// must serialize to the exact same thing as `Self`
     type SerializeType: ?Sized;

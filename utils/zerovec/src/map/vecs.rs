@@ -18,7 +18,7 @@ pub trait BorrowedZeroVecLike<'a, T: ?Sized> {
     /// The type received by `Self::binary_search()`
     type NeedleType: ?Sized;
     /// The type returned by `Self::get()`
-    type GetType: ?Sized;
+    type GetType: ?Sized + 'static;
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
