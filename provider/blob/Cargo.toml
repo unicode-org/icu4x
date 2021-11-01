@@ -34,7 +34,7 @@ postcard = { version = "0.7.0", default-features = false }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
 litemap = { version = "0.2.0", path = "../../utils/litemap/", features = ["serde"] }
 writeable = { path = "../../utils/writeable" }
-yoke = { version = "0.3", path = "../../utils/yoke" }
+yoke = { version = "0.3.1", path = "../../utils/yoke" }
 
 # For the export feature
 log = { version = "0.4", optional = true }
