@@ -37,11 +37,25 @@ pub trait BorrowedZeroVecLike<'a, T: ?Sized> {
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
+///
+/// This trait augments [`BorrowedZeroVecLike`] with methods allowing for taking
+/// longer references to the underlying buffer, for borrowed-only vector types.
+pub trait BorrowedOnlyZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
+    /// Get element at `index`, with a longer lifetime
+    fn get_lengthened(&self, index: usize) -> Option<&'a Self::GetType>;
+}
+
+/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
+/// should not be implementing or calling this trait directly.
+///
+/// This trait augments [`BorrowedZeroVecLike`] with methods allowing for mutation of the underlying
+/// vector for owned vector types.
 pub trait ZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
     /// A fully borrowed version of this
     type BorrowedVersion: BorrowedZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
+        + BorrowedOnlyZeroVecLike<'a, T>
         + Copy;
     /// Insert an element at `index`
     fn insert(&mut self, index: usize, value: &T);
@@ -128,6 +142,15 @@ where
             .as_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
+    }
+}
+
+impl<'a, T> BorrowedOnlyZeroVecLike<'a, T> for &'a [T::ULE]
+where
+    T: AsULE + Ord + Copy,
+{
+    fn get_lengthened(&self, index: usize) -> Option<&'a T::ULE> {
+        <[T::ULE]>::get(self, index)
     }
 }
 
@@ -238,6 +261,18 @@ where
             }
         }
         true
+    }
+}
+
+impl<'a, T> BorrowedOnlyZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
+where
+    T: VarULE,
+    T: Ord,
+    T: ?Sized,
+{
+    fn get_lengthened(&self, index: usize) -> Option<&'a T> {
+        // using UFCS to avoid accidental recursion
+        Self::get(*self, index)
     }
 }
 

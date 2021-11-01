@@ -6,12 +6,13 @@ use crate::ule::AsULE;
 use crate::ZeroVec;
 
 pub use super::kv::ZeroMapKV;
-pub use super::vecs::{BorrowedZeroVecLike, ZeroVecLike};
+pub use super::vecs::{BorrowedOnlyZeroVecLike, BorrowedZeroVecLike, ZeroVecLike};
 
 /// A borrowed-only version of [`ZeroMap`](super::ZeroMap)
 ///
 /// This is useful for fully-zero-copy deserialization from non-human-readable
-/// serialization formats.
+/// serialization formats. It also has the advantage that it can return references that live for
+/// the lifetime of the backing buffer as opposed to that of the [`ZeroMapBorrowed`] instance.
 ///
 /// # Examples
 ///
@@ -84,6 +85,10 @@ where
 
     /// Get the value associated with `key`, if it exists.
     ///
+    /// This is able to return values that live longer than the map itself
+    /// since they borrow directly from the backing buffer. This is the
+    /// primary advantage of using [`ZeroMapBorrowed`] over [`ZeroMap`].
+    ///
     /// ```rust
     /// use zerovec::ZeroMap;
     /// use zerovec::map::ZeroMapBorrowed;
@@ -94,10 +99,15 @@ where
     /// let borrowed = map.as_borrowed();
     /// assert_eq!(borrowed.get(&1), Some("one"));
     /// assert_eq!(borrowed.get(&3), None);
+    ///
+    /// let borrow = borrowed.get(&1);
+    /// drop(borrowed);
+    /// // still exists after the map has been dropped
+    /// assert_eq!(borrow, Some("one"));
     /// ```
-    pub fn get(&self, key: &K::NeedleType) -> Option<&V::GetType> {
+    pub fn get(&self, key: &K::NeedleType) -> Option<&'a V::GetType> {
         let index = self.keys.binary_search(key).ok()?;
-        self.values.get(index)
+        self.values.get_lengthened(index)
     }
 
     /// Returns whether `key` is contained in this map
