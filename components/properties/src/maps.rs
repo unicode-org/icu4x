@@ -103,10 +103,8 @@ where
 ///
 /// ```
 /// use icu::properties::{maps, GraphemeClusterBreak};
-/// use icu_provider_uprops::EnumeratedPropertyCodePointTrieProvider;
 ///
-/// let root_dir = icu_testdata::paths::uprops_toml_root();
-/// let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
+/// let provider = icu_testdata::get_provider();
 /// let payload = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
 /// let gcb = &payload.get().code_point_trie;
 ///
@@ -131,10 +129,8 @@ where
 ///
 /// ```
 /// use icu::properties::{maps, WordBreak};
-/// use icu_provider_uprops::EnumeratedPropertyCodePointTrieProvider;
 ///
-/// let root_dir = icu_testdata::paths::uprops_toml_root();
-/// let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
+/// let provider = icu_testdata::get_provider();
 /// let payload = maps::get_word_break(&provider).expect("The data should be valid!");
 /// let wb = &payload.get().code_point_trie;
 ///
@@ -157,10 +153,8 @@ where
 ///
 /// ```
 /// use icu::properties::{maps, SentenceBreak};
-/// use icu_provider_uprops::EnumeratedPropertyCodePointTrieProvider;
-/// let root_dir = icu_testdata::paths::uprops_toml_root();
-/// let provider = EnumeratedPropertyCodePointTrieProvider::new(root_dir);
 ///
+/// let provider = icu_testdata::get_provider();
 /// let payload = maps::get_sentence_break(&provider).expect("The data should be valid!");
 /// let sb = &payload.get().code_point_trie;
 ///
