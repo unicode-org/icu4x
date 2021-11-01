@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635805697033,
+  "lastUpdate": 1635807303905,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17891,6 +17891,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 19214,
             "range": "± 92",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6975267434af46fc4ec70fc7c7459a2bc74c2699",
+          "message": "Update utils in preparation for release (#1249)\n\n* Bump writeable to 0.2.1\r\n\r\n* Update dependency on writeable\r\n\r\n* Bump yoke version to 0.3.0\r\n\r\n* Update dependency on yoke\r\n\r\n* Bump zerovec version to 0.4.1\r\n\r\n* Bump icu_pattern to 0.1.1\r\n\r\n* Bump CPT to 0.3.0\r\n\r\n* Update dependency on CPT\r\n\r\n* Bump uniset to 0.4.0\r\n\r\n* Update dependency on uniset",
+          "timestamp": "2021-11-01T15:47:18-07:00",
+          "tree_id": "4e15d1bb10b5cdf39bf5ecbaeb12d9cff0804b00",
+          "url": "https://github.com/unicode-org/icu4x/commit/6975267434af46fc4ec70fc7c7459a2bc74c2699"
+        },
+        "date": 1635807298585,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1146,
+            "range": "± 68",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8189,
+            "range": "± 512",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22006,
+            "range": "± 1230",
             "unit": "ns/iter"
           }
         ]
