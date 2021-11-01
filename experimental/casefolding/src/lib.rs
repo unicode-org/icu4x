@@ -4,6 +4,12 @@
 
 //! TODO: module documentation
 
+use core::convert::TryFrom;
+use core::num::TryFromIntError;
+use icu_codepointtrie::codepointtrie::{CodePointTrie, TrieValue};
+use zerovec::ZeroVec;
+use zerovec::ule::{AsULE, PlainOldULE};
+
 /// The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum CaseType {
@@ -50,9 +56,9 @@ impl DotType {
 
 /// The datatype stored in the codepoint trie for casefolding.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub struct CaseFoldingValue(u16);
+pub struct CaseFoldingData(u16);
 
-impl CaseFoldingValue {
+impl CaseFoldingData {
     const CASE_MASK: u16 = 0x3;
     const IGNORABLE_FLAG: u16 = 0x4;
     const EXCEPTION_FLAG: u16 = 0x8;
@@ -115,8 +121,31 @@ impl CaseFoldingValue {
     }
 }
 
-struct CaseFoldingExceptions {
-    raw: Vec<u16>,
+impl AsULE for CaseFoldingData {
+    type ULE = PlainOldULE<2>;
+
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        PlainOldULE(self.0.to_le_bytes())
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        CaseFoldingData(u16::from_le_bytes(unaligned.0))
+    }
+}
+
+impl TrieValue for CaseFoldingData {
+    const DATA_GET_ERROR_VALUE: CaseFoldingData = CaseFoldingData(0);
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u16::try_from(i).map(CaseFoldingData)
+    }
+}
+
+struct CaseFoldingExceptions<'data> {
+    raw: ZeroVec<'data, u16>,
 }
 
 #[derive(Copy,Clone)]
@@ -135,7 +164,7 @@ enum CaseFoldingExceptionSlot {
 /// Following ICU4C, data is stored as a u16 array. The codepoint trie in CaseFolding stores offsets into
 /// this array. The u16 at that index contains a set of flags describing the subsequent data.
 /// TODO: diagram of layout
-impl CaseFoldingExceptions {
+impl<'data> CaseFoldingExceptions<'data> {
     // Each slot is 2 u16 elements instead of 1
     const DOUBLE_SLOTS_FLAG: u16 = 0x100;
 
@@ -148,17 +177,22 @@ impl CaseFoldingExceptions {
     const CONDITIONAL_SPECIAL_FLAG: u16 = 0x4000;
     const CONDITIONAL_FOLD_FLAG: u16 = 0x8000;
 
+    #[inline(always)]
+    fn get(&self, idx: usize) -> u16 {
+	<u16 as AsULE>::from_unaligned(self.raw.as_slice()[idx as usize])
+    }
+
     // Returns true if the given slot exists for the exception data starting at the given index
     fn has_slot(&self, idx: u16, slot: CaseFoldingExceptionSlot) -> bool {
 	let bit = 1u16 << (slot as u16);
-	self.raw[idx as usize] & bit != 0
+	self.get(idx as usize) & bit != 0
     }
 
     // Returns the offset of the given slot for the exception data starting at the given index:
     // that is, the number of slots before the given slot.
     fn slot_offset(&self, idx: u16, slot: CaseFoldingExceptionSlot) -> usize {
 	debug_assert!(self.has_slot(idx, slot));
-	let flags = self.raw[idx as usize];
+	let flags = self.get(idx as usize);
 	let slot_bit = 1u16 << (slot as u16);
 	let previous_slot_mask = slot_bit - 1;
 	let previous_slots = flags & previous_slot_mask;
@@ -167,14 +201,14 @@ impl CaseFoldingExceptions {
 
     fn slot_value(&self, idx: u16, slot: CaseFoldingExceptionSlot) -> u32 {
 	debug_assert!(self.has_slot(idx, slot));
-	if self.raw[idx as usize] & Self::DOUBLE_SLOTS_FLAG != 0 {
+	if self.get(idx as usize) & Self::DOUBLE_SLOTS_FLAG != 0 {
 	    let slot_idx = (idx + 1) as usize + self.slot_offset(idx, slot) * 2;
-	    let hi = self.raw[slot_idx] as u32;
-	    let lo = self.raw[slot_idx + 1] as u32;
+	    let hi = self.get(slot_idx) as u32;
+	    let lo = self.get(slot_idx + 1) as u32;
 	    hi << 16 | lo
 	} else {
 	    let slot_idx = (idx + 1) as usize + self.slot_offset(idx, slot);
-	    self.raw[slot_idx] as u32
+	    self.get(slot_idx) as u32
 	}
     }
 
@@ -186,7 +220,7 @@ impl CaseFoldingExceptions {
     fn delta(&self, idx: u16) -> i32 {
 	debug_assert!(self.has_slot(idx, CaseFoldingExceptionSlot::Delta));
 	let raw: i32 = self.slot_value(idx, CaseFoldingExceptionSlot::Delta) as _;
-	if self.raw[idx as usize] & Self::DELTA_IS_NEGATIVE_FLAG != 0 {
+	if self.get(idx as usize) & Self::DELTA_IS_NEGATIVE_FLAG != 0 {
 	    -raw
 	} else {
 	    raw
@@ -194,23 +228,23 @@ impl CaseFoldingExceptions {
     }
 
     fn no_simple_case_folding(&self, idx: u16) -> bool {
-	self.raw[idx as usize] & Self::NO_SIMPLE_CASE_FOLDING_FLAG != 0
+	self.get(idx as usize) & Self::NO_SIMPLE_CASE_FOLDING_FLAG != 0
     }
 
     fn is_sensitive(&self, idx: u16) -> bool {
-	self.raw[idx as usize] & Self::SENSITIVE_FLAG != 0
+	self.get(idx as usize) & Self::SENSITIVE_FLAG != 0
     }
 
     fn has_conditional_fold(&self, idx: u16) -> bool {
-	self.raw[idx as usize] & Self::CONDITIONAL_FOLD_FLAG != 0
+	self.get(idx as usize) & Self::CONDITIONAL_FOLD_FLAG != 0
     }
 
     fn has_conditional_special(&self, idx: u16) -> bool {
-	self.raw[idx as usize] & Self::CONDITIONAL_SPECIAL_FLAG != 0
+	self.get(idx as usize) & Self::CONDITIONAL_SPECIAL_FLAG != 0
     }
 
     fn dot_type(&self, idx: u16) -> DotType {
-	let masked_bits = (self.raw[idx as usize] >> Self::DOT_SHIFT) & DotType::DOT_MASK;
+	let masked_bits = (self.get(idx as usize) >> Self::DOT_SHIFT) & DotType::DOT_MASK;
 	DotType::from_masked_bits(masked_bits)
     }
 }
@@ -220,12 +254,12 @@ pub struct FoldOptions(u32);
 impl FoldOptions {
     const EXCLUDE_SPECIAL_I_FLAG: u32 = 0x1;
 
-    fn with_turkic_mappings() -> Self {
+    pub fn with_turkic_mappings() -> Self {
 	Self(Self::EXCLUDE_SPECIAL_I_FLAG)
     }
 
     pub fn exclude_special_i(&self) -> bool {
-	self & Self::EXCLUDE_SPECIAL_I_FLAG != 0
+	self.0 & Self::EXCLUDE_SPECIAL_I_FLAG != 0
     }
 }
 
@@ -235,13 +269,14 @@ impl Default for FoldOptions {
     }
 }
 
-pub struct CaseFolding {
-    exceptions: CaseFoldingExceptions
+pub struct CaseFolding<'data> {
+    trie: CodePointTrie<'data, CaseFoldingData>,
+    exceptions: CaseFoldingExceptions<'data>
 }
 
-impl CaseFolding {
-    fn lookup_value(&self, _c: char) -> CaseFoldingValue {
-	unimplemented!()
+impl<'data> CaseFolding<'data> {
+    fn lookup_value(&self, c: char) -> CaseFoldingData {
+	self.trie.get(c as u32)
     }
 
     pub fn to_lower(&self, c: char) -> char {

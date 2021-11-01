@@ -23,6 +23,8 @@ include = [
 ]
 
 [dependencies]
+icu_codepointtrie = { version = "0.2", path = "../../utils/codepointtrie", features = ["serde"] }
+zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["serde"] }
 
 [dev-dependencies]
 

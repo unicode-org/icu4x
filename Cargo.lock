@@ -1094,6 +1094,10 @@ dependencies = [
 [[package]]
 name = "icu_casefolding"
 version = "0.1.0"
+dependencies = [
+ "icu_codepointtrie",
+ "zerovec",
+]
 
 [[package]]
 name = "icu_char16trie"
