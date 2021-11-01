@@ -986,7 +986,7 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 
 [[package]]
 name = "icu"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "fixed_decimal",
  "icu_calendar",
@@ -1010,7 +1010,7 @@ version = "0.1.0"
 
 [[package]]
 name = "icu4x_ecma402"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "ecma402_traits",
@@ -1032,7 +1032,7 @@ dependencies = [
 
 [[package]]
 name = "icu_benchmark_macros"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "dhat",
  "dlmalloc",
@@ -1049,7 +1049,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "displaydoc",
  "icu",
@@ -1094,7 +1094,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1117,7 +1117,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1144,7 +1144,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1165,7 +1165,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_canonicalizer"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "icu_locid",
@@ -1179,7 +1179,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1193,7 +1193,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_macros"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "icu",
  "icu_locid",
@@ -1212,7 +1212,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1229,7 +1229,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "displaydoc",
  "icu",
@@ -1244,7 +1244,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "displaydoc",
  "erased-serde",
@@ -1262,7 +1262,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "erased-serde",
  "icu",
@@ -1280,7 +1280,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_cldr"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "dirs",
  "displaydoc",
@@ -1311,7 +1311,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1331,7 +1331,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1340,7 +1340,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_uprops"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "displaydoc",
  "eyre",
@@ -1384,7 +1384,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "cargo_metadata",
  "displaydoc",

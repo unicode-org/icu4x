@@ -36,12 +36,12 @@ extra_features = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.3", path = "../../provider/core", features = ["provider_serde"] }
-icu_locid = { version = "0.3", path = "../../components/locid" }
-icu_plurals = { version = "0.3", path = "../../components/plurals" }
-icu_datetime = { version = "0.3", path = "../../components/datetime", features = ["provider_transform_internals"] }
-icu_locale_canonicalizer = { version = "0.3", path = "../../components/locale_canonicalizer" }
-icu_decimal = { version = "0.3", path = "../../components/decimal" }
+icu_provider = { version = "0.4", path = "../../provider/core", features = ["provider_serde"] }
+icu_locid = { version = "0.4", path = "../../components/locid" }
+icu_plurals = { version = "0.4", path = "../../components/plurals" }
+icu_datetime = { version = "0.4", path = "../../components/datetime", features = ["provider_transform_internals"] }
+icu_locale_canonicalizer = { version = "0.4", path = "../../components/locale_canonicalizer" }
+icu_decimal = { version = "0.4", path = "../../components/decimal" }
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.2", path = "../../utils/litemap" }
@@ -63,8 +63,8 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
-icu_locid_macros = { version = "0.3", path = "../../components/locid/macros" }
-icu_testdata = { version = "0.3", path = "../../provider/testdata" }
+icu_locid_macros = { version = "0.4", path = "../../components/locid/macros" }
+icu_testdata = { version = "0.4", path = "../../provider/testdata" }
 
 [features]
 # Automatically download CLDR data from a host
