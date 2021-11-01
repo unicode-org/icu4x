@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635805136431,
+  "lastUpdate": 1635805713390,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15905,6 +15905,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5003,
             "range": "± 190",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c68d73b35fb91b552f1a4b8394a8290e3588ee27",
+          "message": "Document utils release process (#1250)\n\n* Document utils release process\r\n\r\n* fix",
+          "timestamp": "2021-11-01T15:21:05-07:00",
+          "tree_id": "72f72c9c4e7679f5d612198a9974b2eb7ad84fa7",
+          "url": "https://github.com/unicode-org/icu4x/commit/c68d73b35fb91b552f1a4b8394a8290e3588ee27"
+        },
+        "date": 1635805707739,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2837,
+            "range": "± 126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5061,
+            "range": "± 299",
             "unit": "ns/iter"
           }
         ]
