@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635554599871,
+  "lastUpdate": 1635796063417,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2723,6 +2723,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bf4b5dfc496f5580ebd8d8d5610b3e4bbacee625"
         },
         "date": 1635554593858,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 811979,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e71aa54a2ed3300ee745ecca6d355af6a90955d3",
+          "message": "Speed up icu4x-datagen by pre-loading data in icu_provider_uprops (#1244)",
+          "timestamp": "2021-11-01T12:46:13-07:00",
+          "tree_id": "41a3e8e12ba95040d79668ed203b83a51df2dced",
+          "url": "https://github.com/unicode-org/icu4x/commit/e71aa54a2ed3300ee745ecca6d355af6a90955d3"
+        },
+        "date": 1635796058221,
         "tool": "ndjson",
         "benches": [
           {
