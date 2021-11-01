@@ -454,6 +454,14 @@ impl GraphemeClusterBreak {
     pub const SpacingMark: GraphemeClusterBreak = GraphemeClusterBreak(10); // name="SM"
     pub const Prepend: GraphemeClusterBreak = GraphemeClusterBreak(11); // name="PP"
     pub const RegionalIndicator: GraphemeClusterBreak = GraphemeClusterBreak(12); // name="RI"
+    /// This value is obsolete and unused.
+    pub const EBase: GraphemeClusterBreak = GraphemeClusterBreak(13); // name="EB"
+    /// This value is obsolete and unused.
+    pub const EBaseGAZ: GraphemeClusterBreak = GraphemeClusterBreak(14); // name="EBG"
+    /// This value is obsolete and unused.
+    pub const EModifier: GraphemeClusterBreak = GraphemeClusterBreak(15); // name="EM"
+    /// This value is obsolete and unused.
+    pub const GlueAfterZwj: GraphemeClusterBreak = GraphemeClusterBreak(16); // name="GAZ"
     pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); // name="ZWJ"
 }
 
@@ -489,6 +497,14 @@ impl WordBreak {
     pub const HebrewLetter: WordBreak = WordBreak(14); // name="HL"
     pub const SingleQuote: WordBreak = WordBreak(15); // name="SQ"
     pub const DoubleQuote: WordBreak = WordBreak(16); // name=DQ
+    /// This value is obsolete and unused.
+    pub const EBase: WordBreak = WordBreak(17); // name="EB"
+    /// This value is obsolete and unused.
+    pub const EBaseGAZ: WordBreak = WordBreak(18); // name="EBG"
+    /// This value is obsolete and unused.
+    pub const EModifier: WordBreak = WordBreak(19); // name="EM"
+    /// This value is obsolete and unused.
+    pub const GlueAfterZwj: WordBreak = WordBreak(20); // name="GAZ"
     pub const ZWJ: WordBreak = WordBreak(21); // name="ZWJ"
     pub const WSegSpace: WordBreak = WordBreak(22); // name="WSegSpace"
 }
