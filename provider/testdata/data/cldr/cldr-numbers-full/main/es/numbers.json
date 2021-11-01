@@ -3,7 +3,7 @@
     "es": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "es"
       },
@@ -147,6 +147,7 @@
         },
         "minimalPairs": {
           "pluralMinimalPairs-count-one": "{0} día",
+          "pluralMinimalPairs-count-many": "{0} de días",
           "pluralMinimalPairs-count-other": "{0} días",
           "other": "Toma la {0}.ª a la derecha.",
           "feminine": "La {0} es...",

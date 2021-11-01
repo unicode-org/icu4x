@@ -2,30 +2,46 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::Error;
+use crate::reader::*;
 use crate::uprops_serde;
+
+use eyre::WrapErr;
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
-use std::fs;
+use std::collections::HashMap;
 use std::path::PathBuf;
+use tinystr::TinyStr16;
 
 pub struct EnumeratedPropertyUnicodeSetDataProvider {
-    root_dir: PathBuf,
+    data: HashMap<TinyStr16, uprops_serde::enumerated::EnumeratedPropertyMap>,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
 impl EnumeratedPropertyUnicodeSetDataProvider {
-    pub fn new(root_dir: PathBuf) -> Self {
-        EnumeratedPropertyUnicodeSetDataProvider { root_dir }
-    }
-    fn get_toml_data(&self, name: &str) -> Result<uprops_serde::enumerated::Main, Error> {
-        let mut path: PathBuf = self.root_dir.clone().join(name);
-        path.set_extension("toml");
-        let toml_str = fs::read_to_string(&path).map_err(|e| Error::Io(e, path.clone()))?;
-        toml::from_str(&toml_str).map_err(|e| Error::Toml(e, path))
+    pub fn try_new(root_dir: PathBuf) -> eyre::Result<Self> {
+        let mut result = Self {
+            data: HashMap::new(),
+        };
+        for path in get_dir_contents(&root_dir)? {
+            let key: TinyStr16 = path
+                .file_stem()
+                .and_then(|p| p.to_str())
+                .ok_or_else(|| eyre::eyre!("Invalid file name: {:?}", path))?
+                .parse()
+                .wrap_err_with(|| format!("Not a Unicode property: {:?}", path))?;
+            let toml_str = read_path_to_string(&path)?;
+            let toml_obj: uprops_serde::enumerated::Main = toml::from_str(&toml_str)
+                .wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
+            let value = match toml_obj.enum_property.into_iter().next() {
+                Some(v) => v,
+                None => continue,
+            };
+            result.data.insert(key, value);
+        }
+        Ok(result)
     }
 }
 
@@ -78,18 +94,21 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker>
             if parts.len() != 2 {
                 return Err(DataError::MissingResourceKey(req.resource_path.key));
             }
-            (parts[0], parts[1])
+            (
+                parts[0].parse().map_err(DataError::new_resc_error)?,
+                parts[1],
+            )
         };
 
-        let toml_data: uprops_serde::enumerated::Main = self
-            .get_toml_data(prop_name)
-            .map_err(DataError::new_resc_error)?;
+        let toml_data = &self
+            .data
+            .get(&prop_name)
+            .ok_or(DataError::MissingResourceKey(req.resource_path.key))?;
 
-        let valid_names = expand_groupings(prop_name, prop_value);
+        let valid_names = expand_groupings(&prop_name, prop_value);
 
         let mut builder = UnicodeSetBuilder::new();
-        let ranges = toml_data.enum_property.data.ranges;
-        for range in ranges {
+        for range in &toml_data.ranges {
             if valid_names.iter().any(|&name| name == range.name) {
                 builder.add_range_u32(&(range.a..=range.b));
             }
@@ -132,7 +151,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
+            .expect("Should parse files successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
@@ -160,7 +180,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
+            .expect("Should parse files successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
@@ -191,7 +212,8 @@ mod tests {
             key: ResourceKey,
         ) -> DataPayload<'data, UnicodePropertyV1Marker> {
             let root_dir = icu_testdata::paths::data_root().join("uprops");
-            let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
+            let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
+                .expect("Should parse files successfully");
             let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
@@ -303,7 +325,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::new(root_dir);
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
+            .expect("Should parse files successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {

@@ -23,9 +23,9 @@ args = [
     "run",
     "--bin=icu4x-datagen",
     "--",
-    "--cldr-testdata",
+    "--input-from-testdata",
     "--out-testdata",
-    "--all-keys",
+    "--test-keys",
     "--test-locales",
     "--syntax=json",
     "--pretty",
@@ -41,9 +41,9 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "--format=blob",
-    "--cldr-testdata",
+    "--input-from-testdata",
     "--out-testdata",
-    "--all-keys",
+    "--test-keys",
     "--test-locales",
     "--overwrite",
 ]
@@ -57,7 +57,7 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "--format=blob",
-    "--cldr-testdata",
+    "--input-from-testdata",
     "--out=provider/testdata/data/decimal-bn-en.postcard",
     "--keys=decimal/symbols@1",
     "--locales=bn",
@@ -104,11 +104,26 @@ args = [
     "run",
     "--bin=icu4x-datagen",
     "--",
-    "-v",
-    "--cldr-testdata",
+    "--input-from-testdata",
     "--out-testdata",
-    "--all-keys",
+    "--test-keys",
     "--test-locales",
+    "--syntax=bincode",
+    "--overwrite",
+]
+
+[tasks.testdata-build-bincode-all]
+description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, testing all available locales, and overwriting the existing ICU4X Bincode if present."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--input-from-testdata",
+    "--out-testdata",
+    "--test-keys",
+    "--all-locales",
     "--syntax=bincode",
     "--overwrite",
 ]

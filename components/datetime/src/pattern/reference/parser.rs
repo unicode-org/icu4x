@@ -292,7 +292,7 @@ mod tests {
 
         for (string, items) in samples {
             assert_eq!(
-                Pattern::from_bytes(string).expect("Parsing pattern failed."),
+                string.parse::<Pattern>().expect("Parsing pattern failed."),
                 Pattern::from(items)
             );
         }

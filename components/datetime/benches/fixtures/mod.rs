@@ -27,7 +27,7 @@ pub fn get_patterns_fixture() -> std::io::Result<structs::PatternsFixture> {
 #[allow(dead_code)]
 pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatOptions {
     match input {
-        structs::TestOptions::Length(bag) => (*bag).clone().into(),
-        structs::TestOptions::Components(bag) => (*bag).clone().into(),
+        structs::TestOptions::Length(bag) => (*bag).into(),
+        structs::TestOptions::Components(bag) => (*bag).into(),
     }
 }

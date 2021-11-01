@@ -624,6 +624,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "eyre"
+version = "0.6.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "221239d1d5ea86bf5d6f91c9d6bc3646ffe471b08ff9b0f91c44f115ac969d2b"
+dependencies = [
+ "indenter",
+ "once_cell",
+]
+
+[[package]]
 name = "fixed_decimal"
 version = "0.2.1"
 dependencies = [
@@ -980,6 +990,7 @@ version = "0.3.0"
 dependencies = [
  "fixed_decimal",
  "icu_calendar",
+ "icu_codepointtrie",
  "icu_datetime",
  "icu_decimal",
  "icu_locale_canonicalizer",
@@ -1071,7 +1082,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "displaydoc",
  "postcard",
@@ -1089,10 +1100,12 @@ dependencies = [
  "clap",
  "futures",
  "icu_locid",
+ "icu_properties",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_cldr",
  "icu_provider_fs",
+ "icu_provider_uprops",
  "icu_testdata",
  "log",
  "reqwest",
@@ -1190,7 +1203,7 @@ dependencies = [
 
 [[package]]
 name = "icu_pattern"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "displaydoc",
  "iai",
@@ -1331,12 +1344,14 @@ name = "icu_provider_uprops"
 version = "0.3.0"
 dependencies = [
  "displaydoc",
+ "eyre",
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
  "serde",
+ "tinystr",
  "toml",
  "zerovec",
 ]
@@ -1387,7 +1402,7 @@ dependencies = [
 
 [[package]]
 name = "icu_uniset"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1417,6 +1432,12 @@ name = "impls"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a46645bbd70538861a90d0f26c31537cdf1e44aae99a794fb75a664b70951bc"
+
+[[package]]
+name = "indenter"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce23b50ad8242c51a442f3ff322d56b02f08852c77e4c0b4d3fd684abc89c683"
 
 [[package]]
 name = "indexmap"
@@ -2980,7 +3001,7 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "criterion",
  "icu_benchmark_macros",
@@ -2988,7 +3009,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.2.3"
+version = "0.3.0"
 dependencies = [
  "bincode",
  "serde",
@@ -3010,7 +3031,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "bincode",
  "criterion",

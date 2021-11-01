@@ -1,4 +1,4 @@
-# icu_locale_canonicalizer [![crates.io](http://meritbadge.herokuapp.com/icu_locale_canonicalizer)](https://crates.io/crates/icu_locale_canonicalizer)
+# icu_locale_canonicalizer [![crates.io](https://img.shields.io/crates/v/icu_locale_canonicalizer)](https://crates.io/crates/icu_locale_canonicalizer)
 
 [`icu_locale_canonicalizer`](crate) is one of the [`ICU4X`] components.
 

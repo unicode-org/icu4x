@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "ja"
       },
@@ -318,11 +318,23 @@
               "medium": "y/MM/dd",
               "short": "y/MM/dd"
             },
+            "dateSkeletons": {
+              "full": "yMEEEEd",
+              "long": "yMd",
+              "medium": "yMMdd",
+              "short": "yMMdd"
+            },
             "timeFormats": {
               "full": "H時mm分ss秒 zzzz",
               "long": "H:mm:ss z",
               "medium": "H:mm:ss",
               "short": "H:mm"
+            },
+            "timeSkeletons": {
+              "full": "Hmmsszzzz",
+              "long": "Hmmssz",
+              "medium": "Hmmss",
+              "short": "Hmm"
             },
             "dateTimeFormats": {
               "full": "{1} {0}",
@@ -344,6 +356,7 @@
                 "Ehms": "aK:mm:ss (E)",
                 "EHms": "H:mm:ss (E)",
                 "Gy": "Gy年",
+                "GyMd": "Gy/M/d",
                 "GyMMM": "Gy年M月",
                 "GyMMMd": "Gy年M月d日",
                 "GyMMMEd": "Gy年M月d日(E)",

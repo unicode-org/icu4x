@@ -5,7 +5,7 @@
 [package]
 name = "icu_pattern"
 description = "ICU pattern utilities"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -25,7 +25,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-writeable = { version = "0.2", path = "../writeable" }
+writeable = { version = "0.2.1", path = "../writeable" }
 
 [dev-dependencies]
 iai = "0.1"

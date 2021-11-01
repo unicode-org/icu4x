@@ -6,6 +6,7 @@ pub mod binary {
     #[derive(serde::Deserialize)]
     pub struct BinaryProperty {
         pub long_name: String,
+        #[serde(skip)]
         pub short_name: String,
         pub ranges: Vec<(u32, u32)>,
     }
@@ -33,6 +34,8 @@ pub mod enumerated {
     #[allow(clippy::upper_case_acronyms)]
     #[derive(serde::Deserialize)]
     pub struct EnumeratedPropertyCodePointTrie {
+        #[serde(skip)]
+        pub short_name: String,
         #[serde(skip)]
         pub long_name: String,
         #[serde(skip)]
@@ -70,12 +73,10 @@ pub mod enumerated {
     }
 
     #[derive(serde::Deserialize)]
-    pub struct Level1 {
-        pub data: EnumeratedPropertyMap,
-    }
-
-    #[derive(serde::Deserialize)]
     pub struct Main {
-        pub enum_property: Level1,
+        #[serde(default)]
+        pub enum_property: Vec<EnumeratedPropertyMap>,
+        #[serde(skip)]
+        pub binary_property: (),
     }
 }

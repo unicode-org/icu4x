@@ -3,7 +3,7 @@
     "sr": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "sr"
       },
@@ -181,10 +181,10 @@
             "quarters": {
               "format": {
                 "abbreviated": {
-                  "1": "К1",
-                  "2": "К2",
-                  "3": "К3",
-                  "4": "К4"
+                  "1": "1. кв.",
+                  "2": "2. кв.",
+                  "3": "3. кв.",
+                  "4": "4. кв."
                 },
                 "narrow": {
                   "1": "1.",
@@ -201,10 +201,10 @@
               },
               "stand-alone": {
                 "abbreviated": {
-                  "1": "К1",
-                  "2": "К2",
-                  "3": "К3",
-                  "4": "К4"
+                  "1": "1. кв.",
+                  "2": "2. кв.",
+                  "3": "3. кв.",
+                  "4": "4. кв."
                 },
                 "narrow": {
                   "1": "1.",
@@ -224,9 +224,9 @@
               "format": {
                 "abbreviated": {
                   "midnight": "поноћ",
-                  "am": "пре подне",
+                  "am": "AM",
                   "noon": "подне",
-                  "pm": "по подне",
+                  "pm": "PM",
                   "morning1": "ујутро",
                   "afternoon1": "по подне",
                   "evening1": "увече",
@@ -234,9 +234,9 @@
                 },
                 "narrow": {
                   "midnight": "поноћ",
-                  "am": "a",
+                  "am": "AM",
                   "noon": "подне",
-                  "pm": "p",
+                  "pm": "PM",
                   "morning1": "ујутру",
                   "afternoon1": "по подне",
                   "evening1": "увече",
@@ -244,9 +244,9 @@
                 },
                 "wide": {
                   "midnight": "поноћ",
-                  "am": "пре подне",
+                  "am": "AM",
                   "noon": "подне",
-                  "pm": "по подне",
+                  "pm": "PM",
                   "morning1": "ујутро",
                   "afternoon1": "по подне",
                   "evening1": "увече",
@@ -256,9 +256,9 @@
               "stand-alone": {
                 "abbreviated": {
                   "midnight": "поноћ",
-                  "am": "пре подне",
+                  "am": "AM",
                   "noon": "подне",
-                  "pm": "по подне",
+                  "pm": "PM",
                   "morning1": "јутро",
                   "afternoon1": "поподне",
                   "evening1": "вече",
@@ -276,9 +276,9 @@
                 },
                 "wide": {
                   "midnight": "поноћ",
-                  "am": "пре подне",
+                  "am": "AM",
                   "noon": "подне",
-                  "pm": "по подне",
+                  "pm": "PM",
                   "morning1": "јутро",
                   "afternoon1": "поподне",
                   "evening1": "вече",
@@ -307,16 +307,28 @@
               }
             },
             "dateFormats": {
-              "full": "EEEE, dd. MMMM y.",
-              "long": "dd. MMMM y.",
-              "medium": "dd.MM.y.",
+              "full": "EEEE, d. MMMM y.",
+              "long": "d. MMMM y.",
+              "medium": "d. M. y.",
               "short": "d.M.yy."
+            },
+            "dateSkeletons": {
+              "full": "yMMMMEEEEdd",
+              "long": "yMMMMdd",
+              "medium": "yMMdd",
+              "short": "yyMd"
             },
             "timeFormats": {
               "full": "HH:mm:ss zzzz",
               "long": "HH:mm:ss z",
               "medium": "HH:mm:ss",
               "short": "HH:mm"
+            },
+            "timeSkeletons": {
+              "full": "HHmmsszzzz",
+              "long": "HHmmssz",
+              "medium": "HHmmss",
+              "short": "HHmm"
             },
             "dateTimeFormats": {
               "full": "{1} {0}",
@@ -337,6 +349,7 @@
                 "Ehms": "E h:mm:ss a",
                 "EHms": "E HH:mm:ss",
                 "Gy": "y. G",
+                "GyMd": "d.MM.y. GGGGG",
                 "GyMMM": "MMM y. G",
                 "GyMMMd": "d. MMM y. G",
                 "GyMMMEd": "E, d. MMM y. G",

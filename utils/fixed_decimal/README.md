@@ -1,4 +1,4 @@
-# fixed_decimal [![crates.io](http://meritbadge.herokuapp.com/fixed_decimal)](https://crates.io/crates/fixed_decimal)
+# fixed_decimal [![crates.io](https://img.shields.io/crates/v/fixed_decimal)](https://crates.io/crates/fixed_decimal)
 
 `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 

@@ -3,7 +3,7 @@
     "bn": {
       "identity": {
         "version": {
-          "_cldrVersion": "39"
+          "_cldrVersion": "40"
         },
         "language": "bn"
       },
@@ -2257,6 +2257,11 @@
                 "generic": "ইয়েকাতেরিনবুর্গ সময়",
                 "standard": "ইয়েকাতেরিনবুর্গ মানক সময়",
                 "daylight": "ইয়েকাতেরিনবুর্গ গ্রীষ্মকালীন সময়"
+              }
+            },
+            "Yukon": {
+              "long": {
+                "standard": "ইউকোন সময়"
               }
             }
           }

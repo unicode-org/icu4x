@@ -22,6 +22,7 @@ mod enum_codepointtrie;
 mod enum_uniset;
 mod error;
 mod provider;
+mod reader;
 mod uprops_serde;
 
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
