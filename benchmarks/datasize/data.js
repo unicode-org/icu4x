@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635805355207,
+  "lastUpdate": 1635806912294,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2813,6 +2813,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c68d73b35fb91b552f1a4b8394a8290e3588ee27"
         },
         "date": 1635805349721,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 811979,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6975267434af46fc4ec70fc7c7459a2bc74c2699",
+          "message": "Update utils in preparation for release (#1249)\n\n* Bump writeable to 0.2.1\r\n\r\n* Update dependency on writeable\r\n\r\n* Bump yoke version to 0.3.0\r\n\r\n* Update dependency on yoke\r\n\r\n* Bump zerovec version to 0.4.1\r\n\r\n* Bump icu_pattern to 0.1.1\r\n\r\n* Bump CPT to 0.3.0\r\n\r\n* Update dependency on CPT\r\n\r\n* Bump uniset to 0.4.0\r\n\r\n* Update dependency on uniset",
+          "timestamp": "2021-11-01T15:47:18-07:00",
+          "tree_id": "4e15d1bb10b5cdf39bf5ecbaeb12d9cff0804b00",
+          "url": "https://github.com/unicode-org/icu4x/commit/6975267434af46fc4ec70fc7c7459a2bc74c2699"
+        },
+        "date": 1635806907988,
         "tool": "ndjson",
         "benches": [
           {
