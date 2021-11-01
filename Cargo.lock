@@ -1072,7 +1072,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "displaydoc",
  "postcard",
@@ -1193,7 +1193,7 @@ dependencies = [
 
 [[package]]
 name = "icu_pattern"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "displaydoc",
  "iai",
