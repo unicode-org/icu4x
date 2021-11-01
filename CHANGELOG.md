@@ -4,6 +4,21 @@
 
   - …
 
+## icu4x 0.4.0 (November 1, 2021)
+
+  - Updated to CLDR 40 (#1216)
+  - Functional Unicode property APIs and data; moved to new crate `icu_properties` (#148)
+  - `DateTimeFormat` optimization: memory usage cut by two-thirds and perf improved by 40% (#519)
+  - `BlobDataProvider` allowing for dynamic, asynchronous data loading (#1084)
+  - Major upgrades to the `zerovec` utility crate and new benchmarks for `ZeroMap` (#1082, #1087)
+  - Initial support for time zones in `DateTimeFormat` components bag (#845)
+  - Bug fixes in `LocaleCanicalizer` (#1189, etc.)
+  - Week of month/year arithmetic (#918)
+  - Major improvements on code size across FFI (#962)
+  - Iterations on ICU4X Segmenter (#1045, #1165, etc.)
+  - Experimental `ListFormatter` (#1053)
+  - ICU4X now requires Rust 1.56 (#1201)
+
 ## icu4x 0.3.0 (July 29, 2021)
 
   - Static data provider without filesystem dependency (#78)
