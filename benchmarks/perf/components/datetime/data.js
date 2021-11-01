@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635805157313,
+  "lastUpdate": 1635805743357,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11477,6 +11477,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 384995,
             "range": "± 60035",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c68d73b35fb91b552f1a4b8394a8290e3588ee27",
+          "message": "Document utils release process (#1250)\n\n* Document utils release process\r\n\r\n* fix",
+          "timestamp": "2021-11-01T15:21:05-07:00",
+          "tree_id": "72f72c9c4e7679f5d612198a9974b2eb7ad84fa7",
+          "url": "https://github.com/unicode-org/icu4x/commit/c68d73b35fb91b552f1a4b8394a8290e3588ee27"
+        },
+        "date": 1635805738124,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 119118,
+            "range": "± 5681",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1431982,
+            "range": "± 77901",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 341964,
+            "range": "± 25172",
             "unit": "ns/iter"
           }
         ]
