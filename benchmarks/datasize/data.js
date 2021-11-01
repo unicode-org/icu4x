@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635796063417,
+  "lastUpdate": 1635804803933,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2753,6 +2753,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e71aa54a2ed3300ee745ecca6d355af6a90955d3"
         },
         "date": 1635796058221,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 811979,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9892697f554b36238613348b323aead3cdd75be1",
+          "message": "Updating CHANGELOG for ICU4X 0.4",
+          "timestamp": "2021-11-01T15:12:03-07:00",
+          "tree_id": "bde858ffe0098794cea6f83b4ac95847625df9ce",
+          "url": "https://github.com/unicode-org/icu4x/commit/9892697f554b36238613348b323aead3cdd75be1"
+        },
+        "date": 1635804799229,
         "tool": "ndjson",
         "benches": [
           {
