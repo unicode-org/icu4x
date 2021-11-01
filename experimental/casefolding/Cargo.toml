@@ -1,0 +1,34 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_casefolding"
+description = "Unicode casefolding algorithms"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[dependencies]
+
+[dev-dependencies]
+
+[lib]
+path = "src/lib.rs"
+bench = false  # This option is required for Benchmark CI
+
+[features]
+default = []
