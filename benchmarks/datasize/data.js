@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635806912294,
+  "lastUpdate": 1635809177365,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2843,6 +2843,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6975267434af46fc4ec70fc7c7459a2bc74c2699"
         },
         "date": 1635806907988,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 811979,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e8b38536c46afca5d9e04dbdfb07b51c9384fccf",
+          "message": "Bump yoke-derive in preparation for release (#1253)\n\n* Bump yoke-derive to 0.1.2\r\n\r\n* Bump yoke to 0.3.1\r\n\r\n* Update users of yoke and yoke-derive",
+          "timestamp": "2021-11-01T16:25:02-07:00",
+          "tree_id": "30a4caba07bf220bd63a0fa5d0b12c51ea0c5038",
+          "url": "https://github.com/unicode-org/icu4x/commit/e8b38536c46afca5d9e04dbdfb07b51c9384fccf"
+        },
+        "date": 1635809172943,
         "tool": "ndjson",
         "benches": [
           {
