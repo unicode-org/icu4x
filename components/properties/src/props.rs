@@ -434,6 +434,7 @@ impl Script {
 ///
 /// The numeric value is compatible with `UGraphemeClusterBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
 pub struct GraphemeClusterBreak(pub u8);
 
@@ -464,6 +465,7 @@ impl GraphemeClusterBreak {
 ///
 /// The numeric value is compatible with `UWordBreakValues` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
 pub struct WordBreak(pub u8);
 
@@ -498,6 +500,7 @@ impl WordBreak {
 ///
 /// The numeric value is compatible with `USentenceBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
 pub struct SentenceBreak(pub u8);
 

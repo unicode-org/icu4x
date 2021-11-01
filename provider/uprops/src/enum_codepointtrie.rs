@@ -10,7 +10,7 @@ use eyre::WrapErr;
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
-use icu_properties::{GeneralSubcategory, Script};
+use icu_properties::{GeneralSubcategory, GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -125,6 +125,9 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
 icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
     key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralSubcategory>,
     key::SCRIPT_V1 => UnicodePropertyMapV1Marker<Script>,
+    key::GRAPHEME_CLUSTER_BREAK_V1 => UnicodePropertyMapV1Marker<GraphemeClusterBreak>,
+    key::WORD_BREAK_V1 => UnicodePropertyMapV1Marker<WordBreak>,
+    key::SENTENCE_BREAK_V1 => UnicodePropertyMapV1Marker<SentenceBreak>,
 }, SERDE_SE, 'data);
 
 impl IterableDataProviderCore for EnumeratedPropertyCodePointTrieProvider {
