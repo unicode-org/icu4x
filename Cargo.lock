@@ -1082,7 +1082,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "displaydoc",
  "postcard",
@@ -1203,7 +1203,7 @@ dependencies = [
 
 [[package]]
 name = "icu_pattern"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "displaydoc",
  "iai",
@@ -1401,7 +1401,7 @@ dependencies = [
 
 [[package]]
 name = "icu_uniset"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -3000,7 +3000,7 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "criterion",
  "icu_benchmark_macros",
@@ -3008,7 +3008,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.2.3"
+version = "0.3.0"
 dependencies = [
  "bincode",
  "serde",
@@ -3030,7 +3030,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "bincode",
  "criterion",
