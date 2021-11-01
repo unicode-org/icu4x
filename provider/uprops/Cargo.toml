@@ -35,6 +35,8 @@ icu_uniset = { version = "0.3", path = "../../utils/uniset", features = ["provid
 serde = { version = "1.0", features = ["derive"] }
 toml = { version = "0.5" }
 zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+eyre = "0.6.5"
+tinystr = "0.4"
 
 [dev-dependencies]
 icu_testdata = { version = "0.3", path = "../../provider/testdata" }

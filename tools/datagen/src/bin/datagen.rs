@@ -422,13 +422,15 @@ fn export_set_props<'data>(
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
 ) -> anyhow::Result<()> {
-    let provider = if let Some(path) = matches.value_of("INPUT_ROOT") {
-        PropertiesDataProvider::new(PathBuf::from(path))
+    let toml_root = if let Some(path) = matches.value_of("INPUT_ROOT") {
+        PathBuf::from(path)
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        PropertiesDataProvider::new(icu_testdata::paths::uprops_toml_root())
+        icu_testdata::paths::uprops_toml_root()
     } else {
         anyhow::bail!("Value for --input-root must be specified",)
     };
+    // TODO(#574): Remove the unwrap when this file is moved to eyre
+    let provider = PropertiesDataProvider::try_new(toml_root).unwrap();
 
     let keys = ALL_SET_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
@@ -458,13 +460,15 @@ fn export_map_props<'data>(
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
 ) -> anyhow::Result<()> {
-    let provider = if let Some(path) = matches.value_of("INPUT_ROOT") {
-        EnumeratedPropertyCodePointTrieProvider::new(PathBuf::from(path))
+    let toml_root = if let Some(path) = matches.value_of("INPUT_ROOT") {
+        PathBuf::from(path)
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        EnumeratedPropertyCodePointTrieProvider::new(icu_testdata::paths::uprops_toml_root())
+        icu_testdata::paths::uprops_toml_root()
     } else {
         anyhow::bail!("Value for --input-root must be specified",)
     };
+    // TODO(#574): Remove the unwrap when this file is moved to eyre
+    let provider = EnumeratedPropertyCodePointTrieProvider::try_new(toml_root).unwrap();
 
     let keys = ALL_MAP_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
