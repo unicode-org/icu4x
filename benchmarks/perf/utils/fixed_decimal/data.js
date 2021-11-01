@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635554923085,
+  "lastUpdate": 1635796492159,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12689,6 +12689,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 126871,
             "range": "± 8450",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e71aa54a2ed3300ee745ecca6d355af6a90955d3",
+          "message": "Speed up icu4x-datagen by pre-loading data in icu_provider_uprops (#1244)",
+          "timestamp": "2021-11-01T12:46:13-07:00",
+          "tree_id": "41a3e8e12ba95040d79668ed203b83a51df2dced",
+          "url": "https://github.com/unicode-org/icu4x/commit/e71aa54a2ed3300ee745ecca6d355af6a90955d3"
+        },
+        "date": 1635796486823,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 142408,
+            "range": "± 4464",
             "unit": "ns/iter"
           }
         ]
