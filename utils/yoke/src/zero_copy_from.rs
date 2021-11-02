@@ -85,92 +85,125 @@ pub trait ZeroCopyFrom<'b, C: ?Sized> {
     fn zero_copy_from(cart: &'b C) -> Self;
 }
 
-// impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b C> {
-//     /// Construct a [`Yoke`]`<Y, &C>` from a borrowed cart by zero-copy cloning the cart to `Y` and
-//     /// then yokeing that object to the cart.
-//     ///
-//     /// This results in a [`Yoke`] bound to the lifetime of the reference to the borrowed cart.
-//     ///
-//     /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
-//     ///
-//     /// # Example
-//     ///
-//     /// ```
-//     /// use yoke::Yoke;
-//     /// use std::borrow::Cow;
-//     ///  
-//     /// let yoke = Yoke::<
-//     ///     Cow<'static, str>,
-//     ///     &str
-//     /// >::attach_to_borrowed_cart("demo");
-//     ///
-//     /// assert_eq!("demo", yoke.get());
-//     /// ```
-//     pub fn attach_to_borrowed_cart(cart: &'b C) -> Self {
-//         Yoke::<Y, &'b C>::attach_to_cart_badly(cart, Y::zero_copy_from)
-//     }
-// }
+impl<'b, 's, Y: for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b C>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: ZeroCopyFrom<'a, C>,
+{
+    /// Construct a [`Yoke`]`<Y, &C>` from a borrowed cart by zero-copy cloning the cart to `Y` and
+    /// then yokeing that object to the cart.
+    ///
+    /// This results in a [`Yoke`] bound to the lifetime of the reference to the borrowed cart.
+    ///
+    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    ///  
+    /// let yoke = Yoke::<
+    ///     Cow<'static, str>,
+    ///     &str
+    /// >::attach_to_borrowed_cart("demo");
+    ///
+    /// assert_eq!("demo", yoke.get());
+    /// ```
+    pub fn attach_to_borrowed_cart(cart: &'b C) -> Self {
+        Yoke::<Y, &'b C>::attach_to_cart_badly(cart, Self::attach_borrowed_inner)
+    }
 
-// #[cfg(feature = "alloc")]
-// impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Box<C>> {
-//     /// Construct a [`Yoke`]`<Y, Box<C>>` from a boxed cart by zero-copy cloning the cart to `Y` and
-//     /// then yokeing that object to the cart.
-//     ///
-//     /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
-//     /// fully owned, then the resulting [`Yoke`] will be `'static`.
-//     ///
-//     /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
-//     ///
-//     /// # Example
-//     ///
-//     /// ```
-//     /// use yoke::Yoke;
-//     /// use std::borrow::Cow;
-//     ///
-//     /// let box_cart = Box::new("demo".to_string());
-//     ///  
-//     /// let yoke = Yoke::<
-//     ///     Cow<'static, str>,
-//     ///     Box<String>
-//     /// >::attach_to_box_cart(box_cart);
-//     ///
-//     /// assert_eq!("demo", yoke.get());
-//     /// ```
-//     pub fn attach_to_box_cart(cart: Box<C>) -> Self {
-//         Yoke::<Y, Box<C>>::attach_to_cart_badly(cart, Y::zero_copy_from)
-//     }
-// }
+    #[inline]
+    // These functions exist so that we can get the appropriate higher order function
+    // while using generics from the outer scope. Rust doesn't support partial
+    // lowering of higher order functions.
+    fn attach_borrowed_inner<'a>(c: &'a C) -> <Y as Yokeable<'a>>::Output {
+        Y::Output::zero_copy_from(c)
+    }
+}
 
-// #[cfg(feature = "alloc")]
-// impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Rc<C>> {
-//     /// Construct a [`Yoke`]`<Y, Rc<C>>` from a reference-counted cart by zero-copy cloning the
-//     /// cart to `Y` and then yokeing that object to the cart.
-//     ///
-//     /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
-//     /// fully owned, then the resulting [`Yoke`] will be `'static`.
-//     ///
-//     /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
-//     ///
-//     /// # Example
-//     ///
-//     /// ```
-//     /// use yoke::Yoke;
-//     /// use std::borrow::Cow;
-//     /// use std::rc::Rc;
-//     ///
-//     /// let rc_cart = Rc::from("demo".to_string());
-//     ///  
-//     /// let yoke = Yoke::<
-//     ///     Cow<'static, str>,
-//     ///     Rc<String>
-//     /// >::attach_to_rc_cart(rc_cart);
-//     ///
-//     /// assert_eq!("demo", yoke.get());
-//     /// ```
-//     pub fn attach_to_rc_cart(cart: Rc<C>) -> Self {
-//         Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Y::zero_copy_from)
-//     }
-// }
+#[cfg(feature = "alloc")]
+impl<'b, 's, Y: for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Box<C>>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: ZeroCopyFrom<'a, C>,
+{
+    /// Construct a [`Yoke`]`<Y, Box<C>>` from a boxed cart by zero-copy cloning the cart to `Y` and
+    /// then yokeing that object to the cart.
+    ///
+    /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
+    /// fully owned, then the resulting [`Yoke`] will be `'static`.
+    ///
+    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    ///
+    /// let box_cart = Box::new("demo".to_string());
+    ///  
+    /// let yoke = Yoke::<
+    ///     Cow<'static, str>,
+    ///     Box<String>
+    /// >::attach_to_box_cart(box_cart);
+    ///
+    /// assert_eq!("demo", yoke.get());
+    /// ```
+    pub fn attach_to_box_cart(cart: Box<C>) -> Self {
+        Yoke::<Y, Box<C>>::attach_to_cart_badly(cart, Self::attach_boxed_inner)
+    }
+
+    #[inline]
+    // These functions exist so that we can get the appropriate higher order function
+    // while using generics from the outer scope. Rust doesn't support partial
+    // lowering of higher order functions.
+    fn attach_boxed_inner<'a>(c: &'a C) -> <Y as Yokeable<'a>>::Output {
+        Y::Output::zero_copy_from(c)
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<'b, 's, Y: for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Rc<C>>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: ZeroCopyFrom<'a, C>,
+{
+    /// Construct a [`Yoke`]`<Y, Rc<C>>` from a reference-counted cart by zero-copy cloning the
+    /// cart to `Y` and then yokeing that object to the cart.
+    ///
+    /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
+    /// fully owned, then the resulting [`Yoke`] will be `'static`.
+    ///
+    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    /// use std::rc::Rc;
+    ///
+    /// let rc_cart = Rc::from("demo".to_string());
+    ///  
+    /// let yoke = Yoke::<
+    ///     Cow<'static, str>,
+    ///     Rc<String>
+    /// >::attach_to_rc_cart(rc_cart);
+    ///
+    /// assert_eq!("demo", yoke.get());
+    /// ```
+    pub fn attach_to_rc_cart(cart: Rc<C>) -> Self {
+        Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Self::attach_rc_inner)
+    }
+
+    #[inline]
+    // These functions exist so that we can get the appropriate higher order function
+    // while using generics from the outer scope. Rust doesn't support partial
+    // lowering of higher order functions.
+    fn attach_rc_inner<'a>(c: &'a C) -> <Y as Yokeable<'a>>::Output {
+        Y::Output::zero_copy_from(c)
+    }
+}
 
 // // Note: The following could be blanket implementations, but that would require constraining the
 // // blanket `T` on `T: 'static`, which may not be desirable for all downstream users who may wish
