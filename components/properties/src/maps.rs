@@ -95,3 +95,77 @@ where
 {
     get_cp_map(provider, key::SCRIPT_V1)
 }
+
+/// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
+/// property. See [`GraphemeClusterBreak`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, GraphemeClusterBreak};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
+/// let gcb = &payload.get().code_point_trie;
+///
+/// assert_eq!(gcb.get('🇦' as u32), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
+/// assert_eq!(gcb.get('ำ' as u32), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+pub fn get_grapheme_cluster_break<'data, D>(
+    provider: &D,
+) -> CodePointMapResult<'data, GraphemeClusterBreak>
+where
+    D: DataProvider<'data, UnicodePropertyMapV1Marker<GraphemeClusterBreak>> + ?Sized,
+{
+    get_cp_map(provider, key::GRAPHEME_CLUSTER_BREAK_V1)
+}
+
+/// Return a [`CodePointTrie`] for the Word_Break Unicode enumerated
+/// property. See [`WordBreak`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, WordBreak};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_word_break(&provider).expect("The data should be valid!");
+/// let wb = &payload.get().code_point_trie;
+///
+/// assert_eq!(wb.get('.' as u32), WordBreak::MidNumLet); // U+002E: Full Stop
+/// assert_eq!(wb.get('，' as u32), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+pub fn get_word_break<'data, D>(provider: &D) -> CodePointMapResult<'data, WordBreak>
+where
+    D: DataProvider<'data, UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
+{
+    get_cp_map(provider, key::WORD_BREAK_V1)
+}
+
+/// Return a [`CodePointTrie`] for the Sentence_Break Unicode enumerated
+/// property. See [`SentenceBreak`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, SentenceBreak};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_sentence_break(&provider).expect("The data should be valid!");
+/// let sb = &payload.get().code_point_trie;
+///
+/// assert_eq!(sb.get('９' as u32), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
+/// assert_eq!(sb.get(',' as u32), SentenceBreak::SContinue); // U+002C: Comma
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+pub fn get_sentence_break<'data, D>(provider: &D) -> CodePointMapResult<'data, SentenceBreak>
+where
+    D: DataProvider<'data, UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
+{
+    get_cp_map(provider, key::SENTENCE_BREAK_V1)
+}

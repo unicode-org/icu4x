@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{GeneralSubcategory, Script};
+use crate::{GeneralSubcategory, GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
 use core::convert::TryInto;
 use core::num::TryFromIntError;
 use icu_codepointtrie::codepointtrie::TrieValue;
@@ -25,5 +25,32 @@ impl TrieValue for Script {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u16::try_from(i).map(Script)
+    }
+}
+
+impl TrieValue for GraphemeClusterBreak {
+    const DATA_GET_ERROR_VALUE: GraphemeClusterBreak = GraphemeClusterBreak::Other;
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u8::try_from(i).map(Self)
+    }
+}
+
+impl TrieValue for WordBreak {
+    const DATA_GET_ERROR_VALUE: WordBreak = WordBreak::Other;
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u8::try_from(i).map(Self)
+    }
+}
+
+impl TrieValue for SentenceBreak {
+    const DATA_GET_ERROR_VALUE: SentenceBreak = SentenceBreak::Other;
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u8::try_from(i).map(Self)
     }
 }
