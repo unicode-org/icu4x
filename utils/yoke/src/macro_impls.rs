@@ -34,8 +34,8 @@ macro_rules! impl_copy_type {
             type Output = Self;
             copy_yoke_impl!();
         }
-        impl ZeroCopyFrom<$ty> for $ty {
-            fn zero_copy_from(this: &Self) -> Self {
+        impl<'b> ZeroCopyFrom<'b, $ty> for $ty {
+            fn zero_copy_from(this: &'b Self) -> Self {
                 // Essentially only works when the struct is fully Copy
                 *this
             }
@@ -61,11 +61,11 @@ unsafe impl<'a, T: Copy + 'static, const N: usize> Yokeable<'a> for [T; N] {
     type Output = Self;
     copy_yoke_impl!();
 }
-impl<T: Copy + 'static, const N: usize> ZeroCopyFrom<[T; N]> for [T; N] {
-    fn zero_copy_from(this: &Self) -> Self {
-        *this
-    }
-}
+// impl<T: Copy + 'static, const N: usize> ZeroCopyFrom<[T; N]> for [T; N] {
+//     fn zero_copy_from(this: &Self) -> Self {
+//         *this
+//     }
+// }
 
 // This is for when we're implementing Yoke on a complex type such that it's not
 // obvious to the compiler that the lifetime is covariant
