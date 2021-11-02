@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635811837636,
+  "lastUpdate": 1635813497541,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11645,6 +11645,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 350386,
             "range": "± 961",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "shane@unicode.org",
+            "name": "Shane Carr",
+            "username": "sffc"
+          },
+          "distinct": true,
+          "id": "dc5ff31e24e1203d719701cb179b3a6f3df3eac0",
+          "message": "Add missing dependency version numbers",
+          "timestamp": "2021-11-01T17:12:05-07:00",
+          "tree_id": "9ca1aab7691fea14624f0f736a25bb34fbafbfbc",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc5ff31e24e1203d719701cb179b3a6f3df3eac0"
+        },
+        "date": 1635813491820,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 130161,
+            "range": "± 5723",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1479547,
+            "range": "± 81947",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 362460,
+            "range": "± 16489",
             "unit": "ns/iter"
           }
         ]
