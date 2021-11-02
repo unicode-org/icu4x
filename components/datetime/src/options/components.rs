@@ -356,15 +356,17 @@ pub enum Text {
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Year {
-    /// The numeric value of the year, such as "2021".
+    /// The numeric value of the year, such as "2018" for 2018-12-31.
     #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
-    /// The two-digit value of the year, such as "21".
+    /// The two-digit value of the year, such as "18" for 2018-12-31.
     #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
-    /// The numeric value of the year in "week-of-year", such as "2021".
+    /// The numeric value of the year in "week-of-year", such as "2019" for the
+    /// week of 2018-12-31 according to the ISO calendar.
     NumericWeekOf,
-    /// The two-digit value of the year in "week-of-year", such as "21".
+    /// The two-digit value of the year in "week-of-year", such as "19" for the
+    /// week of 2018-12-31 according to the ISO calendar.
     TwoDigitWeekOf,
 }
 
