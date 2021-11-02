@@ -63,8 +63,8 @@ use alloc::string::String;
 /// }
 ///
 /// // Reference from a borrowed version of self
-/// impl<'data> ZeroCopyFrom<MyStruct<'data>> for MyStruct<'static> {
-///     fn zero_copy_from<'b>(cart: &'b MyStruct<'data>) -> MyStruct<'b> {
+/// impl<'data> ZeroCopyFrom<'data, MyStruct<'_>> for MyStruct<'data> {
+///     fn zero_copy_from(cart: &'data MyStruct<'_>) -> MyStruct<'data> {
 ///         MyStruct {
 ///             message: Cow::Borrowed(&cart.message)
 ///         }
@@ -72,8 +72,8 @@ use alloc::string::String;
 /// }
 ///
 /// // Reference from a string slice directly
-/// impl ZeroCopyFrom<str> for MyStruct<'static> {
-///     fn zero_copy_from<'b>(cart: &'b str) -> MyStruct<'b> {
+/// impl<'data> ZeroCopyFrom<'data, str> for MyStruct<'data> {
+///     fn zero_copy_from(cart: &'data str) -> MyStruct<'data> {
 ///         MyStruct {
 ///             message: Cow::Borrowed(cart)
 ///         }
