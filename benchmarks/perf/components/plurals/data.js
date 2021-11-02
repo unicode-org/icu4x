@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635811606677,
+  "lastUpdate": 1635813518433,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18017,6 +18017,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25868,
             "range": "± 587",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "shane@unicode.org",
+            "name": "Shane Carr",
+            "username": "sffc"
+          },
+          "distinct": true,
+          "id": "dc5ff31e24e1203d719701cb179b3a6f3df3eac0",
+          "message": "Add missing dependency version numbers",
+          "timestamp": "2021-11-01T17:12:05-07:00",
+          "tree_id": "9ca1aab7691fea14624f0f736a25bb34fbafbfbc",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc5ff31e24e1203d719701cb179b3a6f3df3eac0"
+        },
+        "date": 1635813512990,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1310,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8733,
+            "range": "± 610",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 26667,
+            "range": "± 1619",
             "unit": "ns/iter"
           }
         ]
