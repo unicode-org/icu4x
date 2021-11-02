@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635809519354,
+  "lastUpdate": 1635811545918,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16013,6 +16013,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4189,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1b4dd6279b683a248658fd6b9876f8d2ac9e16ef",
+          "message": "Update version numbers for ICU4X 0.4 (#1252)",
+          "timestamp": "2021-11-01T16:59:18-07:00",
+          "tree_id": "12cef258eb3ee945c36b75ba258c79a184470fef",
+          "url": "https://github.com/unicode-org/icu4x/commit/1b4dd6279b683a248658fd6b9876f8d2ac9e16ef"
+        },
+        "date": 1635811541252,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2415,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4182,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
