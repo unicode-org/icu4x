@@ -5,7 +5,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric"
+                    "year": "Numeric"
                 }
             }
         },
@@ -21,7 +21,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "Numeric",
                     "month": "numeric"
                 }
             }
@@ -38,7 +38,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "Numeric",
                     "month": "numeric",
                     "day": "numeric"
                 }
@@ -56,7 +56,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "Numeric",
                     "month": "numeric",
                     "day": "numeric",
                     "weekday": "short"
@@ -75,7 +75,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "Numeric",
                     "month": "short"
                 }
             }
@@ -92,7 +92,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "Numeric",
                     "month": "short",
                     "day": "numeric"
                 }
@@ -110,7 +110,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "Numeric",
                     "month": "short",
                     "day": "numeric",
                     "weekday": "short"
@@ -129,7 +129,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
+                    "year": "Numeric",
                     "month": "long"
                 }
             }
