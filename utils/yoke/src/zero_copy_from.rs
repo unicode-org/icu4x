@@ -80,9 +80,9 @@ use alloc::string::String;
 ///     }
 /// }
 /// ```
-pub trait ZeroCopyFrom<C: ?Sized>: for<'a> Yokeable<'a> {
+pub trait ZeroCopyFrom<'b, C: ?Sized> {
     /// Clone the cart `C` into a [`Yokeable`] struct, which may retain references into `C`.
-    fn zero_copy_from<'b>(cart: &'b C) -> <Self as Yokeable<'b>>::Output;
+    fn zero_copy_from(cart: &'b C) -> Self;
 }
 
 impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b C> {
