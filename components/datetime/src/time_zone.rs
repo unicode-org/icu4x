@@ -723,3 +723,15 @@ pub(super) enum ZeroPadding {
     /// Do not add zero-padding.
     Off,
 }
+
+/// A config enum for initializing TimeZoneFormat.
+#[allow(dead_code)]
+enum TimeZoneFormatConfig {
+    GenericNonLocationLong,    // Pacific Time
+    GenericNonLocationShort,   // PT
+    GenericLocation,           // Los Angeles Time
+    SpecificNonLocationLong,   // Pacific Standard Time
+    SpecificNonLocationShort,  // PDT
+    LocalizedGMT, // GMT-07:00
+    Iso8601(IsoFormat),     // -07:00
+}
