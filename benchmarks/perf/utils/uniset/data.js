@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635811538743,
+  "lastUpdate": 1635813429303,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13889,6 +13889,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35760714,
             "range": "± 1841798",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "shane@unicode.org",
+            "name": "Shane Carr",
+            "username": "sffc"
+          },
+          "distinct": true,
+          "id": "dc5ff31e24e1203d719701cb179b3a6f3df3eac0",
+          "message": "Add missing dependency version numbers",
+          "timestamp": "2021-11-01T17:12:05-07:00",
+          "tree_id": "9ca1aab7691fea14624f0f736a25bb34fbafbfbc",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc5ff31e24e1203d719701cb179b3a6f3df3eac0"
+        },
+        "date": 1635813423680,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32881483,
+            "range": "± 1738862",
             "unit": "ns/iter"
           }
         ]
