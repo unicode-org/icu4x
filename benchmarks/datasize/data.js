@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635813102533,
+  "lastUpdate": 1635872607225,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2938,6 +2938,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 811979,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0c855b106c6e8b8a66142defc6102885ccc8c7c5",
+          "message": "Implement Grapheme_Cluster_Break, Word_Break, and Sentence_Break Unicode properties (#1233)\n\nThe obsolete enum values in GraphemeClusterBreak and WordBreak are added\r\nto retain the compatibility with ICU.\r\n\r\nThe TOML file was obtained from Azure artifact archive built on\r\nunicode-org/icu, commit 2921a81ee4c67459ff455e31c599e7d7a09086ab titled\r\n\"ICU-21811 TZ update 2021a (2021e)\" on maint/maint-70 branch. This\r\ncommit imports TrieType::Small flavor of the uprops files.\r\n\r\nThe json and postcard files are generated via `cargo make testdata`.",
+          "timestamp": "2021-11-02T10:01:52-07:00",
+          "tree_id": "c6fef0184e27cf1c3e920786d6034e64f16479c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/0c855b106c6e8b8a66142defc6102885ccc8c7c5"
+        },
+        "date": 1635872601099,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 843668,
             "unit": "bytes",
             "biggerIsBetter": false
           }
