@@ -61,11 +61,12 @@ unsafe impl<'a, T: Copy + 'static, const N: usize> Yokeable<'a> for [T; N] {
     type Output = Self;
     copy_yoke_impl!();
 }
-// impl<T: Copy + 'static, const N: usize> ZeroCopyFrom<[T; N]> for [T; N] {
-//     fn zero_copy_from(this: &Self) -> Self {
-//         *this
-//     }
-// }
+
+impl<'b, T: Copy + 'static, const N: usize> ZeroCopyFrom<'b, [T; N]> for [T; N] {
+    fn zero_copy_from(this: &'b Self) -> Self {
+        *this
+    }
+}
 
 // This is for when we're implementing Yoke on a complex type such that it's not
 // obvious to the compiler that the lifetime is covariant
