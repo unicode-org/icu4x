@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635811245175,
+  "lastUpdate": 1635813102533,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2903,6 +2903,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1b4dd6279b683a248658fd6b9876f8d2ac9e16ef"
         },
         "date": 1635811239791,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 811979,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "shane@unicode.org",
+            "name": "Shane Carr",
+            "username": "sffc"
+          },
+          "distinct": true,
+          "id": "dc5ff31e24e1203d719701cb179b3a6f3df3eac0",
+          "message": "Add missing dependency version numbers",
+          "timestamp": "2021-11-01T17:12:05-07:00",
+          "tree_id": "9ca1aab7691fea14624f0f736a25bb34fbafbfbc",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc5ff31e24e1203d719701cb179b3a6f3df3eac0"
+        },
+        "date": 1635813097382,
         "tool": "ndjson",
         "benches": [
           {
