@@ -186,7 +186,9 @@ fn update_langid(
     entry: &LanguageIdentifier,
     langid: &mut LanguageIdentifier,
 ) -> CanonicalizationResult {
-    let unmodified = langid.clone();
+    let language_unmodified = langid.language.clone();
+    let script_unmodified = langid.script.clone();
+    let region_unmodified = langid.region.clone();
 
     if langid.language.is_empty() {
         langid.language = entry.language;
@@ -194,9 +196,9 @@ fn update_langid(
     langid.script = langid.script.or(entry.script);
     langid.region = langid.region.or(entry.region);
 
-    if unmodified.language == langid.language
-        && unmodified.script == langid.script
-        && unmodified.region == langid.region
+    if language_unmodified == langid.language
+        && script_unmodified == langid.script
+        && region_unmodified == langid.region
     {
         return CanonicalizationResult::Unmodified;
     }
