@@ -92,7 +92,11 @@ where
 // TODO(#622) Make TimeZoneFormat public once we have a clean way to provide it options.
 pub(super) struct TimeZoneFormat {
     /// The pattern to format.
+<<<<<<< HEAD
     pub(super) patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+=======
+    pub(super) patterns: Option<DataPayload<'data, PatternPluralsFromPatternsV1Marker>>,
+>>>>>>> 99ac6aeb (add constructor --draft)
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
@@ -108,7 +112,13 @@ pub(super) struct TimeZoneFormat {
         Option<DataPayload<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_short:
+<<<<<<< HEAD
         Option<DataPayload<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>>,
+=======
+        Option<DataPayload<'data, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>>,
+    /// The config of TimeZoneFormat
+    pub(super) time_zone_format_config: Option<TimeZoneFormatConfig>,
+>>>>>>> 99ac6aeb (add constructor --draft)
 }
 
 impl TimeZoneFormat {
@@ -164,17 +174,19 @@ impl TimeZoneFormat {
             .take_payload()?;
 
         let mut time_zone_format = Self {
-            patterns,
-            zone_formats,
+            patterns: Some(patterns),
+            zone_formats: zone_formats,
             exemplar_cities: None,
             mz_generic_long: None,
             mz_generic_short: None,
             mz_specific_long: None,
             mz_specific_short: None,
+            time_zone_format_config: None,
         };
 
         let zone_symbols = time_zone_format
             .patterns
+            .unwrap()
             .get()
             .0
             .patterns_iter()
@@ -263,6 +275,105 @@ impl TimeZoneFormat {
                 // ISO-8601 or localized GMT formats. CLDR data is either unneeded or required by default.
                 TimeZone::LowerX | TimeZone::UpperX | TimeZone::UpperZ | TimeZone::UpperO => (),
             }
+        }
+
+        Ok(time_zone_format)
+    }
+
+    pub(super) fn try_new_with_config<L, ZP>(
+        locale: L,
+        time_zone_format_config: TimeZoneFormatConfig,
+        zone_provider: &ZP,
+    ) -> Result<Self, DateTimeFormatError>
+    where
+        L: Into<Locale>,
+        ZP: DataProvider<'data, provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<'data, provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<'data, provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<'data, provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + ?Sized,
+    {
+        let locale = locale.into();
+
+        let zone_formats: DataPayload<TimeZoneFormatsV1Marker> = zone_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::TIMEZONE_FORMATS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.clone().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+
+        let mut time_zone_format = Self {
+            patterns: None,
+            zone_formats,
+            exemplar_cities: None,
+            mz_generic_long: None,
+            mz_generic_short: None,
+            mz_specific_long: None,
+            mz_specific_short: None,
+            time_zone_format_config: Some(time_zone_format_config),
+        };
+
+        match time_zone_format_config {
+            TimeZoneFormatConfig::GenericNonLocationLong => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1,
+                    &mut time_zone_format.mz_generic_long,
+                    zone_provider,
+                )?;
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+                    &mut time_zone_format.exemplar_cities,
+                    zone_provider,
+                )?;
+            },
+            TimeZoneFormatConfig::GenericNonLocationShort => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
+                    &mut time_zone_format.mz_generic_short,
+                    zone_provider,
+                )?;
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+                    &mut time_zone_format.exemplar_cities,
+                    zone_provider,
+                )?;
+            },
+            TimeZoneFormatConfig::GenericLocation => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+                    &mut time_zone_format.exemplar_cities,
+                    zone_provider,
+                )?;
+            },
+            TimeZoneFormatConfig::SpecificNonLocationLong => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
+                    &mut time_zone_format.mz_specific_long,
+                    zone_provider,
+                )?;
+            },
+            TimeZoneFormatConfig::SpecificNonLocationShort => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
+                    &mut time_zone_format.mz_specific_short,
+                    zone_provider,
+                )?;
+            },
+            TimeZoneFormatConfig::LocalizedGMT | TimeZoneFormatConfig::Iso8601(_) =>(),
         }
 
         Ok(time_zone_format)
@@ -725,7 +836,6 @@ pub(super) enum ZeroPadding {
 }
 
 /// A config enum for initializing TimeZoneFormat.
-#[allow(dead_code)]
 enum TimeZoneFormatConfig {
     GenericNonLocationLong,    // Pacific Time
     GenericNonLocationShort,   // PT

@@ -53,6 +53,8 @@ where
 {
     let pattern = &time_zone_format
         .patterns
+        .as_ref()
+        .unwrap()
         .get()
         .0
         .clone()
