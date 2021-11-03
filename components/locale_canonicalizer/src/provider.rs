@@ -9,6 +9,7 @@
 use alloc::vec::Vec;
 use icu_locid::LanguageIdentifier;
 use icu_provider::yoke::{self, *};
+use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
 
 /// A collection of [`ResourceKey`] structs for LocaleCanonicalizer providers.
@@ -88,17 +89,17 @@ pub struct AliasesV1 {
 /// `LanguageIdentifier`.
 pub struct LikelySubtagsV1 {
     /// Language and script.
-    pub language_script: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
+    pub language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
     /// Language and region.
-    pub language_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
+    pub language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
     /// Just language.
-    pub language: Vec<(TinyStr4, LanguageIdentifier)>,
+    pub language: LiteMap<TinyStr4, LanguageIdentifier>,
     /// Script and region.
-    pub script_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
+    pub script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
     /// Just script.
-    pub script: Vec<(TinyStr4, LanguageIdentifier)>,
+    pub script: LiteMap<TinyStr4, LanguageIdentifier>,
     /// Just region.
-    pub region: Vec<(TinyStr4, LanguageIdentifier)>,
+    pub region: LiteMap<TinyStr4, LanguageIdentifier>,
     /// Undefined.
     pub und: LanguageIdentifier,
 }
