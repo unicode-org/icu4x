@@ -385,25 +385,21 @@ impl<'data> PluralRules<'data> {
     pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
         let rules = self.rules.get();
         let input = input.into();
-        PluralCategory::all()
-            .find(|cat| {
-                let rule = match cat {
-                    PluralCategory::Zero => &rules.zero,
-                    PluralCategory::One => &rules.one,
-                    PluralCategory::Two => &rules.two,
-                    PluralCategory::Few => &rules.few,
-                    PluralCategory::Many => &rules.many,
-                    PluralCategory::Other => {
-                        return true;
-                    }
-                };
-                if let Some(rule) = rule {
-                    if test_rule(rule, &input) {
-                        return true;
-                    }
-                }
-                false
-            })
+
+        macro_rules! test_rule {
+            ($rule:ident, $cat:ident) => {
+                rules
+                    .$rule
+                    .as_ref()
+                    .and_then(|r| test_rule(r, &input).then(|| PluralCategory::$cat))
+            };
+        }
+
+        test_rule!(zero, Zero)
+            .or_else(|| test_rule!(one, One))
+            .or_else(|| test_rule!(two, Two))
+            .or_else(|| test_rule!(few, Few))
+            .or_else(|| test_rule!(many, Many))
             .unwrap_or(PluralCategory::Other)
     }
 
@@ -438,14 +434,23 @@ impl<'data> PluralRules<'data> {
     /// [`Plural Categories`]: PluralCategory
     pub fn categories(&self) -> impl Iterator<Item = PluralCategory> + '_ {
         let rules = self.rules.get();
-        PluralCategory::all().filter(move |cat| match cat {
-            PluralCategory::Zero => rules.zero.is_some(),
-            PluralCategory::One => rules.one.is_some(),
-            PluralCategory::Two => rules.two.is_some(),
-            PluralCategory::Few => rules.few.is_some(),
-            PluralCategory::Many => rules.many.is_some(),
-            PluralCategory::Other => true,
-        })
+
+        macro_rules! test_rule {
+            ($rule:ident, $cat:ident) => {
+                rules
+                    .$rule
+                    .as_ref()
+                    .map(|_| PluralCategory::$cat)
+                    .into_iter()
+            };
+        }
+
+        test_rule!(zero, Zero)
+            .chain(test_rule!(one, One))
+            .chain(test_rule!(two, Two))
+            .chain(test_rule!(few, Few))
+            .chain(test_rule!(many, Many))
+            .chain(Some(PluralCategory::Other).into_iter())
     }
 
     /// Lower-level constructor that allows constructing a [`PluralRules`] directly from
