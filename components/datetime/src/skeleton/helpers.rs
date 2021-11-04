@@ -299,9 +299,10 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut Pattern) {
     runtime::helpers::maybe_replace(pattern, |item| {
         if let PatternItem::Field(pattern_field) = item {
-            if let Some(requested_field) = fields.iter().find(|field| {
-                field.symbol.discriminant_cmp(&pattern_field.symbol) == Ordering::Equal
-            }) {
+            if let Some(requested_field) = fields
+                .iter()
+                .find(|field| field.symbol.discriminant_cmp(&pattern_field.symbol).is_eq())
+            {
                 if requested_field.length != pattern_field.length
                     && requested_field.get_length_type() == pattern_field.get_length_type()
                 {
