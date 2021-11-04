@@ -12,7 +12,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "longGeneric"
+                    "time_zone_name": "long-generic"
                 }
             }
         },
@@ -35,7 +35,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "shortGeneric"
+                    "time_zone_name": "short-generic"
                 }
             }
         },
@@ -58,7 +58,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "shortSpecific"
+                    "time_zone_name": "short-specific"
                 }
             }
         },
@@ -81,7 +81,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "longSpecific"
+                    "time_zone_name": "long-specific"
                 }
             }
         },
@@ -104,7 +104,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "gmtOffset"
+                    "time_zone_name": "gmt-offset"
                 }
             }
         },
@@ -126,7 +126,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "gmtOffset"
+                    "time_zone_name": "gmt-offset"
                 }
             }
         },
