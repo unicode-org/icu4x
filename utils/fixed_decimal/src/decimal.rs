@@ -728,6 +728,100 @@ impl FixedDecimal {
         let formatted = buf.format_finite(float);
         Self::from_str(formatted)
     }
+
+    /// Internal function to round off `n` digits
+    /// from the right
+    ///
+    /// `self` must have at least `n + 1` digits
+    ///
+    /// This may end up adding a digit to the left!
+    ///
+    /// This will not change the number of significant digits, it simply exists
+    /// to *round* them.
+    fn round_digits(&mut self, n: u8) {
+        let cutoff = self.digits.len() - n as usize;
+
+        // Do we need to round our significant digits?
+        let round = if self.digits[cutoff] < 5 { false } else { true };
+
+        self.digits.truncate(cutoff);
+
+        if round {
+            for digit in self.digits[..cutoff].iter_mut().rev() {
+                if *digit == 9 {
+                    // We need to round the next digit
+                    *digit = 0;
+                } else {
+                    // We need to update this digit, then we're done
+                    *digit += 1;
+                    return;
+                }
+            }
+
+            // If we reached this point then the last digit was 9 and we need to insert
+            // another digit at the beginning
+
+            self.digits.insert(0, 1u8);
+            self.magnitude += 1;
+            if self.magnitude != 0 {
+                self.upper_magnitude += 1;
+            }
+        }
+    }
+}
+
+#[cfg(feature = "ryu")]
+#[test]
+fn test_round() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input: f64,
+        pub round: u8,
+        pub expected: &'static str,
+    }
+    let cases = [
+        TestCase {
+            input: 1.234567,
+            round: 2,
+            expected: "1.234600",
+        },
+        TestCase {
+            input: 1.23456789,
+            round: 2,
+            expected: "1.23456800",
+        },
+        TestCase {
+            input: 88899971.,
+            round: 2,
+            expected: "88900000.0",
+        },
+        TestCase {
+            input: 999988.,
+            round: 2,
+            expected: "1000000.0",
+        },
+        TestCase {
+            input: 0.9,
+            round: 1,
+            expected: "1.0",
+        },
+        TestCase {
+            input: 9.9,
+            round: 1,
+            expected: "10.0",
+        },
+        TestCase {
+            input: 9.9,
+            round: 2,
+            expected: "10.0",
+        },
+    ];
+
+    for case in &cases {
+        let mut dec = FixedDecimal::new_from_f64(case.input).unwrap();
+        dec.round_digits(case.round);
+        writeable::assert_writeable_eq!(case.expected, dec, "{:?}", case);
+    }
 }
 
 #[test]
