@@ -1,4 +1,4 @@
-// This file is part of ICU4 and_or: todo!(), polarity: todo!(), operand: todo!(), modulo: todo!(), range_list: todo!()  and_or: todo!(), polarity: todo!(), operand: todo!(), modulo: todo!(), range_list: todo!() X. For terms of use, please see the file
+// This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
@@ -44,7 +44,7 @@ pub enum Operand {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum RangeOrValue {
-    Range(u32, u32), // XXX: Can we get away from smaller?
+    Range(u32, u32),
     Value(u32),
 }
 
@@ -257,8 +257,46 @@ impl fmt::Display for Rule<'_> {
     }
 }
 
-/////////////////
-
+/// `RelationULE` is a type optimized for efficent storing and
+/// deserialization of `rule::runtime::ast::Rule` `ZeroVec` model.
+///
+/// The serialization model packages the rule into 4 bytes plus
+/// variable length of the list of ranges.
+///
+/// The first byte is used to store:
+///  * One bit to store the state of AndOr.
+///  * One bit to store the state of Polarity.
+///  * Six bits to store the Operand.
+///
+/// The following four bytes store the value of the modulo as `u32`.
+///
+/// Finally, the remaining variable length is used to store a list
+/// of `RangeOrValue` elements which have `[u32;2]` layout.
+///
+/// # Diagram
+///
+/// ```text
+/// ┌───────────────┬───────────────┬───────────────┐
+/// │      u8       │    [u8;4]     │     [u8]      │
+/// ├─┬─┬─┬─┬─┬─┬─┬─┼───┬───┬───┬───┼───────────────┤
+/// ├─┼─┼─┴─┴─┴─┴─┴─┼───┴───┴───┴───┼───────────────┤
+/// │ │ │  Operand  │    Modulo     │  RangeOrValue │
+/// └─┴─┴───────────┴───────────────┴───────────────┘
+///  ▲ ▲
+///  │ │
+///  │ Polarity
+///  │
+///  AndOr
+/// ```
+///
+/// # Optimization
+///
+/// This model is optimized for efficient packaging of the `Relation` elements
+/// and performant deserialization from the `RelationULE` to `Relation` type.
+///
+/// # Constraints
+///
+/// The model constraints the `Operand` to 64 variants, and `Modulo` to `u32::MAX`.
 #[derive(Debug)]
 #[repr(packed)]
 pub struct RelationULE {
