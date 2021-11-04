@@ -782,8 +782,6 @@ impl FixedDecimal {
         // note: this does not heap allocate
         let mut buf = ryu::Buffer::new();
         let formatted = buf.format_finite(float);
-        extern crate std;
-        std::println!("{}", formatted);
         Self::from_str(formatted)
     }
 
@@ -805,7 +803,7 @@ impl FixedDecimal {
         let cutoff = self.digits.len() - n as usize;
 
         // Do we need to round our significant digits?
-        let round = if self.digits[cutoff] < 5 { false } else { true };
+        let round = if self.digits[cutoff] >= 5;
 
         self.digits.truncate(cutoff);
 
