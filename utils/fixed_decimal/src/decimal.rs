@@ -697,6 +697,32 @@ impl FromStr for FixedDecimal {
     }
 }
 
+/// Specifies the precision of a floating point value when constructing a FixedDecimal.
+///
+/// IEEE 754 is a representation of a point on the number line. On the other hand, FixedDecimal
+/// specifies not only the point on the number line but also the precision of the number to a
+/// specific power of 10. This enum augments a floating-point value with the additional
+/// information required by FixedDecimal.
+pub enum DoublePrecision {
+    // /// Specify that the floating point number is integer-valued.
+    // ///
+    // /// If the floating point is not actually integer-valued, an error will be returned.
+    // Integer,
+
+    // /// Specify that the floating point number is precise to a specific power of 10.
+    // /// The number may be rounded or trailing zeros may be added as necessary.
+    // Magnitude(i16),
+
+    // /// Specify that the floating point number is precise to a specific number of significant digits.
+    // /// The number may be rounded or trailing zeros may be added as necessary.
+    // SignificantDigits(u8),
+    /// Specify that the floating point number is precise to the maximum representable by IEEE.
+    ///
+    /// This results in a FixedDecimal having enough digits to recover the original floating point
+    /// value, with no trailing zeros.
+    Maximum,
+}
+
 #[cfg(feature = "ryu")]
 impl FixedDecimal {
     /// Construct a [`FixedDecimal`] from an f64. This uses `ryu` and
@@ -719,14 +745,18 @@ impl FixedDecimal {
     /// let decimal = FixedDecimal::new_from_f64(12345678000.).unwrap();
     /// assert_eq!(decimal.writeable_to_string(), "12345678000.0");
     /// ```
-    pub fn new_from_f64(float: f64) -> Result<Self, Error> {
+    pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         if !float.is_finite() {
             return Err(Error::Limit);
         }
         // note: this does not heap allocate
         let mut buf = ryu::Buffer::new();
         let formatted = buf.format_finite(float);
-        Self::from_str(formatted)
+        let mut decimal = Self::from_str(formatted);
+        match precision {
+            DoublePrecision::Maximum => (),
+        }
+        decimal
     }
 
     /// Internal function to round off `n` digits
