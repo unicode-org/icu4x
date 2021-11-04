@@ -803,7 +803,7 @@ impl FixedDecimal {
         let cutoff = self.digits.len() - n as usize;
 
         // Do we need to round our significant digits?
-        let round = if self.digits[cutoff] >= 5;
+        let round = self.digits[cutoff] >= 5;
 
         self.digits.truncate(cutoff);
 
