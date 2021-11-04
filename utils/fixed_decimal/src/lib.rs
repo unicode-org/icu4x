@@ -44,7 +44,7 @@ pub mod decimal;
 pub mod signum;
 mod uint_iterator;
 
-pub use decimal::FixedDecimal;
+pub use decimal::{DoublePrecision, FixedDecimal};
 use displaydoc::Display;
 pub use signum::Signum;
 

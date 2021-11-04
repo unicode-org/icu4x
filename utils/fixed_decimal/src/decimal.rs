@@ -734,21 +734,20 @@ impl FixedDecimal {
     /// This function can be made available with the `"ryu"` feature.
     ///
     /// ```rust
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::{DoublePrecision, FixedDecimal};
     /// use writeable::Writeable;
     ///
-    /// let decimal = FixedDecimal::new_from_f64(0.012345678).unwrap();
+    /// let decimal = FixedDecimal::new_from_f64(0.012345678, DoublePrecision::Maximum).unwrap();
     /// assert_eq!(decimal.writeable_to_string(), "0.012345678");
     ///
-    /// let decimal = FixedDecimal::new_from_f64(-123456.78).unwrap();
+    /// let decimal = FixedDecimal::new_from_f64(-123456.78, DoublePrecision::Maximum).unwrap();
     /// assert_eq!(decimal.writeable_to_string(), "-123456.78");
     ///
-    /// let decimal = FixedDecimal::new_from_f64(12345678000.).unwrap();
+    /// let decimal = FixedDecimal::new_from_f64(12345678000., DoublePrecision::Maximum).unwrap();
     /// assert_eq!(decimal.writeable_to_string(), "12345678000.0");
     /// ```
     pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         extern crate std;
-        use writeable::Writeable;
         let mut decimal = Self::new_from_f64_raw(float)?;
         match precision {
             DoublePrecision::Maximum => (),
