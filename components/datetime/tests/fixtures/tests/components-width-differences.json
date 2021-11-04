@@ -5,7 +5,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "TwoDigit"
+                    "year": "two-digit"
                 }
             }
         },
@@ -39,8 +39,8 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "TwoDigitWeekOf",
-                    "week": "NumericWeekOfYear"
+                    "year": "two-digit-week-of",
+                    "week": "numeric-week-of-year"
                 }
             }
         },
@@ -56,8 +56,8 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "TwoDigit",
-                    "week": "NumericWeekOfYear"
+                    "year": "two-digit",
+                    "week": "numeric-week-of-year"
                 }
             }
         },
@@ -73,7 +73,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "numeric",
                     "day": "numeric"
                 }
@@ -92,7 +92,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "two-digit",
                     "day": "numeric"
                 }
@@ -111,7 +111,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "short",
                     "day": "numeric"
                 }
@@ -130,7 +130,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "long",
                     "day": "numeric"
                 }
@@ -149,7 +149,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "narrow",
                     "day": "numeric"
                 }

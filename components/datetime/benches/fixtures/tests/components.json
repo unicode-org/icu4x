@@ -5,7 +5,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric"
+                        "year": "numeric"
                     }
                 }
             },
@@ -13,7 +13,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "numeric"
                     }
                 }
@@ -22,7 +22,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "numeric",
                         "day": "numeric"
                     }
@@ -32,7 +32,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "numeric",
                         "day": "numeric",
                         "weekday": "short"
@@ -43,7 +43,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "short"
                     }
                 }
@@ -52,7 +52,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "short",
                         "day": "numeric"
                     }
@@ -62,7 +62,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "short",
                         "day": "numeric",
                         "weekday": "short"
@@ -73,7 +73,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "long"
                     }
                 }
@@ -285,7 +285,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "TwoDigit"
+                        "year": "two-digit"
                     }
                 }
             },
@@ -293,7 +293,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "numeric",
                         "day": "numeric"
                     }
@@ -303,7 +303,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "two-digit",
                         "day": "numeric"
                     }
@@ -313,7 +313,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "short",
                         "day": "numeric"
                     }
@@ -323,7 +323,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "long",
                         "day": "numeric"
                     }
@@ -333,7 +333,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "narrow",
                         "day": "numeric"
                     }
@@ -343,7 +343,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "short",
                         "day": "numeric",
 
@@ -358,7 +358,7 @@
                 "locale": "en",
                 "options": {
                     "components": {
-                        "year": "Numeric",
+                        "year": "numeric",
                         "month": "long",
                         "day": "numeric",
 

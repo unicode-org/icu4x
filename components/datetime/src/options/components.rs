@@ -354,7 +354,11 @@ pub enum Text {
 
 /// Options for displaying a Year for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Year {
     /// The numeric value of the year, such as "2018" for 2018-12-31.
     Numeric,
@@ -396,7 +400,11 @@ pub enum Month {
 #[doc(hidden)]
 // TODO(#488): make visible once fully supported.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Week {
     /// The week of the month, such as "3".
     WeekOfMonth,

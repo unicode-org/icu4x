@@ -5,7 +5,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric"
+                    "year": "numeric"
                 }
             }
         },
@@ -21,7 +21,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "numeric"
                 }
             }
@@ -38,7 +38,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "numeric",
                     "day": "numeric"
                 }
@@ -56,7 +56,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "numeric",
                     "day": "numeric",
                     "weekday": "short"
@@ -75,7 +75,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "short"
                 }
             }
@@ -92,7 +92,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "short",
                     "day": "numeric"
                 }
@@ -110,7 +110,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "short",
                     "day": "numeric",
                     "weekday": "short"
@@ -129,7 +129,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "long"
                 }
             }
@@ -518,8 +518,8 @@
             "value": "2016-04-13T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "NumericWeekOf",
-                    "week": "NumericWeekOfYear"
+                    "year": "numeric-week-of",
+                    "week": "numeric-week-of-year"
                 }
             }
         },
@@ -536,8 +536,8 @@
             "value": "2022-01-01T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "NumericWeekOf",
-                    "week": "NumericWeekOfYear"
+                    "year": "numeric-week-of",
+                    "week": "numeric-week-of-year"
                 }
             }
         },

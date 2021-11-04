@@ -5,7 +5,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "short",
                     "day": "numeric",
 
@@ -28,7 +28,7 @@
             "value": "2020-01-07T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "Numeric",
+                    "year": "numeric",
                     "month": "long",
                     "day": "numeric",
 
