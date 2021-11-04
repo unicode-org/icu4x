@@ -703,15 +703,16 @@ impl FromStr for FixedDecimal {
 /// specifies not only the point on the number line but also the precision of the number to a
 /// specific power of 10. This enum augments a floating-point value with the additional
 /// information required by FixedDecimal.
+#[cfg(feature = "ryu")]
+#[derive(Debug, Clone, Copy)]
 pub enum DoublePrecision {
     // /// Specify that the floating point number is integer-valued.
     // ///
     // /// If the floating point is not actually integer-valued, an error will be returned.
     // Integer,
-
-    // /// Specify that the floating point number is precise to a specific power of 10.
-    // /// The number may be rounded or trailing zeros may be added as necessary.
-    // Magnitude(i16),
+    /// Specify that the floating point number is precise to a specific power of 10.
+    /// The number may be rounded or trailing zeros may be added as necessary.
+    Magnitude(i16),
 
     // /// Specify that the floating point number is precise to a specific number of significant digits.
     // /// The number may be rounded or trailing zeros may be added as necessary.
@@ -746,29 +747,62 @@ impl FixedDecimal {
     /// assert_eq!(decimal.writeable_to_string(), "12345678000.0");
     /// ```
     pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
+        extern crate std;
+        use writeable::Writeable;
+        let mut decimal = Self::new_from_f64_raw(float)?;
+        match precision {
+            DoublePrecision::Maximum => (),
+            DoublePrecision::Magnitude(mag) => {
+                let n_digits = decimal.digits.len() as i16;
+                // magnitude of the lowest digit in self.digits
+                let lowest_magnitude = decimal.magnitude - n_digits + 1;
+
+                if mag > lowest_magnitude {
+                    let mut round_by = (mag - lowest_magnitude) as i16;
+
+                    // If we need to round by more digits than we have,
+                    // just round them all
+                    if round_by > n_digits {
+                        round_by = n_digits;
+                    }
+                    decimal.round_digits(round_by as u16);
+                }
+
+                if mag < 0 {
+                    decimal.lower_magnitude = mag;
+                }
+            }
+        }
+        Ok(decimal)
+    }
+    /// Internal function for parsing directly from floats using ryū
+    fn new_from_f64_raw(float: f64) -> Result<Self, Error> {
         if !float.is_finite() {
             return Err(Error::Limit);
         }
         // note: this does not heap allocate
         let mut buf = ryu::Buffer::new();
         let formatted = buf.format_finite(float);
-        let mut decimal = Self::from_str(formatted);
-        match precision {
-            DoublePrecision::Maximum => (),
-        }
-        decimal
+        extern crate std;
+        std::println!("{}", formatted);
+        Self::from_str(formatted)
     }
 
     /// Internal function to round off `n` digits
     /// from the right
     ///
-    /// `self` must have at least `n + 1` digits
+    /// `self` must have at least `n` digits
     ///
     /// This may end up adding a digit to the left!
     ///
     /// This will not change the number of significant digits, it simply exists
-    /// to *round* them.
-    fn round_digits(&mut self, n: u8) {
+    /// to *round* them (and will typically reduce the size of `self.digits`)
+    fn round_digits(&mut self, n: u16) {
+        debug_assert!(self.digits.len() >= n as usize);
+        if n == 0 {
+            // no point attempting to round off any digits
+            return;
+        }
         let cutoff = self.digits.len() - n as usize;
 
         // Do we need to round our significant digits?
@@ -806,7 +840,7 @@ fn test_round() {
     #[derive(Debug)]
     struct TestCase {
         pub input: f64,
-        pub round: u8,
+        pub round: u16,
         pub expected: &'static str,
     }
     let cases = [
@@ -848,8 +882,66 @@ fn test_round() {
     ];
 
     for case in &cases {
-        let mut dec = FixedDecimal::new_from_f64(case.input).unwrap();
+        let mut dec = FixedDecimal::new_from_f64_raw(case.input).unwrap();
         dec.round_digits(case.round);
+        writeable::assert_writeable_eq!(case.expected, dec, "{:?}", case);
+    }
+}
+
+#[cfg(feature = "ryu")]
+#[test]
+fn test_float() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input: f64,
+        pub precision: DoublePrecision,
+        pub expected: &'static str,
+    }
+    let cases = [
+        TestCase {
+            input: 1.234567,
+            precision: DoublePrecision::Maximum,
+            expected: "1.234567",
+        },
+        TestCase {
+            input: 888999.,
+            precision: DoublePrecision::Maximum,
+            expected: "888999.0",
+        },
+        TestCase {
+            input: 1.234567,
+            precision: DoublePrecision::Magnitude(-2),
+            expected: "1.23",
+        },
+        TestCase {
+            input: 1.235567,
+            precision: DoublePrecision::Magnitude(-2),
+            expected: "1.24",
+        },
+        TestCase {
+            input: 888999.,
+            precision: DoublePrecision::Magnitude(2),
+            expected: "889000.0",
+        },
+        TestCase {
+            input: 888999.,
+            precision: DoublePrecision::Magnitude(4),
+            expected: "890000.0",
+        },
+        TestCase {
+            input: 0.9,
+            precision: DoublePrecision::Magnitude(1),
+            expected: "1.0",
+        },
+        TestCase {
+            input: 0.9,
+            precision: DoublePrecision::Magnitude(2),
+            expected: "1.0",
+        },
+    ];
+
+    for case in &cases {
+        let dec = FixedDecimal::new_from_f64(case.input, case.precision).unwrap();
         writeable::assert_writeable_eq!(case.expected, dec, "{:?}", case);
     }
 }
