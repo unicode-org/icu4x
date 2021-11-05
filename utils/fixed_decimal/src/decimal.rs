@@ -747,7 +747,6 @@ impl FixedDecimal {
     /// assert_eq!(decimal.writeable_to_string(), "12345678000.0");
     /// ```
     pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
-        extern crate std;
         let mut decimal = Self::new_from_f64_raw(float)?;
         match precision {
             DoublePrecision::Maximum => (),
@@ -759,14 +758,14 @@ impl FixedDecimal {
                 if mag > lowest_magnitude {
                     let mut round_by = (mag - lowest_magnitude) as i16;
 
-                    // If we need to round by more digits than we have,
-                    // just round them all
-                    if round_by > n_digits {
-                        round_by = n_digits;
+                    if round_by <= n_digits {
+                        decimal.round_digits(round_by as u16);
+                    } else {
+                        // If we need to round by more digits than rounding can ever produce
+                        // the number is zero
+                        decimal = Default::default();
                     }
-                    decimal.round_digits(round_by as u16);
                 }
-
                 if mag < 0 {
                     decimal.lower_magnitude = mag;
                 }
@@ -824,7 +823,7 @@ impl FixedDecimal {
 
             self.digits.insert(0, 1u8);
             self.magnitude += 1;
-            if self.magnitude != 0 {
+            if self.magnitude != 0 && self.upper_magnitude <= self.magnitude {
                 self.upper_magnitude += 1;
             }
         }
@@ -927,13 +926,28 @@ fn test_float() {
         },
         TestCase {
             input: 0.9,
-            precision: DoublePrecision::Magnitude(1),
+            precision: DoublePrecision::Magnitude(0),
             expected: "1.0",
         },
         TestCase {
             input: 0.9,
             precision: DoublePrecision::Magnitude(2),
-            expected: "1.0",
+            expected: "0",
+        },
+        TestCase {
+            input: 0.009,
+            precision: DoublePrecision::Magnitude(-2),
+            expected: "0.01",
+        },
+        TestCase {
+            input: 0.009,
+            precision: DoublePrecision::Magnitude(-1),
+            expected: "0.0",
+        },
+        TestCase {
+            input: 0.009,
+            precision: DoublePrecision::Magnitude(0),
+            expected: "0",
         },
     ];
 
