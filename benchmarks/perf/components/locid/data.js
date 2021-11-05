@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636132482063,
+  "lastUpdate": 1636132768832,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16265,6 +16265,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4863,
             "range": "± 298",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74e74a3bd7e7b00073d4c73d2efa1fcfcc81579d",
+          "message": "Handle exponents in FixedDecimal::from_str() (#1265)\n\n* Handle exponents in FixedDecimal::from_str()\r\n\r\n* Clean up leftmost/rightmost digit calculation\r\n\r\n* use filter()/collect()\r\n\r\n* clippy",
+          "timestamp": "2021-11-05T10:12:36-07:00",
+          "tree_id": "23e854171573c5e2fd85f1c595c6fdb4f47a2d50",
+          "url": "https://github.com/unicode-org/icu4x/commit/74e74a3bd7e7b00073d4c73d2efa1fcfcc81579d"
+        },
+        "date": 1636132764384,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2119,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3677,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
