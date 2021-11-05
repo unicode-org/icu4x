@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636131930385,
+  "lastUpdate": 1636132475149,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11855,6 +11855,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 382408,
             "range": "± 19277",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d18ba05e92871480874c48bc2199e5743ef61141",
+          "message": "Update roadmap.md",
+          "timestamp": "2021-11-05T10:07:48-07:00",
+          "tree_id": "8ca649407d3ae8072ab2aa7c1105eded888809ba",
+          "url": "https://github.com/unicode-org/icu4x/commit/d18ba05e92871480874c48bc2199e5743ef61141"
+        },
+        "date": 1636132470586,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 85533,
+            "range": "± 215",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1021529,
+            "range": "± 3246",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 249118,
+            "range": "± 5169",
             "unit": "ns/iter"
           }
         ]
