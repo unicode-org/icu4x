@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636132456615,
+  "lastUpdate": 1636134251089,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3113,6 +3113,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/74e74a3bd7e7b00073d4c73d2efa1fcfcc81579d"
         },
         "date": 1636132450376,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 843668,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b51dccd78a474c32742917f5a177f808f612db99",
+          "message": "Fix typo in datagen docs (#1222)",
+          "timestamp": "2021-11-05T10:42:49-07:00",
+          "tree_id": "b40f7d249e19ce0265b83e71c34a7df2d7ac3013",
+          "url": "https://github.com/unicode-org/icu4x/commit/b51dccd78a474c32742917f5a177f808f612db99"
+        },
+        "date": 1636134245556,
         "tool": "ndjson",
         "benches": [
           {
