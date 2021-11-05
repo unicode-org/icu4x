@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636132837701,
+  "lastUpdate": 1636134646392,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11939,6 +11939,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 356723,
             "range": "± 24999",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b51dccd78a474c32742917f5a177f808f612db99",
+          "message": "Fix typo in datagen docs (#1222)",
+          "timestamp": "2021-11-05T10:42:49-07:00",
+          "tree_id": "b40f7d249e19ce0265b83e71c34a7df2d7ac3013",
+          "url": "https://github.com/unicode-org/icu4x/commit/b51dccd78a474c32742917f5a177f808f612db99"
+        },
+        "date": 1636134640144,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 115635,
+            "range": "± 4389",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1341299,
+            "range": "± 54085",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 321078,
+            "range": "± 14519",
             "unit": "ns/iter"
           }
         ]
