@@ -82,10 +82,7 @@ impl<A: ULE, B: ULE> Copy for PairULE<A, B> {}
 #[test]
 fn test_pairule_validate() {
     use crate::ZeroVec;
-    let mut vec: Vec<(u32, char)> = Vec::new();
-    vec.push((1, 'a'));
-    vec.push((1234901, '啊'));
-    vec.push((100, 'अ'));
+    let vec: Vec<(u32, char)> = vec![(1, 'a'), (1234901, '啊'), (100, 'अ')];
     let zerovec: ZeroVec<(u32, char)> = vec.iter().copied().collect();
     let bytes = zerovec.as_bytes();
     let zerovec2 = ZeroVec::parse_byte_slice(bytes).unwrap();
