@@ -547,29 +547,29 @@ mod test {
         let full_ast = parse(input.as_bytes()).unwrap();
         let rule = Rule::from(&full_ast);
 
-        // let fd = fixed_decimal::decimal::FixedDecimal::from(0);
-        // let operands = PluralOperands::from(&fd);
-        // assert!(test_rule(&rule, &operands),);
+        let fd = fixed_decimal::decimal::FixedDecimal::from(0);
+        let operands = PluralOperands::from(&fd);
+        assert!(test_rule(&rule, &operands),);
 
-        // let fd = fixed_decimal::decimal::FixedDecimal::from(13);
-        // let operands = PluralOperands::from(&fd);
-        // assert!(!test_rule(&rule, &operands),);
+        let fd = fixed_decimal::decimal::FixedDecimal::from(13);
+        let operands = PluralOperands::from(&fd);
+        assert!(!test_rule(&rule, &operands),);
 
-        // let fd = fixed_decimal::decimal::FixedDecimal::from(103);
-        // let operands = PluralOperands::from(&fd);
-        // assert!(test_rule(&rule, &operands),);
+        let fd = fixed_decimal::decimal::FixedDecimal::from(103);
+        let operands = PluralOperands::from(&fd);
+        assert!(test_rule(&rule, &operands),);
 
-        // let fd = fixed_decimal::decimal::FixedDecimal::from(113);
-        // let operands = PluralOperands::from(&fd);
-        // assert!(!test_rule(&rule, &operands),);
+        let fd = fixed_decimal::decimal::FixedDecimal::from(113);
+        let operands = PluralOperands::from(&fd);
+        assert!(!test_rule(&rule, &operands),);
 
-        // let fd = fixed_decimal::decimal::FixedDecimal::from(178);
-        // let operands = PluralOperands::from(&fd);
-        // assert!(!test_rule(&rule, &operands),);
+        let fd = fixed_decimal::decimal::FixedDecimal::from(178);
+        let operands = PluralOperands::from(&fd);
+        assert!(!test_rule(&rule, &operands),);
 
-        // let fd = fixed_decimal::decimal::FixedDecimal::from(0);
-        // let operands = PluralOperands::from(&fd);
-        // assert!(test_rule(&rule, &operands),);
+        let fd = fixed_decimal::decimal::FixedDecimal::from(0);
+        let operands = PluralOperands::from(&fd);
+        assert!(test_rule(&rule, &operands),);
     }
 
     #[test]
