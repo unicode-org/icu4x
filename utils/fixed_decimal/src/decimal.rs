@@ -588,12 +588,12 @@ impl FromStr for FixedDecimal {
 
         // Constructing DecimalFixed.digits
         let mut v: SmallVec<[u8; 8]> = SmallVec::with_capacity(digits_str_len);
-        for c in no_exponent_str[leftmost_digit..rightmost_digit_end].iter() {
-            if *c == b'.' {
-                continue;
-            }
-            v.push(c - b'0');
-        }
+        let v: SmallVec<[u8; 8]> = no_exponent_str[leftmost_digit..rightmost_digit_end]
+            .iter()
+            .filter(|c| **c != b'.')
+            .map(|c| c - b'0')
+            .collect();
+
         let v_len = v.len();
         debug_assert_eq!(v_len, digits_str_len);
         dec.digits = v;
