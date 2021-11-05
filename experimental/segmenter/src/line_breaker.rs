@@ -23,6 +23,11 @@ use unicode_width::UnicodeWidthChar;
 /// <https://drafts.csswg.org/css-text-3/#line-break-property>.
 #[derive(Copy, Clone, PartialEq)]
 pub enum LineBreakRule {
+    /// Breaks text using the least restrictive set of line-breaking rules.
+    /// Typically used for short lines, such as in newspapers.
+    /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-loose>
+    Loose,
+
     /// Breaks text using the most common set of line-breaking rules.
     /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-normal>
     Normal,
@@ -30,11 +35,6 @@ pub enum LineBreakRule {
     /// Breaks text using the most stringent set of line-breaking rules.
     /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-strict>
     Strict,
-
-    /// Breaks text using the least restrictive set of line-breaking rules.
-    /// Typically used for short lines, such as in newspapers.
-    /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-loose>
-    Loose,
 
     /// Breaks text assuming there is a soft wrap opportunity around every
     /// typographic character unit, disregarding any prohibition against line
