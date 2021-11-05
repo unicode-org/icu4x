@@ -17,11 +17,13 @@ unsafe impl<A: ULE, B: ULE> ULE for PairULE<A, B> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
         let a_len = mem::size_of::<A>();
         let b_len = mem::size_of::<B>();
-        if bytes.len() != a_len + b_len {
-            return Err(PairULEError::IncorrectLength(a_len + b_len, bytes.len()));
+        if bytes.len() % (a_len + b_len) != 0 {
+            return Err(PairULEError::IndivisibleLength(a_len + b_len, bytes.len()));
         }
-        A::validate_byte_slice(&bytes[..a_len]).map_err(PairULEError::First)?;
-        B::validate_byte_slice(&bytes[a_len..]).map_err(PairULEError::Second)?;
+        for chunk in bytes.chunks(a_len + b_len) {
+            A::validate_byte_slice(&chunk[..a_len]).map_err(PairULEError::First)?;
+            B::validate_byte_slice(&chunk[a_len..]).map_err(PairULEError::Second)?;
+        }
         Ok(())
     }
 }
@@ -47,7 +49,7 @@ impl<A: AsULE, B: AsULE> AsULE for (A, B) {
 pub enum PairULEError<E, F> {
     First(E),
     Second(F),
-    IncorrectLength(/* expected */ usize, /* found */ usize),
+    IndivisibleLength(/* expected */ usize, /* found */ usize),
 }
 
 impl<E: fmt::Display, F: fmt::Display> fmt::Display for PairULEError<E, F> {
@@ -55,9 +57,9 @@ impl<E: fmt::Display, F: fmt::Display> fmt::Display for PairULEError<E, F> {
         match *self {
             PairULEError::First(ref e) => e.fmt(f),
             PairULEError::Second(ref e) => e.fmt(f),
-            PairULEError::IncorrectLength(expected, found) => write!(
+            PairULEError::IndivisibleLength(expected, found) => write!(
                 f,
-                "Incorrect length for PairULE: expected {} found {}",
+                "Indivisible length for PairULE: expected multiple of {} found {}",
                 expected, found
             ),
         }
@@ -76,3 +78,13 @@ impl<A: ULE, B: ULE> Clone for PairULE<A, B> {
 }
 
 impl<A: ULE, B: ULE> Copy for PairULE<A, B> {}
+
+#[test]
+fn test_pairule_validate() {
+    use crate::ZeroVec;
+    let vec: Vec<(u32, char)> = vec![(1, 'a'), (1234901, '啊'), (100, 'अ')];
+    let zerovec: ZeroVec<(u32, char)> = vec.iter().copied().collect();
+    let bytes = zerovec.as_bytes();
+    let zerovec2 = ZeroVec::parse_byte_slice(bytes).unwrap();
+    assert_eq!(zerovec, zerovec2);
+}
