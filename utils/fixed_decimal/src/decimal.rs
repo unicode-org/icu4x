@@ -756,7 +756,7 @@ impl FixedDecimal {
                 let lowest_magnitude = decimal.magnitude - n_digits + 1;
 
                 if mag > lowest_magnitude {
-                    let mut round_by = (mag - lowest_magnitude) as i16;
+                    let round_by = (mag - lowest_magnitude) as i16;
 
                     if round_by <= n_digits {
                         decimal.round_digits(round_by as u16);
@@ -948,6 +948,21 @@ fn test_float() {
             input: 0.009,
             precision: DoublePrecision::Magnitude(0),
             expected: "0",
+        },
+        TestCase {
+            input: 0.0000009,
+            precision: DoublePrecision::Magnitude(0),
+            expected: "0",
+        },
+        TestCase {
+            input: 0.0000009,
+            precision: DoublePrecision::Magnitude(-7),
+            expected: "0.0000009",
+        },
+        TestCase {
+            input: 0.0000009,
+            precision: DoublePrecision::Magnitude(-6),
+            expected: "0.000001",
         },
     ];
 
