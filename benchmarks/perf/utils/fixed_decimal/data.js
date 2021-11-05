@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636132734084,
+  "lastUpdate": 1636134579255,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13079,6 +13079,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 116750,
             "range": "± 309",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b51dccd78a474c32742917f5a177f808f612db99",
+          "message": "Fix typo in datagen docs (#1222)",
+          "timestamp": "2021-11-05T10:42:49-07:00",
+          "tree_id": "b40f7d249e19ce0265b83e71c34a7df2d7ac3013",
+          "url": "https://github.com/unicode-org/icu4x/commit/b51dccd78a474c32742917f5a177f808f612db99"
+        },
+        "date": 1636134573344,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 129698,
+            "range": "± 8238",
             "unit": "ns/iter"
           }
         ]
