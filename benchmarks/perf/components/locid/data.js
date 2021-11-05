@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1635872971563,
+  "lastUpdate": 1636090945449,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16121,6 +16121,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4157,
             "range": "± 155",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "04b902b0e81a6964035a3fbcc796bd0207b11e11",
+          "message": "Reorder LineBreakRule's enum values (#1263)\n\nMake their ordering the same as in the spec\r\nhttps://drafts.csswg.org/css-text-3/#line-break-property",
+          "timestamp": "2021-11-04T22:34:54-07:00",
+          "tree_id": "3f3d149419e058192cbc9675667636c8a27905c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/04b902b0e81a6964035a3fbcc796bd0207b11e11"
+        },
+        "date": 1636090939647,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2842,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5032,
+            "range": "± 338",
             "unit": "ns/iter"
           }
         ]
