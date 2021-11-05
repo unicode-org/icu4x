@@ -553,22 +553,17 @@ impl FromStr for FixedDecimal {
         //     001.23000             2                  6
         //     001230.00             2                  5
         // Compute leftmost_digit
-        let mut leftmost_digit = no_exponent_str.len();
-        for (i, c) in no_exponent_str.iter().enumerate() {
-            if *c == b'.' {
-                continue;
-            }
-            if *c != b'0' {
-                leftmost_digit = i;
-                break;
-            }
-        }
+        let leftmost_digit = no_exponent_str
+            .iter()
+            .position(|c| *c != b'.' && *c != b'0');
 
         // If the input only has zeros (like 000, 00.0, -00.000) we handle the situation here
         // by returning the dec and don't running the rest of the code
-        if leftmost_digit == no_exponent_str.len() {
+        let leftmost_digit = if let Some(leftmost_digit) = leftmost_digit {
+            leftmost_digit
+        } else {
             return Ok(dec);
-        }
+        };
 
         // Else if the input is not all zeros, we compute its magnitude:
         // Note that we can cast with "as" here because lower and upper magnitude have been checked already
@@ -578,27 +573,22 @@ impl FromStr for FixedDecimal {
         }
         dec.magnitude = temp_magnitude;
 
-        // Compute rightmost_digit
-        let mut rightmost_digit = no_exponent_str.len();
-        for (i, c) in no_exponent_str.iter().rev().enumerate() {
-            if *c == b'.' {
-                continue;
-            }
-            if *c != b'0' {
-                rightmost_digit = no_exponent_str.len() - i;
-                break;
-            }
-        }
+        // Compute the index where the rightmost_digit ends
+        let rightmost_digit_end = no_exponent_str
+            .iter()
+            .rposition(|c| *c != b'.' && *c != b'0')
+            .map(|p| p + 1)
+            .unwrap_or(no_exponent_str.len());
 
         // digits_str_len: shows the length of digits (Ex. 0012.8900 --> 4)
-        let mut digits_str_len = rightmost_digit - leftmost_digit;
-        if leftmost_digit < dot_index && dot_index < rightmost_digit {
+        let mut digits_str_len = rightmost_digit_end - leftmost_digit;
+        if leftmost_digit < dot_index && dot_index < rightmost_digit_end {
             digits_str_len -= 1;
         }
 
         // Constructing DecimalFixed.digits
         let mut v: SmallVec<[u8; 8]> = SmallVec::with_capacity(digits_str_len);
-        for c in no_exponent_str[leftmost_digit..rightmost_digit].iter() {
+        for c in no_exponent_str[leftmost_digit..rightmost_digit_end].iter() {
             if *c == b'.' {
                 continue;
             }
