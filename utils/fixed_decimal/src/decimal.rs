@@ -532,32 +532,60 @@ impl FromStr for FixedDecimal {
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
         // has_dot: shows if your input has dot in it
-        // dot_index: gives the index of dot (after removing the sign) -- equal to lenght of
+        // has_exponent: shows if your input has an exponent in it
+        // dot_index: gives the index of dot (after removing the sign) -- equal to length of
         // the no_sign_str if there is no dot
-        let no_sign_str_len = no_sign_str.len();
+        // exponent_index: gives the index of exponent (after removing the sign) -- equal to length of
+        // the no_sign_str if there is no dot
         let mut has_dot = false;
-        let mut dot_index = no_sign_str_len;
+        let mut has_exponent = false;
+        let mut dot_index = no_sign_str.len();
+        let mut exponent_index = no_sign_str.len();
         // The following loop computes has_dot, dot_index, and also checks to see if all
         // characters are digits and if you have at most one dot
         // Note: Input of format 111_123 is detected as syntax error here
         // Note: Input starting or ending with a dot is detected as syntax error here (Ex: .123, 123.)
         for (i, c) in no_sign_str.iter().enumerate() {
             if *c == b'.' {
-                match has_dot {
-                    false => {
-                        dot_index = i;
-                        has_dot = true;
-                        if i == 0 || i == no_sign_str.len() - 1 {
-                            return Err(Error::Syntax);
-                        }
-                    }
-                    true => {
-                        return Err(Error::Syntax);
-                    }
+                if has_dot || has_exponent {
+                    // multiple dots or dots after the exponent
+                    return Err(Error::Syntax);
+                }
+                dot_index = i;
+                has_dot = true;
+                if i == 0 || i == no_sign_str.len() - 1 {
+                    return Err(Error::Syntax);
+                }
+            } else if *c == b'e' || *c == b'E' {
+                if has_exponent {
+                    // multiple exponents
+                    return Err(Error::Syntax);
+                }
+                exponent_index = i;
+                has_exponent = true;
+                if i == 0 || i == no_sign_str.len() - 1 {
+                    return Err(Error::Syntax);
+                }
+            } else if *c == b'-' {
+                // Allow a single minus sign after the exponent
+                if has_exponent && exponent_index == i - 1 {
+                    continue;
+                } else {
+                    return Err(Error::Syntax);
                 }
             } else if *c < b'0' || *c > b'9' {
                 return Err(Error::Syntax);
             }
+        }
+
+        // The string without the exponent (or sign)
+        // We do the bulk of the calculation on this string,
+        // and extract the exponent at the end
+        let no_exponent_str = &no_sign_str[..exponent_index];
+
+        // If there was no dot, truncate the dot index
+        if dot_index > exponent_index {
+            dot_index = exponent_index;
         }
 
         // defining the output dec here and set its sign
@@ -567,7 +595,7 @@ impl FromStr for FixedDecimal {
         };
 
         // no_dot_str_len: shows length of the string after removing the dot
-        let mut no_dot_str_len = no_sign_str_len;
+        let mut no_dot_str_len = no_exponent_str.len();
         if has_dot {
             no_dot_str_len -= 1;
         }
@@ -596,22 +624,17 @@ impl FromStr for FixedDecimal {
         //     001.23000             2                  6
         //     001230.00             2                  5
         // Compute leftmost_digit
-        let mut leftmost_digit = no_sign_str_len;
-        for (i, c) in no_sign_str.iter().enumerate() {
-            if *c == b'.' {
-                continue;
-            }
-            if *c != b'0' {
-                leftmost_digit = i;
-                break;
-            }
-        }
+        let leftmost_digit = no_exponent_str
+            .iter()
+            .position(|c| *c != b'.' && *c != b'0');
 
         // If the input only has zeros (like 000, 00.0, -00.000) we handle the situation here
         // by returning the dec and don't running the rest of the code
-        if leftmost_digit == no_sign_str_len {
+        let leftmost_digit = if let Some(leftmost_digit) = leftmost_digit {
+            leftmost_digit
+        } else {
             return Ok(dec);
-        }
+        };
 
         // Else if the input is not all zeros, we compute its magnitude:
         // Note that we can cast with "as" here because lower and upper magnitude have been checked already
@@ -621,35 +644,54 @@ impl FromStr for FixedDecimal {
         }
         dec.magnitude = temp_magnitude;
 
-        // Compute rightmost_digit
-        let mut rightmost_digit = no_sign_str_len;
-        for (i, c) in no_sign_str.iter().rev().enumerate() {
-            if *c == b'.' {
-                continue;
-            }
-            if *c != b'0' {
-                rightmost_digit = no_sign_str_len - i;
-                break;
-            }
-        }
+        // Compute the index where the rightmost_digit ends
+        let rightmost_digit_end = no_exponent_str
+            .iter()
+            .rposition(|c| *c != b'.' && *c != b'0')
+            .map(|p| p + 1)
+            .unwrap_or(no_exponent_str.len());
 
         // digits_str_len: shows the length of digits (Ex. 0012.8900 --> 4)
-        let mut digits_str_len = rightmost_digit - leftmost_digit;
-        if leftmost_digit < dot_index && dot_index < rightmost_digit {
+        let mut digits_str_len = rightmost_digit_end - leftmost_digit;
+        if leftmost_digit < dot_index && dot_index < rightmost_digit_end {
             digits_str_len -= 1;
         }
 
         // Constructing DecimalFixed.digits
-        let mut v: SmallVec<[u8; 8]> = SmallVec::with_capacity(digits_str_len);
-        for c in no_sign_str[leftmost_digit..rightmost_digit].iter() {
-            if *c == b'.' {
-                continue;
-            }
-            v.push(c - b'0');
-        }
+        let v: SmallVec<[u8; 8]> = no_exponent_str[leftmost_digit..rightmost_digit_end]
+            .iter()
+            .filter(|c| **c != b'.')
+            .map(|c| c - b'0')
+            .collect();
+
         let v_len = v.len();
         debug_assert_eq!(v_len, digits_str_len);
         dec.digits = v;
+
+        // Extract the exponent part
+        if has_exponent {
+            let mut pow = 0;
+            let mut pos_neg = 1;
+            for digit in &no_sign_str[exponent_index + 1..] {
+                if *digit == b'-' {
+                    pos_neg = -1;
+                    continue;
+                }
+                pow *= 10;
+                pow += (digit - b'0') as i16;
+            }
+
+            dec.multiply_pow10(pos_neg * pow)?;
+
+            // Clean up magnitude after multiplication
+            if dec.magnitude > 0 {
+                dec.upper_magnitude = dec.magnitude;
+            }
+            let neg_mag = dec.magnitude - dec.digits.len() as i16 + 1;
+            if neg_mag < 0 {
+                dec.lower_magnitude = neg_mag;
+            }
+        }
 
         Ok(dec)
     }
@@ -816,6 +858,45 @@ fn test_from_str() {
     for cas in &cases {
         let input_str_roundtrip = FixedDecimal::from_str(cas.input_str).unwrap().to_string();
         assert_eq!(cas.input_str, input_str_roundtrip);
+    }
+}
+
+#[test]
+fn test_from_str_scientific() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input_str: &'static str,
+        pub output: &'static str,
+    }
+    let cases = [
+        TestCase {
+            input_str: "-5.4e10",
+            output: "-54000000000",
+        },
+        TestCase {
+            input_str: "5.4e-2",
+            output: "0.054",
+        },
+        TestCase {
+            input_str: "54.1e-2",
+            output: "0.541",
+        },
+        TestCase {
+            input_str: "-541e-2",
+            output: "-5.41",
+        },
+        TestCase {
+            input_str: "0.009E10",
+            output: "90000000",
+        },
+        TestCase {
+            input_str: "-9000E-10",
+            output: "-0.0000009",
+        },
+    ];
+    for cas in &cases {
+        let input_str_roundtrip = FixedDecimal::from_str(cas.input_str).unwrap().to_string();
+        assert_eq!(cas.output, input_str_roundtrip);
     }
 }
 
