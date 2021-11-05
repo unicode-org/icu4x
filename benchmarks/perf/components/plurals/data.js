@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636132809981,
+  "lastUpdate": 1636134635693,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18311,6 +18311,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21455,
             "range": "± 3216",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b51dccd78a474c32742917f5a177f808f612db99",
+          "message": "Fix typo in datagen docs (#1222)",
+          "timestamp": "2021-11-05T10:42:49-07:00",
+          "tree_id": "b40f7d249e19ce0265b83e71c34a7df2d7ac3013",
+          "url": "https://github.com/unicode-org/icu4x/commit/b51dccd78a474c32742917f5a177f808f612db99"
+        },
+        "date": 1636134630194,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1287,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8826,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25623,
+            "range": "± 296",
             "unit": "ns/iter"
           }
         ]
