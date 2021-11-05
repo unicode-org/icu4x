@@ -340,6 +340,77 @@ impl FixedDecimal {
         self
     }
 
+    /// Add or remove digits from the left side of the decimal (before the decimal point).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(42);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// dec.pad_or_truncate_left(2);
+    /// assert_eq!("0042", dec.to_string());
+    ///
+    /// dec.pad_or_truncate_left(-2);
+    /// assert_eq!("42", dec.to_string());    
+    ///
+    /// dec.pad_or_truncate_left(-1);
+    /// assert_eq!("2", dec.to_string());
+    /// ```
+    pub fn pad_or_truncate_left(&mut self, shift: i16) {
+        self.upper_magnitude = match shift >= 0 {
+            true => self.upper_magnitude.checked_add(shift).unwrap_or(i16::MAX),
+            false => self.upper_magnitude.checked_add(shift).unwrap_or(0),
+        };
+
+        // upper_magnitude must be greater than or equal zero.
+        if self.upper_magnitude < 0 {
+            self.upper_magnitude = 0;
+        }
+
+        if self.upper_magnitude >= self.magnitude {
+            return;
+        }
+
+        // how many digits need to be deleted from the start.
+        let cut = self.magnitude - self.upper_magnitude;
+
+        self.magnitude = self.upper_magnitude;
+        if cut >= self.digits.len() as i16 {
+            self.digits.clear();
+            self.magnitude = 0;
+            return;
+        }
+
+        self.digits.drain(0..(cut as usize));
+    }
+
+    /// Add or remove digits from the left side of the decimal (before the decimal point).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(42);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// let dec = dec.padded_or_truncated_left(2);
+    /// assert_eq!("0042", dec.to_string());
+    ///
+    /// let dec = dec.padded_or_truncated_left(-2);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// let dec = dec.padded_or_truncated_left(-1);
+    /// assert_eq!("2", dec.to_string());
+    /// ```
+    pub fn padded_or_truncated_left(mut self, magnitude: i16) -> Self {
+        self.pad_or_truncate_left(magnitude);
+        self
+    }
+
     /// Returns the [Signum][Signum] of this FixedDecimal.
     ///
     /// # Examples
@@ -1005,4 +1076,58 @@ fn test_signum_zero() {
         let signum = cas.fixed_decimal.signum();
         assert_eq!(cas.expected_signum, signum, "{:?}", cas);
     }
+}
+
+#[test]
+fn test_pad_or_truncate_left() {
+    let mut dec = FixedDecimal::from(1000);
+    assert_eq!("1000", dec.to_string());
+
+    dec.pad_or_truncate_left(-1);
+    assert_eq!("000", dec.to_string());
+
+    dec.pad_or_truncate_left(-10000);
+    assert_eq!("0", dec.to_string());
+
+    dec.pad_or_truncate_left(3);
+    assert_eq!("0000", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("-0.42").unwrap();
+    assert_eq!("-0.42", dec.to_string());
+
+    dec.pad_or_truncate_left(-1);
+    assert_eq!("-0.42", dec.to_string());
+
+    dec.pad_or_truncate_left(3);
+    assert_eq!("-0000.42", dec.to_string());
+
+    dec.pad_or_truncate_left(-3);
+    assert_eq!("-0.42", dec.to_string());
+}
+
+#[test]
+fn test_padded_or_truncated_left() {
+    let dec = FixedDecimal::from(1000);
+    assert_eq!("1000", dec.to_string());
+
+    let dec = dec.padded_or_truncated_left(-1);
+    assert_eq!("000", dec.to_string());
+
+    let dec = dec.padded_or_truncated_left(-10000);
+    assert_eq!("0", dec.to_string());
+
+    let dec = dec.padded_or_truncated_left(3);
+    assert_eq!("0000", dec.to_string());
+
+    let dec = FixedDecimal::from_str("-0.42").unwrap();
+    assert_eq!("-0.42", dec.to_string());
+
+    let dec = dec.padded_or_truncated_left(-1);
+    assert_eq!("-0.42", dec.to_string());
+
+    let dec = dec.padded_or_truncated_left(3);
+    assert_eq!("-0000.42", dec.to_string());
+
+    let dec = dec.padded_or_truncated_left(-3);
+    assert_eq!("-0.42", dec.to_string());
 }
