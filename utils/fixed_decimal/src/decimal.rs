@@ -587,7 +587,6 @@ impl FromStr for FixedDecimal {
         }
 
         // Constructing DecimalFixed.digits
-        let mut v: SmallVec<[u8; 8]> = SmallVec::with_capacity(digits_str_len);
         let v: SmallVec<[u8; 8]> = no_exponent_str[leftmost_digit..rightmost_digit_end]
             .iter()
             .filter(|c| **c != b'.')
