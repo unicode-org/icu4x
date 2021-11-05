@@ -15,25 +15,68 @@ pub struct GenericPattern {
 }
 
 impl GenericPattern {
-    pub fn combined(self, replacements: Vec<Pattern>) -> Result<Pattern, PatternError> {
-        let size = replacements.iter().fold(0, |acc, r| acc + r.items.len());
-        let mut result = Vec::with_capacity(self.items.len() + size);
+    pub fn combine<'l>(
+        &'l self,
+        date: &'l Pattern,
+        time: &'l Pattern,
+    ) -> GenericPatternIterator<'l> {
+        GenericPatternIterator {
+            date: date.items.iter(),
+            time: time.items.iter(),
+            items: self.items.iter(),
+            state: State::Generic,
+        }
+    }
+}
 
-        for item in self.items.into_iter() {
-            match item {
-                GenericPatternItem::Placeholder(idx) => {
-                    let replacement = replacements.get(idx as usize).ok_or_else(|| {
-                        let idx = char::from_digit(idx as u32, 10)
-                            .expect("Failed to convert placeholder idx to char");
-                        PatternError::UnknownSubstitution(idx)
-                    })?;
-                    result.extend(replacement.items.iter());
+enum State {
+    Generic,
+    Date,
+    Time,
+}
+
+pub struct GenericPatternIterator<'l> {
+    date: core::slice::Iter<'l, PatternItem>,
+    time: core::slice::Iter<'l, PatternItem>,
+    items: core::slice::Iter<'l, GenericPatternItem>,
+    state: State,
+}
+
+impl<'l> Iterator for GenericPatternIterator<'l> {
+    type Item = PatternItem;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            match self.state {
+                State::Generic => match self.items.next()? {
+                    GenericPatternItem::Date => {
+                        self.state = State::Date;
+                    }
+                    GenericPatternItem::Time => {
+                        self.state = State::Time;
+                    }
+                    GenericPatternItem::Literal(ch) => {
+                        return Some(PatternItem::Literal(*ch));
+                    }
+                },
+                State::Date => {
+                    let item = self.date.next();
+                    if item.is_some() {
+                        return item.copied();
+                    } else {
+                        self.state = State::Generic;
+                    }
                 }
-                GenericPatternItem::Literal(ch) => result.push(PatternItem::Literal(ch)),
+                State::Time => {
+                    let item = self.time.next();
+                    if item.is_some() {
+                        return item.copied();
+                    } else {
+                        self.state = State::Generic;
+                    }
+                }
             }
         }
-
-        Ok(result.into())
     }
 }
 
@@ -64,9 +107,7 @@ mod test {
         let date = "Y/m/d".parse().expect("Failed to parse a date pattern.");
         let time = "HH:mm".parse().expect("Failed to parse a time pattern.");
 
-        let pattern = pattern
-            .combined(vec![date, time])
-            .expect("Failed to combine date and time.");
-        assert_eq!(pattern.to_string(), "Y/m/d 'at' HH:mm");
+        let pattern = pattern.combine(&date, &time);
+        assert_eq!(pattern.into_string(), "Y/m/d 'at' HH:mm");
     }
 }

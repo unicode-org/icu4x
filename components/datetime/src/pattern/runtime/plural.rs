@@ -6,11 +6,48 @@ use crate::{
     date::{DateTimeInput, LocalizedDateTimeInput},
     error::DateTimeFormatError,
     fields::{Field, FieldSymbol, Week},
-    pattern::{runtime::Pattern, PatternError, PatternItem},
+    pattern::{common::PatternType, runtime::Pattern, PatternError, PatternItem},
 };
 use either::Either;
 use icu_plurals::{PluralCategory, PluralRules};
 use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
+
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(::serde::Serialize, ::serde::Deserialize)
+)]
+pub(crate) struct PluralPattern2<P>
+where
+    P: PatternType,
+{
+    pivot_field: Week,
+
+    other: P,
+}
+
+impl<P> PluralPattern2<P>
+where
+    P: PatternType,
+{
+    pub fn new(pattern: P) -> Result<Self, PatternError> {
+        let pivot_field = pattern
+            .iter()
+            .find_map(|pattern_item| match pattern_item {
+                PatternItem::Field(Field {
+                    symbol: FieldSymbol::Week(w),
+                    ..
+                }) => Some(w),
+                _ => None,
+            })
+            .ok_or(PatternError::UnsupportedPluralPivot)?;
+
+        Ok(Self {
+            pivot_field,
+            other: pattern,
+        })
+    }
+}
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]

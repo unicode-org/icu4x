@@ -215,7 +215,10 @@ where
                     length::Date::Medium => data.length_combinations.medium,
                     length::Date::Short => data.length_combinations.short,
                 };
-                let pattern = pattern.combined(date, time)?;
+                let pattern = pattern.combine(date, time);
+                let items: alloc::vec::Vec<crate::pattern::PatternItem> =
+                    pattern.into_iter().collect();
+                let pattern = crate::pattern::runtime::Pattern::from(items);
                 Ok(PatternPlurals::from(pattern).into())
             },
         )

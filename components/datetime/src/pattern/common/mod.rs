@@ -4,5 +4,10 @@
 
 //! Code paths that are shared between `reference` and `runtime`
 //! `Pattern` modules.
+
+mod pattern;
+
 #[cfg(feature = "provider_serde")]
 mod serde;
+
+pub(crate) use pattern::PatternType;

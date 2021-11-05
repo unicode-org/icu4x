@@ -10,10 +10,11 @@ use super::{
 use alloc::vec::Vec;
 use core::{fmt, str::FromStr};
 use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
-use zerovec::ZeroVec;
+use zerovec::{ZeroVec, ZeroVecIter};
 
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom, serde::Serialize, serde::Deserialize)]
 pub struct GenericPattern<'data> {
+    #[serde(borrow)]
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
 
@@ -24,14 +25,14 @@ impl<'data> GenericPattern<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::pattern::runtime::{GenericPattern, Pattern};
+    /// use icu_datetime::pattern::runtime::{CombinedPattern, Pattern};
     ///
     /// let date: Pattern = "Y-m-d".parse()
     ///         .expect("Failed to parse pattern");
     /// let time: Pattern = "HH:mm".parse()
     ///         .expect("Failed to parse pattern");
     ///
-    /// let glue: GenericPattern = "{1} 'at' {0}".parse()
+    /// let glue: CombinedPattern = "{1} 'at' {0}".parse()
     ///         .expect("Failed to parse generic pattern");
     /// assert_eq!(
     ///     glue.combined(date, time)
@@ -40,32 +41,84 @@ impl<'data> GenericPattern<'data> {
     ///     "Y-m-d 'at' HH:mm"
     /// );
     /// ```
-    pub fn combined(
-        self,
-        date: Pattern<'data>,
-        time: Pattern<'data>,
-    ) -> Result<Pattern<'static>, PatternError> {
-        let size = date.items.len() + time.items.len();
-        let mut result = Vec::with_capacity(self.items.len() + size);
+    pub fn combine(self, date: Pattern<'data>, time: Pattern<'data>) -> CombinedPattern<'data> {
+        CombinedPattern {
+            combined: self,
+            date,
+            time,
+        }
+    }
+}
 
-        for item in self.items.iter() {
-            match item {
-                GenericPatternItem::Placeholder(0) => {
-                    result.extend(time.items.iter());
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+pub struct CombinedPattern<'data> {
+    combined: GenericPattern<'data>,
+    date: Pattern<'data>,
+    time: Pattern<'data>,
+}
+
+impl<'l> IntoIterator for &'l CombinedPattern<'_> {
+    type Item = PatternItem;
+    type IntoIter = CombinedPatternIterator<'l>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        CombinedPatternIterator {
+            date: self.date.items.iter(),
+            time: self.time.items.iter(),
+            items: self.combined.items.iter(),
+            state: State::Combined,
+        }
+    }
+}
+
+enum State {
+    Combined,
+    Date,
+    Time,
+}
+
+pub struct CombinedPatternIterator<'l> {
+    date: ZeroVecIter<'l, PatternItem>,
+    time: ZeroVecIter<'l, PatternItem>,
+    items: ZeroVecIter<'l, GenericPatternItem>,
+    state: State,
+}
+
+impl<'l> Iterator for CombinedPatternIterator<'l> {
+    type Item = PatternItem;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            match self.state {
+                State::Combined => match self.items.next()? {
+                    GenericPatternItem::Date => {
+                        self.state = State::Date;
+                    }
+                    GenericPatternItem::Time => {
+                        self.state = State::Time;
+                    }
+                    GenericPatternItem::Literal(ch) => {
+                        return Some(PatternItem::Literal(ch));
+                    }
+                },
+                State::Date => {
+                    let item = self.date.next();
+                    if item.is_some() {
+                        return item;
+                    } else {
+                        self.state = State::Combined;
+                    }
                 }
-                GenericPatternItem::Placeholder(1) => {
-                    result.extend(date.items.iter());
+                State::Time => {
+                    let item = self.time.next();
+                    if item.is_some() {
+                        return item;
+                    } else {
+                        self.state = State::Combined;
+                    }
                 }
-                GenericPatternItem::Placeholder(idx) => {
-                    let idx = char::from_digit(idx as u32, 10)
-                        .expect("Failed to convert placeholder idx to char");
-                    return Err(PatternError::UnknownSubstitution(idx));
-                }
-                GenericPatternItem::Literal(ch) => result.push(PatternItem::Literal(ch)),
             }
         }
-
-        Ok(Pattern::from(result))
     }
 }
 
@@ -100,6 +153,33 @@ impl fmt::Display for GenericPattern<'_> {
     }
 }
 
+impl fmt::Display for CombinedPattern<'_> {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        use crate::pattern::reference::display::write_buffer;
+        use core::fmt::Write;
+
+        let mut buffer = alloc::string::String::new();
+        for pattern_item in self.into_iter() {
+            match pattern_item {
+                PatternItem::Field(field) => {
+                    write_buffer(&buffer, formatter)?;
+                    buffer.clear();
+                    let ch: char = field.symbol.into();
+                    for _ in 0..field.length as usize {
+                        formatter.write_char(ch)?;
+                    }
+                }
+                PatternItem::Literal(ch) => {
+                    buffer.push(ch);
+                }
+            }
+        }
+        write_buffer(&buffer, formatter)?;
+        buffer.clear();
+        Ok(())
+    }
+}
+
 impl FromStr for GenericPattern<'_> {
     type Err = PatternError;
 
@@ -115,7 +195,7 @@ mod test {
 
     #[test]
     fn test_runtime_generic_pattern_combine() {
-        let pattern: GenericPattern = "{1} 'at' {0}"
+        let pattern: GenericPattern = "{0} 'at' {1}"
             .parse()
             .expect("Failed to parse a generic pattern.");
 
@@ -123,11 +203,8 @@ mod test {
 
         let time = "HH:mm".parse().expect("Failed to parse a time pattern.");
 
-        let pattern = pattern
-            .combined(date, time)
-            .expect("Failed to combine date and time.");
-        let pattern = reference::Pattern::from(pattern.items.to_vec());
+        let combined_pattern = pattern.combine(date, time);
 
-        assert_eq!(pattern.to_string(), "Y/m/d 'at' HH:mm");
+        assert_eq!(combined_pattern.to_string(), "Y/m/d 'at' HH:mm");
     }
 }

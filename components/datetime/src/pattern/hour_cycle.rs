@@ -57,7 +57,7 @@ impl CoarseHourCycle {
     #[cfg(feature = "provider_transform_internals")]
     pub fn apply_on_pattern<'data>(
         &self,
-        date_time: &provider::gregory::patterns::GenericLengthPatternsV1<'data>,
+        date_time: &provider::gregory::patterns::CombinedLengthPatternsV1<'data>,
         skeletons: &provider::gregory::DateSkeletonPatternsV1<'data>,
         pattern_str: &str,
         mut pattern: reference::Pattern,

@@ -8,14 +8,9 @@
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub enum GenericPatternItem {
-    Placeholder(u8),
+    Date,
+    Time,
     Literal(char),
-}
-
-impl From<u8> for GenericPatternItem {
-    fn from(input: u8) -> Self {
-        Self::Placeholder(input)
-    }
 }
 
 impl From<char> for GenericPatternItem {

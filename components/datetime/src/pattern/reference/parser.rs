@@ -209,10 +209,12 @@ impl<'p> Parser<'p> {
                     Self::collect_generic_segment(self.state, &mut result)?;
 
                     let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
-                    let idx: u32 = ch
-                        .to_digit(10)
-                        .ok_or(PatternError::UnknownSubstitution(ch))?;
-                    result.push(GenericPatternItem::Placeholder(idx as u8));
+                    let item = match ch {
+                        '0' => GenericPatternItem::Date,
+                        '1' => GenericPatternItem::Time,
+                        _ => return Err(PatternError::UnknownSubstitution(ch)),
+                    };
+                    result.push(item);
                     let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
                     if ch != '}' {
                         return Err(PatternError::UnclosedPlaceholder);
@@ -241,10 +243,11 @@ impl<'p> Parser<'p> {
         self,
         replacements: Vec<Pattern>,
     ) -> Result<Vec<PatternItem>, PatternError> {
-        let generic_items = self.parse_generic()?;
+        todo!()
+        // let generic_items = self.parse_generic()?;
 
-        let gp = GenericPattern::from(generic_items);
-        Ok(gp.combined(replacements)?.items.to_vec())
+        // let gp = GenericPattern::from(generic_items);
+        // Ok(gp.combined(replacements)?.items.to_vec())
     }
 }
 

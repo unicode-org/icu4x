@@ -520,6 +520,25 @@ where
     }
 }
 
+pub struct ZeroVecIter<'l, T>
+where
+    T: AsULE,
+{
+    iter: core::iter::Map<core::iter::Copied<core::slice::Iter<'l, T::ULE>>, fn(T::ULE) -> T>,
+}
+
+impl<'l, T> Iterator for ZeroVecIter<'l, T>
+where
+    T: AsULE,
+{
+    type Item = T;
+
+    #[inline]
+    fn next(&mut self) -> Option<T> {
+        self.iter.next()
+    }
+}
+
 impl<T> ZeroVec<'_, T>
 where
     T: AsULE,
@@ -598,8 +617,10 @@ where
     /// assert_eq!(it.next(), None);
     /// ```
     #[inline]
-    pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
-        self.as_slice().iter().copied().map(T::from_unaligned)
+    pub fn iter(&self) -> ZeroVecIter<T> {
+        ZeroVecIter {
+            iter: self.as_slice().iter().copied().map(T::from_unaligned),
+        }
     }
 
     /// Mutates each element according to a given function, meant to be

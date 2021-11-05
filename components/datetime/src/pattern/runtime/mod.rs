@@ -14,6 +14,6 @@ pub(crate) mod helpers;
 mod pattern;
 mod plural;
 
-pub use generic::GenericPattern;
+pub use generic::{CombinedPattern, GenericPattern};
 pub use pattern::Pattern;
 pub use plural::{PatternPlurals, PluralPattern};

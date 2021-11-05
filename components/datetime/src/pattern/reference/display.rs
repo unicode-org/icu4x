@@ -6,7 +6,8 @@
 
 use super::{
     super::{GenericPatternItem, PatternItem},
-    GenericPattern, Pattern,
+    generic::{GenericPattern, GenericPatternIterator},
+    Pattern,
 };
 use alloc::string::String;
 use core::fmt::{self, Write};
@@ -14,10 +15,7 @@ use core::fmt::{self, Write};
 /// A helper function optimized to dump string buffers into `Pattern`
 /// serialization wrapping minimal chunks of the buffer in escaping `'`
 /// literals to produce valid UTF35 pattern string.
-pub(crate) fn dump_buffer_into_formatter(
-    literal: &str,
-    formatter: &mut fmt::Formatter,
-) -> fmt::Result {
+pub(crate) fn write_buffer<W: fmt::Write>(literal: &str, writer: &mut W) -> fmt::Result {
     if literal.is_empty() {
         return Ok(());
     }
@@ -36,7 +34,7 @@ pub(crate) fn dump_buffer_into_formatter(
         // Do not escape the leading whitespace.
         while let Some(ch) = ch_iter.peek() {
             if ch.is_whitespace() {
-                formatter.write_char(*ch)?;
+                writer.write_char(*ch)?;
                 ch_iter.next();
             } else {
                 break;
@@ -44,26 +42,26 @@ pub(crate) fn dump_buffer_into_formatter(
         }
 
         // Wrap in "'" and escape "'".
-        formatter.write_char('\'')?;
+        writer.write_char('\'')?;
         for ch in ch_iter {
             if ch == '\'' {
                 // Escape a single quote.
-                formatter.write_char('\\')?;
+                writer.write_char('\\')?;
             }
-            formatter.write_char(ch)?;
+            writer.write_char(ch)?;
         }
-        formatter.write_char('\'')?;
+        writer.write_char('\'')?;
 
         // Add the trailing whitespace
         for ch in literal.chars().rev() {
             if ch.is_whitespace() {
-                formatter.write_char(ch)?;
+                writer.write_char(ch)?;
             } else {
                 break;
             }
         }
     } else {
-        formatter.write_str(literal)?;
+        writer.write_str(literal)?;
     }
     Ok(())
 }
@@ -79,7 +77,7 @@ impl fmt::Display for Pattern {
         for pattern_item in self.items.iter() {
             match pattern_item {
                 PatternItem::Field(field) => {
-                    dump_buffer_into_formatter(&buffer, formatter)?;
+                    write_buffer(&buffer, formatter)?;
                     buffer.clear();
                     let ch: char = field.symbol.into();
                     for _ in 0..field.length as usize {
@@ -91,7 +89,7 @@ impl fmt::Display for Pattern {
                 }
             }
         }
-        dump_buffer_into_formatter(&buffer, formatter)?;
+        write_buffer(&buffer, formatter)?;
         buffer.clear();
         Ok(())
     }
@@ -99,16 +97,21 @@ impl fmt::Display for Pattern {
 
 impl fmt::Display for GenericPattern {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        let mut buffer = alloc::string::String::new();
-        for pattern_item in self.items.iter() {
+        let mut buffer = String::new();
+        for pattern_item in &self.items {
             match pattern_item {
-                GenericPatternItem::Placeholder(idx) => {
-                    dump_buffer_into_formatter(&buffer, formatter)?;
+                GenericPatternItem::Date => {
+                    write_buffer(&buffer, formatter)?;
                     buffer.clear();
-                    let idx = char::from_digit(*idx as u32, 10)
-                        .expect("Failed to convert placeholder idx to char");
                     formatter.write_char('{')?;
-                    formatter.write_char(idx)?;
+                    formatter.write_char('0')?;
+                    formatter.write_char('}')?;
+                }
+                GenericPatternItem::Time => {
+                    write_buffer(&buffer, formatter)?;
+                    buffer.clear();
+                    formatter.write_char('{')?;
+                    formatter.write_char('1')?;
                     formatter.write_char('}')?;
                 }
                 GenericPatternItem::Literal(ch) => {
@@ -116,8 +119,33 @@ impl fmt::Display for GenericPattern {
                 }
             }
         }
-        dump_buffer_into_formatter(&buffer, formatter)?;
+        write_buffer(&buffer, formatter)?;
         buffer.clear();
         Ok(())
+    }
+}
+
+impl GenericPatternIterator<'_> {
+    pub fn into_string(self) -> String {
+        let mut result = String::new();
+        let mut buffer = String::new();
+        for pattern_item in self {
+            match pattern_item {
+                PatternItem::Field(field) => {
+                    write_buffer(&buffer, &mut result).expect("Failed to write to buffer");
+                    buffer.clear();
+                    let ch: char = field.symbol.into();
+                    for _ in 0..field.length as usize {
+                        result.write_char(ch).expect("Failed to write to buffer");
+                    }
+                }
+                PatternItem::Literal(ch) => {
+                    buffer.push(ch);
+                }
+            }
+        }
+        write_buffer(&buffer, &mut result).expect("Failed to write to buffer");
+        buffer.clear();
+        result
     }
 }

@@ -109,4 +109,4 @@ mod yoke_impls;
 
 pub use crate::map::ZeroMap;
 pub use crate::varzerovec::{VarZeroVec, VarZeroVecError};
-pub use crate::zerovec::ZeroVec;
+pub use crate::zerovec::{ZeroVec, ZeroVecIter};

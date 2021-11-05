@@ -228,11 +228,12 @@ pub fn create_best_pattern_for_fields<'data>(
             date_patterns.for_each_mut(|pattern| {
                 let date = pattern.clone();
                 let time = time_pattern.clone();
-                let dt = dt_pattern
-                    .clone()
-                    .combined(date, time)
-                    .expect("Failed to combine date and time");
-                *pattern = dt;
+                // let dt = dt_pattern
+                //     .clone()
+                //     .combined(date, time)
+                //     .expect("Failed to combine date and time");
+                // *pattern = dt;
+                todo!()
             });
             Some(date_patterns)
         }
