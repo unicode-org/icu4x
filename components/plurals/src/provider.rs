@@ -21,7 +21,7 @@ pub mod key {
 ///
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
 #[icu_provider::data_struct]
-#[derive(Default)]
+#[derive(Default, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)

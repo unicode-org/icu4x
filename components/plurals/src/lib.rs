@@ -211,24 +211,24 @@ impl PluralCategory {
     ///
     /// let mut categories = PluralCategory::all();
     ///
-    /// assert_eq!(categories.next(), Some(PluralCategory::Zero));
-    /// assert_eq!(categories.next(), Some(PluralCategory::One));
-    /// assert_eq!(categories.next(), Some(PluralCategory::Two));
     /// assert_eq!(categories.next(), Some(PluralCategory::Few));
     /// assert_eq!(categories.next(), Some(PluralCategory::Many));
+    /// assert_eq!(categories.next(), Some(PluralCategory::One));
     /// assert_eq!(categories.next(), Some(PluralCategory::Other));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Two));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Zero));
     /// assert_eq!(categories.next(), None);
     /// ```
     ///
     /// [`Plural Categories`]: PluralCategory
     pub fn all() -> impl ExactSizeIterator<Item = Self> {
         [
-            Self::Zero,
-            Self::One,
-            Self::Two,
             Self::Few,
             Self::Many,
+            Self::One,
             Self::Other,
+            Self::Two,
+            Self::Zero,
         ]
         .iter()
         .copied()
