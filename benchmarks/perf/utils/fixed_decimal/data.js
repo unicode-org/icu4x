@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636090866631,
+  "lastUpdate": 1636100887254,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12959,6 +12959,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 118791,
             "range": "± 436",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies@chromium.org",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "11288c3272483b12a01e6e021187a728c4854491",
+          "message": "add pad and padded to FixedDecimal (#1195)\n\n* add pad and padded to FixedDecimal\r\n\r\n* Make it pad or trunc@\r\n\r\n* Fix edge cases and add more tests\r\n\r\n* add an extensive tests and fix the case which the number is an empty string.\r\n\r\nCo-authored-by: younies <younies>",
+          "timestamp": "2021-11-05T09:21:28+01:00",
+          "tree_id": "6f5974b5a70cdebc3a97891ec8b358c89e5d1449",
+          "url": "https://github.com/unicode-org/icu4x/commit/11288c3272483b12a01e6e021187a728c4854491"
+        },
+        "date": 1636100880897,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122876,
+            "range": "± 4898",
             "unit": "ns/iter"
           }
         ]
