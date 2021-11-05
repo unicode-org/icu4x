@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636100983711,
+  "lastUpdate": 1636131919776,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18185,6 +18185,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 27753,
             "range": "± 1279",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "899d8cdd35064b75767d70c845c477cf3e13b849",
+          "message": "Fix PairULE validation function (#1266)\n\n* Fix PairULE validate function\r\n\r\n* Add pairule validation test\r\n\r\n* satisfy clippy",
+          "timestamp": "2021-11-05T09:57:10-07:00",
+          "tree_id": "7d51db9b48b2d36522f8bfd6fa6dcd7e6dcd35dd",
+          "url": "https://github.com/unicode-org/icu4x/commit/899d8cdd35064b75767d70c845c477cf3e13b849"
+        },
+        "date": 1636131914096,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1460,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8048,
+            "range": "± 631",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24459,
+            "range": "± 1515",
             "unit": "ns/iter"
           }
         ]
