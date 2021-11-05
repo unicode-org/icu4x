@@ -32,10 +32,10 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		* [x] Enable core components on `#![no_std]` ([#812](https://github.com/unicode-org/icu4x/issues/812))
 		* [x] Static Data Provider (#78)
 	* [ ] October-December
-		* [ ] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
+		* [x] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 			* [x] DateTime performance (#603)
-			* [ ] Finish full-stack enumerated Unicode properties ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
-			* [ ] ZeroVec improvements ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
+			* [x] Finish full-stack enumerated Unicode properties ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
+			* [x] ZeroVec improvements ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
 		* [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
 			* [ ] UnicodeSet L3b (#168)
 			* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
