@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636131919776,
+  "lastUpdate": 1636132476923,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18227,6 +18227,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24459,
             "range": "± 1515",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d18ba05e92871480874c48bc2199e5743ef61141",
+          "message": "Update roadmap.md",
+          "timestamp": "2021-11-05T10:07:48-07:00",
+          "tree_id": "8ca649407d3ae8072ab2aa7c1105eded888809ba",
+          "url": "https://github.com/unicode-org/icu4x/commit/d18ba05e92871480874c48bc2199e5743ef61141"
+        },
+        "date": 1636132472140,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1115,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7548,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21744,
+            "range": "± 79",
             "unit": "ns/iter"
           }
         ]
