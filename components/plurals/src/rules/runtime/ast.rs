@@ -303,6 +303,7 @@ pub struct RelationULE {
 }
 
 impl RelationULE {
+    #[inline]
     pub fn as_relation(&self) -> Relation {
         let (and_or, polarity, operand) =
             unsafe { Self::decode_andor_polarity_operand(self.andor_polarity_operand) };
@@ -323,11 +324,13 @@ impl RelationULE {
             + encoded_operand
     }
 
+    #[inline]
     fn validate_andor_polarity_operand(encoded: u8) -> Result<(), &'static str> {
         Operand::try_from(encoded & 0b0011_1111).map_err(|_| "Failed to decode operand.")?;
         Ok(())
     }
 
+    #[inline]
     unsafe fn decode_andor_polarity_operand(encoded: u8) -> (AndOr, Polarity, Operand) {
         let and_or = if encoded & 0b1000_0000 != 0 {
             AndOr::And
@@ -350,7 +353,7 @@ impl RelationULE {
 //  1. RelationULE does not include any uninitialized or padding bytes.
 //  2. The impl of validate_byte_slice() returns an error if any byte is not valid.
 //  3. The other ULE methods use the default impl.
-//  4. FieldULE byte equality is semantic equality.
+//  4. RelationULE byte equality is semantic equality.
 unsafe impl VarULE for RelationULE {
     type Error = &'static str;
 
@@ -368,10 +371,13 @@ unsafe impl VarULE for RelationULE {
         ret
     }
 
+    #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
         RelationULE::validate_andor_polarity_operand(bytes[0])?;
+        // Skip bytes 1-4 as they're always valid `u32` for `Modulo`.
         let remaining = &bytes[5..];
-        RangeOrValueULE::validate_byte_slice(remaining).map_err(|_| "foo")?;
+        RangeOrValueULE::validate_byte_slice(remaining)
+            .map_err(|_| "Invalid list of RangeOrValueULE")?;
         Ok(())
     }
 }
