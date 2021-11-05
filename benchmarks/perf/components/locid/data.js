@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636100924072,
+  "lastUpdate": 1636131903416,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16193,6 +16193,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4467,
             "range": "± 297",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "899d8cdd35064b75767d70c845c477cf3e13b849",
+          "message": "Fix PairULE validation function (#1266)\n\n* Fix PairULE validate function\r\n\r\n* Add pairule validation test\r\n\r\n* satisfy clippy",
+          "timestamp": "2021-11-05T09:57:10-07:00",
+          "tree_id": "7d51db9b48b2d36522f8bfd6fa6dcd7e6dcd35dd",
+          "url": "https://github.com/unicode-org/icu4x/commit/899d8cdd35064b75767d70c845c477cf3e13b849"
+        },
+        "date": 1636131896763,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3103,
+            "range": "± 151",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5238,
+            "range": "± 174",
             "unit": "ns/iter"
           }
         ]
