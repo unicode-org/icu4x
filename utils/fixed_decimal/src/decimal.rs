@@ -714,9 +714,11 @@ pub enum DoublePrecision {
     /// The number may be rounded or trailing zeros may be added as necessary.
     Magnitude(i16),
 
-    // /// Specify that the floating point number is precise to a specific number of significant digits.
-    // /// The number may be rounded or trailing zeros may be added as necessary.
-    // SignificantDigits(u8),
+    /// Specify that the floating point number is precise to a specific number of significant digits.
+    /// The number may be rounded or trailing zeros may be added as necessary.
+    ///
+    /// The number requested may not be zero
+    SignificantDigits(u8),
     /// Specify that the floating point number is precise to the maximum representable by IEEE.
     ///
     /// This results in a FixedDecimal having enough digits to recover the original floating point
@@ -767,7 +769,44 @@ impl FixedDecimal {
                     }
                 }
                 if mag < 0 {
+                    // If the target magnitude was negative, make
+                    // sure we update the lower magnitude to match it
                     decimal.lower_magnitude = mag;
+                } else if decimal.lower_magnitude < 0 {
+                    // If the target magnitude was positive,
+                    // we may have truncated digits off the right
+                    // side, reset the lower magnitude
+                    decimal.lower_magnitude = 0;
+                }
+            }
+            DoublePrecision::SignificantDigits(sig) => {
+                let sig = sig as i16;
+                if sig == 0 {
+                    return Err(Error::Limit);
+                }
+                let n_digits = decimal.digits.len() as i16;
+
+                if sig < n_digits {
+                    let round_by = (n_digits - sig) as i16;
+                    decimal.round_digits(round_by as u16);
+                    debug_assert!(decimal.digits.len() >= sig as usize);
+                    if decimal.digits.len() < sig as usize {
+                        // it's possible the magnitude increased by 1 due to overflow. round it again
+                        decimal.round_digits(1);
+                        // In case of overflow it cannot overflow again due to rounding
+                        debug_assert!(decimal.digits.len() == sig as usize);
+                    }
+                }
+                let target_lowest_magnitude = decimal.magnitude - sig as i16 + 1;
+                if target_lowest_magnitude <= 0 {
+                    // If the target magnitude was negative, make sure we update
+                    // the lower magnitude to match it
+                    decimal.lower_magnitude = target_lowest_magnitude;
+                } else if decimal.lower_magnitude < 0 {
+                    // If the target magnitude was positive,
+                    // we may have truncated digits off the right side
+                    // of the decimal point, reset the lower magnitude
+                    decimal.lower_magnitude = 0;
                 }
             }
         }
@@ -794,7 +833,12 @@ impl FixedDecimal {
     /// This will not change the number of significant digits, it simply exists
     /// to *round* them (and will typically reduce the size of `self.digits`)
     fn round_digits(&mut self, n: u16) {
-        debug_assert!(self.digits.len() >= n as usize);
+        debug_assert!(
+            self.digits.len() >= n as usize,
+            "Attempted to round off {} digits of number that has only {}",
+            n,
+            self.digits.len()
+        );
         if n == 0 {
             // no point attempting to round off any digits
             return;
@@ -917,17 +961,17 @@ fn test_float() {
         TestCase {
             input: 888999.,
             precision: DoublePrecision::Magnitude(2),
-            expected: "889000.0",
+            expected: "889000",
         },
         TestCase {
             input: 888999.,
             precision: DoublePrecision::Magnitude(4),
-            expected: "890000.0",
+            expected: "890000",
         },
         TestCase {
             input: 0.9,
             precision: DoublePrecision::Magnitude(0),
-            expected: "1.0",
+            expected: "1",
         },
         TestCase {
             input: 0.9,
@@ -963,6 +1007,76 @@ fn test_float() {
             input: 0.0000009,
             precision: DoublePrecision::Magnitude(-6),
             expected: "0.000001",
+        },
+        TestCase {
+            input: 1.234567,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "1",
+        },
+        TestCase {
+            input: 1.234567,
+            precision: DoublePrecision::SignificantDigits(2),
+            expected: "1.2",
+        },
+        TestCase {
+            input: 1.234567,
+            precision: DoublePrecision::SignificantDigits(4),
+            expected: "1.235",
+        },
+        TestCase {
+            input: 1.234567,
+            precision: DoublePrecision::SignificantDigits(10),
+            expected: "1.234567000",
+        },
+        TestCase {
+            input: 888999.,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "900000",
+        },
+        TestCase {
+            input: 888999.,
+            precision: DoublePrecision::SignificantDigits(2),
+            expected: "890000",
+        },
+        TestCase {
+            input: 888999.,
+            precision: DoublePrecision::SignificantDigits(4),
+            expected: "889000",
+        },
+        TestCase {
+            input: 988999.,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "1000000",
+        },
+        TestCase {
+            input: 99888.,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "100000",
+        },
+        TestCase {
+            input: 99888.,
+            precision: DoublePrecision::SignificantDigits(2),
+            expected: "100000",
+        },
+        TestCase {
+            input: 99888.,
+            precision: DoublePrecision::SignificantDigits(3),
+            expected: "99900",
+        },
+        TestCase {
+            input: 9.9888,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "10",
+        },
+        TestCase {
+            input: 9.9888,
+            precision: DoublePrecision::SignificantDigits(2),
+            expected: "10",
+        },
+        TestCase {
+            input: 9.9888,
+            precision: DoublePrecision::SignificantDigits(3),
+            expected: "9.99",
         },
     ];
 
