@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636134251089,
+  "lastUpdate": 1636395165744,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3143,6 +3143,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b51dccd78a474c32742917f5a177f808f612db99"
         },
         "date": 1636134245556,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 843668,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "027c190e86868ba0acd1dd6be75b32bd4e97855b",
+          "message": "Fix maximize function (#1171)\n\n* Fix maximize function\r\n\r\n* fmt\r\n\r\n* clone only required values\r\n\r\n* Use boolean to maintain modification\r\n\r\n* Minor nit fix",
+          "timestamp": "2021-11-08T10:11:10-08:00",
+          "tree_id": "8f3fdca4a2269614c538745b954ed4f0a099da57",
+          "url": "https://github.com/unicode-org/icu4x/commit/027c190e86868ba0acd1dd6be75b32bd4e97855b"
+        },
+        "date": 1636395159723,
         "tool": "ndjson",
         "benches": [
           {
