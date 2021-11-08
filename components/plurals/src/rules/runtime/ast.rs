@@ -312,7 +312,7 @@ impl RelationULE {
             polarity,
             operand,
             modulo: u32::from_unaligned(self.modulo),
-            range_list: ZeroVec::borrowed_from_slice(&self.range_list),
+            range_list: ZeroVec::Borrowed(&self.range_list),
         }
     }
 

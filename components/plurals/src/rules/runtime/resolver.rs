@@ -5,18 +5,16 @@
 use crate::operands::PluralOperands;
 use crate::rules::runtime::ast;
 
+#[inline]
 pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {
     let mut left = true;
 
     for relation in rule.0.iter() {
         let relation = relation.as_relation();
-        if left {
-            if relation.and_or == ast::AndOr::Or {
-                return true;
-            } else {
-                left = test_relation(&relation, operands);
-            }
-        } else if relation.and_or == ast::AndOr::Or {
+        if left && relation.and_or == ast::AndOr::Or {
+            return true;
+        }
+        if left || relation.and_or == ast::AndOr::Or {
             left = test_relation(&relation, operands);
         }
     }
