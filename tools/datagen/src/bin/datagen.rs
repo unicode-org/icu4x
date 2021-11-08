@@ -429,7 +429,7 @@ fn export_set_props<'data>(
     } else {
         eyre::bail!("Value for --input-root must be specified",)
     };
-    let provider = PropertiesDataProvider::try_new(toml_root)?;
+    let provider = PropertiesDataProvider::try_new(&toml_root)?;
 
     let keys = ALL_SET_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
@@ -466,7 +466,7 @@ fn export_map_props<'data>(
     } else {
         eyre::bail!("Value for --input-root must be specified",)
     };
-    let provider = EnumeratedPropertyCodePointTrieProvider::try_new(toml_root)?;
+    let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&toml_root)?;
 
     let keys = ALL_MAP_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
