@@ -27,7 +27,7 @@ include = [
 all-features = true
 
 [dependencies]
-anyhow = "1.0"
+eyre = "0.6"
 clap = "2.33"
 futures = "0.3"
 icu_locid = { version = "0.4", path = "../../components/locid", features = ["std"]}
