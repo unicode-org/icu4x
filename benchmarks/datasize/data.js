@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636395165744,
+  "lastUpdate": 1636402105363,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3173,6 +3173,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/027c190e86868ba0acd1dd6be75b32bd4e97855b"
         },
         "date": 1636395159723,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 843668,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4fbf81c29ef49cc0c5dc0ccc25c708c68dd128c3",
+          "message": "Change anyhow to eyre (#1268)",
+          "timestamp": "2021-11-08T12:06:56-08:00",
+          "tree_id": "4cf8ab3790b2c7f4387f2d5dde515a8ea875015b",
+          "url": "https://github.com/unicode-org/icu4x/commit/4fbf81c29ef49cc0c5dc0ccc25c708c68dd128c3"
+        },
+        "date": 1636402099706,
         "tool": "ndjson",
         "benches": [
           {
