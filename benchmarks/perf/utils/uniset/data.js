@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636395489948,
+  "lastUpdate": 1636402414362,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14159,6 +14159,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 54649452,
             "range": "± 313819",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4fbf81c29ef49cc0c5dc0ccc25c708c68dd128c3",
+          "message": "Change anyhow to eyre (#1268)",
+          "timestamp": "2021-11-08T12:06:56-08:00",
+          "tree_id": "4cf8ab3790b2c7f4387f2d5dde515a8ea875015b",
+          "url": "https://github.com/unicode-org/icu4x/commit/4fbf81c29ef49cc0c5dc0ccc25c708c68dd128c3"
+        },
+        "date": 1636402409116,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29387567,
+            "range": "± 1854819",
             "unit": "ns/iter"
           }
         ]
