@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636395577219,
+  "lastUpdate": 1636402508645,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18395,6 +18395,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25883,
             "range": "± 1554",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4fbf81c29ef49cc0c5dc0ccc25c708c68dd128c3",
+          "message": "Change anyhow to eyre (#1268)",
+          "timestamp": "2021-11-08T12:06:56-08:00",
+          "tree_id": "4cf8ab3790b2c7f4387f2d5dde515a8ea875015b",
+          "url": "https://github.com/unicode-org/icu4x/commit/4fbf81c29ef49cc0c5dc0ccc25c708c68dd128c3"
+        },
+        "date": 1636402500957,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1298,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8730,
+            "range": "± 456",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 26619,
+            "range": "± 1965",
             "unit": "ns/iter"
           }
         ]
