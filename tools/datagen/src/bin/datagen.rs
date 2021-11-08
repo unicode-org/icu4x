@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use anyhow::Context;
 use clap::{App, Arg, ArgGroup, ArgMatches};
+use eyre::WrapErr;
 use icu_locid::LanguageIdentifier;
 use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SET_KEYS};
 use icu_provider::export::DataExporter;
@@ -29,7 +29,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use writeable::Writeable;
 
-fn main() -> anyhow::Result<()> {
+fn main() -> eyre::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
         .version("0.0.1")
         .author("The ICU4X Project Developers")
@@ -229,11 +229,11 @@ fn main() -> anyhow::Result<()> {
     }
 
     if matches.is_present("KEY_FILE") {
-        anyhow::bail!("Key file is not yet supported (see #192)",);
+        eyre::bail!("Key file is not yet supported (see #192)",);
     }
 
     if matches.is_present("DRY_RUN") {
-        anyhow::bail!("Dry-run is not yet supported");
+        eyre::bail!("Dry-run is not yet supported");
     }
 
     // TODO: Build up this list from --keys and --key-file
@@ -246,7 +246,7 @@ fn main() -> anyhow::Result<()> {
         Some(
             locale_strs
                 .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
-                .collect::<Result<Vec<LanguageIdentifier>, anyhow::Error>>()?,
+                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
         )
     } else if matches.is_present("TEST_LOCALES") {
         Some(icu_testdata::metadata::load()?.package_metadata.locales)
@@ -287,7 +287,7 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn get_fs_exporter(matches: &ArgMatches) -> anyhow::Result<FilesystemExporter> {
+fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
     let syntax = matches.value_of("SYNTAX").unwrap_or("json");
 
     let output_path: PathBuf = if matches.is_present("OUTPUT_TESTDATA") {
@@ -295,7 +295,7 @@ fn get_fs_exporter(matches: &ArgMatches) -> anyhow::Result<FilesystemExporter> {
     } else if let Some(v) = matches.value_of_os("OUTPUT") {
         PathBuf::from(v)
     } else {
-        anyhow::bail!("--out must be specified for --format=dir");
+        eyre::bail!("--out must be specified for --format=dir");
     };
 
     log::info!("Writing to filesystem tree at: {}", output_path.display());
@@ -332,9 +332,9 @@ fn get_fs_exporter(matches: &ArgMatches) -> anyhow::Result<FilesystemExporter> {
     Ok(exporter)
 }
 
-fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter<'static>> {
+fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>> {
     if matches.value_of("SYNTAX") == Some("json") {
-        anyhow::bail!("Cannot use --format=blob with --syntax=json");
+        eyre::bail!("Cannot use --format=blob with --syntax=json");
     }
 
     let output_path: Option<PathBuf> = if matches.is_present("OUTPUT_TESTDATA") {
@@ -350,7 +350,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter<'stati
 
     let sink: Box<dyn std::io::Write> = if let Some(path_buf) = output_path {
         if !matches.is_present("OVERWRITE") && path_buf.exists() {
-            anyhow::bail!("Output path is present: {:?}", path_buf);
+            eyre::bail!("Output path is present: {:?}", path_buf);
         }
         let context = path_buf.to_string_lossy().to_string();
         let temp = std::fs::File::create(path_buf).with_context(|| context)?;
@@ -368,7 +368,7 @@ fn export_cldr<'data>(
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
     allowed_keys: Option<&HashSet<&str>>,
-) -> anyhow::Result<()> {
+) -> eyre::Result<()> {
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
         Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
@@ -383,7 +383,7 @@ fn export_cldr<'data>(
             locale_subset: "full".to_string(),
         })
     } else {
-        anyhow::bail!("Either --cldr-tag or --input-root must be specified",)
+        eyre::bail!("Either --cldr-tag or --input-root must be specified",)
     };
 
     let keys = get_all_cldr_keys();
@@ -421,16 +421,15 @@ fn export_set_props<'data>(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
-) -> anyhow::Result<()> {
+) -> eyre::Result<()> {
     let toml_root = if let Some(path) = matches.value_of("INPUT_ROOT") {
         PathBuf::from(path)
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
         icu_testdata::paths::uprops_toml_root()
     } else {
-        anyhow::bail!("Value for --input-root must be specified",)
+        eyre::bail!("Value for --input-root must be specified",)
     };
-    // TODO(#574): Remove the unwrap when this file is moved to eyre
-    let provider = PropertiesDataProvider::try_new(toml_root).unwrap();
+    let provider = PropertiesDataProvider::try_new(toml_root)?;
 
     let keys = ALL_SET_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
@@ -459,16 +458,15 @@ fn export_map_props<'data>(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
-) -> anyhow::Result<()> {
+) -> eyre::Result<()> {
     let toml_root = if let Some(path) = matches.value_of("INPUT_ROOT") {
         PathBuf::from(path)
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
         icu_testdata::paths::uprops_toml_root()
     } else {
-        anyhow::bail!("Value for --input-root must be specified",)
+        eyre::bail!("Value for --input-root must be specified",)
     };
-    // TODO(#574): Remove the unwrap when this file is moved to eyre
-    let provider = EnumeratedPropertyCodePointTrieProvider::try_new(toml_root).unwrap();
+    let provider = EnumeratedPropertyCodePointTrieProvider::try_new(toml_root)?;
 
     let keys = ALL_MAP_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
@@ -497,7 +495,7 @@ fn export_hello_world<'data>(
     _: &ArgMatches,
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
-) -> anyhow::Result<()> {
+) -> eyre::Result<()> {
     let raw_provider = HelloWorldProvider::new_with_placeholder_data();
     let filtered_provider;
     let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
