@@ -186,7 +186,7 @@ fn update_langid(
     entry: &LanguageIdentifier,
     langid: &mut LanguageIdentifier,
 ) -> CanonicalizationResult {
-    let mut modified: bool = false;
+    let mut modified = false;
 
     if langid.language.is_empty() && !entry.language.is_empty() {
         langid.language = entry.language;
@@ -204,10 +204,10 @@ fn update_langid(
     }
 
     if modified {
-        return CanonicalizationResult::Modified;
+        CanonicalizationResult::Modified
+    } else {
+        CanonicalizationResult::Unmodified
     }
-
-    CanonicalizationResult::Unmodified
 }
 
 macro_rules! maximize_locale {
