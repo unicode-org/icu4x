@@ -187,12 +187,28 @@ fn update_langid(
     entry: &LanguageIdentifier,
     langid: &mut LanguageIdentifier,
 ) -> CanonicalizationResult {
-    if langid.language.is_empty() {
+    let mut modified = false;
+
+    if langid.language.is_empty() && !entry.language.is_empty() {
         langid.language = entry.language;
+        modified = true;
     }
-    langid.script = langid.script.or(entry.script);
-    langid.region = langid.region.or(entry.region);
-    CanonicalizationResult::Modified
+
+    if langid.script.is_none() && entry.script.is_some() {
+        langid.script = entry.script;
+        modified = true;
+    }
+
+    if langid.region.is_none() && entry.region.is_some() {
+        langid.region = entry.region;
+        modified = true;
+    }
+
+    if modified {
+        CanonicalizationResult::Modified
+    } else {
+        CanonicalizationResult::Unmodified
+    }
 }
 
 macro_rules! maximize_locale {
@@ -534,12 +550,14 @@ impl<'data> LocaleCanonicalizer<'data> {
                 maximize_locale!(langid, data.language_script, language, script.into());
             }
             maximize_locale!(langid, data.language, language);
-        } else if let Some(script) = langid.script {
+        }
+        if let Some(script) = langid.script {
             if let Some(region) = langid.region {
                 maximize_locale!(langid, data.script_region, script.into(), region.into());
             }
             maximize_locale!(langid, data.script, script.into());
-        } else if let Some(region) = langid.region {
+        }
+        if let Some(region) = langid.region {
             maximize_locale!(langid, data.region, region.into());
         }
         update_langid(&data.und, langid)
