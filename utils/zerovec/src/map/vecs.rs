@@ -42,7 +42,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
 /// longer references to the underlying buffer, for borrowed-only vector types.
 pub trait BorrowedZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// Get element at `index`, with a longer lifetime
-    fn get_lengthened(&self, index: usize) -> Option<&'a Self::GetType>;
+    fn get_borrowed(&self, index: usize) -> Option<&'a Self::GetType>;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
@@ -147,7 +147,7 @@ impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a [T::ULE]
 where
     T: AsULE + Ord + Copy,
 {
-    fn get_lengthened(&self, index: usize) -> Option<&'a T::ULE> {
+    fn get_borrowed(&self, index: usize) -> Option<&'a T::ULE> {
         <[T::ULE]>::get(self, index)
     }
 }
@@ -268,7 +268,7 @@ where
     T: Ord,
     T: ?Sized,
 {
-    fn get_lengthened(&self, index: usize) -> Option<&'a T> {
+    fn get_borrowed(&self, index: usize) -> Option<&'a T> {
         // using UFCS to avoid accidental recursion
         Self::get(*self, index)
     }

@@ -109,7 +109,7 @@ where
     /// ```
     pub fn get(&self, key: &K::NeedleType) -> Option<&'a V::GetType> {
         let index = self.keys.binary_search(key).ok()?;
-        self.values.get_lengthened(index)
+        self.values.get_borrowed(index)
     }
 
     /// Returns whether `key` is contained in this map
@@ -140,22 +140,22 @@ where
     > + 'b {
         (0..self.keys.len()).map(move |idx| {
             (
-                self.keys.get_lengthened(idx).unwrap(),
-                self.values.get_lengthened(idx).unwrap(),
+                self.keys.get_borrowed(idx).unwrap(),
+                self.values.get_borrowed(idx).unwrap(),
             )
         })
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'a <K as ZeroMapKV<'a>>::GetType> + 'b {
-        (0..self.keys.len()).map(move |idx| self.keys.get_lengthened(idx).unwrap())
+        (0..self.keys.len()).map(move |idx| self.keys.get_borrowed(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = &'a <V as ZeroMapKV<'a>>::GetType> + 'b {
-        (0..self.values.len()).map(move |idx| self.values.get_lengthened(idx).unwrap())
+        (0..self.values.len()).map(move |idx| self.values.get_borrowed(idx).unwrap())
     }
 }
 
