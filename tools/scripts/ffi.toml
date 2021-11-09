@@ -85,6 +85,8 @@ script = '''
 exit_on_error true
 cd ffi/diplomat/cpp/examples/pluralrules
 exec --fail-on-error make
+cd ../properties
+exec --fail-on-error make
 cd ../fixeddecimal
 exec --fail-on-error make
 cd ../fixeddecimal_wasm
