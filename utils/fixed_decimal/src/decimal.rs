@@ -762,12 +762,23 @@ impl FixedDecimal {
     /// assert_eq!(decimal.writeable_to_string(), "-123456.78");
     ///
     /// let decimal = FixedDecimal::new_from_f64(12345678000., DoublePrecision::Maximum).unwrap();
-    /// assert_eq!(decimal.writeable_to_string(), "12345678000.0");
+    /// assert_eq!(decimal.writeable_to_string(), "12345678000");
     /// ```
     pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;
         match precision {
-            DoublePrecision::Maximum => (),
+            DoublePrecision::Maximum => {
+                // ryu will usually tack on a `.0` to integers which gets included when parsing
+                // the other precision modes will handle this anyway, so we handle it explicitly
+                // here
+                let n_digits = decimal.digits.len() as i16;
+                // magnitude of the lowest digit in self.digits
+                let lowest_magnitude = decimal.magnitude - n_digits + 1;
+                if lowest_magnitude >= 0 && decimal.lower_magnitude < 0 {
+                    decimal.lower_magnitude = 0;
+                }
+
+            }
             DoublePrecision::Integer => {
                 let n_digits = decimal.digits.len() as i16;
                 let lowest_magnitude = decimal.magnitude - n_digits + 1;
@@ -991,7 +1002,7 @@ fn test_float() {
         TestCase {
             input: 888999.,
             precision: DoublePrecision::Maximum,
-            expected: "888999.0",
+            expected: "888999",
         },
         // HalfExpand tests
         TestCase {
