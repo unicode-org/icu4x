@@ -773,10 +773,10 @@ impl FixedDecimal {
                 let lowest_magnitude = decimal.magnitude - n_digits + 1;
 
                 if mag > lowest_magnitude {
-                    let round_by = (mag - lowest_magnitude) as i16;
+                    let round_by = (mag - lowest_magnitude) as u16;
 
-                    if round_by <= n_digits {
-                        decimal.round_trailing_digits(round_by as u16, mode)?;
+                    if round_by as i16 <= n_digits {
+                        decimal.round_trailing_digits(round_by, mode)?;
                     } else {
                         // If we need to round by more digits than rounding can ever produce
                         // the number is zero
@@ -802,8 +802,8 @@ impl FixedDecimal {
                 let n_digits = decimal.digits.len() as i16;
 
                 if sig < n_digits {
-                    let round_by = (n_digits - sig) as i16;
-                    decimal.round_trailing_digits(round_by as u16, mode)?;
+                    let round_by = (n_digits - sig) as u16;
+                    decimal.round_trailing_digits(round_by, mode)?;
                     // It may have rounded up by one
                     debug_assert!(decimal.digits.len() >= sig as usize);
                 }
