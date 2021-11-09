@@ -2,10 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[macro_use]
-extern crate lazy_static;
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
 
 mod list_formatter;
-mod patterns;
 
 pub use crate::list_formatter::ListFormatter;
+pub mod error;
+pub mod options;
+pub mod provider;

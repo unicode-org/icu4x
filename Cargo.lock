@@ -1158,6 +1158,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_list"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "displaydoc",
+ "formatted_string_builder",
+ "icu_locid",
+ "icu_provider",
+ "regex",
+ "serde",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_locale_canonicalizer"
 version = "0.4.0"
 dependencies = [
@@ -1280,6 +1294,7 @@ dependencies = [
  "displaydoc",
  "icu_datetime",
  "icu_decimal",
+ "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
@@ -1504,17 +1519,6 @@ name = "libm"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
-
-[[package]]
-name = "list_formatter"
-version = "0.1.0"
-dependencies = [
- "criterion",
- "displaydoc",
- "formatted_string_builder",
- "lazy_static",
- "regex",
-]
 
 [[package]]
 name = "litemap"

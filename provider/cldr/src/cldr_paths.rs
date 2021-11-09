@@ -20,6 +20,10 @@ pub trait CldrPaths: std::fmt::Debug {
     /// Path to checkout of cldr-numbers:
     /// <https://github.com/unicode-cldr/cldr-numbers-full>
     fn cldr_numbers(&self) -> Result<PathBuf, Error>;
+
+    /// Path to checkout of cldr-misc
+    /// <https://github.com/unicode-cldr/cldr-misc-full>
+    fn cldr_misc(&self) -> Result<PathBuf, Error>;
 }
 
 /// An implementation of [`CldrPaths`] for multiple separate local CLDR JSON directories per
@@ -44,6 +48,7 @@ pub struct CldrPathsLocal {
     pub cldr_core: Result<PathBuf, MissingSourceError>,
     pub cldr_dates: Result<PathBuf, MissingSourceError>,
     pub cldr_numbers: Result<PathBuf, MissingSourceError>,
+    pub cldr_misc: Result<PathBuf, MissingSourceError>,
 }
 
 impl CldrPaths for CldrPathsLocal {
@@ -56,6 +61,9 @@ impl CldrPaths for CldrPathsLocal {
     fn cldr_numbers(&self) -> Result<PathBuf, Error> {
         self.cldr_numbers.clone().map_err(|e| e.into())
     }
+    fn cldr_misc(&self) -> Result<PathBuf, Error> {
+        self.cldr_misc.clone().map_err(|e| e.into())
+    }
 }
 
 impl Default for CldrPathsLocal {
@@ -66,6 +74,7 @@ impl Default for CldrPathsLocal {
             cldr_numbers: Err(MissingSourceError {
                 src: "cldr-numbers",
             }),
+            cldr_misc: Err(MissingSourceError { src: "cldr-misc" }),
         }
     }
 }
@@ -109,6 +118,12 @@ impl CldrPaths for CldrPathsAllInOne {
             .cldr_json_root
             .clone()
             .join(format!("cldr-numbers-{}", self.locale_subset)))
+    }
+    fn cldr_misc(&self) -> Result<PathBuf, Error> {
+        Ok(self
+            .cldr_json_root
+            .clone()
+            .join(format!("cldr-misc-{}", self.locale_subset)))
     }
 }
 

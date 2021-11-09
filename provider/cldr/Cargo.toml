@@ -42,6 +42,7 @@ icu_plurals = { version = "0.4", path = "../../components/plurals" }
 icu_datetime = { version = "0.4", path = "../../components/datetime", features = ["provider_transform_internals"] }
 icu_locale_canonicalizer = { version = "0.4", path = "../../components/locale_canonicalizer" }
 icu_decimal = { version = "0.4", path = "../../components/decimal" }
+icu_list = { version = "*", path = "../../experimental/list_formatter", features = ["provider_transform_internals"]}
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.2", path = "../../utils/litemap" }
@@ -53,6 +54,7 @@ smallstr = { version = "0.2", features = ["serde"] }
 smallvec = "1.6"
 tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
+icu_locid_macros = { version = "0.4", path = "../../components/locid/macros" }
 
 # Dependencies for the download feature
 urlencoding = { version = "1.1", optional = true }
