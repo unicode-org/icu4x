@@ -102,7 +102,7 @@ where
     ///
     /// let borrow = borrowed.get(&1);
     /// drop(borrowed);
-    /// // still exists after the map has been dropped
+    /// // still exists after the ZeroMapBorrowed has been dropped
     /// assert_eq!(borrow, Some("one"));
     /// ```
     pub fn get(&self, key: &K::NeedleType) -> Option<&'a V::GetType> {
