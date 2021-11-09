@@ -40,7 +40,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
 ///
 /// This trait augments [`ZeroVecLike`] with methods allowing for taking
 /// longer references to the underlying buffer, for borrowed-only vector types.
-pub trait BorrowedOnlyZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
+pub trait BorrowedZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// Get element at `index`, with a longer lifetime
     fn get_lengthened(&self, index: usize) -> Option<&'a Self::GetType>;
 }
@@ -55,7 +55,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     type OwnedType;
     /// A fully borrowed version of this
     type BorrowedVersion: ZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
-        + BorrowedOnlyZeroVecLike<'a, T>
+        + BorrowedZeroVecLike<'a, T>
         + Copy;
     /// Insert an element at `index`
     fn insert(&mut self, index: usize, value: &T);
@@ -145,7 +145,7 @@ where
     }
 }
 
-impl<'a, T> BorrowedOnlyZeroVecLike<'a, T> for &'a [T::ULE]
+impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a [T::ULE]
 where
     T: AsULE + Ord + Copy,
 {
@@ -264,7 +264,7 @@ where
     }
 }
 
-impl<'a, T> BorrowedOnlyZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
+impl<'a, T> BorrowedZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
 where
     T: VarULE,
     T: Ord,
