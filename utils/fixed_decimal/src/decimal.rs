@@ -789,13 +789,8 @@ impl FixedDecimal {
                 if sig < n_digits {
                     let round_by = (n_digits - sig) as i16;
                     decimal.round_digits(round_by as u16);
+                    // It may have rounded up by one
                     debug_assert!(decimal.digits.len() >= sig as usize);
-                    if decimal.digits.len() < sig as usize {
-                        // it's possible the magnitude increased by 1 due to overflow. round it again
-                        decimal.round_digits(1);
-                        // In case of overflow it cannot overflow again due to rounding
-                        debug_assert!(decimal.digits.len() == sig as usize);
-                    }
                 }
                 let target_lowest_magnitude = decimal.magnitude - sig as i16 + 1;
                 if target_lowest_magnitude <= 0 {
@@ -832,6 +827,10 @@ impl FixedDecimal {
     ///
     /// This will not change the number of significant digits, it simply exists
     /// to *round* them (and will typically reduce the size of `self.digits`)
+    ///
+    /// This function is responsible for fixing `digits`, `magnitude`, and `upper_magnitude`.
+    /// It will only modify upper_magnitude when it is not large enough to fit the rounded number.
+    /// The caller may fix up `lower_magnitude` by whatever scheme it desires
     fn round_digits(&mut self, n: u16) {
         debug_assert!(
             self.digits.len() >= n as usize,
