@@ -766,40 +766,27 @@ impl FixedDecimal {
     /// ```
     pub fn new_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;
+        let n_digits = decimal.digits.len();
+        // magnitude of the lowest digit in self.digits
+        let lowest_magnitude = decimal.magnitude - n_digits as i16 + 1;
+        // ryū will usually tack on a `.0` to integers which gets included when parsing
+        // the other precision modes will handle this anyway, so we handle it explicitly
+        // here
+        if lowest_magnitude >= 0 && decimal.lower_magnitude < 0 {
+            decimal.lower_magnitude = 0;
+        }
         match precision {
-            DoublePrecision::Maximum => {
-                // ryū will usually tack on a `.0` to integers which gets included when parsing
-                // the other precision modes will handle this anyway, so we handle it explicitly
-                // here
-                let n_digits = decimal.digits.len() as i16;
-                // magnitude of the lowest digit in self.digits
-                let lowest_magnitude = decimal.magnitude - n_digits + 1;
-                if lowest_magnitude >= 0 && decimal.lower_magnitude < 0 {
-                    decimal.lower_magnitude = 0;
-                }
-
-            }
+            DoublePrecision::Maximum => (),
             DoublePrecision::Integer => {
-                let n_digits = decimal.digits.len() as i16;
-                let lowest_magnitude = decimal.magnitude - n_digits + 1;
                 if lowest_magnitude < 0 {
                     return Err(Error::Limit);
                 }
-                // ryū sometimes tacks on a `.0` to integer values which gets parsed
-                // as a lower precision
-                if decimal.lower_magnitude < 0 {
-                    decimal.lower_magnitude = 0;
-                }
             }
             DoublePrecision::Magnitude(mag, mode) => {
-                let n_digits = decimal.digits.len() as i16;
-                // magnitude of the lowest digit in self.digits
-                let lowest_magnitude = decimal.magnitude - n_digits + 1;
-
                 if mag > lowest_magnitude {
                     let round_by = (mag - lowest_magnitude) as u16;
 
-                    if round_by as i16 <= n_digits {
+                    if round_by as usize <= n_digits {
                         decimal.round_trailing_digits(round_by, mode)?;
                     } else {
                         // If we need to round by more digits than rounding can ever produce
@@ -819,12 +806,10 @@ impl FixedDecimal {
                 }
             }
             DoublePrecision::SignificantDigits(sig, mode) => {
-                let sig = sig as i16;
+                let sig = sig as usize;
                 if sig == 0 {
                     return Err(Error::Limit);
                 }
-                let n_digits = decimal.digits.len() as i16;
-
                 if sig < n_digits {
                     let round_by = (n_digits - sig) as u16;
                     decimal.round_trailing_digits(round_by, mode)?;
