@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{ZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, MutableZeroVecLike};
+use super::{MutableZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, ZeroVecLike};
 use alloc::boxed::Box;
 use core::fmt;
 use core::marker::PhantomData;

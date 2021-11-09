@@ -6,7 +6,7 @@ use crate::ule::AsULE;
 use crate::ZeroVec;
 
 pub use super::kv::ZeroMapKV;
-pub use super::vecs::{BorrowedZeroVecLike, ZeroVecLike, MutableZeroVecLike};
+pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 
 /// A borrowed-only version of [`ZeroMap`](super::ZeroMap)
 ///
@@ -39,8 +39,10 @@ where
     K: ?Sized,
     V: ?Sized,
 {
-    pub(crate) keys: <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVersion,
-    pub(crate) values: <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVersion,
+    pub(crate) keys:
+        <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVersion,
+    pub(crate) values:
+        <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVersion,
 }
 
 impl<'a, K, V> Copy for ZeroMapBorrowed<'a, K, V>
