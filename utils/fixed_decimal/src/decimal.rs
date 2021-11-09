@@ -878,6 +878,7 @@ impl FixedDecimal {
         }
 
         // Do we need to round our significant digits?
+        // TODO(#1177): This heuristic is insufficient for most rounding modes.
         let round = self.digits[cutoff] >= 5;
 
         self.digits.truncate(cutoff);
