@@ -862,12 +862,8 @@ impl FixedDecimal {
 
         match mode {
             RoundingMode::Unnecessary => {
-                for digit in &self.digits[cutoff..] {
-                    if *digit != 0 {
-                        return Err(Error::Limit);
-                    }
-                }
-                return Ok(());
+                // If we got to this point then rounding was not unnecessary
+                return Err(Error::Limit)
             }
             RoundingMode::Truncate => {
                 self.digits.truncate(cutoff);
