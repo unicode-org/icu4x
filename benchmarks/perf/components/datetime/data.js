@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636402458511,
+  "lastUpdate": 1636478084826,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12065,6 +12065,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 282341,
             "range": "± 811",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c88c6fe1a714c872d7ea1893417fbe4ac72bd58c",
+          "message": "Add EncodeAsVarULE for ZeroVec (#1274)",
+          "timestamp": "2021-11-09T09:06:27-08:00",
+          "tree_id": "ada144b053d15e1ef9bcbdf8c5109984a4b77ad5",
+          "url": "https://github.com/unicode-org/icu4x/commit/c88c6fe1a714c872d7ea1893417fbe4ac72bd58c"
+        },
+        "date": 1636478079508,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 127080,
+            "range": "± 8716",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1470145,
+            "range": "± 110676",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 324137,
+            "range": "± 23382",
             "unit": "ns/iter"
           }
         ]
