@@ -815,7 +815,7 @@ impl FixedDecimal {
                     let round_by = (n_digits - sig) as u16;
                     decimal.round_trailing_digits(round_by, mode)?;
                     // It may have rounded up by one
-                    debug_assert!(decimal.digits.len() >= sig as usize);
+                    debug_assert!(decimal.digits.len() == sig as usize || decimal.digits.len() == 1);
                 }
                 let target_lowest_magnitude = decimal.magnitude - sig as i16 + 1;
                 if target_lowest_magnitude <= 0 {
@@ -904,7 +904,8 @@ impl FixedDecimal {
             // If we reached this point then the last digit was 9 and we need to insert
             // another digit at the beginning
 
-            self.digits.insert(0, 1u8);
+            self.digits.clear();
+            self.digits.push(1);
             self.magnitude += 1;
             if self.magnitude != 0 && self.upper_magnitude <= self.magnitude {
                 self.upper_magnitude += 1;
