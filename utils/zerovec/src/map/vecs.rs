@@ -73,25 +73,23 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     fn clear(&mut self);
     /// Reserve space for `addl` additional elements
     fn reserve(&mut self, addl: usize);
-    /// Construct a borrowed version from this
+    /// Construct a borrowed variant by borrowing from `&self`.
     ///
-    /// Note: This really should be `&'b self -> Self::BorrowedVariant<'b>`
-    /// but doing that requires complicated `for<'b>` code that will likely trigger
-    /// compiler bugs. Instead, we hope that `self` is covariant so this cast will
-    /// just work in the implementation. Basically, we rely on the compiler
+    /// This function behaves like `&'b self -> Self::BorrowedVariant<'b>`,
+    /// where `'b` is the lifetime of the reference to this object.
+    ///
+    /// Note: We rely on the compiler recognizing `'a` and `'b` as covariant and
     /// casting `&'b Self<'a>` to `&'b Self<'b>` when this gets called, which works
     /// out for `ZeroVec` and `VarZeroVec` containers just fine.
     fn as_borrowed(&'a self) -> Self::BorrowedVariant;
 
-    /// If this type *contains* its borrowed version, return that. Returns `None`
-    /// when this contains owned data.
+    /// Extract the inner borrowed variant if possible. Returns `None` if the data is owned.
     ///
-    /// This is subtly different from the [`Self::as_borrowed()`] since the returned type does
-    /// is not tied to the lifetime of the reference `&self`. The tradeoff here is that this
-    /// returns `None` when owned data is encountered, while we gain the ability to refer to the
-    /// wider lifetime when we *know* for a fact that it is borrowed data.
+    /// This function behaves like `&'_ self -> Self::BorrowedVariant<'a>`,
+    /// where `'a` is the lifetime of this object's borrowed data.
     ///
-    /// These are useful to ensure serialization parity between borrowed and owned versions
+    /// This function is similar to matching the `Borrowed` variant of `ZeroVec`
+    /// or `VarZeroVec`, returning the inner borrowed type.
     fn as_borrowed_inner(&self) -> Option<Self::BorrowedVariant>;
 
     /// Construct from the borrowed version of the type
