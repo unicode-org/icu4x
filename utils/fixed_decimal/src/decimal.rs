@@ -737,7 +737,6 @@ pub enum RoundingMode {
 
     /// Round ties away from zero.
     HalfExpand,
-
     // TODO(#1177): Add more rounding modes.
 }
 
@@ -815,7 +814,9 @@ impl FixedDecimal {
                     let round_by = (n_digits - sig) as u16;
                     decimal.round_trailing_digits(round_by, mode)?;
                     // It may have rounded up by one
-                    debug_assert!(decimal.digits.len() == sig as usize || decimal.digits.len() == 1);
+                    debug_assert!(
+                        decimal.digits.len() == sig as usize || decimal.digits.len() == 1
+                    );
                 }
                 let target_lowest_magnitude = decimal.magnitude - sig as i16 + 1;
                 if target_lowest_magnitude <= 0 {
@@ -873,7 +874,7 @@ impl FixedDecimal {
         match mode {
             RoundingMode::Unnecessary => {
                 // If we got to this point then rounding was not unnecessary
-                return Err(Error::Limit)
+                return Err(Error::Limit);
             }
             RoundingMode::Truncate => {
                 self.digits.truncate(cutoff);
