@@ -36,7 +36,7 @@
 //! println!("{:?}", result);
 //! ```
 //!
-//! Use Latin 1 string for C binding and etc
+//! Use Latin 1 string for C binding and etc.
 //!
 //! ```rust
 //! use icu_segmenter::LineBreakIteratorLatin1;
