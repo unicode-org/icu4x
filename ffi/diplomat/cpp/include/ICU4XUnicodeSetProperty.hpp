@@ -28,8 +28,23 @@ struct ICU4XUnicodeSetPropertyDeleter {
 };
 class ICU4XUnicodeSetProperty {
  public:
+
+  /**
+   * Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
+   */
   static ICU4XUnicodeSetPropertyResult try_get_ascii_hex_digit(const ICU4XDataProvider& provider);
+
+  /**
+   * Gets a set for Unicode property ascii_hex_digit from a [`ICU4XStaticDataProvider`].
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
+   */
   static ICU4XUnicodeSetPropertyResult try_get_ascii_hex_digit_from_static(const ICU4XStaticDataProvider& provider);
+
+  /**
+   * Checks whether the code point is in the set.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains) for more information.
+   */
   bool contains(char32_t cp) const;
   inline const capi::ICU4XUnicodeSetProperty* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XUnicodeSetProperty* AsFFIMut() { return this->inner.get(); }

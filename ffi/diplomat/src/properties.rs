@@ -6,11 +6,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
-        sets,
+        sets::{self, UnisetResult},
         provider::UnicodePropertyV1Marker,
     };
     use icu_provider::prelude::DataPayload;
-    use icu_provider::prelude::DataProvider;
 
     use crate::{
         provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider,
@@ -29,18 +28,22 @@ pub mod ffi {
     }
 
     impl ICU4XUnicodeSetProperty {
+        /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
         pub fn try_get_ascii_hex_digit(provider: &ICU4XDataProvider) -> ICU4XUnicodeSetPropertyResult {
             let provider = provider.0.as_ref();
-            Self::try_get_ascii_hex_digit_impl(provider)
+            Self::prepare_result(sets::get_ascii_hex_digit(provider))
         }
 
+        /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XStaticDataProvider`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
         pub fn try_get_ascii_hex_digit_from_static(provider: &ICU4XStaticDataProvider) -> ICU4XUnicodeSetPropertyResult {
             let provider = provider.0.as_ref();
-            Self::try_get_ascii_hex_digit_impl(provider)
+            Self::prepare_result(sets::get_ascii_hex_digit(provider))
         }
 
-        fn try_get_ascii_hex_digit_impl<D>(provider: &D) -> ICU4XUnicodeSetPropertyResult where D: DataProvider<'static, UnicodePropertyV1Marker> + ?Sized {
-            match sets::get_ascii_hex_digit(provider) {
+        fn prepare_result(result: UnisetResult<'static>) -> ICU4XUnicodeSetPropertyResult {
+            match result {
                 Ok(data) => ICU4XUnicodeSetPropertyResult {
                     data: Some(Box::new(ICU4XUnicodeSetProperty(data))),
                     success: true,
@@ -52,6 +55,8 @@ pub mod ffi {
             }
         }
 
+        /// Checks whether the code point is in the set.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains) for more information.
         pub fn contains(&self, cp: char) -> bool {
             self.0.get().inv_list.contains(cp)
         }
