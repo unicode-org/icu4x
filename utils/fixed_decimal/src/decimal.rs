@@ -769,9 +769,8 @@ impl FixedDecimal {
         let n_digits = decimal.digits.len();
         // magnitude of the lowest digit in self.digits
         let lowest_magnitude = decimal.magnitude - n_digits as i16 + 1;
-        // ryū will usually tack on a `.0` to integers which gets included when parsing
-        // the other precision modes will handle this anyway, so we handle it explicitly
-        // here
+        // ryū will usually tack on a `.0` to integers which gets included when parsing.
+        // Explicitly remove it before doing anything else
         if lowest_magnitude >= 0 && decimal.lower_magnitude < 0 {
             decimal.lower_magnitude = 0;
         }
