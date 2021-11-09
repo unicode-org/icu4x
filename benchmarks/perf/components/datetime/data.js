@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636478084826,
+  "lastUpdate": 1636488924286,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12107,6 +12107,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 324137,
             "range": "± 23382",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "615570cc88f9012e78b2bb79900006b9747f0259",
+          "message": "Add borrowed-only version of ZeroMap (#1238)",
+          "timestamp": "2021-11-09T12:06:53-08:00",
+          "tree_id": "f6cd826673762ec45246a9610573c6a71d6bf64a",
+          "url": "https://github.com/unicode-org/icu4x/commit/615570cc88f9012e78b2bb79900006b9747f0259"
+        },
+        "date": 1636488916082,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 123569,
+            "range": "± 6730",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1404922,
+            "range": "± 81090",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 353258,
+            "range": "± 12879",
             "unit": "ns/iter"
           }
         ]
