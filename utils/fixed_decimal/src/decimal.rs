@@ -729,14 +729,15 @@ pub enum DoublePrecision {
 /// Specifies how numbers should be rounded
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum RoundingMode {
-    /// Specify that the number should not need to be rounded, or else return an error.
+    /// Return an error if the number has trailing nonzero digits that need to be rounded.
     Unnecessary,
 
-    /// Specify that the number should be truncated.
+    /// Round toward zero (remove, or truncate, all trailing digits).
     Truncate,
 
-    /// Round up from zero after 0.5
+    /// Round ties away from zero.
     HalfExpand,
+
     // TODO(#1177): Add more rounding modes.
 }
 
