@@ -813,9 +813,7 @@ impl FixedDecimal {
                     let round_by = (n_digits - sig) as u16;
                     decimal.round_trailing_digits(round_by, mode)?;
                     // It may have rounded up by one
-                    debug_assert!(
-                        decimal.digits.len() <= sig as usize
-                    );
+                    debug_assert!(decimal.digits.len() <= sig as usize);
                 }
                 let target_lowest_magnitude = decimal.magnitude - sig as i16 + 1;
                 if target_lowest_magnitude <= 0 {
