@@ -50,7 +50,7 @@ pub trait BorrowedOnlyZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
 ///
 /// This trait augments [`BorrowedZeroVecLike`] with methods allowing for mutation of the underlying
 /// vector for owned vector types.
-pub trait ZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
+pub trait MutableZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
     /// A fully borrowed version of this
@@ -154,7 +154,7 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
+impl<'a, T> MutableZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
     T: AsULE + Ord + Copy,
 {
@@ -276,7 +276,7 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for VarZeroVec<'a, T>
+impl<'a, T> MutableZeroVecLike<'a, T> for VarZeroVec<'a, T>
 where
     T: VarULE,
     T: Ord,

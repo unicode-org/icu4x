@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::vecs::ZeroVecLike;
+use super::vecs::MutableZeroVecLike;
 use crate::ule::*;
 use crate::VarZeroVec;
 use crate::ZeroVec;
@@ -18,7 +18,7 @@ use core::cmp::Ordering;
 #[allow(clippy::upper_case_acronyms)] // KV is not an acronym
 pub trait ZeroMapKV<'a> {
     /// The container that can be used with this type: [`ZeroVec`] or [`VarZeroVec`].
-    type Container: ZeroVecLike<
+    type Container: MutableZeroVecLike<
             'a,
             Self,
             NeedleType = Self::NeedleType,
