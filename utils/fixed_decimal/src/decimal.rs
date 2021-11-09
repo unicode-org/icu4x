@@ -709,7 +709,7 @@ pub enum DoublePrecision {
     // /// Specify that the floating point number is integer-valued.
     // ///
     // /// If the floating point is not actually integer-valued, an error will be returned.
-    // Integer,
+    Integer,
     /// Specify that the floating point number is precise to a specific power of 10.
     /// The number may be rounded or trailing zeros may be added as necessary.
     Magnitude(i16, RoundingMode),
@@ -767,6 +767,16 @@ impl FixedDecimal {
         let mut decimal = Self::new_from_f64_raw(float)?;
         match precision {
             DoublePrecision::Maximum => (),
+            DoublePrecision::Integer => {
+                let n_digits = decimal.digits.len() as i16;
+                let lowest_magnitude = decimal.magnitude - n_digits + 1;
+                if lowest_magnitude < 0 {
+                    return Err(Error::Limit);
+                }
+                if decimal.lower_magnitude < 0 {
+                    decimal.lower_magnitude = 0;
+                }
+            }
             DoublePrecision::Magnitude(mag, mode) => {
                 let n_digits = decimal.digits.len() as i16;
                 // magnitude of the lowest digit in self.digits
@@ -1130,6 +1140,11 @@ fn test_float() {
             input: 9.9888,
             precision: DoublePrecision::SignificantDigits(3, RoundingMode::Truncate),
             expected: "9.98",
+        },
+        TestCase {
+            input: 888999.,
+            precision: DoublePrecision::Integer,
+            expected: "888999",
         },
     ];
 
