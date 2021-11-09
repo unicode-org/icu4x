@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{ZeroMap, ZeroMapKV, ZeroVecLike};
+use super::{MutableZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, ZeroVecLike};
 use alloc::boxed::Box;
 use core::fmt;
 use core::marker::PhantomData;
@@ -36,6 +36,26 @@ where
         } else {
             (&self.keys, &self.values).serialize(serializer)
         }
+    }
+}
+
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+impl<'a, K, V> Serialize for ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+    K::Container: Serialize,
+    V::Container: Serialize,
+    K::SerializeType: Serialize,
+    V::SerializeType: Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        ZeroMap::<K, V>::from(*self).serialize(serializer)
     }
 }
 
@@ -126,6 +146,46 @@ where
     }
 }
 
+// /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+impl<'de, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMapBorrowed<'de, K, V>
+where
+    K: Ord,
+    K::Container: Deserialize<'de>,
+    V::Container: Deserialize<'de>,
+    K: ZeroMapKV<'de>,
+    V: ZeroMapKV<'de>,
+    K::OwnedType: Deserialize<'de>,
+    V::OwnedType: Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            Err(de::Error::custom(
+                "ZeroMapBorrowed cannot be deserialized from human-readable formats",
+            ))
+        } else {
+            let deserialized: ZeroMap<'de, K, V> = ZeroMap::deserialize(deserializer)?;
+            let keys = if let Some(keys) = deserialized.keys.as_borrowed_inner() {
+                keys
+            } else {
+                return Err(de::Error::custom(
+                    "ZeroMapBorrowed can only deserialize in zero-copy ways",
+                ));
+            };
+            let values = if let Some(values) = deserialized.values.as_borrowed_inner() {
+                values
+            } else {
+                return Err(de::Error::custom(
+                    "ZeroMapBorrowed can only deserialize in zero-copy ways",
+                ));
+            };
+            Ok(Self { keys, values })
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::super::*;
@@ -161,6 +221,13 @@ mod test {
         let bincode_bytes = bincode::serialize(&map).expect("serialize");
         assert_eq!(BINCODE_BYTES, bincode_bytes);
         let new_map: ZeroMap<u32, str> = bincode::deserialize(&bincode_bytes).expect("deserialize");
+        assert_eq!(
+            new_map.iter().collect::<Vec<_>>(),
+            map.iter().collect::<Vec<_>>()
+        );
+
+        let new_map: ZeroMapBorrowed<u32, str> =
+            bincode::deserialize(&bincode_bytes).expect("deserialize");
         assert_eq!(
             new_map.iter().collect::<Vec<_>>(),
             map.iter().collect::<Vec<_>>()
