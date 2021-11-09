@@ -6,7 +6,7 @@ use crate::ule::AsULE;
 use crate::ZeroVec;
 
 pub use super::kv::ZeroMapKV;
-pub use super::vecs::{BorrowedOnlyZeroVecLike, BorrowedZeroVecLike, MutableZeroVecLike};
+pub use super::vecs::{BorrowedOnlyZeroVecLike, ZeroVecLike, MutableZeroVecLike};
 
 /// A borrowed-only version of [`ZeroMap`](super::ZeroMap)
 ///

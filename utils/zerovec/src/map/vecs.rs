@@ -14,7 +14,7 @@ use core::mem;
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
-pub trait BorrowedZeroVecLike<'a, T: ?Sized> {
+pub trait ZeroVecLike<'a, T: ?Sized> {
     /// The type received by `Self::binary_search()`
     type NeedleType: ?Sized;
     /// The type returned by `Self::get()`
@@ -38,9 +38,9 @@ pub trait BorrowedZeroVecLike<'a, T: ?Sized> {
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
 ///
-/// This trait augments [`BorrowedZeroVecLike`] with methods allowing for taking
+/// This trait augments [`ZeroVecLike`] with methods allowing for taking
 /// longer references to the underlying buffer, for borrowed-only vector types.
-pub trait BorrowedOnlyZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
+pub trait BorrowedOnlyZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// Get element at `index`, with a longer lifetime
     fn get_lengthened(&self, index: usize) -> Option<&'a Self::GetType>;
 }
@@ -48,13 +48,13 @@ pub trait BorrowedOnlyZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
 ///
-/// This trait augments [`BorrowedZeroVecLike`] with methods allowing for mutation of the underlying
+/// This trait augments [`ZeroVecLike`] with methods allowing for mutation of the underlying
 /// vector for owned vector types.
-pub trait MutableZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
+pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
     /// A fully borrowed version of this
-    type BorrowedVersion: BorrowedZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
+    type BorrowedVersion: ZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
         + BorrowedOnlyZeroVecLike<'a, T>
         + Copy;
     /// Insert an element at `index`
@@ -100,7 +100,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: BorrowedZeroVecLike<'a, T> {
     fn from_borrowed(b: Self::BorrowedVersion) -> Self;
 }
 
-impl<'a, T> BorrowedZeroVecLike<'a, T> for ZeroVec<'a, T>
+impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
     T: AsULE + Ord + Copy,
 {
@@ -122,7 +122,7 @@ where
     }
 }
 
-impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a [T::ULE]
+impl<'a, T> ZeroVecLike<'a, T> for &'a [T::ULE]
 where
     T: AsULE + Ord + Copy,
 {
@@ -201,7 +201,7 @@ where
     }
 }
 
-impl<'a, T> BorrowedZeroVecLike<'a, T> for VarZeroVec<'a, T>
+impl<'a, T> ZeroVecLike<'a, T> for VarZeroVec<'a, T>
 where
     T: VarULE,
     T: Ord,
@@ -232,7 +232,7 @@ where
     }
 }
 
-impl<'a, T> BorrowedZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
+impl<'a, T> ZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
 where
     T: VarULE,
     T: Ord,
