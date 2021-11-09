@@ -761,7 +761,7 @@ impl FixedDecimal {
                     let round_by = (mag - lowest_magnitude) as i16;
 
                     if round_by <= n_digits {
-                        decimal.round_digits(round_by as u16);
+                        decimal.round_trailing_digits(round_by as u16);
                     } else {
                         // If we need to round by more digits than rounding can ever produce
                         // the number is zero
@@ -788,7 +788,7 @@ impl FixedDecimal {
 
                 if sig < n_digits {
                     let round_by = (n_digits - sig) as i16;
-                    decimal.round_digits(round_by as u16);
+                    decimal.round_trailing_digits(round_by as u16);
                     // It may have rounded up by one
                     debug_assert!(decimal.digits.len() >= sig as usize);
                 }
@@ -831,7 +831,7 @@ impl FixedDecimal {
     /// This function is responsible for fixing `digits`, `magnitude`, and `upper_magnitude`.
     /// It will only modify upper_magnitude when it is not large enough to fit the rounded number.
     /// The caller may fix up `lower_magnitude` by whatever scheme it desires
-    fn round_digits(&mut self, n: u16) {
+    fn round_trailing_digits(&mut self, n: u16) {
         debug_assert!(
             self.digits.len() >= n as usize,
             "Attempted to round off {} digits of number that has only {}",
@@ -922,7 +922,7 @@ fn test_round() {
 
     for case in &cases {
         let mut dec = FixedDecimal::new_from_f64_raw(case.input).unwrap();
-        dec.round_digits(case.round);
+        dec.round_trailing_digits(case.round);
         writeable::assert_writeable_eq!(case.expected, dec, "{:?}", case);
     }
 }
