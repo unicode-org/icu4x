@@ -768,7 +768,7 @@ impl FixedDecimal {
         let mut decimal = Self::new_from_f64_raw(float)?;
         match precision {
             DoublePrecision::Maximum => {
-                // ryu will usually tack on a `.0` to integers which gets included when parsing
+                // ryū will usually tack on a `.0` to integers which gets included when parsing
                 // the other precision modes will handle this anyway, so we handle it explicitly
                 // here
                 let n_digits = decimal.digits.len() as i16;
@@ -785,6 +785,8 @@ impl FixedDecimal {
                 if lowest_magnitude < 0 {
                     return Err(Error::Limit);
                 }
+                // ryū sometimes tacks on a `.0` to integer values which gets parsed
+                // as a lower precision
                 if decimal.lower_magnitude < 0 {
                     decimal.lower_magnitude = 0;
                 }
@@ -920,9 +922,10 @@ impl FixedDecimal {
 
             self.digits.clear();
             self.digits.push(1);
+            debug_assert!(self.upper_magnitude >= 0);
             self.magnitude += 1;
-            if self.magnitude != 0 && self.upper_magnitude <= self.magnitude {
-                self.upper_magnitude += 1;
+            if self.upper_magnitude < self.magnitude {
+                self.upper_magnitude = self.magnitude;
             }
         }
         Ok(())
