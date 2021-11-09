@@ -814,7 +814,7 @@ impl FixedDecimal {
                     decimal.round_trailing_digits(round_by, mode)?;
                     // It may have rounded up by one
                     debug_assert!(
-                        decimal.digits.len() == sig as usize || decimal.digits.len() == 1
+                        decimal.digits.len() <= sig as usize
                     );
                 }
                 let target_lowest_magnitude = decimal.magnitude - sig as i16 + 1;
@@ -890,13 +890,16 @@ impl FixedDecimal {
         self.digits.truncate(cutoff);
 
         if round {
+            // how much to truncate by after rounding
+            let mut round_truncate = cutoff;
             for digit in self.digits[..cutoff].iter_mut().rev() {
                 if *digit == 9 {
-                    // We need to round the next digit
-                    *digit = 0;
+                    // Truncate this digit, the next digit can be rounded
+                    round_truncate -= 1;
                 } else {
                     // We need to update this digit, then we're done
                     *digit += 1;
+                    self.digits.truncate(round_truncate);
                     return Ok(());
                 }
             }
