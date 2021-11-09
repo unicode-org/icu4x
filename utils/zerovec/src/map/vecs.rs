@@ -92,7 +92,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// wider lifetime when we *know* for a fact that it is borrowed data.
     ///
     /// These are useful to ensure serialization parity between borrowed and owned versions
-    fn maybe_as_borrowed(&self) -> Option<Self::BorrowedVariant>;
+    fn as_borrowed_inner(&self) -> Option<Self::BorrowedVariant>;
 
     /// Construct from the borrowed version of the type
     ///
@@ -189,7 +189,7 @@ where
     fn as_borrowed(&'a self) -> &'a [T::ULE] {
         self.as_slice()
     }
-    fn maybe_as_borrowed(&self) -> Option<&'a [T::ULE]> {
+    fn as_borrowed_inner(&self) -> Option<&'a [T::ULE]> {
         if let ZeroVec::Borrowed(b) = *self {
             Some(b)
         } else {
@@ -318,7 +318,7 @@ where
     fn as_borrowed(&'a self) -> VarZeroVecBorrowed<'a, T> {
         self.as_borrowed()
     }
-    fn maybe_as_borrowed(&self) -> Option<VarZeroVecBorrowed<'a, T>> {
+    fn as_borrowed_inner(&self) -> Option<VarZeroVecBorrowed<'a, T>> {
         if let VarZeroVec::Borrowed(b) = *self {
             Some(b)
         } else {

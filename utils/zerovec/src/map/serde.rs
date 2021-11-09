@@ -167,14 +167,14 @@ where
             ))
         } else {
             let deserialized: ZeroMap<'de, K, V> = ZeroMap::deserialize(deserializer)?;
-            let keys = if let Some(keys) = deserialized.keys.maybe_as_borrowed() {
+            let keys = if let Some(keys) = deserialized.keys.as_borrowed_inner() {
                 keys
             } else {
                 return Err(de::Error::custom(
                     "ZeroMapBorrowed can only deserialize in zero-copy ways",
                 ));
             };
-            let values = if let Some(values) = deserialized.values.maybe_as_borrowed() {
+            let values = if let Some(values) = deserialized.values.as_borrowed_inner() {
                 values
             } else {
                 return Err(de::Error::custom(
