@@ -6,6 +6,8 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use toml;
+use ucharstrie::ucharstrie::UCharsTrie;
+use zerovec::ZeroVec;
 
 #[derive(serde::Deserialize)]
 pub struct TestFile {
@@ -22,7 +24,7 @@ pub struct TestUCharsTrie {
 // Given a .toml file dumped from ICU4C test data for UCharsTrie, run the test
 // data file deserialization into the test file struct, convert and construct
 // the `UCharsTrie`, and return the constructed struct.
-pub fn build_ucharstrie_from_test_data(test_file_path: &str) -> Vec<u16> {
+pub fn load_ucharstrie_data(test_file_path: &str) -> Vec<u16> {
     let path = Path::new(test_file_path);
     let display = path.display();
 

@@ -6,7 +6,16 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 [dev-dependencies]
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 toml = "0.5"
+serde = { version = "1.0", features = ["derive"] }
+
+[lib]
+path = "src/lib.rs"
+
+[features]
+default = ["provider_serde"]
+provider_serde = ["serde"]

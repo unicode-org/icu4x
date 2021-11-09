@@ -10,7 +10,7 @@
 //! associated to code points.
 //!
 //! It is an implementation of the existing [ICU4C UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UCharsTrie.html)
-//! / [ICU4J UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
+//! / [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
 //!
 //! ## Architecture
 //!
@@ -18,7 +18,7 @@
 //!
 //! ## Examples
 //!
-//! ### Querying a `CodePointTrie`
+//! ### Querying a `UCharsTrie`
 //!
 //! ```rust
 //! // TODO!
