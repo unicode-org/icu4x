@@ -10,7 +10,7 @@ Documentation
    locale_canonicalizer_ffi
    locale_ffi
    pluralrules_ffi
-   properties_ffi
+   properties_sets_ffi
    provider_ffi
 
 Indices and tables

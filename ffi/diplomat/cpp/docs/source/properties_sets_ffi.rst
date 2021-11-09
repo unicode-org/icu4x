@@ -1,5 +1,5 @@
-``properties::ffi``
-===================
+``properties_sets::ffi``
+========================
 
 .. cpp:class:: ICU4XUnicodeSetProperty
 
