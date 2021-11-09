@@ -6,20 +6,20 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
-        Script,
         maps::{self, CodePointMapResult},
         provider::UnicodePropertyMapV1Marker,
+        Script,
     };
     use icu_provider::prelude::DataPayload;
 
-    use crate::{
-        provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider,
-    };
+    use crate::{provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
-    pub struct ICU4XUnicodeScriptMapProperty(DataPayload<'static, UnicodePropertyMapV1Marker<Script>>);
+    pub struct ICU4XUnicodeScriptMapProperty(
+        DataPayload<'static, UnicodePropertyMapV1Marker<Script>>,
+    );
 
     pub struct ICU4XUnicodeScriptMapPropertyResult {
         /// The [`ICU4XUnicodeScriptMapProperty`], if creation was successful.
@@ -38,12 +38,16 @@ pub mod ffi {
 
         /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XStaticDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
-        pub fn try_get_from_static(provider: &ICU4XStaticDataProvider) -> ICU4XUnicodeScriptMapPropertyResult {
+        pub fn try_get_from_static(
+            provider: &ICU4XStaticDataProvider,
+        ) -> ICU4XUnicodeScriptMapPropertyResult {
             let provider = provider.0.as_ref();
             Self::prepare_result(maps::get_script(provider))
         }
 
-        fn prepare_result(result: CodePointMapResult<'static, Script>) -> ICU4XUnicodeScriptMapPropertyResult {
+        fn prepare_result(
+            result: CodePointMapResult<'static, Script>,
+        ) -> ICU4XUnicodeScriptMapPropertyResult {
             match result {
                 Ok(data) => ICU4XUnicodeScriptMapPropertyResult {
                     data: Some(Box::new(ICU4XUnicodeScriptMapProperty(data))),
@@ -51,8 +55,8 @@ pub mod ffi {
                 },
                 Err(_) => ICU4XUnicodeScriptMapPropertyResult {
                     data: None,
-                    success: false
-                }
+                    success: false,
+                },
             }
         }
 

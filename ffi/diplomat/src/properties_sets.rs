@@ -6,14 +6,12 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
-        sets::{self, UnisetResult},
         provider::UnicodePropertyV1Marker,
+        sets::{self, UnisetResult},
     };
     use icu_provider::prelude::DataPayload;
 
-    use crate::{
-        provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider,
-    };
+    use crate::{provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
@@ -30,14 +28,18 @@ pub mod ffi {
     impl ICU4XUnicodeSetProperty {
         /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
-        pub fn try_get_ascii_hex_digit(provider: &ICU4XDataProvider) -> ICU4XUnicodeSetPropertyResult {
+        pub fn try_get_ascii_hex_digit(
+            provider: &ICU4XDataProvider,
+        ) -> ICU4XUnicodeSetPropertyResult {
             let provider = provider.0.as_ref();
             Self::prepare_result(sets::get_ascii_hex_digit(provider))
         }
 
         /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XStaticDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
-        pub fn try_get_ascii_hex_digit_from_static(provider: &ICU4XStaticDataProvider) -> ICU4XUnicodeSetPropertyResult {
+        pub fn try_get_ascii_hex_digit_from_static(
+            provider: &ICU4XStaticDataProvider,
+        ) -> ICU4XUnicodeSetPropertyResult {
             let provider = provider.0.as_ref();
             Self::prepare_result(sets::get_ascii_hex_digit(provider))
         }
@@ -50,8 +52,8 @@ pub mod ffi {
                 },
                 Err(_) => ICU4XUnicodeSetPropertyResult {
                     data: None,
-                    success: false
-                }
+                    success: false,
+                },
             }
         }
 
