@@ -40,9 +40,9 @@ where
     V: ?Sized,
 {
     pub(crate) keys:
-        <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVersion,
+        <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant,
     pub(crate) values:
-        <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVersion,
+        <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant,
 }
 
 impl<'a, K, V> Copy for ZeroMapBorrowed<'a, K, V>

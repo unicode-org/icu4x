@@ -54,7 +54,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
     /// A fully borrowed version of this
-    type BorrowedVersion: ZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
+    type BorrowedVariant: ZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
         + BorrowedZeroVecLike<'a, T>
         + Copy;
     /// Insert an element at `index`
@@ -75,13 +75,13 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     fn reserve(&mut self, addl: usize);
     /// Construct a borrowed version from this
     ///
-    /// Note: This really should be `&'b self -> Self::BorrowedVersion<'b>`
+    /// Note: This really should be `&'b self -> Self::BorrowedVariant<'b>`
     /// but doing that requires complicated `for<'b>` code that will likely trigger
     /// compiler bugs. Instead, we hope that `self` is covariant so this cast will
     /// just work in the implementation. Basically, we rely on the compiler
     /// casting `&'b Self<'a>` to `&'b Self<'b>` when this gets called, which works
     /// out for `ZeroVec` and `VarZeroVec` containers just fine.
-    fn as_borrowed(&'a self) -> Self::BorrowedVersion;
+    fn as_borrowed(&'a self) -> Self::BorrowedVariant;
 
     /// If this type *contains* its borrowed version, return that. Returns `None`
     /// when this contains owned data.
@@ -92,12 +92,12 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// wider lifetime when we *know* for a fact that it is borrowed data.
     ///
     /// These are useful to ensure serialization parity between borrowed and owned versions
-    fn maybe_as_borrowed(&self) -> Option<Self::BorrowedVersion>;
+    fn maybe_as_borrowed(&self) -> Option<Self::BorrowedVariant>;
 
     /// Construct from the borrowed version of the type
     ///
     /// These are useful to ensure serialization parity between borrowed and owned versions
-    fn from_borrowed(b: Self::BorrowedVersion) -> Self;
+    fn from_borrowed(b: Self::BorrowedVariant) -> Self;
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
@@ -159,7 +159,7 @@ where
     T: AsULE + Ord + Copy,
 {
     type OwnedType = T;
-    type BorrowedVersion = &'a [T::ULE];
+    type BorrowedVariant = &'a [T::ULE];
     fn insert(&mut self, index: usize, value: &T) {
         self.to_mut().insert(index, value.as_unaligned())
     }
@@ -283,7 +283,7 @@ where
     T: ?Sized,
 {
     type OwnedType = Box<T>;
-    type BorrowedVersion = VarZeroVecBorrowed<'a, T>;
+    type BorrowedVariant = VarZeroVecBorrowed<'a, T>;
     fn insert(&mut self, index: usize, value: &T) {
         self.make_mut().insert(index, value)
     }
