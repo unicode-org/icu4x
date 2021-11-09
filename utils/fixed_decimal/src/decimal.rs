@@ -710,7 +710,7 @@ pub enum DoublePrecision {
     ///
     /// If the floating point is not actually integer-valued, an error will be returned.
     Integer,
-    
+
     /// Specify that the floating point number is precise to a specific power of 10.
     /// The number may be rounded or trailing zeros may be added as necessary.
     Magnitude(i16, RoundingMode),
@@ -720,7 +720,7 @@ pub enum DoublePrecision {
     ///
     /// The number requested may not be zero
     SignificantDigits(u8, RoundingMode),
-    
+
     /// Specify that the floating point number is precise to the maximum representable by IEEE.
     ///
     /// This results in a FixedDecimal having enough digits to recover the original floating point
