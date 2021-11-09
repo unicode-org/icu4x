@@ -950,3 +950,149 @@ export class ICU4XStaticDataProvider {
     return diplomat_out;
   }
 }
+
+const ICU4XUnicodeScriptMapProperty_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XUnicodeScriptMapProperty_destroy(underlying);
+});
+
+export class ICU4XUnicodeScriptMapProperty {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static try_get(provider) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeScriptMapProperty_try_get(diplomat_receive_buffer, provider.underlying);
+      const out = new ICU4XUnicodeScriptMapPropertyResult(diplomat_receive_buffer);
+      const out_data_value = out.data;
+      ICU4XUnicodeScriptMapProperty_box_destroy_registry.register(out_data_value, out_data_value.underlying);
+      Object.defineProperty(out, "data", { value: out_data_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5,
+        align: 4,
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
+
+  static try_get_from_static(provider) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeScriptMapProperty_try_get_from_static(diplomat_receive_buffer, provider.underlying);
+      const out = new ICU4XUnicodeScriptMapPropertyResult(diplomat_receive_buffer);
+      const out_data_value = out.data;
+      ICU4XUnicodeScriptMapProperty_box_destroy_registry.register(out_data_value, out_data_value.underlying);
+      Object.defineProperty(out, "data", { value: out_data_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5,
+        align: 4,
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
+
+  get(cp) {
+    const diplomat_out = wasm.ICU4XUnicodeScriptMapProperty_get(this.underlying, cp);
+    return diplomat_out;
+  }
+}
+
+const ICU4XUnicodeScriptMapPropertyResult_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XUnicodeScriptMapPropertyResult_destroy(underlying);
+});
+
+export class ICU4XUnicodeScriptMapPropertyResult {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  get data() {
+    return (() => {
+      const out = new ICU4XUnicodeScriptMapProperty((new Uint32Array(wasm.memory.buffer, this.underlying + 0, 1))[0]);
+      out.owner = null;
+      return out;
+    })();
+  }
+
+  get success() {
+    return (new Uint8Array(wasm.memory.buffer, this.underlying + 4, 1))[0] == 1;
+  }
+}
+
+const ICU4XUnicodeSetProperty_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XUnicodeSetProperty_destroy(underlying);
+});
+
+export class ICU4XUnicodeSetProperty {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static try_get_ascii_hex_digit(provider) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeSetProperty_try_get_ascii_hex_digit(diplomat_receive_buffer, provider.underlying);
+      const out = new ICU4XUnicodeSetPropertyResult(diplomat_receive_buffer);
+      const out_data_value = out.data;
+      ICU4XUnicodeSetProperty_box_destroy_registry.register(out_data_value, out_data_value.underlying);
+      Object.defineProperty(out, "data", { value: out_data_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5,
+        align: 4,
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
+
+  static try_get_ascii_hex_digit_from_static(provider) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeSetProperty_try_get_ascii_hex_digit_from_static(diplomat_receive_buffer, provider.underlying);
+      const out = new ICU4XUnicodeSetPropertyResult(diplomat_receive_buffer);
+      const out_data_value = out.data;
+      ICU4XUnicodeSetProperty_box_destroy_registry.register(out_data_value, out_data_value.underlying);
+      Object.defineProperty(out, "data", { value: out_data_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5,
+        align: 4,
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
+
+  contains(cp) {
+    const diplomat_out = wasm.ICU4XUnicodeSetProperty_contains(this.underlying, cp);
+    return diplomat_out;
+  }
+}
+
+const ICU4XUnicodeSetPropertyResult_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XUnicodeSetPropertyResult_destroy(underlying);
+});
+
+export class ICU4XUnicodeSetPropertyResult {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  get data() {
+    return (() => {
+      const out = new ICU4XUnicodeSetProperty((new Uint32Array(wasm.memory.buffer, this.underlying + 0, 1))[0]);
+      out.owner = null;
+      return out;
+    })();
+  }
+
+  get success() {
+    return (new Uint8Array(wasm.memory.buffer, this.underlying + 4, 1))[0] == 1;
+  }
+}
