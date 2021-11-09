@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636402105363,
+  "lastUpdate": 1636477688360,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3203,6 +3203,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4fbf81c29ef49cc0c5dc0ccc25c708c68dd128c3"
         },
         "date": 1636402099706,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 843668,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c88c6fe1a714c872d7ea1893417fbe4ac72bd58c",
+          "message": "Add EncodeAsVarULE for ZeroVec (#1274)",
+          "timestamp": "2021-11-09T09:06:27-08:00",
+          "tree_id": "ada144b053d15e1ef9bcbdf8c5109984a4b77ad5",
+          "url": "https://github.com/unicode-org/icu4x/commit/c88c6fe1a714c872d7ea1893417fbe4ac72bd58c"
+        },
+        "date": 1636477681141,
         "tool": "ndjson",
         "benches": [
           {
