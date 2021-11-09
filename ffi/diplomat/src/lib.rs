@@ -38,6 +38,7 @@ pub mod fixed_decimal;
 pub mod locale;
 pub mod locale_canonicalizer;
 pub mod pluralrules;
+pub mod properties_maps;
 pub mod properties_sets;
 pub mod provider;
 

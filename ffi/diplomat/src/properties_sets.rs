@@ -17,7 +17,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html) for more information.
+    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
     pub struct ICU4XUnicodeSetProperty(DataPayload<'static, UnicodePropertyV1Marker>);
 
     pub struct ICU4XUnicodeSetPropertyResult {

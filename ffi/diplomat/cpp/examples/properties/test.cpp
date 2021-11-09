@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XUnicodeSetProperty.hpp"
+#include "../../include/ICU4XUnicodeScriptMapProperty.hpp"
 
 #include <iostream>
 
@@ -25,6 +26,22 @@ int test_set_property(ICU4XUnicodeSetPropertyResult result, char32_t included, c
     return 0;
 }
 
+int test_script_map_property(ICU4XUnicodeScriptMapPropertyResult result, char32_t sample, uint32_t expected) {
+    if (!result.success) {
+        std::cout << "Failed to create ICU4XUnicodeScriptMapProperty" << std::endl;
+        return 1;
+    }
+    uint32_t actual = result.data.value().get(sample);
+    std::cout << std::hex; // print hex for U+####
+    if (actual == expected) {
+        std::cout << "Code point U+" << sample << " correctly mapped to 0x" << actual << std::endl;
+    } else {
+        std::cout << "Code point U+" << sample << " incorrectly mapped to 0x" << actual << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
 int main() {
     ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).provider.value();
     int result;
@@ -33,6 +50,15 @@ int main() {
         ICU4XUnicodeSetProperty::try_get_ascii_hex_digit(dp),
         u'3',
         u'੩'
+    );
+    if (result != 0) {
+        return result;
+    }
+
+    result = test_script_map_property(
+        ICU4XUnicodeScriptMapProperty::try_get(dp),
+        u'木',
+        17 // Script::Han
     );
     if (result != 0) {
         return result;
