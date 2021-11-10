@@ -100,6 +100,9 @@ pub struct DataResponseMetadata {
 /// `dyn Drop` isn't legal (and doesn't make sense since `Drop` is not
 /// implement on all destructible types). However, all trait objects come with
 /// a destructor, so we can just use an empty trait to get a destructor object.
+///
+/// This should eventually be moved into the yoke crate once it's cleaner
+/// https://github.com/unicode-org/icu4x/issues/1284
 pub(crate) trait ErasedDestructor<'data>: IsCovariant<'data> {}
 impl<'data, T: IsCovariant<'data>> ErasedDestructor<'data> for T {}
 

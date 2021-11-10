@@ -294,6 +294,9 @@ where
                     Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
+                //
+                // eventually the yoke crate will have a safe function for this
+                // https://github.com/unicode-org/icu4x/issues/1284
                 unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
             }
             DataPayloadInner::Owned(yoke) => {
@@ -302,6 +305,9 @@ where
                     Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
+                //
+                // eventually the yoke crate will have a safe function for this
+                // https://github.com/unicode-org/icu4x/issues/1284
                 unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
             }
             DataPayloadInner::RcBuf(yoke) => {
@@ -310,6 +316,9 @@ where
                     Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
+                //
+                // eventually the yoke crate will have a safe function for this
+                // https://github.com/unicode-org/icu4x/issues/1284
                 unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
             }
         };
