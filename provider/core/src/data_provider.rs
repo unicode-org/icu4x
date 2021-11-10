@@ -237,7 +237,6 @@ fn test_clone_eq() {
 impl<'data, M> DataPayload<'data, M>
 where
     M: DataMarker<'data>,
-    M::Yokeable: ZeroCopyFrom<M::Cart>,
 {
     /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`].
     ///
@@ -264,9 +263,16 @@ where
     ///
     /// [`Cart`]: crate::marker::DataMarker::Cart
     #[inline]
-    pub fn from_partial_owned(data: Rc<M::Cart>) -> Self {
+    pub fn from_partial_owned<T: 'data>(data: Rc<T>) -> Self
+    where
+        M::Yokeable: ZeroCopyFrom<T>,
+    {
+        let yoke = unsafe {
+            // safe because we're not throwing away any actual data, simply type-erasing it
+            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedCart<'data>)
+        };
         Self {
-            inner: DataPayloadInner::RcStruct(Yoke::attach_to_rc_cart(data)),
+            inner: DataPayloadInner::RcStruct(yoke),
         }
     }
 }
