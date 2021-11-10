@@ -66,7 +66,7 @@ impl ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
 /// Marker type for [`ErasedDataStruct`].
 pub struct ErasedDataStructMarker {}
 
-impl DataMarker<'static> for ErasedDataStructMarker {
+impl DataMarker for ErasedDataStructMarker {
     type Yokeable = ErasedDataStructBox;
 }
 
@@ -75,7 +75,7 @@ pub struct ErasedDataStructBox(Box<dyn ErasedDataStruct>);
 
 impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
-    M: DataMarker<'static>,
+    M: DataMarker,
 {
     /// Upcast for ErasedDataStruct creates a `Box<dyn ErasedDataStruct>` from the current inner
     /// `Yoke` (i.e., `Box::new(yoke)`).
@@ -134,7 +134,7 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
     /// ```
     pub fn downcast<M>(self) -> Result<DataPayload<'static, M>, Error>
     where
-        M: DataMarker<'static>,
+        M: DataMarker,
     {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
@@ -236,7 +236,7 @@ where
 
 impl<'data, M> DataProvider<'static, M> for dyn ErasedDataProvider<'data> + 'data
 where
-    M: DataMarker<'static>,
+    M: DataMarker,
     <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
