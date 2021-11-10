@@ -82,12 +82,12 @@ where
     /// `Yoke` (i.e., `Box::new(yoke)`).
     fn upcast(other: DataPayload<'static, M>) -> DataPayload<'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
-        let cart: Box<dyn ErasedDataStruct> = match other.inner {
+        let owned: Box<dyn ErasedDataStruct> = match other.inner {
             RcStruct(yoke) => Box::new(yoke),
             Owned(yoke) => Box::new(yoke),
             RcBuf(yoke) => Box::new(yoke),
         };
-        DataPayload::from_owned(ErasedDataStructBox(cart))
+        DataPayload::from_owned(ErasedDataStructBox(owned))
     }
 }
 
