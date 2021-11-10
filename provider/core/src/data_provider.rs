@@ -540,7 +540,7 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'data, Cart = M::Cart>,
+        M2: DataMarker<'data>,
     {
         use DataPayloadInner::*;
         match self.inner {
@@ -598,7 +598,7 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'data, Cart = M::Cart>,
+        M2: DataMarker<'data>,
     {
         use DataPayloadInner::*;
         match &self.inner {
@@ -690,7 +690,7 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'data, Cart = M::Cart>,
+        M2: DataMarker<'data>,
     {
         use DataPayloadInner::*;
         match self.inner {
@@ -756,7 +756,7 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'data, Cart = M::Cart>,
+        M2: DataMarker<'data>,
     {
         use DataPayloadInner::*;
         match &self.inner {
@@ -856,7 +856,7 @@ where
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
     ) -> Result<DataPayload<'data, M2>, E>
     where
-        M2: DataMarker<'data, Cart = M::Cart>,
+        M2: DataMarker<'data>,
     {
         use DataPayloadInner::*;
         Ok(match self.inner {
@@ -926,7 +926,7 @@ where
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
     ) -> Result<DataPayload<'data, M2>, E>
     where
-        M2: DataMarker<'data, Cart = M::Cart>,
+        M2: DataMarker<'data>,
     {
         use DataPayloadInner::*;
         Ok(match &self.inner {

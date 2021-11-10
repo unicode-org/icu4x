@@ -77,7 +77,6 @@ pub struct ErasedDataStructBox(Box<dyn ErasedDataStruct>);
 impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
     M: DataMarker<'static>,
-    M::Cart: Sized,
 {
     /// Upcast for ErasedDataStruct creates a `Box<dyn ErasedDataStruct>` from the current inner
     /// `Yoke` (i.e., `Box::new(yoke)`).
@@ -137,8 +136,6 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
     pub fn downcast<M>(self) -> Result<DataPayload<'static, M>, Error>
     where
         M: DataMarker<'static>,
-        M::Cart: Sized,
-        M::Yokeable: ZeroCopyFrom<M::Cart>,
     {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
@@ -179,7 +176,7 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
                 // None of the downcasts succeeded; return an error.
                 Err(Error::MismatchedType {
                     actual: Some(any_box.type_id()),
-                    generic: Some(TypeId::of::<M::Cart>()),
+                    generic: Some(TypeId::of::<M::Yokeable>()),
                 })
             }
             // This is unreachable because an ErasedDataStruct payload can only be constructed as fully owned
@@ -242,8 +239,6 @@ impl<'data, M> DataProvider<'static, M> for dyn ErasedDataProvider<'data> + 'dat
 where
     M: DataMarker<'static>,
     <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,
-    M::Yokeable: ZeroCopyFrom<M::Cart>,
-    M::Cart: Sized,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'static, M>, Error> {

@@ -284,7 +284,6 @@ impl<'data, M> crate::dynutil::UpcastDataPayload<'data, M> for SerdeSeDataStruct
 where
     M: DataMarker<'data>,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
-    M::Cart: IsCovariant<'data>,
 {
     fn upcast(other: DataPayload<'data, M>) -> DataPayload<'data, SerdeSeDataStructMarker> {
         use crate::data_provider::{DataPayloadInner, ErasedCart};

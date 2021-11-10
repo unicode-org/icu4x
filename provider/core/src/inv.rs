@@ -8,8 +8,8 @@ use crate::error::Error;
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
 use alloc::boxed::Box;
-use alloc::vec::Vec;
 use alloc::vec;
+use alloc::vec::Vec;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
