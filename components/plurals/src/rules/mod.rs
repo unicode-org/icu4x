@@ -156,4 +156,8 @@
 //! [`Sample`]: super::rules::ast::Samples
 //! [`AST`]: super::rules::ast
 pub mod reference;
-pub(crate) mod runtime;
+
+// Need to expose it for `icu::provider_cldr` use, but we don't
+// have a reason to make it fully public, so hiding docs for now.
+#[doc(hidden)]
+pub mod runtime;
