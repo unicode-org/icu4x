@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636572663279,
+  "lastUpdate": 1636573265579,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16589,6 +16589,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4594,
             "range": "± 184",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "052c398ed85fe63c64b746d2e4c58167d47564f5",
+          "message": "Unify handling of TOML in uprops provider (#1254)",
+          "timestamp": "2021-11-10T11:32:56-08:00",
+          "tree_id": "7b37812cc03345076bcf62d494a78cf7478d1ef3",
+          "url": "https://github.com/unicode-org/icu4x/commit/052c398ed85fe63c64b746d2e4c58167d47564f5"
+        },
+        "date": 1636573258819,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3154,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5420,
+            "range": "± 227",
             "unit": "ns/iter"
           }
         ]
