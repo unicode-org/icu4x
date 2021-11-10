@@ -275,7 +275,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This can be used for type-erasing the cart, for example.
     ///
-    /// # Safety:
+    /// # Safety
     ///
     /// - `f()` must not panic
     /// - References from the yokeable `Y` should still be valid for the lifetime of the
