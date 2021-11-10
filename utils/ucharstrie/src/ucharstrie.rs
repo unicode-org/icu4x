@@ -37,6 +37,8 @@ const MAX_ONE_UNIT_NODE_VALUE: u16 = 0xff;
 
 const MIN_TWO_UNIT_NODE_VALUE_LEAD: u16 = MIN_VALUE_LEAD + ((MAX_ONE_UNIT_NODE_VALUE + 1) << 6); // 0x4040
 
+const THREE_UNIT_NODE_VALUE_LEAD: u16 = 0x7fc0;
+
 const THREE_UNIT_VALUE_LEAD: u16 = 0x7fff;
 
 // Compact delta integers.
@@ -48,6 +50,16 @@ fn skip_value(pos: usize, lead: u16) -> usize {
     if lead < MIN_TWO_UNIT_VALUE_LEAD {
         pos
     } else if lead < THREE_UNIT_VALUE_LEAD {
+        pos + 1
+    } else {
+        pos + 2
+    }
+}
+
+fn skip_node_value(pos: usize, lead: u16) -> usize {
+    if lead < MIN_TWO_UNIT_NODE_VALUE_LEAD {
+        pos
+    } else if lead < THREE_UNIT_NODE_VALUE_LEAD {
         pos + 1
     } else {
         pos + 2
@@ -164,7 +176,7 @@ impl<'a> UCharsTrieIterator<'a> {
                         return self.value_result(pos);
                     }
                 } else {
-                    self.remaining_match_length = Some(length);
+                    self.remaining_match_length = Some(length - 1);
                 }
                 return TrieResult::NoValue;
             }
@@ -279,7 +291,7 @@ impl<'a> UCharsTrieIterator<'a> {
                 break;
             } else {
                 // Skip intermediate value.
-                pos = skip_value(pos, node);
+                pos = skip_node_value(pos, node);
                 node &= NODE_TYPE_MASK;
             }
         }
@@ -346,18 +358,18 @@ impl<'a> UCharsTrieIterator<'a> {
         } else if lead_unit < THREE_UNIT_VALUE_LEAD {
             ((lead_unit - MIN_TWO_UNIT_VALUE_LEAD) as i32) << 16 | self.get(pos) as i32
         } else {
-            ((self.get(pos) as i32) << 16) | self.get(pos + 1) as i32
+            (self.get(pos) as i32) << 16 | self.get(pos + 1) as i32
         }
     }
 
     fn read_node_value(&self, pos: usize, lead_unit: u16) -> i32 {
-        if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
+        if lead_unit < (MIN_TWO_UNIT_NODE_VALUE_LEAD) {
             ((lead_unit >> 6) - 1).into()
-        } else if lead_unit < THREE_UNIT_VALUE_LEAD {
-            ((((lead_unit & 0x7fc0) - MIN_TWO_UNIT_NODE_VALUE_LEAD) as i32) << 10)
+        } else if lead_unit < THREE_UNIT_NODE_VALUE_LEAD {
+            (((lead_unit & 0x7fc0) - MIN_TWO_UNIT_NODE_VALUE_LEAD) as i32) << 10
                 | self.get(pos) as i32
         } else {
-            ((self.get(pos) as i32) << 16) | self.get(pos + 1) as i32
+            (self.get(pos) as i32) << 16 | self.get(pos + 1) as i32
         }
     }
 }
