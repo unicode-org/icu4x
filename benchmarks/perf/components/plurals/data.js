@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636572714999,
+  "lastUpdate": 1636573271131,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18647,6 +18647,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 26584,
             "range": "± 1518",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "052c398ed85fe63c64b746d2e4c58167d47564f5",
+          "message": "Unify handling of TOML in uprops provider (#1254)",
+          "timestamp": "2021-11-10T11:32:56-08:00",
+          "tree_id": "7b37812cc03345076bcf62d494a78cf7478d1ef3",
+          "url": "https://github.com/unicode-org/icu4x/commit/052c398ed85fe63c64b746d2e4c58167d47564f5"
+        },
+        "date": 1636573263760,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1195,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8646,
+            "range": "± 334",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24508,
+            "range": "± 1087",
             "unit": "ns/iter"
           }
         ]
