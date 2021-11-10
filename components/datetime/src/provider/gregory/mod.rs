@@ -118,8 +118,7 @@ pub mod patterns {
     /// `DataPayload<PatternPluralsV1>`.
     pub(crate) struct PatternPluralsFromPatternsV1Marker;
 
-    impl<'data> DataMarker<'data> for PatternPluralsFromPatternsV1Marker {
+    impl DataMarker for PatternPluralsFromPatternsV1Marker {
         type Yokeable = PatternPluralsV1<'static>;
-        type Cart = DatePatternsV1<'data>;
     }
 }
