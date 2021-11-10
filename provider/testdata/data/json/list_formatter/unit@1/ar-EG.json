@@ -1,0 +1,44 @@
+{
+  "start": {
+    "default": {
+      "string": "، و",
+      "index_1": 5
+    },
+    "special_case": null
+  },
+  "middle": null,
+  "end": null,
+  "pair": {
+    "default": {
+      "string": " و",
+      "index_1": 3
+    },
+    "special_case": null
+  },
+  "short_start": null,
+  "short_middle": null,
+  "short_end": null,
+  "short_pair": {
+    "default": {
+      "string": " و",
+      "index_1": 3
+    },
+    "special_case": null
+  },
+  "narrow_start": {
+    "default": {
+      "string": " و",
+      "index_1": 3
+    },
+    "special_case": null
+  },
+  "narrow_middle": null,
+  "narrow_end": {
+    "default": {
+      "string": " و",
+      "index_1": 3
+    },
+    "special_case": null
+  },
+  "narrow_pair": null
+}
