@@ -95,6 +95,18 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
+/// Dummy trait that lets us `dyn Drop`
+///
+/// `dyn Drop` isn't legal (and doesn't make sense since `Drop` is not
+/// implement on all destructible types). However, all trait objects come with
+/// a destructor, so we can just use an empty trait to get a destructor object.
+pub(crate) trait ErasedDestructor {}
+impl<T> ErasedDestructor for T {}
+
+/// All that Yoke needs from the Cart type is the destructor. We can
+/// use a trait object to handle that.
+pub(crate) type ErasedCart<'a> = Rc<dyn ErasedDestructor + 'a>;
+
 pub(crate) enum DataPayloadInner<'data, M>
 where
     M: DataMarker<'data>,
