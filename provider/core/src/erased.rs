@@ -253,16 +253,16 @@ where
 mod test {
     use super::*;
     use crate::dynutil::UpcastDataPayload;
-    use crate::marker::CowStringMarker;
+    use crate::marker::CowStrMarker;
     use alloc::borrow::Cow;
 
     #[test]
     fn test_erased_case_2() {
         let data = Rc::new("foo".to_string());
-        let original = DataPayload::<CowStringMarker>::from_partial_owned(data);
+        let original = DataPayload::<CowStrMarker>::from_partial_owned(data);
         let upcasted = ErasedDataStructMarker::upcast(original);
         let downcasted = upcasted
-            .downcast::<CowStringMarker>()
+            .downcast::<CowStrMarker>()
             .expect("Type conversion");
         assert_eq!(downcasted.get(), "foo");
     }
@@ -270,10 +270,10 @@ mod test {
     #[test]
     fn test_erased_case_3() {
         let data = "foo".to_string();
-        let original = DataPayload::<CowStringMarker>::from_owned(Cow::Owned(data));
+        let original = DataPayload::<CowStrMarker>::from_owned(Cow::Owned(data));
         let upcasted = ErasedDataStructMarker::upcast(original);
         let downcasted = upcasted
-            .downcast::<CowStringMarker>()
+            .downcast::<CowStrMarker>()
             .expect("Type conversion");
         assert_eq!(downcasted.get(), "foo");
     }
@@ -281,13 +281,13 @@ mod test {
     #[test]
     fn test_erased_case_4() {
         let data: Rc<[u8]> = "foo".as_bytes().into();
-        let original = DataPayload::<CowStringMarker>::try_from_rc_buffer_badly(data, |bytes| {
+        let original = DataPayload::<CowStrMarker>::try_from_rc_buffer_badly(data, |bytes| {
             core::str::from_utf8(bytes).map(|s| Cow::Borrowed(s))
         })
         .expect("String is valid UTF-8");
         let upcasted = ErasedDataStructMarker::upcast(original);
         let downcasted = upcasted
-            .downcast::<CowStringMarker>()
+            .downcast::<CowStrMarker>()
             .expect("Type conversion");
         assert_eq!(downcasted.get(), "foo");
     }

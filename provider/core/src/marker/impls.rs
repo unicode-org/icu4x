@@ -19,11 +19,3 @@ impl DataPayload<'static, CowStrMarker> {
         DataPayload::from_owned(Cow::Borrowed(s))
     }
 }
-
-/// Marker type for [`Cow`]`<str>` where the backing cart is `String`. This is required if
-/// `ErasedDataStruct` is to be used.
-pub struct CowStringMarker;
-
-impl DataMarker for CowStringMarker {
-    type Yokeable = Cow<'static, str>;
-}
