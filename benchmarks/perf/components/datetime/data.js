@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636582116367,
+  "lastUpdate": 1636583909293,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12443,6 +12443,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 360736,
             "range": "± 22128",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92abc789dd46000a3dcfd3d5b46a592f76e834da",
+          "message": "Update tutorial to include uprops data (#1286)",
+          "timestamp": "2021-11-10T14:30:34-08:00",
+          "tree_id": "b376f260011fd1c5a660f2df1511b68d6b11fe81",
+          "url": "https://github.com/unicode-org/icu4x/commit/92abc789dd46000a3dcfd3d5b46a592f76e834da"
+        },
+        "date": 1636583902069,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 123881,
+            "range": "± 8864",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1394474,
+            "range": "± 72211",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 355822,
+            "range": "± 18715",
             "unit": "ns/iter"
           }
         ]
