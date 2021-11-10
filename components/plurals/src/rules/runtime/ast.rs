@@ -375,6 +375,9 @@ unsafe impl VarULE for RelationULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
         RelationULE::validate_andor_polarity_operand(bytes[0])?;
         // Skip bytes 1-4 as they're always valid `u32` for `Modulo`.
+        if bytes.len() < 5 {
+            return Err("byte slice is too short");
+        }
         let remaining = &bytes[5..];
         RangeOrValueULE::validate_byte_slice(remaining)
             .map_err(|_| "Invalid list of RangeOrValueULE")?;

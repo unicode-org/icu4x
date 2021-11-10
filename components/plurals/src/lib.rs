@@ -65,12 +65,10 @@
 //! [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 //! [`CLDR`]: http://cldr.unicode.org/
 
-#![warn(missing_docs)]
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
 extern crate alloc;
 
-// mod data;
 mod error;
 mod operands;
 pub mod provider;
@@ -303,7 +301,7 @@ impl<'data> PluralRules<'data> {
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
     where
-        D: DataProvider<'data, PluralRulesV1Marker>,
+        D: DataProvider<'data, PluralRulesV1Marker> + ?Sized,
     {
         let locale = locale.into();
         let key = match rule_type {

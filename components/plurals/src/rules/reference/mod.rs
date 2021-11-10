@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Reference version of the Plural Rules parser, AST and serializer.
+
 pub mod ast;
 pub(crate) mod lexer;
 pub(crate) mod parser;

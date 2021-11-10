@@ -7,6 +7,27 @@ use crate::rules::runtime::ast;
 
 #[inline]
 pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {
+    // This algorithm is a simple non-recursive interpreter of the
+    // [`UTS #35: Language Plural Rules`].
+    //
+    // The algorithm exploits the fact that plural rules syntax is a simple
+    // logical operator expression composition with maximum depth of one
+    // level of `OR` expression.
+    //
+    // That means that any `AND` expression accumulates to a single boolean
+    // result which either results in a test passing, or the next set
+    // of `AND` relations is evaluated after the `OR`.
+    //
+    // To achieve that, the algorithm traverses the relations from left to right
+    // collecting all matching relations into a temporary `left` variable for
+    // as long as they are followed by the `AND` operator.
+    //
+    // If any relation fails to match, the `left` variable becomes `false` and the
+    // interpreter skips to the first `OR` operator, rejects the left side, and
+    // evaluates the right as a candidate and so on.
+    //
+    // [`UTS #35: Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
+
     let mut left = true;
 
     for relation in rule.0.iter() {

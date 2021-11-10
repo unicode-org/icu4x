@@ -7,7 +7,6 @@ use icu_plurals::provider::{self, PluralRulesV1};
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu_provider::prelude::*;
 use icu_provider::struct_provider::StructProvider;
-use std::borrow::Cow;
 use std::rc::Rc;
 
 #[test]
