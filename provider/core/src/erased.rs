@@ -66,9 +66,12 @@ impl ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
 pub struct ErasedDataStructMarker {}
 
 impl DataMarker<'static> for ErasedDataStructMarker {
-    type Yokeable = &'static dyn ErasedDataStruct;
-    type Cart = dyn ErasedDataStruct;
+    type Yokeable = ErasedDataYokeable;
+    type Cart = ErasedDataYokeable;
 }
+
+#[derive(Yokeable)]
+pub struct ErasedDataYokeable(Rc<dyn ErasedDataStruct>);
 
 impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
@@ -84,7 +87,7 @@ where
             Owned(yoke) => Rc::from(yoke),
             RcBuf(yoke) => Rc::from(yoke),
         };
-        DataPayload::from_partial_owned(cart)
+        DataPayload::from_owned(ErasedDataYokeable(cart))
     }
 }
 
@@ -138,8 +141,8 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
     {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
-            RcStruct(yoke) => {
-                let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
+            Owned(yoke) => {
+                let any_rc: Rc<dyn Any> = yoke.into_yokeable().0.into_any_rc();
                 // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
                 // could have been either the RcStruct or the Owned variant of Yoke.
                 // Check first for Case 2: an RcStruct Yoke.
@@ -182,11 +185,10 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
                     generic: Some(TypeId::of::<M::Cart>()),
                 })
             }
-            // This is unreachable because ErasedDataStruct cannot be fully owned, since it
-            // contains a reference.
-            Owned(_) => unreachable!(),
-            // This is unreachable because ErasedDataStruct needs to reference an object.
-            RcBuf(_) => unreachable!(),
+            // This is unreachable because an ErasedDataStruct payload can only be constructed as fully owned
+            // (It is impossible for clients to construct an ErasedDataStruct payload manually since ErasedDataYokeable
+            // has a private field)
+            RcStruct(_) | RcBuf(_) => unreachable!(),
         }
     }
 }
