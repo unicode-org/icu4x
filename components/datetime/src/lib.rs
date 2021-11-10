@@ -88,9 +88,8 @@ pub mod pattern;
 pub mod provider;
 #[doc(hidden)]
 pub mod skeleton;
-// TODO(#622) make the time_zone module public once TimeZoneFormat is public.
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
-pub(crate) mod time_zone;
+pub mod time_zone;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod zoned_datetime;
 
@@ -100,4 +99,5 @@ pub use format::datetime::FormattedDateTime;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatOptions;
 pub use zoned_datetime::ZonedDateTimeFormat;
-// TODO(#622) re-export TimeZoneFormat once it is made public.
+pub use time_zone::TimeZoneFormat;
+
