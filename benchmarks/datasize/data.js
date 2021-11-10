@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636578532067,
+  "lastUpdate": 1636578922826,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3413,6 +3413,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fd2515c6b881d0a47ab7414637d3eaf3787f0a5f"
         },
         "date": 1636578527037,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 846762,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6857ec1508b0fd74e6d15e20a76220bad211067",
+          "message": "Burn DataMarker::Cart down with fire (#1279)\n\n* Add Yoke::replace_cart()\r\n\r\n* Use ErasedCart\r\n\r\n* Replace M::Cart with ErasedCart in RcStruct\r\n\r\n* Remove Cart type from DataMarker\r\n\r\n* Remove 'data from DataMarker",
+          "timestamp": "2021-11-10T13:14:00-08:00",
+          "tree_id": "6e7c0f3da973b0e47ec23491c260e3c359071dc2",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6857ec1508b0fd74e6d15e20a76220bad211067"
+        },
+        "date": 1636578917878,
         "tool": "ndjson",
         "benches": [
           {
