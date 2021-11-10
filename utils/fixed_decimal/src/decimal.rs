@@ -441,17 +441,38 @@ impl FixedDecimal {
     #[cfg(debug_assertions)]
     fn check_invariants(&self) {
         // magnitude invariants:
-        debug_assert!(self.upper_magnitude >= self.magnitude, "{:?}", self);
-        debug_assert!(self.lower_magnitude <= self.magnitude, "{:?}", self);
-        debug_assert!(self.upper_magnitude >= 0, "{:?}", self);
-        debug_assert!(self.lower_magnitude <= 0, "{:?}", self);
+        debug_assert!(
+            self.upper_magnitude >= self.magnitude,
+            "Upper magnitude too small {:?}",
+            self
+        );
+        debug_assert!(
+            self.lower_magnitude <= self.magnitude,
+            "Lower magnitude too large {:?}",
+            self
+        );
+        debug_assert!(
+            self.upper_magnitude >= 0,
+            "Upper magnitude below zero {:?}",
+            self
+        );
+        debug_assert!(
+            self.lower_magnitude <= 0,
+            "Lower magnitude above zero {:?}",
+            self
+        );
 
         // digits invariants:
         let max_len = (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize;
         debug_assert!(self.digits.len() <= max_len, "{:?}", self);
         if !self.digits.is_empty() {
-            debug_assert_ne!(self.digits[0], 0, "{:?}", self);
-            debug_assert_ne!(self.digits[self.digits.len() - 1], 0, "{:?}", self);
+            debug_assert_ne!(self.digits[0], 0, "Starts with a zero {:?}", self);
+            debug_assert_ne!(
+                self.digits[self.digits.len() - 1],
+                0,
+                "Ends with a zero {:?}",
+                self
+            );
         }
     }
 }
@@ -828,6 +849,8 @@ impl FixedDecimal {
                 }
             }
         }
+        #[cfg(debug_assertions)]
+        decimal.check_invariants();
         Ok(decimal)
     }
     /// Internal function for parsing directly from floats using ryū
@@ -855,6 +878,18 @@ impl FixedDecimal {
     /// It will only modify upper_magnitude when it is not large enough to fit the rounded number.
     /// The caller may fix up `lower_magnitude` by whatever scheme it desires
     fn round_trailing_digits(&mut self, n: u16, mode: RoundingMode) -> Result<(), Error> {
+        /// For fixing up invariants after truncation
+        ///
+        /// Basically will ensure that we don't end with any zeroes
+        fn fixup_invariants(dec: &mut FixedDecimal) {
+            let first_nonzero = dec.digits.iter().rposition(|d| *d != 0).unwrap_or(0);
+            dec.digits.truncate(first_nonzero + 1);
+            if dec.digits.len() == 0 {
+                dec.magnitude = 0;
+                dec.upper_magnitude = 0;
+            }
+        }
+
         debug_assert!(
             self.digits.len() >= n as usize,
             "Attempted to round off {} digits of number that has only {}",
@@ -863,6 +898,8 @@ impl FixedDecimal {
         );
         if n == 0 {
             // no point attempting to round off any digits
+            #[cfg(debug_assertions)]
+            self.check_invariants();
             return Ok(());
         }
 
@@ -875,6 +912,9 @@ impl FixedDecimal {
             }
             RoundingMode::Truncate => {
                 self.digits.truncate(cutoff);
+                fixup_invariants(self);
+                #[cfg(debug_assertions)]
+                self.check_invariants();
                 return Ok(());
             }
             // continue to rest of routine
@@ -898,6 +938,8 @@ impl FixedDecimal {
                     // We need to update this digit, then we're done
                     *digit += 1;
                     self.digits.truncate(round_truncate);
+                    #[cfg(debug_assertions)]
+                    self.check_invariants();
                     return Ok(());
                 }
             }
@@ -913,6 +955,9 @@ impl FixedDecimal {
                 self.upper_magnitude = self.magnitude;
             }
         }
+        fixup_invariants(self);
+        #[cfg(debug_assertions)]
+        self.check_invariants();
         Ok(())
     }
 }
@@ -1002,6 +1047,11 @@ fn test_float() {
             input: 1.235567,
             precision: DoublePrecision::Magnitude(-2, RoundingMode::HalfExpand),
             expected: "1.24",
+        },
+        TestCase {
+            input: 1.2002,
+            precision: DoublePrecision::Magnitude(-3, RoundingMode::HalfExpand),
+            expected: "1.200",
         },
         TestCase {
             input: 888999.,
