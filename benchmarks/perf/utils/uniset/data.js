@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636582033577,
+  "lastUpdate": 1636583826200,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14459,6 +14459,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31991571,
             "range": "± 1260244",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92abc789dd46000a3dcfd3d5b46a592f76e834da",
+          "message": "Update tutorial to include uprops data (#1286)",
+          "timestamp": "2021-11-10T14:30:34-08:00",
+          "tree_id": "b376f260011fd1c5a660f2df1511b68d6b11fe81",
+          "url": "https://github.com/unicode-org/icu4x/commit/92abc789dd46000a3dcfd3d5b46a592f76e834da"
+        },
+        "date": 1636583819102,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 52332618,
+            "range": "± 886219",
             "unit": "ns/iter"
           }
         ]
