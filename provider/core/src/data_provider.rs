@@ -513,7 +513,7 @@ where
     /// // target type, and the Cart should correspond to the type being transformed.
     ///
     /// struct HelloWorldV1MessageMarker;
-    /// impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// impl DataMarker for HelloWorldV1MessageMarker {
     ///     type Yokeable = Cow<'static, str>;
     ///     type Cart = HelloWorldV1<'data>;
     /// }
@@ -571,7 +571,7 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
     /// #     type Cart = HelloWorldV1<'data>;
     /// # }
@@ -630,7 +630,7 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
     /// #     type Cart = HelloWorldV1<'data>;
     /// # }
@@ -659,7 +659,7 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
     /// #     type Cart = HelloWorldV1<'data>;
     /// # }
@@ -722,7 +722,7 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
     /// #     type Cart = HelloWorldV1<'data>;
     /// # }
@@ -788,7 +788,7 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
     /// #     type Cart = HelloWorldV1<'data>;
     /// # }
@@ -821,7 +821,7 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
     /// #     type Cart = HelloWorldV1<'data>;
     /// # }
@@ -888,7 +888,7 @@ where
     /// # use icu_provider::prelude::*;
     /// # use std::borrow::Cow;
     /// # struct HelloWorldV1MessageMarker;
-    /// # impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
     /// #     type Cart = HelloWorldV1<'data>;
     /// # }

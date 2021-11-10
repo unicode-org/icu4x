@@ -31,7 +31,7 @@ struct HelloAlt {
 /// Marker type for [`HelloAlt`].
 struct HelloAltMarker {}
 
-impl<'data> DataMarker<'data> for HelloAltMarker {
+impl DataMarker for HelloAltMarker {
     type Yokeable = HelloAlt;
 }
 

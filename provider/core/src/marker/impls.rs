@@ -9,7 +9,7 @@ use alloc::borrow::Cow;
 /// Marker type for [`Cow`]`<str>` where the backing cart is `str`.
 pub struct CowStrMarker;
 
-impl<'data> DataMarker<'data> for CowStrMarker {
+impl DataMarker for CowStrMarker {
     type Yokeable = Cow<'static, str>;
 }
 
@@ -24,6 +24,6 @@ impl DataPayload<'static, CowStrMarker> {
 /// `ErasedDataStruct` is to be used.
 pub struct CowStringMarker;
 
-impl<'data> DataMarker<'data> for CowStringMarker {
+impl DataMarker for CowStringMarker {
     type Yokeable = Cow<'static, str>;
 }

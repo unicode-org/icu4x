@@ -341,6 +341,6 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructDynRef<'static> {
 /// Marker type for [`SerdeSeDataStruct`].
 pub struct SerdeSeDataStructMarker {}
 
-impl<'data> DataMarker<'data> for SerdeSeDataStructMarker {
+impl DataMarker for SerdeSeDataStructMarker {
     type Yokeable = SerdeSeDataStructDynRef<'static>;
 }

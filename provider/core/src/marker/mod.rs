@@ -39,7 +39,7 @@ use crate::yoke::Yokeable;
 ///
 /// struct MyDataStructMarker;
 ///
-/// impl<'data> DataMarker<'data> for MyDataStructMarker {
+/// impl DataMarker for MyDataStructMarker {
 ///     type Yokeable = MyDataStruct<'static>;
 ///
 ///     // Note: the cart could also be just `str` since

@@ -44,7 +44,7 @@ impl Default for HelloWorldV1<'_> {
 /// Marker type for [`HelloWorldV1`].
 pub struct HelloWorldV1Marker;
 
-impl<'data> DataMarker<'data> for HelloWorldV1Marker {
+impl DataMarker for HelloWorldV1Marker {
     type Yokeable = HelloWorldV1<'static>;
 }
 
