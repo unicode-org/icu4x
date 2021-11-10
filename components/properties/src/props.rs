@@ -15,8 +15,12 @@ use serde::{Deserialize, Serialize};
 #[non_exhaustive]
 #[repr(i32)]
 pub enum EnumeratedProperty {
+    /// The East_Asian_Width property. See [`EastAsianWidth`].
+    EastAsianWidth = 0x1004,
     /// The General Category property.
     GeneralCategory = 0x1005,
+    /// The Line_Break enumerated property. See [`LineBreak`].
+    LineBreak = 0x1008,
     /// The Script property. See [`Script`].
     Script = 0x100A,
     /// The Grapheme_Cluster_Break enumerated property. See [`GraphemeClusterBreak`].
@@ -424,6 +428,87 @@ impl Script {
     pub const Yezidi: Script = Script(192);
     pub const Yi: Script = Script(41);
     pub const ZanabazarSquare: Script = Script(177);
+}
+
+/// Enumerated property East_Asian_Width.
+///
+/// See "Definition" in UAX #11 for the summary of each property value:
+/// <https://www.unicode.org/reports/tr11/#Definitions>
+///
+/// The numeric value is compatible with `UEastAsianWidth` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[repr(transparent)]
+pub struct EastAsianWidth(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl EastAsianWidth {
+    pub const Neutral: EastAsianWidth = EastAsianWidth(0); //name="N"
+    pub const Ambiguous: EastAsianWidth = EastAsianWidth(1); //name="A"
+    pub const Halfwidth: EastAsianWidth = EastAsianWidth(2); //name="H"
+    pub const Fullwidth: EastAsianWidth = EastAsianWidth(3); //name="F"
+    pub const Narrow: EastAsianWidth = EastAsianWidth(4); //name="Na"
+    pub const Wide: EastAsianWidth = EastAsianWidth(5); //name="W"
+}
+
+/// Enumerated property Line_Break.
+///
+/// See "Line Breaking Properties" in UAX #14 for the summary of each property
+/// value: <https://www.unicode.org/reports/tr14/#Properties>
+///
+/// The numeric value is compatible with `ULineBreak` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[repr(transparent)]
+pub struct LineBreak(pub u8);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl LineBreak {
+    pub const Unknown: LineBreak = LineBreak(0); // name="XX"
+    pub const Ambiguous: LineBreak = LineBreak(1); // name="AI"
+    pub const Alphabetic: LineBreak = LineBreak(2); // name="AL"
+    pub const BreakBoth: LineBreak = LineBreak(3); // name="B2"
+    pub const BreakAfter: LineBreak = LineBreak(4); // name="BA"
+    pub const BreakBefore: LineBreak = LineBreak(5); // name="BB"
+    pub const MandatoryBreak: LineBreak = LineBreak(6); // name="BK"
+    pub const ContingentBreak: LineBreak = LineBreak(7); // name="CB"
+    pub const ClosePunctuation: LineBreak = LineBreak(8); // name="CL"
+    pub const CombiningMark: LineBreak = LineBreak(9); // name="CM"
+    pub const CarriageReturn: LineBreak = LineBreak(10); // name="CR"
+    pub const Exclamation: LineBreak = LineBreak(11); // name="EX"
+    pub const Glue: LineBreak = LineBreak(12); // name="GL"
+    pub const Hyphen: LineBreak = LineBreak(13); // name="HY"
+    pub const Ideographic: LineBreak = LineBreak(14); // name="ID"
+    pub const Inseparable: LineBreak = LineBreak(15); // name="IN"
+    pub const InfixNumeric: LineBreak = LineBreak(16); // name="IS"
+    pub const LineFeed: LineBreak = LineBreak(17); // name="LF"
+    pub const Nonstarter: LineBreak = LineBreak(18); // name="NS"
+    pub const Numeric: LineBreak = LineBreak(19); // name="NU"
+    pub const OpenPunctuation: LineBreak = LineBreak(20); // name="OP"
+    pub const PostfixNumeric: LineBreak = LineBreak(21); // name="PO"
+    pub const PrefixNumeric: LineBreak = LineBreak(22); // name="PR"
+    pub const Quotation: LineBreak = LineBreak(23); // name="QU"
+    pub const ComplexContext: LineBreak = LineBreak(24); // name="SA"
+    pub const Surrogate: LineBreak = LineBreak(25); // name="SG"
+    pub const Space: LineBreak = LineBreak(26); // name="SP"
+    pub const BreakSymbols: LineBreak = LineBreak(27); // name="SY"
+    pub const ZWSpace: LineBreak = LineBreak(28); // name="ZW"
+    pub const NextLine: LineBreak = LineBreak(29); // name="NL"
+    pub const WordJoiner: LineBreak = LineBreak(30); // name="WJ"
+    pub const H2: LineBreak = LineBreak(31); // name="H2"
+    pub const H3: LineBreak = LineBreak(32); // name="H3"
+    pub const JL: LineBreak = LineBreak(33); // name="JL"
+    pub const JT: LineBreak = LineBreak(34); // name="JT"
+    pub const JV: LineBreak = LineBreak(35); // name="JV"
+    pub const CloseParenthesis: LineBreak = LineBreak(36); // name="CP"
+    pub const ConditionalJapaneseStarter: LineBreak = LineBreak(37); // name="CJ"
+    pub const HebrewLetter: LineBreak = LineBreak(38); // name="HL"
+    pub const RegionalIndicator: LineBreak = LineBreak(39); // name="RI"
+    pub const EBase: LineBreak = LineBreak(40); // name="EB"
+    pub const EModifier: LineBreak = LineBreak(41); // name="EM"
+    pub const ZWJ: LineBreak = LineBreak(42); // name="ZWJ
 }
 
 /// Enumerated property Grapheme_Cluster_Break.
