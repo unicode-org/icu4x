@@ -98,6 +98,5 @@ pub use error::DateTimeFormatError;
 pub use format::datetime::FormattedDateTime;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatOptions;
-pub use zoned_datetime::ZonedDateTimeFormat;
 pub use time_zone::TimeZoneFormat;
-
+pub use zoned_datetime::ZonedDateTimeFormat;

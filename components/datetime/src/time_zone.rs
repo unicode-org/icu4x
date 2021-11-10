@@ -93,7 +93,11 @@ pub struct TimeZoneFormat {
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
+<<<<<<< HEAD
     pub(super) exemplar_cities: Option<DataPayload<provider::time_zones::ExemplarCitiesV1Marker>>,
+=======
+    pub exemplar_cities: Option<DataPayload<'data, provider::time_zones::ExemplarCitiesV1Marker>>,
+>>>>>>> d69131fe (cargo fmt)
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
         Option<DataPayload<provider::time_zones::MetaZoneGenericNamesLongV1Marker>>,
