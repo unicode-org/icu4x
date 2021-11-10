@@ -6,8 +6,8 @@
 based off of a single sorted vector.
 
 The goal of this crate is to provide a map that is good enough for small
-sizes, and does not carry the binary size impact of [`std::collections::HashMap`]
-or [`std::collections::BTreeMap`].
+sizes, and does not carry the binary size impact of [`HashMap`](std::collections::HashMap)
+or [`BTreeMap`](alloc::collections::BTreeMap).
 
 If binary size is not a concern, [`std::collections::BTreeMap`] may be a better choice
 for your use case. It behaves very similarly to [`LiteMap`] for less than 12 elements,
