@@ -292,18 +292,24 @@ where
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
                     Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                // Safe since we are replacing the cart with another that owns
+                // the same underlying data
                 unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
             }
             DataPayloadInner::Owned(yoke) => {
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
                     Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                // Safe since we are replacing the cart with another that owns
+                // the same underlying data
                 unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
             }
             DataPayloadInner::RcBuf(yoke) => {
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
                     Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                // Safe since we are replacing the cart with another that owns
+                // the same underlying data
                 unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
             }
         };
