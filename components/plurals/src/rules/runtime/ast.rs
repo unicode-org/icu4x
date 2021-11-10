@@ -17,7 +17,7 @@ use zerovec::{
     {VarZeroVec, ZeroVec},
 };
 
-#[derive(Yokeable, ZeroCopyFrom, Clone)]
+#[derive(Yokeable, ZeroCopyFrom, Clone, PartialEq, Debug)]
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
@@ -290,6 +290,7 @@ impl fmt::Display for Rule<'_> {
 /// # Constraints
 ///
 /// The model constraints the `Operand` to 64 variants, and `Modulo` to `u32::MAX`.
+#[derive(Debug, PartialEq)]
 #[repr(packed)]
 pub struct RelationULE {
     /// This maps to (AndOr, Polarity, Operand),
