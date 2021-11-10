@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636573265579,
+  "lastUpdate": 1636578878828,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16625,6 +16625,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5420,
             "range": "± 227",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd2515c6b881d0a47ab7414637d3eaf3787f0a5f",
+          "message": "Deduplicating list formatter data (#1276)",
+          "timestamp": "2021-11-10T13:07:29-08:00",
+          "tree_id": "06957d906059cccc72452b9893dfffe8b72fdefe",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd2515c6b881d0a47ab7414637d3eaf3787f0a5f"
+        },
+        "date": 1636578872835,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2539,
+            "range": "± 84",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4757,
+            "range": "± 342",
             "unit": "ns/iter"
           }
         ]
