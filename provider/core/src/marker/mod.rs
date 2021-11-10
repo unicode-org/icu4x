@@ -54,7 +54,7 @@ use crate::yoke::Yokeable;
 /// let payload = DataPayload::<MyDataStructMarker>::from_partial_owned(s);
 /// assert_eq!(payload.get().message, "Hello World");
 /// ```
-pub trait DataMarker<'data> {
+pub trait DataMarker {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
