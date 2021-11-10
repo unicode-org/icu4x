@@ -116,7 +116,7 @@ pub fn deserialize_zero_copy<'data, M>(
     syntax_option: &SyntaxOption,
 ) -> for<'de> fn(bytes: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):

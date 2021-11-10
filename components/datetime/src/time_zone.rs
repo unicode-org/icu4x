@@ -29,7 +29,7 @@ fn load_resource<'data, D, L, P>(
     provider: &P,
 ) -> Result<(), DateTimeFormatError>
 where
-    D: DataMarker<'data>,
+    D: DataMarker,
     L: Clone + Into<LanguageIdentifier>,
     P: DataProvider<'data, D> + ?Sized,
 {
