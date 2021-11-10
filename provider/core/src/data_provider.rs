@@ -105,13 +105,13 @@ impl<T> ErasedDestructor for T {}
 
 /// All that Yoke needs from the Cart type is the destructor. We can
 /// use a trait object to handle that.
-pub(crate) type ErasedCart<'a> = Rc<dyn ErasedDestructor + 'a>;
+pub(crate) type ErasedCart<'data> = Rc<dyn ErasedDestructor + 'data>;
 
 pub(crate) enum DataPayloadInner<'data, M>
 where
     M: DataMarker<'data>,
 {
-    RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
+    RcStruct(Yoke<M::Yokeable, ErasedCart<'data>>),
     Owned(Yoke<M::Yokeable, ()>),
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
