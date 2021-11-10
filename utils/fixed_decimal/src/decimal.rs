@@ -884,7 +884,7 @@ impl FixedDecimal {
         fn fixup_invariants(dec: &mut FixedDecimal) {
             let first_nonzero = dec.digits.iter().rposition(|d| *d != 0).unwrap_or(0);
             dec.digits.truncate(first_nonzero + 1);
-            if dec.digits.len() == 0 {
+            if dec.digits.is_empty() {
                 dec.magnitude = 0;
                 dec.upper_magnitude = 0;
             }
