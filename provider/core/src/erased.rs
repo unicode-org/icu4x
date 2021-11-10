@@ -71,21 +71,21 @@ impl DataMarker<'static> for ErasedDataStructMarker {
 }
 
 #[derive(Yokeable)]
-pub struct ErasedDataYokeable(Rc<dyn ErasedDataStruct>);
+pub struct ErasedDataYokeable(Box<dyn ErasedDataStruct>);
 
 impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
     M: DataMarker<'static>,
     M::Cart: Sized,
 {
-    /// Upcast for ErasedDataStruct creates an `Rc<dyn ErasedDataStruct>` from the current inner
-    /// `Yoke` (i.e., `Rc::from(yoke)`).
+    /// Upcast for ErasedDataStruct creates a `Box<dyn ErasedDataStruct>` from the current inner
+    /// `Yoke` (i.e., `Box::new(yoke)`).
     fn upcast(other: DataPayload<'static, M>) -> DataPayload<'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
-        let cart: Rc<dyn ErasedDataStruct> = match other.inner {
-            RcStruct(yoke) => Rc::from(yoke),
-            Owned(yoke) => Rc::from(yoke),
-            RcBuf(yoke) => Rc::from(yoke),
+        let cart: Box<dyn ErasedDataStruct> = match other.inner {
+            RcStruct(yoke) => Box::new(yoke),
+            Owned(yoke) => Box::new(yoke),
+            RcBuf(yoke) => Box::new(yoke),
         };
         DataPayload::from_owned(ErasedDataYokeable(cart))
     }
@@ -142,46 +142,42 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
             Owned(yoke) => {
-                let any_rc: Rc<dyn Any> = yoke.into_yokeable().0.into_any_rc();
-                // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
+                let any_box: Box<dyn Any> = yoke.into_yokeable().0.into_any();
+                // `any_box` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
                 // could have been either the RcStruct or the Owned variant of Yoke.
                 // Check first for Case 2: an RcStruct Yoke.
-                let y1 = any_rc.downcast::<Yoke<M::Yokeable, Rc<M::Cart>>>();
-                let any_rc = match y1 {
-                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
-                        Ok(yoke) => {
-                            return Ok(DataPayload {
-                                inner: RcStruct(yoke),
-                            })
-                        }
-                        // Note: We could consider cloning the Yoke instead of erroring out.
-                        Err(_) => return Err(Error::MultipleReferences),
-                    },
-                    Err(any_rc) => any_rc,
+                let y1 = any_box.downcast::<Yoke<M::Yokeable, Rc<M::Cart>>>();
+                let any_box = match y1 {
+                    Ok(yoke) => {
+                        return Ok(DataPayload {
+                            inner: RcStruct(*yoke),
+                        })
+                    }
+                    Err(any_box) => any_box,
                 };
                 // Check for Case 3: an Owned Yoke.
-                let y2 = any_rc.downcast::<Yoke<M::Yokeable, ()>>();
-                let any_rc = match y2 {
-                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
-                        Ok(yoke) => return Ok(DataPayload { inner: Owned(yoke) }),
-                        // Note: We could consider cloning the Yoke instead of erroring out.
-                        Err(_) => return Err(Error::MultipleReferences),
-                    },
-                    Err(any_rc) => any_rc,
+                let y2 = any_box.downcast::<Yoke<M::Yokeable, ()>>();
+                let any_box = match y2 {
+                    Ok(yoke) => {
+                        return Ok(DataPayload {
+                            inner: Owned(*yoke),
+                        })
+                    }
+                    Err(any_box) => any_box,
                 };
                 // Check for Case 4: an RcBuf Yoke.
-                let y2 = any_rc.downcast::<Yoke<M::Yokeable, Rc<[u8]>>>();
-                let any_rc = match y2 {
-                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
-                        Ok(yoke) => return Ok(DataPayload { inner: RcBuf(yoke) }),
-                        // Note: We could consider cloning the Yoke instead of erroring out.
-                        Err(_) => return Err(Error::MultipleReferences),
-                    },
-                    Err(any_rc) => any_rc,
+                let y2 = any_box.downcast::<Yoke<M::Yokeable, Rc<[u8]>>>();
+                let any_box = match y2 {
+                    Ok(yoke) => {
+                        return Ok(DataPayload {
+                            inner: RcBuf(*yoke),
+                        })
+                    }
+                    Err(any_box) => any_box,
                 };
                 // None of the downcasts succeeded; return an error.
                 Err(Error::MismatchedType {
-                    actual: Some(any_rc.type_id()),
+                    actual: Some(any_box.type_id()),
                     generic: Some(TypeId::of::<M::Cart>()),
                 })
             }
