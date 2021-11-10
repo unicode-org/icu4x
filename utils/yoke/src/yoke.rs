@@ -388,6 +388,15 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     pub fn new_always_owned(yokeable: Y) -> Self {
         Self { yokeable, cart: () }
     }
+
+    /// Obtain the yokeable out of a `Yoke<Y, ()>`
+    ///
+    /// For most `Yoke` types this would be unsafe but it's
+    /// fine for `Yoke<Y, ()>` since there are no actual internal
+    /// references
+    pub fn into_yokeable(self) -> Y {
+        self.yokeable
+    }
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
