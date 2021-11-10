@@ -12,13 +12,11 @@ pub mod binary {
     }
 
     #[derive(serde::Deserialize)]
-    pub struct Level1 {
-        pub data: BinaryProperty,
-    }
-
-    #[derive(serde::Deserialize)]
     pub struct Main {
-        pub binary_property: Level1,
+        #[serde(default)]
+        pub binary_property: Vec<BinaryProperty>,
+        #[serde(skip)]
+        pub enum_property: (),
     }
 }
 
@@ -74,9 +72,9 @@ pub mod enumerated {
 
     #[derive(serde::Deserialize)]
     pub struct Main {
-        #[serde(default)]
-        pub enum_property: Vec<EnumeratedPropertyMap>,
         #[serde(skip)]
         pub binary_property: (),
+        #[serde(default)]
+        pub enum_property: Vec<EnumeratedPropertyMap>,
     }
 }

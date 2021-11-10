@@ -2,30 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::Error;
-use crate::uprops_serde;
+use crate::uprops_helpers::{self, TomlBinary};
+
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
-use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 
 pub struct BinaryPropertyUnicodeSetDataProvider {
-    root_dir: PathBuf,
+    data: TomlBinary,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
 impl BinaryPropertyUnicodeSetDataProvider {
-    pub fn new(root_dir: PathBuf) -> Self {
-        BinaryPropertyUnicodeSetDataProvider { root_dir }
-    }
-    fn get_toml_data(&self, name: &str) -> Result<uprops_serde::binary::Main, Error> {
-        let mut path: PathBuf = self.root_dir.clone().join(name);
-        path.set_extension("toml");
-        let toml_str = fs::read_to_string(&path).map_err(|e| Error::Io(e, path.clone()))?;
-        toml::from_str(&toml_str).map_err(|e| Error::Toml(e, path))
+    pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
+        let data = uprops_helpers::load_binary_from_dir(root_dir)?;
+        Ok(Self { data })
     }
 }
 
@@ -34,12 +28,13 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertyUnico
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'data, UnicodePropertyV1Marker>, DataError> {
-        let toml_data: uprops_serde::binary::Main = self
-            .get_toml_data(&req.resource_path.key.sub_category)
-            .map_err(DataError::new_resc_error)?;
+        let data = &self
+            .data
+            .get(&req.resource_path.key.sub_category)
+            .ok_or(DataError::MissingResourceKey(req.resource_path.key))?;
 
         let mut builder = UnicodeSetBuilder::new();
-        for (start, end) in toml_data.binary_property.data.ranges {
+        for (start, end) in &data.ranges {
             builder.add_range_u32(&(start..=end));
         }
         let uniset = builder.build();
@@ -76,7 +71,8 @@ fn test_basic() {
     use std::convert::TryInto;
 
     let root_dir = icu_testdata::paths::data_root().join("uprops");
-    let provider = BinaryPropertyUnicodeSetDataProvider::new(root_dir);
+    let provider = BinaryPropertyUnicodeSetDataProvider::try_new(&root_dir)
+        .expect("TOML should load successfully");
 
     let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
         .load_payload(&DataRequest {
