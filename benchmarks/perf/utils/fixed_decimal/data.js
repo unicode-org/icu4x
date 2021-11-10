@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636494557277,
+  "lastUpdate": 1636572617791,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13259,6 +13259,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 130900,
             "range": "± 5276",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0fe7189471f3889ede366fcc9979ff311ed84d45",
+          "message": "Move ErasedDataStruct to the owned variant of DataPayload (#1278)",
+          "timestamp": "2021-11-10T11:23:19-08:00",
+          "tree_id": "19db1c514ffcdbfcbc0e208aede04dc42f408dee",
+          "url": "https://github.com/unicode-org/icu4x/commit/0fe7189471f3889ede366fcc9979ff311ed84d45"
+        },
+        "date": 1636572611782,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 133415,
+            "range": "± 4463",
             "unit": "ns/iter"
           }
         ]
