@@ -96,13 +96,25 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("INPUT_ROOT")
-                .long("input-root")
+            Arg::with_name("CLDR_ROOT")
+                .long("cldr-root")
                 .value_name("PATH")
                 .help(
-                    "Path to input files' root directory. \n(For CLDR JSON, ignored if \
+                    "Path to the CLDR JSON root directory. Ignored if \
                         '--cldr-tag' is present.\n\
-                    https://github.com/unicode-org/cldr-json/tree/master/cldr-json.)",
+                    https://github.com/unicode-org/cldr-json/tree/master/cldr-json",
+                )
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("UPROPS_ROOT")
+                .long("uprops-root")
+                .value_name("PATH")
+                .help(
+                    "Path to the icuexportdata uprops directory. Download a \
+                    icuexportdata_uprops_*.zip file and point to either the \
+                    'small' or the 'fast'  subdirectory.\n\
+                    https://github.com/unicode-org/icu/releases",
                 )
                 .takes_value(true),
         )
@@ -372,7 +384,7 @@ fn export_cldr<'data>(
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
         Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
-    } else if let Some(path) = matches.value_of("INPUT_ROOT") {
+    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
         Box::new(CldrPathsAllInOne {
             cldr_json_root: PathBuf::from(path),
             locale_subset: locale_subset.to_string(),
@@ -383,7 +395,7 @@ fn export_cldr<'data>(
             locale_subset: "full".to_string(),
         })
     } else {
-        eyre::bail!("Either --cldr-tag or --input-root must be specified",)
+        eyre::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };
 
     let keys = get_all_cldr_keys();
@@ -424,12 +436,12 @@ fn export_set_props<'data>(
 ) -> eyre::Result<()> {
     log::trace!("Loading data for binary properties...");
 
-    let toml_root = if let Some(path) = matches.value_of("INPUT_ROOT") {
+    let toml_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
         PathBuf::from(path)
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
         icu_testdata::paths::uprops_toml_root()
     } else {
-        eyre::bail!("Value for --input-root must be specified",)
+        eyre::bail!("Value for --uprops-root must be specified",)
     };
     let provider = PropertiesDataProvider::try_new(&toml_root)?;
 
@@ -466,12 +478,12 @@ fn export_map_props<'data>(
 ) -> eyre::Result<()> {
     log::trace!("Loading data for enumerated properties...");
 
-    let toml_root = if let Some(path) = matches.value_of("INPUT_ROOT") {
+    let toml_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
         PathBuf::from(path)
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
         icu_testdata::paths::uprops_toml_root()
     } else {
-        eyre::bail!("Value for --input-root must be specified",)
+        eyre::bail!("Value for --uprops-root must be specified",)
     };
     let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&toml_root)?;
 
