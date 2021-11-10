@@ -886,7 +886,6 @@ impl FixedDecimal {
             dec.digits.truncate(first_nonzero + 1);
             if dec.digits.is_empty() {
                 dec.magnitude = 0;
-                dec.upper_magnitude = 0;
             }
         }
 
@@ -954,8 +953,9 @@ impl FixedDecimal {
             if self.upper_magnitude < self.magnitude {
                 self.upper_magnitude = self.magnitude;
             }
+        } else {
+            fixup_invariants(self);
         }
-        fixup_invariants(self);
         #[cfg(debug_assertions)]
         self.check_invariants();
         Ok(())
