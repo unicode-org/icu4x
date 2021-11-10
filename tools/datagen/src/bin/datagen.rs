@@ -422,6 +422,8 @@ fn export_set_props<'data>(
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
 ) -> eyre::Result<()> {
+    log::trace!("Loading data for binary properties...");
+
     let toml_root = if let Some(path) = matches.value_of("INPUT_ROOT") {
         PathBuf::from(path)
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
@@ -429,7 +431,7 @@ fn export_set_props<'data>(
     } else {
         eyre::bail!("Value for --input-root must be specified",)
     };
-    let provider = PropertiesDataProvider::try_new(toml_root)?;
+    let provider = PropertiesDataProvider::try_new(&toml_root)?;
 
     let keys = ALL_SET_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
@@ -442,11 +444,14 @@ fn export_set_props<'data>(
     };
 
     for key in keys.iter() {
-        log::info!("Writing key: {}", key);
         let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
-        if matches.is_present("TEST_KEYS") && matches!(result, Err(DataError::Resource(_))) {
+        if matches.is_present("TEST_KEYS")
+            && matches!(result, Err(DataError::MissingResourceKey(_)))
+        {
             // Within testdata, if the data for a particular property is unavailable, skip it for now.
+            log::trace!("Skipping key: {}", key);
         } else {
+            log::info!("Writing key: {}", key);
             result?
         }
     }
@@ -459,6 +464,8 @@ fn export_map_props<'data>(
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
 ) -> eyre::Result<()> {
+    log::trace!("Loading data for enumerated properties...");
+
     let toml_root = if let Some(path) = matches.value_of("INPUT_ROOT") {
         PathBuf::from(path)
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
@@ -466,7 +473,7 @@ fn export_map_props<'data>(
     } else {
         eyre::bail!("Value for --input-root must be specified",)
     };
-    let provider = EnumeratedPropertyCodePointTrieProvider::try_new(toml_root)?;
+    let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&toml_root)?;
 
     let keys = ALL_MAP_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
@@ -479,11 +486,14 @@ fn export_map_props<'data>(
     };
 
     for key in keys.iter() {
-        log::info!("Writing key: {}", key);
         let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
-        if matches.is_present("TEST_KEYS") && matches!(result, Err(DataError::Resource(_))) {
+        if matches.is_present("TEST_KEYS")
+            && matches!(result, Err(DataError::MissingResourceKey(_)))
+        {
             // Within testdata, if the data for a particular property is unavailable, skip it for now.
+            log::trace!("Skipping key: {}", key);
         } else {
+            log::info!("Writing key: {}", key);
             result?
         }
     }

@@ -721,7 +721,7 @@ enum IcuError {
 }
 ```
 
-A couple of crates by `@dtolnay` that are considered "new wave of good error APIs" and are complementary to each other:
+A couple of crates by `@dtolnay` and `@yaahc` that are considered "new wave of good error APIs" and are complementary to each other:
 
 * https://github.com/dtolnay/thiserror
 * https://docs.rs/eyre/0.6.5/eyre/

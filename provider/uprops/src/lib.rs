@@ -20,9 +20,9 @@
 mod bin_uniset;
 mod enum_codepointtrie;
 mod enum_uniset;
-mod error;
 mod provider;
 mod reader;
+mod uprops_helpers;
 mod uprops_serde;
 
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
