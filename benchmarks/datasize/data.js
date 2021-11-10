@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636572290704,
+  "lastUpdate": 1636572870660,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3353,6 +3353,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0fe7189471f3889ede366fcc9979ff311ed84d45"
         },
         "date": 1636572284567,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 858753,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "052c398ed85fe63c64b746d2e4c58167d47564f5",
+          "message": "Unify handling of TOML in uprops provider (#1254)",
+          "timestamp": "2021-11-10T11:32:56-08:00",
+          "tree_id": "7b37812cc03345076bcf62d494a78cf7478d1ef3",
+          "url": "https://github.com/unicode-org/icu4x/commit/052c398ed85fe63c64b746d2e4c58167d47564f5"
+        },
+        "date": 1636572864471,
         "tool": "ndjson",
         "benches": [
           {
