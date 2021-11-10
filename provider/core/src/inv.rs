@@ -38,7 +38,7 @@ pub struct InvariantDataProvider;
 
 impl<'data, M> DataProvider<'data, M> for InvariantDataProvider
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     M::Yokeable: Default,
 {
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {

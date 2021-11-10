@@ -113,7 +113,7 @@ pub trait SerdeDeDataReceiver {
 
 impl<'data, M> SerdeDeDataReceiver for Option<DataPayload<'data, M>>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     M::Yokeable: serde::de::Deserialize<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
@@ -202,7 +202,7 @@ pub trait SerdeDeDataProvider {
 /// Note: This impl returns `'static` payloads because borrowing is handled by [`Yoke`].
 impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'static
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     M::Yokeable: serde::de::Deserialize<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
@@ -282,7 +282,7 @@ impl<'a> Deref for SerdeSeDataStructDynRef<'a> {
 
 impl<'data, M> crate::dynutil::UpcastDataPayload<'data, M> for SerdeSeDataStructMarker
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
 {
     fn upcast(other: DataPayload<'data, M>) -> DataPayload<'data, SerdeSeDataStructMarker> {

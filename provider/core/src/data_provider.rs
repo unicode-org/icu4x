@@ -109,7 +109,7 @@ pub(crate) type ErasedCart<'data> = Rc<dyn ErasedDestructor<'data> + 'data>;
 
 pub(crate) enum DataPayloadInner<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     RcStruct(Yoke<M::Yokeable, ErasedCart<'data>>),
     Owned(Yoke<M::Yokeable, ()>),
@@ -166,14 +166,14 @@ where
 /// [`ErasedDataStructMarker`]: crate::erased::ErasedDataStructMarker
 pub struct DataPayload<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     pub(crate) inner: DataPayloadInner<'data, M>,
 }
 
 impl<'data, M> Debug for DataPayload<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -195,7 +195,7 @@ where
 /// ```
 impl<'data, M> Clone for DataPayload<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
@@ -211,7 +211,7 @@ where
 
 impl<'data, M> PartialEq for DataPayload<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
@@ -221,7 +221,7 @@ where
 
 impl<'data, M> Eq for DataPayload<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
 {
 }
@@ -236,7 +236,7 @@ fn test_clone_eq() {
 
 impl<'data, M> DataPayload<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`].
     ///
@@ -280,7 +280,7 @@ where
 
 impl<'data, M> DataPayload<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
@@ -540,7 +540,7 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'data>,
+        M2: DataMarker,
     {
         use DataPayloadInner::*;
         match self.inner {
@@ -598,7 +598,7 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'data>,
+        M2: DataMarker,
     {
         use DataPayloadInner::*;
         match &self.inner {
@@ -690,7 +690,7 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'data>,
+        M2: DataMarker,
     {
         use DataPayloadInner::*;
         match self.inner {
@@ -756,7 +756,7 @@ where
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
     ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'data>,
+        M2: DataMarker,
     {
         use DataPayloadInner::*;
         match &self.inner {
@@ -856,7 +856,7 @@ where
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
     ) -> Result<DataPayload<'data, M2>, E>
     where
-        M2: DataMarker<'data>,
+        M2: DataMarker,
     {
         use DataPayloadInner::*;
         Ok(match self.inner {
@@ -926,7 +926,7 @@ where
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
     ) -> Result<DataPayload<'data, M2>, E>
     where
-        M2: DataMarker<'data>,
+        M2: DataMarker,
     {
         use DataPayloadInner::*;
         Ok(match &self.inner {
@@ -946,7 +946,7 @@ where
 /// A response object containing an object as payload and metadata about it.
 pub struct DataResponse<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -957,7 +957,7 @@ where
 
 impl<'data, M> DataResponse<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
@@ -968,7 +968,7 @@ where
 
 impl<'data, M> TryFrom<DataResponse<'data, M>> for DataPayload<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     type Error = Error;
 
@@ -979,7 +979,7 @@ where
 
 impl<'data, M> Debug for DataResponse<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -1005,7 +1005,7 @@ where
 /// ```
 impl<'data, M> Clone for DataResponse<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
@@ -1038,7 +1038,7 @@ fn test_debug() {
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     /// Query the provider for data, returning the result.
     ///

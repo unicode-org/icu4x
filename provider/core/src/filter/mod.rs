@@ -68,7 +68,7 @@ where
 impl<'data, D, F, M> DataProvider<'data, M> for RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,
-    M: DataMarker<'data>,
+    M: DataMarker,
     D: DataProvider<'data, M>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, DataError> {

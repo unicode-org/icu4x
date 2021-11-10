@@ -12,8 +12,8 @@
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<'data, M>
 where
-    M: crate::prelude::DataMarker<'data>,
-    Self: Sized + crate::prelude::DataMarker<'data>,
+    M: crate::prelude::DataMarker,
+    Self: Sized + crate::prelude::DataMarker,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
     ///
