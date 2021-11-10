@@ -7,6 +7,7 @@ use alloc::{
     borrow::{Cow, ToOwned},
     boxed::Box,
     rc::Rc,
+    string::String,
 };
 
 /// A type implementing `IsCovariant<'a>` is covariant with respect to lifetime `'a`.
@@ -112,6 +113,7 @@ pub unsafe trait IsCovariant<'a>: 'a {}
 unsafe impl<'a> IsCovariant<'a> for () {}
 
 unsafe impl<'a> IsCovariant<'a> for str {}
+unsafe impl<'a> IsCovariant<'a> for String {}
 
 unsafe impl<'a, T: IsCovariant<'a>> IsCovariant<'a> for Option<T> {}
 
