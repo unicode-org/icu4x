@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636579328969,
+  "lastUpdate": 1636582045256,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16697,6 +16697,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5049,
             "range": "± 196",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ed57813d760147f20cea0084de736790561b730",
+          "message": "Fixes for icu4x-datagen for Unicode properties (#1285)",
+          "timestamp": "2021-11-10T14:00:17-08:00",
+          "tree_id": "28b5c0cb4d42dc3d541322dcad37f276b1cb9c92",
+          "url": "https://github.com/unicode-org/icu4x/commit/1ed57813d760147f20cea0084de736790561b730"
+        },
+        "date": 1636582040114,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2472,
+            "range": "± 140",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4033,
+            "range": "± 252",
             "unit": "ns/iter"
           }
         ]
