@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636573271131,
+  "lastUpdate": 1636578898328,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18689,6 +18689,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24508,
             "range": "± 1087",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd2515c6b881d0a47ab7414637d3eaf3787f0a5f",
+          "message": "Deduplicating list formatter data (#1276)",
+          "timestamp": "2021-11-10T13:07:29-08:00",
+          "tree_id": "06957d906059cccc72452b9893dfffe8b72fdefe",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd2515c6b881d0a47ab7414637d3eaf3787f0a5f"
+        },
+        "date": 1636578892950,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1158,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7721,
+            "range": "± 445",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23172,
+            "range": "± 1391",
             "unit": "ns/iter"
           }
         ]
