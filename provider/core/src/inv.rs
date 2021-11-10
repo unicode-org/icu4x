@@ -7,11 +7,9 @@
 use crate::error::Error;
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
-use crate::yoke;
 use alloc::boxed::Box;
-use alloc::rc::Rc;
-use alloc::vec;
 use alloc::vec::Vec;
+use alloc::vec;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -41,15 +39,12 @@ pub struct InvariantDataProvider;
 impl<'data, M> DataProvider<'data, M> for InvariantDataProvider
 where
     M: DataMarker<'data>,
-    M::Cart: Default,
-    M::Yokeable: yoke::ZeroCopyFrom<M::Cart>,
+    M::Yokeable: Default,
 {
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(
-                Rc::from(M::Cart::default()),
-            )),
+            payload: Some(DataPayload::from_owned(M::Yokeable::default())),
         })
     }
 }

@@ -100,12 +100,12 @@ pub struct DataResponseMetadata {
 /// `dyn Drop` isn't legal (and doesn't make sense since `Drop` is not
 /// implement on all destructible types). However, all trait objects come with
 /// a destructor, so we can just use an empty trait to get a destructor object.
-pub(crate) trait ErasedDestructor {}
-impl<T> ErasedDestructor for T {}
+pub(crate) trait ErasedDestructor<'data>: IsCovariant<'data> {}
+impl<'data, T: IsCovariant<'data>> ErasedDestructor<'data> for T {}
 
 /// All that Yoke needs from the Cart type is the destructor. We can
 /// use a trait object to handle that.
-pub(crate) type ErasedCart<'data> = Rc<dyn ErasedDestructor + 'data>;
+pub(crate) type ErasedCart<'data> = Rc<dyn ErasedDestructor<'data> + 'data>;
 
 pub(crate) enum DataPayloadInner<'data, M>
 where
@@ -263,9 +263,10 @@ where
     ///
     /// [`Cart`]: crate::marker::DataMarker::Cart
     #[inline]
-    pub fn from_partial_owned<T: 'data>(data: Rc<T>) -> Self
+    pub fn from_partial_owned<T>(data: Rc<T>) -> Self
     where
         M::Yokeable: ZeroCopyFrom<T>,
+        T: 'data + IsCovariant<'data>,
     {
         let yoke = unsafe {
             // safe because we're not throwing away any actual data, simply type-erasing it

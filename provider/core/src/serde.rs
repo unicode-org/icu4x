@@ -287,13 +287,30 @@ where
     M::Cart: IsCovariant<'data>,
 {
     fn upcast(other: DataPayload<'data, M>) -> DataPayload<'data, SerdeSeDataStructMarker> {
-        use crate::data_provider::DataPayloadInner::*;
-        let cart: Rc<dyn SerdeSeDataStruct<'data> + 'data> = match other.inner {
-            RcStruct(yoke) => Rc::from(yoke),
-            Owned(yoke) => Rc::from(yoke),
-            RcBuf(yoke) => Rc::from(yoke),
+        use crate::data_provider::{DataPayloadInner, ErasedCart};
+        let yoke: Yoke<_, ErasedCart> = match other.inner {
+            DataPayloadInner::RcStruct(yoke) => {
+                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
+                let yoke =
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+            }
+            DataPayloadInner::Owned(yoke) => {
+                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
+                let yoke =
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+            }
+            DataPayloadInner::RcBuf(yoke) => {
+                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
+                let yoke =
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+            }
         };
-        DataPayload::from_partial_owned(cart)
+        DataPayload {
+            inner: DataPayloadInner::RcStruct(yoke),
+        }
     }
 }
 
