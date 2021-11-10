@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636583525214,
+  "lastUpdate": 1636588547461,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3503,6 +3503,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/92abc789dd46000a3dcfd3d5b46a592f76e834da"
         },
         "date": 1636583518917,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 846762,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fe24e7b9309bb87eb43c3bfde7c74412c818a059",
+          "message": "Impl Debug/PartialEq on PairULE (#1287)",
+          "timestamp": "2021-11-10T15:54:13-08:00",
+          "tree_id": "3437c2cc8d3f14828b25ca72d60e937f90522e18",
+          "url": "https://github.com/unicode-org/icu4x/commit/fe24e7b9309bb87eb43c3bfde7c74412c818a059"
+        },
+        "date": 1636588541133,
         "tool": "ndjson",
         "benches": [
           {
