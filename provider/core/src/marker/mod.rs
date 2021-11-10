@@ -41,10 +41,6 @@ use crate::yoke::Yokeable;
 ///
 /// impl DataMarker for MyDataStructMarker {
 ///     type Yokeable = MyDataStruct<'static>;
-///
-///     // Note: the cart could also be just `str` since
-///     // MyDataStruct has only one field.
-///     type Cart = MyDataStruct<'data>;
 /// }
 ///
 /// // We can now use MyDataStruct with DataProvider:

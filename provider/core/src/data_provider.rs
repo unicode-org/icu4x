@@ -515,7 +515,6 @@ where
     /// struct HelloWorldV1MessageMarker;
     /// impl DataMarker for HelloWorldV1MessageMarker {
     ///     type Yokeable = Cow<'static, str>;
-    ///     type Cart = HelloWorldV1<'data>;
     /// }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -573,7 +572,6 @@ where
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
-    /// #     type Cart = HelloWorldV1<'data>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -632,7 +630,6 @@ where
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
-    /// #     type Cart = HelloWorldV1<'data>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -661,7 +658,6 @@ where
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
-    /// #     type Cart = HelloWorldV1<'data>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -724,7 +720,6 @@ where
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
-    /// #     type Cart = HelloWorldV1<'data>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -790,7 +785,6 @@ where
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
-    /// #     type Cart = HelloWorldV1<'data>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -823,7 +817,6 @@ where
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
-    /// #     type Cart = HelloWorldV1<'data>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -890,7 +883,6 @@ where
     /// # struct HelloWorldV1MessageMarker;
     /// # impl DataMarker for HelloWorldV1MessageMarker {
     /// #     type Yokeable = Cow<'static, str>;
-    /// #     type Cart = HelloWorldV1<'data>;
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
