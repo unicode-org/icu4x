@@ -140,6 +140,7 @@ wget https://github.com/unicode-org/icu/releases/download/release-70-1/icuexport
 unzip icuexportdata_uprops_full.zip
 git clone https://github.com/unicode-org/icu4x
 cd icu4x
+git checkout icu@0.4.1
 cargo run --bin icu4x-datagen -- \
     --cldr-tag 40.0.0 \
     --uprops-root ../icuexportdata_uprops_full/small \
