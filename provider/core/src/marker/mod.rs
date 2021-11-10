@@ -19,6 +19,7 @@ use crate::yoke::Yokeable;
 /// for the data struct:
 ///
 /// - `impl<'a> Yokeable<'a>` (required)
+/// - `impl ZeroCopyFrom<Self>`
 ///
 /// See also some common pre-made DataMarker impls in this module.
 ///
