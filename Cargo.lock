@@ -1343,6 +1343,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
+ "log",
  "serde",
  "tinystr",
  "toml",
