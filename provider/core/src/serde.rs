@@ -343,5 +343,4 @@ pub struct SerdeSeDataStructMarker {}
 
 impl<'data> DataMarker<'data> for SerdeSeDataStructMarker {
     type Yokeable = SerdeSeDataStructDynRef<'static>;
-    type Cart = dyn SerdeSeDataStruct<'data>;
 }

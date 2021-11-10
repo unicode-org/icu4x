@@ -68,7 +68,6 @@ pub struct ErasedDataStructMarker {}
 
 impl DataMarker<'static> for ErasedDataStructMarker {
     type Yokeable = ErasedDataStructBox;
-    type Cart = ErasedDataStructBox;
 }
 
 #[derive(Yokeable)]

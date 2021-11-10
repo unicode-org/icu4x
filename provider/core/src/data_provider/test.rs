@@ -33,7 +33,6 @@ struct HelloAltMarker {}
 
 impl<'data> DataMarker<'data> for HelloAltMarker {
     type Yokeable = HelloAlt;
-    type Cart = HelloAlt;
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]

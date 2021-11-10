@@ -19,7 +19,6 @@ use crate::yoke::Yokeable;
 /// for the data struct:
 ///
 /// - `impl<'a> Yokeable<'a>` (required)
-/// - `impl ZeroCopyFrom<Cart>` (required for use with some `DataPayload` constructors)
 ///
 /// See also some common pre-made DataMarker impls in this module.
 ///
@@ -59,8 +58,4 @@ pub trait DataMarker<'data> {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
-
-    /// A type that is capable of owning all data necessary for the Yokeable type. This can often
-    /// be the `'data` version of the data struct.
-    type Cart: 'data + ?Sized;
 }

@@ -120,6 +120,5 @@ pub mod patterns {
 
     impl<'data> DataMarker<'data> for PatternPluralsFromPatternsV1Marker {
         type Yokeable = PatternPluralsV1<'static>;
-        type Cart = DatePatternsV1<'data>;
     }
 }

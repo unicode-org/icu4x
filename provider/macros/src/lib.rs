@@ -50,7 +50,6 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
 
             impl<#lt> icu_provider::DataMarker<#lt> for #marker {
                 type Yokeable = #name<'static>;
-                type Cart = #name<#lt>;
             }
 
             #[derive(Yokeable, ZeroCopyFrom)]
@@ -63,7 +62,6 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
 
             impl<'data> icu_provider::DataMarker<'data> for #marker {
                 type Yokeable = #name;
-                type Cart = #name;
             }
 
             #[derive(Yokeable, ZeroCopyFrom)]

@@ -404,5 +404,4 @@ pub struct UnicodePropertyMapV1Marker<T: TrieValue> {
 
 impl<'data, T: TrieValue> icu_provider::DataMarker<'data> for UnicodePropertyMapV1Marker<T> {
     type Yokeable = UnicodePropertyMapV1<'static, T>;
-    type Cart = UnicodePropertyMapV1<'data, T>;
 }
