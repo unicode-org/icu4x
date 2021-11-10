@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636494613358,
+  "lastUpdate": 1636572702944,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18563,6 +18563,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 26022,
             "range": "± 333",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8a99635bf98b44c4cb57e7a2db491c9a88d3d4ad",
+          "message": "Add double-to-decimal for FixedDecimal via ryū (#1217)\n\n* Add ryu and new_from_f32/new_from_f64 to FixedDecimal\r\n\r\n* Add C++ test for ryu APIs\r\n\r\n* fmt\r\n\r\n* Remove f32 methods\r\n\r\n* Add rounding routine\r\n\r\n* Add DoublePrecision\r\n\r\n* Add DoublePrecision::Magnitude\r\n\r\n* fixes\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* Fix bounds\r\n\r\n* More testcases with scientific notation\r\n\r\n* Add SignificantDigits\r\n\r\n* comments\r\n\r\n* round_digits -> round_trailing_digits\r\n\r\n* Add rounding modes\r\n\r\n* Update utils/fixed_decimal/src/decimal.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* +todo\r\n\r\n* review\r\n\r\n* more review\r\n\r\n* Add DoublePrecision::Integer\r\n\r\n* Properly round up\r\n\r\n* fmt\r\n\r\n* Update utils/fixed_decimal/src/decimal.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* fmt\r\n\r\n* fix .0\r\n\r\n* fixes\r\n\r\n* refactor integer types\r\n\r\n* fix\r\n\r\n* Correctly uphold invariant of not having trailing zeroes\r\n\r\n* fmt\r\n\r\n* Handle invariants\r\n\r\n* clippy\r\n\r\n* don't override upper magnitude; test fix\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2021-11-10T11:23:07-08:00",
+          "tree_id": "c546e4179c86a307544001ce0a6ad4706f86293a",
+          "url": "https://github.com/unicode-org/icu4x/commit/8a99635bf98b44c4cb57e7a2db491c9a88d3d4ad"
+        },
+        "date": 1636572696746,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1334,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8597,
+            "range": "± 374",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 26181,
+            "range": "± 1363",
             "unit": "ns/iter"
           }
         ]
