@@ -66,25 +66,28 @@ impl ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
 pub struct ErasedDataStructMarker {}
 
 impl DataMarker<'static> for ErasedDataStructMarker {
-    type Yokeable = &'static dyn ErasedDataStruct;
-    type Cart = dyn ErasedDataStruct;
+    type Yokeable = ErasedDataStructBox;
+    type Cart = ErasedDataStructBox;
 }
+
+#[derive(Yokeable)]
+pub struct ErasedDataStructBox(Box<dyn ErasedDataStruct>);
 
 impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
     M: DataMarker<'static>,
     M::Cart: Sized,
 {
-    /// Upcast for ErasedDataStruct creates an `Rc<dyn ErasedDataStruct>` from the current inner
-    /// `Yoke` (i.e., `Rc::from(yoke)`).
+    /// Upcast for ErasedDataStruct creates a `Box<dyn ErasedDataStruct>` from the current inner
+    /// `Yoke` (i.e., `Box::new(yoke)`).
     fn upcast(other: DataPayload<'static, M>) -> DataPayload<'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
-        let cart: Rc<dyn ErasedDataStruct> = match other.inner {
-            RcStruct(yoke) => Rc::from(yoke),
-            Owned(yoke) => Rc::from(yoke),
-            RcBuf(yoke) => Rc::from(yoke),
+        let owned: Box<dyn ErasedDataStruct> = match other.inner {
+            RcStruct(yoke) => Box::new(yoke),
+            Owned(yoke) => Box::new(yoke),
+            RcBuf(yoke) => Box::new(yoke),
         };
-        DataPayload::from_partial_owned(cart)
+        DataPayload::from_owned(ErasedDataStructBox(owned))
     }
 }
 
@@ -138,55 +141,50 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
     {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
-            RcStruct(yoke) => {
-                let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
-                // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
+            Owned(yoke) => {
+                let any_box: Box<dyn Any> = yoke.into_yokeable().0.into_any();
+                // `any_box` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
                 // could have been either the RcStruct or the Owned variant of Yoke.
                 // Check first for Case 2: an RcStruct Yoke.
-                let y1 = any_rc.downcast::<Yoke<M::Yokeable, Rc<M::Cart>>>();
-                let any_rc = match y1 {
-                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
-                        Ok(yoke) => {
-                            return Ok(DataPayload {
-                                inner: RcStruct(yoke),
-                            })
-                        }
-                        // Note: We could consider cloning the Yoke instead of erroring out.
-                        Err(_) => return Err(Error::MultipleReferences),
-                    },
-                    Err(any_rc) => any_rc,
+                let y1 = any_box.downcast::<Yoke<M::Yokeable, Rc<M::Cart>>>();
+                let any_box = match y1 {
+                    Ok(yoke) => {
+                        return Ok(DataPayload {
+                            inner: RcStruct(*yoke),
+                        })
+                    }
+                    Err(any_box) => any_box,
                 };
                 // Check for Case 3: an Owned Yoke.
-                let y2 = any_rc.downcast::<Yoke<M::Yokeable, ()>>();
-                let any_rc = match y2 {
-                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
-                        Ok(yoke) => return Ok(DataPayload { inner: Owned(yoke) }),
-                        // Note: We could consider cloning the Yoke instead of erroring out.
-                        Err(_) => return Err(Error::MultipleReferences),
-                    },
-                    Err(any_rc) => any_rc,
+                let y2 = any_box.downcast::<Yoke<M::Yokeable, ()>>();
+                let any_box = match y2 {
+                    Ok(yoke) => {
+                        return Ok(DataPayload {
+                            inner: Owned(*yoke),
+                        })
+                    }
+                    Err(any_box) => any_box,
                 };
                 // Check for Case 4: an RcBuf Yoke.
-                let y2 = any_rc.downcast::<Yoke<M::Yokeable, Rc<[u8]>>>();
-                let any_rc = match y2 {
-                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
-                        Ok(yoke) => return Ok(DataPayload { inner: RcBuf(yoke) }),
-                        // Note: We could consider cloning the Yoke instead of erroring out.
-                        Err(_) => return Err(Error::MultipleReferences),
-                    },
-                    Err(any_rc) => any_rc,
+                let y2 = any_box.downcast::<Yoke<M::Yokeable, Rc<[u8]>>>();
+                let any_box = match y2 {
+                    Ok(yoke) => {
+                        return Ok(DataPayload {
+                            inner: RcBuf(*yoke),
+                        })
+                    }
+                    Err(any_box) => any_box,
                 };
                 // None of the downcasts succeeded; return an error.
                 Err(Error::MismatchedType {
-                    actual: Some(any_rc.type_id()),
+                    actual: Some(any_box.type_id()),
                     generic: Some(TypeId::of::<M::Cart>()),
                 })
             }
-            // This is unreachable because ErasedDataStruct cannot be fully owned, since it
-            // contains a reference.
-            Owned(_) => unreachable!(),
-            // This is unreachable because ErasedDataStruct needs to reference an object.
-            RcBuf(_) => unreachable!(),
+            // This is unreachable because an ErasedDataStruct payload can only be constructed as fully owned
+            // (It is impossible for clients to construct an ErasedDataStruct payload manually since ErasedDataStructBox
+            // has a private field)
+            RcStruct(_) | RcBuf(_) => unreachable!(),
         }
     }
 }
