@@ -66,12 +66,12 @@ impl ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
 pub struct ErasedDataStructMarker {}
 
 impl DataMarker<'static> for ErasedDataStructMarker {
-    type Yokeable = ErasedDataYokeable;
-    type Cart = ErasedDataYokeable;
+    type Yokeable = ErasedDataStructBox;
+    type Cart = ErasedDataStructBox;
 }
 
 #[derive(Yokeable)]
-pub struct ErasedDataYokeable(Box<dyn ErasedDataStruct>);
+pub struct ErasedDataStructBox(Box<dyn ErasedDataStruct>);
 
 impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
@@ -87,7 +87,7 @@ where
             Owned(yoke) => Box::new(yoke),
             RcBuf(yoke) => Box::new(yoke),
         };
-        DataPayload::from_owned(ErasedDataYokeable(cart))
+        DataPayload::from_owned(ErasedDataStructBox(cart))
     }
 }
 
@@ -182,7 +182,7 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
                 })
             }
             // This is unreachable because an ErasedDataStruct payload can only be constructed as fully owned
-            // (It is impossible for clients to construct an ErasedDataStruct payload manually since ErasedDataYokeable
+            // (It is impossible for clients to construct an ErasedDataStruct payload manually since ErasedDataStructBox
             // has a private field)
             RcStruct(_) | RcBuf(_) => unreachable!(),
         }
