@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636588928998,
+  "lastUpdate": 1636653821749,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16841,6 +16841,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4858,
             "range": "± 68",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b2c93173505d9e307a89fec12083e59a6706b936",
+          "message": "Fix diplomat regen (#1289)",
+          "timestamp": "2021-11-11T09:56:51-08:00",
+          "tree_id": "04163ee3040678ce6fadcf449d4ac9d991bfaf7d",
+          "url": "https://github.com/unicode-org/icu4x/commit/b2c93173505d9e307a89fec12083e59a6706b936"
+        },
+        "date": 1636653815117,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2417,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4183,
+            "range": "± 673",
             "unit": "ns/iter"
           }
         ]
