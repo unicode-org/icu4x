@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636588852721,
+  "lastUpdate": 1636588894074,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13499,6 +13499,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 126933,
             "range": "± 7275",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "771b837e5f30a2a8e89dcde088dd2404a9a6a4bd",
+          "message": "Fix up some intra doc links (#1288)",
+          "timestamp": "2021-11-10T15:54:29-08:00",
+          "tree_id": "fd50229087ec30a6e6668075580ba5bfbd75851d",
+          "url": "https://github.com/unicode-org/icu4x/commit/771b837e5f30a2a8e89dcde088dd2404a9a6a4bd"
+        },
+        "date": 1636588887686,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 129891,
+            "range": "± 7181",
             "unit": "ns/iter"
           }
         ]
