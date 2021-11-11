@@ -70,6 +70,14 @@ impl TrieValue for u32 {
     }
 }
 
+impl TrieValue for char {
+    const DATA_GET_ERROR_VALUE: char = '\0';
+    type TryFromU32Error = core::char::CharTryFromError;
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        char::try_from(i)
+    }
+}
+
 /// This struct represents a de-serialized CodePointTrie that was exported from
 /// ICU binary data.
 ///
@@ -301,6 +309,40 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         self.data
             .get(data_pos as usize)
             .unwrap_or(T::DATA_GET_ERROR_VALUE)
+    }
+
+    /// Converts the CodePointTrie into one that returns another type of the same size.
+    ///
+    /// Borrowed data remains borrowed, and owned data remains owned.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the new type `P` is a different size than the original type `T`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let cpt1: CodePointTrie<char> = todo!();
+    /// let cpt2: CodePointTrie<u32> = cpt1.convert_trie().expect("infallible");
+    /// ```
+    pub fn convert_trie<P>(
+        self,
+    ) -> Result<
+        CodePointTrie<'trie, P>,
+        <<P as zerovec::ule::AsULE>::ULE as zerovec::ule::ULE>::Error,
+    >
+    where
+        P: TrieValue,
+    {
+        assert_eq!(core::mem::size_of::<T>(), core::mem::size_of::<P>());
+        let converted_data = self.data.into_bytes().try_into_parsed()?;
+        Ok(CodePointTrie {
+            header: self.header,
+            index: self.index,
+            data: converted_data,
+        })
     }
 }
 
