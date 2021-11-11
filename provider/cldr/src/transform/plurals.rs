@@ -191,13 +191,12 @@ pub(self) mod cldr_json {
 #[test]
 fn test_basic() {
     use icu_locid_macros::langid;
-    use std::borrow::Borrow;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = PluralsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: DataPayload<PluralRuleStringsV1Marker> = provider
+    let cs_rules: DataPayload<PluralRulesV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::CARDINAL_V1,
@@ -213,16 +212,16 @@ fn test_basic() {
 
     assert_eq!(None, cs_rules.get().zero);
     assert_eq!(
-        Some("i = 1 and v = 0"),
-        cs_rules.get().one.as_ref().map(|v| v.borrow())
+        Some("i = 1 and v = 0".parse().expect("Failed to parse rule")),
+        cs_rules.get().one
     );
     assert_eq!(None, cs_rules.get().two);
     assert_eq!(
-        Some("i = 2..4 and v = 0"),
-        cs_rules.get().few.as_ref().map(|v| v.borrow())
+        Some("i = 2..4 and v = 0".parse().expect("Failed to parse rule")),
+        cs_rules.get().few
     );
     assert_eq!(
-        Some("v != 0"),
-        cs_rules.get().many.as_ref().map(|v| v.borrow())
+        Some("v != 0".parse().expect("Failed to parse rule")),
+        cs_rules.get().many
     );
 }

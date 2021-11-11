@@ -19,7 +19,7 @@ use icu_datetime::{
     DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_plurals::provider::PluralRuleStringsV1Marker;
+use icu_plurals::provider::PluralRulesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::struct_provider::StructProvider;
 use patterns::{
@@ -65,11 +65,11 @@ impl<'data> DataProvider<'data, DatePatternsV1Marker> for MultiKeyStructProvider
     }
 }
 
-impl<'data> DataProvider<'data, PluralRuleStringsV1Marker> for MultiKeyStructProvider<'data> {
+impl<'data> DataProvider<'data, PluralRulesV1Marker> for MultiKeyStructProvider<'data> {
     fn load_payload(
         &self,
         _req: &DataRequest,
-    ) -> Result<DataResponse<'data, PluralRuleStringsV1Marker>, icu_provider::DataError> {
+    ) -> Result<DataResponse<'data, PluralRulesV1Marker>, icu_provider::DataError> {
         Err(icu_provider::DataError::MissingPayload)
     }
 }
