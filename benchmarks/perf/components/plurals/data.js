@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636588917558,
+  "lastUpdate": 1636588985354,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18899,6 +18899,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 27183,
             "range": "± 32",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "771b837e5f30a2a8e89dcde088dd2404a9a6a4bd",
+          "message": "Fix up some intra doc links (#1288)",
+          "timestamp": "2021-11-10T15:54:29-08:00",
+          "tree_id": "fd50229087ec30a6e6668075580ba5bfbd75851d",
+          "url": "https://github.com/unicode-org/icu4x/commit/771b837e5f30a2a8e89dcde088dd2404a9a6a4bd"
+        },
+        "date": 1636588979071,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1348,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8582,
+            "range": "± 361",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 27651,
+            "range": "± 1126",
             "unit": "ns/iter"
           }
         ]
