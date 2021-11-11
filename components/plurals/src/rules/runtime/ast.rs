@@ -498,15 +498,16 @@ mod serde {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::rules::reference::ast;
-    use crate::rules::reference::parse;
+    use crate::rules::reference;
     use crate::rules::runtime::test_rule;
     use crate::PluralOperands;
 
     #[test]
     fn simple_rule_test() {
+        use reference::ast;
+
         let input = "i = 1";
-        let full_ast = parse(input.as_bytes()).unwrap();
+        let full_ast = reference::parse(input.as_bytes()).unwrap();
         assert_eq!(
             full_ast,
             ast::Rule {
@@ -547,9 +548,9 @@ mod test {
 
     #[test]
     fn complex_rule_test() {
-        let input = "n % 10 = 3..4,9 and n % 100 != 10..19,70..79,90..99 or n = 0";
-        let full_ast = parse(input.as_bytes()).unwrap();
-        let rule = Rule::from(&full_ast);
+        let input = "n % 10 = 3..4, 9 and n % 100 != 10..19, 70..79, 90..99 or n = 0";
+        let ref_rule = reference::parse(input.as_bytes()).unwrap();
+        let rule = Rule::from(&ref_rule);
 
         let fd = fixed_decimal::decimal::FixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
@@ -574,6 +575,22 @@ mod test {
         let fd = fixed_decimal::decimal::FixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
+    }
+
+    #[test]
+    fn complex_rule_ule_roundtrip_test() {
+        let input = "n % 10 = 3..4, 9 and n % 100 != 10..19, 70..79, 90..99 or n = 0";
+
+        let ref_rule = reference::parse(input.as_bytes()).unwrap();
+
+        // Create a ZVZ backed Rule from the reference one.
+        let rule = Rule::from(&ref_rule);
+
+        // Convert it back to reference Rule and compare.
+        assert_eq!(ref_rule, reference::ast::Rule::from(&rule));
+
+        // Verify that the stringified output matches the input.
+        assert_eq!(input, rule.to_string(),);
     }
 
     #[test]
