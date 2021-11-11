@@ -5,7 +5,7 @@
 use crate::{GeneralSubcategory, GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
 use core::convert::TryInto;
 use core::num::TryFromIntError;
-use icu_codepointtrie::codepointtrie::TrieValue;
+use icu_codepointtrie::TrieValue;
 use num_enum::TryFromPrimitiveError;
 
 use core::convert::TryFrom;
