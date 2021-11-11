@@ -325,9 +325,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::CodePointTrie;
     ///
     /// let cpt1: CodePointTrie<char> = todo!();
-    /// let cpt2: CodePointTrie<u32> = cpt1.convert_trie().expect("infallible");
+    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted().expect("infallible");
     /// ```
-    pub fn convert_trie<P>(
+    pub fn try_into_converted<P>(
         self,
     ) -> Result<
         CodePointTrie<'trie, P>,
@@ -337,7 +337,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         P: TrieValue,
     {
         assert_eq!(core::mem::size_of::<T>(), core::mem::size_of::<P>());
-        let converted_data = self.data.into_bytes().try_into_parsed()?;
+        let converted_data = self.data.try_into_converted()?;
         Ok(CodePointTrie {
             header: self.header,
             index: self.index,

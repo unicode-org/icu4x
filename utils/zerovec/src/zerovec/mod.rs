@@ -271,10 +271,8 @@ where
             }
         }
     }
-}
 
-impl<'a> ZeroVec<'a, u8> {
-    /// Converts a `ZeroVec<u8>` into a `ZeroVec<T>`, retaining the current ownership model.
+    /// Converts a `ZeroVec<T>` into a `ZeroVec<P>`, retaining the current ownership model.
     ///
     /// Note that the length of the ZeroVec may change.
     ///
@@ -286,11 +284,12 @@ impl<'a> ZeroVec<'a, u8> {
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zv_bytes = ZeroVec::Borrowed(bytes);
-    /// let zerovec: ZeroVec<u16> = zv_bytes.try_into_parsed().expect("infallible");
+    /// let zv_u16: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// let zv_u32: ZeroVec<u32> = zv_u16.try_into_converted()
+    ///     .expect("length is divisible");
     ///
-    /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
-    /// assert_eq!(zerovec.get(0), Some(211));
+    /// assert!(matches!(zv_u32, ZeroVec::Borrowed(_)));
+    /// assert_eq!(zv_u32.get(0), Some(0x011900D3));
     /// ```
     ///
     /// Convert an owned `ZeroVec`:
@@ -298,22 +297,25 @@ impl<'a> ZeroVec<'a, u8> {
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let bytes: Vec<u8> = vec![0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zv_bytes = ZeroVec::Owned(bytes);
-    /// let zerovec: ZeroVec<u16> = zv_bytes.try_into_parsed().expect("infallible");
+    /// let nums: &[u16] = &[211, 281, 421, 461];
+    /// let zv_u16 = ZeroVec::clone_from_slice(nums);
+    /// let zv_u32: ZeroVec<u32> = zv_u16.try_into_converted()
+    ///     .expect("length is divisible");
     ///
-    /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
-    /// assert_eq!(zerovec.get(0), Some(211));
+    /// assert!(matches!(zv_u32, ZeroVec::Owned(_)));
+    /// assert_eq!(zv_u32.get(0), Some(0x011900D3));
     /// ```
-    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, <T::ULE as ULE>::Error> {
+    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, <P::ULE as ULE>::Error> {
         match self {
-            ZeroVec::Borrowed(bytes) => {
-                let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
-                Ok(ZeroVec::Borrowed(slice))
+            ZeroVec::Borrowed(old_slice) => {
+                let bytes: &'a [u8] = T::ULE::as_byte_slice(old_slice);
+                let new_slice = P::ULE::parse_byte_slice(bytes)?;
+                Ok(ZeroVec::Borrowed(new_slice))
             }
-            ZeroVec::Owned(vec) => {
-                let slice = Vec::from(T::ULE::parse_byte_slice(&vec)?);
-                Ok(ZeroVec::Owned(slice))
+            ZeroVec::Owned(old_vec) => {
+                let bytes: &[u8] = T::ULE::as_byte_slice(&old_vec);
+                let new_vec = Vec::from(P::ULE::parse_byte_slice(bytes)?);
+                Ok(ZeroVec::Owned(new_vec))
             }
         }
     }
