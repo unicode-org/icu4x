@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636583907616,
+  "lastUpdate": 1636588917558,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18857,6 +18857,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 26438,
             "range": "± 1351",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fe24e7b9309bb87eb43c3bfde7c74412c818a059",
+          "message": "Impl Debug/PartialEq on PairULE (#1287)",
+          "timestamp": "2021-11-10T15:54:13-08:00",
+          "tree_id": "3437c2cc8d3f14828b25ca72d60e937f90522e18",
+          "url": "https://github.com/unicode-org/icu4x/commit/fe24e7b9309bb87eb43c3bfde7c74412c818a059"
+        },
+        "date": 1636588911201,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1346,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8561,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 27183,
+            "range": "± 32",
             "unit": "ns/iter"
           }
         ]
