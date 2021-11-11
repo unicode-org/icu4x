@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
+use crate::ZeroVec;
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -102,5 +103,24 @@ unsafe impl EncodeAsVarULE<str> for String {
 unsafe impl<T: ULE> EncodeAsVarULE<[T]> for Vec<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[<[T] as VarULE>::as_byte_slice(self)])
+    }
+}
+
+unsafe impl<'a, T> custom::EncodeAsVarULE<[T::ULE]> for ZeroVec<'a, T>
+where
+    T: AsULE,
+{
+    fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
+        // unnecesessary if the other two are implemented
+        unreachable!()
+    }
+
+    fn encode_var_ule_len(&self) -> usize {
+        self.as_bytes().len()
+    }
+
+    fn encode_var_ule_write(&self, dst: &mut [u8]) {
+        debug_assert_eq!(self.as_bytes().len(), dst.len());
+        dst.copy_from_slice(self.as_bytes());
     }
 }

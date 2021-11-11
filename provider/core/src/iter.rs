@@ -25,14 +25,14 @@ pub trait IterableDataProviderCore {
 pub trait IterableDataProvider<'data, M>:
     IterableDataProviderCore + DataProvider<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
 }
 
 impl<'data, S, M> IterableDataProvider<'data, M> for S
 where
     S: IterableDataProviderCore + DataProvider<'data, M>,
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
 }
 

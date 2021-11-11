@@ -130,13 +130,22 @@ In this tutorial we are going to use a synchronous file-system data provider whi
 
 We're going to use [JSON CLDR](https://github.com/unicode-cldr/cldr-json) as our source data. JSON CLDR is an export of [CLDR data](http://cldr.unicode.org/index/downloads) into JSON maintained by Unicode.
 
+We are also going to use Unicode property data shipped as a zip file in the ICU4C release.
+
 The `provider_fs` component has a binary application which will fetch the CLDR data and generate ICU4X data out of it.
 
 ```
 cd ~/projects/icu
+wget https://github.com/unicode-org/icu/releases/download/release-70-1/icuexportdata_uprops_full.zip
+unzip icuexportdata_uprops_full.zip
 git clone https://github.com/unicode-org/icu4x
 cd icu4x
-cargo run --bin icu4x-datagen -- --cldr-tag 37.0.0 --out ~/projects/icu/icu4x-data --all-keys --all-locales
+git checkout icu@0.4.1
+cargo run --bin icu4x-datagen -- \
+    --cldr-tag 40.0.0 \
+    --uprops-root ../icuexportdata_uprops_full/small \
+    --out ~/projects/icu/icu4x-data \
+    --all-keys --all-locales
 ```
 
 The last command is a bit dense, so let's dissect it.
@@ -145,6 +154,7 @@ The last command is a bit dense, so let's dissect it.
 * We tell it that the binary is named `icu4x-datagen`
 * Then we use `--` to separate arguments to `cargo` from arguments to our app
 * Then we pass `--cldr-tag` which informs the program which CLDR version to use
+* Then we pass `--uprops-root` which informs the program where to get the Unicode property data
 * Then we pass `--out` directory which is where the generated ICU4X data will be stored
 * Finally, we set `--all-keys` which specify that we want to export all keys available
 

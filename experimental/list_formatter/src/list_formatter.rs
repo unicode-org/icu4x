@@ -2,15 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::patterns::get_patterns;
-use displaydoc::Display;
+use crate::error::*;
+use crate::options::*;
+use crate::provider::*;
+use alloc::string::{String, ToString};
 use formatted_string_builder::FormattedStringBuilder;
-
-#[derive(Debug, Display)]
-pub enum Error {
-    #[displaydoc("cannot create a ListFormatter for the given locale")]
-    UnknownLocale,
-}
+use icu_locid::Locale;
+use icu_provider::prelude::*;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum FieldType {
@@ -18,65 +16,67 @@ pub enum FieldType {
     Literal,
 }
 
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum Type {
-    And,
-    Or,
-    Unit,
-}
-
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum Width {
-    Wide,
-    Short,
-    Narrow,
-}
-
-pub struct ListFormatter<'a> {
-    first: &'a Pattern<'a>,
-    pair: &'a Pattern<'a>,
-    middle: &'a Pattern<'a>,
-    last: &'a Pattern<'a>,
+pub struct ListFormatter<'data> {
+    data: DataPayload<'data, ListFormatterPatternsV1Marker>,
+    width: Width,
 }
 
 impl<'a> ListFormatter<'a> {
-    pub fn new(locale: &str, type_: Type, width: Width) -> Result<ListFormatter<'static>, Error> {
-        match get_patterns(locale, type_, width) {
-            None => Err(Error::UnknownLocale),
-            Some(patterns) => {
-                let [first, pair, middle, last] = patterns;
-                Ok(ListFormatter {
-                    first,
-                    pair,
-                    middle,
-                    last,
-                })
-            }
-        }
+    pub fn try_new<T: Into<Locale>, D: DataProvider<'a, ListFormatterPatternsV1Marker> + ?Sized>(
+        locale: T,
+        data_provider: &D,
+        type_: Type,
+        width: Width,
+    ) -> Result<Self, Error> {
+        let data = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: match type_ {
+                        Type::And => key::LIST_FORMAT_AND_V1,
+                        Type::Or => key::LIST_FORMAT_OR_V1,
+                        Type::Unit => key::LIST_FORMAT_UNIT_V1,
+                    },
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.into().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+        Ok(Self { data, width })
     }
 
-    fn format_internal<B>(
-        &self,
+    fn format_internal<'c, B>(
+        &'c self,
         values: &[&str],
         empty: fn() -> B,
         single: fn(&str) -> B,
-        apply_pattern: fn(&str, &PatternParts<'a>, B) -> B,
+        apply_pattern: fn(&str, &PatternParts<'c>, B) -> B,
     ) -> B {
+        let pattern = &self.data.get();
         match values.len() {
             0 => empty(),
             1 => single(values[0]),
-            2 => apply_pattern(values[0], self.pair.get_parts(values[1]), single(values[1])),
+            2 => apply_pattern(
+                values[0],
+                &pattern.pair(self.width).parts(values[1]),
+                single(values[1]),
+            ),
             n => {
                 let mut builder = apply_pattern(
                     values[n - 2],
-                    self.last.get_parts(values[n - 1]),
+                    &pattern.end(self.width).parts(values[n - 1]),
                     single(values[n - 1]),
                 );
+                let middle = pattern.middle(self.width);
                 for i in (1..n - 2).rev() {
-                    builder =
-                        apply_pattern(values[i], self.middle.get_parts(values[i + 1]), builder);
+                    builder = apply_pattern(values[i], &middle.parts(values[i + 1]), builder);
                 }
-                apply_pattern(values[0], self.first.get_parts(values[1]), builder)
+                apply_pattern(
+                    values[0],
+                    &pattern.start(self.width).parts(values[1]),
+                    builder,
+                )
             }
         }
     }
@@ -86,11 +86,10 @@ impl<'a> ListFormatter<'a> {
             values,
             || "".to_string(),
             |value| value.to_string(),
-            |value, (before, between, after), mut builder| {
+            |value, (between, after), mut builder| {
                 builder = builder + after;
                 builder.insert_str(0, between);
                 builder.insert_str(0, value);
-                builder.insert_str(0, before);
                 builder
             },
         )
@@ -105,104 +104,78 @@ impl<'a> ListFormatter<'a> {
                 builder.append(value, FieldType::Element);
                 builder
             },
-            |value, (before, between, after), mut builder| {
+            |value, (between, after), mut builder| {
                 builder.append(after, FieldType::Literal);
                 builder.prepend(between, FieldType::Literal);
                 builder.prepend(value, FieldType::Element);
-                builder.prepend(before, FieldType::Literal);
                 builder
             },
         )
     }
 }
 
-type PatternParts<'a> = (&'a str, &'a str, &'a str);
-
-pub(crate) enum Pattern<'a> {
-    Simple {
-        parts: PatternParts<'a>,
-    },
-    Conditional {
-        cond: fn(&str) -> bool,
-        then: PatternParts<'a>,
-        else_: PatternParts<'a>,
-    },
-}
-
-impl<'a> Pattern<'a> {
-    fn get_parts(&self, following_value: &str) -> &PatternParts<'a> {
-        match self {
-            Pattern::Simple { parts } => parts,
-            Pattern::Conditional { cond, then, else_ } => {
-                if cond(following_value) {
-                    then
-                } else {
-                    else_
-                }
-            }
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use core::str::FromStr;
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
-    fn test_formatter() -> ListFormatter<'static> {
+    fn formatter<'data>() -> ListFormatter<'data> {
+        let pattern = ListFormatterPatternsV1::new(
+            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
+            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+                .unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
+            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+                .unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
+            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+                .unwrap(),
+        );
+
         ListFormatter {
-            pair: &Pattern::Simple {
-                parts: ("", "; ", ""),
-            },
-            first: &Pattern::Simple {
-                parts: ("", ": ", ""),
-            },
-            middle: &Pattern::Simple {
-                parts: ("", ", ", ""),
-            },
-            last: &Pattern::Simple {
-                parts: ("", ". ", "!"),
-            },
+            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(pattern),
+            width: Width::default(),
         }
     }
 
     #[test]
     fn test_format() {
-        assert_eq!(test_formatter().format(&VALUES[0..0]), "");
-        assert_eq!(test_formatter().format(&VALUES[0..1]), "one");
-        assert_eq!(test_formatter().format(&VALUES[0..2]), "one; two");
-        assert_eq!(test_formatter().format(&VALUES[0..3]), "one: two. three!");
-        assert_eq!(
-            test_formatter().format(&VALUES[0..4]),
-            "one: two, three. four!"
-        );
-        assert_eq!(
-            test_formatter().format(VALUES),
-            "one: two, three, four. five!"
-        );
+        let formatter = formatter();
+        assert_eq!(formatter.format(&VALUES[0..0]), "");
+        assert_eq!(formatter.format(&VALUES[0..1]), "one");
+        assert_eq!(formatter.format(&VALUES[0..2]), "one; two");
+        assert_eq!(formatter.format(&VALUES[0..3]), "one: two. three!");
+        assert_eq!(formatter.format(&VALUES[0..4]), "one: two, three. four!");
+        assert_eq!(formatter.format(VALUES), "one: two, three, four. five!");
     }
 
     #[test]
     fn test_format_to_parts() {
-        assert_eq!(test_formatter().format_to_parts(&VALUES[0..0]).as_str(), "");
+        let formatter = formatter();
+
+        assert_eq!(formatter.format_to_parts(&VALUES[0..0]).as_str(), "");
+        assert_eq!(formatter.format_to_parts(&VALUES[0..1]).as_str(), "one");
         assert_eq!(
-            test_formatter().format_to_parts(&VALUES[0..1]).as_str(),
-            "one"
-        );
-        assert_eq!(
-            test_formatter().format_to_parts(&VALUES[0..2]).as_str(),
+            formatter.format_to_parts(&VALUES[0..2]).as_str(),
             "one; two"
         );
         assert_eq!(
-            test_formatter().format_to_parts(&VALUES[0..3]).as_str(),
+            formatter.format_to_parts(&VALUES[0..3]).as_str(),
             "one: two. three!"
         );
         assert_eq!(
-            test_formatter().format_to_parts(&VALUES[0..4]).as_str(),
+            formatter.format_to_parts(&VALUES[0..4]).as_str(),
             "one: two, three. four!"
         );
-        let parts = test_formatter().format_to_parts(VALUES);
+        let parts = formatter.format_to_parts(VALUES);
         assert_eq!(parts.as_str(), "one: two, three, four. five!");
 
         assert_eq!(parts.field_at(0), FieldType::Element);
@@ -218,17 +191,9 @@ mod tests {
     }
 
     #[test]
-    fn test_spanish() {
-        let mut formatter = ListFormatter::new("es", Type::And, Width::Wide).unwrap();
-        assert_eq!(formatter.format(VALUES), "one, two, three, four y five");
-        assert_eq!(formatter.format(&["Mallorca", "Ibiza"]), "Mallorca e Ibiza");
-        formatter = ListFormatter::new("es", Type::Or, Width::Wide).unwrap();
-        assert_eq!(formatter.format(&["7", "8"]), "7 u 8");
-        assert_eq!(formatter.format(&["siete", "ocho"]), "siete u ocho");
-        assert_eq!(formatter.format(&["7", "11"]), "7 u 11");
-        // un millón ciento cuatro mil trescientos veinticuatro
-        // assert_eq!(formatter.format(&["7", "1104324"]), "7 o 1104324");
-        // *o*nce millones cuarenta y tres mil doscientos treinta y cuatro
-        // assert_eq!(formatter.format(&["7", "11043234"]), "7 u 11043234");
+    fn test_conditional() {
+        let formatter = formatter();
+
+        assert_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
     }
 }

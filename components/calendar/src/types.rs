@@ -175,19 +175,19 @@ macro_rules! dt_unit {
 dt_unit!(
     IsoHour,
     24,
-    "An ISO-8601 hour component, for use with the [`IsoTimeInput`]."
+    "An ISO-8601 hour component, for use with ISO calendars."
 );
 
 dt_unit!(
     IsoMinute,
     60,
-    "An ISO-8601 minute component, for use with the [`IsoTimeInput`]."
+    "An ISO-8601 minute component, for use with ISO calendars."
 );
 
 dt_unit!(
     IsoSecond,
     61,
-    "An ISO-8601 second component, for use with the [`IsoTimeInput`]."
+    "An ISO-8601 second component, for use with ISO calendars."
 );
 
 #[derive(Debug)]
@@ -234,7 +234,7 @@ pub enum FractionalSecond {
     Nanosecond(u32),
 }
 
-/// The GMT offset in seconds for a [`MockTimeZone`](crate::mock::time_zone::MockTimeZone).
+/// The GMT offset in seconds for a mock time zone
 #[derive(Copy, Clone, Debug, Default)]
 pub struct GmtOffset(i32);
 

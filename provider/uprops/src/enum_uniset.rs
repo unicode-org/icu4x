@@ -2,46 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::reader::*;
-use crate::uprops_serde;
+use crate::uprops_helpers::{self, TomlEnumerated};
 
-use eyre::WrapErr;
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
-use std::collections::HashMap;
-use std::path::PathBuf;
-use tinystr::TinyStr16;
+use std::path::Path;
 
 pub struct EnumeratedPropertyUnicodeSetDataProvider {
-    data: HashMap<TinyStr16, uprops_serde::enumerated::EnumeratedPropertyMap>,
+    data: TomlEnumerated,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
 impl EnumeratedPropertyUnicodeSetDataProvider {
-    pub fn try_new(root_dir: PathBuf) -> eyre::Result<Self> {
-        let mut result = Self {
-            data: HashMap::new(),
-        };
-        for path in get_dir_contents(&root_dir)? {
-            let key: TinyStr16 = path
-                .file_stem()
-                .and_then(|p| p.to_str())
-                .ok_or_else(|| eyre::eyre!("Invalid file name: {:?}", path))?
-                .parse()
-                .wrap_err_with(|| format!("Not a Unicode property: {:?}", path))?;
-            let toml_str = read_path_to_string(&path)?;
-            let toml_obj: uprops_serde::enumerated::Main = toml::from_str(&toml_str)
-                .wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
-            let value = match toml_obj.enum_property.into_iter().next() {
-                Some(v) => v,
-                None => continue,
-            };
-            result.data.insert(key, value);
-        }
-        Ok(result)
+    pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
+        let data = uprops_helpers::load_enumerated_from_dir(root_dir)?;
+        Ok(Self { data })
     }
 }
 
@@ -151,8 +129,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
-            .expect("Should parse files successfully");
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
+            .expect("TOML should load successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
@@ -180,8 +158,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
-            .expect("Should parse files successfully");
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
+            .expect("TOML should load successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
@@ -212,8 +190,8 @@ mod tests {
             key: ResourceKey,
         ) -> DataPayload<'data, UnicodePropertyV1Marker> {
             let root_dir = icu_testdata::paths::data_root().join("uprops");
-            let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
-                .expect("Should parse files successfully");
+            let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
+                .expect("TOML should load successfully");
             let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
@@ -325,8 +303,8 @@ mod tests {
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)
-            .expect("Should parse files successfully");
+        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
+            .expect("TOML should load successfully");
 
         let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {

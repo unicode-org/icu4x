@@ -111,8 +111,8 @@ script = '''
 exit_on_error true
 cd ffi/diplomat
 # Duckscript doesn't support globs in rm, so we delete the dir
-rm -r include/
-mkdir include
+rm -r ./c/include/
+mkdir ./c/include
 exec --fail-on-error diplomat-tool c ./c/include
 '''
 

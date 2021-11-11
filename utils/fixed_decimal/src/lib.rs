@@ -44,6 +44,9 @@ pub mod decimal;
 pub mod signum;
 mod uint_iterator;
 
+#[cfg(feature = "ryu")]
+pub use decimal::DoublePrecision;
+
 pub use decimal::FixedDecimal;
 use displaydoc::Display;
 pub use signum::Signum;

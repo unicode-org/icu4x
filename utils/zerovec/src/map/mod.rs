@@ -8,13 +8,15 @@ use crate::ule::AsULE;
 use crate::ZeroVec;
 use core::cmp::Ordering;
 
+mod borrowed;
 mod kv;
 #[cfg(feature = "serde")]
 mod serde;
 mod vecs;
 
+pub use borrowed::ZeroMapBorrowed;
 pub use kv::ZeroMapKV;
-pub use vecs::ZeroVecLike;
+pub use vecs::{MutableZeroVecLike, ZeroVecLike};
 
 /// A zero-copy map datastructure, built on sorted binary-searchable [`ZeroVec`]
 /// and [`VarZeroVec`].
@@ -88,6 +90,14 @@ where
         Self {
             keys: K::Container::with_capacity(capacity),
             values: V::Container::with_capacity(capacity),
+        }
+    }
+
+    /// Obtain a borrowed version of this map
+    pub fn as_borrowed(&'a self) -> ZeroMapBorrowed<'a, K, V> {
+        ZeroMapBorrowed {
+            keys: self.keys.as_borrowed(),
+            values: self.values.as_borrowed(),
         }
     }
 
@@ -295,5 +305,20 @@ where
                 ZeroVec::get(values, idx).unwrap(),
             )
         })
+    }
+}
+
+impl<'a, K, V> From<ZeroMapBorrowed<'a, K, V>> for ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+{
+    fn from(other: ZeroMapBorrowed<'a, K, V>) -> Self {
+        Self {
+            keys: K::Container::from_borrowed(other.keys),
+            values: V::Container::from_borrowed(other.values),
+        }
     }
 }

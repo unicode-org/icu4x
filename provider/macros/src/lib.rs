@@ -43,14 +43,13 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
 
     let docs = format!("Marker type for [`{}`]", name);
 
-    if let Some(lt) = lifetimes.get(0) {
+    if lifetimes.get(0).is_some() {
         quote!(
             #[doc = #docs]
             pub struct #marker;
 
-            impl<#lt> icu_provider::DataMarker<#lt> for #marker {
+            impl icu_provider::DataMarker for #marker {
                 type Yokeable = #name<'static>;
-                type Cart = #name<#lt>;
             }
 
             #[derive(Yokeable, ZeroCopyFrom)]
@@ -61,9 +60,8 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
             #[doc = #docs]
             pub struct #marker;
 
-            impl<'data> icu_provider::DataMarker<'data> for #marker {
+            impl icu_provider::DataMarker for #marker {
                 type Yokeable = #name;
-                type Cart = #name;
             }
 
             #[derive(Yokeable, ZeroCopyFrom)]

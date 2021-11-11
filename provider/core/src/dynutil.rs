@@ -12,8 +12,8 @@
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<'data, M>
 where
-    M: crate::prelude::DataMarker<'data>,
-    Self: Sized + crate::prelude::DataMarker<'data>,
+    M: crate::prelude::DataMarker,
+    Self: Sized + crate::prelude::DataMarker,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
     ///
@@ -26,14 +26,14 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::erased::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::marker::CowStringMarker;
+    /// use icu_provider::marker::CowStrMarker;
     /// use std::borrow::Cow;
     ///
     /// let data = "foo".to_string();
-    /// let original = DataPayload::<CowStringMarker>::from_owned(Cow::Owned(data));
+    /// let original = DataPayload::<CowStrMarker>::from_owned(Cow::Owned(data));
     /// let upcasted = ErasedDataStructMarker::upcast(original);
     /// let downcasted = upcasted
-    ///     .downcast::<CowStringMarker>()
+    ///     .downcast::<CowStrMarker>()
     ///     .expect("Type conversion");
     /// assert_eq!(downcasted.get(), "foo");
     /// ```
@@ -67,15 +67,15 @@ where
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::erased::ErasedDataStructMarker;
-/// use icu_provider::marker::CowStringMarker;
+/// use icu_provider::marker::CowStrMarker;
 /// use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
 ///
 /// // A small DataProvider that returns owned strings
 /// struct MyProvider(pub String);
-/// impl<'data> DataProvider<'static, CowStringMarker> for MyProvider {
+/// impl<'data> DataProvider<'static, CowStrMarker> for MyProvider {
 ///     fn load_payload(&self, req: &DataRequest)
-///             -> Result<DataResponse<'static, CowStringMarker>, DataError> {
+///             -> Result<DataResponse<'static, CowStrMarker>, DataError> {
 ///         req.resource_path.key.match_key(DEMO_KEY)?;
 ///         Ok(DataResponse {
 ///             metadata: Default::default(),
@@ -86,7 +86,7 @@ where
 ///
 /// // Implement DataProvider<ErasedDataStructMarker>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
-///     DEMO_KEY => CowStringMarker,
+///     DEMO_KEY => CowStrMarker,
 /// }, ERASED);
 ///
 /// // Usage example
@@ -94,7 +94,7 @@ where
 /// let resp: DataResponse<ErasedDataStructMarker> = provider
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
-/// let payload: DataPayload<CowStringMarker> = resp
+/// let payload: DataPayload<CowStrMarker> = resp
 ///     .take_payload()
 ///     .expect("Payload should be present")
 ///     .downcast()
@@ -106,21 +106,21 @@ where
 ///
 /// ```
 /// # use icu_provider::prelude::*;
-/// # use icu_provider::marker::CowStringMarker;
+/// # use icu_provider::marker::CowStrMarker;
 /// # use std::borrow::Cow;
 /// # struct MyProvider(pub String);
-/// # impl<'data> DataProvider<'static, CowStringMarker> for MyProvider {
+/// # impl<'data> DataProvider<'static, CowStrMarker> for MyProvider {
 /// #   fn load_payload(&self, req: &DataRequest)
-/// #           -> Result<DataResponse<'static, CowStringMarker>, DataError> {
+/// #           -> Result<DataResponse<'static, CowStrMarker>, DataError> {
 /// #       Ok(DataResponse {
 /// #           metadata: Default::default(),
 /// #           payload: Some(DataPayload::from_owned(self.0.to_string().into()))
 /// #       })
 /// #   }
 /// # }
-/// // Send all keys to the `CowStringMarker` provider.
+/// // Send all keys to the `CowStrMarker` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
-///     _ => CowStringMarker,
+///     _ => CowStrMarker,
 /// }, ERASED);
 /// ```
 ///

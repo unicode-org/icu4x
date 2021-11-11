@@ -29,6 +29,7 @@ pub enum ResourceCategory {
     Plurals,
     TimeZone,
     UnicodeSet,
+    ListFormatter,
     PrivateUse(TinyStr4),
 }
 
@@ -43,6 +44,7 @@ impl ResourceCategory {
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::TimeZone => Cow::Borrowed("time_zone"),
             Self::UnicodeSet => Cow::Borrowed("uniset"),
+            Self::ListFormatter => Cow::Borrowed("list_formatter"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());

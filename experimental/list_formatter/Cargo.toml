@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "list_formatter"
+name = "icu_list"
 description = "ECMA-402 ListFormatter"
 version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
@@ -21,12 +21,22 @@ include = [
 
 [dependencies]
 formatted_string_builder = { path = "../formatted_string_builder" }
-regex = "1.5"
 displaydoc = { version = "0.2.3", default-features = false }
-lazy_static = "1.0"
+icu_locid = { version = "0.4", path = "../../components/locid" }
+icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["yoke"] }
+regex = "1.5"
 
 [dev-dependencies]
 criterion = "0.3.3"
 
 [lib]
 path = "src/lib.rs"
+
+[features]
+std = ["icu_provider/std", "icu_locid/std"]
+default = ["provider_serde"]
+bench = []
+provider_serde = ["serde", "zerovec/serde"]
+provider_transform_internals = ["std"]

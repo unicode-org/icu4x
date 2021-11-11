@@ -1,4 +1,4 @@
-# list_formatter [![crates.io](https://img.shields.io/crates/v/list_formatter)](https://crates.io/crates/list_formatter)
+# icu_list [![crates.io](https://img.shields.io/crates/v/icu_list)](https://crates.io/crates/icu_list)
 
 
 
