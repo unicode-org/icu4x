@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636653828972,
+  "lastUpdate": 1636733397690,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14579,6 +14579,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37576619,
             "range": "± 2941780",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "89508d93bb5421beaf9a3d09793c0944743cb046",
+          "message": "Document ULE alignment guarantee; update all impls with checklists (#1294)",
+          "timestamp": "2021-11-12T08:03:17-08:00",
+          "tree_id": "4898988d1b364be4c516444d5e353139c36bfae0",
+          "url": "https://github.com/unicode-org/icu4x/commit/89508d93bb5421beaf9a3d09793c0944743cb046"
+        },
+        "date": 1636733391163,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 54515023,
+            "range": "± 637866",
             "unit": "ns/iter"
           }
         ]
