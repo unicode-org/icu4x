@@ -53,7 +53,12 @@ where
     match (&time_zone_format.patterns, &time_zone_format.config) {
         (Some(_), None) => write_pattern(time_zone_format, time_zone, w),
         (None, Some(_)) => write_config(time_zone_format, time_zone, w),
-        _ => todo!("Invalid state (both populated, or none populated, shouldn't be possible)"),
+        (Some(_), Some(_)) => {
+            unreachable!("TimeZoneFormat should have a configuration or a pattern, but found both")
+        }
+        (None, None) => unreachable!(
+            "TimeZoneFormat should have either a configuration or a pattern, but found neither"
+        ),
     }
 }
 
