@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636653840876,
+  "lastUpdate": 1636733450495,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12611,6 +12611,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 286921,
             "range": "± 484",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "89508d93bb5421beaf9a3d09793c0944743cb046",
+          "message": "Document ULE alignment guarantee; update all impls with checklists (#1294)",
+          "timestamp": "2021-11-12T08:03:17-08:00",
+          "tree_id": "4898988d1b364be4c516444d5e353139c36bfae0",
+          "url": "https://github.com/unicode-org/icu4x/commit/89508d93bb5421beaf9a3d09793c0944743cb046"
+        },
+        "date": 1636733444550,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 110884,
+            "range": "± 7974",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1366819,
+            "range": "± 68439",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 309025,
+            "range": "± 18698",
             "unit": "ns/iter"
           }
         ]
