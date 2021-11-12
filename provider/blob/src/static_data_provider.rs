@@ -75,7 +75,7 @@ impl StaticDataProvider {
 
 impl<'data, M> DataProvider<'data, M> for StaticDataProvider
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     // 'static is what we want here, because we are deserializing from a static buffer.
     M::Yokeable: Deserialize<'static>,
 {

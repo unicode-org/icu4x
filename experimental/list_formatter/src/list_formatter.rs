@@ -18,7 +18,6 @@ pub enum FieldType {
 
 pub struct ListFormatter<'data> {
     data: DataPayload<'data, ListFormatterPatternsV1Marker>,
-    type_: Type,
     width: Width,
 }
 
@@ -32,7 +31,11 @@ impl<'a> ListFormatter<'a> {
         let data = data_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: key::LIST_FORMAT_V1,
+                    key: match type_ {
+                        Type::And => key::LIST_FORMAT_AND_V1,
+                        Type::Or => key::LIST_FORMAT_OR_V1,
+                        Type::Unit => key::LIST_FORMAT_UNIT_V1,
+                    },
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(locale.into().into()),
@@ -40,7 +43,7 @@ impl<'a> ListFormatter<'a> {
                 },
             })?
             .take_payload()?;
-        Ok(Self { data, type_, width })
+        Ok(Self { data, width })
     }
 
     fn format_internal<'c, B>(
@@ -50,22 +53,30 @@ impl<'a> ListFormatter<'a> {
         single: fn(&str) -> B,
         apply_pattern: fn(&str, &PatternParts<'c>, B) -> B,
     ) -> B {
-        let pattern = &self.data.get().patterns[self.type_][self.width];
+        let pattern = &self.data.get();
         match values.len() {
             0 => empty(),
             1 => single(values[0]),
-            2 => apply_pattern(values[0], &pattern.pair.parts(values[1]), single(values[1])),
+            2 => apply_pattern(
+                values[0],
+                &pattern.pair(self.width).parts(values[1]),
+                single(values[1]),
+            ),
             n => {
                 let mut builder = apply_pattern(
                     values[n - 2],
-                    &pattern.end.parts(values[n - 1]),
+                    &pattern.end(self.width).parts(values[n - 1]),
                     single(values[n - 1]),
                 );
+                let middle = pattern.middle(self.width);
                 for i in (1..n - 2).rev() {
-                    builder =
-                        apply_pattern(values[i], &pattern.middle.parts(values[i + 1]), builder);
+                    builder = apply_pattern(values[i], &middle.parts(values[i + 1]), builder);
                 }
-                apply_pattern(values[0], &pattern.start.parts(values[1]), builder)
+                apply_pattern(
+                    values[0],
+                    &pattern.start(self.width).parts(values[1]),
+                    builder,
+                )
             }
         }
     }
@@ -75,11 +86,10 @@ impl<'a> ListFormatter<'a> {
             values,
             || "".to_string(),
             |value| value.to_string(),
-            |value, (before, between, after), mut builder| {
+            |value, (between, after), mut builder| {
                 builder = builder + after;
                 builder.insert_str(0, between);
                 builder.insert_str(0, value);
-                builder.insert_str(0, before);
                 builder
             },
         )
@@ -94,11 +104,10 @@ impl<'a> ListFormatter<'a> {
                 builder.append(value, FieldType::Element);
                 builder
             },
-            |value, (before, between, after), mut builder| {
+            |value, (between, after), mut builder| {
                 builder.append(after, FieldType::Literal);
                 builder.prepend(between, FieldType::Literal);
                 builder.prepend(value, FieldType::Element);
-                builder.prepend(before, FieldType::Literal);
                 builder
             },
         )
@@ -113,29 +122,26 @@ mod tests {
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
     fn formatter<'data>() -> ListFormatter<'data> {
-        let pattern = ListFormatterPattern {
-            pair: ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+        let pattern = ListFormatterPatternsV1::new(
+            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
+            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
                 .unwrap(),
-            start: ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            middle: ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            end: ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-        };
-        let pattern_sizes = PatternSizes {
-            wide: pattern.clone(),
-            narrow: pattern.clone(),
-            short: pattern,
-        };
+            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
+            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+                .unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
+            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+                .unwrap(),
+        );
+
         ListFormatter {
-            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
-                ListFormatterPatternsV1 {
-                    patterns: PatternTypes {
-                        and: pattern_sizes.clone(),
-                        or: pattern_sizes.clone(),
-                        unit: pattern_sizes,
-                    },
-                },
-            ),
-            type_: Type::default(),
+            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(pattern),
             width: Width::default(),
         }
     }

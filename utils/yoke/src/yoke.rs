@@ -271,6 +271,27 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         self.cart
     }
 
+    /// Unsafe function for replacing the cart with another
+    ///
+    /// This can be used for type-erasing the cart, for example.
+    ///
+    /// # Safety
+    ///
+    /// - `f()` must not panic
+    /// - References from the yokeable `Y` should still be valid for the lifetime of the
+    ///   returned cart type.
+    ///
+    /// Typically, this means implementing `f` as something which _wraps_ the inner cart type.
+    /// `Yoke` only really cares about destructors for its carts so it's fine to erase other
+    /// information about the cart, as long as the backing data will still be destroyed at the
+    /// same time.
+    pub unsafe fn replace_cart<C2>(self, f: impl FnOnce(C) -> C2) -> Yoke<Y, C2> {
+        Yoke {
+            yokeable: self.yokeable,
+            cart: f(self.cart),
+        }
+    }
+
     /// Mutate the stored [`Yokeable`] data.
     ///
     /// See [`Yokeable::transform_mut()`] for why this operation is safe.
@@ -387,6 +408,15 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// ```
     pub fn new_always_owned(yokeable: Y) -> Self {
         Self { yokeable, cart: () }
+    }
+
+    /// Obtain the yokeable out of a `Yoke<Y, ()>`
+    ///
+    /// For most `Yoke` types this would be unsafe but it's
+    /// fine for `Yoke<Y, ()>` since there are no actual internal
+    /// references
+    pub fn into_yokeable(self) -> Y {
+        self.yokeable
     }
 }
 

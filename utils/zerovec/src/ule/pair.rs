@@ -66,6 +66,24 @@ impl<E: fmt::Display, F: fmt::Display> fmt::Display for PairULEError<E, F> {
     }
 }
 
+impl<A: fmt::Debug + ULE, B: fmt::Debug + ULE> fmt::Debug for PairULE<A, B> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        let a = self.0;
+        let b = self.1;
+        (a, b).fmt(f)
+    }
+}
+
+impl<A: PartialEq + ULE, B: PartialEq + ULE> PartialEq for PairULE<A, B> {
+    fn eq(&self, other: &Self) -> bool {
+        let a = self.0;
+        let b = self.1;
+        let other_a = other.0;
+        let other_b = other.1;
+        (a, b) == (other_a, other_b)
+    }
+}
+
 // We need manual impls since `#[derive()]` is disallowed on packed types
 impl<A: ULE, B: ULE> Clone for PairULE<A, B> {
     fn clone(&self) -> Self {

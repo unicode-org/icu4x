@@ -19,7 +19,7 @@ use crate::yoke::Yokeable;
 /// for the data struct:
 ///
 /// - `impl<'a> Yokeable<'a>` (required)
-/// - `impl ZeroCopyFrom<Cart>` (required for use with some `DataPayload` constructors)
+/// - `impl ZeroCopyFrom<Self>`
 ///
 /// See also some common pre-made DataMarker impls in this module.
 ///
@@ -40,12 +40,8 @@ use crate::yoke::Yokeable;
 ///
 /// struct MyDataStructMarker;
 ///
-/// impl<'data> DataMarker<'data> for MyDataStructMarker {
+/// impl DataMarker for MyDataStructMarker {
 ///     type Yokeable = MyDataStruct<'static>;
-///
-///     // Note: the cart could also be just `str` since
-///     // MyDataStruct has only one field.
-///     type Cart = MyDataStruct<'data>;
 /// }
 ///
 /// // We can now use MyDataStruct with DataProvider:
@@ -55,12 +51,8 @@ use crate::yoke::Yokeable;
 /// let payload = DataPayload::<MyDataStructMarker>::from_partial_owned(s);
 /// assert_eq!(payload.get().message, "Hello World");
 /// ```
-pub trait DataMarker<'data> {
+pub trait DataMarker {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
-
-    /// A type that is capable of owning all data necessary for the Yokeable type. This can often
-    /// be the `'data` version of the data struct.
-    type Cart: 'data + ?Sized;
 }

@@ -8,7 +8,7 @@ use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 
-use std::path::PathBuf;
+use std::path::Path;
 
 /// This data provider returns `UnicodeSet` data inside a `UnicodeProperty`
 /// data struct. The source data is in the form of a directory of TOML file(s)
@@ -22,8 +22,8 @@ pub struct PropertiesDataProvider {
 impl PropertiesDataProvider {
     /// Construct a new data provider instance. `root_dir` is the path to the
     /// root directory containing the property data TOML files.
-    pub fn try_new(root_dir: PathBuf) -> eyre::Result<Self> {
-        let binary = BinaryPropertyUnicodeSetDataProvider::new(root_dir.clone());
+    pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
+        let binary = BinaryPropertyUnicodeSetDataProvider::try_new(root_dir)?;
         let enumerated = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)?;
         Ok(Self { binary, enumerated })
     }

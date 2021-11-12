@@ -94,7 +94,7 @@ impl BlobDataProvider {
 
 impl<'data, M> DataProvider<'data, M> for BlobDataProvider
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):

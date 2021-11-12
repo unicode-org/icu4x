@@ -113,7 +113,7 @@ pub trait SerdeDeDataReceiver {
 
 impl<'data, M> SerdeDeDataReceiver for Option<DataPayload<'data, M>>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     M::Yokeable: serde::de::Deserialize<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
@@ -202,7 +202,7 @@ pub trait SerdeDeDataProvider {
 /// Note: This impl returns `'static` payloads because borrowing is handled by [`Yoke`].
 impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'static
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     M::Yokeable: serde::de::Deserialize<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
@@ -282,18 +282,49 @@ impl<'a> Deref for SerdeSeDataStructDynRef<'a> {
 
 impl<'data, M> crate::dynutil::UpcastDataPayload<'data, M> for SerdeSeDataStructMarker
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
-    M::Cart: IsCovariant<'data>,
 {
     fn upcast(other: DataPayload<'data, M>) -> DataPayload<'data, SerdeSeDataStructMarker> {
-        use crate::data_provider::DataPayloadInner::*;
-        let cart: Rc<dyn SerdeSeDataStruct<'data> + 'data> = match other.inner {
-            RcStruct(yoke) => Rc::from(yoke),
-            Owned(yoke) => Rc::from(yoke),
-            RcBuf(yoke) => Rc::from(yoke),
+        use crate::data_provider::{DataPayloadInner, ErasedCart};
+        let yoke: Yoke<_, ErasedCart> = match other.inner {
+            DataPayloadInner::RcStruct(yoke) => {
+                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
+                let yoke =
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                // Safe since we are replacing the cart with another that owns
+                // the same underlying data
+                //
+                // eventually the yoke crate will have a safe function for this
+                // https://github.com/unicode-org/icu4x/issues/1284
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+            }
+            DataPayloadInner::Owned(yoke) => {
+                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
+                let yoke =
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                // Safe since we are replacing the cart with another that owns
+                // the same underlying data
+                //
+                // eventually the yoke crate will have a safe function for this
+                // https://github.com/unicode-org/icu4x/issues/1284
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+            }
+            DataPayloadInner::RcBuf(yoke) => {
+                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
+                let yoke =
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                // Safe since we are replacing the cart with another that owns
+                // the same underlying data
+                //
+                // eventually the yoke crate will have a safe function for this
+                // https://github.com/unicode-org/icu4x/issues/1284
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+            }
         };
-        DataPayload::from_partial_owned(cart)
+        DataPayload {
+            inner: DataPayloadInner::RcStruct(yoke),
+        }
     }
 }
 
@@ -325,7 +356,6 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructDynRef<'static> {
 /// Marker type for [`SerdeSeDataStruct`].
 pub struct SerdeSeDataStructMarker {}
 
-impl<'data> DataMarker<'data> for SerdeSeDataStructMarker {
+impl DataMarker for SerdeSeDataStructMarker {
     type Yokeable = SerdeSeDataStructDynRef<'static>;
-    type Cart = dyn SerdeSeDataStruct<'data>;
 }

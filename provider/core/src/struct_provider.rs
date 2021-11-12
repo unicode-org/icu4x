@@ -40,7 +40,7 @@ use crate::yoke::*;
 /// ```
 pub struct StructProvider<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     pub key: ResourceKey,
     pub data: DataPayload<'data, M>,
@@ -48,7 +48,7 @@ where
 
 impl<'data, M> DataProvider<'data, M> for StructProvider<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {

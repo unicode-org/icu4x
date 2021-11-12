@@ -13,7 +13,7 @@ use crate::prelude::*;
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
 pub trait DataExporter<'data, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
     fn put_payload(
@@ -63,7 +63,7 @@ pub fn export_from_iterable<'data, P, E, M>(
     exporter: &mut E,
 ) -> Result<(), Error>
 where
-    M: DataMarker<'data>,
+    M: DataMarker,
     P: IterableDataProvider<'data, M> + ?Sized,
     E: DataExporter<'data, M> + ?Sized,
 {

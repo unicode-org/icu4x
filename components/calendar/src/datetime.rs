@@ -7,7 +7,7 @@ use crate::{AsCalendar, Date};
 
 /// A date+time for a given calendar
 ///
-/// This can work with wrappers arount [`Calendar`] types,
+/// This can work with wrappers arount [`Calendar`](crate::Calendar) types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait, much like
 /// [`Date`]
 #[derive(Debug)]
