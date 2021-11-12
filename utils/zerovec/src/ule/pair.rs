@@ -11,6 +11,15 @@ use core::mem;
 #[repr(packed)]
 pub struct PairULE<A, B>(pub A, pub B);
 
+// Safety (based on the safety checklist on the ULE trait):
+//  1. PairULE does not include any uninitialized or padding bytes.
+//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields)
+//  2. PairULE is aligned to 1 byte.
+//     (achieved by `#[repr(packed)]` on a struct containing only ULE fields)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  4. The other ULE methods use the default impl.
+//  5. PairULE byte equality is semantic equality by relying on the ULE equality
+//     invariant on the subfields
 unsafe impl<A: ULE, B: ULE> ULE for PairULE<A, B> {
     type Error = PairULEError<A::Error, B::Error>;
 

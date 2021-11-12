@@ -61,10 +61,13 @@ impl AsULE for fields::Field {
 }
 
 // Safety (based on the safety checklist on the ULE trait):
-//  1. FieldULE does not include any uninitialized or padding bytes.
-//  2. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  3. The other ULE methods use the default impl.
-//  4. FieldULE byte equality is semantic equality.
+//  1. FieldULE does not include any uninitialized or padding bytes
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+/// 2. FieldULE is aligned to 1 byte
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  4. The other ULE methods use the default impl.
+//  5. FieldULE byte equality is semantic equality.
 unsafe impl ULE for FieldULE {
     type Error = &'static str;
 
