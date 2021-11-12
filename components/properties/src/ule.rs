@@ -35,8 +35,9 @@ impl AsULE for GeneralSubcategory {
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
 //     Because GeneralSubcategory is repr(u8), any length of byte slice is okay.
-//  4. The other ULE methods use the default impl.
-//  5. The PartialEq implementation on GeneralSubcategory uses byte equality.
+//  4. The impl of validate_byte_slice() returns an error if there are extra bytes (impossible)
+//  5. The other ULE methods use the default impl.
+//  6. The PartialEq implementation on GeneralSubcategory uses byte equality.
 unsafe impl ULE for GeneralSubcategoryULE {
     type Error = TryFromPrimitiveError<GeneralSubcategory>;
 

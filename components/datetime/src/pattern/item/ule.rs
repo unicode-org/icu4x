@@ -89,8 +89,9 @@ impl PatternItemULE {
 //  2. PatternItemULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a ULE type)
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The other ULE methods use the default impl.
-//  5. PatternItemULE byte equality is semantic equality.
+//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  5. The other ULE methods use the default impl.
+//  6. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
     type Error = &'static str;
 
@@ -223,8 +224,9 @@ impl GenericPatternItemULE {
 //  2. GenericPatternItemULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The other ULE methods use the default impl.
-//  5. GenericPatternItemULE byte equality is semantic equality.
+//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  5. The other ULE methods use the default impl.
+//  6. GenericPatternItemULE byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
     type Error = &'static str;
 
