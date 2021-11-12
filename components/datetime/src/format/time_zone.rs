@@ -57,7 +57,7 @@ where
     }
 }
 
-pub(crate) fn write_config<T, W>(
+fn write_config<T, W>(
     time_zone_format: &TimeZoneFormat,
     time_zone: &T,
     w: &mut W,
@@ -66,7 +66,10 @@ where
     T: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    match time_zone_format.config.as_ref().unwrap() {
+    match time_zone_format
+        .config
+        .expect("TimeZoneFormat::write_config() expected Some(config) but got None")
+    {
         TimeZoneFormatConfig::GenericNonLocationLong => {
             time_zone_format
                 .long_generic_non_location_format(w, time_zone)
@@ -98,19 +101,13 @@ where
             time_zone_format.localized_gmt_format(w, time_zone)?;
         }
         TimeZoneFormatConfig::Iso8601(iso_format, iso_minutes, iso_seconds) => {
-            time_zone_format.iso8601_format(
-                w,
-                time_zone,
-                iso_format.clone(),
-                iso_minutes.clone(),
-                iso_seconds.clone(),
-            )?;
+            time_zone_format.iso8601_format(w, time_zone, iso_format, iso_minutes, iso_seconds)?;
         }
     }
     Ok(())
 }
 
-pub(crate) fn write_pattern<T, W>(
+fn write_pattern<T, W>(
     time_zone_format: &TimeZoneFormat,
     time_zone: &T,
     w: &mut W,
@@ -122,7 +119,7 @@ where
     let pattern = &time_zone_format
         .patterns
         .as_ref()
-        .unwrap()
+        .expect("TimeZoneFormat::write_pattern() expected Some(patterns) but got None")
         .get()
         .0
         .clone()

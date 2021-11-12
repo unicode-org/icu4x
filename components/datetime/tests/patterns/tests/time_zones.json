@@ -87,9 +87,7 @@
         "patterns": [
           "VVV"
         ],
-        "configs": [
-          
-        ],
+        "configs": [],
         "expected": "Los Angeles"
       },
       {
@@ -249,9 +247,7 @@
         "patterns": [
           "VVV"
         ],
-        "configs": [
-          
-        ],
+        "configs": [],
         "expected": "東京"
       },
       {
@@ -411,9 +407,7 @@
         "patterns": [
           "VVV"
         ],
-        "configs": [
-          
-        ],
+        "configs": [],
         "expected": "Тролль"
       },
       {
@@ -615,9 +609,7 @@
         "patterns": [
           "VVV"
         ],
-        "configs": [
-          
-        ],
+        "configs": [],
         "expected": "Катманду"
       },
       {
