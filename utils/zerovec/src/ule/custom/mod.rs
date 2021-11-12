@@ -44,6 +44,18 @@
 //!     field3: [<u32 as AsULE>::ULE],
 //! }
 //!
+//!
+//!
+//! // Safety (based on the safety checklist on the VarULE trait):
+//! //  1. FooULE does not include any uninitialized or padding bytes. (achieved by `#[repr(packed)]` on
+//! //     a struct with only ULE fields)
+//! //  2. FooULE is aligned to 1 byte. (achieved by `#[repr(packed)]` on
+//! //     a struct with only ULE fields)
+//! //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
+//! //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//! //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//! //  6. The other VarULE methods use the default impl.
+//! //  7. FooULE byte equality is semantic equality
 //! unsafe impl VarULE for FooULE {
 //!     type Error = &'static str; // use strings for simplicity
 //!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {

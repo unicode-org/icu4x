@@ -105,6 +105,17 @@ where
         self.as_borrowed().binary_search(x)
     }
 }
+
+// Safety (based on the safety checklist on the VarULE trait):
+//  1. VarZeroVecULE does not include any uninitialized or padding bytes (achieved by `#[repr(transparent)]` on a
+//     `[u8]` slice which satisfies this invariant)
+//  2. VarZeroVecULE is aligned to 1 byte (achieved by `#[repr(transparent)]` on a
+//     `[u8]` slice which satisfies this invariant)
+//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
+//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  6. `as_byte_slice()` is equivalent to a regular transmute of the underlying data
+//  7. VarZeroVecULE byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroVecULE<T> {
     type Error = ParseErrorFor<T>;
 
