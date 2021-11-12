@@ -352,9 +352,13 @@ impl RelationULE {
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. RelationULE does not include any uninitialized or padding bytes.
-//  2. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  3. The other ULE methods use the default impl.
-//  4. RelationULE byte equality is semantic equality.
+//     (achieved by `#[repr(packed)]` on a type that satisfies this invariant)
+//  2. RelationULE is aligned to 1 byte
+//     (achieved by `#[repr(packed)]` on a type that satisfies this invariant)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  5 The other ULE methods use the default impl.
+//  6. RelationULE byte equality is semantic equality.
 unsafe impl VarULE for RelationULE {
     type Error = &'static str;
 
