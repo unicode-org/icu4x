@@ -277,9 +277,12 @@ fn test_time_zone_format_configs() {
         {
             for &config_input in configs {
                 extern crate std;
-                let tzf =
-                    TimeZoneFormat::try_from_config(langid.clone(), config_input, &zone_provider)
-                        .unwrap();
+                let tzf = TimeZoneFormat::try_from_config(
+                    langid.clone(),
+                    config_input.into(),
+                    &zone_provider,
+                )
+                .unwrap();
                 let mut buffer = String::new();
                 tzf.format_to_write(&mut buffer, &datetime).unwrap();
                 assert_eq!(
