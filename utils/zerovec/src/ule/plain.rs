@@ -31,9 +31,10 @@ macro_rules! impl_byte_slice_size {
         //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
         //  2. PlainOldULE is aligned to 1 byte.
         //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-        //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-        //  4. The other ULE methods use the default impl.
-        //  5. PlainOldULE byte equality is semantic equality
+        //  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
+        //  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
+        //  5. The other ULE methods use the default impl.
+        //  6. PlainOldULE byte equality is semantic equality
         unsafe impl ULE for PlainOldULE<$size> {
             type Error = ULEError<core::convert::Infallible>;
 
@@ -106,9 +107,10 @@ impl_byte_slice_type!(i128, 16);
 // Safety (based on the safety checklist on the ULE trait):
 //  1. u8 does not include any uninitialized or padding bytes.
 //  2. u8 is aligned to 1 byte.
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The other ULE methods use the default impl.
-//  5. u8 byte equality is semantic equality
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
+//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes (never).
+//  5. The other ULE methods use the default impl.
+//  6. u8 byte equality is semantic equality
 unsafe impl ULE for u8 {
     type Error = core::convert::Infallible;
     #[inline]
