@@ -14,11 +14,17 @@
           "zz",
           "zzz"
         ],
+        "configs": [
+          "SpecificNonLocationShort"
+        ],
         "expected": "PDT"
       },
       {
         "patterns": [
           "zzzz"
+        ],
+        "configs": [
+          "SpecificNonLocationLong"
         ],
         "expected": "Pacific Daylight Time"
       },
@@ -28,6 +34,9 @@
           "ZZ",
           "ZZZ"
         ],
+        "configs": [
+          
+        ],
         "expected": "-0700"
       },
       {
@@ -36,11 +45,23 @@
           "OOOO",
           "ZZZZ"
         ],
+        "configs": [
+          "LocalizedGMT"
+        ],
         "expected": "GMT-07:00"
       },
       {
         "patterns": [
           "ZZZZZ"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Optional"
+            ]
+          }
         ],
         "expected": "-07:00"
       },
@@ -48,11 +69,17 @@
         "patterns": [
           "v"
         ],
+        "configs": [
+          "GenericNonLocationShort"
+        ],
         "expected": "PT"
       },
       {
         "patterns": [
           "vvvv"
+        ],
+        "configs": [
+          "GenericNonLocationLong"
         ],
         "expected": "Pacific Time"
       },
@@ -60,11 +87,17 @@
         "patterns": [
           "VVV"
         ],
+        "configs": [
+          
+        ],
         "expected": "Los Angeles"
       },
       {
         "patterns": [
           "VVVV"
+        ],
+        "configs": [
+          "GenericLocation"
         ],
         "expected": "Los Angeles Time"
       },
@@ -72,6 +105,15 @@
         "patterns": [
           "x",
           "X"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Optional",
+              "Never"
+            ]
+          }
         ],
         "expected": "-07"
       },
@@ -82,6 +124,15 @@
           "xxxx",
           "XXXX"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
         "expected": "-0700"
       },
       {
@@ -90,6 +141,15 @@
           "XXX",
           "xxxxx",
           "XXXXX"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Extended",
+              "Required",
+              "Never"
+            ]
+          }
         ],
         "expected": "-07:00"
       }
@@ -110,11 +170,17 @@
           "zz",
           "zzz"
         ],
+        "configs": [
+          "SpecificNonLocationShort"
+        ],
         "expected": "GMT+09:00"
       },
       {
         "patterns": [
           "zzzz"
+        ],
+        "configs": [
+          "SpecificNonLocationLong"
         ],
         "expected": "GMT+09:00"
       },
@@ -124,6 +190,15 @@
           "ZZ",
           "ZZZ"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Optional"
+            ]
+          }
+        ],
         "expected": "+0900"
       },
       {
@@ -132,11 +207,23 @@
           "OOOO",
           "ZZZZ"
         ],
+        "configs": [
+          "LocalizedGMT"
+        ],
         "expected": "GMT+09:00"
       },
       {
         "patterns": [
           "ZZZZZ"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Optional"
+            ]
+          }
         ],
         "expected": "+09:00"
       },
@@ -144,11 +231,17 @@
         "patterns": [
           "v"
         ],
+        "configs": [
+          "GenericNonLocationShort"
+        ],
         "expected": "JST"
       },
       {
         "patterns": [
           "vvvv"
+        ],
+        "configs": [
+          "GenericNonLocationLong"
         ],
         "expected": "日本時間"
       },
@@ -156,11 +249,17 @@
         "patterns": [
           "VVV"
         ],
+        "configs": [
+          
+        ],
         "expected": "東京"
       },
       {
         "patterns": [
           "VVVV"
+        ],
+        "configs": [
+          "GenericLocation"
         ],
         "expected": "東京時間"
       },
@@ -168,6 +267,15 @@
         "patterns": [
           "x",
           "X"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcBasic",
+              "Optional",
+              "Never"
+            ]
+          }
         ],
         "expected": "+09"
       },
@@ -178,6 +286,15 @@
           "xxxx",
           "XXXX"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcBasic",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
         "expected": "+0900"
       },
       {
@@ -186,6 +303,15 @@
           "XXX",
           "xxxxx",
           "XXXXX"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Never"
+            ]
+          }
         ],
         "expected": "+09:00"
       }
@@ -206,11 +332,17 @@
           "zz",
           "zzz"
         ],
+        "configs": [
+          "SpecificNonLocationShort"
+        ],
         "expected": "GMT"
       },
       {
         "patterns": [
           "zzzz"
+        ],
+        "configs": [
+          "SpecificNonLocationLong"
         ],
         "expected": "GMT"
       },
@@ -220,6 +352,15 @@
           "ZZ",
           "ZZZ"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Optional"
+            ]
+          }
+        ],
         "expected": "+0000"
       },
       {
@@ -228,11 +369,23 @@
           "OOOO",
           "ZZZZ"
         ],
+        "configs": [
+          "LocalizedGMT"
+        ],
         "expected": "GMT"
       },
       {
         "patterns": [
           "ZZZZZ"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Optional"
+            ]
+          }
         ],
         "expected": "Z"
       },
@@ -240,11 +393,17 @@
         "patterns": [
           "v"
         ],
+        "configs": [
+          "GenericNonLocationShort"
+        ],
         "expected": "Тролль"
       },
       {
         "patterns": [
           "vvvv"
+        ],
+        "configs": [
+          "GenericNonLocationLong"
         ],
         "expected": "Среднее время по Гринвичу"
       },
@@ -252,11 +411,17 @@
         "patterns": [
           "VVV"
         ],
+        "configs": [
+          
+        ],
         "expected": "Тролль"
       },
       {
         "patterns": [
           "VVVV"
+        ],
+        "configs": [
+          "GenericLocation"
         ],
         "expected": "Тролль"
       },
@@ -264,11 +429,29 @@
         "patterns": [
           "x"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcBasic",
+              "Optional",
+              "Never"
+            ]
+          }
+        ],
         "expected": "Z"
       },
       {
         "patterns": [
           "X"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Optional",
+              "Never"
+            ]
+          }
         ],
         "expected": "+00"
       },
@@ -277,12 +460,30 @@
           "xx",
           "xxxx"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcBasic",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
         "expected": "Z"
       },
       {
         "patterns": [
           "XX",
           "XXXX"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Never"
+            ]
+          }
         ],
         "expected": "+0000"
       },
@@ -291,12 +492,30 @@
           "xxx",
           "xxxxx"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
         "expected": "Z"
       },
       {
         "patterns": [
           "XXX",
           "XXXXX"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Extended",
+              "Required",
+              "Never"
+            ]
+          }
         ],
         "expected": "+00:00"
       }
@@ -317,11 +536,17 @@
           "zz",
           "zzz"
         ],
+        "configs": [
+          "SpecificNonLocationShort"
+        ],
         "expected": "GMT+05:45"
       },
       {
         "patterns": [
           "zzzz"
+        ],
+        "configs": [
+          "SpecificNonLocationLong"
         ],
         "expected": "GMT+05:45"
       },
@@ -331,6 +556,15 @@
           "ZZ",
           "ZZZ"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Optional"
+            ]
+          }
+        ],
         "expected": "+0545"
       },
       {
@@ -339,11 +573,23 @@
           "OOOO",
           "ZZZZ"
         ],
+        "configs": [
+          "LocalizedGMT"
+        ],
         "expected": "GMT+05:45"
       },
       {
         "patterns": [
           "ZZZZZ"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Optional"
+            ]
+          }
         ],
         "expected": "+05:45"
       },
@@ -351,11 +597,17 @@
         "patterns": [
           "v"
         ],
+        "configs": [
+          "GenericNonLocationShort"
+        ],
         "expected": "Катманду"
       },
       {
         "patterns": [
           "vvvv"
+        ],
+        "configs": [
+          "GenericNonLocationLong"
         ],
         "expected": "Непал време"
       },
@@ -363,11 +615,17 @@
         "patterns": [
           "VVV"
         ],
+        "configs": [
+          
+        ],
         "expected": "Катманду"
       },
       {
         "patterns": [
           "VVVV"
+        ],
+        "configs": [
+          "GenericLocation"
         ],
         "expected": "Катманду"
       },
@@ -375,6 +633,15 @@
         "patterns": [
           "x",
           "X"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcBasic",
+              "Optional",
+              "Never"
+            ]
+          }
         ],
         "expected": "+0545"
       },
@@ -385,6 +652,15 @@
           "xxxx",
           "XXXX"
         ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcBasic",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
         "expected": "+0545"
       },
       {
@@ -393,6 +669,15 @@
           "XXX",
           "xxxxx",
           "XXXXX"
+        ],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Never"
+            ]
+          }
         ],
         "expected": "+05:45"
       }

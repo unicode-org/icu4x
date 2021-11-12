@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datetime::time_zone::TimeZoneFormatConfig;
 use serde::{Deserialize, Serialize};
 use tinystr::TinyStr8;
+
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeZoneConfig {
     pub time_zone_id: Option<String>,
@@ -25,5 +27,6 @@ pub struct TimeZoneTest {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeZoneExpectation {
     pub patterns: Vec<String>,
+    pub configs: Vec<TimeZoneFormatConfig>,
     pub expected: String,
 }

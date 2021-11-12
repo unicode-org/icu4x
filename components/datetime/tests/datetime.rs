@@ -14,6 +14,7 @@ use icu_datetime::{
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
         key::{DATE_PATTERNS_V1, DATE_SKELETON_PATTERNS_V1, DATE_SYMBOLS_V1},
     },
+    time_zone::TimeZoneFormat,
     DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
@@ -258,6 +259,48 @@ fn test_dayperiod_patterns() {
 }
 
 #[test]
+fn test_time_zone_format_configs() {
+    let zone_provider = icu_testdata::get_provider();
+
+    for test in get_time_zone_tests("time_zones").unwrap().0 {
+        let langid: LanguageIdentifier = test.locale.parse().unwrap();
+        let mut config = test.config;
+        let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
+        datetime.time_zone.time_zone_id = config.time_zone_id.take();
+        datetime.time_zone.metazone_id = config.metazone_id.take();
+        datetime.time_zone.time_variant = config.time_variant.take();
+        for TimeZoneExpectation {
+            patterns: _,
+            configs,
+            expected,
+        } in &test.expectations
+        {
+            for config_input in configs {
+                extern crate std;
+                let tzc = TimeZoneFormat::try_new_with_config(
+                    langid.clone(),
+                    config_input.clone(),
+                    &zone_provider,
+                )
+                .unwrap();
+                let mut buffer = String::new();
+                tzc.format_to_write(&mut buffer, &datetime).unwrap();
+                assert_eq!(
+                    buffer.to_string(),
+                    *expected,
+                    "\n\
+                    locale:   `{}`,\n\
+                    datetime: `{}`,\n\
+                    ",
+                    langid,
+                    test.datetime,
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn test_time_zone_patterns() {
     let date_provider = icu_testdata::get_provider();
     let plural_provider = icu_testdata::get_provider();
@@ -316,7 +359,12 @@ fn test_time_zone_patterns() {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
 
-        for TimeZoneExpectation { patterns, expected } in &test.expectations {
+        for TimeZoneExpectation {
+            patterns,
+            configs: _,
+            expected,
+        } in &test.expectations
+        {
             for pattern_input in patterns {
                 let new_pattern1: Pattern = pattern_input.parse().unwrap();
                 let new_pattern2: Pattern = pattern_input.parse().unwrap();
