@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636766627175,
+  "lastUpdate": 1636767753105,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12695,6 +12695,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 355844,
             "range": "± 20726",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0845aa18ff40b5f7a0dfad8b7d63ec86b55d3d59",
+          "message": "Add CodePointTrie and ZeroVec conversion methods (#1291)",
+          "timestamp": "2021-11-12T17:35:22-08:00",
+          "tree_id": "27420c27afdad4d6295266a3afa6acc186ed3c4c",
+          "url": "https://github.com/unicode-org/icu4x/commit/0845aa18ff40b5f7a0dfad8b7d63ec86b55d3d59"
+        },
+        "date": 1636767747906,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 110815,
+            "range": "± 8451",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1281005,
+            "range": "± 89901",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 331825,
+            "range": "± 32807",
             "unit": "ns/iter"
           }
         ]
