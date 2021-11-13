@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636733454569,
+  "lastUpdate": 1636766607250,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16913,6 +16913,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5056,
             "range": "± 281",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "33d441cc9fdfdb5c86ba21f28eb50753bbe6e6a1",
+          "message": "Fix item 5 in the VarULE checklist (#1295)",
+          "timestamp": "2021-11-12T17:15:25-08:00",
+          "tree_id": "b4278d2f88dfc273a605362bd4adad31578c246b",
+          "url": "https://github.com/unicode-org/icu4x/commit/33d441cc9fdfdb5c86ba21f28eb50753bbe6e6a1"
+        },
+        "date": 1636766599292,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2980,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5306,
+            "range": "± 119",
             "unit": "ns/iter"
           }
         ]
