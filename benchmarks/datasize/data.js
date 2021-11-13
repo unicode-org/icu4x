@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636733082679,
+  "lastUpdate": 1636766224144,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3623,6 +3623,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/89508d93bb5421beaf9a3d09793c0944743cb046"
         },
         "date": 1636733077081,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 846762,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "33d441cc9fdfdb5c86ba21f28eb50753bbe6e6a1",
+          "message": "Fix item 5 in the VarULE checklist (#1295)",
+          "timestamp": "2021-11-12T17:15:25-08:00",
+          "tree_id": "b4278d2f88dfc273a605362bd4adad31578c246b",
+          "url": "https://github.com/unicode-org/icu4x/commit/33d441cc9fdfdb5c86ba21f28eb50753bbe6e6a1"
+        },
+        "date": 1636766216927,
         "tool": "ndjson",
         "benches": [
           {
