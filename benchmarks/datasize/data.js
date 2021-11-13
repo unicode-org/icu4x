@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636766224144,
+  "lastUpdate": 1636767417727,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3653,6 +3653,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/33d441cc9fdfdb5c86ba21f28eb50753bbe6e6a1"
         },
         "date": 1636766216927,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 846762,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0845aa18ff40b5f7a0dfad8b7d63ec86b55d3d59",
+          "message": "Add CodePointTrie and ZeroVec conversion methods (#1291)",
+          "timestamp": "2021-11-12T17:35:22-08:00",
+          "tree_id": "27420c27afdad4d6295266a3afa6acc186ed3c4c",
+          "url": "https://github.com/unicode-org/icu4x/commit/0845aa18ff40b5f7a0dfad8b7d63ec86b55d3d59"
+        },
+        "date": 1636767411106,
         "tool": "ndjson",
         "benches": [
           {
