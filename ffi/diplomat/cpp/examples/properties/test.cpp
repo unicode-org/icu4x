@@ -2,16 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "../../include/ICU4XUnicodeSetProperty.hpp"
-#include "../../include/ICU4XUnicodeScriptMapProperty.hpp"
+#include "../../include/ICU4XCodePointSetData.hpp"
+#include "../../include/ICU4XCodePointMapData16.hpp"
+#include "../../include/ICU4XCodePointMapData16Response.hpp"
 
 #include <iostream>
 
 const std::string_view path = "../../../../../provider/testdata/data/json/";
 
-int test_set_property(ICU4XUnicodeSetPropertyResult result, char32_t included, char32_t excluded) {
+int test_set_property(ICU4XCodePointSetDataResult result, char32_t included, char32_t excluded) {
     if (!result.success) {
-        std::cout << "Failed to create ICU4XUnicodeSetProperty" << std::endl;
+        std::cout << "Failed to create ICU4XCodePointSetData" << std::endl;
         return 1;
     }
     bool contains1 = result.data.value().contains(included);
@@ -26,9 +27,9 @@ int test_set_property(ICU4XUnicodeSetPropertyResult result, char32_t included, c
     return 0;
 }
 
-int test_script_map_property(ICU4XUnicodeScriptMapPropertyResult result, char32_t sample, uint32_t expected) {
+int test_map_16_property(ICU4XCodePointMapData16Response result, char32_t sample, uint32_t expected) {
     if (!result.success) {
-        std::cout << "Failed to create ICU4XUnicodeScriptMapProperty" << std::endl;
+        std::cout << "Failed to create ICU4XCodePointMapData16" << std::endl;
         return 1;
     }
     uint32_t actual = result.data.value().get(sample);
@@ -47,7 +48,7 @@ int main() {
     int result;
 
     result = test_set_property(
-        ICU4XUnicodeSetProperty::try_get_ascii_hex_digit(dp),
+        ICU4XCodePointSetData::try_get_ascii_hex_digit(dp),
         u'3',
         u'੩'
     );
@@ -55,8 +56,8 @@ int main() {
         return result;
     }
 
-    result = test_script_map_property(
-        ICU4XUnicodeScriptMapProperty::try_get(dp),
+    result = test_map_16_property(
+        ICU4XCodePointMapData16::try_get_script(dp),
         u'木',
         17 // Script::Han
     );
