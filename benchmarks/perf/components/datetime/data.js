@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636733450495,
+  "lastUpdate": 1636766627175,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12653,6 +12653,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 309025,
             "range": "± 18698",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "33d441cc9fdfdb5c86ba21f28eb50753bbe6e6a1",
+          "message": "Fix item 5 in the VarULE checklist (#1295)",
+          "timestamp": "2021-11-12T17:15:25-08:00",
+          "tree_id": "b4278d2f88dfc273a605362bd4adad31578c246b",
+          "url": "https://github.com/unicode-org/icu4x/commit/33d441cc9fdfdb5c86ba21f28eb50753bbe6e6a1"
+        },
+        "date": 1636766620720,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 127381,
+            "range": "± 8426",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1401592,
+            "range": "± 84724",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 355844,
+            "range": "± 20726",
             "unit": "ns/iter"
           }
         ]
