@@ -7,7 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
         maps::{self, CodePointMapResult},
-        provider::UnicodePropertyMapV1Marker,
+        provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker},
         Script,
     };
     use icu_provider::prelude::DataPayload;
@@ -15,55 +15,63 @@ pub mod ffi {
     use crate::{provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider};
 
     #[diplomat::opaque]
-    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. For properties whose values fit into 16 bits.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
-    pub struct ICU4XUnicodeScriptMapProperty(
-        DataPayload<'static, UnicodePropertyMapV1Marker<Script>>,
-    );
+    pub struct ICU4XCodePointMapData16(DataPayload<'static, UnicodePropertyMapV1Marker<u16>>);
 
-    pub struct ICU4XUnicodeScriptMapPropertyResult {
-        /// The [`ICU4XUnicodeScriptMapProperty`], if creation was successful.
-        pub data: Option<Box<ICU4XUnicodeScriptMapProperty>>,
-        /// Whether creating the [`ICU4XUnicodeScriptMapProperty`] was successful.
+    pub struct ICU4XCodePointMapData16Response {
+        /// The [`ICU4XCodePointMapData16`], if creation was successful.
+        pub data: Option<Box<ICU4XCodePointMapData16>>,
+        /// Whether creating the [`ICU4XCodePointMapData16`] was successful.
         pub success: bool,
     }
 
-    impl ICU4XUnicodeScriptMapProperty {
-        /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
+    impl ICU4XCodePointMapData16 {
+        /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
-        pub fn try_get(provider: &ICU4XDataProvider) -> ICU4XUnicodeScriptMapPropertyResult {
+        pub fn try_get_script(provider: &ICU4XDataProvider) -> ICU4XCodePointMapData16Response {
             let provider = provider.0.as_ref();
-            Self::prepare_result(maps::get_script(provider))
+            Self::prepare_result_from_script(maps::get_script(provider))
         }
 
-        /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XStaticDataProvider`].
+        /// Gets a map for Unicode property Script from a [`ICU4XStaticDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
-        pub fn try_get_from_static(
+        pub fn try_get_script_from_static(
             provider: &ICU4XStaticDataProvider,
-        ) -> ICU4XUnicodeScriptMapPropertyResult {
+        ) -> ICU4XCodePointMapData16Response {
             let provider = provider.0.as_ref();
-            Self::prepare_result(maps::get_script(provider))
+            Self::prepare_result_from_script(maps::get_script(provider))
         }
 
-        fn prepare_result(
+        fn prepare_result_from_script(
             result: CodePointMapResult<'static, Script>,
-        ) -> ICU4XUnicodeScriptMapPropertyResult {
+        ) -> ICU4XCodePointMapData16Response {
             match result {
-                Ok(data) => ICU4XUnicodeScriptMapPropertyResult {
-                    data: Some(Box::new(ICU4XUnicodeScriptMapProperty(data))),
-                    success: true,
-                },
-                Err(_) => ICU4XUnicodeScriptMapPropertyResult {
+                Ok(data) => {
+                    let data: DataPayload<UnicodePropertyMapV1Marker<u16>> = data
+                        .try_map_project_with_capture((), |data_struct, _, _| {
+                            match data_struct.code_point_trie.try_into_converted::<u16>() {
+                                Ok(code_point_trie) => Ok(UnicodePropertyMapV1 { code_point_trie }),
+                                Err(e) => Err(e),
+                            }
+                        })
+                        .expect("infallible");
+                    ICU4XCodePointMapData16Response {
+                        data: Some(Box::new(ICU4XCodePointMapData16(data))),
+                        success: true,
+                    }
+                }
+                Err(_) => ICU4XCodePointMapData16Response {
                     data: None,
                     success: false,
                 },
             }
         }
 
-        /// Gets the Script for a code point.
+        /// Gets the value for a code point.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
-        pub fn get(&self, cp: char) -> u32 {
-            self.0.get().code_point_trie.get(cp.into()).0.into()
+        pub fn get(&self, cp: char) -> u16 {
+            self.0.get().code_point_trie.get(cp.into())
         }
     }
 }
