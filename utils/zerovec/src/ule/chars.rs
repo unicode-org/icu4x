@@ -39,8 +39,15 @@ use core::convert::TryFrom;
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct CharULE([u8; 4]);
 
-// This is safe to implement because from_byte_slice_unchecked returns
-// the same value as parse_byte_slice
+// Safety (based on the safety checklist on the ULE trait):
+//  1. CharULE does not include any uninitialized or padding bytes.
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  2. CharULE is aligned to 1 byte.
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+//  5. The other ULE methods use the default impl.
+//  6. CharULE byte equality is semantic equality
 unsafe impl ULE for CharULE {
     type Error = ULEError<core::char::CharTryFromError>;
 

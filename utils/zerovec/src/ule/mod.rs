@@ -34,13 +34,17 @@ use core::{fmt, mem, slice};
 /// Safety checklist for `ULE`:
 ///
 /// 1. The type *must not* include any uninitialized or padding bytes.
-/// 2. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
-///    would not represent a valid slice of this type.
+/// 2. The type must have an alignment of 1 byte.
 /// 3. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+///    would not represent a valid slice of this type.
+/// 4. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety (if its length is not a multiple of `size_of::<Self>()`).
-/// 4. All other methods *must* be left with their default impl, or else implemented according to
+/// 5. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
-/// 5. Acknowledge the following note about the equality invariant.
+/// 6. Acknowledge the following note about the equality invariant.
+///
+/// If the ULE type is a struct only containing other ULE types (or other types which satisfy invariants 1 and 2,
+/// like `[u8; N]`), invariants 1 and 2 can be achieved via `#[repr(packed)]` or `#[repr(transparent)]`.
 ///
 /// # Equality invariant
 ///
@@ -232,13 +236,19 @@ where
 /// Safety checklist for `VarULE`:
 ///
 /// 1. The type *must not* include any uninitialized or padding bytes.
-/// 2. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 2. The type must have an alignment of 1 byte.
+/// 3. The impl of [`VarULE::validate_byte_slice()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type.
-/// 3. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 4. The impl of [`VarULE::validate_byte_slice()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety.
-/// 4. All other methods *must* be left with their default impl, or else implemented according to
+/// 5. The impl of [`VarULE::from_byte_slice_unchecked()`] must produce a reference to the same
+///    underlying data assuming that the given bytes previously passed validation.
+/// 6. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
-/// 5. Acknowledge the following note about the equality invariant.
+/// 7. Acknowledge the following note about the equality invariant.
+///
+/// If the ULE type is a struct only containing other ULE/VarULE types (or other types which satisfy invariants 1 and 2,
+/// like `[u8; N]`), invariants 1 and 2 can be achieved via `#[repr(packed)]` or `#[repr(transparent)]`.
 ///
 /// # Equality invariant
 ///

@@ -9,13 +9,13 @@
 //! The descriptions of most properties are taken from [`TR44`], the documentation for the
 //! Unicode Character Database.
 //!
-//! [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+//! [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
 use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
-use icu_codepointtrie::codepointtrie::TrieValue;
+use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 
 /// TODO(#1239): Finalize this API.
@@ -49,7 +49,7 @@ where
 ///
 /// ```
 /// use icu::properties::{maps, GeneralSubcategory};
-/// use icu_codepointtrie::codepointtrie::CodePointTrie;
+/// use icu_codepointtrie::CodePointTrie;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
@@ -62,7 +62,7 @@ where
 /// assert_eq!(gc.get('🎃' as u32), GeneralSubcategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
 /// ```
 ///
-/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_general_category<'data, D>(provider: &D) -> CodePointMapResult<'data, GeneralSubcategory>
 where
     D: DataProvider<'data, UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
@@ -76,7 +76,7 @@ where
 ///
 /// ```
 /// use icu::properties::{maps, Script};
-/// use icu_codepointtrie::codepointtrie::CodePointTrie;
+/// use icu_codepointtrie::CodePointTrie;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
@@ -89,7 +89,7 @@ where
 /// assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
 /// ```
 ///
-/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_script<'data, D>(provider: &D) -> CodePointMapResult<'data, Script>
 where
     D: DataProvider<'data, UnicodePropertyMapV1Marker<Script>> + ?Sized,
@@ -113,7 +113,7 @@ where
 /// assert_eq!(gcb.get('ำ' as u32), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
 /// ```
 ///
-/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_grapheme_cluster_break<'data, D>(
     provider: &D,
 ) -> CodePointMapResult<'data, GraphemeClusterBreak>
@@ -139,7 +139,7 @@ where
 /// assert_eq!(wb.get('，' as u32), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
 /// ```
 ///
-/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_word_break<'data, D>(provider: &D) -> CodePointMapResult<'data, WordBreak>
 where
     D: DataProvider<'data, UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
@@ -163,7 +163,7 @@ where
 /// assert_eq!(sb.get(',' as u32), SentenceBreak::SContinue); // U+002C: Comma
 /// ```
 ///
-/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_sentence_break<'data, D>(provider: &D) -> CodePointMapResult<'data, SentenceBreak>
 where
     D: DataProvider<'data, UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,

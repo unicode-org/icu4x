@@ -6,7 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_codepointtrie::codepointtrie::{CodePointTrie, TrieValue};
+use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use icu_uniset::UnicodeSet;
 use icu_uniset::UnicodeSetBuilder;
