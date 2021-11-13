@@ -274,6 +274,107 @@ where
 
     /// Converts a `ZeroVec<T>` into a `ZeroVec<P>`, retaining the current ownership model.
     ///
+    /// # Panics
+    ///
+    /// Panics if `T::ULE` and `P::ULE` are not the same size.
+    ///
+    /// # Examples
+    ///
+    /// Convert a borrowed `ZeroVec`:
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
+    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes)
+    ///     .expect("valid code points");
+    /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted()
+    ///     .expect("infallible conversion");
+    ///
+    /// assert!(matches!(zv_u32, ZeroVec::Borrowed(_)));
+    /// assert_eq!(zv_u32.get(0), Some(u32::from('🍿')));
+    /// ```
+    ///
+    /// Convert an owned `ZeroVec`:
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let chars: &[char] = &['🍿', '🙉'];
+    /// let zv_char = ZeroVec::clone_from_slice(chars);
+    /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted()
+    ///     .expect("length is divisible");
+    ///
+    /// assert!(matches!(zv_u32, ZeroVec::Owned(_)));
+    /// assert_eq!(zv_u32.get(0), Some(u32::from('🍿')));
+    /// ```
+    ///
+    /// If the types are not the same size, we refuse to convert:
+    ///
+    /// ```should_panic
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
+    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes)
+    ///     .expect("valid code points");
+    ///
+    /// // Panics! mem::size_of::<char::ULE> != mem::size_of::<u16::ULE>
+    /// zv_char.try_into_converted::<u16>();
+    /// ```
+    ///
+    /// Instead, convert to bytes and then parse:
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
+    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes)
+    ///     .expect("valid code points");
+    /// let zv_u16: ZeroVec<u16> = zv_char.into_bytes().try_into_parsed()
+    ///     .expect("infallible");
+    ///
+    /// assert!(matches!(zv_u16, ZeroVec::Borrowed(_)));
+    /// assert_eq!(zv_u16.get(0), Some(0xF37F));
+    /// ```
+    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, <P::ULE as ULE>::Error> {
+        assert_eq!(
+            core::mem::size_of::<<T as AsULE>::ULE>(),
+            core::mem::size_of::<<P as AsULE>::ULE>()
+        );
+        match self {
+            ZeroVec::Borrowed(old_slice) => {
+                let bytes: &'a [u8] = T::ULE::as_byte_slice(old_slice);
+                let new_slice = P::ULE::parse_byte_slice(bytes)?;
+                Ok(ZeroVec::Borrowed(new_slice))
+            }
+            ZeroVec::Owned(old_vec) => {
+                let bytes: &[u8] = T::ULE::as_byte_slice(&old_vec);
+                P::ULE::validate_byte_slice(bytes)?;
+                // Feature "vec_into_raw_parts" is not yet stable (#65816). Polyfill:
+                let (ptr, len, cap) = {
+                    // Take ownership of the pointer
+                    let mut v = core::mem::ManuallyDrop::new(old_vec);
+                    // Fetch the pointer, length, and capacity
+                    (v.as_mut_ptr(), v.len(), v.capacity())
+                };
+                // Safety checklist for Vec::from_raw_parts:
+                // 1. ptr came from a Vec<T>
+                // 2. P and T are asserted above to be the same size
+                // 3. length is what it was before
+                // 4. capacity is what it was before
+                let new_vec = unsafe {
+                    let ptr = ptr as *mut P::ULE;
+                    Vec::from_raw_parts(ptr, len, cap)
+                };
+                Ok(ZeroVec::Owned(new_vec))
+            }
+        }
+    }
+}
+
+impl<'a> ZeroVec<'a, u8> {
+    /// Converts a `ZeroVec<u8>` into a `ZeroVec<T>`, retaining the current ownership model.
+    ///
     /// Note that the length of the ZeroVec may change.
     ///
     /// # Examples
@@ -284,12 +385,11 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zv_u16: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// let zv_u32: ZeroVec<u32> = zv_u16.try_into_converted()
-    ///     .expect("length is divisible");
+    /// let zv_bytes = ZeroVec::Borrowed(bytes);
+    /// let zerovec: ZeroVec<u16> = zv_bytes.try_into_parsed().expect("infallible");
     ///
-    /// assert!(matches!(zv_u32, ZeroVec::Borrowed(_)));
-    /// assert_eq!(zv_u32.get(0), Some(0x011900D3));
+    /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
+    /// assert_eq!(zerovec.get(0), Some(211));
     /// ```
     ///
     /// Convert an owned `ZeroVec`:
@@ -297,25 +397,22 @@ where
     /// ```
     /// use zerovec::ZeroVec;
     ///
-    /// let nums: &[u16] = &[211, 281, 421, 461];
-    /// let zv_u16 = ZeroVec::clone_from_slice(nums);
-    /// let zv_u32: ZeroVec<u32> = zv_u16.try_into_converted()
-    ///     .expect("length is divisible");
+    /// let bytes: Vec<u8> = vec![0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let zv_bytes = ZeroVec::Owned(bytes);
+    /// let zerovec: ZeroVec<u16> = zv_bytes.try_into_parsed().expect("infallible");
     ///
-    /// assert!(matches!(zv_u32, ZeroVec::Owned(_)));
-    /// assert_eq!(zv_u32.get(0), Some(0x011900D3));
+    /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
+    /// assert_eq!(zerovec.get(0), Some(211));
     /// ```
-    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, <P::ULE as ULE>::Error> {
+    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, <T::ULE as ULE>::Error> {
         match self {
-            ZeroVec::Borrowed(old_slice) => {
-                let bytes: &'a [u8] = T::ULE::as_byte_slice(old_slice);
-                let new_slice = P::ULE::parse_byte_slice(bytes)?;
-                Ok(ZeroVec::Borrowed(new_slice))
+            ZeroVec::Borrowed(bytes) => {
+                let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
+                Ok(ZeroVec::Borrowed(slice))
             }
-            ZeroVec::Owned(old_vec) => {
-                let bytes: &[u8] = T::ULE::as_byte_slice(&old_vec);
-                let new_vec = Vec::from(P::ULE::parse_byte_slice(bytes)?);
-                Ok(ZeroVec::Owned(new_vec))
+            ZeroVec::Owned(vec) => {
+                let slice = Vec::from(T::ULE::parse_byte_slice(&vec)?);
+                Ok(ZeroVec::Owned(slice))
             }
         }
     }

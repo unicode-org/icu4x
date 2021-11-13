@@ -317,15 +317,19 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// # Panics
     ///
-    /// Panics if the new type `P` is a different size than the original type `T`.
+    /// Panics if `T` and `P` are different sizes.
+    ///
+    /// More specifically, panics if [ZeroVec::try_into_converted()] panics when converting
+    /// `ZeroVec<T>` into `ZeroVec<P>`, which happens if `T::ULE` and `P::ULE` differ in size.
     ///
     /// # Examples
     ///
     /// ```no_run
     /// use icu_codepointtrie::CodePointTrie;
     ///
-    /// let cpt1: CodePointTrie<char> = todo!();
-    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted().expect("infallible");
+    /// let cpt1: CodePointTrie<char> = unimplemented!();
+    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted()
+    ///     .expect("infallible");
     /// ```
     pub fn try_into_converted<P>(
         self,
@@ -336,7 +340,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     where
         P: TrieValue,
     {
-        assert_eq!(core::mem::size_of::<T>(), core::mem::size_of::<P>());
         let converted_data = self.data.try_into_converted()?;
         Ok(CodePointTrie {
             header: self.header,
