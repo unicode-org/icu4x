@@ -241,8 +241,8 @@ where
 ///    would not represent a valid slice of this type.
 /// 4. The impl of [`VarULE::validate_byte_slice()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety.
-/// 5. The impl of [`VarULE::validate_byte_slice()`] must produce a reference to the same underlying data
-///    assuming that the given string passes validation.
+/// 5. The impl of [`VarULE::from_byte_slice_unchecked()`] must produce a reference to the same
+///    underlying data assuming that the given bytes previously passed validation.
 /// 6. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
 /// 7. Acknowledge the following note about the equality invariant.
