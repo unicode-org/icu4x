@@ -101,11 +101,11 @@ pub enum CanonicalizationResult {
 /// [`CLDR`]: http://cldr.unicode.org/
 /// [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 /// [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
-pub struct LocaleCanonicalizer<'data> {
+pub struct LocaleCanonicalizer {
     /// Data to support canonicalization.
-    aliases: DataPayload<'data, AliasesV1Marker>,
+    aliases: DataPayload<AliasesV1Marker>,
     /// Data to support likely subtags maximize and minimize.
-    likely_subtags: DataPayload<'data, LikelySubtagsV1Marker>,
+    likely_subtags: DataPayload<LikelySubtagsV1Marker>,
     /// Extension keys that require canonicalization.
     extension_keys: Vec<Key>,
 }
@@ -226,12 +226,12 @@ macro_rules! maximize_locale {
     }};
 }
 
-impl<'data> LocaleCanonicalizer<'data> {
+impl LocaleCanonicalizer {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
-    pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer<'data>, DataError>
+    pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer, DataError>
     where
-        P: DataProvider<'data, AliasesV1Marker>
-            + DataProvider<'data, LikelySubtagsV1Marker>
+        P: DataProvider<AliasesV1Marker>
+            + DataProvider<LikelySubtagsV1Marker>
             + ?Sized,
     {
         // The `rg` region override and `sd` regional subdivision keys may contain
