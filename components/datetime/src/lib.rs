@@ -99,4 +99,5 @@ pub use format::datetime::FormattedDateTime;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatOptions;
 pub use time_zone::TimeZoneFormat;
+pub use time_zone::TimeZoneFormatConfig;
 pub use zoned_datetime::ZonedDateTimeFormat;
