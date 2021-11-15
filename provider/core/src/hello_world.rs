@@ -78,13 +78,13 @@ impl DataMarker for HelloWorldV1Marker {
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
 #[derive(Debug, PartialEq, Default)]
-pub struct HelloWorldProvider<'data> {
-    map: LiteMap<LanguageIdentifier, Cow<'data, str>>,
+pub struct HelloWorldProvider {
+    map: LiteMap<LanguageIdentifier, Cow<'static, str>>,
 }
 
-impl<'data> HelloWorldProvider<'data> {
+impl HelloWorldProvider {
     /// Creates a [`HelloWorldProvider`] pre-populated with hardcoded data from Wiktionary.
-    pub fn new_with_placeholder_data() -> HelloWorldProvider<'static> {
+    pub fn new_with_placeholder_data() -> HelloWorldProvider {
         // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
         // Note: we don't want to use langid!() because icu_langid_macros is heavy.
         HelloWorldProvider {
@@ -117,11 +117,11 @@ impl<'data> HelloWorldProvider<'data> {
     }
 }
 
-impl<'data, 't> DataProvider<'data, HelloWorldV1Marker> for HelloWorldProvider<'data> {
+impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, HelloWorldV1Marker>, DataError> {
+    ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let data = self
@@ -138,16 +138,16 @@ impl<'data, 't> DataProvider<'data, HelloWorldV1Marker> for HelloWorldProvider<'
     }
 }
 
-impl_dyn_provider!(HelloWorldProvider<'static>, {
+impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
 }, ERASED);
 
 #[cfg(feature = "provider_serde")]
-impl_dyn_provider!(HelloWorldProvider<'data>, {
+impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
-impl<'data> IterableDataProviderCore for HelloWorldProvider<'data> {
+impl IterableDataProviderCore for HelloWorldProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
@@ -167,13 +167,11 @@ impl<'data> IterableDataProviderCore for HelloWorldProvider<'data> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'data> crate::export::DataExporter<'static, crate::erased::ErasedDataStructMarker>
-    for HelloWorldProvider<'static>
-{
+impl crate::export::DataExporter<crate::erased::ErasedDataStructMarker> for HelloWorldProvider {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        payload: DataPayload<'static, crate::erased::ErasedDataStructMarker>,
+        payload: DataPayload<crate::erased::ErasedDataStructMarker>,
     ) -> Result<(), DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;

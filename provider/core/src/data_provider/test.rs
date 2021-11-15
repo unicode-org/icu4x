@@ -5,7 +5,6 @@
 use alloc::borrow::Cow;
 use alloc::rc::Rc;
 use alloc::string::String;
-use alloc::string::ToString;
 use core::fmt::Debug;
 use serde::{Deserialize, Serialize};
 
@@ -45,16 +44,16 @@ struct HelloCombined<'data> {
 /// A DataProvider that owns its data, returning an Rc-variant DataPayload.
 /// Supports only HELLO_WORLD_V1. Uses `impl_dyn_provider!()`.
 #[derive(Debug)]
-struct DataWarehouse<'data> {
-    hello_v1: Rc<HelloWorldV1<'data>>,
+struct DataWarehouse {
+    hello_v1: Rc<HelloWorldV1<'static>>,
     hello_alt: Rc<HelloAlt>,
 }
 
-impl<'data> DataProvider<'data, HelloWorldV1Marker> for DataWarehouse<'data> {
+impl DataProvider<HelloWorldV1Marker> for DataWarehouse {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, HelloWorldV1Marker>, DataError> {
+    ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -63,27 +62,27 @@ impl<'data> DataProvider<'data, HelloWorldV1Marker> for DataWarehouse<'data> {
     }
 }
 
-crate::impl_dyn_provider!(DataWarehouse<'static>, {
+crate::impl_dyn_provider!(DataWarehouse, {
     HELLO_WORLD_V1 => HelloWorldV1Marker,
 }, ERASED);
 
 /// A DataProvider that supports both HELLO_WORLD_V1 and HELLO_ALT.
 #[derive(Debug)]
-struct DataProvider2<'data> {
-    data: DataWarehouse<'data>,
+struct DataProvider2 {
+    data: DataWarehouse,
 }
 
-impl<'data> From<DataWarehouse<'data>> for DataProvider2<'data> {
-    fn from(warehouse: DataWarehouse<'data>) -> Self {
+impl From<DataWarehouse> for DataProvider2 {
+    fn from(warehouse: DataWarehouse) -> Self {
         DataProvider2 { data: warehouse }
     }
 }
 
-impl<'data> DataProvider<'data, HelloWorldV1Marker> for DataProvider2<'data> {
+impl DataProvider<HelloWorldV1Marker> for DataProvider2 {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, HelloWorldV1Marker>, DataError> {
+    ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -92,11 +91,8 @@ impl<'data> DataProvider<'data, HelloWorldV1Marker> for DataProvider2<'data> {
     }
 }
 
-impl<'data> DataProvider<'data, HelloAltMarker> for DataProvider2<'data> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'data, HelloAltMarker>, DataError> {
+impl DataProvider<HelloAltMarker> for DataProvider2 {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -105,7 +101,7 @@ impl<'data> DataProvider<'data, HelloAltMarker> for DataProvider2<'data> {
     }
 }
 
-crate::impl_dyn_provider!(DataProvider2<'static>, {
+crate::impl_dyn_provider!(DataProvider2, {
     HELLO_WORLD_V1 => HelloWorldV1Marker,
     HELLO_ALT_KEY => HelloAltMarker,
 }, ERASED);
@@ -121,7 +117,7 @@ const DATA: &'static str = r#"{
 }"#;
 
 #[allow(clippy::needless_lifetimes)]
-fn get_warehouse<'data>(data: &'data str) -> DataWarehouse<'data> {
+fn get_warehouse(data: &'static str) -> DataWarehouse {
     let data: HelloCombined = serde_json::from_str(data).expect("Well-formed data");
     DataWarehouse {
         hello_v1: Rc::from(data.hello_v1),
@@ -129,15 +125,15 @@ fn get_warehouse<'data>(data: &'data str) -> DataWarehouse<'data> {
     }
 }
 
-fn get_payload_v1<'data, P: DataProvider<'data, HelloWorldV1Marker> + ?Sized>(
+fn get_payload_v1<P: DataProvider<HelloWorldV1Marker> + ?Sized>(
     provider: &P,
-) -> Result<DataPayload<'data, HelloWorldV1Marker>, DataError> {
+) -> Result<DataPayload<HelloWorldV1Marker>, DataError> {
     provider.load_payload(&get_request_v1())?.take_payload()
 }
 
-fn get_payload_alt<'data, P: DataProvider<'data, HelloAltMarker> + ?Sized>(
+fn get_payload_alt<P: DataProvider<HelloAltMarker> + ?Sized>(
     d: &P,
-) -> Result<DataPayload<'data, HelloAltMarker>, DataError> {
+) -> Result<DataPayload<HelloAltMarker>, DataError> {
     d.load_payload(&get_request_alt())?.take_payload()
 }
 
@@ -282,16 +278,16 @@ fn test_mismatched_types() {
     assert!(matches!(response, Err(DataError::MismatchedType { .. })));
 }
 
-fn check_v1_v2<'data, P>(d: &P)
+fn check_v1_v2<P>(d: &P)
 where
-    P: DataProvider<'data, HelloWorldV1Marker> + DataProvider<'data, HelloAltMarker> + ?Sized,
+    P: DataProvider<HelloWorldV1Marker> + DataProvider<HelloAltMarker> + ?Sized,
 {
-    let v1: DataPayload<'data, HelloWorldV1Marker> = d
+    let v1: DataPayload<HelloWorldV1Marker> = d
         .load_payload(&get_request_v1())
         .unwrap()
         .take_payload()
         .unwrap();
-    let v2: DataPayload<'data, HelloAltMarker> = d
+    let v2: DataPayload<HelloAltMarker> = d
         .load_payload(&get_request_alt())
         .unwrap()
         .take_payload()
@@ -314,33 +310,3 @@ fn test_v1_v2_dyn_erased() {
     let provider = DataProvider2::from(warehouse);
     check_v1_v2(&provider as &dyn ErasedDataProvider);
 }
-
-#[test]
-fn test_local() {
-    let local_data = DATA.to_string();
-    let warehouse = get_warehouse(&local_data);
-    let hello_data = get_payload_v1(&warehouse).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
-    assert!(matches!(
-        hello_data.get(),
-        HelloWorldV1 {
-            message: Cow::Borrowed(_),
-        }
-    ));
-}
-
-#[test]
-fn test_local_ref() {
-    let local_data = DATA.to_string();
-    let warehouse = get_warehouse(&local_data);
-    let hello_data = get_payload_v1(&warehouse).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
-    assert!(matches!(
-        hello_data.get(),
-        HelloWorldV1 {
-            message: Cow::Borrowed(_),
-        }
-    ));
-}
-
-// Note: Local data is not allowed in ErasedDataProvider. How do you test this?

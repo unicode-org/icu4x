@@ -110,11 +110,11 @@ impl<'data, T: IsCovariant<'data>> ErasedDestructor<'data> for T {}
 /// use a trait object to handle that.
 pub(crate) type ErasedCart<'data> = Rc<dyn ErasedDestructor<'data> + 'data>;
 
-pub(crate) enum DataPayloadInner<'data, M>
+pub(crate) enum DataPayloadInner<M>
 where
     M: DataMarker,
 {
-    RcStruct(Yoke<M::Yokeable, ErasedCart<'data>>),
+    RcStruct(Yoke<M::Yokeable, ErasedCart<'static>>),
     Owned(Yoke<M::Yokeable, ()>),
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
@@ -167,14 +167,14 @@ where
 /// ```
 ///
 /// [`ErasedDataStructMarker`]: crate::erased::ErasedDataStructMarker
-pub struct DataPayload<'data, M>
+pub struct DataPayload<M>
 where
     M: DataMarker,
 {
-    pub(crate) inner: DataPayloadInner<'data, M>,
+    pub(crate) inner: DataPayloadInner<M>,
 }
 
-impl<'data, M> Debug for DataPayload<'data, M>
+impl<M> Debug for DataPayload<M>
 where
     M: DataMarker,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
@@ -196,7 +196,7 @@ where
 /// let resp1: DataPayload<HelloWorldV1Marker> = todo!();
 /// let resp2 = resp1.clone();
 /// ```
-impl<'data, M> Clone for DataPayload<'data, M>
+impl<M> Clone for DataPayload<M>
 where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
@@ -212,7 +212,7 @@ where
     }
 }
 
-impl<'data, M> PartialEq for DataPayload<'data, M>
+impl<M> PartialEq for DataPayload<M>
 where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
@@ -222,7 +222,7 @@ where
     }
 }
 
-impl<'data, M> Eq for DataPayload<'data, M>
+impl<M> Eq for DataPayload<M>
 where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
@@ -237,13 +237,11 @@ fn test_clone_eq() {
     assert_eq!(p1, p2);
 }
 
-impl<'data, M> DataPayload<'data, M>
+impl<M> DataPayload<M>
 where
     M: DataMarker,
 {
     /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`].
-    ///
-    /// The data need not be fully owned; this constructor creates payloads bounded by `'data`.
     ///
     /// # Examples
     ///
@@ -256,7 +254,7 @@ where
     /// let local_data = "example".to_string();
     ///
     /// let rc_struct = Rc::from(HelloWorldV1 {
-    ///     message: Cow::Borrowed(&local_data),
+    ///     message: Cow::Owned(local_data),
     /// });
     ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::from_partial_owned(rc_struct.clone());
@@ -269,11 +267,11 @@ where
     pub fn from_partial_owned<T>(data: Rc<T>) -> Self
     where
         M::Yokeable: ZeroCopyFrom<T>,
-        T: 'data + IsCovariant<'data>,
+        T: 'static + IsCovariant<'static>,
     {
         let yoke = unsafe {
             // safe because we're not throwing away any actual data, simply type-erasing it
-            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedCart<'data>)
+            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedCart<'static>)
         };
         Self {
             inner: DataPayloadInner::RcStruct(yoke),
@@ -281,7 +279,7 @@ where
     }
 }
 
-impl<'data, M> DataPayload<'data, M>
+impl<M> DataPayload<M>
 where
     M: DataMarker,
 {
@@ -540,7 +538,7 @@ where
             <M::Yokeable as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<'data, M2>
+    ) -> DataPayload<M2>
     where
         M2: DataMarker,
     {
@@ -597,7 +595,7 @@ where
             &'this <M::Yokeable as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<'data, M2>
+    ) -> DataPayload<M2>
     where
         M2: DataMarker,
     {
@@ -687,7 +685,7 @@ where
             capture: T,
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<'data, M2>
+    ) -> DataPayload<M2>
     where
         M2: DataMarker,
     {
@@ -752,7 +750,7 @@ where
             capture: T,
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<'data, M2>
+    ) -> DataPayload<M2>
     where
         M2: DataMarker,
     {
@@ -850,7 +848,7 @@ where
             capture: T,
             PhantomData<&'a ()>,
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
-    ) -> Result<DataPayload<'data, M2>, E>
+    ) -> Result<DataPayload<M2>, E>
     where
         M2: DataMarker,
     {
@@ -919,7 +917,7 @@ where
             capture: T,
             PhantomData<&'a ()>,
         ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
-    ) -> Result<DataPayload<'data, M2>, E>
+    ) -> Result<DataPayload<M2>, E>
     where
         M2: DataMarker,
     {
@@ -939,7 +937,7 @@ where
 }
 
 /// A response object containing an object as payload and metadata about it.
-pub struct DataResponse<'data, M>
+pub struct DataResponse<M>
 where
     M: DataMarker,
 {
@@ -947,32 +945,32 @@ where
     pub metadata: DataResponseMetadata,
 
     /// The object itself; None if it was not loaded.
-    pub payload: Option<DataPayload<'data, M>>,
+    pub payload: Option<DataPayload<M>>,
 }
 
-impl<'data, M> DataResponse<'data, M>
+impl<M> DataResponse<M>
 where
     M: DataMarker,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
-    pub fn take_payload(self) -> Result<DataPayload<'data, M>, Error> {
+    pub fn take_payload(self) -> Result<DataPayload<M>, Error> {
         self.payload.ok_or(Error::MissingPayload)
     }
 }
 
-impl<'data, M> TryFrom<DataResponse<'data, M>> for DataPayload<'data, M>
+impl<M> TryFrom<DataResponse<M>> for DataPayload<M>
 where
     M: DataMarker,
 {
     type Error = Error;
 
-    fn try_from(response: DataResponse<'data, M>) -> Result<Self, Self::Error> {
+    fn try_from(response: DataResponse<M>) -> Result<Self, Self::Error> {
         response.take_payload()
     }
 }
 
-impl<'data, M> Debug for DataResponse<'data, M>
+impl<M> Debug for DataResponse<M>
 where
     M: DataMarker,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
@@ -998,7 +996,7 @@ where
 /// let resp1: DataResponse<HelloWorldV1Marker> = todo!();
 /// let resp2 = resp1.clone();
 /// ```
-impl<'data, M> Clone for DataResponse<'data, M>
+impl<M> Clone for DataResponse<M>
 where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
@@ -1031,7 +1029,7 @@ fn test_debug() {
 /// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
 /// - [`StructProvider`](crate::struct_provider::StructProvider)
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
-pub trait DataProvider<'data, M>
+pub trait DataProvider<M>
 where
     M: DataMarker,
 {
@@ -1039,5 +1037,5 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error>;
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, Error>;
 }
