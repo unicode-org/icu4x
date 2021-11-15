@@ -1,7 +1,7 @@
 ``properties_sets::ffi``
 ========================
 
-.. js:class:: ICU4XUnicodeSetProperty
+.. js:class:: ICU4XCodePointSetData
 
     An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html>`__ for more information.
 
@@ -17,12 +17,12 @@
 
         Checks whether the code point is in the set. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains>`__ for more information.
 
-.. js:class:: ICU4XUnicodeSetPropertyResult
+.. js:class:: ICU4XCodePointSetDataResult
 
     .. js:attribute:: data
 
-        The :js:class:`ICU4XUnicodeSetProperty`, if creation was successful.
+        The :js:class:`ICU4XCodePointSetData`, if creation was successful.
 
     .. js:attribute:: success
 
-        Whether creating the :js:class:`ICU4XUnicodeSetProperty` was successful.
+        Whether creating the :js:class:`ICU4XCodePointSetData` was successful.
