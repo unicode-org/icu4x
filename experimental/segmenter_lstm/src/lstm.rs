@@ -10,13 +10,13 @@ use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
 use std::str;
 use unicode_segmentation::UnicodeSegmentation;
 
-pub struct Lstm<'data> {
-    data: DataPayload<'data, structs::LstmDataMarker>,
+pub struct Lstm {
+    data: DataPayload<structs::LstmDataMarker>,
 }
 
-impl<'data> Lstm<'data> {
+impl Lstm {
     /// `try_new` is the initiator of struct `Lstm`
-    pub fn try_new(data: DataPayload<'data, structs::LstmDataMarker>) -> Result<Self, Error> {
+    pub fn try_new(data: DataPayload<structs::LstmDataMarker>) -> Result<Self, Error> {
         if data.get().dic.len() > std::i16::MAX as usize {
             return Err(Error::Limit);
         }
