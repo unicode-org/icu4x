@@ -92,7 +92,7 @@ impl BlobDataProvider {
     }
 }
 
-impl<'data, M> DataProvider<'data, M> for BlobDataProvider
+impl<M> DataProvider<M> for BlobDataProvider
 where
     M: DataMarker,
     // Actual bound:
@@ -100,7 +100,7 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         let file = self.get_file(req)?;
         let payload =
             DataPayload::try_from_yoked_buffer::<(), DataError>(file, (), |bytes, _, _| {

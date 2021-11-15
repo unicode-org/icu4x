@@ -36,8 +36,8 @@ mod test {
     };
 
     fn get_data_payload() -> (
-        DataPayload<'static, DatePatternsV1Marker>,
-        DataPayload<'static, DateSkeletonPatternsV1Marker>,
+        DataPayload<DatePatternsV1Marker>,
+        DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");

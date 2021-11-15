@@ -38,20 +38,20 @@ use crate::yoke::*;
 ///
 /// assert_eq!(payload.get().message, "hello world");
 /// ```
-pub struct StructProvider<'data, M>
+pub struct StructProvider<M>
 where
     M: DataMarker,
 {
     pub key: ResourceKey,
-    pub data: DataPayload<'data, M>,
+    pub data: DataPayload<M>,
 }
 
-impl<'data, M> DataProvider<'data, M> for StructProvider<'data, M>
+impl<M> DataProvider<M> for StructProvider<M>
 where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, Error> {
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),

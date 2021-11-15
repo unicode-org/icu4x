@@ -32,9 +32,9 @@ fn map_poison<E>(_err: E) -> DataError {
 }
 
 /// A lazy-initialized CLDR JSON data provider.
-impl<'b, 'data, T> LazyCldrProvider<T>
+impl<'b, T> LazyCldrProvider<T>
 where
-    T: DataProvider<'data, SerdeSeDataStructMarker>
+    T: DataProvider<SerdeSeDataStructMarker>
         + IterableDataProviderCore
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths>,
@@ -45,7 +45,7 @@ where
         &self,
         req: &DataRequest,
         cldr_paths: &'b dyn CldrPaths,
-    ) -> Result<Option<DataResponse<'data, SerdeSeDataStructMarker>>, DataError> {
+    ) -> Result<Option<DataResponse<SerdeSeDataStructMarker>>, DataError> {
         if T::supports_key(&req.resource_path.key).is_err() {
             return Ok(None);
         }
@@ -59,7 +59,7 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        return DataProvider::load_payload(data_provider, req).map(Some);
+        DataProvider::load_payload(data_provider, req).map(Some)
     }
 
     /// Call [`IterableDataProviderCore::supported_options_for_key()`], initializing `T` if necessary.

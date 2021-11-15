@@ -13,9 +13,9 @@ impl DataMarker for CowStrMarker {
     type Yokeable = Cow<'static, str>;
 }
 
-impl DataPayload<'static, CowStrMarker> {
+impl DataPayload<CowStrMarker> {
     /// Make a [`DataPayload`]`<`[`CowStrMarker`]`>` from a static string slice.
-    pub fn from_static_str(s: &'static str) -> DataPayload<'static, CowStrMarker> {
+    pub fn from_static_str(s: &'static str) -> DataPayload<CowStrMarker> {
         DataPayload::from_owned(Cow::Borrowed(s))
     }
 }

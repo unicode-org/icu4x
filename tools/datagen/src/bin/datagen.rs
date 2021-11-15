@@ -375,9 +375,9 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
     Ok(BlobExporter::new_with_sink(sink))
 }
 
-fn export_cldr<'data>(
+fn export_cldr(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
     allowed_keys: Option<&HashSet<&str>>,
 ) -> eyre::Result<()> {
@@ -429,9 +429,9 @@ fn export_cldr<'data>(
     Ok(())
 }
 
-fn export_set_props<'data>(
+fn export_set_props(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<SerdeSeDataStructMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for binary properties...");
@@ -471,9 +471,9 @@ fn export_set_props<'data>(
     Ok(())
 }
 
-fn export_map_props<'data>(
+fn export_map_props(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<SerdeSeDataStructMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for enumerated properties...");
@@ -513,9 +513,9 @@ fn export_map_props<'data>(
     Ok(())
 }
 
-fn export_hello_world<'data>(
+fn export_hello_world(
     _: &ArgMatches,
-    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> eyre::Result<()> {
     let raw_provider = HelloWorldProvider::new_with_placeholder_data();

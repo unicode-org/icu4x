@@ -48,18 +48,18 @@ use writeable::Writeable;
 ///
 /// let _ = format!("Date: {}", formatted_date);
 /// ```
-pub struct FormattedDateTime<'l, 'data, T>
+pub struct FormattedDateTime<'l, T>
 where
     T: DateTimeInput,
 {
-    pub(crate) patterns: &'l DataPayload<'data, PatternPluralsFromPatternsV1Marker>,
+    pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(crate) symbols: Option<&'l provider::gregory::DateSymbolsV1>,
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
-    pub(crate) ordinal_rules: Option<&'l PluralRules<'data>>,
+    pub(crate) ordinal_rules: Option<&'l PluralRules>,
 }
 
-impl<'l, 'data, T> Writeable for FormattedDateTime<'l, 'data, T>
+impl<'l, T> Writeable for FormattedDateTime<'l, T>
 where
     T: DateTimeInput,
 {
@@ -78,7 +78,7 @@ where
     // TODO(#489): Implement write_len
 }
 
-impl<'l, 'data, T> fmt::Display for FormattedDateTime<'l, 'data, T>
+impl<'l, T> fmt::Display for FormattedDateTime<'l, T>
 where
     T: DateTimeInput,
 {

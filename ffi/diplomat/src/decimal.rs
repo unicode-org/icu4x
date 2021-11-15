@@ -22,7 +22,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Fixed Decimal Format object, capable of formatting a [`ICU4XFixedDecimal`] as a string.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html) for more information.
-    pub struct ICU4XFixedDecimalFormat(pub FixedDecimalFormat<'static>);
+    pub struct ICU4XFixedDecimalFormat(pub FixedDecimalFormat);
 
     pub struct ICU4XFixedDecimalFormatResult {
         /// The [`ICU4XFixedDecimalFormat`], exists if creation was successful.
@@ -88,7 +88,7 @@ pub mod ffi {
             options: ICU4XFixedDecimalFormatOptions,
         ) -> ICU4XFixedDecimalFormatResult
         where
-            D: DataProvider<'static, DecimalSymbolsV1Marker> + ?Sized,
+            D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
         {
             let langid = locale.0.as_ref().clone();
 

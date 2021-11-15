@@ -269,12 +269,12 @@ impl PluralCategory {
 /// [`ICU4X`]: ../icu/index.html
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
-pub struct PluralRules<'data> {
+pub struct PluralRules {
     _locale: Locale,
-    rules: DataPayload<'data, PluralRulesV1Marker>,
+    rules: DataPayload<PluralRulesV1Marker>,
 }
 
-impl<'data> PluralRules<'data> {
+impl PluralRules {
     /// Constructs a new `PluralRules` for a given locale, [`type`] and [`data provider`].
     ///
     /// This constructor will fail if the [`Data Provider`] does not have the data.
@@ -301,7 +301,7 @@ impl<'data> PluralRules<'data> {
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
     where
-        D: DataProvider<'data, PluralRulesV1Marker> + ?Sized,
+        D: DataProvider<PluralRulesV1Marker> + ?Sized,
     {
         let locale = locale.into();
         let key = match rule_type {
@@ -455,7 +455,7 @@ impl<'data> PluralRules<'data> {
     /// data obtained from a provider.
     pub fn new<T: Into<Locale>>(
         locale: T,
-        rules: DataPayload<'data, PluralRulesV1Marker>,
+        rules: DataPayload<PluralRulesV1Marker>,
     ) -> Result<Self, PluralRulesError> {
         let locale = locale.into();
         Ok(Self {

@@ -18,12 +18,11 @@ use crate::*;
 use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 
-type CodePointMapResult<'data, T> =
-    Result<DataPayload<'data, UnicodePropertyMapV1Marker<T>>, PropertiesError>;
+type CodePointMapResult<T> = Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
 
-fn get_cp_map<'data, D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<'data, T>
+fn get_cp_map<D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<T>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<T>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<T>> + ?Sized,
     T: TrieValue,
 {
     let data_req = DataRequest {
@@ -62,9 +61,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_general_category<'data, D>(provider: &D) -> CodePointMapResult<'data, GeneralSubcategory>
+pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralSubcategory>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
 {
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }
@@ -89,9 +88,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_script<'data, D>(provider: &D) -> CodePointMapResult<'data, Script>
+pub fn get_script<D>(provider: &D) -> CodePointMapResult<Script>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<Script>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<Script>> + ?Sized,
 {
     get_cp_map(provider, key::SCRIPT_V1)
 }
@@ -113,9 +112,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_east_asian_width<'data, D>(provider: &D) -> CodePointMapResult<'data, EastAsianWidth>
+pub fn get_east_asian_width<D>(provider: &D) -> CodePointMapResult<EastAsianWidth>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
 {
     get_cp_map(provider, key::EAST_ASIAN_WIDTH_V1)
 }
@@ -137,9 +136,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_line_break<'data, D>(provider: &D) -> CodePointMapResult<'data, LineBreak>
+pub fn get_line_break<D>(provider: &D) -> CodePointMapResult<LineBreak>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
 {
     get_cp_map(provider, key::LINE_BREAK_V1)
 }
@@ -161,11 +160,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_grapheme_cluster_break<'data, D>(
-    provider: &D,
-) -> CodePointMapResult<'data, GraphemeClusterBreak>
+pub fn get_grapheme_cluster_break<D>(provider: &D) -> CodePointMapResult<GraphemeClusterBreak>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<GraphemeClusterBreak>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<GraphemeClusterBreak>> + ?Sized,
 {
     get_cp_map(provider, key::GRAPHEME_CLUSTER_BREAK_V1)
 }
@@ -187,9 +184,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_word_break<'data, D>(provider: &D) -> CodePointMapResult<'data, WordBreak>
+pub fn get_word_break<D>(provider: &D) -> CodePointMapResult<WordBreak>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
 {
     get_cp_map(provider, key::WORD_BREAK_V1)
 }
@@ -211,9 +208,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_sentence_break<'data, D>(provider: &D) -> CodePointMapResult<'data, SentenceBreak>
+pub fn get_sentence_break<D>(provider: &D) -> CodePointMapResult<SentenceBreak>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
 {
     get_cp_map(provider, key::SENTENCE_BREAK_V1)
 }

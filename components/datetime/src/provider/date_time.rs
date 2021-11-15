@@ -22,12 +22,12 @@ use icu_provider::prelude::*;
 
 type Result<T> = core::result::Result<T, DateTimeFormatError>;
 
-fn patterns_data_payload<'data, D>(
+fn patterns_data_payload<D>(
     data_provider: &D,
     locale: &Locale,
-) -> Result<DataPayload<'data, DatePatternsV1Marker>>
+) -> Result<DataPayload<DatePatternsV1Marker>>
 where
-    D: DataProvider<'data, DatePatternsV1Marker>,
+    D: DataProvider<DatePatternsV1Marker>,
 {
     let data = data_provider
         .load_payload(&DataRequest {
@@ -43,12 +43,12 @@ where
     Ok(data)
 }
 
-fn skeleton_data_payload<'data, D>(
+fn skeleton_data_payload<D>(
     data_provider: &D,
     locale: &Locale,
-) -> Result<DataPayload<'data, DateSkeletonPatternsV1Marker>>
+) -> Result<DataPayload<DateSkeletonPatternsV1Marker>>
 where
-    D: DataProvider<'data, DateSkeletonPatternsV1Marker>,
+    D: DataProvider<DateSkeletonPatternsV1Marker>,
 {
     let data = data_provider
         .load_payload(&DataRequest {
@@ -109,16 +109,15 @@ fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> 
 
 pub struct PatternSelector<D>(PhantomData<D>);
 
-impl<'data, D> PatternSelector<D>
+impl<D> PatternSelector<D>
 where
-    D: DataProvider<'data, DatePatternsV1Marker>
-        + DataProvider<'data, DateSkeletonPatternsV1Marker>,
+    D: DataProvider<DatePatternsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker>,
 {
     pub(crate) fn for_options(
         data_provider: &D,
         locale: &Locale,
         options: &DateTimeFormatOptions,
-    ) -> Result<DataPayload<'data, PatternPluralsFromPatternsV1Marker>> {
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         match options {
             DateTimeFormatOptions::Length(bag) => {
                 Self::pattern_for_length_bag(data_provider, locale, bag)
@@ -134,7 +133,7 @@ where
         data_provider: &D,
         locale: &Locale,
         length: &length::Bag,
-    ) -> Result<DataPayload<'data, PatternPluralsFromPatternsV1Marker>> {
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         match (length.date, length.time) {
             (None, None) => Ok(DataPayload::from_owned(PatternPluralsV1(
                 PatternPlurals::default(),
@@ -163,7 +162,7 @@ where
         data_provider: &D,
         locale: &Locale,
         length: length::Date,
-    ) -> Result<DataPayload<'data, PatternPluralsFromPatternsV1Marker>> {
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let patterns_data = patterns_data_payload(data_provider, locale)?;
         Ok(
             patterns_data.map_project_with_capture(length, |data, length, _| {
@@ -181,7 +180,7 @@ where
         locale: &Locale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
-    ) -> Result<DataPayload<'data, PatternPluralsFromPatternsV1Marker>> {
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let patterns_data = patterns_data_payload(data_provider, locale)?;
         Ok(patterns_data.map_project_with_capture(
             (length, preferences),
@@ -200,7 +199,7 @@ where
         date_length: length::Date,
         time_length: length::Time,
         preferences: Option<preferences::Bag>,
-    ) -> Result<DataPayload<'data, PatternPluralsFromPatternsV1Marker>> {
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let patterns_data = patterns_data_payload(data_provider, locale)?;
         patterns_data.try_map_project_with_capture(
             (date_length, time_length, preferences),
@@ -227,7 +226,7 @@ where
         data_provider: &D,
         locale: &Locale,
         components: &components::Bag,
-    ) -> Result<DataPayload<'data, PatternPluralsFromPatternsV1Marker>> {
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let skeletons_data = skeleton_data_payload(data_provider, locale)?;
         let patterns_data = patterns_data_payload(data_provider, locale)?;
         // Not all skeletons are currently supported.

@@ -26,7 +26,7 @@ lazy_static! {
 }
 
 // LSTM model depends on language, So we have to switch models per language.
-fn get_best_lstm_model(codepoint: u32) -> Lstm<'static> {
+fn get_best_lstm_model(codepoint: u32) -> Lstm {
     // TODO:
     // DataPayLoad isn't thread safe. We need anything static version.
     let lang = get_language(codepoint);

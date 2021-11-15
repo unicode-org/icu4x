@@ -10,7 +10,6 @@ use icu_locid::{subtags, LanguageIdentifier};
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use std::marker::PhantomData;
 use tinystr::{TinyStr4, TinyStr8};
 
 /// All keys that this module is able to produce.
@@ -18,12 +17,11 @@ pub const ALL_KEYS: [ResourceKey; 1] = [key::ALIASES_V1];
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
-pub struct AliasesProvider<'data> {
+pub struct AliasesProvider {
     data: cldr_json::Resource,
-    _phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
-impl TryFrom<&dyn CldrPaths> for AliasesProvider<'_> {
+impl TryFrom<&dyn CldrPaths> for AliasesProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let data: cldr_json::Resource = {
@@ -33,36 +31,27 @@ impl TryFrom<&dyn CldrPaths> for AliasesProvider<'_> {
                 .join("aliases.json");
             serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?
         };
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
+        Ok(Self { data })
     }
 }
 
-impl<'data> TryFrom<&'data str> for AliasesProvider<'data> {
+impl TryFrom<&'_ str> for AliasesProvider {
     type Error = serde_json::error::Error;
     /// Attempt to parse a JSON string.
-    fn try_from(s: &'data str) -> Result<Self, Self::Error> {
+    fn try_from(s: &'_ str) -> Result<Self, Self::Error> {
         let data: cldr_json::Resource = serde_json::from_str(s)?;
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
+        Ok(Self { data })
     }
 }
 
-impl<'data> KeyedDataProvider for AliasesProvider<'data> {
+impl KeyedDataProvider for AliasesProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         key::ALIASES_V1.match_key(*resc_key)
     }
 }
 
-impl<'data> DataProvider<'data, AliasesV1Marker> for AliasesProvider<'data> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'data, AliasesV1Marker>, DataError> {
+impl DataProvider<AliasesV1Marker> for AliasesProvider {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         AliasesProvider::supports_key(&req.resource_path.key)?;
         let langid = &req.resource_path.options.langid;
 
@@ -81,11 +70,11 @@ impl<'data> DataProvider<'data, AliasesV1Marker> for AliasesProvider<'data> {
     }
 }
 
-icu_provider::impl_dyn_provider!(AliasesProvider<'data>, {
+icu_provider::impl_dyn_provider!(AliasesProvider, {
     _ => AliasesV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
-impl<'data> IterableDataProviderCore for AliasesProvider<'data> {
+impl IterableDataProviderCore for AliasesProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

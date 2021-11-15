@@ -16,13 +16,13 @@ pub enum FieldType {
     Literal,
 }
 
-pub struct ListFormatter<'data> {
-    data: DataPayload<'data, ListFormatterPatternsV1Marker>,
+pub struct ListFormatter {
+    data: DataPayload<ListFormatterPatternsV1Marker>,
     width: Width,
 }
 
-impl<'a> ListFormatter<'a> {
-    pub fn try_new<T: Into<Locale>, D: DataProvider<'a, ListFormatterPatternsV1Marker> + ?Sized>(
+impl ListFormatter {
+    pub fn try_new<T: Into<Locale>, D: DataProvider<ListFormatterPatternsV1Marker> + ?Sized>(
         locale: T,
         data_provider: &D,
         type_: Type,
@@ -121,7 +121,7 @@ mod tests {
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
-    fn formatter<'data>() -> ListFormatter<'data> {
+    fn formatter() -> ListFormatter {
         let pattern = ListFormatterPatternsV1::new(
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
