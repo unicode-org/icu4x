@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637004313255,
+  "lastUpdate": 1637007751631,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19193,6 +19193,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20147,
             "range": "± 1102",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cfc5fda14a03bf6a053492c0bcc4fa2ae4f36f82",
+          "message": "Get rid of the lifetime on DataPayload/DataProvider/DataExporter (#1297)\n\nRemove 'data from DataProvider/DataPayload/DataExport",
+          "timestamp": "2021-11-15T12:14:01-08:00",
+          "tree_id": "00730afd744adbc03372b4c4aa58235eeb210f07",
+          "url": "https://github.com/unicode-org/icu4x/commit/cfc5fda14a03bf6a053492c0bcc4fa2ae4f36f82"
+        },
+        "date": 1637007744617,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1281,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6450,
+            "range": "± 377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22781,
+            "range": "± 1124",
             "unit": "ns/iter"
           }
         ]
