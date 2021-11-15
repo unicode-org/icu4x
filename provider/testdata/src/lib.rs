@@ -46,7 +46,7 @@
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let data: DataPayload<icu_plurals::provider::PluralRuleStringsV1Marker> = data_provider
+//! let data: DataPayload<icu_plurals::provider::PluralRulesV1Marker> = data_provider
 //!     .load_payload(&DataRequest {
 //!         resource_path: ResourcePath {
 //!             key: icu_plurals::provider::key::CARDINAL_V1,
@@ -59,7 +59,9 @@
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();
-//! assert_eq!(data.get().few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
+//! let rule = "v = 0 and i % 10 = 2..4 and i % 100 != 12..14".parse()
+//!     .expect("Failed to parse plural rule");
+//! assert_eq!(data.get().few, Some(rule));
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html

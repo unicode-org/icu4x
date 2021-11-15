@@ -9,37 +9,37 @@
 //! # Examples
 //!
 //! ```
-//! use icu::plurals::rules::parse_condition;
-//! use icu::plurals::rules::ast::*;
+//! use icu::plurals::rules::reference::parse_condition;
+//! use icu::plurals::rules::reference::ast::*;
 //!
 //! let input = "i = 1";
 //!
 //! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
 //!
-//! assert_eq!(ast, Condition(Box::new([
-//!     AndCondition(Box::new([
+//! assert_eq!(ast, Condition(vec![
+//!     AndCondition(vec![
 //!         Relation {
 //!             expression: Expression {
 //!                 operand: Operand::I,
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(vec![
 //!                 RangeListItem::Value(
 //!                     Value(1)
 //!                 )
-//!             ]))
+//!             ])
 //!         }
-//!     ]))
-//! ])));
+//!     ])
+//! ]));
 //! ```
 //!
 //! [`PluralCategory`]: crate::PluralCategory
 //! [`parse`]: super::parse()
 //! [`test_condition`]: super::test_condition()
-use alloc::boxed::Box;
 use alloc::string::String;
+use alloc::vec::Vec;
 use core::ops::RangeInclusive;
 
 /// A complete AST representation of a plural rule.
@@ -48,25 +48,25 @@ use core::ops::RangeInclusive;
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
-/// use icu::plurals::rules::{parse, parse_condition};
+/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::rules::reference::{parse, parse_condition};
 ///
 /// let condition = parse_condition(b"i = 5 or v = 2")
 ///     .expect("Parsing failed.");
 ///
 /// let samples = Samples {
 ///     integer: Some(SampleList {
-///         sample_ranges: Box::new([SampleRange {
+///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2".to_string()),
 ///             upper_val: None,
-///         }]),
+///         }],
 ///         ellipsis: true
 ///     }),
 ///     decimal: Some(SampleList {
-///         sample_ranges: Box::new([SampleRange {
+///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2.5".to_string()),
 ///             upper_val: None,
-///         }]),
+///         }],
 ///         ellipsis: false
 ///     }),
 /// };
@@ -96,27 +96,27 @@ pub struct Rule {
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
-/// use icu::plurals::rules::parse_condition;
+/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::rules::reference::parse_condition;
 ///
-/// let condition = Condition(Box::new([
-///     AndCondition(Box::new([Relation {
+/// let condition = Condition(vec![
+///     AndCondition(vec![Relation {
 ///         expression: Expression {
 ///             operand: Operand::I,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(5))])),
-///     }])),
-///     AndCondition(Box::new([Relation {
+///         range_list: RangeList(vec![RangeListItem::Value(Value(5))]),
+///     }]),
+///     AndCondition(vec![Relation {
 ///         expression: Expression {
 ///             operand: Operand::V,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(2))])),
-///     }])),
-/// ]));
+///         range_list: RangeList(vec![RangeListItem::Value(Value(2))]),
+///     }]),
+/// ]);
 ///
 /// assert_eq!(
 ///     condition,
@@ -127,7 +127,7 @@ pub struct Rule {
 ///
 /// [`AndConditions`]: AndCondition
 #[derive(Debug, Clone, PartialEq)]
-pub struct Condition(pub Box<[AndCondition]>);
+pub struct Condition(pub Vec<AndCondition>);
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of [`Relations`].
 ///
@@ -143,16 +143,16 @@ pub struct Condition(pub Box<[AndCondition]>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
-/// AndCondition(Box::new([
+/// AndCondition(vec![
 ///     Relation {
 ///         expression: Expression {
 ///             operand: Operand::I,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(5))])),
+///         range_list: RangeList(vec![RangeListItem::Value(Value(5))]),
 ///     },
 ///     Relation {
 ///         expression: Expression {
@@ -160,15 +160,15 @@ pub struct Condition(pub Box<[AndCondition]>);
 ///             modulus: None,
 ///         },
 ///         operator: Operator::NotEq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(2))])),
+///         range_list: RangeList(vec![RangeListItem::Value(Value(2))]),
 ///     },
-/// ]));
+/// ]);
 ///
 /// ```
 ///
 /// [`Relations`]: Relation
 #[derive(Debug, Clone, PartialEq)]
-pub struct AndCondition(pub Box<[Relation]>);
+pub struct AndCondition(pub Vec<Relation>);
 
 /// An incomplete AST representation of a plural rule. Comprises an [`Expression`], an [`Operator`], and a [`RangeList`].
 ///
@@ -184,7 +184,7 @@ pub struct AndCondition(pub Box<[Relation]>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// Relation {
 ///     expression: Expression {
@@ -192,7 +192,7 @@ pub struct AndCondition(pub Box<[Relation]>);
 ///         modulus: None,
 ///     },
 ///     operator: Operator::Eq,
-///     range_list: RangeList(Box::new([RangeListItem::Value(Value(3))])),
+///     range_list: RangeList(vec![RangeListItem::Value(Value(3))]),
 /// };
 ///
 /// ```
@@ -234,7 +234,7 @@ pub enum Operator {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// Expression {
 ///     operand: Operand::I,
@@ -263,7 +263,7 @@ pub struct Expression {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::Operand;
+/// use icu::plurals::rules::reference::ast::Operand;
 ///
 /// Operand::I;
 /// ```
@@ -303,18 +303,18 @@ pub enum Operand {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
-/// RangeList(Box::new([
+/// RangeList(vec![
 ///     RangeListItem::Value(Value(5)),
 ///     RangeListItem::Value(Value(7)),
 ///     RangeListItem::Value(Value(9)),
-/// ]));
+/// ]);
 /// ```
 ///
 /// [`RangeListItems`]: RangeListItem
 #[derive(Debug, Clone, PartialEq)]
-pub struct RangeList(pub Box<[RangeListItem]>);
+pub struct RangeList(pub Vec<RangeListItem>);
 
 /// An enum of items that appear in a [`RangeList`]: `Range` or a `Value`.
 ///
@@ -331,7 +331,7 @@ pub struct RangeList(pub Box<[RangeListItem]>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// let _ = RangeListItem::Value(Value(5));
 /// let _ = RangeListItem::Range(Value(11)..=Value(15));
@@ -357,7 +357,7 @@ pub enum RangeListItem {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 ///
 /// RangeListItem::Value(Value(99));
 /// ```
@@ -373,20 +373,20 @@ pub struct Value(pub u64);
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 /// Samples {
 ///     integer: Some(SampleList {
-///         sample_ranges: Box::new([SampleRange {
+///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2".to_string()),
 ///             upper_val: None,
-///         }]),
+///         }],
 ///         ellipsis: true
 ///     }),
 ///     decimal: Some(SampleList {
-///         sample_ranges: Box::new([SampleRange {
+///         sample_ranges: vec![SampleRange {
 ///             lower_val: DecimalValue("2.5".to_string()),
 ///             upper_val: None,
-///         }]),
+///         }],
 ///         ellipsis: false
 ///     }),
 /// };
@@ -407,21 +407,21 @@ pub struct Samples {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 /// SampleList {
-///     sample_ranges: Box::new([
+///     sample_ranges: vec![
 ///         SampleRange {
 ///             lower_val: DecimalValue("0.0".to_string()),
 ///             upper_val: Some(DecimalValue("1.5".to_string())),
 ///         }
-///     ]),
+///     ],
 ///     ellipsis: true
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub struct SampleList {
-    pub sample_ranges: Box<[SampleRange]>,
+    pub sample_ranges: Vec<SampleRange>,
     pub ellipsis: bool,
 }
 
@@ -434,7 +434,7 @@ pub struct SampleList {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 /// SampleRange {
 ///     lower_val: DecimalValue("0.0".to_string()),
 ///     upper_val: Some(DecimalValue("1.5".to_string())),
@@ -456,7 +456,7 @@ pub struct SampleRange {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu::plurals::rules::reference::ast::*;
 /// DecimalValue("1.00".to_string());
 /// ```
 #[derive(Debug, Clone, PartialEq)]

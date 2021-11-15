@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::rules::ast;
+use crate::rules::reference::ast;
 use core::fmt;
 use core::ops::RangeInclusive;
 
@@ -11,9 +11,9 @@ use core::ops::RangeInclusive;
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::parse;
-/// use icu::plurals::rules::ast;
-/// use icu::plurals::rules::serialize;
+/// use icu::plurals::rules::reference::parse;
+/// use icu::plurals::rules::reference::ast;
+/// use icu::plurals::rules::reference::serialize;
 ///
 /// let input = "i = 0 or n = 1 @integer 0, 1 @decimal 0.0~1.0, 0.00~0.04";
 ///

@@ -40,7 +40,7 @@ use std::path::PathBuf;
 ///     let data_provider = PluralsProvider::try_from(&paths as &dyn CldrPaths)
 ///         .expect("The data should be well-formed after downloading");
 ///
-///     let data: DataPayload<icu_plurals::provider::PluralRuleStringsV1Marker> = data_provider
+///     let data: DataPayload<icu_plurals::provider::PluralRulesV1Marker> = data_provider
 ///         .load_payload(&DataRequest {
 ///             resource_path: ResourcePath {
 ///                 key: icu_plurals::provider::key::ORDINAL_V1,
@@ -53,7 +53,9 @@ use std::path::PathBuf;
 ///         .unwrap()
 ///         .take_payload()
 ///         .unwrap();
-///     assert_eq!(data.get().few, Some(Cow::Borrowed("n % 10 = 3 and n % 100 != 13")));
+///     let rule = "n % 10 = 3 and n % 100 != 13".parse()
+///         .expect("Failed to parse plural rule");
+///     assert_eq!(data.get().few, Some(rule));
 /// }
 ///
 /// // Calling demo(downloader) will cause the data to actually get downloaded.

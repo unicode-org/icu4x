@@ -70,6 +70,14 @@ impl TrieValue for u32 {
     }
 }
 
+impl TrieValue for char {
+    const DATA_GET_ERROR_VALUE: char = '\0';
+    type TryFromU32Error = core::char::CharTryFromError;
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        char::try_from(i)
+    }
+}
+
 /// This struct represents a de-serialized CodePointTrie that was exported from
 /// ICU binary data.
 ///
@@ -301,6 +309,43 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         self.data
             .get(data_pos as usize)
             .unwrap_or(T::DATA_GET_ERROR_VALUE)
+    }
+
+    /// Converts the CodePointTrie into one that returns another type of the same size.
+    ///
+    /// Borrowed data remains borrowed, and owned data remains owned.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `T` and `P` are different sizes.
+    ///
+    /// More specifically, panics if [ZeroVec::try_into_converted()] panics when converting
+    /// `ZeroVec<T>` into `ZeroVec<P>`, which happens if `T::ULE` and `P::ULE` differ in size.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let cpt1: CodePointTrie<char> = unimplemented!();
+    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted()
+    ///     .expect("infallible");
+    /// ```
+    pub fn try_into_converted<P>(
+        self,
+    ) -> Result<
+        CodePointTrie<'trie, P>,
+        <<P as zerovec::ule::AsULE>::ULE as zerovec::ule::ULE>::Error,
+    >
+    where
+        P: TrieValue,
+    {
+        let converted_data = self.data.try_into_converted()?;
+        Ok(CodePointTrie {
+            header: self.header,
+            index: self.index,
+            data: converted_data,
+        })
     }
 }
 

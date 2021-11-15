@@ -10,7 +10,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_provider::prelude::*;
 
 fn parser(c: &mut Criterion) {
-    use icu_plurals::rules::parse_condition;
+    use icu_plurals::rules::reference::parse_condition;
 
     let fixture_data = helpers::get_plurals_data();
 
@@ -19,7 +19,7 @@ fn parser(c: &mut Criterion) {
     let mut rules = vec![];
 
     for langid in &fixture_data.langs {
-        let data_payload: DataPayload<icu_plurals::provider::PluralRuleStringsV1Marker> = provider
+        let data_payload: DataPayload<icu_plurals::provider::PluralRulesV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: icu_plurals::provider::key::CARDINAL_V1,
@@ -57,7 +57,7 @@ fn parser(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     c.bench_function("plurals/parser/lex", |b| {
-        use icu_plurals::rules::Lexer;
+        use icu_plurals::rules::reference::Lexer;
         b.iter(|| {
             for rule in &rules {
                 let _ = Lexer::new(black_box(rule.as_bytes())).count();

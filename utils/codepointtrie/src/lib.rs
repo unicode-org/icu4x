@@ -39,7 +39,12 @@ extern crate alloc;
 #[cfg(feature = "serde")]
 extern crate serde;
 
-pub mod codepointtrie;
+mod codepointtrie;
 pub mod error;
 mod impl_const;
 pub mod planes;
+
+pub use codepointtrie::CodePointTrie;
+pub use codepointtrie::CodePointTrieHeader;
+pub use codepointtrie::TrieType;
+pub use codepointtrie::TrieValue;

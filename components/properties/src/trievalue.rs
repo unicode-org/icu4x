@@ -8,7 +8,7 @@ use crate::{
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;
-use icu_codepointtrie::codepointtrie::TrieValue;
+use icu_codepointtrie::TrieValue;
 use num_enum::TryFromPrimitiveError;
 
 use core::convert::TryFrom;
@@ -16,6 +16,7 @@ use core::convert::TryFrom;
 impl TrieValue for GeneralSubcategory {
     const DATA_GET_ERROR_VALUE: GeneralSubcategory = GeneralSubcategory::Unassigned;
     type TryFromU32Error = TryFromPrimitiveError<Self>;
+
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         // If the u32 is out of range, fall back to u8::MAX, which is out of range of the GeneralSubcategory enum.
         GeneralSubcategory::try_from(i.try_into().unwrap_or(u8::MAX))

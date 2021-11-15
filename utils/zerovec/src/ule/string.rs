@@ -5,8 +5,14 @@
 use crate::ule::*;
 use core::str;
 
-// This is safe to implement because from_byte_slice_unchecked returns
-// the same value as parse_byte_slice
+// Safety (based on the safety checklist on the VarULE trait):
+//  1. str does not include any uninitialized or padding bytes.
+//  2. str is aligned to 1 byte.
+//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
+//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  6. `parse_byte_slice()` is equivalent to `validate_byte_slice()` followed by `from_byte_slice_unchecked()`
+//  7. str byte equality is semantic equality
 unsafe impl VarULE for str {
     type Error = str::Utf8Error;
 
@@ -25,9 +31,5 @@ unsafe impl VarULE for str {
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         str::from_utf8_unchecked(bytes)
-    }
-    #[inline]
-    fn as_byte_slice(&self) -> &[u8] {
-        self.as_bytes()
     }
 }

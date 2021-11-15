@@ -6,35 +6,53 @@
 
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
-use icu_plurals::provider::*;
+use icu_plurals::{provider::*, rules::runtime::ast::Rule};
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
 use icu_provider_fs::FsDataProvider;
 use std::borrow::Cow;
 
+#[derive(Debug, PartialEq)]
+struct PluralRulesTestData {
+    zero: Option<&'static str>,
+    one: Option<&'static str>,
+    two: Option<&'static str>,
+    few: Option<&'static str>,
+    many: Option<&'static str>,
+}
+
+impl From<&PluralRulesTestData> for PluralRulesV1<'_> {
+    fn from(i: &PluralRulesTestData) -> Self {
+        fn parse(i: &'static str) -> Rule {
+            i.parse().expect("Failed to parse rule")
+        }
+        Self {
+            zero: i.zero.map(parse),
+            one: i.one.map(parse),
+            two: i.two.map(parse),
+            few: i.few.map(parse),
+            many: i.many.map(parse),
+        }
+    }
+}
+
 #[cfg(feature = "provider_json")]
-const EXPECTED_RU_DATA: PluralRuleStringsV1 = PluralRuleStringsV1 {
+const EXPECTED_RU_DATA: PluralRulesTestData = PluralRulesTestData {
     zero: None,
-    one: Some(Cow::Borrowed("v = 0 and i % 10 = 1 and i % 100 != 11")),
+    one: Some("v = 0 and i % 10 = 1 and i % 100 != 11"),
     two: None,
-    few: Some(Cow::Borrowed(
-        "v = 0 and i % 10 = 2..4 and i % 100 != 12..14",
-    )),
-    many: Some(Cow::Borrowed(
-        "v = 0 and i % 10 = 0 or v = 0 and i % 10 = 5..9 or v = 0 and i % 100 = 11..14",
-    )),
+    few: Some("v = 0 and i % 10 = 2..4 and i % 100 != 12..14"),
+    many: Some("v = 0 and i % 10 = 0 or v = 0 and i % 10 = 5..9 or v = 0 and i % 100 = 11..14"),
 };
 
 #[cfg(feature = "provider_bincode")]
-const EXPECTED_SR_DATA: PluralRuleStringsV1 = PluralRuleStringsV1 {
+const EXPECTED_SR_DATA: PluralRulesTestData = PluralRulesTestData {
     zero: None,
-    one: Some(Cow::Borrowed(
-        "v = 0 and i % 10 = 1 and i % 100 != 11 or f % 10 = 1 and f % 100 != 11",
-    )),
+    one: Some("v = 0 and i % 10 = 1 and i % 100 != 11 or f % 10 = 1 and f % 100 != 11"),
     two: None,
-    few: Some(Cow::Borrowed(
+    few: Some(
         "v = 0 and i % 10 = 2..4 and i % 100 != 12..14 or f % 10 = 2..4 and f % 100 != 12..14",
-    )),
+    ),
     many: None,
 };
 
@@ -63,12 +81,12 @@ fn test_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = provider
+    let plurals_data: DataPayload<PluralRulesV1Marker> = provider
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
-    assert_eq!(plurals_data.get(), &EXPECTED_RU_DATA);
+    assert_eq!(plurals_data.get(), &PluralRulesV1::from(&EXPECTED_RU_DATA));
 }
 
 #[cfg(feature = "provider_json")]
@@ -77,13 +95,12 @@ fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = (&provider
-        as &dyn SerdeDeDataProvider)
+    let plurals_data: DataPayload<PluralRulesV1Marker> = (&provider as &dyn SerdeDeDataProvider)
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
-    assert_eq!(plurals_data.get(), &EXPECTED_RU_DATA);
+    assert_eq!(plurals_data.get(), &PluralRulesV1::from(&EXPECTED_RU_DATA));
 }
 
 #[cfg(feature = "provider_json")]
@@ -92,7 +109,7 @@ fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    type Provider<'data> = dyn DataProvider<'data, PluralRuleStringsV1Marker>;
+    type Provider<'data> = dyn DataProvider<'data, PluralRulesV1Marker>;
 
     assert!(matches!(
         Provider::load_payload(
@@ -165,12 +182,12 @@ fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = provider
+    let plurals_data: DataPayload<PluralRulesV1Marker> = provider
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
-    assert_eq!(plurals_data.get(), &EXPECTED_SR_DATA);
+    assert_eq!(plurals_data.get(), &PluralRulesV1::from(&EXPECTED_SR_DATA));
 }
 
 #[test]
@@ -179,11 +196,10 @@ fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = (&provider
-        as &dyn SerdeDeDataProvider)
+    let plurals_data: DataPayload<PluralRulesV1Marker> = (&provider as &dyn SerdeDeDataProvider)
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
-    assert_eq!(plurals_data.get(), &EXPECTED_SR_DATA);
+    assert_eq!(plurals_data.get(), &PluralRulesV1::from(&EXPECTED_SR_DATA));
 }

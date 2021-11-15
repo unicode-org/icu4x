@@ -5,7 +5,7 @@
 use crate::uprops_helpers::{self, TomlEnumerated};
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 
-use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
+use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_properties::{
@@ -124,7 +124,7 @@ impl IterableDataProviderCore for EnumeratedPropertyCodePointTrieProvider {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_codepointtrie::codepointtrie::CodePointTrie;
+    use icu_codepointtrie::CodePointTrie;
     use icu_properties::provider::key;
     use icu_properties::{GeneralSubcategory, Script};
 
