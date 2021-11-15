@@ -73,13 +73,13 @@ impl DataMarker for ErasedDataStructMarker {
 #[derive(Yokeable)]
 pub struct ErasedDataStructBox(Box<dyn ErasedDataStruct>);
 
-impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
+impl<M> crate::dynutil::UpcastDataPayload<M> for ErasedDataStructMarker
 where
     M: DataMarker,
 {
     /// Upcast for ErasedDataStruct creates a `Box<dyn ErasedDataStruct>` from the current inner
     /// `Yoke` (i.e., `Box::new(yoke)`).
-    fn upcast(other: DataPayload<'static, M>) -> DataPayload<'static, ErasedDataStructMarker> {
+    fn upcast(other: DataPayload<M>) -> DataPayload<ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         let owned: Box<dyn ErasedDataStruct> = match other.inner {
             RcStruct(yoke) => Box::new(yoke),
@@ -90,7 +90,7 @@ where
     }
 }
 
-impl<'data> DataPayload<'static, ErasedDataStructMarker> {
+impl DataPayload<ErasedDataStructMarker> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a
     /// concrete type.
     ///
@@ -132,7 +132,7 @@ impl<'data> DataPayload<'static, ErasedDataStructMarker> {
     ///
     /// assert_eq!("Hallo Welt", downcast_payload.get().message);
     /// ```
-    pub fn downcast<M>(self) -> Result<DataPayload<'static, M>, Error>
+    pub fn downcast<M>(self) -> Result<DataPayload<M>, Error>
     where
         M: DataMarker,
     {
@@ -210,37 +210,35 @@ where
 ///
 /// - [#41517](https://github.com/rust-lang/rust/issues/41517) (trait aliases are not supported)
 /// - [#68636](https://github.com/rust-lang/rust/issues/68636) (identical traits can't be auto-implemented)
-pub trait ErasedDataProvider<'data> {
+pub trait ErasedDataProvider {
     /// Query the provider for data, returning the result as an [`ErasedDataStruct`] trait object.
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_erased(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'static, ErasedDataStructMarker>, Error>;
+    fn load_erased(&self, req: &DataRequest)
+        -> Result<DataResponse<ErasedDataStructMarker>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
-impl<'data, T> ErasedDataProvider<'data> for T
+impl<T> ErasedDataProvider for T
 where
-    T: DataProvider<'static, ErasedDataStructMarker>,
+    T: DataProvider<ErasedDataStructMarker>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'static, ErasedDataStructMarker>, Error> {
+    ) -> Result<DataResponse<ErasedDataStructMarker>, Error> {
         DataProvider::<ErasedDataStructMarker>::load_payload(self, req)
     }
 }
 
-impl<'data, M> DataProvider<'static, M> for dyn ErasedDataProvider<'data> + 'data
+impl<M> DataProvider<M> for dyn ErasedDataProvider
 where
     M: DataMarker,
     <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'static, M>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, Error> {
         let result = ErasedDataProvider::load_erased(self, req)?;
         Ok(DataResponse {
             metadata: result.metadata,

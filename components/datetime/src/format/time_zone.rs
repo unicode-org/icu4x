@@ -17,7 +17,7 @@ pub struct FormattedTimeZone<'l, T>
 where
     T: TimeZoneInput,
 {
-    pub(crate) time_zone_format: &'l TimeZoneFormat<'l>,
+    pub(crate) time_zone_format: &'l TimeZoneFormat,
     pub(crate) time_zone: &'l T,
 }
 

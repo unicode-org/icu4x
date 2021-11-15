@@ -19,7 +19,7 @@ use icu_datetime::{
     DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_plurals::provider::PluralRuleStringsV1Marker;
+use icu_plurals::provider::PluralRulesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::struct_provider::StructProvider;
 use patterns::{
@@ -32,44 +32,44 @@ use patterns::{
 use std::fmt::Write;
 use tinystr::tinystr8;
 
-struct MultiKeyStructProvider<'data> {
-    pub symbols: StructProvider<'data, DateSymbolsV1Marker>,
-    pub skeletons: StructProvider<'data, DateSkeletonPatternsV1Marker>,
-    pub patterns: StructProvider<'data, DatePatternsV1Marker>,
+struct MultiKeyStructProvider {
+    pub symbols: StructProvider<DateSymbolsV1Marker>,
+    pub skeletons: StructProvider<DateSkeletonPatternsV1Marker>,
+    pub patterns: StructProvider<DatePatternsV1Marker>,
 }
 
-impl<'data> DataProvider<'data, DateSymbolsV1Marker> for MultiKeyStructProvider<'data> {
+impl DataProvider<DateSymbolsV1Marker> for MultiKeyStructProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, DateSymbolsV1Marker>, icu_provider::DataError> {
+    ) -> Result<DataResponse<DateSymbolsV1Marker>, icu_provider::DataError> {
         self.symbols.load_payload(req)
     }
 }
 
-impl<'data> DataProvider<'data, DateSkeletonPatternsV1Marker> for MultiKeyStructProvider<'data> {
+impl DataProvider<DateSkeletonPatternsV1Marker> for MultiKeyStructProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, DateSkeletonPatternsV1Marker>, icu_provider::DataError> {
+    ) -> Result<DataResponse<DateSkeletonPatternsV1Marker>, icu_provider::DataError> {
         self.skeletons.load_payload(req)
     }
 }
 
-impl<'data> DataProvider<'data, DatePatternsV1Marker> for MultiKeyStructProvider<'data> {
+impl DataProvider<DatePatternsV1Marker> for MultiKeyStructProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, DatePatternsV1Marker>, icu_provider::DataError> {
+    ) -> Result<DataResponse<DatePatternsV1Marker>, icu_provider::DataError> {
         self.patterns.load_payload(req)
     }
 }
 
-impl<'data> DataProvider<'data, PluralRuleStringsV1Marker> for MultiKeyStructProvider<'data> {
+impl DataProvider<PluralRulesV1Marker> for MultiKeyStructProvider {
     fn load_payload(
         &self,
         _req: &DataRequest,
-    ) -> Result<DataResponse<'data, PluralRuleStringsV1Marker>, icu_provider::DataError> {
+    ) -> Result<DataResponse<PluralRulesV1Marker>, icu_provider::DataError> {
         Err(icu_provider::DataError::MissingPayload)
     }
 }

@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_plurals::{provider::PluralRuleStringsV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
 use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
 
 use crate::{
@@ -68,12 +68,12 @@ use crate::{
 ///
 /// let value = zdtf.format_to_string(&zoned_datetime);
 /// ```
-pub struct ZonedDateTimeFormat<'data> {
-    pub(super) datetime_format: DateTimeFormat<'data>,
-    pub(super) time_zone_format: TimeZoneFormat<'data>,
+pub struct ZonedDateTimeFormat {
+    pub(super) datetime_format: DateTimeFormat,
+    pub(super) time_zone_format: TimeZoneFormat,
 }
 
-impl<'data> ZonedDateTimeFormat<'data> {
+impl ZonedDateTimeFormat {
     /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
     /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
@@ -108,17 +108,17 @@ impl<'data> ZonedDateTimeFormat<'data> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        DP: DataProvider<'data, DateSymbolsV1Marker>
-            + DataProvider<'data, DatePatternsV1Marker>
-            + DataProvider<'data, DateSkeletonPatternsV1Marker>,
-        ZP: DataProvider<'data, provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<'data, provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<'data, provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<'data, provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        DP: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>,
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: DataProvider<'data, PluralRuleStringsV1Marker> + ?Sized,
+        PP: DataProvider<PluralRulesV1Marker>,
     {
         let locale = locale.into();
         let langid: LanguageIdentifier = locale.clone().into();
@@ -131,7 +131,7 @@ impl<'data> ZonedDateTimeFormat<'data> {
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new(
-                langid.clone(),
+                locale.clone(),
                 plural_provider,
                 PluralRuleType::Ordinal,
             )?)
@@ -204,7 +204,7 @@ impl<'data> ZonedDateTimeFormat<'data> {
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but [`FormattedZonedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, 'data, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
     where
         T: ZonedDateTimeInput,
     {

@@ -6,7 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
+use crate::rules::runtime::ast::Rule;
 use icu_provider::yoke::{self, *};
 
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
@@ -16,23 +16,26 @@ pub mod key {
     pub const ORDINAL_V1: ResourceKey = resource_key!(Plurals, "ordinal", 1);
 }
 
-pub mod resolver;
-
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
 #[icu_provider::data_struct]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
-pub struct PluralRuleStringsV1<'data> {
-    pub zero: Option<Cow<'data, str>>,
-    pub one: Option<Cow<'data, str>>,
-    pub two: Option<Cow<'data, str>>,
-    pub few: Option<Cow<'data, str>>,
-    pub many: Option<Cow<'data, str>>,
+pub struct PluralRulesV1<'data> {
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub zero: Option<Rule<'data>>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub one: Option<Rule<'data>>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub two: Option<Rule<'data>>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub few: Option<Rule<'data>>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub many: Option<Rule<'data>>,
 }

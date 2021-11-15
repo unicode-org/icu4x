@@ -36,12 +36,12 @@ use alloc::vec::Vec;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<'data, M> DataProvider<'data, M> for InvariantDataProvider
+impl<M> DataProvider<M> for InvariantDataProvider
 where
     M: DataMarker,
     M::Yokeable: Default,
 {
-    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
+    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<M>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(M::Yokeable::default())),

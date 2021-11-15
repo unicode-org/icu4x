@@ -15,11 +15,14 @@ typedef struct ICU4XPluralRules ICU4XPluralRules;
 #include "ICU4XDataProvider.h"
 #include "ICU4XPluralRuleType.h"
 #include "ICU4XCreatePluralRulesResult.h"
+#include "ICU4XStaticDataProvider.h"
 #include "ICU4XPluralOperands.h"
 #include "ICU4XPluralCategory.h"
 #include "ICU4XPluralCategories.h"
 
-ICU4XCreatePluralRulesResult ICU4XPluralRules_create(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XPluralRuleType ty);
+ICU4XCreatePluralRulesResult ICU4XPluralRules_try_new(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XPluralRuleType ty);
+
+ICU4XCreatePluralRulesResult ICU4XPluralRules_try_new_from_static(const ICU4XLocale* locale, const ICU4XStaticDataProvider* provider, ICU4XPluralRuleType ty);
 
 ICU4XPluralCategory ICU4XPluralRules_select(const ICU4XPluralRules* self, const ICU4XPluralOperands* op);
 

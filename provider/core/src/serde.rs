@@ -111,7 +111,7 @@ pub trait SerdeDeDataReceiver {
     ) -> Result<(), Error>;
 }
 
-impl<'data, M> SerdeDeDataReceiver for Option<DataPayload<'data, M>>
+impl<M> SerdeDeDataReceiver for Option<DataPayload<M>>
 where
     M: DataMarker,
     M::Yokeable: serde::de::Deserialize<'static>,
@@ -200,7 +200,7 @@ pub trait SerdeDeDataProvider {
 }
 
 /// Note: This impl returns `'static` payloads because borrowing is handled by [`Yoke`].
-impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'static
+impl<M> DataProvider<M> for dyn SerdeDeDataProvider + 'static
 where
     M: DataMarker,
     M::Yokeable: serde::de::Deserialize<'static>,
@@ -210,7 +210,7 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse { metadata, payload })
@@ -280,46 +280,46 @@ impl<'a> Deref for SerdeSeDataStructDynRef<'a> {
     }
 }
 
-impl<'data, M> crate::dynutil::UpcastDataPayload<'data, M> for SerdeSeDataStructMarker
+impl<M> crate::dynutil::UpcastDataPayload<M> for SerdeSeDataStructMarker
 where
     M: DataMarker,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
 {
-    fn upcast(other: DataPayload<'data, M>) -> DataPayload<'data, SerdeSeDataStructMarker> {
+    fn upcast(other: DataPayload<M>) -> DataPayload<SerdeSeDataStructMarker> {
         use crate::data_provider::{DataPayloadInner, ErasedCart};
         let yoke: Yoke<_, ErasedCart> = match other.inner {
             DataPayloadInner::RcStruct(yoke) => {
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
                 //
                 // eventually the yoke crate will have a safe function for this
                 // https://github.com/unicode-org/icu4x/issues/1284
-                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'static>) }
             }
             DataPayloadInner::Owned(yoke) => {
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
                 //
                 // eventually the yoke crate will have a safe function for this
                 // https://github.com/unicode-org/icu4x/issues/1284
-                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'static>) }
             }
             DataPayloadInner::RcBuf(yoke) => {
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'data> + 'data>);
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
                 //
                 // eventually the yoke crate will have a safe function for this
                 // https://github.com/unicode-org/icu4x/issues/1284
-                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'data>) }
+                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'static>) }
             }
         };
         DataPayload {

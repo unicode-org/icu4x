@@ -99,11 +99,11 @@ impl NumbersProvider {
     }
 }
 
-impl<'data> DataProvider<'data, DecimalSymbolsV1Marker> for NumbersProvider {
+impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, DecimalSymbolsV1Marker>, DataError> {
+    ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
         let numbers = match self
@@ -139,9 +139,9 @@ impl<'data> DataProvider<'data, DecimalSymbolsV1Marker> for NumbersProvider {
 
 icu_provider::impl_dyn_provider!(NumbersProvider, {
     _ => DecimalSymbolsV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
-impl<'data> IterableDataProviderCore for NumbersProvider {
+impl IterableDataProviderCore for NumbersProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

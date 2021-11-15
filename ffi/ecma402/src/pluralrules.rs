@@ -255,14 +255,14 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
 
 impl PluralRules {
     /// Creates a new [`PluralRules`], using the specified data provider.
-    pub fn try_new_with_provider<'data, L, P>(
+    pub fn try_new_with_provider<L, P>(
         l: L,
         opts: ecma402_traits::pluralrules::Options,
         provider: &P,
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<'data, ipr::provider::PluralRuleStringsV1Marker>,
+        P: icu_provider::DataProvider<ipr::provider::PluralRulesV1Marker>,
         Self: Sized,
     {
         let locale: String = format!("{}", l);
@@ -272,7 +272,7 @@ impl PluralRules {
         let rule_type = internal::to_icu4x_type(&opts.in_type);
 
         // Oops, there is no slot in the ECMA 402 APIs to add the data provider.  What to do?
-        let rep = ipr::PluralRules::try_new(locale.into(), provider, rule_type)?;
+        let rep = ipr::PluralRules::try_new(locale, provider, rule_type)?;
         Ok(Self { opts, rep })
     }
 }

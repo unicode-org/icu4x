@@ -65,24 +65,22 @@
 //! [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 //! [`CLDR`]: http://cldr.unicode.org/
 
-#![warn(missing_docs)]
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
 extern crate alloc;
 
-mod data;
 mod error;
 mod operands;
 pub mod provider;
 pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
-use core::convert::TryInto;
 pub use error::PluralRulesError;
-use icu_locid::LanguageIdentifier;
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
-use provider::{resolver, PluralRuleStringsV1, PluralRuleStringsV1Marker};
+use provider::PluralRulesV1Marker;
+use rules::runtime::test_rule;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 ///
@@ -211,17 +209,17 @@ impl PluralCategory {
     ///
     /// let mut categories = PluralCategory::all();
     ///
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Few));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Many));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::One));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Other));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Two));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Zero));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Few));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Many));
+    /// assert_eq!(categories.next(), Some(PluralCategory::One));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Other));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Two));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Zero));
     /// assert_eq!(categories.next(), None);
     /// ```
     ///
     /// [`Plural Categories`]: PluralCategory
-    pub fn all() -> impl ExactSizeIterator<Item = &'static Self> {
+    pub fn all() -> impl ExactSizeIterator<Item = Self> {
         [
             Self::Few,
             Self::Many,
@@ -231,6 +229,7 @@ impl PluralCategory {
             Self::Zero,
         ]
         .iter()
+        .copied()
     }
 
     /// Returns the PluralCategory coresponding to given TR35 string.
@@ -271,8 +270,8 @@ impl PluralCategory {
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
 pub struct PluralRules {
-    _langid: LanguageIdentifier,
-    selector: data::RulesSelector,
+    _locale: Locale,
+    rules: DataPayload<PluralRulesV1Marker>,
 }
 
 impl PluralRules {
@@ -296,13 +295,31 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'data, D: DataProvider<'data, PluralRuleStringsV1Marker> + ?Sized>(
-        langid: LanguageIdentifier,
+    pub fn try_new<T: Into<Locale>, D>(
+        locale: T,
         data_provider: &D,
-        type_: PluralRuleType,
-    ) -> Result<Self, PluralRulesError> {
-        let data = resolver::resolve_plural_data(langid.clone(), data_provider, type_)?;
-        Self::new_from_data(langid, data.get())
+        rule_type: PluralRuleType,
+    ) -> Result<Self, PluralRulesError>
+    where
+        D: DataProvider<PluralRulesV1Marker> + ?Sized,
+    {
+        let locale = locale.into();
+        let key = match rule_type {
+            PluralRuleType::Cardinal => provider::key::CARDINAL_V1,
+            PluralRuleType::Ordinal => provider::key::ORDINAL_V1,
+        };
+        let rules = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.clone().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+        Self::new(locale, rules)
     }
 
     /// Returns the [`Plural Category`] appropriate for the given number.
@@ -364,13 +381,30 @@ impl PluralRules {
     /// [`Plural Category`]: PluralCategory
     /// [`Plural Operands`]: operands::PluralOperands
     pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
-        self.selector.select(&input.into())
+        let rules = self.rules.get();
+        let input = input.into();
+
+        macro_rules! test_rule {
+            ($rule:ident, $cat:ident) => {
+                rules
+                    .$rule
+                    .as_ref()
+                    .and_then(|r| test_rule(r, &input).then(|| PluralCategory::$cat))
+            };
+        }
+
+        test_rule!(zero, Zero)
+            .or_else(|| test_rule!(one, One))
+            .or_else(|| test_rule!(two, Two))
+            .or_else(|| test_rule!(few, Few))
+            .or_else(|| test_rule!(many, Many))
+            .unwrap_or(PluralCategory::Other)
     }
 
     /// Returns all [`Plural Categories`] appropriate for a [`PluralRules`] object
     /// based on the [`LanguageIdentifier`] and [`PluralRuleType`].
     ///
-    /// The [`Plural Categories`] are returned in alphabetically sorted order.
+    /// The [`Plural Categories`] are returned in UTS 35 sorted order.
     ///
     /// The category [`PluralCategory::Other`] is always included.
     ///
@@ -389,27 +423,44 @@ impl PluralRules {
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let mut categories = pr.categories();
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Many));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::One));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Other));
+    /// assert_eq!(categories.next(), Some(PluralCategory::One));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Many));
+    /// assert_eq!(categories.next(), Some(PluralCategory::Other));
     /// assert_eq!(categories.next(), None);
     /// ```
     ///
     /// [`Plural Categories`]: PluralCategory
-    pub fn categories(&self) -> impl Iterator<Item = &'static PluralCategory> + '_ {
-        self.selector.categories()
+    pub fn categories(&self) -> impl Iterator<Item = PluralCategory> + '_ {
+        let rules = self.rules.get();
+
+        macro_rules! test_rule {
+            ($rule:ident, $cat:ident) => {
+                rules
+                    .$rule
+                    .as_ref()
+                    .map(|_| PluralCategory::$cat)
+                    .into_iter()
+            };
+        }
+
+        test_rule!(zero, Zero)
+            .chain(test_rule!(one, One))
+            .chain(test_rule!(two, Two))
+            .chain(test_rule!(few, Few))
+            .chain(test_rule!(many, Many))
+            .chain(Some(PluralCategory::Other).into_iter())
     }
 
     /// Lower-level constructor that allows constructing a [`PluralRules`] directly from
     /// data obtained from a provider.
-    pub fn new_from_data(
-        langid: LanguageIdentifier,
-        data: &PluralRuleStringsV1,
+    pub fn new<T: Into<Locale>>(
+        locale: T,
+        rules: DataPayload<PluralRulesV1Marker>,
     ) -> Result<Self, PluralRulesError> {
-        let data: data::PluralRuleList = data.try_into()?;
+        let locale = locale.into();
         Ok(Self {
-            _langid: langid,
-            selector: data.into(),
+            _locale: locale,
+            rules,
         })
     }
 }

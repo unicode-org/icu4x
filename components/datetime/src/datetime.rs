@@ -13,7 +13,7 @@ use crate::{
 };
 use alloc::string::String;
 use icu_locid::Locale;
-use icu_plurals::{provider::PluralRuleStringsV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
@@ -61,14 +61,14 @@ use crate::{
 ///
 /// This model replicates that of `ICU` and `ECMA402`. In the future this will become even more pronounced
 /// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
-pub struct DateTimeFormat<'data> {
+pub struct DateTimeFormat {
     pub(super) locale: Locale,
-    pub(super) patterns: DataPayload<'data, PatternPluralsFromPatternsV1Marker>,
-    pub(super) symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
+    pub(super) patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+    pub(super) symbols: Option<DataPayload<DateSymbolsV1Marker>>,
     pub(super) ordinal_rules: Option<PluralRules>,
 }
 
-impl<'data> DateTimeFormat<'data> {
+impl DateTimeFormat {
     /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
@@ -96,10 +96,10 @@ impl<'data> DateTimeFormat<'data> {
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
-        D: DataProvider<'data, DateSymbolsV1Marker>
-            + DataProvider<'data, DatePatternsV1Marker>
-            + DataProvider<'data, DateSkeletonPatternsV1Marker>
-            + DataProvider<'data, PluralRuleStringsV1Marker>,
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<PluralRulesV1Marker>,
     {
         let locale = locale.into();
 
@@ -113,7 +113,7 @@ impl<'data> DateTimeFormat<'data> {
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new(
-                langid.clone(),
+                locale.clone(),
                 data_provider,
                 PluralRuleType::Ordinal,
             )?)
@@ -157,8 +157,8 @@ impl<'data> DateTimeFormat<'data> {
     /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
-        patterns: DataPayload<'data, PatternPluralsFromPatternsV1Marker>,
-        symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
+        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+        symbols: Option<DataPayload<DateSymbolsV1Marker>>,
         ordinal_rules: Option<PluralRules>,
     ) -> Self {
         let locale = locale.into();
@@ -199,7 +199,7 @@ impl<'data> DateTimeFormat<'data> {
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, 'data, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
     where
         T: DateTimeInput,
     {

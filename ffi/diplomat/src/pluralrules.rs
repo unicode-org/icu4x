@@ -8,9 +8,15 @@ pub mod ffi {
 
     use alloc::boxed::Box;
 
-    use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRules};
+    use icu_plurals::{
+        provider::PluralRulesV1Marker, PluralCategory, PluralOperands, PluralRuleType, PluralRules,
+    };
+    use icu_provider::prelude::DataProvider;
 
-    use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
+    use crate::{
+        locale::ffi::ICU4XLocale,
+        provider::ffi::{ICU4XDataProvider, ICU4XStaticDataProvider},
+    };
 
     pub struct ICU4XCreatePluralRulesResult {
         pub rules: Option<Box<ICU4XPluralRules>>,
@@ -43,17 +49,35 @@ pub mod ffi {
     impl ICU4XPluralRules {
         /// FFI version of `PluralRules::try_new()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
-        pub fn create(
+        pub fn try_new(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
             ty: ICU4XPluralRuleType,
         ) -> ICU4XCreatePluralRulesResult {
-            let langid = locale.0.as_ref().clone();
-            let provider =
-                <&dyn icu_provider::serde::SerdeDeDataProvider>::clone(&provider.0.as_ref());
+            let provider = provider.0.as_ref();
+            Self::try_new_impl(locale, provider, ty)
+        }
 
+        /// Creates a new [`ICU4XPluralRules`] from a [`ICU4XStaticDataProvider`].
+        pub fn try_new_from_static(
+            locale: &ICU4XLocale,
+            provider: &ICU4XStaticDataProvider,
+            ty: ICU4XPluralRuleType,
+        ) -> ICU4XCreatePluralRulesResult {
+            let provider = provider.0.as_ref();
+            Self::try_new_impl(locale, provider, ty)
+        }
+
+        fn try_new_impl<D>(
+            locale: &ICU4XLocale,
+            provider: &D,
+            ty: ICU4XPluralRuleType,
+        ) -> ICU4XCreatePluralRulesResult
+        where
+            D: DataProvider<PluralRulesV1Marker> + ?Sized,
+        {
             PluralRules::try_new(
-                langid,
+                locale.0.as_ref().clone(),
                 provider,
                 match ty {
                     ICU4XPluralRuleType::Cardinal => PluralRuleType::Cardinal,

@@ -5,7 +5,10 @@
 mod fixtures;
 mod helpers;
 
-use icu_plurals::rules::{parse, parse_condition, serialize, test_condition, Lexer};
+use icu_plurals::rules::{
+    reference::test_condition,
+    reference::{parse, parse_condition, serialize, Lexer},
+};
 use icu_plurals::PluralOperands;
 
 #[test]

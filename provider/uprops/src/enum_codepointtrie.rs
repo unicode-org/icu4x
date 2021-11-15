@@ -8,7 +8,10 @@ use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
-use icu_properties::{GeneralSubcategory, GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
+use icu_properties::{
+    EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
+    WordBreak,
+};
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -70,13 +73,13 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodeProperty
     }
 }
 
-impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
+impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
     for EnumeratedPropertyCodePointTrieProvider
 {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, UnicodePropertyMapV1Marker<T>>, DataError> {
+    ) -> Result<DataResponse<UnicodePropertyMapV1Marker<T>>, DataError> {
         // For data resource keys that represent the CodePointTrie data for an enumerated
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
@@ -101,10 +104,12 @@ impl<'data, T: TrieValue> DataProvider<'data, UnicodePropertyMapV1Marker<T>>
 icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
     key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralSubcategory>,
     key::SCRIPT_V1 => UnicodePropertyMapV1Marker<Script>,
+    key::EAST_ASIAN_WIDTH_V1 => UnicodePropertyMapV1Marker<EastAsianWidth>,
+    key::LINE_BREAK_V1 => UnicodePropertyMapV1Marker<LineBreak>,
     key::GRAPHEME_CLUSTER_BREAK_V1 => UnicodePropertyMapV1Marker<GraphemeClusterBreak>,
     key::WORD_BREAK_V1 => UnicodePropertyMapV1Marker<WordBreak>,
     key::SENTENCE_BREAK_V1 => UnicodePropertyMapV1Marker<SentenceBreak>,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
 impl IterableDataProviderCore for EnumeratedPropertyCodePointTrieProvider {
     fn supported_options_for_key(
@@ -133,7 +138,7 @@ mod tests {
         let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
-        let payload: DataPayload<'_, UnicodePropertyMapV1Marker<GeneralSubcategory>> = provider
+        let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralSubcategory>> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::GENERAL_CATEGORY_V1,
@@ -156,7 +161,7 @@ mod tests {
         let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
-        let payload: DataPayload<'_, UnicodePropertyMapV1Marker<Script>> = provider
+        let payload: DataPayload<UnicodePropertyMapV1Marker<Script>> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::SCRIPT_V1,

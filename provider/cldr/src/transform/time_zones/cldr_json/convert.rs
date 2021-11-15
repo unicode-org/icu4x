@@ -24,7 +24,7 @@ fn type_fallback(zone_format: &ZoneFormat) -> Option<&String> {
         .or_else(|| zone_format.0.get("standard"))
 }
 
-fn parse_hour_format<'data>(hour_format: &str) -> (Cow<'data, str>, Cow<'data, str>) {
+fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>) {
     // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
     let index = hour_format.rfind(';').unwrap();
     let positive = String::from(&hour_format[0..index]);
@@ -32,7 +32,7 @@ fn parse_hour_format<'data>(hour_format: &str) -> (Cow<'data, str>, Cow<'data, s
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-impl<'data> From<TimeZoneNames> for TimeZoneFormatsV1<'data> {
+impl From<TimeZoneNames> for TimeZoneFormatsV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
         Self {
             hour_format: parse_hour_format(&other.hour_format),
@@ -67,7 +67,7 @@ impl Location {
     }
 }
 
-impl<'data> From<TimeZoneNames> for ExemplarCitiesV1<'data> {
+impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
         Self(
             other
@@ -104,7 +104,7 @@ impl<'data> From<TimeZoneNames> for ExemplarCitiesV1<'data> {
     }
 }
 
-impl<'data> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'data> {
+impl From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(LiteMap::new()),
@@ -125,7 +125,7 @@ impl<'data> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'data> {
     }
 }
 
-impl<'data> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'data> {
+impl From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(LiteMap::new()),
@@ -146,7 +146,7 @@ impl<'data> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'data> {
     }
 }
 
-impl<'data> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'data> {
+impl From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(LiteMap::new()),
@@ -167,7 +167,7 @@ impl<'data> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'data> {
     }
 }
 
-impl<'data> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'data> {
+impl From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(LiteMap::new()),
@@ -188,7 +188,7 @@ impl<'data> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'data> {
     }
 }
 
-impl<'data> From<ZoneFormat> for MetaZoneSpecificNamesV1<'data> {
+impl From<ZoneFormat> for MetaZoneSpecificNamesV1<'_> {
     fn from(other: ZoneFormat) -> Self {
         let len = other.0.len();
         Self(

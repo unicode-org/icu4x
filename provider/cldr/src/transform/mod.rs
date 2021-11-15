@@ -44,20 +44,20 @@ pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
 }
 
 #[derive(Debug)]
-pub struct CldrJsonDataProvider<'a, 'data> {
+pub struct CldrJsonDataProvider<'a> {
     pub cldr_paths: &'a dyn CldrPaths,
-    aliases: LazyCldrProvider<AliasesProvider<'data>>,
-    date_symbols: LazyCldrProvider<DateSymbolsProvider<'data>>,
-    date_skeletons: LazyCldrProvider<DateSkeletonPatternsProvider<'data>>,
-    date_patterns: LazyCldrProvider<DatePatternsProvider<'data>>,
-    likelysubtags: LazyCldrProvider<LikelySubtagsProvider<'data>>,
+    aliases: LazyCldrProvider<AliasesProvider>,
+    date_symbols: LazyCldrProvider<DateSymbolsProvider>,
+    date_skeletons: LazyCldrProvider<DateSkeletonPatternsProvider>,
+    date_patterns: LazyCldrProvider<DatePatternsProvider>,
+    likelysubtags: LazyCldrProvider<LikelySubtagsProvider>,
     numbers: LazyCldrProvider<NumbersProvider>,
-    plurals: LazyCldrProvider<PluralsProvider<'data>>,
-    time_zones: LazyCldrProvider<TimeZonesProvider<'data>>,
-    list: LazyCldrProvider<ListProvider<'data>>,
+    plurals: LazyCldrProvider<PluralsProvider>,
+    time_zones: LazyCldrProvider<TimeZonesProvider>,
+    list: LazyCldrProvider<ListProvider>,
 }
 
-impl<'a> CldrJsonDataProvider<'a, '_> {
+impl<'a> CldrJsonDataProvider<'a> {
     pub fn new(cldr_paths: &'a dyn CldrPaths) -> Self {
         CldrJsonDataProvider {
             cldr_paths,
@@ -74,11 +74,11 @@ impl<'a> CldrJsonDataProvider<'a, '_> {
     }
 }
 
-impl<'a, 'data> DataProvider<'data, SerdeSeDataStructMarker> for CldrJsonDataProvider<'a, 'data> {
+impl<'a> DataProvider<SerdeSeDataStructMarker> for CldrJsonDataProvider<'a> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, SerdeSeDataStructMarker>, DataError> {
+    ) -> Result<DataResponse<SerdeSeDataStructMarker>, DataError> {
         if let Some(result) = self.aliases.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
@@ -110,7 +110,7 @@ impl<'a, 'data> DataProvider<'data, SerdeSeDataStructMarker> for CldrJsonDataPro
     }
 }
 
-impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a, '_> {
+impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
@@ -170,7 +170,7 @@ impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a, '_> {
     }
 }
 
-impl<'a, 'd> KeyedDataProvider for CldrJsonDataProvider<'a, 'd> {
+impl<'a> KeyedDataProvider for CldrJsonDataProvider<'a> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         PluralsProvider::supports_key(resc_key)
             .or_else(|err| DateSymbolsProvider::or_else_supports_key(err, resc_key))

@@ -1233,8 +1233,10 @@ dependencies = [
  "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
+ "num_enum",
  "serde",
  "serde_json",
+ "zerovec",
 ]
 
 [[package]]

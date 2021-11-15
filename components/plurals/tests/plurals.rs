@@ -3,12 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid_macros::langid;
-use icu_plurals::provider::{self, PluralRuleStringsV1};
-use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
+use icu_plurals::{
+    provider::{self, PluralRulesV1Marker},
+    rules::runtime::ast::Rule,
+    PluralCategory, PluralRuleType, PluralRules,
+};
 use icu_provider::prelude::*;
-use icu_provider::struct_provider::StructProvider;
-use std::borrow::Cow;
-use std::rc::Rc;
+use zerovec::VarZeroVec;
 
 #[test]
 fn test_plural_rules() {
@@ -19,6 +20,29 @@ fn test_plural_rules() {
     let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal).unwrap();
 
     assert_eq!(pr.select(5_usize), PluralCategory::Other);
+}
+
+#[test]
+fn test_static_provider_borrowed_rules() {
+    let provider = icu_testdata::get_static_provider();
+
+    let lid = langid!("en");
+
+    let rules: DataPayload<PluralRulesV1Marker> = provider
+        .load_payload(&DataRequest {
+            resource_path: ResourcePath {
+                key: provider::key::CARDINAL_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: Some(lid),
+                },
+            },
+        })
+        .expect("Failed to load payload")
+        .take_payload()
+        .expect("Failed to retrieve payload");
+    let rules = rules.get();
+    assert!(matches!(rules.one, Some(Rule(VarZeroVec::Borrowed(_)))));
 }
 
 #[test]
@@ -34,37 +58,14 @@ fn test_plural_rules_missing() {
 
 #[test]
 fn test_plural_category_all() {
-    let categories: Vec<&PluralCategory> = PluralCategory::all().collect();
+    let categories: Vec<PluralCategory> = PluralCategory::all().collect();
 
     assert_eq!(categories.len(), 6);
 
-    assert_eq!(categories[0], &PluralCategory::Few);
-    assert_eq!(categories[1], &PluralCategory::Many);
-    assert_eq!(categories[2], &PluralCategory::One);
-    assert_eq!(categories[3], &PluralCategory::Other);
-    assert_eq!(categories[4], &PluralCategory::Two);
-    assert_eq!(categories[5], &PluralCategory::Zero);
-}
-
-#[test]
-fn test_plural_rules_non_static_lifetime() {
-    let local_string = "v = 0 and i % 10 = 1".to_string();
-    let local_data = PluralRuleStringsV1 {
-        zero: None,
-        one: Some(Cow::Borrowed(&local_string)),
-        two: None,
-        few: None,
-        many: None,
-    };
-    let provider = StructProvider {
-        key: provider::key::CARDINAL_V1,
-        data: DataPayload::from_partial_owned(Rc::from(local_data)),
-    };
-
-    let lid = langid!("und");
-    let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal).unwrap();
-
-    assert_eq!(pr.select(1_usize), PluralCategory::One);
-    assert_eq!(pr.select(5_usize), PluralCategory::Other);
-    assert_eq!(pr.select(11_usize), PluralCategory::One);
+    assert_eq!(categories[0], PluralCategory::Few);
+    assert_eq!(categories[1], PluralCategory::Many);
+    assert_eq!(categories[2], PluralCategory::One);
+    assert_eq!(categories[3], PluralCategory::Other);
+    assert_eq!(categories[4], PluralCategory::Two);
+    assert_eq!(categories[5], PluralCategory::Zero);
 }

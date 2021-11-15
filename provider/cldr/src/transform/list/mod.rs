@@ -10,7 +10,6 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use std::marker::PhantomData;
 
 mod cldr_serde;
 
@@ -23,15 +22,14 @@ pub const ALL_KEYS: [ResourceKey; 3] = [
 
 /// A data provider reading from CLDR JSON list rule files.
 #[derive(PartialEq, Debug)]
-pub struct ListProvider<'data> {
+pub struct ListProvider {
     data: Vec<(
         LanguageIdentifier,
         cldr_serde::list_patterns_json::LangListPatterns,
     )>,
-    _phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
-impl<'data> TryFrom<&dyn CldrPaths> for ListProvider<'data> {
+impl TryFrom<&dyn CldrPaths> for ListProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let mut data = vec![];
@@ -41,14 +39,11 @@ impl<'data> TryFrom<&dyn CldrPaths> for ListProvider<'data> {
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.append(&mut resource.main.0);
         }
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
+        Ok(Self { data })
     }
 }
 
-impl<'data> KeyedDataProvider for ListProvider<'data> {
+impl KeyedDataProvider for ListProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         key::LIST_FORMAT_AND_V1
             .match_key(*resc_key)
@@ -57,11 +52,11 @@ impl<'data> KeyedDataProvider for ListProvider<'data> {
     }
 }
 
-impl<'data> DataProvider<'data, ListFormatterPatternsV1Marker> for ListProvider<'data> {
+impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, ListFormatterPatternsV1Marker>, DataError> {
+    ) -> Result<DataResponse<ListFormatterPatternsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
         let data = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
@@ -86,11 +81,11 @@ impl<'data> DataProvider<'data, ListFormatterPatternsV1Marker> for ListProvider<
     }
 }
 
-icu_provider::impl_dyn_provider!(ListProvider<'data>, {
+icu_provider::impl_dyn_provider!(ListProvider, {
     _ => ListFormatterPatternsV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
-impl<'data> IterableDataProviderCore for ListProvider<'data> {
+impl IterableDataProviderCore for ListProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

@@ -19,12 +19,12 @@ use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 
 /// TODO(#1239): Finalize this API.
-pub type CodePointMapResult<'data, T> =
-    Result<DataPayload<'data, UnicodePropertyMapV1Marker<T>>, PropertiesError>;
+pub type CodePointMapResult<T> =
+    Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
 
-fn get_cp_map<'data, D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<'data, T>
+fn get_cp_map<D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<T>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<T>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<T>> + ?Sized,
     T: TrieValue,
 {
     let data_req = DataRequest {
@@ -63,9 +63,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_general_category<'data, D>(provider: &D) -> CodePointMapResult<'data, GeneralSubcategory>
+pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralSubcategory>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
 {
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }
@@ -90,11 +90,59 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_script<'data, D>(provider: &D) -> CodePointMapResult<'data, Script>
+pub fn get_script<D>(provider: &D) -> CodePointMapResult<Script>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<Script>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<Script>> + ?Sized,
 {
     get_cp_map(provider, key::SCRIPT_V1)
+}
+
+/// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
+/// property. See [`East_Asian_Width`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, EastAsianWidth};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_east_asian_width(&provider).expect("The data should be valid!");
+/// let eaw = &payload.get().code_point_trie;
+///
+/// assert_eq!(eaw.get('ｱ' as u32), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
+/// assert_eq!(eaw.get('ア' as u32), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+pub fn get_east_asian_width<D>(provider: &D) -> CodePointMapResult<EastAsianWidth>
+where
+    D: DataProvider<UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
+{
+    get_cp_map(provider, key::EAST_ASIAN_WIDTH_V1)
+}
+
+/// Return a [`CodePointTrie`] for the Line_Break Unicode enumerated
+/// property. See [`LineBreak`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, LineBreak};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_line_break(&provider).expect("The data should be valid!");
+/// let lb = &payload.get().code_point_trie;
+///
+/// assert_eq!(lb.get(')' as u32), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
+/// assert_eq!(lb.get('ぁ' as u32), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+pub fn get_line_break<D>(provider: &D) -> CodePointMapResult<LineBreak>
+where
+    D: DataProvider<UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
+{
+    get_cp_map(provider, key::LINE_BREAK_V1)
 }
 
 /// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
@@ -114,11 +162,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_grapheme_cluster_break<'data, D>(
-    provider: &D,
-) -> CodePointMapResult<'data, GraphemeClusterBreak>
+pub fn get_grapheme_cluster_break<D>(provider: &D) -> CodePointMapResult<GraphemeClusterBreak>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<GraphemeClusterBreak>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<GraphemeClusterBreak>> + ?Sized,
 {
     get_cp_map(provider, key::GRAPHEME_CLUSTER_BREAK_V1)
 }
@@ -140,9 +186,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_word_break<'data, D>(provider: &D) -> CodePointMapResult<'data, WordBreak>
+pub fn get_word_break<D>(provider: &D) -> CodePointMapResult<WordBreak>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
 {
     get_cp_map(provider, key::WORD_BREAK_V1)
 }
@@ -164,9 +210,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_sentence_break<'data, D>(provider: &D) -> CodePointMapResult<'data, SentenceBreak>
+pub fn get_sentence_break<D>(provider: &D) -> CodePointMapResult<SentenceBreak>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
 {
     get_cp_map(provider, key::SENTENCE_BREAK_V1)
 }
