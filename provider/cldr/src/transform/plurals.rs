@@ -10,7 +10,6 @@ use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use std::marker::PhantomData;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 2] = [
@@ -20,13 +19,12 @@ pub const ALL_KEYS: [ResourceKey; 2] = [
 
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
-pub struct PluralsProvider<'data> {
+pub struct PluralsProvider {
     cardinal_rules: Option<cldr_json::Rules>,
     ordinal_rules: Option<cldr_json::Rules>,
-    _phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
-impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
+impl TryFrom<&dyn CldrPaths> for PluralsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let cardinal_rules = {
@@ -58,12 +56,11 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
         Ok(PluralsProvider {
             cardinal_rules,
             ordinal_rules,
-            _phantom: PhantomData,
         })
     }
 }
 
-impl<'data> KeyedDataProvider for PluralsProvider<'data> {
+impl KeyedDataProvider for PluralsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::Plurals || resc_key.version != 1 {
             return Err(resc_key.into());
@@ -72,7 +69,7 @@ impl<'data> KeyedDataProvider for PluralsProvider<'data> {
     }
 }
 
-impl<'data> PluralsProvider<'data> {
+impl PluralsProvider {
     fn get_rules_for(&self, resc_key: &ResourceKey) -> Result<&cldr_json::Rules, DataError> {
         PluralsProvider::supports_key(resc_key)?;
         match *resc_key {
@@ -84,11 +81,11 @@ impl<'data> PluralsProvider<'data> {
     }
 }
 
-impl<'data> DataProvider<'data, PluralRulesV1Marker> for PluralsProvider<'data> {
+impl DataProvider<PluralRulesV1Marker> for PluralsProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, PluralRulesV1Marker>, DataError> {
+    ) -> Result<DataResponse<PluralRulesV1Marker>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let langid = req.try_langid()?;
@@ -105,11 +102,11 @@ impl<'data> DataProvider<'data, PluralRulesV1Marker> for PluralsProvider<'data> 
     }
 }
 
-icu_provider::impl_dyn_provider!(PluralsProvider<'data>, {
+icu_provider::impl_dyn_provider!(PluralsProvider, {
     _ => PluralRulesV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
-impl<'data> IterableDataProviderCore for PluralsProvider<'data> {
+impl IterableDataProviderCore for PluralsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

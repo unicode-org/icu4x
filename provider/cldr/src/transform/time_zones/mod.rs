@@ -13,7 +13,6 @@ use icu_provider::{
 };
 
 use std::convert::TryFrom;
-use std::marker::PhantomData;
 
 mod cldr_json;
 
@@ -29,12 +28,11 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
 
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
-pub struct TimeZonesProvider<'data> {
+pub struct TimeZonesProvider {
     data: Vec<(LanguageIdentifier, cldr_json::LangTimeZones)>,
-    phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
-impl TryFrom<&dyn CldrPaths> for TimeZonesProvider<'_> {
+impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let mut data = vec![];
@@ -51,26 +49,22 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider<'_> {
             data.append(&mut resource.main.0);
         }
 
-        Ok(Self {
-            data,
-            phantom: PhantomData,
-        })
+        Ok(Self { data })
     }
 }
 
-impl TryFrom<&str> for TimeZonesProvider<'_> {
+impl TryFrom<&str> for TimeZonesProvider {
     type Error = Error;
     fn try_from(input: &str) -> Result<Self, Self::Error> {
         let resource: cldr_json::Resource =
             serde_json::from_str(input).map_err(|e| Error::Json(e, None))?;
         Ok(Self {
             data: resource.main.0,
-            phantom: PhantomData,
         })
     }
 }
 
-impl<'data> KeyedDataProvider for TimeZonesProvider<'data> {
+impl KeyedDataProvider for TimeZonesProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::TimeZone || resc_key.version != 1 {
             return Err(resc_key.into());
@@ -79,7 +73,7 @@ impl<'data> KeyedDataProvider for TimeZonesProvider<'data> {
     }
 }
 
-impl<'data> IterableDataProviderCore for TimeZonesProvider<'data> {
+impl IterableDataProviderCore for TimeZonesProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
@@ -98,12 +92,9 @@ impl<'data> IterableDataProviderCore for TimeZonesProvider<'data> {
 }
 
 macro_rules! impl_data_provider {
-    ($id:ident: $lt:lifetime, $marker:ident) => {
-        impl<$lt> DataProvider<$lt, $marker> for TimeZonesProvider<$lt> {
-            fn load_payload(
-                &self,
-                req: &DataRequest,
-            ) -> Result<DataResponse<$lt, $marker>, DataError> {
+    ($id:ident, $marker:ident) => {
+        impl DataProvider<$marker> for TimeZonesProvider {
+            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 TimeZonesProvider::supports_key(&req.resource_path.key)?;
                 let langid = req.try_langid()?;
                 let time_zones = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
@@ -121,7 +112,7 @@ macro_rules! impl_data_provider {
     };
 }
 
-icu_provider::impl_dyn_provider!(TimeZonesProvider<'data>, {
+icu_provider::impl_dyn_provider!(TimeZonesProvider, {
     key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1Marker,
     key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1Marker,
     key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1Marker,
@@ -130,21 +121,30 @@ icu_provider::impl_dyn_provider!(TimeZonesProvider<'data>, {
     key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1Marker,
 }, ERASED);
 
-icu_provider::impl_dyn_provider!(TimeZonesProvider<'data>, {
+icu_provider::impl_dyn_provider!(TimeZonesProvider, {
     key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1Marker,
     key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1Marker,
     key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1Marker,
     key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1Marker,
     key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1Marker,
     key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
-impl_data_provider!(TimeZoneFormatsV1: 'd, TimeZoneFormatsV1Marker);
-impl_data_provider!(ExemplarCitiesV1: 'd, ExemplarCitiesV1Marker);
-impl_data_provider!(MetaZoneGenericNamesLongV1: 'd, MetaZoneGenericNamesLongV1Marker);
-impl_data_provider!(MetaZoneGenericNamesShortV1: 'd, MetaZoneGenericNamesShortV1Marker);
-impl_data_provider!(MetaZoneSpecificNamesLongV1: 'd, MetaZoneSpecificNamesLongV1Marker);
-impl_data_provider!(MetaZoneSpecificNamesShortV1: 'd, MetaZoneSpecificNamesShortV1Marker);
+impl_data_provider!(TimeZoneFormatsV1, TimeZoneFormatsV1Marker);
+impl_data_provider!(ExemplarCitiesV1, ExemplarCitiesV1Marker);
+impl_data_provider!(MetaZoneGenericNamesLongV1, MetaZoneGenericNamesLongV1Marker);
+impl_data_provider!(
+    MetaZoneGenericNamesShortV1,
+    MetaZoneGenericNamesShortV1Marker
+);
+impl_data_provider!(
+    MetaZoneSpecificNamesLongV1,
+    MetaZoneSpecificNamesLongV1Marker
+);
+impl_data_provider!(
+    MetaZoneSpecificNamesShortV1,
+    MetaZoneSpecificNamesShortV1Marker
+);
 
 #[cfg(test)]
 mod tests {

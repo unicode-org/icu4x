@@ -12,7 +12,6 @@ use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use std::marker::PhantomData;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [
@@ -21,12 +20,11 @@ pub const ALL_KEYS: [ResourceKey; 1] = [
 
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
-pub struct DateSymbolsProvider<'data> {
+pub struct DateSymbolsProvider {
     data: Vec<(LanguageIdentifier, cldr_json::LangDates)>,
-    _phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
-impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider<'_> {
+impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let mut data = vec![];
@@ -43,24 +41,21 @@ impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider<'_> {
             data.append(&mut resource.main.0);
         }
 
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
+        Ok(Self { data })
     }
 }
 
-impl<'data> KeyedDataProvider for DateSymbolsProvider<'data> {
+impl KeyedDataProvider for DateSymbolsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         key::GREGORY_DATE_SYMBOLS_V1.match_key(*resc_key)
     }
 }
 
-impl<'data> DataProvider<'data, gregory::DateSymbolsV1Marker> for DateSymbolsProvider<'data> {
+impl DataProvider<gregory::DateSymbolsV1Marker> for DateSymbolsProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, gregory::DateSymbolsV1Marker>, DataError> {
+    ) -> Result<DataResponse<gregory::DateSymbolsV1Marker>, DataError> {
         DateSymbolsProvider::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
         let dates = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
@@ -76,11 +71,11 @@ impl<'data> DataProvider<'data, gregory::DateSymbolsV1Marker> for DateSymbolsPro
     }
 }
 
-icu_provider::impl_dyn_provider!(DateSymbolsProvider<'data>, {
+icu_provider::impl_dyn_provider!(DateSymbolsProvider, {
     _ => gregory::DateSymbolsV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
-impl<'data> IterableDataProviderCore for DateSymbolsProvider<'data> {
+impl IterableDataProviderCore for DateSymbolsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
