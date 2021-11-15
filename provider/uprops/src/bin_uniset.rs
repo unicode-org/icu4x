@@ -23,11 +23,11 @@ impl BinaryPropertyUnicodeSetDataProvider {
     }
 }
 
-impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
+impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, UnicodePropertyV1Marker>, DataError> {
+    ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         let data = &self
             .data
             .get(&req.resource_path.key.sub_category)
@@ -52,7 +52,7 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertyUnico
 
 icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
     _ => UnicodePropertyV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
 impl IterableDataProviderCore for BinaryPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
@@ -74,7 +74,7 @@ fn test_basic() {
     let provider = BinaryPropertyUnicodeSetDataProvider::try_new(&root_dir)
         .expect("TOML should load successfully");
 
-    let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
+    let payload: DataPayload<UnicodePropertyV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::WHITE_SPACE_V1,

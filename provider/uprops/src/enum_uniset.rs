@@ -56,13 +56,11 @@ fn expand_groupings<'a>(prop_name: &str, prop_val: &'a str) -> Vec<&'a str> {
     }
 }
 
-impl<'data> DataProvider<'data, UnicodePropertyV1Marker>
-    for EnumeratedPropertyUnicodeSetDataProvider
-{
+impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, UnicodePropertyV1Marker>, DataError> {
+    ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         let key = &req.resource_path.key.sub_category;
 
         // ResourceKey subcategory strings for enumerated properties are
@@ -106,7 +104,7 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker>
 
 icu_provider::impl_dyn_provider!(EnumeratedPropertyUnicodeSetDataProvider, {
     _ => UnicodePropertyV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
 impl IterableDataProviderCore for EnumeratedPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
@@ -132,7 +130,7 @@ mod tests {
         let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
-        let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
+        let payload: DataPayload<UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::GENERAL_CATEGORY_NUMBER_V1,
@@ -161,7 +159,7 @@ mod tests {
         let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
-        let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
+        let payload: DataPayload<UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::SCRIPT_THAI_V1,
@@ -186,13 +184,11 @@ mod tests {
         use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
         use std::convert::TryInto;
 
-        fn get_uniset_payload<'data>(
-            key: ResourceKey,
-        ) -> DataPayload<'data, UnicodePropertyV1Marker> {
+        fn get_uniset_payload(key: ResourceKey) -> DataPayload<UnicodePropertyV1Marker> {
             let root_dir = icu_testdata::paths::data_root().join("uprops");
             let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
                 .expect("TOML should load successfully");
-            let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
+            let payload: DataPayload<UnicodePropertyV1Marker> = provider
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key,
@@ -306,7 +302,7 @@ mod tests {
         let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
-        let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
+        let payload: DataPayload<UnicodePropertyV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::GENERAL_CATEGORY_SURROGATE_V1,

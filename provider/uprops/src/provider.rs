@@ -29,11 +29,11 @@ impl PropertiesDataProvider {
     }
 }
 
-impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for PropertiesDataProvider {
+impl DataProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'data, UnicodePropertyV1Marker>, DataError> {
+    ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         if req.resource_path.key.sub_category.contains('=') {
             self.enumerated.load_payload(req)
         } else {
@@ -44,7 +44,7 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for PropertiesDataProvi
 
 icu_provider::impl_dyn_provider!(PropertiesDataProvider, {
     _ => UnicodePropertyV1Marker,
-}, SERDE_SE, 'data);
+}, SERDE_SE);
 
 impl IterableDataProviderCore for PropertiesDataProvider {
     fn supported_options_for_key(
