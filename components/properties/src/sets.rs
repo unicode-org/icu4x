@@ -19,7 +19,8 @@ use crate::provider::*;
 use crate::*;
 use icu_provider::prelude::*;
 
-type UnisetResult = Result<DataPayload<UnicodePropertyV1Marker>, PropertiesError>;
+/// TODO(#1239): Finalize this API.
+pub type UnisetResult = Result<DataPayload<UnicodePropertyV1Marker>, PropertiesError>;
 
 // helper fn
 fn get_uniset<D>(provider: &D, resc_key: ResourceKey) -> UnisetResult

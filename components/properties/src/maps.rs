@@ -18,7 +18,9 @@ use crate::*;
 use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 
-type CodePointMapResult<T> = Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
+/// TODO(#1239): Finalize this API.
+pub type CodePointMapResult<T> =
+    Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
 
 fn get_cp_map<D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<T>
 where
