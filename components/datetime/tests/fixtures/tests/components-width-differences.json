@@ -36,7 +36,7 @@
     {
         "description": "Width difference: Y vs YY",
         "input": {
-            "value": "2020-01-07T08:25:07.000",
+            "value": "2002-12-31T08:25:07.000",
             "options": {
                 "components": {
                     "year": "two-digit-week-of",
@@ -46,14 +46,16 @@
         },
         "output": {
             "values": {
-                "en": "week 2 of 20"
+                "en": "week 1 of 03",
+                "fil": "ika-1 linggo ng 03",
+                "fr": "semaine 1 de 03"
             }
         }
     },
     {
-        "description": "Width and symbol difference: y vs YY",
+        "description": "Width and symbol difference: yyw + 'week w of Y' -> 'week w of yy'",
         "input": {
-            "value": "2020-01-07T08:25:07.000",
+            "value": "2002-12-31T08:25:07.000",
             "options": {
                 "components": {
                     "year": "two-digit",
@@ -63,7 +65,9 @@
         },
         "output": {
             "values": {
-                "en": "week 2 of 20"
+                "en": "week 1 of 02",
+                "fil": "ika-1 linggo ng 02",
+                "fr": "semaine 1 de 02"
             }
         }
     },
@@ -82,7 +86,8 @@
         "output": {
             "values": {
                 "en": "1/7/2020",
-                "buddhist/en": "1/7/2563 BE"
+                "buddhist/en": "1/7/2563 BE",
+                "fr": "07/01/2020"
             }
         }
     },
@@ -101,7 +106,8 @@
         "output": {
             "values": {
                 "en": "01/7/2020",
-                "buddhist/en": "01/7/2563 BE"
+                "buddhist/en": "01/7/2563 BE",
+                "fr": "7/01/2020"
             }
         }
     },
@@ -120,7 +126,8 @@
         "output": {
             "values": {
                 "en": "Jan 7, 2020",
-                "buddhist/en": "Jan 7, 2563 BE"
+                "buddhist/en": "Jan 7, 2563 BE",
+                "fr": "7 janv. 2020"
             }
         }
     },
@@ -139,7 +146,8 @@
         "output": {
             "values": {
                 "en": "January 7, 2020",
-                "buddhist/en": "January 7, 2563 BE"
+                "buddhist/en": "January 7, 2563 BE",
+                "fr": "7 janvier 2020"
             }
         }
     },
@@ -158,7 +166,8 @@
         "output": {
             "values": {
                 "en": "J 7, 2020",
-                "buddhist/en": "J 7, 2563 BE"
+                "buddhist/en": "J 7, 2563 BE",
+                "fr": "7 J 2020"
             }
         }
     }
