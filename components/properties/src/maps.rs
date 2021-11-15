@@ -112,9 +112,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_east_asian_width<'data, D>(provider: &D) -> CodePointMapResult<'data, EastAsianWidth>
+pub fn get_east_asian_width<D>(provider: &D) -> CodePointMapResult<EastAsianWidth>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
 {
     get_cp_map(provider, key::EAST_ASIAN_WIDTH_V1)
 }
@@ -136,9 +136,9 @@ where
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_line_break<'data, D>(provider: &D) -> CodePointMapResult<'data, LineBreak>
+pub fn get_line_break<D>(provider: &D) -> CodePointMapResult<LineBreak>
 where
-    D: DataProvider<'data, UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
 {
     get_cp_map(provider, key::LINE_BREAK_V1)
 }
