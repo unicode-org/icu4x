@@ -43,11 +43,11 @@ fn serialize(obj: &dyn erased_serde::Serialize) -> Result<Vec<u8>, DataError> {
     Ok(serializer.output.0)
 }
 
-impl<'data> DataExporter<'data, SerdeSeDataStructMarker> for BlobExporter<'_> {
+impl DataExporter<SerdeSeDataStructMarker> for BlobExporter<'_> {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        obj: DataPayload<'data, SerdeSeDataStructMarker>,
+        obj: DataPayload<SerdeSeDataStructMarker>,
     ) -> Result<(), DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
         log::trace!("Adding: {}", path);
