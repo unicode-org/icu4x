@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637012241862,
+  "lastUpdate": 1637019197133,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14819,6 +14819,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34956960,
             "range": "± 1748880",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cee2b5fa9dc7649e78b29e5e2d67e3e7c33764e3",
+          "message": "Remove RcStruct (#1299)\n\n* Use owned data structs in SerdeSeDataStruct\r\n\r\n* Move ErasedCart to Yoke\r\n\r\n* Remove DataPayload::from_partial_owned()\r\n\r\n* Remove RcStruct",
+          "timestamp": "2021-11-15T15:26:37-08:00",
+          "tree_id": "1c45872111bf72096ebed3c3a6723b48db0f6841",
+          "url": "https://github.com/unicode-org/icu4x/commit/cee2b5fa9dc7649e78b29e5e2d67e3e7c33764e3"
+        },
+        "date": 1637019190942,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 51767535,
+            "range": "± 1597397",
             "unit": "ns/iter"
           }
         ]
