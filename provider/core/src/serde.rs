@@ -219,10 +219,7 @@ where
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
-///
-/// This trait requires [`IsCovariant`] such that it can be safely used as a trait object in
-/// [`DataProvider`].
-pub trait SerdeSeDataStruct<'data>: IsCovariant<'data> {
+pub trait SerdeSeDataStruct: 'static {
     /// Return this trait object reference for Serde serialization.
     ///
     /// # Examples
@@ -250,9 +247,9 @@ pub trait SerdeSeDataStruct<'data>: IsCovariant<'data> {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
-impl<'data, T> SerdeSeDataStruct<'data> for T
+impl<T> SerdeSeDataStruct for T
 where
-    T: IsCovariant<'data> + serde::Serialize,
+    T: 'static + serde::Serialize,
 {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
@@ -260,13 +257,13 @@ where
 }
 
 /// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'a>` for integration with DataProvider.
-pub struct SerdeSeDataStructDynRef<'a>(&'a (dyn SerdeSeDataStruct<'a> + 'a));
+pub struct SerdeSeDataStructDynRef<'a>(&'a (dyn SerdeSeDataStruct));
 
-impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data>
+impl ZeroCopyFrom<dyn SerdeSeDataStruct>
     for SerdeSeDataStructDynRef<'static>
 {
     fn zero_copy_from<'b>(
-        this: &'b (dyn SerdeSeDataStruct<'data> + 'data),
+        this: &'b (dyn SerdeSeDataStruct),
     ) -> SerdeSeDataStructDynRef<'b> {
         // This is safe because the trait object requires IsCovariant.
         SerdeSeDataStructDynRef(unsafe { core::mem::transmute(this) })
@@ -274,7 +271,7 @@ impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data>
 }
 
 impl<'a> Deref for SerdeSeDataStructDynRef<'a> {
-    type Target = dyn SerdeSeDataStruct<'a> + 'a;
+    type Target = dyn SerdeSeDataStruct;
     fn deref(&self) -> &Self::Target {
         self.0.deref()
     }
@@ -291,7 +288,7 @@ where
             DataPayloadInner::RcStruct(yoke) => {
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
                 //
@@ -302,7 +299,7 @@ where
             DataPayloadInner::Owned(yoke) => {
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
                 //
@@ -313,7 +310,7 @@ where
             DataPayloadInner::RcBuf(yoke) => {
                 let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
                 let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
+                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct>);
                 // Safe since we are replacing the cart with another that owns
                 // the same underlying data
                 //
