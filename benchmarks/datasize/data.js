@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637010531615,
+  "lastUpdate": 1637011930717,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3803,6 +3803,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/242fa55e995a92da7f6a8d333ca9639a7b9e222c"
         },
         "date": 1637010525979,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 866721,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ef6477796157315b35c2537441edbb7fff37cf9c",
+          "message": "Tooling fixes (#1298)",
+          "timestamp": "2021-11-15T13:30:36-08:00",
+          "tree_id": "2ecfba3ac3c89402fb640e8130493263c9bd7eaf",
+          "url": "https://github.com/unicode-org/icu4x/commit/ef6477796157315b35c2537441edbb7fff37cf9c"
+        },
+        "date": 1637011923618,
         "tool": "ndjson",
         "benches": [
           {
