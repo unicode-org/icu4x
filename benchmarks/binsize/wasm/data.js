@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636767659790,
+  "lastUpdate": 1637000768903,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20248,6 +20248,144 @@ window.BENCHMARK_DATA = {
           {
             "name": "simple+opt.wasm",
             "value": 869964,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5da8ba9e5d792e836316808b050a015ff902741",
+          "message": "Switch PluralRules Data to ZeroVec (#1240)\n\n* Separate runtime and reference rules in PluralRules.\r\n\r\n* Add ZeroVec::borrowed_from_slice()\r\n\r\n* Add RelationULE::as_relation()\r\n\r\n* Add encoding/decoding for andor/plurals/operand\r\n\r\n* fix encode\r\n\r\n* fix from_byte_slice_unchecked\r\n\r\n* slightly better impl\r\n\r\n* Plug it all together\r\n\r\n* Fix tests\r\n\r\n* Apply feedback\r\n\r\n* Add RelationULE doc\r\n\r\n* Apply feedback\r\n\r\n* Add inlines and docs\r\n\r\n* Uncomment tests\r\n\r\n* Apply reviewers feedback\r\n\r\n* Fix tests and apply feedback\r\n\r\n* Revise postcard file\r\n\r\n* Fix provider benchmarks\r\n\r\n* Fix more tests\r\n\r\n* Add rountrip test\r\n\r\n* Fix another test\r\n\r\n* Fix more tests\r\n\r\n* Update postcard\r\n\r\n* Fix readme\r\n\r\n* Regenerate diplomat ffi\r\n\r\n* Fix diplomat example\r\n\r\n* Fix test-cpp\r\n\r\n* Update safety comment\r\n\r\n* Apply feedback\r\n\r\n* No need to guard local type used for debug test. DCE will take care of it.\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2021-11-15T10:20:37-08:00",
+          "tree_id": "c81ae767fafcfefdd0858b50338d7504be2fe9c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/e5da8ba9e5d792e836316808b050a015ff902741"
+        },
+        "date": 1637000761042,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "work_log+opt.wasm",
+            "value": 960568,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 16201,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 863799,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 8740,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 8840,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 9103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 864221,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10134,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30553,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 7255,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 7964,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 990727,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 866351,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12313,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13539,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple+opt.wasm",
+            "value": 868968,
             "unit": "bytes",
             "biggerIsBetter": false
           }
