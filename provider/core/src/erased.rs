@@ -255,17 +255,6 @@ mod test {
     use alloc::borrow::Cow;
 
     #[test]
-    fn test_erased_case_2() {
-        let data = Rc::new("foo".to_string());
-        let original = DataPayload::<CowStrMarker>::from_partial_owned(data);
-        let upcasted = ErasedDataStructMarker::upcast(original);
-        let downcasted = upcasted
-            .downcast::<CowStrMarker>()
-            .expect("Type conversion");
-        assert_eq!(downcasted.get(), "foo");
-    }
-
-    #[test]
     fn test_erased_case_3() {
         let data = "foo".to_string();
         let original = DataPayload::<CowStrMarker>::from_owned(Cow::Owned(data));
