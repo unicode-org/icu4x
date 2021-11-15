@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637000891081,
+  "lastUpdate": 1637004319333,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17021,6 +17021,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5164,
             "range": "± 148",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bcba2fbdb6fdfcb8648e3826579255b43a799f32",
+          "message": "Implement East_Asian_Width and Line_Break Unicode properties (#1280)\n\nThe numeric value of EastAsianWidth=0x1004 and LineBreak=0x1008 are defined in:\r\nhttps://github.com/unicode-org/icu/blob/d3a56c5ceda272054e7c6bf7e62b4b51367eecf5/icu4c/source/common/unicode/uchar.h#L559-L574\r\n\r\nUEastAsianWidth in ICU4C:\r\nhttps://github.com/unicode-org/icu/blob/d3a56c5ceda272054e7c6bf7e62b4b51367eecf5/icu4c/source/common/unicode/uchar.h#L1905-L1934\r\n\r\nULineBreak enum in ICU4C:\r\nhttps://github.com/unicode-org/icu/blob/d3a56c5ceda272054e7c6bf7e62b4b51367eecf5/icu4c/source/common/unicode/uchar.h#L2361-L2436\r\n\r\nThe TOML file was obtained from Azure artifact archive built on\r\nunicode-org/icu, commit 2921a81ee4c67459ff455e31c599e7d7a09086ab titled\r\n\"ICU-21811 TZ update 2021a (2021e)\" on maint/maint-70 branch. This\r\ncommit imports TrieType::Small flavor of the uprops files.",
+          "timestamp": "2021-11-15T11:17:59-08:00",
+          "tree_id": "e3efc1ef7541cf3bb9baa1c13b6105f53d56a2b5",
+          "url": "https://github.com/unicode-org/icu4x/commit/bcba2fbdb6fdfcb8648e3826579255b43a799f32"
+        },
+        "date": 1637004312543,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3002,
+            "range": "± 163",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5439,
+            "range": "± 269",
             "unit": "ns/iter"
           }
         ]
