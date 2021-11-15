@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637010905152,
+  "lastUpdate": 1637012245554,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17129,6 +17129,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5500,
             "range": "± 314",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ef6477796157315b35c2537441edbb7fff37cf9c",
+          "message": "Tooling fixes (#1298)",
+          "timestamp": "2021-11-15T13:30:36-08:00",
+          "tree_id": "2ecfba3ac3c89402fb640e8130493263c9bd7eaf",
+          "url": "https://github.com/unicode-org/icu4x/commit/ef6477796157315b35c2537441edbb7fff37cf9c"
+        },
+        "date": 1637012239845,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2425,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4240,
+            "range": "± 20",
             "unit": "ns/iter"
           }
         ]
