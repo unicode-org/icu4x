@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637000768903,
+  "lastUpdate": 1637004218867,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20386,6 +20386,144 @@ window.BENCHMARK_DATA = {
           {
             "name": "simple+opt.wasm",
             "value": 868968,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bcba2fbdb6fdfcb8648e3826579255b43a799f32",
+          "message": "Implement East_Asian_Width and Line_Break Unicode properties (#1280)\n\nThe numeric value of EastAsianWidth=0x1004 and LineBreak=0x1008 are defined in:\r\nhttps://github.com/unicode-org/icu/blob/d3a56c5ceda272054e7c6bf7e62b4b51367eecf5/icu4c/source/common/unicode/uchar.h#L559-L574\r\n\r\nUEastAsianWidth in ICU4C:\r\nhttps://github.com/unicode-org/icu/blob/d3a56c5ceda272054e7c6bf7e62b4b51367eecf5/icu4c/source/common/unicode/uchar.h#L1905-L1934\r\n\r\nULineBreak enum in ICU4C:\r\nhttps://github.com/unicode-org/icu/blob/d3a56c5ceda272054e7c6bf7e62b4b51367eecf5/icu4c/source/common/unicode/uchar.h#L2361-L2436\r\n\r\nThe TOML file was obtained from Azure artifact archive built on\r\nunicode-org/icu, commit 2921a81ee4c67459ff455e31c599e7d7a09086ab titled\r\n\"ICU-21811 TZ update 2021a (2021e)\" on maint/maint-70 branch. This\r\ncommit imports TrieType::Small flavor of the uprops files.",
+          "timestamp": "2021-11-15T11:17:59-08:00",
+          "tree_id": "e3efc1ef7541cf3bb9baa1c13b6105f53d56a2b5",
+          "url": "https://github.com/unicode-org/icu4x/commit/bcba2fbdb6fdfcb8648e3826579255b43a799f32"
+        },
+        "date": 1637004211162,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "work_log+opt.wasm",
+            "value": 979419,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 16201,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 882650,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 8740,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 8840,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 9103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 883072,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10134,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30553,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 7255,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 7964,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 1009578,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 885202,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12313,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13539,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple+opt.wasm",
+            "value": 887819,
             "unit": "bytes",
             "biggerIsBetter": false
           }
