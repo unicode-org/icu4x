@@ -112,7 +112,7 @@ where
 /// assert_eq!(eaw.get('ア' as u32), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
 /// ```
 ///
-/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_east_asian_width<'data, D>(provider: &D) -> CodePointMapResult<'data, EastAsianWidth>
 where
     D: DataProvider<'data, UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
@@ -136,7 +136,7 @@ where
 /// assert_eq!(lb.get('ぁ' as u32), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
 /// ```
 ///
-/// [`CodePointTrie`]: icu_codepointtrie::codepointtrie::CodePointTrie
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_line_break<'data, D>(provider: &D) -> CodePointMapResult<'data, LineBreak>
 where
     D: DataProvider<'data, UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
