@@ -230,9 +230,7 @@ impl LocaleCanonicalizer {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
     pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer, DataError>
     where
-        P: DataProvider<AliasesV1Marker>
-            + DataProvider<LikelySubtagsV1Marker>
-            + ?Sized,
+        P: DataProvider<AliasesV1Marker> + DataProvider<LikelySubtagsV1Marker> + ?Sized,
     {
         // The `rg` region override and `sd` regional subdivision keys may contain
         // language codes that require canonicalization.

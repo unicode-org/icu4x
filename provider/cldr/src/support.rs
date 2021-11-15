@@ -59,7 +59,7 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        return DataProvider::load_payload(data_provider, req).map(Some);
+        DataProvider::load_payload(data_provider, req).map(Some)
     }
 
     /// Call [`IterableDataProviderCore::supported_options_for_key()`], initializing `T` if necessary.
