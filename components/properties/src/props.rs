@@ -508,7 +508,7 @@ impl LineBreak {
     pub const RegionalIndicator: LineBreak = LineBreak(39); // name="RI"
     pub const EBase: LineBreak = LineBreak(40); // name="EB"
     pub const EModifier: LineBreak = LineBreak(41); // name="EM"
-    pub const ZWJ: LineBreak = LineBreak(42); // name="ZWJ
+    pub const ZWJ: LineBreak = LineBreak(42); // name="ZWJ"
 }
 
 /// Enumerated property Grapheme_Cluster_Break.
