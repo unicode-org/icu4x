@@ -17,7 +17,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. For properties whose values fit into 16 bits.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
-    pub struct ICU4XCodePointMapData16(DataPayload<'static, UnicodePropertyMapV1Marker<u16>>);
+    pub struct ICU4XCodePointMapData16(DataPayload<UnicodePropertyMapV1Marker<u16>>);
 
     pub struct ICU4XCodePointMapData16Response {
         /// The [`ICU4XCodePointMapData16`], if creation was successful.
@@ -44,7 +44,7 @@ pub mod ffi {
         }
 
         fn prepare_result_from_script(
-            result: CodePointMapResult<'static, Script>,
+            result: CodePointMapResult<Script>,
         ) -> ICU4XCodePointMapData16Response {
             match result {
                 Ok(data) => {
