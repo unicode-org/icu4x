@@ -6,7 +6,10 @@ use crate::{
     date::{DateTimeInput, LocalizedDateTimeInput},
     error::DateTimeFormatError,
     fields::{Field, FieldSymbol, Week},
-    pattern::{common::PatternType, runtime::Pattern, PatternError, PatternItem},
+    pattern::{
+        runtime::{Pattern, CombinedPattern},
+        PatternError, PatternItem
+    },
 };
 use either::Either;
 use icu_plurals::{PluralCategory, PluralRules};
@@ -17,35 +20,35 @@ use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
     feature = "provider_serde",
     derive(::serde::Serialize, ::serde::Deserialize)
 )]
-pub(crate) struct PluralPattern2<P>
-where
-    P: PatternType,
-{
-    pivot_field: Week,
-
-    other: P,
+pub enum PatternKind<'data> {
+    Plain(
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        Pattern<'data>
+    ),
+    Combined(
+        #[cfg_attr(feature = "provider_serde", serde(borrow))]
+        CombinedPattern<'data>
+    ),
 }
 
-impl<P> PluralPattern2<P>
-where
-    P: PatternType,
-{
-    pub fn new(pattern: P) -> Result<Self, PatternError> {
-        let pivot_field = pattern
-            .iter()
-            .find_map(|pattern_item| match pattern_item {
-                PatternItem::Field(Field {
-                    symbol: FieldSymbol::Week(w),
-                    ..
-                }) => Some(w),
-                _ => None,
-            })
-            .ok_or(PatternError::UnsupportedPluralPivot)?;
+impl<'data> PatternKind<'data> {
+    pub fn into_owned(self) -> Self {
+        match self {
+            Self::Plain(p) => Self::Plain(p.into_owned()),
+            Self::Combined(p) => Self::Combined(p.into_owned()),
+        }
+    }
+}
 
-        Ok(Self {
-            pivot_field,
-            other: pattern,
-        })
+impl<'data> From<Pattern<'data>> for PatternKind<'data> {
+    fn from(p: Pattern<'data>) -> Self {
+        Self::Plain(p)
+    }
+}
+
+impl<'data> From<CombinedPattern<'data>> for PatternKind<'data> {
+    fn from(p: CombinedPattern<'data>) -> Self {
+        Self::Combined(p)
     }
 }
 
@@ -60,17 +63,17 @@ pub struct PluralPattern<'data> {
     pivot_field: Week,
 
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub(crate) zero: Option<Pattern<'data>>,
+    pub(crate) zero: Option<PatternKind<'data>>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub(crate) one: Option<Pattern<'data>>,
+    pub(crate) one: Option<PatternKind<'data>>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub(crate) two: Option<Pattern<'data>>,
+    pub(crate) two: Option<PatternKind<'data>>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub(crate) few: Option<Pattern<'data>>,
+    pub(crate) few: Option<PatternKind<'data>>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub(crate) many: Option<Pattern<'data>>,
+    pub(crate) many: Option<PatternKind<'data>>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub(crate) other: Pattern<'data>,
+    pub(crate) other: PatternKind<'data>,
 }
 
 impl<'data> PluralPattern<'data> {

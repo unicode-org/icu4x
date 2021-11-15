@@ -43,18 +43,34 @@ impl<'data> GenericPattern<'data> {
     /// ```
     pub fn combine(self, date: Pattern<'data>, time: Pattern<'data>) -> CombinedPattern<'data> {
         CombinedPattern {
-            combined: self,
+            generic: self,
             date,
             time,
+        }
+    }
+
+    pub fn into_owned(self) -> Self {
+        Self {
+            items: self.items.into_owned()
         }
     }
 }
 
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 pub struct CombinedPattern<'data> {
-    combined: GenericPattern<'data>,
+    generic: GenericPattern<'data>,
     date: Pattern<'data>,
     time: Pattern<'data>,
+}
+
+impl<'data> CombinedPattern<'data> {
+    pub fn into_owned(self) -> Self {
+        Self {
+            generic: self.generic.into_owned(),
+            date: self.date.into_owned(),
+            time: self.time.into_owned(),
+        }
+    }
 }
 
 impl<'l> IntoIterator for &'l CombinedPattern<'_> {
