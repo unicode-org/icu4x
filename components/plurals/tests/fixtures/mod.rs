@@ -148,7 +148,7 @@ pub enum PluralCategoryInput {
     Other,
 }
 
-impl PartialEq<PluralCategory> for PluralCategoryInput {
+impl PartialEq<PluralCategory> for &PluralCategoryInput {
     fn eq(&self, other: &PluralCategory) -> bool {
         matches!(
             (self, other),

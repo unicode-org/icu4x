@@ -43,7 +43,7 @@ impl std::error::Error for LexerError {}
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::Lexer;
+/// use icu::plurals::rules::reference::Lexer;
 ///
 /// let input = b"i = 5";
 /// let lexer = Lexer::new(input);
@@ -60,7 +60,7 @@ impl<'l> Lexer<'l> {
     /// # Examples
     ///
     /// ```
-    /// use icu::plurals::rules::Lexer;
+    /// use icu::plurals::rules::reference::Lexer;
     ///
     /// Lexer::new(b"n = 1");
     /// ```

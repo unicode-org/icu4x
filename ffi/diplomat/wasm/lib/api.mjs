@@ -884,10 +884,28 @@ export class ICU4XPluralRules {
     this.underlying = underlying;
   }
 
-  static create(locale, provider, ty) {
+  static try_new(locale, provider, ty) {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XPluralRules_create(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XPluralRuleType_js_to_rust[ty]);
+      wasm.ICU4XPluralRules_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XPluralRuleType_js_to_rust[ty]);
+      const out = new ICU4XCreatePluralRulesResult(diplomat_receive_buffer);
+      const out_rules_value = out.rules;
+      ICU4XPluralRules_box_destroy_registry.register(out_rules_value, out_rules_value.underlying);
+      Object.defineProperty(out, "rules", { value: out_rules_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5,
+        align: 4,
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
+
+  static try_new_from_static(locale, provider, ty) {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XPluralRules_try_new_from_static(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XPluralRuleType_js_to_rust[ty]);
       const out = new ICU4XCreatePluralRulesResult(diplomat_receive_buffer);
       const out_rules_value = out.rules;
       ICU4XPluralRules_box_destroy_registry.register(out_rules_value, out_rules_value.underlying);

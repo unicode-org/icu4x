@@ -55,26 +55,26 @@
 //! When parsed, the resulting [`AST`] will look like this:
 //!
 //! ```
-//! use icu::plurals::rules::parse_condition;
-//! use icu::plurals::rules::ast::*;
+//! use icu::plurals::rules::reference::parse_condition;
+//! use icu::plurals::rules::reference::ast::*;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
 //! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
-//! assert_eq!(ast, Condition(Box::new([
-//!     AndCondition(Box::new([
+//! assert_eq!(ast, Condition(vec![
+//!     AndCondition(vec![
 //!         Relation {
 //!             expression: Expression {
 //!                 operand: Operand::I,
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(vec![
 //!                 RangeListItem::Value(
 //!                     Value(1)
 //!                 )
-//!             ]))
+//!             ])
 //!         },
 //!         Relation {
 //!             expression: Expression {
@@ -82,14 +82,14 @@
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(vec![
 //!                 RangeListItem::Value(
 //!                     Value(0)
 //!                 )
-//!             ]))
+//!             ])
 //!         },
-//!     ])),
-//! ])));
+//!     ]),
+//! ]));
 //! ```
 //!
 //! Finally, we can pass this [`AST`] (in fact, just the [`Condition`] node),
@@ -97,7 +97,8 @@
 //! matches:
 //!
 //! ```
-//! use icu::plurals::rules::{test_condition, parse_condition};
+//! use icu::plurals::rules::reference::test_condition;
+//! use icu::plurals::rules::reference::parse_condition;
 //! use icu::plurals::PluralOperands;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
@@ -130,6 +131,17 @@
 //!
 //! For example, in Russian [`PluralCategory::One`] matches numbers such as `11`, `21`, `121` etc.
 //!
+//! # Runtime vs. Resolver Rules
+//!
+//! `ICU4X` provides two sets of rules AST and APIs to manage it:
+//!  * `reference` is the canonical implementation of the specification intended for
+//!                tooling and testing to use.
+//!                This module provides APIs for parsing, editing and serialization
+//!                of the rules.
+//!  * `runtime`   is a non-public, non-mutable runtime version optimized for
+//!                performance and low memory overhead. This version provides
+//!                runtime resolver used by the `PluralRules` itself.
+//!
 //! [`PluralCategory`]: super::PluralCategory
 //! [`PluralCategories`]: super::PluralCategory
 //! [`PluralCategory::One`]: super::PluralCategory::One
@@ -143,13 +155,9 @@
 //! [`Condition`]: super::rules::ast::Condition
 //! [`Sample`]: super::rules::ast::Samples
 //! [`AST`]: super::rules::ast
-pub mod ast;
-pub(crate) mod lexer;
-pub(crate) mod parser;
-pub(crate) mod resolver;
-pub(crate) mod serializer;
+pub mod reference;
 
-pub use lexer::Lexer;
-pub use parser::{parse, parse_condition};
-pub use resolver::test_condition;
-pub use serializer::serialize;
+// Need to expose it for `icu::provider_cldr` use, but we don't
+// have a reason to make it fully public, so hiding docs for now.
+#[doc(hidden)]
+pub mod runtime;

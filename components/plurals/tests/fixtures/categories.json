@@ -3,12 +3,12 @@
     "langid": "ar",
     "plural_type": "Cardinal",
     "categories": [
+      "zero",
+      "one",
+      "two",
       "few",
       "many",
-      "one",
-      "other",
-      "two",
-      "zero"
+      "other"
     ]
   },
   {
@@ -30,18 +30,18 @@
     "langid": "en",
     "plural_type": "Ordinal",
     "categories": [
-      "few",
       "one",
-      "other",
-      "two"
+      "two",
+      "few",
+      "other"
     ]
   },
   {
     "langid": "fr",
     "plural_type": "Cardinal",
     "categories": [
-      "many",
       "one",
+      "many",
       "other"
     ]
   },
