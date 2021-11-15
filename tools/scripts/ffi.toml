@@ -125,16 +125,14 @@ exit_on_error true
 cd ffi/diplomat
 
 
-# Duckscript doesn't support globs in rm, so we do this instead
-# (we need .gitignore and conf.py to stick around)
-include = glob_array ./cpp/include/**/*.hpp
-for path in ${include}
-    rm ${path}
-end
-docs = glob_array cpp/docs/source/*.rst
-for path in ${docs}
-    rm ${path}
-end
+# Duckscript doesn't support globs in rm, so we delete the dir.
+# Preserve conf.py across the deletion.
+conf_py = readfile ./cpp/docs/source/conf.py
+rm -r ./cpp/include
+mkdir ./cpp/include
+rm -r ./cpp/docs/source
+mkdir ./cpp/docs/source
+writefile ./cpp/docs/source/conf.py ${conf_py}
 exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source
 '''
 
