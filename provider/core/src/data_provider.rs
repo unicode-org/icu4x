@@ -103,18 +103,18 @@ pub struct DataResponseMetadata {
 ///
 /// This should eventually be moved into the yoke crate once it's cleaner
 /// https://github.com/unicode-org/icu4x/issues/1284
-pub(crate) trait ErasedDestructor<'data>: IsCovariant<'data> {}
-impl<'data, T: IsCovariant<'data>> ErasedDestructor<'data> for T {}
+pub(crate) trait ErasedDestructor: 'static {}
+impl<T: 'static> ErasedDestructor for T {}
 
 /// All that Yoke needs from the Cart type is the destructor. We can
 /// use a trait object to handle that.
-pub(crate) type ErasedCart<'data> = Rc<dyn ErasedDestructor<'data> + 'data>;
+pub(crate) type ErasedCart = Rc<dyn ErasedDestructor>;
 
 pub(crate) enum DataPayloadInner<M>
 where
     M: DataMarker,
 {
-    RcStruct(Yoke<M::Yokeable, ErasedCart<'static>>),
+    RcStruct(Yoke<M::Yokeable, ErasedCart>),
     Owned(Yoke<M::Yokeable, ()>),
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
@@ -267,11 +267,11 @@ where
     pub fn from_partial_owned<T>(data: Rc<T>) -> Self
     where
         M::Yokeable: ZeroCopyFrom<T>,
-        T: 'static + IsCovariant<'static>,
+        T: 'static,
     {
         let yoke = unsafe {
             // safe because we're not throwing away any actual data, simply type-erasing it
-            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedCart<'static>)
+            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedCart)
         };
         Self {
             inner: DataPayloadInner::RcStruct(yoke),
