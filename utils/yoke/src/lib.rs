@@ -17,6 +17,8 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+#[cfg(feature = "alloc")]
+pub mod erased;
 mod is_covariant;
 mod macro_impls;
 pub mod trait_hack;

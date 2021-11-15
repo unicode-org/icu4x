@@ -9,7 +9,6 @@ use crate::prelude::*;
 use crate::yoke::{self, *};
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
-use alloc::rc::Rc;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::fmt::Debug;
@@ -133,7 +132,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
             },
-            payload: Some(DataPayload::from_partial_owned(Rc::from(data))),
+            payload: Some(DataPayload::from_owned(data)),
         })
     }
 }

@@ -22,6 +22,7 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
+use alloc::boxed::Box;
 use alloc::rc::Rc;
 
 use core::ops::Deref;
@@ -219,10 +220,7 @@ where
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
-///
-/// This trait requires [`IsCovariant`] such that it can be safely used as a trait object in
-/// [`DataProvider`].
-pub trait SerdeSeDataStruct<'data>: IsCovariant<'data> {
+pub trait SerdeSeDataStruct: 'static {
     /// Return this trait object reference for Serde serialization.
     ///
     /// # Examples
@@ -250,31 +248,21 @@ pub trait SerdeSeDataStruct<'data>: IsCovariant<'data> {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
-impl<'data, T> SerdeSeDataStruct<'data> for T
+impl<T> SerdeSeDataStruct for T
 where
-    T: IsCovariant<'data> + serde::Serialize,
+    T: 'static + serde::Serialize,
 {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
     }
 }
 
-/// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'a>` for integration with DataProvider.
-pub struct SerdeSeDataStructDynRef<'a>(&'a (dyn SerdeSeDataStruct<'a> + 'a));
+/// A wrapper around `Box<`[`SerdeSeDataStruct`]`>` for integration with DataProvider.
+#[derive(yoke::Yokeable)]
+pub struct SerdeSeDataStructBox(Box<dyn SerdeSeDataStruct>);
 
-impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data>
-    for SerdeSeDataStructDynRef<'static>
-{
-    fn zero_copy_from<'b>(
-        this: &'b (dyn SerdeSeDataStruct<'data> + 'data),
-    ) -> SerdeSeDataStructDynRef<'b> {
-        // This is safe because the trait object requires IsCovariant.
-        SerdeSeDataStructDynRef(unsafe { core::mem::transmute(this) })
-    }
-}
-
-impl<'a> Deref for SerdeSeDataStructDynRef<'a> {
-    type Target = dyn SerdeSeDataStruct<'a> + 'a;
+impl Deref for SerdeSeDataStructBox {
+    type Target = dyn SerdeSeDataStruct;
     fn deref(&self) -> &Self::Target {
         self.0.deref()
     }
@@ -286,70 +274,12 @@ where
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<SerdeSeDataStructMarker> {
-        use crate::data_provider::{DataPayloadInner, ErasedCart};
-        let yoke: Yoke<_, ErasedCart> = match other.inner {
-            DataPayloadInner::RcStruct(yoke) => {
-                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
-                let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
-                // Safe since we are replacing the cart with another that owns
-                // the same underlying data
-                //
-                // eventually the yoke crate will have a safe function for this
-                // https://github.com/unicode-org/icu4x/issues/1284
-                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'static>) }
-            }
-            DataPayloadInner::Owned(yoke) => {
-                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
-                let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
-                // Safe since we are replacing the cart with another that owns
-                // the same underlying data
-                //
-                // eventually the yoke crate will have a safe function for this
-                // https://github.com/unicode-org/icu4x/issues/1284
-                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'static>) }
-            }
-            DataPayloadInner::RcBuf(yoke) => {
-                let rc: Rc<Yoke<_, _>> = Rc::from(yoke);
-                let yoke =
-                    Yoke::attach_to_rc_cart(rc.clone() as Rc<dyn SerdeSeDataStruct<'static>>);
-                // Safe since we are replacing the cart with another that owns
-                // the same underlying data
-                //
-                // eventually the yoke crate will have a safe function for this
-                // https://github.com/unicode-org/icu4x/issues/1284
-                unsafe { yoke.replace_cart(move |_| rc as ErasedCart<'static>) }
-            }
+        use crate::data_provider::DataPayloadInner;
+        let b = match other.inner {
+            DataPayloadInner::Owned(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
+            DataPayloadInner::RcBuf(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
         };
-        DataPayload {
-            inner: DataPayloadInner::RcStruct(yoke),
-        }
-    }
-}
-
-unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructDynRef<'static> {
-    type Output = SerdeSeDataStructDynRef<'a>;
-    fn transform(&'a self) -> &'a Self::Output {
-        // This is safe because SerdeSeDataStruct requires IsCovariant.
-        unsafe { core::mem::transmute(self) }
-    }
-    fn transform_owned(self) -> Self::Output {
-        // (needs a transmute for the same reason as above)
-        unsafe { core::mem::transmute(self) }
-    }
-    unsafe fn make(from: Self::Output) -> Self {
-        core::mem::transmute(from)
-    }
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        unsafe {
-            f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
-                self,
-            ))
-        }
+        DataPayload::from_owned(SerdeSeDataStructBox(b))
     }
 }
 
@@ -357,5 +287,5 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructDynRef<'static> {
 pub struct SerdeSeDataStructMarker {}
 
 impl DataMarker for SerdeSeDataStructMarker {
-    type Yokeable = SerdeSeDataStructDynRef<'static>;
+    type Yokeable = SerdeSeDataStructBox;
 }

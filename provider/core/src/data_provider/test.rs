@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use alloc::rc::Rc;
 use alloc::string::String;
 use core::fmt::Debug;
 use serde::{Deserialize, Serialize};
@@ -45,8 +44,8 @@ struct HelloCombined<'data> {
 /// Supports only HELLO_WORLD_V1. Uses `impl_dyn_provider!()`.
 #[derive(Debug)]
 struct DataWarehouse {
-    hello_v1: Rc<HelloWorldV1<'static>>,
-    hello_alt: Rc<HelloAlt>,
+    hello_v1: HelloWorldV1<'static>,
+    hello_alt: HelloAlt,
 }
 
 impl DataProvider<HelloWorldV1Marker> for DataWarehouse {
@@ -57,7 +56,7 @@ impl DataProvider<HelloWorldV1Marker> for DataWarehouse {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(self.hello_v1.clone())),
+            payload: Some(DataPayload::from_owned(self.hello_v1.clone())),
         })
     }
 }
@@ -86,7 +85,7 @@ impl DataProvider<HelloWorldV1Marker> for DataProvider2 {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(self.data.hello_v1.clone())),
+            payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
         })
     }
 }
@@ -96,7 +95,7 @@ impl DataProvider<HelloAltMarker> for DataProvider2 {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(self.data.hello_alt.clone())),
+            payload: Some(DataPayload::from_owned(self.data.hello_alt.clone())),
         })
     }
 }
@@ -120,8 +119,8 @@ const DATA: &'static str = r#"{
 fn get_warehouse(data: &'static str) -> DataWarehouse {
     let data: HelloCombined = serde_json::from_str(data).expect("Well-formed data");
     DataWarehouse {
-        hello_v1: Rc::from(data.hello_v1),
-        hello_alt: Rc::from(data.hello_alt),
+        hello_v1: data.hello_v1,
+        hello_alt: data.hello_alt,
     }
 }
 
@@ -159,7 +158,7 @@ fn get_request_alt() -> DataRequest {
 fn test_warehouse_owned() {
     let warehouse = get_warehouse(DATA);
     let hello_data = get_payload_v1(&warehouse).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -172,7 +171,7 @@ fn test_warehouse_owned() {
 fn test_warehouse_owned_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let hello_data = get_payload_v1(&warehouse as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -185,7 +184,7 @@ fn test_warehouse_owned_dyn_erased() {
 fn test_warehouse_owned_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -209,7 +208,7 @@ fn test_provider2() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -223,7 +222,7 @@ fn test_provider2_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -237,7 +236,7 @@ fn test_provider2_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
 
@@ -246,7 +245,7 @@ fn test_provider2_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -260,7 +259,7 @@ fn test_provider2_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltMarker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
 

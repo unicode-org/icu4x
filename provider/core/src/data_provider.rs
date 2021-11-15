@@ -95,26 +95,10 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-/// Dummy trait that lets us `dyn Drop`
-///
-/// `dyn Drop` isn't legal (and doesn't make sense since `Drop` is not
-/// implement on all destructible types). However, all trait objects come with
-/// a destructor, so we can just use an empty trait to get a destructor object.
-///
-/// This should eventually be moved into the yoke crate once it's cleaner
-/// https://github.com/unicode-org/icu4x/issues/1284
-pub(crate) trait ErasedDestructor<'data>: IsCovariant<'data> {}
-impl<'data, T: IsCovariant<'data>> ErasedDestructor<'data> for T {}
-
-/// All that Yoke needs from the Cart type is the destructor. We can
-/// use a trait object to handle that.
-pub(crate) type ErasedCart<'data> = Rc<dyn ErasedDestructor<'data> + 'data>;
-
 pub(crate) enum DataPayloadInner<M>
 where
     M: DataMarker,
 {
-    RcStruct(Yoke<M::Yokeable, ErasedCart<'static>>),
     Owned(Yoke<M::Yokeable, ()>),
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
@@ -126,8 +110,7 @@ where
 /// several data stores ("carts"):
 ///
 /// 1. Fully-owned structured data ([`DataPayload::from_owned()`])
-/// 2. Partially-owned structured data in an [`Rc`] ([`DataPayload::from_partial_owned()`])
-/// 3. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
+/// 2. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
 ///
 /// The type of the data stored in [`DataPayload`], and the type of the structured data store
 /// (cart), is determined by the [`DataMarker`] type parameter.
@@ -204,7 +187,6 @@ where
     fn clone(&self) -> Self {
         use DataPayloadInner::*;
         let new_inner = match &self.inner {
-            RcStruct(yoke) => RcStruct(yoke.clone()),
             Owned(yoke) => Owned(yoke.clone()),
             RcBuf(yoke) => RcBuf(yoke.clone()),
         };
@@ -235,48 +217,6 @@ fn test_clone_eq() {
     let p1 = DataPayload::<CowStrMarker>::from_static_str("Demo");
     let p2 = p1.clone();
     assert_eq!(p1, p2);
-}
-
-impl<M> DataPayload<M>
-where
-    M: DataMarker,
-{
-    /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use std::borrow::Cow;
-    /// use std::rc::Rc;
-    ///
-    /// let local_data = "example".to_string();
-    ///
-    /// let rc_struct = Rc::from(HelloWorldV1 {
-    ///     message: Cow::Owned(local_data),
-    /// });
-    ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::from_partial_owned(rc_struct.clone());
-    ///
-    /// assert_eq!(payload.get(), &*rc_struct);
-    /// ```
-    ///
-    /// [`Cart`]: crate::marker::DataMarker::Cart
-    #[inline]
-    pub fn from_partial_owned<T>(data: Rc<T>) -> Self
-    where
-        M::Yokeable: ZeroCopyFrom<T>,
-        T: 'static + IsCovariant<'static>,
-    {
-        let yoke = unsafe {
-            // safe because we're not throwing away any actual data, simply type-erasing it
-            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedCart<'static>)
-        };
-        Self {
-            inner: DataPayloadInner::RcStruct(yoke),
-        }
-    }
 }
 
 impl<M> DataPayload<M>
@@ -454,7 +394,6 @@ where
     {
         use DataPayloadInner::*;
         match &mut self.inner {
-            RcStruct(yoke) => yoke.with_mut(f),
             Owned(yoke) => yoke.with_mut(f),
             RcBuf(yoke) => yoke.with_mut(f),
         }
@@ -479,7 +418,6 @@ where
     pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
         use DataPayloadInner::*;
         match &self.inner {
-            RcStruct(yoke) => yoke.get(),
             Owned(yoke) => yoke.get(),
             RcBuf(yoke) => yoke.get(),
         }
@@ -544,9 +482,6 @@ where
     {
         use DataPayloadInner::*;
         match self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.project(f)),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.project(f)),
             },
@@ -601,9 +536,6 @@ where
     {
         use DataPayloadInner::*;
         match &self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.project_cloned(f)),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.project_cloned(f)),
             },
@@ -691,9 +623,6 @@ where
     {
         use DataPayloadInner::*;
         match self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.project_with_capture(capture, f)),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.project_with_capture(capture, f)),
             },
@@ -756,9 +685,6 @@ where
     {
         use DataPayloadInner::*;
         match &self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.project_cloned_with_capture(capture, f)),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.project_cloned_with_capture(capture, f)),
             },
@@ -854,9 +780,6 @@ where
     {
         use DataPayloadInner::*;
         Ok(match self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.try_project_with_capture(capture, f)?),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.try_project_with_capture(capture, f)?),
             },
@@ -923,9 +846,6 @@ where
     {
         use DataPayloadInner::*;
         Ok(match &self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.try_project_cloned_with_capture(capture, f)?),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.try_project_cloned_with_capture(capture, f)?),
             },

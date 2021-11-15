@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "alloc")]
+use crate::erased::{ErasedBoxCart, ErasedRcCart};
 use crate::trait_hack::YokeTraitHack;
 use crate::IsCovariant;
 use crate::Yokeable;
@@ -9,6 +11,8 @@ use core::marker::PhantomData;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
 
+#[cfg(feature = "alloc")]
+use alloc::boxed::Box;
 #[cfg(feature = "alloc")]
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
@@ -779,6 +783,121 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
         })
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
+    /// Allows type-erasing the cart in a `Yoke<Y, Rc<C>>`.
+    ///
+    /// The yoke only carries around a cart type for its destructor,
+    /// since it needs to be able to guarantee that its internal references
+    /// are valid for the lifetime of the Yoke. As such, the actual type of the
+    /// Cart is not very useful unless you wish to extract data out of it
+    /// via [`Yoke::backing_cart()`]. Erasing the cart allows for one to mix
+    /// [`Yoke`]s obtained from different sources.
+    ///
+    /// In case the cart type is not already `Rc<T>`, you can use
+    /// [`Yoke::wrap_cart_in_rc()`] to wrap it.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use yoke::Yoke;
+    /// use yoke::erased::ErasedRcCart;
+    /// use std::rc::Rc;
+    ///
+    /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
+    /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
+    ///
+    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer1, |rc| rc.trim());
+    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer2, |b| b.trim());
+    ///
+    ///
+    /// let erased1: Yoke<_, ErasedRcCart> = yoke1.erase_rc_cart();
+    /// // Wrap the Box in an Rc to make it compatible
+    /// let erased2: Yoke<_, ErasedRcCart> = yoke2.wrap_cart_in_rc().erase_rc_cart();
+    ///
+    /// // Now erased1 and erased2 have the same type!
+    /// ```
+    ///
+    /// Available with the `"alloc"` feature enabled.
+    pub fn erase_rc_cart(self) -> Yoke<Y, ErasedRcCart> {
+        unsafe {
+            // safe because the cart is preserved, just
+            // type-erased
+            self.replace_cart(|c| c as ErasedRcCart)
+        }
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
+    /// Allows type-erasing the cart in a `Yoke<Y, Box<C>>`.
+    ///
+    /// The yoke only carries around a cart type for its destructor,
+    /// since it needs to be able to guarantee that its internal references
+    /// are valid for the lifetime of the Yoke. As such, the actual type of the
+    /// Cart is not very useful unless you wish to extract data out of it
+    /// via [`Yoke::backing_cart()`]. Erasing the cart allows for one to mix
+    /// [`Yoke`]s obtained from different sources.
+    ///
+    /// In case the cart type is not already `Box<T>`, you can use
+    /// [`Yoke::wrap_cart_in_box()`] to wrap it.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use yoke::Yoke;
+    /// use yoke::erased::ErasedBoxCart;
+    /// use std::rc::Rc;
+    ///
+    /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
+    /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
+    ///
+    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer1, |rc| rc.trim());
+    /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart_badly(buffer2, |b| b.trim());
+    ///
+    ///
+    /// // Wrap the Rc in an Box to make it compatible
+    /// let erased1: Yoke<_, ErasedBoxCart> = yoke1.wrap_cart_in_box().erase_box_cart();
+    /// let erased2: Yoke<_, ErasedBoxCart> = yoke2.erase_box_cart();
+    ///
+    /// // Now erased1 and erased2 have the same type!
+    /// ```
+    ///
+    /// Available with the `"alloc"` feature enabled.
+    pub fn erase_box_cart(self) -> Yoke<Y, ErasedBoxCart> {
+        unsafe {
+            // safe because the cart is preserved, just
+            // type-erased
+            self.replace_cart(|c| c as ErasedBoxCart)
+        }
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
+    /// Helper function allowing one to wrap the cart type in a `Box<T>`,
+    /// can be paired with [`Yoke::erase_box_cart()`]
+    ///
+    /// Available with the `"alloc"` feature enabled.
+    pub fn wrap_cart_in_box(self) -> Yoke<Y, Box<C>> {
+        unsafe {
+            // safe because the cart is preserved, just wrapped
+            self.replace_cart(Box::new)
+        }
+    }
+    /// Helper function allowing one to wrap the cart type in an `Rc<T>`,
+    /// can be paired with [`Yoke::erase_rc_cart()`], or generally used
+    /// to make the [`Yoke`] cloneable.
+    ///
+    /// Available with the `"alloc"` feature enabled.
+    pub fn wrap_cart_in_rc(self) -> Yoke<Y, Rc<C>> {
+        unsafe {
+            // safe because the cart is preserved, just wrapped
+            self.replace_cart(Rc::new)
+        }
     }
 }
 
