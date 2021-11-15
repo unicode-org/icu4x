@@ -225,12 +225,12 @@ pub(crate) mod internal {
     }
 }
 
-pub struct PluralRules<'data> {
+pub struct PluralRules {
     opts: ecma402_traits::pluralrules::Options,
-    rep: ipr::PluralRules<'data>,
+    rep: ipr::PluralRules,
 }
 
-impl<'data> ecma402_traits::pluralrules::PluralRules for PluralRules<'data> {
+impl ecma402_traits::pluralrules::PluralRules for PluralRules {
     type Error = PluralRulesError;
 
     fn try_new<L>(l: L, opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
@@ -253,7 +253,7 @@ impl<'data> ecma402_traits::pluralrules::PluralRules for PluralRules<'data> {
     }
 }
 
-impl<'data> PluralRules<'data> {
+impl PluralRules {
     /// Creates a new [`PluralRules`], using the specified data provider.
     pub fn try_new_with_provider<L, P>(
         l: L,
@@ -262,7 +262,7 @@ impl<'data> PluralRules<'data> {
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<'data, ipr::provider::PluralRulesV1Marker>,
+        P: icu_provider::DataProvider<ipr::provider::PluralRulesV1Marker>,
         Self: Sized,
     {
         let locale: String = format!("{}", l);
