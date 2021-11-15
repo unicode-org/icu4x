@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637007675022,
+  "lastUpdate": 1637010905152,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17093,6 +17093,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4270,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "242fa55e995a92da7f6a8d333ca9639a7b9e222c",
+          "message": "Initial Properties FFI (#1269)",
+          "timestamp": "2021-11-15T13:07:21-08:00",
+          "tree_id": "646c5472b4ee5fd28b5ac8bc650afc6a45e0fc49",
+          "url": "https://github.com/unicode-org/icu4x/commit/242fa55e995a92da7f6a8d333ca9639a7b9e222c"
+        },
+        "date": 1637010895990,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3215,
+            "range": "± 177",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5500,
+            "range": "± 314",
             "unit": "ns/iter"
           }
         ]
