@@ -10,6 +10,7 @@ use crate::error::Error;
 use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
+use crate::yoke::erased::ErasedRcCart;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
@@ -95,26 +96,11 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-/// Dummy trait that lets us `dyn Drop`
-///
-/// `dyn Drop` isn't legal (and doesn't make sense since `Drop` is not
-/// implement on all destructible types). However, all trait objects come with
-/// a destructor, so we can just use an empty trait to get a destructor object.
-///
-/// This should eventually be moved into the yoke crate once it's cleaner
-/// https://github.com/unicode-org/icu4x/issues/1284
-pub(crate) trait ErasedDestructor: 'static {}
-impl<T: 'static> ErasedDestructor for T {}
-
-/// All that Yoke needs from the Cart type is the destructor. We can
-/// use a trait object to handle that.
-pub(crate) type ErasedCart = Rc<dyn ErasedDestructor>;
-
 pub(crate) enum DataPayloadInner<M>
 where
     M: DataMarker,
 {
-    RcStruct(Yoke<M::Yokeable, ErasedCart>),
+    RcStruct(Yoke<M::Yokeable, ErasedRcCart>),
     Owned(Yoke<M::Yokeable, ()>),
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
@@ -271,7 +257,7 @@ where
     {
         let yoke = unsafe {
             // safe because we're not throwing away any actual data, simply type-erasing it
-            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedCart)
+            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedRcCart)
         };
         Self {
             inner: DataPayloadInner::RcStruct(yoke),

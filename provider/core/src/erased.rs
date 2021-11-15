@@ -4,9 +4,9 @@
 
 //! Collection of traits for providers that support type erasure of data structs.
 
-use crate::data_provider::ErasedCart;
 use crate::error::Error;
 use crate::prelude::*;
+use crate::yoke::erased::ErasedRcCart;
 use crate::yoke::*;
 use alloc::boxed::Box;
 use alloc::rc::Rc;
@@ -143,7 +143,7 @@ impl DataPayload<ErasedDataStructMarker> {
                 // `any_box` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
                 // could have been either the RcStruct or the Owned variant of Yoke.
                 // Check first for Case 2: an RcStruct Yoke.
-                let y1 = any_box.downcast::<Yoke<M::Yokeable, ErasedCart>>();
+                let y1 = any_box.downcast::<Yoke<M::Yokeable, ErasedRcCart>>();
                 let any_box = match y1 {
                     Ok(yoke) => {
                         return Ok(DataPayload {
