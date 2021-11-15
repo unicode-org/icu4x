@@ -3,34 +3,34 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 mod test_util;
 
-use ucharstrie::ucharstrie::{TrieResult, UCharsTrie, UCharsTrieIterator};
+use icu_char16trie::char16trie::{Char16Trie, Char16TrieIterator, TrieResult};
 use zerovec::ZeroVec;
 
 #[test]
-fn ucharstrie_test_empty() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/empty.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_empty() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/empty.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     let res = itor.next('h' as i32);
     assert_eq!(res, TrieResult::NoMatch);
     assert_eq!(res, TrieResult::NoMatch);
 }
 
 #[test]
-fn ucharstrie_test_a() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/test_a.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_a() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/test_a.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     let res = itor.next('h' as i32);
     assert_eq!(res, TrieResult::NoMatch);
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     let res = itor.next('a' as i32);
     assert_eq!(res, TrieResult::FinalValue(1));
     let res = itor.next('a' as i32);
@@ -38,19 +38,19 @@ fn ucharstrie_test_a() {
 }
 
 #[test]
-fn ucharstrie_test_a_b() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/test_a_ab.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_a_b() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/test_a_ab.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     let res = itor.next('a' as i32);
     assert_eq!(res, TrieResult::Intermediate(1));
     let res = itor.next('a' as i32);
     assert_eq!(res, TrieResult::NoMatch);
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     let res = itor.next('a' as i32);
     assert_eq!(res, TrieResult::Intermediate(1));
     let res = itor.next('b' as i32);
@@ -60,19 +60,19 @@ fn ucharstrie_test_a_b() {
 }
 
 #[test]
-fn ucharstrie_test_shortest_branch() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/test_shortest_branch.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_shortest_branch() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/test_shortest_branch.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     let res = itor.next('a' as i32);
     assert_eq!(res, TrieResult::FinalValue(1000));
     let res = itor.next('b' as i32);
     assert_eq!(res, TrieResult::NoMatch);
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     let res = itor.next('b' as i32);
     assert_eq!(res, TrieResult::FinalValue(2000));
     let res = itor.next('a' as i32);
@@ -80,9 +80,9 @@ fn ucharstrie_test_shortest_branch() {
 }
 
 #[test]
-fn ucharstrie_test_branches() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/test_branches.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_branches() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/test_branches.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
@@ -102,7 +102,7 @@ fn ucharstrie_test_branches() {
         ("vv", TrieResult::FinalValue(0x7fffffff)),
         ("zz", TrieResult::FinalValue(-2147483648)),
     ] {
-        let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+        let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
         for (i, chr) in query.chars().enumerate() {
             let res = itor.next(chr as i32);
             if i + 1 == query.len() {
@@ -115,9 +115,9 @@ fn ucharstrie_test_branches() {
 }
 
 #[test]
-fn ucharstrie_test_long_sequence() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/test_long_sequence.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_long_sequence() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/test_long_sequence.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
@@ -141,7 +141,7 @@ fn ucharstrie_test_long_sequence() {
             TrieResult::FinalValue(-3),
         ),
     ] {
-        let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+        let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
         for (i, chr) in query.chars().enumerate() {
             let res = itor.next(chr as i32);
             if i + 1 == query.len() {
@@ -158,9 +158,9 @@ fn ucharstrie_test_long_sequence() {
 }
 
 #[test]
-fn ucharstrie_test_long_branch() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/test_long_branch.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_long_branch() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/test_long_branch.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
@@ -196,7 +196,7 @@ fn ucharstrie_test_long_branch() {
         ("t234567890", TrieResult::FinalValue(0x77777777)),
         ("z", TrieResult::FinalValue(-2147483647)),
     ] {
-        let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+        let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
         for (i, chr) in query.chars().enumerate() {
             let res = itor.next(chr as i32);
             if i + 1 == query.len() {
@@ -211,9 +211,9 @@ fn ucharstrie_test_long_branch() {
 }
 
 #[test]
-fn ucharstrie_test_compact() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/test_compact.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_compact() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/test_compact.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
@@ -237,7 +237,7 @@ fn ucharstrie_test_compact() {
         ("xjuly", TrieResult::FinalValue(7)),
         ("xjune", TrieResult::FinalValue(6)),
     ] {
-        let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+        let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
         for (i, chr) in query.chars().enumerate() {
             let res = itor.next(chr as i32);
             if i + 1 == query.len() {
@@ -252,13 +252,13 @@ fn ucharstrie_test_compact() {
 }
 
 #[test]
-fn ucharstrie_test_months() {
-    let trie_data = test_util::load_ucharstrie_data("tests/testdata/months.toml");
-    let trie = UCharsTrie {
+fn char16trie_test_months() {
+    let trie_data = test_util::load_char16trie_data("tests/testdata/months.toml");
+    let trie = Char16Trie {
         data: ZeroVec::from_slice(trie_data.as_slice()),
     };
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     for (chr, expected) in [
         ('j', TrieResult::NoValue),
         ('u', TrieResult::NoValue),
@@ -271,7 +271,7 @@ fn ucharstrie_test_months() {
     let res = itor.next('h' as i32);
     assert_eq!(res, TrieResult::NoMatch);
 
-    let mut itor = UCharsTrieIterator::new(trie.data.as_slice(), 0);
+    let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
     for (chr, expected) in [
         ('j', TrieResult::NoValue),
         ('u', TrieResult::NoValue),

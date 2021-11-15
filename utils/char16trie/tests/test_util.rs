@@ -8,17 +8,17 @@ use toml;
 
 #[derive(serde::Deserialize)]
 pub struct TestFile {
-    ucharstrie: TestUCharsTrie,
+    ucharstrie: Char16Trie,
 }
 
 #[derive(serde::Deserialize)]
-pub struct TestUCharsTrie {
+pub struct Char16Trie {
     data: Vec<u16>,
 }
 
 // Given a .toml file dumped from ICU4C test data for UCharsTrie, run the test
 // data file deserialization into the test file struct and return the data.
-pub fn load_ucharstrie_data(test_file_path: &str) -> Vec<u16> {
+pub fn load_char16trie_data(test_file_path: &str) -> Vec<u16> {
     let path = Path::new(test_file_path);
     let display = path.display();
 

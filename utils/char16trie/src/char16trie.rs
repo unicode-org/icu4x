@@ -66,7 +66,7 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
     }
 }
 
-/// This struct represents a de-serialized UCharsTrie that was exported from
+/// This struct represents a de-serialized Char16Trie that was exported from
 /// ICU binary data.
 ///
 /// The trie consists of a series of char16_t-serialized nodes for incremental
@@ -108,15 +108,15 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 /// - [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone)]
-pub struct UCharsTrie<'data> {
+pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.
     #[serde(borrow)]
     pub data: ZeroVec<'data, u16>,
 }
 
-/// This struct represents an iterator over a UCharsTrie.
-pub struct UCharsTrieIterator<'a> {
-    /// A reference to the UCharsTrie data to iterate over.
+/// This struct represents an iterator over a Char16Trie.
+pub struct Char16TrieIterator<'a> {
+    /// A reference to the Char16Trie data to iterate over.
     trie: &'a [<u16 as zerovec::ule::AsULE>::ULE],
     /// Index of next trie unit to read, or None if there are no more matches.
     pos: Option<usize>,
@@ -145,7 +145,7 @@ pub enum TrieResult {
     Intermediate(i32),
 }
 
-impl<'a> UCharsTrieIterator<'a> {
+impl<'a> Char16TrieIterator<'a> {
     pub fn new(trie: &'a [<u16 as zerovec::ule::AsULE>::ULE], offset: usize) -> Self {
         Self {
             trie,

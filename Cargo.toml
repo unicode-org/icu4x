@@ -37,7 +37,7 @@ members = [
     "utils/fixed_decimal",
     "utils/litemap",
     "utils/pattern",
-    "utils/ucharstrie",
+    "utils/char16trie",
     "utils/uniset",
     "utils/writeable",
     "utils/yoke",
