@@ -45,10 +45,10 @@ use crate::yoke::Yokeable;
 /// }
 ///
 /// // We can now use MyDataStruct with DataProvider:
-/// let s = Rc::from(MyDataStruct {
-///     message: Cow::Borrowed("Hello World")
-/// });
-/// let payload = DataPayload::<MyDataStructMarker>::from_partial_owned(s);
+/// let s = MyDataStruct {
+///     message: Cow::Owned("Hello World".into())
+/// };
+/// let payload = DataPayload::<MyDataStructMarker>::from_owned(s);
 /// assert_eq!(payload.get().message, "Hello World");
 /// ```
 pub trait DataMarker {
