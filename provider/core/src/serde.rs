@@ -22,6 +22,7 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
+use alloc::boxed::Box;
 use alloc::rc::Rc;
 
 use core::ops::Deref;
@@ -274,15 +275,9 @@ where
     fn upcast(other: DataPayload<M>) -> DataPayload<SerdeSeDataStructMarker> {
         use crate::data_provider::DataPayloadInner;
         let b = match other.inner {
-            DataPayloadInner::RcStruct(yoke) => {
-                Box::new(yoke) as Box<dyn SerdeSeDataStruct>
-            }
-            DataPayloadInner::Owned(yoke) => {
-                Box::new(yoke) as Box<dyn SerdeSeDataStruct>
-            }
-            DataPayloadInner::RcBuf(yoke) => {
-                Box::new(yoke) as Box<dyn SerdeSeDataStruct>
-            }
+            DataPayloadInner::RcStruct(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
+            DataPayloadInner::Owned(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
+            DataPayloadInner::RcBuf(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
         };
         DataPayload::from_owned(SerdeSeDataStructBox(b))
     }
