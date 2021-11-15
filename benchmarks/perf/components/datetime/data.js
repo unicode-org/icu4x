@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1636767753105,
+  "lastUpdate": 1637000871903,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12737,6 +12737,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 331825,
             "range": "± 32807",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5da8ba9e5d792e836316808b050a015ff902741",
+          "message": "Switch PluralRules Data to ZeroVec (#1240)\n\n* Separate runtime and reference rules in PluralRules.\r\n\r\n* Add ZeroVec::borrowed_from_slice()\r\n\r\n* Add RelationULE::as_relation()\r\n\r\n* Add encoding/decoding for andor/plurals/operand\r\n\r\n* fix encode\r\n\r\n* fix from_byte_slice_unchecked\r\n\r\n* slightly better impl\r\n\r\n* Plug it all together\r\n\r\n* Fix tests\r\n\r\n* Apply feedback\r\n\r\n* Add RelationULE doc\r\n\r\n* Apply feedback\r\n\r\n* Add inlines and docs\r\n\r\n* Uncomment tests\r\n\r\n* Apply reviewers feedback\r\n\r\n* Fix tests and apply feedback\r\n\r\n* Revise postcard file\r\n\r\n* Fix provider benchmarks\r\n\r\n* Fix more tests\r\n\r\n* Add rountrip test\r\n\r\n* Fix another test\r\n\r\n* Fix more tests\r\n\r\n* Update postcard\r\n\r\n* Fix readme\r\n\r\n* Regenerate diplomat ffi\r\n\r\n* Fix diplomat example\r\n\r\n* Fix test-cpp\r\n\r\n* Update safety comment\r\n\r\n* Apply feedback\r\n\r\n* No need to guard local type used for debug test. DCE will take care of it.\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2021-11-15T10:20:37-08:00",
+          "tree_id": "c81ae767fafcfefdd0858b50338d7504be2fe9c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/e5da8ba9e5d792e836316808b050a015ff902741"
+        },
+        "date": 1637000866610,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 85415,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1022384,
+            "range": "± 1605",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 253399,
+            "range": "± 1318",
             "unit": "ns/iter"
           }
         ]
