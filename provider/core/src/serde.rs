@@ -258,6 +258,7 @@ where
 }
 
 /// A wrapper around `Box<`[`SerdeSeDataStruct`]`>` for integration with DataProvider.
+#[derive(yoke::Yokeable)]
 pub struct SerdeSeDataStructBox(Box<dyn SerdeSeDataStruct>);
 
 impl Deref for SerdeSeDataStructBox {
@@ -279,25 +280,6 @@ where
             DataPayloadInner::RcBuf(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
         };
         DataPayload::from_owned(SerdeSeDataStructBox(b))
-    }
-}
-
-unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructBox {
-    type Output = SerdeSeDataStructBox;
-    fn transform(&'a self) -> &'a Self::Output {
-        self
-    }
-    fn transform_owned(self) -> Self::Output {
-        self
-    }
-    unsafe fn make(from: Self::Output) -> Self {
-        from
-    }
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        f(self)
     }
 }
 
