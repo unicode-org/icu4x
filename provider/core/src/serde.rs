@@ -275,7 +275,6 @@ where
     fn upcast(other: DataPayload<M>) -> DataPayload<SerdeSeDataStructMarker> {
         use crate::data_provider::DataPayloadInner;
         let b = match other.inner {
-            DataPayloadInner::RcStruct(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
             DataPayloadInner::Owned(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
             DataPayloadInner::RcBuf(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
         };

@@ -6,7 +6,6 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use crate::yoke::erased::ErasedRcCart;
 use crate::yoke::*;
 use alloc::boxed::Box;
 use alloc::rc::Rc;
@@ -82,7 +81,6 @@ where
     fn upcast(other: DataPayload<M>) -> DataPayload<ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         let owned: Box<dyn ErasedDataStruct> = match other.inner {
-            RcStruct(yoke) => Box::new(yoke),
             Owned(yoke) => Box::new(yoke),
             RcBuf(yoke) => Box::new(yoke),
         };
@@ -141,18 +139,8 @@ impl DataPayload<ErasedDataStructMarker> {
             Owned(yoke) => {
                 let any_box: Box<dyn Any> = yoke.into_yokeable().0.into_any();
                 // `any_box` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
-                // could have been either the RcStruct or the Owned variant of Yoke.
-                // Check first for Case 2: an RcStruct Yoke.
-                let y1 = any_box.downcast::<Yoke<M::Yokeable, ErasedRcCart>>();
-                let any_box = match y1 {
-                    Ok(yoke) => {
-                        return Ok(DataPayload {
-                            inner: RcStruct(*yoke),
-                        })
-                    }
-                    Err(any_box) => any_box,
-                };
-                // Check for Case 3: an Owned Yoke.
+                // could have been either the RcBuf or the Owned variant of Yoke.
+                // Check for an Owned Yoke.
                 let y2 = any_box.downcast::<Yoke<M::Yokeable, ()>>();
                 let any_box = match y2 {
                     Ok(yoke) => {
@@ -162,7 +150,7 @@ impl DataPayload<ErasedDataStructMarker> {
                     }
                     Err(any_box) => any_box,
                 };
-                // Check for Case 4: an RcBuf Yoke.
+                // Check for  an RcBuf Yoke.
                 let y2 = any_box.downcast::<Yoke<M::Yokeable, Rc<[u8]>>>();
                 let any_box = match y2 {
                     Ok(yoke) => {
@@ -181,7 +169,7 @@ impl DataPayload<ErasedDataStructMarker> {
             // This is unreachable because an ErasedDataStruct payload can only be constructed as fully owned
             // (It is impossible for clients to construct an ErasedDataStruct payload manually since ErasedDataStructBox
             // has a private field)
-            RcStruct(_) | RcBuf(_) => unreachable!(),
+            RcBuf(_) => unreachable!(),
         }
     }
 }

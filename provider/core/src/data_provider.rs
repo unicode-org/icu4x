@@ -10,7 +10,6 @@ use crate::error::Error;
 use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
-use crate::yoke::erased::ErasedRcCart;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
@@ -100,7 +99,6 @@ pub(crate) enum DataPayloadInner<M>
 where
     M: DataMarker,
 {
-    RcStruct(Yoke<M::Yokeable, ErasedRcCart>),
     Owned(Yoke<M::Yokeable, ()>),
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
@@ -189,7 +187,6 @@ where
     fn clone(&self) -> Self {
         use DataPayloadInner::*;
         let new_inner = match &self.inner {
-            RcStruct(yoke) => RcStruct(yoke.clone()),
             Owned(yoke) => Owned(yoke.clone()),
             RcBuf(yoke) => RcBuf(yoke.clone()),
         };
@@ -397,7 +394,6 @@ where
     {
         use DataPayloadInner::*;
         match &mut self.inner {
-            RcStruct(yoke) => yoke.with_mut(f),
             Owned(yoke) => yoke.with_mut(f),
             RcBuf(yoke) => yoke.with_mut(f),
         }
@@ -422,7 +418,6 @@ where
     pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
         use DataPayloadInner::*;
         match &self.inner {
-            RcStruct(yoke) => yoke.get(),
             Owned(yoke) => yoke.get(),
             RcBuf(yoke) => yoke.get(),
         }
@@ -487,9 +482,6 @@ where
     {
         use DataPayloadInner::*;
         match self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.project(f)),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.project(f)),
             },
@@ -544,9 +536,6 @@ where
     {
         use DataPayloadInner::*;
         match &self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.project_cloned(f)),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.project_cloned(f)),
             },
@@ -634,9 +623,6 @@ where
     {
         use DataPayloadInner::*;
         match self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.project_with_capture(capture, f)),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.project_with_capture(capture, f)),
             },
@@ -699,9 +685,6 @@ where
     {
         use DataPayloadInner::*;
         match &self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.project_cloned_with_capture(capture, f)),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.project_cloned_with_capture(capture, f)),
             },
@@ -797,9 +780,6 @@ where
     {
         use DataPayloadInner::*;
         Ok(match self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.try_project_with_capture(capture, f)?),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.try_project_with_capture(capture, f)?),
             },
@@ -866,9 +846,6 @@ where
     {
         use DataPayloadInner::*;
         Ok(match &self.inner {
-            RcStruct(yoke) => DataPayload {
-                inner: RcStruct(yoke.try_project_cloned_with_capture(capture, f)?),
-            },
             Owned(yoke) => DataPayload {
                 inner: Owned(yoke.try_project_cloned_with_capture(capture, f)?),
             },
