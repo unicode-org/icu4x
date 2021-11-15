@@ -96,6 +96,54 @@ where
     get_cp_map(provider, key::SCRIPT_V1)
 }
 
+/// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
+/// property. See [`East_Asian_Width`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, EastAsianWidth};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_east_asian_width(&provider).expect("The data should be valid!");
+/// let eaw = &payload.get().code_point_trie;
+///
+/// assert_eq!(eaw.get('ｱ' as u32), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
+/// assert_eq!(eaw.get('ア' as u32), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+pub fn get_east_asian_width<'data, D>(provider: &D) -> CodePointMapResult<'data, EastAsianWidth>
+where
+    D: DataProvider<'data, UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
+{
+    get_cp_map(provider, key::EAST_ASIAN_WIDTH_V1)
+}
+
+/// Return a [`CodePointTrie`] for the Line_Break Unicode enumerated
+/// property. See [`LineBreak`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, LineBreak};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_line_break(&provider).expect("The data should be valid!");
+/// let lb = &payload.get().code_point_trie;
+///
+/// assert_eq!(lb.get(')' as u32), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
+/// assert_eq!(lb.get('ぁ' as u32), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+pub fn get_line_break<'data, D>(provider: &D) -> CodePointMapResult<'data, LineBreak>
+where
+    D: DataProvider<'data, UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
+{
+    get_cp_map(provider, key::LINE_BREAK_V1)
+}
+
 /// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
 /// property. See [`GraphemeClusterBreak`].
 ///
