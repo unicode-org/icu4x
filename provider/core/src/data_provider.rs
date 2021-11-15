@@ -112,8 +112,7 @@ where
 /// several data stores ("carts"):
 ///
 /// 1. Fully-owned structured data ([`DataPayload::from_owned()`])
-/// 2. Partially-owned structured data in an [`Rc`] ([`DataPayload::from_partial_owned()`])
-/// 3. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
+/// 2. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
 ///
 /// The type of the data stored in [`DataPayload`], and the type of the structured data store
 /// (cart), is determined by the [`DataMarker`] type parameter.
@@ -221,48 +220,6 @@ fn test_clone_eq() {
     let p1 = DataPayload::<CowStrMarker>::from_static_str("Demo");
     let p2 = p1.clone();
     assert_eq!(p1, p2);
-}
-
-impl<M> DataPayload<M>
-where
-    M: DataMarker,
-{
-    /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use std::borrow::Cow;
-    /// use std::rc::Rc;
-    ///
-    /// let local_data = "example".to_string();
-    ///
-    /// let rc_struct = Rc::from(HelloWorldV1 {
-    ///     message: Cow::Owned(local_data),
-    /// });
-    ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::from_partial_owned(rc_struct.clone());
-    ///
-    /// assert_eq!(payload.get(), &*rc_struct);
-    /// ```
-    ///
-    /// [`Cart`]: crate::marker::DataMarker::Cart
-    #[inline]
-    pub fn from_partial_owned<T>(data: Rc<T>) -> Self
-    where
-        M::Yokeable: ZeroCopyFrom<T>,
-        T: 'static,
-    {
-        let yoke = unsafe {
-            // safe because we're not throwing away any actual data, simply type-erasing it
-            Yoke::attach_to_rc_cart(data).replace_cart(|c| c as ErasedRcCart)
-        };
-        Self {
-            inner: DataPayloadInner::RcStruct(yoke),
-        }
-    }
 }
 
 impl<M> DataPayload<M>
