@@ -883,7 +883,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     pub fn wrap_cart_in_box(self) -> Yoke<Y, Box<C>> {
         unsafe {
             // safe because the cart is preserved, just wrapped
-            self.replace_cart(|c| Box::new(c))
+            self.replace_cart(Box::new)
         }
     }
     /// Helper function allowing one to wrap the cart type in an `Rc<T>`,
@@ -894,7 +894,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     pub fn wrap_cart_in_rc(self) -> Yoke<Y, Rc<C>> {
         unsafe {
             // safe because the cart is preserved, just wrapped
-            self.replace_cart(|c| Rc::new(c))
+            self.replace_cart(Rc::new)
         }
     }
 }
