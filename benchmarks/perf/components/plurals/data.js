@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637010947540,
+  "lastUpdate": 1637012324045,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19277,6 +19277,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18754,
             "range": "± 1139",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ef6477796157315b35c2537441edbb7fff37cf9c",
+          "message": "Tooling fixes (#1298)",
+          "timestamp": "2021-11-15T13:30:36-08:00",
+          "tree_id": "2ecfba3ac3c89402fb640e8130493263c9bd7eaf",
+          "url": "https://github.com/unicode-org/icu4x/commit/ef6477796157315b35c2537441edbb7fff37cf9c"
+        },
+        "date": 1637012317378,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1271,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6226,
+            "range": "± 207",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23102,
+            "range": "± 1110",
             "unit": "ns/iter"
           }
         ]
