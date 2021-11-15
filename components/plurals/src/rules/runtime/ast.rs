@@ -371,7 +371,6 @@ unsafe impl VarULE for RelationULE {
         let len_new = (len - 5) / 8;
 
         // Keep this in sync with `RelationULE`
-        #[cfg(debug_assertions)]
         struct RelationULESized {
             _andor_polarity_operand: u8,
             _modulo: <u32 as AsULE>::ULE,
