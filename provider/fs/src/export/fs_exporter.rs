@@ -65,11 +65,11 @@ impl Drop for FilesystemExporter {
     }
 }
 
-impl<'data> DataExporter<'data, SerdeSeDataStructMarker> for FilesystemExporter {
+impl DataExporter<SerdeSeDataStructMarker> for FilesystemExporter {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        obj: DataPayload<'data, SerdeSeDataStructMarker>,
+        obj: DataPayload<SerdeSeDataStructMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());

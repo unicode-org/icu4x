@@ -21,7 +21,7 @@ struct PluralRulesTestData {
     many: Option<&'static str>,
 }
 
-impl From<&PluralRulesTestData> for PluralRulesV1<'_> {
+impl From<&PluralRulesTestData> for PluralRulesV1 {
     fn from(i: &PluralRulesTestData) -> Self {
         fn parse(i: &'static str) -> Rule {
             i.parse().expect("Failed to parse rule")
@@ -109,7 +109,7 @@ fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    type Provider<'data> = dyn DataProvider<'data, PluralRulesV1Marker>;
+    type Provider = dyn DataProvider<PluralRulesV1Marker>;
 
     assert!(matches!(
         Provider::load_payload(
