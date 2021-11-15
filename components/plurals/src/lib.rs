@@ -200,7 +200,7 @@ pub enum PluralCategory {
 impl PluralCategory {
     /// Returns an ordered iterator over variants of [`Plural Categories`].
     ///
-    /// Categories are returned in UTS 35 order.
+    /// Categories are returned in alphabetical order.
     ///
     /// # Examples
     ///
@@ -404,7 +404,7 @@ impl<'data> PluralRules<'data> {
     /// Returns all [`Plural Categories`] appropriate for a [`PluralRules`] object
     /// based on the [`LanguageIdentifier`] and [`PluralRuleType`].
     ///
-    /// The [`Plural Categories`] are returned in alphabetically sorted order.
+    /// The [`Plural Categories`] are returned in UTS 35 sorted order.
     ///
     /// The category [`PluralCategory::Other`] is always included.
     ///

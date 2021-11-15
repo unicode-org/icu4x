@@ -357,8 +357,9 @@ impl RelationULE {
 //     (achieved by `#[repr(packed)]` on a type that satisfies this invariant)
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
 //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
-//  5 The other ULE methods use the default impl.
-//  6. RelationULE byte equality is semantic equality.
+//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  6. The other VarULE methods use the default impl.
+//  7. RelationULE byte equality is semantic equality.
 unsafe impl VarULE for RelationULE {
     type Error = &'static str;
 
@@ -368,6 +369,16 @@ unsafe impl VarULE for RelationULE {
         let len = bytes.len();
         // subtract length of andor_polarity_operand and modulo and then convert between a slice of bytes and RangeOrValueULE
         let len_new = (len - 5) / 8;
+
+        // Keep this in sync with `RelationULE`
+        #[cfg(debug_assertions)]
+        struct RelationULESized {
+            _andor_polarity_operand: u8,
+            _modulo: <u32 as AsULE>::ULE,
+        }
+        debug_assert_eq!(core::mem::size_of::<RelationULESized>(), 5);
+        debug_assert_eq!(core::mem::size_of::<RangeOrValueULE>(), 8);
+
         // it's hard constructing custom DSTs, we fake a pointer/length construction
         // eventually we can use the Pointer::Metadata APIs when they stabilize
         let fake_slice = core::ptr::slice_from_raw_parts(ptr as *const RangeOrValueULE, len_new);
@@ -390,6 +401,10 @@ unsafe impl VarULE for RelationULE {
     }
 }
 
+// Safety
+//
+// the slices to the callback must, when concatenated,
+// are a valid instance of the RelationULE type.
 unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         let encoded =

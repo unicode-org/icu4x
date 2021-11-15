@@ -3,11 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid_macros::langid;
-use icu_plurals::provider::{self, PluralRulesV1};
-use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
-use icu_provider::prelude::*;
-use icu_provider::struct_provider::StructProvider;
+use icu_plurals::{
+    provider::{self, PluralRulesV1, PluralRulesV1Marker},
+    rules::runtime::ast::Rule,
+    PluralCategory, PluralRuleType, PluralRules,
+};
+use icu_provider::{prelude::*, struct_provider::StructProvider};
 use std::rc::Rc;
+use zerovec::VarZeroVec;
 
 #[test]
 fn test_plural_rules() {
@@ -18,6 +21,29 @@ fn test_plural_rules() {
     let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal).unwrap();
 
     assert_eq!(pr.select(5_usize), PluralCategory::Other);
+}
+
+#[test]
+fn test_static_provider_borrowed_rules() {
+    let provider = icu_testdata::get_static_provider();
+
+    let lid = langid!("en");
+
+    let rules: DataPayload<'_, PluralRulesV1Marker> = provider
+        .load_payload(&DataRequest {
+            resource_path: ResourcePath {
+                key: provider::key::CARDINAL_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: Some(lid),
+                },
+            },
+        })
+        .expect("Failed to load payload")
+        .take_payload()
+        .expect("Failed to retrieve payload");
+    let rules = rules.get();
+    assert!(matches!(rules.one, Some(Rule(VarZeroVec::Borrowed(_)))));
 }
 
 #[test]
