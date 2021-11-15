@@ -44,7 +44,7 @@ pub mod ffi {
     /// FFI version of `PluralRules`.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html) for more details.
     #[diplomat::opaque]
-    pub struct ICU4XPluralRules(PluralRules<'static>);
+    pub struct ICU4XPluralRules(PluralRules);
 
     impl ICU4XPluralRules {
         /// FFI version of `PluralRules::try_new()`.
@@ -74,7 +74,7 @@ pub mod ffi {
             ty: ICU4XPluralRuleType,
         ) -> ICU4XCreatePluralRulesResult
         where
-            D: DataProvider<'static, PluralRulesV1Marker> + ?Sized,
+            D: DataProvider<PluralRulesV1Marker> + ?Sized,
         {
             PluralRules::try_new(
                 locale.0.as_ref().clone(),

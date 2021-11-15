@@ -21,7 +21,7 @@ struct PluralRulesTestData {
     many: Option<&'static str>,
 }
 
-impl From<&PluralRulesTestData> for PluralRulesV1 {
+impl From<&PluralRulesTestData> for PluralRulesV1<'_> {
     fn from(i: &PluralRulesTestData) -> Self {
         fn parse(i: &'static str) -> Rule {
             i.parse().expect("Failed to parse rule")

@@ -4,12 +4,11 @@
 
 use icu_locid_macros::langid;
 use icu_plurals::{
-    provider::{self, PluralRulesV1, PluralRulesV1Marker},
+    provider::{self, PluralRulesV1Marker},
     rules::runtime::ast::Rule,
     PluralCategory, PluralRuleType, PluralRules,
 };
-use icu_provider::{prelude::*, struct_provider::StructProvider};
-use std::rc::Rc;
+use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
 #[test]
@@ -29,7 +28,7 @@ fn test_static_provider_borrowed_rules() {
 
     let lid = langid!("en");
 
-    let rules: DataPayload<'_, PluralRulesV1Marker> = provider
+    let rules: DataPayload<PluralRulesV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: provider::key::CARDINAL_V1,
