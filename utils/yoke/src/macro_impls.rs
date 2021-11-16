@@ -57,16 +57,6 @@ impl_copy_type!(i128);
 impl_copy_type!(char);
 impl_copy_type!(bool);
 
-unsafe impl<'a, T: Copy + 'static, const N: usize> Yokeable<'a> for [T; N] {
-    type Output = Self;
-    copy_yoke_impl!();
-}
-impl<T: Copy + 'static, const N: usize> ZeroCopyFrom<[T; N]> for [T; N] {
-    fn zero_copy_from(this: &Self) -> Self {
-        *this
-    }
-}
-
 // This is for when we're implementing Yoke on a complex type such that it's not
 // obvious to the compiler that the lifetime is covariant
 macro_rules! unsafe_complex_yoke_impl {
@@ -112,3 +102,42 @@ unsafe impl<'a, T1: 'static + for<'b> Yokeable<'b>, T2: 'static + for<'b> Yokeab
     type Output = (<T1 as Yokeable<'a>>::Output, <T2 as Yokeable<'a>>::Output);
     unsafe_complex_yoke_impl!();
 }
+
+unsafe impl<'a, T: Yokeable<'a>, const N: usize> Yokeable<'a> for [T; N] {
+    type Output = [<T as Yokeable<'a>>::Output; N];
+    unsafe_complex_yoke_impl!();
+}
+
+// This can be cleaned up once `[T; N]`::each_ref() is stabilized
+// https://github.com/rust-lang/rust/issues/76118
+macro_rules! array_zcf_impl {
+    ($n:expr; $($i:expr),+) => {
+        impl<C, T: ZeroCopyFrom<C>> ZeroCopyFrom<[C; $n]> for [T; $n] {
+            fn zero_copy_from<'b>(this: &'b [C; $n]) -> [<T as Yokeable<'b>>::Output; $n] {
+                [
+                    $(
+                        <T as ZeroCopyFrom<C>>::zero_copy_from(&this[$i])
+                    ),+
+
+                ]
+            }
+        }
+    }
+}
+
+array_zcf_impl!(1; 0);
+array_zcf_impl!(2; 0, 1);
+array_zcf_impl!(3; 0, 1, 2);
+array_zcf_impl!(4; 0, 1, 2, 3);
+array_zcf_impl!(5; 0, 1, 2, 3, 4);
+array_zcf_impl!(6; 0, 1, 2, 3, 4, 5);
+array_zcf_impl!(7; 0, 1, 2, 3, 4, 5, 6);
+array_zcf_impl!(8; 0, 1, 2, 3, 4, 5, 6, 7);
+array_zcf_impl!(9; 0, 1, 2, 3, 4, 5, 6, 7, 8);
+array_zcf_impl!(10; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+array_zcf_impl!(11; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+array_zcf_impl!(12; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+array_zcf_impl!(13; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+array_zcf_impl!(14; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+array_zcf_impl!(15; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
+array_zcf_impl!(16; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
