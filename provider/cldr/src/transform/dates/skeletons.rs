@@ -29,7 +29,7 @@ impl TryFrom<&dyn CldrPaths> for DateSkeletonPatternsProvider {
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let mut data = vec![];
 
-        let path = cldr_paths.cldr_dates()?.join("main");
+        let path = cldr_paths.cldr_dates("gregorian")?.join("main");
 
         let locale_dirs = get_langid_subdirectories(&path)?;
 

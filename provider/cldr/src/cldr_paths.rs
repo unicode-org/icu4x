@@ -15,7 +15,7 @@ pub trait CldrPaths: std::fmt::Debug {
 
     /// Path to checkout of cldr-dates:
     /// <https://github.com/unicode-cldr/cldr-dates-full>
-    fn cldr_dates(&self) -> Result<PathBuf, Error>;
+    fn cldr_dates_gregorian(&self) -> Result<PathBuf, Error>;
 
     /// Path to checkout of cldr-numbers:
     /// <https://github.com/unicode-cldr/cldr-numbers-full>
@@ -24,6 +24,24 @@ pub trait CldrPaths: std::fmt::Debug {
     /// Path to checkout of cldr-misc
     /// <https://github.com/unicode-cldr/cldr-misc-full>
     fn cldr_misc(&self) -> Result<PathBuf, Error>;
+
+    /// Path to checkout of CLDR dates repository for given calendar
+    fn cldr_dates(&self, cal: &str) -> Result<PathBuf, Error> {
+        if cal == "gregorian" {
+            return self.cldr_dates_gregorian();
+        } else {
+            return Err(Error::Custom(format!("Unsupported calendar {}", cal), None));
+        }
+    }
+
+    fn cldr_dates_all(&self) -> Vec<(&'static str, PathBuf)> {
+        let mut vec = Vec::new();
+        if let Ok(greg) = self.cldr_dates_gregorian() {
+            vec.push(("gregorian", greg));
+        }
+        // more calendars here
+        vec
+    }
 }
 
 /// An implementation of [`CldrPaths`] for multiple separate local CLDR JSON directories per
@@ -46,7 +64,7 @@ pub trait CldrPaths: std::fmt::Debug {
 #[derive(Debug, PartialEq)]
 pub struct CldrPathsLocal {
     pub cldr_core: Result<PathBuf, MissingSourceError>,
-    pub cldr_dates: Result<PathBuf, MissingSourceError>,
+    pub cldr_dates_gregorian: Result<PathBuf, MissingSourceError>,
     pub cldr_numbers: Result<PathBuf, MissingSourceError>,
     pub cldr_misc: Result<PathBuf, MissingSourceError>,
 }
@@ -55,8 +73,8 @@ impl CldrPaths for CldrPathsLocal {
     fn cldr_core(&self) -> Result<PathBuf, Error> {
         self.cldr_core.clone().map_err(|e| e.into())
     }
-    fn cldr_dates(&self) -> Result<PathBuf, Error> {
-        self.cldr_dates.clone().map_err(|e| e.into())
+    fn cldr_dates_gregorian(&self) -> Result<PathBuf, Error> {
+        self.cldr_dates_gregorian.clone().map_err(|e| e.into())
     }
     fn cldr_numbers(&self) -> Result<PathBuf, Error> {
         self.cldr_numbers.clone().map_err(|e| e.into())
@@ -70,7 +88,7 @@ impl Default for CldrPathsLocal {
     fn default() -> Self {
         Self {
             cldr_core: Err(MissingSourceError { src: "cldr-core" }),
-            cldr_dates: Err(MissingSourceError { src: "cldr-dates" }),
+            cldr_dates_gregorian: Err(MissingSourceError { src: "cldr-dates" }),
             cldr_numbers: Err(MissingSourceError {
                 src: "cldr-numbers",
             }),
@@ -107,7 +125,7 @@ impl CldrPaths for CldrPathsAllInOne {
     fn cldr_core(&self) -> Result<PathBuf, Error> {
         Ok(self.cldr_json_root.clone().join("cldr-core"))
     }
-    fn cldr_dates(&self) -> Result<PathBuf, Error> {
+    fn cldr_dates_gregorian(&self) -> Result<PathBuf, Error> {
         Ok(self
             .cldr_json_root
             .clone()
