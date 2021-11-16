@@ -12,6 +12,7 @@ pub(self) mod cldr_json {
     use icu_locid::LanguageIdentifier;
     use serde::Deserialize;
     use std::borrow::Cow;
+    use std::collections::HashMap;
 
     macro_rules! symbols {
         ($name: ident, $([$alias: expr, $element: ident, $ty: ty]),+ $(,)?) => {
@@ -169,13 +170,8 @@ pub(self) mod cldr_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Calendars {
-        pub gregorian: GregoryDates,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
     pub struct Dates {
-        pub calendars: Calendars,
+        pub calendars: HashMap<String, GregoryDates>,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]

@@ -17,7 +17,7 @@ use std::convert::TryFrom;
 #[derive(PartialEq, Debug)]
 pub struct CommonDateProvider {
     // map of calendars to their locale-data mappings
-    data: LiteMap<&'static str, LiteMap<LanguageIdentifier, cldr_json::LangDates>>,
+    data: LiteMap<&'static str, LiteMap<LanguageIdentifier, cldr_json::GregoryDates>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
@@ -39,7 +39,13 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 
                 let mut resource: cldr_json::Resource =
                     serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-                for (k, v) in resource.main.0.drain(..) {
+                for (k, mut v) in resource.main.0.drain(..) {
+                    let v = v.dates.calendars.remove(cldr_cal).ok_or_else(|| {
+                        Error::Custom(
+                            format!("{} does not have {} field", cal_file, cldr_cal),
+                            None,
+                        )
+                    })?;
                     cal_data.insert(k, v);
                 }
             }
@@ -51,7 +57,10 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 }
 
 impl CommonDateProvider {
-    pub fn dates_for<'a>(&'a self, req: &DataRequest) -> Result<&'a cldr_json::Dates, DataError> {
+    pub fn dates_for<'a>(
+        &'a self,
+        req: &DataRequest,
+    ) -> Result<&'a cldr_json::GregoryDates, DataError> {
         let langid = req.try_langid()?;
         let variant = req
             .resource_path
@@ -64,7 +73,7 @@ impl CommonDateProvider {
             .get(&**variant)
             .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
         match map.get(langid) {
-            Some(date) => Ok(&date.dates),
+            Some(date) => Ok(date),
             None => Err(DataError::MissingResourceOptions(req.clone())),
         }
     }

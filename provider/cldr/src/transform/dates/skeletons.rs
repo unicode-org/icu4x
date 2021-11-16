@@ -48,7 +48,7 @@ impl DataProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatter
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(DataPayload::from_owned(
-                calendar::DateSkeletonPatternsV1::from(&dates.calendars.gregorian.datetime_formats),
+                calendar::DateSkeletonPatternsV1::from(&dates.datetime_formats),
             )),
         })
     }

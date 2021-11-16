@@ -68,12 +68,12 @@ impl IterableDataProviderCore for DateSymbolsProvider {
     }
 }
 
-impl From<&cldr_json::Dates> for calendar::DateSymbolsV1 {
-    fn from(other: &cldr_json::Dates) -> Self {
+impl From<&cldr_json::GregoryDates> for calendar::DateSymbolsV1 {
+    fn from(other: &cldr_json::GregoryDates) -> Self {
         Self {
-            months: (&other.calendars.gregorian.months).into(),
-            weekdays: (&other.calendars.gregorian.days).into(),
-            day_periods: (&other.calendars.gregorian.day_periods).into(),
+            months: (&other.months).into(),
+            weekdays: (&other.days).into(),
+            day_periods: (&other.day_periods).into(),
         }
     }
 }

@@ -153,18 +153,16 @@ impl From<&cldr_json::DateTimeFormats> for calendar::patterns::GenericLengthPatt
     }
 }
 
-impl From<&cldr_json::Dates> for calendar::DatePatternsV1<'_> {
-    fn from(other: &cldr_json::Dates) -> Self {
-        let length_combinations_v1 = calendar::patterns::GenericLengthPatternsV1::from(
-            &other.calendars.gregorian.datetime_formats,
-        );
-        let skeletons_v1 =
-            calendar::DateSkeletonPatternsV1::from(&other.calendars.gregorian.datetime_formats);
+impl From<&cldr_json::GregoryDates> for calendar::DatePatternsV1<'_> {
+    fn from(other: &cldr_json::GregoryDates) -> Self {
+        let length_combinations_v1 =
+            calendar::patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
+        let skeletons_v1 = calendar::DateSkeletonPatternsV1::from(&other.datetime_formats);
 
-        let pattern_str_full = other.calendars.gregorian.time_formats.full.get_pattern();
-        let pattern_str_long = other.calendars.gregorian.time_formats.long.get_pattern();
-        let pattern_str_medium = other.calendars.gregorian.time_formats.medium.get_pattern();
-        let pattern_str_short = other.calendars.gregorian.time_formats.short.get_pattern();
+        let pattern_str_full = other.time_formats.full.get_pattern();
+        let pattern_str_long = other.time_formats.long.get_pattern();
+        let pattern_str_medium = other.time_formats.medium.get_pattern();
+        let pattern_str_short = other.time_formats.short.get_pattern();
 
         let pattern_full = pattern_str_full
             .parse()
@@ -207,7 +205,7 @@ impl From<&cldr_json::Dates> for calendar::DatePatternsV1<'_> {
         };
 
         let (time_h11_h12, time_h23_h24) = {
-            let time = (&other.calendars.gregorian.time_formats).into();
+            let time = (&other.time_formats).into();
             let alt_time = calendar::patterns::LengthPatternsV1 {
                 full: alt_hour_cycle
                     .apply_on_pattern(
@@ -258,7 +256,7 @@ impl From<&cldr_json::Dates> for calendar::DatePatternsV1<'_> {
         };
 
         Self {
-            date: (&other.calendars.gregorian.date_formats).into(),
+            date: (&other.date_formats).into(),
             time_h11_h12,
             time_h23_h24,
             preferred_hour_cycle,
