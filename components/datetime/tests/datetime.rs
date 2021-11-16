@@ -173,7 +173,7 @@ fn test_dayperiod_patterns() {
                 resource_path: ResourcePath {
                     key: GREGORY_DATE_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: None,
+                        variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -189,7 +189,7 @@ fn test_dayperiod_patterns() {
                 resource_path: ResourcePath {
                     key: GREGORY_DATE_SYMBOLS_V1,
                     options: ResourceOptions {
-                        variant: None,
+                        variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -202,7 +202,7 @@ fn test_dayperiod_patterns() {
                 resource_path: ResourcePath {
                     key: GREGORY_DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: None,
+                        variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -279,7 +279,7 @@ fn test_time_zone_patterns() {
                 resource_path: ResourcePath {
                     key: GREGORY_DATE_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: None,
+                        variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -292,7 +292,7 @@ fn test_time_zone_patterns() {
                 resource_path: ResourcePath {
                     key: GREGORY_DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: None,
+                        variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -305,7 +305,7 @@ fn test_time_zone_patterns() {
                 resource_path: ResourcePath {
                     key: GREGORY_DATE_SYMBOLS_V1,
                     options: ResourceOptions {
-                        variant: None,
+                        variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
                     },
                 },
