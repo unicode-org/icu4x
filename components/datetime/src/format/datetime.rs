@@ -10,8 +10,8 @@ use crate::pattern::{
     PatternItem,
 };
 use crate::provider;
-use crate::provider::date_time::DateTimeSymbols;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
+use crate::provider::date_time::DateTimeSymbols;
 
 use alloc::string::ToString;
 use core::fmt;
