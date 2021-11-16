@@ -14,7 +14,7 @@ use crate::{
     format::time_zone::{self, FormattedTimeZone},
     pattern::{PatternError, PatternItem},
     provider::{
-        self, gregory::patterns::PatternPluralsFromPatternsV1Marker,
+        self, calendar::patterns::PatternPluralsFromPatternsV1Marker,
         time_zones::TimeZoneFormatsV1Marker,
     },
 };

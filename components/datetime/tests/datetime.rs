@@ -11,7 +11,7 @@ use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
     provider::{
-        gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
         key::{DATE_PATTERNS_V1, DATE_SKELETON_PATTERNS_V1, DATE_SYMBOLS_V1},
     },
     DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,

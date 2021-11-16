@@ -24,7 +24,7 @@ mod test {
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
         provider::{
-            gregory::DatePatternsV1Marker, gregory::DateSkeletonPatternsV1Marker,
+            calendar::DatePatternsV1Marker, calendar::DateSkeletonPatternsV1Marker,
             key::DATE_PATTERNS_V1, key::DATE_SKELETON_PATTERNS_V1,
         },
     };

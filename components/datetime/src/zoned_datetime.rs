@@ -18,7 +18,7 @@ use crate::{
     pattern::runtime::PatternPlurals,
     provider::{
         self,
-        gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     },
     time_zone::TimeZoneFormat,
     DateTimeFormatError,

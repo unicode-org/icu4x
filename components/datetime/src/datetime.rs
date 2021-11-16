@@ -8,8 +8,8 @@
 use crate::{
     format::datetime,
     options::DateTimeFormatOptions,
-    provider::gregory::patterns::PatternPluralsFromPatternsV1Marker,
-    provider::gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
+    provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
 };
 use alloc::string::String;
 use icu_locid::Locale;

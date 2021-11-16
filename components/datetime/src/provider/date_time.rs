@@ -8,9 +8,9 @@ use crate::fields;
 use crate::options::{components, length, preferences, DateTimeFormatOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
-use crate::provider::gregory::patterns::PatternPluralsV1;
-use crate::provider::gregory::DatePatternsV1;
-use crate::provider::gregory::{
+use crate::provider::calendar::patterns::PatternPluralsV1;
+use crate::provider::calendar::DatePatternsV1;
+use crate::provider::calendar::{
     patterns::PatternPluralsFromPatternsV1Marker, DatePatternsV1Marker,
     DateSkeletonPatternsV1Marker,
 };
@@ -271,7 +271,7 @@ pub trait DateTimeSymbols {
     ) -> &Cow<str>;
 }
 
-impl DateTimeSymbols for provider::gregory::DateSymbolsV1 {
+impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,

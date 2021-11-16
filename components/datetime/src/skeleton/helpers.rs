@@ -12,7 +12,7 @@ use crate::{
         runtime::{Pattern, PatternPlurals},
         PatternItem,
     },
-    provider::gregory::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
+    provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1},
 };
 
 // The following scalar values are for testing the suitability of a skeleton's field for the
