@@ -156,7 +156,7 @@ pub(self) mod cldr_json {
     /// e.g.
     /// https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct GregoryDates {
+    pub struct Dates {
         pub months: months::Contexts,
         pub days: days::Contexts,
         #[serde(rename = "dayPeriods")]
@@ -170,13 +170,13 @@ pub(self) mod cldr_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Dates {
-        pub calendars: HashMap<String, GregoryDates>,
+    pub struct DatesCalendars {
+        pub calendars: HashMap<String, Dates>,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct LangDates {
-        pub dates: Dates,
+        pub dates: DatesCalendars,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]

@@ -153,8 +153,8 @@ impl From<&cldr_json::DateTimeFormats> for calendar::patterns::GenericLengthPatt
     }
 }
 
-impl From<&cldr_json::GregoryDates> for calendar::DatePatternsV1<'_> {
-    fn from(other: &cldr_json::GregoryDates) -> Self {
+impl From<&cldr_json::Dates> for calendar::DatePatternsV1<'_> {
+    fn from(other: &cldr_json::Dates) -> Self {
         let length_combinations_v1 =
             calendar::patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
         let skeletons_v1 = calendar::DateSkeletonPatternsV1::from(&other.datetime_formats);

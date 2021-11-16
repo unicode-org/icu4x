@@ -17,7 +17,7 @@ use std::convert::TryFrom;
 #[derive(PartialEq, Debug)]
 pub struct CommonDateProvider {
     // map of calendars to their locale-data mappings
-    data: LiteMap<&'static str, LiteMap<LanguageIdentifier, cldr_json::GregoryDates>>,
+    data: LiteMap<&'static str, LiteMap<LanguageIdentifier, cldr_json::Dates>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
@@ -60,7 +60,7 @@ impl CommonDateProvider {
     pub fn dates_for<'a>(
         &'a self,
         req: &DataRequest,
-    ) -> Result<&'a cldr_json::GregoryDates, DataError> {
+    ) -> Result<&'a cldr_json::Dates, DataError> {
         let langid = req.try_langid()?;
         let variant = req
             .resource_path
