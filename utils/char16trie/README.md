@@ -1,4 +1,4 @@
-# icu_char16trie [![crates.io](http://meritbadge.herokuapp.com/icu_char16trie)](https://crates.io/crates/icu_char16trie)
+# icu_char16trie [![crates.io](https://img.shields.io/crates/v/icu_char16trie)](https://crates.io/crates/icu_char16trie)
 
 ## icu_char16trie [![crates.io](http://meritbadge.herokuapp.com/icu_char16trie)](https://crates.io/crates/icu_char16trie)
 
