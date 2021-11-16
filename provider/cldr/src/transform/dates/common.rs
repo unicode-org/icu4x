@@ -10,13 +10,14 @@ use crate::CldrPaths;
 use icu_locid::LanguageIdentifier;
 
 use icu_provider::prelude::*;
-use std::convert::TryFrom;
 use litemap::LiteMap;
+use std::convert::TryFrom;
 
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
 pub struct CommonDateProvider {
-    data: LiteMap<LanguageIdentifier, cldr_json::LangDates>,
+    // map of calendars to their locale-data mappings
+    data: LiteMap<&'static str, LiteMap<LanguageIdentifier, cldr_json::LangDates>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
@@ -24,18 +25,25 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let mut data = LiteMap::new();
 
-        let path = cldr_paths.cldr_dates("gregorian")?.join("main");
+        // Raise an error if Gregorian paths are not available
+        let _ = cldr_paths.cldr_dates("gregorian")?;
 
-        let locale_dirs = get_langid_subdirectories(&path)?;
+        for (calendar, path) in cldr_paths.cldr_dates_all() {
+            let mut cal_data = LiteMap::new();
+            let path = path.join("main");
+            let locale_dirs = get_langid_subdirectories(&path)?;
 
-        for dir in locale_dirs {
-            let path = dir.join("ca-gregorian.json");
+            let cal_file = format!("ca-{}.json", calendar);
+            for dir in locale_dirs {
+                let path = dir.join(&cal_file);
 
-            let mut resource: cldr_json::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            for (k, v) in resource.main.0.drain(..) {
-                data.insert(k, v);
+                let mut resource: cldr_json::Resource =
+                    serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
+                for (k, v) in resource.main.0.drain(..) {
+                    cal_data.insert(k, v);
+                }
             }
+            data.insert(calendar, cal_data);
         }
 
         Ok(Self { data })
@@ -45,7 +53,17 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 impl CommonDateProvider {
     pub fn dates_for<'a>(&'a self, req: &DataRequest) -> Result<&'a cldr_json::Dates, DataError> {
         let langid = req.try_langid()?;
-        match self.data.get(&langid) {
+        let variant = req
+            .resource_path
+            .options
+            .variant
+            .as_ref()
+            .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
+        let map = self
+            .data
+            .get(&**variant)
+            .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
+        match map.get(&langid) {
             Some(date) => Ok(&date.dates),
             None => Err(DataError::MissingResourceOptions(req.clone())),
         }
@@ -61,10 +79,12 @@ impl CommonDateProvider {
         let list: Vec<ResourceOptions> = self
             .data
             .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                // TODO: Avoid the clone
-                langid: Some(l.clone()),
+            .flat_map(|(cal, map)| {
+                map.iter().map(move |(l, _)| ResourceOptions {
+                    variant: Some((*cal).into()),
+                    // TODO: Avoid the clone
+                    langid: Some(l.clone()),
+                })
             })
             .collect();
         Ok(Box::new(list.into_iter()))
