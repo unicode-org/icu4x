@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::cldr_json;
+use super::common::CommonDateProvider;
 use crate::error::Error;
-use crate::reader::{get_langid_subdirectories, open_reader};
+
 use crate::CldrPaths;
 use icu_datetime::provider::*;
-use icu_locid::LanguageIdentifier;
+
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -20,28 +21,12 @@ pub const ALL_KEYS: [ResourceKey; 1] = [
 
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
-pub struct DateSymbolsProvider {
-    data: Vec<(LanguageIdentifier, cldr_json::LangDates)>,
-}
+pub struct DateSymbolsProvider(CommonDateProvider);
 
 impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = vec![];
-
-        let path = cldr_paths.cldr_dates("gregorian")?.join("main");
-
-        let locale_dirs = get_langid_subdirectories(&path)?;
-
-        for dir in locale_dirs {
-            let path = dir.join("ca-gregorian.json");
-
-            let mut resource: cldr_json::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.append(&mut resource.main.0);
-        }
-
-        Ok(Self { data })
+        CommonDateProvider::try_from(cldr_paths).map(DateSymbolsProvider)
     }
 }
 
@@ -57,11 +42,7 @@ impl DataProvider<gregory::DateSymbolsV1Marker> for DateSymbolsProvider {
         req: &DataRequest,
     ) -> Result<DataResponse<gregory::DateSymbolsV1Marker>, DataError> {
         DateSymbolsProvider::supports_key(&req.resource_path.key)?;
-        let langid = req.try_langid()?;
-        let dates = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
-            Ok(idx) => &self.data[idx].1.dates,
-            Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
-        };
+        let dates = self.0.dates_for(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
@@ -79,18 +60,9 @@ impl IterableDataProviderCore for DateSymbolsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                // TODO: Avoid the clone
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+        self.0.supported_options_for_key(resc_key)
     }
 }
 
