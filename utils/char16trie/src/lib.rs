@@ -30,7 +30,7 @@
 //!     data: ZeroVec::from_slice(trie_data.as_slice()),
 //! };
 //!
-//! let mut itor = Char16TrieIterator::new(trie.data.as_slice(), 0);
+//! let mut itor = Char16TrieIterator::new(trie.data.as_slice());
 //! let res = itor.next('a' as i32);
 //! assert_eq!(res, TrieResult::Intermediate(1));
 //! let res = itor.next('b' as i32);
@@ -38,6 +38,8 @@
 //! let res = itor.next('c' as i32);
 //! assert_eq!(res, TrieResult::NoMatch);
 //! ```
+//!
+//! [`ICU4X`]: ../icu/index.html
 
 #![no_std]
 

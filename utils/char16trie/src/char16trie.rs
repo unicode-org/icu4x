@@ -128,9 +128,8 @@ pub struct Char16TrieIterator<'a> {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TrieResult {
     /// The input unit(s) did not continue a matching string.
-    /// Once current()/next() return TrieResult::NoMatch,
-    /// all further calls to current()/next() will also return
-    /// TrieResult::NoMatch.
+    /// Once next() return TrieResult::NoMatch, all further calls to next()
+    /// will also return TrieResult::NoMatch.
     NoMatch,
     /// The input unit(s) matched a string but there is no value for the string
     /// so far.  (It is a prefix of a longer string.)
@@ -146,19 +145,37 @@ pub enum TrieResult {
 }
 
 impl<'a> Char16TrieIterator<'a> {
-    pub fn new(trie: &'a [<u16 as zerovec::ule::AsULE>::ULE], offset: usize) -> Self {
+    /// Returns a new [`Char16Iterator`] backed by borrowed data for the `trie` array
+    pub fn new(trie: &'a [<u16 as zerovec::ule::AsULE>::ULE]) -> Self {
         Self {
             trie,
-            pos: Some(offset / 2),
+            pos: Some(0),
             remaining_match_length: None,
         }
     }
 
-    fn get(&self, pos: usize) -> u16 {
-        u16::from_unaligned(self.trie[pos])
-    }
-
-    // Traverses the trie from the current state for this input char.
+    /// Traverses the trie from the current state for this input char.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_char16trie::char16trie::{Char16Trie, Char16TrieIterator, TrieResult};
+    /// use zerovec::ZeroVec;
+    ///
+    /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
+    /// let trie_data = vec![48, 97, 176, 98, 32868];
+    /// let trie = Char16Trie {
+    ///     data: ZeroVec::from_slice(trie_data.as_slice()),
+    /// };
+    ///
+    /// let mut itor = Char16TrieIterator::new(trie.data.as_slice());
+    /// let res = itor.next('a' as i32);
+    /// assert_eq!(res, TrieResult::Intermediate(1));
+    /// let res = itor.next('b' as i32);
+    /// assert_eq!(res, TrieResult::FinalValue(100));
+    /// let res = itor.next('c' as i32);
+    /// assert_eq!(res, TrieResult::NoMatch);
+    /// ```
     pub fn next(&mut self, c: i32) -> TrieResult {
         if self.pos.is_none() {
             return TrieResult::NoMatch;
@@ -185,6 +202,10 @@ impl<'a> Char16TrieIterator<'a> {
         } else {
             self.next_impl(pos, c)
         }
+    }
+
+    fn get(&self, pos: usize) -> u16 {
+        u16::from_unaligned(self.trie[pos])
     }
 
     fn branch_next(&mut self, pos: usize, length: usize, in_unit: i32) -> TrieResult {
