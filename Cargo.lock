@@ -1150,8 +1150,10 @@ dependencies = [
  "formatted_string_builder",
  "icu_locid",
  "icu_provider",
+ "postcard",
  "regex",
  "serde",
+ "serde_json",
  "zerovec",
 ]
 
