@@ -63,7 +63,7 @@ impl CommonDateProvider {
             .data
             .get(&**variant)
             .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
-        match map.get(&langid) {
+        match map.get(langid) {
             Some(date) => Ok(&date.dates),
             None => Err(DataError::MissingResourceOptions(req.clone())),
         }

@@ -28,7 +28,7 @@ pub trait CldrPaths: std::fmt::Debug {
     /// Path to checkout of CLDR dates repository for given calendar
     fn cldr_dates(&self, cal: &str) -> Result<PathBuf, Error> {
         if cal == "gregorian" {
-            return self.cldr_dates_gregorian();
+            self.cldr_dates_gregorian()
         } else {
             return Err(Error::Custom(format!("Unsupported calendar {}", cal), None));
         }
