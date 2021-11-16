@@ -25,7 +25,7 @@ mod test {
         options::components,
         provider::{
             gregory::DatePatternsV1Marker, gregory::DateSkeletonPatternsV1Marker,
-            key::GREGORY_DATE_PATTERNS_V1, key::GREGORY_DATE_SKELETON_PATTERNS_V1,
+            key::DATE_PATTERNS_V1, key::DATE_SKELETON_PATTERNS_V1,
         },
     };
     use core::convert::TryFrom;
@@ -44,7 +44,7 @@ mod test {
         let patterns = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_DATE_PATTERNS_V1,
+                    key: DATE_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
@@ -57,7 +57,7 @@ mod test {
         let skeletons = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_DATE_SKELETON_PATTERNS_V1,
+                    key: DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: Some("gregorian".into()),
                         langid: Some(langid),

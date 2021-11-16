@@ -16,7 +16,7 @@ use std::convert::TryFrom;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::GREGORY_DATE_SKELETON_PATTERNS_V1, //
+    key::DATE_SKELETON_PATTERNS_V1, //
 ];
 
 /// A data provider reading from CLDR JSON dates files.
@@ -32,7 +32,7 @@ impl TryFrom<&dyn CldrPaths> for DateSkeletonPatternsProvider {
 
 impl KeyedDataProvider for DateSkeletonPatternsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::GREGORY_DATE_SKELETON_PATTERNS_V1.match_key(*resc_key)
+        key::DATE_SKELETON_PATTERNS_V1.match_key(*resc_key)
     }
 }
 
@@ -160,7 +160,7 @@ fn test_datetime_skeletons() {
     let skeletons: DataPayload<gregory::DateSkeletonPatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: key::GREGORY_DATE_SKELETON_PATTERNS_V1,
+                key: key::DATE_SKELETON_PATTERNS_V1,
                 options: ResourceOptions {
                     variant: Some("gregorian".into()),
                     langid: Some(langid!("fil")),

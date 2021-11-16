@@ -32,7 +32,7 @@ where
     let data = data_provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: provider::key::GREGORY_DATE_PATTERNS_V1,
+                key: provider::key::DATE_PATTERNS_V1,
                 options: ResourceOptions {
                     variant: Some("gregorian".into()),
                     langid: Some(locale.clone().into()),
@@ -53,7 +53,7 @@ where
     let data = data_provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: provider::key::GREGORY_DATE_SKELETON_PATTERNS_V1,
+                key: provider::key::DATE_SKELETON_PATTERNS_V1,
                 options: ResourceOptions {
                     variant: Some("gregorian".into()),
                     langid: Some(locale.clone().into()),

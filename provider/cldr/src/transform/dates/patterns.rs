@@ -17,7 +17,7 @@ use std::convert::TryFrom;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::GREGORY_DATE_PATTERNS_V1, //
+    key::DATE_PATTERNS_V1, //
 ];
 
 /// A data provider reading from CLDR JSON dates files.
@@ -33,7 +33,7 @@ impl TryFrom<&dyn CldrPaths> for DatePatternsProvider {
 
 impl KeyedDataProvider for DatePatternsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::GREGORY_DATE_PATTERNS_V1.match_key(*resc_key)
+        key::DATE_PATTERNS_V1.match_key(*resc_key)
     }
 }
 
@@ -278,7 +278,7 @@ fn test_basic() {
     let cs_dates: DataPayload<gregory::DatePatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: key::GREGORY_DATE_PATTERNS_V1,
+                key: key::DATE_PATTERNS_V1,
                 options: ResourceOptions {
                     variant: Some("gregorian".into()),
                     langid: Some(langid!("cs")),
@@ -303,7 +303,7 @@ fn test_with_numbering_system() {
     let cs_dates: DataPayload<gregory::DatePatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: key::GREGORY_DATE_PATTERNS_V1,
+                key: key::DATE_PATTERNS_V1,
                 options: ResourceOptions {
                     variant: Some("gregorian".into()),
                     langid: Some(langid!("haw")),

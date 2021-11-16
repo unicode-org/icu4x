@@ -26,14 +26,13 @@ pub mod key {
     use icu_provider::{resource_key, ResourceKey};
 
     /// A [`ResourceKey`] to [`gregory::DatePatternsV1`].
-    pub const GREGORY_DATE_PATTERNS_V1: ResourceKey = resource_key!(DateTime, "lengths", 1);
+    pub const DATE_PATTERNS_V1: ResourceKey = resource_key!(DateTime, "lengths", 1);
 
     /// A [`ResourceKey`] to [`gregory::DateSkeletonPatternsV1`].
-    pub const GREGORY_DATE_SKELETON_PATTERNS_V1: ResourceKey =
-        resource_key!(DateTime, "skeletons", 1);
+    pub const DATE_SKELETON_PATTERNS_V1: ResourceKey = resource_key!(DateTime, "skeletons", 1);
 
     /// A [`ResourceKey`] to [`gregory::DateSymbolsV1`]
-    pub const GREGORY_DATE_SYMBOLS_V1: ResourceKey = resource_key!(DateTime, "symbols", 1);
+    pub const DATE_SYMBOLS_V1: ResourceKey = resource_key!(DateTime, "symbols", 1);
 
     /// A [`ResourceKey`] to [`time_zones::TimeZoneFormatsV1`].
     pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(TimeZone, "formats", 1);

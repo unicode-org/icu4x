@@ -12,9 +12,7 @@ use icu_datetime::{
     pattern::runtime::Pattern,
     provider::{
         gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
-        key::{
-            GREGORY_DATE_PATTERNS_V1, GREGORY_DATE_SKELETON_PATTERNS_V1, GREGORY_DATE_SYMBOLS_V1,
-        },
+        key::{DATE_PATTERNS_V1, DATE_SKELETON_PATTERNS_V1, DATE_SYMBOLS_V1},
     },
     DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
@@ -171,7 +169,7 @@ fn test_dayperiod_patterns() {
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_DATE_PATTERNS_V1,
+                    key: DATE_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
@@ -187,7 +185,7 @@ fn test_dayperiod_patterns() {
         let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_DATE_SYMBOLS_V1,
+                    key: DATE_SYMBOLS_V1,
                     options: ResourceOptions {
                         variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
@@ -200,7 +198,7 @@ fn test_dayperiod_patterns() {
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_DATE_SKELETON_PATTERNS_V1,
+                    key: DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
@@ -223,15 +221,15 @@ fn test_dayperiod_patterns() {
                         });
                         let local_provider = MultiKeyStructProvider {
                             symbols: StructProvider {
-                                key: GREGORY_DATE_SYMBOLS_V1,
+                                key: DATE_SYMBOLS_V1,
                                 data: symbols_data.clone(),
                             },
                             skeletons: StructProvider {
-                                key: GREGORY_DATE_SKELETON_PATTERNS_V1,
+                                key: DATE_SKELETON_PATTERNS_V1,
                                 data: skeleton_data.clone(),
                             },
                             patterns: StructProvider {
-                                key: GREGORY_DATE_PATTERNS_V1,
+                                key: DATE_PATTERNS_V1,
                                 data: patterns_data.clone(),
                             },
                         };
@@ -277,7 +275,7 @@ fn test_time_zone_patterns() {
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_DATE_PATTERNS_V1,
+                    key: DATE_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
@@ -290,7 +288,7 @@ fn test_time_zone_patterns() {
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_DATE_SKELETON_PATTERNS_V1,
+                    key: DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
@@ -303,7 +301,7 @@ fn test_time_zone_patterns() {
         let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_DATE_SYMBOLS_V1,
+                    key: DATE_SYMBOLS_V1,
                     options: ResourceOptions {
                         variant: Some("gregorian".into()),
                         langid: Some(langid.clone()),
@@ -328,15 +326,15 @@ fn test_time_zone_patterns() {
                 });
                 let local_provider = MultiKeyStructProvider {
                     symbols: StructProvider {
-                        key: GREGORY_DATE_SYMBOLS_V1,
+                        key: DATE_SYMBOLS_V1,
                         data: symbols_data.clone(),
                     },
                     skeletons: StructProvider {
-                        key: GREGORY_DATE_SKELETON_PATTERNS_V1,
+                        key: DATE_SKELETON_PATTERNS_V1,
                         data: skeleton_data.clone(),
                     },
                     patterns: StructProvider {
-                        key: GREGORY_DATE_PATTERNS_V1,
+                        key: DATE_PATTERNS_V1,
                         data: patterns_data.clone(),
                     },
                 };

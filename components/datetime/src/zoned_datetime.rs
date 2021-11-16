@@ -144,7 +144,7 @@ impl ZonedDateTimeFormat {
                 date_provider
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {
-                            key: provider::key::GREGORY_DATE_SYMBOLS_V1,
+                            key: provider::key::DATE_SYMBOLS_V1,
                             options: ResourceOptions {
                                 variant: Some("gregorian".into()),
                                 langid: Some(langid),
