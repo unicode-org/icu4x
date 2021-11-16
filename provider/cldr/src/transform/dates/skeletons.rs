@@ -36,11 +36,11 @@ impl KeyedDataProvider for DateSkeletonPatternsProvider {
     }
 }
 
-impl DataProvider<gregory::DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
+impl DataProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<gregory::DateSkeletonPatternsV1Marker>, DataError> {
+    ) -> Result<DataResponse<calendar::DateSkeletonPatternsV1Marker>, DataError> {
         DateSkeletonPatternsProvider::supports_key(&req.resource_path.key)?;
         let dates = self.0.dates_for(req)?;
         Ok(DataResponse {
@@ -48,14 +48,14 @@ impl DataProvider<gregory::DateSkeletonPatternsV1Marker> for DateSkeletonPattern
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(DataPayload::from_owned(
-                gregory::DateSkeletonPatternsV1::from(&dates.calendars.gregorian.datetime_formats),
+                calendar::DateSkeletonPatternsV1::from(&dates.calendars.gregorian.datetime_formats),
             )),
         })
     }
 }
 
 icu_provider::impl_dyn_provider!(DateSkeletonPatternsProvider, {
-    _ => gregory::DateSkeletonPatternsV1Marker,
+    _ => calendar::DateSkeletonPatternsV1Marker,
 }, SERDE_SE);
 
 impl IterableDataProviderCore for DateSkeletonPatternsProvider {
@@ -68,9 +68,9 @@ impl IterableDataProviderCore for DateSkeletonPatternsProvider {
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
+impl From<&cldr_json::DateTimeFormats> for calendar::DateSkeletonPatternsV1<'_> {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use gregory::SkeletonV1;
+        use calendar::SkeletonV1;
         use icu_datetime::{
             pattern::runtime::{PatternPlurals, PluralPattern},
             skeleton::reference::Skeleton,
@@ -148,7 +148,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
 
 #[test]
 fn test_datetime_skeletons() {
-    use gregory::SkeletonV1;
+    use calendar::SkeletonV1;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
     use icu_locid_macros::langid;
     use icu_plurals::PluralCategory;
@@ -157,7 +157,7 @@ fn test_datetime_skeletons() {
     let provider = DateSkeletonPatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
         .expect("Failed to retrieve provider");
 
-    let skeletons: DataPayload<gregory::DateSkeletonPatternsV1Marker> = provider
+    let skeletons: DataPayload<calendar::DateSkeletonPatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::DATE_SKELETON_PATTERNS_V1,

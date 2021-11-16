@@ -37,18 +37,18 @@ impl KeyedDataProvider for DatePatternsProvider {
     }
 }
 
-impl DataProvider<gregory::DatePatternsV1Marker> for DatePatternsProvider {
+impl DataProvider<calendar::DatePatternsV1Marker> for DatePatternsProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<gregory::DatePatternsV1Marker>, DataError> {
+    ) -> Result<DataResponse<calendar::DatePatternsV1Marker>, DataError> {
         DatePatternsProvider::supports_key(&req.resource_path.key)?;
         let dates = self.0.dates_for(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_owned(gregory::DatePatternsV1::from(
+            payload: Some(DataPayload::from_owned(calendar::DatePatternsV1::from(
                 dates,
             ))),
         })
@@ -56,7 +56,7 @@ impl DataProvider<gregory::DatePatternsV1Marker> for DatePatternsProvider {
 }
 
 icu_provider::impl_dyn_provider!(DatePatternsProvider, {
-    _ => gregory::DatePatternsV1Marker,
+    _ => calendar::DatePatternsV1Marker,
 }, SERDE_SE);
 
 impl IterableDataProviderCore for DatePatternsProvider {
@@ -69,7 +69,7 @@ impl IterableDataProviderCore for DatePatternsProvider {
     }
 }
 
-impl From<&cldr_json::LengthPatterns> for gregory::patterns::LengthPatternsV1<'_> {
+impl From<&cldr_json::LengthPatterns> for calendar::patterns::LengthPatternsV1<'_> {
     fn from(other: &cldr_json::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -97,7 +97,7 @@ impl From<&cldr_json::LengthPatterns> for gregory::patterns::LengthPatternsV1<'_
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for gregory::patterns::LengthPatternsV1<'_> {
+impl From<&cldr_json::DateTimeFormats> for calendar::patterns::LengthPatternsV1<'_> {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -125,7 +125,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::LengthPatternsV1<'
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for gregory::patterns::GenericLengthPatternsV1<'_> {
+impl From<&cldr_json::DateTimeFormats> for calendar::patterns::GenericLengthPatternsV1<'_> {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -153,13 +153,13 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::GenericLengthPatte
     }
 }
 
-impl From<&cldr_json::Dates> for gregory::DatePatternsV1<'_> {
+impl From<&cldr_json::Dates> for calendar::DatePatternsV1<'_> {
     fn from(other: &cldr_json::Dates) -> Self {
-        let length_combinations_v1 = gregory::patterns::GenericLengthPatternsV1::from(
+        let length_combinations_v1 = calendar::patterns::GenericLengthPatternsV1::from(
             &other.calendars.gregorian.datetime_formats,
         );
         let skeletons_v1 =
-            gregory::DateSkeletonPatternsV1::from(&other.calendars.gregorian.datetime_formats);
+            calendar::DateSkeletonPatternsV1::from(&other.calendars.gregorian.datetime_formats);
 
         let pattern_str_full = other.calendars.gregorian.time_formats.full.get_pattern();
         let pattern_str_long = other.calendars.gregorian.time_formats.long.get_pattern();
@@ -208,7 +208,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1<'_> {
 
         let (time_h11_h12, time_h23_h24) = {
             let time = (&other.calendars.gregorian.time_formats).into();
-            let alt_time = gregory::patterns::LengthPatternsV1 {
+            let alt_time = calendar::patterns::LengthPatternsV1 {
                 full: alt_hour_cycle
                     .apply_on_pattern(
                         &length_combinations_v1,
@@ -275,7 +275,7 @@ fn test_basic() {
     let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
         .expect("Failed to retrieve provider");
 
-    let cs_dates: DataPayload<gregory::DatePatternsV1Marker> = provider
+    let cs_dates: DataPayload<calendar::DatePatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::DATE_PATTERNS_V1,
@@ -300,7 +300,7 @@ fn test_with_numbering_system() {
     let provider = DatePatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
         .expect("Failed to retrieve provider");
 
-    let cs_dates: DataPayload<gregory::DatePatternsV1Marker> = provider
+    let cs_dates: DataPayload<calendar::DatePatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::DATE_PATTERNS_V1,
