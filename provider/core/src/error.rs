@@ -20,6 +20,10 @@ pub enum Error {
     #[displaydoc("Missing resource for request: {0}")]
     MissingResourceOptions(DataRequest),
 
+    /// The data provider supports the key, but the key needs to be supplied with a variant
+    #[displaydoc("Request {0} needs a variant")]
+    MissingVariant(DataRequest),
+
     /// The resource was not returned due to a filter. The resource may or may not be available.
     #[displaydoc("Resource was filtered: {1}: {0}")]
     FilteredResource(DataRequest, String),
