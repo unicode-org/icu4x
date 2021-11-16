@@ -11,17 +11,18 @@ use icu_locid::LanguageIdentifier;
 
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
+use litemap::LiteMap;
 
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
 pub struct CommonDateProvider {
-    data: Vec<(LanguageIdentifier, cldr_json::LangDates)>,
+    data: LiteMap<LanguageIdentifier, cldr_json::LangDates>,
 }
 
 impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = vec![];
+        let mut data = LiteMap::new();
 
         let path = cldr_paths.cldr_dates("gregorian")?.join("main");
 
@@ -32,7 +33,9 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 
             let mut resource: cldr_json::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.append(&mut resource.main.0);
+            for (k, v) in resource.main.0.drain(..) {
+                data.insert(k, v);
+            }
         }
 
         Ok(Self { data })
@@ -42,9 +45,9 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 impl CommonDateProvider {
     pub fn dates_for<'a>(&'a self, req: &DataRequest) -> Result<&'a cldr_json::Dates, DataError> {
         let langid = req.try_langid()?;
-        match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
-            Ok(idx) => Ok(&self.data[idx].1.dates),
-            Err(_) => Err(DataError::MissingResourceOptions(req.clone())),
+        match self.data.get(&langid) {
+            Some(date) => Ok(&date.dates),
+            None => Err(DataError::MissingResourceOptions(req.clone())),
         }
     }
 }
