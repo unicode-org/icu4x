@@ -57,10 +57,7 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 }
 
 impl CommonDateProvider {
-    pub fn dates_for<'a>(
-        &'a self,
-        req: &DataRequest,
-    ) -> Result<&'a cldr_json::Dates, DataError> {
+    pub fn dates_for<'a>(&'a self, req: &DataRequest) -> Result<&'a cldr_json::Dates, DataError> {
         let langid = req.try_langid()?;
         let variant = req
             .resource_path
