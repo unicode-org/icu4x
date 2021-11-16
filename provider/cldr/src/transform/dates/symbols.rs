@@ -207,7 +207,7 @@ fn test_basic() {
             resource_path: ResourcePath {
                 key: key::DATE_SYMBOLS_V1,
                 options: ResourceOptions {
-                    variant: Some("gregorian".into()),
+                    variant: Some("gregory".into()),
                     langid: Some(langid!("cs")),
                 },
             },
@@ -236,7 +236,7 @@ fn unalias_contexts() {
             resource_path: ResourcePath {
                 key: key::DATE_SYMBOLS_V1,
                 options: ResourceOptions {
-                    variant: Some("gregorian".into()),
+                    variant: Some("gregory".into()),
                     langid: Some(langid!("cs")),
                 },
             },

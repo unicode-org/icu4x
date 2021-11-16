@@ -26,14 +26,14 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
         let mut data = LiteMap::new();
 
         // Raise an error if Gregorian paths are not available
-        let _ = cldr_paths.cldr_dates("gregorian")?;
+        let _ = cldr_paths.cldr_dates("gregory")?;
 
-        for (calendar, path) in cldr_paths.cldr_dates_all() {
+        for (cldr_cal, bcp_cal, path) in cldr_paths.cldr_dates_all() {
             let mut cal_data = LiteMap::new();
             let path = path.join("main");
             let locale_dirs = get_langid_subdirectories(&path)?;
 
-            let cal_file = format!("ca-{}.json", calendar);
+            let cal_file = format!("ca-{}.json", cldr_cal);
             for dir in locale_dirs {
                 let path = dir.join(&cal_file);
 
@@ -43,7 +43,7 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
                     cal_data.insert(k, v);
                 }
             }
-            data.insert(calendar, cal_data);
+            data.insert(bcp_cal, cal_data);
         }
 
         Ok(Self { data })

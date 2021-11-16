@@ -26,18 +26,21 @@ pub trait CldrPaths: std::fmt::Debug {
     fn cldr_misc(&self) -> Result<PathBuf, Error>;
 
     /// Path to checkout of CLDR dates repository for given calendar
+    ///
+    /// `cal` should be a BCP-47 calendar identifier
     fn cldr_dates(&self, cal: &str) -> Result<PathBuf, Error> {
-        if cal == "gregorian" {
+        if cal == "gregory" {
             self.cldr_dates_gregorian()
         } else {
             return Err(Error::Custom(format!("Unsupported calendar {}", cal), None));
         }
     }
 
-    fn cldr_dates_all(&self) -> Vec<(&'static str, PathBuf)> {
+    /// Returns a list of (CLDR name, BCP name, path) for each supported calendar
+    fn cldr_dates_all(&self) -> Vec<(&'static str, &'static str, PathBuf)> {
         let mut vec = Vec::new();
         if let Ok(greg) = self.cldr_dates_gregorian() {
-            vec.push(("gregorian", greg));
+            vec.push(("gregorian", "gregory", greg));
         }
         // more calendars here
         vec

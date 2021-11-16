@@ -345,7 +345,7 @@ mod tests {
                 resource_path: ResourcePath {
                     key: provider::key::DATE_SYMBOLS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some("en".parse().unwrap()),
                     },
                 },

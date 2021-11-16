@@ -171,7 +171,7 @@ fn test_dayperiod_patterns() {
                 resource_path: ResourcePath {
                     key: DATE_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -187,7 +187,7 @@ fn test_dayperiod_patterns() {
                 resource_path: ResourcePath {
                     key: DATE_SYMBOLS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -200,7 +200,7 @@ fn test_dayperiod_patterns() {
                 resource_path: ResourcePath {
                     key: DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -277,7 +277,7 @@ fn test_time_zone_patterns() {
                 resource_path: ResourcePath {
                     key: DATE_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -290,7 +290,7 @@ fn test_time_zone_patterns() {
                 resource_path: ResourcePath {
                     key: DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -303,7 +303,7 @@ fn test_time_zone_patterns() {
                 resource_path: ResourcePath {
                     key: DATE_SYMBOLS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some(langid.clone()),
                     },
                 },

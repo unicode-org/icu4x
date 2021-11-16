@@ -34,7 +34,7 @@ where
             resource_path: ResourcePath {
                 key: provider::key::DATE_PATTERNS_V1,
                 options: ResourceOptions {
-                    variant: Some("gregorian".into()),
+                    variant: Some("gregory".into()),
                     langid: Some(locale.clone().into()),
                 },
             },
@@ -55,7 +55,7 @@ where
             resource_path: ResourcePath {
                 key: provider::key::DATE_SKELETON_PATTERNS_V1,
                 options: ResourceOptions {
-                    variant: Some("gregorian".into()),
+                    variant: Some("gregory".into()),
                     langid: Some(locale.clone().into()),
                 },
             },

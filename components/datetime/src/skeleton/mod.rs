@@ -46,7 +46,7 @@ mod test {
                 resource_path: ResourcePath {
                     key: DATE_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some(langid.clone()),
                     },
                 },
@@ -59,7 +59,7 @@ mod test {
                 resource_path: ResourcePath {
                     key: DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregorian".into()),
+                        variant: Some("gregory".into()),
                         langid: Some(langid),
                     },
                 },
