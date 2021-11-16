@@ -17,6 +17,10 @@ pub trait CldrPaths: std::fmt::Debug {
     /// <https://github.com/unicode-cldr/cldr-dates-full>
     fn cldr_dates_gregorian(&self) -> Result<PathBuf, Error>;
 
+    /// Path to checkout of cldr-cal-buddhist-full:
+    /// <https://github.com/unicode-cldr/cldr-cal-buddhist-full>
+    fn cldr_dates_buddhist(&self) -> Result<PathBuf, Error>;
+
     /// Path to checkout of cldr-numbers:
     /// <https://github.com/unicode-cldr/cldr-numbers-full>
     fn cldr_numbers(&self) -> Result<PathBuf, Error>;
@@ -29,10 +33,10 @@ pub trait CldrPaths: std::fmt::Debug {
     ///
     /// `cal` should be a BCP-47 calendar identifier
     fn cldr_dates(&self, cal: &str) -> Result<PathBuf, Error> {
-        if cal == "gregory" {
-            self.cldr_dates_gregorian()
-        } else {
-            return Err(Error::Custom(format!("Unsupported calendar {}", cal), None));
+        match cal {
+            "gregory" => self.cldr_dates_gregorian(),
+            "buddhist" => self.cldr_dates_buddhist(),
+            _ => Err(Error::Custom(format!("Unsupported calendar {}", cal), None)),
         }
     }
 
@@ -41,6 +45,9 @@ pub trait CldrPaths: std::fmt::Debug {
         let mut vec = Vec::new();
         if let Ok(greg) = self.cldr_dates_gregorian() {
             vec.push(("gregorian", "gregory", greg));
+        }
+        if let Ok(bud) = self.cldr_dates_buddhist() {
+            vec.push(("buddhist", "buddhist", bud));
         }
         // more calendars here
         vec
@@ -68,6 +75,7 @@ pub trait CldrPaths: std::fmt::Debug {
 pub struct CldrPathsLocal {
     pub cldr_core: Result<PathBuf, MissingSourceError>,
     pub cldr_dates_gregorian: Result<PathBuf, MissingSourceError>,
+    pub cldr_dates_buddhist: Result<PathBuf, MissingSourceError>,
     pub cldr_numbers: Result<PathBuf, MissingSourceError>,
     pub cldr_misc: Result<PathBuf, MissingSourceError>,
 }
@@ -78,6 +86,9 @@ impl CldrPaths for CldrPathsLocal {
     }
     fn cldr_dates_gregorian(&self) -> Result<PathBuf, Error> {
         self.cldr_dates_gregorian.clone().map_err(|e| e.into())
+    }
+    fn cldr_dates_buddhist(&self) -> Result<PathBuf, Error> {
+        self.cldr_dates_buddhist.clone().map_err(|e| e.into())
     }
     fn cldr_numbers(&self) -> Result<PathBuf, Error> {
         self.cldr_numbers.clone().map_err(|e| e.into())
@@ -92,6 +103,9 @@ impl Default for CldrPathsLocal {
         Self {
             cldr_core: Err(MissingSourceError { src: "cldr-core" }),
             cldr_dates_gregorian: Err(MissingSourceError { src: "cldr-dates" }),
+            cldr_dates_buddhist: Err(MissingSourceError {
+                src: "cldr-cal-buddhist-full",
+            }),
             cldr_numbers: Err(MissingSourceError {
                 src: "cldr-numbers",
             }),
@@ -133,6 +147,12 @@ impl CldrPaths for CldrPathsAllInOne {
             .cldr_json_root
             .clone()
             .join(format!("cldr-dates-{}", self.locale_subset)))
+    }
+    fn cldr_dates_buddhist(&self) -> Result<PathBuf, Error> {
+        Ok(self
+            .cldr_json_root
+            .clone()
+            .join(format!("cldr-cal-buddhist-{}", self.locale_subset)))
     }
     fn cldr_numbers(&self) -> Result<PathBuf, Error> {
         Ok(self
