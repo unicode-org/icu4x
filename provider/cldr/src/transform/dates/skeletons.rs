@@ -162,7 +162,7 @@ fn test_datetime_skeletons() {
             resource_path: ResourcePath {
                 key: key::GREGORY_DATE_SKELETON_PATTERNS_V1,
                 options: ResourceOptions {
-                    variant: None,
+                    variant: Some("gregorian".into()),
                     langid: Some(langid!("fil")),
                 },
             },

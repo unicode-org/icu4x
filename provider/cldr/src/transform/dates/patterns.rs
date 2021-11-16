@@ -280,7 +280,7 @@ fn test_basic() {
             resource_path: ResourcePath {
                 key: key::GREGORY_DATE_PATTERNS_V1,
                 options: ResourceOptions {
-                    variant: None,
+                    variant: Some("gregorian".into()),
                     langid: Some(langid!("cs")),
                 },
             },
@@ -305,7 +305,7 @@ fn test_with_numbering_system() {
             resource_path: ResourcePath {
                 key: key::GREGORY_DATE_PATTERNS_V1,
                 options: ResourceOptions {
-                    variant: None,
+                    variant: Some("gregorian".into()),
                     langid: Some(langid!("haw")),
                 },
             },
