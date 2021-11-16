@@ -7,10 +7,12 @@ use core::fmt;
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::{PatternError, PatternItem};
+use crate::provider::gregory::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::{
     date::TimeZoneInput,
     time_zone::{IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat, TimeZoneFormatConfig},
 };
+use icu_provider::DataPayload;
 use writeable::Writeable;
 
 pub struct FormattedTimeZone<'l, T>
@@ -51,8 +53,8 @@ where
     W: fmt::Write + ?Sized,
 {
     match (&time_zone_format.patterns, &time_zone_format.config) {
-        (Some(_), None) => write_pattern(time_zone_format, time_zone, w),
-        (None, Some(_)) => write_config(time_zone_format, time_zone, w),
+        (Some(patterns), None) => write_pattern(time_zone_format, time_zone, patterns, w),
+        (None, Some(config)) => write_config(time_zone_format, time_zone, config, w),
         (Some(_), Some(_)) => {
             unreachable!("TimeZoneFormat should have a configuration or a pattern, but found both")
         }
@@ -65,16 +67,14 @@ where
 fn write_config<T, W>(
     time_zone_format: &TimeZoneFormat,
     time_zone: &T,
+    config: &TimeZoneFormatConfig,
     w: &mut W,
 ) -> Result<(), Error>
 where
     T: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    match time_zone_format
-        .config
-        .expect("TimeZoneFormat::write_config() expected Some(config) but got None")
-    {
+    match config {
         TimeZoneFormatConfig::GenericNonLocationLong => {
             time_zone_format
                 .long_generic_non_location_format(w, time_zone)
@@ -106,7 +106,13 @@ where
             time_zone_format.localized_gmt_format(w, time_zone)?;
         }
         TimeZoneFormatConfig::Iso8601(iso_format, iso_minutes, iso_seconds) => {
-            time_zone_format.iso8601_format(w, time_zone, iso_format, iso_minutes, iso_seconds)?;
+            time_zone_format.iso8601_format(
+                w,
+                time_zone,
+                *iso_format,
+                *iso_minutes,
+                *iso_seconds,
+            )?;
         }
     }
     Ok(())
@@ -115,16 +121,14 @@ where
 fn write_pattern<T, W>(
     time_zone_format: &TimeZoneFormat,
     time_zone: &T,
+    patterns: &DataPayload<PatternPluralsFromPatternsV1Marker>,
     w: &mut W,
 ) -> Result<(), Error>
 where
     T: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    let pattern = &time_zone_format
-        .patterns
-        .as_ref()
-        .expect("TimeZoneFormat::write_pattern() expected Some(patterns) but got None")
+    let pattern = patterns
         .get()
         .0
         .clone()

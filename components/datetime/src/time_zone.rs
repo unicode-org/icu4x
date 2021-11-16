@@ -170,6 +170,21 @@ impl TimeZoneFormat {
             DataPayload<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>,
         > = None;
 
+        let mut exemplar_cities: Option<DataPayload<provider::time_zones::ExemplarCitiesV1Marker>> =
+            None;
+        let mut mz_generic_long: Option<
+            DataPayload<provider::time_zones::MetaZoneGenericNamesLongV1Marker>,
+        > = None;
+        let mut mz_generic_short: Option<
+            DataPayload<provider::time_zones::MetaZoneGenericNamesShortV1Marker>,
+        > = None;
+        let mut mz_specific_long: Option<
+            DataPayload<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>,
+        > = None;
+        let mut mz_specific_short: Option<
+            DataPayload<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>,
+        > = None;
+
         for (length, symbol) in zone_symbols {
             match symbol {
                 TimeZone::LowerZ => match length {
