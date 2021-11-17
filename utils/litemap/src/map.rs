@@ -300,12 +300,10 @@ mod serde {
                 if let Some(&(ref k, _)) = self.values.get(0) {
                     let json = serde_json::json!(k);
                     if !json.is_string() && !json.is_number() {
-                        
+                        map.serialize_entry(json, v);
+                    } else {
+                        map.serialize_entry(k, v)?;
                     }
-                }
-                if map.serialize_entry(k, v).is_err() {
-                    let json = serde_json::json!(k);
-                    map.serialize_entry(&json, v)?;
                 }
             }
             map.end()
