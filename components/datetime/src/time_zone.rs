@@ -173,99 +173,100 @@ impl TimeZoneFormat {
             mz_specific_short: None,
         };
 
-        let zone_symbols = time_zone_format
-            .patterns
-            .get()
-            .0
-            .patterns_iter()
-            .map(|pattern| pattern.items.iter())
-            .flatten()
-            .filter_map(|item| match item {
-                PatternItem::Field(field) => Some(field),
-                _ => None,
-            })
-            .filter_map(|field| match field.symbol {
-                FieldSymbol::TimeZone(zone) => Some((field.length.idx(), zone)),
-                _ => None,
-            });
+        // let zone_symbols = time_zone_format
+        //     .patterns
+        //     .get()
+        //     .0
+        //     .patterns_iter()
+        //     .map(|pattern| pattern.items.iter())
+        //     .flatten()
+        //     .filter_map(|item| match item {
+        //         PatternItem::Field(field) => Some(field),
+        //         _ => None,
+        //     })
+        //     .filter_map(|field| match field.symbol {
+        //         FieldSymbol::TimeZone(zone) => Some((field.length.idx(), zone)),
+        //         _ => None,
+        //     });
+        todo!();
 
-        for (length, symbol) in zone_symbols {
-            match symbol {
-                TimeZone::LowerZ => match length {
-                    1..=3 => load_resource(
-                        &locale,
-                        provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
-                        &mut time_zone_format.mz_specific_short,
-                        zone_provider,
-                    )?,
-                    4 => load_resource(
-                        &locale,
-                        provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
-                        &mut time_zone_format.mz_specific_long,
-                        zone_provider,
-                    )?,
-                    _ => {
-                        return Err(DateTimeFormatError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
-                    }
-                },
-                TimeZone::LowerV => match length {
-                    1 => {
-                        load_resource(
-                            &locale,
-                            provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
-                            &mut time_zone_format.mz_generic_short,
-                            zone_provider,
-                        )?;
-                        load_resource(
-                            &locale,
-                            provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                            &mut time_zone_format.exemplar_cities,
-                            zone_provider,
-                        )?;
-                    }
-                    4 => {
-                        load_resource(
-                            &locale,
-                            provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1,
-                            &mut time_zone_format.mz_generic_long,
-                            zone_provider,
-                        )?;
-                        load_resource(
-                            &locale,
-                            provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                            &mut time_zone_format.exemplar_cities,
-                            zone_provider,
-                        )?;
-                    }
-                    _ => {
-                        return Err(DateTimeFormatError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
-                    }
-                },
-                TimeZone::UpperV => match length {
-                    1 => (), // BCP-47 identifier, no CLDR-data necessary.
-                    2 => (), // IANA time-zone ID, no CLDR data necessary.
-                    3 | 4 => load_resource(
-                        &locale,
-                        provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                        &mut time_zone_format.exemplar_cities,
-                        zone_provider,
-                    )?,
-                    _ => {
-                        return Err(DateTimeFormatError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
-                    }
-                },
-                // ISO-8601 or localized GMT formats. CLDR data is either unneeded or required by default.
-                TimeZone::LowerX | TimeZone::UpperX | TimeZone::UpperZ | TimeZone::UpperO => (),
-            }
-        }
+        // for (length, symbol) in zone_symbols {
+        //     match symbol {
+        //         TimeZone::LowerZ => match length {
+        //             1..=3 => load_resource(
+        //                 &locale,
+        //                 provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
+        //                 &mut time_zone_format.mz_specific_short,
+        //                 zone_provider,
+        //             )?,
+        //             4 => load_resource(
+        //                 &locale,
+        //                 provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
+        //                 &mut time_zone_format.mz_specific_long,
+        //                 zone_provider,
+        //             )?,
+        //             _ => {
+        //                 return Err(DateTimeFormatError::Pattern(
+        //                     PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
+        //                 ))
+        //             }
+        //         },
+        //         TimeZone::LowerV => match length {
+        //             1 => {
+        //                 load_resource(
+        //                     &locale,
+        //                     provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
+        //                     &mut time_zone_format.mz_generic_short,
+        //                     zone_provider,
+        //                 )?;
+        //                 load_resource(
+        //                     &locale,
+        //                     provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+        //                     &mut time_zone_format.exemplar_cities,
+        //                     zone_provider,
+        //                 )?;
+        //             }
+        //             4 => {
+        //                 load_resource(
+        //                     &locale,
+        //                     provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1,
+        //                     &mut time_zone_format.mz_generic_long,
+        //                     zone_provider,
+        //                 )?;
+        //                 load_resource(
+        //                     &locale,
+        //                     provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+        //                     &mut time_zone_format.exemplar_cities,
+        //                     zone_provider,
+        //                 )?;
+        //             }
+        //             _ => {
+        //                 return Err(DateTimeFormatError::Pattern(
+        //                     PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
+        //                 ))
+        //             }
+        //         },
+        //         TimeZone::UpperV => match length {
+        //             1 => (), // BCP-47 identifier, no CLDR-data necessary.
+        //             2 => (), // IANA time-zone ID, no CLDR data necessary.
+        //             3 | 4 => load_resource(
+        //                 &locale,
+        //                 provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+        //                 &mut time_zone_format.exemplar_cities,
+        //                 zone_provider,
+        //             )?,
+        //             _ => {
+        //                 return Err(DateTimeFormatError::Pattern(
+        //                     PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
+        //                 ))
+        //             }
+        //         },
+        //         // ISO-8601 or localized GMT formats. CLDR data is either unneeded or required by default.
+        //         TimeZone::LowerX | TimeZone::UpperX | TimeZone::UpperZ | TimeZone::UpperO => (),
+        //     }
+        // }
 
-        Ok(time_zone_format)
+        // Ok(time_zone_format)
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]

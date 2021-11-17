@@ -135,8 +135,8 @@ pub fn create_best_pattern_for_fields<'data>(
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(mut pattern_plurals) = first_pattern_match {
         pattern_plurals.for_each_mut(|pattern| {
-            hour_cycle::naively_apply_preferences(pattern, &components.preferences);
-            naively_apply_time_zone_name(pattern, &components.time_zone_name);
+            // hour_cycle::naively_apply_preferences(pattern, &components.preferences);
+            // naively_apply_time_zone_name(pattern, &components.time_zone_name);
         });
         return BestSkeleton::AllFieldsMatch(pattern_plurals);
     }
@@ -151,8 +151,8 @@ pub fn create_best_pattern_for_fields<'data>(
             BestSkeleton::MissingOrExtraFields(mut pattern_plurals) => {
                 if date.is_empty() {
                     pattern_plurals.for_each_mut(|pattern| {
-                        hour_cycle::naively_apply_preferences(pattern, &components.preferences);
-                        naively_apply_time_zone_name(pattern, &components.time_zone_name);
+                        // hour_cycle::naively_apply_preferences(pattern, &components.preferences);
+                        // naively_apply_time_zone_name(pattern, &components.time_zone_name);
                     });
                 }
                 BestSkeleton::MissingOrExtraFields(pattern_plurals)
@@ -179,9 +179,10 @@ pub fn create_best_pattern_for_fields<'data>(
     let time_pattern: Option<Pattern<'data>> = time_patterns.map(|pattern_plurals| {
         let mut pattern =
             pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
-        hour_cycle::naively_apply_preferences(&mut pattern, &components.preferences);
-        naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
-        pattern
+        todo!()
+        // hour_cycle::naively_apply_preferences(&mut pattern, &components.preferences);
+        // naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
+        // pattern
     });
 
     // Determine how to combine the date and time.
@@ -434,7 +435,7 @@ pub fn get_best_available_format_pattern<'data>(
         panic!("This code branch should only be run when transforming provider code.");
     } else {
         closest_format_pattern.for_each_mut(|pattern| {
-            adjust_pattern_field_lengths(fields, pattern);
+            // adjust_pattern_field_lengths(fields, pattern);
         });
     }
 

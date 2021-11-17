@@ -100,7 +100,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
         use gregory::SkeletonV1;
         use icu_datetime::{
-            pattern::runtime::{PatternPlurals, PluralPattern},
+            pattern::runtime::{Pattern, PatternPlurals, PluralPattern},
             skeleton::reference::Skeleton,
         };
         use litemap::LiteMap;
@@ -142,13 +142,13 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
             };
 
             let pattern_str = patterns.get("other").expect("Other variant must exist");
-            let pattern = pattern_str.parse().expect("Unable to parse a pattern");
+            let pattern: Pattern = pattern_str.parse().expect("Unable to parse a pattern");
 
             let mut pattern_plurals = if patterns.len() == 1 {
-                PatternPlurals::SinglePattern(pattern)
+                PatternPlurals::SinglePattern(pattern.into())
             } else {
                 let mut plural_pattern =
-                    PluralPattern::new(pattern).expect("Unable to construct PluralPattern");
+                    PluralPattern::new(pattern.into()).expect("Unable to construct PluralPattern");
 
                 for (key, pattern_str) in patterns {
                     if key == "other" {
@@ -156,8 +156,8 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
                     }
                     let cat = PluralCategory::from_tr35_string(&key)
                         .expect("Failed to retrieve plural category");
-                    let pattern = pattern_str.parse().expect("Unable to parse a pattern");
-                    plural_pattern.maybe_set_variant(cat, pattern);
+                    let pattern: Pattern = pattern_str.parse().expect("Unable to parse a pattern");
+                    plural_pattern.maybe_set_variant(cat, pattern.into());
                 }
                 PatternPlurals::MultipleVariants(plural_pattern)
             };

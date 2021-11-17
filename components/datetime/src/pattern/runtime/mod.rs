@@ -11,9 +11,11 @@
 //! For all spec compliant behaviors see `reference::Pattern` equivalent.
 mod generic;
 pub(crate) mod helpers;
+mod iter;
 mod pattern;
 mod plural;
 
 pub use generic::{CombinedPattern, GenericPattern};
+pub use iter::PatternKindItemIterator;
 pub use pattern::Pattern;
-pub use plural::{PatternPlurals, PluralPattern};
+pub use plural::{PatternKind, PatternPlurals, PluralPattern};

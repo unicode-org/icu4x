@@ -222,7 +222,7 @@ mod runtime {
         // Can't use `serde(untagged)` on `PatternPlurals` because
         // Postcard can't handle enums not discriminated at compilation time.
         use super::*;
-        use crate::pattern::runtime::{PatternPlurals, PluralPattern};
+        use crate::pattern::runtime::{PatternKind, PatternPlurals, PluralPattern};
         use alloc::string::ToString;
         use core::fmt;
 
@@ -233,7 +233,7 @@ mod runtime {
             #[serde(borrow)]
             MultipleVariants(PluralPattern<'data>),
             #[serde(borrow)]
-            SinglePattern(Pattern<'data>),
+            SinglePattern(PatternKind<'data>),
         }
 
         impl<'data> From<PatternPluralsForSerde<'data>> for PatternPlurals<'data> {
@@ -272,7 +272,8 @@ mod runtime {
                 let reference_deserializer = super::super::reference::DeserializePatternUTS35String;
                 let pattern = reference_deserializer.visit_str(pattern_string)?;
 
-                Ok(PatternPlurals::SinglePattern(Pattern::from(&pattern)))
+                todo!()
+                // Ok(PatternPlurals::SinglePattern(Pattern::from(&pattern)))
             }
 
             fn visit_map<V>(self, map: V) -> Result<Self::Value, V::Error>
@@ -319,6 +320,29 @@ mod runtime {
                 } else {
                     let pfs: PatternPluralsForSerde = self.into();
                     pfs.serialize(serializer)
+                }
+            }
+        }
+
+        impl Serialize for PatternKind<'_> {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: ser::Serializer,
+            {
+                if serializer.is_human_readable() {
+                    match self {
+                        Self::Plain(pattern) => {
+                            serializer.serialize_str(&pattern.to_string())
+                        }
+                        Self::Combined(_) => todo!(),
+                    }
+                } else {
+                    match self {
+                        Self::Plain(pattern) => {
+                            pattern.serialize(serializer)
+                        }
+                        Self::Combined(_) => todo!(),
+                    }
                 }
             }
         }
@@ -378,13 +402,13 @@ mod runtime {
 
     mod generic {
         use super::*;
-        use crate::pattern::runtime::CombinedPattern;
+        use crate::pattern::runtime::GenericPattern;
 
         #[allow(clippy::upper_case_acronyms)]
-        struct DeserializeCombinedPatternUTS35String;
+        struct DeserializeGenericPatternUTS35String;
 
-        impl<'de> de::Visitor<'de> for DeserializeCombinedPatternUTS35String {
-            type Value = CombinedPattern<'de>;
+        impl<'de> de::Visitor<'de> for DeserializeGenericPatternUTS35String {
+            type Value = GenericPattern<'de>;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 write!(formatter, "a valid pattern.")
@@ -396,39 +420,37 @@ mod runtime {
             {
                 // Parse a string into a list of fields.
                 // let pattern = pattern_string.parse().expect("Failed to parse pattern");
-                // Ok(CombinedPattern::from(&pattern))
+                // Ok(GenericPattern::from(&pattern))
                 todo!()
             }
         }
 
-        impl<'de: 'data, 'data> Deserialize<'de> for CombinedPattern<'data> {
+        impl<'de: 'data, 'data> Deserialize<'de> for GenericPattern<'data> {
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where
                 D: Deserializer<'de>,
             {
                 if deserializer.is_human_readable() {
-                    deserializer.deserialize_str(DeserializeCombinedPatternUTS35String)
+                    deserializer.deserialize_str(DeserializeGenericPatternUTS35String)
                 } else {
-                    // let items = ZeroVec::deserialize(deserializer)?;
-                    // Ok(Self { items })
-                    todo!()
+                    let items = ZeroVec::deserialize(deserializer)?;
+                    Ok(Self { items })
                 }
             }
         }
 
-        impl Serialize for CombinedPattern<'_> {
+        impl Serialize for GenericPattern<'_> {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
                 S: ser::Serializer,
             {
-                todo!();
-                // if serializer.is_human_readable() {
-                //     // Serialize into the UTS 35 string representation.
-                //     let string = self.to_string();
-                //     serializer.serialize_str(&string)
-                // } else {
-                //     self.items.serialize(serializer)
-                // }
+                if serializer.is_human_readable() {
+                    // Serialize into the UTS 35 string representation.
+                    let string = self.to_string();
+                    serializer.serialize_str(&string)
+                } else {
+                    self.items.serialize(serializer)
+                }
             }
         }
 
@@ -438,20 +460,20 @@ mod runtime {
 
             #[test]
             fn runtime_generic_pattern_serde_human_readable_test() {
-                // let pattern: CombinedPattern =
+                // let pattern: GenericPattern =
                 //     "{0} 'and' {1}".parse().expect("Failed to parse pattern");
                 // let json = serde_json::to_string(&pattern).expect("Failed to serialize pattern");
-                // let result: CombinedPattern =
+                // let result: GenericPattern =
                 //     serde_json::from_str(&json).expect("Failed to deserialize pattern");
                 // assert_eq!(pattern, result);
             }
 
             #[test]
             fn runtime_generic_pattern_serde_bincode_test() {
-                // let pattern: CombinedPattern =
+                // let pattern: GenericPattern =
                 //     "{0} 'and' {1}".parse().expect("Failed to parse pattern");
                 // let bytes = bincode::serialize(&pattern).expect("Failed to serialize pattern");
-                // let result: CombinedPattern =
+                // let result: GenericPattern =
                 //     bincode::deserialize(&bytes).expect("Failed to deserialize pattern");
                 // assert_eq!(pattern, result);
             }

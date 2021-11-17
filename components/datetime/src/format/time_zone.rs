@@ -57,13 +57,14 @@ where
         .0
         .clone()
         .expect_pattern("Expected a single pattern");
-    for item in pattern.items.iter() {
-        match item {
-            PatternItem::Field(field) => write_field(field, time_zone_format, time_zone, w)?,
-            PatternItem::Literal(ch) => w.write_char(ch)?,
-        }
-    }
-    Ok(())
+    todo!()
+    // for item in pattern.items.iter() {
+    //     match item {
+    //         PatternItem::Field(field) => write_field(field, time_zone_format, time_zone, w)?,
+    //         PatternItem::Literal(ch) => w.write_char(ch)?,
+    //     }
+    // }
+    // Ok(())
 }
 
 /// Write fields according to the UTS-35 specification.

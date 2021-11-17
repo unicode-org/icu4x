@@ -7,8 +7,9 @@ use crate::{
     error::DateTimeFormatError,
     fields::{Field, FieldSymbol, Week},
     pattern::{
-        runtime::{Pattern, CombinedPattern},
-        PatternError, PatternItem
+        runtime::{CombinedPattern, Pattern, PatternKindItemIterator},
+        PatternError, PatternItem,
+        TimeGranularity,
     },
 };
 use either::Either;
@@ -18,25 +19,60 @@ use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
-    derive(::serde::Serialize, ::serde::Deserialize)
+    derive(::serde::Deserialize)
 )]
 pub enum PatternKind<'data> {
-    Plain(
-        #[cfg_attr(feature = "provider_serde", serde(borrow))]
-        Pattern<'data>
-    ),
-    Combined(
-        #[cfg_attr(feature = "provider_serde", serde(borrow))]
-        CombinedPattern<'data>
-    ),
+    Plain(#[cfg_attr(feature = "provider_serde", serde(borrow))] Pattern<'data>),
+    Combined(#[cfg_attr(feature = "provider_serde", serde(borrow))] CombinedPattern<'data>),
+}
+
+impl<'data> Default for PatternKind<'data> {
+    fn default() -> Self {
+        Self::Plain(Pattern::default())
+    }
 }
 
 impl<'data> PatternKind<'data> {
-    pub fn into_owned(self) -> Self {
+    pub fn items<'p>(&'p self) -> PatternKindItemIterator<'p> {
         match self {
-            Self::Plain(p) => Self::Plain(p.into_owned()),
-            Self::Combined(p) => Self::Combined(p.into_owned()),
+            PatternKind::Plain(pattern) => PatternKindItemIterator::Plain(pattern.items()),
+            PatternKind::Combined(pattern) => {
+                PatternKindItemIterator::Combined(pattern.into_iter())
+            }
         }
+    }
+}
+
+impl<'data> PatternKind<'data> {
+    pub fn into_owned(self) -> PatternKind<'static> {
+        todo!()
+        // match self {
+        //     Self::Plain(p) => PatternKind::Plain(p.into_owned()),
+        //     Self::Combined(p) => PatternKind::Combined(p.into_owned()),
+        // }
+    }
+
+    pub(crate) fn time_granularity(&self) -> TimeGranularity {
+        match self {
+            Self::Plain(p) => p.time_granularity,
+            Self::Combined(p) => p.time_granularity(),
+        }
+    }
+}
+
+impl core::fmt::Display for PatternKind<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Plain(p) => p.fmt(f),
+            Self::Combined(c) => c.fmt(f),
+        }
+    }
+}
+
+impl From<&PatternKind<'_>> for crate::pattern::reference::Pattern {
+    fn from(input: &PatternKind<'_>) -> Self {
+        let items: alloc::vec::Vec<PatternItem> = input.items().collect();
+        items.into()
     }
 }
 
@@ -77,10 +113,9 @@ pub struct PluralPattern<'data> {
 }
 
 impl<'data> PluralPattern<'data> {
-    pub fn new(pattern: Pattern<'data>) -> Result<Self, PatternError> {
+    pub fn new(pattern: PatternKind<'data>) -> Result<Self, PatternError> {
         let pivot_field = pattern
-            .items
-            .iter()
+            .items()
             .find_map(|pattern_item| match pattern_item {
                 PatternItem::Field(Field {
                     symbol: FieldSymbol::Week(w),
@@ -97,7 +132,7 @@ impl<'data> PluralPattern<'data> {
             two: None,
             few: None,
             many: None,
-            other: pattern,
+            other: pattern.into(),
         })
     }
 
@@ -106,7 +141,7 @@ impl<'data> PluralPattern<'data> {
         self.pivot_field
     }
 
-    pub fn maybe_set_variant(&mut self, category: PluralCategory, pattern: Pattern<'data>) {
+    pub fn maybe_set_variant(&mut self, category: PluralCategory, pattern: PatternKind<'data>) {
         if pattern == self.other {
             return;
         }
@@ -120,7 +155,7 @@ impl<'data> PluralPattern<'data> {
         }
     }
 
-    fn variant(&self, category: PluralCategory) -> &Pattern<'data> {
+    fn variant(&self, category: PluralCategory) -> &PatternKind<'data> {
         let variant = match category {
             PluralCategory::Zero => &self.zero,
             PluralCategory::One => &self.one,
@@ -132,7 +167,7 @@ impl<'data> PluralPattern<'data> {
         variant.as_ref().unwrap_or(&self.other)
     }
 
-    pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern<'data>> {
+    pub fn patterns_iter(&self) -> impl Iterator<Item = &PatternKind<'data>> {
         PluralCategory::all().filter_map(move |cat| match cat {
             PluralCategory::Zero => self.zero.as_ref(),
             PluralCategory::One => self.one.as_ref(),
@@ -145,7 +180,7 @@ impl<'data> PluralPattern<'data> {
 
     pub fn for_each_mut<F>(&mut self, f: &F)
     where
-        F: Fn(&mut Pattern<'data>),
+        F: Fn(&mut PatternKind<'data>),
     {
         self.zero.iter_mut().for_each(f);
         self.one.iter_mut().for_each(f);
@@ -174,7 +209,7 @@ pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
     MultipleVariants(PluralPattern<'data>),
     /// A single pattern.
-    SinglePattern(Pattern<'data>),
+    SinglePattern(PatternKind<'data>),
 }
 
 impl<'data> PatternPlurals<'data> {
@@ -183,7 +218,7 @@ impl<'data> PatternPlurals<'data> {
         &self,
         loc_datetime: &impl LocalizedDateTimeInput<T>,
         ordinal_rules: Option<&PluralRules>,
-    ) -> Result<&Pattern, DateTimeFormatError>
+    ) -> Result<&PatternKind, DateTimeFormatError>
     where
         T: DateTimeInput,
     {
@@ -211,7 +246,7 @@ impl<'data> PatternPlurals<'data> {
         }
     }
 
-    pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern<'data>> {
+    pub fn patterns_iter(&self) -> impl Iterator<Item = &PatternKind<'data>> {
         match self {
             Self::SinglePattern(pattern) => Either::Left(core::iter::once(pattern)),
             Self::MultipleVariants(plural_pattern) => Either::Right(plural_pattern.patterns_iter()),
@@ -220,7 +255,7 @@ impl<'data> PatternPlurals<'data> {
 
     pub fn for_each_mut<F>(&mut self, f: F)
     where
-        F: Fn(&mut Pattern<'data>),
+        F: Fn(&mut PatternKind<'data>),
     {
         match self {
             Self::SinglePattern(pattern) => f(pattern),
@@ -228,7 +263,7 @@ impl<'data> PatternPlurals<'data> {
         }
     }
 
-    pub fn expect_pattern(self, msg: &str) -> Pattern<'data> {
+    pub fn expect_pattern(self, msg: &str) -> PatternKind<'data> {
         match self {
             Self::SinglePattern(pattern) => pattern,
             _ => panic!("expect_pattern failed: {}", msg),
@@ -245,9 +280,15 @@ impl<'data> PatternPlurals<'data> {
     }
 }
 
+impl<'data> From<PatternKind<'data>> for PatternPlurals<'data> {
+    fn from(pattern: PatternKind<'data>) -> Self {
+        Self::SinglePattern(pattern)
+    }
+}
+
 impl<'data> From<Pattern<'data>> for PatternPlurals<'data> {
     fn from(pattern: Pattern<'data>) -> Self {
-        Self::SinglePattern(pattern)
+        Self::SinglePattern(pattern.into())
     }
 }
 
@@ -259,7 +300,8 @@ impl<'data> From<PluralPattern<'data>> for PatternPlurals<'data> {
 
 impl Default for PatternPlurals<'_> {
     fn default() -> Self {
-        PatternPlurals::SinglePattern(Pattern::default())
+        todo!()
+        // PatternPlurals::SinglePattern(Pattern::default())
     }
 }
 

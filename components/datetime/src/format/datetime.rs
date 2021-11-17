@@ -6,7 +6,7 @@ use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Week};
 use crate::pattern::{
-    runtime::{Pattern, PatternPlurals},
+    runtime::{Pattern, PatternPlurals, PatternKind},
     PatternItem,
 };
 use crate::provider;
@@ -108,7 +108,7 @@ where
 }
 
 fn write_pattern<T, W>(
-    pattern: &crate::pattern::runtime::Pattern,
+    pattern: &crate::pattern::runtime::PatternKind,
     symbols: Option<&provider::gregory::DateSymbolsV1>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
@@ -117,7 +117,7 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    for item in pattern.items.iter() {
+    for item in pattern.items() {
         match item {
             PatternItem::Field(field) => write_field(pattern, field, symbols, loc_datetime, w)?,
             PatternItem::Literal(ch) => w.write_char(ch)?,
@@ -149,7 +149,7 @@ where
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 pub(super) fn write_field<T, W>(
-    pattern: &crate::pattern::runtime::Pattern,
+    pattern: &crate::pattern::runtime::PatternKind,
     field: fields::Field,
     symbols: Option<&crate::provider::gregory::DateSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
@@ -269,7 +269,7 @@ where
                     period,
                     field.length,
                     datetime.datetime().hour().ok_or(Error::MissingInputField)?,
-                    pattern.time_granularity.is_top_of_hour(
+                    pattern.time_granularity().is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                     ),
@@ -283,8 +283,8 @@ where
 
 // This function determins whether the struct will load symbols data.
 // Keep it in sync with the `write_field` use of symbols.
-pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<bool, Field> {
-    let fields = pattern.items.iter().filter_map(|p| match p {
+pub fn analyze_pattern(pattern: &PatternKind, supports_time_zones: bool) -> Result<bool, Field> {
+    let fields = pattern.items().filter_map(|p| match p {
         PatternItem::Field(field) => Some(field),
         _ => None,
     });

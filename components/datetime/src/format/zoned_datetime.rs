@@ -7,7 +7,7 @@
 use crate::date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
-use crate::pattern::{runtime::Pattern, PatternItem};
+use crate::pattern::{runtime::{PatternKind, Pattern}, PatternItem};
 use crate::{date::ZonedDateTimeInput, zoned_datetime::ZonedDateTimeFormat};
 use core::fmt;
 use writeable::Writeable;
@@ -64,19 +64,20 @@ where
         zoned_datetime_format.datetime_format.ordinal_rules.as_ref(),
     )?;
 
-    for item in pattern.items.iter() {
-        match item {
-            PatternItem::Field(field) => {
-                write_field(pattern, field, zoned_datetime_format, &loc_datetime, w)?
-            }
-            PatternItem::Literal(ch) => w.write_char(ch)?,
-        }
-    }
-    Ok(())
+    todo!()
+    // for item in pattern.items.iter() {
+    //     match item {
+    //         PatternItem::Field(field) => {
+    //             write_field(pattern, field, zoned_datetime_format, &loc_datetime, w)?
+    //         }
+    //         PatternItem::Literal(ch) => w.write_char(ch)?,
+    //     }
+    // }
+    // Ok(())
 }
 
 fn write_field<T, W>(
-    pattern: &Pattern,
+    pattern: &PatternKind,
     field: fields::Field,
     zoned_datetime_format: &ZonedDateTimeFormat,
     loc_datetime: &impl LocalizedDateTimeInput<T>,

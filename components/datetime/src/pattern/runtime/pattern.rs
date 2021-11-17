@@ -6,7 +6,7 @@ use super::super::{reference, PatternError, PatternItem, TimeGranularity};
 use alloc::{fmt, vec::Vec};
 use core::str::FromStr;
 use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
-use zerovec::ZeroVec;
+use zerovec::{ZeroVec, ZeroVecIter};
 
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 pub struct Pattern<'data> {
@@ -20,6 +20,10 @@ impl<'data> Pattern<'data> {
             items: self.items.into_owned(),
             time_granularity: self.time_granularity,
         }
+    }
+
+    pub fn items<'p>(&'p self) -> ZeroVecIter<'p, PatternItem> {
+        self.items.iter()
     }
 }
 

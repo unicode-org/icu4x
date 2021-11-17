@@ -7,14 +7,15 @@ use super::{
     super::{GenericPatternItem, PatternItem},
     Pattern,
 };
+use crate::pattern::runtime::PatternKind;
+use crate::pattern::TimeGranularity;
 use alloc::vec::Vec;
 use core::{fmt, str::FromStr};
 use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
 use zerovec::{ZeroVec, ZeroVecIter};
 
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 pub struct GenericPattern<'data> {
-    #[serde(borrow)]
     pub items: ZeroVec<'data, GenericPatternItem>,
 }
 
@@ -49,17 +50,20 @@ impl<'data> GenericPattern<'data> {
         }
     }
 
-    pub fn into_owned(self) -> Self {
-        Self {
-            items: self.items.into_owned()
+    pub fn into_owned(self) -> GenericPattern<'static> {
+        GenericPattern {
+            items: self.items.into_owned(),
         }
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom, serde::Serialize, serde::Deserialize)]
 pub struct CombinedPattern<'data> {
+    #[serde(borrow)]
     generic: GenericPattern<'data>,
+    #[serde(borrow)]
     date: Pattern<'data>,
+    #[serde(borrow)]
     time: Pattern<'data>,
 }
 
@@ -71,6 +75,10 @@ impl<'data> CombinedPattern<'data> {
             time: self.time.into_owned(),
         }
     }
+
+    pub(crate) fn time_granularity(&self) -> TimeGranularity {
+        self.time.time_granularity
+    }
 }
 
 impl<'l> IntoIterator for &'l CombinedPattern<'_> {
@@ -81,7 +89,7 @@ impl<'l> IntoIterator for &'l CombinedPattern<'_> {
         CombinedPatternIterator {
             date: self.date.items.iter(),
             time: self.time.items.iter(),
-            items: self.combined.items.iter(),
+            items: self.generic.items.iter(),
             state: State::Combined,
         }
     }

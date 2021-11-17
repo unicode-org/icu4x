@@ -215,11 +215,17 @@ where
                     length::Date::Medium => data.length_combinations.medium,
                     length::Date::Short => data.length_combinations.short,
                 };
+                let date = match date {
+                    crate::pattern::runtime::PatternKind::Plain(p) => p,
+                    crate::pattern::runtime::PatternKind::Combined(_) => todo!(),
+                };
+                let time = match time {
+                    crate::pattern::runtime::PatternKind::Plain(p) => p,
+                    crate::pattern::runtime::PatternKind::Combined(_) => todo!(),
+                };
                 let pattern = pattern.combine(date, time);
-                let items: alloc::vec::Vec<crate::pattern::PatternItem> =
-                    pattern.into_iter().collect();
-                let pattern = crate::pattern::runtime::Pattern::from(items);
-                Ok(PatternPlurals::from(pattern).into())
+                let kind: crate::pattern::runtime::PatternKind = pattern.into();
+                Ok(PatternPlurals::from(kind).into())
             },
         )
     }
