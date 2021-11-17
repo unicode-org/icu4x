@@ -57,51 +57,6 @@ impl_copy_type!(i128);
 impl_copy_type!(char);
 impl_copy_type!(bool);
 
-/// [`OwnedYokeable`] is a convenience type that allows one to wrap fully-owned types and produce
-/// [`Yokeable`]s from them. Its primary purpose is to be able to quickly satisfy the
-/// requirements on fields in the [`Yokeable`] and [`ZeroCopyFrom`] custom derive without
-/// needing to do a manual impl.
-///
-/// The [`ZeroCopyFrom`] impl will call `.clone()` since there is no borrowed version of this type. This
-/// will be cheap for `Copy` types.
-///
-/// For example, the following custom derive would fail to compile:
-///
-/// ```rust,compile_fail
-/// use yoke::{Yokeable, ZeroCopyFrom};
-/// use std::borrow::Cow;
-///
-/// #[derive(Yokeable, ZeroCopyFrom)]
-/// struct Foo<'a> {
-///    arr: [String; 12],
-///    cow: Cow<'a, str>
-/// }
-/// ```
-///
-/// ```rust
-/// use yoke::{OwnedYokeable, Yokeable, ZeroCopyFrom};
-/// use std::borrow::Cow;
-///
-/// #[derive(Yokeable, ZeroCopyFrom)]
-/// struct Foo<'a> {
-///    arr: OwnedYokeable<[String; 12]>,
-///    cow: Cow<'a, str>
-/// }
-/// ```
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Ord, PartialOrd, Hash)]
-pub struct OwnedYokeable<T>(pub T);
-
-unsafe impl<'a, T: 'static> Yokeable<'a> for OwnedYokeable<T> {
-    type Output = Self;
-    copy_yoke_impl! {}
-}
-
-impl<T: Clone + 'static> ZeroCopyFrom<OwnedYokeable<T>> for OwnedYokeable<T> {
-    fn zero_copy_from(this: &Self) -> Self {
-        this.clone()
-    }
-}
-
 // This is for when we're implementing Yoke on a complex type such that it's not
 // obvious to the compiler that the lifetime is covariant
 macro_rules! unsafe_complex_yoke_impl {
