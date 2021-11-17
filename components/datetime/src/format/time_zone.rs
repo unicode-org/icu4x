@@ -52,7 +52,7 @@ where
     T: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    match (&time_zone_format.patterns, &time_zone_format.config) {
+    match (&time_zone_format.patterns, time_zone_format.config) {
         (Some(patterns), None) => write_pattern(time_zone_format, time_zone, patterns, w),
         (None, Some(config)) => write_config(time_zone_format, time_zone, config, w),
         (Some(_), Some(_)) => {
@@ -67,7 +67,7 @@ where
 fn write_config<T, W>(
     time_zone_format: &TimeZoneFormat,
     time_zone: &T,
-    config: &TimeZoneFormatConfig,
+    config: TimeZoneFormatConfig,
     w: &mut W,
 ) -> Result<(), Error>
 where
@@ -106,13 +106,7 @@ where
             time_zone_format.localized_gmt_format(w, time_zone)?;
         }
         TimeZoneFormatConfig::Iso8601(iso_format, iso_minutes, iso_seconds) => {
-            time_zone_format.iso8601_format(
-                w,
-                time_zone,
-                *iso_format,
-                *iso_minutes,
-                *iso_seconds,
-            )?;
+            time_zone_format.iso8601_format(w, time_zone, iso_format, iso_minutes, iso_seconds)?;
         }
     }
     Ok(())
