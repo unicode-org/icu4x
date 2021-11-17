@@ -17,6 +17,7 @@
 extern crate alloc;
 
 pub mod arithmetic;
+pub mod buddhist;
 mod calendar;
 mod date;
 mod datetime;
