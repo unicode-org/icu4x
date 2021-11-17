@@ -25,5 +25,7 @@ extern crate std;
 extern crate alloc;
 
 mod map;
+#[cfg(feature = "serde")]
+mod serde;
 
 pub use map::LiteMap;
