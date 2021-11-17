@@ -172,13 +172,15 @@ mod test {
 
         let map = get_tuple_map();
         let json = serde_json::to_string(&map).unwrap();
-        assert_eq!(json, "[[[1,\"en\"],\"one\"],[[1,\"zh\"],\"一\"],[[2,\"en\"],\"two\"],\
+        assert_eq!(
+            json,
+            "[[[1,\"en\"],\"one\"],[[1,\"zh\"],\"一\"],[[2,\"en\"],\"two\"],\
                           [[2,\"zh\"],\"二\"],[[4,\"en\"],\"four\"],[[5,\"en\"],\"five\"],\
-                          [[5,\"zh\"],\"五\"],[[7,\"zh\"],\"七\"]]");
+                          [[5,\"zh\"],\"五\"],[[7,\"zh\"],\"七\"]]"
+        );
         let deserialized: LiteMap<(u32, String), String> = serde_json::from_str(&json).unwrap();
         assert_eq!(map, deserialized);
     }
-
 
     #[test]
     fn test_roundtrip_postcard() {
