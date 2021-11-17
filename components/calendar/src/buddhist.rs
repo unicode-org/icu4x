@@ -23,34 +23,30 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 /// [cal]: https://en.wikipedia.org/wiki/Thai_solar_calendar
 pub struct Buddhist;
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-/// The inner date type used for representing Date<Buddhist>
-pub struct BuddhistDateInner(IsoDateInner);
-
 impl Calendar for Buddhist {
-    type DateInner = BuddhistDateInner;
-    fn date_from_iso(&self, iso: Date<Iso>) -> BuddhistDateInner {
-        BuddhistDateInner(*iso.inner())
+    type DateInner = IsoDateInner;
+    fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
+        *iso.inner()
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        Date::from_raw(date.0, Iso)
+        Date::from_raw(*date, Iso)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Iso.months_in_year(&date.0)
+        Iso.months_in_year(date)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
-        Iso.days_in_year(&date.0)
+        Iso.days_in_year(date)
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Iso.days_in_month(&date.0)
+        Iso.days_in_month(date)
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Iso.offset_date(&mut date.0, offset.cast_unit())
+        Iso.offset_date(date, offset.cast_unit())
     }
 
     #[allow(clippy::field_reassign_with_default)] // it's more clear this way
@@ -61,32 +57,32 @@ impl Calendar for Buddhist {
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        Iso.until(&date1.0, &date2.0, largest_unit, smallest_unit)
+        Iso.until(date1, date2, largest_unit, smallest_unit)
             .cast_unit()
     }
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        iso_year_as_buddhist(date.0.year)
+        iso_year_as_buddhist(date.year)
     }
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::Month {
-        Iso.month(&date.0)
+        Iso.month(date)
     }
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        Iso.day_of_month(&date.0)
+        Iso.day_of_month(date)
     }
 
     /// Information of the day of the year
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.0.year.0 - 1);
-        let next_year = IsoYear(date.0.year.0 + 1);
+        let prev_year = IsoYear(date.year.0 - 1);
+        let next_year = IsoYear(date.year.0 + 1);
         types::DayOfYearInfo {
-            day_of_year: Iso::day_of_year(date.0),
-            days_in_year: Iso::days_in_year(date.0.year),
+            day_of_year: Iso::day_of_year(*date),
+            days_in_year: Iso::days_in_year(date.year),
             prev_year: iso_year_as_buddhist(prev_year),
             days_in_prev_year: Iso::days_in_year(prev_year),
             next_year: iso_year_as_buddhist(next_year),
