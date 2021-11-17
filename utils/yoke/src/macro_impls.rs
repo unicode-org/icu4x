@@ -64,6 +64,30 @@ impl_copy_type!(bool);
 ///
 /// The [`ZeroCopyFrom`] impl will call `.clone()` since there is no borrowed version of this type. This
 /// will be cheap for `Copy` types.
+///
+/// For example, the following custom derive would fail to compile:
+///
+/// ```rust,compile_fail
+/// use yoke::{Yokeable, ZeroCopyFrom};
+/// use std::borrow::Cow;
+/// 
+/// #[derive(Yokeable, ZeroCopyFrom)]
+/// struct Foo<'a> {
+///    arr: [String; 12],
+///    cow: Cow<'a, str>
+/// }
+/// ```
+///
+/// ```rust
+/// use yoke::{OwnedYokeable, Yokeable, ZeroCopyFrom};
+/// use std::borrow::Cow;
+/// 
+/// #[derive(Yokeable, ZeroCopyFrom)]
+/// struct Foo<'a> {
+///    arr: OwnedYokeable<[String; 12]>,
+///    cow: Cow<'a, str>
+/// }
+/// ```
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Ord, PartialOrd, Hash)]
 pub struct OwnedYokeable<T>(pub T);
 
