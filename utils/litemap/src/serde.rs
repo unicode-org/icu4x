@@ -127,8 +127,6 @@ mod test {
     use alloc::borrow::ToOwned;
     use alloc::string::String;
     use alloc::vec;
-    use postcard;
-    use serde_json;
 
     fn get_simple_map() -> LiteMap<u32, String> {
         vec![
