@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637179488553,
+  "lastUpdate": 1637184733544,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14909,6 +14909,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 28380058,
             "range": "± 1611597",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1c296f0cce90c50742d4f820dfa298b06d04f0c3",
+          "message": "Add Buddhist calendar calculations (#1305)\n\n* Add Buddhist calendar calculations\n\n* move into const\n\n* Remove intermediate layer of inner date",
+          "timestamp": "2021-11-17T13:25:18-08:00",
+          "tree_id": "8ea32a66097faf4ee3362c136f2092facffc3e8c",
+          "url": "https://github.com/unicode-org/icu4x/commit/1c296f0cce90c50742d4f820dfa298b06d04f0c3"
+        },
+        "date": 1637184727188,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34280005,
+            "range": "± 651338",
             "unit": "ns/iter"
           }
         ]
