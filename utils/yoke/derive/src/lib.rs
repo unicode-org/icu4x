@@ -209,20 +209,24 @@ pub fn zcf_derive(input: TokenStream) -> TokenStream {
     TokenStream::from(zcf_derive_impl(&input))
 }
 
-fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
-    let tybounds = input.generics.type_params().collect::<Vec<_>>();
-    let typarams = tybounds
-        .iter()
-        .map(|ty| ty.ident.clone())
-        .collect::<Vec<_>>();
-    let has_clone = input.attrs.iter().any(|a| {
+fn has_cloning_zcf_attr(attrs: &[syn::Attribute]) -> bool {
+    attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
             if i == "cloning_zcf" {
                 return true;
             }
         }
         false
-    });
+    })
+}
+
+fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
+    let tybounds = input.generics.type_params().collect::<Vec<_>>();
+    let typarams = tybounds
+        .iter()
+        .map(|ty| ty.ident.clone())
+        .collect::<Vec<_>>();
+    let has_clone = has_cloning_zcf_attr(&input.attrs);
     let lts = input.generics.lifetimes().count();
     let name = &input.ident;
     if lts == 0 {
