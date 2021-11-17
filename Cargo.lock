@@ -1095,6 +1095,7 @@ dependencies = [
 name = "icu_casefolding"
 version = "0.1.0"
 dependencies = [
+ "criterion",
  "icu_codepointtrie",
  "zerovec",
 ]

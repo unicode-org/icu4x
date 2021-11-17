@@ -806,3 +806,54 @@ mod tests {
 	closure.clear();
     }
 }
+
+// TODO: deleteme
+pub struct RawUnfold {
+    rows: Vec<[u8; 12]>,
+}
+
+impl RawUnfold {
+    pub fn new(raw: &[u16]) -> Self {
+	let row_width = raw[1] as usize;
+	assert_eq!(row_width, 5);
+	let str_width = raw[2];
+	assert_eq!(str_width, 3);
+	let mut rows: Vec<[u8; 12]> = vec![];
+
+	for row in raw.chunks_exact(row_width).skip(1) {
+	    let mut u8_row = [0u8; 12];
+	    let key = Self::decode_string(&row[..3]);
+	    let val = Self::decode_string(&row[3..]);
+	    for (idx, b) in key.bytes().enumerate() {
+		u8_row[idx] = b;
+	    }
+	    for (idx, b) in val.bytes().enumerate() {
+		u8_row[idx+6] = b;
+	    }
+	    rows.push(u8_row);
+	}
+	Self { rows }
+    }
+    #[inline]
+    pub fn get(&self, key: &str) -> Option<&str> {
+	match self.rows.binary_search_by_key(&key, |entry| {
+	    Self::decode_str(&entry[..6])
+	}) {
+	    Ok(idx) => Some(Self::decode_str(&self.rows[idx][6..])),
+	    Err(_) => None,
+	}
+    }
+    #[inline(always)]
+    fn decode_string(slice: &[u16]) -> String {
+	let iter = slice.iter().map(|&c| c).take_while(|&c| c != 0);
+	char::decode_utf16(iter)
+	    .map(|c| c.unwrap())
+	    .collect::<String>()
+    }
+
+    #[inline(always)]
+    fn decode_str(raw: &[u8]) -> &str {
+	let len = raw.iter().take_while(|&&b| b != 0).count();
+	unsafe { std::str::from_utf8_unchecked(&raw[..len]) }
+    }
+}
