@@ -70,7 +70,7 @@ impl_copy_type!(bool);
 /// ```rust,compile_fail
 /// use yoke::{Yokeable, ZeroCopyFrom};
 /// use std::borrow::Cow;
-/// 
+///
 /// #[derive(Yokeable, ZeroCopyFrom)]
 /// struct Foo<'a> {
 ///    arr: [String; 12],
@@ -81,7 +81,7 @@ impl_copy_type!(bool);
 /// ```rust
 /// use yoke::{OwnedYokeable, Yokeable, ZeroCopyFrom};
 /// use std::borrow::Cow;
-/// 
+///
 /// #[derive(Yokeable, ZeroCopyFrom)]
 /// struct Foo<'a> {
 ///    arr: OwnedYokeable<[String; 12]>,
