@@ -101,7 +101,7 @@ pub struct IsoDateInner {
 }
 
 impl IsoDateInner {
-    fn add_months(&mut self, months: i32) {
+    pub fn add_months(&mut self, months: i32) {
         // Get a zero-indexed new month
         let new_month = (self.month.0 as i32 - 1) + months;
         if new_month >= 0 {
