@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637184750354,
+  "lastUpdate": 1637187391620,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19487,6 +19487,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16796,
             "range": "± 81",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f2a5bf5e9dcad52e072e23e3770d5c7decf67a64",
+          "message": "Homogenize yoke generic impls to always work with Yokeable, add OwnedYokeable (#1302)",
+          "timestamp": "2021-11-17T14:09:09-08:00",
+          "tree_id": "ba9ebd58c27b92d3b49c79602137cfd4378f1303",
+          "url": "https://github.com/unicode-org/icu4x/commit/f2a5bf5e9dcad52e072e23e3770d5c7decf67a64"
+        },
+        "date": 1637187386088,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1079,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5356,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18872,
+            "range": "± 12",
             "unit": "ns/iter"
           }
         ]
