@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637184399760,
+  "lastUpdate": 1637187046196,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3953,6 +3953,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1c296f0cce90c50742d4f820dfa298b06d04f0c3"
         },
         "date": 1637184393955,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 866778,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f2a5bf5e9dcad52e072e23e3770d5c7decf67a64",
+          "message": "Homogenize yoke generic impls to always work with Yokeable, add OwnedYokeable (#1302)",
+          "timestamp": "2021-11-17T14:09:09-08:00",
+          "tree_id": "ba9ebd58c27b92d3b49c79602137cfd4378f1303",
+          "url": "https://github.com/unicode-org/icu4x/commit/f2a5bf5e9dcad52e072e23e3770d5c7decf67a64"
+        },
+        "date": 1637187039374,
         "tool": "ndjson",
         "benches": [
           {
