@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637116623272,
+  "lastUpdate": 1637179566407,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17237,6 +17237,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5042,
             "range": "± 286",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a0a65962002a56f610a9f171f0aee6ed0caeead7",
+          "message": "Handle serialization of tuples (etc) in litemaps (#1306)\n\n* Move serde code into separate file\r\n\r\n* Add serde_json to litemap, split into serde_serialize and serde features\r\n\r\n* Handle tuple serialization in LiteMap\r\n\r\n* fmt\r\n\r\n* appease clippy\r\n\r\n* appease clippy\r\n\r\n* fix dep",
+          "timestamp": "2021-11-17T11:58:32-08:00",
+          "tree_id": "2348028445d58bcc172c3f8e0dbc8225bac1f8c5",
+          "url": "https://github.com/unicode-org/icu4x/commit/a0a65962002a56f610a9f171f0aee6ed0caeead7"
+        },
+        "date": 1637179558869,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3185,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5598,
+            "range": "± 414",
             "unit": "ns/iter"
           }
         ]
