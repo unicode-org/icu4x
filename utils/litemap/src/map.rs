@@ -297,7 +297,16 @@ mod serde {
         {
             let mut map = serializer.serialize_map(Some(self.len()))?;
             for (k, v) in self.iter() {
-                map.serialize_entry(k, v)?;
+                if let Some(&(ref k, _)) = self.values.get(0) {
+                    let json = serde_json::json!(k);
+                    if !json.is_string() && !json.is_number() {
+                        
+                    }
+                }
+                if map.serialize_entry(k, v).is_err() {
+                    let json = serde_json::json!(k);
+                    map.serialize_entry(&json, v)?;
+                }
             }
             map.end()
         }
