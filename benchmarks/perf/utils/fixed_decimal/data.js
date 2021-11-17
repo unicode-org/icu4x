@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637019205055,
+  "lastUpdate": 1637116600065,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13829,6 +13829,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 124892,
             "range": "± 10442",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "608fbd45586a8f392421b30087c6cd1c2cf902ca",
+          "message": "Update data model for non-gregorian calendars (#1300)\n\n* Parametrize cldr_dates() on calendar type\n\n* Refactor date code into common\n\n* Use litemap in CLDR provider\n\n* Start producing locale data in per-calendar subfolders\n\n* Regen testdata\n\n* Update tests\n\n* Use gregorian variant in datetime\n\n* Rename data keys to remove 'gregory'\n\n* Regen testdata\n\n* Rename GREGORY_ keys to not say GREGORY_\n\n* Move gregory -> calendar\n\n* fmt\n\n* gregory -> calendar\n\n* appease clippy\n\n* Add MissingVariant\n\n* gregorian -> gregory\n\n* Regen data\n\n* rm pubself\n\n* Handle other calendars in the JSON\n\n* Rename CLDR field types\n\n* fmt\n\n* MissingVariant -> NeedsVariant",
+          "timestamp": "2021-11-16T18:29:12-08:00",
+          "tree_id": "da0101cec667cc87db0ea4471ad72ed687e6cfae",
+          "url": "https://github.com/unicode-org/icu4x/commit/608fbd45586a8f392421b30087c6cd1c2cf902ca"
+        },
+        "date": 1637116592165,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 140117,
+            "range": "± 7921",
             "unit": "ns/iter"
           }
         ]
