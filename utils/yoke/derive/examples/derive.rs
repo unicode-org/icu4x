@@ -105,13 +105,13 @@ pub struct CloningZCF3<'data> {
 pub enum CloningZCF4<'data> {
     Cow(Cow<'data, str>),
     #[yoke(cloning_zcf)] // this will clone the first field instead of borrowing
-    CowVec(Cow<'data, str>, Vec<u8>)
+    CowVec(Cow<'data, str>, Vec<u8>),
 }
 
 #[derive(Yokeable, ZeroCopyFrom)]
 pub enum CloningZCF5<'data> {
     Cow(Cow<'data, str>),
-    CowVec(Cow<'data, str>, #[yoke(cloning_zcf)] Vec<u8>)
+    CowVec(Cow<'data, str>, #[yoke(cloning_zcf)] Vec<u8>),
 }
 
 pub struct AssertYokeable {
