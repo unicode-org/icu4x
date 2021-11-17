@@ -22,7 +22,7 @@ pub enum Error {
 
     /// The data provider supports the key, but the key needs to be supplied with a variant
     #[displaydoc("Request {0} needs a variant")]
-    MissingVariant(DataRequest),
+    NeedsVariant(DataRequest),
 
     /// The resource was not returned due to a filter. The resource may or may not be available.
     #[displaydoc("Resource was filtered: {1}: {0}")]

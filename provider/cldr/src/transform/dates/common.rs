@@ -64,7 +64,7 @@ impl CommonDateProvider {
             .options
             .variant
             .as_ref()
-            .ok_or_else(|| DataError::MissingVariant(req.clone()))?;
+            .ok_or_else(|| DataError::NeedsVariant(req.clone()))?;
         let map = self
             .data
             .get(&**variant)
