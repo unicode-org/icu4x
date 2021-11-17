@@ -6,9 +6,6 @@ use serde::ser::SerializeMap;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[cfg(feature = "serde_serialize")]
-use serde_json;
-
-#[cfg(feature = "serde_serialize")]
 impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
