@@ -9,6 +9,11 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Dat
 use core::convert::TryInto;
 use tinystr::tinystr8;
 
+/// The number of years the Buddhist Era is ahead of C.E. by
+///
+/// (1 AD = 544 BE)
+const BUDDHIST_ERA_OFFSET: i32 = 543;
+
 #[derive(Copy, Clone, Debug, Default)]
 /// The [Thai Solar Buddhist Calendar][cal]
 ///
@@ -116,7 +121,7 @@ impl DateTime<Buddhist> {
         minute: u8,
         second: u8,
     ) -> Result<DateTime<Buddhist>, DateTimeError> {
-        let iso_year = year - 543;
+        let iso_year = year - BUDDHIST_ERA_OFFSET;
         Ok(DateTime {
             date: Date::new_buddhist_date(iso_year.into(), month.try_into()?, day.try_into()?)?,
             time: types::Time::try_new(hour, minute, second)?,
@@ -125,7 +130,7 @@ impl DateTime<Buddhist> {
 }
 
 fn iso_year_as_buddhist(year: IsoYear) -> types::Year {
-    let buddhist_year = year.0 + 543;
+    let buddhist_year = year.0 + BUDDHIST_ERA_OFFSET;
     types::Year {
         era: types::Era(tinystr8!("be")),
         number: buddhist_year,
