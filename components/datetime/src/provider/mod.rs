@@ -10,7 +10,7 @@
 use icu_provider::prelude::ResourceKey;
 
 /// Data providers for the Gregorian Calendar.
-pub mod gregory;
+pub mod calendar;
 
 /// Data providers for time zones.
 pub mod time_zones;
@@ -21,19 +21,18 @@ pub(crate) mod date_time;
 /// A collection of [`ResourceKey`] structs for DateTime providers.
 pub mod key {
     #[cfg(doc)]
-    use crate::provider::{gregory, time_zones};
+    use crate::provider::{calendar, time_zones};
 
     use icu_provider::{resource_key, ResourceKey};
 
-    /// A [`ResourceKey`] to [`gregory::DatePatternsV1`].
-    pub const GREGORY_DATE_PATTERNS_V1: ResourceKey = resource_key!(DateTime, "gregory_lengths", 1);
+    /// A [`ResourceKey`] to [`calendar::DatePatternsV1`].
+    pub const DATE_PATTERNS_V1: ResourceKey = resource_key!(DateTime, "lengths", 1);
 
-    /// A [`ResourceKey`] to [`gregory::DateSkeletonPatternsV1`].
-    pub const GREGORY_DATE_SKELETON_PATTERNS_V1: ResourceKey =
-        resource_key!(DateTime, "gregory_skltns", 1);
+    /// A [`ResourceKey`] to [`calendar::DateSkeletonPatternsV1`].
+    pub const DATE_SKELETON_PATTERNS_V1: ResourceKey = resource_key!(DateTime, "skeletons", 1);
 
-    /// A [`ResourceKey`] to [`gregory::DateSymbolsV1`]
-    pub const GREGORY_DATE_SYMBOLS_V1: ResourceKey = resource_key!(DateTime, "gregory_symbols", 1);
+    /// A [`ResourceKey`] to [`calendar::DateSymbolsV1`]
+    pub const DATE_SYMBOLS_V1: ResourceKey = resource_key!(DateTime, "symbols", 1);
 
     /// A [`ResourceKey`] to [`time_zones::TimeZoneFormatsV1`].
     pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(TimeZone, "formats", 1);

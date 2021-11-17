@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::cldr_json;
+use super::common::CommonDateProvider;
 use crate::error::Error;
-use crate::reader::{get_langid_subdirectories, open_reader};
+
 use crate::CldrPaths;
 use icu_datetime::provider::*;
-use icu_locid::LanguageIdentifier;
+
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -15,98 +16,71 @@ use std::convert::TryFrom;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::GREGORY_DATE_SYMBOLS_V1, //
+    key::DATE_SYMBOLS_V1, //
 ];
 
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
-pub struct DateSymbolsProvider {
-    data: Vec<(LanguageIdentifier, cldr_json::LangDates)>,
-}
+pub struct DateSymbolsProvider(CommonDateProvider);
 
 impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = vec![];
-
-        let path = cldr_paths.cldr_dates()?.join("main");
-
-        let locale_dirs = get_langid_subdirectories(&path)?;
-
-        for dir in locale_dirs {
-            let path = dir.join("ca-gregorian.json");
-
-            let mut resource: cldr_json::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.append(&mut resource.main.0);
-        }
-
-        Ok(Self { data })
+        CommonDateProvider::try_from(cldr_paths).map(DateSymbolsProvider)
     }
 }
 
 impl KeyedDataProvider for DateSymbolsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::GREGORY_DATE_SYMBOLS_V1.match_key(*resc_key)
+        key::DATE_SYMBOLS_V1.match_key(*resc_key)
     }
 }
 
-impl DataProvider<gregory::DateSymbolsV1Marker> for DateSymbolsProvider {
+impl DataProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<gregory::DateSymbolsV1Marker>, DataError> {
+    ) -> Result<DataResponse<calendar::DateSymbolsV1Marker>, DataError> {
         DateSymbolsProvider::supports_key(&req.resource_path.key)?;
-        let langid = req.try_langid()?;
-        let dates = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
-            Ok(idx) => &self.data[idx].1.dates,
-            Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
-        };
+        let dates = self.0.dates_for(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_owned(gregory::DateSymbolsV1::from(dates))),
+            payload: Some(DataPayload::from_owned(calendar::DateSymbolsV1::from(
+                dates,
+            ))),
         })
     }
 }
 
 icu_provider::impl_dyn_provider!(DateSymbolsProvider, {
-    _ => gregory::DateSymbolsV1Marker,
+    _ => calendar::DateSymbolsV1Marker,
 }, SERDE_SE);
 
 impl IterableDataProviderCore for DateSymbolsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                // TODO: Avoid the clone
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+        self.0.supported_options_for_key(resc_key)
     }
 }
 
-impl From<&cldr_json::Dates> for gregory::DateSymbolsV1 {
+impl From<&cldr_json::Dates> for calendar::DateSymbolsV1 {
     fn from(other: &cldr_json::Dates) -> Self {
         Self {
-            months: (&other.calendars.gregorian.months).into(),
-            weekdays: (&other.calendars.gregorian.days).into(),
-            day_periods: (&other.calendars.gregorian.day_periods).into(),
+            months: (&other.months).into(),
+            weekdays: (&other.days).into(),
+            day_periods: (&other.day_periods).into(),
         }
     }
 }
 
 macro_rules! symbols_from {
     ([$name: ident, $name2: ident $(,)?], [ $($element: ident),+ $(,)? ] $(,)?) => {
-        impl From<&cldr_json::$name::Symbols> for gregory::$name2::SymbolsV1 {
+        impl From<&cldr_json::$name::Symbols> for calendar::$name2::SymbolsV1 {
             fn from(other: &cldr_json::$name::Symbols) -> Self {
                 Self([
                     $(
@@ -118,7 +92,7 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name2]);
     };
     ([$name: ident, $name2: ident $(,)?], { $($element: ident),+ $(,)? } $(,)?) => {
-        impl From<&cldr_json::$name::Symbols> for gregory::$name2::SymbolsV1 {
+        impl From<&cldr_json::$name::Symbols> for calendar::$name2::SymbolsV1 {
             fn from(other: &cldr_json::$name::Symbols) -> Self {
                 Self {
                     $(
@@ -141,7 +115,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_json::$name::Contexts> for gregory::$name2::ContextsV1 {
+        impl From<&cldr_json::$name::Contexts> for calendar::$name2::ContextsV1 {
             fn from(other: &cldr_json::$name::Contexts) -> Self {
                 Self {
                     format: (&other.format).into(),
@@ -177,7 +151,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_json::$name::FormatWidths> for gregory::$name2::FormatWidthsV1 {
+        impl From<&cldr_json::$name::FormatWidths> for calendar::$name2::FormatWidthsV1 {
             fn from(other: &cldr_json::$name::FormatWidths) -> Self {
                 Self {
                     abbreviated: (&other.abbreviated).into(),
@@ -188,7 +162,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_json::$name::StandAloneWidths> for gregory::$name2::StandAloneWidthsV1 {
+        impl From<&cldr_json::$name::StandAloneWidths> for calendar::$name2::StandAloneWidthsV1 {
             fn from(other: &cldr_json::$name::StandAloneWidths) -> Self {
                 Self {
                     abbreviated: other.abbreviated.as_ref().map(|width| width.into()),
@@ -228,12 +202,12 @@ fn test_basic() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: DataPayload<gregory::DateSymbolsV1Marker> = provider
+    let cs_dates: DataPayload<calendar::DateSymbolsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: key::GREGORY_DATE_SYMBOLS_V1,
+                key: key::DATE_SYMBOLS_V1,
                 options: ResourceOptions {
-                    variant: None,
+                    variant: Some("gregory".into()),
                     langid: Some(langid!("cs")),
                 },
             },
@@ -257,12 +231,12 @@ fn unalias_contexts() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: DataPayload<gregory::DateSymbolsV1Marker> = provider
+    let cs_dates: DataPayload<calendar::DateSymbolsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: key::GREGORY_DATE_SYMBOLS_V1,
+                key: key::DATE_SYMBOLS_V1,
                 options: ResourceOptions {
-                    variant: None,
+                    variant: Some("gregory".into()),
                     langid: Some(langid!("cs")),
                 },
             },

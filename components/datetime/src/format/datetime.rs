@@ -10,8 +10,8 @@ use crate::pattern::{
     PatternItem,
 };
 use crate::provider;
+use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::provider::date_time::DateTimeSymbols;
-use crate::provider::gregory::patterns::PatternPluralsFromPatternsV1Marker;
 
 use alloc::string::ToString;
 use core::fmt;
@@ -53,7 +53,7 @@ where
     T: DateTimeInput,
 {
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub(crate) symbols: Option<&'l provider::gregory::DateSymbolsV1>,
+    pub(crate) symbols: Option<&'l provider::calendar::DateSymbolsV1>,
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
@@ -109,7 +109,7 @@ where
 
 fn write_pattern<T, W>(
     pattern: &crate::pattern::runtime::Pattern,
-    symbols: Option<&provider::gregory::DateSymbolsV1>,
+    symbols: Option<&provider::calendar::DateSymbolsV1>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
 ) -> Result<(), Error>
@@ -128,7 +128,7 @@ where
 
 pub fn write_pattern_plurals<T, W>(
     patterns: &PatternPlurals,
-    symbols: Option<&provider::gregory::DateSymbolsV1>,
+    symbols: Option<&provider::calendar::DateSymbolsV1>,
     datetime: &T,
     ordinal_rules: Option<&PluralRules>,
     locale: &Locale,
@@ -151,7 +151,7 @@ where
 pub(super) fn write_field<T, W>(
     pattern: &crate::pattern::runtime::Pattern,
     field: fields::Field,
-    symbols: Option<&crate::provider::gregory::DateSymbolsV1>,
+    symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
 ) -> Result<(), Error>
@@ -335,7 +335,7 @@ mod tests {
     #[test]
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
-        use crate::provider::gregory::DateSymbolsV1Marker;
+        use crate::provider::calendar::DateSymbolsV1Marker;
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
@@ -343,9 +343,9 @@ mod tests {
         let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: provider::key::GREGORY_DATE_SYMBOLS_V1,
+                    key: provider::key::DATE_SYMBOLS_V1,
                     options: ResourceOptions {
-                        variant: None,
+                        variant: Some("gregory".into()),
                         langid: Some("en".parse().unwrap()),
                     },
                 },

@@ -18,7 +18,7 @@ use crate::{
     pattern::runtime::PatternPlurals,
     provider::{
         self,
-        gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     },
     time_zone::TimeZoneFormat,
     DateTimeFormatError,
@@ -144,9 +144,9 @@ impl ZonedDateTimeFormat {
                 date_provider
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {
-                            key: provider::key::GREGORY_DATE_SYMBOLS_V1,
+                            key: provider::key::DATE_SYMBOLS_V1,
                             options: ResourceOptions {
-                                variant: None,
+                                variant: Some("gregory".into()),
                                 langid: Some(langid),
                             },
                         },

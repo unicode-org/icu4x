@@ -8,8 +8,8 @@
 use crate::{
     format::datetime,
     options::DateTimeFormatOptions,
-    provider::gregory::patterns::PatternPluralsFromPatternsV1Marker,
-    provider::gregory::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
+    provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
 };
 use alloc::string::String;
 use icu_locid::Locale;
@@ -126,9 +126,9 @@ impl DateTimeFormat {
                 data_provider
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {
-                            key: provider::key::GREGORY_DATE_SYMBOLS_V1,
+                            key: provider::key::DATE_SYMBOLS_V1,
                             options: ResourceOptions {
-                                variant: None,
+                                variant: Some("gregory".into()),
                                 langid: Some(langid),
                             },
                         },

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+mod common;
 pub mod patterns;
 pub mod skeletons;
 pub mod symbols;
@@ -11,6 +12,7 @@ pub(self) mod cldr_json {
     use icu_locid::LanguageIdentifier;
     use serde::Deserialize;
     use std::borrow::Cow;
+    use std::collections::HashMap;
 
     macro_rules! symbols {
         ($name: ident, $([$alias: expr, $element: ident, $ty: ty]),+ $(,)?) => {
@@ -154,7 +156,7 @@ pub(self) mod cldr_json {
     /// e.g.
     /// https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct GregoryDates {
+    pub struct Dates {
         pub months: months::Contexts,
         pub days: days::Contexts,
         #[serde(rename = "dayPeriods")]
@@ -168,18 +170,13 @@ pub(self) mod cldr_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Calendars {
-        pub gregorian: GregoryDates,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Dates {
-        pub calendars: Calendars,
+    pub struct DatesCalendars {
+        pub calendars: HashMap<String, Dates>,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct LangDates {
-        pub dates: Dates,
+        pub dates: DatesCalendars,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]

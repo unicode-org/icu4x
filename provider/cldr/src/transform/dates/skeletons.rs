@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::cldr_json;
+use super::common::CommonDateProvider;
 use crate::error::Error;
-use crate::reader::{get_langid_subdirectories, open_reader};
+
 use crate::CldrPaths;
 use icu_datetime::{provider::*, skeleton::SkeletonError};
-use icu_locid::LanguageIdentifier;
+
 use icu_plurals::PluralCategory;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
@@ -15,90 +16,61 @@ use std::convert::TryFrom;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::GREGORY_DATE_SKELETON_PATTERNS_V1, //
+    key::DATE_SKELETON_PATTERNS_V1, //
 ];
 
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
-pub struct DateSkeletonPatternsProvider {
-    data: Vec<(LanguageIdentifier, cldr_json::LangDates)>,
-}
+pub struct DateSkeletonPatternsProvider(CommonDateProvider);
 
 impl TryFrom<&dyn CldrPaths> for DateSkeletonPatternsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = vec![];
-
-        let path = cldr_paths.cldr_dates()?.join("main");
-
-        let locale_dirs = get_langid_subdirectories(&path)?;
-
-        for dir in locale_dirs {
-            let path = dir.join("ca-gregorian.json");
-
-            let mut resource: cldr_json::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.append(&mut resource.main.0);
-        }
-
-        Ok(Self { data })
+        CommonDateProvider::try_from(cldr_paths).map(DateSkeletonPatternsProvider)
     }
 }
 
 impl KeyedDataProvider for DateSkeletonPatternsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::GREGORY_DATE_SKELETON_PATTERNS_V1.match_key(*resc_key)
+        key::DATE_SKELETON_PATTERNS_V1.match_key(*resc_key)
     }
 }
 
-impl DataProvider<gregory::DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
+impl DataProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<gregory::DateSkeletonPatternsV1Marker>, DataError> {
+    ) -> Result<DataResponse<calendar::DateSkeletonPatternsV1Marker>, DataError> {
         DateSkeletonPatternsProvider::supports_key(&req.resource_path.key)?;
-        let langid = req.try_langid()?;
-        let dates = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
-            Ok(idx) => &self.data[idx].1.dates,
-            Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
-        };
+        let dates = self.0.dates_for(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(DataPayload::from_owned(
-                gregory::DateSkeletonPatternsV1::from(&dates.calendars.gregorian.datetime_formats),
+                calendar::DateSkeletonPatternsV1::from(&dates.datetime_formats),
             )),
         })
     }
 }
 
 icu_provider::impl_dyn_provider!(DateSkeletonPatternsProvider, {
-    _ => gregory::DateSkeletonPatternsV1Marker,
+    _ => calendar::DateSkeletonPatternsV1Marker,
 }, SERDE_SE);
 
 impl IterableDataProviderCore for DateSkeletonPatternsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                // TODO: Avoid the clone
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+        self.0.supported_options_for_key(resc_key)
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
+impl From<&cldr_json::DateTimeFormats> for calendar::DateSkeletonPatternsV1<'_> {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use gregory::SkeletonV1;
+        use calendar::SkeletonV1;
         use icu_datetime::{
             pattern::runtime::{PatternPlurals, PluralPattern},
             skeleton::reference::Skeleton,
@@ -176,7 +148,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1<'_> {
 
 #[test]
 fn test_datetime_skeletons() {
-    use gregory::SkeletonV1;
+    use calendar::SkeletonV1;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
     use icu_locid_macros::langid;
     use icu_plurals::PluralCategory;
@@ -185,12 +157,12 @@ fn test_datetime_skeletons() {
     let provider = DateSkeletonPatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
         .expect("Failed to retrieve provider");
 
-    let skeletons: DataPayload<gregory::DateSkeletonPatternsV1Marker> = provider
+    let skeletons: DataPayload<calendar::DateSkeletonPatternsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
-                key: key::GREGORY_DATE_SKELETON_PATTERNS_V1,
+                key: key::DATE_SKELETON_PATTERNS_V1,
                 options: ResourceOptions {
-                    variant: None,
+                    variant: Some("gregory".into()),
                     langid: Some(langid!("fil")),
                 },
             },
