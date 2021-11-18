@@ -114,6 +114,7 @@ cldr_json_glob = [
     "cldr-numbers-full/main/$LOCALES/numbers.json",
     "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
     "cldr-misc-full/main/$LOCALES/listPatterns.json",
+    "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
     # Extra data for feature coverage in provider_cldr tests:
     "cldr-dates-full/main/cs/ca-gregorian.json",
     "cldr-dates-full/main/cs/timeZoneNames.json",
