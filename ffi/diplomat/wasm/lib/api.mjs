@@ -1113,4 +1113,22 @@ export class ICU4XStaticDataProvider {
     })();
     return diplomat_out;
   }
+
+  static create_empty() {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XStaticDataProvider_create_empty(diplomat_receive_buffer);
+      const out = new ICU4XCreateStaticDataProviderResult(diplomat_receive_buffer);
+      const out_provider_value = out.provider;
+      ICU4XStaticDataProvider_box_destroy_registry.register(out_provider_value, out_provider_value.underlying);
+      Object.defineProperty(out, "provider", { value: out_provider_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5,
+        align: 4,
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
 }

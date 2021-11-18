@@ -48,3 +48,8 @@
 
         Constructs an ``StaticDataProvider`` and returns it as an :js:class:`ICU4XStaticDataProvider`.
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more details.
+
+    .. js:staticfunction:: create_empty()
+
+        Constructs an empty ``StaticDataProvider``, which can serve as a stub.
+        See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html#method.new_empty>`__ for more details.

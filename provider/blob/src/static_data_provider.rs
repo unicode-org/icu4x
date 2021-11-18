@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::blob_schema::BlobSchema;
+use crate::blob_schema::*;
 use crate::path_util;
 use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
+use litemap::LiteMap;
 use serde::de::Deserialize;
 
 /// A data provider loading data statically baked in to the binary.
@@ -61,6 +62,39 @@ impl StaticDataProvider {
             blob: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob))
                 .map_err(DataError::new_resc_error)?,
         })
+    }
+
+    /// Creates an empty [`StaticDataProvider`] that contains no data.
+    ///
+    /// Can be used as a stub for when a real data provider is not available.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider_blob::StaticDataProvider;
+    /// use icu_locid_macros::langid;
+    ///
+    /// let stub_provider = StaticDataProvider::new_empty();
+    ///
+    /// DataProvider::<HelloWorldV1Marker>::load_payload(
+    ///     &stub_provider,
+    ///     &DataRequest {
+    ///         resource_path: ResourcePath {
+    ///             key: key::HELLO_WORLD_V1,
+    ///             options: langid!("la").into(),
+    ///         }
+    ///     }
+    /// )
+    /// .expect_err("Stub provider returns no data");
+    /// ```
+    pub fn new_empty() -> Self {
+        StaticDataProvider {
+            blob: BlobSchema::V001(BlobSchemaV1 {
+                resources: LiteMap::new(),
+            }),
+        }
     }
 
     fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
