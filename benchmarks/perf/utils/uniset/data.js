@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637196286527,
+  "lastUpdate": 1637254734516,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14999,6 +14999,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 55352193,
             "range": "± 2981488",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c25706bf3967816438337bc3ca483acd490e1a1",
+          "message": "Add StaticDataProvider create_empty (#1314)",
+          "timestamp": "2021-11-18T10:52:29-06:00",
+          "tree_id": "3437ab39d4f995e177875cc06b55e8609f7583ca",
+          "url": "https://github.com/unicode-org/icu4x/commit/6c25706bf3967816438337bc3ca483acd490e1a1"
+        },
+        "date": 1637254726857,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32280078,
+            "range": "± 1192470",
             "unit": "ns/iter"
           }
         ]
