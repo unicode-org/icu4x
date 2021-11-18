@@ -14,6 +14,8 @@ typedef struct ICU4XStaticDataProvider ICU4XStaticDataProvider;
 #include "ICU4XCreateStaticDataProviderResult.h"
 
 ICU4XCreateStaticDataProviderResult ICU4XStaticDataProvider_create();
+
+ICU4XCreateStaticDataProviderResult ICU4XStaticDataProvider_create_empty();
 void ICU4XStaticDataProvider_destroy(ICU4XStaticDataProvider* self);
 
 #ifdef __cplusplus

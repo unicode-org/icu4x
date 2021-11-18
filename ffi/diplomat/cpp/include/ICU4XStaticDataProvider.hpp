@@ -33,6 +33,13 @@ class ICU4XStaticDataProvider {
    * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
    */
   static ICU4XCreateStaticDataProviderResult create();
+
+  /**
+   * Constructs an empty `StaticDataProvider`, which can serve as a stub.
+   * 
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html#method.new_empty) for more details.
+   */
+  static ICU4XCreateStaticDataProviderResult create_empty();
   inline const capi::ICU4XStaticDataProvider* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XStaticDataProvider* AsFFIMut() { return this->inner.get(); }
   inline ICU4XStaticDataProvider(capi::ICU4XStaticDataProvider* i) : inner(i) {}
@@ -44,6 +51,17 @@ class ICU4XStaticDataProvider {
 
 inline ICU4XCreateStaticDataProviderResult ICU4XStaticDataProvider::create() {
   capi::ICU4XCreateStaticDataProviderResult diplomat_raw_struct_out_value = capi::ICU4XStaticDataProvider_create();
+  auto diplomat_optional_raw_out_value_provider = diplomat_raw_struct_out_value.provider;
+  std::optional<ICU4XStaticDataProvider> diplomat_optional_out_value_provider;
+  if (diplomat_optional_raw_out_value_provider != nullptr) {
+    diplomat_optional_out_value_provider = ICU4XStaticDataProvider(diplomat_optional_raw_out_value_provider);
+  } else {
+    diplomat_optional_out_value_provider = std::nullopt;
+  }
+  return ICU4XCreateStaticDataProviderResult{ .provider = std::move(diplomat_optional_out_value_provider), .success = std::move(diplomat_raw_struct_out_value.success) };
+}
+inline ICU4XCreateStaticDataProviderResult ICU4XStaticDataProvider::create_empty() {
+  capi::ICU4XCreateStaticDataProviderResult diplomat_raw_struct_out_value = capi::ICU4XStaticDataProvider_create_empty();
   auto diplomat_optional_raw_out_value_provider = diplomat_raw_struct_out_value.provider;
   std::optional<ICU4XStaticDataProvider> diplomat_optional_out_value_provider;
   if (diplomat_optional_raw_out_value_provider != nullptr) {
