@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637196340405,
+  "lastUpdate": 1637254815119,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19571,6 +19571,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21327,
             "range": "± 2460",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c25706bf3967816438337bc3ca483acd490e1a1",
+          "message": "Add StaticDataProvider create_empty (#1314)",
+          "timestamp": "2021-11-18T10:52:29-06:00",
+          "tree_id": "3437ab39d4f995e177875cc06b55e8609f7583ca",
+          "url": "https://github.com/unicode-org/icu4x/commit/6c25706bf3967816438337bc3ca483acd490e1a1"
+        },
+        "date": 1637254807480,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1293,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6366,
+            "range": "± 319",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21578,
+            "range": "± 2164",
             "unit": "ns/iter"
           }
         ]
