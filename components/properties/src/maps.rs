@@ -385,7 +385,7 @@ pub fn is_symbol(gc_map: &CodePointTrie<GeneralSubcategory>, code_point: u32) ->
 /// let data_struct = payload.get();
 /// let gc = &data_struct.code_point_trie;
 /// 
-/// assert_eq!(gc.get(' ' as u32), GeneralSubcategory::SpaceSeprator);
+/// assert_eq!(gc.get(' ' as u32), GeneralSubcategory::SpaceSeparator);
 /// assert!(maps::is_separator(&gc, ' ' as u32));
 /// ```
 pub fn is_separator(gc_map: &CodePointTrie<GeneralSubcategory>, code_point: u32) -> bool {

@@ -240,6 +240,40 @@ impl GeneralCategory {
         | 1 << (GS::CurrencySymbol as u32)
         | 1 << (GS::ModifierSymbol as u32)
         | 1 << (GS::OtherSymbol as u32));
+
+    /// Return whether the code point belongs in the provided multi-value category.
+    /// 
+    /// ```
+    /// use icu::properties::{maps, GeneralSubcategory, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let payload =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let gc = &data_struct.code_point_trie;
+    /// 
+    /// assert_eq!(gc.get('A' as u32), GeneralSubcategory::UppercaseLetter);
+    /// assert!(GeneralCategory::CasedLetter.contains(gc.get('A' as u32)));
+    /// assert_eq!(gc.get('𝔅' as u32), GeneralSubcategory::UppercaseLetter);  // U+1D505 MATHEMATICAL FRAKTUR CAPITAL B
+    /// assert!(GeneralCategory::Letter.contains(gc.get('𝔅' as u32)));
+    /// assert_eq!(gc.get(0x0301), GeneralSubcategory::NonspacingMark);  // U+0301 COMBINING ACUTE ACCENT
+    /// assert!(GeneralCategory::Mark.contains(gc.get(0x0301)));
+    /// assert_eq!(gc.get('0' as u32), GeneralSubcategory::DecimalNumber);
+    /// assert!(GeneralCategory::Number.contains(gc.get('0' as u32)));
+    /// assert_eq!(gc.get('(' as u32), GeneralSubcategory::OpenPunctuation);
+    /// assert!(GeneralCategory::Punctuation.contains(gc.get('(' as u32)));
+    /// assert_eq!(gc.get('✓' as u32), GeneralSubcategory::OtherSymbol);
+    /// assert!(GeneralCategory::Symbol.contains(gc.get('✓' as u32)));
+    /// assert_eq!(gc.get(' ' as u32), GeneralSubcategory::SpaceSeparator);
+    /// assert!(GeneralCategory::Separator.contains(gc.get(' ' as u32)));
+    /// assert_eq!(gc.get(0xE007F), GeneralSubcategory::Format);  // U+E007F CANCEL TAG
+    /// assert!(GeneralCategory::Other.contains(gc.get(0xE007F)));
+    /// ```
+    pub fn contains(&self, val: GeneralSubcategory) -> bool {
+        0 != (1 << (val as u32)) & self.0
+    }
 }
 
 impl From<GeneralSubcategory> for GeneralCategory {
