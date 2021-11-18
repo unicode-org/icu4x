@@ -64,7 +64,7 @@ pub enum GeneralSubcategory {
     EnclosingMark = 7,
 
     /// A decimal digit
-    Digit = 9,
+    DecimalNumber = 9,
     /// A letterlike numeric character
     LetterNumber = 10,
     /// A numeric character of other type
@@ -166,13 +166,13 @@ impl GeneralCategory {
         | 1 << (GS::SpacingMark as u32));
 
     /// (`Nd`) A decimal digit
-    pub const Digit: GeneralCategory = GC(1 << (GS::Digit as u32));
+    pub const DecimalNumber: GeneralCategory = GC(1 << (GS::DecimalNumber as u32));
     /// (`Nl`) A letterlike numeric character
     pub const LetterNumber: GeneralCategory = GC(1 << (GS::LetterNumber as u32));
     /// (`No`) A numeric character of other type
     pub const OtherNumber: GeneralCategory = GC(1 << (GS::OtherNumber as u32));
     /// (`N`) The union of all number categories
-    pub const Number: GeneralCategory = GC(1 << (GS::Digit as u32)
+    pub const Number: GeneralCategory = GC(1 << (GS::DecimalNumber as u32)
         | 1 << (GS::LetterNumber as u32)
         | 1 << (GS::OtherNumber as u32));
 
@@ -242,7 +242,7 @@ impl GeneralCategory {
         | 1 << (GS::OtherSymbol as u32));
 
     /// Return whether the code point belongs in the provided multi-value category.
-    /// 
+    ///
     /// ```
     /// use icu::properties::{maps, GeneralSubcategory, GeneralCategory};
     /// use icu_codepointtrie::CodePointTrie;
@@ -253,7 +253,7 @@ impl GeneralCategory {
     ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let gc = &data_struct.code_point_trie;
-    /// 
+    ///
     /// assert_eq!(gc.get('A' as u32), GeneralSubcategory::UppercaseLetter);
     /// assert!(GeneralCategory::CasedLetter.contains(gc.get('A' as u32)));
     /// assert_eq!(gc.get('𝔅' as u32), GeneralSubcategory::UppercaseLetter);  // U+1D505 MATHEMATICAL FRAKTUR CAPITAL B
