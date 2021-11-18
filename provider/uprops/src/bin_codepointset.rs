@@ -4,26 +4,26 @@
 
 use crate::uprops_helpers::{self, TomlBinary};
 
+use icu_codepointset::CodePointSetBuilder;
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
 
-pub struct BinaryPropertyUnicodeSetDataProvider {
+pub struct BinaryPropertyCodePointSetDataProvider {
     data: TomlBinary,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
-impl BinaryPropertyUnicodeSetDataProvider {
+impl BinaryPropertyCodePointSetDataProvider {
     pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
         let data = uprops_helpers::load_binary_from_dir(root_dir)?;
         Ok(Self { data })
     }
 }
 
-impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
+impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyCodePointSetDataProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
@@ -33,28 +33,28 @@ impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvi
             .get(&req.resource_path.key.sub_category)
             .ok_or(DataError::MissingResourceKey(req.resource_path.key))?;
 
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         for (start, end) in &data.ranges {
             builder.add_range_u32(&(start..=end));
         }
-        let uniset = builder.build();
+        let codepointset = builder.build();
 
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(DataPayload::from_owned(
-                UnicodePropertyV1::from_owned_uniset(uniset),
+                UnicodePropertyV1::from_owned_codepointset(codepointset),
             )),
         })
     }
 }
 
-icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
+icu_provider::impl_dyn_provider!(BinaryPropertyCodePointSetDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for BinaryPropertyUnicodeSetDataProvider {
+impl IterableDataProviderCore for BinaryPropertyCodePointSetDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -66,12 +66,12 @@ impl IterableDataProviderCore for BinaryPropertyUnicodeSetDataProvider {
 
 #[test]
 fn test_basic() {
+    use icu_codepointset::CodePointSet;
     use icu_properties::provider::key;
-    use icu_uniset::UnicodeSet;
     use std::convert::TryInto;
 
     let root_dir = icu_testdata::paths::data_root().join("uprops");
-    let provider = BinaryPropertyUnicodeSetDataProvider::try_new(&root_dir)
+    let provider = BinaryPropertyCodePointSetDataProvider::try_new(&root_dir)
         .expect("TOML should load successfully");
 
     let payload: DataPayload<UnicodePropertyV1Marker> = provider
@@ -85,7 +85,7 @@ fn test_basic() {
         .take_payload()
         .expect("Loading was successful");
 
-    let whitespace: UnicodeSet = payload.get().clone().try_into().expect("Valid unicode set");
+    let whitespace: CodePointSet = payload.get().clone().try_into().expect("Valid unicode set");
 
     assert!(whitespace.contains(' '));
     assert!(whitespace.contains('\n'));

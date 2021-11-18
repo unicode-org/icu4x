@@ -985,6 +985,7 @@ version = "0.4.0"
 dependencies = [
  "fixed_decimal",
  "icu_calendar",
+ "icu_codepointset",
  "icu_codepointtrie",
  "icu_datetime",
  "icu_decimal",
@@ -995,7 +996,6 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_testdata",
- "icu_uniset",
  "writeable",
 ]
 
@@ -1074,6 +1074,22 @@ dependencies = [
  "log",
  "tinystr",
  "writeable",
+]
+
+[[package]]
+name = "icu_codepointset"
+version = "0.4.0"
+dependencies = [
+ "criterion",
+ "displaydoc",
+ "icu_benchmark_macros",
+ "litemap",
+ "postcard",
+ "serde",
+ "serde_json",
+ "tinystr",
+ "yoke",
+ "zerovec",
 ]
 
 [[package]]
@@ -1245,10 +1261,10 @@ version = "0.4.0"
 dependencies = [
  "displaydoc",
  "icu",
+ "icu_codepointset",
  "icu_codepointtrie",
  "icu_provider",
  "icu_testdata",
- "icu_uniset",
  "num_enum",
  "serde",
  "zerovec",
@@ -1357,11 +1373,11 @@ version = "0.4.0"
 dependencies = [
  "displaydoc",
  "eyre",
+ "icu_codepointset",
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
  "icu_testdata",
- "icu_uniset",
  "log",
  "serde",
  "tinystr",
@@ -1411,22 +1427,6 @@ dependencies = [
  "serde",
  "serde_json",
  "writeable",
-]
-
-[[package]]
-name = "icu_uniset"
-version = "0.4.0"
-dependencies = [
- "criterion",
- "displaydoc",
- "icu_benchmark_macros",
- "litemap",
- "postcard",
- "serde",
- "serde_json",
- "tinystr",
- "yoke",
- "zerovec",
 ]
 
 [[package]]

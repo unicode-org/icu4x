@@ -4,19 +4,19 @@
 
 use crate::uprops_helpers::{self, TomlEnumerated};
 
+use icu_codepointset::CodePointSetBuilder;
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
 
-pub struct EnumeratedPropertyUnicodeSetDataProvider {
+pub struct EnumeratedPropertyCodePointSetDataProvider {
     data: TomlEnumerated,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
-impl EnumeratedPropertyUnicodeSetDataProvider {
+impl EnumeratedPropertyCodePointSetDataProvider {
     pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
         let data = uprops_helpers::load_enumerated_from_dir(root_dir)?;
         Ok(Self { data })
@@ -56,7 +56,7 @@ fn expand_groupings<'a>(prop_name: &str, prop_val: &'a str) -> Vec<&'a str> {
     }
 }
 
-impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataProvider {
+impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyCodePointSetDataProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
@@ -83,30 +83,30 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
 
         let valid_names = expand_groupings(&prop_name, prop_value);
 
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         for range in &toml_data.ranges {
             if valid_names.iter().any(|&name| name == range.name) {
                 builder.add_range_u32(&(range.a..=range.b));
             }
         }
-        let uniset = builder.build();
+        let codepointset = builder.build();
 
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(DataPayload::from_owned(
-                UnicodePropertyV1::from_owned_uniset(uniset),
+                UnicodePropertyV1::from_owned_codepointset(codepointset),
             )),
         })
     }
 }
 
-icu_provider::impl_dyn_provider!(EnumeratedPropertyUnicodeSetDataProvider, {
+icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointSetDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for EnumeratedPropertyUnicodeSetDataProvider {
+impl IterableDataProviderCore for EnumeratedPropertyCodePointSetDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -123,11 +123,11 @@ mod tests {
 
     #[test]
     fn test_general_category() {
-        use icu_uniset::UnicodeSet;
+        use icu_codepointset::CodePointSet;
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
+        let provider = EnumeratedPropertyCodePointSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyV1Marker> = provider
@@ -141,7 +141,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let digits: UnicodeSet = payload.get().clone().try_into().expect("Valid unicode set");
+        let digits: CodePointSet = payload.get().clone().try_into().expect("Valid unicode set");
 
         assert!(digits.contains('5'));
         assert!(digits.contains('\u{0665}')); // U+0665 ARABIC-INDIC DIGIT FIVE
@@ -152,11 +152,11 @@ mod tests {
 
     #[test]
     fn test_script() {
-        use icu_uniset::UnicodeSet;
+        use icu_codepointset::CodePointSet;
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
+        let provider = EnumeratedPropertyCodePointSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyV1Marker> = provider
@@ -170,7 +170,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let thai: UnicodeSet = payload.get().clone().try_into().expect("Valid unicode set");
+        let thai: CodePointSet = payload.get().clone().try_into().expect("Valid unicode set");
 
         assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
         assert!(thai.contains('\u{0e50}')); // U+0E50 THAI DIGIT ZERO
@@ -181,12 +181,12 @@ mod tests {
 
     #[test]
     fn test_gc_groupings() {
-        use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+        use icu_codepointset::{CodePointSet, CodePointSetBuilder};
         use std::convert::TryInto;
 
-        fn get_uniset_payload(key: ResourceKey) -> DataPayload<UnicodePropertyV1Marker> {
+        fn get_codepointset_payload(key: ResourceKey) -> DataPayload<UnicodePropertyV1Marker> {
             let root_dir = icu_testdata::paths::data_root().join("uprops");
-            let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
+            let provider = EnumeratedPropertyCodePointSetDataProvider::try_new(&root_dir)
                 .expect("TOML should load successfully");
             let payload: DataPayload<UnicodePropertyV1Marker> = provider
                 .load_payload(&DataRequest {
@@ -202,16 +202,16 @@ mod tests {
         }
 
         let test_group = |category: ResourceKey, subcategories: &[ResourceKey]| {
-            let category_set_payload = get_uniset_payload(category);
-            let category_set: UnicodeSet = category_set_payload
+            let category_set_payload = get_codepointset_payload(category);
+            let category_set: CodePointSet = category_set_payload
                 .get()
                 .clone()
                 .try_into()
                 .expect("Valid unicode set");
-            let mut builder = UnicodeSetBuilder::new();
+            let mut builder = CodePointSetBuilder::new();
             for subcategory in subcategories {
                 builder.add_set(
-                    &get_uniset_payload(*subcategory)
+                    &get_codepointset_payload(*subcategory)
                         .get()
                         .clone()
                         .try_into()
@@ -295,11 +295,11 @@ mod tests {
 
     #[test]
     fn test_gc_surrogate() {
-        use icu_uniset::UnicodeSet;
+        use icu_codepointset::CodePointSet;
         use std::convert::TryInto;
 
         let root_dir = icu_testdata::paths::data_root().join("uprops");
-        let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
+        let provider = EnumeratedPropertyCodePointSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyV1Marker> = provider
@@ -313,7 +313,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let surrogates: UnicodeSet = payload.get().clone().try_into().expect("Valid unicode set");
+        let surrogates: CodePointSet = payload.get().clone().try_into().expect("Valid unicode set");
 
         assert!(surrogates.contains_u32(0xd800));
         assert!(surrogates.contains_u32(0xd900));

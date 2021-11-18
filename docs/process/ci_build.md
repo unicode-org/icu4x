@@ -75,7 +75,7 @@ Also, part of your testing-appropriate changes can be as primitive-yet-sufficien
         matrix:
           component:
             - components/locid
-            - components/uniset
+            - components/codepointset
             - components/plurals
             - components/datetime
             - utils/fixed_decimal
@@ -89,7 +89,7 @@ Also, part of your testing-appropriate changes can be as primitive-yet-sufficien
             popd
         - ...
   ```
-  Here, `component` is a parameter defined under `strategy.matrix.component` for the `benchmark` job's job matrix. `component` takes on the values defined in the [YAML array](https://stackoverflow.com/a/33136212) `[ components/locid, components/uniset, components/plurals, components/datetime, utils/fixed_decimal]`
+  Here, `component` is a parameter defined under `strategy.matrix.component` for the `benchmark` job's job matrix. `component` takes on the values defined in the [YAML array](https://stackoverflow.com/a/33136212) `[ components/locid, components/codepointset, components/plurals, components/datetime, utils/fixed_decimal]`
 * Conditional execution of steps and jobs - you can use the `if` key to control more granularly whether a step or job can run.
   * In this [example](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L168), we want the workflow to trigger on all Pull Requests and successful merges to `main`. However, when we look more granularly at the jobs within the workflow, some jobs, like regenerating API docs or benchmark dashboards, make no sense on in-flight PRs and therefore should only execute when they're fully finished, reviewed, and merged to `main`. We add the `if` key on the jobs to control the conditional execution in isolated instances that is more granular than the workflow-level triggers defined in the `on` key.
 * "Uploading / downloading artifacts" is a mechanism that Github Actions provides to allow a persistence of files from one job to another within a single workflow. This can be useful since each job VM runner is created fresh, and inherits no previous state.

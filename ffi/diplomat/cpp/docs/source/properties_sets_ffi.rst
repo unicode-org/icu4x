@@ -15,7 +15,7 @@
 
     .. cpp:function:: bool contains(char32_t cp) const
 
-        Checks whether the code point is in the set. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains>`__ for more information.
+        Checks whether the code point is in the set. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_codepointset/struct.CodePointSet.html#method.contains>`__ for more information.
 
 .. cpp:struct:: ICU4XCodePointSetDataResult
 

@@ -7,7 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
         provider::UnicodePropertyV1Marker,
-        sets::{self, UnisetResult},
+        sets::{self, CodePointSetResult},
     };
     use icu_provider::prelude::DataPayload;
 
@@ -44,7 +44,7 @@ pub mod ffi {
             Self::prepare_result(sets::get_ascii_hex_digit(provider))
         }
 
-        fn prepare_result(result: UnisetResult) -> ICU4XCodePointSetDataResult {
+        fn prepare_result(result: CodePointSetResult) -> ICU4XCodePointSetDataResult {
             match result {
                 Ok(data) => ICU4XCodePointSetDataResult {
                     data: Some(Box::new(ICU4XCodePointSetData(data))),
@@ -58,7 +58,7 @@ pub mod ffi {
         }
 
         /// Checks whether the code point is in the set.
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains) for more information.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointset/struct.CodePointSet.html#method.contains) for more information.
         pub fn contains(&self, cp: char) -> bool {
             self.0.get().inv_list.contains(cp)
         }

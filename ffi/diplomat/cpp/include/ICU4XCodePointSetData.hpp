@@ -43,7 +43,7 @@ class ICU4XCodePointSetData {
 
   /**
    * Checks whether the code point is in the set.
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains) for more information.
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointset/struct.CodePointSet.html#method.contains) for more information.
    */
   bool contains(char32_t cp) const;
   inline const capi::ICU4XCodePointSetData* AsFFI() const { return this->inner.get(); }

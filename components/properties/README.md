@@ -5,7 +5,7 @@
 This component provides definitions of [Unicode Properties] and APIs for
 retrieving property data in an appropriate data structure.
 
-APIs that return a [`UnicodeSet`] exist for binary properties and certain enumerated
+APIs that return a [`CodePointSet`] exist for binary properties and certain enumerated
 properties. See the [`sets`] module for more details.
 
 APIs that return a [`CodePointTrie`] exist for certain enumerated properties. See the
@@ -13,14 +13,14 @@ APIs that return a [`CodePointTrie`] exist for certain enumerated properties. Se
 
 ## Examples
 
-### Property data as `UnicodeSet`s
+### Property data as `CodePointSet`s
 
 ```rust
 use icu::properties::{sets, GeneralCategory};
 
 let provider = icu_testdata::get_provider();
 
-// A binary property as a `UnicodeSet`
+// A binary property as a `CodePointSet`
 
 let payload =
     sets::get_emoji(&provider)
@@ -31,7 +31,7 @@ let emoji = &data_struct.inv_list;
 assert!(emoji.contains('🎃'));  // U+1F383 JACK-O-LANTERN
 assert!(!emoji.contains('木'));  // U+6728
 
-// An individual enumerated property value as a `UnicodeSet`
+// An individual enumerated property value as a `CodePointSet`
 
 let payload =
     sets::get_for_general_category(&provider, GeneralCategory::LineSeparator)
@@ -62,7 +62,7 @@ assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
 
 [`ICU4X`]: ../icu/index.html
 [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
-[`UnicodeSet`]: icu_uniset::UnicodeSet
+[`CodePointSet`]: icu_codepointset::CodePointSet
 [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 [`sets`]: crate::sets
 

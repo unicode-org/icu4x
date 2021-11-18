@@ -10,8 +10,8 @@
 use icu::datetime::DateTimeFormatOptions;
 use icu::locid::{macros::langid, Locale};
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
+use icu_codepointset::CodePointSetBuilder;
 use icu_datetime::{mock::zoned_datetime::MockZonedDateTime, ZonedDateTimeFormat};
-use icu_uniset::UnicodeSetBuilder;
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {
@@ -61,7 +61,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         // See http://ftp.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
         builder.add_range(&('\u{0000}'..='\u{00FF}'));
         let latin1_set = builder.build();

@@ -14,7 +14,7 @@ components/icu4x/                 @unicode-org/icu4x-owners
 components/locale_canonicalizer/  @dminor @zbraniecki
 components/locid/                 @zbraniecki @nciric
 components/plurals/               @zbraniecki @sffc
-components/uniset/                @echeran @iainireland
+components/codepointset/          echeran @iainireland
 experimental/bies/                @sffc
 experimental/calendar/            @Manishearth @sffc
 experimental/codepointtrie/       @echeran

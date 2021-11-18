@@ -2,29 +2,29 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::bin_uniset::BinaryPropertyUnicodeSetDataProvider;
-use crate::enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
+use crate::bin_codepointset::BinaryPropertyCodePointSetDataProvider;
+use crate::enum_codepointset::EnumeratedPropertyCodePointSetDataProvider;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 
 use std::path::Path;
 
-/// This data provider returns `UnicodeSet` data inside a `UnicodeProperty`
+/// This data provider returns `CodePointSet` data inside a `UnicodeProperty`
 /// data struct. The source data is in the form of a directory of TOML file(s)
 /// of data for the property(-ies) desired, as given by the ICU4C property data
 /// exporter tool.
 pub struct PropertiesDataProvider {
-    binary: BinaryPropertyUnicodeSetDataProvider,
-    enumerated: EnumeratedPropertyUnicodeSetDataProvider,
+    binary: BinaryPropertyCodePointSetDataProvider,
+    enumerated: EnumeratedPropertyCodePointSetDataProvider,
 }
 
 impl PropertiesDataProvider {
     /// Construct a new data provider instance. `root_dir` is the path to the
     /// root directory containing the property data TOML files.
     pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
-        let binary = BinaryPropertyUnicodeSetDataProvider::try_new(root_dir)?;
-        let enumerated = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)?;
+        let binary = BinaryPropertyCodePointSetDataProvider::try_new(root_dir)?;
+        let enumerated = EnumeratedPropertyCodePointSetDataProvider::try_new(root_dir)?;
         Ok(Self { binary, enumerated })
     }
 }

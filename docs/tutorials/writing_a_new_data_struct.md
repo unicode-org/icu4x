@@ -33,7 +33,7 @@ The data struct definitions should live in the crate that uses them. By conventi
 
 - `icu::decimal::provider::DecimalSymbolsV1`
 - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
-- `icu::uniset::provider::UnicodePropertyV1`
+- `icu::codepointset::provider::UnicodePropertyV1`
 
 In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
 
@@ -60,7 +60,7 @@ Examples of source data providers include:
     - [`PluralsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.PluralsProvider.html)
     - [`DateSymbolsProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/struct.DateSymbolsProvider.html)
     - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_cldr/transform/index.html)
-- `BinaryPropertyUnicodeSetDataProvider`
+- `BinaryPropertyCodePointSetDataProvider`
 - [`HelloWorldProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/hello_world/struct.HelloWorldProvider.html)
 
 Source data providers must implement the following traits:

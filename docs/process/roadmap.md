@@ -14,7 +14,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [x] Day Periods (#435)
 			* [x] Timezones (#418)
 			* [x] Components Bag (#481)
-		* [x] UnicodeSet
+		* [x] CodePointSet
 			* [x] L3a (#478)
 	* [x] March/April
 		* [x] FFI/WASM exploration (#398)
@@ -37,7 +37,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [x] Finish full-stack enumerated Unicode properties ([#936](https://github.com/unicode-org/icu4x/issues/936))([#1160](https://github.com/unicode-org/icu4x/issues/1160))([#1159](https://github.com/unicode-org/icu4x/issues/1159))([#1158](https://github.com/unicode-org/icu4x/issues/1158))([#1074](https://github.com/unicode-org/icu4x/issues/1074))([#1073](https://github.com/unicode-org/icu4x/issues/1073))
 			* [x] ZeroVec improvements ([#1082](https://github.com/unicode-org/icu4x/issues/1082))
 		* [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
-			* [ ] UnicodeSet L3b (#168)
+			* [ ] CodePointSet L3b (#168)
 			* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
 			* [ ] Full support for enumerated properties ([#148](https://github.com/unicode-org/icu4x/issues/148))
 			* [ ] Implement full-stack properties of strings

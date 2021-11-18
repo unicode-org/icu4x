@@ -6,17 +6,17 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_codepointset::CodePointSet;
+use icu_codepointset::CodePointSetBuilder;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
-use icu_uniset::UnicodeSet;
-use icu_uniset::UnicodeSetBuilder;
 
 //
 // resource key structs - the structs used directly by users of data provider
 //
 
 pub mod key {
-    //! Resource keys for [`icu_uniset`](crate)
+    //! Resource keys for [`icu_codepointset`](crate)
     use icu_provider::resource_key;
     use icu_provider::ResourceKey;
 
@@ -25,17 +25,17 @@ pub mod key {
         ($allkeys:ident; $count:expr; $(($k:ident, $s:literal)),+,) => {
             $(
                 #[allow(missing_docs)] // These constants don't need individual documentation.
-                pub const $k: ResourceKey = resource_key!(UnicodeSet, $s, 1);
+                pub const $k: ResourceKey = resource_key!(CodePointSet, $s, 1);
             )+
 
-            /// The set of all resource keys supported by [`icu_uniset`](crate).
+            /// The set of all resource keys supported by [`icu_codepointset`](crate).
             pub const $allkeys: [ResourceKey; $count] = [$($k,)+];
         };
     }
 
     define_resource_keys!(ALL_SET_KEYS; 265;
         //
-        // Binary property UnicodeSets
+        // Binary property CodePointSets
         //
 
         (ASCII_HEX_DIGIT_V1, "AHex"),
@@ -105,7 +105,7 @@ pub mod key {
         (XID_START_V1, "XIDS"),
 
         //
-        // Enumerated property prop=val UnicodeSets
+        // Enumerated property prop=val CodePointSets
         //
 
         // Note: The ResourceKey subcategory strings are determined from the
@@ -346,27 +346,27 @@ pub mod key {
 pub struct UnicodePropertyV1<'data> {
     /// The set of characters, represented as an inversion list
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub inv_list: UnicodeSet<'data>,
+    pub inv_list: CodePointSet<'data>,
 }
 
 impl Default for UnicodePropertyV1<'static> {
     /// Default empty property
     fn default() -> UnicodePropertyV1<'static> {
         UnicodePropertyV1 {
-            inv_list: UnicodeSetBuilder::new().build(),
+            inv_list: CodePointSetBuilder::new().build(),
         }
     }
 }
 
 impl<'data> UnicodePropertyV1<'data> {
-    /// Creates a [`UnicodePropertyV1`] for the given [`UnicodeSet`].
-    pub fn from_owned_uniset(set: UnicodeSet<'data>) -> UnicodePropertyV1<'data> {
+    /// Creates a [`UnicodePropertyV1`] for the given [`CodePointSet`].
+    pub fn from_owned_codepointset(set: CodePointSet<'data>) -> UnicodePropertyV1<'data> {
         UnicodePropertyV1 { inv_list: set }
     }
 }
 
-impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
-    fn from(prop: UnicodePropertyV1<'data>) -> UnicodeSet<'data> {
+impl<'data> From<UnicodePropertyV1<'data>> for CodePointSet<'data> {
+    fn from(prop: UnicodePropertyV1<'data>) -> CodePointSet<'data> {
         prop.inv_list
     }
 }

@@ -17,9 +17,9 @@
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 
-mod bin_uniset;
+mod bin_codepointset;
+mod enum_codepointset;
 mod enum_codepointtrie;
-mod enum_uniset;
 mod provider;
 mod reader;
 mod uprops_helpers;

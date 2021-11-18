@@ -3,16 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_uniset::UnicodeSet;
+use icu_codepointset::CodePointSet;
 use std::char;
 
-fn uniset_bench(c: &mut Criterion) {
+fn codepointset_bench(c: &mut Criterion) {
     let best_ex = vec![0x41, 0x46];
-    let best_sample = UnicodeSet::from_inversion_list_slice(&best_ex).unwrap();
+    let best_sample = CodePointSet::from_inversion_list_slice(&best_ex).unwrap();
     let worst_ex: Vec<u32> = (0x0..((char::MAX as u32) + 1)).collect();
-    let worst_sample = UnicodeSet::from_inversion_list_slice(&worst_ex).unwrap();
+    let worst_sample = CodePointSet::from_inversion_list_slice(&worst_ex).unwrap();
 
-    c.bench_function("uniset/overview", |b| {
+    c.bench_function("codepointset/overview", |b| {
         #[allow(clippy::suspicious_map)]
         b.iter(|| {
             best_sample
@@ -37,7 +37,7 @@ fn uniset_bench(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     {
-        let mut group = c.benchmark_group("uniset/contains");
+        let mut group = c.benchmark_group("codepointset/contains");
         group.bench_with_input("best", &best_sample, |b, sample| {
             b.iter(|| sample.iter_chars().map(|ch| sample.contains(ch)))
         });
@@ -46,7 +46,7 @@ fn uniset_bench(c: &mut Criterion) {
         });
         group.finish();
 
-        let mut group = c.benchmark_group("uniset/contains_range");
+        let mut group = c.benchmark_group("codepointset/contains_range");
         group.bench_with_input("best", &best_sample, |b, sample| {
             b.iter(|| {
                 sample
@@ -66,5 +66,5 @@ fn uniset_bench(c: &mut Criterion) {
     }
 }
 
-criterion_group!(benches, uniset_bench);
+criterion_group!(benches, codepointset_bench);
 criterion_main!(benches);
