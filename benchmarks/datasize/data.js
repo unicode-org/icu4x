@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637187046196,
+  "lastUpdate": 1637195961973,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -3988,6 +3988,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 866778,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "46e82e78f8a0480334540ac39fdded2b976cc908",
+          "message": "Add Buddhist calendar data to testdata (#1308)\n\n* Set up CLDR transformer for buddhist data\r\n\r\n* Download buddhist calendar testdata\r\n\r\n* Add buddhist calendar data to testdata",
+          "timestamp": "2021-11-17T16:37:42-08:00",
+          "tree_id": "8d22b0a57fa89ec4f77595134ae7a0781e6f5edd",
+          "url": "https://github.com/unicode-org/icu4x/commit/46e82e78f8a0480334540ac39fdded2b976cc908"
+        },
+        "date": 1637195953476,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 903688,
             "unit": "bytes",
             "biggerIsBetter": false
           }
