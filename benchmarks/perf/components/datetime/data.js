@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637187456222,
+  "lastUpdate": 1637196336453,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13157,6 +13157,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 371966,
             "range": "± 32153",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "46e82e78f8a0480334540ac39fdded2b976cc908",
+          "message": "Add Buddhist calendar data to testdata (#1308)\n\n* Set up CLDR transformer for buddhist data\r\n\r\n* Download buddhist calendar testdata\r\n\r\n* Add buddhist calendar data to testdata",
+          "timestamp": "2021-11-17T16:37:42-08:00",
+          "tree_id": "8d22b0a57fa89ec4f77595134ae7a0781e6f5edd",
+          "url": "https://github.com/unicode-org/icu4x/commit/46e82e78f8a0480334540ac39fdded2b976cc908"
+        },
+        "date": 1637196329624,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 116046,
+            "range": "± 6757",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1378864,
+            "range": "± 52614",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 347957,
+            "range": "± 26009",
             "unit": "ns/iter"
           }
         ]
