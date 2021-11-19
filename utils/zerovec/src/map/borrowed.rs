@@ -199,8 +199,8 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Ord + Copy,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
@@ -230,8 +230,8 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>>,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + ?Sized,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     K: AsULE + Copy + Ord,
     V: AsULE + Copy + Ord,
 {
@@ -262,8 +262,8 @@ where
 // with different lifetimes
 impl<'a, 'b, K, V> PartialEq<ZeroMapBorrowed<'b, K, V>> for ZeroMapBorrowed<'a, K, V>
 where
-    K: for<'c> ZeroMapKV<'c>,
-    V: for<'c> ZeroMapKV<'c>,
+    K: for<'c> ZeroMapKV<'c> + ?Sized,
+    V: for<'c> ZeroMapKV<'c> + ?Sized,
     <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant:
         PartialEq<<<K as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, K>>::BorrowedVariant>,
     <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant:
@@ -276,8 +276,8 @@ where
 
 impl<'a, K, V> fmt::Debug for ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
     <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant: fmt::Debug,
     <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
 {
