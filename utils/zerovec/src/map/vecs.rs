@@ -14,9 +14,9 @@ use core::mem;
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
+///
+/// The T type is the type received by [`Self::binary_search()`]
 pub trait ZeroVecLike<'a, T: ?Sized> {
-    /// The type received by `Self::binary_search()`
-    type NeedleType: ?Sized;
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
     /// The type to use whilst serializing. This may not necessarily be `T`, however it
@@ -28,7 +28,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
-    fn binary_search(&self, k: &Self::NeedleType) -> Result<usize, usize>;
+    fn binary_search(&self, k: &T) -> Result<usize, usize>;
     /// Get element at `index`
     fn get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
@@ -41,7 +41,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     }
 
     /// Convert T to a needle for searching
-    fn t_as_needle(t: &T) -> &Self::NeedleType;
+    fn t_as_needle(t: &T) -> &T;
 
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
@@ -73,7 +73,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
     /// A fully borrowed version of this
-    type BorrowedVariant: ZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
+    type BorrowedVariant: ZeroVecLike<'a, T, GetType = Self::GetType>
         + BorrowedZeroVecLike<'a, T>
         + Copy;
 
@@ -123,7 +123,6 @@ impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
     T: AsULE + Ord + Copy,
 {
-    type NeedleType = T;
     type GetType = T::ULE;
     type SerializeType = T;
     fn new() -> Self {
@@ -161,7 +160,6 @@ impl<'a, T> ZeroVecLike<'a, T> for &'a [T::ULE]
 where
     T: AsULE + Ord + Copy,
 {
-    type NeedleType = T;
     type GetType = T::ULE;
     type SerializeType = T;
     fn new() -> Self {
@@ -259,7 +257,6 @@ where
     T: Ord,
     T: ?Sized,
 {
-    type NeedleType = T;
     type GetType = T;
     type SerializeType = T;
     fn new() -> Self {
@@ -307,7 +304,6 @@ where
     T: Ord,
     T: ?Sized,
 {
-    type NeedleType = T;
     type GetType = T;
     type SerializeType = T;
     fn new() -> Self {

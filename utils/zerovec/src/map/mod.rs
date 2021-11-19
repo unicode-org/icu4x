@@ -146,7 +146,7 @@ where
     /// assert_eq!(map.get(&1), Some("one"));
     /// assert_eq!(map.get(&3), None);
     /// ```
-    pub fn get(&self, key: &K::NeedleType) -> Option<&V::GetType> {
+    pub fn get(&self, key: &K) -> Option<&V::GetType> {
         let index = self.keys.binary_search(key).ok()?;
         self.values.get(index)
     }
@@ -162,7 +162,7 @@ where
     /// assert_eq!(map.contains_key(&1), true);
     /// assert_eq!(map.contains_key(&3), false);
     /// ```
-    pub fn contains_key(&self, key: &K::NeedleType) -> bool {
+    pub fn contains_key(&self, key: &K) -> bool {
         self.keys.binary_search(key).is_ok()
     }
 
@@ -200,7 +200,7 @@ where
     /// assert_eq!(map.remove(&1), Some("one".to_owned().into_boxed_str()));
     /// assert_eq!(map.get(&1), None);
     /// ```
-    pub fn remove(&mut self, key: &K::NeedleType) -> Option<V::OwnedType> {
+    pub fn remove(&mut self, key: &K) -> Option<V::OwnedType> {
         let idx = self.keys.binary_search(key).ok()?;
         self.keys.remove(idx);
         Some(self.values.remove(idx))
@@ -276,7 +276,7 @@ where
     V: AsULE + Copy,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
-    pub fn get_copied(&self, key: &K::NeedleType) -> Option<V> {
+    pub fn get_copied(&self, key: &K) -> Option<V> {
         let index = self.keys.binary_search(key).ok()?;
         ZeroVec::get(&self.values, index)
     }

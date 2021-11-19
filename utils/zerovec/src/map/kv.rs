@@ -20,15 +20,10 @@ pub trait ZeroMapKV<'a> {
     type Container: MutableZeroVecLike<
             'a,
             Self,
-            NeedleType = Self::NeedleType,
             GetType = Self::GetType,
             OwnedType = Self::OwnedType,
             SerializeType = Self::SerializeType,
         > + Sized;
-    /// The type to use with `Container::binary_search()`
-    ///
-    /// This type will be predetermined by the choice of `Self::Container`
-    type NeedleType: ?Sized;
     /// The type produced by `Container::get()`
     ///
     /// This type will be predetermined by the choice of `Self::Container`
@@ -47,7 +42,6 @@ macro_rules! impl_sized_kv {
     ($ty:ident) => {
         impl<'a> ZeroMapKV<'a> for $ty {
             type Container = ZeroVec<'a, $ty>;
-            type NeedleType = $ty;
             type GetType = <$ty as AsULE>::ULE;
             type SerializeType = $ty;
             type OwnedType = $ty;
@@ -67,7 +61,6 @@ impl_sized_kv!(char);
 
 impl<'a> ZeroMapKV<'a> for str {
     type Container = VarZeroVec<'a, str>;
-    type NeedleType = str;
     type GetType = str;
     type SerializeType = str;
     type OwnedType = Box<str>;
@@ -75,7 +68,6 @@ impl<'a> ZeroMapKV<'a> for str {
 
 impl<'a> ZeroMapKV<'a> for [u8] {
     type Container = VarZeroVec<'a, [u8]>;
-    type NeedleType = [u8];
     type GetType = [u8];
     type SerializeType = [u8];
     type OwnedType = Box<[u8]>;
