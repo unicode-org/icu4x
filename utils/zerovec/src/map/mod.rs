@@ -66,10 +66,7 @@ where
     V: ?Sized,
 {
     fn default() -> Self {
-        Self {
-            keys: K::Container::new(),
-            values: V::Container::new(),
-        }
+        Self::new()
     }
 }
 
@@ -80,9 +77,21 @@ where
     K: ?Sized,
     V: ?Sized,
 {
-    /// Construct a new [`ZeroMap`]
+    /// Creates a new, empty `ZeroMap<K, V>`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroMap;
+    ///
+    /// let zm: ZeroMap<u16, str> = ZeroMap::new();
+    /// assert!(zm.is_empty());
+    /// ```
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            keys: K::Container::new(),
+            values: V::Container::new(),
+        }
     }
 
     /// Construct a new [`ZeroMap`] with a given capacity

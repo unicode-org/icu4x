@@ -204,16 +204,26 @@ impl<'a, T: ?Sized + VarULE> From<VarZeroVec<'a, T>> for VarZeroVecOwned<T> {
 }
 
 impl<T: VarULE + ?Sized> Default for VarZeroVec<'_, T> {
+    #[inline]
     fn default() -> Self {
         Self::new()
     }
 }
 
 impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
-    /// Construct a new empty [`VarZeroVec`]
+    /// Creates a new, empty `VarZeroVec<T>`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::VarZeroVec;
+    ///
+    /// let vzv: VarZeroVec<str> = VarZeroVec::new();
+    /// assert!(vzv.is_empty());
+    /// ```
     #[inline]
     pub fn new() -> Self {
-        VarZeroVecOwned::new().into()
+        Self::Borrowed(VarZeroVecBorrowed::default())
     }
 
     /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer

@@ -19,6 +19,8 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     type NeedleType: ?Sized;
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
+    /// Create a new, empty vector
+    fn new() -> Self;
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
@@ -65,8 +67,6 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     fn replace(&mut self, index: usize, value: &T) -> Self::OwnedType;
     /// Push an element to the end of this vector
     fn push(&mut self, value: &T);
-    /// Create a new, empty vector
-    fn new() -> Self;
     /// Create a new, empty vector, with given capacity
     fn with_capacity(cap: usize) -> Self;
     /// Remove all elements from the vector
@@ -104,6 +104,9 @@ where
 {
     type NeedleType = T;
     type GetType = T::ULE;
+    fn new() -> Self {
+        Self::new()
+    }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
         self.binary_search(k)
     }
@@ -126,6 +129,9 @@ where
 {
     type NeedleType = T;
     type GetType = T::ULE;
+    fn new() -> Self {
+        &[]
+    }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
         ZeroVec::<T>::Borrowed(self).binary_search(k)
     }
@@ -171,9 +177,6 @@ where
     fn push(&mut self, value: &T) {
         self.to_mut().push(value.as_unaligned())
     }
-    fn new() -> Self {
-        ZeroVec::Owned(Vec::new())
-    }
     fn with_capacity(cap: usize) -> Self {
         ZeroVec::Owned(Vec::with_capacity(cap))
     }
@@ -207,6 +210,9 @@ where
 {
     type NeedleType = T;
     type GetType = T;
+    fn new() -> Self {
+        Self::new()
+    }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
         self.binary_search(k)
     }
@@ -238,6 +244,9 @@ where
 {
     type NeedleType = T;
     type GetType = T;
+    fn new() -> Self {
+        Self::new()
+    }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
         Self::binary_search(self, k)
     }
@@ -300,9 +309,6 @@ where
     fn push(&mut self, value: &T) {
         let len = self.len();
         self.make_mut().insert(len, value)
-    }
-    fn new() -> Self {
-        VarZeroVecOwned::new().into()
     }
     fn with_capacity(cap: usize) -> Self {
         VarZeroVecOwned::with_capacity(cap).into()

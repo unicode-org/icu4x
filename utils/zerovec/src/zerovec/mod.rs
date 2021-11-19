@@ -123,10 +123,32 @@ where
     }
 }
 
+impl<'a, T: AsULE> Default for ZeroVec<'a, T> {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a, T> ZeroVec<'a, T>
 where
     T: AsULE + ?Sized,
 {
+    #[inline]
+    /// Creates a new, empty `ZeroVec<T>`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let zv: ZeroVec<u16> = ZeroVec::new();
+    /// assert!(zv.is_empty());
+    /// ```
+    pub fn new() -> Self {
+        Self::Borrowed(&[])
+    }
+
     /// Parses a `&[u8]` buffer into a `ZeroVec<T>`.
     ///
     /// This function is infallible for built-in integer types, but fallible for other types,
@@ -752,23 +774,6 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
         I: IntoIterator<Item = T>,
     {
         ZeroVec::Owned(iter.into_iter().map(|t| t.as_unaligned()).collect())
-    }
-}
-
-impl<'a, T: AsULE> Default for ZeroVec<'a, T> {
-    /// Creates a new, empty `ZeroVec<T>`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let zv: ZeroVec<u16> = Default::default();
-    /// assert!(zv.is_empty());
-    /// ```
-    #[inline]
-    fn default() -> Self {
-        Self::Borrowed(&[])
     }
 }
 
