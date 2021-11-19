@@ -23,6 +23,7 @@ pub trait ZeroMapKV<'a> {
             NeedleType = Self::NeedleType,
             GetType = Self::GetType,
             OwnedType = Self::OwnedType,
+            SerializeType = Self::SerializeType,
         > + Sized;
     /// The type to use with `Container::binary_search()`
     ///
@@ -40,11 +41,6 @@ pub trait ZeroMapKV<'a> {
     /// deserializing to `Self::OwnedType` should produce the same value once
     /// passed through `Self::owned_as_self()`
     type OwnedType: 'static;
-    /// Obtain a version of this type suitable for serialization
-    ///
-    /// This uses a callback because it's not possible to return owned-or-borrowed
-    /// types without GATs
-    fn with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R;
 
     /// Convert an owned value to a borrowed Self
     fn owned_as_self(o: &Self::OwnedType) -> &Self;
@@ -58,11 +54,6 @@ macro_rules! impl_sized_kv {
             type GetType = <$ty as AsULE>::ULE;
             type SerializeType = $ty;
             type OwnedType = $ty;
-
-            #[inline]
-            fn with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self) -> R) -> R {
-                f(&Self::from_unaligned(*g))
-            }
 
             #[inline]
             fn owned_as_self(o: &Self::OwnedType) -> &Self {
@@ -90,11 +81,6 @@ impl<'a> ZeroMapKV<'a> for str {
     type OwnedType = Box<str>;
 
     #[inline]
-    fn with_ser<R>(g: &str, f: impl FnOnce(&str) -> R) -> R {
-        f(g)
-    }
-
-    #[inline]
     fn owned_as_self(o: &Self::OwnedType) -> &Self {
         o
     }
@@ -106,11 +92,6 @@ impl<'a> ZeroMapKV<'a> for [u8] {
     type GetType = [u8];
     type SerializeType = [u8];
     type OwnedType = Box<[u8]>;
-
-    #[inline]
-    fn with_ser<R>(g: &[u8], f: impl FnOnce(&[u8]) -> R) -> R {
-        f(g)
-    }
 
     #[inline]
     fn owned_as_self(o: &Self::OwnedType) -> &Self {

@@ -28,8 +28,8 @@ where
         if serializer.is_human_readable() {
             let mut map = serializer.serialize_map(Some(self.len()))?;
             for (k, v) in self.iter() {
-                K::with_ser(k, |k| map.serialize_key(k))?;
-                V::with_ser(v, |v| map.serialize_value(v))?;
+                K::Container::t_with_ser(k, |k| map.serialize_key(k))?;
+                V::Container::t_with_ser(v, |v| map.serialize_value(v))?;
             }
             map.end()
         } else {

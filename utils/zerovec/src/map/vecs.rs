@@ -19,6 +19,10 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     type NeedleType: ?Sized;
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
+    /// The type to use whilst serializing. This may not necessarily be `T`, however it
+    /// must serialize to the exact same thing as `T`
+    type SerializeType: ?Sized;
+
     /// Create a new, empty vector
     fn new() -> Self;
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
@@ -42,6 +46,12 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering;
+
+    /// Obtain a version of T suitable for serialization
+    ///
+    /// This uses a callback because it's not possible to return owned-or-borrowed
+    /// types without GATs
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
@@ -112,6 +122,7 @@ where
 {
     type NeedleType = T;
     type GetType = T::ULE;
+    type SerializeType = T;
     fn new() -> Self {
         Self::new()
     }
@@ -137,6 +148,10 @@ where
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(&T::from_unaligned(*g))
     }
+
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R {
+        f(&T::from_unaligned(*g))
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for &'a [T::ULE]
@@ -145,6 +160,7 @@ where
 {
     type NeedleType = T;
     type GetType = T::ULE;
+    type SerializeType = T;
     fn new() -> Self {
         &[]
     }
@@ -170,6 +186,10 @@ where
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(&T::from_unaligned(*g))
+    }
+
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R {
+        f(&T::from_unaligned(*g))
     }
 }
 
@@ -234,6 +254,7 @@ where
 {
     type NeedleType = T;
     type GetType = T;
+    type SerializeType = T;
     fn new() -> Self {
         Self::new()
     }
@@ -266,6 +287,11 @@ where
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(g)
     }
+
+    #[inline]
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R {
+        f(g)
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
@@ -276,6 +302,7 @@ where
 {
     type NeedleType = T;
     type GetType = T;
+    type SerializeType = T;
     fn new() -> Self {
         Self::new()
     }
@@ -308,6 +335,11 @@ where
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(g)
+    }
+
+    #[inline]
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R {
+        f(g)
     }
 }
 
