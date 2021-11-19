@@ -1092,11 +1092,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_casefolding"
+name = "icu_casemapping"
 version = "0.1.0"
 dependencies = [
  "criterion",
  "icu_codepointtrie",
+ "icu_provider",
+ "serde",
+ "yoke",
  "zerovec",
 ]
 
@@ -1431,6 +1434,7 @@ version = "0.5.0"
 dependencies = [
  "displaydoc",
  "eyre",
+ "icu_casemapping",
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",

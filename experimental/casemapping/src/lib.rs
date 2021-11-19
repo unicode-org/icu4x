@@ -7,12 +7,13 @@
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
 use icu_codepointtrie::codepointtrie::{CodePointTrie, TrieValue};
+#[cfg(feature = "serde")]
+use serde::{Serialize, Deserialize};
+use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ule::{AsULE, PlainOldULE};
 use zerovec::{ZeroVec, ZeroMap};
 
-// TODO: remove pub
-// #[cfg(test)]
-pub mod test_data;
+pub mod provider;
 
 /// The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -161,6 +162,8 @@ impl TrieValue for CaseMappingData {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 struct CaseMappingExceptions<'data> {
     raw: ZeroVec<'data, u16>,
 }
@@ -343,9 +346,10 @@ impl<'data> CaseMappingExceptions<'data> {
     }
 }
 
-// TODO: return this to pub(crate) after benchmarking, and remove pub from map
-pub struct CaseMappingUnfoldData<'data> {
-    pub map: ZeroMap<'data, str, str>,
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+struct CaseMappingUnfoldData<'data> {
+    map: ZeroMap<'data, str, str>,
 }
 
 impl<'data> CaseMappingUnfoldData<'data> {
@@ -408,6 +412,8 @@ impl Default for FoldOptions {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 pub struct CaseMapping<'data> {
     trie: CodePointTrie<'data, CaseMappingData>,
     exceptions: CaseMappingExceptions<'data>,
@@ -706,154 +712,103 @@ pub trait SetAdder {
     // Note: SetAdder in ICU4C also has remove and remove_range, but these are only used for ISO/IEC 2022
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::collections::HashSet;
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     use std::collections::HashSet;
 
-    pub(crate) fn get_case_mapping() -> CaseMapping<'static> {
-	let trie = super::test_data::get_case_trie();
-	let exceptions = CaseMappingExceptions {
-	    raw: ZeroVec::from_slice(&test_data::UCASE_PROPS_EXCEPTIONS),
-	};
-	let unfold = CaseMappingUnfoldData::try_from_raw(&test_data::UCASE_PROPS_UNFOLD).unwrap();
-	CaseMapping { trie, exceptions, unfold }
-    }
+//     pub(crate) fn get_case_mapping() -> CaseMapping<'static> {
+// 	let trie = super::test_data::get_case_trie();
+// 	let exceptions = CaseMappingExceptions {
+// 	    raw: ZeroVec::from_slice(&test_data::UCASE_PROPS_EXCEPTIONS),
+// 	};
+// 	let unfold = CaseMappingUnfoldData::try_from_raw(&test_data::UCASE_PROPS_UNFOLD).unwrap();
+// 	CaseMapping { trie, exceptions, unfold }
+//     }
 
-    #[test]
-    fn test_upper() {
-	let case_mapping = get_case_mapping();
-	assert_eq!(case_mapping.to_upper('a'), 'A');
-	assert_eq!(case_mapping.to_upper('\u{1c4}'), '\u{1c4}');
-	assert_eq!(case_mapping.to_title('\u{1c4}'), '\u{1c5}');
-	assert_eq!(case_mapping.to_lower('\u{1c4}'), '\u{1c6}');
-	assert_eq!(case_mapping.to_upper('\u{1c5}'), '\u{1c4}');
-	assert_eq!(case_mapping.to_title('\u{1c5}'), '\u{1c5}');
-	assert_eq!(case_mapping.to_lower('\u{1c5}'), '\u{1c6}');
-	assert_eq!(case_mapping.to_upper('\u{1c6}'), '\u{1c4}');
-	assert_eq!(case_mapping.to_title('\u{1c6}'), '\u{1c5}');
-	assert_eq!(case_mapping.to_lower('\u{1c6}'), '\u{1c6}');
-    }
+//     #[test]
+//     fn test_upper() {
+// 	let case_mapping = get_case_mapping();
+// 	assert_eq!(case_mapping.to_upper('a'), 'A');
+// 	assert_eq!(case_mapping.to_upper('\u{1c4}'), '\u{1c4}');
+// 	assert_eq!(case_mapping.to_title('\u{1c4}'), '\u{1c5}');
+// 	assert_eq!(case_mapping.to_lower('\u{1c4}'), '\u{1c6}');
+// 	assert_eq!(case_mapping.to_upper('\u{1c5}'), '\u{1c4}');
+// 	assert_eq!(case_mapping.to_title('\u{1c5}'), '\u{1c5}');
+// 	assert_eq!(case_mapping.to_lower('\u{1c5}'), '\u{1c6}');
+// 	assert_eq!(case_mapping.to_upper('\u{1c6}'), '\u{1c4}');
+// 	assert_eq!(case_mapping.to_title('\u{1c6}'), '\u{1c5}');
+// 	assert_eq!(case_mapping.to_lower('\u{1c6}'), '\u{1c6}');
+//     }
 
-    #[test]
-    fn test_softdotted() {
-	let case_mapping = get_case_mapping();
-	assert_eq!(case_mapping.is_soft_dotted('a'), false);
-	assert_eq!(case_mapping.dot_type('i'), DotType::SoftDotted);
-	assert_eq!(case_mapping.dot_type('j'), DotType::SoftDotted);
-    }
+//     #[test]
+//     fn test_softdotted() {
+// 	let case_mapping = get_case_mapping();
+// 	assert_eq!(case_mapping.is_soft_dotted('a'), false);
+// 	assert_eq!(case_mapping.dot_type('i'), DotType::SoftDotted);
+// 	assert_eq!(case_mapping.dot_type('j'), DotType::SoftDotted);
+//     }
 
-    #[derive(Eq,PartialEq,Default)]
-    struct SimpleSet {
-	chars: HashSet<char>,
-	strings: HashSet<String>,
-    }
+//     #[derive(Eq,PartialEq,Default)]
+//     struct SimpleSet {
+// 	chars: HashSet<char>,
+// 	strings: HashSet<String>,
+//     }
 
-    impl SimpleSet {
-	pub fn chars(&self) -> Vec<char> {
-	    let mut result: Vec<char> = self.chars.iter().map(|&c| c).collect();
-	    result.sort();
-	    result
-	}
-	pub fn strings(&self) -> Vec<String> {
-	    let mut result: Vec<String> = self.strings.iter().map(|c| c.clone()).collect();
-	    result.sort();
-	    result
-	}
-	pub fn clear(&mut self) {
-	    self.chars.clear();
-	    self.strings.clear();
-	}
-    }
+//     impl SimpleSet {
+// 	pub fn chars(&self) -> Vec<char> {
+// 	    let mut result: Vec<char> = self.chars.iter().map(|&c| c).collect();
+// 	    result.sort();
+// 	    result
+// 	}
+// 	pub fn strings(&self) -> Vec<String> {
+// 	    let mut result: Vec<String> = self.strings.iter().map(|c| c.clone()).collect();
+// 	    result.sort();
+// 	    result
+// 	}
+// 	pub fn clear(&mut self) {
+// 	    self.chars.clear();
+// 	    self.strings.clear();
+// 	}
+//     }
 
-    impl SetAdder for SimpleSet {
-	fn add_char(&mut self, c: char) {
-	    self.chars.insert(c);
-	}
-	fn add_string(&mut self, s: &str) {
-	    self.strings.insert(String::from(s));
-	}
-	fn add_range(&mut self, start: char, end: char) {
-	    for c in start..=end {
-		self.chars.insert(c);
-	    }
-	}
-    }
+//     impl SetAdder for SimpleSet {
+// 	fn add_char(&mut self, c: char) {
+// 	    self.chars.insert(c);
+// 	}
+// 	fn add_string(&mut self, s: &str) {
+// 	    self.strings.insert(String::from(s));
+// 	}
+// 	fn add_range(&mut self, start: char, end: char) {
+// 	    for c in start..=end {
+// 		self.chars.insert(c);
+// 	    }
+// 	}
+//     }
 
-    #[test]
-    fn test_closure() {
-	let case_mapping = get_case_mapping();
-	let mut closure = SimpleSet::default();
+//     #[test]
+//     fn test_closure() {
+// 	let case_mapping = get_case_mapping();
+// 	let mut closure = SimpleSet::default();
 
-	case_mapping.add_case_closure('i', &mut closure);
-	assert_eq!(closure.chars(), vec!['I']);
-	assert!(closure.strings().is_empty());
-	closure.clear();
+// 	case_mapping.add_case_closure('i', &mut closure);
+// 	assert_eq!(closure.chars(), vec!['I']);
+// 	assert!(closure.strings().is_empty());
+// 	closure.clear();
 
-	case_mapping.add_case_closure('k', &mut closure);
-	assert_eq!(closure.chars(), vec!['K', '\u{212a}']); // Kelvin sign
-	assert!(closure.strings().is_empty());
-	closure.clear();
+// 	case_mapping.add_case_closure('k', &mut closure);
+// 	assert_eq!(closure.chars(), vec!['K', '\u{212a}']); // Kelvin sign
+// 	assert!(closure.strings().is_empty());
+// 	closure.clear();
 
-	case_mapping.add_case_closure('s', &mut closure);
-	assert_eq!(closure.chars(), vec!['S', '\u{17f}']); // long S
-	assert!(closure.strings().is_empty());
-	closure.clear();
+// 	case_mapping.add_case_closure('s', &mut closure);
+// 	assert_eq!(closure.chars(), vec!['S', '\u{17f}']); // long S
+// 	assert!(closure.strings().is_empty());
+// 	closure.clear();
 
-	case_mapping.add_case_closure('\u{df}', &mut closure); // lowercase sharp s
-	assert_eq!(closure.chars(), vec!['\u{1e9e}']); // uppercase sharp s
-	assert_eq!(closure.strings(), vec![String::from("ss")]);
-	closure.clear();
-    }
-}
-
-// TODO: deleteme
-pub struct RawUnfold {
-    rows: Vec<[u8; 12]>,
-}
-
-impl RawUnfold {
-    pub fn new(raw: &[u16]) -> Self {
-	let row_width = raw[1] as usize;
-	assert_eq!(row_width, 5);
-	let str_width = raw[2];
-	assert_eq!(str_width, 3);
-	let mut rows: Vec<[u8; 12]> = vec![];
-
-	for row in raw.chunks_exact(row_width).skip(1) {
-	    let mut u8_row = [0u8; 12];
-	    let key = Self::decode_string(&row[..3]);
-	    let val = Self::decode_string(&row[3..]);
-	    for (idx, b) in key.bytes().enumerate() {
-		u8_row[idx] = b;
-	    }
-	    for (idx, b) in val.bytes().enumerate() {
-		u8_row[idx+6] = b;
-	    }
-	    rows.push(u8_row);
-	}
-	Self { rows }
-    }
-    #[inline]
-    pub fn get(&self, key: &str) -> Option<&str> {
-	match self.rows.binary_search_by_key(&key, |entry| {
-	    Self::decode_str(&entry[..6])
-	}) {
-	    Ok(idx) => Some(Self::decode_str(&self.rows[idx][6..])),
-	    Err(_) => None,
-	}
-    }
-    #[inline(always)]
-    fn decode_string(slice: &[u16]) -> String {
-	let iter = slice.iter().map(|&c| c).take_while(|&c| c != 0);
-	char::decode_utf16(iter)
-	    .map(|c| c.unwrap())
-	    .collect::<String>()
-    }
-
-    #[inline(always)]
-    fn decode_str(raw: &[u8]) -> &str {
-	let len = raw.iter().take_while(|&&b| b != 0).count();
-	unsafe { std::str::from_utf8_unchecked(&raw[..len]) }
-    }
-}
+// 	case_mapping.add_case_closure('\u{df}', &mut closure); // lowercase sharp s
+// 	assert_eq!(closure.chars(), vec!['\u{1e9e}']); // uppercase sharp s
+// 	assert_eq!(closure.strings(), vec![String::from("ss")]);
+// 	closure.clear();
+//     }
+// }
