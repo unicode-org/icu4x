@@ -195,13 +195,13 @@ mod test {
     #[derive(::serde::Serialize, ::serde::Deserialize)]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
-        _data: ZeroMap<'data, str, [u8]>
+        _data: ZeroMap<'data, str, [u8]>,
     }
 
     #[derive(::serde::Serialize, ::serde::Deserialize)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]
-        _data: ZeroMapBorrowed<'data, str, [u8]>
+        _data: ZeroMapBorrowed<'data, str, [u8]>,
     }
 
     const JSON_STR: &str = "{\"1\":\"uno\",\"2\":\"dos\",\"3\":\"tres\"}";
