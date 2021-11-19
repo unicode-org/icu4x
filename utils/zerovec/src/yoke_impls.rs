@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// This way we can copy-paste Yokeable impls
+#![allow(clippy::forget_copy)]
+
 use crate::map::ZeroMapBorrowed;
 use crate::map::ZeroMapKV;
 use crate::ule::*;
