@@ -61,6 +61,15 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
     ///
     /// Note: Since [`VarZeroVecBorrowed`] is not mutable, the return value will be a stub unless
     /// wrapped in [`VarZeroVec::Borrowed`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::varzerovec::VarZeroVecBorrowed;
+    ///
+    /// let vzv: VarZeroVecBorrowed<str> = VarZeroVecBorrowed::new();
+    /// assert!(vzv.is_empty());
+    /// ```
     #[inline]
     pub fn new() -> Self {
         Self {

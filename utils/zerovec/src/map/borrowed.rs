@@ -68,6 +68,18 @@ where
     }
 }
 
+impl<'a, K, V> Default for ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K: ?Sized,
+    V: ?Sized,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a>,
@@ -75,6 +87,30 @@ where
     K: ?Sized,
     V: ?Sized,
 {
+    /// Creates a new, empty `ZeroMapBorrowed<K, V>`.
+    ///
+    /// Note: Since [`ZeroMapBorrowed`] is not mutable, the return value will be a stub unless
+    /// converted into a [`ZeroMap`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::map::ZeroMapBorrowed;
+    ///
+    /// let zm: ZeroMapBorrowed<u16, str> = ZeroMapBorrowed::new();
+    /// assert!(zm.is_empty());
+    /// ```
+    pub fn new() -> Self {
+        Self {
+            keys:
+                <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant::new(
+                ),
+            values:
+                <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant::new(
+                ),
+        }
+    }
+
     /// The number of elements in the [`ZeroMapBorrowed`]
     pub fn len(&self) -> usize {
         self.values.len()
