@@ -91,6 +91,8 @@ unsafe impl<'a, K, V> Yokeable<'a> for ZeroMap<'static, K, V>
 where
     K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
+    <K as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
+    <V as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
 {
     type Output = ZeroMap<'a, K, V>;
     fn transform(&'a self) -> &'a Self::Output {
@@ -132,6 +134,8 @@ unsafe impl<'a, K, V> Yokeable<'a> for ZeroMapBorrowed<'static, K, V>
 where
     K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
+    <K as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
+    <V as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
 {
     type Output = ZeroMapBorrowed<'a, K, V>;
     fn transform(&'a self) -> &'a Self::Output {
