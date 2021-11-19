@@ -156,7 +156,7 @@ impl<'data> CodePointSet<'data> {
     ///
     /// use std::vec::Vec;
     ///
-    /// fn inv_list_to_owned_unicodeset(inv_list: &[u32]) -> CodePointSet {
+    /// fn inv_list_to_owned_codepointset(inv_list: &[u32]) -> CodePointSet {
     ///     CodePointSet::clone_from_inversion_list_slice(inv_list)
     ///         .unwrap()
     /// }
@@ -166,16 +166,16 @@ impl<'data> CodePointSet<'data> {
     /// let sip_list: &[u32] = &vec![0x20000, 0x30000];
     ///
     /// let inv_lists: [&[u32]; 3] = [&bmp_list, &smp_list, sip_list];
-    /// let unicodesets: Vec<CodePointSet> =
+    /// let codepointsets: Vec<CodePointSet> =
     ///     inv_lists.iter()
-    ///         .map(|il| inv_list_to_owned_unicodeset(il))
+    ///         .map(|il| inv_list_to_owned_codepointset(il))
     ///         .collect();
     ///
-    /// let bmp = &unicodesets.get(0).unwrap();
+    /// let bmp = &codepointsets.get(0).unwrap();
     /// assert!(bmp.contains_u32(0xFFFF));
     /// assert!(!bmp.contains_u32(0x10000));
     ///
-    /// assert!(!&unicodesets.iter().any(|set| set.contains_u32(0x40000)));
+    /// assert!(!&codepointsets.iter().any(|set| set.contains_u32(0x40000)));
     /// ```
     pub fn clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, CodePointSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::clone_from_slice(inv_list);
@@ -532,7 +532,7 @@ mod tests {
     use zerovec::ZeroVec;
 
     #[test]
-    fn test_unicodeset_try_from_vec() {
+    fn test_codepointset_try_from_vec() {
         let ex = vec![0x2, 0x3, 0x4, 0x5];
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(ex, check.get_inversion_list());
@@ -540,7 +540,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_try_from_vec_error() {
+    fn test_codepointset_try_from_vec_error() {
         let check = vec![0x1, 0x1, 0x2, 0x3, 0x4];
         let inv_list = ZeroVec::from_slice(&check);
         let set = CodePointSet::from_inversion_list(inv_list);
@@ -552,7 +552,7 @@ mod tests {
 
     // CodePointSet membership functions
     #[test]
-    fn test_unicodeset_contains_query() {
+    fn test_codepointset_contains_query() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert!(check.contains_query(0x40).is_none());
@@ -564,7 +564,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains() {
+    fn test_codepointset_contains() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert!(check.contains(0x2 as char));
@@ -574,7 +574,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains_false() {
+    fn test_codepointset_contains_false() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert!(!check.contains(0x1 as char));
@@ -585,7 +585,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains_range() {
+    fn test_codepointset_contains_range() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert!(check.contains_range(&('A'..='E'))); // 65 - 69
@@ -595,7 +595,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains_range_false() {
+    fn test_codepointset_contains_range_false() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert!(!check.contains_range(&('!'..'A'))); // 33 - 65
@@ -604,14 +604,14 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains_range_invalid() {
+    fn test_codepointset_contains_range_invalid() {
         let check = CodePointSet::all();
         assert!(!check.contains_range(&('A'..'!'))); // 65 - 33
         assert!(!check.contains_range(&('A'..'A'))); // 65 - 65
     }
 
     #[test]
-    fn test_unicodeset_contains_set_u() {
+    fn test_codepointset_contains_set_u() {
         let ex = vec![0xA, 0x14, 0x28, 0x32, 0x46, 0x50, 0x64, 0x6E];
         let u = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         let inside = vec![0xF, 0x14, 0x2C, 0x31, 0x46, 0x50, 0x64, 0x6D];
@@ -620,7 +620,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains_set_u_false() {
+    fn test_codepointset_contains_set_u_false() {
         let ex = vec![0xA, 0x14, 0x28, 0x32, 0x46, 0x50, 0x64, 0x78];
         let u = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         let outside = vec![0x0, 0xA, 0x16, 0x2C, 0x32, 0x46, 0x4F, 0x51, 0x6D, 0x6F];
@@ -629,7 +629,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_size() {
+    fn test_codepointset_size() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(8, check.size());
@@ -645,7 +645,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_is_empty() {
+    fn test_codepointset_is_empty() {
         let inv_list_vec: Vec<u32> = vec![];
         let check = CodePointSet {
             inv_list: ZeroVec::from_slice(&inv_list_vec),
@@ -655,13 +655,13 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_is_not_empty() {
+    fn test_codepointset_is_not_empty() {
         let check = CodePointSet::all();
         assert!(!check.is_empty());
     }
 
     #[test]
-    fn test_unicodeset_iter_chars() {
+    fn test_codepointset_iter_chars() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         let mut iter = check.iter_chars();
@@ -673,7 +673,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_iter_ranges() {
+    fn test_codepointset_iter_ranges() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
         let set = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         let mut ranges = set.iter_ranges();
@@ -684,7 +684,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_iter_ranges_exactsizeiter_trait() {
+    fn test_codepointset_iter_ranges_exactsizeiter_trait() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
         let set = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         let ranges = set.iter_ranges();
@@ -692,14 +692,14 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_range_count() {
+    fn test_codepointset_range_count() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
         let set = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(3, set.get_range_count());
     }
 
     #[test]
-    fn test_unicodeset_get_nth_range() {
+    fn test_codepointset_get_nth_range() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
         let set = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(Some(0x41..=0x43), set.get_nth_range(0));
@@ -711,7 +711,7 @@ mod tests {
     // Range<char> cannot represent the upper bound (non-inclusive) for
     // char::MAX, whereas Range<u32> can.
     #[test]
-    fn test_unicodeset_iter_ranges_with_max_code_point() {
+    fn test_codepointset_iter_ranges_with_max_code_point() {
         let ex = vec![0x80, (char::MAX as u32) + 1];
         let set = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         let mut ranges = set.iter_ranges();
@@ -720,7 +720,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_span_contains() {
+    fn test_codepointset_span_contains() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(check.span("ABCDE", true), 3);
@@ -728,7 +728,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_span_does_not_contain() {
+    fn test_codepointset_span_does_not_contain() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(check.span("DEF", false), 2);
@@ -736,7 +736,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_span_back_contains() {
+    fn test_codepointset_span_back_contains() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(check.span_back("XYZABFH", true), 3);
@@ -744,7 +744,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_span_back_does_not_contain() {
+    fn test_codepointset_span_back_does_not_contain() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
         let check = CodePointSet::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(check.span_back("ABCXYZ", false), 3);

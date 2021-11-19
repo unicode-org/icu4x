@@ -658,7 +658,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_unicodeset() {
+    fn test_add_codepointset() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
         let check =
             CodePointSet::from_inversion_list_slice(&[0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
