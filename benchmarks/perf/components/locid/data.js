@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637349590061,
+  "lastUpdate": 1637353211639,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17453,6 +17453,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4806,
             "range": "± 411",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c78b611172290d7ab729a985f48879b2f724b63e",
+          "message": "Add Default impls for all zerovec types (#1330)",
+          "timestamp": "2021-11-19T12:12:57-08:00",
+          "tree_id": "94a7417e5e9735ada9ce18c952d9d279e2e825d3",
+          "url": "https://github.com/unicode-org/icu4x/commit/c78b611172290d7ab729a985f48879b2f724b63e"
+        },
+        "date": 1637353203613,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2977,
+            "range": "± 116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5171,
+            "range": "± 177",
             "unit": "ns/iter"
           }
         ]
