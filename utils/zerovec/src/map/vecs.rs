@@ -38,9 +38,6 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
         self.len() == 0
     }
 
-    /// Convert T to a needle for searching
-    fn t_as_needle(t: &T) -> &T;
-
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering;
@@ -140,10 +137,6 @@ where
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
 
-    fn t_as_needle(t: &T) -> &T {
-        t
-    }
-
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(&T::from_unaligned(*g))
     }
@@ -175,10 +168,6 @@ where
             .as_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
-    }
-
-    fn t_as_needle(t: &T) -> &T {
-        t
     }
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
@@ -279,10 +268,6 @@ where
         true
     }
 
-    fn t_as_needle(t: &T) -> &T {
-        t
-    }
-
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(g)
     }
@@ -324,10 +309,6 @@ where
             }
         }
         true
-    }
-
-    fn t_as_needle(t: &T) -> &T {
-        t
     }
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {

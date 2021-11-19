@@ -28,7 +28,7 @@ pub trait ZeroMapKV<'a> {
     /// also used during deserialization. If `Self` is human readable serialized,
     /// deserializing to `Self::OwnedType` should produce the same value once
     /// passed through `Self::owned_as_self()`
-    /// 
+    ///
     /// This type will be predetermined by the choice of `Self::Container`:
     /// For sized types this must be `T` and for unsized types this must be `Box<T>`
     type OwnedType: 'static;
