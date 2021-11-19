@@ -18,8 +18,8 @@ where
     V: ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
-    K::SerializeType: Serialize,
-    V::SerializeType: Serialize,
+    K: Serialize,
+    V: Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -47,8 +47,8 @@ where
     V: ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
-    K::SerializeType: Serialize,
-    V::SerializeType: Serialize,
+    K: Serialize,
+    V: Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

@@ -15,13 +15,11 @@ use core::mem;
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
 ///
-/// The T type is the type received by [`Self::binary_search()`]
+/// The T type is the type received by [`Self::binary_search()`], as well as the one used
+/// for human-readable serialization.
 pub trait ZeroVecLike<'a, T: ?Sized> {
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
-    /// The type to use whilst serializing. This may not necessarily be `T`, however it
-    /// must serialize to the exact same thing as `T`
-    type SerializeType: ?Sized;
 
     /// Create a new, empty vector
     fn new() -> Self;
@@ -51,7 +49,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     ///
     /// This uses a callback because it's not possible to return owned-or-borrowed
     /// types without GATs
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R;
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
@@ -124,7 +122,6 @@ where
     T: AsULE + Ord + Copy,
 {
     type GetType = T::ULE;
-    type SerializeType = T;
     fn new() -> Self {
         Self::new()
     }
@@ -151,7 +148,7 @@ where
         t.cmp(&T::from_unaligned(*g))
     }
 
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R {
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
 }
@@ -161,7 +158,6 @@ where
     T: AsULE + Ord + Copy,
 {
     type GetType = T::ULE;
-    type SerializeType = T;
     fn new() -> Self {
         &[]
     }
@@ -189,7 +185,7 @@ where
         t.cmp(&T::from_unaligned(*g))
     }
 
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R {
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
 }
@@ -258,7 +254,6 @@ where
     T: ?Sized,
 {
     type GetType = T;
-    type SerializeType = T;
     fn new() -> Self {
         Self::new()
     }
@@ -293,7 +288,7 @@ where
     }
 
     #[inline]
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R {
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
     }
 }
@@ -305,7 +300,6 @@ where
     T: ?Sized,
 {
     type GetType = T;
-    type SerializeType = T;
     fn new() -> Self {
         Self::new()
     }
@@ -341,7 +335,7 @@ where
     }
 
     #[inline]
-    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R {
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
     }
 }

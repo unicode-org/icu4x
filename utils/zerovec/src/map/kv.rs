@@ -17,20 +17,12 @@ use alloc::boxed::Box;
 #[allow(clippy::upper_case_acronyms)] // KV is not an acronym
 pub trait ZeroMapKV<'a> {
     /// The container that can be used with this type: [`ZeroVec`] or [`VarZeroVec`].
-    type Container: MutableZeroVecLike<
-            'a,
-            Self,
-            GetType = Self::GetType,
-            OwnedType = Self::OwnedType,
-            SerializeType = Self::SerializeType,
-        > + Sized;
+    type Container: MutableZeroVecLike<'a, Self, GetType = Self::GetType, OwnedType = Self::OwnedType>
+        + Sized;
     /// The type produced by `Container::get()`
     ///
     /// This type will be predetermined by the choice of `Self::Container`
     type GetType: ?Sized + 'static;
-    /// The type to use whilst serializing. This may not necessarily be `Self`, however it
-    /// must serialize to the exact same thing as `Self`
-    type SerializeType: ?Sized;
     /// The type produced by `Container::replace()` and `Container::remove()`,
     /// also used during deserialization. If `Self` is human readable serialized,
     /// deserializing to `Self::OwnedType` should produce the same value once
@@ -43,7 +35,6 @@ macro_rules! impl_sized_kv {
         impl<'a> ZeroMapKV<'a> for $ty {
             type Container = ZeroVec<'a, $ty>;
             type GetType = <$ty as AsULE>::ULE;
-            type SerializeType = $ty;
             type OwnedType = $ty;
         }
     };
@@ -62,13 +53,11 @@ impl_sized_kv!(char);
 impl<'a> ZeroMapKV<'a> for str {
     type Container = VarZeroVec<'a, str>;
     type GetType = str;
-    type SerializeType = str;
     type OwnedType = Box<str>;
 }
 
 impl<'a> ZeroMapKV<'a> for [u8] {
     type Container = VarZeroVec<'a, [u8]>;
     type GetType = [u8];
-    type SerializeType = [u8];
     type OwnedType = Box<[u8]>;
 }
