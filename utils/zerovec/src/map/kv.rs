@@ -40,7 +40,7 @@ pub trait ZeroMapKV<'a> {
     /// also used during deserialization. If `Self` is human readable serialized,
     /// deserializing to `Self::OwnedType` should produce the same value once
     /// passed through `Self::owned_as_self()`
-    type OwnedType;
+    type OwnedType: 'static;
     /// Convert to a needle for searching
     fn as_needle(&self) -> &Self::NeedleType;
     /// Compare this type with a `Self::GetType`. This must produce the same result as
