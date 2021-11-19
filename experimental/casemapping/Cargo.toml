@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_casefolding"
-description = "Unicode casefolding algorithms"
+name = "icu_casemapping"
+description = "Unicode case mapping algorithms"
 version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
