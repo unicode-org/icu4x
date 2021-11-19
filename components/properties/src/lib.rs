@@ -18,28 +18,24 @@
 //! ## Property data as `CodePointSet`s
 //!
 //! ```
-//! use icu::properties::{sets, GeneralCategory};
+//! use icu::properties::{sets, CodePointSetLike, GeneralCategory};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
 //! // A binary property as a `CodePointSet`
 //!
-//! let payload =
+//! let emoji =
 //!     sets::get_emoji(&provider)
 //!         .expect("The data should be valid");
-//! let data_struct = payload.get();
-//! let emoji = &data_struct.inv_list;
 //!
 //! assert!(emoji.contains('🎃'));  // U+1F383 JACK-O-LANTERN
 //! assert!(!emoji.contains('木'));  // U+6728
 //!
 //! // An individual enumerated property value as a `CodePointSet`
 //!
-//! let payload =
+//! let line_sep =
 //!     sets::get_for_general_category(&provider, GeneralCategory::LineSeparator)
 //!         .expect("The data should be valid");
-//! let data_struct = payload.get();
-//! let line_sep = &data_struct.inv_list;
 //!
 //! assert!(line_sep.contains_u32(0x2028));
 //! assert!(!line_sep.contains_u32(0x2029));
@@ -70,6 +66,9 @@
 
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
+extern crate alloc;
+
+pub mod api_util;
 mod error;
 pub mod maps;
 mod props;
@@ -79,3 +78,4 @@ mod trievalue;
 mod ule;
 
 pub use props::*;
+pub use api_util::*;

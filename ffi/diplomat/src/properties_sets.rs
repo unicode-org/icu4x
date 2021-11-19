@@ -6,17 +6,16 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
-        provider::UnicodePropertyV1Marker,
+        CodePointSetData, CodePointSetLike,
         sets::{self, CodePointSetResult},
     };
-    use icu_provider::prelude::DataPayload;
 
     use crate::{provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
-    pub struct ICU4XCodePointSetData(DataPayload<UnicodePropertyV1Marker>);
+    pub struct ICU4XCodePointSetData(CodePointSetData);
 
     pub struct ICU4XCodePointSetDataResult {
         /// The [`ICU4XCodePointSetData`], if creation was successful.
@@ -60,7 +59,7 @@ pub mod ffi {
         /// Checks whether the code point is in the set.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointset/struct.CodePointSet.html#method.contains) for more information.
         pub fn contains(&self, cp: char) -> bool {
-            self.0.get().inv_list.contains(cp)
+            self.0.contains(cp)
         }
     }
 }
