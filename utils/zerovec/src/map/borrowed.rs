@@ -257,7 +257,6 @@ where
     }
 }
 
-
 // We can't use the default PartialEq because ZeroMap is invariant
 // so otherwise rustc will not automatically allow you to compare ZeroMaps
 // with different lifetimes
@@ -265,8 +264,10 @@ impl<'a, 'b, K, V> PartialEq<ZeroMapBorrowed<'b, K, V>> for ZeroMapBorrowed<'a, 
 where
     K: for<'c> ZeroMapKV<'c>,
     V: for<'c> ZeroMapKV<'c>,
-    <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant: PartialEq<<<K as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, K>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant: PartialEq<<<V as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, V>>::BorrowedVariant>,
+    <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant:
+        PartialEq<<<K as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, K>>::BorrowedVariant>,
+    <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant:
+        PartialEq<<<V as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, V>>::BorrowedVariant>,
 {
     fn eq(&self, other: &ZeroMapBorrowed<'b, K, V>) -> bool {
         self.keys.eq(&other.keys) && self.values.eq(&other.values)
