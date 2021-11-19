@@ -5,6 +5,8 @@
 use crate::ule::AsULE;
 use crate::ZeroVec;
 
+use core::fmt;
+
 pub use super::kv::ZeroMapKV;
 pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 
@@ -252,5 +254,36 @@ where
                     .unwrap(),
             )
         })
+    }
+}
+
+
+// We can't use the default PartialEq because ZeroMap is invariant
+// so otherwise rustc will not automatically allow you to compare ZeroMaps
+// with different lifetimes
+impl<'a, 'b, K, V> PartialEq<ZeroMapBorrowed<'b, K, V>> for ZeroMapBorrowed<'a, K, V>
+where
+    K: for<'c> ZeroMapKV<'c>,
+    V: for<'c> ZeroMapKV<'c>,
+    <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant: PartialEq<<<K as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, K>>::BorrowedVariant>,
+    <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant: PartialEq<<<V as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, V>>::BorrowedVariant>,
+{
+    fn eq(&self, other: &ZeroMapBorrowed<'b, K, V>) -> bool {
+        self.keys.eq(&other.keys) && self.values.eq(&other.values)
+    }
+}
+
+impl<'a, K, V> fmt::Debug for ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant: fmt::Debug,
+    <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        f.debug_struct("ZeroMapBorrowed")
+            .field("keys", &self.keys)
+            .field("values", &self.values)
+            .finish()
     }
 }

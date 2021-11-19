@@ -7,6 +7,7 @@
 use crate::ule::AsULE;
 use crate::ZeroVec;
 use core::cmp::Ordering;
+use core::fmt;
 
 mod borrowed;
 mod kv;
@@ -328,6 +329,51 @@ where
         Self {
             keys: K::Container::from_borrowed(other.keys),
             values: V::Container::from_borrowed(other.values),
+        }
+    }
+}
+
+// We can't use the default PartialEq because ZeroMap is invariant
+// so otherwise rustc will not automatically allow you to compare ZeroMaps
+// with different lifetimes
+impl<'a, 'b, K, V> PartialEq<ZeroMap<'b, K, V>> for ZeroMap<'a, K, V>
+where
+    K: for<'c> ZeroMapKV<'c>,
+    V: for<'c> ZeroMapKV<'c>,
+    <K as ZeroMapKV<'a>>::Container: PartialEq<<K as ZeroMapKV<'b>>::Container>,
+    <V as ZeroMapKV<'a>>::Container: PartialEq<<V as ZeroMapKV<'b>>::Container>,
+{
+    fn eq(&self, other: &ZeroMap<'b, K, V>) -> bool {
+        self.keys.eq(&other.keys) && self.values.eq(&other.values)
+    }
+}
+
+impl<'a, K, V> fmt::Debug for ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    <K as ZeroMapKV<'a>>::Container: fmt::Debug,
+    <V as ZeroMapKV<'a>>::Container: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        f.debug_struct("ZeroMap")
+            .field("keys", &self.keys)
+            .field("values", &self.values)
+            .finish()
+    }
+}
+
+impl<'a, K, V> Clone for ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    <K as ZeroMapKV<'a>>::Container: Clone,
+    <V as ZeroMapKV<'a>>::Container: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            keys: self.keys.clone(),
+            values: self.values.clone(),
         }
     }
 }
