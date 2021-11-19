@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{MutableZeroVecLike, ZeroMap, ZeroMapBorrowed, ZeroMapKV, ZeroVecLike};
-use alloc::boxed::Box;
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{self, MapAccess, Visitor};
@@ -60,12 +59,12 @@ where
 }
 
 /// Modified example from https://serde.rs/deserialize-map.html
-struct ZeroMapMapVisitor<K: ?Sized, V: ?Sized> {
+struct ZeroMapMapVisitor<'a, K: ZeroMapKV<'a> + ?Sized, V: ZeroMapKV<'a> + ?Sized> {
     #[allow(clippy::type_complexity)] // it's a marker type, complexity doesn't matter
-    marker: PhantomData<fn() -> (Box<K>, Box<V>)>,
+    marker: PhantomData<fn() -> (&'a K::OwnedType, &'a V::OwnedType)>,
 }
 
-impl<K: ?Sized, V: ?Sized> ZeroMapMapVisitor<K, V> {
+impl<'a, K: ZeroMapKV<'a> + ?Sized, V: ZeroMapKV<'a> + ?Sized> ZeroMapMapVisitor<'a, K, V> {
     fn new() -> Self {
         ZeroMapMapVisitor {
             marker: PhantomData,
@@ -73,15 +72,15 @@ impl<K: ?Sized, V: ?Sized> ZeroMapMapVisitor<K, V> {
     }
 }
 
-impl<'de, K: ?Sized, V: ?Sized> Visitor<'de> for ZeroMapMapVisitor<K, V>
+impl<'a, 'de, K: ?Sized, V: ?Sized> Visitor<'de> for ZeroMapMapVisitor<'a, K, V>
 where
     K: Ord,
-    K: ZeroMapKV<'de>,
-    V: ZeroMapKV<'de>,
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
     K::OwnedType: Deserialize<'de>,
     V::OwnedType: Deserialize<'de>,
 {
-    type Value = ZeroMap<'de, K, V>;
+    type Value = ZeroMap<'a, K, V>;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a map produced by ZeroMap")
@@ -114,22 +113,23 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<'de, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMap<'de, K, V>
+impl<'de, 'a, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMap<'a, K, V>
 where
     K: Ord,
     K::Container: Deserialize<'de>,
     V::Container: Deserialize<'de>,
-    K: ZeroMapKV<'de>,
-    V: ZeroMapKV<'de>,
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
     K::OwnedType: Deserialize<'de>,
     V::OwnedType: Deserialize<'de>,
+    'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            deserializer.deserialize_map(ZeroMapMapVisitor::new())
+            deserializer.deserialize_map(ZeroMapMapVisitor::<'a, K, V>::new())
         } else {
             let (keys, values): (K::Container, V::Container) =
                 Deserialize::deserialize(deserializer)?;
@@ -147,15 +147,16 @@ where
 }
 
 // /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<'de, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMapBorrowed<'de, K, V>
+impl<'de, 'a, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMapBorrowed<'a, K, V>
 where
     K: Ord,
     K::Container: Deserialize<'de>,
     V::Container: Deserialize<'de>,
-    K: ZeroMapKV<'de>,
-    V: ZeroMapKV<'de>,
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
     K::OwnedType: Deserialize<'de>,
     V::OwnedType: Deserialize<'de>,
+    'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -166,7 +167,7 @@ where
                 "ZeroMapBorrowed cannot be deserialized from human-readable formats",
             ))
         } else {
-            let deserialized: ZeroMap<'de, K, V> = ZeroMap::deserialize(deserializer)?;
+            let deserialized: ZeroMap<'a, K, V> = ZeroMap::deserialize(deserializer)?;
             let keys = if let Some(keys) = deserialized.keys.as_borrowed_inner() {
                 keys
             } else {
@@ -187,8 +188,21 @@ where
 }
 
 #[cfg(test)]
+#[allow(non_camel_case_types)]
 mod test {
     use super::super::*;
+
+    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    struct DeriveTest_ZeroMap<'data> {
+        #[serde(borrow)]
+        _data: ZeroMap<'data, str, [u8]>,
+    }
+
+    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    struct DeriveTest_ZeroMapBorrowed<'data> {
+        #[serde(borrow)]
+        _data: ZeroMapBorrowed<'data, str, [u8]>,
+    }
 
     const JSON_STR: &str = "{\"1\":\"uno\",\"2\":\"dos\",\"3\":\"tres\"}";
     const BINCODE_BYTES: &[u8] = &[
