@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637254734516,
+  "lastUpdate": 1637349519319,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15029,6 +15029,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 32280078,
             "range": "± 1192470",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a96c0aa8873370bbba80fb0f041f65945ab30d37",
+          "message": "Add missing Serde/Yoke impls to ZeroVec crate (#1328)",
+          "timestamp": "2021-11-19T11:11:54-08:00",
+          "tree_id": "35314837ec943e81683fa5d5d1601ae0a1b670ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/a96c0aa8873370bbba80fb0f041f65945ab30d37"
+        },
+        "date": 1637349513551,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 45354685,
+            "range": "± 92133",
             "unit": "ns/iter"
           }
         ]
