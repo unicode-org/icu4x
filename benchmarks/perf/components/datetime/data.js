@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637254763824,
+  "lastUpdate": 1637349599315,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13241,6 +13241,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 285144,
             "range": "± 685",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a96c0aa8873370bbba80fb0f041f65945ab30d37",
+          "message": "Add missing Serde/Yoke impls to ZeroVec crate (#1328)",
+          "timestamp": "2021-11-19T11:11:54-08:00",
+          "tree_id": "35314837ec943e81683fa5d5d1601ae0a1b670ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/a96c0aa8873370bbba80fb0f041f65945ab30d37"
+        },
+        "date": 1637349592730,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 114017,
+            "range": "± 4097",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1317834,
+            "range": "± 42965",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 324379,
+            "range": "± 10763",
             "unit": "ns/iter"
           }
         ]
