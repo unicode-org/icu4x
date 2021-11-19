@@ -96,9 +96,16 @@ where
 }
 
 #[cfg(test)]
+#[allow(non_camel_case_types)]
 mod test {
     use super::super::*;
     use crate::samples::*;
+
+    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    struct DeriveTest_ZeroVec<'data> {
+        #[serde(borrow)]
+        _data: ZeroVec<'data, u16>,
+    }
 
     #[test]
     fn test_serde_json() {

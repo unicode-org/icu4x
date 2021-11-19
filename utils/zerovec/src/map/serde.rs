@@ -114,15 +114,16 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<'de, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMap<'de, K, V>
+impl<'de, 'a, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMap<'a, K, V>
 where
     K: Ord,
-    K::Container: Deserialize<'de>,
-    V::Container: Deserialize<'de>,
-    K: ZeroMapKV<'de>,
-    V: ZeroMapKV<'de>,
-    K::OwnedType: Deserialize<'de>,
-    V::OwnedType: Deserialize<'de>,
+    K::Container: Deserialize<'a>,
+    V::Container: Deserialize<'a>,
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K::OwnedType: Deserialize<'a>,
+    V::OwnedType: Deserialize<'a>,
+    'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -147,15 +148,16 @@ where
 }
 
 // /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<'de, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMapBorrowed<'de, K, V>
+impl<'de, 'a, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMapBorrowed<'a, K, V>
 where
     K: Ord,
-    K::Container: Deserialize<'de>,
-    V::Container: Deserialize<'de>,
-    K: ZeroMapKV<'de>,
-    V: ZeroMapKV<'de>,
-    K::OwnedType: Deserialize<'de>,
-    V::OwnedType: Deserialize<'de>,
+    K::Container: Deserialize<'a>,
+    V::Container: Deserialize<'a>,
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K::OwnedType: Deserialize<'a>,
+    V::OwnedType: Deserialize<'a>,
+    'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -166,7 +168,7 @@ where
                 "ZeroMapBorrowed cannot be deserialized from human-readable formats",
             ))
         } else {
-            let deserialized: ZeroMap<'de, K, V> = ZeroMap::deserialize(deserializer)?;
+            let deserialized: ZeroMap<'a, K, V> = ZeroMap::deserialize(deserializer)?;
             let keys = if let Some(keys) = deserialized.keys.as_borrowed_inner() {
                 keys
             } else {
@@ -187,8 +189,21 @@ where
 }
 
 #[cfg(test)]
+#[allow(non_camel_case_types)]
 mod test {
     use super::super::*;
+
+    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    struct DeriveTest_ZeroMap<'data> {
+        #[serde(borrow)]
+        _data: ZeroMap<'data, str, [u8]>
+    }
+
+    #[derive(::serde::Serialize, ::serde::Deserialize)]
+    struct DeriveTest_ZeroMapBorrowed<'data> {
+        #[serde(borrow)]
+        _data: ZeroMapBorrowed<'data, str, [u8]>
+    }
 
     const JSON_STR: &str = "{\"1\":\"uno\",\"2\":\"dos\",\"3\":\"tres\"}";
     const BINCODE_BYTES: &[u8] = &[
