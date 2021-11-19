@@ -41,9 +41,6 @@ pub trait ZeroMapKV<'a> {
     /// deserializing to `Self::OwnedType` should produce the same value once
     /// passed through `Self::owned_as_self()`
     type OwnedType: 'static;
-
-    /// Convert an owned value to a borrowed Self
-    fn owned_as_self(o: &Self::OwnedType) -> &Self;
 }
 
 macro_rules! impl_sized_kv {
@@ -54,11 +51,6 @@ macro_rules! impl_sized_kv {
             type GetType = <$ty as AsULE>::ULE;
             type SerializeType = $ty;
             type OwnedType = $ty;
-
-            #[inline]
-            fn owned_as_self(o: &Self::OwnedType) -> &Self {
-                o
-            }
         }
     };
 }
@@ -79,11 +71,6 @@ impl<'a> ZeroMapKV<'a> for str {
     type GetType = str;
     type SerializeType = str;
     type OwnedType = Box<str>;
-
-    #[inline]
-    fn owned_as_self(o: &Self::OwnedType) -> &Self {
-        o
-    }
 }
 
 impl<'a> ZeroMapKV<'a> for [u8] {
@@ -92,9 +79,4 @@ impl<'a> ZeroMapKV<'a> for [u8] {
     type GetType = [u8];
     type SerializeType = [u8];
     type OwnedType = Box<[u8]>;
-
-    #[inline]
-    fn owned_as_self(o: &Self::OwnedType) -> &Self {
-        o
-    }
 }

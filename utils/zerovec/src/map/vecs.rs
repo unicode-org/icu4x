@@ -114,6 +114,9 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     ///
     /// These are useful to ensure serialization parity between borrowed and owned versions
     fn from_borrowed(b: Self::BorrowedVariant) -> Self;
+
+    /// Convert an owned value to a borrowed T
+    fn owned_as_t(o: &Self::OwnedType) -> &T;
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
@@ -243,6 +246,10 @@ where
     }
     fn from_borrowed(b: &'a [T::ULE]) -> Self {
         ZeroVec::Borrowed(b)
+    }
+
+    fn owned_as_t(o: &Self::OwnedType) -> &T {
+        o
     }
 }
 
@@ -403,5 +410,9 @@ where
     }
     fn from_borrowed(b: VarZeroVecBorrowed<'a, T>) -> Self {
         VarZeroVec::Borrowed(b)
+    }
+
+    fn owned_as_t(o: &Self::OwnedType) -> &T {
+        o
     }
 }

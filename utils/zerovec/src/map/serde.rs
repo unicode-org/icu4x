@@ -99,7 +99,10 @@ where
             // If not sorted, return an error
             // a serialized map that came from another ZeroMap
             if map
-                .try_append(K::owned_as_self(&key), V::owned_as_self(&value))
+                .try_append(
+                    K::Container::owned_as_t(&key),
+                    V::Container::owned_as_t(&value),
+                )
                 .is_some()
             {
                 return Err(de::Error::custom(
