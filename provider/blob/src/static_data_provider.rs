@@ -96,9 +96,7 @@ impl StaticDataProvider {
     /// ```
     pub fn new_empty() -> Self {
         StaticDataProvider {
-            blob: BlobSchema::V001(BlobSchemaV1 {
-                resources: LiteMap::new(),
-            }),
+            data: ZeroMapBorrowed::new(),
         }
     }
 
