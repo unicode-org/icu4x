@@ -69,39 +69,9 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 /// This struct represents a de-serialized Char16Trie that was exported from
 /// ICU binary data.
 ///
-/// The trie consists of a series of char16_t-serialized nodes for incremental
-/// Unicode string/char16_t sequence matching. (char16_t=16-bit unsigned integer)
-/// The root node is at the beginning of the trie data.
-///
-/// Types of nodes are distinguished by their node lead unit ranges.
-/// After each node, except a final-value node, another node follows to
-/// encode match values or continue matching further units.
-///
-/// Node types:
-///  - Final-value node: Stores a 32-bit integer in a compact, variable-length format.
-///    The value is for the string/char16_t sequence so far.
-///  - Match node, optionally with an intermediate value in a different compact format.
-///    The value, if present, is for the string/char16_t sequence so far.
-///
-///  Aside from the value, which uses the node lead unit's high bits:
-///
-///  - Linear-match node: Matches a number of units.
-///  - Branch node: Branches to other nodes according to the current input unit.
-///    The node unit is the length of the branch (number of units to select from)
-///    minus 1. It is followed by a sub-node:
-///    - If the length is at most MAX_BRANCH_LINEAR_SUB_NODE_LENGTH, then
-///      there are length-1 (key, value) pairs and then one more comparison unit.
-///      If one of the key units matches, then the value is either a final value for
-///      the string so far, or a "jump" delta to the next node.
-///      If the last unit matches, then matching continues with the next node.
-///      (Values have the same encoding as final-value nodes.)
-///    - If the length is greater than MAX_BRANCH_LINEAR_SUB_NODE_LENGTH, then
-///      there is one unit and one "jump" delta.
-///      If the input unit is less than the sub-node unit, then "jump" by delta to
-///      the next sub-node which will have a length of length/2.
-///      (The delta has its own compact encoding.)
-///      Otherwise, skip the "jump" delta to the next sub-node
-///      which will have a length of length-length/2.
+/// Light-weight, non-const reader class for a CharsTrie. Traverses a
+/// char-serialized data structure with minimal state, for mapping 16-bit-unit
+/// sequences to non-negative integer values.
 ///
 /// For more information:
 /// - [ICU4C UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UCharsTrie.html)
@@ -112,6 +82,18 @@ pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ZeroVec<'data, u16>,
+}
+
+impl<'data> Char16Trie<'data> {
+    /// Returns a new [`Char16Trie`] with ownership of the provided data.
+    pub fn new(data: ZeroVec<'data, u16>) -> Self {
+        Self { data }
+    }
+
+    /// Returns a new [`Char16Iterator`] backed by borrowed data from the `trie` data
+    pub fn iter(&self) -> Char16TrieIterator {
+        Char16TrieIterator::new(self.data.as_slice())
+    }
 }
 
 /// This struct represents an iterator over a Char16Trie.
@@ -128,7 +110,7 @@ pub struct Char16TrieIterator<'a> {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TrieResult {
     /// The input unit(s) did not continue a matching string.
-    /// Once next() return TrieResult::NoMatch, all further calls to next()
+    /// Once next() returns TrieResult::NoMatch, all further calls to next()
     /// will also return TrieResult::NoMatch.
     NoMatch,
     /// The input unit(s) matched a string but there is no value for the string
@@ -142,6 +124,22 @@ pub enum TrieResult {
     /// the string so far.  Another input byte/unit can continue a matching
     /// string.
     Intermediate(i32),
+}
+
+// Get the lead surrogate (0xd800..0xdbff) for a
+// supplementary code point (0x10000..0x10ffff).
+// @param supplementary 32-bit code point (U+10000..U+10ffff)
+// @return lead surrogate (U+d800..U+dbff) for supplementary
+fn u16_lead(supplementary: i32) -> u16 {
+    (((supplementary) >> 10) + 0xd7c0) as u16
+}
+
+// Get the trail surrogate (0xdc00..0xdfff) for a
+// supplementary code point (0x10000..0x10ffff).
+// @param supplementary 32-bit code point (U+10000..U+10ffff)
+// @return trail surrogate (U+dc00..U+dfff) for supplementary
+fn u16_tail(supplementary: i32) -> u16 {
+    (((supplementary) & 0x3ff) | 0xdc00) as u16
 }
 
 impl<'a> Char16TrieIterator<'a> {
@@ -159,31 +157,95 @@ impl<'a> Char16TrieIterator<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_char16trie::char16trie::{Char16Trie, Char16TrieIterator, TrieResult};
+    /// use icu_char16trie::char16trie::{Char16Trie, TrieResult};
     /// use zerovec::ZeroVec;
     ///
     /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
     /// let trie_data = vec![48, 97, 176, 98, 32868];
-    /// let trie = Char16Trie {
-    ///     data: ZeroVec::from_slice(trie_data.as_slice()),
-    /// };
+    /// let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
     ///
-    /// let mut itor = Char16TrieIterator::new(trie.data.as_slice());
-    /// let res = itor.next('a' as i32);
+    /// let mut iter = trie.iter();
+    /// let res = iter.next('a');
     /// assert_eq!(res, TrieResult::Intermediate(1));
-    /// let res = itor.next('b' as i32);
+    /// let res = iter.next('b');
     /// assert_eq!(res, TrieResult::FinalValue(100));
-    /// let res = itor.next('c' as i32);
+    /// let res = iter.next('c');
     /// assert_eq!(res, TrieResult::NoMatch);
     /// ```
-    pub fn next(&mut self, c: i32) -> TrieResult {
+    pub fn next(&mut self, c: char) -> TrieResult {
+        if (c as u32) <= 0xffff {
+            self.next_u16(c as u16)
+        } else {
+            match self.next_u16(u16_lead(c as i32)) {
+                TrieResult::NoValue | TrieResult::Intermediate(_) => {
+                    self.next_u16(u16_tail(c as i32))
+                }
+                _ => TrieResult::NoMatch,
+            }
+        }
+    }
+
+    /// Traverses the trie from the current state for this input char.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+    /// use zerovec::ZeroVec;
+    ///
+    /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
+    /// let trie_data = vec![48, 97, 176, 98, 32868];
+    /// let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    ///
+    /// let mut iter = trie.iter();
+    /// let res = iter.next('a');
+    /// assert_eq!(res, TrieResult::Intermediate(1));
+    /// let res = iter.next('b');
+    /// assert_eq!(res, TrieResult::FinalValue(100));
+    /// let res = iter.next('c');
+    /// assert_eq!(res, TrieResult::NoMatch);
+    /// ```
+    pub fn next_u32(&mut self, c: u32) -> TrieResult {
+        if c <= 0xffff {
+            self.next_u16(c as u16)
+        } else {
+            match self.next_u16(u16_lead(c as i32)) {
+                TrieResult::NoValue | TrieResult::Intermediate(_) => {
+                    self.next_u16(u16_tail(c as i32))
+                }
+                _ => TrieResult::NoMatch,
+            }
+        }
+    }
+
+    /// Traverses the trie from the current state for this input char.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+    /// use zerovec::ZeroVec;
+    ///
+    /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
+    /// let trie_data = vec![48, 97, 176, 98, 32868];
+    /// let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
+    ///
+    /// let mut iter = trie.iter();
+    /// let res = iter.next_u16('a' as u16);
+    /// assert_eq!(res, TrieResult::Intermediate(1));
+    /// let res = iter.next_u16('b' as u16);
+    /// assert_eq!(res, TrieResult::FinalValue(100));
+    /// let res = iter.next_u16('c' as u16);
+    /// assert_eq!(res, TrieResult::NoMatch);
+    /// ```
+    pub fn next_u16(&mut self, c: u16) -> TrieResult {
         if self.pos.is_none() {
             return TrieResult::NoMatch;
         }
         let mut pos = self.pos.unwrap();
         if let Some(length) = self.remaining_match_length {
             // Remaining part of a linear-match node
-            if c == self.get(pos).into() {
+            if c == self.get(pos) {
                 pos += 1;
                 self.pos = Some(pos);
                 if length == 0 {
@@ -208,7 +270,7 @@ impl<'a> Char16TrieIterator<'a> {
         u16::from_unaligned(self.trie[pos])
     }
 
-    fn branch_next(&mut self, pos: usize, length: usize, in_unit: i32) -> TrieResult {
+    fn branch_next(&mut self, pos: usize, length: usize, in_unit: u16) -> TrieResult {
         let mut pos = pos;
         let mut length = length;
         if length == 0 {
@@ -220,7 +282,7 @@ impl<'a> Char16TrieIterator<'a> {
         // The length of the branch is the number of units to select from.
         // The data structure encodes a binary search.
         while length > MAX_BRANCH_LINEAR_SUB_NODE_LENGTH {
-            if in_unit < self.get(pos).into() {
+            if in_unit < self.get(pos) {
                 length >>= 1;
                 pos = self.jump_by_delta(pos + 1);
             } else {
@@ -232,7 +294,7 @@ impl<'a> Char16TrieIterator<'a> {
         // length>=2 because the loop body above sees length>kMaxBranchLinearSubNodeLength>=3
         // and divides length by 2.
         loop {
-            if in_unit == self.get(pos).into() {
+            if in_unit == self.get(pos) {
                 pos += 1;
                 let mut node = self.get(pos);
                 if node & VALUE_IS_FINAL != 0 {
@@ -267,7 +329,7 @@ impl<'a> Char16TrieIterator<'a> {
             }
         }
 
-        if in_unit == self.get(pos).into() {
+        if in_unit == self.get(pos) {
             pos += 1;
             self.pos = Some(pos);
             let node = self.get(pos);
@@ -281,7 +343,7 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
-    fn next_impl(&mut self, pos: usize, in_unit: i32) -> TrieResult {
+    fn next_impl(&mut self, pos: usize, in_unit: u16) -> TrieResult {
         let mut node = self.get(pos);
         let mut pos = pos + 1;
         loop {
@@ -290,7 +352,7 @@ impl<'a> Char16TrieIterator<'a> {
             } else if node < MIN_VALUE_LEAD {
                 // Match the first of length+1 units.
                 let length = node - MIN_LINEAR_MATCH;
-                if in_unit == self.get(pos).into() {
+                if in_unit == self.get(pos) {
                     pos += 1;
                     if length == 0 {
                         self.remaining_match_length = None;
@@ -340,8 +402,8 @@ impl<'a> Char16TrieIterator<'a> {
     }
 
     fn skip_value(&self, pos: usize) -> usize {
-        let lead_byte = self.get(pos);
-        skip_value(pos + 1, lead_byte & 0x7fff)
+        let lead_unit = self.get(pos);
+        skip_value(pos + 1, lead_unit & 0x7fff)
     }
 
     fn skip_delta(&self, pos: usize) -> usize {
@@ -364,7 +426,7 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
-    pub fn get_value(&self, pos: usize) -> i32 {
+    fn get_value(&self, pos: usize) -> i32 {
         let lead_unit = self.get(pos);
         if lead_unit & VALUE_IS_FINAL == VALUE_IS_FINAL {
             self.read_value(pos + 1, lead_unit & 0x7fff)

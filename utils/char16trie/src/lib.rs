@@ -6,8 +6,9 @@
 //!
 //! `icu_char16trie` is a utility crate of the [`ICU4X`] project.
 //!
-//! This component provides a data structure for an time-efficient lookup of values
-//! associated to code points.
+//! This component provides a data structure for a space-efficient and time-efficient lookup of
+//! sequences of 16-bit units (commonly but not necessarily UTF-16 code units)
+//! which map to integer values.
 //!
 //! It is an implementation of the existing [ICU4C UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UCharsTrie.html)
 //! / [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
@@ -21,21 +22,20 @@
 //! ### Querying a `Char16Trie`
 //!
 //! ```rust
-//! use icu_char16trie::char16trie::{Char16Trie, Char16TrieIterator, TrieResult};
+//! use icu_char16trie::char16trie::{Char16Trie, TrieResult};
 //! use zerovec::ZeroVec;
 //!
-//! // A Char16Trie containing the ASCII characters 'a' and 'b'.
+//! // A Char16Trie containing the ASCII characters mapping 'a' to 1 and 'ab'
+//! // to 100.
 //! let trie_data = vec![48, 97, 176, 98, 32868];
-//! let trie = Char16Trie {
-//!     data: ZeroVec::from_slice(trie_data.as_slice()),
-//! };
+//! let trie = Char16Trie::new(ZeroVec::from_slice(trie_data.as_slice()));
 //!
-//! let mut itor = Char16TrieIterator::new(trie.data.as_slice());
-//! let res = itor.next('a' as i32);
+//! let mut iter = trie.iter();
+//! let res = iter.next('a');
 //! assert_eq!(res, TrieResult::Intermediate(1));
-//! let res = itor.next('b' as i32);
+//! let res = iter.next('b');
 //! assert_eq!(res, TrieResult::FinalValue(100));
-//! let res = itor.next('c' as i32);
+//! let res = iter.next('c');
 //! assert_eq!(res, TrieResult::NoMatch);
 //! ```
 //!
