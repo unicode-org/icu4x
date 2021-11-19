@@ -21,12 +21,16 @@ pub trait ZeroMapKV<'a> {
         + Sized;
     /// The type produced by `Container::get()`
     ///
-    /// This type will be predetermined by the choice of `Self::Container`
+    /// This type will be predetermined by the choice of `Self::Container`:
+    /// For sized types this must be `T::ULE`, and for unsized types this must be `T`
     type GetType: ?Sized + 'static;
     /// The type produced by `Container::replace()` and `Container::remove()`,
     /// also used during deserialization. If `Self` is human readable serialized,
     /// deserializing to `Self::OwnedType` should produce the same value once
     /// passed through `Self::owned_as_self()`
+    /// 
+    /// This type will be predetermined by the choice of `Self::Container`:
+    /// For sized types this must be `T` and for unsized types this must be `Box<T>`
     type OwnedType: 'static;
 }
 
