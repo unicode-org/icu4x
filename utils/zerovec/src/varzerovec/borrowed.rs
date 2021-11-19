@@ -49,7 +49,28 @@ impl<'a, T: ?Sized> Clone for VarZeroVecBorrowed<'a, T> {
     }
 }
 
+impl<'a, T: VarULE + ?Sized> Default for VarZeroVecBorrowed<'a, T> {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
+    /// Creates a new, empty `VarZeroVecBorrowed<T>`.
+    ///
+    /// Note: Since [`VarZeroVecBorrowed`] is not mutable, the return value will be a stub unless
+    /// wrapped in [`VarZeroVec::Borrowed`].
+    #[inline]
+    pub fn new() -> Self {
+        Self {
+            indices: &[],
+            things: &[],
+            entire_slice: &[],
+            marker: PhantomData,
+        }
+    }
+
     /// Construct a new VarZeroVecBorrowed, checking invariants about the overall buffer size:
     ///
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
