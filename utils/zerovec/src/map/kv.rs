@@ -41,8 +41,6 @@ pub trait ZeroMapKV<'a> {
     /// deserializing to `Self::OwnedType` should produce the same value once
     /// passed through `Self::owned_as_self()`
     type OwnedType: 'static;
-    /// Convert to a needle for searching
-    fn as_needle(&self) -> &Self::NeedleType;
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
     fn cmp_get(&self, g: &Self::GetType) -> Ordering;
@@ -64,11 +62,6 @@ macro_rules! impl_sized_kv {
             type GetType = <$ty as AsULE>::ULE;
             type SerializeType = $ty;
             type OwnedType = $ty;
-
-            #[inline]
-            fn as_needle(&self) -> &Self {
-                self
-            }
 
             #[inline]
             fn cmp_get(&self, g: &Self::GetType) -> Ordering {
@@ -106,11 +99,6 @@ impl<'a> ZeroMapKV<'a> for str {
     type OwnedType = Box<str>;
 
     #[inline]
-    fn as_needle(&self) -> &str {
-        self
-    }
-
-    #[inline]
     fn cmp_get(&self, g: &str) -> Ordering {
         (&*self).cmp(g)
     }
@@ -132,11 +120,6 @@ impl<'a> ZeroMapKV<'a> for [u8] {
     type GetType = [u8];
     type SerializeType = [u8];
     type OwnedType = Box<[u8]>;
-
-    #[inline]
-    fn as_needle(&self) -> &[u8] {
-        self
-    }
 
     #[inline]
     fn cmp_get(&self, g: &[u8]) -> Ordering {

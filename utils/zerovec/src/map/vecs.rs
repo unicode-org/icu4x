@@ -35,6 +35,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
+
+    /// Convert T to a needle for searching
+    fn t_as_needle(t: &T) -> &Self::NeedleType;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
@@ -59,6 +62,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     type BorrowedVariant: ZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
         + BorrowedZeroVecLike<'a, T>
         + Copy;
+
     /// Insert an element at `index`
     fn insert(&mut self, index: usize, value: &T);
     /// Remove the element at `index` (panicking if nonexistant)
@@ -121,6 +125,10 @@ where
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
+
+    fn t_as_needle(t: &T) -> &T {
+        t
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for &'a [T::ULE]
@@ -146,6 +154,10 @@ where
             .as_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
+    }
+
+    fn t_as_needle(t: &T) -> &T {
+        t
     }
 }
 
@@ -234,6 +246,10 @@ where
         }
         true
     }
+
+    fn t_as_needle(t: &T) -> &T {
+        t
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
@@ -268,6 +284,10 @@ where
             }
         }
         true
+    }
+
+    fn t_as_needle(t: &T) -> &T {
+        t
     }
 }
 

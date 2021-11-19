@@ -178,7 +178,7 @@ where
     /// assert_eq!(map.get(&3), None);
     /// ```
     pub fn insert(&mut self, key: &K, value: &V) -> Option<V::OwnedType> {
-        let key_needle = key.as_needle();
+        let key_needle = K::Container::t_as_needle(key);
         match self.keys.binary_search(key_needle) {
             Ok(index) => Some(self.values.replace(index, value)),
             Err(index) => {
