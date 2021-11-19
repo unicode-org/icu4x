@@ -2,10 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use litemap::LiteMap;
 use zerovec::map::ZeroMapBorrowed;
-use alloc::string::String;
-use alloc::vec::Vec;
 
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Serialize, serde::Deserialize)]

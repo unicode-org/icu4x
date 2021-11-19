@@ -71,11 +71,12 @@ impl BlobDataProvider {
     pub fn new_from_rc_blob(blob: Rc<[u8]>) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
             data: Yoke::try_attach_to_cart_badly(blob, |bytes| {
-                BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes))
-                .map(|blob| {
-                    let BlobSchema::V001(blob) = blob;
-                    blob.resources
-                })
+                BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
+                    |blob| {
+                        let BlobSchema::V001(blob) = blob;
+                        blob.resources
+                    },
+                )
             })
             .map_err(DataError::new_resc_error)?,
         })
@@ -88,9 +89,7 @@ impl BlobDataProvider {
         self.data
             .try_project_cloned_with_capture::<&'static [u8], String, ()>(
                 path,
-                move |zm, path, _| {
-                    zm.get(&*path).ok_or(())
-                },
+                move |zm, path, _| zm.get(&*path).ok_or(()),
             )
             .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))
     }

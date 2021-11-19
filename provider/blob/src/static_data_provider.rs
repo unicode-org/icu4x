@@ -6,7 +6,6 @@ use crate::blob_schema::*;
 use crate::path_util;
 use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
-use litemap::LiteMap;
 use serde::de::Deserialize;
 use zerovec::map::ZeroMapBorrowed;
 

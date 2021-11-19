@@ -8,6 +8,7 @@ use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerdeSeDataStructMarker;
 use litemap::LiteMap;
+use zerovec::ZeroMap;
 
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
@@ -57,18 +58,14 @@ impl DataExporter<SerdeSeDataStructMarker> for BlobExporter<'_> {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        // Convert from LiteMap<String, Vec> to LiteMap<&str, &[]>
-        let mut schema = BlobSchemaV1 {
-            resources: LiteMap::with_capacity(self.resources.len()),
-        };
+        // Convert from LiteMap<String, Vec<u8>> to ZeroVecBorrowed<&str, &[u8]>
+        let mut zm: ZeroMap<str, [u8]> = ZeroMap::with_capacity(self.resources.len());
         for (k, v) in self.resources.iter() {
-            schema
-                .resources
-                .try_append(k, v)
-                .ok_or(())
-                .expect_err("Same order");
+            zm.try_append(k, v).ok_or(()).expect_err("Same order");
         }
-        let blob = BlobSchema::V001(schema);
+        let blob = BlobSchema::V001(BlobSchemaV1 {
+            resources: zm.as_borrowed(),
+        });
         log::info!("Serializing blob to output stream...");
         let vec = serialize(&blob)?;
         self.sink.write(&vec).map_err(|e| e.to_string())?;
