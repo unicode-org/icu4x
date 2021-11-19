@@ -35,6 +35,7 @@ erased-serde = { version = "0.3", default-features = false, features = ["alloc"]
 litemap = { version = "0.2.0", path = "../../utils/litemap/", features = ["serde", "serde_serialize"] }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 yoke = { version = "0.3.1", path = "../../utils/yoke" }
+zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 # For the export feature
 log = { version = "0.4", optional = true }
