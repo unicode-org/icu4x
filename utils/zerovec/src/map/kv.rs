@@ -7,7 +7,6 @@ use crate::ule::*;
 use crate::VarZeroVec;
 use crate::ZeroVec;
 use alloc::boxed::Box;
-use core::cmp::Ordering;
 
 /// Trait marking types which are allowed to be keys or values in [`ZeroMap`](super::ZeroMap).
 ///
@@ -41,9 +40,6 @@ pub trait ZeroMapKV<'a> {
     /// deserializing to `Self::OwnedType` should produce the same value once
     /// passed through `Self::owned_as_self()`
     type OwnedType: 'static;
-    /// Compare this type with a `Self::GetType`. This must produce the same result as
-    /// if `g` were converted to `Self`
-    fn cmp_get(&self, g: &Self::GetType) -> Ordering;
     /// Obtain a version of this type suitable for serialization
     ///
     /// This uses a callback because it's not possible to return owned-or-borrowed
@@ -62,11 +58,6 @@ macro_rules! impl_sized_kv {
             type GetType = <$ty as AsULE>::ULE;
             type SerializeType = $ty;
             type OwnedType = $ty;
-
-            #[inline]
-            fn cmp_get(&self, g: &Self::GetType) -> Ordering {
-                self.cmp(&$ty::from_unaligned(*g))
-            }
 
             #[inline]
             fn with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self) -> R) -> R {
@@ -99,11 +90,6 @@ impl<'a> ZeroMapKV<'a> for str {
     type OwnedType = Box<str>;
 
     #[inline]
-    fn cmp_get(&self, g: &str) -> Ordering {
-        (&*self).cmp(g)
-    }
-
-    #[inline]
     fn with_ser<R>(g: &str, f: impl FnOnce(&str) -> R) -> R {
         f(g)
     }
@@ -120,11 +106,6 @@ impl<'a> ZeroMapKV<'a> for [u8] {
     type GetType = [u8];
     type SerializeType = [u8];
     type OwnedType = Box<[u8]>;
-
-    #[inline]
-    fn cmp_get(&self, g: &[u8]) -> Ordering {
-        (&*self).cmp(g)
-    }
 
     #[inline]
     fn with_ser<R>(g: &[u8], f: impl FnOnce(&[u8]) -> R) -> R {

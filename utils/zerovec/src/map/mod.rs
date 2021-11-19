@@ -234,7 +234,7 @@ where
     pub fn try_append<'b>(&mut self, key: &'b K, value: &'b V) -> Option<(&'b K, &'b V)> {
         if self.keys.len() != 0 {
             if let Some(last) = self.keys.get(self.keys.len() - 1) {
-                if key.cmp_get(last) != Ordering::Greater {
+                if K::Container::t_cmp_get(key, last) != Ordering::Greater {
                     return Some((key, value));
                 }
             }

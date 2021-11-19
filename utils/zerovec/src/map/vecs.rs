@@ -38,6 +38,10 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
 
     /// Convert T to a needle for searching
     fn t_as_needle(t: &T) -> &Self::NeedleType;
+
+    /// Compare this type with a `Self::GetType`. This must produce the same result as
+    /// if `g` were converted to `Self`
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
@@ -129,6 +133,10 @@ where
     fn t_as_needle(t: &T) -> &T {
         t
     }
+
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
+        t.cmp(&T::from_unaligned(*g))
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for &'a [T::ULE]
@@ -158,6 +166,10 @@ where
 
     fn t_as_needle(t: &T) -> &T {
         t
+    }
+
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
+        t.cmp(&T::from_unaligned(*g))
     }
 }
 
@@ -250,6 +262,10 @@ where
     fn t_as_needle(t: &T) -> &T {
         t
     }
+
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
+        t.cmp(g)
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
@@ -288,6 +304,10 @@ where
 
     fn t_as_needle(t: &T) -> &T {
         t
+    }
+
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
+        t.cmp(g)
     }
 }
 
