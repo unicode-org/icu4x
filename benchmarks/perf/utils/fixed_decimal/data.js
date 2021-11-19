@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637353168752,
+  "lastUpdate": 1637364104963,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14069,6 +14069,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 130336,
             "range": "± 7234",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9258d0505eab7165723c6e052c51e26f085cd1fa",
+          "message": "Add PartialEq, Debug, Clone impls to ZeroMap (#1332)\n\n* Add PartialEq, Debug, Clone impls to ZeroMap\r\n\r\n* fmt\r\n\r\n* Add ?Sized bounds",
+          "timestamp": "2021-11-19T15:14:31-08:00",
+          "tree_id": "b796e4cc08c29f67ced0c4544209936495c84873",
+          "url": "https://github.com/unicode-org/icu4x/commit/9258d0505eab7165723c6e052c51e26f085cd1fa"
+        },
+        "date": 1637364097717,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 129743,
+            "range": "± 7721",
             "unit": "ns/iter"
           }
         ]
