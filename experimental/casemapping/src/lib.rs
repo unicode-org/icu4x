@@ -6,14 +6,14 @@
 
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
-use icu_codepointtrie::codepointtrie::{CodePointTrie, TrieValue};
+use icu_codepointtrie::{CodePointTrie, TrieValue};
 #[cfg(feature = "serde")]
 use serde::{Serialize, Deserialize};
 use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ule::{AsULE, PlainOldULE};
 use zerovec::{ZeroVec, ZeroMap};
 
-pub mod provider;
+// pub mod provider;
 
 /// The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -79,6 +79,7 @@ impl DotType {
 
 /// The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub(crate) struct CaseMappingData(u16);
 
 impl CaseMappingData {
@@ -165,6 +166,7 @@ impl TrieValue for CaseMappingData {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 struct CaseMappingExceptions<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
     raw: ZeroVec<'data, u16>,
 }
 
@@ -347,8 +349,9 @@ impl<'data> CaseMappingExceptions<'data> {
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 struct CaseMappingUnfoldData<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
     map: ZeroMap<'data, str, str>,
 }
 
@@ -413,10 +416,13 @@ impl Default for FoldOptions {
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 pub struct CaseMapping<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
     trie: CodePointTrie<'data, CaseMappingData>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     exceptions: CaseMappingExceptions<'data>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     unfold: CaseMappingUnfoldData<'data>
 }
 

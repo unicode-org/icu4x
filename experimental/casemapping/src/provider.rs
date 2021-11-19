@@ -8,13 +8,13 @@ pub mod key {
     pub const CASE_MAPPING_V1: ResourceKey = resource_key!(UnicodeSet, "case_map", 1);
 }
 
-#[icu_provider::data_struct]
-#[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub struct CaseMappingV1<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub inv_list: CaseMapping<'data>,
-}
+// #[icu_provider::data_struct]
+// #[derive(Debug, PartialEq, Clone)]
+// #[cfg_attr(
+//     feature = "provider_serde",
+//     derive(serde::Serialize, serde::Deserialize)
+// )]
+// pub struct CaseMappingV1<'data> {
+//     #[cfg_attr(feature = "provider_serde", serde(borrow))]
+//     pub inv_list: CaseMapping<'data>,
+// }
