@@ -104,7 +104,7 @@ impl ZonedDateTimeFormat {
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
-        options: &DateTimeFormatOptions,
+        options: DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
@@ -124,7 +124,7 @@ impl ZonedDateTimeFormat {
         let langid: LanguageIdentifier = locale.clone().into();
 
         let patterns =
-            provider::date_time::PatternSelector::for_options(date_provider, &locale, options)?;
+            provider::date_time::PatternSelector::for_options(date_provider, &locale, &options)?;
 
         let requires_data = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
@@ -157,7 +157,8 @@ impl ZonedDateTimeFormat {
             None
         };
 
-        let datetime_format = DateTimeFormat::new(locale, patterns, symbols_data, ordinal_rules);
+        let datetime_format =
+            DateTimeFormat::new(locale, patterns, symbols_data, ordinal_rules, options);
         let time_zone_format = TimeZoneFormat::try_new(
             datetime_format.locale.clone(),
             datetime_format

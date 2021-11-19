@@ -34,7 +34,7 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+                        let dtf = DateTimeFormat::try_new(locale, &provider, options)
                             .expect("Failed to create DateTimeFormat.");
 
                         let mut result = String::new();
@@ -67,7 +67,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let locale: Locale = setup.locale.parse().unwrap();
                     let options = fixtures::get_options(&setup.options);
                     let dtf = ZonedDateTimeFormat::try_new(
-                        locale, &provider, &provider, &provider, &options,
+                        locale, &provider, &provider, &provider, options,
                     )
                     .unwrap();
 

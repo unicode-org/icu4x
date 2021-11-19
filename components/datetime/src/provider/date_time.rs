@@ -93,7 +93,7 @@ fn pattern_for_time_length_inner<'data>(
         length::Time::Short => time.short,
     };
 
-    hour_cycle::naively_apply_preferences(&mut pattern, preferences);
+    // hour_cycle::naively_apply_preferences(&mut pattern, preferences);
     PatternPlurals::from(pattern)
 }
 

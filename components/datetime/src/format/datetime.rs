@@ -12,6 +12,7 @@ use crate::pattern::{
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::provider::date_time::DateTimeSymbols;
+use crate::DateTimeFormatOptions;
 
 use alloc::string::ToString;
 use core::fmt;
@@ -57,6 +58,7 @@ where
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
+    pub(crate) options: &'l DateTimeFormatOptions,
 }
 
 impl<'l, T> Writeable for FormattedDateTime<'l, T>
@@ -69,6 +71,7 @@ where
             self.symbols,
             self.datetime,
             self.ordinal_rules,
+            self.options,
             self.locale,
             sink,
         )
@@ -111,6 +114,7 @@ fn write_pattern<T, W>(
     pattern: &crate::pattern::runtime::Pattern,
     symbols: Option<&provider::calendar::DateSymbolsV1>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
+    options: &DateTimeFormatOptions,
     w: &mut W,
 ) -> Result<(), Error>
 where
@@ -119,7 +123,9 @@ where
 {
     for item in pattern.items.iter() {
         match item {
-            PatternItem::Field(field) => write_field(pattern, field, symbols, loc_datetime, w)?,
+            PatternItem::Field(field) => {
+                write_field(pattern, field, symbols, loc_datetime, options, w)?
+            }
             PatternItem::Literal(ch) => w.write_char(ch)?,
         }
     }
@@ -131,6 +137,7 @@ pub fn write_pattern_plurals<T, W>(
     symbols: Option<&provider::calendar::DateSymbolsV1>,
     datetime: &T,
     ordinal_rules: Option<&PluralRules>,
+    options: &DateTimeFormatOptions,
     locale: &Locale,
     w: &mut W,
 ) -> Result<(), Error>
@@ -140,7 +147,7 @@ where
 {
     let loc_datetime = DateTimeInputWithLocale::new(datetime, locale);
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
-    write_pattern(pattern, symbols, &loc_datetime, w)
+    write_pattern(pattern, symbols, &loc_datetime, options, w)
 }
 
 // This function assumes that the correct decision has been
@@ -153,6 +160,7 @@ pub(super) fn write_field<T, W>(
     field: fields::Field,
     symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
+    options: &DateTimeFormatOptions,
     w: &mut W,
 ) -> Result<(), Error>
 where
@@ -221,6 +229,19 @@ where
         FieldSymbol::Hour(hour) => {
             let h =
                 usize::from(datetime.datetime().hour().ok_or(Error::MissingInputField)?) as isize;
+
+            let preferences = match options {
+                DateTimeFormatOptions::Length(l) => l.preferences,
+                DateTimeFormatOptions::Components(c) => c.preferences,
+            };
+            let mut hour = hour;
+            if let Some(preferences) = preferences {
+                if let Some(hour_cycle) = preferences.hour_cycle {
+                    if hour_cycle.field() != hour {
+                        hour = hour_cycle.field();
+                    }
+                }
+            }
             let value = match hour {
                 fields::Hour::H11 => h % 12,
                 fields::Hour::H12 => {
@@ -358,7 +379,14 @@ mod tests {
             DateTime::new_gregorian_datetime_from_integers(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, &"und".parse().unwrap());
-        write_pattern(&pattern, Some(data.get()), &loc_datetime, &mut sink).unwrap();
+        write_pattern(
+            &pattern,
+            Some(data.get()),
+            &loc_datetime,
+            &DateTimeFormatOptions::default(),
+            &mut sink,
+        )
+        .unwrap();
         println!("{}", sink);
     }
 
