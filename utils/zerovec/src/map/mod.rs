@@ -7,6 +7,7 @@
 use crate::ule::AsULE;
 use crate::ZeroVec;
 use core::cmp::Ordering;
+use core::fmt;
 
 mod borrowed;
 mod kv;
@@ -271,8 +272,8 @@ where
 
 impl<'a, K, V> ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Copy,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
@@ -297,8 +298,8 @@ where
 
 impl<'a, K, V> ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>>,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + ?Sized,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     K: AsULE + Copy,
     V: AsULE + Copy,
 {
@@ -328,6 +329,51 @@ where
         Self {
             keys: K::Container::from_borrowed(other.keys),
             values: V::Container::from_borrowed(other.values),
+        }
+    }
+}
+
+// We can't use the default PartialEq because ZeroMap is invariant
+// so otherwise rustc will not automatically allow you to compare ZeroMaps
+// with different lifetimes
+impl<'a, 'b, K, V> PartialEq<ZeroMap<'b, K, V>> for ZeroMap<'a, K, V>
+where
+    K: for<'c> ZeroMapKV<'c> + ?Sized,
+    V: for<'c> ZeroMapKV<'c> + ?Sized,
+    <K as ZeroMapKV<'a>>::Container: PartialEq<<K as ZeroMapKV<'b>>::Container>,
+    <V as ZeroMapKV<'a>>::Container: PartialEq<<V as ZeroMapKV<'b>>::Container>,
+{
+    fn eq(&self, other: &ZeroMap<'b, K, V>) -> bool {
+        self.keys.eq(&other.keys) && self.values.eq(&other.values)
+    }
+}
+
+impl<'a, K, V> fmt::Debug for ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+    <K as ZeroMapKV<'a>>::Container: fmt::Debug,
+    <V as ZeroMapKV<'a>>::Container: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        f.debug_struct("ZeroMap")
+            .field("keys", &self.keys)
+            .field("values", &self.values)
+            .finish()
+    }
+}
+
+impl<'a, K, V> Clone for ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+    <K as ZeroMapKV<'a>>::Container: Clone,
+    <V as ZeroMapKV<'a>>::Container: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            keys: self.keys.clone(),
+            values: self.values.clone(),
         }
     }
 }
