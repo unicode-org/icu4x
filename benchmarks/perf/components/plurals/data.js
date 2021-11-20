@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637364176007,
+  "lastUpdate": 1637370054380,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19739,6 +19739,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21980,
             "range": "± 1605",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1c5901fa24fd17605e0534a1c2bcee89d84807e3",
+          "message": "Simplify ZeroMapKV (#1334)",
+          "timestamp": "2021-11-19T16:52:23-08:00",
+          "tree_id": "b32a7f40aa662c53e397928d2433585634b41292",
+          "url": "https://github.com/unicode-org/icu4x/commit/1c5901fa24fd17605e0534a1c2bcee89d84807e3"
+        },
+        "date": 1637370046572,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1377,
+            "range": "± 75",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6812,
+            "range": "± 456",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23728,
+            "range": "± 1137",
             "unit": "ns/iter"
           }
         ]
