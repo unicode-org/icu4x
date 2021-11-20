@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637364104963,
+  "lastUpdate": 1637369965122,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14099,6 +14099,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 129743,
             "range": "± 7721",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1c5901fa24fd17605e0534a1c2bcee89d84807e3",
+          "message": "Simplify ZeroMapKV (#1334)",
+          "timestamp": "2021-11-19T16:52:23-08:00",
+          "tree_id": "b32a7f40aa662c53e397928d2433585634b41292",
+          "url": "https://github.com/unicode-org/icu4x/commit/1c5901fa24fd17605e0534a1c2bcee89d84807e3"
+        },
+        "date": 1637369956194,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 104409,
+            "range": "± 11313",
             "unit": "ns/iter"
           }
         ]
