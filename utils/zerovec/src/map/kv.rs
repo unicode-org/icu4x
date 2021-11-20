@@ -7,7 +7,6 @@ use crate::ule::*;
 use crate::VarZeroVec;
 use crate::ZeroVec;
 use alloc::boxed::Box;
-use core::cmp::Ordering;
 
 /// Trait marking types which are allowed to be keys or values in [`ZeroMap`](super::ZeroMap).
 ///
@@ -18,72 +17,29 @@ use core::cmp::Ordering;
 #[allow(clippy::upper_case_acronyms)] // KV is not an acronym
 pub trait ZeroMapKV<'a> {
     /// The container that can be used with this type: [`ZeroVec`] or [`VarZeroVec`].
-    type Container: MutableZeroVecLike<
-            'a,
-            Self,
-            NeedleType = Self::NeedleType,
-            GetType = Self::GetType,
-            OwnedType = Self::OwnedType,
-        > + Sized;
-    /// The type to use with `Container::binary_search()`
-    ///
-    /// This type will be predetermined by the choice of `Self::Container`
-    type NeedleType: ?Sized;
+    type Container: MutableZeroVecLike<'a, Self, GetType = Self::GetType, OwnedType = Self::OwnedType>
+        + Sized;
     /// The type produced by `Container::get()`
     ///
-    /// This type will be predetermined by the choice of `Self::Container`
+    /// This type will be predetermined by the choice of `Self::Container`:
+    /// For sized types this must be `T::ULE`, and for unsized types this must be `T`
     type GetType: ?Sized + 'static;
-    /// The type to use whilst serializing. This may not necessarily be `Self`, however it
-    /// must serialize to the exact same thing as `Self`
-    type SerializeType: ?Sized;
     /// The type produced by `Container::replace()` and `Container::remove()`,
     /// also used during deserialization. If `Self` is human readable serialized,
     /// deserializing to `Self::OwnedType` should produce the same value once
     /// passed through `Self::owned_as_self()`
-    type OwnedType: 'static;
-    /// Convert to a needle for searching
-    fn as_needle(&self) -> &Self::NeedleType;
-    /// Compare this type with a `Self::GetType`. This must produce the same result as
-    /// if `g` were converted to `Self`
-    fn cmp_get(&self, g: &Self::GetType) -> Ordering;
-    /// Obtain a version of this type suitable for serialization
     ///
-    /// This uses a callback because it's not possible to return owned-or-borrowed
-    /// types without GATs
-    fn with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R;
-
-    /// Convert an owned value to a borrowed Self
-    fn owned_as_self(o: &Self::OwnedType) -> &Self;
+    /// This type will be predetermined by the choice of `Self::Container`:
+    /// For sized types this must be `T` and for unsized types this must be `Box<T>`
+    type OwnedType: 'static;
 }
 
 macro_rules! impl_sized_kv {
     ($ty:ident) => {
         impl<'a> ZeroMapKV<'a> for $ty {
             type Container = ZeroVec<'a, $ty>;
-            type NeedleType = $ty;
             type GetType = <$ty as AsULE>::ULE;
-            type SerializeType = $ty;
             type OwnedType = $ty;
-
-            #[inline]
-            fn as_needle(&self) -> &Self {
-                self
-            }
-
-            #[inline]
-            fn cmp_get(&self, g: &Self::GetType) -> Ordering {
-                self.cmp(&$ty::from_unaligned(*g))
-            }
-
-            #[inline]
-            fn with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self) -> R) -> R {
-                f(&Self::from_unaligned(*g))
-            }
-
-            #[inline]
-            fn owned_as_self(o: &Self::OwnedType) -> &Self {
-                o
-            }
         }
     };
 }
@@ -100,56 +56,12 @@ impl_sized_kv!(char);
 
 impl<'a> ZeroMapKV<'a> for str {
     type Container = VarZeroVec<'a, str>;
-    type NeedleType = str;
     type GetType = str;
-    type SerializeType = str;
     type OwnedType = Box<str>;
-
-    #[inline]
-    fn as_needle(&self) -> &str {
-        self
-    }
-
-    #[inline]
-    fn cmp_get(&self, g: &str) -> Ordering {
-        (&*self).cmp(g)
-    }
-
-    #[inline]
-    fn with_ser<R>(g: &str, f: impl FnOnce(&str) -> R) -> R {
-        f(g)
-    }
-
-    #[inline]
-    fn owned_as_self(o: &Self::OwnedType) -> &Self {
-        o
-    }
 }
 
 impl<'a> ZeroMapKV<'a> for [u8] {
     type Container = VarZeroVec<'a, [u8]>;
-    type NeedleType = [u8];
     type GetType = [u8];
-    type SerializeType = [u8];
     type OwnedType = Box<[u8]>;
-
-    #[inline]
-    fn as_needle(&self) -> &[u8] {
-        self
-    }
-
-    #[inline]
-    fn cmp_get(&self, g: &[u8]) -> Ordering {
-        (&*self).cmp(g)
-    }
-
-    #[inline]
-    fn with_ser<R>(g: &[u8], f: impl FnOnce(&[u8]) -> R) -> R {
-        f(g)
-    }
-
-    #[inline]
-    fn owned_as_self(o: &Self::OwnedType) -> &Self {
-        o
-    }
 }

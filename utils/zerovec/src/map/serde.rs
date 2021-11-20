@@ -18,8 +18,8 @@ where
     V: ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
-    K::SerializeType: Serialize,
-    V::SerializeType: Serialize,
+    K: Serialize,
+    V: Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -28,8 +28,8 @@ where
         if serializer.is_human_readable() {
             let mut map = serializer.serialize_map(Some(self.len()))?;
             for (k, v) in self.iter() {
-                K::with_ser(k, |k| map.serialize_key(k))?;
-                V::with_ser(v, |v| map.serialize_value(v))?;
+                K::Container::t_with_ser(k, |k| map.serialize_key(k))?;
+                V::Container::t_with_ser(v, |v| map.serialize_value(v))?;
             }
             map.end()
         } else {
@@ -47,8 +47,8 @@ where
     V: ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
-    K::SerializeType: Serialize,
-    V::SerializeType: Serialize,
+    K: Serialize,
+    V: Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -99,7 +99,10 @@ where
             // If not sorted, return an error
             // a serialized map that came from another ZeroMap
             if map
-                .try_append(K::owned_as_self(&key), V::owned_as_self(&value))
+                .try_append(
+                    K::Container::owned_as_t(&key),
+                    V::Container::owned_as_t(&value),
+                )
                 .is_some()
             {
                 return Err(de::Error::custom(

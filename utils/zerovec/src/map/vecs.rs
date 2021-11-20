@@ -14,17 +14,19 @@ use core::mem;
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
+///
+/// The T type is the type received by [`Self::binary_search()`], as well as the one used
+/// for human-readable serialization.
 pub trait ZeroVecLike<'a, T: ?Sized> {
-    /// The type received by `Self::binary_search()`
-    type NeedleType: ?Sized;
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
+
     /// Create a new, empty vector
     fn new() -> Self;
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
-    fn binary_search(&self, k: &Self::NeedleType) -> Result<usize, usize>;
+    fn binary_search(&self, k: &T) -> Result<usize, usize>;
     /// Get element at `index`
     fn get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
@@ -35,6 +37,16 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
+
+    /// Compare this type with a `Self::GetType`. This must produce the same result as
+    /// if `g` were converted to `Self`
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering;
+
+    /// Obtain a version of T suitable for serialization
+    ///
+    /// This uses a callback because it's not possible to return owned-or-borrowed
+    /// types without GATs
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
@@ -56,9 +68,10 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
     /// A fully borrowed version of this
-    type BorrowedVariant: ZeroVecLike<'a, T, NeedleType = Self::NeedleType, GetType = Self::GetType>
+    type BorrowedVariant: ZeroVecLike<'a, T, GetType = Self::GetType>
         + BorrowedZeroVecLike<'a, T>
         + Copy;
+
     /// Insert an element at `index`
     fn insert(&mut self, index: usize, value: &T);
     /// Remove the element at `index` (panicking if nonexistant)
@@ -96,13 +109,15 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     ///
     /// These are useful to ensure serialization parity between borrowed and owned versions
     fn from_borrowed(b: Self::BorrowedVariant) -> Self;
+
+    /// Convert an owned value to a borrowed T
+    fn owned_as_t(o: &Self::OwnedType) -> &T;
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
     T: AsULE + Ord + Copy,
 {
-    type NeedleType = T;
     type GetType = T::ULE;
     fn new() -> Self {
         Self::new()
@@ -121,13 +136,20 @@ where
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
+
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
+        t.cmp(&T::from_unaligned(*g))
+    }
+
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+        f(&T::from_unaligned(*g))
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for &'a [T::ULE]
 where
     T: AsULE + Ord + Copy,
 {
-    type NeedleType = T;
     type GetType = T::ULE;
     fn new() -> Self {
         &[]
@@ -146,6 +168,14 @@ where
             .as_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
+    }
+
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
+        t.cmp(&T::from_unaligned(*g))
+    }
+
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+        f(&T::from_unaligned(*g))
     }
 }
 
@@ -200,6 +230,10 @@ where
     fn from_borrowed(b: &'a [T::ULE]) -> Self {
         ZeroVec::Borrowed(b)
     }
+
+    fn owned_as_t(o: &Self::OwnedType) -> &T {
+        o
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for VarZeroVec<'a, T>
@@ -208,7 +242,6 @@ where
     T: Ord,
     T: ?Sized,
 {
-    type NeedleType = T;
     type GetType = T;
     fn new() -> Self {
         Self::new()
@@ -234,6 +267,15 @@ where
         }
         true
     }
+
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
+        t.cmp(g)
+    }
+
+    #[inline]
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+        f(g)
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
@@ -242,7 +284,6 @@ where
     T: Ord,
     T: ?Sized,
 {
-    type NeedleType = T;
     type GetType = T;
     fn new() -> Self {
         Self::new()
@@ -268,6 +309,15 @@ where
             }
         }
         true
+    }
+
+    fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
+        t.cmp(g)
+    }
+
+    #[inline]
+    fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
+        f(g)
     }
 }
 
@@ -331,5 +381,9 @@ where
     }
     fn from_borrowed(b: VarZeroVecBorrowed<'a, T>) -> Self {
         VarZeroVec::Borrowed(b)
+    }
+
+    fn owned_as_t(o: &Self::OwnedType) -> &T {
+        o
     }
 }
