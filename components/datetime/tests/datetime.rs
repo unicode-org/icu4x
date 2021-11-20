@@ -93,7 +93,7 @@ fn test_fixture(fixture_name: &str) {
         };
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
-            let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
+            let dtf = DateTimeFormat::try_new(locale, &provider, options).unwrap();
             let result = dtf.format_to_string(&input_value);
 
             assert_eq!(result, output_value, "{}", description);
@@ -139,7 +139,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
             let dtf =
-                ZonedDateTimeFormat::try_new(locale, &provider, &provider, &provider, &options)
+                ZonedDateTimeFormat::try_new(locale, &provider, &provider, &provider, options)
                     .unwrap();
             let result = dtf.format_to_string(&input_value);
 
@@ -236,7 +236,7 @@ fn test_dayperiod_patterns() {
                         let dtf = DateTimeFormat::try_new(
                             langid.clone(),
                             &local_provider,
-                            &format_options,
+                            format_options,
                         )
                         .unwrap();
                         assert_eq!(
@@ -344,7 +344,7 @@ fn test_time_zone_patterns() {
                     &local_provider,
                     &zone_provider,
                     &plural_provider,
-                    &format_options,
+                    format_options,
                 )
                 .unwrap();
 
@@ -436,7 +436,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
 
     let locale: Locale = langid!("en").into();
     let provider = icu_testdata::get_provider();
-    let result = DateTimeFormat::try_new(locale, &provider, &options);
+    let result = DateTimeFormat::try_new(locale, &provider, options);
 
     assert!(result.is_err());
 }

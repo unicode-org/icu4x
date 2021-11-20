@@ -8,6 +8,7 @@ use crate::date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::{runtime::Pattern, PatternItem};
+use crate::DateTimeFormatOptions;
 use crate::{date::ZonedDateTimeInput, zoned_datetime::ZonedDateTimeFormat};
 use core::fmt;
 use writeable::Writeable;
@@ -99,7 +100,14 @@ where
             loc_datetime.datetime(),
             w,
         )?,
-        _ => datetime::write_field(pattern, field, symbols, loc_datetime, w)?,
+        _ => datetime::write_field(
+            pattern,
+            field,
+            symbols,
+            loc_datetime,
+            &zoned_datetime_format.datetime_format.options,
+            w,
+        )?,
     }
     Ok(())
 }

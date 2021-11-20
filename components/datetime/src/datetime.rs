@@ -66,6 +66,7 @@ pub struct DateTimeFormat {
     pub(super) patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub(super) symbols: Option<DataPayload<DateSymbolsV1Marker>>,
     pub(super) ordinal_rules: Option<PluralRules>,
+    pub(super) options: DateTimeFormatOptions,
 }
 
 impl DateTimeFormat {
@@ -93,7 +94,7 @@ impl DateTimeFormat {
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
-        options: &DateTimeFormatOptions,
+        options: DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
         D: DataProvider<DateSymbolsV1Marker>
@@ -104,7 +105,7 @@ impl DateTimeFormat {
         let locale = locale.into();
 
         let patterns =
-            provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
+            provider::date_time::PatternSelector::for_options(data_provider, &locale, &options)?;
 
         let requires_data = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
@@ -139,7 +140,13 @@ impl DateTimeFormat {
             None
         };
 
-        Ok(Self::new(locale, patterns, symbols_data, ordinal_rules))
+        Ok(Self::new(
+            locale,
+            patterns,
+            symbols_data,
+            ordinal_rules,
+            options,
+        ))
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
@@ -160,6 +167,7 @@ impl DateTimeFormat {
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<DateSymbolsV1Marker>>,
         ordinal_rules: Option<PluralRules>,
+        options: DateTimeFormatOptions,
     ) -> Self {
         let locale = locale.into();
 
@@ -168,6 +176,7 @@ impl DateTimeFormat {
             patterns,
             symbols,
             ordinal_rules,
+            options,
         }
     }
 
@@ -208,6 +217,7 @@ impl DateTimeFormat {
             symbols: self.symbols.as_ref().map(|s| s.get()),
             datetime: value,
             locale: &self.locale,
+            options: &self.options,
             ordinal_rules: self.ordinal_rules.as_ref(),
         }
     }
@@ -248,6 +258,7 @@ impl DateTimeFormat {
             self.symbols.as_ref().map(|s| s.get()),
             value,
             self.ordinal_rules.as_ref(),
+            &self.options,
             &self.locale,
             w,
         )
