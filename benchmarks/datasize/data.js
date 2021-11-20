@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637363776598,
+  "lastUpdate": 1637369636973,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4133,6 +4133,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9258d0505eab7165723c6e052c51e26f085cd1fa"
         },
         "date": 1637363769396,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 903688,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1c5901fa24fd17605e0534a1c2bcee89d84807e3",
+          "message": "Simplify ZeroMapKV (#1334)",
+          "timestamp": "2021-11-19T16:52:23-08:00",
+          "tree_id": "b32a7f40aa662c53e397928d2433585634b41292",
+          "url": "https://github.com/unicode-org/icu4x/commit/1c5901fa24fd17605e0534a1c2bcee89d84807e3"
+        },
+        "date": 1637369629874,
         "tool": "ndjson",
         "benches": [
           {
