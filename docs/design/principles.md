@@ -1,20 +1,22 @@
 # ICU4X Design Principles & Decisions
 
-## Guiding principles
-
 These principles are not cast in stone, but are strong guidelines for developers.
 
-### Immutable objects
+## i18n Best Practices
 
-No object is to be mutated after creation.
+Above all, ICU4X must provide modern, standards-compliant APIs that encourage best i18n practices and produce correct results for all languages and locales. No language or locale should be at a structural disadvantage.
 
-### No I/O in the core library
+## Code Style
 
-Leave I/O to the wrapper or clients. Pass data as reference to the methods.
+All ICU4X code must conform to the [style guide](../process/style_guide.md), including the following:
 
-***
-*NOTE*: Clients can mmap, async fetch, package data with the library...
-***
+### Safety
+
+All standard Rust practices regarding mutability, litetimes and safety must be followed.
+
+### No standard library dependencies in the core library
+
+The core icu4x library should be `#[no_std]`, but may use the `alloc` crate.
 
 ### No internal threading
 
@@ -22,33 +24,24 @@ Both Rust and Wasm support multithreading but we don’t have a need for it in t
 
 To simplify our library, and make sure we don’t have cross platform/language compatibility issues, one should avoid using threads in the core library.
 
-***
 *NOTE*: In rare cases where threading is needed in native Rust implementation, multiple code paths can be created/opted in at build time.
-***
 
 ### No global mutable data
 
 ICU has an internal cache that optimizes construction of some of the objects. We plan to leave optimization to the user, i.e. reusable objects should be kept around for later use, not discarded and recreated again.
 
-***
 *NOTE*: Memoization is acceptable, as it's not really a global cache, but an object with internal state.  An example implementation used in [fluent-rs](https://github.com/projectfluent/fluent-rs/tree/master/intl-memoizer).
-***
 
-### Stable data across library versions
+## Stable data across library versions
 
-One of the big problems for existing ICU users is that ICU data cannot be shared among different versions of code, forcing clients to carry hefty duplicates with small deltas.
+Older library versions should be able to read newer data, and vice-versa to the extent possible. (One of the big problems for existing ICU users is that ICU data cannot be shared among different versions of code, forcing clients to carry hefty duplicates with small deltas.)
 
-Another approach is to deploy deltas on data for each installed version of the library. This approach is hard, given data can be cut differently, e.g. with or without currency data.
-
-### Use Heuristics and ML
-
-ML may be required for inflection support, or to improve line breaking and date/number parsing. Service approach is also in play here.
-
-Main takeaway is to not prohibit ML use in the library.
-
-### Modular Code and Data with static analysis
+## Modular Code and Data with static analysis
 
 Both the code and the data should be written so that you only bring what you need.  Code and data should be modular not only on a "class" level, but also within a class, such that you don't carry code and data for a feature of a class that you aren't using.
 
 Code and data slicing should be able to be determined using static code analysis.  We should be able to look at the functions being called, and from that, build exactly the code and data bundle that the app needs.
 
+## Available Across Programming Languages
+
+ICU4X functionality should be available uniformly in all supported programming languages.  It should be an exception for functionality to be available in Rust but not in FFI.
