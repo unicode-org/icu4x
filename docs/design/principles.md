@@ -12,7 +12,7 @@ All ICU4X code must conform to the [style guide](../process/style_guide.md), inc
 
 ### Safety
 
-All standard Rust practices regarding mutability, litetimes and safety must be followed.
+All standard Rust practices regarding mutability, lifetimes and safety must be followed.
 
 ### No standard library dependencies in the core library
 
