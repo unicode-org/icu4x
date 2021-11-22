@@ -16,7 +16,7 @@ All standard Rust practices regarding mutability, lifetimes and safety must be f
 
 ### No standard library dependencies in the core library
 
-The core icu4x library should be `#[no_std]`, but may use the `alloc` crate.
+The core icu4x library (the `icu` and `icu_capi` crates and all of their direct and indirect dependencies) should be `#[no_std]`, but may use the `alloc` crate.
 
 ### No internal threading
 
@@ -32,7 +32,7 @@ ICU has an internal cache that optimizes construction of some of the objects. We
 
 *NOTE*: Memoization is acceptable, as it's not really a global cache, but an object with internal state.  An example implementation used in [fluent-rs](https://github.com/projectfluent/fluent-rs/tree/master/intl-memoizer).
 
-## Stable data across library versions
+## Stable data across stable library versions
 
 Older library versions should be able to read newer data, and vice-versa to the extent possible. (One of the big problems for existing ICU users is that ICU data cannot be shared among different versions of code, forcing clients to carry hefty duplicates with small deltas.)
 
@@ -44,4 +44,4 @@ Code and data slicing should be able to be determined using static code analysis
 
 ## Available Across Programming Languages
 
-ICU4X functionality should be available uniformly in all supported programming languages.  It should be an exception for functionality to be available in Rust but not in FFI.
+ICU4X functionality should be available uniformly in all supported programming languages.  The API shape may differ between programming languages, but the underlying functionality should be uniformly available; it should be an exception for functionality to be available in Rust but not in FFI.
