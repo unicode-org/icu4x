@@ -16,7 +16,7 @@ All standard Rust practices regarding mutability, lifetimes and safety must be f
 
 ### No standard library dependencies in the core library
 
-The core icu4x library (the `icu` and `icu_capi` crates and all of their direct and indirect dependencies) should be `#[no_std]`, but may use the `alloc` crate.
+The core icu4x library (the `icu` and `icu_capi` crates and all of their direct and indirect dependencies, not including dev-dependencies) should be `#[no_std]`, but may use the `alloc` crate.
 
 ### No internal threading
 
