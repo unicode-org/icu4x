@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637609997530,
+  "lastUpdate": 1637613212822,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4193,6 +4193,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/08f539e48bac34b218a27df29ef18dc62ede132e"
         },
         "date": 1637609990557,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 903688,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca2dd56cc13ad6c18d66d7b2f4df989acc5a71c5",
+          "message": "Bump zerovec to 0.5 (#1336)",
+          "timestamp": "2021-11-22T12:31:57-08:00",
+          "tree_id": "58002db444f6e981b88b31e01c282e95f58d72f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/ca2dd56cc13ad6c18d66d7b2f4df989acc5a71c5"
+        },
+        "date": 1637613205273,
         "tool": "ndjson",
         "benches": [
           {
