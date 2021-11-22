@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637610397135,
+  "lastUpdate": 1637613586181,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13451,6 +13451,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 369726,
             "range": "± 11241",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca2dd56cc13ad6c18d66d7b2f4df989acc5a71c5",
+          "message": "Bump zerovec to 0.5 (#1336)",
+          "timestamp": "2021-11-22T12:31:57-08:00",
+          "tree_id": "58002db444f6e981b88b31e01c282e95f58d72f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/ca2dd56cc13ad6c18d66d7b2f4df989acc5a71c5"
+        },
+        "date": 1637613579959,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 103736,
+            "range": "± 7578",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1162935,
+            "range": "± 54512",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 305035,
+            "range": "± 23402",
             "unit": "ns/iter"
           }
         ]
