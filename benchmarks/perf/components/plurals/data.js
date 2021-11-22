@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637610381499,
+  "lastUpdate": 1637613626715,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19823,6 +19823,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22199,
             "range": "± 1386",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca2dd56cc13ad6c18d66d7b2f4df989acc5a71c5",
+          "message": "Bump zerovec to 0.5 (#1336)",
+          "timestamp": "2021-11-22T12:31:57-08:00",
+          "tree_id": "58002db444f6e981b88b31e01c282e95f58d72f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/ca2dd56cc13ad6c18d66d7b2f4df989acc5a71c5"
+        },
+        "date": 1637613619183,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1301,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6384,
+            "range": "± 332",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22445,
+            "range": "± 4287",
             "unit": "ns/iter"
           }
         ]
