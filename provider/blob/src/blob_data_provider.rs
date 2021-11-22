@@ -89,7 +89,7 @@ impl BlobDataProvider {
         self.data
             .try_project_cloned_with_capture::<&'static [u8], String, ()>(
                 path,
-                move |zm, path, _| zm.get(&*path).ok_or(()),
+                |zm, path, _| zm.get(&path).ok_or(()),
             )
             .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))
     }

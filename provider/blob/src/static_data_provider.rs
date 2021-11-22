@@ -102,7 +102,7 @@ impl StaticDataProvider {
     fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
         self.data
-            .get(&*path)
+            .get(&path)
             .ok_or(DataError::MissingResourceKey(req.resource_path.key))
     }
 }
