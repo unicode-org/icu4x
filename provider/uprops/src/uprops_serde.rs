@@ -108,10 +108,20 @@ pub mod script_extensions {
 #[cfg(feature = "casemap")]
 pub mod case {
     #[derive(serde::Deserialize)]
+    pub struct Exceptions {
+	pub exceptions: Vec<u16>,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct Unfold {
+	pub unfold: Vec<u16>,
+    }
+
+    #[derive(serde::Deserialize)]
     pub struct Level1 {
-	code_point_trie: super::enumerated::EnumeratedPropertyCodePointTrie,
-	exceptions: Vec<u16>,
-	unfold: Vec<u16>
+	pub code_point_trie: super::enumerated::EnumeratedPropertyCodePointTrie,
+	pub exceptions: Exceptions,
+	pub unfold: Unfold
     }
 
     #[derive(serde::Deserialize)]

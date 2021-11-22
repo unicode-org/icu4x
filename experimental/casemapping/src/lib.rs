@@ -4,6 +4,10 @@
 
 //! TODO: module documentation
 
+// TODO: delete me
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
@@ -13,7 +17,7 @@ use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ule::{AsULE, PlainOldULE};
 use zerovec::{ZeroVec, ZeroMap};
 
-// pub mod provider;
+pub mod provider;
 
 /// The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -80,7 +84,7 @@ impl DotType {
 /// The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub(crate) struct CaseMappingData(u16);
+pub struct CaseMappingData(u16);
 
 impl CaseMappingData {
     const IGNORABLE_FLAG: u16 = 0x4;
@@ -350,6 +354,7 @@ impl<'data> CaseMappingExceptions<'data> {
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[yoke(prove_covariance_manually)]
 struct CaseMappingUnfoldData<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     map: ZeroMap<'data, str, str>,
@@ -360,8 +365,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
     const ROW_WIDTH_INDEX: usize = 1;
     const STRING_WIDTH_INDEX: usize = 2;
 
-    // TODO: pub(crate)
-    pub fn try_from_raw(raw: &[u16]) -> Option<Self> {
+    fn try_from_raw(raw: &[u16]) -> Option<Self> {
 	let num_rows = *raw.get(Self::ROWS_INDEX)? as usize;
 	let row_width = *raw.get(Self::ROW_WIDTH_INDEX)? as usize;
 	let string_width = *raw.get(Self::STRING_WIDTH_INDEX)? as usize;
@@ -417,6 +421,7 @@ impl Default for FoldOptions {
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[yoke(prove_covariance_manually)]
 pub struct CaseMapping<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     trie: CodePointTrie<'data, CaseMappingData>,
@@ -427,6 +432,14 @@ pub struct CaseMapping<'data> {
 }
 
 impl<'data> CaseMapping<'data> {
+    pub fn try_new(trie: CodePointTrie<'data, CaseMappingData>, exceptions: &[u16], unfold: &[u16]) -> Option<Self> {
+	let exceptions = CaseMappingExceptions {
+	    raw: ZeroVec::clone_from_slice(exceptions),
+	};
+	let unfold = CaseMappingUnfoldData::try_from_raw(unfold).unwrap();
+	Some(Self { trie, exceptions, unfold })
+    }
+
     fn lookup_data(&self, c: char) -> CaseMappingData {
         self.trie.get(c as u32)
     }
