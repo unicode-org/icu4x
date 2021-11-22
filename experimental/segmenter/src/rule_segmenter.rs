@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub fn get_break_property_utf32(codepoint: u32, property_table: &[&[u8; 1024]; 192]) -> u8 {
+pub fn get_break_property_utf32(codepoint: u32, property_table: &[&[u8; 1024]; 897]) -> u8 {
     let codepoint = codepoint as usize;
-    if codepoint >= 0x30000 {
+    if codepoint >= 897 * 1024 {
         // Unknown
         return 0;
     }
@@ -12,13 +12,13 @@ pub fn get_break_property_utf32(codepoint: u32, property_table: &[&[u8; 1024]; 1
 }
 
 #[inline]
-pub fn get_break_property_latin1(codepoint: u8, property_table: &[&[u8; 1024]; 192]) -> u8 {
+pub fn get_break_property_latin1(codepoint: u8, property_table: &[&[u8; 1024]; 897]) -> u8 {
     let codepoint = codepoint as usize;
     property_table[codepoint / 1024][(codepoint & 0x3ff)]
 }
 
 #[inline]
-pub fn get_break_property_utf8(codepoint: char, property_table: &[&[u8; 1024]; 192]) -> u8 {
+pub fn get_break_property_utf8(codepoint: char, property_table: &[&[u8; 1024]; 897]) -> u8 {
     get_break_property_utf32(codepoint as u32, property_table)
 }
 
@@ -39,7 +39,7 @@ macro_rules! break_iterator_impl {
             current_pos_data: Option<(usize, $char_type)>,
             result_cache: Vec<usize>,
             break_state_table: &'a [i8],
-            property_table: &'a [&'a [u8; 1024]; 192],
+            property_table: &'a [&'a [u8; 1024]; 897],
             rule_property_count: usize,
             last_codepoint_property: i8,
             sot_property: u8,

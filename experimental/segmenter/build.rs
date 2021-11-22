@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu::properties::{maps, sets, WordBreak};
+use icu::properties::{maps, sets, LineBreak, WordBreak};
 use icu_provider_fs::FsDataProvider;
 use serde::Deserialize;
 use std::env;
@@ -10,19 +10,48 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+// state machine define using code point
+// {
+//   "codepoint": [32, 33, ...]
+// }
+//
+// state machine define for combined state
+// {
+//   "left": "Double_Quote",
+//   "right": "ALetter"
+// }
 #[derive(Deserialize, Debug)]
 struct SegmenterPropertyValueMap {
+    // If codepoint is defined, this is custom define, not builtin define.
     codepoint: Option<Vec<u32>>,
+    // If left and right are defined, this define is combined state.
     left: Option<String>,
     right: Option<String>,
 }
 
+// state machine name define by builtin name
+// {
+//    "name": "Double_Quote"
+// }
+//
+// state machine name define by custom data or combined state.
+// {
+//    "name": "Double_Quote",
+//    "value": { ... }
+// }
 #[derive(Deserialize, Debug)]
 struct SegmenterProperty {
     name: String,
     value: Option<SegmenterPropertyValueMap>,
 }
 
+// state machine break result define
+// The follow is "Double_Quote x Double_Quote".
+// {
+//   "left": "Double_Qoute",
+//   "right": "Double_Qoute",
+//   "break_state": true, <- true if break opportunity.
+// }
 #[derive(Deserialize, Debug)]
 struct SegmenterState {
     left: Vec<String>,
@@ -30,6 +59,17 @@ struct SegmenterState {
     break_state: Option<bool>,
 }
 
+// rule based segmenter define
+//
+// type: builtin type. word, sentence or graphme.
+// tables: state machine name defines.
+// rules: state machine rules.
+//
+// {
+//   "type": "word",
+//   "tables": [{"name":...}, {...}, ...],
+//   "rules": [{"left":..,...}, {...}, ...]
+// }
 #[derive(Deserialize, Debug)]
 struct SegmenterRuleTable {
     segmenter_type: String,
@@ -42,6 +82,9 @@ const BREAK_RULE: i8 = -128;
 const UNKNOWN_RULE: i8 = -127;
 const NOT_MATCH_RULE: i8 = -2;
 const KEEP_RULE: i8 = -1;
+
+// UAX29 defines break property until U+0xE01EF
+const CODEPOINT_TABLE_LEN: usize = 0xe0400;
 
 fn set_break_state(
     break_state_table: &mut [i8],
@@ -86,7 +129,7 @@ fn get_word_segmenter_value_from_name(name: &str) -> WordBreak {
 }
 
 fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &FsDataProvider) {
-    let mut properties_map: [u8; 0x30000] = [0; 0x30000];
+    let mut properties_map: [u8; CODEPOINT_TABLE_LEN] = [0; CODEPOINT_TABLE_LEN];
     let mut properties_names = Vec::<String>::new();
     let mut simple_properties_count = 0;
 
@@ -95,6 +138,9 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
 
     let payload = sets::get_extended_pictographic(provider).expect("The data should be valid");
     let extended_pictographic = &payload.get().inv_list;
+
+    let payload = maps::get_line_break(provider).expect("The data should be valid!");
+    let lb = &payload.get().code_point_trie;
 
     let segmenter: SegmenterRuleTable =
         serde_json::from_slice(json_data).expect("JSON syntax error");
@@ -112,13 +158,15 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
         }
 
         if p.value.is_none() {
+            // If value isn't set, this is builtin type.
             simple_properties_count += 1;
 
             match &*segmenter.segmenter_type {
                 "word" => {
                     // Extended_Pictographic isn't a part of word break property
+                    // Extended pictographic property is within 0..U+0x20000
                     if p.name == "Extended_Pictographic" {
-                        for i in 0..0x30000 {
+                        for i in 0..0x20000 {
                             if let Some(c) = char::from_u32(i) {
                                 if extended_pictographic.contains(c) {
                                     properties_map[c as usize] = property_index
@@ -128,8 +176,19 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
                         continue;
                     }
 
+                    if p.name == "SA" {
+                        // Word break property doesn't define SA, but we will use non-UAX29 rules.
+                        // SA property is within 0..U+0x20000
+                        for c in 0..0x20000 {
+                            if lb.get(c) == LineBreak::ComplexContext {
+                                properties_map[c as usize] = property_index
+                            }
+                        }
+                        continue;
+                    }
+
                     let prop = get_word_segmenter_value_from_name(&*p.name);
-                    for c in 0..0x30000 {
+                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if wb.get(c) == prop {
                             properties_map[c as usize] = property_index;
                         }
@@ -148,7 +207,7 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
             simple_properties_count += 1;
             for c in codepoint {
                 let c = *c as usize;
-                if c >= 0x30000 {
+                if c > CODEPOINT_TABLE_LEN {
                     continue;
                 }
                 properties_map[c] = property_index;
@@ -161,10 +220,7 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
     properties_names.push("eot".to_string());
 
     let rule_size = properties_names.len() * properties_names.len();
-    let mut break_state_table = Vec::<i8>::with_capacity(rule_size);
-    for _i in 0..rule_size {
-        break_state_table.push(UNKNOWN_RULE);
-    }
+    let mut break_state_table = vec![UNKNOWN_RULE; rule_size];
 
     for rule in segmenter.rules {
         let break_state;
@@ -299,7 +355,7 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
 
         if i > 1 && (i % 1024) == 0 {
             writeln!(out, "];").ok();
-            if i >= 0x30000 {
+            if i >= CODEPOINT_TABLE_LEN {
                 break;
             }
             page += 1;
@@ -328,7 +384,12 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
     }
     writeln!(out, "];").ok();
 
-    writeln!(out, "pub const PROPERTY_TABLE: [&[u8; 1024]; 192] = [").ok();
+    writeln!(
+        out,
+        "pub const PROPERTY_TABLE: [&[u8; 1024]; {}] = [",
+        CODEPOINT_TABLE_LEN / 1024
+    )
+    .ok();
     for i in codepoint_table.iter() {
         writeln!(out, "    &{},", i).ok();
     }
