@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637370000668,
+  "lastUpdate": 1637610397135,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13409,6 +13409,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 280515,
             "range": "± 3604",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "08f539e48bac34b218a27df29ef18dc62ede132e",
+          "message": "Allow cloning_zcf to be applied to individual variants or fields (#1307)\n\n* Move has_cloning_zcf_attr to function\r\n\r\n* Extend cloning_zcf to work on fields as well\r\n\r\n* Add test\r\n\r\n* fmt",
+          "timestamp": "2021-11-22T11:38:21-08:00",
+          "tree_id": "4aade8279b57f5efda2967fda8fa2e670fe6e8f0",
+          "url": "https://github.com/unicode-org/icu4x/commit/08f539e48bac34b218a27df29ef18dc62ede132e"
+        },
+        "date": 1637610389375,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 126755,
+            "range": "± 3957",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1489324,
+            "range": "± 51721",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 369726,
+            "range": "± 11241",
             "unit": "ns/iter"
           }
         ]
