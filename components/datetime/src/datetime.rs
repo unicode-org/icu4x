@@ -129,7 +129,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// about formatted date and so on.
     pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
     where
-        T: DateTimeInput,
+        T: DateTimeInput<Calendar = C>,
     {
         self.0.format(value)
     }
@@ -163,7 +163,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput,
+        value: &impl DateTimeInput<Calendar = C>,
     ) -> core::fmt::Result {
         self.0.format_to_write(w, value)
     }
@@ -189,7 +189,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// let _ = dtf.format_to_string(&datetime);
     /// ```
-    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
+    pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
         self.0.format_to_string(value)
     }
 }
