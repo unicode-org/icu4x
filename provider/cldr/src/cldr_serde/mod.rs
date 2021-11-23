@@ -2,6 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Serde structures for CLDR JSON.
+//!
+//! The modules below each contain Rust struct definitions for CLDR JSON files, with Serde
+//! deserialization support. These structures can be used in the transformers.
+
 pub mod aliases;
 pub mod ca;
 pub mod likely_subtags;

@@ -9,11 +9,11 @@
 
 use icu_locid::LanguageIdentifier;
 use itertools::Itertools;
+use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use serde_aux::prelude::*;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
-use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Symbols {

@@ -10,9 +10,6 @@
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 
-// TODO: Use Serde Borrow throughout these structs. Blocked by:
-// https://stackoverflow.com/q/63201624/1407170
-
 #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
 pub struct LocalePluralRules {
     #[serde(rename = "pluralRule-count-zero")]
