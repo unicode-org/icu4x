@@ -47,7 +47,7 @@ where
     }
 }
 
-pub fn write_pattern<T, W>(
+pub(crate) fn write_pattern<T, W>(
     zoned_datetime_format: &raw::ZonedDateTimeFormat,
     zoned_datetime: &T,
     w: &mut W,
