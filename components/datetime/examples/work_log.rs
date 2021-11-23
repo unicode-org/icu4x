@@ -58,7 +58,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         ..Default::default()
     };
 
-    let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
+    let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
         .expect("Failed to create DateTimeFormat instance.");
     {
         print("\n====== Work Log (en) example ============", None);

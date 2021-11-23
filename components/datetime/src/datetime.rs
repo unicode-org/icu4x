@@ -46,7 +46,7 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 ///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
-/// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
+/// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -78,7 +78,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options);
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
@@ -94,7 +94,12 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
             + DataProvider<PluralRulesV1Marker>,
     {
         Ok(Self(
-            raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,
+            raw::DateTimeFormat::try_new(
+                locale,
+                data_provider,
+                options,
+                C::IDENTIFIER,
+            )?,
             PhantomData,
         ))
     }
@@ -113,7 +118,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
@@ -148,7 +153,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
@@ -181,7 +186,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)

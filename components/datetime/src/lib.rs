@@ -30,7 +30,7 @@
 //!     ..Default::default()
 //! });
 //!
-//! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+//! let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //!
@@ -56,7 +56,7 @@
 //!     ..Default::default()
 //! }.into();
 //!
-//! let dtf = DateTimeFormat::try_new(locale, &provider, &options);
+//! let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Length`] bag, but in the future,

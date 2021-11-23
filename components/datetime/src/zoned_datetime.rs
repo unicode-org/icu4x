@@ -53,7 +53,7 @@ use crate::{
 ///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
-/// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
+/// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -87,7 +87,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options);
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options);
     ///
     /// assert_eq!(zdtf.is_ok(), true);
     /// ```
@@ -141,7 +141,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options)
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options)
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -179,7 +179,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -215,7 +215,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
