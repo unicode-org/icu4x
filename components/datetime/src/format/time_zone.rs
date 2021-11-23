@@ -7,7 +7,7 @@ use core::fmt;
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::{PatternError, PatternItem};
-use crate::provider::gregory::patterns::PatternPluralsFromPatternsV1Marker;
+use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::{
     date::TimeZoneInput,
     time_zone::{

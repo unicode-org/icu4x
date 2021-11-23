@@ -154,21 +154,6 @@ impl TimeZoneFormat {
                 FieldSymbol::TimeZone(zone) => Some((field.length.idx(), zone)),
                 _ => None,
             });
-        
-        let mut exemplar_cities: Option<DataPayload<provider::time_zones::ExemplarCitiesV1Marker>> =
-            None;
-        let mut mz_generic_long: Option<
-            DataPayload<provider::time_zones::MetaZoneGenericNamesLongV1Marker>,
-        > = None;
-        let mut mz_generic_short: Option<
-            DataPayload<provider::time_zones::MetaZoneGenericNamesShortV1Marker>,
-        > = None;
-        let mut mz_specific_long: Option<
-            DataPayload<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>,
-        > = None;
-        let mut mz_specific_short: Option<
-            DataPayload<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>,
-        > = None;
 
         let mut exemplar_cities: Option<DataPayload<provider::time_zones::ExemplarCitiesV1Marker>> =
             None;
@@ -291,9 +276,9 @@ impl TimeZoneFormat {
     ///
     /// assert!(tzf.is_ok());
     /// ```
-    pub fn try_new_with_config<L, ZP>(
+    pub fn try_from_config<L, ZP>(
         locale: L,
-        time_zone_format_config: TimeZoneFormatConfig,
+        config: TimeZoneFormatConfig,
         zone_provider: &ZP,
     ) -> Result<Self, DateTimeFormatError>
     where
@@ -477,7 +462,7 @@ impl TimeZoneFormat {
         w: &mut impl core::fmt::Write,
         value: &impl TimeZoneInput,
     ) -> fmt::Result {
-        time_zone::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
+        time_zone::write_zone(self, value, w).map_err(|_| core::fmt::Error)
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.
@@ -507,7 +492,7 @@ impl TimeZoneFormat {
     ///
     /// let _ = tzf.format_to_string(&time_zone);
     /// ```
-    pub(super) fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
+    pub fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
         let mut s = String::new();
         self.format_to_write(&mut s, value)
             .expect("Failed to write to a String.");
@@ -795,9 +780,9 @@ impl TimeZoneFormat {
 
 /// Determines which type of formats time zone uses. It can be either config or pattern.
 #[allow(clippy::large_enum_variant)]
-pub(super) enum TimeZoneFormatKind<'data> {
+pub(super) enum TimeZoneFormatKind {
     Config(TimeZoneFormatConfig),
-    Pattern(DataPayload<'data, PatternPluralsFromPatternsV1Marker>),
+    Pattern(DataPayload<PatternPluralsFromPatternsV1Marker>),
 }
 
 /// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).
