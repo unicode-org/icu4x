@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::Gregorian;
+use icu_calendar::{buddhist::Buddhist, Gregorian};
 
 /// A calendar that can be found in CLDR
 pub trait CldrCalendar {
@@ -12,4 +12,8 @@ pub trait CldrCalendar {
 
 impl CldrCalendar for Gregorian {
     const IDENTIFIER: &'static str = "gregory";
+}
+
+impl CldrCalendar for Buddhist {
+    const IDENTIFIER: &'static str = "buddhist";
 }
