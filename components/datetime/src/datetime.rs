@@ -34,7 +34,7 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
 /// use icu::datetime::{DateTimeFormat, options::length};
-/// use icu::calendar::DateTime;
+/// use icu::calendar::{DateTime, Gregorian};
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let locale: Locale = langid!("en").into();
@@ -69,6 +69,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
@@ -94,12 +95,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
             + DataProvider<PluralRulesV1Marker>,
     {
         Ok(Self(
-            raw::DateTimeFormat::try_new(
-                locale,
-                data_provider,
-                options,
-                C::IDENTIFIER,
-            )?,
+            raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,
             PhantomData,
         ))
     }
@@ -113,7 +109,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -148,7 +144,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -181,7 +177,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;

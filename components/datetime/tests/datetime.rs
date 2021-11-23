@@ -7,6 +7,7 @@
 mod fixtures;
 mod patterns;
 
+use icu_calendar::Gregorian;
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,

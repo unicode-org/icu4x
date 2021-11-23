@@ -38,6 +38,7 @@ use crate::{
 /// ```
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
+/// use icu::calendar::Gregorian;
 /// use icu::datetime::{ZonedDateTimeFormat, options::length};
 /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
@@ -75,6 +76,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -133,6 +135,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -171,6 +174,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -207,6 +211,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
