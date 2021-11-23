@@ -1288,6 +1288,7 @@ dependencies = [
  "serde",
  "writeable",
  "yoke",
+ "zerovec",
 ]
 
 [[package]]

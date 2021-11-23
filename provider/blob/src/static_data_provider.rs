@@ -6,8 +6,8 @@ use crate::blob_schema::*;
 use crate::path_util;
 use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
-use litemap::LiteMap;
 use serde::de::Deserialize;
+use zerovec::map::ZeroMapBorrowed;
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -52,14 +52,18 @@ use serde::de::Deserialize;
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
-    blob: BlobSchema<'static>,
+    data: ZeroMapBorrowed<'static, str, [u8]>,
 }
 
 impl StaticDataProvider {
     /// Create a [`StaticDataProvider`] from a `'static` blob of ICU4X data.
     pub fn new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(StaticDataProvider {
-            blob: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob))
+            data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob))
+                .map(|blob| {
+                    let BlobSchema::V001(blob) = blob;
+                    blob.resources
+                })
                 .map_err(DataError::new_resc_error)?,
         })
     }
@@ -91,19 +95,15 @@ impl StaticDataProvider {
     /// ```
     pub fn new_empty() -> Self {
         StaticDataProvider {
-            blob: BlobSchema::V001(BlobSchemaV1 {
-                resources: LiteMap::new(),
-            }),
+            data: ZeroMapBorrowed::new(),
         }
     }
 
     fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
-        let BlobSchema::V001(blob) = &self.blob;
-        blob.resources
-            .get(&*path)
+        self.data
+            .get(&path)
             .ok_or(DataError::MissingResourceKey(req.resource_path.key))
-            .map(|v| *v)
     }
 }
 

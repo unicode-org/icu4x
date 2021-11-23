@@ -11,6 +11,7 @@ use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
+use zerovec::map::ZeroMapBorrowed;
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -62,15 +63,20 @@ use yoke::*;
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
-    blob: Yoke<BlobSchema<'static>, Rc<[u8]>>,
+    data: Yoke<ZeroMapBorrowed<'static, str, [u8]>, Rc<[u8]>>,
 }
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from an `Rc` blob of ICU4X data.
     pub fn new_from_rc_blob(blob: Rc<[u8]>) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
-            blob: Yoke::try_attach_to_cart_badly(blob, |bytes| {
-                BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes))
+            data: Yoke::try_attach_to_cart_badly(blob, |bytes| {
+                BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
+                    |blob| {
+                        let BlobSchema::V001(blob) = blob;
+                        blob.resources
+                    },
+                )
             })
             .map_err(DataError::new_resc_error)?,
         })
@@ -80,14 +86,10 @@ impl BlobDataProvider {
     /// to the buffer backing the BlobSchema.
     fn get_file(&self, req: &DataRequest) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
-        self.blob
-            .try_project_cloned_with_capture::<&'static [u8], String, ()>(
-                path,
-                move |blob, path, _| {
-                    let BlobSchema::V001(blob) = blob;
-                    blob.resources.get(&*path).ok_or(()).map(|v| *v)
-                },
-            )
+        self.data
+            .try_project_cloned_with_capture::<&'static [u8], String, ()>(path, |zm, path, _| {
+                zm.get(&path).ok_or(())
+            })
             .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))
     }
 }
