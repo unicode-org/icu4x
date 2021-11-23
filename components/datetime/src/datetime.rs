@@ -83,6 +83,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
+    #[inline]
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
@@ -128,6 +129,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
+    #[inline]
     pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
     where
         T: DateTimeInput<Calendar = C>,
@@ -161,6 +163,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// let _ = format!("Date: {}", buffer);
     /// ```
+    #[inline]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
@@ -190,6 +193,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// let _ = dtf.format_to_string(&datetime);
     /// ```
+    #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
         self.0.format_to_string(value)
     }

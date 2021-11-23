@@ -35,6 +35,7 @@ impl DateTimeFormat {
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
+    #[inline(never)]
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
@@ -111,6 +112,7 @@ impl DateTimeFormat {
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
+    #[inline]
     pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
     where
         T: DateTimeInput,
@@ -126,6 +128,7 @@ impl DateTimeFormat {
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
     /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    #[inline(never)]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
@@ -143,6 +146,7 @@ impl DateTimeFormat {
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
         let mut s = String::new();
         self.format_to_write(&mut s, value)

@@ -37,6 +37,7 @@ impl ZonedDateTimeFormat {
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
+    #[inline(never)]
     pub fn try_new<L, DP, ZP, PP>(
         locale: L,
         date_provider: &DP,
@@ -119,6 +120,7 @@ impl ZonedDateTimeFormat {
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
+    #[inline]
     pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
     where
         T: ZonedDateTimeInput,
@@ -131,6 +133,7 @@ impl ZonedDateTimeFormat {
 
     /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
     /// and a [`ZonedDateTimeInput`] implementer, then populates the buffer with a formatted value.
+    #[inline(never)]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
@@ -140,6 +143,7 @@ impl ZonedDateTimeFormat {
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
+    #[inline]
     pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
         let mut s = String::new();
         self.format_to_write(&mut s, value)
