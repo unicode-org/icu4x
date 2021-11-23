@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
-use crate::cldr_serde;
 
 use icu_locid::LanguageIdentifier;
 
@@ -57,7 +57,10 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 }
 
 impl CommonDateProvider {
-    pub fn dates_for<'a>(&'a self, req: &DataRequest) -> Result<&'a cldr_serde::ca::Dates, DataError> {
+    pub fn dates_for<'a>(
+        &'a self,
+        req: &DataRequest,
+    ) -> Result<&'a cldr_serde::ca::Dates, DataError> {
         let langid = req.try_langid()?;
         let variant = req
             .resource_path

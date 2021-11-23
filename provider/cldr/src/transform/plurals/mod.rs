@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
@@ -10,7 +11,6 @@ use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-use crate::cldr_serde;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 2] = [
@@ -71,7 +71,10 @@ impl KeyedDataProvider for PluralsProvider {
 }
 
 impl PluralsProvider {
-    fn get_rules_for(&self, resc_key: &ResourceKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
+    fn get_rules_for(
+        &self,
+        resc_key: &ResourceKey,
+    ) -> Result<&cldr_serde::plurals::Rules, DataError> {
         PluralsProvider::supports_key(resc_key)?;
         match *resc_key {
             key::CARDINAL_V1 => self.cardinal_rules.as_ref(),

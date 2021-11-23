@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Serde structs representing CLDR JSON date time display name files.
-//! 
+//!
 //! CLDR JSON files having this structure include "ca-gregorian.json", "ca-buddhist.json", etc.
 //!
 //! Sample file:

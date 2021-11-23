@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
@@ -12,7 +13,6 @@ use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use tinystr::TinyStr8;
-use crate::cldr_serde;
 
 mod decimal_pattern;
 

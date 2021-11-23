@@ -5,9 +5,9 @@
 use super::common::CommonDateProvider;
 use crate::error::Error;
 
+use crate::cldr_serde;
 use crate::CldrPaths;
 use icu_datetime::provider::*;
-use crate::cldr_serde;
 
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;

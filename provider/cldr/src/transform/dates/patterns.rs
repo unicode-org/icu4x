@@ -6,10 +6,10 @@ use super::common::CommonDateProvider;
 
 use crate::error::Error;
 
+use crate::cldr_serde;
 use crate::CldrPaths;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::{pattern, provider::*};
-use crate::cldr_serde;
 
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;

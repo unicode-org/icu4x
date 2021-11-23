@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
@@ -11,7 +12,6 @@ use icu_provider::{
     iter::{IterableDataProviderCore, KeyedDataProvider},
     prelude::*,
 };
-use crate::cldr_serde;
 
 use std::convert::TryFrom;
 
@@ -30,7 +30,10 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
 pub struct TimeZonesProvider {
-    data: Vec<(LanguageIdentifier, cldr_serde::time_zone_names::LangTimeZones)>,
+    data: Vec<(
+        LanguageIdentifier,
+        cldr_serde::time_zone_names::LangTimeZones,
+    )>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {

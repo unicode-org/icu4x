@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use crate::cldr_serde;
 
 use std::convert::TryFrom;
 use tinystr::TinyStr4;

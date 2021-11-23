@@ -9,13 +9,13 @@ mod numbers;
 mod plurals;
 mod time_zones;
 
-pub use locale_canonicalizer::aliases::AliasesProvider;
 pub use dates::{
     patterns::DatePatternsProvider, skeletons::DateSkeletonPatternsProvider,
     symbols::DateSymbolsProvider,
 };
-pub use locale_canonicalizer::likelysubtags::LikelySubtagsProvider;
 pub use list::ListProvider;
+pub use locale_canonicalizer::aliases::AliasesProvider;
+pub use locale_canonicalizer::likelysubtags::LikelySubtagsProvider;
 pub use numbers::NumbersProvider;
 pub use plurals::PluralsProvider;
 
