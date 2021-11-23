@@ -44,6 +44,7 @@ convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 ```rust
 use icu::locid::Locale;
 use icu::locid::macros::langid;
+use icu::calendar::Gregorian;
 use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 let options = length::Bag {
     date: Some(length::Date::Medium),
