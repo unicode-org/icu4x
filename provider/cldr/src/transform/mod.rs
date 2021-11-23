@@ -20,7 +20,7 @@ pub use datetime::{
 pub use decimal::NumbersProvider;
 pub use list::ListProvider;
 pub use locale_canonicalizer::aliases::AliasesProvider;
-pub use locale_canonicalizer::likelysubtags::LikelySubtagsProvider;
+pub use locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
 pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
@@ -38,7 +38,7 @@ pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     result.extend(&datetime::symbols::ALL_KEYS);
     result.extend(&datetime::skeletons::ALL_KEYS);
     result.extend(&datetime::patterns::ALL_KEYS);
-    result.extend(&locale_canonicalizer::likelysubtags::ALL_KEYS);
+    result.extend(&locale_canonicalizer::likely_subtags::ALL_KEYS);
     result.extend(&decimal::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
     result.extend(&time_zones::ALL_KEYS);
