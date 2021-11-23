@@ -5,6 +5,8 @@
 use crate::ule::AsULE;
 use crate::ZeroVec;
 
+use core::fmt;
+
 pub use super::kv::ZeroMapKV;
 pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 
@@ -143,7 +145,7 @@ where
     /// // still exists after the ZeroMapBorrowed has been dropped
     /// assert_eq!(borrow, Some("one"));
     /// ```
-    pub fn get(&self, key: &K::NeedleType) -> Option<&'a V::GetType> {
+    pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
         let index = self.keys.binary_search(key).ok()?;
         self.values.get_borrowed(index)
     }
@@ -161,7 +163,7 @@ where
     /// assert_eq!(borrowed.contains_key(&1), true);
     /// assert_eq!(borrowed.contains_key(&3), false);
     /// ```
-    pub fn contains_key(&self, key: &K::NeedleType) -> bool {
+    pub fn contains_key(&self, key: &K) -> bool {
         self.keys.binary_search(key).is_ok()
     }
 
@@ -197,12 +199,12 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Ord + Copy,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
-    pub fn get_copied(&self, key: &K::NeedleType) -> Option<V> {
+    pub fn get_copied(&self, key: &K) -> Option<V> {
         let index = self.keys.binary_search(key).ok()?;
         <[V::ULE]>::get(self.values, index)
             .copied()
@@ -228,8 +230,8 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>>,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + ?Sized,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     K: AsULE + Copy + Ord,
     V: AsULE + Copy + Ord,
 {
@@ -252,5 +254,37 @@ where
                     .unwrap(),
             )
         })
+    }
+}
+
+// We can't use the default PartialEq because ZeroMap is invariant
+// so otherwise rustc will not automatically allow you to compare ZeroMaps
+// with different lifetimes
+impl<'a, 'b, K, V> PartialEq<ZeroMapBorrowed<'b, K, V>> for ZeroMapBorrowed<'a, K, V>
+where
+    K: for<'c> ZeroMapKV<'c> + ?Sized,
+    V: for<'c> ZeroMapKV<'c> + ?Sized,
+    <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant:
+        PartialEq<<<K as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, K>>::BorrowedVariant>,
+    <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant:
+        PartialEq<<<V as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, V>>::BorrowedVariant>,
+{
+    fn eq(&self, other: &ZeroMapBorrowed<'b, K, V>) -> bool {
+        self.keys.eq(&other.keys) && self.values.eq(&other.values)
+    }
+}
+
+impl<'a, K, V> fmt::Debug for ZeroMapBorrowed<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+    <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant: fmt::Debug,
+    <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        f.debug_struct("ZeroMapBorrowed")
+            .field("keys", &self.keys)
+            .field("values", &self.values)
+            .finish()
     }
 }

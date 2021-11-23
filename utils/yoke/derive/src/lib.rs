@@ -202,11 +202,23 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 /// for types with a lifetime parameter.
 ///
 /// Apply the `#[yoke(cloning_zcf)]` attribute if you wish for this custom derive
-/// to use `.clone()` for its implementation.
+/// to use `.clone()` for its implementation. The attribute can be applied to
+/// fields as well.
 #[proc_macro_derive(ZeroCopyFrom, attributes(yoke))]
 pub fn zcf_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(zcf_derive_impl(&input))
+}
+
+fn has_cloning_zcf_attr(attrs: &[syn::Attribute]) -> bool {
+    attrs.iter().any(|a| {
+        if let Ok(i) = a.parse_args::<Ident>() {
+            if i == "cloning_zcf" {
+                return true;
+            }
+        }
+        false
+    })
 }
 
 fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
@@ -215,14 +227,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .iter()
         .map(|ty| ty.ident.clone())
         .collect::<Vec<_>>();
-    let has_clone = input.attrs.iter().any(|a| {
-        if let Ok(i) = a.parse_args::<Ident>() {
-            if i == "cloning_zcf" {
-                return true;
-            }
-        }
-        false
-    });
+    let has_clone = has_cloning_zcf_attr(&input.attrs);
     let lts = input.generics.lifetimes().count();
     let name = &input.ident;
     if lts == 0 {
@@ -269,33 +274,43 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
         let mut zcf_bounds: Vec<WherePredicate> = vec![];
         let body = structure.each_variant(|vi| {
+            let variant_cloning = has_cloning_zcf_attr(vi.ast().attrs);
             vi.construct(|f, i| {
+                let binding_cloning = variant_cloning || has_cloning_zcf_attr(&f.attrs);
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
-                let fty = replace_lifetime(&f.ty, static_lt());
-                let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'data"));
 
-                let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
-                if has_ty {
-                    // For types without type parameters, the compiler can figure out that the field implements
-                    // ZeroCopyFrom on its own. However, if there are type parameters, there may be complex preconditions
-                    // to `FieldTy: ZeroCopyFrom` that need to be satisfied. We get them to be satisfied by requiring
-                    // `FieldTy<'static>: ZeroCopyFrom<FieldTy<'data>>` as well as
-                    // `for<'data_hrtb> FieldTy<'static>: Yokeable<'data_hrtb, Output = FieldTy<'data_hrtb>>`
-                    if has_lt {
-                        let hrtb_ty = replace_lifetime(&f.ty, custom_lt("'data_hrtb"));
-                        zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#lifetime_ty>));
-                        zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #hrtb_ty>));
-                    } else {
-                        zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#fty>));
-                        zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #fty>));
+
+                if binding_cloning {
+                    quote! {
+                        #field.clone()
                     }
-                }
+                } else {
+                    let fty = replace_lifetime(&f.ty, static_lt());
+                    let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'data"));
 
-                // By doing this we essentially require ZCF to be implemented
-                // on all fields
-                quote! {
-                    <#fty as yoke::ZeroCopyFrom<#lifetime_ty>>::zero_copy_from(#field)
+                    let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
+                    if has_ty {
+                        // For types without type parameters, the compiler can figure out that the field implements
+                        // ZeroCopyFrom on its own. However, if there are type parameters, there may be complex preconditions
+                        // to `FieldTy: ZeroCopyFrom` that need to be satisfied. We get them to be satisfied by requiring
+                        // `FieldTy<'static>: ZeroCopyFrom<FieldTy<'data>>` as well as
+                        // `for<'data_hrtb> FieldTy<'static>: Yokeable<'data_hrtb, Output = FieldTy<'data_hrtb>>`
+                        if has_lt {
+                            let hrtb_ty = replace_lifetime(&f.ty, custom_lt("'data_hrtb"));
+                            zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#lifetime_ty>));
+                            zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #hrtb_ty>));
+                        } else {
+                            zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#fty>));
+                            zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #fty>));
+                        }
+                    }
+
+                    // By doing this we essentially require ZCF to be implemented
+                    // on all fields
+                    quote! {
+                        <#fty as yoke::ZeroCopyFrom<#lifetime_ty>>::zero_copy_from(#field)
+                    }
                 }
             })
         });

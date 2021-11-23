@@ -81,6 +81,39 @@ pub fn assert_zcf_map<'a, 'b>(
     ZeroMapGenericExample::<'static, str>::zero_copy_from(x)
 }
 
+#[derive(Yokeable, Clone, ZeroCopyFrom)]
+#[yoke(cloning_zcf)]
+pub struct CloningZCF1 {
+    vec: Vec<u8>,
+}
+
+#[derive(Yokeable, Clone, ZeroCopyFrom)]
+#[yoke(cloning_zcf)] // this will clone `cow` instead of borrowing from it
+pub struct CloningZCF2<'data> {
+    cow: Cow<'data, str>,
+    vec: Vec<u8>,
+}
+
+#[derive(Yokeable, ZeroCopyFrom)]
+pub struct CloningZCF3<'data> {
+    cow: Cow<'data, str>,
+    #[yoke(cloning_zcf)]
+    vec: Vec<u8>,
+}
+
+#[derive(Yokeable, ZeroCopyFrom)]
+pub enum CloningZCF4<'data> {
+    Cow(Cow<'data, str>),
+    #[yoke(cloning_zcf)] // this will clone the first field instead of borrowing
+    CowVec(Cow<'data, str>, Vec<u8>),
+}
+
+#[derive(Yokeable, ZeroCopyFrom)]
+pub enum CloningZCF5<'data> {
+    Cow(Cow<'data, str>),
+    CowVec(Cow<'data, str>, #[yoke(cloning_zcf)] Vec<u8>),
+}
+
 pub struct AssertYokeable {
     string: Yoke<StringExample, Box<[u8]>>,
     int: Yoke<IntExample, Box<[u8]>>,
