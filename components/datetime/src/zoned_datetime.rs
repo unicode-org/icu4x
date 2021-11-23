@@ -20,6 +20,7 @@ use crate::{
         self,
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     },
+    raw,
     time_zone::TimeZoneFormat,
     DateTimeFormatError,
 };
@@ -68,10 +69,7 @@ use crate::{
 ///
 /// let value = zdtf.format_to_string(&zoned_datetime);
 /// ```
-pub struct ZonedDateTimeFormat {
-    pub(super) datetime_format: DateTimeFormat,
-    pub(super) time_zone_format: TimeZoneFormat,
-}
+pub struct ZonedDateTimeFormat(raw::ZonedDateTimeFormat);
 
 impl ZonedDateTimeFormat {
     /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
@@ -120,57 +118,13 @@ impl ZonedDateTimeFormat {
             + ?Sized,
         PP: DataProvider<PluralRulesV1Marker>,
     {
-        let locale = locale.into();
-        let langid: LanguageIdentifier = locale.clone().into();
-
-        let patterns =
-            provider::date_time::PatternSelector::for_options(date_provider, &locale, options)?;
-
-        let requires_data = datetime::analyze_patterns(&patterns.get().0, true)
-            .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
-
-        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new(
-                locale.clone(),
-                plural_provider,
-                PluralRuleType::Ordinal,
-            )?)
-        } else {
-            None
-        };
-
-        let symbols_data = if requires_data {
-            Some(
-                date_provider
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: provider::key::DATE_SYMBOLS_V1,
-                            options: ResourceOptions {
-                                variant: Some("gregory".into()),
-                                langid: Some(langid),
-                            },
-                        },
-                    })?
-                    .take_payload()?,
-            )
-        } else {
-            None
-        };
-
-        let datetime_format = DateTimeFormat::new(locale, patterns, symbols_data, ordinal_rules);
-        let time_zone_format = TimeZoneFormat::try_new(
-            datetime_format.locale.clone(),
-            datetime_format
-                // Only dates have plural variants so we can use any of the patterns for the time segment.
-                .patterns
-                .clone(),
+        Ok(Self(raw::ZonedDateTimeFormat::try_new(
+            locale,
+            date_provider,
             zone_provider,
-        )?;
-
-        Ok(Self {
-            datetime_format,
-            time_zone_format,
-        })
+            plural_provider,
+            options,
+        )?))
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
@@ -208,10 +162,7 @@ impl ZonedDateTimeFormat {
     where
         T: ZonedDateTimeInput,
     {
-        FormattedZonedDateTime {
-            zoned_datetime_format: self,
-            zoned_datetime: value,
-        }
+        self.0.format(value)
     }
 
     /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
@@ -248,7 +199,7 @@ impl ZonedDateTimeFormat {
         w: &mut impl core::fmt::Write,
         value: &impl ZonedDateTimeInput,
     ) -> core::fmt::Result {
-        zoned_datetime::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
+        self.0.format_to_write(w, value)
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
@@ -276,9 +227,6 @@ impl ZonedDateTimeFormat {
     /// let _ = zdtf.format_to_string(&zoned_datetime);
     /// ```
     pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
-        let mut s = String::new();
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
-        s
+        self.0.format_to_string(value)
     }
 }

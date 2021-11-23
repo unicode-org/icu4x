@@ -20,6 +20,7 @@ use crate::{
         self,
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     },
+    raw,
     time_zone::TimeZoneFormat,
     DateTimeFormatError,
 };
@@ -27,7 +28,7 @@ use crate::{
 /// This is the internal "raw" version of [crate::ZonedDateTimeFormat], i.e. a version of ZonedDateTimeFormat
 /// without the generic parameter. The actual implementation of [crate::ZonedDateTimeFormat] should live here.
 pub(crate) struct ZonedDateTimeFormat {
-    pub datetime_format: DateTimeFormat,
+    pub datetime_format: raw::DateTimeFormat,
     pub time_zone_format: TimeZoneFormat,
 }
 
@@ -93,7 +94,8 @@ impl ZonedDateTimeFormat {
             None
         };
 
-        let datetime_format = DateTimeFormat::new(locale, patterns, symbols_data, ordinal_rules);
+        let datetime_format =
+            raw::DateTimeFormat::new(locale, patterns, symbols_data, ordinal_rules);
         let time_zone_format = TimeZoneFormat::try_new(
             datetime_format.locale.clone(),
             datetime_format
