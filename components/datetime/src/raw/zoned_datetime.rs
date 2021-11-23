@@ -35,12 +35,15 @@ impl ZonedDateTimeFormat {
     /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
     /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
+    ///
+    /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     pub fn try_new<L, DP, ZP, PP>(
         locale: L,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
         options: &DateTimeFormatOptions,
+        calendar: &'static str,
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
@@ -59,8 +62,12 @@ impl ZonedDateTimeFormat {
         let locale = locale.into();
         let langid: LanguageIdentifier = locale.clone().into();
 
-        let patterns =
-            provider::date_time::PatternSelector::for_options(date_provider, &locale, options)?;
+        let patterns = provider::date_time::PatternSelector::for_options(
+            date_provider,
+            &locale,
+            options,
+            calendar,
+        )?;
 
         let requires_data = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
@@ -82,7 +89,7 @@ impl ZonedDateTimeFormat {
                         resource_path: ResourcePath {
                             key: provider::key::DATE_SYMBOLS_V1,
                             options: ResourceOptions {
-                                variant: Some("gregory".into()),
+                                variant: Some(calendar.into()),
                                 langid: Some(langid),
                             },
                         },

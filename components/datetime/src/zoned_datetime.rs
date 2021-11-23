@@ -117,6 +117,7 @@ impl ZonedDateTimeFormat {
             zone_provider,
             plural_provider,
             options,
+            "gregory"
         )?))
     }
 

@@ -67,6 +67,7 @@ fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> 
 pub struct PatternSelector<'a, D> {
     data_provider: &'a D,
     locale: &'a Locale,
+    calendar: &'static str,
 }
 
 // Manual impls needed since `derive(Copy)` inserts
@@ -211,7 +212,7 @@ where
                 resource_path: ResourcePath {
                     key: provider::key::DATE_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregory".into()),
+                        variant: Some(self.calendar.into()),
                         langid: Some(self.locale.clone().into()),
                     },
                 },
@@ -227,7 +228,7 @@ where
                 resource_path: ResourcePath {
                     key: provider::key::DATE_SKELETON_PATTERNS_V1,
                     options: ResourceOptions {
-                        variant: Some("gregory".into()),
+                        variant: Some(self.calendar.into()),
                         langid: Some(self.locale.clone().into()),
                     },
                 },
