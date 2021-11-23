@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637613545446,
+  "lastUpdate": 1637653566728,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15209,6 +15209,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40752198,
             "range": "± 340824",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9d0137c20b31d2fd222cd13a2257e8d98416b86c",
+          "message": "Migrate StaticDataProvider and BlobDataProvider to ZeroMap (#1058)",
+          "timestamp": "2021-11-22T23:39:30-08:00",
+          "tree_id": "2a458590b63493adabe0d3da0c5bc6b6b9887558",
+          "url": "https://github.com/unicode-org/icu4x/commit/9d0137c20b31d2fd222cd13a2257e8d98416b86c"
+        },
+        "date": 1637653559052,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40457702,
+            "range": "± 1687679",
             "unit": "ns/iter"
           }
         ]
