@@ -793,6 +793,13 @@ impl TimeZoneFormat {
     }
 }
 
+/// Determines which type of formats time zone uses. It can be either config or pattern.
+#[allow(clippy::large_enum_variant)]
+pub(super) enum TimeZoneFormatKind<'data> {
+    Config(TimeZoneFormatConfig),
+    Pattern(DataPayload<'data, PatternPluralsFromPatternsV1Marker>),
+}
+
 /// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum IsoFormat {

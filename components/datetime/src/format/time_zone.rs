@@ -10,7 +10,9 @@ use crate::pattern::{PatternError, PatternItem};
 use crate::provider::gregory::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::{
     date::TimeZoneInput,
-    time_zone::{IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat, TimeZoneFormatConfig},
+    time_zone::{
+        IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatKind,
+    },
 };
 use icu_provider::DataPayload;
 use writeable::Writeable;
@@ -52,15 +54,11 @@ where
     T: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    match (&time_zone_format.patterns, time_zone_format.config) {
-        (Some(patterns), None) => write_pattern(time_zone_format, time_zone, patterns, w),
-        (None, Some(config)) => write_config(time_zone_format, time_zone, config, w),
-        (Some(_), Some(_)) => {
-            unreachable!("TimeZoneFormat should have a configuration or a pattern, but found both")
+    match &time_zone_format.kind {
+        TimeZoneFormatKind::Pattern(patterns) => {
+            write_pattern(time_zone_format, time_zone, patterns, w)
         }
-        (None, None) => unreachable!(
-            "TimeZoneFormat should have either a configuration or a pattern, but found neither"
-        ),
+        TimeZoneFormatKind::Config(config) => write_config(time_zone_format, time_zone, *config, w),
     }
 }
 
