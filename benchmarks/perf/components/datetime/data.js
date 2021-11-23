@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637613586181,
+  "lastUpdate": 1637653596217,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13493,6 +13493,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 305035,
             "range": "± 23402",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9d0137c20b31d2fd222cd13a2257e8d98416b86c",
+          "message": "Migrate StaticDataProvider and BlobDataProvider to ZeroMap (#1058)",
+          "timestamp": "2021-11-22T23:39:30-08:00",
+          "tree_id": "2a458590b63493adabe0d3da0c5bc6b6b9887558",
+          "url": "https://github.com/unicode-org/icu4x/commit/9d0137c20b31d2fd222cd13a2257e8d98416b86c"
+        },
+        "date": 1637653589778,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 96446,
+            "range": "± 280",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1169462,
+            "range": "± 2274",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 291570,
+            "range": "± 1713",
             "unit": "ns/iter"
           }
         ]
