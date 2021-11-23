@@ -87,10 +87,9 @@ impl BlobDataProvider {
     fn get_file(&self, req: &DataRequest) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
         self.data
-            .try_project_cloned_with_capture::<&'static [u8], String, ()>(
-                path,
-                |zm, path, _| zm.get(&path).ok_or(()),
-            )
+            .try_project_cloned_with_capture::<&'static [u8], String, ()>(path, |zm, path, _| {
+                zm.get(&path).ok_or(())
+            })
             .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))
     }
 }
