@@ -86,6 +86,7 @@ pub mod options;
 #[doc(hidden)]
 pub mod pattern;
 pub mod provider;
+pub(crate) mod raw;
 #[doc(hidden)]
 pub mod skeleton;
 // TODO(#622) make the time_zone module public once TimeZoneFormat is public.
