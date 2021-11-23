@@ -6,15 +6,7 @@ pub mod aliases;
 pub mod ca;
 pub mod likely_subtags;
 pub mod list_patterns;
+pub mod numbering_systems;
+pub mod numbers;
 pub mod plurals;
 pub mod time_zone_names;
-
-mod num;
-
-pub mod numbers {
-    pub use super::num::numbers_json::*;
-}
-
-pub mod numbering_systems {
-    pub use super::num::numbering_systems_json::*;
-}
