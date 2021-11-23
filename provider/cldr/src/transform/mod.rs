@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod dates;
+mod datetime;
 mod list;
 mod locale_canonicalizer;
 mod numbers;
 mod plurals;
 mod time_zones;
 
-pub use dates::{
+pub use datetime::{
     patterns::DatePatternsProvider, skeletons::DateSkeletonPatternsProvider,
     symbols::DateSymbolsProvider,
 };
@@ -31,9 +31,9 @@ use self::time_zones::TimeZonesProvider;
 pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
     result.extend(&locale_canonicalizer::aliases::ALL_KEYS);
-    result.extend(&dates::symbols::ALL_KEYS);
-    result.extend(&dates::skeletons::ALL_KEYS);
-    result.extend(&dates::patterns::ALL_KEYS);
+    result.extend(&datetime::symbols::ALL_KEYS);
+    result.extend(&datetime::skeletons::ALL_KEYS);
+    result.extend(&datetime::patterns::ALL_KEYS);
     result.extend(&locale_canonicalizer::likelysubtags::ALL_KEYS);
     result.extend(&numbers::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
