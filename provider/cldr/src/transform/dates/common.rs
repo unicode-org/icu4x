@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::cldr_json;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
+use crate::cldr_serde;
 
 use icu_locid::LanguageIdentifier;
 
@@ -17,7 +17,7 @@ use std::convert::TryFrom;
 #[derive(PartialEq, Debug)]
 pub struct CommonDateProvider {
     // map of calendars to their locale-data mappings
-    data: LiteMap<&'static str, LiteMap<LanguageIdentifier, cldr_json::Dates>>,
+    data: LiteMap<&'static str, LiteMap<LanguageIdentifier, cldr_serde::ca::Dates>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
@@ -37,7 +37,7 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
             for dir in locale_dirs {
                 let path = dir.join(&cal_file);
 
-                let mut resource: cldr_json::Resource =
+                let mut resource: cldr_serde::ca::Resource =
                     serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
                 for (k, mut v) in resource.main.0.drain(..) {
                     let v = v.dates.calendars.remove(cldr_cal).ok_or_else(|| {
@@ -57,7 +57,7 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 }
 
 impl CommonDateProvider {
-    pub fn dates_for<'a>(&'a self, req: &DataRequest) -> Result<&'a cldr_json::Dates, DataError> {
+    pub fn dates_for<'a>(&'a self, req: &DataRequest) -> Result<&'a cldr_serde::ca::Dates, DataError> {
         let langid = req.try_langid()?;
         let variant = req
             .resource_path

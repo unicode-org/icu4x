@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::cldr_json;
 use super::common::CommonDateProvider;
 use crate::error::Error;
 
 use crate::CldrPaths;
 use icu_datetime::provider::*;
+use crate::cldr_serde;
 
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
@@ -68,8 +68,8 @@ impl IterableDataProviderCore for DateSymbolsProvider {
     }
 }
 
-impl From<&cldr_json::Dates> for calendar::DateSymbolsV1 {
-    fn from(other: &cldr_json::Dates) -> Self {
+impl From<&cldr_serde::ca::Dates> for calendar::DateSymbolsV1 {
+    fn from(other: &cldr_serde::ca::Dates) -> Self {
         Self {
             months: (&other.months).into(),
             weekdays: (&other.days).into(),
@@ -80,8 +80,8 @@ impl From<&cldr_json::Dates> for calendar::DateSymbolsV1 {
 
 macro_rules! symbols_from {
     ([$name: ident, $name2: ident $(,)?], [ $($element: ident),+ $(,)? ] $(,)?) => {
-        impl From<&cldr_json::$name::Symbols> for calendar::$name2::SymbolsV1 {
-            fn from(other: &cldr_json::$name::Symbols) -> Self {
+        impl From<&cldr_serde::ca::$name::Symbols> for calendar::$name2::SymbolsV1 {
+            fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
                 Self([
                     $(
                         Cow::Owned(other.$element.clone()),
@@ -92,8 +92,8 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name2]);
     };
     ([$name: ident, $name2: ident $(,)?], { $($element: ident),+ $(,)? } $(,)?) => {
-        impl From<&cldr_json::$name::Symbols> for calendar::$name2::SymbolsV1 {
-            fn from(other: &cldr_json::$name::Symbols) -> Self {
+        impl From<&cldr_serde::ca::$name::Symbols> for calendar::$name2::SymbolsV1 {
+            fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
                 Self {
                     $(
                         $element: other.$element.clone(),
@@ -104,7 +104,7 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name]);
     };
     ([$name: ident, $name2: ident]) => {
-        impl cldr_json::$name::Symbols {
+        impl cldr_serde::ca::$name::Symbols {
             // Helper function which returns None if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &Self) -> Option<Self> {
                 if self == other {
@@ -115,8 +115,8 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_json::$name::Contexts> for calendar::$name2::ContextsV1 {
-            fn from(other: &cldr_json::$name::Contexts) -> Self {
+        impl From<&cldr_serde::ca::$name::Contexts> for calendar::$name2::ContextsV1 {
+            fn from(other: &cldr_serde::ca::$name::Contexts) -> Self {
                 Self {
                     format: (&other.format).into(),
                     stand_alone: other.stand_alone.as_ref().and_then(|stand_alone| {
@@ -126,9 +126,9 @@ macro_rules! symbols_from {
             }
         }
 
-        impl cldr_json::$name::StandAloneWidths {
+        impl cldr_serde::ca::$name::StandAloneWidths {
             // Helper function which returns None if the two groups of symbols overlap.
-            pub fn get_unaliased(&self, other: &cldr_json::$name::FormatWidths) -> Option<Self> {
+            pub fn get_unaliased(&self, other: &cldr_serde::ca::$name::FormatWidths) -> Option<Self> {
                 let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
                 let narrow = self.narrow.as_ref().and_then(|v| v.get_unaliased(&other.narrow));
                 let short = if self.short == other.short {
@@ -151,8 +151,8 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_json::$name::FormatWidths> for calendar::$name2::FormatWidthsV1 {
-            fn from(other: &cldr_json::$name::FormatWidths) -> Self {
+        impl From<&cldr_serde::ca::$name::FormatWidths> for calendar::$name2::FormatWidthsV1 {
+            fn from(other: &cldr_serde::ca::$name::FormatWidths) -> Self {
                 Self {
                     abbreviated: (&other.abbreviated).into(),
                     narrow: (&other.narrow).into(),
@@ -162,8 +162,8 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_json::$name::StandAloneWidths> for calendar::$name2::StandAloneWidthsV1 {
-            fn from(other: &cldr_json::$name::StandAloneWidths) -> Self {
+        impl From<&cldr_serde::ca::$name::StandAloneWidths> for calendar::$name2::StandAloneWidthsV1 {
+            fn from(other: &cldr_serde::ca::$name::StandAloneWidths) -> Self {
                 Self {
                     abbreviated: other.abbreviated.as_ref().map(|width| width.into()),
                     narrow: other.narrow.as_ref().map(|width| width.into()),

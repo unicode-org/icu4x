@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod aliases;
+pub mod ca;
 pub mod likely_subtags;
 pub mod list_patterns;
 pub mod plurals;
