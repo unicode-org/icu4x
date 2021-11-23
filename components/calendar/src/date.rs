@@ -47,6 +47,12 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().date_to_iso(self.inner())
     }
 
+    /// Convert the Date to a date in a different calendar
+    #[inline]
+    pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> Date<A2> {
+        Date::new_from_iso(self.to_iso(), calendar)
+    }
+
     /// The number of months in the year of this date
     #[inline]
     pub fn months_in_year(&self) -> u8 {
