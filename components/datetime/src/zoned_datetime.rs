@@ -3,26 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
-use icu_locid::{LanguageIdentifier, Locale};
-use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
-use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
+use icu_locid::Locale;
+use icu_plurals::provider::PluralRulesV1Marker;
+use icu_provider::DataProvider;
 
 use crate::{
     date::ZonedDateTimeInput,
-    datetime::DateTimeFormat,
-    format::{
-        datetime,
-        zoned_datetime::{self, FormattedZonedDateTime},
-    },
+    format::zoned_datetime::FormattedZonedDateTime,
     options::DateTimeFormatOptions,
-    pattern::runtime::PatternPlurals,
     provider::{
         self,
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     },
-    raw,
-    time_zone::TimeZoneFormat,
-    DateTimeFormatError,
+    raw, DateTimeFormatError,
 };
 
 // TODO(#622) link [`TimeZoneFormat`] once it is public.

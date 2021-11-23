@@ -9,7 +9,6 @@ use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
 
 use crate::{
     date::ZonedDateTimeInput,
-    datetime::DateTimeFormat,
     format::{
         datetime,
         zoned_datetime::{self, FormattedZonedDateTime},

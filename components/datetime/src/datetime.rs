@@ -6,7 +6,6 @@
 //! Central to this is the [`DateTimeFormat`].
 
 use crate::{
-    format::datetime,
     options::DateTimeFormatOptions,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
@@ -14,13 +13,10 @@ use crate::{
 };
 use alloc::string::String;
 use icu_locid::Locale;
-use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::{provider::PluralRulesV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
-use crate::{
-    date::DateTimeInput, pattern::runtime::PatternPlurals, provider, DateTimeFormatError,
-    FormattedDateTime,
-};
+use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
 
 /// [`DateTimeFormat`] is the main structure of the [`icu_datetime`] component.
 /// When constructed, it uses data from the [`DataProvider`], selected [`Locale`] and provided options to
