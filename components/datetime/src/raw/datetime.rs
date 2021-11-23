@@ -86,7 +86,7 @@ impl DateTimeFormat {
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
-    pub(super) fn new<T: Into<Locale>>(
+    pub fn new<T: Into<Locale>>(
         locale: T,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<DateSymbolsV1Marker>>,

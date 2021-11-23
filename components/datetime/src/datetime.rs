@@ -10,6 +10,7 @@ use crate::{
     options::DateTimeFormatOptions,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    raw,
 };
 use alloc::string::String;
 use icu_locid::Locale;
@@ -61,12 +62,7 @@ use crate::{
 ///
 /// This model replicates that of `ICU` and `ECMA402`. In the future this will become even more pronounced
 /// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
-pub struct DateTimeFormat {
-    pub(super) locale: Locale,
-    pub(super) patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub(super) symbols: Option<DataPayload<DateSymbolsV1Marker>>,
-    pub(super) ordinal_rules: Option<PluralRules>,
-}
+pub struct DateTimeFormat(pub(super) raw::DateTimeFormat);
 
 impl DateTimeFormat {
     /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
@@ -101,45 +97,11 @@ impl DateTimeFormat {
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<PluralRulesV1Marker>,
     {
-        let locale = locale.into();
-
-        let patterns =
-            provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
-
-        let requires_data = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
-
-        let langid: icu_locid::LanguageIdentifier = locale.clone().into();
-
-        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new(
-                locale.clone(),
-                data_provider,
-                PluralRuleType::Ordinal,
-            )?)
-        } else {
-            None
-        };
-
-        let symbols_data = if requires_data {
-            Some(
-                data_provider
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: provider::key::DATE_SYMBOLS_V1,
-                            options: ResourceOptions {
-                                variant: Some("gregory".into()),
-                                langid: Some(langid),
-                            },
-                        },
-                    })?
-                    .take_payload()?,
-            )
-        } else {
-            None
-        };
-
-        Ok(Self::new(locale, patterns, symbols_data, ordinal_rules))
+        Ok(Self(raw::DateTimeFormat::try_new(
+            locale,
+            data_provider,
+            options,
+        )?))
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
@@ -161,14 +123,12 @@ impl DateTimeFormat {
         symbols: Option<DataPayload<DateSymbolsV1Marker>>,
         ordinal_rules: Option<PluralRules>,
     ) -> Self {
-        let locale = locale.into();
-
-        Self {
+        Self(raw::DateTimeFormat::new(
             locale,
             patterns,
             symbols,
             ordinal_rules,
-        }
+        ))
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
@@ -203,13 +163,7 @@ impl DateTimeFormat {
     where
         T: DateTimeInput,
     {
-        FormattedDateTime {
-            patterns: &self.patterns,
-            symbols: self.symbols.as_ref().map(|s| s.get()),
-            datetime: value,
-            locale: &self.locale,
-            ordinal_rules: self.ordinal_rules.as_ref(),
-        }
+        self.0.format(value)
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
@@ -243,15 +197,7 @@ impl DateTimeFormat {
         w: &mut impl core::fmt::Write,
         value: &impl DateTimeInput,
     ) -> core::fmt::Result {
-        datetime::write_pattern_plurals(
-            &self.patterns.get().0,
-            self.symbols.as_ref().map(|s| s.get()),
-            value,
-            self.ordinal_rules.as_ref(),
-            &self.locale,
-            w,
-        )
-        .map_err(|_| core::fmt::Error)
+        self.0.format_to_write(w, value)
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
@@ -276,9 +222,6 @@ impl DateTimeFormat {
     /// let _ = dtf.format_to_string(&datetime);
     /// ```
     pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
-        let mut s = String::new();
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
-        s
+        self.0.format_to_string(value)
     }
 }
