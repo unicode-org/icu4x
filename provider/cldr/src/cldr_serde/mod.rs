@@ -5,6 +5,7 @@
 pub mod aliases;
 pub mod likely_subtags;
 pub mod list_patterns;
+pub mod plurals;
 pub mod time_zone_names;
 
 mod num;
