@@ -11,11 +11,12 @@ use crate::{
     raw,
 };
 use alloc::string::String;
+use core::marker::PhantomData;
 use icu_locid::Locale;
 use icu_plurals::provider::PluralRulesV1Marker;
 use icu_provider::prelude::*;
 
-use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
+use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDateTime};
 
 /// [`DateTimeFormat`] is the main structure of the [`icu_datetime`] component.
 /// When constructed, it uses data from the [`DataProvider`], selected [`Locale`] and provided options to
@@ -57,9 +58,9 @@ use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
 ///
 /// This model replicates that of `ICU` and `ECMA402`. In the future this will become even more pronounced
 /// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
-pub struct DateTimeFormat(pub(super) raw::DateTimeFormat);
+pub struct DateTimeFormat<C>(pub(super) raw::DateTimeFormat, PhantomData<C>);
 
-impl DateTimeFormat {
+impl<C: CldrCalendar> DateTimeFormat<C> {
     /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
@@ -92,12 +93,10 @@ impl DateTimeFormat {
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<PluralRulesV1Marker>,
     {
-        Ok(Self(raw::DateTimeFormat::try_new(
-            locale,
-            data_provider,
-            options,
-            "gregory"
-        )?))
+        Ok(Self(
+            raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,
+            PhantomData,
+        ))
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]

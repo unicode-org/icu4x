@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
+use core::marker::PhantomData;
 use icu_locid::Locale;
 use icu_plurals::provider::PluralRulesV1Marker;
 use icu_provider::DataProvider;
@@ -15,7 +16,7 @@ use crate::{
         self,
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     },
-    raw, DateTimeFormatError,
+    raw, CldrCalendar, DateTimeFormatError,
 };
 
 // TODO(#622) link [`TimeZoneFormat`] once it is public.
@@ -62,9 +63,9 @@ use crate::{
 ///
 /// let value = zdtf.format_to_string(&zoned_datetime);
 /// ```
-pub struct ZonedDateTimeFormat(raw::ZonedDateTimeFormat);
+pub struct ZonedDateTimeFormat<C>(raw::ZonedDateTimeFormat, PhantomData<C>);
 
-impl ZonedDateTimeFormat {
+impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
     /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
@@ -111,14 +112,17 @@ impl ZonedDateTimeFormat {
             + ?Sized,
         PP: DataProvider<PluralRulesV1Marker>,
     {
-        Ok(Self(raw::ZonedDateTimeFormat::try_new(
-            locale,
-            date_provider,
-            zone_provider,
-            plural_provider,
-            options,
-            "gregory"
-        )?))
+        Ok(Self(
+            raw::ZonedDateTimeFormat::try_new(
+                locale,
+                date_provider,
+                zone_provider,
+                plural_provider,
+                options,
+                C::IDENTIFIER,
+            )?,
+            PhantomData,
+        ))
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
