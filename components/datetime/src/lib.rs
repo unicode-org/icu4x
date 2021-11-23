@@ -76,6 +76,7 @@
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 extern crate alloc;
 
+mod calendar;
 pub mod date;
 pub mod datetime;
 mod error;
@@ -95,6 +96,7 @@ pub(crate) mod time_zone;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod zoned_datetime;
 
+pub use calendar::CldrCalendar;
 pub use datetime::DateTimeFormat;
 pub use error::DateTimeFormatError;
 pub use format::datetime::FormattedDateTime;
