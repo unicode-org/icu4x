@@ -3,3 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod list_patterns;
+
+mod num;
+
+pub mod numbers {
+    pub use super::num::numbers_json::*;
+}
+
+pub mod numbering_systems {
+    pub use super::num::numbering_systems_json::*;
+}
