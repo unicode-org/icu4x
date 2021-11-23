@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module contains the core transformer code from CLDR JSON to ICU4X Data Provider.
+//! 
+//! Every ICU4X component should have its own private submodule and then export the types from here.
+
 mod datetime;
 mod list;
 mod locale_canonicalizer;
