@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod list_patterns;
+pub mod time_zone_names;
 
 mod num;
 

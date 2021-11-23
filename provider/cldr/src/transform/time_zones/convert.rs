@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Location, TimeZoneNames, ZoneFormat};
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1,
     MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, MetaZoneSpecificNamesV1,
@@ -11,6 +10,8 @@ use icu_datetime::provider::time_zones::{
 use litemap::LiteMap;
 use std::borrow::Cow;
 use tinystr::TinyStr8;
+
+use crate::cldr_serde::time_zone_names::*;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -83,11 +84,11 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
                             key.push('/');
                             key.push_str(&inner_key);
                             match place_or_region {
-                                super::LocationOrSubRegion::Location(place) => place
+                                LocationOrSubRegion::Location(place) => place
                                     .exemplar_city()
                                     .map(|city| vec![(key.into(), city.into())])
                                     .unwrap_or_default(),
-                                super::LocationOrSubRegion::SubRegion(region) => region
+                                LocationOrSubRegion::SubRegion(region) => region
                                     .into_iter()
                                     .filter_map(|(inner_key, place)| {
                                         let mut key = key.clone();
