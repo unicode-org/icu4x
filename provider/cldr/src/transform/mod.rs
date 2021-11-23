@@ -5,7 +5,7 @@
 mod datetime;
 mod list;
 mod locale_canonicalizer;
-mod numbers;
+mod decimal;
 mod plurals;
 mod time_zones;
 
@@ -16,7 +16,7 @@ pub use datetime::{
 pub use list::ListProvider;
 pub use locale_canonicalizer::aliases::AliasesProvider;
 pub use locale_canonicalizer::likelysubtags::LikelySubtagsProvider;
-pub use numbers::NumbersProvider;
+pub use decimal::NumbersProvider;
 pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
@@ -35,7 +35,7 @@ pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     result.extend(&datetime::skeletons::ALL_KEYS);
     result.extend(&datetime::patterns::ALL_KEYS);
     result.extend(&locale_canonicalizer::likelysubtags::ALL_KEYS);
-    result.extend(&numbers::ALL_KEYS);
+    result.extend(&decimal::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
     result.extend(&time_zones::ALL_KEYS);
     result.extend(&list::ALL_KEYS);
