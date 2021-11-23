@@ -7,13 +7,12 @@
 
 use crate::{
     options::DateTimeFormatOptions,
-    provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     raw,
 };
 use alloc::string::String;
 use icu_locid::Locale;
-use icu_plurals::{provider::PluralRulesV1Marker, PluralRules};
+use icu_plurals::provider::PluralRulesV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{date::DateTimeInput, DateTimeFormatError, FormattedDateTime};
@@ -98,33 +97,6 @@ impl DateTimeFormat {
             data_provider,
             options,
         )?))
-    }
-
-    /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
-    ///
-    /// By contrast, the public [`DateTimeFormat::try_new()`] function will return an error if there are
-    /// time-zone symbols in the pattern.
-    ///
-    /// This function is only `pub(super)` (not `pub`) because it is needed by [`ZonedDateTimeFormat`]
-    /// to create a [`DateTimeFormat`] for use internally. [`ZonedDateTimeFormat`] maintains
-    /// the invariant that [`DateTimeFormat`] will not be used to format the time zone.
-    ///
-    /// Creating a [`DateTimeFormat`] with time-zone symbols should always be an error
-    /// in public contexts.
-    ///
-    /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
-    pub(super) fn new<T: Into<Locale>>(
-        locale: T,
-        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-        symbols: Option<DataPayload<DateSymbolsV1Marker>>,
-        ordinal_rules: Option<PluralRules>,
-    ) -> Self {
-        Self(raw::DateTimeFormat::new(
-            locale,
-            patterns,
-            symbols,
-            ordinal_rules,
-        ))
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
