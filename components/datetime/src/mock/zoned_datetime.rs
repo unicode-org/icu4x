@@ -95,6 +95,7 @@ impl FromStr for MockZonedDateTime {
 }
 
 impl DateInput for MockZonedDateTime {
+    type Calendar = Gregorian;
     fn year(&self) -> Option<Year> {
         self.datetime.year()
     }

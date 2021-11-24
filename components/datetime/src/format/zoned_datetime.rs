@@ -4,11 +4,12 @@
 
 //! A collection of code for formatting DateTimes with time zones.
 
+use crate::date::ZonedDateTimeInput;
 use crate::date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::{runtime::Pattern, PatternItem};
-use crate::{date::ZonedDateTimeInput, zoned_datetime::ZonedDateTimeFormat};
+use crate::raw;
 use core::fmt;
 use writeable::Writeable;
 
@@ -20,7 +21,7 @@ pub struct FormattedZonedDateTime<'l, T>
 where
     T: ZonedDateTimeInput,
 {
-    pub(crate) zoned_datetime_format: &'l ZonedDateTimeFormat,
+    pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormat,
     pub(crate) zoned_datetime: &'l T,
 }
 
@@ -46,8 +47,8 @@ where
     }
 }
 
-pub fn write_pattern<T, W>(
-    zoned_datetime_format: &ZonedDateTimeFormat,
+pub(crate) fn write_pattern<T, W>(
+    zoned_datetime_format: &raw::ZonedDateTimeFormat,
     zoned_datetime: &T,
     w: &mut W,
 ) -> Result<(), Error>
@@ -78,7 +79,7 @@ where
 fn write_field<T, W>(
     pattern: &Pattern,
     field: fields::Field,
-    zoned_datetime_format: &ZonedDateTimeFormat,
+    zoned_datetime_format: &raw::ZonedDateTimeFormat,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
 ) -> Result<(), Error>

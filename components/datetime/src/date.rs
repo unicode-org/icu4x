@@ -5,7 +5,9 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Gregorian};
+use crate::calendar::CldrCalendar;
+
+use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime};
 use icu_locid::Locale;
 use tinystr::TinyStr8;
 
@@ -21,6 +23,8 @@ pub use icu_calendar::DateTimeError;
 ///
 /// All data represented in [`DateInput`] should be locale-agnostic.
 pub trait DateInput {
+    /// The CLDR calendar this date relates to
+    type Calendar: CldrCalendar;
     /// Gets the era and year input.
     fn year(&self) -> Option<Year>;
 
@@ -236,7 +240,8 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
     }
 }
 
-impl<A: AsCalendar<Calendar = Gregorian>> DateInput for Date<A> {
+impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
+    type Calendar = C;
     /// Gets the era and year input.
     fn year(&self) -> Option<Year> {
         Some(self.year())
@@ -263,7 +268,8 @@ impl<A: AsCalendar<Calendar = Gregorian>> DateInput for Date<A> {
     }
 }
 
-impl<A: AsCalendar<Calendar = Gregorian>> DateInput for DateTime<A> {
+impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
+    type Calendar = C;
     /// Gets the era and year input.
     fn year(&self) -> Option<Year> {
         Some(self.date.year())
@@ -290,7 +296,7 @@ impl<A: AsCalendar<Calendar = Gregorian>> DateInput for DateTime<A> {
     }
 }
 
-impl<A: AsCalendar<Calendar = Gregorian>> IsoTimeInput for DateTime<A> {
+impl<A: AsCalendar> IsoTimeInput for DateTime<A> {
     /// Gets the hour input.
     fn hour(&self) -> Option<IsoHour> {
         Some(self.time.hour)

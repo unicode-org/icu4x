@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::types::Time;
-use crate::{AsCalendar, Date};
+use crate::{AsCalendar, Date, Iso};
 
 /// A date+time for a given calendar
 ///
@@ -19,5 +19,33 @@ pub struct DateTime<A: AsCalendar> {
 impl<A: AsCalendar> DateTime<A> {
     pub fn new(date: Date<A>, time: Time) -> Self {
         DateTime { date, time }
+    }
+
+    /// Construct a DateTime from an ISO datetime and some calendar representation
+    #[inline]
+    pub fn new_from_iso(iso: DateTime<Iso>, calendar: A) -> Self {
+        let date = Date::new_from_iso(iso.date, calendar);
+        DateTime {
+            date,
+            time: iso.time,
+        }
+    }
+
+    /// Convert the DateTime to an ISO DateTime
+    #[inline]
+    pub fn to_iso(&self) -> DateTime<Iso> {
+        DateTime {
+            date: self.date.to_iso(),
+            time: self.time,
+        }
+    }
+
+    /// Convert the DateTime to a DateTime in a different calendar
+    #[inline]
+    pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> DateTime<A2> {
+        DateTime {
+            date: self.date.to_calendar(calendar),
+            time: self.time,
+        }
     }
 }

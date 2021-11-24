@@ -16,53 +16,10 @@ use crate::provider::calendar::{
 };
 use crate::skeleton;
 use alloc::borrow::Cow;
-use core::marker::PhantomData;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 type Result<T> = core::result::Result<T, DateTimeFormatError>;
-
-fn patterns_data_payload<D>(
-    data_provider: &D,
-    locale: &Locale,
-) -> Result<DataPayload<DatePatternsV1Marker>>
-where
-    D: DataProvider<DatePatternsV1Marker>,
-{
-    let data = data_provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: provider::key::DATE_PATTERNS_V1,
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(locale.clone().into()),
-                },
-            },
-        })?
-        .take_payload()?;
-    Ok(data)
-}
-
-fn skeleton_data_payload<D>(
-    data_provider: &D,
-    locale: &Locale,
-) -> Result<DataPayload<DateSkeletonPatternsV1Marker>>
-where
-    D: DataProvider<DateSkeletonPatternsV1Marker>,
-{
-    let data = data_provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: provider::key::DATE_SKELETON_PATTERNS_V1,
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(locale.clone().into()),
-                },
-            },
-        })?
-        .take_payload()?;
-    Ok(data)
-}
 
 fn pattern_for_time_length_inner<'data>(
     data: DatePatternsV1<'data>,
@@ -107,63 +64,67 @@ fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> 
     PatternPlurals::from(pattern)
 }
 
-pub struct PatternSelector<D>(PhantomData<D>);
+pub struct PatternSelector<'a, D> {
+    data_provider: &'a D,
+    locale: &'a Locale,
+    calendar: &'static str,
+}
 
-impl<D> PatternSelector<D>
+// Manual impls needed since `derive(Copy)` inserts
+// a `D: Copy` bound
+impl<D> Copy for PatternSelector<'_, D> {}
+impl<D> Clone for PatternSelector<'_, D> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl<D> PatternSelector<'_, D>
 where
     D: DataProvider<DatePatternsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker>,
 {
-    pub(crate) fn for_options(
-        data_provider: &D,
-        locale: &Locale,
+    pub(crate) fn for_options<'a>(
+        data_provider: &'a D,
+        locale: &'a Locale,
         options: &DateTimeFormatOptions,
+        calendar: &'static str,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
+        let selector = PatternSelector {
+            data_provider,
+            locale,
+            calendar,
+        };
         match options {
-            DateTimeFormatOptions::Length(bag) => {
-                Self::pattern_for_length_bag(data_provider, locale, bag)
-            }
-            DateTimeFormatOptions::Components(bag) => {
-                Self::patterns_for_components_bag(data_provider, locale, bag)
-            }
+            DateTimeFormatOptions::Length(bag) => selector.pattern_for_length_bag(bag),
+            DateTimeFormatOptions::Components(bag) => selector.patterns_for_components_bag(bag),
         }
     }
 
     /// Determine the appropriate `Pattern` for a given `options::Length` bag.
     fn pattern_for_length_bag(
-        data_provider: &D,
-        locale: &Locale,
+        self,
         length: &length::Bag,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         match (length.date, length.time) {
             (None, None) => Ok(DataPayload::from_owned(PatternPluralsV1(
                 PatternPlurals::default(),
             ))),
-            (None, Some(time_length)) => Self::pattern_for_time_length(
-                data_provider,
-                locale,
-                time_length,
-                length.preferences,
-            ),
-            (Some(date_length), None) => {
-                Self::pattern_for_date_length(data_provider, locale, date_length)
+            (None, Some(time_length)) => {
+                self.pattern_for_time_length(time_length, length.preferences)
             }
-            (Some(date_length), Some(time_length)) => Self::pattern_for_datetime_length(
-                data_provider,
-                locale,
-                date_length,
-                time_length,
-                length.preferences,
-            ),
+            (Some(date_length), None) => self.pattern_for_date_length(date_length),
+            (Some(date_length), Some(time_length)) => {
+                self.pattern_for_datetime_length(date_length, time_length, length.preferences)
+            }
         }
     }
 
     /// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
     fn pattern_for_date_length(
-        data_provider: &D,
-        locale: &Locale,
+        self,
         length: length::Date,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = patterns_data_payload(data_provider, locale)?;
+        let patterns_data = self.patterns_data_payload()?;
         Ok(
             patterns_data.map_project_with_capture(length, |data, length, _| {
                 let pattern = pattern_for_date_length_inner(data, length);
@@ -176,12 +137,11 @@ where
     /// If a preference for an hour cycle is set, it will look look up a pattern in the time_h11_12 or
     /// time_h23_h24 provider data, and then manually modify the symbol in the pattern if needed.
     fn pattern_for_time_length(
-        data_provider: &D,
-        locale: &Locale,
+        self,
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = patterns_data_payload(data_provider, locale)?;
+        let patterns_data = self.patterns_data_payload()?;
         Ok(patterns_data.map_project_with_capture(
             (length, preferences),
             |data, (length, preferences), _| {
@@ -194,13 +154,12 @@ where
     /// Determine the appropriate `Pattern` for a given `options::length::Date` and
     /// `options::length::Time` bag.
     fn pattern_for_datetime_length(
-        data_provider: &D,
-        locale: &Locale,
+        self,
         date_length: length::Date,
         time_length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = patterns_data_payload(data_provider, locale)?;
+        let patterns_data = self.patterns_data_payload()?;
         patterns_data.try_map_project_with_capture(
             (date_length, time_length, preferences),
             |data, (date_length, time_length, preferences), _| {
@@ -223,12 +182,11 @@ where
 
     /// Determine the appropriate `PatternPlurals` for a given `options::components::Bag`.
     fn patterns_for_components_bag(
-        data_provider: &D,
-        locale: &Locale,
+        self,
         components: &components::Bag,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let skeletons_data = skeleton_data_payload(data_provider, locale)?;
-        let patterns_data = patterns_data_payload(data_provider, locale)?;
+        let skeletons_data = self.skeleton_data_payload()?;
+        let patterns_data = self.patterns_data_payload()?;
         // Not all skeletons are currently supported.
         let requested_fields = components.to_vec_fields();
         let patterns = match skeleton::create_best_pattern_for_fields(
@@ -246,6 +204,37 @@ where
         Ok(DataPayload::from_owned(PatternPluralsV1(
             patterns.into_owned(),
         )))
+    }
+    fn patterns_data_payload(self) -> Result<DataPayload<DatePatternsV1Marker>> {
+        let data = self
+            .data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::DATE_PATTERNS_V1,
+                    options: ResourceOptions {
+                        variant: Some(self.calendar.into()),
+                        langid: Some(self.locale.clone().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+        Ok(data)
+    }
+
+    fn skeleton_data_payload(self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
+        let data = self
+            .data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::DATE_SKELETON_PATTERNS_V1,
+                    options: ResourceOptions {
+                        variant: Some(self.calendar.into()),
+                        langid: Some(self.locale.clone().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+        Ok(data)
     }
 }
 

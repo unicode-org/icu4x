@@ -13,6 +13,7 @@ used to quickly format any date and time provided.
 ```rust
 use icu::locid::Locale;
 use icu::locid::macros::langid;
+use icu::calendar::Gregorian;
 use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
 
 let provider = icu_testdata::get_provider();
@@ -26,7 +27,7 @@ let options = DateTimeFormatOptions::Length(length::Bag {
     ..Default::default()
 });
 
-let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
     .expect("Failed to create DateTimeFormat instance.");
 
 
@@ -43,6 +44,7 @@ convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 ```rust
 use icu::locid::Locale;
 use icu::locid::macros::langid;
+use icu::calendar::Gregorian;
 use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 let options = length::Bag {
     date: Some(length::Date::Medium),
@@ -50,7 +52,7 @@ let options = length::Bag {
     ..Default::default()
 }.into();
 
-let dtf = DateTimeFormat::try_new(locale, &provider, &options);
+let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
 ```
 
 At the moment, the crate provides only options using the [`Length`] bag, but in the future,

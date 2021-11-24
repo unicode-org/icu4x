@@ -6,20 +6,17 @@
 //! Central to this is the [`DateTimeFormat`].
 
 use crate::{
-    format::datetime,
     options::DateTimeFormatOptions,
-    provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    raw,
 };
 use alloc::string::String;
+use core::marker::PhantomData;
 use icu_locid::Locale;
-use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::provider::PluralRulesV1Marker;
 use icu_provider::prelude::*;
 
-use crate::{
-    date::DateTimeInput, pattern::runtime::PatternPlurals, provider, DateTimeFormatError,
-    FormattedDateTime,
-};
+use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDateTime};
 
 /// [`DateTimeFormat`] is the main structure of the [`icu_datetime`] component.
 /// When constructed, it uses data from the [`DataProvider`], selected [`Locale`] and provided options to
@@ -37,7 +34,7 @@ use crate::{
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
 /// use icu::datetime::{DateTimeFormat, options::length};
-/// use icu::calendar::DateTime;
+/// use icu::calendar::{DateTime, Gregorian};
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let locale: Locale = langid!("en").into();
@@ -49,7 +46,7 @@ use crate::{
 ///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
-/// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
+/// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -61,14 +58,9 @@ use crate::{
 ///
 /// This model replicates that of `ICU` and `ECMA402`. In the future this will become even more pronounced
 /// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
-pub struct DateTimeFormat {
-    pub(super) locale: Locale,
-    pub(super) patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub(super) symbols: Option<DataPayload<DateSymbolsV1Marker>>,
-    pub(super) ordinal_rules: Option<PluralRules>,
-}
+pub struct DateTimeFormat<C>(pub(super) raw::DateTimeFormat, PhantomData<C>);
 
-impl DateTimeFormat {
+impl<C: CldrCalendar> DateTimeFormat<C> {
     /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
@@ -77,6 +69,7 @@ impl DateTimeFormat {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
@@ -86,10 +79,11 @@ impl DateTimeFormat {
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options);
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
+    #[inline]
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
@@ -101,74 +95,10 @@ impl DateTimeFormat {
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<PluralRulesV1Marker>,
     {
-        let locale = locale.into();
-
-        let patterns =
-            provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
-
-        let requires_data = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
-
-        let langid: icu_locid::LanguageIdentifier = locale.clone().into();
-
-        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new(
-                locale.clone(),
-                data_provider,
-                PluralRuleType::Ordinal,
-            )?)
-        } else {
-            None
-        };
-
-        let symbols_data = if requires_data {
-            Some(
-                data_provider
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: provider::key::DATE_SYMBOLS_V1,
-                            options: ResourceOptions {
-                                variant: Some("gregory".into()),
-                                langid: Some(langid),
-                            },
-                        },
-                    })?
-                    .take_payload()?,
-            )
-        } else {
-            None
-        };
-
-        Ok(Self::new(locale, patterns, symbols_data, ordinal_rules))
-    }
-
-    /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
-    ///
-    /// By contrast, the public [`DateTimeFormat::try_new()`] function will return an error if there are
-    /// time-zone symbols in the pattern.
-    ///
-    /// This function is only `pub(super)` (not `pub`) because it is needed by [`ZonedDateTimeFormat`]
-    /// to create a [`DateTimeFormat`] for use internally. [`ZonedDateTimeFormat`] maintains
-    /// the invariant that [`DateTimeFormat`] will not be used to format the time zone.
-    ///
-    /// Creating a [`DateTimeFormat`] with time-zone symbols should always be an error
-    /// in public contexts.
-    ///
-    /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
-    pub(super) fn new<T: Into<Locale>>(
-        locale: T,
-        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-        symbols: Option<DataPayload<DateSymbolsV1Marker>>,
-        ordinal_rules: Option<PluralRules>,
-    ) -> Self {
-        let locale = locale.into();
-
-        Self {
-            locale,
-            patterns,
-            symbols,
-            ordinal_rules,
-        }
+        Ok(Self(
+            raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,
+            PhantomData,
+        ))
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
@@ -180,12 +110,12 @@ impl DateTimeFormat {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
@@ -199,17 +129,12 @@ impl DateTimeFormat {
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
+    #[inline]
     pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
     where
-        T: DateTimeInput,
+        T: DateTimeInput<Calendar = C>,
     {
-        FormattedDateTime {
-            patterns: &self.patterns,
-            symbols: self.symbols.as_ref().map(|s| s.get()),
-            datetime: value,
-            locale: &self.locale,
-            ordinal_rules: self.ordinal_rules.as_ref(),
-        }
+        self.0.format(value)
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
@@ -221,12 +146,12 @@ impl DateTimeFormat {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
@@ -238,20 +163,13 @@ impl DateTimeFormat {
     ///
     /// let _ = format!("Date: {}", buffer);
     /// ```
+    #[inline]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput,
+        value: &impl DateTimeInput<Calendar = C>,
     ) -> core::fmt::Result {
-        datetime::write_pattern_plurals(
-            &self.patterns.get().0,
-            self.symbols.as_ref().map(|s| s.get()),
-            value,
-            self.ordinal_rules.as_ref(),
-            &self.locale,
-            w,
-        )
-        .map_err(|_| core::fmt::Error)
+        self.0.format_to_write(w, value)
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
@@ -262,12 +180,12 @@ impl DateTimeFormat {
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime_from_integers(2020, 9, 1, 12, 34, 28)
@@ -275,10 +193,8 @@ impl DateTimeFormat {
     ///
     /// let _ = dtf.format_to_string(&datetime);
     /// ```
-    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
-        let mut s = String::new();
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
-        s
+    #[inline]
+    pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
+        self.0.format_to_string(value)
     }
 }

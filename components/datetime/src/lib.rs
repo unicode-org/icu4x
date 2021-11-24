@@ -17,6 +17,7 @@
 //! ```
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
+//! use icu::calendar::Gregorian;
 //! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
 //!
 //! let provider = icu_testdata::get_provider();
@@ -30,7 +31,7 @@
 //!     ..Default::default()
 //! });
 //!
-//! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+//! let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //!
@@ -47,6 +48,7 @@
 //! ```
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
+//! use icu::calendar::Gregorian;
 //! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale: Locale = langid!("en").into();
@@ -56,7 +58,7 @@
 //!     ..Default::default()
 //! }.into();
 //!
-//! let dtf = DateTimeFormat::try_new(locale, &provider, &options);
+//! let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Length`] bag, but in the future,
@@ -76,6 +78,7 @@
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 extern crate alloc;
 
+mod calendar;
 pub mod date;
 pub mod datetime;
 mod error;
@@ -86,6 +89,7 @@ pub mod options;
 #[doc(hidden)]
 pub mod pattern;
 pub mod provider;
+pub(crate) mod raw;
 #[doc(hidden)]
 pub mod skeleton;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
@@ -93,6 +97,7 @@ pub mod time_zone;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod zoned_datetime;
 
+pub use calendar::CldrCalendar;
 pub use datetime::DateTimeFormat;
 pub use error::DateTimeFormatError;
 pub use format::datetime::FormattedDateTime;

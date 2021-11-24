@@ -3,25 +3,20 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
-use icu_locid::{LanguageIdentifier, Locale};
-use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
-use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
+use core::marker::PhantomData;
+use icu_locid::Locale;
+use icu_plurals::provider::PluralRulesV1Marker;
+use icu_provider::DataProvider;
 
 use crate::{
     date::ZonedDateTimeInput,
-    datetime::DateTimeFormat,
-    format::{
-        datetime,
-        zoned_datetime::{self, FormattedZonedDateTime},
-    },
+    format::zoned_datetime::FormattedZonedDateTime,
     options::DateTimeFormatOptions,
-    pattern::runtime::PatternPlurals,
     provider::{
         self,
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     },
-    time_zone::TimeZoneFormat,
-    DateTimeFormatError,
+    raw, CldrCalendar, DateTimeFormatError,
 };
 
 /// The composition of [`DateTimeFormat`] and [`TimeZoneFormat`].
@@ -42,6 +37,7 @@ use crate::{
 /// ```
 /// use icu::locid::Locale;
 /// use icu::locid::macros::langid;
+/// use icu::calendar::Gregorian;
 /// use icu::datetime::{ZonedDateTimeFormat, options::length};
 /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
@@ -57,7 +53,7 @@ use crate::{
 ///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
-/// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
+/// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -67,12 +63,9 @@ use crate::{
 ///
 /// let value = zdtf.format_to_string(&zoned_datetime);
 /// ```
-pub struct ZonedDateTimeFormat {
-    pub(super) datetime_format: DateTimeFormat,
-    pub(super) time_zone_format: TimeZoneFormat,
-}
+pub struct ZonedDateTimeFormat<C>(raw::ZonedDateTimeFormat, PhantomData<C>);
 
-impl ZonedDateTimeFormat {
+impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
     /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
@@ -82,6 +75,7 @@ impl ZonedDateTimeFormat {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -94,10 +88,11 @@ impl ZonedDateTimeFormat {
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options);
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options);
     ///
     /// assert_eq!(zdtf.is_ok(), true);
     /// ```
+    #[inline]
     pub fn try_new<L, DP, ZP, PP>(
         locale: L,
         date_provider: &DP,
@@ -119,57 +114,17 @@ impl ZonedDateTimeFormat {
             + ?Sized,
         PP: DataProvider<PluralRulesV1Marker>,
     {
-        let locale = locale.into();
-        let langid: LanguageIdentifier = locale.clone().into();
-
-        let patterns =
-            provider::date_time::PatternSelector::for_options(date_provider, &locale, options)?;
-
-        let requires_data = datetime::analyze_patterns(&patterns.get().0, true)
-            .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
-
-        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new(
-                locale.clone(),
+        Ok(Self(
+            raw::ZonedDateTimeFormat::try_new(
+                locale,
+                date_provider,
+                zone_provider,
                 plural_provider,
-                PluralRuleType::Ordinal,
-            )?)
-        } else {
-            None
-        };
-
-        let symbols_data = if requires_data {
-            Some(
-                date_provider
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: provider::key::DATE_SYMBOLS_V1,
-                            options: ResourceOptions {
-                                variant: Some("gregory".into()),
-                                langid: Some(langid),
-                            },
-                        },
-                    })?
-                    .take_payload()?,
-            )
-        } else {
-            None
-        };
-
-        let datetime_format = DateTimeFormat::new(locale, patterns, symbols_data, ordinal_rules);
-        let time_zone_format = TimeZoneFormat::try_new(
-            datetime_format.locale.clone(),
-            datetime_format
-                // Only dates have plural variants so we can use any of the patterns for the time segment.
-                .patterns
-                .clone(),
-            zone_provider,
-        )?;
-
-        Ok(Self {
-            datetime_format,
-            time_zone_format,
-        })
+                options,
+                C::IDENTIFIER,
+            )?,
+            PhantomData,
+        ))
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
@@ -180,6 +135,7 @@ impl ZonedDateTimeFormat {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -188,7 +144,7 @@ impl ZonedDateTimeFormat {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options)
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options)
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -203,14 +159,12 @@ impl ZonedDateTimeFormat {
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but [`FormattedZonedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
+    #[inline]
     pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
     where
         T: ZonedDateTimeInput,
     {
-        FormattedZonedDateTime {
-            zoned_datetime_format: self,
-            zoned_datetime: value,
-        }
+        self.0.format(value)
     }
 
     /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
@@ -221,6 +175,7 @@ impl ZonedDateTimeFormat {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -229,7 +184,7 @@ impl ZonedDateTimeFormat {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -242,12 +197,13 @@ impl ZonedDateTimeFormat {
     ///
     /// let _ = format!("Date: {}", buffer);
     /// ```
+    #[inline]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
         value: &impl ZonedDateTimeInput,
     ) -> core::fmt::Result {
-        zoned_datetime::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
+        self.0.format_to_write(w, value)
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
@@ -257,6 +213,7 @@ impl ZonedDateTimeFormat {
     /// ```
     /// use icu::locid::Locale;
     /// use icu::locid::macros::langid;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
@@ -265,7 +222,7 @@ impl ZonedDateTimeFormat {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -274,10 +231,8 @@ impl ZonedDateTimeFormat {
     ///
     /// let _ = zdtf.format_to_string(&zoned_datetime);
     /// ```
+    #[inline]
     pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
-        let mut s = String::new();
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
-        s
+        self.0.format_to_string(value)
     }
 }
