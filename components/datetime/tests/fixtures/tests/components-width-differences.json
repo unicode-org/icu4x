@@ -16,6 +16,23 @@
         }
     },
     {
+        "description": "Formatting eras",
+        "input": {
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "era": "short"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "2020 AD"
+            }
+        }
+    },
+    {
         "description": "Enumerate month lengths which may need expansion: yMd => M/d/y",
         "input": {
             "value": "2020-01-07T08:25:07.000",
