@@ -435,6 +435,13 @@ fn test_lengths_with_preferences() {
     test_fixture("lengths_with_preferences");
 }
 
+/// Tests simple component::Bag.
+#[test]
+fn test_components() {
+    // components/datetime/tests/fixtures/tests/components.json
+    test_fixture("components");
+}
+
 /// Tests component::Bag configurations that have exact matches to CLDR skeletons.
 #[test]
 fn test_components_exact_matches() {
