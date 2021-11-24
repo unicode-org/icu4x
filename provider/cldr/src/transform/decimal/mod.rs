@@ -107,7 +107,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
-        let numbers = match self.cldr_numbers_data.get(&langid) {
+        let numbers = match self.cldr_numbers_data.get(langid) {
             Some(v) => &v.numbers,
             None => return Err(DataError::MissingResourceOptions(req.clone())),
         };

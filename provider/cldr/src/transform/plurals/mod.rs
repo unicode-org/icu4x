@@ -85,7 +85,7 @@ impl DataProvider<PluralRulesV1Marker> for PluralsProvider {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let langid = req.try_langid()?;
-        let r = match cldr_rules.0.get(&langid) {
+        let r = match cldr_rules.0.get(langid) {
             Some(v) => v,
             None => return Err(req.clone().into()),
         };

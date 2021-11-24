@@ -56,7 +56,7 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
     ) -> Result<DataResponse<ListFormatterPatternsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
-        let data = match self.data.get(&langid) {
+        let data = match self.data.get(langid) {
             Some(v) => &v.list_patterns,
             None => return Err(DataError::MissingResourceOptions(req.clone())),
         };
