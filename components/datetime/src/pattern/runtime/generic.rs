@@ -72,7 +72,7 @@ impl<'data> GenericPattern<'data> {
 impl Default for GenericPattern<'_> {
     fn default() -> Self {
         Self {
-            items: ZeroVec::clone_from_slice(&[]),
+            items: ZeroVec::new(),
         }
     }
 }
@@ -80,7 +80,7 @@ impl Default for GenericPattern<'_> {
 impl From<&reference::GenericPattern> for GenericPattern<'_> {
     fn from(input: &reference::GenericPattern) -> Self {
         Self {
-            items: ZeroVec::clone_from_slice(&input.items),
+            items: ZeroVec::alloc_from_slice(&input.items),
         }
     }
 }

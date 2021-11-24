@@ -178,7 +178,7 @@ impl<'data> UnicodeSet<'data> {
     /// assert!(!&unicodesets.iter().any(|set| set.contains_u32(0x40000)));
     /// ```
     pub fn clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, UnicodeSetError> {
-        let inv_list_zv: ZeroVec<u32> = ZeroVec::clone_from_slice(inv_list);
+        let inv_list_zv: ZeroVec<u32> = ZeroVec::alloc_from_slice(inv_list);
         UnicodeSet::from_inversion_list(inv_list_zv)
     }
 

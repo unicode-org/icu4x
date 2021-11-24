@@ -88,7 +88,7 @@ impl From<&reference::ast::Rule> for Rule<'_> {
                     polarity: relation.operator.into(),
                     operand: relation.expression.operand.into(),
                     modulo: get_modulo(&relation.expression.modulus),
-                    range_list: ZeroVec::clone_from_slice(&range_list),
+                    range_list: ZeroVec::alloc_from_slice(&range_list),
                 })
             }
         }
@@ -632,7 +632,7 @@ mod test {
             polarity: Polarity::Positive,
             operand: Operand::N,
             modulo: 0,
-            range_list: ZeroVec::clone_from_slice(&[rov]),
+            range_list: ZeroVec::alloc_from_slice(&[rov]),
         };
         let relations = alloc::vec![relation];
         let vzv = VarZeroVec::from(relations.as_slice());

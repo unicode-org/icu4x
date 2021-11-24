@@ -60,7 +60,7 @@ pub enum ZeroVec<'a, T>
 where
     T: AsULE + ?Sized,
 {
-    /// An owned `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::clone_from_slice()`]
+    /// An owned `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::alloc_from_slice()`]
     /// or by calling [`ZeroVec::to_mut()`]/[`ZeroVec::for_each_mut()`]/etc on [`ZeroVec::Borrowed`].
     Owned(Vec<T::ULE>),
 
@@ -190,7 +190,7 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
-    /// let zerovec = ZeroVec::clone_from_slice(nums);
+    /// let zerovec = ZeroVec::alloc_from_slice(nums);
     ///
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
@@ -275,7 +275,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let nums: &[u16] = &[211, 281, 421, 461];
-    /// let zerovec = ZeroVec::clone_from_slice(nums);
+    /// let zerovec = ZeroVec::alloc_from_slice(nums);
     /// let zv_bytes = zerovec.into_bytes();
     ///
     /// assert!(matches!(zv_bytes, ZeroVec::Owned(_)));
@@ -323,7 +323,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let chars: &[char] = &['🍿', '🙉'];
-    /// let zv_char = ZeroVec::clone_from_slice(chars);
+    /// let zv_char = ZeroVec::alloc_from_slice(chars);
     /// let zv_u32: ZeroVec<u32> = zv_char.try_into_converted()
     ///     .expect("length is divisible");
     ///
@@ -457,13 +457,13 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
-    /// let zerovec = ZeroVec::clone_from_slice(nums);
+    /// let zerovec = ZeroVec::alloc_from_slice(nums);
     ///
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
     #[inline]
-    pub fn clone_from_slice(other: &[T]) -> Self {
+    pub fn alloc_from_slice(other: &[T]) -> Self {
         Self::Owned(other.iter().copied().map(T::as_unaligned).collect())
     }
 
@@ -475,7 +475,7 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let nums: &[u16] = &[211, 281, 421, 461];
-    /// let vec: Vec<u16> = ZeroVec::clone_from_slice(nums).to_vec();
+    /// let vec: Vec<u16> = ZeroVec::alloc_from_slice(nums).to_vec();
     ///
     /// assert_eq!(nums, vec.as_slice());
     /// ```
@@ -538,7 +538,7 @@ where
     /// ```
     #[inline]
     pub fn from_slice(slice: &'a [T]) -> Self {
-        Self::try_from_slice(slice).unwrap_or_else(|| Self::clone_from_slice(slice))
+        Self::try_from_slice(slice).unwrap_or_else(|| Self::alloc_from_slice(slice))
     }
 }
 

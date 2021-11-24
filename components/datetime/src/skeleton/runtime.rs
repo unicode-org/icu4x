@@ -20,7 +20,7 @@ impl<'data> Skeleton<'data> {
 impl From<reference::Skeleton> for Skeleton<'_> {
     fn from(input: reference::Skeleton) -> Self {
         let fields = input.fields_iter().copied().collect::<Vec<_>>();
-        Self(ZeroVec::clone_from_slice(&fields))
+        Self(ZeroVec::alloc_from_slice(&fields))
     }
 }
 
