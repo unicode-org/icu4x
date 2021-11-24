@@ -142,5 +142,16 @@
       }
     },
     "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "be": "буддийская эра"
+    },
+    "abbr": {
+      "be": "BE"
+    },
+    "narrow": {
+      "be": "бэ"
+    }
   }
 }

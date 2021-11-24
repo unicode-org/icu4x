@@ -1,0 +1,5351 @@
+--- cldr-cal-buddhist-full/main/ar/ca-buddhist.json	2021-11-19 12:34:54.970618693 -0800
++++ cldr-dates-full/main/ar/ca-gregorian.json	2021-11-17 14:17:17.220918809 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "ar"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "يناير",
+                   "2": "فبراير",
+                   "3": "مارس",
+                   "4": "أبريل",
+                   "5": "مايو",
+@@ -289,97 +289,124 @@
+                   "evening1": "مساءً",
+                   "night1": "منتصف الليل",
+                   "night2": "ليلاً"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "التقويم البوذي"
++                "0": "قبل الميلاد",
++                "0-alt-variant": "قبل الحقبة الحالية",
++                "1": "ميلادي",
++                "1-alt-variant": "بعد الميلاد"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "ق.م",
++                "0-alt-variant": "ق. م",
++                "1": "م",
++                "1-alt-variant": "ب.م"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "ق.م",
++                "0-alt-variant": "ق. م",
++                "1": "م",
++                "1-alt-variant": "ب.م"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE، d MMMM y G",
+-              "long": "d MMMM y G",
+-              "medium": "dd‏/MM‏/y G",
+-              "short": "d‏/M‏/y GGGGG"
++              "full": "EEEE، d MMMM y",
++              "long": "d MMMM y",
++              "medium": "dd‏/MM‏/y",
++              "short": "d‏/M‏/y"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMdd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMdd",
++              "short": "yMd"
+             },
+             "timeFormats": {
+               "full": "h:mm:ss a zzzz",
+               "long": "h:mm:ss a z",
+               "medium": "h:mm:ss a",
+               "short": "h:mm a"
+             },
+             "timeSkeletons": {
+               "full": "ahmmsszzzz",
+               "long": "ahmmssz",
+               "medium": "ahmmss",
+               "short": "ahmm"
+             },
+             "dateTimeFormats": {
+               "full": "{1} في {0}",
+               "long": "{1} في {0}",
+-              "medium": "{1} في {0}",
+-              "short": "{1} في {0}",
++              "medium": "{1}, {0}",
++              "short": "{1}, {0}",
+               "availableFormats": {
+                 "Bh": "h B",
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "E h:mm B",
+                 "EBhms": "E h:mm:ss B",
+                 "Ed": "E، d",
+                 "Ehm": "E h:mm a",
+                 "EHm": "E HH:mm",
+                 "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "y G",
+-                "GyMd": "d‏/M‏/y G",
++                "GyMd": "dd-MM-y GGGGG",
+                 "GyMMM": "MMM y G",
+                 "GyMMMd": "d MMM y G",
+                 "GyMMMEd": "E، d MMM y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d/‏M",
+                 "MEd": "E، d/‏M",
++                "MMdd": "dd‏/MM",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "E، d MMM",
+                 "MMMMd": "d MMMM",
++                "MMMMEd": "E، d MMMM",
++                "MMMMW-count-zero": "الأسبوع W من MMMM",
++                "MMMMW-count-one": "الأسبوع W من MMMM",
++                "MMMMW-count-two": "الأسبوع W من MMMM",
++                "MMMMW-count-few": "الأسبوع W من MMMM",
++                "MMMMW-count-many": "الأسبوع W من MMMM",
++                "MMMMW-count-other": "الأسبوع W من MMMM",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "M‏/y G",
+-                "yyyyMd": "d‏/M‏/y G",
+-                "yyyyMEd": "E، d/‏M/‏y G",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "d MMM y G",
+-                "yyyyMMMEd": "E، d MMM y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "M‏/y",
++                "yMd": "d‏/M‏/y",
++                "yMEd": "E، d/‏M/‏y",
++                "yMM": "MM‏/y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM y",
++                "yMMMEd": "E، d MMM y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-zero": "الأسبوع w من سنة Y",
++                "yw-count-one": "الأسبوع w من سنة Y",
++                "yw-count-two": "الأسبوع w من سنة Y",
++                "yw-count-few": "الأسبوع w من سنة Y",
++                "yw-count-many": "الأسبوع w من سنة Y",
++                "yw-count-other": "الأسبوع w من سنة Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -400,34 +427,34 @@
+                   "h": "h:mm–h:mm B",
+                   "m": "h:mm–h:mm B"
+                 },
+                 "d": {
+                   "d": "d–d"
+                 },
+                 "Gy": {
+                   "G": "y G – y G",
+-                  "y": "y–y G"
++                  "y": "y – y G"
+                 },
+                 "GyM": {
+                   "G": "MM-y GGGG – MM-y GGGG",
+                   "M": "MM-y – MM-y GGGG",
+                   "y": "MM-y – MM-y GGGG"
+                 },
+                 "GyMd": {
+-                  "d": "dd-MM-y – dd-MM-y GGGG",
++                  "d": "d-MM-y – d-MM-y GGGG",
+                   "G": "dd-MM-y GGGG – dd-MM-y GGGG",
+                   "M": "dd-MM-y – dd-MM-y GGGG",
+                   "y": "dd-MM-y – dd-MM-y GGGG"
+                 },
+                 "GyMEd": {
+                   "d": "E, dd-MM-y – E, dd-MM-y GGGG",
+                   "G": "E, dd-MM-y GGGG – E, dd-MM-y GGGG",
+                   "M": "E, dd-MM-y – E, dd-MM-y GGGG",
+-                  "y": "E, dd-MM-y – E,dd-MM-y GGGG"
++                  "y": "E, dd-MM-y – E, dd-MM-y GGGG"
+                 },
+                 "GyMMM": {
+                   "G": "MMM y G – MMM y G",
+                   "M": "MMM – MMM y G",
+                   "y": "MMM y – MMM y G"
+                 },
+                 "GyMMMd": {
+                   "d": "d–d MMM y G",
+@@ -473,17 +500,17 @@
+                 "Hv": {
+                   "H": "HH–HH v"
+                 },
+                 "M": {
+                   "M": "M–M"
+                 },
+                 "Md": {
+                   "d": "d-M – d-M",
+-                  "M": "d-M – d-M"
++                  "M": "M/d – M/d"
+                 },
+                 "MEd": {
+                   "d": "E، d/‏M –‏ E، d/‏M",
+                   "M": "E، d/‏M – E، d/‏M"
+                 },
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+@@ -494,49 +521,49 @@
+                 "MMMEd": {
+                   "d": "E، d – E، d MMM",
+                   "M": "E، d MMM – E، d MMM"
+                 },
+                 "MMMM": {
+                   "M": "LLLL–LLLL"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M‏/y – M‏/y G",
+-                  "y": "M‏/y – M‏/y G"
++                  "M": "M‏/y – M‏/y",
++                  "y": "M‏/y – M‏/y"
+                 },
+                 "yMd": {
+-                  "d": "d‏/M‏/y – d‏/M‏/y G",
+-                  "M": "d‏/M‏/y – d‏/M‏/y G",
+-                  "y": "d‏/M‏/y – d‏/M‏/y G"
++                  "d": "d‏/M‏/y – d‏/M‏/y",
++                  "M": "d‏/M‏/y – d‏/M‏/y",
++                  "y": "d‏/M‏/y – d‏/M‏/y"
+                 },
+                 "yMEd": {
+-                  "d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y G",
+-                  "M": "E، d‏/M‏/y – E، d‏/M‏/y G",
+-                  "y": "E، d‏/M‏/y – E، d‏/M‏/y G"
++                  "d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y",
++                  "M": "E، d‏/M‏/y – E، d‏/M‏/y",
++                  "y": "E، d‏/M‏/y – E، d‏/M‏/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM – MMM y G",
+-                  "y": "MMM، y – MMM y G"
++                  "M": "MMM – MMM، y",
++                  "y": "MMM، y – MMM، y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d MMM y G",
+-                  "M": "d MMM – d MMM y G",
+-                  "y": "d MMM y – d MMM y G"
++                  "d": "d–d MMM، y",
++                  "M": "d MMM – d MMM، y",
++                  "y": "d MMM، y – d MMM، y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E، d – E، d MMM y G",
+-                  "M": "E، d MMM – E، d MMM y G",
+-                  "y": "E، d MMM y – E، d MMM y G"
++                  "d": "E، d – E، d MMM، y",
++                  "M": "E، d MMM – E، d MMM، y",
++                  "y": "E، d MMM، y – E، d MMM، y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM – MMMM، y",
++                  "y": "MMMM، y – MMMM، y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/ar-EG/ca-buddhist.json	2021-11-19 12:34:54.970618693 -0800
++++ cldr-dates-full/main/ar-EG/ca-gregorian.json	2021-11-17 14:17:17.260919015 -0800
+@@ -5,17 +5,17 @@
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "ar",
+         "territory": "EG"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "يناير",
+                   "2": "فبراير",
+                   "3": "مارس",
+                   "4": "أبريل",
+                   "5": "مايو",
+@@ -290,97 +290,124 @@
+                   "evening1": "مساءً",
+                   "night1": "منتصف الليل",
+                   "night2": "ليلاً"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "التقويم البوذي"
++                "0": "قبل الميلاد",
++                "0-alt-variant": "قبل الحقبة الحالية",
++                "1": "ميلادي",
++                "1-alt-variant": "بعد الميلاد"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "ق.م",
++                "0-alt-variant": "ق. م",
++                "1": "م",
++                "1-alt-variant": "ب.م"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "ق.م",
++                "0-alt-variant": "ق. م",
++                "1": "م",
++                "1-alt-variant": "ب.م"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE، d MMMM y G",
+-              "long": "d MMMM y G",
+-              "medium": "dd‏/MM‏/y G",
+-              "short": "d‏/M‏/y GGGGG"
++              "full": "EEEE، d MMMM y",
++              "long": "d MMMM y",
++              "medium": "dd‏/MM‏/y",
++              "short": "d‏/M‏/y"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMdd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMdd",
++              "short": "yMd"
+             },
+             "timeFormats": {
+               "full": "h:mm:ss a zzzz",
+               "long": "h:mm:ss a z",
+               "medium": "h:mm:ss a",
+               "short": "h:mm a"
+             },
+             "timeSkeletons": {
+               "full": "ahmmsszzzz",
+               "long": "ahmmssz",
+               "medium": "ahmmss",
+               "short": "ahmm"
+             },
+             "dateTimeFormats": {
+               "full": "{1} في {0}",
+               "long": "{1} في {0}",
+-              "medium": "{1} في {0}",
+-              "short": "{1} في {0}",
++              "medium": "{1}, {0}",
++              "short": "{1}, {0}",
+               "availableFormats": {
+                 "Bh": "h B",
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "E h:mm B",
+                 "EBhms": "E h:mm:ss B",
+                 "Ed": "E، d",
+                 "Ehm": "E h:mm a",
+                 "EHm": "E HH:mm",
+                 "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "y G",
+-                "GyMd": "d‏/M‏/y G",
++                "GyMd": "dd-MM-y GGGGG",
+                 "GyMMM": "MMM y G",
+                 "GyMMMd": "d MMM y G",
+                 "GyMMMEd": "E، d MMM y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d/‏M",
+                 "MEd": "E، d/‏M",
++                "MMdd": "dd‏/MM",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "E، d MMM",
+                 "MMMMd": "d MMMM",
++                "MMMMEd": "E، d MMMM",
++                "MMMMW-count-zero": "الأسبوع W من MMMM",
++                "MMMMW-count-one": "الأسبوع W من MMMM",
++                "MMMMW-count-two": "الأسبوع W من MMMM",
++                "MMMMW-count-few": "الأسبوع W من MMMM",
++                "MMMMW-count-many": "الأسبوع W من MMMM",
++                "MMMMW-count-other": "الأسبوع W من MMMM",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "M‏/y G",
+-                "yyyyMd": "d‏/M‏/y G",
+-                "yyyyMEd": "E، d/‏M/‏y G",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "d MMM y G",
+-                "yyyyMMMEd": "E، d MMM y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "M‏/y",
++                "yMd": "d‏/M‏/y",
++                "yMEd": "E، d/‏M/‏y",
++                "yMM": "MM‏/y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM y",
++                "yMMMEd": "E، d MMM y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-zero": "الأسبوع w من سنة Y",
++                "yw-count-one": "الأسبوع w من سنة Y",
++                "yw-count-two": "الأسبوع w من سنة Y",
++                "yw-count-few": "الأسبوع w من سنة Y",
++                "yw-count-many": "الأسبوع w من سنة Y",
++                "yw-count-other": "الأسبوع w من سنة Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -401,34 +428,34 @@
+                   "h": "h:mm–h:mm B",
+                   "m": "h:mm–h:mm B"
+                 },
+                 "d": {
+                   "d": "d–d"
+                 },
+                 "Gy": {
+                   "G": "y G – y G",
+-                  "y": "y–y G"
++                  "y": "y – y G"
+                 },
+                 "GyM": {
+                   "G": "MM-y GGGG – MM-y GGGG",
+                   "M": "MM-y – MM-y GGGG",
+                   "y": "MM-y – MM-y GGGG"
+                 },
+                 "GyMd": {
+-                  "d": "dd-MM-y – dd-MM-y GGGG",
++                  "d": "d-MM-y – d-MM-y GGGG",
+                   "G": "dd-MM-y GGGG – dd-MM-y GGGG",
+                   "M": "dd-MM-y – dd-MM-y GGGG",
+                   "y": "dd-MM-y – dd-MM-y GGGG"
+                 },
+                 "GyMEd": {
+                   "d": "E, dd-MM-y – E, dd-MM-y GGGG",
+                   "G": "E, dd-MM-y GGGG – E, dd-MM-y GGGG",
+                   "M": "E, dd-MM-y – E, dd-MM-y GGGG",
+-                  "y": "E, dd-MM-y – E,dd-MM-y GGGG"
++                  "y": "E, dd-MM-y – E, dd-MM-y GGGG"
+                 },
+                 "GyMMM": {
+                   "G": "MMM y G – MMM y G",
+                   "M": "MMM – MMM y G",
+                   "y": "MMM y – MMM y G"
+                 },
+                 "GyMMMd": {
+                   "d": "d–d MMM y G",
+@@ -474,17 +501,17 @@
+                 "Hv": {
+                   "H": "HH–HH v"
+                 },
+                 "M": {
+                   "M": "M–M"
+                 },
+                 "Md": {
+                   "d": "d-M – d-M",
+-                  "M": "d-M – d-M"
++                  "M": "M/d – M/d"
+                 },
+                 "MEd": {
+                   "d": "E، d/‏M –‏ E، d/‏M",
+                   "M": "E، d/‏M – E، d/‏M"
+                 },
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+@@ -495,49 +522,49 @@
+                 "MMMEd": {
+                   "d": "E، d – E، d MMM",
+                   "M": "E، d MMM – E، d MMM"
+                 },
+                 "MMMM": {
+                   "M": "LLLL–LLLL"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M‏/y – M‏/y G",
+-                  "y": "M‏/y – M‏/y G"
++                  "M": "M‏/y – M‏/y",
++                  "y": "M‏/y – M‏/y"
+                 },
+                 "yMd": {
+-                  "d": "d‏/M‏/y – d‏/M‏/y G",
+-                  "M": "d‏/M‏/y – d‏/M‏/y G",
+-                  "y": "d‏/M‏/y – d‏/M‏/y G"
++                  "d": "d‏/M‏/y – d‏/M‏/y",
++                  "M": "d‏/M‏/y – d‏/M‏/y",
++                  "y": "d‏/M‏/y – d‏/M‏/y"
+                 },
+                 "yMEd": {
+-                  "d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y G",
+-                  "M": "E، d‏/M‏/y – E، d‏/M‏/y G",
+-                  "y": "E، d‏/M‏/y – E، d‏/M‏/y G"
++                  "d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y",
++                  "M": "E، d‏/M‏/y – E، d‏/M‏/y",
++                  "y": "E، d‏/M‏/y – E، d‏/M‏/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM – MMM y G",
+-                  "y": "MMM، y – MMM y G"
++                  "M": "MMM – MMM، y",
++                  "y": "MMM، y – MMM، y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d MMM y G",
+-                  "M": "d MMM – d MMM y G",
+-                  "y": "d MMM y – d MMM y G"
++                  "d": "d–d MMM، y",
++                  "M": "d MMM – d MMM، y",
++                  "y": "d MMM، y – d MMM، y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E، d – E، d MMM y G",
+-                  "M": "E، d MMM – E، d MMM y G",
+-                  "y": "E، d MMM y – E، d MMM y G"
++                  "d": "E، d – E، d MMM، y",
++                  "M": "E، d MMM – E، d MMM، y",
++                  "y": "E، d MMM، y – E، d MMM، y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM – MMMM، y",
++                  "y": "MMMM، y – MMMM، y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/bn/ca-buddhist.json	2021-11-19 12:34:54.970618693 -0800
++++ cldr-dates-full/main/bn/ca-gregorian.json	2021-11-17 14:17:17.288919160 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "bn"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "জানু",
+                   "2": "ফেব",
+                   "3": "মার্চ",
+                   "4": "এপ্রিল",
+                   "5": "মে",
+@@ -283,36 +283,45 @@
+                   "afternoon2": "বিকাল",
+                   "evening1": "সন্ধ্যা",
+                   "night1": "রাত্রি"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "খ্রিস্টপূর্ব",
++                "0-alt-variant": "খ্রিষ্টপূর্বাব্দ",
++                "1": "খ্রীষ্টাব্দ",
++                "1-alt-variant": "খ্রিষ্টাব্দ"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "খ্রিস্টপূর্ব",
++                "0-alt-variant": "খ্রিষ্টপূর্বাব্দ",
++                "1": "খৃষ্টাব্দ",
++                "1-alt-variant": "খ্রিষ্টাব্দ"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "খ্রিস্টপূর্ব",
++                "0-alt-variant": "খ্রিষ্টপূর্বাব্দ",
++                "1": "খৃষ্টাব্দ",
++                "1-alt-variant": "খ্রিষ্টাব্দ"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d MMMM, y G",
+-              "long": "d MMMM, y G",
+-              "medium": "d MMM, y G",
+-              "short": "d/M/y GGGGG"
++              "full": "EEEE, d MMMM, y",
++              "long": "d MMMM, y",
++              "medium": "d MMM, y",
++              "short": "d/M/yy"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "h:mm:ss a zzzz",
+               "long": "h:mm:ss a z",
+               "medium": "h:mm:ss a",
+               "short": "h:mm a"
+             },
+             "timeSkeletons": {
+@@ -335,48 +344,55 @@
+                 "EBhm": "E h:mm B",
+                 "EBhms": "E h:mm:ss B",
+                 "Ed": "d E",
+                 "Ehm": "E h:mm a",
+                 "EHm": "E HH:mm",
+                 "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "y G",
+-                "GyMd": "d/M/y GGGGG",
++                "GyMd": "GGGGG dd-MM-y",
+                 "GyMMM": "MMM y G",
+                 "GyMMMd": "d MMM, y G",
+                 "GyMMMEd": "E, d MMM, y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d/M",
+                 "MEd": "E, d-M",
+                 "MMdd": "dd-MM",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "E d MMM",
+                 "MMMMd": "d MMMM",
+                 "MMMMEd": "E d MMMM",
++                "MMMMW-count-one": "MMMM এর Wয় সপ্তাহ",
++                "MMMMW-count-other": "MMMM এর Wয় সপ্তাহ",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "M/y G",
+-                "yyyyMd": "d/M/y G",
+-                "yyyyMEd": "E, d/M/y G",
+-                "yyyyMM": "MM-y G",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "d MMM, y G",
+-                "yyyyMMMEd": "E, d MMM, y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "M/y",
++                "yMd": "d/M/y",
++                "yMEd": "E, d/M/y",
++                "yMM": "MM-y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM, y",
++                "yMMMEd": "E, d MMM, y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-one": "Y এর wতম সপ্তাহ",
++                "yw-count-other": "Y এর wতম সপ্তাহ"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -413,35 +429,35 @@
+                   "d": "d/M/y – d/M/y GGGGG",
+                   "G": "d/M/y GGGGG – d/M/y GGGGG",
+                   "M": "d/M/y – d/M/y GGGGG",
+                   "y": "d/M/y – d/M/y GGGGG"
+                 },
+                 "GyMEd": {
+                   "d": "E, d/M/y – E, d/M/y GGGGG",
+                   "G": "E, d/M/y GGGGG – E, d/M/y GGGGG",
+-                  "M": "E, d/M/y – E, d/M/y GGGGG",
++                  "M": "E, d/M/y GGGGG – E, d/M/y GGGGG",
+                   "y": "E, d/M/y – E, d/M/y GGGGG"
+                 },
+                 "GyMMM": {
+                   "G": "MMM y G – MMM y G",
+                   "M": "MMM – MMM y G",
+                   "y": "MMM y – MMM y G"
+                 },
+                 "GyMMMd": {
+-                  "d": "MMM d – d, y G",
+-                  "G": "MMM d, y G – MMM d, y G",
+-                  "M": "MMM d – MMM d, y G",
+-                  "y": "MMM d, y – MMM d, y G"
++                  "d": "d – d MMM, y G",
++                  "G": "d MMM, y G – d MMM, y G",
++                  "M": "d MMM – d MMM, y G",
++                  "y": "d MMM, y – d MMM, y G"
+                 },
+                 "GyMMMEd": {
+-                  "d": "E, MMM d – E, MMM d, y G",
+-                  "G": "E, MMM d, y G – E, MMM d, y G",
+-                  "M": "E, MMM d – E, MMM d, y G",
+-                  "y": "E, MMM d, y – E, MMM d, y G"
++                  "d": "E, d MMM – E, d MMM, y G",
++                  "G": "E, d MMM, y G – E, d MMM, y G",
++                  "M": "E, d MMM – E, d MMM, y G",
++                  "y": "E, d MMM, y – E, d MMM, y G"
+                 },
+                 "h": {
+                   "a": "h a – h a",
+                   "h": "h–h a"
+                 },
+                 "H": {
+                   "H": "HH–HH"
+                 },
+@@ -488,49 +504,49 @@
+                   "d": "d–d MMM",
+                   "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+                   "d": "E, d MMM – E, d MMM",
+                   "M": "E, d MMM – E, d MMM"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M/y – M/y G",
+-                  "y": "M/y – M/y G"
++                  "M": "M/y – M/y",
++                  "y": "M/y – M/y"
+                 },
+                 "yMd": {
+-                  "d": "d/M/y – d/M/y G",
+-                  "M": "d/M/y – d/M/y G",
+-                  "y": "d/M/y – d/M/y G"
++                  "d": "d/M/y – d/M/y",
++                  "M": "d/M/y – d/M/y",
++                  "y": "d/M/y – d/M/y"
+                 },
+                 "yMEd": {
+-                  "d": "E, d/M/y – E, d/M/y G",
+-                  "M": "E, d/M/y – E, d/M/y G",
+-                  "y": "E, d/M/y – E, d/M/y G"
++                  "d": "E, d/M/y – E, d/M/y",
++                  "M": "E, d/M/y – E, d/M/y",
++                  "y": "E, d/M/y – E, d/M/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM–MMM y G",
+-                  "y": "MMM y – MMM y G"
++                  "M": "MMM–MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d MMM, y G",
+-                  "M": "d MMM – d MMM, y G",
+-                  "y": "d MMM, y – d MMM, y G"
++                  "d": "d–d MMM, y",
++                  "M": "d MMM – d MMM, y",
++                  "y": "d MMM, y – d MMM, y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d MMM – E, d MMM, y G",
+-                  "M": "E, d MMM – E, d MMM, y G",
+-                  "y": "E, d MMM, y – E, d MMM, y G"
++                  "d": "E, d MMM – E, d MMM, y",
++                  "M": "E, d MMM – E, d MMM, y",
++                  "y": "E, d MMM, y – E, d MMM, y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM–MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM–MMMM y",
++                  "y": "MMMM y – MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/ccp/ca-buddhist.json	2021-11-19 12:34:54.970618693 -0800
++++ cldr-dates-full/main/ccp/ca-gregorian.json	2021-11-17 14:17:17.436919922 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "ccp"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "𑄎𑄚𑄪",
+                   "2": "𑄜𑄬𑄛𑄴",
+                   "3": "𑄟𑄢𑄴𑄌𑄧",
+                   "4": "𑄃𑄬𑄛𑄳𑄢𑄨𑄣𑄴",
+                   "5": "𑄟𑄬",
+@@ -283,36 +283,45 @@
+                   "afternoon2": "𑄝𑄬𑄣𑄳𑄠𑄬",
+                   "evening1": "𑄥𑄎𑄧𑄚𑄳𑄠",
+                   "night1": "𑄢𑄬𑄖𑄴"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄴𑄛𑄫𑄢𑄴𑄝𑄧",
++                "0-alt-variant": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄴𑄛𑄫𑄢𑄴𑄝𑄛𑄴𑄘𑄧",
++                "1": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄛𑄴𑄘𑄧",
++                "1-alt-variant": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄛𑄴𑄘𑄧"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄴𑄛𑄫𑄢𑄴𑄝𑄧",
++                "0-alt-variant": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄧𑄛𑄫𑄢𑄴𑄝𑄛𑄴𑄘𑄧",
++                "1": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄛𑄴𑄘𑄧",
++                "1-alt-variant": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄛𑄴𑄘𑄧"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄴𑄛𑄫𑄢𑄴𑄝𑄧",
++                "0-alt-variant": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄧𑄛𑄫𑄢𑄴𑄝𑄛𑄴𑄘𑄧",
++                "1": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄛𑄴𑄘𑄧",
++                "1-alt-variant": "𑄈𑄳𑄢𑄨𑄌𑄴𑄑𑄛𑄴𑄘𑄧"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d MMMM, y G",
+-              "long": "d MMMM, y G",
+-              "medium": "d MMM, y G",
+-              "short": "d/M/y GGGGG"
++              "full": "EEEE, d MMMM, y",
++              "long": "d MMMM, y",
++              "medium": "d MMM, y",
++              "short": "d/M/yy"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "h:mm:ss a zzzz",
+               "long": "h:mm:ss a z",
+               "medium": "h:mm:ss a",
+               "short": "h:mm a"
+             },
+             "timeSkeletons": {
+@@ -345,38 +354,45 @@
+                 "GyMMMd": "d MMM, y G",
+                 "GyMMMEd": "E, d MMM, y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d/M",
+                 "MEd": "E, d-M",
+                 "MMdd": "dd-MM",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "E d MMM",
+                 "MMMMd": "d MMMM",
+                 "MMMMEd": "E d MMMM",
++                "MMMMW-count-one": "MMMM 𑄃𑄬𑄢𑄴 𑄠𑄴 𑄥𑄛𑄴𑄖 W",
++                "MMMMW-count-other": "MMMM 𑄃𑄬𑄢𑄴 𑄠𑄴 𑄥𑄛𑄴𑄖 W",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "M/y G",
+-                "yyyyMd": "d/M/y G",
+-                "yyyyMEd": "E, d/M/y G",
+-                "yyyyMM": "MM-y G",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "d MMM, y G",
+-                "yyyyMMMEd": "E, d MMM, y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "M/y",
++                "yMd": "d/M/y",
++                "yMEd": "E, d/M/y",
++                "yMM": "MM-y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM, y",
++                "yMMMEd": "E, d MMM, y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-one": "Y 𑄃𑄬𑄢𑄴 𑄖𑄧𑄟𑄴 𑄥𑄛𑄴𑄖 w",
++                "yw-count-other": "Y 𑄃𑄬𑄢𑄴 𑄖𑄧𑄟𑄴 𑄥𑄛𑄴𑄖 w"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -488,49 +504,49 @@
+                   "d": "d–d MMM",
+                   "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+                   "d": "E, d MMM – E, d MMM",
+                   "M": "E, d MMM – E, d MMM"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M/y – M/y G",
+-                  "y": "M/y – M/y G"
++                  "M": "M/y – M/y",
++                  "y": "M/y – M/y"
+                 },
+                 "yMd": {
+-                  "d": "d/M/y – d/M/y G",
+-                  "M": "d/M/y – d/M/y G",
+-                  "y": "d/M/y – d/M/y G"
++                  "d": "d/M/y – d/M/y",
++                  "M": "d/M/y – d/M/y",
++                  "y": "d/M/y – d/M/y"
+                 },
+                 "yMEd": {
+-                  "d": "E, d/M/y – E, d/M/y G",
+-                  "M": "E, d/M/y – E, d/M/y G",
+-                  "y": "E, d/M/y – E, d/M/y G"
++                  "d": "E, d/M/y – E, d/M/y",
++                  "M": "E, d/M/y – E, d/M/y",
++                  "y": "E, d/M/y – E, d/M/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM–MMM y G",
+-                  "y": "MMM y – MMM y G"
++                  "M": "MMM–MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d MMM, y G",
+-                  "M": "d MMM – d MMM, y G",
+-                  "y": "d MMM, y – d MMM, y G"
++                  "d": "d–d MMM, y",
++                  "M": "d MMM – d MMM, y",
++                  "y": "d MMM, y – d MMM, y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d MMM – E, d MMM, y G",
+-                  "M": "E, d MMM – E, d MMM, y G",
+-                  "y": "E, d MMM, y – E, d MMM, y G"
++                  "d": "E, d MMM – E, d MMM, y",
++                  "M": "E, d MMM – E, d MMM, y",
++                  "y": "E, d MMM, y – E, d MMM, y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM–MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM–MMMM y",
++                  "y": "MMMM y – MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/en/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/en/ca-gregorian.json	2021-11-17 14:17:17.508920293 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "en"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "Jan",
+                   "2": "Feb",
+                   "3": "Mar",
+                   "4": "Apr",
+                   "5": "May",
+@@ -295,36 +295,45 @@
+                   "afternoon1": "afternoon",
+                   "evening1": "evening",
+                   "night1": "night"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "Before Christ",
++                "0-alt-variant": "Before Common Era",
++                "1": "Anno Domini",
++                "1-alt-variant": "Common Era"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "BC",
++                "0-alt-variant": "BCE",
++                "1": "AD",
++                "1-alt-variant": "CE"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "B",
++                "0-alt-variant": "BCE",
++                "1": "A",
++                "1-alt-variant": "CE"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, MMMM d, y G",
+-              "long": "MMMM d, y G",
+-              "medium": "MMM d, y G",
+-              "short": "M/d/y GGGGG"
++              "full": "EEEE, MMMM d, y",
++              "long": "MMMM d, y",
++              "medium": "MMM d, y",
++              "short": "M/d/yy"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "h:mm:ss a zzzz",
+               "long": "h:mm:ss a z",
+               "medium": "h:mm:ss a",
+               "short": "h:mm a"
+             },
+             "timeSkeletons": {
+@@ -357,35 +366,42 @@
+                 "GyMMMd": "MMM d, y G",
+                 "GyMMMEd": "E, MMM d, y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "M/d",
+                 "MEd": "E, M/d",
+                 "MMM": "LLL",
+                 "MMMd": "MMM d",
+                 "MMMEd": "E, MMM d",
+                 "MMMMd": "MMMM d",
++                "MMMMW-count-one": "'week' W 'of' MMMM",
++                "MMMMW-count-other": "'week' W 'of' MMMM",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "M/y GGGGG",
+-                "yyyyMd": "M/d/y GGGGG",
+-                "yyyyMEd": "E, M/d/y GGGGG",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "MMM d, y G",
+-                "yyyyMMMEd": "E, MMM d, y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "M/y",
++                "yMd": "M/d/y",
++                "yMEd": "E, M/d/y",
++                "yMMM": "MMM y",
++                "yMMMd": "MMM d, y",
++                "yMMMEd": "E, MMM d, y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-one": "'week' w 'of' Y",
++                "yw-count-other": "'week' w 'of' Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{0} {1}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -497,49 +513,49 @@
+                   "d": "MMM d – d",
+                   "M": "MMM d – MMM d"
+                 },
+                 "MMMEd": {
+                   "d": "E, MMM d – E, MMM d",
+                   "M": "E, MMM d – E, MMM d"
+                 },
+                 "y": {
+-                  "y": "y – y G"
++                  "y": "y – y"
+                 },
+                 "yM": {
+-                  "M": "M/y – M/y GGGGG",
+-                  "y": "M/y – M/y GGGGG"
++                  "M": "M/y – M/y",
++                  "y": "M/y – M/y"
+                 },
+                 "yMd": {
+-                  "d": "M/d/y – M/d/y GGGGG",
+-                  "M": "M/d/y – M/d/y GGGGG",
+-                  "y": "M/d/y – M/d/y GGGGG"
++                  "d": "M/d/y – M/d/y",
++                  "M": "M/d/y – M/d/y",
++                  "y": "M/d/y – M/d/y"
+                 },
+                 "yMEd": {
+-                  "d": "E, M/d/y – E, M/d/y GGGGG",
+-                  "M": "E, M/d/y – E, M/d/y GGGGG",
+-                  "y": "E, M/d/y – E, M/d/y GGGGG"
++                  "d": "E, M/d/y – E, M/d/y",
++                  "M": "E, M/d/y – E, M/d/y",
++                  "y": "E, M/d/y – E, M/d/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM – MMM y G",
+-                  "y": "MMM y – MMM y G"
++                  "M": "MMM – MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "MMM d – d, y G",
+-                  "M": "MMM d – MMM d, y G",
+-                  "y": "MMM d, y – MMM d, y G"
++                  "d": "MMM d – d, y",
++                  "M": "MMM d – MMM d, y",
++                  "y": "MMM d, y – MMM d, y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E, MMM d – E, MMM d, y G",
+-                  "M": "E, MMM d – E, MMM d, y G",
+-                  "y": "E, MMM d, y – E, MMM d, y G"
++                  "d": "E, MMM d – E, MMM d, y",
++                  "M": "E, MMM d – E, MMM d, y",
++                  "y": "E, MMM d, y – E, MMM d, y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM – MMMM y",
++                  "y": "MMMM y – MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/en-001/ca-buddhist.json	2021-11-19 12:34:54.970618693 -0800
++++ cldr-dates-full/main/en-001/ca-gregorian.json	2021-11-17 14:17:17.520920355 -0800
+@@ -5,17 +5,17 @@
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "en",
+         "territory": "001"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "Jan",
+                   "2": "Feb",
+                   "3": "Mar",
+                   "4": "Apr",
+                   "5": "May",
+@@ -296,36 +296,45 @@
+                   "afternoon1": "afternoon",
+                   "evening1": "evening",
+                   "night1": "night"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "Before Christ",
++                "0-alt-variant": "Before Common Era",
++                "1": "Anno Domini",
++                "1-alt-variant": "Common Era"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "BC",
++                "0-alt-variant": "BCE",
++                "1": "AD",
++                "1-alt-variant": "CE"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "B",
++                "0-alt-variant": "BCE",
++                "1": "A",
++                "1-alt-variant": "CE"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d MMMM y G",
+-              "long": "d MMMM y G",
+-              "medium": "d MMM y G",
+-              "short": "dd/MM/y GGGGG"
++              "full": "EEEE, d MMMM y",
++              "long": "d MMMM y",
++              "medium": "d MMM y",
++              "short": "dd/MM/y"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyMMdd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yMMdd"
+             },
+             "timeFormats": {
+               "full": "h:mm:ss a zzzz",
+               "long": "h:mm:ss a z",
+               "medium": "h:mm:ss a",
+               "short": "h:mm a"
+             },
+             "timeSkeletons": {
+@@ -343,50 +352,58 @@
+                 "Bh": "h B",
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "E, h:mm B",
+                 "EBhms": "E, h:mm:ss B",
+                 "Ed": "E d",
+-                "Ehm": "E, h:mm a",
+-                "EHm": "E, HH:mm",
+-                "Ehms": "E, h:mm:ss a",
+-                "EHms": "E, HH:mm:ss",
++                "Ehm": "E h:mm a",
++                "EHm": "E HH:mm",
++                "Ehms": "E h:mm:ss a",
++                "EHms": "E HH:mm:ss",
+                 "Gy": "y G",
+-                "GyMd": "dd/MM/y GGGGG",
++                "GyMd": "d/M/y GGGGG",
+                 "GyMMM": "MMM y G",
+                 "GyMMMd": "d MMM y G",
+                 "GyMMMEd": "E, d MMM y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
+-                "M": "LL",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
++                "M": "L",
+                 "Md": "dd/MM",
+                 "MEd": "E, dd/MM",
++                "MMdd": "dd/MM",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "E, d MMM",
+                 "MMMMd": "d MMMM",
++                "MMMMW-count-one": "'week' W 'of' MMMM",
++                "MMMMW-count-other": "'week' W 'of' MMMM",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "MM/y GGGGG",
+-                "yyyyMd": "dd/MM/y GGGGG",
+-                "yyyyMEd": "E, dd/MM/y GGGGG",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "d MMM y G",
+-                "yyyyMMMEd": "E, d MMM y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "MM/y",
++                "yMd": "dd/MM/y",
++                "yMEd": "E, dd/MM/y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM y",
++                "yMMMEd": "E, d MMM y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-one": "'week' w 'of' Y",
++                "yw-count-other": "'week' w 'of' Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{0} {1}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -407,17 +424,17 @@
+                   "h": "h:mm – h:mm B",
+                   "m": "h:mm – h:mm B"
+                 },
+                 "d": {
+                   "d": "d–d"
+                 },
+                 "Gy": {
+                   "G": "y G – y G",
+-                  "y": "y–y G"
++                  "y": "y – y G"
+                 },
+                 "GyM": {
+                   "G": "M/y GGGGG – M/y GGGGG",
+                   "M": "M/y – M/y GGGGG",
+                   "y": "M/y – M/y GGGGG"
+                 },
+                 "GyMd": {
+                   "d": "dd/MM/y – dd/MM/y GGGGG",
+@@ -432,58 +449,58 @@
+                   "y": "E, dd/MM/y – E, dd/MM/y GGGGG"
+                 },
+                 "GyMMM": {
+                   "G": "MMM y G – MMM y G",
+                   "M": "MMM – MMM y G",
+                   "y": "MMM y – MMM y G"
+                 },
+                 "GyMMMd": {
+-                  "d": "d–d MMM y G",
++                  "d": "d – d MMM y G",
+                   "G": "d MMM y G – d MMM y G",
+                   "M": "d MMM – d MMM y G",
+                   "y": "d MMM y – d MMM y G"
+                 },
+                 "GyMMMEd": {
+                   "d": "E, d MMM – E, d MMM y G",
+                   "G": "E, d MMM y G – E, d MMM y G",
+                   "M": "E, d MMM – E, d MMM y G",
+                   "y": "E, d MMM y – E, d MMM y G"
+                 },
+                 "h": {
+                   "a": "h a – h a",
+-                  "h": "h – h a"
++                  "h": "h–h a"
+                 },
+                 "H": {
+-                  "H": "HH – HH"
++                  "H": "HH–HH"
+                 },
+                 "hm": {
+                   "a": "h:mm a – h:mm a",
+                   "h": "h:mm – h:mm a",
+                   "m": "h:mm – h:mm a"
+                 },
+                 "Hm": {
+-                  "H": "HH:mm – HH:mm",
+-                  "m": "HH:mm – HH:mm"
++                  "H": "HH:mm–HH:mm",
++                  "m": "HH:mm–HH:mm"
+                 },
+                 "hmv": {
+                   "a": "h:mm a – h:mm a v",
+                   "h": "h:mm – h:mm a v",
+                   "m": "h:mm – h:mm a v"
+                 },
+                 "Hmv": {
+-                  "H": "HH:mm – HH:mm v",
+-                  "m": "HH:mm – HH:mm v"
++                  "H": "HH:mm–HH:mm v",
++                  "m": "HH:mm–HH:mm v"
+                 },
+                 "hv": {
+                   "a": "h a – h a v",
+-                  "h": "h – h a v"
++                  "h": "h–h a v"
+                 },
+                 "Hv": {
+-                  "H": "HH – HH v"
++                  "H": "HH–HH v"
+                 },
+                 "M": {
+                   "M": "M–M"
+                 },
+                 "Md": {
+                   "d": "dd/MM – dd/MM",
+                   "M": "dd/MM – dd/MM"
+                 },
+@@ -498,49 +515,49 @@
+                   "d": "d–d MMM",
+                   "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+                   "d": "E d – E d MMM",
+                   "M": "E d MMM – E d MMM"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "MM/y – MM/y GGGGG",
+-                  "y": "MM/y – MM/y GGGGG"
++                  "M": "MM/y – MM/y",
++                  "y": "MM/y – MM/y"
+                 },
+                 "yMd": {
+-                  "d": "dd/MM/y – dd/MM/y GGGGG",
+-                  "M": "dd/MM/y – dd/MM/y GGGGG",
+-                  "y": "dd/MM/y – dd/MM/y GGGGG"
++                  "d": "dd/MM/y – dd/MM/y",
++                  "M": "dd/MM/y – dd/MM/y",
++                  "y": "dd/MM/y – dd/MM/y"
+                 },
+                 "yMEd": {
+-                  "d": "E, dd/MM/y – E, dd/MM/y GGGGG",
+-                  "M": "E, dd/MM/y – E, dd/MM/y GGGGG",
+-                  "y": "E, dd/MM/y – E, dd/MM/y GGGGG"
++                  "d": "E, dd/MM/y – E, dd/MM/y",
++                  "M": "E, dd/MM/y – E, dd/MM/y",
++                  "y": "E, dd/MM/y – E, dd/MM/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM – MMM y G",
+-                  "y": "MMM y – MMM y G"
++                  "M": "MMM – MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d MMM y G",
+-                  "M": "d MMM – d MMM y G",
+-                  "y": "d MMM y – d MMM y G"
++                  "d": "d–d MMM y",
++                  "M": "d MMM – d MMM y",
++                  "y": "d MMM y – d MMM y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d – E, d MMM y G",
+-                  "M": "E, d MMM – E, d MMM y G",
+-                  "y": "E, d MMM y – E, d MMM y G"
++                  "d": "E, d – E, d MMM y",
++                  "M": "E, d MMM – E, d MMM y",
++                  "y": "E, d MMM y – E, d MMM y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM – MMMM y",
++                  "y": "MMMM y – MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/en-ZA/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/en-ZA/ca-gregorian.json	2021-11-17 14:17:17.544920478 -0800
+@@ -5,17 +5,17 @@
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "en",
+         "territory": "ZA"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "Jan",
+                   "2": "Feb",
+                   "3": "Mar",
+                   "4": "Apr",
+                   "5": "May",
+@@ -296,36 +296,45 @@
+                   "afternoon1": "afternoon",
+                   "evening1": "evening",
+                   "night1": "night"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "Before Christ",
++                "0-alt-variant": "Before Common Era",
++                "1": "Anno Domini",
++                "1-alt-variant": "Common Era"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "BC",
++                "0-alt-variant": "BCE",
++                "1": "AD",
++                "1-alt-variant": "CE"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "B",
++                "0-alt-variant": "BCE",
++                "1": "A",
++                "1-alt-variant": "CE"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, dd MMMM y G",
+-              "long": "dd MMMM y G",
+-              "medium": "dd MMM y G",
+-              "short": "GGGGG y/MM/dd"
++              "full": "EEEE, dd MMMM y",
++              "long": "dd MMMM y",
++              "medium": "dd MMM y",
++              "short": "y/MM/dd"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEdd",
+-              "long": "GyMMMMdd",
+-              "medium": "GyMMMdd",
+-              "short": "GGGGGyMMdd"
++              "full": "yMMMMEEEEdd",
++              "long": "yMMMMdd",
++              "medium": "yMMMdd",
++              "short": "yMMdd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+@@ -343,50 +352,58 @@
+                 "Bh": "h B",
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "E, h:mm B",
+                 "EBhms": "E, h:mm:ss B",
+                 "Ed": "E d",
+-                "Ehm": "E, h:mm a",
+-                "EHm": "E, HH:mm",
+-                "Ehms": "E, h:mm:ss a",
+-                "EHms": "E, HH:mm:ss",
++                "Ehm": "E h:mm a",
++                "EHm": "E HH:mm",
++                "Ehms": "E h:mm:ss a",
++                "EHms": "E HH:mm:ss",
+                 "Gy": "y G",
+-                "GyMd": "dd/MM/y GGGGG",
++                "GyMd": "d/M/y GGGGG",
+                 "GyMMM": "MMM y G",
+                 "GyMMMd": "d MMM y G",
+                 "GyMMMEd": "E, d MMM y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
+-                "M": "LL",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
++                "M": "L",
+                 "Md": "MM/dd",
+                 "MEd": "E, MM/dd",
++                "MMdd": "dd/MM",
+                 "MMM": "LLL",
+                 "MMMd": "dd MMM",
+                 "MMMEd": "E, dd MMM",
+                 "MMMMd": "d MMMM",
++                "MMMMW-count-one": "'week' W 'of' MMMM",
++                "MMMMW-count-other": "'week' W 'of' MMMM",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "MM/y GGGGG",
+-                "yyyyMd": "G y/MM/dd",
+-                "yyyyMEd": "E, G y/MM/dd",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "dd MMM y G",
+-                "yyyyMMMEd": "E, dd MMM y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "MM/y",
++                "yMd": "y/MM/dd",
++                "yMEd": "E, y/MM/dd",
++                "yMMM": "MMM y",
++                "yMMMd": "dd MMM y",
++                "yMMMEd": "E, dd MMM y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-one": "'week' w 'of' Y",
++                "yw-count-other": "'week' w 'of' Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{0} {1}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -407,17 +424,17 @@
+                   "h": "h:mm – h:mm B",
+                   "m": "h:mm – h:mm B"
+                 },
+                 "d": {
+                   "d": "d–d"
+                 },
+                 "Gy": {
+                   "G": "y G – y G",
+-                  "y": "y–y G"
++                  "y": "y – y G"
+                 },
+                 "GyM": {
+                   "G": "M/y GGGGG – M/y GGGGG",
+                   "M": "M/y – M/y GGGGG",
+                   "y": "M/y – M/y GGGGG"
+                 },
+                 "GyMd": {
+                   "d": "dd/MM/y – dd/MM/y GGGGG",
+@@ -432,58 +449,58 @@
+                   "y": "E, dd/MM/y – E, dd/MM/y GGGGG"
+                 },
+                 "GyMMM": {
+                   "G": "MMM y G – MMM y G",
+                   "M": "MMM – MMM y G",
+                   "y": "MMM y – MMM y G"
+                 },
+                 "GyMMMd": {
+-                  "d": "d–d MMM y G",
++                  "d": "d – d MMM y G",
+                   "G": "d MMM y G – d MMM y G",
+                   "M": "d MMM – d MMM y G",
+                   "y": "d MMM y – d MMM y G"
+                 },
+                 "GyMMMEd": {
+                   "d": "E, d MMM – E, d MMM y G",
+                   "G": "E, d MMM y G – E, d MMM y G",
+                   "M": "E, d MMM – E, d MMM y G",
+                   "y": "E, d MMM y – E, d MMM y G"
+                 },
+                 "h": {
+                   "a": "h a – h a",
+-                  "h": "h – h a"
++                  "h": "h–h a"
+                 },
+                 "H": {
+-                  "H": "HH – HH"
++                  "H": "HH–HH"
+                 },
+                 "hm": {
+                   "a": "h:mm a – h:mm a",
+                   "h": "h:mm – h:mm a",
+                   "m": "h:mm – h:mm a"
+                 },
+                 "Hm": {
+-                  "H": "HH:mm – HH:mm",
+-                  "m": "HH:mm – HH:mm"
++                  "H": "HH:mm–HH:mm",
++                  "m": "HH:mm–HH:mm"
+                 },
+                 "hmv": {
+                   "a": "h:mm a – h:mm a v",
+                   "h": "h:mm – h:mm a v",
+                   "m": "h:mm – h:mm a v"
+                 },
+                 "Hmv": {
+-                  "H": "HH:mm – HH:mm v",
+-                  "m": "HH:mm – HH:mm v"
++                  "H": "HH:mm–HH:mm v",
++                  "m": "HH:mm–HH:mm v"
+                 },
+                 "hv": {
+                   "a": "h a – h a v",
+-                  "h": "h – h a v"
++                  "h": "h–h a v"
+                 },
+                 "Hv": {
+-                  "H": "HH – HH v"
++                  "H": "HH–HH v"
+                 },
+                 "M": {
+                   "M": "M–M"
+                 },
+                 "Md": {
+                   "d": "dd/MM – dd/MM",
+                   "M": "dd/MM – dd/MM"
+                 },
+@@ -498,49 +515,49 @@
+                   "d": "d–d MMM",
+                   "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+                   "d": "E d – E d MMM",
+                   "M": "E d MMM – E d MMM"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "MM/y – MM/y GGGGG",
+-                  "y": "MM/y – MM/y GGGGG"
++                  "M": "MM/y – MM/y",
++                  "y": "MM/y – MM/y"
+                 },
+                 "yMd": {
+-                  "d": "dd/MM/y – dd/MM/y GGGGG",
+-                  "M": "dd/MM/y – dd/MM/y GGGGG",
+-                  "y": "dd/MM/y – dd/MM/y GGGGG"
++                  "d": "dd/MM/y – dd/MM/y",
++                  "M": "dd/MM/y – dd/MM/y",
++                  "y": "dd/MM/y – dd/MM/y"
+                 },
+                 "yMEd": {
+-                  "d": "E, dd/MM/y – E, dd/MM/y GGGGG",
+-                  "M": "E, dd/MM/y – E, dd/MM/y GGGGG",
+-                  "y": "E, dd/MM/y – E, dd/MM/y GGGGG"
++                  "d": "E, dd/MM/y – E, dd/MM/y",
++                  "M": "E, dd/MM/y – E, dd/MM/y",
++                  "y": "E, dd/MM/y – E, dd/MM/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM – MMM y G",
+-                  "y": "MMM y – MMM y G"
++                  "M": "MMM – MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d MMM y G",
+-                  "M": "d MMM – d MMM y G",
+-                  "y": "d MMM y – d MMM y G"
++                  "d": "d–d MMM y",
++                  "M": "d MMM – d MMM y",
++                  "y": "d MMM y – d MMM y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d – E, d MMM y G",
+-                  "M": "E, d MMM – E, d MMM y G",
+-                  "y": "E, d MMM y – E, d MMM y G"
++                  "d": "E, d – E, d MMM y",
++                  "M": "E, d MMM – E, d MMM y",
++                  "y": "E, d MMM y – E, d MMM y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM – MMMM y",
++                  "y": "MMMM y – MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/es/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/es/ca-gregorian.json	2021-11-17 14:17:17.836921983 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "es"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "ene",
+                   "2": "feb",
+                   "3": "mar",
+                   "4": "abr",
+                   "5": "may",
+@@ -277,36 +277,45 @@
+                   "morning2": "mañana",
+                   "evening1": "tarde",
+                   "night1": "noche"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "antes de Cristo",
++                "0-alt-variant": "antes de la era común",
++                "1": "después de Cristo",
++                "1-alt-variant": "era común"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "a. C.",
++                "0-alt-variant": "a. e. c.",
++                "1": "d. C.",
++                "1-alt-variant": "e. c."
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "a. C.",
++                "0-alt-variant": "a. e. c.",
++                "1": "d. C.",
++                "1-alt-variant": "e. c."
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d 'de' MMMM 'de' y G",
+-              "long": "d 'de' MMMM 'de' y G",
+-              "medium": "d 'de' MMM 'de' y G",
+-              "short": "d/M/y GGGGG"
++              "full": "EEEE, d 'de' MMMM 'de' y",
++              "long": "d 'de' MMMM 'de' y",
++              "medium": "d MMM y",
++              "short": "d/M/yy"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GGGGGyMd",
+-              "short": "GGGGGyyMd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "H:mm:ss (zzzz)",
+               "long": "H:mm:ss z",
+               "medium": "H:mm:ss",
+               "short": "H:mm"
+             },
+             "timeSkeletons": {
+@@ -324,56 +333,68 @@
+                 "Bh": "h B",
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "E h:mm B",
+                 "EBhms": "E h:mm:ss B",
+                 "Ed": "E d",
+-                "Ehm": "E h:mm a",
+-                "EHm": "E HH:mm",
+-                "Ehms": "E h:mm:ss a",
+-                "EHms": "E HH:mm:ss",
++                "Ehm": "E, h:mm a",
++                "EHm": "E, H:mm",
++                "Ehms": "E, h:mm:ss a",
++                "EHms": "E, H:mm:ss",
+                 "Gy": "y G",
+                 "GyMd": "d/M/y GGGGG",
+                 "GyMMM": "MMM y G",
+                 "GyMMMd": "d MMM y G",
+                 "GyMMMEd": "E, d MMM y G",
+                 "GyMMMM": "MMMM 'de' y G",
+                 "GyMMMMd": "d 'de' MMMM 'de' y G",
+                 "GyMMMMEd": "E, d 'de' MMMM 'de' y G",
+                 "h": "h a",
+-                "H": "HH",
++                "H": "H",
+                 "hm": "h:mm a",
+-                "Hm": "HH:mm",
++                "Hm": "H:mm",
+                 "hms": "h:mm:ss a",
+-                "Hms": "HH:mm:ss",
++                "Hms": "H:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "H:mm:ss v",
++                "hmsvvvv": "h:mm:ss a (vvvv)",
++                "Hmsvvvv": "H:mm:ss (vvvv)",
++                "hmv": "h:mm a v",
++                "Hmv": "H:mm v",
+                 "M": "L",
+                 "Md": "d/M",
+                 "MEd": "E, d/M",
++                "MMd": "d/M",
++                "MMdd": "d/M",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "E, d MMM",
+                 "MMMMd": "d 'de' MMMM",
+                 "MMMMEd": "E, d 'de' MMMM",
++                "MMMMW-count-one": "'semana' W 'de' MMMM",
++                "MMMMW-count-other": "'semana' W 'de' MMMM",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "M/y GGGGG",
+-                "yyyyMd": "d/M/y GGGGG",
+-                "yyyyMEd": "E, d/M/y GGGGG",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "d MMM y G",
+-                "yyyyMMMEd": "EEE, d MMM y G",
+-                "yyyyMMMM": "MMMM 'de' y G",
+-                "yyyyMMMMd": "d 'de' MMMM 'de' y G",
+-                "yyyyMMMMEd": "EEE, d 'de' MMMM 'de' y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ 'de' y G"
++                "y": "y",
++                "yM": "M/y",
++                "yMd": "d/M/y",
++                "yMEd": "EEE, d/M/y",
++                "yMM": "M/y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM y",
++                "yMMMEd": "EEE, d MMM y",
++                "yMMMM": "MMMM 'de' y",
++                "yMMMMd": "d 'de' MMMM 'de' y",
++                "yMMMMEd": "EEE, d 'de' MMMM 'de' y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ 'de' y",
++                "yw-count-one": "'semana' w 'de' Y",
++                "yw-count-other": "'semana' w 'de' Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -394,140 +415,158 @@
+                   "h": "h:mm–h:mm B",
+                   "m": "h:mm–h:mm B"
+                 },
+                 "d": {
+                   "d": "d–d"
+                 },
+                 "Gy": {
+                   "G": "y G – y G",
+-                  "y": "y – y G"
++                  "y": "y–y G"
+                 },
+                 "GyM": {
+-                  "G": "M/y GGGGG – M/y GGGG",
++                  "G": "M/y GGGGG – M/y GGGGG",
+                   "M": "M/y – M/y GGGGG",
+                   "y": "M/y – M/y GGGGG"
+                 },
+                 "GyMd": {
+                   "d": "d/M/y – d/M/y GGGGG",
+                   "G": "d/M/y GGGGG – d/M/y GGGGG",
+                   "M": "d/M/y – d/M/y GGGGG",
+                   "y": "d/M/y – d/M/y GGGGG"
+                 },
+                 "GyMEd": {
+-                  "d": "E d/M/y – E d/M/y GGGGG",
+-                  "G": "E d/M/y GGGGG – E d/M/y GGGGG",
+-                  "M": "E d/M/y – E d/M/y GGGGG",
+-                  "y": "E d/M/y – E d/M/y GGGGG"
++                  "d": "E, d/M/y – E, d/M/y GGGGG",
++                  "G": "E, d/M/y GGGGG – E, d/M/y GGGGG",
++                  "M": "E, d/M/y – E, d/M/y GGGGG",
++                  "y": "E, d/M/y – E, d/M/y GGGGG"
+                 },
+                 "GyMMM": {
+-                  "G": "MMM 'de' y G – MMM 'de' y G",
+-                  "M": "MMM–MMM 'de' y G",
+-                  "y": "MMM 'de' y – MMM 'de' y G"
++                  "G": "MMM y G – MMM y G",
++                  "M": "MMM–MMM y G",
++                  "y": "MMM y – MMM y G"
+                 },
+                 "GyMMMd": {
+-                  "d": "d–d 'de' MMM 'de' y G",
+-                  "G": "d 'de' MMM 'de' y G – d 'de' MMM 'de' y G",
+-                  "M": "d 'de' MMM – d 'de' MMM 'de' y G",
+-                  "y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
++                  "d": "d–d MMM y G",
++                  "G": "d MMM y G – d MMM y G",
++                  "M": "d MMM – d MMM y G",
++                  "y": "d MMM y – d MMM y G"
+                 },
+                 "GyMMMEd": {
+-                  "d": "E d 'de' MMM – E d 'de' MMM 'de' y G",
+-                  "G": "E d 'de' MMM 'de' y G – E d 'de' MMM 'de' y G",
+-                  "M": "E d 'de' MMM – E d 'de' MMM 'de' y G",
+-                  "y": "E d 'de' MMM 'de' y – E d 'de' MMM 'de' y G"
++                  "d": "E, d MMM – E, d MMM y G",
++                  "G": "E, d MMM y G – E, d MMM y G",
++                  "M": "E, d MMM – E, d MMM y G",
++                  "y": "E, d MMM y – E, d MMM y G"
+                 },
+                 "h": {
+                   "a": "h a – h a",
+                   "h": "h–h a"
+                 },
+                 "H": {
+-                  "H": "HH–HH"
++                  "H": "H–H"
+                 },
+                 "hm": {
+                   "a": "h:mm a – h:mm a",
+                   "h": "h:mm – h:mm a",
+                   "m": "h:mm – h:mm a"
+                 },
+                 "Hm": {
+-                  "H": "HH:mm – HH:mm",
+-                  "m": "HH:mm – HH:mm"
++                  "H": "H:mm–H:mm",
++                  "m": "H:mm–H:mm"
+                 },
+                 "hmv": {
+                   "a": "h:mm a – h:mm a v",
+-                  "h": "h:mm – h:mm a v",
+-                  "m": "h:mm – h:mm a v"
++                  "h": "h:mm–h:mm a v",
++                  "m": "h:mm–h:mm a v"
+                 },
+                 "Hmv": {
+-                  "H": "HH:mm – HH:mm v",
+-                  "m": "HH:mm – HH:mm v"
++                  "H": "H:mm–H:mm v",
++                  "m": "H:mm–H:mm v"
+                 },
+                 "hv": {
+                   "a": "h a – h a v",
+                   "h": "h–h a v"
+                 },
+                 "Hv": {
+-                  "H": "HH–HH v"
++                  "H": "H–H v"
+                 },
+                 "M": {
+                   "M": "M–M"
+                 },
+                 "Md": {
+                   "d": "d/M – d/M",
+                   "M": "d/M – d/M"
+                 },
+                 "MEd": {
+                   "d": "E, d/M – E, d/M",
+                   "M": "E, d/M – E, d/M"
+                 },
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+                 "MMMd": {
+-                  "d": "d–d 'de' MMM",
+-                  "M": "d 'de' MMM – d 'de' MMM"
++                  "d": "d–d MMM",
++                  "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+-                  "d": "E, d 'de' MMM – E, d 'de' MMM",
+-                  "M": "E, d 'de' MMM – E, d 'de' MMM"
++                  "d": "E, d MMM – E, d MMM",
++                  "M": "E, d MMM – E, d MMM"
++                },
++                "MMMMd": {
++                  "d": "d–d 'de' MMMM",
++                  "M": "d 'de' MMMM – d 'de' MMMM"
++                },
++                "MMMMEd": {
++                  "d": "E, d 'de' MMMM – E, d 'de' MMMM",
++                  "M": "E, d 'de' MMMM – E, d 'de' MMMM"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M/y – M/y G",
+-                  "y": "M/y – M/y G"
++                  "M": "M/y – M/y",
++                  "y": "M/y – M/y"
+                 },
+                 "yMd": {
+-                  "d": "d/M/y – d/M/y G",
+-                  "M": "d/M/y – d/M/y G",
+-                  "y": "d/M/y – d/M/y G"
++                  "d": "d/M/y – d/M/y",
++                  "M": "d/M/y – d/M/y",
++                  "y": "d/M/y – d/M/y"
+                 },
+                 "yMEd": {
+-                  "d": "E, d/M/y – E, d/M/y G",
+-                  "M": "E, d/M/y – E, d/M/y G",
+-                  "y": "E, d/M/y – E, d/M/y G"
++                  "d": "E, d/M/y – E, d/M/y",
++                  "M": "E, d/M/y – E, d/M/y",
++                  "y": "E, d/M/y – E, d/M/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM–MMM 'de' y G",
+-                  "y": "MMM 'de' y – MMM 'de' y G"
++                  "M": "MMM–MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d 'de' MMM 'de' y G",
+-                  "M": "d 'de' MMM – d 'de' MMM y G",
+-                  "y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
++                  "d": "d–d MMM y",
++                  "M": "d MMM – d MMM y",
++                  "y": "d MMM y – d MMM y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+-                  "M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+-                  "y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G"
++                  "d": "E, d MMM – E, d MMM y",
++                  "M": "E, d MMM – E, d MMM y",
++                  "y": "E, d MMM y – E, d MMM y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM–MMMM 'de' y G",
+-                  "y": "MMMM 'de' y – MMMM 'de' y G"
++                  "M": "MMMM–MMMM 'de' y",
++                  "y": "MMMM 'de' y – MMMM 'de' y"
++                },
++                "yMMMMd": {
++                  "d": "d–d 'de' MMMM 'de' y",
++                  "M": "d 'de' MMMM – d 'de' MMMM 'de' y",
++                  "y": "d 'de' MMMM 'de' y – d 'de' MMMM 'de' y"
++                },
++                "yMMMMEd": {
++                  "d": "E, d 'de' MMMM – E, d 'de' MMMM 'de' y",
++                  "M": "E, d 'de' MMMM – E, d 'de' MMMM 'de' y",
++                  "y": "E, d 'de' MMMM 'de' y – E, d 'de' MMMM 'de' y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/es-AR/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/es-AR/ca-gregorian.json	2021-11-17 14:17:17.712921344 -0800
+@@ -5,17 +5,17 @@
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "es",
+         "territory": "AR"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "ene",
+                   "2": "feb",
+                   "3": "mar",
+                   "4": "abr",
+                   "5": "may",
+@@ -278,36 +278,45 @@
+                   "morning2": "mañana",
+                   "evening1": "tarde",
+                   "night1": "noche"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "antes de Cristo",
++                "0-alt-variant": "antes de la era común",
++                "1": "después de Cristo",
++                "1-alt-variant": "era común"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "a. C.",
++                "0-alt-variant": "a. e. c.",
++                "1": "d. C.",
++                "1-alt-variant": "e. c."
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "a. C.",
++                "0-alt-variant": "a. e. c.",
++                "1": "d. C.",
++                "1-alt-variant": "e. c."
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d 'de' MMMM 'de' y G",
+-              "long": "d 'de' MMMM 'de' y G",
+-              "medium": "d 'de' MMM 'de' y G",
+-              "short": "d/M/y GGGGG"
++              "full": "EEEE, d 'de' MMMM 'de' y",
++              "long": "d 'de' MMMM 'de' y",
++              "medium": "d MMM y",
++              "short": "d/M/yy"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyyMMdd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+@@ -315,83 +324,95 @@
+               "long": "HHmmssz",
+               "medium": "HHmmss",
+               "short": "HHmm"
+             },
+             "dateTimeFormats": {
+               "full": "{1}, {0}",
+               "long": "{1}, {0}",
+               "medium": "{1} {0}",
+-              "short": "{1} {0}",
++              "short": "{1}, {0}",
+               "availableFormats": {
+                 "Bh": "h B",
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "E h:mm B",
+                 "EBhms": "E h:mm:ss B",
+                 "Ed": "E d",
+-                "Ehm": "E h:mm a",
+-                "EHm": "E HH:mm",
+-                "Ehms": "E h:mm:ss a",
+-                "EHms": "E HH:mm:ss",
++                "Ehm": "E, h:mm a",
++                "EHm": "E, HH:mm",
++                "Ehms": "E, h:mm:ss a",
++                "EHms": "E, HH:mm:ss",
+                 "Gy": "y G",
+                 "GyMd": "d/M/y GGGGG",
+-                "GyMMM": "MMM 'de' y G",
+-                "GyMMMd": "d 'de' MMM 'de' y G",
++                "GyMMM": "MMM y G",
++                "GyMMMd": "d MMM y G",
+                 "GyMMMEd": "E, d 'de' MMM 'de' y G",
+                 "GyMMMM": "MMMM 'de' y G",
+                 "GyMMMMd": "d 'de' MMMM 'de' y G",
+                 "GyMMMMEd": "E, d 'de' MMMM 'de' y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+-                "hms": "h:mm:ss a",
++                "hms": "hh:mm:ss",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmsvvvv": "h:mm:ss a (vvvv)",
++                "Hmsvvvv": "HH:mm:ss (vvvv)",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d/M",
+                 "MEd": "E d-M",
++                "MMd": "d/M",
++                "MMdd": "d/M",
+                 "MMM": "LLL",
+-                "MMMd": "d 'de' MMM",
+-                "MMMEd": "E, d 'de' MMM",
++                "MMMd": "d MMM",
++                "MMMdd": "dd-MMM",
++                "MMMEd": "E, d MMM",
+                 "MMMMd": "d 'de' MMMM",
+                 "MMMMEd": "E, d 'de' MMMM",
++                "MMMMW-count-one": "'semana' W 'de' MMMM",
++                "MMMMW-count-other": "'semana' W 'de' MMMM",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yMEd": "E d/M/y G",
+-                "yyyy": "y G",
+-                "yyyyM": "M-y G",
+-                "yyyyMd": "d/M/y GGGGG",
+-                "yyyyMEd": "E d/M/y GGGGG",
+-                "yyyyMMM": "MMM 'de' y G",
+-                "yyyyMMMd": "d 'de' MMM 'de' y G",
+-                "yyyyMMMEd": "EEE, d 'de' MMM 'de' y G",
+-                "yyyyMMMM": "MMMM 'de' y G",
+-                "yyyyMMMMd": "d 'de' MMMM 'de' y G",
+-                "yyyyMMMMEd": "EEE, d 'de' MMMM 'de' y G",
+-                "yyyyQQQ": "QQQ 'de' y G",
+-                "yyyyQQQQ": "QQQQ 'de' y G"
++                "y": "y",
++                "yM": "M-y",
++                "yMd": "d/M/y",
++                "yMEd": "E, d/M/y",
++                "yMM": "M/y",
++                "yMMM": "MMM y",
++                "yMMMd": "d 'de' MMM 'de' y",
++                "yMMMEd": "E, d MMM y",
++                "yMMMM": "MMMM 'de' y",
++                "yMMMMd": "d 'de' MMMM 'de' y",
++                "yMMMMEd": "EEE, d 'de' MMMM 'de' y",
++                "yQQQ": "QQQ 'de' y",
++                "yQQQQ": "QQQQ 'de' y",
++                "yw-count-one": "'semana' w 'de' Y",
++                "yw-count-other": "'semana' w 'de' Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+                 "Quarter": "{0} ({2}: {1})",
+                 "Second": "{0} ({2}: {1})",
+                 "Timezone": "{0} {1}",
+                 "Week": "{0} ({2}: {1})",
+                 "Year": "{1} {0}"
+               },
+               "intervalFormats": {
+-                "intervalFormatFallback": "{0}–{1}",
++                "intervalFormatFallback": "{0} a el {1}",
+                 "Bh": {
+                   "B": "h B – h B",
+                   "h": "h–h B"
+                 },
+                 "Bhm": {
+                   "B": "h:mm B – h:mm B",
+                   "h": "h:mm–h:mm B",
+                   "m": "h:mm–h:mm B"
+@@ -399,137 +420,155 @@
+                 "d": {
+                   "d": "d–d"
+                 },
+                 "Gy": {
+                   "G": "y G – y G",
+                   "y": "y–y G"
+                 },
+                 "GyM": {
+-                  "G": "M/y GGGGG – M/y GGGG",
+-                  "M": "M/y – M/y GGGGG",
++                  "G": "MM/y GGGGG – MM/y GGGGG",
++                  "M": "MM/y – MM/y GGGGG",
+                   "y": "MM/y – MM/y GGGGG"
+                 },
+                 "GyMd": {
+-                  "d": "d/M/y – d/M/y GGGGG",
+-                  "G": "d/M/y GGGGG – d/M/y GGGGG",
+-                  "M": "d/M/y – d/M/y GGGGG",
+-                  "y": "d/M/y – d/M/y GGGGG"
++                  "d": "dd/MM/y – dd/MM/y GGGGG",
++                  "G": "dd/MM/y GGGGG – dd/MM/y GGGGG",
++                  "M": "dd/MM/y – dd/MM/y GGGGG",
++                  "y": "dd/MM/y – dd/MM/y GGGGG"
+                 },
+                 "GyMEd": {
+-                  "d": "E d/M/y – E d/M/y GGGGG",
+-                  "G": "E d/M/y GGGGG – E d/M/y GGGGG",
+-                  "M": "E d/M/y – E d/M/y GGGGG",
+-                  "y": "E d/M/y – E d/M/y GGGGG"
++                  "d": "E, dd/MM/y – E, dd/MM/y GGGGG",
++                  "G": "E, dd/MM/y GGGGG – E, dd/MM/y GGGGG",
++                  "M": "E, dd/MM/y – E, dd/MM/y GGGGG",
++                  "y": "E, dd/MM/y – E, dd/MM/y GGGGG"
+                 },
+                 "GyMMM": {
+-                  "G": "MMM 'de' y G – MMM 'de' y G",
+-                  "M": "MMM–MMM 'de' y G",
+-                  "y": "MMM 'de' y – MMM 'de' y G"
++                  "G": "MMM y G – MMM y G",
++                  "M": "MMM–MMM y G",
++                  "y": "MMM y – MMM y G"
+                 },
+                 "GyMMMd": {
+-                  "d": "d–d 'de' MMM 'de' y G",
+-                  "G": "d 'de' MMM 'de' y G – d 'de' MMM 'de' y G",
+-                  "M": "d 'de' MMM – d 'de' MMM 'de' y G",
+-                  "y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
++                  "d": "d–d MMM 'de' y G",
++                  "G": "d MMM 'de' y G – d MMM 'de' y G",
++                  "M": "d MMM – d MMM 'de' y G",
++                  "y": "d MMM 'de' y – d MMM 'de' y G"
+                 },
+                 "GyMMMEd": {
+-                  "d": "E d 'de' MMM – E d 'de' MMM 'de' y G",
+-                  "G": "E d 'de' MMM 'de' y G – E d 'de' MMM 'de' y G",
+-                  "M": "E d 'de' MMM – E d 'de' MMM 'de' y G",
+-                  "y": "E d 'de' MMM 'de' y – E d 'de' MMM 'de' y G"
++                  "d": "E d MMM – E d MMM 'de' y G",
++                  "G": "E d MMM 'de' y G – E d MMM 'de' y G",
++                  "M": "E d MMM – E d MMM 'de' y G",
++                  "y": "E d MMM 'de' y – E d MMM 'de' y G"
+                 },
+                 "h": {
+                   "a": "h a – h a",
+                   "h": "h–h a"
+                 },
+                 "H": {
+                   "H": "HH–HH"
+                 },
+                 "hm": {
+                   "a": "h:mm a – h:mm a",
+-                  "h": "h:mm – h:mm a",
+-                  "m": "h:mm – h:mm a"
++                  "h": "h:mm–h:mm a",
++                  "m": "h:mm–h:mm a"
+                 },
+                 "Hm": {
+-                  "H": "HH:mm – HH:mm",
+-                  "m": "HH:mm – HH:mm"
++                  "H": "HH:mm–HH:mm",
++                  "m": "HH:mm–HH:mm"
+                 },
+                 "hmv": {
+                   "a": "h:mm a – h:mm a v",
+-                  "h": "h:mm – h:mm a v",
+-                  "m": "h:mm – h:mm a v"
++                  "h": "h:mm–h:mm a v",
++                  "m": "h:mm–h:mm a v"
+                 },
+                 "Hmv": {
+-                  "H": "HH:mm – HH:mm v",
+-                  "m": "HH:mm – HH:mm v"
++                  "H": "HH:mm–HH:mm v",
++                  "m": "HH:mm–HH:mm v"
+                 },
+                 "hv": {
+                   "a": "h a – h a v",
+                   "h": "h–h a v"
+                 },
+                 "Hv": {
+                   "H": "HH–HH v"
+                 },
+                 "M": {
+                   "M": "M–M"
+                 },
+                 "Md": {
+-                  "d": "d/M–d/M",
+-                  "M": "d/M–d/M"
++                  "d": "dd/MM – dd/MM",
++                  "M": "dd/MM – dd/MM"
+                 },
+                 "MEd": {
+-                  "d": "E, d/M–E, d/M",
+-                  "M": "E, d/M–E, d/M"
++                  "d": "E dd/MM – E dd/MM",
++                  "M": "E dd/MM – E dd/MM"
+                 },
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+                 "MMMd": {
+-                  "d": "d–d 'de' MMM",
+-                  "M": "d 'de' MMM–d 'de' MMM"
++                  "d": "dd – dd 'de' MM",
++                  "M": "d 'de' MMM 'al' d 'de' MMM"
+                 },
+                 "MMMEd": {
+-                  "d": "E, d 'de' MMM–E, d 'de' MMM",
+-                  "M": "E, d 'de' MMM–E, d 'de' MMM"
++                  "d": "E d 'al' E d 'de' MMM",
++                  "M": "E d 'de' MMM 'al' E d 'de' MMM"
++                },
++                "MMMMd": {
++                  "d": "d–d 'de' MMMM",
++                  "M": "d 'de' MMMM – d 'de' MMMM"
++                },
++                "MMMMEd": {
++                  "d": "E, d 'de' MMMM – E, d 'de' MMMM",
++                  "M": "E, d 'de' MMMM – E, d 'de' MMMM"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M/y – M/y GGGGG",
+-                  "y": "M/y – M/y GGGGG"
++                  "M": "MM/y – MM/y",
++                  "y": "MM/y – MM/y"
+                 },
+                 "yMd": {
+-                  "d": "d/M/y – d/M/y GGGGG",
+-                  "M": "d/M/y – d/M/y GGGGG",
+-                  "y": "d/M/y – d/M/y GGGGG"
++                  "d": "dd/MM/y – dd/MM/y",
++                  "M": "dd/MM/y – dd/MM/y",
++                  "y": "dd/MM/y – dd/MM/y"
+                 },
+                 "yMEd": {
+-                  "d": "E, d/M/y – E, d/M/y GGGGG",
+-                  "M": "E, d/M/y – E, d/M/y GGGGG",
+-                  "y": "E, d/M/y – E, d/M/y GGGGG"
++                  "d": "E, dd/MM/y – E, dd/MM/y",
++                  "M": "E, dd/MM/y – E, dd/MM/y",
++                  "y": "E, dd/MM/y – E, dd/MM/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM–MMM 'de' y G",
+-                  "y": "MMM 'de' y – MMM 'de' y G"
++                  "M": "MMM–MMM y",
++                  "y": "MMM 'de' y 'a' MMM 'de' y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d 'de' MMM 'de' y G",
+-                  "M": "d 'de' MMM – d 'de' MMM y G",
+-                  "y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
++                  "d": "d – d 'de' MMM 'de' y",
++                  "M": "d 'de' MMM 'al' d 'de' MMM 'de' y",
++                  "y": "d 'de' MMM 'de' y 'al' d 'de' MMM 'de' y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+-                  "M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+-                  "y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G"
++                  "d": "E, d 'al' E, d 'de' MMM 'de' y",
++                  "M": "E, d 'de' MMM 'al' E, d 'de' MMM 'de' y",
++                  "y": "E, d 'de' MMM 'de' y 'al' E, d 'de' MMM 'de' y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM–MMMM 'de' y G",
+-                  "y": "MMMM 'de' y – MMMM 'de' y G"
++                  "M": "MMMM 'al' MMMM 'de' y",
++                  "y": "MMMM 'de' y 'al' MMMM 'de' y"
++                },
++                "yMMMMd": {
++                  "d": "d–d 'de' MMMM 'de' y",
++                  "M": "d 'de' MMMM – d 'de' MMMM 'de' y",
++                  "y": "d 'de' MMMM 'de' y – d 'de' MMMM 'de' y"
++                },
++                "yMMMMEd": {
++                  "d": "E, d 'de' MMMM – E, d 'de' MMMM 'de' y",
++                  "M": "E, d 'de' MMMM – E, d 'de' MMMM 'de' y",
++                  "y": "E, d 'de' MMMM 'de' y – E, d 'de' MMMM 'de' y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/fil/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/fil/ca-gregorian.json	2021-11-17 14:17:17.760921591 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "fil"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "Ene",
+                   "2": "Peb",
+                   "3": "Mar",
+                   "4": "Abr",
+                   "5": "May",
+@@ -289,36 +289,45 @@
+                   "afternoon1": "tanghali",
+                   "evening1": "hapon",
+                   "night1": "gabi"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "Before Christ",
++                "0-alt-variant": "Before Common Era",
++                "1": "Anno Domini",
++                "1-alt-variant": "Common Era"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "BC",
++                "0-alt-variant": "BCE",
++                "1": "AD",
++                "1-alt-variant": "CE"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "BC",
++                "0-alt-variant": "BCE",
++                "1": "AD",
++                "1-alt-variant": "CE"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, MMMM d, y G",
+-              "long": "MMMM d, y G",
+-              "medium": "MMM d, y G",
+-              "short": "M/d/y GGGGG"
++              "full": "EEEE, MMMM d, y",
++              "long": "MMMM d, y",
++              "medium": "MMM d, y",
++              "short": "M/d/yy"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "h:mm:ss a zzzz",
+               "long": "h:mm:ss a z",
+               "medium": "h:mm:ss a",
+               "short": "h:mm a"
+             },
+             "timeSkeletons": {
+@@ -340,48 +349,55 @@
+                 "E": "ccc",
+                 "EBhm": "E h:mm B",
+                 "EBhms": "E h:mm:ss B",
+                 "Ed": "d E",
+                 "Ehm": "E h:mm a",
+                 "EHm": "E HH:mm",
+                 "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+-                "Gy": "y G",
++                "Gy": "G y",
+                 "GyMd": "M/d/y GGGGG",
+                 "GyMMM": "MMM y G",
+                 "GyMMMd": "MMM d, y G",
+                 "GyMMMEd": "E, MMM d, y G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "M/d",
+                 "MEd": "E, M/d",
+                 "MMM": "LLL",
+                 "MMMd": "MMM d",
+                 "MMMEd": "E, MMM d",
+                 "MMMMd": "MMMM d",
+                 "MMMMEd": "E, MMMM d",
++                "MMMMW-count-one": "'ika'-W 'linggo' 'ng' MMMM",
++                "MMMMW-count-other": "'linggo' W 'ng' MMMM",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "M/y GGGGG",
+-                "yyyyMd": "M/d/y GGGGG",
+-                "yyyyMEd": "E, M/d/y GGGGG",
+-                "yyyyMM": "MM-y G",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "MMM d, y G",
+-                "yyyyMMMEd": "E, MMM d, y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "M/y",
++                "yMd": "M/d/y",
++                "yMEd": "E, M/d/y",
++                "yMM": "MM/y",
++                "yMMM": "MMM y",
++                "yMMMd": "MMM d, y",
++                "yMMMEd": "E, MMM d, y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-one": "'ika'-w 'linggo' 'ng' Y",
++                "yw-count-other": "'linggo' w 'ng' Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -493,49 +509,49 @@
+                   "d": "MMM d–d",
+                   "M": "MMM d – MMM d"
+                 },
+                 "MMMEd": {
+                   "d": "E, MMM d – E, MMM d",
+                   "M": "E, MMM d – E, MMM d"
+                 },
+                 "y": {
+-                  "y": "y–y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M/y – M/y GGGGG",
+-                  "y": "M/y – M/y GGGGG"
++                  "M": "M/y – M/y",
++                  "y": "M/y – M/y"
+                 },
+                 "yMd": {
+-                  "d": "M/d/y – M/d/y GGGGG",
+-                  "M": "M/d/y – M/d/y GGGGG",
+-                  "y": "M/d/y – M/d/y GGGGG"
++                  "d": "M/d/y – M/d/y",
++                  "M": "M/d/y – M/d/y",
++                  "y": "M/d/y – M/d/y"
+                 },
+                 "yMEd": {
+-                  "d": "E, M/d/y – E, M/d/y GGGGG",
+-                  "M": "E, M/d/y – E, M/d/y GGGGG",
+-                  "y": "E, M/d/y – E, M/d/y GGGGG"
++                  "d": "E, M/d/y – E, M/d/y",
++                  "M": "E, M/d/y – E, M/d/y",
++                  "y": "E, M/d/y – E, M/d/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM–MMM y G",
+-                  "y": "MMM y – MMM y G"
++                  "M": "MMM–MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "MMM d–d, y G",
+-                  "M": "MMM d – MMM d, y G",
+-                  "y": "MMM d, y – MMM d, y G"
++                  "d": "MMM d–d, y",
++                  "M": "MMM d – MMM d, y",
++                  "y": "MMM d, y – MMM d, y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E, MMM d – E, MMM d, y G",
+-                  "M": "E, MMM d – E, MMM d, y G",
+-                  "y": "E, MMM d, y – E, MMM d, y G"
++                  "d": "E, MMM d – E, MMM d, y",
++                  "M": "E, MMM d – E, MMM d, y",
++                  "y": "E, MMM d, y – E, MMM d, y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM–MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM–MMMM y",
++                  "y": "MMMM y – MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/fr/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/fr/ca-gregorian.json	2021-11-17 14:17:17.720921386 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "fr"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "janv.",
+                   "2": "févr.",
+                   "3": "mars",
+                   "4": "avr.",
+                   "5": "mai",
+@@ -283,97 +283,113 @@
+                   "afternoon1": "après-midi",
+                   "evening1": "soir",
+                   "night1": "nuit"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "ère bouddhique"
++                "0": "avant Jésus-Christ",
++                "0-alt-variant": "avant l’ère commune",
++                "1": "après Jésus-Christ",
++                "1-alt-variant": "de l’ère commune"
+               },
+               "eraAbbr": {
+-                "0": "E. B."
++                "0": "av. J.-C.",
++                "0-alt-variant": "AEC",
++                "1": "ap. J.-C.",
++                "1-alt-variant": "EC"
+               },
+               "eraNarrow": {
+-                "0": "EB"
++                "0": "av. J.-C.",
++                "0-alt-variant": "AEC",
++                "1": "ap. J.-C.",
++                "1-alt-variant": "EC"
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE d MMMM y G",
+-              "long": "d MMMM y G",
+-              "medium": "d MMM y G",
+-              "short": "dd/MM/y GGGGG"
++              "full": "EEEE d MMMM y",
++              "long": "d MMMM y",
++              "medium": "d MMM y",
++              "short": "dd/MM/y"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyMMdd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yMMdd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+               "full": "HHmmsszzzz",
+               "long": "HHmmssz",
+               "medium": "HHmmss",
+               "short": "HHmm"
+             },
+             "dateTimeFormats": {
+               "full": "{1} 'à' {0}",
+               "long": "{1} 'à' {0}",
+-              "medium": "{1} {0}",
++              "medium": "{1}, {0}",
+               "short": "{1} {0}",
+               "availableFormats": {
+                 "Bh": "h B",
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+-                "E": "ccc",
++                "E": "E",
+                 "EBhm": "E h:mm B",
+                 "EBhms": "E h:mm:ss B",
+                 "Ed": "E d",
+                 "Ehm": "E h:mm a",
+                 "EHm": "E HH:mm",
+                 "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "y G",
+                 "GyMd": "dd/MM/y GGGGG",
+                 "GyMMM": "MMM y G",
+                 "GyMMMd": "d MMM y G",
+                 "GyMMMEd": "E d MMM y G",
+                 "h": "h a",
+-                "H": "HH",
++                "H": "HH 'h'",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+-                "Md": "d/M",
+-                "MEd": "E d/M",
++                "Md": "dd/MM",
++                "MEd": "E dd/MM",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "E d MMM",
+                 "MMMMd": "d MMMM",
++                "MMMMW-count-one": "'semaine' W (MMMM)",
++                "MMMMW-count-other": "'semaine' W (MMMM)",
+                 "ms": "mm:ss",
+-                "y": "y G",
+-                "yyyy": "y G",
+-                "yyyyM": "MM/y GGGGG",
+-                "yyyyMd": "dd/MM/y GGGGG",
+-                "yyyyMEd": "E dd/MM/y GGGGG",
+-                "yyyyMMM": "MMM y G",
+-                "yyyyMMMd": "d MMM y G",
+-                "yyyyMMMEd": "E d MMM y G",
+-                "yyyyMMMM": "MMMM y G",
+-                "yyyyQQQ": "QQQ y G",
+-                "yyyyQQQQ": "QQQQ y G"
++                "y": "y",
++                "yM": "MM/y",
++                "yMd": "dd/MM/y",
++                "yMEd": "E dd/MM/y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM y",
++                "yMMMEd": "E d MMM y",
++                "yMMMM": "MMMM y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ y",
++                "yw-count-one": "'semaine' w 'de' Y",
++                "yw-count-other": "'semaine' w 'de' Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -390,17 +406,17 @@
+                   "h": "h – h B"
+                 },
+                 "Bhm": {
+                   "B": "h:mm B – h:mm B",
+                   "h": "h:mm – h:mm B",
+                   "m": "h:mm – h:mm B"
+                 },
+                 "d": {
+-                  "d": "d – d"
++                  "d": "d–d"
+                 },
+                 "Gy": {
+                   "G": "y G 'à' y G",
+                   "y": "y–y G"
+                 },
+                 "GyM": {
+                   "G": "M/y G 'à' M/y G",
+                   "M": "M–M/y G",
+@@ -463,17 +479,17 @@
+                 "hv": {
+                   "a": "h a – h a v",
+                   "h": "h – h a v"
+                 },
+                 "Hv": {
+                   "H": "HH – HH v"
+                 },
+                 "M": {
+-                  "M": "M – M"
++                  "M": "M–M"
+                 },
+                 "Md": {
+                   "d": "dd/MM – dd/MM",
+                   "M": "dd/MM – dd/MM"
+                 },
+                 "MEd": {
+                   "d": "E dd/MM – E dd/MM",
+                   "M": "E dd/MM – E dd/MM"
+@@ -481,53 +497,53 @@
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+                 "MMMd": {
+                   "d": "d–d MMM",
+                   "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+-                  "d": "E d MMM – E d MMM",
++                  "d": "E d – E d MMM",
+                   "M": "E d MMM – E d MMM"
+                 },
+                 "y": {
+-                  "y": "y – y G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "MM/y – MM/y G",
+-                  "y": "M/y – M/y G"
++                  "M": "MM/y – MM/y",
++                  "y": "MM/y – MM/y"
+                 },
+                 "yMd": {
+-                  "d": "d/M/y – d/M/y G",
+-                  "M": "d/M/y – d/M/y G",
+-                  "y": "dd/MM/y – dd/MM/y G"
++                  "d": "dd/MM/y – dd/MM/y",
++                  "M": "dd/MM/y – dd/MM/y",
++                  "y": "dd/MM/y – dd/MM/y"
+                 },
+                 "yMEd": {
+-                  "d": "E dd/MM/y – E dd/MM/y G",
+-                  "M": "E dd/MM/y – E dd/MM/y G",
+-                  "y": "E dd/MM/y – E dd/MM/y G"
++                  "d": "E dd/MM/y – E dd/MM/y",
++                  "M": "E dd/MM/y – E dd/MM/y",
++                  "y": "E dd/MM/y – E dd/MM/y"
+                 },
+                 "yMMM": {
+-                  "M": "MMM–MMM y G",
+-                  "y": "MMM y – MMM y G"
++                  "M": "MMM–MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "d–d MMM y G",
+-                  "M": "d MMM – d MMM y G",
+-                  "y": "d MMM y – d MMM y G"
++                  "d": "d–d MMM y",
++                  "M": "d MMM – d MMM y",
++                  "y": "d MMM y – d MMM y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E d – E d MMM y G",
+-                  "M": "E d MMM – E d MMM y G",
+-                  "y": "E d MMM y – E d MMM y G"
++                  "d": "E d – E d MMM y",
++                  "M": "E d MMM – E d MMM y",
++                  "y": "E d MMM y – E d MMM y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y G",
+-                  "y": "MMMM y – MMMM y G"
++                  "M": "MMMM – MMMM y",
++                  "y": "MMMM y – MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/ja/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/ja/ca-gregorian.json	2021-11-17 14:17:17.952922581 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "ja"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "1月",
+                   "2": "2月",
+                   "3": "3月",
+                   "4": "4月",
+                   "5": "5月",
+@@ -289,36 +289,45 @@
+                   "evening1": "夕方",
+                   "night1": "夜",
+                   "night2": "夜中"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "仏暦"
++                "0": "紀元前",
++                "0-alt-variant": "西暦紀元前",
++                "1": "西暦",
++                "1-alt-variant": "西暦紀元"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "紀元前",
++                "0-alt-variant": "西暦紀元前",
++                "1": "西暦",
++                "1-alt-variant": "西暦紀元"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "BC",
++                "0-alt-variant": "西暦紀元前",
++                "1": "AD",
++                "1-alt-variant": "西暦紀元"
+               }
+             },
+             "dateFormats": {
+-              "full": "GGGGy年M月d日EEEE",
+-              "long": "GGGGy年M月d日",
+-              "medium": "Gy/MM/dd",
+-              "short": "Gy/MM/dd"
++              "full": "y年M月d日EEEE",
++              "long": "y年M月d日",
++              "medium": "y/MM/dd",
++              "short": "y/MM/dd"
+             },
+             "dateSkeletons": {
+-              "full": "GGGGyMEEEEd",
+-              "long": "GGGGyMd",
+-              "medium": "GyMMdd",
+-              "short": "GyMMdd"
++              "full": "yMEEEEd",
++              "long": "yMd",
++              "medium": "yMMdd",
++              "short": "yMMdd"
+             },
+             "timeFormats": {
+               "full": "H時mm分ss秒 zzzz",
+               "long": "H:mm:ss z",
+               "medium": "H:mm:ss",
+               "short": "H:mm"
+             },
+             "timeSkeletons": {
+@@ -341,52 +350,57 @@
+                 "EBhm": "BK:mm (E)",
+                 "EBhms": "BK:mm:ss (E)",
+                 "Ed": "d日(E)",
+                 "EEEEd": "d日EEEE",
+                 "Ehm": "aK:mm (E)",
+                 "EHm": "H:mm (E)",
+                 "Ehms": "aK:mm:ss (E)",
+                 "EHms": "H:mm:ss (E)",
+-                "Gy": "GGGGy年",
+-                "GyMd": "GGGGy年M月d日",
+-                "GyMMM": "GGGGy年M月",
+-                "GyMMMd": "GGGGy年M月d日",
+-                "GyMMMEd": "GGGGy年M月d日(E)",
+-                "GyMMMEEEEd": "GGGGy年M月d日EEEE",
++                "Gy": "Gy年",
++                "GyMd": "Gy/M/d",
++                "GyMMM": "Gy年M月",
++                "GyMMMd": "Gy年M月d日",
++                "GyMMMEd": "Gy年M月d日(E)",
++                "GyMMMEEEEd": "Gy年M月d日EEEE",
+                 "h": "aK時",
+                 "H": "H時",
+                 "hm": "aK:mm",
+                 "Hm": "H:mm",
+                 "hms": "aK:mm:ss",
+                 "Hms": "H:mm:ss",
++                "hmsv": "aK:mm:ss v",
++                "Hmsv": "H:mm:ss v",
++                "hmv": "aK:mm v",
++                "Hmv": "H:mm v",
+                 "M": "M月",
+                 "Md": "M/d",
+                 "MEd": "M/d(E)",
+                 "MEEEEd": "M/dEEEE",
+                 "MMM": "M月",
+                 "MMMd": "M月d日",
+                 "MMMEd": "M月d日(E)",
+                 "MMMEEEEd": "M月d日EEEE",
+                 "MMMMd": "M月d日",
++                "MMMMW-count-other": "M月第W週",
+                 "ms": "mm:ss",
+-                "y": "GGGGy年",
+-                "yyyy": "GGGGy年",
+-                "yyyyM": "GGGGy年M月",
+-                "yyyyMd": "Gy/M/d",
+-                "yyyyMEd": "GGGGy年M/d(E)",
+-                "yyyyMEEEEd": "GGGGy年M/dEEEE",
+-                "yyyyMM": "Gy/MM",
+-                "yyyyMMM": "GGGGy年M月",
+-                "yyyyMMMd": "GGGGy年M月d日",
+-                "yyyyMMMEd": "GGGGy年M月d日(E)",
+-                "yyyyMMMEEEEd": "GGGGy年M月d日EEEE",
+-                "yyyyMMMM": "GGGGy年M月",
+-                "yyyyQQQ": "Gy/QQQ",
+-                "yyyyQQQQ": "Gy年QQQQ"
++                "y": "y年",
++                "yM": "y/M",
++                "yMd": "y/M/d",
++                "yMEd": "y/M/d(E)",
++                "yMEEEEd": "y/M/dEEEE",
++                "yMM": "y/MM",
++                "yMMM": "y年M月",
++                "yMMMd": "y年M月d日",
++                "yMMMEd": "y年M月d日(E)",
++                "yMMMEEEEd": "y年M月d日EEEE",
++                "yMMMM": "y年M月",
++                "yQQQ": "y/QQQ",
++                "yQQQQ": "y年QQQQ",
++                "yw-count-other": "Y年第w週"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -405,53 +419,36 @@
+                 "Bhm": {
+                   "B": "BK:mm～BK:mm",
+                   "h": "BK:mm～K:mm",
+                   "m": "BK:mm～K:mm"
+                 },
+                 "d": {
+                   "d": "d日～d日"
+                 },
+-                "GGGGGyM": {
+-                  "G": "GGGGGy/MM～GGGGGy/MM",
+-                  "M": "GGGGGy/MM～y/MM",
+-                  "y": "GGGGGy/MM～y/MM"
+-                },
+-                "GGGGGyMd": {
+-                  "d": "GGGGGy/MM/dd～y/MM/dd",
+-                  "G": "GGGGGy/MM/dd～GGGGGy/MM/dd",
+-                  "M": "GGGGGy/MM/dd～y/MM/dd",
+-                  "y": "GGGGGy/MM/dd～y/MM/dd"
+-                },
+-                "GGGGGyMEd": {
+-                  "d": "GGGGGy/MM/dd(E)～y/MM/dd(E)",
+-                  "G": "GGGGGy/MM/dd(E)～GGGGGy/MM/dd(E)",
+-                  "M": "GGGGGy/MM/dd(E)～y/MM/dd(E)",
+-                  "y": "GGGGGy/MM/dd(E)～y/MM/dd(E)"
+-                },
+                 "Gy": {
+                   "G": "Gy年～Gy年",
+                   "y": "Gy年～y年"
+                 },
+                 "GyM": {
+-                  "G": "GGGGGy/MM～GGGGGy/MM",
+-                  "M": "GGGGGy/MM～y/MM",
+-                  "y": "GGGGGy/MM～y/MM"
++                  "G": "Gy/MM～Gy/MM",
++                  "M": "Gy/MM～y/MM",
++                  "y": "Gy/MM～y/MM"
+                 },
+                 "GyMd": {
+-                  "d": "GGGGGy/MM/dd～y/MM/dd",
+-                  "G": "GGGGGy/MM/dd～GGGGGy/MM/dd",
+-                  "M": "GGGGGy/MM/dd～y/MM/dd",
+-                  "y": "GGGGGy/MM/dd～y/MM/dd"
++                  "d": "Gy/MM/dd～y/MM/dd",
++                  "G": "Gy/MM/dd～Gy/MM/dd",
++                  "M": "Gy/MM/dd～y/MM/dd",
++                  "y": "Gy/MM/dd～y/MM/dd"
+                 },
+                 "GyMEd": {
+-                  "d": "GGGGGy/MM/dd(E)～y/MM/dd(E)",
+-                  "G": "GGGGGy/MM/dd(E)～GGGGGy/MM/dd(E)",
+-                  "M": "GGGGGy/MM/dd(E)～y/MM/dd(E)",
+-                  "y": "GGGGGy/MM/dd(E)～y/MM/dd(E)"
++                  "d": "Gy/MM/dd(E)～y/MM/dd(E)",
++                  "G": "Gy/MM/dd(E)～Gy/MM/dd(E)",
++                  "M": "Gy/MM/dd(E)～y/MM/dd(E)",
++                  "y": "Gy/MM/dd(E)～y/MM/dd(E)"
+                 },
+                 "GyMMM": {
+                   "G": "Gy年M月～Gy年M月",
+                   "M": "Gy年M月～M月",
+                   "y": "Gy年M月～y年M月"
+                 },
+                 "GyMMMd": {
+                   "d": "Gy年M月d日～d日",
+@@ -518,49 +515,49 @@
+                 "MMMEd": {
+                   "d": "M月d日(E)～d日(E)",
+                   "M": "M月d日(E)～M月d日(E)"
+                 },
+                 "MMMM": {
+                   "M": "M月～M月"
+                 },
+                 "y": {
+-                  "y": "Gy年～y年"
++                  "y": "y年～y年"
+                 },
+                 "yM": {
+-                  "M": "GGGGGy/MM～y/MM",
+-                  "y": "GGGGGy/MM～y/MM"
++                  "M": "y/MM～y/MM",
++                  "y": "y/MM～y/MM"
+                 },
+                 "yMd": {
+-                  "d": "GGGGGy/MM/dd～y/MM/dd",
+-                  "M": "GGGGGy/MM/dd～y/MM/dd",
+-                  "y": "GGGGGy/MM/dd～y/MM/dd"
++                  "d": "y/MM/dd～y/MM/dd",
++                  "M": "y/MM/dd～y/MM/dd",
++                  "y": "y/MM/dd～y/MM/dd"
+                 },
+                 "yMEd": {
+-                  "d": "GGGGGy/MM/dd(E)～y/MM/dd(E)",
+-                  "M": "GGGGGy/MM/dd(E)～y/MM/dd(E)",
+-                  "y": "GGGGGy/MM/dd(E)～y/MM/dd(E)"
++                  "d": "y/MM/dd(E)～y/MM/dd(E)",
++                  "M": "y/MM/dd(E)～y/MM/dd(E)",
++                  "y": "y/MM/dd(E)～y/MM/dd(E)"
+                 },
+                 "yMMM": {
+-                  "M": "Gy年M月～M月",
+-                  "y": "Gy年M月～y年M月"
++                  "M": "y年M月～M月",
++                  "y": "y年M月～y年M月"
+                 },
+                 "yMMMd": {
+-                  "d": "Gy年M月d日～d日",
+-                  "M": "Gy年M月d日～M月d日",
+-                  "y": "Gy年M月d日～y年M月d日"
++                  "d": "y年M月d日～d日",
++                  "M": "y年M月d日～M月d日",
++                  "y": "y年M月d日～y年M月d日"
+                 },
+                 "yMMMEd": {
+-                  "d": "Gy年M月d日(E)～d日(E)",
+-                  "M": "Gy年M月d日(E)～M月d日(E)",
+-                  "y": "Gy年M月d日(E)～y年M月d日(E)"
++                  "d": "y年M月d日(E)～d日(E)",
++                  "M": "y年M月d日(E)～M月d日(E)",
++                  "y": "y年M月d日(E)～y年M月d日(E)"
+                 },
+                 "yMMMM": {
+-                  "M": "Gy年M月～M月",
+-                  "y": "Gy年M月～y年M月"
++                  "M": "y年M月～M月",
++                  "y": "y年M月～y年M月"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/ru/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/ru/ca-gregorian.json	2021-11-17 14:17:17.940922519 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "ru"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "янв.",
+                   "2": "февр.",
+                   "3": "мар.",
+                   "4": "апр.",
+                   "5": "мая",
+@@ -283,36 +283,45 @@
+                   "afternoon1": "день",
+                   "evening1": "вечер",
+                   "night1": "ночь"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "буддийская эра"
++                "0": "до Рождества Христова",
++                "0-alt-variant": "до нашей эры",
++                "1": "от Рождества Христова",
++                "1-alt-variant": "нашей эры"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "до н. э.",
++                "0-alt-variant": "до н. э.",
++                "1": "н. э.",
++                "1-alt-variant": "н. э."
+               },
+               "eraNarrow": {
+-                "0": "бэ"
++                "0": "до н.э.",
++                "0-alt-variant": "до н. э.",
++                "1": "н.э.",
++                "1-alt-variant": "н. э."
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d MMMM y 'г'. G",
+-              "long": "d MMMM y 'г'. G",
+-              "medium": "d MMM y 'г'. G",
+-              "short": "dd.MM.y G"
++              "full": "EEEE, d MMMM y 'г'.",
++              "long": "d MMMM y 'г'.",
++              "medium": "d MMM y 'г'.",
++              "short": "dd.MM.y"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GyMMdd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yMMdd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+@@ -329,51 +338,64 @@
+               "availableFormats": {
+                 "Bh": "h B",
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "ccc, h:mm B",
+                 "EBhms": "ccc, h:mm:ss B",
+-                "Ed": "E, d",
+-                "Ehm": "ccc, h:mm a",
+-                "EHm": "ccc HH:mm",
+-                "Ehms": "ccc, h:mm:ss a",
+-                "EHms": "ccc HH:mm:ss",
++                "Ed": "ccc, d",
++                "Ehm": "E h:mm a",
++                "EHm": "E HH:mm",
++                "Ehms": "E h:mm:ss a",
++                "EHms": "E HH:mm:ss",
+                 "Gy": "y 'г'. G",
+-                "GyMd": "dd.MM.y G",
++                "GyMd": "dd.MM.y GGGGG",
+                 "GyMMM": "LLL y 'г'. G",
+                 "GyMMMd": "d MMM y 'г'. G",
+                 "GyMMMEd": "E, d MMM y 'г'. G",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "dd.MM",
+                 "MEd": "E, dd.MM",
++                "MMdd": "dd.MM",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "ccc, d MMM",
+                 "MMMMd": "d MMMM",
++                "MMMMW-count-one": "W-'я' 'неделя' MMMM",
++                "MMMMW-count-few": "W-'я' 'неделя' MMMM",
++                "MMMMW-count-many": "W-'я' 'неделя' MMMM",
++                "MMMMW-count-other": "W-'я' 'неделя' MMMM",
+                 "ms": "mm:ss",
+-                "y": "y 'г'. G",
+-                "yyyy": "y 'г'. G",
+-                "yyyyM": "MM.y G",
+-                "yyyyMd": "dd.MM.y G",
+-                "yyyyMEd": "E, dd.MM.y G",
+-                "yyyyMMM": "LLL y 'г'. G",
+-                "yyyyMMMd": "d MMM y 'г'. G",
+-                "yyyyMMMEd": "E, d MMM y 'г'. G",
+-                "yyyyMMMM": "LLLL y 'г'. G",
+-                "yyyyQQQ": "QQQ y 'г'. G",
+-                "yyyyQQQQ": "QQQQ y 'г'. G"
++                "y": "y",
++                "yM": "MM.y",
++                "yMd": "dd.MM.y",
++                "yMEd": "ccc, dd.MM.y 'г'.",
++                "yMM": "MM.y",
++                "yMMM": "LLL y 'г'.",
++                "yMMMd": "d MMM y 'г'.",
++                "yMMMEd": "E, d MMM y 'г'.",
++                "yMMMM": "LLLL y 'г'.",
++                "yQQQ": "QQQ y 'г'.",
++                "yQQQQ": "QQQQ y 'г'.",
++                "yw-count-one": "w-'я' 'неделя' Y 'г'.",
++                "yw-count-few": "w-'я' 'неделя' Y 'г'.",
++                "yw-count-many": "w-'я' 'неделя' Y 'г'.",
++                "yw-count-other": "w-'я' 'неделя' Y 'г'."
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -435,42 +457,42 @@
+                   "M": "ccc, d MMM – ccc, d MMM y 'г'. G",
+                   "y": "ccc, d MMM y – ccc, d MMM y 'гг'. G"
+                 },
+                 "h": {
+                   "a": "h a – h a",
+                   "h": "h–h a"
+                 },
+                 "H": {
+-                  "H": "H–H"
++                  "H": "HH–HH"
+                 },
+                 "hm": {
+                   "a": "h:mm a – h:mm a",
+                   "h": "h:mm–h:mm a",
+                   "m": "h:mm–h:mm a"
+                 },
+                 "Hm": {
+-                  "H": "H:mm–H:mm",
+-                  "m": "H:mm–H:mm"
++                  "H": "HH:mm–HH:mm",
++                  "m": "HH:mm–HH:mm"
+                 },
+                 "hmv": {
+                   "a": "h:mm a – h:mm a v",
+                   "h": "h:mm–h:mm a v",
+                   "m": "h:mm–h:mm a v"
+                 },
+                 "Hmv": {
+-                  "H": "H:mm–H:mm v",
+-                  "m": "H:mm–H:mm v"
++                  "H": "HH:mm–HH:mm v",
++                  "m": "HH:mm–HH:mm v"
+                 },
+                 "hv": {
+                   "a": "h a – h a v",
+                   "h": "h–h a v"
+                 },
+                 "Hv": {
+-                  "H": "H–H v"
++                  "H": "HH–HH v"
+                 },
+                 "M": {
+                   "M": "M–M"
+                 },
+                 "Md": {
+                   "d": "dd.MM – dd.MM",
+                   "M": "dd.MM – dd.MM"
+                 },
+@@ -481,56 +503,56 @@
+                 "MMM": {
+                   "M": "LLL – LLL"
+                 },
+                 "MMMd": {
+                   "d": "d–d MMM",
+                   "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+-                  "d": "ccc, d MMM – ccc, d MMM",
+-                  "M": "ccc, d MMM – ccc, d MMM"
++                  "d": "E, d MMM – E, d MMM",
++                  "M": "E, d MMM – E, d MMM"
+                 },
+                 "MMMM": {
+                   "M": "LLLL – LLLL"
+                 },
+                 "y": {
+-                  "y": "y–y 'гг'. G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "MM.y – MM.y G",
+-                  "y": "MM.y – MM.y G"
++                  "M": "MM.y – MM.y",
++                  "y": "MM.y – MM.y"
+                 },
+                 "yMd": {
+-                  "d": "dd.MM.y – dd.MM.y G",
+-                  "M": "dd.MM.y – dd.MM.y G",
+-                  "y": "dd.MM.y – dd.MM.y G"
++                  "d": "dd.MM.y – dd.MM.y",
++                  "M": "dd.MM.y – dd.MM.y",
++                  "y": "dd.MM.y – dd.MM.y"
+                 },
+                 "yMEd": {
+-                  "d": "ccc, dd.MM.y – ccc, dd.MM.y G",
+-                  "M": "ccc, dd.MM.y – ccc, dd.MM.y G",
+-                  "y": "ccc, dd.MM.y – ccc, dd.MM.y G"
++                  "d": "ccc, dd.MM.y – ccc, dd.MM.y",
++                  "M": "ccc, dd.MM.y – ccc, dd.MM.y",
++                  "y": "ccc, dd.MM.y – ccc, dd.MM.y"
+                 },
+                 "yMMM": {
+-                  "M": "LLL – LLL y 'г'. G",
+-                  "y": "LLL y 'г'. – LLL y 'г'. G"
++                  "M": "LLL – LLL y 'г'.",
++                  "y": "LLL y 'г'. – LLL y 'г'."
+                 },
+                 "yMMMd": {
+-                  "d": "d–d MMM y 'г'. G",
+-                  "M": "d MMM – d MMM y 'г'. G",
+-                  "y": "d MMM y 'г'. – d MMM y 'г'. G"
++                  "d": "d–d MMM y 'г'.",
++                  "M": "d MMM – d MMM y 'г'.",
++                  "y": "d MMM y 'г'. – d MMM y 'г'."
+                 },
+                 "yMMMEd": {
+-                  "d": "ccc, d MMM – ccc, d MMM y 'г'. G",
+-                  "M": "ccc, d MMM – ccc, d MMM y 'г'. G",
+-                  "y": "ccc, d MMM y 'г'. – ccc, d MMM y 'г'. G"
++                  "d": "ccc, d – ccc, d MMM y 'г'.",
++                  "M": "ccc, d MMM – ccc, d MMM y 'г'.",
++                  "y": "ccc, d MMM y 'г'. – ccc, d MMM y 'г'."
+                 },
+                 "yMMMM": {
+-                  "M": "LLLL – LLLL y 'г'. G",
+-                  "y": "LLLL y 'г'. – LLLL y 'г'. G"
++                  "M": "LLLL – LLLL y 'г'.",
++                  "y": "LLLL y 'г'. – LLLL y 'г'."
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/sr/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/sr/ca-gregorian.json	2021-11-17 14:17:17.996922808 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "sr"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "јан",
+                   "2": "феб",
+                   "3": "мар",
+                   "4": "апр",
+                   "5": "мај",
+@@ -283,36 +283,45 @@
+                   "afternoon1": "поподне",
+                   "evening1": "вече",
+                   "night1": "ноћ"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "БЕ"
++                "0": "пре нове ере",
++                "0-alt-variant": "пре наше ере",
++                "1": "нове ере",
++                "1-alt-variant": "наше ере"
+               },
+               "eraAbbr": {
+-                "0": "БЕ"
++                "0": "п. н. е.",
++                "0-alt-variant": "п. н. е.",
++                "1": "н. е.",
++                "1-alt-variant": "н. е."
+               },
+               "eraNarrow": {
+-                "0": "БЕ"
++                "0": "п.н.е.",
++                "0-alt-variant": "п. н. е.",
++                "1": "н.е.",
++                "1-alt-variant": "н. е."
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d. MMMM y. G",
+-              "long": "d. MMMM y. G",
+-              "medium": "d.MM.y. G",
+-              "short": "d.M.y. GGGGG"
++              "full": "EEEE, d. MMMM y.",
++              "long": "d. MMMM y.",
++              "medium": "d. M. y.",
++              "short": "d.M.yy."
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEdd",
++              "long": "yMMMMdd",
++              "medium": "yMMdd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+@@ -326,59 +335,68 @@
+               "long": "{1} {0}",
+               "medium": "{1} {0}",
+               "short": "{1} {0}",
+               "availableFormats": {
+                 "Bh": "h B",
+                 "Bhm": "hh:mm B",
+                 "Bhms": "hh:mm:ss B",
+                 "d": "d",
+-                "E": "ccc",
++                "E": "E",
+                 "EBhm": "E hh:mm B",
+                 "EBhms": "E hh:mm:ss B",
+                 "Ed": "E d.",
+-                "Ehm": "E hh:mm a",
++                "Ehm": "E h:mm a",
+                 "EHm": "E HH:mm",
+-                "Ehms": "E hh:mm:ss a",
++                "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "y. G",
+-                "GyMd": "d.M.y. GGGGG",
++                "GyMd": "d.MM.y. GGGGG",
+                 "GyMMM": "MMM y. G",
+                 "GyMMMd": "d. MMM y. G",
+                 "GyMMMEd": "E, d. MMM y. G",
+                 "h": "h a",
+                 "H": "HH",
+-                "hm": "hh:mm a",
++                "hm": "h:mm a",
+                 "Hm": "HH:mm",
+-                "hms": "hh:mm:ss a",
++                "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d.M.",
+                 "MEd": "E, d.M.",
+-                "MMdd": "MM-dd",
++                "MMdd": "dd.MM.",
+                 "MMM": "LLL",
+                 "MMMd": "d. MMM",
+                 "MMMdd": "dd.MMM",
+-                "MMMEd": "E, d. MMM",
++                "MMMEd": "E d. MMM",
+                 "MMMMd": "d. MMMM",
+                 "MMMMEd": "E, d. MMMM",
++                "MMMMW-count-one": "W. 'седмица' 'у' MMMM.",
++                "MMMMW-count-few": "W. 'седмица' 'у' MMMM.",
++                "MMMMW-count-other": "W. 'седмица' 'у' MMMM.",
+                 "ms": "mm:ss",
+-                "y": "y. G",
+-                "yyyy": "y. G",
+-                "yyyyM": "M.y. GGGGG",
+-                "yyyyMd": "d.M.y. GGGGG",
+-                "yyyyMEd": "E, d.M.y. GGGGG",
+-                "yyyyMM": "MM.y. G",
+-                "yyyyMMdd": "dd.MM.y. G",
+-                "yyyyMMM": "MMM y. G",
+-                "yyyyMMMd": "d. MMM y. G",
+-                "yyyyMMMEd": "E, d. MMM y. G",
+-                "yyyyMMMM": "MMMM y. G",
+-                "yyyyQQQ": "QQQ, y. G",
+-                "yyyyQQQQ": "QQQQ y. G"
++                "y": "y.",
++                "yM": "M.y.",
++                "yMd": "d.M.y.",
++                "yMEd": "E, d.M.y.",
++                "yMM": "MM.y.",
++                "yMMdd": "dd.MM.y.",
++                "yMMM": "MMM y.",
++                "yMMMd": "d. MMM y.",
++                "yMMMEd": "E, d. MMM y.",
++                "yMMMM": "MMMM y.",
++                "yQQQ": "QQQ y.",
++                "yQQQQ": "QQQQ y.",
++                "yw-count-one": "w. 'седмица' 'у' Y.",
++                "yw-count-few": "w. 'седмица' 'у' Y.",
++                "yw-count-other": "w. 'седмица' 'у' Y."
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -482,57 +500,57 @@
+                 "MEd": {
+                   "d": "E, d.M – E, d.M",
+                   "M": "E, d.M – E, d.M"
+                 },
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+                 "MMMd": {
+-                  "d": "d – d. MMM",
+-                  "M": "d. MMM – d. MMM"
++                  "d": "dd.–dd. MMM",
++                  "M": "dd. MMM – dd. MMM"
+                 },
+                 "MMMEd": {
+                   "d": "E, dd. – E, dd. MMM",
+                   "M": "E, dd. MMM – E, dd. MMM"
+                 },
+                 "y": {
+-                  "y": "y – y. G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M.y – M.y. GGGGG",
+-                  "y": "M.y – M.y. GGGGG"
++                  "M": "M – M, y",
++                  "y": "M.y. – M.y."
+                 },
+                 "yMd": {
+-                  "d": "d.M.y – d.M.y. GGGGG",
++                  "d": "d.M.y. – d.M.y.",
+                   "M": "d.M.y. – d.M.y.",
+-                  "y": "d.M.y – d.M.y. GGGGG"
++                  "y": "d.M.y. – d.M.y."
+                 },
+                 "yMEd": {
+-                  "d": "E, d.M.y – E, d.M.y. GGGGG",
+-                  "M": "E, d.M.y – E, d.M.y. GGGGG",
+-                  "y": "E, d.M.y – E, d.M.y. GGGGG"
++                  "d": "E, d.M.y. – E, d.M.y.",
++                  "M": "E, d.M.y. – E, d.M.y.",
++                  "y": "E, d.M.y. – E, d.M.y."
+                 },
+                 "yMMM": {
+-                  "M": "MMM – MMM y. G",
+-                  "y": "MMM y – MMM y. G"
++                  "M": "MMM–MMM y.",
++                  "y": "MMM y. – MMM y."
+                 },
+                 "yMMMd": {
+-                  "d": "d–d. MMM y. G",
+-                  "M": "d. MMM – d. MMM y. G",
+-                  "y": "d. MMM y. – d. MMM y. G"
++                  "d": "dd.–dd. MMM y.",
++                  "M": "dd. MMM – dd. MMM y.",
++                  "y": "dd. MMM y. – dd. MMM y."
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d. MMM – E, d. MMM y. G",
+-                  "M": "E, d. MMM – E, d. MMM y. G",
+-                  "y": "E, d. MMM y – E, d. MMM y. G"
++                  "d": "E, dd. – E, dd. MMM y.",
++                  "M": "E, dd. MMM – E, dd. MMM y.",
++                  "y": "E, dd. MMM y. – E, dd. MMM y."
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y. G",
+-                  "y": "MMMM y. – MMMM y. G"
++                  "M": "MMMM – MMMM y.",
++                  "y": "MMMM y. – MMMM y."
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/sr-Cyrl/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/sr-Cyrl/ca-gregorian.json	2021-11-17 14:17:18.036923014 -0800
+@@ -5,17 +5,17 @@
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "sr",
+         "script": "Cyrl"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "јан",
+                   "2": "феб",
+                   "3": "мар",
+                   "4": "апр",
+                   "5": "мај",
+@@ -284,36 +284,45 @@
+                   "afternoon1": "поподне",
+                   "evening1": "вече",
+                   "night1": "ноћ"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "БЕ"
++                "0": "пре нове ере",
++                "0-alt-variant": "пре наше ере",
++                "1": "нове ере",
++                "1-alt-variant": "наше ере"
+               },
+               "eraAbbr": {
+-                "0": "БЕ"
++                "0": "п. н. е.",
++                "0-alt-variant": "п. н. е.",
++                "1": "н. е.",
++                "1-alt-variant": "н. е."
+               },
+               "eraNarrow": {
+-                "0": "БЕ"
++                "0": "п.н.е.",
++                "0-alt-variant": "п. н. е.",
++                "1": "н.е.",
++                "1-alt-variant": "н. е."
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d. MMMM y. G",
+-              "long": "d. MMMM y. G",
+-              "medium": "d.MM.y. G",
+-              "short": "d.M.y. GGGGG"
++              "full": "EEEE, d. MMMM y.",
++              "long": "d. MMMM y.",
++              "medium": "d. M. y.",
++              "short": "d.M.yy."
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEdd",
++              "long": "yMMMMdd",
++              "medium": "yMMdd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+@@ -327,59 +336,68 @@
+               "long": "{1} {0}",
+               "medium": "{1} {0}",
+               "short": "{1} {0}",
+               "availableFormats": {
+                 "Bh": "h B",
+                 "Bhm": "hh:mm B",
+                 "Bhms": "hh:mm:ss B",
+                 "d": "d",
+-                "E": "ccc",
++                "E": "E",
+                 "EBhm": "E hh:mm B",
+                 "EBhms": "E hh:mm:ss B",
+                 "Ed": "E d.",
+-                "Ehm": "E hh:mm a",
++                "Ehm": "E h:mm a",
+                 "EHm": "E HH:mm",
+-                "Ehms": "E hh:mm:ss a",
++                "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "y. G",
+-                "GyMd": "d.M.y. GGGGG",
++                "GyMd": "d.MM.y. GGGGG",
+                 "GyMMM": "MMM y. G",
+                 "GyMMMd": "d. MMM y. G",
+                 "GyMMMEd": "E, d. MMM y. G",
+                 "h": "h a",
+                 "H": "HH",
+-                "hm": "hh:mm a",
++                "hm": "h:mm a",
+                 "Hm": "HH:mm",
+-                "hms": "hh:mm:ss a",
++                "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d.M.",
+                 "MEd": "E, d.M.",
+-                "MMdd": "MM-dd",
++                "MMdd": "dd.MM.",
+                 "MMM": "LLL",
+                 "MMMd": "d. MMM",
+                 "MMMdd": "dd.MMM",
+-                "MMMEd": "E, d. MMM",
++                "MMMEd": "E d. MMM",
+                 "MMMMd": "d. MMMM",
+                 "MMMMEd": "E, d. MMMM",
++                "MMMMW-count-one": "W. 'седмица' 'у' MMMM.",
++                "MMMMW-count-few": "W. 'седмица' 'у' MMMM.",
++                "MMMMW-count-other": "W. 'седмица' 'у' MMMM.",
+                 "ms": "mm:ss",
+-                "y": "y. G",
+-                "yyyy": "y. G",
+-                "yyyyM": "M.y. GGGGG",
+-                "yyyyMd": "d.M.y. GGGGG",
+-                "yyyyMEd": "E, d.M.y. GGGGG",
+-                "yyyyMM": "MM.y. G",
+-                "yyyyMMdd": "dd.MM.y. G",
+-                "yyyyMMM": "MMM y. G",
+-                "yyyyMMMd": "d. MMM y. G",
+-                "yyyyMMMEd": "E, d. MMM y. G",
+-                "yyyyMMMM": "MMMM y. G",
+-                "yyyyQQQ": "QQQ, y. G",
+-                "yyyyQQQQ": "QQQQ y. G"
++                "y": "y.",
++                "yM": "M.y.",
++                "yMd": "d.M.y.",
++                "yMEd": "E, d.M.y.",
++                "yMM": "MM.y.",
++                "yMMdd": "dd.MM.y.",
++                "yMMM": "MMM y.",
++                "yMMMd": "d. MMM y.",
++                "yMMMEd": "E, d. MMM y.",
++                "yMMMM": "MMMM y.",
++                "yQQQ": "QQQ y.",
++                "yQQQQ": "QQQQ y.",
++                "yw-count-one": "w. 'седмица' 'у' Y.",
++                "yw-count-few": "w. 'седмица' 'у' Y.",
++                "yw-count-other": "w. 'седмица' 'у' Y."
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -483,57 +501,57 @@
+                 "MEd": {
+                   "d": "E, d.M – E, d.M",
+                   "M": "E, d.M – E, d.M"
+                 },
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+                 "MMMd": {
+-                  "d": "d – d. MMM",
+-                  "M": "d. MMM – d. MMM"
++                  "d": "dd.–dd. MMM",
++                  "M": "dd. MMM – dd. MMM"
+                 },
+                 "MMMEd": {
+                   "d": "E, dd. – E, dd. MMM",
+                   "M": "E, dd. MMM – E, dd. MMM"
+                 },
+                 "y": {
+-                  "y": "y – y. G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M.y – M.y. GGGGG",
+-                  "y": "M.y – M.y. GGGGG"
++                  "M": "M – M, y",
++                  "y": "M.y. – M.y."
+                 },
+                 "yMd": {
+-                  "d": "d.M.y – d.M.y. GGGGG",
++                  "d": "d.M.y. – d.M.y.",
+                   "M": "d.M.y. – d.M.y.",
+-                  "y": "d.M.y – d.M.y. GGGGG"
++                  "y": "d.M.y. – d.M.y."
+                 },
+                 "yMEd": {
+-                  "d": "E, d.M.y – E, d.M.y. GGGGG",
+-                  "M": "E, d.M.y – E, d.M.y. GGGGG",
+-                  "y": "E, d.M.y – E, d.M.y. GGGGG"
++                  "d": "E, d.M.y. – E, d.M.y.",
++                  "M": "E, d.M.y. – E, d.M.y.",
++                  "y": "E, d.M.y. – E, d.M.y."
+                 },
+                 "yMMM": {
+-                  "M": "MMM – MMM y. G",
+-                  "y": "MMM y – MMM y. G"
++                  "M": "MMM–MMM y.",
++                  "y": "MMM y. – MMM y."
+                 },
+                 "yMMMd": {
+-                  "d": "d–d. MMM y. G",
+-                  "M": "d. MMM – d. MMM y. G",
+-                  "y": "d. MMM y. – d. MMM y. G"
++                  "d": "dd.–dd. MMM y.",
++                  "M": "dd. MMM – dd. MMM y.",
++                  "y": "dd. MMM y. – dd. MMM y."
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d. MMM – E, d. MMM y. G",
+-                  "M": "E, d. MMM – E, d. MMM y. G",
+-                  "y": "E, d. MMM y – E, d. MMM y. G"
++                  "d": "E, dd. – E, dd. MMM y.",
++                  "M": "E, dd. MMM – E, dd. MMM y.",
++                  "y": "E, dd. MMM y. – E, dd. MMM y."
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y. G",
+-                  "y": "MMMM y. – MMMM y. G"
++                  "M": "MMMM – MMMM y.",
++                  "y": "MMMM y. – MMMM y."
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/sr-Latn/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/sr-Latn/ca-gregorian.json	2021-11-17 14:17:18.176923735 -0800
+@@ -5,17 +5,17 @@
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "sr",
+         "script": "Latn"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "jan",
+                   "2": "feb",
+                   "3": "mar",
+                   "4": "apr",
+                   "5": "maj",
+@@ -284,36 +284,45 @@
+                   "afternoon1": "popodne",
+                   "evening1": "veče",
+                   "night1": "noć"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "pre nove ere",
++                "0-alt-variant": "pre naše ere",
++                "1": "nove ere",
++                "1-alt-variant": "naše ere"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "p. n. e.",
++                "0-alt-variant": "p. n. e.",
++                "1": "n. e.",
++                "1-alt-variant": "n. e."
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "p.n.e.",
++                "0-alt-variant": "p. n. e.",
++                "1": "n.e.",
++                "1-alt-variant": "n. e."
+               }
+             },
+             "dateFormats": {
+-              "full": "EEEE, d. MMMM y. G",
+-              "long": "d. MMMM y. G",
+-              "medium": "d.MM.y. G",
+-              "short": "d.M.y. GGGGG"
++              "full": "EEEE, d. MMMM y.",
++              "long": "d. MMMM y.",
++              "medium": "d. M. y.",
++              "short": "d.M.yy."
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMd",
+-              "short": "GGGGGyMd"
++              "full": "yMMMMEEEEdd",
++              "long": "yMMMMdd",
++              "medium": "yMMdd",
++              "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+@@ -327,59 +336,68 @@
+               "long": "{1} {0}",
+               "medium": "{1} {0}",
+               "short": "{1} {0}",
+               "availableFormats": {
+                 "Bh": "h B",
+                 "Bhm": "hh:mm B",
+                 "Bhms": "hh:mm:ss B",
+                 "d": "d",
+-                "E": "ccc",
++                "E": "E",
+                 "EBhm": "E hh:mm B",
+                 "EBhms": "E hh:mm:ss B",
+                 "Ed": "E d.",
+-                "Ehm": "E hh:mm a",
++                "Ehm": "E h:mm a",
+                 "EHm": "E HH:mm",
+-                "Ehms": "E hh:mm:ss a",
++                "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "y. G",
+-                "GyMd": "d.M.y. GGGGG",
++                "GyMd": "d.MM.y. GGGGG",
+                 "GyMMM": "MMM y. G",
+                 "GyMMMd": "d. MMM y. G",
+                 "GyMMMEd": "E, d. MMM y. G",
+                 "h": "h a",
+                 "H": "HH",
+-                "hm": "hh:mm a",
++                "hm": "h:mm a",
+                 "Hm": "HH:mm",
+-                "hms": "hh:mm:ss a",
++                "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d.M.",
+                 "MEd": "E, d.M.",
+-                "MMdd": "MM-dd",
++                "MMdd": "dd.MM.",
+                 "MMM": "LLL",
+                 "MMMd": "d. MMM",
+                 "MMMdd": "dd.MMM",
+-                "MMMEd": "E, d. MMM",
++                "MMMEd": "E d. MMM",
+                 "MMMMd": "d. MMMM",
+                 "MMMMEd": "E, d. MMMM",
++                "MMMMW-count-one": "W. 'sedmica' 'u' MMMM.",
++                "MMMMW-count-few": "W. 'sedmica' 'u' MMMM.",
++                "MMMMW-count-other": "W. 'sedmica' 'u' MMMM.",
+                 "ms": "mm:ss",
+-                "y": "y. G",
+-                "yyyy": "y. G",
+-                "yyyyM": "M.y. GGGGG",
+-                "yyyyMd": "d.M.y. GGGGG",
+-                "yyyyMEd": "E, d.M.y. GGGGG",
+-                "yyyyMM": "MM.y. G",
+-                "yyyyMMdd": "dd.MM.y. G",
+-                "yyyyMMM": "MMM y. G",
+-                "yyyyMMMd": "d. MMM y. G",
+-                "yyyyMMMEd": "E, d. MMM y. G",
+-                "yyyyMMMM": "MMMM y. G",
+-                "yyyyQQQ": "QQQ, y. G",
+-                "yyyyQQQQ": "QQQQ y. G"
++                "y": "y.",
++                "yM": "M.y.",
++                "yMd": "d.M.y.",
++                "yMEd": "E, d.M.y.",
++                "yMM": "MM.y.",
++                "yMMdd": "dd.MM.y.",
++                "yMMM": "MMM y.",
++                "yMMMd": "d. MMM y.",
++                "yMMMEd": "E, d. MMM y.",
++                "yMMMM": "MMMM y.",
++                "yQQQ": "QQQ y.",
++                "yQQQQ": "QQQQ y.",
++                "yw-count-one": "w. 'sedmica' 'u' Y.",
++                "yw-count-few": "w. 'sedmica' 'u' Y.",
++                "yw-count-other": "w. 'sedmica' 'u' Y."
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -483,57 +501,57 @@
+                 "MEd": {
+                   "d": "E, d.M – E, d.M",
+                   "M": "E, d.M – E, d.M"
+                 },
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+                 "MMMd": {
+-                  "d": "d – d. MMM",
+-                  "M": "d. MMM – d. MMM"
++                  "d": "dd.–dd. MMM",
++                  "M": "dd. MMM – dd. MMM"
+                 },
+                 "MMMEd": {
+                   "d": "E, dd. – E, dd. MMM",
+                   "M": "E, dd. MMM – E, dd. MMM"
+                 },
+                 "y": {
+-                  "y": "y – y. G"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "M.y – M.y. GGGGG",
+-                  "y": "M.y – M.y. GGGGG"
++                  "M": "M – M, y",
++                  "y": "M.y. – M.y."
+                 },
+                 "yMd": {
+-                  "d": "d.M.y – d.M.y. GGGGG",
++                  "d": "d.M.y. – d.M.y.",
+                   "M": "d.M.y. – d.M.y.",
+-                  "y": "d.M.y – d.M.y. GGGGG"
++                  "y": "d.M.y. – d.M.y."
+                 },
+                 "yMEd": {
+-                  "d": "E, d.M.y – E, d.M.y. GGGGG",
+-                  "M": "E, d.M.y – E, d.M.y. GGGGG",
+-                  "y": "E, d.M.y – E, d.M.y. GGGGG"
++                  "d": "E, d.M.y. – E, d.M.y.",
++                  "M": "E, d.M.y. – E, d.M.y.",
++                  "y": "E, d.M.y. – E, d.M.y."
+                 },
+                 "yMMM": {
+-                  "M": "MMM – MMM y. G",
+-                  "y": "MMM y – MMM y. G"
++                  "M": "MMM–MMM y.",
++                  "y": "MMM y. – MMM y."
+                 },
+                 "yMMMd": {
+-                  "d": "d–d. MMM y. G",
+-                  "M": "d. MMM – d. MMM y. G",
+-                  "y": "d. MMM y. – d. MMM y. G"
++                  "d": "dd.–dd. MMM y.",
++                  "M": "dd. MMM – dd. MMM y.",
++                  "y": "dd. MMM y. – dd. MMM y."
+                 },
+                 "yMMMEd": {
+-                  "d": "E, d. MMM – E, d. MMM y. G",
+-                  "M": "E, d. MMM – E, d. MMM y. G",
+-                  "y": "E, d. MMM y – E, d. MMM y. G"
++                  "d": "E, dd. – E, dd. MMM y.",
++                  "M": "E, dd. MMM – E, dd. MMM y.",
++                  "y": "E, dd. MMM y. – E, dd. MMM y."
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM – MMMM y. G",
+-                  "y": "MMMM y. – MMMM y. G"
++                  "M": "MMMM – MMMM y.",
++                  "y": "MMMM y. – MMMM y."
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/th/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/th/ca-gregorian.json	2021-11-17 14:17:18.216923941 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "th"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "ม.ค.",
+                   "2": "ก.พ.",
+                   "3": "มี.ค.",
+                   "4": "เม.ย.",
+                   "5": "พ.ค.",
+@@ -295,34 +295,43 @@
+                   "evening1": "ในตอนเย็น",
+                   "evening2": "ค่ำ",
+                   "night1": "กลางคืน"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "พุทธศักราช"
++                "0": "ปีก่อนคริสตกาล",
++                "0-alt-variant": "ก่อนสามัญศักราช",
++                "1": "คริสต์ศักราช",
++                "1-alt-variant": "สามัญศักราช"
+               },
+               "eraAbbr": {
+-                "0": "พ.ศ."
++                "0": "ก่อน ค.ศ.",
++                "0-alt-variant": "ก่อน ส.ศ.",
++                "1": "ค.ศ.",
++                "1-alt-variant": "ส.ศ."
+               },
+               "eraNarrow": {
+-                "0": "พ.ศ."
++                "0": "ก่อน ค.ศ.",
++                "0-alt-variant": "ก.ส.ศ.",
++                "1": "ค.ศ.",
++                "1-alt-variant": "ส.ศ."
+               }
+             },
+             "dateFormats": {
+               "full": "EEEEที่ d MMMM G y",
+-              "long": "d MMMM y",
++              "long": "d MMMM G y",
+               "medium": "d MMM y",
+               "short": "d/M/yy"
+             },
+             "dateSkeletons": {
+               "full": "GyMMMMEEEEd",
+-              "long": "yMMMMd",
++              "long": "GyMMMMd",
+               "medium": "yMMMd",
+               "short": "yyMd"
+             },
+             "timeFormats": {
+               "full": "H นาฬิกา mm นาที ss วินาที zzzz",
+               "long": "H นาฬิกา mm นาที ss วินาที z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+@@ -343,70 +352,79 @@
+                 "Bhm": "h:mm B",
+                 "Bhms": "h:mm:ss B",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "E h:mm B",
+                 "EBhms": "E h:mm:ss B",
+                 "Ed": "E d",
+                 "Ehm": "E h:mm a",
+-                "EHm": "E HH:mm",
++                "EHm": "E HH:mm น.",
+                 "Ehms": "E h:mm:ss a",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "G y",
+-                "GyMd": "d/M/y",
++                "GyMd": "d/M/GGGGG y",
+                 "GyMMM": "MMM G y",
+                 "GyMMMd": "d MMM G y",
+                 "GyMMMEd": "E d MMM G y",
+                 "GyMMMEEEEd": "EEEEที่ d MMM G y",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+-                "Hm": "HH:mm",
++                "Hm": "HH:mm น.",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm น. a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "d/M",
+                 "MEd": "E d/M",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+                 "MMMEd": "E d MMM",
+                 "MMMEEEEd": "EEEEที่ d MMM",
+                 "MMMMd": "d MMMM",
+                 "MMMMEd": "E d MMMM",
+                 "MMMMEEEEd": "EEEEที่ d MMMM",
++                "MMMMW-count-other": "สัปดาห์ที่ W ของเดือนMMMM",
++                "mmss": "mm:ss",
+                 "ms": "mm:ss",
+-                "y": "G y",
+-                "yyyy": "G y",
+-                "yyyyM": "M/y",
+-                "yyyyMd": "d/M/y",
+-                "yyyyMEd": "E d/M/y",
+-                "yyyyMMM": "MMM y",
+-                "yyyyMMMd": "d MMM y",
+-                "yyyyMMMEd": "E d MMM y",
+-                "yyyyMMMEEEEd": "EEEEที่ d MMM y",
+-                "yyyyMMMM": "MMMM y",
+-                "yyyyQQQ": "QQQ y",
+-                "yyyyQQQQ": "QQQQ y"
++                "y": "y",
++                "yM": "M/y",
++                "yMd": "d/M/y",
++                "yMEd": "E d/M/y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM y",
++                "yMMMEd": "E d MMM y",
++                "yMMMEEEEd": "EEEEที่ d MMM y",
++                "yMMMM": "MMMM G y",
++                "yMMMMd": "d MMMM G y",
++                "yMMMMEd": "E d MMMM G y",
++                "yMMMMEEEEd": "EEEEที่ d MMMM G y",
++                "yQQQ": "QQQ y",
++                "yQQQQ": "QQQQ G y",
++                "yw-count-other": "สัปดาห์ที่ w ของปี Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+                 "Quarter": "{0} ({2}: {1})",
+                 "Second": "{0} ({2}: {1})",
+                 "Timezone": "{0} {1}",
+                 "Week": "{0} ({2}: {1})",
+                 "Year": "{1} {0}"
+               },
+               "intervalFormats": {
+-                "intervalFormatFallback": "{0} - {1}",
++                "intervalFormatFallback": "{0} – {1}",
+                 "Bh": {
+                   "B": "h B – h B",
+                   "h": "h – h B"
+                 },
+                 "Bhm": {
+                   "B": "h:mm B – h:mm B",
+                   "h": "h:mm – h:mm B",
+                   "m": "h:mm – h:mm B"
+@@ -415,96 +433,96 @@
+                   "d": "d–d"
+                 },
+                 "Gy": {
+                   "G": "G y – G y",
+                   "y": "G y–y"
+                 },
+                 "GyM": {
+                   "G": "MM/GGGGG y – MM/GGGGG y",
+-                  "M": "M/y – M/y G",
+-                  "y": "M/y – M/y G"
++                  "M": "MM/GGGGG y – MM/GGGGG y",
++                  "y": "MM/GGGGG y – MM/GGGGG y"
+                 },
+                 "GyMd": {
+-                  "d": "d/M/y – d/M/y G",
++                  "d": "d/MM/GGGGG y – d/MM/GGGGG y",
+                   "G": "d/MM/GGGGG y – d/MM/GGGGG y",
+-                  "M": "d/M/y – d/M/y G",
+-                  "y": "d/M/y – d/M/y G"
++                  "M": "d/MM/GGGGG y – d/MM/GGGGG y",
++                  "y": "d/MM/GGGGG y – d/MM/GGGGG y"
+                 },
+                 "GyMEd": {
+-                  "d": "E d/M/y – E d/M/y G",
++                  "d": "E d/MM/GGGGG y – E d/MM/GGGGG y",
+                   "G": "E d/MM/GGGGG y – E d/MM/GGGGG y",
+-                  "M": "E d/M/y – E d/M/y G",
+-                  "y": "E d/M/y – E d/M/y G"
++                  "M": "E d/MM/GGGGG y – E d/MM/GGGGG y",
++                  "y": "E d/MM/GGGGG y – E d/MM/GGGGG y"
+                 },
+                 "GyMMM": {
+                   "G": "MMM G y – MMM G y",
+                   "M": "MMM – MMM G y",
+-                  "y": "MMM G y – MMM y"
++                  "y": "MMM G y – MMM G y"
+                 },
+                 "GyMMMd": {
+                   "d": "d – d MMM G y",
+                   "G": "d MMM G y – d MMM G y",
+                   "M": "d MMM – d MMM G y",
+                   "y": "d MMM G y – d MMM y"
+                 },
+                 "GyMMMEd": {
+                   "d": "E d MMM – E d MMM G y",
+                   "G": "E d MMM G y – E d MMM G y",
+                   "M": "E d MMM – E d MMM G y",
+-                  "y": "E d MMM G y – E d MMM y"
++                  "y": "E d MMM y – E d MMM y"
+                 },
+                 "h": {
+                   "a": "h a – h a",
+                   "h": "h–h a"
+                 },
+                 "H": {
+-                  "H": "H–H"
++                  "H": "HH–HH"
+                 },
+                 "hm": {
+                   "a": "h:mm a – h:mm a",
+                   "h": "h:mm–h:mm a",
+                   "m": "h:mm–h:mm a"
+                 },
+                 "Hm": {
+-                  "H": "H:mm–H:mm",
+-                  "m": "H:mm–H:mm"
++                  "H": "HH:mm น. – HH:mm น.",
++                  "m": "HH:mm น. – HH:mm น."
+                 },
+                 "hmv": {
+                   "a": "h:mm a – h:mm a v",
+                   "h": "h:mm–h:mm a v",
+                   "m": "h:mm–h:mm a v"
+                 },
+                 "Hmv": {
+-                  "H": "H:mm–H:mm v",
+-                  "m": "H:mm–H:mm v"
++                  "H": "H:mm น. – H:mm น. v",
++                  "m": "H:mm น. – H:mm น. v"
+                 },
+                 "hv": {
+                   "a": "h a – h a v",
+                   "h": "h–h a v"
+                 },
+                 "Hv": {
+-                  "H": "H–H v"
++                  "H": "HH–HH v"
+                 },
+                 "M": {
+                   "M": "M–M"
+                 },
+                 "Md": {
+                   "d": "d/M – d/M",
+                   "M": "d/M – d/M"
+                 },
+                 "MEd": {
+-                  "d": "E d – E d/M",
+-                  "M": "E d – E d/M"
++                  "d": "E d/M – E d/M/",
++                  "M": "E d/M – E d/M"
+                 },
+                 "MMM": {
+-                  "M": "LLL–LLL"
++                  "M": "MMM – MMM"
+                 },
+                 "MMMd": {
+-                  "d": "d – d MMM",
++                  "d": "MMM d–d",
+                   "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+                   "d": "E d – E d MMM",
+                   "M": "E d MMM – E d MMM"
+                 },
+                 "MMMEEEEd": {
+                   "d": "EEEEที่ d – EEEEที่ d MMM",
+@@ -513,47 +531,62 @@
+                 "y": {
+                   "y": "y–y"
+                 },
+                 "yM": {
+                   "M": "M/y – M/y",
+                   "y": "M/y – M/y"
+                 },
+                 "yMd": {
+-                  "d": "d–d/M/y",
++                  "d": "d/M/y – d/M/y",
+                   "M": "d/M/y – d/M/y",
+                   "y": "d/M/y – d/M/y"
+                 },
+                 "yMEd": {
+-                  "d": "E d – E d/M/y",
++                  "d": "E d/M/y – E d/M/y",
+                   "M": "E d/M/y – E d/M/y",
+                   "y": "E d/M/y – E d/M/y"
+                 },
+                 "yMMM": {
+                   "M": "MMM–MMM y",
+                   "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+                   "d": "d–d MMM y",
+                   "M": "d MMM – d MMM y",
+                   "y": "d MMM y – d MMM y"
+                 },
+                 "yMMMEd": {
+-                  "d": "E d – E d MMM y",
++                  "d": "E d MMM – E d MMM y",
+                   "M": "E d MMM – E d MMM y",
+                   "y": "E d MMM y – E d MMM y"
+                 },
+                 "yMMMEEEEd": {
+                   "d": "EEEEที่ d – EEEEที่ d MMM y",
+                   "M": "EEEEที่ d MMM – EEEEที่ d MMM y",
+                   "y": "EEEEที่ d MMM y – EEEEที่ d MMM y"
+                 },
+                 "yMMMM": {
+-                  "M": "MMMM–MMMM y",
++                  "M": "MMMM – MMMM y",
+                   "y": "MMMM y – MMMM y"
++                },
++                "yMMMMd": {
++                  "d": "d–d MMMM G y",
++                  "M": "d MMMM – d MMMM G y",
++                  "y": "d MMMM G y – d MMMM G y"
++                },
++                "yMMMMEd": {
++                  "d": "E d – E d MMMM G y",
++                  "M": "E d MMMM – E d MMMM G y",
++                  "y": "E d MMMM G y – E d MMMM G y"
++                },
++                "yMMMMEEEEd": {
++                  "d": "EEEEที่ d – EEEEที่ d MMMM G y",
++                  "M": "EEEEที่ d MMMM – EEEEที่ d MMMM G y",
++                  "y": "EEEEที่ d MMMM G y – EEEEที่ d MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/tr/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/tr/ca-gregorian.json	2021-11-17 14:17:18.348924621 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "tr"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "Oca",
+                   "2": "Şub",
+                   "3": "Mar",
+                   "4": "Nis",
+                   "5": "May",
+@@ -295,36 +295,45 @@
+                   "afternoon2": "akşamüstü",
+                   "evening1": "akşam",
+                   "night1": "gece"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "Milattan Önce",
++                "0-alt-variant": "İsa’dan Önce",
++                "1": "Milattan Sonra",
++                "1-alt-variant": "İsa’dan Sonra"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "MÖ",
++                "0-alt-variant": "İÖ",
++                "1": "MS",
++                "1-alt-variant": "İS"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "MÖ",
++                "0-alt-variant": "İÖ",
++                "1": "MS",
++                "1-alt-variant": "İS"
+               }
+             },
+             "dateFormats": {
+-              "full": "G d MMMM y EEEE",
+-              "long": "G d MMMM y",
+-              "medium": "G d MMM y",
+-              "short": "GGGGG d.MM.y"
++              "full": "d MMMM y EEEE",
++              "long": "d MMMM y",
++              "medium": "d MMM y",
++              "short": "d.MM.y"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyMMd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yMMd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+@@ -342,53 +351,60 @@
+                 "Bh": "B h",
+                 "Bhm": "B h:mm",
+                 "Bhms": "B h:mm:ss",
+                 "d": "d",
+                 "E": "ccc",
+                 "EBhm": "E B h:mm",
+                 "EBhms": "E B h:mm:ss",
+                 "Ed": "d E",
+-                "Ehm": "E h:mm a",
++                "Ehm": "E a h:mm",
+                 "EHm": "E HH:mm",
+-                "Ehms": "E h:mm:ss a",
++                "Ehms": "E a h:mm:ss",
+                 "EHms": "E HH:mm:ss",
+                 "Gy": "G y",
+                 "GyMd": "d/M/y GGGGG",
+                 "GyMMM": "G MMM y",
+                 "GyMMMd": "G d MMM y",
+                 "GyMMMEd": "G d MMM y E",
+-                "h": "h a",
++                "h": "a h",
+                 "H": "HH",
+-                "hm": "h:mm a",
++                "hm": "a h:mm",
+                 "Hm": "HH:mm",
+-                "hms": "h:mm:ss a",
++                "hms": "a h:mm:ss",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "a h:mm:ss v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "a h:mm v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+-                "Md": "dd/MM",
+-                "MEd": "dd/MM E",
++                "Md": "d/M",
++                "MEd": "d/MM E",
+                 "MMM": "LLL",
+                 "MMMd": "d MMM",
+-                "MMMEd": "d MMM E",
+-                "MMMMd": "dd MMMM",
+-                "MMMMEd": "dd MMMM E",
++                "MMMEd": "d MMMM E",
++                "MMMMd": "d MMMM",
++                "MMMMEd": "d MMMM E",
++                "MMMMW-count-one": "MMMM 'ayının' W. 'haftası'",
++                "MMMMW-count-other": "MMMM 'ayının' W. 'haftası'",
+                 "mmss": "mm:ss",
+                 "ms": "mm:ss",
+-                "y": "G y",
+-                "yyyy": "G y",
+-                "yyyyM": "GGGGG M/y",
+-                "yyyyMd": "GGGGG dd.MM.y",
+-                "yyyyMEd": "GGGGG dd.MM.y E",
+-                "yyyyMM": "MM.y G",
+-                "yyyyMMM": "G MMM y",
+-                "yyyyMMMd": "G dd MMM y",
+-                "yyyyMMMEd": "G d MMM y E",
+-                "yyyyMMMM": "G MMMM y",
+-                "yyyyQQQ": "G y/QQQ",
+-                "yyyyQQQQ": "G y/QQQQ"
++                "y": "y",
++                "yM": "MM/y",
++                "yMd": "dd.MM.y",
++                "yMEd": "d.M.y E",
++                "yMM": "MM.y",
++                "yMMM": "MMM y",
++                "yMMMd": "d MMM y",
++                "yMMMEd": "d MMM y E",
++                "yMMMM": "MMMM y",
++                "yQQQ": "y QQQ",
++                "yQQQQ": "y QQQQ",
++                "yw-count-one": "Y 'yılının' w. 'haftası'",
++                "yw-count-other": "Y 'yılının' w. 'haftası'"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -418,131 +434,131 @@
+                 },
+                 "GyM": {
+                   "G": "GGGGG MM.y – GGGGG MM.y",
+                   "M": "GGGGG MM.y – MM.y",
+                   "y": "GGGGG MM.y – MM.y"
+                 },
+                 "GyMd": {
+                   "d": "GGGGG dd.MM.y – dd.MM.y",
+-                  "G": "GGGGG dd.MM.y GGGGG – dd.MM.y",
++                  "G": "GGGGG dd.MM.y – GGGGG dd.MM.y",
+                   "M": "GGGGG dd.MM.y – dd.MM.y",
+                   "y": "GGGGG dd.MM.y – dd.MM.y"
+                 },
+                 "GyMEd": {
+                   "d": "GGGGG dd.MM.y E – dd.MM.y E",
+                   "G": "GGGGG dd.MM.y E – GGGGG dd.MM.y E",
+                   "M": "GGGGG dd.MM.y E – dd.MM.y E",
+                   "y": "GGGGG dd.MM.y E – dd.MM.y E"
+                 },
+                 "GyMMM": {
+-                  "G": "G MMM y G – G MMM y",
+-                  "M": "G MMM – MMM y",
++                  "G": "G MMM y – G MMM y",
++                  "M": "G MMM–MMM y",
+                   "y": "G MMM y – MMM y"
+                 },
+                 "GyMMMd": {
+                   "d": "G d–d MMM y",
+                   "G": "G d MMM y – G d MMM y",
+                   "M": "G d MMM – d MMM y",
+                   "y": "G d MMM y – d MMM y"
+                 },
+                 "GyMMMEd": {
+                   "d": "G d MMM E – d MMM E y",
+-                  "G": "d MMM y E – d MMM y E",
++                  "G": "G d MMM y E – G d MMM y E",
+                   "M": "G d MMM E – d MMM E y",
+                   "y": "G d MMM y E – d MMM y E"
+                 },
+                 "h": {
+-                  "a": "h a – h a",
+-                  "h": "h–h a"
++                  "a": "a h – a h",
++                  "h": "a h–h"
+                 },
+                 "H": {
+                   "H": "HH–HH"
+                 },
+                 "hm": {
+-                  "a": "h:mm a – h:mm a",
+-                  "h": "h:mm–h:mm a",
+-                  "m": "h:mm–h:mm a"
++                  "a": "a h:mm – a h:mm",
++                  "h": "a h:mm–h:mm",
++                  "m": "a h:mm–h:mm"
+                 },
+                 "Hm": {
+                   "H": "HH:mm–HH:mm",
+                   "m": "HH:mm–HH:mm"
+                 },
+                 "hmv": {
+-                  "a": "h:mm a – h:mm a v",
+-                  "h": "h:mm–h:mm a v",
+-                  "m": "h:mm–h:mm a v"
++                  "a": "a h:mm – a h:mm v",
++                  "h": "a h:mm–h:mm v",
++                  "m": "a h:mm–h:mm v"
+                 },
+                 "Hmv": {
+                   "H": "HH:mm–HH:mm v",
+                   "m": "HH:mm–HH:mm v"
+                 },
+                 "hv": {
+-                  "a": "h a – h a v",
+-                  "h": "h–h a v"
++                  "a": "a h – a h v",
++                  "h": "a h–h v"
+                 },
+                 "Hv": {
+                   "H": "HH–HH v"
+                 },
+                 "M": {
+-                  "M": "MM–MM"
++                  "M": "M – M"
+                 },
+                 "Md": {
+-                  "d": "dd/MM – dd/MM",
+-                  "M": "dd/MM – dd/MM"
++                  "d": "d.M – d.M",
++                  "M": "d.M – d.M"
+                 },
+                 "MEd": {
+-                  "d": "dd/MM E – dd/MM E",
+-                  "M": "dd/MM E – dd/MM E"
++                  "d": "d.M E – d.M E",
++                  "M": "d.M E – d.M E"
+                 },
+                 "MMM": {
+                   "M": "MMM–MMM"
+                 },
+                 "MMMd": {
+                   "d": "d – d MMM",
+                   "M": "d MMM – d MMM"
+                 },
+                 "MMMEd": {
+                   "d": "d MMM E – d MMM E",
+                   "M": "d MMM E – d MMM E"
+                 },
+                 "y": {
+-                  "y": "G y–y"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "GGGGG M/y – M/y",
+-                  "y": "GGGGG M/y – M/y"
++                  "M": "MM.y – MM.y",
++                  "y": "MM.y – MM.y"
+                 },
+                 "yMd": {
+-                  "d": "GGGGG dd.MM.y – dd.MM.y",
+-                  "M": "GGGGG dd.MM.y – dd.MM.y",
+-                  "y": "GGGGG dd.MM.y – dd.MM.y"
++                  "d": "dd.MM.y – dd.MM.y",
++                  "M": "dd.MM.y – dd.MM.y",
++                  "y": "dd.MM.y – dd.MM.y"
+                 },
+                 "yMEd": {
+-                  "d": "GGGGG dd.MM.y E – dd.MM.y E",
+-                  "M": "GGGGG dd.MM.y E – dd.MM.y E",
+-                  "y": "GGGGG dd.MM.y E – dd.MM.y E"
++                  "d": "dd.MM.y E – dd.MM.y E",
++                  "M": "dd.MM.y E – dd.MM.y E",
++                  "y": "dd.MM.y E – dd.MM.y E"
+                 },
+                 "yMMM": {
+-                  "M": "G MMM–MMM y",
+-                  "y": "G MMM y – MMM y"
++                  "M": "MMM–MMM y",
++                  "y": "MMM y – MMM y"
+                 },
+                 "yMMMd": {
+-                  "d": "G d–d MMM y",
+-                  "M": "G d MMM – d MMM y",
+-                  "y": "G d MMM y – d MMM y"
++                  "d": "d–d MMM y",
++                  "M": "d MMM – d MMM y",
++                  "y": "d MMM y – d MMM y"
+                 },
+                 "yMMMEd": {
+-                  "d": "G d MMM y E – d MMM y E",
+-                  "M": "G d MMM y E – d MMM y E",
+-                  "y": "G d MMM y E – d MMM y E"
++                  "d": "d MMM y E – d MMM y E",
++                  "M": "d MMM y E – d MMM y E",
++                  "y": "d MMM y E – d MMM y E"
+                 },
+                 "yMMMM": {
+-                  "M": "G MMMM – MMMM y",
+-                  "y": "G MMMM y – MMMM y"
++                  "M": "MMMM – MMMM y",
++                  "y": "MMMM y – MMMM y"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+--- cldr-cal-buddhist-full/main/und/ca-buddhist.json	2021-11-19 12:34:54.974618716 -0800
++++ cldr-dates-full/main/und/ca-gregorian.json	2021-11-17 14:17:18.356924662 -0800
+@@ -4,17 +4,17 @@
+       "identity": {
+         "version": {
+           "_cldrVersion": "40"
+         },
+         "language": "root"
+       },
+       "dates": {
+         "calendars": {
+-          "buddhist": {
++          "gregorian": {
+             "months": {
+               "format": {
+                 "abbreviated": {
+                   "1": "M01",
+                   "2": "M02",
+                   "3": "M03",
+                   "4": "M04",
+                   "5": "M05",
+@@ -247,36 +247,45 @@
+                 "wide": {
+                   "am": "AM",
+                   "pm": "PM"
+                 }
+               }
+             },
+             "eras": {
+               "eraNames": {
+-                "0": "BE"
++                "0": "BCE",
++                "0-alt-variant": "BCE",
++                "1": "CE",
++                "1-alt-variant": "CE"
+               },
+               "eraAbbr": {
+-                "0": "BE"
++                "0": "BCE",
++                "0-alt-variant": "BCE",
++                "1": "CE",
++                "1-alt-variant": "CE"
+               },
+               "eraNarrow": {
+-                "0": "BE"
++                "0": "BCE",
++                "0-alt-variant": "BCE",
++                "1": "CE",
++                "1-alt-variant": "CE"
+               }
+             },
+             "dateFormats": {
+-              "full": "G y MMMM d, EEEE",
+-              "long": "G y MMMM d",
+-              "medium": "G y MMM d",
+-              "short": "GGGGG y-MM-dd"
++              "full": "y MMMM d, EEEE",
++              "long": "y MMMM d",
++              "medium": "y MMM d",
++              "short": "y-MM-dd"
+             },
+             "dateSkeletons": {
+-              "full": "GyMMMMEEEEd",
+-              "long": "GyMMMMd",
+-              "medium": "GyMMMd",
+-              "short": "GGGGGyMMdd"
++              "full": "yMMMMEEEEd",
++              "long": "yMMMMd",
++              "medium": "yMMMd",
++              "short": "yMMdd"
+             },
+             "timeFormats": {
+               "full": "HH:mm:ss zzzz",
+               "long": "HH:mm:ss z",
+               "medium": "HH:mm:ss",
+               "short": "HH:mm"
+             },
+             "timeSkeletons": {
+@@ -309,35 +318,40 @@
+                 "GyMMMd": "G y MMM d",
+                 "GyMMMEd": "G y MMM d, E",
+                 "h": "h a",
+                 "H": "HH",
+                 "hm": "h:mm a",
+                 "Hm": "HH:mm",
+                 "hms": "h:mm:ss a",
+                 "Hms": "HH:mm:ss",
++                "hmsv": "h:mm:ss a v",
++                "Hmsv": "HH:mm:ss v",
++                "hmv": "h:mm a v",
++                "Hmv": "HH:mm v",
+                 "M": "L",
+                 "Md": "MM-dd",
+                 "MEd": "MM-dd, E",
+                 "MMM": "LLL",
+                 "MMMd": "MMM d",
+                 "MMMEd": "MMM d, E",
+                 "MMMMd": "MMMM d",
++                "MMMMW-count-other": "'week' W 'of' MMMM",
+                 "ms": "mm:ss",
+-                "y": "G y",
+-                "yyyy": "G y",
+-                "yyyyM": "GGGGG y-MM",
+-                "yyyyMd": "GGGGG y-MM-dd",
+-                "yyyyMEd": "GGGGG y-MM-dd, E",
+-                "yyyyMMM": "G y MMM",
+-                "yyyyMMMd": "G y MMM d",
+-                "yyyyMMMEd": "G y MMM d, E",
+-                "yyyyMMMM": "G y MMMM",
+-                "yyyyQQQ": "G y QQQ",
+-                "yyyyQQQQ": "G y QQQQ"
++                "y": "y",
++                "yM": "y-MM",
++                "yMd": "y-MM-dd",
++                "yMEd": "y-MM-dd, E",
++                "yMMM": "y MMM",
++                "yMMMd": "y MMM d",
++                "yMMMEd": "y MMM d, E",
++                "yMMMM": "y MMMM",
++                "yQQQ": "y QQQ",
++                "yQQQQ": "y QQQQ",
++                "yw-count-other": "'week' w 'of' Y"
+               },
+               "appendItems": {
+                 "Day": "{0} ({2}: {1})",
+                 "Day-Of-Week": "{0} {1}",
+                 "Era": "{1} {0}",
+                 "Hour": "{0} ({2}: {1})",
+                 "Minute": "{0} ({2}: {1})",
+                 "Month": "{0} ({2}: {1})",
+@@ -449,49 +463,49 @@
+                   "d": "MMM d–d",
+                   "M": "MMM d – MMM d"
+                 },
+                 "MMMEd": {
+                   "d": "MMM d, E – MMM d, E",
+                   "M": "MMM d, E – MMM d, E"
+                 },
+                 "y": {
+-                  "y": "G y–y"
++                  "y": "y–y"
+                 },
+                 "yM": {
+-                  "M": "GGGGG y-MM – y-MM",
+-                  "y": "GGGGG y-MM – y-MM"
++                  "M": "y-MM – y-MM",
++                  "y": "y-MM – y-MM"
+                 },
+                 "yMd": {
+-                  "d": "GGGGG y-MM-dd – y-MM-dd",
+-                  "M": "GGGGG y-MM-dd – y-MM-dd",
+-                  "y": "GGGGG y-MM-dd – y-MM-dd"
++                  "d": "y-MM-dd – y-MM-dd",
++                  "M": "y-MM-dd – y-MM-dd",
++                  "y": "y-MM-dd – y-MM-dd"
+                 },
+                 "yMEd": {
+-                  "d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+-                  "M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+-                  "y": "GGGGG y-MM-dd, E – y-MM-dd, E"
++                  "d": "y-MM-dd, E – y-MM-dd, E",
++                  "M": "y-MM-dd, E – y-MM-dd, E",
++                  "y": "y-MM-dd, E – y-MM-dd, E"
+                 },
+                 "yMMM": {
+-                  "M": "G y MMM–MMM",
+-                  "y": "G y MMM – y MMM"
++                  "M": "y MMM–MMM",
++                  "y": "y MMM – y MMM"
+                 },
+                 "yMMMd": {
+-                  "d": "G y MMM d–d",
+-                  "M": "G y MMM d – MMM d",
+-                  "y": "G y MMM d – y MMM d"
++                  "d": "y MMM d–d",
++                  "M": "y MMM d – MMM d",
++                  "y": "y MMM d – y MMM d"
+                 },
+                 "yMMMEd": {
+-                  "d": "G y MMM d, E – MMM d, E",
+-                  "M": "G y MMM d, E – MMM d, E",
+-                  "y": "G y MMM d, E – y MMM d, E"
++                  "d": "y MMM d, E – MMM d, E",
++                  "M": "y MMM d, E – MMM d, E",
++                  "y": "y MMM d, E – y MMM d, E"
+                 },
+                 "yMMMM": {
+-                  "M": "G y MMMM–MMMM",
+-                  "y": "G y MMMM – y MMMM"
++                  "M": "y MMMM–MMMM",
++                  "y": "y MMMM – y MMMM"
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }

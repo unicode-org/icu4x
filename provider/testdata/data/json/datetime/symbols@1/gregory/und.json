@@ -111,5 +111,19 @@
       }
     },
     "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "ad": "CE",
+      "bc": "BCE"
+    },
+    "abbr": {
+      "ad": "CE",
+      "bc": "BCE"
+    },
+    "narrow": {
+      "ad": "CE",
+      "bc": "BCE"
+    }
   }
 }

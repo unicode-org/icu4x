@@ -111,5 +111,19 @@
       }
     },
     "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "ad": "après Jésus-Christ",
+      "bc": "avant Jésus-Christ"
+    },
+    "abbr": {
+      "ad": "ap. J.-C.",
+      "bc": "av. J.-C."
+    },
+    "narrow": {
+      "ad": "ap. J.-C.",
+      "bc": "av. J.-C."
+    }
   }
 }
