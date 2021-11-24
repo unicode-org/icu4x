@@ -488,8 +488,8 @@ impl<'data> CaseMappingExceptions<'data> {
 	    }
 
 	    // Validate that we can read slot data without reading out of bounds.
-	    let mut next_idx = idx + slot_len;
-	    if next_idx >= data_len {
+	    let mut next_idx = idx + 1 + slot_len;
+	    if next_idx > data_len {
 		return Error::invalid("Exceptions: missing slot data");
 	    }
 
@@ -510,7 +510,7 @@ impl<'data> CaseMappingExceptions<'data> {
 				     FullMapping::Upper, FullMapping::Title] {
 		    let range = self.full_mapping_string_range(idx, full_mapping);
 		    next_idx += range.len() as u16;
-		    if next_idx >= data_len {
+		    if next_idx > data_len {
 			return Error::invalid("Exceptions: missing full mapping data");
 		    }
 
@@ -521,7 +521,7 @@ impl<'data> CaseMappingExceptions<'data> {
 	    // Validate closure string.
 	    if self.has_slot(idx, CaseMappingExceptionSlot::Closure) {
 		let closure_len = self.closure_len(idx);
-		if next_idx + closure_len as u16 >= data_len {
+		if next_idx + closure_len as u16 > data_len {
 		    return Error::invalid("Exceptions: missing closure data");
 		}
 
