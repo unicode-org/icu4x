@@ -52,11 +52,11 @@ where
 }
 
 /// [`TimeZoneFormat`] uses data from the [`DataProvider`], the selected [`Locale`], and the provided
-/// pattern to collect all data necessary to format time zones into that locale.
+/// [`TimeZoneFormatConfig`] to collect all data necessary to format time zones into that locale.
 ///
-/// The various time-zone pattern symbols specified in UTS-35 require different sets of data for
+/// The various time-zone configs specified in UTS-35 require different sets of data for
 /// formatting. As such,[`TimeZoneFormat`] will pull in only the resources needed to format the
-/// pattern that it is given upon construction.
+/// config that it is given upon construction.
 ///
 /// For that reason, one should think of the process of formatting a time zone in two steps:
 /// first, a computationally heavy construction of [`TimeZoneFormat`], and then fast formatting
@@ -64,35 +64,32 @@ where
 ///
 /// # Examples
 ///
-/// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
-/// // ```
-/// // use icu_locid::Locale;
-/// // use icu_locid::macros::langid;
-/// // use icu_datetime::TimeZoneFormat;
-/// // use icu_datetime::date::GmtOffset;
-/// // use icu_datetime::mock::time_zone::MockTimeZone;
-/// // use icu_provider::inv::InvariantDataProvider;
+/// ```
+/// use icu_locid::Locale;
+/// use icu::locid::macros::langid;
+/// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+/// use icu_datetime::date::GmtOffset;
+/// use icu_datetime::mock::time_zone::MockTimeZone;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// // let locale: Locale = langid!("en").into();
-/// // let pattern = std::iter::empty().collect();
-/// // let provider = InvariantDataProvider;
+/// let locale: Locale = langid!("en").into();
+/// let provider = InvariantDataProvider;
 ///
-/// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider)
-/// //     .expect("Failed to create TimeZoneFormat");
+/// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::GenericNonLocationLong, &provider)
+///     .expect("Failed to create TimeZoneFormat");
 ///
-/// // let time_zone = MockTimeZone::new(
-/// //        GmtOffset::default(),
-/// //        None,
-/// //        None,
-/// //        None,
-/// // );
+/// let time_zone = MockTimeZone::new(
+///        GmtOffset::default(),
+///        None,
+///        None,
+///        None,
+/// );
 ///
-/// // let value = tzf.format_to_string(&time_zone);
-/// // ```
-// TODO(#622) Make TimeZoneFormat public once we have a clean way to provide it options.
-pub(super) struct TimeZoneFormat {
-    /// The pattern to format.
-    pub(super) patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+/// let value = tzf.format_to_string(&time_zone);
+/// ```
+pub struct TimeZoneFormat {
+    // The kind of time zone format.
+    pub(super) kind: TimeZoneFormatKind,
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
@@ -114,26 +111,6 @@ pub(super) struct TimeZoneFormat {
 impl TimeZoneFormat {
     /// Constructor that selectively loads data based on what is required to
     /// format the given pattern into the given locale.
-    ///
-    /// # Examples
-    ///
-    /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
-    /// // ```
-    /// // use icu_locid::Locale;
-    /// // use icu_locid::macros::langid;
-    /// // use icu_datetime::TimeZoneFormat;
-    /// // use icu_datetime::mock::time_zone::MockTimeZone;
-    /// // use icu_provider::inv::InvariantDataProvider;
-    ///
-    /// // let locale: Locale = langid!("en").into();
-    /// // let pattern = std::iter::empty().collect();
-    /// // let provider = InvariantDataProvider;
-    ///
-    /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider);
-    ///
-    /// // assert!(tzf.is_ok());
-    /// // ```
-    // TODO(#622) Make this public once TimeZoneFormat is public.
     pub(super) fn try_new<L, ZP>(
         locale: L,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -163,18 +140,7 @@ impl TimeZoneFormat {
             })?
             .take_payload()?;
 
-        let mut time_zone_format = Self {
-            patterns,
-            zone_formats,
-            exemplar_cities: None,
-            mz_generic_long: None,
-            mz_generic_short: None,
-            mz_specific_long: None,
-            mz_specific_short: None,
-        };
-
-        let zone_symbols = time_zone_format
-            .patterns
+        let zone_symbols = patterns
             .get()
             .0
             .patterns_iter()
@@ -189,19 +155,34 @@ impl TimeZoneFormat {
                 _ => None,
             });
 
+        let mut exemplar_cities: Option<DataPayload<provider::time_zones::ExemplarCitiesV1Marker>> =
+            None;
+        let mut mz_generic_long: Option<
+            DataPayload<provider::time_zones::MetaZoneGenericNamesLongV1Marker>,
+        > = None;
+        let mut mz_generic_short: Option<
+            DataPayload<provider::time_zones::MetaZoneGenericNamesShortV1Marker>,
+        > = None;
+        let mut mz_specific_long: Option<
+            DataPayload<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>,
+        > = None;
+        let mut mz_specific_short: Option<
+            DataPayload<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>,
+        > = None;
+
         for (length, symbol) in zone_symbols {
             match symbol {
                 TimeZone::LowerZ => match length {
                     1..=3 => load_resource(
                         &locale,
                         provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
-                        &mut time_zone_format.mz_specific_short,
+                        &mut mz_specific_short,
                         zone_provider,
                     )?,
                     4 => load_resource(
                         &locale,
                         provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
-                        &mut time_zone_format.mz_specific_long,
+                        &mut mz_specific_long,
                         zone_provider,
                     )?,
                     _ => {
@@ -215,13 +196,13 @@ impl TimeZoneFormat {
                         load_resource(
                             &locale,
                             provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
-                            &mut time_zone_format.mz_generic_short,
+                            &mut mz_generic_short,
                             zone_provider,
                         )?;
                         load_resource(
                             &locale,
                             provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                            &mut time_zone_format.exemplar_cities,
+                            &mut exemplar_cities,
                             zone_provider,
                         )?;
                     }
@@ -229,13 +210,13 @@ impl TimeZoneFormat {
                         load_resource(
                             &locale,
                             provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1,
-                            &mut time_zone_format.mz_generic_long,
+                            &mut mz_generic_long,
                             zone_provider,
                         )?;
                         load_resource(
                             &locale,
                             provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                            &mut time_zone_format.exemplar_cities,
+                            &mut exemplar_cities,
                             zone_provider,
                         )?;
                     }
@@ -251,7 +232,7 @@ impl TimeZoneFormat {
                     3 | 4 => load_resource(
                         &locale,
                         provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                        &mut time_zone_format.exemplar_cities,
+                        &mut exemplar_cities,
                         zone_provider,
                     )?,
                     _ => {
@@ -265,7 +246,145 @@ impl TimeZoneFormat {
             }
         }
 
-        Ok(time_zone_format)
+        Ok(Self {
+            kind: TimeZoneFormatKind::Pattern(patterns),
+            zone_formats,
+            exemplar_cities,
+            mz_generic_long,
+            mz_generic_short,
+            mz_specific_long,
+            mz_specific_short,
+        })
+    }
+
+    /// Constructor that selectively loads data based on what is required to
+    /// format the given config into the given locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// let locale: Locale = langid!("en").into();
+    /// let provider = InvariantDataProvider;
+    ///
+    /// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::LocalizedGMT, &provider);
+    ///
+    /// assert!(tzf.is_ok());
+    /// ```
+    pub fn try_from_config<L, ZP>(
+        locale: L,
+        config: TimeZoneFormatConfig,
+        zone_provider: &ZP,
+    ) -> Result<Self, DateTimeFormatError>
+    where
+        L: Into<Locale>,
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + ?Sized,
+    {
+        let locale = locale.into();
+
+        let zone_formats: DataPayload<TimeZoneFormatsV1Marker> = zone_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::TIMEZONE_FORMATS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.clone().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+
+        let mut exemplar_cities: Option<DataPayload<provider::time_zones::ExemplarCitiesV1Marker>> =
+            None;
+        let mut mz_generic_long: Option<
+            DataPayload<provider::time_zones::MetaZoneGenericNamesLongV1Marker>,
+        > = None;
+        let mut mz_generic_short: Option<
+            DataPayload<provider::time_zones::MetaZoneGenericNamesShortV1Marker>,
+        > = None;
+        let mut mz_specific_long: Option<
+            DataPayload<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>,
+        > = None;
+        let mut mz_specific_short: Option<
+            DataPayload<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>,
+        > = None;
+
+        match config {
+            TimeZoneFormatConfig::GenericNonLocationLong => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1,
+                    &mut mz_generic_long,
+                    zone_provider,
+                )?;
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+                    &mut exemplar_cities,
+                    zone_provider,
+                )?;
+            }
+            TimeZoneFormatConfig::GenericNonLocationShort => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
+                    &mut mz_generic_short,
+                    zone_provider,
+                )?;
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+                    &mut exemplar_cities,
+                    zone_provider,
+                )?;
+            }
+            TimeZoneFormatConfig::GenericLocation => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
+                    &mut exemplar_cities,
+                    zone_provider,
+                )?;
+            }
+            TimeZoneFormatConfig::SpecificNonLocationLong => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
+                    &mut mz_specific_long,
+                    zone_provider,
+                )?;
+            }
+            TimeZoneFormatConfig::SpecificNonLocationShort => {
+                load_resource(
+                    &locale,
+                    provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
+                    &mut mz_specific_short,
+                    zone_provider,
+                )?;
+            }
+            TimeZoneFormatConfig::LocalizedGMT | TimeZoneFormatConfig::Iso8601(..) => (),
+        }
+
+        Ok(Self {
+            kind: TimeZoneFormatKind::Config(config),
+            zone_formats,
+            exemplar_cities,
+            mz_generic_long,
+            mz_generic_short,
+            mz_specific_long,
+            mz_specific_short,
+        })
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]
@@ -273,35 +392,30 @@ impl TimeZoneFormat {
     ///
     /// # Examples
     ///
-    /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
-    /// // ```
-    /// // use icu_locid::Locale;
-    /// // use icu_locid::macros::langid;
-    /// // use icu_datetime::TimeZoneFormat;
-    /// // use icu_datetime::date::GmtOffset;
-    /// // use icu_datetime::mock::time_zone::MockTimeZone;
-    /// // use icu_provider::inv::InvariantDataProvider;
+    /// ```
+    /// use icu_locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+    /// use icu_datetime::date::GmtOffset;
+    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// // # let locale: Locale = langid!("en").into();
-    /// // # let pattern = std::iter::empty().collect();
-    /// // # let provider = InvariantDataProvider;
+    /// let locale: Locale = langid!("en").into();
+    /// let provider = InvariantDataProvider;
     ///
-    /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider)
-    /// //     .expect("Failed to create TimeZoneFormat");
+    /// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::LocalizedGMT, &provider)
+    ///     .expect("Failed to create TimeZoneFormat");
     ///
-    /// // let time_zone = MockTimeZone::new(
-    /// //        GmtOffset::default(),
-    /// //        None,
-    /// //        None,
-    /// //        None,
-    /// // );
+    /// let time_zone = MockTimeZone::new(
+    ///        GmtOffset::default(),
+    ///        None,
+    ///        None,
+    ///        None,
+    /// );
     ///
-    /// // let _ = tzf.format(&time_zone);
-    /// // ```
-    // TODO(#622) Make this public once TimeZoneFormat is public.
-    //           And remove #[allow(unused)]
-    #[allow(unused)]
-    pub(super) fn format<'l, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
+    /// let _ = tzf.format(&time_zone);
+    /// ```
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
     where
         T: TimeZoneInput,
     {
@@ -316,79 +430,69 @@ impl TimeZoneFormat {
     ///
     /// # Examples
     ///
-    /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
-    /// // ```
-    /// // use icu_locid::Locale;
-    /// // use icu_locid::macros::langid;
-    /// // use icu_datetime::TimeZoneFormat;
-    /// // use icu_datetime::date::GmtOffset;
-    /// // use icu_datetime::mock::time_zone::MockTimeZone;
-    /// // use icu_provider::inv::InvariantDataProvider;
+    /// ```
+    /// use icu_locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+    /// use icu_datetime::date::GmtOffset;
+    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// // # let locale: Locale = langid!("en").into();
-    /// // # let pattern = std::iter::empty().collect();
-    /// // # let provider = InvariantDataProvider;
+    /// let locale: Locale = langid!("en").into();
+    /// let provider = InvariantDataProvider;
     ///
-    /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider)
-    /// //     .expect("Failed to create TimeZoneFormat");
+    /// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::LocalizedGMT, &provider)
+    ///     .expect("Failed to create TimeZoneFormat");
     ///
-    /// // let time_zone = MockTimeZone::new(
-    /// //        GmtOffset::default(),
-    /// //        None,
-    /// //        None,
-    /// //        None,
-    /// // );
+    /// let time_zone = MockTimeZone::new(
+    ///        GmtOffset::default(),
+    ///        None,
+    ///        None,
+    ///        None,
+    /// );
     ///
-    /// // let mut buffer = String::new();
-    /// // tzf.format_to_write(&mut buffer, &time_zone)
-    /// //     .expect("Failed to write to a buffer.");
+    /// let mut buffer = String::new();
+    /// tzf.format_to_write(&mut buffer, &time_zone)
+    ///     .expect("Failed to write to a buffer.");
     ///
-    /// // let _ = format!("Time Zone: {}", buffer);
-    /// // ```
-    // TODO(#622) Make this public once TimeZoneFormat is public.
-    //            And remove #[allow(unused)]
-    #[allow(unused)]
-    pub(super) fn format_to_write(
+    /// let _ = format!("Time Zone: {}", buffer);
+    /// ```
+    pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
         value: &impl TimeZoneInput,
     ) -> fmt::Result {
-        time_zone::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
+        time_zone::write_zone(self, value, w).map_err(|_| core::fmt::Error)
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.
     ///
     /// # Examples
     ///
-    /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
-    /// // ```
-    /// // use icu_locid::Locale;
-    /// // use icu_locid::macros::langid;
-    /// // use icu_datetime::TimeZoneFormat;
-    /// // use icu_datetime::date::GmtOffset;
-    /// // use icu_datetime::mock::time_zone::MockTimeZone;
-    /// // use icu_provider::inv::InvariantDataProvider;
+    /// ```
+    /// use icu_locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig};
+    /// use icu_datetime::date::GmtOffset;
+    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// // # let locale: Locale = langid!("en").into();
-    /// // # let pattern = std::iter::empty().collect();
-    /// // # let provider = InvariantDataProvider;
+    /// let locale: Locale = langid!("en").into();
+    /// let provider = InvariantDataProvider;
     ///
-    /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider)
-    /// //     .expect("Failed to create TimeZoneFormat");
+    /// let tzf = TimeZoneFormat::try_from_config(locale, TimeZoneFormatConfig::LocalizedGMT, &provider)
+    ///     .expect("Failed to create TimeZoneFormat");
     ///
-    /// // let time_zone = MockTimeZone::new(
-    /// //        GmtOffset::default(),
-    /// //        None,
-    /// //        None,
-    /// //        None,
-    /// // );
+    /// let time_zone = MockTimeZone::new(
+    ///        GmtOffset::default(),
+    ///        None,
+    ///        None,
+    ///        None,
+    /// );
     ///
-    /// // let _ = tzf.format_to_string(&time_zone);
-    /// // ```
-    // TODO(#622) Make this public once TimeZoneFormat is public.
-    //           And remove #[allow(unused)]
-    #[allow(unused)]
-    pub(super) fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
+    /// let _ = tzf.format_to_string(&time_zone);
+    /// ```
+    pub fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
         let mut s = String::new();
         self.format_to_write(&mut s, value)
             .expect("Failed to write to a String.");
@@ -674,8 +778,16 @@ impl TimeZoneFormat {
     }
 }
 
+/// Determines which type of formats time zone uses. It can be either config or pattern.
+#[allow(clippy::large_enum_variant)]
+pub(super) enum TimeZoneFormatKind {
+    Config(TimeZoneFormatConfig),
+    Pattern(DataPayload<PatternPluralsFromPatternsV1Marker>),
+}
+
 /// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).
-pub(super) enum IsoFormat {
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum IsoFormat {
     /// ISO-8601 Basic Format.
     /// Formats zero-offset numerically.
     /// e.g. +0500, +0000
@@ -698,7 +810,8 @@ pub(super) enum IsoFormat {
 }
 
 /// Whether the minutes field should be optional or required in ISO-8601 format.
-pub(super) enum IsoMinutes {
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum IsoMinutes {
     /// Minutes are always displayed.
     Required,
 
@@ -707,7 +820,8 @@ pub(super) enum IsoMinutes {
 }
 
 /// Whether the seconds field should be optional or excluded in ISO-8601 format.
-pub(super) enum IsoSeconds {
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum IsoSeconds {
     /// Seconds are displayed only if they are non-zero.
     Optional,
 
@@ -716,10 +830,23 @@ pub(super) enum IsoSeconds {
 }
 
 /// Whether a field should be zero-padded in ISO-8601 format.
-pub(super) enum ZeroPadding {
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum ZeroPadding {
     /// Add zero-padding.
     On,
 
     /// Do not add zero-padding.
     Off,
+}
+
+/// A config enum for initializing TimeZoneFormat.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum TimeZoneFormatConfig {
+    GenericNonLocationLong,                     // Pacific Time
+    GenericNonLocationShort,                    // PT
+    GenericLocation,                            // Los Angeles Time
+    SpecificNonLocationLong,                    // Pacific Standard Time
+    SpecificNonLocationShort,                   // PDT
+    LocalizedGMT,                               // GMT-07:00
+    Iso8601(IsoFormat, IsoMinutes, IsoSeconds), // -07:00
 }

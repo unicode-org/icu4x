@@ -24,8 +24,7 @@ use crate::{
     DateTimeFormatError,
 };
 
-// TODO(#622) link [`TimeZoneFormat`] once it is public.
-/// The composition of [`DateTimeFormat`] and `TimeZoneFormat`.
+/// The composition of [`DateTimeFormat`] and [`TimeZoneFormat`].
 ///
 /// [`ZonedDateTimeFormat`] uses data from the [`DataProvider`]s, the selected [`Locale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
