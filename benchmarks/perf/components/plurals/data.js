@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637781357197,
+  "lastUpdate": 1637781386704,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20159,6 +20159,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20958,
             "range": "± 1302",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b42c3594c9c109816ba59f3f7a0a948ebf53f6ad",
+          "message": "ZeroVec::clone_from_slice --> ZeroVec::alloc_from_slice (#1343)",
+          "timestamp": "2021-11-24T11:07:58-08:00",
+          "tree_id": "3fb31ed25169382eb10dad3e42b0b5c0aa439f83",
+          "url": "https://github.com/unicode-org/icu4x/commit/b42c3594c9c109816ba59f3f7a0a948ebf53f6ad"
+        },
+        "date": 1637781378465,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1363,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6977,
+            "range": "± 179",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24529,
+            "range": "± 819",
             "unit": "ns/iter"
           }
         ]
