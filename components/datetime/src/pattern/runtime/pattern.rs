@@ -27,7 +27,7 @@ impl From<Vec<PatternItem>> for Pattern<'_> {
     fn from(items: Vec<PatternItem>) -> Self {
         Self {
             time_granularity: items.iter().map(Into::into).max().unwrap_or_default(),
-            items: ZeroVec::clone_from_slice(&items),
+            items: ZeroVec::alloc_from_slice(&items),
         }
     }
 }
@@ -35,7 +35,7 @@ impl From<Vec<PatternItem>> for Pattern<'_> {
 impl From<&reference::Pattern> for Pattern<'_> {
     fn from(input: &reference::Pattern) -> Self {
         Self {
-            items: ZeroVec::clone_from_slice(&input.items),
+            items: ZeroVec::alloc_from_slice(&input.items),
             time_granularity: input.time_granularity,
         }
     }

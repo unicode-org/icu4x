@@ -50,7 +50,7 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodeProperty
             null_value: cpt_data.null_value,
             trie_type: trie_type_enum,
         };
-        let index: ZeroVec<u16> = ZeroVec::clone_from_slice(&cpt_data.index);
+        let index: ZeroVec<u16> = ZeroVec::alloc_from_slice(&cpt_data.index);
         let data: Result<ZeroVec<'static, T>, T::TryFromU32Error> =
             if let Some(data_8) = &cpt_data.data_8 {
                 data_8.iter().map(|i| T::try_from_u32(*i as u32)).collect()
