@@ -8,6 +8,7 @@
 //! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/plurals.json
 
 use icu_locid::LanguageIdentifier;
+use litemap::LiteMap;
 use serde::Deserialize;
 
 #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
@@ -25,9 +26,7 @@ pub struct LocalePluralRules {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Rules(
-    #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LocalePluralRules)>,
-);
+pub struct Rules(pub LiteMap<LanguageIdentifier, LocalePluralRules>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {

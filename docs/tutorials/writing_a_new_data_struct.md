@@ -177,7 +177,7 @@ pub mod numbers_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct LangData(#[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LangNumbers)>);
+    pub struct LangData(pub LiteMap<LanguageIdentifier, LangNumbers>);
 
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct Resource {

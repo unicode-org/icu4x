@@ -42,6 +42,7 @@ impl From<TimeZoneNames> for TimeZoneFormatsV1<'_> {
             region_format: other.region_format.into(),
             region_format_variants: other
                 .region_format_variants
+                .into_tuple_vec()
                 .into_iter()
                 .map(|(key, value)| {
                     (
@@ -74,12 +75,11 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
             other
                 .zone
                 .0
+                .into_tuple_vec()
                 .into_iter()
                 .flat_map(|(key, region)| {
-                    region
-                        .0
-                        .into_iter()
-                        .flat_map(move |(inner_key, place_or_region)| {
+                    region.0.into_tuple_vec().into_iter().flat_map(
+                        move |(inner_key, place_or_region)| {
                             let mut key = key.clone();
                             key.push('/');
                             key.push_str(&inner_key);
@@ -89,6 +89,7 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
                                     .map(|city| vec![(key.into(), city.into())])
                                     .unwrap_or_default(),
                                 LocationOrSubRegion::SubRegion(region) => region
+                                    .into_tuple_vec()
                                     .into_iter()
                                     .filter_map(|(inner_key, place)| {
                                         let mut key = key.clone();
@@ -98,7 +99,8 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
                                     })
                                     .collect::<Vec<_>>(),
                             }
-                        })
+                        },
+                    )
                 })
                 .collect(),
         )
@@ -154,6 +156,7 @@ impl From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'_> {
             Some(metazones) => Self(
                 metazones
                     .0
+                    .into_tuple_vec()
                     .into_iter()
                     .filter_map(|(key, metazone)| metazone.long.map(|value| (key, value)))
                     .map(|(key, zf)| (key.into(), zf.into()))
@@ -175,6 +178,7 @@ impl From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'_> {
             Some(metazones) => Self(
                 metazones
                     .0
+                    .into_tuple_vec()
                     .into_iter()
                     .filter_map(|(key, metazone)| metazone.short.map(|value| (key, value)))
                     .map(|(key, value)| (key.into(), value.into()))
@@ -195,6 +199,7 @@ impl From<ZoneFormat> for MetaZoneSpecificNamesV1<'_> {
         Self(
             other
                 .0
+                .into_tuple_vec()
                 .into_iter()
                 .filter(|(key, _)| len > 1 && !key.eq("generic"))
                 .map(|(key, value)| {

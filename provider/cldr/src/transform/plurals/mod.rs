@@ -35,11 +35,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
                 .join("plurals.json");
             let data: cldr_serde::plurals::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            let mut rules = data.supplemental.plurals_type_cardinal;
-            if let Some(v) = rules.as_mut() {
-                v.0.sort()
-            }
-            rules
+            data.supplemental.plurals_type_cardinal
         };
         let ordinal_rules = {
             let path = cldr_paths
@@ -48,11 +44,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
                 .join("ordinals.json");
             let data: cldr_serde::plurals::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            let mut rules = data.supplemental.plurals_type_ordinal;
-            if let Some(v) = rules.as_mut() {
-                v.0.sort()
-            }
-            rules
+            data.supplemental.plurals_type_ordinal
         };
         Ok(PluralsProvider {
             cardinal_rules,
@@ -93,9 +85,9 @@ impl DataProvider<PluralRulesV1Marker> for PluralsProvider {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let langid = req.try_langid()?;
-        let (_, r) = match cldr_rules.0.binary_search_by_key(&langid, |(l, _)| l) {
-            Ok(idx) => &cldr_rules.0[idx],
-            Err(_) => return Err(req.clone().into()),
+        let r = match cldr_rules.0.get(langid) {
+            Some(v) => v,
+            None => return Err(req.clone().into()),
         };
         Ok(DataResponse {
             metadata: DataResponseMetadata {

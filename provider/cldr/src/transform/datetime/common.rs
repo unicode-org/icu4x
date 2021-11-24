@@ -37,9 +37,9 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
             for dir in locale_dirs {
                 let path = dir.join(&cal_file);
 
-                let mut resource: cldr_serde::ca::Resource =
+                let resource: cldr_serde::ca::Resource =
                     serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-                for (k, mut v) in resource.main.0.drain(..) {
+                for (k, mut v) in resource.main.0.into_tuple_vec().drain(..) {
                     let v = v.dates.calendars.remove(cldr_cal).ok_or_else(|| {
                         Error::Custom(
                             format!("{} does not have {} field", cal_file, cldr_cal),

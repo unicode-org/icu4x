@@ -10,6 +10,7 @@ use icu_decimal::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
+use litemap::LiteMap;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use tinystr::TinyStr8;
@@ -25,7 +26,7 @@ pub const ALL_KEYS: [ResourceKey; 1] = [
 #[derive(PartialEq, Debug)]
 pub struct NumbersProvider {
     cldr_numbering_systems_data: cldr_serde::numbering_systems::Resource,
-    cldr_numbers_data: Vec<(LanguageIdentifier, cldr_serde::numbers::LangNumbers)>,
+    cldr_numbers_data: LiteMap<LanguageIdentifier, cldr_serde::numbers::LangNumbers>,
 }
 
 impl TryFrom<&dyn CldrPaths> for NumbersProvider {
@@ -41,14 +42,14 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
         };
 
         // Load data for each locale:
-        let mut cldr_numbers_data = vec![];
+        let mut cldr_numbers_data = LiteMap::new();
         let path = cldr_paths.cldr_numbers()?.join("main");
         let locale_dirs = get_langid_subdirectories(&path)?;
         for dir in locale_dirs {
             let path = dir.join("numbers.json");
-            let mut resource: cldr_serde::numbers::Resource =
+            let resource: cldr_serde::numbers::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            cldr_numbers_data.append(&mut resource.main.0);
+            cldr_numbers_data.extend_from_litemap(resource.main.0);
         }
 
         Ok(Self {
@@ -106,12 +107,9 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
-        let numbers = match self
-            .cldr_numbers_data
-            .binary_search_by_key(&langid, |(lid, _)| lid)
-        {
-            Ok(idx) => &self.cldr_numbers_data[idx].1.numbers,
-            Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
+        let numbers = match self.cldr_numbers_data.get(langid) {
+            Some(v) => &v.numbers,
+            None => return Err(DataError::MissingResourceOptions(req.clone())),
         };
         let nsname = numbers.default_numbering_system;
 
