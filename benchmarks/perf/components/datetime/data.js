@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637781332828,
+  "lastUpdate": 1637781347562,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13787,6 +13787,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 288730,
             "range": "± 896",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92dbabdbf4f81f55492d65dcfde9a003aaa9de24",
+          "message": "Remove DataPayloadInner and migrate to a single Yoke type (#1342)",
+          "timestamp": "2021-11-24T11:07:48-08:00",
+          "tree_id": "16b9957252cb5158b6f9e499a38fe0945886838d",
+          "url": "https://github.com/unicode-org/icu4x/commit/92dbabdbf4f81f55492d65dcfde9a003aaa9de24"
+        },
+        "date": 1637781339819,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 118252,
+            "range": "± 824",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1404724,
+            "range": "± 2128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 344212,
+            "range": "± 480",
             "unit": "ns/iter"
           }
         ]
