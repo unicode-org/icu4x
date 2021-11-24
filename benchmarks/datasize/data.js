@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637714165949,
+  "lastUpdate": 1637721288686,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4283,6 +4283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d683334935645db8a7015ee490b3ee3356e0e058"
         },
         "date": 1637714157885,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 906952,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6edc9d418a52661ef7fcefd3b6d99c77e80d10f9",
+          "message": "Create TimeZoneFormatConfig enum (#1256)\n\n* Create TimeZoneFormatConfig enum\r\n\r\n* Add tests\r\n\r\n* Create enum TimeZoneFormatKind",
+          "timestamp": "2021-11-23T18:33:15-08:00",
+          "tree_id": "5af6d889548ed9d7b037f814ffb2231a19b108e6",
+          "url": "https://github.com/unicode-org/icu4x/commit/6edc9d418a52661ef7fcefd3b6d99c77e80d10f9"
+        },
+        "date": 1637721281381,
         "tool": "ndjson",
         "benches": [
           {
