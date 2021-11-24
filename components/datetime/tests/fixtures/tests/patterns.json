@@ -21,7 +21,8 @@
     "m mm",
     "s ss",
     "S SS SSS SSSS SSSSS SSSSS",
-    "A AA AAA AAAA AAAAA AAAAA"
+    "A AA AAA AAAA AAAAA AAAAA",
+    "G GG GGG GGGG GGGGG GGGGG"
   ],
   "invalid_patterns": [
     {
