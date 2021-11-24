@@ -158,7 +158,6 @@ fn get_request_alt() -> DataRequest {
 fn test_warehouse_owned() {
     let warehouse = get_warehouse(DATA);
     let hello_data = get_payload_v1(&warehouse).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -171,7 +170,6 @@ fn test_warehouse_owned() {
 fn test_warehouse_owned_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let hello_data = get_payload_v1(&warehouse as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -184,7 +182,6 @@ fn test_warehouse_owned_dyn_erased() {
 fn test_warehouse_owned_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -208,7 +205,6 @@ fn test_provider2() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -222,7 +218,6 @@ fn test_provider2_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -236,7 +231,6 @@ fn test_provider2_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
 
@@ -245,7 +239,6 @@ fn test_provider2_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -259,7 +252,6 @@ fn test_provider2_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltMarker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Owned(_)));
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
 

@@ -385,6 +385,14 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     {
         self.yokeable.transform_mut(f)
     }
+
+    /// Helper function allowing one to wrap the cart type in an `Option<T>`.
+    pub fn wrap_cart_in_option(self) -> Yoke<Y, Option<C>> {
+        unsafe {
+            // safe because the cart is preserved, just wrapped
+            self.replace_cart(Some)
+        }
+    }
 }
 
 impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
@@ -486,6 +494,29 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart: Some(cart),
+        }
+    }
+
+    /// Version of [`Yoke::attach_to_option_cart()`] that passes through an error.
+    pub fn try_attach_to_option_cart<E, F>(cart: C, f: F) -> Result<Self, E>
+    where
+        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
+    {
+        let deserialized = f(cart.deref())?;
+        Ok(Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart: Some(cart),
+        })
+    }
+
+    /// Obtain the yokeable out of a `Yoke<Y, Option<C>>` if possible.
+    ///
+    /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,
+    /// this returns `self` as an error.
+    pub fn try_into_yokeable(self) -> Result<Y, Self> {
+        match self.cart {
+            Some(_) => Err(self),
+            None => Ok(self.yokeable),
         }
     }
 }

@@ -95,14 +95,6 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-pub(crate) enum DataPayloadInner<M>
-where
-    M: DataMarker,
-{
-    Owned(Yoke<M::Yokeable, ()>),
-    RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
-}
-
 /// A container for data payloads returned from a [`DataProvider`].
 ///
 /// [`DataPayload`] is built on top of the [`yoke`] framework, which allows for cheap, zero-copy
@@ -154,7 +146,7 @@ pub struct DataPayload<M>
 where
     M: DataMarker,
 {
-    pub(crate) inner: DataPayloadInner<M>,
+    pub(crate) yoke: Yoke<M::Yokeable, Option<Rc<[u8]>>>,
 }
 
 impl<M> Debug for DataPayload<M>
@@ -185,12 +177,9 @@ where
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
-        use DataPayloadInner::*;
-        let new_inner = match &self.inner {
-            Owned(yoke) => Owned(yoke.clone()),
-            RcBuf(yoke) => RcBuf(yoke.clone()),
-        };
-        Self { inner: new_inner }
+        Self {
+            yoke: self.yoke.clone(),
+        }
     }
 }
 
@@ -236,10 +225,8 @@ where
         rc_buffer: Rc<[u8]>,
         f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?;
-        Ok(Self {
-            inner: DataPayloadInner::RcBuf(yoke),
-        })
+        let yoke = Yoke::try_attach_to_option_cart(rc_buffer, f)?;
+        Ok(Self { yoke })
     }
 
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
@@ -277,10 +264,8 @@ where
         rc_buffer: Rc<[u8]>,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart_badly(rc_buffer, f)?;
-        Ok(Self {
-            inner: DataPayloadInner::RcBuf(yoke),
-        })
+        let yoke = Yoke::try_attach_to_option_cart(rc_buffer, f)?;
+        Ok(Self { yoke })
     }
 
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
@@ -323,10 +308,10 @@ where
             PhantomData<&'de ()>,
         ) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = yoked_buffer.try_project_with_capture(capture, f)?;
-        Ok(Self {
-            inner: DataPayloadInner::RcBuf(yoke),
-        })
+        let yoke = yoked_buffer
+            .wrap_cart_in_option()
+            .try_project_with_capture(capture, f)?;
+        Ok(Self { yoke })
     }
 
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
@@ -351,7 +336,7 @@ where
     #[inline]
     pub fn from_owned(data: M::Yokeable) -> Self {
         Self {
-            inner: DataPayloadInner::Owned(Yoke::new_always_owned(data)),
+            yoke: Yoke::new_owned(data),
         }
     }
 
@@ -392,11 +377,7 @@ where
     where
         F: 'static + for<'b> FnOnce(&'b mut <M::Yokeable as Yokeable<'a>>::Output),
     {
-        use DataPayloadInner::*;
-        match &mut self.inner {
-            Owned(yoke) => yoke.with_mut(f),
-            RcBuf(yoke) => yoke.with_mut(f),
-        }
+        self.yoke.with_mut(f)
     }
 
     /// Borrows the underlying data.
@@ -416,11 +397,7 @@ where
     /// ```
     #[allow(clippy::needless_lifetimes)]
     pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
-        use DataPayloadInner::*;
-        match &self.inner {
-            Owned(yoke) => yoke.get(),
-            RcBuf(yoke) => yoke.get(),
-        }
+        self.yoke.get()
     }
 
     /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::project`].
@@ -480,14 +457,8 @@ where
     where
         M2: DataMarker,
     {
-        use DataPayloadInner::*;
-        match self.inner {
-            Owned(yoke) => DataPayload {
-                inner: Owned(yoke.project(f)),
-            },
-            RcBuf(yoke) => DataPayload {
-                inner: RcBuf(yoke.project(f)),
-            },
+        DataPayload {
+            yoke: self.yoke.project(f),
         }
     }
 
@@ -534,14 +505,8 @@ where
     where
         M2: DataMarker,
     {
-        use DataPayloadInner::*;
-        match &self.inner {
-            Owned(yoke) => DataPayload {
-                inner: Owned(yoke.project_cloned(f)),
-            },
-            RcBuf(yoke) => DataPayload {
-                inner: RcBuf(yoke.project_cloned(f)),
-            },
+        DataPayload {
+            yoke: self.yoke.project_cloned(f),
         }
     }
 
@@ -621,14 +586,8 @@ where
     where
         M2: DataMarker,
     {
-        use DataPayloadInner::*;
-        match self.inner {
-            Owned(yoke) => DataPayload {
-                inner: Owned(yoke.project_with_capture(capture, f)),
-            },
-            RcBuf(yoke) => DataPayload {
-                inner: RcBuf(yoke.project_with_capture(capture, f)),
-            },
+        DataPayload {
+            yoke: self.yoke.project_with_capture(capture, f),
         }
     }
 
@@ -683,14 +642,8 @@ where
     where
         M2: DataMarker,
     {
-        use DataPayloadInner::*;
-        match &self.inner {
-            Owned(yoke) => DataPayload {
-                inner: Owned(yoke.project_cloned_with_capture(capture, f)),
-            },
-            RcBuf(yoke) => DataPayload {
-                inner: RcBuf(yoke.project_cloned_with_capture(capture, f)),
-            },
+        DataPayload {
+            yoke: self.yoke.project_cloned_with_capture(capture, f),
         }
     }
 
@@ -778,14 +731,8 @@ where
     where
         M2: DataMarker,
     {
-        use DataPayloadInner::*;
-        Ok(match self.inner {
-            Owned(yoke) => DataPayload {
-                inner: Owned(yoke.try_project_with_capture(capture, f)?),
-            },
-            RcBuf(yoke) => DataPayload {
-                inner: RcBuf(yoke.try_project_with_capture(capture, f)?),
-            },
+        Ok(DataPayload {
+            yoke: self.yoke.try_project_with_capture(capture, f)?,
         })
     }
 
@@ -844,14 +791,8 @@ where
     where
         M2: DataMarker,
     {
-        use DataPayloadInner::*;
-        Ok(match &self.inner {
-            Owned(yoke) => DataPayload {
-                inner: Owned(yoke.try_project_cloned_with_capture(capture, f)?),
-            },
-            RcBuf(yoke) => DataPayload {
-                inner: RcBuf(yoke.try_project_cloned_with_capture(capture, f)?),
-            },
+        Ok(DataPayload {
+            yoke: self.yoke.try_project_cloned_with_capture(capture, f)?,
         })
     }
 }

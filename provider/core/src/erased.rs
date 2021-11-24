@@ -79,11 +79,7 @@ where
     /// Upcast for ErasedDataStruct creates a `Box<dyn ErasedDataStruct>` from the current inner
     /// `Yoke` (i.e., `Box::new(yoke)`).
     fn upcast(other: DataPayload<M>) -> DataPayload<ErasedDataStructMarker> {
-        use crate::data_provider::DataPayloadInner::*;
-        let owned: Box<dyn ErasedDataStruct> = match other.inner {
-            Owned(yoke) => Box::new(yoke),
-            RcBuf(yoke) => Box::new(yoke),
-        };
+        let owned: Box<dyn ErasedDataStruct> = Box::new(other.yoke);
         DataPayload::from_owned(ErasedDataStructBox(owned))
     }
 }
@@ -134,42 +130,23 @@ impl DataPayload<ErasedDataStructMarker> {
     where
         M: DataMarker,
     {
-        use crate::data_provider::DataPayloadInner::*;
-        match self.inner {
-            Owned(yoke) => {
-                let any_box: Box<dyn Any> = yoke.into_yokeable().0.into_any();
-                // `any_box` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
-                // could have been either the RcBuf or the Owned variant of Yoke.
-                // Check for an Owned Yoke.
-                let y2 = any_box.downcast::<Yoke<M::Yokeable, ()>>();
-                let any_box = match y2 {
-                    Ok(yoke) => {
-                        return Ok(DataPayload {
-                            inner: Owned(*yoke),
-                        })
-                    }
-                    Err(any_box) => any_box,
-                };
-                // Check for  an RcBuf Yoke.
-                let y2 = any_box.downcast::<Yoke<M::Yokeable, Rc<[u8]>>>();
-                let any_box = match y2 {
-                    Ok(yoke) => {
-                        return Ok(DataPayload {
-                            inner: RcBuf(*yoke),
-                        })
-                    }
-                    Err(any_box) => any_box,
-                };
-                // None of the downcasts succeeded; return an error.
-                Err(Error::MismatchedType {
-                    actual: Some(any_box.type_id()),
-                    generic: Some(TypeId::of::<M::Yokeable>()),
-                })
-            }
-            // This is unreachable because an ErasedDataStruct payload can only be constructed as fully owned
-            // (It is impossible for clients to construct an ErasedDataStruct payload manually since ErasedDataStructBox
-            // has a private field)
-            RcBuf(_) => unreachable!(),
+        // It is impossible for clients to construct an ErasedDataStruct payload manually
+        // since ErasedDataStructBox has a private field.
+        let any_box: Box<dyn Any> = self
+            .yoke
+            .try_into_yokeable()
+            .ok()
+            .expect("An ErasedDataStruct payload can only be constructed as fully owned")
+            .0
+            .into_any();
+        // `any_box` is the Yoke that was converted into the `dyn ErasedDataStruct`.
+        let maybe_yoke = any_box.downcast::<Yoke<M::Yokeable, Option<Rc<[u8]>>>>();
+        match maybe_yoke {
+            Ok(yoke) => Ok(DataPayload { yoke: *yoke }),
+            Err(any_box) => Err(Error::MismatchedType {
+                actual: Some(any_box.type_id()),
+                generic: Some(TypeId::of::<M::Yokeable>()),
+            }),
         }
     }
 }
