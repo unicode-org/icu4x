@@ -160,6 +160,9 @@ where
     W: fmt::Write + ?Sized,
 {
     match field.symbol {
+        FieldSymbol::Era => {
+            todo!("todo manish");
+        }
         FieldSymbol::Year(..) => format_number(
             w,
             datetime
