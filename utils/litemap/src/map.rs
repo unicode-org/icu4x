@@ -141,6 +141,42 @@ impl<K: Ord, V> LiteMap<K, V> {
         }
     }
 
+    /// Get the lowest-rank key/value pair from the `LiteMap`, if it exists.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new();
+    /// assert!(map.try_append(1, "uno").is_none());
+    /// assert!(map.try_append(3, "tres").is_none());
+    ///
+    /// assert_eq!(map.first(), Some((&1, &"uno")));
+    /// ```
+    #[inline]
+    pub fn first(&self) -> Option<(&K, &V)> {
+        self.values.get(0).map(|(k, v)| (k, v))
+    }
+
+    /// Get the highest-rank key/value pair from the `LiteMap`, if it exists.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new();
+    /// assert!(map.try_append(1, "uno").is_none());
+    /// assert!(map.try_append(3, "tres").is_none());
+    ///
+    /// assert_eq!(map.last(), Some((&3, &"tres")));
+    /// ```
+    #[inline]
+    pub fn last(&self) -> Option<(&K, &V)> {
+        self.values.get(self.len() - 1).map(|(k, v)| (k, v))
+    }
+
     /// Appends `value` with `key` to the end of the underlying vector, returning
     /// `key` and `value` _if it failed_. Useful for extending with an existing
     /// sorted list.
@@ -193,8 +229,13 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// assert_eq!(map.get(&3), None);
     /// ```
     pub fn insert(&mut self, key: K, value: V) -> Option<V> {
+        self.insert_save_key(key, value).map(|(_, v)| v)
+    }
+
+    /// Version of [`Self::insert()`] that returns both the key and the value.
+    fn insert_save_key(&mut self, key: K, value: V) -> Option<(K, V)> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
-            Ok(found) => Some(mem::replace(&mut self.values[found].1, value)),
+            Ok(found) => Some((key, mem::replace(&mut self.values[found].1, value))),
             Err(ins) => {
                 self.values.insert(ins, (key, value));
                 None
@@ -221,6 +262,72 @@ impl<K: Ord, V> LiteMap<K, V> {
         match self.values.binary_search_by(|k| k.0.borrow().cmp(key)) {
             Ok(found) => Some(self.values.remove(found).1),
             Err(_) => None,
+        }
+    }
+
+    /// Insert all elements from `other` into this `LiteMap`.
+    ///
+    /// If `other` contains keys that already exist in `self`, the values in `other` replace the
+    /// corresponding ones in `self`, and the rejected items from `self` are returned as a new
+    /// `LiteMap`. Otherwise, `None` is returned.
+    ///
+    /// The implementation of this function is optimized if `self` and `other` have no overlap.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map1 = LiteMap::new();
+    /// map1.insert(1, "one");
+    /// map1.insert(2, "two");
+    ///
+    /// let mut map2 = LiteMap::new();
+    /// map2.insert(2, "TWO");
+    /// map2.insert(4, "FOUR");
+    ///
+    /// let leftovers = map1.extend_from_litemap(map2);
+    ///
+    /// assert_eq!(map1.len(), 3);
+    /// assert_eq!(map1.get(&1), Some("one").as_ref());
+    /// assert_eq!(map1.get(&2), Some("TWO").as_ref());
+    /// assert_eq!(map1.get(&4), Some("FOUR").as_ref());
+    ///
+    /// let map3 = leftovers.expect("Duplicate keys");
+    /// assert_eq!(map3.len(), 1);
+    /// assert_eq!(map3.get(&2), Some("two").as_ref());
+    /// ```
+    pub fn extend_from_litemap(&mut self, other: LiteMap<K, V>) -> Option<LiteMap<K, V>> {
+        if self.is_empty() {
+            self.values = other.values;
+            return None;
+        }
+        if other.is_empty() {
+            return None;
+        }
+        if self.last().map(|(k, _)| k) < other.first().map(|(k, _)| k) {
+            // append other to self
+            self.values.extend(other.values);
+            None
+        } else if self.first().map(|(k, _)| k) > other.last().map(|(k, _)| k) {
+            // prepend other to self
+            self.values.splice(0..0, other.values);
+            None
+        } else {
+            // insert every element
+            let leftover_tuples = other
+                .values
+                .into_iter()
+                .filter_map(|(k, v)| self.insert_save_key(k, v))
+                .collect();
+            let ret = LiteMap {
+                values: leftover_tuples,
+            };
+            if ret.is_empty() {
+                None
+            } else {
+                Some(ret)
+            }
         }
     }
 }
@@ -305,5 +412,65 @@ mod test {
         .collect::<LiteMap<_, _>>();
 
         assert_eq!(expected, actual);
+    }
+
+    fn make_13() -> LiteMap<usize, &'static str> {
+        let mut result = LiteMap::new();
+        result.insert(1, "one");
+        result.insert(3, "three");
+        result
+    }
+
+    fn make_24() -> LiteMap<usize, &'static str> {
+        let mut result = LiteMap::new();
+        result.insert(2, "TWO");
+        result.insert(4, "FOUR");
+        result
+    }
+
+    fn make_46() -> LiteMap<usize, &'static str> {
+        let mut result = LiteMap::new();
+        result.insert(4, "four");
+        result.insert(6, "six");
+        result
+    }
+
+    #[test]
+    fn extend_from_litemap_append() {
+        let mut map = LiteMap::new();
+        map.extend_from_litemap(make_13())
+            .ok_or(())
+            .expect_err("Append to empty map");
+        map.extend_from_litemap(make_46())
+            .ok_or(())
+            .expect_err("Append to lesser map");
+        assert_eq!(map.len(), 4);
+    }
+
+    #[test]
+    fn extend_from_litemap_prepend() {
+        let mut map = LiteMap::new();
+        map.extend_from_litemap(make_46())
+            .ok_or(())
+            .expect_err("Prepend to empty map");
+        map.extend_from_litemap(make_13())
+            .ok_or(())
+            .expect_err("Prepend to lesser map");
+        assert_eq!(map.len(), 4);
+    }
+
+    #[test]
+    fn extend_from_litemap_insert() {
+        let mut map = LiteMap::new();
+        map.extend_from_litemap(make_13())
+            .ok_or(())
+            .expect_err("Append to empty map");
+        map.extend_from_litemap(make_24())
+            .ok_or(())
+            .expect_err("Insert with no conflict");
+        map.extend_from_litemap(make_46())
+            .ok_or(())
+            .expect("Insert with conflict");
+        assert_eq!(map.len(), 5);
     }
 }
