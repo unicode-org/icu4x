@@ -198,12 +198,13 @@ mod test {
     // https://gist.github.com/gregtatum/1d76bbdb87132f71a969a10f0c1d2d9c
 
     #[rustfmt::skip]
-    const SUPPORTED_STRING_SKELETONS: [&str; 61] = [
+    const SUPPORTED_STRING_SKELETONS: &[&str] = &[
         "E", "dEEEE", "EHm", "EHms", "dE", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
         "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM", "MMMMdEEEE", "MMMMdE", "MMMMd",
         "MMMMdd", "MMMd", "MMMdd", "MMd", "MMdd", "Md", "Mdd", "d", "h", "hm", "hms", "mmss", "ms",
         "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
         "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd", "yw",
+        "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
         // Timezones
         "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
     ];
@@ -213,11 +214,9 @@ mod test {
     //       and then regenerate the test data.
     //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
     #[rustfmt::skip]
-    const UNSUPPORTED_STRING_SKELETONS: [&str; 18] = [
+    const UNSUPPORTED_STRING_SKELETONS: &[&str] = &[
         // TODO(#487) - Flexible day periods
         "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
-        // TODO(#486) - Era
-        "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
         // TODO(#502) - Week of month
         "MMMMW",
         // TODO(#501) - Quarters
@@ -226,7 +225,7 @@ mod test {
 
     #[test]
     fn test_known_skeletons_ok() {
-        for string_skeleton in &SUPPORTED_STRING_SKELETONS {
+        for string_skeleton in SUPPORTED_STRING_SKELETONS {
             match Skeleton::try_from(*string_skeleton) {
                 Ok(_) => {}
                 Err(err) => {
@@ -241,7 +240,7 @@ mod test {
 
     #[test]
     fn test_unsupported_skeletons_skeletons_err() {
-        for string_skeleton in &UNSUPPORTED_STRING_SKELETONS {
+        for string_skeleton in UNSUPPORTED_STRING_SKELETONS {
             match Skeleton::try_from(*string_skeleton) {
                 Ok(_) => {
                     panic!(
