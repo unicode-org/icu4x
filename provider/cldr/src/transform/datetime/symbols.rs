@@ -4,6 +4,7 @@
 
 use super::common::CommonDateProvider;
 use crate::error::Error;
+use litemap::LiteMap;
 
 use crate::cldr_serde;
 use crate::CldrPaths;
@@ -43,13 +44,17 @@ impl DataProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
     ) -> Result<DataResponse<calendar::DateSymbolsV1Marker>, DataError> {
         DateSymbolsProvider::supports_key(&req.resource_path.key)?;
         let dates = self.0.dates_for(req)?;
+        let calendar = req
+            .resource_path
+            .options
+            .variant
+            .as_ref()
+            .ok_or_else(|| DataError::NeedsVariant(req.clone()))?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_owned(calendar::DateSymbolsV1::from(
-                dates,
-            ))),
+            payload: Some(DataPayload::from_owned(convert_dates(dates, calendar))),
         })
     }
 }
@@ -68,13 +73,38 @@ impl IterableDataProviderCore for DateSymbolsProvider {
     }
 }
 
-impl From<&cldr_serde::ca::Dates> for calendar::DateSymbolsV1 {
-    fn from(other: &cldr_serde::ca::Dates) -> Self {
-        Self {
-            months: (&other.months).into(),
-            weekdays: (&other.days).into(),
-            day_periods: (&other.day_periods).into(),
+fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> calendar::DateSymbolsV1 {
+    calendar::DateSymbolsV1 {
+        months: (&other.months).into(),
+        weekdays: (&other.days).into(),
+        day_periods: (&other.day_periods).into(),
+        eras: convert_eras(&other.eras, calendar),
+    }
+}
+
+fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> calendar::Eras {
+    let map = get_era_code_map(calendar);
+    let mut out_eras = calendar::Eras::default();
+
+    for (cldr, code) in map.iter() {
+        if let Some(name) = eras.names.get(&**cldr) {
+            out_eras.names.insert(code.to_string(), name.clone());
         }
+        if let Some(abbr) = eras.abbr.get(&**cldr) {
+            out_eras.abbr.insert(code.to_string(), abbr.clone());
+        }
+        if let Some(narrow) = eras.narrow.get(&**cldr) {
+            out_eras.narrow.insert(code.to_string(), narrow.clone());
+        }
+    }
+    out_eras
+}
+
+fn get_era_code_map(calendar: &str) -> LiteMap<&'static str, &'static str> {
+    match calendar {
+        "gregory" => [("0", "bc"), ("1", "ad")].iter().copied().collect(),
+        "buddhist" => [("0", "be")].iter().copied().collect(),
+        _ => panic!("Era map unknown for {}", calendar),
     }
 }
 
