@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637781320666,
+  "lastUpdate": 1637781330478,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13703,6 +13703,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 397144,
             "range": "± 18294",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d7e2d1bbfe836885979d6ad7e2cdd22d3b91edda",
+          "message": "Add extend_from_litemap to LiteMap (#1340)",
+          "timestamp": "2021-11-24T11:07:03-08:00",
+          "tree_id": "b8670c5ee7651cf859eff9c112033d4b06e4de49",
+          "url": "https://github.com/unicode-org/icu4x/commit/d7e2d1bbfe836885979d6ad7e2cdd22d3b91edda"
+        },
+        "date": 1637781322578,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 129409,
+            "range": "± 8130",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1465634,
+            "range": "± 66364",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 383080,
+            "range": "± 27859",
             "unit": "ns/iter"
           }
         ]
