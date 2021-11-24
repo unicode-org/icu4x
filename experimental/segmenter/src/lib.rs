@@ -9,8 +9,8 @@
 //! - Line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
 //! - Word breaker that is compatible with [Unicode Standard Annex #29][UAX29].
 //!
-//! [UAX14]: http://www.unicode.org/reports/tr14/
-//! [UAX29]: http://www.unicode.org/reports/tr29/
+//! [UAX14]: https://www.unicode.org/reports/tr14/
+//! [UAX29]: https://www.unicode.org/reports/tr29/
 //!
 //! # Line breaker
 //!
