@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637781274832,
+  "lastUpdate": 1637781288922,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17813,6 +17813,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4949,
             "range": "± 71",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d7e2d1bbfe836885979d6ad7e2cdd22d3b91edda",
+          "message": "Add extend_from_litemap to LiteMap (#1340)",
+          "timestamp": "2021-11-24T11:07:03-08:00",
+          "tree_id": "b8670c5ee7651cf859eff9c112033d4b06e4de49",
+          "url": "https://github.com/unicode-org/icu4x/commit/d7e2d1bbfe836885979d6ad7e2cdd22d3b91edda"
+        },
+        "date": 1637781282063,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2450,
+            "range": "± 203",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4548,
+            "range": "± 337",
             "unit": "ns/iter"
           }
         ]
