@@ -1,4 +1,10 @@
 {
+  "Gy": "Gy年",
+  "GyMd": "Gy/M/d",
+  "GyMMM": "Gy年M月",
+  "GyMMMd": "Gy年M月d日",
+  "GyMMMdE": "Gy年M月d日(E)",
+  "GyMMMdEEEE": "Gy年M月d日EEEE",
   "y": "y年",
   "yM": "y/M",
   "yMd": "y/M/d",
