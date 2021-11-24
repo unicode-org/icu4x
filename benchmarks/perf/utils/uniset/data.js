@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637653566728,
+  "lastUpdate": 1637714515521,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15239,6 +15239,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40457702,
             "range": "± 1687679",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d683334935645db8a7015ee490b3ee3356e0e058",
+          "message": "Move CLDR JSON structs to central location and other refactoring (#1337)",
+          "timestamp": "2021-11-23T16:34:25-08:00",
+          "tree_id": "510d3c7f53e55c8dfa796ded764603be821ceb2d",
+          "url": "https://github.com/unicode-org/icu4x/commit/d683334935645db8a7015ee490b3ee3356e0e058"
+        },
+        "date": 1637714507540,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44442206,
+            "range": "± 1409966",
             "unit": "ns/iter"
           }
         ]
