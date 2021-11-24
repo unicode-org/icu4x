@@ -5,6 +5,7 @@
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
 use alloc::borrow::Cow;
+use alloc::string::String;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 
