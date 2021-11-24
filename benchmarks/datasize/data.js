@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637721288686,
+  "lastUpdate": 1637766793666,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4313,6 +4313,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6edc9d418a52661ef7fcefd3b6d99c77e80d10f9"
         },
         "date": 1637721281381,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 906952,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "919d6f03fc2809ddb5adf7d20addd2d91b2754f1",
+          "message": "Extend DateTimeFormat to support other calendars (#1339)",
+          "timestamp": "2021-11-24T07:11:30-08:00",
+          "tree_id": "1369c739ad1b079dc63553d9efc154e066af61c9",
+          "url": "https://github.com/unicode-org/icu4x/commit/919d6f03fc2809ddb5adf7d20addd2d91b2754f1"
+        },
+        "date": 1637766785710,
         "tool": "ndjson",
         "benches": [
           {
