@@ -12,7 +12,7 @@
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::borrow::Cow;
-use std::collections::HashMap;
+use litemap::LiteMap;
 
 macro_rules! symbols {
     ($name: ident, $([$alias: expr, $element: ident, $ty: ty]),+ $(,)?) => {
@@ -147,7 +147,7 @@ pub struct DateTimeFormats {
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
 pub struct AvailableFormats(
-    #[serde(with = "tuple_vec_map")] pub(crate) Vec<(Cow<'static, str>, Cow<'static, str>)>,
+    pub LiteMap<String, String>,
 );
 
 /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
@@ -171,7 +171,7 @@ pub struct Dates {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct DatesCalendars {
-    pub calendars: HashMap<String, Dates>,
+    pub calendars: LiteMap<String, Dates>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -181,7 +181,7 @@ pub struct LangDates {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct LangData(
-    #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LangDates)>,
+    pub LiteMap<LanguageIdentifier, LangDates>,
 );
 
 #[derive(PartialEq, Debug, Deserialize)]

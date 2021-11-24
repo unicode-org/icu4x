@@ -12,6 +12,7 @@ use icu_provider::{
     iter::{IterableDataProviderCore, KeyedDataProvider},
     prelude::*,
 };
+use litemap::LiteMap;
 
 use std::convert::TryFrom;
 
@@ -30,16 +31,16 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
 pub struct TimeZonesProvider {
-    data: Vec<(
+    data: LiteMap<
         LanguageIdentifier,
         cldr_serde::time_zone_names::LangTimeZones,
-    )>,
+    >,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = vec![];
+        let mut data = LiteMap::new();
 
         let path = cldr_paths.cldr_dates("gregory")?.join("main");
 
@@ -48,9 +49,9 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
         for dir in locale_dirs {
             let path = dir.join("timeZoneNames.json");
 
-            let mut resource: cldr_serde::time_zone_names::Resource =
+            let resource: cldr_serde::time_zone_names::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.append(&mut resource.main.0);
+            data.extend_from_litemap(resource.main.0);
         }
 
         Ok(Self { data })
@@ -101,9 +102,9 @@ macro_rules! impl_data_provider {
             fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 TimeZonesProvider::supports_key(&req.resource_path.key)?;
                 let langid = req.try_langid()?;
-                let time_zones = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
-                    Ok(idx) => &self.data[idx].1.dates.time_zone_names,
-                    Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
+                let time_zones = match self.data.get(&langid) {
+                    Some(v) => &v.dates.time_zone_names,
+                    None => return Err(DataError::MissingResourceOptions(req.clone())),
                 };
                 Ok(DataResponse {
                     metadata: DataResponseMetadata {

@@ -12,7 +12,7 @@ use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use serde_aux::prelude::*;
-use std::collections::HashMap;
+use litemap::LiteMap;
 use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -34,9 +34,9 @@ pub struct DecimalFormats {
 #[derive(PartialEq, Debug, Default)]
 pub struct NumberingSystemData {
     /// Map from numbering system to symbols
-    pub symbols: HashMap<TinyStr8, Symbols>,
+    pub symbols: LiteMap<TinyStr8, Symbols>,
     /// Map from numbering system to decimal formats
-    pub formats: HashMap<TinyStr8, DecimalFormats>,
+    pub formats: LiteMap<TinyStr8, DecimalFormats>,
 }
 
 pub struct NumberingSystemDataVisitor;
@@ -109,7 +109,7 @@ pub struct LangNumbers {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct LangData(
-    #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LangNumbers)>,
+    pub LiteMap<LanguageIdentifier, LangNumbers>,
 );
 
 #[derive(PartialEq, Debug, Deserialize)]
