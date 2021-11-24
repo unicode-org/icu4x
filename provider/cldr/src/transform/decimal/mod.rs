@@ -10,10 +10,10 @@ use icu_decimal::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
+use litemap::LiteMap;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use tinystr::TinyStr8;
-use litemap::LiteMap;
 
 mod decimal_pattern;
 
@@ -107,10 +107,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
-        let numbers = match self
-            .cldr_numbers_data
-            .get(&langid)
-        {
+        let numbers = match self.cldr_numbers_data.get(&langid) {
             Some(v) => &v.numbers,
             None => return Err(DataError::MissingResourceOptions(req.clone())),
         };

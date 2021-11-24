@@ -7,9 +7,9 @@
 //! Sample file:
 //! https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-core/supplemental/numberingSystems.json
 
+use litemap::LiteMap;
 use serde::Deserialize;
 use tinystr::{TinyStr8, TinyStrAuto};
-use litemap::LiteMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]

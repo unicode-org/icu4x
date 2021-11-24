@@ -9,10 +9,10 @@
 
 use icu_locid::LanguageIdentifier;
 use itertools::Itertools;
+use litemap::LiteMap;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use serde_aux::prelude::*;
-use litemap::LiteMap;
 use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -108,9 +108,7 @@ pub struct LangNumbers {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(
-    pub LiteMap<LanguageIdentifier, LangNumbers>,
-);
+pub struct LangData(pub LiteMap<LanguageIdentifier, LangNumbers>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {

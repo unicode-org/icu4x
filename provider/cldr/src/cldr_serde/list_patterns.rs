@@ -8,6 +8,7 @@
 //! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/en/listPatterns.json
 
 use icu_locid::LanguageIdentifier;
+use litemap::LiteMap;
 use serde::Deserialize;
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -48,9 +49,7 @@ pub struct LangListPatterns {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(
-    #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LangListPatterns)>,
-);
+pub struct LangData(pub LiteMap<LanguageIdentifier, LangListPatterns>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {

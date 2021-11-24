@@ -8,11 +8,11 @@
 //! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/timeZoneNames.json
 
 use icu_locid::LanguageIdentifier;
+use litemap::LiteMap;
 use serde::{
     de::{IgnoredAny, MapAccess, Visitor},
     Deserialize, Deserializer,
 };
-use litemap::LiteMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct ZoneFormat(pub LiteMap<String, String>);
@@ -159,9 +159,7 @@ pub struct LangTimeZones {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(
-    pub LiteMap<LanguageIdentifier, LangTimeZones>,
-);
+pub struct LangData(pub LiteMap<LanguageIdentifier, LangTimeZones>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {

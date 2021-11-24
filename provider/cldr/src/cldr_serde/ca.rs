@@ -10,9 +10,9 @@
 //! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
 
 use icu_locid::LanguageIdentifier;
+use litemap::LiteMap;
 use serde::Deserialize;
 use std::borrow::Cow;
-use litemap::LiteMap;
 
 macro_rules! symbols {
     ($name: ident, $([$alias: expr, $element: ident, $ty: ty]),+ $(,)?) => {
@@ -146,9 +146,7 @@ pub struct DateTimeFormats {
 }
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
-pub struct AvailableFormats(
-    pub LiteMap<String, String>,
-);
+pub struct AvailableFormats(pub LiteMap<String, String>);
 
 /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
 /// "main.LANGID.dates.calendars.gregorian" where "LANGID" is the identifier.
@@ -180,9 +178,7 @@ pub struct LangDates {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(
-    pub LiteMap<LanguageIdentifier, LangDates>,
-);
+pub struct LangData(pub LiteMap<LanguageIdentifier, LangDates>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {

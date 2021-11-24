@@ -31,10 +31,7 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
 pub struct TimeZonesProvider {
-    data: LiteMap<
-        LanguageIdentifier,
-        cldr_serde::time_zone_names::LangTimeZones,
-    >,
+    data: LiteMap<LanguageIdentifier, cldr_serde::time_zone_names::LangTimeZones>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {

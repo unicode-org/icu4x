@@ -10,6 +10,7 @@ use icu_list::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
+use litemap::LiteMap;
 use std::convert::TryFrom;
 
 /// All keys that this module is able to produce.
@@ -22,21 +23,18 @@ pub const ALL_KEYS: [ResourceKey; 3] = [
 /// A data provider reading from CLDR JSON list rule files.
 #[derive(PartialEq, Debug)]
 pub struct ListProvider {
-    data: Vec<(
-        LanguageIdentifier,
-        cldr_serde::list_patterns::LangListPatterns,
-    )>,
+    data: LiteMap<LanguageIdentifier, cldr_serde::list_patterns::LangListPatterns>,
 }
 
 impl TryFrom<&dyn CldrPaths> for ListProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = vec![];
+        let mut data = LiteMap::new();
         for dir in get_langid_subdirectories(&cldr_paths.cldr_misc()?.join("main"))? {
             let path = dir.join("listPatterns.json");
-            let mut resource: cldr_serde::list_patterns::Resource =
+            let resource: cldr_serde::list_patterns::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.append(&mut resource.main.0);
+            data.extend_from_litemap(resource.main.0);
         }
         Ok(Self { data })
     }
@@ -58,9 +56,9 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
     ) -> Result<DataResponse<ListFormatterPatternsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
-        let data = match self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
-            Ok(idx) => &self.data[idx].1.list_patterns,
-            Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
+        let data = match self.data.get(&langid) {
+            Some(v) => &v.list_patterns,
+            None => return Err(DataError::MissingResourceOptions(req.clone())),
         };
 
         let patterns = match req.resource_path.key {
@@ -96,7 +94,7 @@ impl IterableDataProviderCore for ListProvider {
             // ur-IN has a buggy pattern ("{1}, {0}") which violates
             // our invariant that {0} is at index 0 (and rotates the output).
             // See https://github.com/unicode-org/icu4x/issues/1282
-            .filter(|(l, _)| l != &icu_locid_macros::langid!("ur-IN"))
+            .filter(|(l, _)| *l != &icu_locid_macros::langid!("ur-IN"))
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 langid: Some(l.clone()),

@@ -78,11 +78,8 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
                 .into_tuple_vec()
                 .into_iter()
                 .flat_map(|(key, region)| {
-                    region
-                        .0
-                        .into_tuple_vec()
-                        .into_iter()
-                        .flat_map(move |(inner_key, place_or_region)| {
+                    region.0.into_tuple_vec().into_iter().flat_map(
+                        move |(inner_key, place_or_region)| {
                             let mut key = key.clone();
                             key.push('/');
                             key.push_str(&inner_key);
@@ -102,7 +99,8 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
                                     })
                                     .collect::<Vec<_>>(),
                             }
-                        })
+                        },
+                    )
                 })
                 .collect(),
         )
