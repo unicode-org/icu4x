@@ -274,12 +274,8 @@ where
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<SerdeSeDataStructMarker> {
-        use crate::data_provider::DataPayloadInner;
-        let b = match other.inner {
-            DataPayloadInner::Owned(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
-            DataPayloadInner::RcBuf(yoke) => Box::new(yoke) as Box<dyn SerdeSeDataStruct>,
-        };
-        DataPayload::from_owned(SerdeSeDataStructBox(b))
+        let owned: Box<dyn SerdeSeDataStruct> = Box::new(other.yoke);
+        DataPayload::from_owned(SerdeSeDataStructBox(owned))
     }
 }
 
