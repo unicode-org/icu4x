@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637767160011,
+  "lastUpdate": 1637781320666,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13661,6 +13661,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 324422,
             "range": "± 30545",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7418270529534848b000a195299802c74e9971ff",
+          "message": "Migrate the various map impls in the CLDR transformer to LiteMap (#1341)",
+          "timestamp": "2021-11-24T11:07:30-08:00",
+          "tree_id": "54277d03057779d7e9bfb95a3db4faaf77f3470d",
+          "url": "https://github.com/unicode-org/icu4x/commit/7418270529534848b000a195299802c74e9971ff"
+        },
+        "date": 1637781312243,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 134426,
+            "range": "± 3107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1584840,
+            "range": "± 75535",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 397144,
+            "range": "± 18294",
             "unit": "ns/iter"
           }
         ]
