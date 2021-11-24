@@ -2,14 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO: delete me
-#![allow(dead_code)]
-#![allow(unused_imports)]
-#![allow(unused_variables)]
-
 use crate::uprops_serde;
-use icu_casemapping::{CaseMapping, CaseMappingData};
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_casemapping::CaseMapping;
+use icu_codepointtrie::{CodePointTrieHeader, TrieType};
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_provider::prelude::*;
 
@@ -23,16 +18,29 @@ pub struct CaseMappingDataProvider {
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
 impl CaseMappingDataProvider {
-    pub fn try_new(path: PathBuf) -> eyre::Result<Self> {
+    pub fn try_new(path: PathBuf) -> Result<Self, DataError> {
         let toml_str = fs::read_to_string(&path).unwrap();
         let toml: uprops_serde::case::Main = toml::from_str(&toml_str).unwrap();
 
-	// TODO: can we avoid making this type public?
-	let code_point_trie = CodePointTrie::<'static, CaseMappingData>::try_from(&toml.ucase.code_point_trie).unwrap();
+	let trie_data = &toml.ucase.code_point_trie;
+        let trie_type: TrieType =
+            TrieType::try_from(trie_data.trie_type_enum_val).map_err(DataError::new_resc_error)?;
+        let trie_header = CodePointTrieHeader {
+            high_start: trie_data.high_start,
+            shifted12_high_start: trie_data.shifted12_high_start,
+            index3_null_offset: trie_data.index3_null_offset,
+            data_null_offset: trie_data.data_null_offset,
+            null_value: trie_data.null_value,
+            trie_type: trie_type,
+        };
+	let trie_index = &trie_data.index;
+	let trie_data = &trie_data.data_16.as_ref().unwrap(); // TODO: return error
 	let exceptions = &toml.ucase.exceptions.exceptions;
  	let unfold = &toml.ucase.unfold.unfold;
 
-	let case_mapping = CaseMapping::try_new(code_point_trie, exceptions, unfold).unwrap();
+	let case_mapping = CaseMapping::try_from_icu(trie_header, trie_index, trie_data,
+						     exceptions, unfold)
+	    .map_err(DataError::new_resc_error)?;
 
 	Ok(Self { case_mapping })
     }

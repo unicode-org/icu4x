@@ -23,6 +23,7 @@ include = [
 ]
 
 [dependencies]
+displaydoc = { version = "0.2.3", default-features = false }
 icu_codepointtrie = { version = "0.3", path = "../../utils/codepointtrie", features = ["serde"] }
 icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
 yoke = { path = "../../utils/yoke", version = "0.3", features = ["derive"] }
