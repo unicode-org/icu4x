@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637721608807,
+  "lastUpdate": 1637767105886,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17741,6 +17741,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3838,
             "range": "± 178",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "919d6f03fc2809ddb5adf7d20addd2d91b2754f1",
+          "message": "Extend DateTimeFormat to support other calendars (#1339)",
+          "timestamp": "2021-11-24T07:11:30-08:00",
+          "tree_id": "1369c739ad1b079dc63553d9efc154e066af61c9",
+          "url": "https://github.com/unicode-org/icu4x/commit/919d6f03fc2809ddb5adf7d20addd2d91b2754f1"
+        },
+        "date": 1637767099847,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2401,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4185,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
