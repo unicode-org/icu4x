@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637766793666,
+  "lastUpdate": 1637780925191,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4343,6 +4343,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/919d6f03fc2809ddb5adf7d20addd2d91b2754f1"
         },
         "date": 1637766785710,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 906952,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d7e2d1bbfe836885979d6ad7e2cdd22d3b91edda",
+          "message": "Add extend_from_litemap to LiteMap (#1340)",
+          "timestamp": "2021-11-24T11:07:03-08:00",
+          "tree_id": "b8670c5ee7651cf859eff9c112033d4b06e4de49",
+          "url": "https://github.com/unicode-org/icu4x/commit/d7e2d1bbfe836885979d6ad7e2cdd22d3b91edda"
+        },
+        "date": 1637780917499,
         "tool": "ndjson",
         "benches": [
           {
