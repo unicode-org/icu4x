@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637780965551,
+  "lastUpdate": 1637780976025,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4433,6 +4433,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/92dbabdbf4f81f55492d65dcfde9a003aaa9de24"
         },
         "date": 1637780957947,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 906952,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b42c3594c9c109816ba59f3f7a0a948ebf53f6ad",
+          "message": "ZeroVec::clone_from_slice --> ZeroVec::alloc_from_slice (#1343)",
+          "timestamp": "2021-11-24T11:07:58-08:00",
+          "tree_id": "3fb31ed25169382eb10dad3e42b0b5c0aa439f83",
+          "url": "https://github.com/unicode-org/icu4x/commit/b42c3594c9c109816ba59f3f7a0a948ebf53f6ad"
+        },
+        "date": 1637780968783,
         "tool": "ndjson",
         "benches": [
           {
