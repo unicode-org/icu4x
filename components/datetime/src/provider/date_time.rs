@@ -258,6 +258,7 @@ pub trait DateTimeSymbols {
         hour: date::IsoHour,
         is_top_of_hour: bool,
     ) -> &Cow<str>;
+    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &'_ str) -> &str;
 }
 
 impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
@@ -355,5 +356,14 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
             (_, hour, _) if hour < 12 => &symbols.am,
             _ => &symbols.pm,
         }
+    }
+
+    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &str) -> &str {
+        let symbols = match length {
+            fields::FieldLength::Wide => &self.eras.names,
+            fields::FieldLength::Narrow => &self.eras.narrow,
+            _ => &self.eras.abbr,
+        };
+        &symbols.get(era_code).expect("Unable to find era code")
     }
 }
