@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637714571547,
+  "lastUpdate": 1637721654415,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19949,6 +19949,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22925,
             "range": "± 98",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6edc9d418a52661ef7fcefd3b6d99c77e80d10f9",
+          "message": "Create TimeZoneFormatConfig enum (#1256)\n\n* Create TimeZoneFormatConfig enum\r\n\r\n* Add tests\r\n\r\n* Create enum TimeZoneFormatKind",
+          "timestamp": "2021-11-23T18:33:15-08:00",
+          "tree_id": "5af6d889548ed9d7b037f814ffb2231a19b108e6",
+          "url": "https://github.com/unicode-org/icu4x/commit/6edc9d418a52661ef7fcefd3b6d99c77e80d10f9"
+        },
+        "date": 1637721648088,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1011,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5358,
+            "range": "± 351",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18422,
+            "range": "± 1593",
             "unit": "ns/iter"
           }
         ]
