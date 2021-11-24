@@ -510,7 +510,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     }
 
     /// Obtain the yokeable out of a `Yoke<Y, Option<C>>` if possible.
-    /// 
+    ///
     /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,
     /// this returns `self` as an error.
     pub fn try_into_yokeable(self) -> Result<Y, Self> {
