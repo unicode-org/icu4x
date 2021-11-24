@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637714514181,
+  "lastUpdate": 1637721619543,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14249,6 +14249,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 129321,
             "range": "± 5774",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6edc9d418a52661ef7fcefd3b6d99c77e80d10f9",
+          "message": "Create TimeZoneFormatConfig enum (#1256)\n\n* Create TimeZoneFormatConfig enum\r\n\r\n* Add tests\r\n\r\n* Create enum TimeZoneFormatKind",
+          "timestamp": "2021-11-23T18:33:15-08:00",
+          "tree_id": "5af6d889548ed9d7b037f814ffb2231a19b108e6",
+          "url": "https://github.com/unicode-org/icu4x/commit/6edc9d418a52661ef7fcefd3b6d99c77e80d10f9"
+        },
+        "date": 1637721609136,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 125211,
+            "range": "± 10802",
             "unit": "ns/iter"
           }
         ]
