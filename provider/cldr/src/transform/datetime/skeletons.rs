@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::cldr_json;
 use super::common::CommonDateProvider;
 use crate::error::Error;
 
+use crate::cldr_serde;
 use crate::CldrPaths;
 use icu_datetime::{provider::*, skeleton::SkeletonError};
 
@@ -68,8 +68,8 @@ impl IterableDataProviderCore for DateSkeletonPatternsProvider {
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for calendar::DateSkeletonPatternsV1<'_> {
-    fn from(other: &cldr_json::DateTimeFormats) -> Self {
+impl From<&cldr_serde::ca::DateTimeFormats> for calendar::DateSkeletonPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         use calendar::SkeletonV1;
         use icu_datetime::{
             pattern::runtime::{PatternPlurals, PluralPattern},

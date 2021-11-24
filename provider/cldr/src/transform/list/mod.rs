@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
@@ -10,8 +11,6 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-
-mod cldr_serde;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 3] = [
@@ -25,7 +24,7 @@ pub const ALL_KEYS: [ResourceKey; 3] = [
 pub struct ListProvider {
     data: Vec<(
         LanguageIdentifier,
-        cldr_serde::list_patterns_json::LangListPatterns,
+        cldr_serde::list_patterns::LangListPatterns,
     )>,
 }
 
@@ -35,7 +34,7 @@ impl TryFrom<&dyn CldrPaths> for ListProvider {
         let mut data = vec![];
         for dir in get_langid_subdirectories(&cldr_paths.cldr_misc()?.join("main"))? {
             let path = dir.join("listPatterns.json");
-            let mut resource: cldr_serde::list_patterns_json::Resource =
+            let mut resource: cldr_serde::list_patterns::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.append(&mut resource.main.0);
         }
@@ -108,7 +107,7 @@ impl IterableDataProviderCore for ListProvider {
 }
 
 fn parse_and_patterns<'a>(
-    raw: &cldr_serde::list_patterns_json::ListPatterns,
+    raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
     Ok(ListFormatterPatternsV1::new(
         raw.standard.start.parse()?,
@@ -127,7 +126,7 @@ fn parse_and_patterns<'a>(
 }
 
 fn parse_or_patterns<'a>(
-    raw: &cldr_serde::list_patterns_json::ListPatterns,
+    raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
     Ok(ListFormatterPatternsV1::new(
         raw.or.start.parse()?,
@@ -146,7 +145,7 @@ fn parse_or_patterns<'a>(
 }
 
 fn parse_unit_patterns<'a>(
-    raw: &cldr_serde::list_patterns_json::ListPatterns,
+    raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
     Ok(ListFormatterPatternsV1::new(
         raw.unit.start.parse()?,

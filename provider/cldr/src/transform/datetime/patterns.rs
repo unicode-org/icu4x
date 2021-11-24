@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::cldr_json;
 use super::common::CommonDateProvider;
 
 use crate::error::Error;
 
+use crate::cldr_serde;
 use crate::CldrPaths;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::{pattern, provider::*};
@@ -69,8 +69,8 @@ impl IterableDataProviderCore for DatePatternsProvider {
     }
 }
 
-impl From<&cldr_json::LengthPatterns> for calendar::patterns::LengthPatternsV1<'_> {
-    fn from(other: &cldr_json::LengthPatterns) -> Self {
+impl From<&cldr_serde::ca::LengthPatterns> for calendar::patterns::LengthPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
             full: other
@@ -97,8 +97,8 @@ impl From<&cldr_json::LengthPatterns> for calendar::patterns::LengthPatternsV1<'
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for calendar::patterns::LengthPatternsV1<'_> {
-    fn from(other: &cldr_json::DateTimeFormats) -> Self {
+impl From<&cldr_serde::ca::DateTimeFormats> for calendar::patterns::LengthPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
             full: other
@@ -125,8 +125,8 @@ impl From<&cldr_json::DateTimeFormats> for calendar::patterns::LengthPatternsV1<
     }
 }
 
-impl From<&cldr_json::DateTimeFormats> for calendar::patterns::GenericLengthPatternsV1<'_> {
-    fn from(other: &cldr_json::DateTimeFormats) -> Self {
+impl From<&cldr_serde::ca::DateTimeFormats> for calendar::patterns::GenericLengthPatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
             full: other
@@ -153,8 +153,8 @@ impl From<&cldr_json::DateTimeFormats> for calendar::patterns::GenericLengthPatt
     }
 }
 
-impl From<&cldr_json::Dates> for calendar::DatePatternsV1<'_> {
-    fn from(other: &cldr_json::Dates) -> Self {
+impl From<&cldr_serde::ca::Dates> for calendar::DatePatternsV1<'_> {
+    fn from(other: &cldr_serde::ca::Dates) -> Self {
         let length_combinations_v1 =
             calendar::patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
         let skeletons_v1 = calendar::DateSkeletonPatternsV1::from(&other.datetime_formats);

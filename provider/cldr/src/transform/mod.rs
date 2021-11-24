@@ -2,22 +2,25 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod aliases;
-mod dates;
-mod likelysubtags;
+//! This module contains the core transformer code from CLDR JSON to ICU4X Data Provider.
+//!
+//! Every ICU4X component should have its own private submodule and then export the types from here.
+
+mod datetime;
+mod decimal;
 mod list;
-mod numbers;
+mod locale_canonicalizer;
 mod plurals;
 mod time_zones;
 
-pub use aliases::AliasesProvider;
-pub use dates::{
+pub use datetime::{
     patterns::DatePatternsProvider, skeletons::DateSkeletonPatternsProvider,
     symbols::DateSymbolsProvider,
 };
-pub use likelysubtags::LikelySubtagsProvider;
+pub use decimal::NumbersProvider;
 pub use list::ListProvider;
-pub use numbers::NumbersProvider;
+pub use locale_canonicalizer::aliases::AliasesProvider;
+pub use locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
 pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
@@ -31,12 +34,12 @@ use self::time_zones::TimeZonesProvider;
 /// Returns a list of all [`ResourceKeys`](ResourceKey) that this provider can produce.
 pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
-    result.extend(&aliases::ALL_KEYS);
-    result.extend(&dates::symbols::ALL_KEYS);
-    result.extend(&dates::skeletons::ALL_KEYS);
-    result.extend(&dates::patterns::ALL_KEYS);
-    result.extend(&likelysubtags::ALL_KEYS);
-    result.extend(&numbers::ALL_KEYS);
+    result.extend(&locale_canonicalizer::aliases::ALL_KEYS);
+    result.extend(&datetime::symbols::ALL_KEYS);
+    result.extend(&datetime::skeletons::ALL_KEYS);
+    result.extend(&datetime::patterns::ALL_KEYS);
+    result.extend(&locale_canonicalizer::likely_subtags::ALL_KEYS);
+    result.extend(&decimal::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
     result.extend(&time_zones::ALL_KEYS);
     result.extend(&list::ALL_KEYS);

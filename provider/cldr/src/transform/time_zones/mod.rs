@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
@@ -14,7 +15,7 @@ use icu_provider::{
 
 use std::convert::TryFrom;
 
-mod cldr_json;
+mod convert;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 6] = [
@@ -29,7 +30,10 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
 pub struct TimeZonesProvider {
-    data: Vec<(LanguageIdentifier, cldr_json::LangTimeZones)>,
+    data: Vec<(
+        LanguageIdentifier,
+        cldr_serde::time_zone_names::LangTimeZones,
+    )>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
@@ -44,7 +48,7 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
         for dir in locale_dirs {
             let path = dir.join("timeZoneNames.json");
 
-            let mut resource: cldr_json::Resource =
+            let mut resource: cldr_serde::time_zone_names::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.append(&mut resource.main.0);
         }
@@ -56,7 +60,7 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
 impl TryFrom<&str> for TimeZonesProvider {
     type Error = Error;
     fn try_from(input: &str) -> Result<Self, Self::Error> {
-        let resource: cldr_json::Resource =
+        let resource: cldr_serde::time_zone_names::Resource =
             serde_json::from_str(input).map_err(|e| Error::Json(e, None))?;
         Ok(Self {
             data: resource.main.0,

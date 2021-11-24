@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
@@ -18,13 +19,13 @@ pub const ALL_KEYS: [ResourceKey; 1] = [key::ALIASES_V1];
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
 pub struct AliasesProvider {
-    data: cldr_json::Resource,
+    data: cldr_serde::aliases::Resource,
 }
 
 impl TryFrom<&dyn CldrPaths> for AliasesProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let data: cldr_json::Resource = {
+        let data: cldr_serde::aliases::Resource = {
             let path = cldr_paths
                 .cldr_core()?
                 .join("supplemental")
@@ -39,7 +40,7 @@ impl TryFrom<&'_ str> for AliasesProvider {
     type Error = serde_json::error::Error;
     /// Attempt to parse a JSON string.
     fn try_from(s: &'_ str) -> Result<Self, Self::Error> {
-        let data: cldr_json::Resource = serde_json::from_str(s)?;
+        let data: cldr_serde::aliases::Resource = serde_json::from_str(s)?;
         Ok(Self { data })
     }
 }
@@ -111,9 +112,9 @@ fn rules_cmp(a: &LanguageIdentifier, b: &LanguageIdentifier) -> std::cmp::Orderi
     }
 }
 
-impl From<&cldr_json::Resource> for AliasesV1 {
+impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
     // Step 1. Load the rules from aliases.json
-    fn from(other: &cldr_json::Resource) -> Self {
+    fn from(other: &cldr_serde::aliases::Resource) -> Self {
         // These all correspond to language aliases in the CLDR data. By storing known
         // special cases in the CLDR data, we can minimize the number of comparisons done
         // for commonly used languages. With the current CLDR data, all aliases end up in
@@ -276,47 +277,6 @@ impl From<&cldr_json::Resource> for AliasesV1 {
             variant,
             subdivision,
         }
-    }
-}
-
-/// Serde structs for the CLDR JSON aliases file.
-pub(self) mod cldr_json {
-    use serde::Deserialize;
-    use tinystr::{TinyStr4, TinyStr8};
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Replacement<T> {
-        #[serde(rename = "_replacement")]
-        pub replacement: T,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Alias {
-        #[serde(with = "tuple_vec_map", rename = "languageAlias")]
-        pub language_aliases: Vec<(String, Replacement<String>)>,
-        #[serde(with = "tuple_vec_map", rename = "scriptAlias")]
-        pub script_aliases: Vec<(TinyStr4, Replacement<TinyStr4>)>,
-        #[serde(with = "tuple_vec_map", rename = "territoryAlias")]
-        pub region_aliases: Vec<(TinyStr4, Replacement<String>)>,
-        #[serde(with = "tuple_vec_map", rename = "variantAlias")]
-        pub variant_aliases: Vec<(TinyStr8, Replacement<TinyStr8>)>,
-        #[serde(with = "tuple_vec_map", rename = "subdivisionAlias")]
-        pub subdivision_aliases: Vec<(TinyStr8, Replacement<String>)>,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Metadata {
-        pub alias: Alias,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Supplemental {
-        pub metadata: Metadata,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Resource {
-        pub supplemental: Supplemental,
     }
 }
 

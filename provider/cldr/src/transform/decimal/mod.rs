@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::CldrPaths;
@@ -13,7 +14,6 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use tinystr::TinyStr8;
 
-mod cldr_serde;
 mod decimal_pattern;
 
 /// All keys that this module is able to produce.
@@ -24,15 +24,15 @@ pub const ALL_KEYS: [ResourceKey; 1] = [
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
 pub struct NumbersProvider {
-    cldr_numbering_systems_data: cldr_serde::numbering_systems_json::Resource,
-    cldr_numbers_data: Vec<(LanguageIdentifier, cldr_serde::numbers_json::LangNumbers)>,
+    cldr_numbering_systems_data: cldr_serde::numbering_systems::Resource,
+    cldr_numbers_data: Vec<(LanguageIdentifier, cldr_serde::numbers::LangNumbers)>,
 }
 
 impl TryFrom<&dyn CldrPaths> for NumbersProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         // Load common numbering system data:
-        let cldr_numbering_systems_data: cldr_serde::numbering_systems_json::Resource = {
+        let cldr_numbering_systems_data: cldr_serde::numbering_systems::Resource = {
             let path = cldr_paths
                 .cldr_core()?
                 .join("supplemental")
@@ -46,7 +46,7 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
         let locale_dirs = get_langid_subdirectories(&path)?;
         for dir in locale_dirs {
             let path = dir.join("numbers.json");
-            let mut resource: cldr_serde::numbers_json::Resource =
+            let mut resource: cldr_serde::numbers::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             cldr_numbers_data.append(&mut resource.main.0);
         }
@@ -160,10 +160,10 @@ impl IterableDataProviderCore for NumbersProvider {
     }
 }
 
-impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1<'static> {
+impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
     type Error = Cow<'static, str>;
 
-    fn try_from(other: &cldr_serde::numbers_json::Numbers) -> Result<Self, Self::Error> {
+    fn try_from(other: &cldr_serde::numbers::Numbers) -> Result<Self, Self::Error> {
         // TODO(#510): Select from non-default numbering systems
         let symbols = other
             .numsys_data

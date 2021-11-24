@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
@@ -18,13 +19,13 @@ pub const ALL_KEYS: [ResourceKey; 1] = [key::LIKELY_SUBTAGS_V1];
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
 pub struct LikelySubtagsProvider {
-    data: cldr_json::Resource,
+    data: cldr_serde::likely_subtags::Resource,
 }
 
 impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let data: cldr_json::Resource = {
+        let data: cldr_serde::likely_subtags::Resource = {
             let path = cldr_paths
                 .cldr_core()?
                 .join("supplemental")
@@ -78,8 +79,8 @@ impl IterableDataProviderCore for LikelySubtagsProvider {
     }
 }
 
-impl From<&cldr_json::Resource> for LikelySubtagsV1 {
-    fn from(other: &cldr_json::Resource) -> Self {
+impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
+    fn from(other: &cldr_serde::likely_subtags::Resource) -> Self {
         use icu_locid::LanguageIdentifier;
 
         let mut language_script: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)> = Vec::new();
@@ -154,23 +155,6 @@ impl From<&cldr_json::Resource> for LikelySubtagsV1 {
             region,
             und,
         }
-    }
-}
-
-/// Serde structs for the CLDR JSON likely subtags file.
-pub(self) mod cldr_json {
-    use icu_locid::LanguageIdentifier;
-    use serde::Deserialize;
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Supplemental {
-        #[serde(with = "tuple_vec_map", rename = "likelySubtags")]
-        pub likely_subtags: Vec<(LanguageIdentifier, LanguageIdentifier)>,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Resource {
-        pub supplemental: Supplemental,
     }
 }
 

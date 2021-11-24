@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
@@ -20,8 +21,8 @@ pub const ALL_KEYS: [ResourceKey; 2] = [
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
 pub struct PluralsProvider {
-    cardinal_rules: Option<cldr_json::Rules>,
-    ordinal_rules: Option<cldr_json::Rules>,
+    cardinal_rules: Option<cldr_serde::plurals::Rules>,
+    ordinal_rules: Option<cldr_serde::plurals::Rules>,
 }
 
 impl TryFrom<&dyn CldrPaths> for PluralsProvider {
@@ -32,7 +33,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
                 .cldr_core()?
                 .join("supplemental")
                 .join("plurals.json");
-            let data: cldr_json::Resource =
+            let data: cldr_serde::plurals::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             let mut rules = data.supplemental.plurals_type_cardinal;
             if let Some(v) = rules.as_mut() {
@@ -45,7 +46,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
                 .cldr_core()?
                 .join("supplemental")
                 .join("ordinals.json");
-            let data: cldr_json::Resource =
+            let data: cldr_serde::plurals::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             let mut rules = data.supplemental.plurals_type_ordinal;
             if let Some(v) = rules.as_mut() {
@@ -70,7 +71,10 @@ impl KeyedDataProvider for PluralsProvider {
 }
 
 impl PluralsProvider {
-    fn get_rules_for(&self, resc_key: &ResourceKey) -> Result<&cldr_json::Rules, DataError> {
+    fn get_rules_for(
+        &self,
+        resc_key: &ResourceKey,
+    ) -> Result<&cldr_serde::plurals::Rules, DataError> {
         PluralsProvider::supports_key(resc_key)?;
         match *resc_key {
             key::CARDINAL_V1 => self.cardinal_rules.as_ref(),
@@ -126,8 +130,8 @@ impl IterableDataProviderCore for PluralsProvider {
     }
 }
 
-impl From<&cldr_json::LocalePluralRules> for PluralRulesV1<'static> {
-    fn from(other: &cldr_json::LocalePluralRules) -> Self {
+impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
+    fn from(other: &cldr_serde::plurals::LocalePluralRules) -> Self {
         /// Removes samples from plural rule strings. Takes an owned [`String`] reference and
         /// returns a new [`String`] in a [`Cow::Owned`].
         #[allow(clippy::ptr_arg)]
@@ -141,47 +145,6 @@ impl From<&cldr_json::LocalePluralRules> for PluralRulesV1<'static> {
             few: other.few.as_ref().map(convert),
             many: other.many.as_ref().map(convert),
         }
-    }
-}
-
-/// Serde structs for the CLDR JSON plurals files.
-pub(self) mod cldr_json {
-    use icu_locid::LanguageIdentifier;
-    use serde::Deserialize;
-
-    // TODO: Use Serde Borrow throughout these structs. Blocked by:
-    // https://stackoverflow.com/q/63201624/1407170
-
-    #[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
-    pub struct LocalePluralRules {
-        #[serde(rename = "pluralRule-count-zero")]
-        pub zero: Option<String>,
-        #[serde(rename = "pluralRule-count-one")]
-        pub one: Option<String>,
-        #[serde(rename = "pluralRule-count-two")]
-        pub two: Option<String>,
-        #[serde(rename = "pluralRule-count-few")]
-        pub few: Option<String>,
-        #[serde(rename = "pluralRule-count-many")]
-        pub many: Option<String>,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Rules(
-        #[serde(with = "tuple_vec_map")] pub(crate) Vec<(LanguageIdentifier, LocalePluralRules)>,
-    );
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Supplemental {
-        #[serde(rename = "plurals-type-cardinal")]
-        pub plurals_type_cardinal: Option<Rules>,
-        #[serde(rename = "plurals-type-ordinal")]
-        pub plurals_type_ordinal: Option<Rules>,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Resource {
-        pub supplemental: Supplemental,
     }
 }
 
