@@ -308,6 +308,7 @@ pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<b
     for field in fields {
         if !requires_symbols {
             requires_symbols = match field.symbol {
+                FieldSymbol::Era => true,
                 FieldSymbol::Month(_) => {
                     !matches!(field.length, FieldLength::One | FieldLength::TwoDigit)
                 }
