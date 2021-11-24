@@ -161,7 +161,18 @@ where
 {
     match field.symbol {
         FieldSymbol::Era => {
-            todo!("todo manish");
+            let symbol = symbols
+                .expect("Expect symbols to be present")
+                .get_symbol_for_era(
+                    field.length,
+                    &datetime
+                        .datetime()
+                        .year()
+                        .ok_or(Error::MissingInputField)?
+                        .era
+                        .0,
+                );
+            w.write_str(symbol)?
         }
         FieldSymbol::Year(..) => format_number(
             w,
