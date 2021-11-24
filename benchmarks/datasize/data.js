@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637780938918,
+  "lastUpdate": 1637780965551,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4403,6 +4403,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7418270529534848b000a195299802c74e9971ff"
         },
         "date": 1637780931626,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 906952,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92dbabdbf4f81f55492d65dcfde9a003aaa9de24",
+          "message": "Remove DataPayloadInner and migrate to a single Yoke type (#1342)",
+          "timestamp": "2021-11-24T11:07:48-08:00",
+          "tree_id": "16b9957252cb5158b6f9e499a38fe0945886838d",
+          "url": "https://github.com/unicode-org/icu4x/commit/92dbabdbf4f81f55492d65dcfde9a003aaa9de24"
+        },
+        "date": 1637780957947,
         "tool": "ndjson",
         "benches": [
           {
