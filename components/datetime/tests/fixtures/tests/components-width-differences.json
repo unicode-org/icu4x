@@ -28,7 +28,8 @@
         },
         "output": {
             "values": {
-                "en": "2020 AD"
+                "en": "2020 AD",
+                "buddhist/en": "2563 BE"
             }
         }
     },
@@ -46,7 +47,8 @@
         },
         "output": {
             "values": {
-                "en": "1/7/2020"
+                "en": "1/7/2020",
+                "buddhist/en": "1/7/2563 BE"
             }
         }
     },
@@ -64,7 +66,8 @@
         },
         "output": {
             "values": {
-                "en": "01/7/2020"
+                "en": "01/7/2020",
+                "buddhist/en": "01/7/2563 BE"
             }
         }
     },
@@ -82,7 +85,8 @@
         },
         "output": {
             "values": {
-                "en": "Jan 7, 2020"
+                "en": "Jan 7, 2020",
+                "buddhist/en": "Jan 7, 2563 BE"
             }
         }
     },
@@ -100,7 +104,8 @@
         },
         "output": {
             "values": {
-                "en": "January 7, 2020"
+                "en": "January 7, 2020",
+                "buddhist/en": "January 7, 2563 BE"
             }
         }
     },
@@ -118,7 +123,8 @@
         },
         "output": {
             "values": {
-                "en": "J 7, 2020"
+                "en": "J 7, 2020",
+                "buddhist/en": "J 7, 2563 BE"
             }
         }
     }

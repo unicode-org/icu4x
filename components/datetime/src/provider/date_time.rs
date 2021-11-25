@@ -364,6 +364,6 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
-        &symbols.get(era_code).expect("Unable to find era code")
+        symbols.get(era_code).expect("Unable to find era code")
     }
 }
