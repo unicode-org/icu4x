@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637781347562,
+  "lastUpdate": 1637859645308,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13829,6 +13829,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 344212,
             "range": "± 480",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c7db0802d44dd9c79518a29712f63cbb8b2159d7",
+          "message": "Include era symbol information in data (#1344)",
+          "timestamp": "2021-11-25T08:52:59-08:00",
+          "tree_id": "3c2a3e20ec46888831efca1657021ee707bded8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c7db0802d44dd9c79518a29712f63cbb8b2159d7"
+        },
+        "date": 1637859637716,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 141277,
+            "range": "± 4633",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1551508,
+            "range": "± 53802",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 398084,
+            "range": "± 28103",
             "unit": "ns/iter"
           }
         ]
