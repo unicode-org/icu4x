@@ -22,7 +22,6 @@ use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::provider::PluralRulesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::struct_provider::StructProvider;
-use icu_provider_fs::FsDataProvider;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -119,15 +118,20 @@ fn test_fixture(fixture_name: &str) {
     }
 }
 
-fn assert_fixture_element<A: AsCalendar>(
+fn assert_fixture_element<A, D>(
     locale: &str,
     input_value: &DateTime<A>,
     output_value: &str,
-    provider: &FsDataProvider,
+    provider: &D,
     options: &DateTimeFormatOptions,
     description: &str,
 ) where
+    A: AsCalendar,
     A::Calendar: CldrCalendar,
+    D: DataProvider<DateSymbolsV1Marker>
+        + DataProvider<DatePatternsV1Marker>
+        + DataProvider<DateSkeletonPatternsV1Marker>
+        + DataProvider<PluralRulesV1Marker>,
 {
     let locale: Locale = locale.parse().unwrap();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, &options).unwrap();
