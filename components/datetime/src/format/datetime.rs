@@ -171,7 +171,7 @@ where
                         .ok_or(Error::MissingInputField)?
                         .era
                         .0,
-                );
+                )?;
             w.write_str(symbol)?
         }
         FieldSymbol::Year(..) => format_number(
@@ -205,7 +205,7 @@ where
                             .ok_or(Error::MissingInputField)?
                             .number as usize
                             - 1,
-                    );
+                    )?;
                 w.write_str(symbol)?
             }
         },
@@ -220,7 +220,7 @@ where
                 .ok_or(Error::MissingInputField)?;
             let symbol = symbols
                 .expect("Expect symbols to be present")
-                .get_symbol_for_weekday(weekday, field.length, dow);
+                .get_symbol_for_weekday(weekday, field.length, dow)?;
             w.write_str(symbol)?
         }
         FieldSymbol::Day(..) => format_number(
@@ -287,7 +287,7 @@ where
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                     ),
-                );
+                )?;
             w.write_str(symbol)?
         }
         field @ FieldSymbol::TimeZone(_) => return Err(Error::UnsupportedField(field)),

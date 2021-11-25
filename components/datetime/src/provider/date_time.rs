@@ -243,21 +243,21 @@ pub trait DateTimeSymbols {
         month: fields::Month,
         length: fields::FieldLength,
         num: usize,
-    ) -> &str;
+    ) -> Result<&str>;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: date::IsoWeekday,
-    ) -> &str;
+    ) -> Result<&str>;
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: date::IsoHour,
         is_top_of_hour: bool,
-    ) -> &str;
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &'_ str) -> &str;
+    ) -> Result<&str>;
+    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &'_ str) -> Result<&str>;
 }
 
 impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
@@ -266,7 +266,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: date::IsoWeekday,
-    ) -> &str {
+    ) -> Result<&str> {
         let widths = match weekday {
             fields::Weekday::Format => &self.weekdays.format,
             fields::Weekday::StandAlone => {
@@ -281,7 +281,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return &symbols.0[(day as usize) % 7];
+                        return Ok(&symbols.0[(day as usize) % 7]);
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -297,7 +297,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
             fields::FieldLength::Six => widths.short.as_ref().unwrap_or(&widths.abbreviated),
             _ => &widths.abbreviated,
         };
-        &symbols.0[(day as usize) % 7]
+        Ok(&symbols.0[(day as usize) % 7])
     }
 
     fn get_symbol_for_month(
@@ -305,7 +305,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
         month: fields::Month,
         length: fields::FieldLength,
         num: usize,
-    ) -> &str {
+    ) -> Result<&str> {
         // TODO(#493): Support symbols for non-Gregorian calendars.
         debug_assert!(num < 12);
         let widths = match month {
@@ -318,7 +318,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return &symbols.0[num];
+                        return Ok(&symbols.0[num]);
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, num);
                     }
@@ -332,7 +332,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
             fields::FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-        &symbols.0[num]
+        Ok(&symbols.0[num])
     }
 
     fn get_symbol_for_day_period(
@@ -341,7 +341,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
         length: fields::FieldLength,
         hour: date::IsoHour,
         is_top_of_hour: bool,
-    ) -> &str {
+    ) -> Result<&str> {
         use fields::{DayPeriod::NoonMidnight, FieldLength};
         let widths = &self.day_periods.format;
         let symbols = match length {
@@ -349,20 +349,20 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
             FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-        match (day_period, u8::from(hour), is_top_of_hour) {
+        Ok(match (day_period, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
             (NoonMidnight, 12, true) => symbols.noon.as_ref().unwrap_or(&symbols.pm),
             (_, hour, _) if hour < 12 => &symbols.am,
             _ => &symbols.pm,
-        }
+        })
     }
 
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &str) -> &str {
+    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &str) -> Result<&str> {
         let symbols = match length {
             fields::FieldLength::Wide => &self.eras.names,
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
-        symbols.get(era_code).expect("Unable to find era code")
+        Ok(symbols.get(era_code).expect("Unable to find era code"))
     }
 }
