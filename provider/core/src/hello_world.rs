@@ -131,6 +131,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
+                serde_format: None,
             },
             payload: Some(DataPayload::from_owned(data)),
         })

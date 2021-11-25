@@ -12,6 +12,7 @@ use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 use zerovec::map::ZeroMapBorrowed;
+use tinystr::{tinystr16, TinyStrAuto};
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -114,6 +115,7 @@ where
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
+                serde_format: Some(TinyStrAuto::Tiny(tinystr16!("postcard"))),
             },
             payload: Some(payload),
         })
@@ -133,6 +135,7 @@ impl SerdeDeDataProvider for BlobDataProvider {
         })?;
         Ok(DataResponseMetadata {
             data_langid: req.resource_path.options.langid.clone(),
+            serde_format: Some(TinyStrAuto::Tiny(tinystr16!("postcard"))),
         })
     }
 }

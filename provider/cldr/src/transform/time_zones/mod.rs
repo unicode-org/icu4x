@@ -106,6 +106,7 @@ macro_rules! impl_data_provider {
                 Ok(DataResponse {
                     metadata: DataResponseMetadata {
                         data_langid: req.resource_path.options.langid.clone(),
+                        serde_format: None,
                     },
                     payload: Some(DataPayload::from_owned($id::from(time_zones.clone()))),
                 })

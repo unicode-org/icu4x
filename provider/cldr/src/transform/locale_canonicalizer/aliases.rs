@@ -62,6 +62,7 @@ impl DataProvider<AliasesV1Marker> for AliasesProvider {
             Ok(DataResponse {
                 metadata: DataResponseMetadata {
                     data_langid: langid.clone(),
+                    serde_format: None,
                 },
                 payload: Some(DataPayload::from_owned(AliasesV1::from(&self.data))),
             })

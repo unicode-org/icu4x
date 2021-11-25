@@ -95,6 +95,7 @@ impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
+                serde_format: None,
             },
             payload: Some(DataPayload::from_owned(data_struct)),
         })

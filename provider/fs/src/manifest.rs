@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use serde::{Deserialize, Serialize};
+use tinystr::{tinystr16, TinyStrAuto};
 
 /// File name of the manifest. The manifest always uses JSON, even if the serializer isn't JSON.
 pub const MANIFEST_FILE: &str = "manifest.json";
@@ -36,6 +37,14 @@ impl SyntaxOption {
         match self {
             Self::Json => "json",
             Self::Bincode => "bincode",
+        }
+    }
+
+    /// Gets a tinystr representing the given syntax.
+    pub fn get_serde_format(&self) -> TinyStrAuto {
+        match self {
+            Self::Json => TinyStrAuto::Tiny(tinystr16!("json")),
+            Self::Bincode => TinyStrAuto::Tiny(tinystr16!("bincode")),
         }
     }
 }

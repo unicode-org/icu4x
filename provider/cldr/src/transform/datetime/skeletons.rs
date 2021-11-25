@@ -46,6 +46,7 @@ impl DataProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatter
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
+                serde_format: None,
             },
             payload: Some(DataPayload::from_owned(
                 calendar::DateSkeletonPatternsV1::from(&dates.datetime_formats),

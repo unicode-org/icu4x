@@ -46,6 +46,7 @@ impl DataProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
+                serde_format: None,
             },
             payload: Some(DataPayload::from_owned(calendar::DateSymbolsV1::from(
                 dates,

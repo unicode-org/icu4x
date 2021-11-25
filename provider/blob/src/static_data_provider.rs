@@ -8,6 +8,7 @@ use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
 use zerovec::map::ZeroMapBorrowed;
+use tinystr::{tinystr16, TinyStrAuto};
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -120,6 +121,7 @@ where
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
+                serde_format: Some(TinyStrAuto::Tiny(tinystr16!("postcard"))),
             },
             payload: Some(DataPayload::from_owned(data)),
         })
@@ -139,6 +141,7 @@ impl SerdeDeDataProvider for StaticDataProvider {
 
         Ok(DataResponseMetadata {
             data_langid: req.resource_path.options.langid.clone(),
+            serde_format: Some(TinyStrAuto::Tiny(tinystr16!("postcard"))),
         })
     }
 }
