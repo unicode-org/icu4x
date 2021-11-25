@@ -6,17 +6,22 @@ use core::char::DecodeUtf16Error;
 use displaydoc::Display;
 use icu_codepointtrie::error::Error as CodePointTrieError;
 
+/// A list of possible errors for the [`CaseMapping`](crate::CaseMapping) struct
 #[derive(Display, Debug, PartialEq)]
 pub enum Error {
+    /// An error occurred while building and validating the data
     #[displaydoc("Failed to validate: {0}")]
     Validation(&'static str),
+    /// A UTF16 string in the data contained an unpaired surrogate
     #[displaydoc("Unpaired surrogate")]
     DecodeUtf16(DecodeUtf16Error),
+    /// An error occurred while building the code point trie
     #[displaydoc("Failed to build code point trie: {0}")]
     CodePointTrie(CodePointTrieError),
 }
 
 impl Error {
+    /// Creates a new validation error with the given reason
     pub fn invalid<T>(reason: &'static str) -> Result<T, Self> {
 	Err(Self::Validation(reason))
     }

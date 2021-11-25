@@ -19,7 +19,7 @@ use crate::error::Error;
 
 /// The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum CaseType {
+enum CaseType {
     /// Not a cased letter
     None = 0,
     /// Lowercase letter
@@ -648,6 +648,8 @@ pub struct CaseMapping<'data> {
 }
 
 impl<'data> CaseMapping<'data> {
+    /// Creates a new CaseMapping using data exported by the `icuexportdata` tool
+    /// in ICU4C. Validates that the data is consistent.
     pub fn try_from_icu(trie_header: CodePointTrieHeader,
 			trie_index: &[u16],
 			trie_data: &[u16],
@@ -674,6 +676,9 @@ impl<'data> CaseMapping<'data> {
         self.trie.get(c as u32)
     }
 
+    /// Returns the lowercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
     pub fn to_lower(&self, c: char) -> char {
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -704,6 +709,9 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
+    /// Returns the uppercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
     pub fn to_upper(&self, c: char) -> char {
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -734,6 +742,9 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
+    /// Returns the titlecase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
     pub fn to_title(&self, c: char) -> char {
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -771,7 +782,7 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
-    /// Return the simple case folding mapping for `c`
+    /// Return the simple case folding mapping of the given char.
     fn fold(&self, c: char, options: FoldOptions) -> char {
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -832,11 +843,11 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
-    pub fn case_type(&self, c: char) -> CaseType {
+    fn case_type(&self, c: char) -> CaseType {
         self.lookup_data(c).case_type()
     }
 
-    pub fn is_ignorable(&self, c: char) -> bool {
+    fn is_ignorable(&self, c: char) -> bool {
         self.lookup_data(c).is_ignorable()
     }
 
@@ -850,11 +861,11 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
-    pub fn is_soft_dotted(&self, c: char) -> bool {
+    fn is_soft_dotted(&self, c: char) -> bool {
         self.lookup_data(c).dot_type() == DotType::SoftDotted
     }
 
-    pub fn is_case_sensitive(&self, c: char) -> bool {
+    fn is_case_sensitive(&self, c: char) -> bool {
         let data = self.lookup_data(c);
         if !data.has_exception() {
             data.is_sensitive()
@@ -863,7 +874,15 @@ impl<'data> CaseMapping<'data> {
             self.exceptions.is_sensitive(idx)
         }
     }
-    pub fn add_case_closure<S: SetAdder>(&self, c: char, set: &mut S) {
+
+    // Adds all simple case mappings and the full case folding for `c` to `set`.
+    // Also adds special case closure mappings.
+    // The character itself is not added.
+    // For example, the mappings
+    // - for s include long s
+    // - for sharp s include ss
+    // - for k include the Kelvin sign
+    fn add_case_closure<S: SetAdder>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -936,7 +955,16 @@ impl<'data> CaseMapping<'data> {
         self.exceptions.add_full_and_closure_mappings(idx, set);
     }
 
-    pub fn add_string_case_closure<S: SetAdder>(&self, s: &str, set: &mut S) -> bool {
+    // Maps the string to single code points and adds the associated case closure
+    // mappings.
+    // The string is mapped to code points if it is their full case folding string.
+    // In other words, this performs a reverse full case folding and then
+    // adds the case closure items of the resulting code points.
+    // If the string is found and its closure applied, then
+    // the string itself is added as well as part of its code points' closure.
+    //
+    // Returns true if the string was found
+    fn add_string_case_closure<S: SetAdder>(&self, s: &str, set: &mut S) -> bool {
 	if s.chars().count() <= 1 {
 	    // The string is too short to find any match.
 	    return false;

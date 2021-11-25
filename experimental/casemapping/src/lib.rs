@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! TODO: module documentation
+#![warn(missing_docs)]
 
-pub mod error;
-pub mod internals;
+mod error;
+mod internals;
 pub mod provider;
 
-pub use self::internals::CaseMapping;
+pub use error::Error as CaseMappingError;
+pub use internals::CaseMapping;
 
 // #[cfg(test)]
 // mod tests {
