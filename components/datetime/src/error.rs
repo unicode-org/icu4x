@@ -6,6 +6,7 @@ use crate::date::DateTimeError;
 use crate::fields::FieldSymbol;
 use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
+use alloc::string::String;
 use displaydoc::Display;
 use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;

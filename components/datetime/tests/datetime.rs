@@ -134,7 +134,7 @@ fn assert_fixture_element<A, D>(
         + DataProvider<PluralRulesV1Marker>,
 {
     let locale: Locale = locale.parse().unwrap();
-    let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, &options).unwrap();
+    let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
