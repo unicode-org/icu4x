@@ -38,6 +38,9 @@ pub enum DateTimeFormatError {
     /// An error originating from [`DateTimeInput`][icu_datetime::date::DateTimeInput].
     #[displaydoc("{0}")]
     DateTimeInput(DateTimeError),
+    /// An error originating from a missing symbol in the data.
+    #[displaydoc("Missing {0} symbol for key {1}")]
+    MissingSymbol(&'static str, String),
 }
 
 #[cfg(feature = "std")]
