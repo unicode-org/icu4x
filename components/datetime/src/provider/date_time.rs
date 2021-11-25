@@ -15,7 +15,6 @@ use crate::provider::calendar::{
     DateSkeletonPatternsV1Marker,
 };
 use crate::skeleton;
-use alloc::borrow::Cow;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
@@ -244,20 +243,20 @@ pub trait DateTimeSymbols {
         month: fields::Month,
         length: fields::FieldLength,
         num: usize,
-    ) -> &Cow<str>;
+    ) -> &str;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: date::IsoWeekday,
-    ) -> &Cow<str>;
+    ) -> &str;
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: date::IsoHour,
         is_top_of_hour: bool,
-    ) -> &Cow<str>;
+    ) -> &str;
     fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &'_ str) -> &str;
 }
 
@@ -267,7 +266,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: date::IsoWeekday,
-    ) -> &Cow<str> {
+    ) -> &str {
         let widths = match weekday {
             fields::Weekday::Format => &self.weekdays.format,
             fields::Weekday::StandAlone => {
@@ -306,7 +305,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
         month: fields::Month,
         length: fields::FieldLength,
         num: usize,
-    ) -> &Cow<str> {
+    ) -> &str {
         // TODO(#493): Support symbols for non-Gregorian calendars.
         debug_assert!(num < 12);
         let widths = match month {
@@ -342,7 +341,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
         length: fields::FieldLength,
         hour: date::IsoHour,
         is_top_of_hour: bool,
-    ) -> &Cow<str> {
+    ) -> &str {
         use fields::{DayPeriod::NoonMidnight, FieldLength};
         let widths = &self.day_periods.format;
         let symbols = match length {
