@@ -15,7 +15,7 @@ use crate::provider::calendar::{
     DateSkeletonPatternsV1Marker,
 };
 use crate::skeleton;
-use alloc::string::ToString;
+use alloc::borrow::ToOwned;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
@@ -283,9 +283,11 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
                     };
                     if let Some(symbols) = symbols {
                         let idx = (day as usize) % 7;
-                        return symbols.0.get(idx).map(|x| &**x).ok_or_else(|| {
-                            DateTimeFormatError::MissingSymbol("weekday", idx.to_string())
-                        });
+                        return symbols
+                            .0
+                            .get(idx)
+                            .map(|x| &**x)
+                            .ok_or(DateTimeFormatError::MissingWeekdaySymbol(idx));
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -306,7 +308,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
             .0
             .get(idx)
             .map(|x| &**x)
-            .ok_or_else(|| DateTimeFormatError::MissingSymbol("weekday", idx.to_string()))
+            .ok_or(DateTimeFormatError::MissingWeekdaySymbol(idx))
     }
 
     fn get_symbol_for_month(
@@ -327,9 +329,11 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return symbols.0.get(num).map(|x| &**x).ok_or_else(|| {
-                            DateTimeFormatError::MissingSymbol("month", num.to_string())
-                        });
+                        return symbols
+                            .0
+                            .get(num)
+                            .map(|x| &**x)
+                            .ok_or(DateTimeFormatError::MissingMonthSymbol(num));
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, num);
                     }
@@ -347,7 +351,7 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
             .0
             .get(num)
             .map(|x| &**x)
-            .ok_or_else(|| DateTimeFormatError::MissingSymbol("month", num.to_string()))
+            .ok_or(DateTimeFormatError::MissingMonthSymbol(num))
     }
 
     fn get_symbol_for_day_period(
@@ -381,6 +385,6 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
         symbols
             .get(era_code)
             .map(|x| &**x)
-            .ok_or_else(|| DateTimeFormatError::MissingSymbol("month", era_code.to_string()))
+            .ok_or_else(|| DateTimeFormatError::MissingEraSymbol(era_code.to_owned()))
     }
 }

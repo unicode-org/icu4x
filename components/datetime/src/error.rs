@@ -39,9 +39,15 @@ pub enum DateTimeFormatError {
     /// An error originating from [`DateTimeInput`][icu_datetime::date::DateTimeInput].
     #[displaydoc("{0}")]
     DateTimeInput(DateTimeError),
-    /// An error originating from a missing symbol in the data.
-    #[displaydoc("Data file missing {0} symbol for key {1}")]
-    MissingSymbol(&'static str, String),
+    /// An error originating from a missing weekday symbol in the data.
+    #[displaydoc("Data file missing weekday symbol for weekday {0}")]
+    MissingWeekdaySymbol(usize),
+    /// An error originating from a missing month symbol in the data.
+    #[displaydoc("Data file missing month symbol for month code {0}")]
+    MissingMonthSymbol(usize),
+    /// An error originating from a missing era symbol in the data.
+    #[displaydoc("Data file missing era symbol for era code {0}")]
+    MissingEraSymbol(String),
 }
 
 #[cfg(feature = "std")]
