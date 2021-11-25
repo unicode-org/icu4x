@@ -6,187 +6,109 @@ use crate::FormattedStringBuilderError;
 use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
 use alloc::string::String;
-use alloc::{vec, vec::Vec};
+use alloc::vec::Vec;
 use core::str;
 
-/// A string with L levels of type annotations
-#[derive(Debug, PartialEq)]
-pub struct LayeredFormattedString<F: Copy, const L: usize> {
-    string: String,
-    // The first dimension corresponds to the bytes, the second are the L levels of annotations
-    annotations: Box<[Annotation<F, L>]>,
-}
-
-pub type FormattedString<F> = LayeredFormattedString<F, 1>;
-
-/// A string builder with L levels of type annotations.
-#[derive(Debug)]
-pub struct LayeredFormattedStringBuilder<F: Copy, const L: usize> {
-    // bytes is always valid UTF-8, so from_utf8_unchecked is safe
-    bytes: Vec<u8>,
-    // The first dimension corresponds to the bytes, the second are the L levels of annotations
-    annotations: Vec<Annotation<F, L>>,
-}
-
-pub type FormattedStringBuilder<F> = LayeredFormattedStringBuilder<F, 1>;
-
 #[derive(Copy, Clone, PartialEq, Debug)]
-enum LocationInPart {
+pub enum LocationInPart {
     Begin,
     Extend,
 }
 
-// An L-level deep annotation for a single character, using F as field types
-type Annotation<F, const L: usize> = [(LocationInPart, F); L];
-
-// Transforms a list of Annotation<F, L-1>s into the same length list of Annotation<F, L>, adding the given field as the 0th level
-fn raise_annotation<F: Copy, const L: usize, const L1: usize>(
-    top_level: F,
-    lower_levels: Vec<Annotation<F, L1>>,
-) -> Vec<Annotation<F, L>> {
-    assert_eq!(L - 1, L1);
-
-    // Transforms an Annotation<F, L-1> into Annotation<F, L> by prepending the given level
-    fn add_level<F: Copy, const L: usize, const L1: usize>(
-        lower_levels: &Annotation<F, L1>,
-        top_level: (LocationInPart, F),
-    ) -> Annotation<F, L> {
-        assert_eq!(L - 1, L1);
-        let mut all_levels = [top_level; L];
-        all_levels[1..L].clone_from_slice(&lower_levels[..L1]);
-        all_levels
+pub trait FormattedString<F: Copy, const L: usize>: AsRef<str> {
+    fn fields_at(&self, pos: usize) -> [F; L] {
+        self.annotation_at(pos).map(|(_, field)| field)
     }
 
-    match lower_levels.len() {
-        0 => vec![],
-        n => {
-            let mut vec: Vec<Annotation<F, L>> = Vec::with_capacity(n);
-            vec.push(add_level(
-                &lower_levels[0],
-                (LocationInPart::Begin, top_level),
-            ));
-            for item in &lower_levels[1..n] {
-                vec.push(add_level(item, (LocationInPart::Extend, top_level)));
-            }
-            vec
-        }
+    fn is_field_start(&self, pos: usize, level: usize) -> bool {
+        assert!(level < L);
+        let (location, _) = self.annotation_at(pos)[level];
+        location == LocationInPart::Begin
+    }
+
+    #[doc(hidden)]
+    // This is used to make the builder more efficient; clients should
+    // use fields_at and is_field_start.
+    fn annotation_at(&self, pos: usize) -> &[(LocationInPart, F); L];
+}
+
+impl<F: Copy> FormattedString<F, 0> for &str {
+    fn annotation_at(&self, _pos: usize) -> &[(LocationInPart, F); 0] {
+        // Yay we can return dangling references for singleton types!
+        &[]
     }
 }
 
-impl<F: Copy, const L: usize> LayeredFormattedStringBuilder<F, L> {
+/// A string with L levels of formatting annotations. The name refers
+/// to the fact that the trait FormattedString is also implemented for
+/// &str, but with 0 levels of annotations there isn't much formatting.
+#[derive(Debug, PartialEq)]
+pub struct ActualFormattedString<F: Copy, const L: usize> {
+    string: String,
+    // The slice dimension corresponds to the bytes in string,
+    // the array dimension are the L levels of annotations
+    annotations: Box<[[(LocationInPart, F); L]]>,
+}
+
+impl<F: Copy, const L: usize> AsRef<str> for ActualFormattedString<F, L> {
+    fn as_ref(&self) -> &str {
+        &self.string
+    }
+}
+
+impl<F: Copy, const L: usize> FormattedString<F, L> for ActualFormattedString<F, L> {
+    fn annotation_at(&self, pos: usize) -> &[(LocationInPart, F); L] {
+        &self.annotations[pos]
+    }
+}
+
+/// A builder with L levels of type annotations.
+#[derive(Debug)]
+pub struct FormattedStringBuilder<F: Copy, const L: usize> {
+    // bytes is always valid UTF-8, so from_utf8_unchecked is safe
+    bytes: Vec<u8>,
+    // The first dimension corresponds to the bytes, the second are the L levels of annotations
+    annotations: Vec<[(LocationInPart, F); L]>,
+}
+
+impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
     pub fn new() -> Self {
+        // A builder with 0 annotations doesn't make sense.
+        assert!(L > 0);
         Self {
             bytes: Vec::with_capacity(40),
             annotations: Vec::with_capacity(40),
         }
     }
 
-    pub fn append_layered<const L1: usize>(
-        &mut self,
-        string: &LayeredFormattedString<F, L1>,
-        field: F,
-    ) -> &mut Self {
+    pub fn append<S, const L1: usize>(&mut self, string: &S, field: F) -> &mut Self
+    where
+        S: FormattedString<F, L1>,
+    {
         assert_eq!(L - 1, L1);
-        // len() is always a char boundary
-        self.insert_layered_internal(self.bytes.len(), string, field)
-    }
-
-    pub fn prepend_layered<const L1: usize>(
-        &mut self,
-        string: &LayeredFormattedString<F, L1>,
-        field: F,
-    ) -> &mut Self {
-        assert_eq!(L - 1, L1);
-        // 0 is always a char boundary
-        self.insert_layered_internal(0, string, field)
-    }
-
-    pub fn insert_layered<const L1: usize>(
-        &mut self,
-        pos: usize,
-        string: &LayeredFormattedString<F, L1>,
-        field: F,
-    ) -> Result<&mut Self, FormattedStringBuilderError> {
-        assert_eq!(L - 1, L1);
-        if pos > self.bytes.len() {
-            return Err(FormattedStringBuilderError::IndexOutOfBounds(pos));
-        }
-        // bytes is valid UTF-8 precisely because we do this check before
-        // insertion (and string is valid UTF-8)
-        let current = unsafe { str::from_utf8_unchecked(&self.bytes) };
-        if !current.is_char_boundary(pos) {
-            Err(FormattedStringBuilderError::PositionNotCharBoundary(
-                pos,
-                current.to_owned(),
-            ))
-        } else {
-            Ok(self.insert_layered_internal(pos, string, field))
-        }
-    }
-
-    // Precondition here is that pos is a char boundary and < buffer_len.
-    fn insert_layered_internal<const L1: usize>(
-        &mut self,
-        pos: usize,
-        string: &LayeredFormattedString<F, L1>,
-        field: F,
-    ) -> &mut Self {
-        assert_eq!(L - 1, L1);
-        self.bytes.splice(pos..pos, string.as_ref().bytes());
-        self.annotations.splice(
-            pos..pos,
-            raise_annotation(field, Vec::from(string.annotations.as_ref())),
-        );
-        self
-    }
-
-    pub fn build(self) -> LayeredFormattedString<F, L> {
-        LayeredFormattedString {
-            string: unsafe { String::from_utf8_unchecked(self.bytes) },
-            annotations: self.annotations.into_boxed_slice(),
-        }
-    }
-}
-
-impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
-    pub fn fields_at(&self, pos: usize) -> [F; L] {
-        let mut res = [self.annotations[pos][0].1; L];
-        for (i, (_bies, field)) in self.annotations[pos][1..L].iter().enumerate() {
-            res[i + 1] = *field;
-        }
-        res
-    }
-
-    pub fn is_field_start(&self, pos: usize, level: usize) -> bool {
-        assert!(level < L);
-        let (location, _) = self.annotations[pos][level];
-        location == LocationInPart::Begin
-    }
-}
-
-impl<F: Copy, const L: usize> AsRef<str> for LayeredFormattedString<F, L> {
-    fn as_ref(&self) -> &str {
-        &self.string
-    }
-}
-
-impl<F: Copy> FormattedStringBuilder<F> {
-    pub fn append(&mut self, string: &str, field: F) -> &mut FormattedStringBuilder<F> {
         // len() is always a char boundary
         self.insert_internal(self.bytes.len(), string, field)
     }
 
-    pub fn prepend(&mut self, string: &str, field: F) -> &mut FormattedStringBuilder<F> {
+    pub fn prepend<S, const L1: usize>(&mut self, string: &S, field: F) -> &mut Self
+    where
+        S: FormattedString<F, L1>,
+    {
+        assert_eq!(L - 1, L1);
         // 0 is always a char boundary
         self.insert_internal(0, string, field)
     }
 
-    pub fn insert(
+    pub fn insert<S, const L1: usize>(
         &mut self,
         pos: usize,
-        string: &str,
+        string: &S,
         field: F,
-    ) -> Result<&mut FormattedStringBuilder<F>, FormattedStringBuilderError> {
+    ) -> Result<&mut Self, FormattedStringBuilderError>
+    where
+        S: FormattedString<F, L1>,
+    {
+        assert_eq!(L - 1, L1);
         if pos > self.bytes.len() {
             return Err(FormattedStringBuilderError::IndexOutOfBounds(pos));
         }
@@ -204,26 +126,47 @@ impl<F: Copy> FormattedStringBuilder<F> {
     }
 
     // Precondition here is that pos is a char boundary and < buffer_len.
-    fn insert_internal(
-        &mut self,
-        pos: usize,
-        string: &str,
-        field: F,
-    ) -> &mut FormattedStringBuilder<F> {
-        self.bytes.splice(pos..pos, string.bytes());
-        self.annotations
-            .splice(pos..pos, raise_annotation(field, vec![[]; string.len()]));
+    fn insert_internal<S, const L1: usize>(&mut self, pos: usize, string: &S, field: F) -> &mut Self
+    where
+        S: FormattedString<F, L1>,
+    {
+        assert_eq!(L - 1, L1);
+        self.bytes.splice(pos..pos, string.as_ref().bytes());
+        self.annotations.splice(
+            pos..pos,
+            (0..string.as_ref().len()).map(|i| {
+                let top_level = (
+                    if i == 0 {
+                        LocationInPart::Begin
+                    } else {
+                        LocationInPart::Extend
+                    },
+                    field,
+                );
+                let mut all_levels = [top_level; L];
+                all_levels[1..L].copy_from_slice(string.annotation_at(i));
+                all_levels
+            }),
+        );
         self
     }
-}
 
-impl<F: Copy> FormattedString<F> {
-    pub fn field_at(&self, pos: usize) -> F {
-        self.annotations[pos][0].1
+    pub fn build(self) -> ActualFormattedString<F, L> {
+        ActualFormattedString {
+            // bytes is valid UTF-8
+            string: unsafe { String::from_utf8_unchecked(self.bytes) },
+            annotations: self.annotations.into_boxed_slice(),
+        }
     }
 }
 
-impl<F: Copy, const L: usize> Default for LayeredFormattedStringBuilder<F, L> {
+impl<F: Copy> ActualFormattedString<F, 1> {
+    pub fn field_at(&self, pos: usize) -> F {
+        self.fields_at(pos)[0]
+    }
+}
+
+impl<F: Copy, const L: usize> Default for FormattedStringBuilder<F, L> {
     fn default() -> Self {
         Self::new()
     }
@@ -243,11 +186,11 @@ mod test {
 
     #[test]
     fn test_basic() {
-        let mut builder = FormattedStringBuilder::<Field>::new();
+        let mut builder = FormattedStringBuilder::<Field, 1>::new();
         builder
-            .append("world", Field::Word)
-            .prepend(" ", Field::Space)
-            .prepend("hello", Field::Word);
+            .append(&"world", Field::Word)
+            .prepend(&" ", Field::Space)
+            .prepend(&"hello", Field::Word);
         let x = builder.build();
 
         assert_eq!(x.as_ref(), "hello world");
@@ -264,15 +207,15 @@ mod test {
 
     #[test]
     fn test_multi_level() {
-        let mut builder = FormattedStringBuilder::<Field>::new();
+        let mut builder = FormattedStringBuilder::<Field, 1>::new();
         builder
-            .append("world", Field::Word)
-            .prepend(" ", Field::Space)
-            .prepend("hello", Field::Word);
+            .append(&"world", Field::Word)
+            .prepend(&" ", Field::Space)
+            .prepend(&"hello", Field::Word);
         let x = builder.build();
 
-        let mut builder = LayeredFormattedStringBuilder::<Field, 2>::new();
-        builder.append_layered(&x, Field::Greeting);
+        let mut builder = FormattedStringBuilder::<Field, 2>::new();
+        builder.append(&x, Field::Greeting);
         let y = builder.build();
 
         assert_eq!(y.as_ref(), "hello world");
@@ -281,11 +224,11 @@ mod test {
 
     #[test]
     fn test_multi_byte() {
-        let mut builder = FormattedStringBuilder::<Field>::new();
-        builder.append("π", Field::Word);
+        let mut builder = FormattedStringBuilder::<Field, 1>::new();
+        builder.append(&"π", Field::Word);
         assert_eq!(
             builder
-                .insert(1, "pi/2", Field::Word)
+                .insert(1, &"pi/2", Field::Word)
                 .unwrap_err()
                 .to_string(),
             "attempted to insert at an index that is not a character boundary: 1 in \"π\""

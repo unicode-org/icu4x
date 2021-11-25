@@ -9,8 +9,7 @@ extern crate alloc;
 mod error;
 mod formatted_string;
 
+pub use crate::formatted_string::ActualFormattedString;
 pub use crate::formatted_string::FormattedString;
 pub use crate::formatted_string::FormattedStringBuilder;
-pub use crate::formatted_string::LayeredFormattedString;
-pub use crate::formatted_string::LayeredFormattedStringBuilder;
 pub use error::Error as FormattedStringBuilderError;

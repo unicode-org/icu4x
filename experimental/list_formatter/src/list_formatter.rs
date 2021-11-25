@@ -95,19 +95,19 @@ impl ListFormatter {
         )
     }
 
-    pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType> {
+    pub fn format_to_parts(&self, values: &[&str]) -> ActualFormattedString<FieldType, 1> {
         self.format_internal(
             values,
-            FormattedStringBuilder::<FieldType>::new,
+            FormattedStringBuilder::<FieldType, 1>::new,
             |value| {
-                let mut builder = FormattedStringBuilder::<FieldType>::new();
-                builder.append(value, FieldType::Element);
+                let mut builder = FormattedStringBuilder::<FieldType, 1>::new();
+                builder.append(&value, FieldType::Element);
                 builder
             },
             |value, (between, after), mut builder| {
                 builder.append(after, FieldType::Literal);
                 builder.prepend(between, FieldType::Literal);
-                builder.prepend(value, FieldType::Element);
+                builder.prepend(&value, FieldType::Element);
                 builder
             },
         )
@@ -179,15 +179,15 @@ mod tests {
         let parts = formatter.format_to_parts(VALUES);
         assert_eq!(parts.as_ref(), "one: two, three, four. five!");
 
-        assert_eq!(parts.field_at(0), FieldType::Element);
+        assert_eq!(parts.fields_at(0), [FieldType::Element]);
         assert!(parts.is_field_start(0, 0));
-        assert_eq!(parts.field_at(2), FieldType::Element);
+        assert_eq!(parts.fields_at(2), [FieldType::Element]);
         assert!(!parts.is_field_start(2, 0));
-        assert_eq!(parts.field_at(3), FieldType::Literal);
+        assert_eq!(parts.fields_at(3), [FieldType::Literal]);
         assert!(parts.is_field_start(3, 0));
-        assert_eq!(parts.field_at(4), FieldType::Literal);
+        assert_eq!(parts.fields_at(4), [FieldType::Literal]);
         assert!(!parts.is_field_start(4, 0));
-        assert_eq!(parts.field_at(5), FieldType::Element);
+        assert_eq!(parts.fields_at(5), [FieldType::Element]);
         assert!(parts.is_field_start(5, 0));
     }
 
