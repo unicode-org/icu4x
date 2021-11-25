@@ -56,7 +56,7 @@ impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
             Ok(DataResponse {
                 metadata: DataResponseMetadata {
                     data_langid: langid.clone(),
-                    serde_format: None,
+                    ..Default::default()
                 },
                 payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&self.data))),
             })

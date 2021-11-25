@@ -110,7 +110,8 @@ where
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
-                serde_format: Some(self.manifest.syntax.get_serde_format()),
+                buffer_format: Some(self.manifest.syntax.get_buffer_format()),
+                attributes: None,
             },
             payload: Some(
                 DataPayload::try_from_rc_buffer(
@@ -134,7 +135,8 @@ impl SerdeDeDataProvider for FsDataProvider {
             .map_err(|err| err.into_resource_error(&path_buf))?;
         Ok(DataResponseMetadata {
             data_langid: req.resource_path.options.langid.clone(),
-            serde_format: Some(self.manifest.syntax.get_serde_format()),
+            buffer_format: Some(self.manifest.syntax.get_buffer_format()),
+            attributes: None,
         })
     }
 }
