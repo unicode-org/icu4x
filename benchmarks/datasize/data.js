@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637780976025,
+  "lastUpdate": 1637859278686,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4468,6 +4468,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 906952,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c7db0802d44dd9c79518a29712f63cbb8b2159d7",
+          "message": "Include era symbol information in data (#1344)",
+          "timestamp": "2021-11-25T08:52:59-08:00",
+          "tree_id": "3c2a3e20ec46888831efca1657021ee707bded8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c7db0802d44dd9c79518a29712f63cbb8b2159d7"
+        },
+        "date": 1637859270722,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 909427,
             "unit": "bytes",
             "biggerIsBetter": false
           }
