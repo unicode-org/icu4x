@@ -3,13 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::FormattedStringBuilderError;
+use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::{vec, vec::Vec};
-use core::str::from_utf8_unchecked;
+use core::str;
 
 /// A string with L levels of type annotations
-#[cfg_attr(test, derive(Debug, PartialEq))]
+#[derive(Debug, PartialEq)]
 pub struct LayeredFormattedString<F: Copy, const L: usize> {
     string: String,
     // The first dimension corresponds to the bytes, the second are the L levels of annotations
@@ -19,7 +20,7 @@ pub struct LayeredFormattedString<F: Copy, const L: usize> {
 pub type FormattedString<F> = LayeredFormattedString<F, 1>;
 
 /// A string builder with L levels of type annotations.
-#[cfg_attr(test, derive(Debug, PartialEq))]
+#[derive(Debug)]
 pub struct LayeredFormattedStringBuilder<F: Copy, const L: usize> {
     // bytes is always valid UTF-8, so from_utf8_unchecked is safe
     bytes: Vec<u8>,
@@ -108,11 +109,15 @@ impl<F: Copy, const L: usize> LayeredFormattedStringBuilder<F, L> {
     ) -> Result<&mut Self, FormattedStringBuilderError> {
         assert_eq!(L - 1, L1);
         if pos > self.bytes.len() {
-            Err(FormattedStringBuilderError::IndexOutOfBounds(pos))
-        } else if !unsafe { from_utf8_unchecked(&self.bytes) }.is_char_boundary(pos) {
+            return Err(FormattedStringBuilderError::IndexOutOfBounds(pos));
+        }
+        // bytes is valid UTF-8 precisely because we do this check before
+        // insertion (and string is valid UTF-8)
+        let current = unsafe { str::from_utf8_unchecked(&self.bytes) };
+        if !current.is_char_boundary(pos) {
             Err(FormattedStringBuilderError::PositionNotCharBoundary(
                 pos,
-                unsafe { String::from_utf8_unchecked(self.bytes.clone()) },
+                current.to_owned(),
             ))
         } else {
             Ok(self.insert_layered_internal(pos, string, field))
@@ -183,11 +188,15 @@ impl<F: Copy> FormattedStringBuilder<F> {
         field: F,
     ) -> Result<&mut FormattedStringBuilder<F>, FormattedStringBuilderError> {
         if pos > self.bytes.len() {
-            Err(FormattedStringBuilderError::IndexOutOfBounds(pos))
-        } else if !unsafe { from_utf8_unchecked(&self.bytes) }.is_char_boundary(pos) {
+            return Err(FormattedStringBuilderError::IndexOutOfBounds(pos));
+        }
+        // bytes is valid UTF-8 precisely because we do this check before
+        // insertion (and string is valid UTF-8)
+        let current = unsafe { str::from_utf8_unchecked(&self.bytes) };
+        if !current.is_char_boundary(pos) {
             Err(FormattedStringBuilderError::PositionNotCharBoundary(
                 pos,
-                unsafe { String::from_utf8_unchecked(self.bytes.clone()) },
+                current.to_owned(),
             ))
         } else {
             Ok(self.insert_internal(pos, string, field))
@@ -275,11 +284,11 @@ mod test {
         let mut builder = FormattedStringBuilder::<Field>::new();
         builder.append("π", Field::Word);
         assert_eq!(
-            builder.insert(1, "pi/2", Field::Word),
-            Err(FormattedStringBuilderError::PositionNotCharBoundary(
-                1,
-                "π".to_owned()
-            ))
+            builder
+                .insert(1, "pi/2", Field::Word)
+                .unwrap_err()
+                .to_string(),
+            "attempted to insert at an index that is not a character boundary: 1 in \"π\""
         );
         let x = builder.build();
 
