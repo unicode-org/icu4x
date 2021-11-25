@@ -111,5 +111,16 @@
       }
     },
     "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "be": "ère bouddhique"
+    },
+    "abbr": {
+      "be": "E. B."
+    },
+    "narrow": {
+      "be": "EB"
+    }
   }
 }

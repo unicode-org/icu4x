@@ -111,5 +111,16 @@
       }
     },
     "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "be": "仏暦"
+    },
+    "abbr": {
+      "be": "BE"
+    },
+    "narrow": {
+      "be": "BE"
+    }
   }
 }

@@ -121,5 +121,19 @@
       "short": null,
       "wide": null
     }
+  },
+  "eras": {
+    "names": {
+      "ad": "Anno Domini",
+      "bc": "Before Christ"
+    },
+    "abbr": {
+      "ad": "AD",
+      "bc": "BC"
+    },
+    "narrow": {
+      "ad": "A",
+      "bc": "B"
+    }
   }
 }

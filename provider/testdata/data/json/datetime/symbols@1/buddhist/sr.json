@@ -121,5 +121,16 @@
       "short": null,
       "wide": null
     }
+  },
+  "eras": {
+    "names": {
+      "be": "БЕ"
+    },
+    "abbr": {
+      "be": "БЕ"
+    },
+    "narrow": {
+      "be": "БЕ"
+    }
   }
 }

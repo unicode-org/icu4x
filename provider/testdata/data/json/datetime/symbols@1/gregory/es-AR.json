@@ -121,5 +121,19 @@
       "short": null,
       "wide": null
     }
+  },
+  "eras": {
+    "names": {
+      "ad": "después de Cristo",
+      "bc": "antes de Cristo"
+    },
+    "abbr": {
+      "ad": "d. C.",
+      "bc": "a. C."
+    },
+    "narrow": {
+      "ad": "d. C.",
+      "bc": "a. C."
+    }
   }
 }

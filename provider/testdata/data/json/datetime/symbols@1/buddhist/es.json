@@ -131,5 +131,16 @@
         "midnight": null
       }
     }
+  },
+  "eras": {
+    "names": {
+      "be": "BE"
+    },
+    "abbr": {
+      "be": "BE"
+    },
+    "narrow": {
+      "be": "BE"
+    }
   }
 }

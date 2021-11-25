@@ -111,5 +111,19 @@
       }
     },
     "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "ad": "西暦",
+      "bc": "紀元前"
+    },
+    "abbr": {
+      "ad": "西暦",
+      "bc": "紀元前"
+    },
+    "narrow": {
+      "ad": "AD",
+      "bc": "BC"
+    }
   }
 }

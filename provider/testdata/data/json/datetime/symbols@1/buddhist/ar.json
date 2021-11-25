@@ -121,5 +121,16 @@
         "midnight": null
       }
     }
+  },
+  "eras": {
+    "names": {
+      "be": "التقويم البوذي"
+    },
+    "abbr": {
+      "be": "BE"
+    },
+    "narrow": {
+      "be": "BE"
+    }
   }
 }

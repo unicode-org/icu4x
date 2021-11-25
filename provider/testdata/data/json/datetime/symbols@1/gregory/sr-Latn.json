@@ -121,5 +121,19 @@
       "short": null,
       "wide": null
     }
+  },
+  "eras": {
+    "names": {
+      "ad": "nove ere",
+      "bc": "pre nove ere"
+    },
+    "abbr": {
+      "ad": "n. e.",
+      "bc": "p. n. e."
+    },
+    "narrow": {
+      "ad": "n.e.",
+      "bc": "p.n.e."
+    }
   }
 }
