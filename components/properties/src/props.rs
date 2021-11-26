@@ -15,6 +15,8 @@ use serde::{Deserialize, Serialize};
 #[non_exhaustive]
 #[repr(i32)]
 pub enum EnumeratedProperty {
+    /// the Canonical_Combining_Class property.
+    CanonicalCombiningClass = 0x1002,
     /// The East_Asian_Width property. See [`EastAsianWidth`].
     EastAsianWidth = 0x1004,
     /// The General Category property.
@@ -674,4 +676,76 @@ impl SentenceBreak {
     pub const Extend: SentenceBreak = SentenceBreak(12); // name="EX"
     pub const LF: SentenceBreak = SentenceBreak(13); // name="LF"
     pub const SContinue: SentenceBreak = SentenceBreak(14); // name="SC"
+}
+
+/// Property Canonical_Combining_Class.
+/// See UAX #15:
+/// <https://www.unicode.org/reports/tr15/>.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[repr(transparent)]
+pub struct CanonicalCombiningClass(pub u8);
+
+// These constant names come from PropertyValueAliases.txt
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl CanonicalCombiningClass {
+    pub const NotReordered: CanonicalCombiningClass = CanonicalCombiningClass(0); // name="NR"
+    pub const Overlay: CanonicalCombiningClass = CanonicalCombiningClass(1); // name="OV"
+    pub const HanReading: CanonicalCombiningClass = CanonicalCombiningClass(6); // name="HANR"
+    pub const Nukta: CanonicalCombiningClass = CanonicalCombiningClass(7); // name="NK"
+    pub const KanaVoicing: CanonicalCombiningClass = CanonicalCombiningClass(8); // name="KV"
+    pub const Virama: CanonicalCombiningClass = CanonicalCombiningClass(9); // name="VR"
+    pub const CCC10: CanonicalCombiningClass = CanonicalCombiningClass(10); // name="CCC10"
+    pub const CCC11: CanonicalCombiningClass = CanonicalCombiningClass(11); // name="CCC11"
+    pub const CCC12: CanonicalCombiningClass = CanonicalCombiningClass(12); // name="CCC12"
+    pub const CCC13: CanonicalCombiningClass = CanonicalCombiningClass(13); // name="CCC13"
+    pub const CCC14: CanonicalCombiningClass = CanonicalCombiningClass(14); // name="CCC14"
+    pub const CCC15: CanonicalCombiningClass = CanonicalCombiningClass(15); // name="CCC15"
+    pub const CCC16: CanonicalCombiningClass = CanonicalCombiningClass(16); // name="CCC16"
+    pub const CCC17: CanonicalCombiningClass = CanonicalCombiningClass(17); // name="CCC17"
+    pub const CCC18: CanonicalCombiningClass = CanonicalCombiningClass(18); // name="CCC18"
+    pub const CCC19: CanonicalCombiningClass = CanonicalCombiningClass(19); // name="CCC19"
+    pub const CCC20: CanonicalCombiningClass = CanonicalCombiningClass(20); // name="CCC20"
+    pub const CCC21: CanonicalCombiningClass = CanonicalCombiningClass(21); // name="CCC21"
+    pub const CCC22: CanonicalCombiningClass = CanonicalCombiningClass(22); // name="CCC22"
+    pub const CCC23: CanonicalCombiningClass = CanonicalCombiningClass(23); // name="CCC23"
+    pub const CCC24: CanonicalCombiningClass = CanonicalCombiningClass(24); // name="CCC24"
+    pub const CCC25: CanonicalCombiningClass = CanonicalCombiningClass(25); // name="CCC25"
+    pub const CCC26: CanonicalCombiningClass = CanonicalCombiningClass(26); // name="CCC26"
+    pub const CCC27: CanonicalCombiningClass = CanonicalCombiningClass(27); // name="CCC27"
+    pub const CCC28: CanonicalCombiningClass = CanonicalCombiningClass(28); // name="CCC28"
+    pub const CCC29: CanonicalCombiningClass = CanonicalCombiningClass(29); // name="CCC29"
+    pub const CCC30: CanonicalCombiningClass = CanonicalCombiningClass(30); // name="CCC30"
+    pub const CCC31: CanonicalCombiningClass = CanonicalCombiningClass(31); // name="CCC31"
+    pub const CCC32: CanonicalCombiningClass = CanonicalCombiningClass(32); // name="CCC32"
+    pub const CCC33: CanonicalCombiningClass = CanonicalCombiningClass(33); // name="CCC33"
+    pub const CCC34: CanonicalCombiningClass = CanonicalCombiningClass(34); // name="CCC34"
+    pub const CCC35: CanonicalCombiningClass = CanonicalCombiningClass(35); // name="CCC35"
+    pub const CCC36: CanonicalCombiningClass = CanonicalCombiningClass(36); // name="CCC36"
+    pub const CCC84: CanonicalCombiningClass = CanonicalCombiningClass(84); // name="CCC84"
+    pub const CCC91: CanonicalCombiningClass = CanonicalCombiningClass(91); // name="CCC91"
+    pub const CCC103: CanonicalCombiningClass = CanonicalCombiningClass(103); // name="CCC103"
+    pub const CCC107: CanonicalCombiningClass = CanonicalCombiningClass(107); // name="CCC107"
+    pub const CCC118: CanonicalCombiningClass = CanonicalCombiningClass(118); // name="CCC118"
+    pub const CCC122: CanonicalCombiningClass = CanonicalCombiningClass(122); // name="CCC122"
+    pub const CCC129: CanonicalCombiningClass = CanonicalCombiningClass(129); // name="CCC129"
+    pub const CCC130: CanonicalCombiningClass = CanonicalCombiningClass(130); // name="CCC130"
+    pub const CCC132: CanonicalCombiningClass = CanonicalCombiningClass(132); // name="CCC132"
+    pub const CCC133: CanonicalCombiningClass = CanonicalCombiningClass(133); // name="CCC133" // RESERVED
+    pub const AttachedBelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(200); // name="ATBL"
+    pub const AttachedBelow: CanonicalCombiningClass = CanonicalCombiningClass(202); // name="ATB"
+    pub const AttachedAbove: CanonicalCombiningClass = CanonicalCombiningClass(214); // name="ATA"
+    pub const AttachedAboveRight: CanonicalCombiningClass = CanonicalCombiningClass(216); // name="ATAR"
+    pub const BelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(218); // name="BL"
+    pub const Below: CanonicalCombiningClass = CanonicalCombiningClass(220); // name="B"
+    pub const BelowRight: CanonicalCombiningClass = CanonicalCombiningClass(222); // name="BR"
+    pub const Left: CanonicalCombiningClass = CanonicalCombiningClass(224); // name="L"
+    pub const Right: CanonicalCombiningClass = CanonicalCombiningClass(226); // name="R"
+    pub const AboveLeft: CanonicalCombiningClass = CanonicalCombiningClass(228); // name="AL"
+    pub const Above: CanonicalCombiningClass = CanonicalCombiningClass(230); // name="A"
+    pub const AboveRight: CanonicalCombiningClass = CanonicalCombiningClass(232); // name="AR"
+    pub const DoubleBelow: CanonicalCombiningClass = CanonicalCombiningClass(233); // name="DB"
+    pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
+    pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
 }
