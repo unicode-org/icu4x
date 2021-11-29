@@ -109,19 +109,19 @@ pub mod script_extensions {
 pub mod case {
     #[derive(serde::Deserialize)]
     pub struct Exceptions {
-	pub exceptions: Vec<u16>,
+        pub exceptions: Vec<u16>,
     }
 
     #[derive(serde::Deserialize)]
     pub struct Unfold {
-	pub unfold: Vec<u16>,
+        pub unfold: Vec<u16>,
     }
 
     #[derive(serde::Deserialize)]
     pub struct Level1 {
-	pub code_point_trie: super::enumerated::EnumeratedPropertyCodePointTrie,
-	pub exceptions: Exceptions,
-	pub unfold: Unfold
+        pub code_point_trie: super::enumerated::EnumeratedPropertyCodePointTrie,
+        pub exceptions: Exceptions,
+        pub unfold: Unfold,
     }
 
     #[derive(serde::Deserialize)]

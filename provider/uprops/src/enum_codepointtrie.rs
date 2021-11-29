@@ -110,7 +110,7 @@ impl<T: TrieValue> DynProvider<UnicodePropertyMapV1Marker<T>>
             .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?
             .code_point_trie;
 
-	let code_point_trie = CodePointTrie::try_from(source_cpt_data)?;
+        let code_point_trie = CodePointTrie::try_from(source_cpt_data)?;
         let data_struct = UnicodePropertyMapV1 { code_point_trie };
 
         Ok(DataResponse {

@@ -52,7 +52,7 @@ impl CaseType {
 /// letters (like `i` and `j`) combine with accents placed above the
 /// letter.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-enum DotType {
+pub enum DotType {
     /// Normal characters with combining class 0
     NoDot = 0,
     /// Soft-dotted characters with combining class 0
@@ -559,25 +559,43 @@ impl<'data> CaseMappingExceptions<'data> {
 fn test_exception_validation() {
     let missing_slot_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16)];
     let result = CaseMappingExceptions::try_from_icu(missing_slot_data);
-    assert_eq!(result, Err(Error::Validation("Exceptions: missing slot data")));
+    assert_eq!(
+        result,
+        Err(Error::Validation("Exceptions: missing slot data"))
+    );
 
     let invalid_char_slot: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16), 0xdf00];
     let result = CaseMappingExceptions::try_from_icu(invalid_char_slot);
-    assert_eq!(result, Err(Error::Validation("Exceptions: invalid char slot")));
+    assert_eq!(
+        result,
+        Err(Error::Validation("Exceptions: invalid char slot"))
+    );
 
-    let missing_full_mappings: &[u16] = &[1 << (CaseMappingExceptionSlot::FullMappings as u16), 0x1111];
+    let missing_full_mappings: &[u16] =
+        &[1 << (CaseMappingExceptionSlot::FullMappings as u16), 0x1111];
     let result = CaseMappingExceptions::try_from_icu(missing_full_mappings);
-    assert_eq!(result, Err(Error::Validation("Exceptions: missing full mapping data")));
+    assert_eq!(
+        result,
+        Err(Error::Validation("Exceptions: missing full mapping data"))
+    );
 
-    let full_mapping_unpaired_surrogate: &[u16] = &[1 << (CaseMappingExceptionSlot::FullMappings as u16), 0x1111, 0xdf00];
+    let full_mapping_unpaired_surrogate: &[u16] = &[
+        1 << (CaseMappingExceptionSlot::FullMappings as u16),
+        0x1111,
+        0xdf00,
+    ];
     let result = CaseMappingExceptions::try_from_icu(full_mapping_unpaired_surrogate);
     assert!(matches!(result, Err(Error::DecodeUtf16(_))));
 
     let missing_closure_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1];
     let result = CaseMappingExceptions::try_from_icu(missing_closure_data);
-    assert_eq!(result, Err(Error::Validation("Exceptions: missing closure data")));
+    assert_eq!(
+        result,
+        Err(Error::Validation("Exceptions: missing closure data"))
+    );
 
-    let closure_unpaired_surrogate: &[u16] = &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1, 0xdf00];
+    let closure_unpaired_surrogate: &[u16] =
+        &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1, 0xdf00];
     let result = CaseMappingExceptions::try_from_icu(closure_unpaired_surrogate);
     assert!(matches!(result, Err(Error::DecodeUtf16(_))));
 }
@@ -916,8 +934,10 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
-    fn is_soft_dotted(&self, c: char) -> bool {
-        self.lookup_data(c).dot_type() == DotType::SoftDotted
+    /// Returns true if the character has a dot above it that should be replaced with an accent if one is added.
+    /// TODO: implement functions using this, and make this function private.
+    pub fn is_soft_dotted(&self, c: char) -> bool {
+        self.dot_type(c) == DotType::SoftDotted
     }
 
     fn is_case_sensitive(&self, c: char) -> bool {
@@ -930,14 +950,15 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
-    // Adds all simple case mappings and the full case folding for `c` to `set`.
-    // Also adds special case closure mappings.
-    // The character itself is not added.
-    // For example, the mappings
-    // - for s include long s
-    // - for sharp s include ss
-    // - for k include the Kelvin sign
-    fn add_case_closure<S: SetAdder>(&self, c: char, set: &mut S) {
+    /// Adds all simple case mappings and the full case folding for `c` to `set`.
+    /// Also adds special case closure mappings.
+    /// The character itself is not added.
+    /// For example, the mappings
+    /// - for s include long s
+    /// - for sharp s include ss
+    /// - for k include the Kelvin sign
+    /// TODO: implement functions using this, and make this function private.
+    pub fn add_case_closure<S: SetAdder>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -1037,9 +1058,11 @@ impl<'data> CaseMapping<'data> {
     }
 }
 
-// Interface for adding items to a set of chars + strings.
-// Eventually this may become UnicodeSet, but that can't currently hold strings.
+/// Interface for adding items to a set of chars + strings.
+/// Eventually this may become UnicodeSet, but that can't currently hold strings.
 pub trait SetAdder {
+    /// Add a character to the set
     fn add_char(&mut self, c: char);
+    /// Add a string to the set
     fn add_string(&mut self, string: &str);
 }
