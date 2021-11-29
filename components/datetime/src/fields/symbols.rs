@@ -204,37 +204,34 @@ impl TryFrom<char> for FieldSymbol {
             return Err(SymbolError::Invalid(ch as u8));
         }
 
-        Err(SymbolError::Unknown(ch))
-            .or_else(|_| {
-                if ch == 'G' {
-                    Ok(Self::Era)
-                } else {
-                    Err(SymbolError::Unknown(ch))
-                }
-            })
-            .or_else(|_| Year::try_from(ch).map(Self::Year))
-            .or_else(|_| Month::try_from(ch).map(Self::Month))
-            .or_else(|_| {
-                if ch == 'w' {
-                    Week::try_from(ch).map(Self::Week)
-                } else {
-                    // TODO(#488): Add support for 'W'.
-                    Err(SymbolError::Unknown(ch))
-                }
-            })
-            .or_else(|_| Day::try_from(ch).map(Self::Day))
-            .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
-            .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))
-            .or_else(|_| Hour::try_from(ch).map(Self::Hour))
-            .or_else(|_| {
-                if ch == 'm' {
-                    Ok(Self::Minute)
-                } else {
-                    Err(SymbolError::Unknown(ch))
-                }
-            })
-            .or_else(|_| Second::try_from(ch).map(Self::Second))
-            .or_else(|_| TimeZone::try_from(ch).map(Self::TimeZone))
+        (if ch == 'G' {
+            Ok(Self::Era)
+        } else {
+            Err(SymbolError::Unknown(ch))
+        })
+        .or_else(|_| Year::try_from(ch).map(Self::Year))
+        .or_else(|_| Month::try_from(ch).map(Self::Month))
+        .or_else(|_| {
+            if ch == 'w' {
+                Week::try_from(ch).map(Self::Week)
+            } else {
+                // TODO(#488): Add support for 'W'.
+                Err(SymbolError::Unknown(ch))
+            }
+        })
+        .or_else(|_| Day::try_from(ch).map(Self::Day))
+        .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
+        .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))
+        .or_else(|_| Hour::try_from(ch).map(Self::Hour))
+        .or_else(|_| {
+            if ch == 'm' {
+                Ok(Self::Minute)
+            } else {
+                Err(SymbolError::Unknown(ch))
+            }
+        })
+        .or_else(|_| Second::try_from(ch).map(Self::Second))
+        .or_else(|_| TimeZone::try_from(ch).map(Self::TimeZone))
     }
 }
 
