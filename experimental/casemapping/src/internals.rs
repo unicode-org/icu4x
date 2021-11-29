@@ -1031,16 +1031,17 @@ impl<'data> CaseMapping<'data> {
         self.exceptions.add_full_and_closure_mappings(idx, set);
     }
 
-    // Maps the string to single code points and adds the associated case closure
-    // mappings.
-    // The string is mapped to code points if it is their full case folding string.
-    // In other words, this performs a reverse full case folding and then
-    // adds the case closure items of the resulting code points.
-    // If the string is found and its closure applied, then
-    // the string itself is added as well as part of its code points' closure.
-    //
-    // Returns true if the string was found
-    fn add_string_case_closure<S: SetAdder>(&self, s: &str, set: &mut S) -> bool {
+    /// Maps the string to single code points and adds the associated case closure
+    /// mappings.
+    /// The string is mapped to code points if it is their full case folding string.
+    /// In other words, this performs a reverse full case folding and then
+    /// adds the case closure items of the resulting code points.
+    /// If the string is found and its closure applied, then
+    /// the string itself is added as well as part of its code points' closure.
+    ///
+    /// Returns true if the string was found
+    /// TODO: implement functions using this, and make this function private.
+    pub fn add_string_case_closure<S: SetAdder>(&self, s: &str, set: &mut S) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
             return false;
