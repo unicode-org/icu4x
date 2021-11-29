@@ -23,18 +23,18 @@ pub enum Error {
 impl Error {
     /// Creates a new validation error with the given reason
     pub fn invalid<T>(reason: &'static str) -> Result<T, Self> {
-	Err(Self::Validation(reason))
+        Err(Self::Validation(reason))
     }
 }
 
 impl From<DecodeUtf16Error> for Error {
     fn from(e: DecodeUtf16Error) -> Self {
-	Error::DecodeUtf16(e)
+        Error::DecodeUtf16(e)
     }
 }
 
 impl From<CodePointTrieError> for Error {
     fn from(e: CodePointTrieError) -> Self {
-	Error::CodePointTrie(e)
+        Error::CodePointTrie(e)
     }
 }

@@ -9,7 +9,6 @@
 use crate::CaseMapping;
 use icu_provider::yoke::{self, *};
 
-
 pub mod key {
     //! Resource keys for [`icu_casemapping`](crate)
     use icu_provider::{resource_key, ResourceKey};

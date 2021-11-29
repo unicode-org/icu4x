@@ -10,10 +10,10 @@ use core::num::TryFromIntError;
 use core::ops::Range;
 use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieValue};
 #[cfg(feature = "serde")]
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ule::{AsULE, PlainOldULE};
-use zerovec::{ZeroVec, ZeroMap};
+use zerovec::{ZeroMap, ZeroVec};
 
 use crate::error::Error;
 
@@ -253,10 +253,10 @@ enum CaseMappingExceptionSlot {
 
 impl CaseMappingExceptionSlot {
     fn contains_char(&self) -> bool {
-	match self {
-	    Self::Lower | Self::Fold | Self::Upper | Self::Title => true,
-	    _ => false
-	}
+        match self {
+            Self::Lower | Self::Fold | Self::Upper | Self::Title => true,
+            _ => false,
+        }
     }
 }
 
@@ -290,10 +290,10 @@ impl<'data> CaseMappingExceptions<'data> {
     const CLOSURE_MAX_LENGTH: u32 = 0xf;
 
     fn try_from_icu(raw: &[u16]) -> Result<(Self, Vec<u16>), Error> {
-	let raw = ZeroVec::clone_from_slice(raw);
-	let exceptions = Self { raw };
-	let valid_indices = exceptions.validate()?;
-	Ok((exceptions, valid_indices))
+        let raw = ZeroVec::clone_from_slice(raw);
+        let exceptions = Self { raw };
+        let valid_indices = exceptions.validate()?;
+        Ok((exceptions, valid_indices))
     }
 
     // Returns the array element at the given index
@@ -304,8 +304,8 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Given a base index, returns the number of optional slots for the entry at that index
     fn num_slots(&self, base_idx: u16) -> u16 {
-	let slot_bits = self.get(base_idx as usize) & Self::SLOTS_MASK;
-	slot_bits.count_ones() as u16
+        let slot_bits = self.get(base_idx as usize) & Self::SLOTS_MASK;
+        slot_bits.count_ones() as u16
     }
 
     // Given a base index, returns true if the given slot exists
@@ -351,9 +351,9 @@ impl<'data> CaseMappingExceptions<'data> {
     fn slot_char(&self, base_idx: u16, slot: CaseMappingExceptionSlot) -> char {
         let raw = self.slot_value(base_idx, slot);
 
-	// Safety: the exception data is validated on construction.
-	debug_assert!(slot.contains_char());
-	debug_assert!(char::from_u32(raw).is_some());
+        // Safety: the exception data is validated on construction.
+        debug_assert!(slot.contains_char());
+        debug_assert!(char::from_u32(raw).is_some());
         unsafe { char::from_u32_unchecked(raw) }
     }
 
@@ -408,27 +408,31 @@ impl<'data> CaseMappingExceptions<'data> {
     // Used to read full mapping strings, and also to find the start of the closure string.
     #[inline(always)]
     fn full_mapping_string_range(&self, base_idx: u16, slot: FullMapping) -> Range<usize> {
-	debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings));
-	let mut lengths = self.slot_value(base_idx, CaseMappingExceptionSlot::FullMappings);
+        debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings));
+        let mut lengths = self.slot_value(base_idx, CaseMappingExceptionSlot::FullMappings);
         let mut data_idx = self.slot_index(base_idx, CaseMappingExceptionSlot::FullMappings) + 1;
 
-	// Skip past previous slots
-	for _ in 0 .. (slot as usize) {
+        // Skip past previous slots
+        for _ in 0..(slot as usize) {
             let str_len = lengths & Self::FULL_MAPPINGS_LENGTH_MASK;
             data_idx += str_len as usize;
             lengths >>= Self::FULL_MAPPINGS_LENGTH_SHIFT;
-	}
+        }
 
-	// Return range of this string
+        // Return range of this string
         let str_len = (lengths & Self::FULL_MAPPINGS_LENGTH_MASK) as usize;
-	data_idx .. (data_idx + str_len)
+        data_idx..(data_idx + str_len)
     }
 
     // Full mapping strings are stored as UTF16 immediately following the full mappings slot.
     // The length of each full mapping string (in code units) is stored in a nibble of the slot.
-    fn full_mapping_string(&self, base_idx: u16, slot: FullMapping) -> Result<String, DecodeUtf16Error> {
-	debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings));
-	let range = self.full_mapping_string_range(base_idx, slot);
+    fn full_mapping_string(
+        &self,
+        base_idx: u16,
+        slot: FullMapping,
+    ) -> Result<String, DecodeUtf16Error> {
+        debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings));
+        let range = self.full_mapping_string_range(base_idx, slot);
         let iter = self.raw.as_slice()[range]
             .iter()
             .map(|&ule| <u16 as AsULE>::from_unaligned(ule));
@@ -437,7 +441,7 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Given a base index, returns the length of the closure string
     fn closure_len(&self, base_idx: u16) -> usize {
-	debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::Closure));
+        debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::Closure));
         let value = self.slot_value(base_idx, CaseMappingExceptionSlot::Closure);
         (value & Self::CLOSURE_MAX_LENGTH) as usize
     }
@@ -447,95 +451,112 @@ impl<'data> CaseMappingExceptions<'data> {
     // closure string (in code points).
     // This function returns an iterator over the characters of the closure string.
     fn closure_string(&self, base_idx: u16) -> Result<String, DecodeUtf16Error> {
-	let start_idx = if self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings) {
-	    self.full_mapping_string_range(base_idx, FullMapping::Title).end
-	} else {
-	    self.slot_index(base_idx, CaseMappingExceptionSlot::Closure) + 1
-	};
-	let closure_len = self.closure_len(base_idx);
-	let u16_iter = self.raw.as_slice()[start_idx..]
-	    .iter()
-	    .map(|&ule| <u16 as AsULE>::from_unaligned(ule));
-	char::decode_utf16(u16_iter).take(closure_len).collect()
+        let start_idx = if self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings) {
+            self.full_mapping_string_range(base_idx, FullMapping::Title)
+                .end
+        } else {
+            self.slot_index(base_idx, CaseMappingExceptionSlot::Closure) + 1
+        };
+        let closure_len = self.closure_len(base_idx);
+        let u16_iter = self.raw.as_slice()[start_idx..]
+            .iter()
+            .map(|&ule| <u16 as AsULE>::from_unaligned(ule));
+        char::decode_utf16(u16_iter).take(closure_len).collect()
     }
 
     fn add_full_and_closure_mappings<S: SetAdder>(&self, base_idx: u16, set: &mut S) {
         if self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings) {
-	    let mapping_string = self.full_mapping_string(base_idx, FullMapping::Fold)
-		.expect("No unpaired surrogates");
-	    if !mapping_string.is_empty() {
-		set.add_string(&mapping_string);
-	    }
+            let mapping_string = self
+                .full_mapping_string(base_idx, FullMapping::Fold)
+                .expect("No unpaired surrogates");
+            if !mapping_string.is_empty() {
+                set.add_string(&mapping_string);
+            }
         };
 
         if self.has_slot(base_idx, CaseMappingExceptionSlot::Closure) {
-	    for c in self.closure_string(base_idx).expect("No unpaired surrogates").chars() {
+            for c in self
+                .closure_string(base_idx)
+                .expect("No unpaired surrogates")
+                .chars()
+            {
                 set.add_char(c);
-	    }
+            }
         };
     }
 
     fn validate(&self) -> Result<Vec<u16>, Error> {
-	let mut valid_indices = vec![];
-	let mut idx: u16 = 0;
+        let mut valid_indices = vec![];
+        let mut idx: u16 = 0;
 
-	let data_len = self.raw.len() as u16;
+        let data_len = self.raw.len() as u16;
 
-	while idx < data_len {
-	    let mut slot_len = self.num_slots(idx);
-	    if self.has_double_slots(idx) {
-		slot_len *= 2;
-	    }
+        while idx < data_len {
+            let mut slot_len = self.num_slots(idx);
+            if self.has_double_slots(idx) {
+                slot_len *= 2;
+            }
 
-	    // Validate that we can read slot data without reading out of bounds.
-	    let mut next_idx = idx + 1 + slot_len;
-	    if next_idx > data_len {
-		return Error::invalid("Exceptions: missing slot data");
-	    }
+            // Validate that we can read slot data without reading out of bounds.
+            let mut next_idx = idx + 1 + slot_len;
+            if next_idx > data_len {
+                return Error::invalid("Exceptions: missing slot data");
+            }
 
-	    // Validate slots that should contain chars
-	    for slot in [CaseMappingExceptionSlot::Lower, CaseMappingExceptionSlot::Fold,
-			 CaseMappingExceptionSlot::Upper, CaseMappingExceptionSlot::Title] {
-		if self.has_slot(idx, slot) {
-		    let val = self.slot_value(idx, slot);
-		    if !char::from_u32(val).is_some() {
-			return Error::invalid("Exceptions: invalid char slot");
-		    }
-		}
-	    }
+            // Validate slots that should contain chars
+            for slot in [
+                CaseMappingExceptionSlot::Lower,
+                CaseMappingExceptionSlot::Fold,
+                CaseMappingExceptionSlot::Upper,
+                CaseMappingExceptionSlot::Title,
+            ] {
+                if self.has_slot(idx, slot) {
+                    let val = self.slot_value(idx, slot);
+                    if !char::from_u32(val).is_some() {
+                        return Error::invalid("Exceptions: invalid char slot");
+                    }
+                }
+            }
 
-	    // Validate full mappings.
-	    if self.has_slot(idx, CaseMappingExceptionSlot::FullMappings) {
-		for full_mapping in [FullMapping::Lower, FullMapping::Fold,
-				     FullMapping::Upper, FullMapping::Title] {
-		    let range = self.full_mapping_string_range(idx, full_mapping);
-		    next_idx += range.len() as u16;
-		    if next_idx > data_len {
-			return Error::invalid("Exceptions: missing full mapping data");
-		    }
+            // Validate full mappings.
+            if self.has_slot(idx, CaseMappingExceptionSlot::FullMappings) {
+                for full_mapping in [
+                    FullMapping::Lower,
+                    FullMapping::Fold,
+                    FullMapping::Upper,
+                    FullMapping::Title,
+                ] {
+                    let range = self.full_mapping_string_range(idx, full_mapping);
+                    next_idx += range.len() as u16;
+                    if next_idx > data_len {
+                        return Error::invalid("Exceptions: missing full mapping data");
+                    }
 
-		    self.full_mapping_string(idx, full_mapping)?;
-		}
-	    }
+                    self.full_mapping_string(idx, full_mapping)?;
+                }
+            }
 
-	    // Validate closure string.
-	    if self.has_slot(idx, CaseMappingExceptionSlot::Closure) {
-		let closure_len = self.closure_len(idx);
-		if next_idx + closure_len as u16 > data_len {
-		    return Error::invalid("Exceptions: missing closure data");
-		}
+            // Validate closure string.
+            if self.has_slot(idx, CaseMappingExceptionSlot::Closure) {
+                let closure_len = self.closure_len(idx);
+                if next_idx + closure_len as u16 > data_len {
+                    return Error::invalid("Exceptions: missing closure data");
+                }
 
-		for c in self.closure_string(idx)?.chars() {
-		    next_idx += c.len_utf16() as u16;
-		}
-	    }
+                for c in self.closure_string(idx)?.chars() {
+                    next_idx += c.len_utf16() as u16;
+                }
+            }
 
-	    valid_indices.push(idx);
-	    idx = next_idx;
-	}
-	Ok(valid_indices)
+            valid_indices.push(idx);
+            idx = next_idx;
+        }
+        Ok(valid_indices)
     }
 }
+
+#[test]
+fn test_exception_validation() {}
 
 /// Reverse case folding data. Maps from multi-character strings back to code-points that fold to those
 /// strings.
@@ -562,50 +583,50 @@ impl<'data> CaseMappingUnfoldData<'data> {
     // Rust strings are UTF8 by default. To avoid the cost of converting from UTF16 on access,
     // we convert the ICU data into a more convenient format during construction.
     fn try_from_icu(raw: &[u16]) -> Result<Self, Error> {
-	const ROWS_INDEX: usize = 0;
-	const ROW_WIDTH_INDEX: usize = 1;
-	const STRING_WIDTH_INDEX: usize = 2;
+        const ROWS_INDEX: usize = 0;
+        const ROW_WIDTH_INDEX: usize = 1;
+        const STRING_WIDTH_INDEX: usize = 2;
 
-	if raw.len() <= STRING_WIDTH_INDEX {
-	    return Error::invalid("Unfold: header missing");
-	}
+        if raw.len() <= STRING_WIDTH_INDEX {
+            return Error::invalid("Unfold: header missing");
+        }
 
-	let num_rows = raw[ROWS_INDEX] as usize;
-	let row_width = raw[ROW_WIDTH_INDEX] as usize;
-	let string_width = raw[STRING_WIDTH_INDEX] as usize;
+        let num_rows = raw[ROWS_INDEX] as usize;
+        let row_width = raw[ROW_WIDTH_INDEX] as usize;
+        let string_width = raw[STRING_WIDTH_INDEX] as usize;
 
-	if row_width == 0 {
-	    return Error::invalid("Unfold: invalid row width");
-	}
+        if row_width == 0 {
+            return Error::invalid("Unfold: invalid row width");
+        }
 
-	// Header takes up one row.
-	let row_data = &raw[row_width..];
+        // Header takes up one row.
+        let row_data = &raw[row_width..];
 
-	let mut map = ZeroMap::new();
+        let mut map = ZeroMap::new();
 
-	debug_assert!(num_rows == row_data.chunks_exact(row_width).count());
-	for row in row_data.chunks_exact(row_width) {
-	    let key = Self::decode_string(&row[..string_width])
-		.ok_or(Error::Validation("Unfold: unpaired surrogate in key"))?;
-	    let val = Self::decode_string(&row[string_width..])
-		.ok_or(Error::Validation("Unfold: unpaired surrogate in value"))?;
-	    if let Some(_) = map.try_append(key.as_ref(), val.as_ref()) {
-		return Error::invalid("Unfold: keys not sorted/unique");
-	    }
-	}
-	Ok(Self { map })
+        debug_assert!(num_rows == row_data.chunks_exact(row_width).count());
+        for row in row_data.chunks_exact(row_width) {
+            let key = Self::decode_string(&row[..string_width])
+                .ok_or(Error::Validation("Unfold: unpaired surrogate in key"))?;
+            let val = Self::decode_string(&row[string_width..])
+                .ok_or(Error::Validation("Unfold: unpaired surrogate in value"))?;
+            if let Some(_) = map.try_append(key.as_ref(), val.as_ref()) {
+                return Error::invalid("Unfold: keys not sorted/unique");
+            }
+        }
+        Ok(Self { map })
     }
 
     // Decode a zero-terminated UTF16 string from a slice of u16.
     fn decode_string(slice: &[u16]) -> Option<String> {
-	let iter = slice.iter().map(|&c| c).take_while(|&c| c != 0);
-	char::decode_utf16(iter).collect::<Result<String, _>>().ok()
+        let iter = slice.iter().map(|&c| c).take_while(|&c| c != 0);
+        char::decode_utf16(iter).collect::<Result<String, _>>().ok()
     }
 
     // Given a string, returns another string representing the set of characters
     // that case fold to that string.
     fn get(&self, key: &str) -> Option<&str> {
-	self.map.get(key)
+        self.map.get(key)
     }
 }
 
@@ -618,16 +639,16 @@ struct FoldOptions {
 impl FoldOptions {
     fn with_turkic_mappings() -> Self {
         Self {
-	    exclude_special_i: true,
-	}
+            exclude_special_i: true,
+        }
     }
 }
 
 impl Default for FoldOptions {
     fn default() -> Self {
         Self {
-	    exclude_special_i: false,
-	}
+            exclude_special_i: false,
+        }
     }
 }
 
@@ -644,32 +665,42 @@ pub struct CaseMapping<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     exceptions: CaseMappingExceptions<'data>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    unfold: CaseMappingUnfoldData<'data>
+    unfold: CaseMappingUnfoldData<'data>,
 }
 
 impl<'data> CaseMapping<'data> {
     /// Creates a new CaseMapping using data exported by the `icuexportdata` tool
     /// in ICU4C. Validates that the data is consistent.
-    pub fn try_from_icu(trie_header: CodePointTrieHeader,
-			trie_index: &[u16],
-			trie_data: &[u16],
-			exceptions: &[u16],
-			unfold: &[u16]) -> Result<Self, Error> {
-	let (exceptions, valid_exception_indices) = CaseMappingExceptions::try_from_icu(exceptions)?;
-	let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
+    pub fn try_from_icu(
+        trie_header: CodePointTrieHeader,
+        trie_index: &[u16],
+        trie_data: &[u16],
+        exceptions: &[u16],
+        unfold: &[u16],
+    ) -> Result<Self, Error> {
+        let (exceptions, valid_exception_indices) =
+            CaseMappingExceptions::try_from_icu(exceptions)?;
+        let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
 
-	let trie_index = ZeroVec::clone_from_slice(trie_index);
-	let trie_data = trie_data.iter().map(|&i| CaseMappingData(i)).collect::<ZeroVec<_>>();
+        let trie_index = ZeroVec::clone_from_slice(trie_index);
+        let trie_data = trie_data
+            .iter()
+            .map(|&i| CaseMappingData(i))
+            .collect::<ZeroVec<_>>();
 
-	for data in trie_data.iter() {
-	    if data.has_exception() && !valid_exception_indices.contains(&data.exception_index()) {
-		return Error::invalid("Invalid exception index in trie data");
-	    }
-	}
+        for data in trie_data.iter() {
+            if data.has_exception() && !valid_exception_indices.contains(&data.exception_index()) {
+                return Error::invalid("Invalid exception index in trie data");
+            }
+        }
 
-	let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
+        let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
-	Ok(Self { trie, exceptions, unfold })
+        Ok(Self {
+            trie,
+            exceptions,
+            unfold,
+        })
     }
 
     fn lookup_data(&self, c: char) -> CaseMappingData {
@@ -965,24 +996,25 @@ impl<'data> CaseMapping<'data> {
     //
     // Returns true if the string was found
     fn add_string_case_closure<S: SetAdder>(&self, s: &str, set: &mut S) -> bool {
-	if s.chars().count() <= 1 {
-	    // The string is too short to find any match.
-	    return false;
-	}
-	match self.unfold.get(s) {
-	    Some(closure_string) => {
-		for c in closure_string.chars() {
-		    set.add_char(c);
-		    self.add_case_closure(c, set);
-		}
-		true
-	    },
-	    None => false
-	}
+        if s.chars().count() <= 1 {
+            // The string is too short to find any match.
+            return false;
+        }
+        match self.unfold.get(s) {
+            Some(closure_string) => {
+                for c in closure_string.chars() {
+                    set.add_char(c);
+                    self.add_case_closure(c, set);
+                }
+                true
+            }
+            None => false,
+        }
     }
 }
 
-//
+// Interface for adding items to a set of chars + strings.
+// Eventually this may become UnicodeSet, but that can't currently hold strings.
 pub trait SetAdder {
     fn add_char(&mut self, c: char);
     fn add_string(&mut self, string: &str);
