@@ -556,7 +556,31 @@ impl<'data> CaseMappingExceptions<'data> {
 }
 
 #[test]
-fn test_exception_validation() {}
+fn test_exception_validation() {
+    let missing_slot_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16)];
+    let result = CaseMappingExceptions::try_from_icu(missing_slot_data);
+    assert_eq!(result, Err(Error::Validation("Exceptions: missing slot data")));
+
+    let invalid_char_slot: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16), 0xdf00];
+    let result = CaseMappingExceptions::try_from_icu(invalid_char_slot);
+    assert_eq!(result, Err(Error::Validation("Exceptions: invalid char slot")));
+
+    let missing_full_mappings: &[u16] = &[1 << (CaseMappingExceptionSlot::FullMappings as u16), 0x1111];
+    let result = CaseMappingExceptions::try_from_icu(missing_full_mappings);
+    assert_eq!(result, Err(Error::Validation("Exceptions: missing full mapping data")));
+
+    let full_mapping_unpaired_surrogate: &[u16] = &[1 << (CaseMappingExceptionSlot::FullMappings as u16), 0x1111, 0xdf00];
+    let result = CaseMappingExceptions::try_from_icu(full_mapping_unpaired_surrogate);
+    assert!(matches!(result, Err(Error::DecodeUtf16(_))));
+
+    let missing_closure_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1];
+    let result = CaseMappingExceptions::try_from_icu(missing_closure_data);
+    assert_eq!(result, Err(Error::Validation("Exceptions: missing closure data")));
+
+    let closure_unpaired_surrogate: &[u16] = &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1, 0xdf00];
+    let result = CaseMappingExceptions::try_from_icu(closure_unpaired_surrogate);
+    assert!(matches!(result, Err(Error::DecodeUtf16(_))));
+}
 
 /// Reverse case folding data. Maps from multi-character strings back to code-points that fold to those
 /// strings.
