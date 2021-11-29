@@ -30,9 +30,6 @@ yoke = { path = "../../utils/yoke", version = "0.3", features = ["derive"] }
 zerovec = { version = "0.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
-[dev-dependencies]
-criterion = { version = "0.3.4", features = ["html_reports"] }
-
 [lib]
 path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
@@ -41,7 +38,3 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std"]
 default = ["provider_serde"]
 provider_serde = ["serde"]
-
-[[bench]]
-name = "unfold"
-harness = false
