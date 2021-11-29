@@ -290,7 +290,7 @@ impl<'data> CaseMappingExceptions<'data> {
     const CLOSURE_MAX_LENGTH: u32 = 0xf;
 
     fn try_from_icu(raw: &[u16]) -> Result<(Self, Vec<u16>), Error> {
-        let raw = ZeroVec::clone_from_slice(raw);
+        let raw = ZeroVec::alloc_from_slice(raw);
         let exceptions = Self { raw };
         let valid_indices = exceptions.validate()?;
         Ok((exceptions, valid_indices))
@@ -724,7 +724,7 @@ impl<'data> CaseMapping<'data> {
             CaseMappingExceptions::try_from_icu(exceptions)?;
         let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
 
-        let trie_index = ZeroVec::clone_from_slice(trie_index);
+        let trie_index = ZeroVec::alloc_from_slice(trie_index);
         let trie_data = trie_data
             .iter()
             .map(|&i| CaseMappingData(i))
