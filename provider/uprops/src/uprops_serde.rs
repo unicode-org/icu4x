@@ -105,7 +105,7 @@ pub mod script_extensions {
     }
 }
 
-#[cfg(feature = "casemap")]
+#[cfg(feature = "casemapping")]
 pub mod case {
     #[derive(serde::Deserialize)]
     pub struct Exceptions {

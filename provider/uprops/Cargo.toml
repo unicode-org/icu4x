@@ -44,4 +44,4 @@ tinystr = "0.4"
 icu_testdata = { version = "0.5", path = "../../provider/testdata" }
 
 [features]
-casemap = ["icu_casemapping"]
+casemapping = ["icu_casemapping"]

@@ -34,7 +34,10 @@ impl CaseMappingDataProvider {
             trie_type: trie_type,
         };
 	let trie_index = &trie_data.index;
-	let trie_data = &trie_data.data_16.as_ref().unwrap(); // TODO: return error
+	let trie_data = &trie_data.data_16.as_ref().ok_or_else(|| DataError::new_resc_error(
+            icu_codepointtrie::error::Error::FromDeserialized {
+                reason: "Did not find 16-bit data array for case mapping in TOML",
+            }))?;
 	let exceptions = &toml.ucase.exceptions.exceptions;
  	let unfold = &toml.ucase.unfold.unfold;
 
@@ -62,22 +65,8 @@ impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     }
 }
 
-// icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
-//     _ => UnicodePropertyV1Marker,
-// }, SERDE_SE, 'data);
-
-// impl IterableDataProviderCore for BinaryPropertyUnicodeSetDataProvider {
-//     fn supported_options_for_key(
-//         &self,
-//         _resc_key: &ResourceKey,
-//     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-//         let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-//         Ok(Box::new(list.into_iter()))
-//     }
-// }
-
 #[test]
-fn test_basic() {
+fn test_validation() {
     let root_dir = icu_testdata::paths::data_root().join("uprops").join("ucase.toml");
     CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
 }
