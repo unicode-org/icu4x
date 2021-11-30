@@ -21,7 +21,6 @@ use core::fmt::Debug;
 use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 use tinystr::TinyStr8;
-use litemap::LiteMap;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
@@ -92,13 +91,12 @@ impl DataRequest {
 
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
+#[non_exhaustive]
 pub struct DataResponseMetadata {
     /// The language of the returned data, or None if the resource key isn't localized.
     pub data_langid: Option<LanguageIdentifier>,
     /// The format of the buffer for buffer-backed data, if known (for example, "json").
     pub buffer_format: Option<TinyStr8>,
-    /// Other attributes containing arbitrary information.
-    pub attributes: Option<LiteMap<TinyStr8, Option<alloc::vec::Vec<u8>>>>,
 }
 
 /// A container for data payloads returned from a [`DataProvider`].

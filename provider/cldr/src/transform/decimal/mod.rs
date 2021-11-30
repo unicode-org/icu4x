@@ -126,11 +126,10 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             })
             .map_err(DataError::new_resc_error)?;
 
+        let metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-                ..Default::default()
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(result)),
         })
     }

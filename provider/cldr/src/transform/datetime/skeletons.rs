@@ -43,11 +43,10 @@ impl DataProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatter
     ) -> Result<DataResponse<calendar::DateSkeletonPatternsV1Marker>, DataError> {
         DateSkeletonPatternsProvider::supports_key(&req.resource_path.key)?;
         let dates = self.0.dates_for(req)?;
+        let metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-                ..Default::default()
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(
                 calendar::DateSkeletonPatternsV1::from(&dates.datetime_formats),
             )),

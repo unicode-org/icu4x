@@ -107,12 +107,11 @@ where
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(self.manifest.syntax.get_buffer_format());
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-                buffer_format: Some(self.manifest.syntax.get_buffer_format()),
-                attributes: None,
-            },
+            metadata,
             payload: Some(
                 DataPayload::try_from_rc_buffer(
                     rc_buffer,
@@ -133,10 +132,9 @@ impl SerdeDeDataProvider for FsDataProvider {
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
         deserializer::deserialize_into_receiver(rc_buffer, &self.manifest.syntax, receiver)
             .map_err(|err| err.into_resource_error(&path_buf))?;
-        Ok(DataResponseMetadata {
-            data_langid: req.resource_path.options.langid.clone(),
-            buffer_format: Some(self.manifest.syntax.get_buffer_format()),
-            attributes: None,
-        })
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(self.manifest.syntax.get_buffer_format());
+        Ok(metadata)
     }
 }

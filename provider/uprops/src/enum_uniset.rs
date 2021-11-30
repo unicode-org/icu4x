@@ -92,9 +92,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
         let uniset = builder.build();
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                ..Default::default()
-            },
+            metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(
                 UnicodePropertyV1::from_owned_uniset(uniset),
             )),

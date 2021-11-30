@@ -128,11 +128,10 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
             .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
+        let mut metadata = DataResponseMetadata::default();
+        metadata.data_langid = Some(langid.clone());
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: Some(langid.clone()),
-                ..Default::default()
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(data)),
         })
     }

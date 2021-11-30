@@ -118,12 +118,11 @@ where
         let file = self.get_file(req)?;
         let data = M::Yokeable::deserialize(&mut postcard::Deserializer::from_bytes(file))
             .map_err(DataError::new_resc_error)?;
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(tinystr8!("postcard"));
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-                buffer_format: Some(tinystr8!("postcard")),
-                attributes: None,
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(data)),
         })
     }
@@ -139,11 +138,9 @@ impl SerdeDeDataProvider for StaticDataProvider {
         receiver.receive_static(&mut <dyn erased_serde::Deserializer>::erase(
             &mut postcard::Deserializer::from_bytes(file),
         ))?;
-
-        Ok(DataResponseMetadata {
-            data_langid: req.resource_path.options.langid.clone(),
-            buffer_format: Some(tinystr8!("postcard")),
-            attributes: None,
-        })
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(tinystr8!("postcard"));
+        Ok(metadata)
     }
 }

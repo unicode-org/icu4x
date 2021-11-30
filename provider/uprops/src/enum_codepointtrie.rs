@@ -93,9 +93,7 @@ impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                ..Default::default()
-            },
+            metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data_struct)),
         })
     }

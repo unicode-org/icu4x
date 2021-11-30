@@ -112,12 +112,11 @@ where
                     .map_err(DataError::new_resc_error)?;
                 Ok(data.0)
             })?;
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(tinystr8!("postcard"));
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-                buffer_format: Some(tinystr8!("postcard")),
-                attributes: None,
-            },
+            metadata,
             payload: Some(payload),
         })
     }
@@ -134,10 +133,9 @@ impl SerdeDeDataProvider for BlobDataProvider {
             let mut d = postcard::Deserializer::from_bytes(bytes);
             f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
         })?;
-        Ok(DataResponseMetadata {
-            data_langid: req.resource_path.options.langid.clone(),
-            buffer_format: Some(tinystr8!("postcard")),
-            attributes: None,
-        })
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(tinystr8!("postcard"));
+        Ok(metadata)
     }
 }

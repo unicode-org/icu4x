@@ -53,11 +53,10 @@ impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
         if langid.is_none() {
+            let metadata = DataResponseMetadata::default();
+            // TODO(#1109): Set metadata.data_langid correctly.
             Ok(DataResponse {
-                metadata: DataResponseMetadata {
-                    data_langid: langid.clone(),
-                    ..Default::default()
-                },
+                metadata,
                 payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&self.data))),
             })
         } else {
