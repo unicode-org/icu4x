@@ -4,7 +4,6 @@
 
 //! TODO: Document
 
-mod de_impls;
 mod new;
 mod old;
 
