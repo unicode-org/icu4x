@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638238822788,
+  "lastUpdate": 1638309665345,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4553,6 +4553,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fcf248c8a8ff1c6da7e18800a21ee4c95a3b97ca"
         },
         "date": 1638238815382,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916111,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5a49da1bb9022134ad07b8c754ed1070655d0bb",
+          "message": "Update principles.md to reflect current reality (#1335)",
+          "timestamp": "2021-11-30T13:59:19-08:00",
+          "tree_id": "7d3e972ddc4419775a4309436ea1022a674d3183",
+          "url": "https://github.com/unicode-org/icu4x/commit/e5a49da1bb9022134ad07b8c754ed1070655d0bb"
+        },
+        "date": 1638309655395,
         "tool": "ndjson",
         "benches": [
           {
