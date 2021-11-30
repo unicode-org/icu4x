@@ -257,9 +257,10 @@ impl GeneralCategory {
     /// assert_eq!(gc.get('A' as u32), GeneralSubcategory::UppercaseLetter);
     /// assert!(GeneralCategory::CasedLetter.contains(gc.get('A' as u32)));
     ///
-    /// // U+1D505 MATHEMATICAL FRAKTUR CAPITAL B
-    /// assert_eq!(gc.get('𝔅' as u32), GeneralSubcategory::UppercaseLetter);
-    /// assert!(GeneralCategory::Letter.contains(gc.get('𝔅' as u32)));
+    /// // U+0B1E ORIYA LETTER NYA
+    /// assert_eq!(gc.get('ଞ' as u32), GeneralSubcategory::OtherLetter);
+    /// assert!(GeneralCategory::Letter.contains(gc.get('ଞ' as u32)));
+    /// assert!(!GeneralCategory::CasedLetter.contains(gc.get('ଞ' as u32)));
     ///
     /// // U+0301 COMBINING ACUTE ACCENT
     /// assert_eq!(gc.get(0x0301), GeneralSubcategory::NonspacingMark);
