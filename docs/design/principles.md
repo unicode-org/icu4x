@@ -44,4 +44,4 @@ Code and data slicing should be able to be determined using static code analysis
 
 ## Available Across Programming Languages
 
-ICU4X functionality should be available uniformly in all supported programming languages.  The API shape may differ between programming languages, but the underlying functionality should be uniformly available; it should be an exception for functionality to be available in Rust but not in FFI.
+ICU4X functionality should be available uniformly in all supported programming languages.  The API shape may differ between programming languages, but the underlying functionality should be uniformly available in both Rust and FFI.
