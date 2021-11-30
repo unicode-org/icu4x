@@ -95,12 +95,12 @@ impl ListFormatter {
         )
     }
 
-    pub fn format_to_parts(&self, values: &[&str]) -> ActualFormattedString<FieldType, 1> {
+    pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType, 1> {
         self.format_internal(
             values,
-            FormattedStringBuilder::<FieldType, 1>::new,
+            FormattedString::<FieldType, 1>::new,
             |value| {
-                let mut builder = FormattedStringBuilder::<FieldType, 1>::new();
+                let mut builder = FormattedString::<FieldType, 1>::new();
                 builder.append(&value, FieldType::Element);
                 builder
             },
@@ -111,7 +111,6 @@ impl ListFormatter {
                 builder
             },
         )
-        .build()
     }
 }
 

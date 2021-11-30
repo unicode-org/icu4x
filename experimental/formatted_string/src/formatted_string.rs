@@ -2,10 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::FormattedStringBuilderError;
+use crate::FormattedStringError;
 use alloc::borrow::ToOwned;
-use alloc::boxed::Box;
-use alloc::string::String;
 use alloc::vec::Vec;
 use core::str;
 
@@ -15,7 +13,7 @@ pub enum LocationInPart {
     Extend,
 }
 
-pub trait FormattedString<F: Copy, const L: usize>: AsRef<str> {
+pub trait FormattedStringLike<F: Copy, const L: usize>: AsRef<str> {
     fn fields_at(&self, pos: usize) -> [F; L] {
         self.annotation_at(pos).map(|(_, field)| field)
     }
@@ -27,53 +25,42 @@ pub trait FormattedString<F: Copy, const L: usize>: AsRef<str> {
     }
 
     #[doc(hidden)]
-    // This is used to make the builder more efficient; clients should
+    // This is used to make the inserts more efficient; clients should
     // use fields_at and is_field_start.
     fn annotation_at(&self, pos: usize) -> &[(LocationInPart, F); L];
 }
 
-impl<F: Copy> FormattedString<F, 0> for &str {
+impl<F: Copy> FormattedStringLike<F, 0> for &str {
     fn annotation_at(&self, _pos: usize) -> &[(LocationInPart, F); 0] {
         // Yay we can return dangling references for singleton types!
         &[]
     }
 }
 
-/// A string with L levels of formatting annotations. The name refers
-/// to the fact that the trait FormattedString is also implemented for
-/// &str, but with 0 levels of annotations there isn't much formatting.
+/// A string with L levels of formatting annotations.
 #[derive(Debug, PartialEq)]
-pub struct ActualFormattedString<F: Copy, const L: usize> {
-    string: String,
-    // The slice dimension corresponds to the bytes in string,
-    // the array dimension are the L levels of annotations
-    annotations: Box<[[(LocationInPart, F); L]]>,
-}
-
-impl<F: Copy, const L: usize> AsRef<str> for ActualFormattedString<F, L> {
-    fn as_ref(&self) -> &str {
-        &self.string
-    }
-}
-
-impl<F: Copy, const L: usize> FormattedString<F, L> for ActualFormattedString<F, L> {
-    fn annotation_at(&self, pos: usize) -> &[(LocationInPart, F); L] {
-        &self.annotations[pos]
-    }
-}
-
-/// A builder with L levels of type annotations.
-#[derive(Debug)]
-pub struct FormattedStringBuilder<F: Copy, const L: usize> {
+pub struct FormattedString<F: Copy, const L: usize> {
     // bytes is always valid UTF-8, so from_utf8_unchecked is safe
     bytes: Vec<u8>,
     // The first dimension corresponds to the bytes, the second are the L levels of annotations
     annotations: Vec<[(LocationInPart, F); L]>,
 }
 
-impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
+impl<F: Copy, const L: usize> AsRef<str> for FormattedString<F, L> {
+    fn as_ref(&self) -> &str {
+        unsafe { &str::from_utf8_unchecked(&self.bytes) }
+    }
+}
+
+impl<F: Copy, const L: usize> FormattedStringLike<F, L> for FormattedString<F, L> {
+    fn annotation_at(&self, pos: usize) -> &[(LocationInPart, F); L] {
+        &self.annotations[pos]
+    }
+}
+
+impl<F: Copy, const L: usize> FormattedString<F, L> {
     pub fn new() -> Self {
-        // A builder with 0 annotations doesn't make sense.
+        // A FormattedString with 0 annotations doesn't make sense.
         assert!(L > 0);
         Self {
             bytes: Vec::with_capacity(40),
@@ -83,7 +70,7 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
 
     pub fn append<S, const L1: usize>(&mut self, string: &S, field: F) -> &mut Self
     where
-        S: FormattedString<F, L1>,
+        S: FormattedStringLike<F, L1>,
     {
         assert_eq!(L - 1, L1);
         // len() is always a char boundary
@@ -92,7 +79,7 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
 
     pub fn prepend<S, const L1: usize>(&mut self, string: &S, field: F) -> &mut Self
     where
-        S: FormattedString<F, L1>,
+        S: FormattedStringLike<F, L1>,
     {
         assert_eq!(L - 1, L1);
         // 0 is always a char boundary
@@ -104,19 +91,19 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
         pos: usize,
         string: &S,
         field: F,
-    ) -> Result<&mut Self, FormattedStringBuilderError>
+    ) -> Result<&mut Self, FormattedStringError>
     where
-        S: FormattedString<F, L1>,
+        S: FormattedStringLike<F, L1>,
     {
         assert_eq!(L - 1, L1);
         if pos > self.bytes.len() {
-            return Err(FormattedStringBuilderError::IndexOutOfBounds(pos));
+            return Err(FormattedStringError::IndexOutOfBounds(pos));
         }
         // bytes is valid UTF-8 precisely because we do this check before
         // insertion (and string is valid UTF-8)
         let current = unsafe { str::from_utf8_unchecked(&self.bytes) };
         if !current.is_char_boundary(pos) {
-            Err(FormattedStringBuilderError::PositionNotCharBoundary(
+            Err(FormattedStringError::PositionNotCharBoundary(
                 pos,
                 current.to_owned(),
             ))
@@ -128,7 +115,7 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
     // Precondition here is that pos is a char boundary and < buffer_len.
     fn insert_internal<S, const L1: usize>(&mut self, pos: usize, string: &S, field: F) -> &mut Self
     where
-        S: FormattedString<F, L1>,
+        S: FormattedStringLike<F, L1>,
     {
         assert_eq!(L - 1, L1);
         self.bytes.splice(pos..pos, string.as_ref().bytes());
@@ -151,22 +138,12 @@ impl<F: Copy, const L: usize> FormattedStringBuilder<F, L> {
         self
     }
 
-    pub fn build(self) -> ActualFormattedString<F, L> {
-        ActualFormattedString {
-            // bytes is valid UTF-8
-            string: unsafe { String::from_utf8_unchecked(self.bytes) },
-            annotations: self.annotations.into_boxed_slice(),
-        }
-    }
-}
-
-impl<F: Copy> ActualFormattedString<F, 1> {
     pub fn field_at(&self, pos: usize) -> F {
         self.fields_at(pos)[0]
     }
 }
 
-impl<F: Copy, const L: usize> Default for FormattedStringBuilder<F, L> {
+impl<F: Copy, const L: usize> Default for FormattedString<F, L> {
     fn default() -> Self {
         Self::new()
     }
@@ -186,12 +163,10 @@ mod test {
 
     #[test]
     fn test_basic() {
-        let mut builder = FormattedStringBuilder::<Field, 1>::new();
-        builder
-            .append(&"world", Field::Word)
+        let mut x = FormattedString::<Field, 1>::new();
+        x.append(&"world", Field::Word)
             .prepend(&" ", Field::Space)
             .prepend(&"hello", Field::Word);
-        let x = builder.build();
 
         assert_eq!(x.as_ref(), "hello world");
 
@@ -207,16 +182,13 @@ mod test {
 
     #[test]
     fn test_multi_level() {
-        let mut builder = FormattedStringBuilder::<Field, 1>::new();
-        builder
-            .append(&"world", Field::Word)
+        let mut x = FormattedString::<Field, 1>::new();
+        x.append(&"world", Field::Word)
             .prepend(&" ", Field::Space)
             .prepend(&"hello", Field::Word);
-        let x = builder.build();
 
-        let mut builder = FormattedStringBuilder::<Field, 2>::new();
-        builder.append(&x, Field::Greeting);
-        let y = builder.build();
+        let mut y = FormattedString::<Field, 2>::new();
+        y.append(&x, Field::Greeting);
 
         assert_eq!(y.as_ref(), "hello world");
         assert_eq!(y.fields_at(0), [Field::Greeting, Field::Word]);
@@ -224,16 +196,12 @@ mod test {
 
     #[test]
     fn test_multi_byte() {
-        let mut builder = FormattedStringBuilder::<Field, 1>::new();
-        builder.append(&"π", Field::Word);
+        let mut x = FormattedString::<Field, 1>::new();
+        x.append(&"π", Field::Word);
         assert_eq!(
-            builder
-                .insert(1, &"pi/2", Field::Word)
-                .unwrap_err()
-                .to_string(),
+            x.insert(1, &"pi/2", Field::Word).unwrap_err().to_string(),
             "attempted to insert at an index that is not a character boundary: 1 in \"π\""
         );
-        let x = builder.build();
 
         assert_eq!(x.as_ref(), "π");
         assert_eq!(x.field_at(0), Field::Word);
