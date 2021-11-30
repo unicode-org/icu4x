@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637859589794,
+  "lastUpdate": 1638239174591,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14459,6 +14459,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 135782,
             "range": "± 4648",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fcf248c8a8ff1c6da7e18800a21ee4c95a3b97ca",
+          "message": "Implement era formatting (#1346)\n\n* Add era field parsing\r\n\r\n* Handle eras in components bag\r\n\r\n* Apply era formatting\r\n\r\n* Add tests for buddhist date formatting",
+          "timestamp": "2021-11-29T18:18:45-08:00",
+          "tree_id": "2bc3073d9d69c2d89d93c86684541854e1c17582",
+          "url": "https://github.com/unicode-org/icu4x/commit/fcf248c8a8ff1c6da7e18800a21ee4c95a3b97ca"
+        },
+        "date": 1638239166868,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 127257,
+            "range": "± 10867",
             "unit": "ns/iter"
           }
         ]
