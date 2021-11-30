@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638239308467,
+  "lastUpdate": 1638309972584,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15539,6 +15539,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43902723,
             "range": "± 1727224",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5a49da1bb9022134ad07b8c754ed1070655d0bb",
+          "message": "Update principles.md to reflect current reality (#1335)",
+          "timestamp": "2021-11-30T13:59:19-08:00",
+          "tree_id": "7d3e972ddc4419775a4309436ea1022a674d3183",
+          "url": "https://github.com/unicode-org/icu4x/commit/e5a49da1bb9022134ad07b8c754ed1070655d0bb"
+        },
+        "date": 1638309965491,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 33825416,
+            "range": "± 25086",
             "unit": "ns/iter"
           }
         ]
