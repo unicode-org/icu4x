@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637859278686,
+  "lastUpdate": 1638236472610,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4493,6 +4493,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c7db0802d44dd9c79518a29712f63cbb8b2159d7"
         },
         "date": 1637859270722,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 909427,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd5eb4b373b48870b7ffd4dd19946fdcc46e2cd9",
+          "message": "Remove attach_to_option_cart() (#1348)",
+          "timestamp": "2021-11-29T17:39:44-08:00",
+          "tree_id": "dff9d68f81b1d9c112ea3ed080853f8f8b7f24be",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd5eb4b373b48870b7ffd4dd19946fdcc46e2cd9"
+        },
+        "date": 1638236464929,
         "tool": "ndjson",
         "benches": [
           {
