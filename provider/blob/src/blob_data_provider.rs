@@ -9,7 +9,6 @@ use alloc::string::String;
 use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
-use tinystr::tinystr8;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 use zerovec::map::ZeroMapBorrowed;
@@ -114,7 +113,7 @@ where
             })?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(tinystr8!("postcard"));
+        metadata.buffer_format = Some(icu_provider::serde::BufferFormat::Postcard07);
         Ok(DataResponse {
             metadata,
             payload: Some(payload),
@@ -135,7 +134,7 @@ impl SerdeDeDataProvider for BlobDataProvider {
         })?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(tinystr8!("postcard"));
+        metadata.buffer_format = Some(icu_provider::serde::BufferFormat::Postcard07);
         Ok(metadata)
     }
 }

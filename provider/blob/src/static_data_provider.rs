@@ -7,7 +7,6 @@ use crate::path_util;
 use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
-use tinystr::tinystr8;
 use zerovec::map::ZeroMapBorrowed;
 
 /// A data provider loading data statically baked in to the binary.
@@ -120,7 +119,7 @@ where
             .map_err(DataError::new_resc_error)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(tinystr8!("postcard"));
+        metadata.buffer_format = Some(icu_provider::serde::BufferFormat::Postcard07);
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned(data)),
@@ -140,7 +139,7 @@ impl SerdeDeDataProvider for StaticDataProvider {
         ))?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(tinystr8!("postcard"));
+        metadata.buffer_format = Some(icu_provider::serde::BufferFormat::Postcard07);
         Ok(metadata)
     }
 }

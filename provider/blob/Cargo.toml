@@ -35,7 +35,6 @@ erased-serde = { version = "0.3", default-features = false, features = ["alloc"]
 writeable = { version = "0.2", path = "../../utils/writeable" }
 yoke = { version = "0.3.1", path = "../../utils/yoke" }
 zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["serde", "yoke"] }
-tinystr = { version = "0.4", default-features = false, features = ["alloc"] }
 
 # For the export feature
 log = { version = "0.4", optional = true }
@@ -51,4 +50,4 @@ path = "src/lib.rs"
 
 [features]
 export = ["log", "postcard/alloc", "std", "litemap"]
-std = ["icu_locid/std", "icu_provider/std", "tinystr/std"]
+std = ["icu_locid/std", "icu_provider/std"]
