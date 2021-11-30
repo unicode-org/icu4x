@@ -256,20 +256,36 @@ impl GeneralCategory {
     ///
     /// assert_eq!(gc.get('A' as u32), GeneralSubcategory::UppercaseLetter);
     /// assert!(GeneralCategory::CasedLetter.contains(gc.get('A' as u32)));
-    /// assert_eq!(gc.get('𝔅' as u32), GeneralSubcategory::UppercaseLetter);  // U+1D505 MATHEMATICAL FRAKTUR CAPITAL B
+    ///
+    /// // U+1D505 MATHEMATICAL FRAKTUR CAPITAL B
+    /// assert_eq!(gc.get('𝔅' as u32), GeneralSubcategory::UppercaseLetter);
     /// assert!(GeneralCategory::Letter.contains(gc.get('𝔅' as u32)));
-    /// assert_eq!(gc.get(0x0301), GeneralSubcategory::NonspacingMark);  // U+0301 COMBINING ACUTE ACCENT
+    ///
+    /// // U+0301 COMBINING ACUTE ACCENT
+    /// assert_eq!(gc.get(0x0301), GeneralSubcategory::NonspacingMark);
     /// assert!(GeneralCategory::Mark.contains(gc.get(0x0301)));
+    /// assert!(!GeneralCategory::Letter.contains(gc.get(0x0301)));
+    ///
     /// assert_eq!(gc.get('0' as u32), GeneralSubcategory::DecimalNumber);
     /// assert!(GeneralCategory::Number.contains(gc.get('0' as u32)));
+    /// assert!(!GeneralCategory::Mark.contains(gc.get('0' as u32)));
+    ///
     /// assert_eq!(gc.get('(' as u32), GeneralSubcategory::OpenPunctuation);
     /// assert!(GeneralCategory::Punctuation.contains(gc.get('(' as u32)));
+    /// assert!(!GeneralCategory::Number.contains(gc.get('(' as u32)));
+    ///
     /// assert_eq!(gc.get('✓' as u32), GeneralSubcategory::OtherSymbol);
     /// assert!(GeneralCategory::Symbol.contains(gc.get('✓' as u32)));
+    /// assert!(!GeneralCategory::Punctuation.contains(gc.get('✓' as u32)));
+    ///
     /// assert_eq!(gc.get(' ' as u32), GeneralSubcategory::SpaceSeparator);
     /// assert!(GeneralCategory::Separator.contains(gc.get(' ' as u32)));
-    /// assert_eq!(gc.get(0xE007F), GeneralSubcategory::Format);  // U+E007F CANCEL TAG
+    /// assert!(!GeneralCategory::Symbol.contains(gc.get(' ' as u32)));
+    ///
+    /// // U+E007F CANCEL TAG
+    /// assert_eq!(gc.get(0xE007F), GeneralSubcategory::Format);
     /// assert!(GeneralCategory::Other.contains(gc.get(0xE007F)));
+    /// assert!(!GeneralCategory::Separator.contains(gc.get(0xE007F)));
     /// ```
     pub fn contains(&self, val: GeneralSubcategory) -> bool {
         0 != (1 << (val as u32)) & self.0
