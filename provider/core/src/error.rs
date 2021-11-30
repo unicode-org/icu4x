@@ -61,6 +61,9 @@ pub enum Error {
     #[displaydoc("Serde error: {0}")]
     Serde(erased_serde::Error),
 
+    #[displaydoc("Error while deserializing: {0}")]
+    Serde2(crate::serde::Error),
+
     /// The data provider encountered some other error when loading the resource, such as I/O.
     #[displaydoc("Failed to load resource: {0}")]
     Resource(String),
@@ -73,6 +76,12 @@ impl std::error::Error for Error {}
 impl From<erased_serde::Error> for Error {
     fn from(e: erased_serde::Error) -> Self {
         Error::Serde(e)
+    }
+}
+
+impl From<crate::serde::Error> for Error {
+    fn from(e: crate::serde::Error) -> Self {
+        Error::Serde2(e)
     }
 }
 

@@ -95,8 +95,8 @@ impl DataRequest {
 pub struct DataResponseMetadata {
     /// The language of the returned data, or None if the resource key isn't localized.
     pub data_langid: Option<LanguageIdentifier>,
-    /// The format of the buffer for buffer-backed data, if known (for example, "json").
-    pub buffer_format: Option<TinyStr8>,
+    /// The format of the buffer for buffer-backed data, if known (for example, JSON).
+    pub buffer_format: Option<crate::serde::BufferFormat>,
 }
 
 /// A container for data payloads returned from a [`DataProvider`].

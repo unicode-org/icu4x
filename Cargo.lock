@@ -1258,12 +1258,14 @@ dependencies = [
 name = "icu_provider"
 version = "0.4.0"
 dependencies = [
+ "bincode",
  "displaydoc",
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
  "icu_provider_macros",
  "litemap",
+ "postcard",
  "serde",
  "serde_json",
  "static_assertions",
@@ -1342,7 +1344,6 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "static_assertions",
- "tinystr",
 ]
 
 [[package]]
