@@ -38,3 +38,4 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std"]
 default = ["provider_serde"]
 provider_serde = ["serde"]
+provider_transform_internals = ["std"]

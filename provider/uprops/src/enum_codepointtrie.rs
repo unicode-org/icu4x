@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::uprops_helpers::{self, get_last_component_no_version, TomlEnumerated};
-use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
+use crate::uprops_serde::SerializedCodePointTrie;
 
 use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
 use icu_properties::provider::*;
@@ -36,24 +36,32 @@ impl EnumeratedPropertyCodePointTrieProvider {
 
 // public helper function for doing the TOML->CodePointTrie conversion within
 // the source data -> data struct conversion
-impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for CodePointTrie<'static, T> {
+impl TryFrom<&SerializedCodePointTrie> for CodePointTrieHeader {
     type Error = DataError;
 
-    fn try_from(
-        cpt_data: &EnumeratedPropertyCodePointTrie,
-    ) -> Result<CodePointTrie<'static, T>, Self::Error> {
+    fn try_from(cpt_data: &SerializedCodePointTrie) -> Result<Self, Self::Error> {
         let trie_type_enum: TrieType =
             TrieType::try_from(cpt_data.trie_type_enum_val).map_err(|e| {
                 DataError::custom("Could not parse TrieType in TOML").with_display_context(&e)
             })?;
-        let header = CodePointTrieHeader {
+        Ok(CodePointTrieHeader {
             high_start: cpt_data.high_start,
             shifted12_high_start: cpt_data.shifted12_high_start,
             index3_null_offset: cpt_data.index3_null_offset,
             data_null_offset: cpt_data.data_null_offset,
             null_value: cpt_data.null_value,
             trie_type: trie_type_enum,
-        };
+        })
+    }
+}
+
+impl<T: TrieValue> TryFrom<&SerializedCodePointTrie> for CodePointTrie<'static, T> {
+    type Error = DataError;
+
+    fn try_from(
+        cpt_data: &SerializedCodePointTrie,
+    ) -> Result<CodePointTrie<'static, T>, DataError> {
+        let header = CodePointTrieHeader::try_from(cpt_data)?;
         let index: ZeroVec<u16> = ZeroVec::alloc_from_slice(&cpt_data.index);
         let data: Result<ZeroVec<'static, T>, T::TryFromU32Error> =
             if let Some(data_8) = &cpt_data.data_8 {

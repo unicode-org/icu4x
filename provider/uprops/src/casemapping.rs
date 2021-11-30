@@ -5,7 +5,7 @@
 use crate::uprops_serde;
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMapping;
-use icu_codepointtrie::{CodePointTrieHeader, TrieType};
+use icu_codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
 
 use std::convert::TryFrom;
@@ -23,16 +23,7 @@ impl CaseMappingDataProvider {
         let toml: uprops_serde::case::Main = toml::from_str(&toml_str).unwrap();
 
         let trie_data = &toml.ucase.code_point_trie;
-        let trie_type: TrieType =
-            TrieType::try_from(trie_data.trie_type_enum_val).map_err(DataError::new_resc_error)?;
-        let trie_header = CodePointTrieHeader {
-            high_start: trie_data.high_start,
-            shifted12_high_start: trie_data.shifted12_high_start,
-            index3_null_offset: trie_data.index3_null_offset,
-            data_null_offset: trie_data.data_null_offset,
-            null_value: trie_data.null_value,
-            trie_type,
-        };
+        let trie_header = CodePointTrieHeader::try_from(trie_data)?;
         let trie_index = &trie_data.index;
         let trie_data = &trie_data.data_16.as_ref().ok_or_else(|| {
             DataError::new_resc_error(icu_codepointtrie::error::Error::FromDeserialized {

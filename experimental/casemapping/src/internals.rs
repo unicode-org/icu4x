@@ -253,7 +253,7 @@ enum CaseMappingExceptionSlot {
 
 impl CaseMappingExceptionSlot {
     fn contains_char(&self) -> bool {
-	matches!(self, Self::Lower | Self::Fold | Self::Upper | Self::Title)
+        matches!(self, Self::Lower | Self::Fold | Self::Upper | Self::Title)
     }
 }
 
@@ -285,13 +285,6 @@ impl<'data> CaseMappingExceptions<'data> {
     const FULL_MAPPINGS_LENGTH_SHIFT: u32 = 4;
 
     const CLOSURE_MAX_LENGTH: u32 = 0xf;
-
-    fn try_from_icu(raw: &[u16]) -> Result<(Self, Vec<u16>), Error> {
-        let raw = ZeroVec::alloc_from_slice(raw);
-        let exceptions = Self { raw };
-        let valid_indices = exceptions.validate()?;
-        Ok((exceptions, valid_indices))
-    }
 
     // Returns the array element at the given index
     #[inline(always)]
@@ -465,7 +458,7 @@ impl<'data> CaseMappingExceptions<'data> {
         if self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings) {
             let mapping_string = self
                 .full_mapping_string(base_idx, FullMapping::Fold)
-                .expect("No unpaired surrogates");
+                .expect("Data was validated on construction");
             if !mapping_string.is_empty() {
                 set.add_string(&mapping_string);
             }
@@ -474,7 +467,7 @@ impl<'data> CaseMappingExceptions<'data> {
         if self.has_slot(base_idx, CaseMappingExceptionSlot::Closure) {
             for c in self
                 .closure_string(base_idx)
-                .expect("No unpaired surrogates")
+                .expect("Data was validated on construction")
                 .chars()
             {
                 set.add_char(c);
@@ -482,6 +475,15 @@ impl<'data> CaseMappingExceptions<'data> {
         };
     }
 
+    #[cfg(feature = "provider_transform_internals")]
+    fn try_from_icu(raw: &[u16]) -> Result<(Self, Vec<u16>), Error> {
+        let raw = ZeroVec::alloc_from_slice(raw);
+        let exceptions = Self { raw };
+        let valid_indices = exceptions.validate()?;
+        Ok((exceptions, valid_indices))
+    }
+
+    #[cfg(feature = "provider_transform_internals")]
     fn validate(&self) -> Result<Vec<u16>, Error> {
         let mut valid_indices = vec![];
         let mut idx: u16 = 0;
@@ -552,6 +554,7 @@ impl<'data> CaseMappingExceptions<'data> {
     }
 }
 
+#[cfg(feature = "provider_transform_internals")]
 #[test]
 fn test_exception_validation() {
     let missing_slot_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16)];
@@ -621,6 +624,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
     //
     // Rust strings are UTF8 by default. To avoid the cost of converting from UTF16 on access,
     // we convert the ICU data into a more convenient format during construction.
+    #[cfg(feature = "provider_transform_internals")]
     fn try_from_icu(raw: &[u16]) -> Result<Self, Error> {
         const ROWS_INDEX: usize = 0;
         const ROW_WIDTH_INDEX: usize = 1;
@@ -657,6 +661,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
     }
 
     // Decode a zero-terminated UTF16 string from a slice of u16.
+    #[cfg(feature = "provider_transform_internals")]
     fn decode_string(slice: &[u16]) -> Option<String> {
         let iter = slice.iter().copied().take_while(|&c| c != 0);
         char::decode_utf16(iter).collect::<Result<String, _>>().ok()
@@ -710,6 +715,7 @@ pub struct CaseMapping<'data> {
 impl<'data> CaseMapping<'data> {
     /// Creates a new CaseMapping using data exported by the `icuexportdata` tool
     /// in ICU4C. Validates that the data is consistent.
+    #[cfg(feature = "provider_transform_internals")]
     pub fn try_from_icu(
         trie_header: CodePointTrieHeader,
         trie_index: &[u16],
