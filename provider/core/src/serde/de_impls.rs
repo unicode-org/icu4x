@@ -9,13 +9,10 @@ use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 
 /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
-#[allow(clippy::type_complexity)]
-pub fn deserialize<M>(
+pub fn deserialize<'data, M>(
+    bytes: &'data [u8],
     buffer_format: BufferFormat,
-) -> for<'de> fn(
-    bytes: &'de [u8],
-    buffer_format: BufferFormat,
-) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>
+) -> Result<<M::Yokeable as Yokeable<'data>>::Output, Error>
 where
     M: DataMarker,
     // Actual bound:
@@ -25,14 +22,14 @@ where
 {
     match buffer_format {
         #[cfg(feature = "provider_json")]
-        BufferFormat::Json => |bytes, _| {
+        BufferFormat::Json => {
             let mut d = serde_json::Deserializer::from_slice(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
-        },
+        }
 
         #[cfg(feature = "provider_bincode1")]
-        BufferFormat::Bincode1 => |bytes, _| {
+        BufferFormat::Bincode1 => {
             use bincode::Options;
             let options = bincode::DefaultOptions::new()
                 .with_fixint_encoding()
@@ -40,17 +37,17 @@ where
             let mut d = bincode::de::Deserializer::from_slice(bytes, options);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
-        },
+        }
 
         #[cfg(feature = "provider_postcard07")]
-        BufferFormat::Postcard07 => |bytes, _| {
+        BufferFormat::Postcard07 => {
             let mut d = postcard::Deserializer::from_bytes(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
-        },
+        }
 
         // Allowed for cases in which all features are enabled
         #[allow(unreachable_patterns)]
-        _ => |_, buffer_format| Err(Error::UnavailableFormat(buffer_format)),
+        _ => Err(Error::UnavailableFormat(buffer_format)),
     }
 }

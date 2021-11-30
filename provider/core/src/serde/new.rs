@@ -22,23 +22,24 @@ where
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         // TODO(#1077): Remove the `req.clone()` when we start taking `req` by value.
         let old_response = BufferProvider::load_buffer(&self.0, req.clone())?;
-        let buffer_format = old_response
-            .metadata
-            .buffer_format
-            .ok_or(Error::FormatNotSpecified)?;
-        let new_payload = match old_response.payload {
-            Some(p) => {
-                let p =
-                    p.try_map_project_with_capture(buffer_format, |bytes, buffer_format, _| {
-                        de_impls::deserialize::<M>(buffer_format)(bytes, buffer_format)
-                    })?;
-                Some(p)
-            }
-            None => None,
-        };
-        Ok(DataResponse {
-            metadata: old_response.metadata,
-            payload: new_payload,
-        })
+        if let Some(old_payload) = old_response.payload {
+            let buffer_format = old_response
+                .metadata
+                .buffer_format
+                .ok_or(Error::FormatNotSpecified)?;
+            let new_payload = old_payload
+                .try_map_project_with_capture(buffer_format, |bytes, buffer_format, _| {
+                    de_impls::deserialize::<M>(bytes, buffer_format)
+                })?;
+            Ok(DataResponse {
+                metadata: old_response.metadata,
+                payload: Some(new_payload),
+            })
+        } else {
+            Ok(DataResponse {
+                metadata: old_response.metadata,
+                payload: None,
+            })
+        }
     }
 }
