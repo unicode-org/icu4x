@@ -7,8 +7,8 @@ use crate::path_util;
 use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
-use zerovec::map::ZeroMapBorrowed;
 use tinystr::tinystr8;
+use zerovec::map::ZeroMapBorrowed;
 
 /// A data provider loading data statically baked in to the binary.
 ///

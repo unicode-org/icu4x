@@ -9,10 +9,10 @@ use alloc::string::String;
 use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
+use tinystr::tinystr8;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 use zerovec::map::ZeroMapBorrowed;
-use tinystr::tinystr8;
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
