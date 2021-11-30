@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1637859619197,
+  "lastUpdate": 1638237066534,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17957,6 +17957,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4992,
             "range": "± 43",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd5eb4b373b48870b7ffd4dd19946fdcc46e2cd9",
+          "message": "Remove attach_to_option_cart() (#1348)",
+          "timestamp": "2021-11-29T17:39:44-08:00",
+          "tree_id": "dff9d68f81b1d9c112ea3ed080853f8f8b7f24be",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd5eb4b373b48870b7ffd4dd19946fdcc46e2cd9"
+        },
+        "date": 1638237059105,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2871,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5043,
+            "range": "± 224",
             "unit": "ns/iter"
           }
         ]
