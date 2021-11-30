@@ -7,11 +7,16 @@
 mod new;
 mod old;
 
-#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
+pub use old::*;
+
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
 pub enum BufferFormat {
+    /// Serialize using JavaScript Object Notation (JSON).
     Json,
+    /// Serialize using Bincode version 1.
     Bincode1,
+    /// Serialize using Postcard version 0.7.
     Postcard07,
 }
 
@@ -65,5 +70,3 @@ impl From<postcard::Error> for Error {
         Error::Postcard07(e)
     }
 }
-
-pub use old::*;

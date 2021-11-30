@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::manifest::SyntaxOption;
 use displaydoc::Display;
+use icu_provider::serde::BufferFormat;
 use std::path::{Path, PathBuf};
 
 #[derive(Display, Debug)]
@@ -18,7 +18,7 @@ pub enum Error {
     #[displaydoc("Serializer error: {0}: {1:?}")]
     Serializer(erased_serde::Error, Option<PathBuf>),
     #[displaydoc("Unknown syntax {0:?}. Do you need to enable a feature?")]
-    UnknownSyntax(SyntaxOption),
+    UnknownSyntax(BufferFormat),
 }
 
 impl std::error::Error for Error {}

@@ -98,7 +98,7 @@ impl FilesystemExporter {
             root: options.root,
             manifest: Manifest {
                 aliasing: options.aliasing,
-                syntax: serializer.deref().clone(),
+                buffer_format: *serializer.deref(),
             },
             alias_collection: None,
             serializer,
@@ -136,7 +136,7 @@ impl FilesystemExporter {
         mut path_buf: PathBuf,
         obj: &dyn erased_serde::Serialize,
     ) -> Result<(), Error> {
-        let file_extension = self.serializer.get_file_extension();
+        let file_extension = self.manifest.get_file_extension();
         match self.manifest.aliasing {
             AliasOption::NoAliases => {
                 path_buf.set_extension(file_extension);

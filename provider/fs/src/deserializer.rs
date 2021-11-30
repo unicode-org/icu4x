@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::manifest::SyntaxOption;
 use displaydoc::Display;
 use icu_provider::prelude::*;
+use icu_provider::serde::BufferFormat;
 use icu_provider::serde::*;
 use icu_provider::yoke::trait_hack::YokeTraitHack;
 use icu_provider::yoke::Yokeable;
@@ -28,7 +28,7 @@ pub enum Error {
     DataProvider(DataError),
     #[allow(dead_code)]
     #[displaydoc("Unknown syntax: {0:?}")]
-    UnknownSyntax(SyntaxOption),
+    UnknownSyntax(BufferFormat),
 }
 
 impl std::error::Error for Error {}
@@ -95,25 +95,24 @@ macro_rules! get_bincode_deserializer_zc {
 }
 
 /// Returns an error if the syntax option is not supported.
-pub fn check_format_supported(syntax_option: &SyntaxOption) -> Result<(), crate::error::Error> {
+pub fn check_format_supported(buffer_format: BufferFormat) -> Result<(), crate::error::Error> {
     #[allow(unused_imports)]
     use crate::error::Error;
-    match syntax_option {
+    match buffer_format {
         #[cfg(feature = "provider_json")]
-        SyntaxOption::Json => Ok(()),
-        #[cfg(not(feature = "provider_json"))]
-        SyntaxOption::Json => Err(Error::UnknownSyntax(SyntaxOption::Json)),
+        BufferFormat::Json => Ok(()),
+
         #[cfg(feature = "provider_bincode")]
-        SyntaxOption::Bincode => Ok(()),
-        #[cfg(not(feature = "provider_bincode"))]
-        SyntaxOption::Bincode => Err(Error::UnknownSyntax(SyntaxOption::Bincode)),
+        BufferFormat::Bincode1 => Ok(()),
+
+        _ => Err(Error::UnknownSyntax(buffer_format)),
     }
 }
 
 /// Deserialize into a generic type ([`DataProvider`]). Covers all supported data formats.
 #[allow(clippy::type_complexity)]
 pub fn deserialize_zero_copy<'data, M>(
-    syntax_option: &SyntaxOption,
+    buffer_format: BufferFormat,
 ) -> for<'de> fn(bytes: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>
 where
     M: DataMarker,
@@ -122,23 +121,22 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    match syntax_option {
+    match buffer_format {
         #[cfg(feature = "provider_json")]
-        SyntaxOption::Json => |bytes| {
+        BufferFormat::Json => |bytes| {
             let mut d = get_json_deserializer_zc!(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         },
-        #[cfg(not(feature = "provider_json"))]
-        SyntaxOption::Json => |_| Err(Error::UnknownSyntax(SyntaxOption::Json)),
+
         #[cfg(feature = "provider_bincode")]
-        SyntaxOption::Bincode => |bytes| {
+        BufferFormat::Bincode1 => |bytes| {
             let mut d = get_bincode_deserializer_zc!(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         },
-        #[cfg(not(feature = "provider_bincode"))]
-        SyntaxOption::Bincode => |_| Err(Error::UnknownSyntax(SyntaxOption::Bincode)),
+
+        _ => |_| Err(Error::UnknownSyntax(todo!("will be deleted soon"))),
     }
 }
 
@@ -147,29 +145,28 @@ where
 #[allow(unused_variables)]
 pub fn deserialize_into_receiver(
     rc_buffer: Rc<[u8]>,
-    syntax_option: &SyntaxOption,
+    buffer_format: BufferFormat,
     receiver: &mut dyn SerdeDeDataReceiver,
 ) -> Result<(), Error> {
-    match syntax_option {
+    match buffer_format {
         #[cfg(feature = "provider_json")]
-        SyntaxOption::Json => {
+        BufferFormat::Json => {
             receiver.receive_rc_buffer(rc_buffer, |bytes, f2| {
                 let mut d = get_json_deserializer_zc!(bytes);
                 f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
             })?;
             Ok(())
         }
-        #[cfg(not(feature = "provider_json"))]
-        SyntaxOption::Json => Err(Error::UnknownSyntax(SyntaxOption::Json)),
+
         #[cfg(feature = "provider_bincode")]
-        SyntaxOption::Bincode => {
+        BufferFormat::Bincode1 => {
             receiver.receive_rc_buffer(rc_buffer, |bytes, f2| {
                 let mut d = get_bincode_deserializer_zc!(bytes);
                 f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
             })?;
             Ok(())
         }
-        #[cfg(not(feature = "provider_bincode"))]
-        SyntaxOption::Bincode => Err(Error::UnknownSyntax(SyntaxOption::Bincode)),
+
+        _ => Err(Error::UnknownSyntax(buffer_format)),
     }
 }

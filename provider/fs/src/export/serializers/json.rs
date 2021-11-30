@@ -4,7 +4,7 @@
 
 use super::AbstractSerializer;
 use super::Error;
-use crate::manifest::SyntaxOption;
+use icu_provider::serde::BufferFormat;
 use std::io::{self, Write};
 use std::ops::Deref;
 
@@ -62,7 +62,7 @@ pub enum StyleOption {
 
 /// A serializer for JavaScript Object Notation (JSON).
 pub struct Serializer {
-    syntax: SyntaxOption,
+    syntax: BufferFormat,
     style: StyleOption,
 }
 
@@ -83,7 +83,7 @@ impl Default for Options {
 }
 
 impl Deref for Serializer {
-    type Target = SyntaxOption;
+    type Target = BufferFormat;
 
     fn deref(&self) -> &Self::Target {
         &self.syntax
@@ -118,7 +118,7 @@ impl AbstractSerializer for Serializer {
 impl Serializer {
     pub fn new(options: Options) -> Self {
         Self {
-            syntax: SyntaxOption::Json,
+            syntax: BufferFormat::Json,
             style: options.style,
         }
     }

@@ -4,8 +4,6 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use yoke::trait_hack::YokeTraitHack;
-use yoke::Yokeable;
 
 pub struct BufferMarker {}
 

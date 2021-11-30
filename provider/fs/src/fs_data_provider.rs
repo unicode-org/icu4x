@@ -53,7 +53,7 @@ impl FsDataProvider {
         let manifest: Manifest = serde_json_core::from_str(&manifest_str)
             .map(|(obj, _)| obj)
             .map_err(|e| (e, &manifest_path))?;
-        deserializer::check_format_supported(&manifest.syntax)?;
+        deserializer::check_format_supported(manifest.buffer_format)?;
         Ok(Self {
             res_root: root_path_buf,
             manifest,
@@ -65,7 +65,7 @@ impl FsDataProvider {
         let mut path_buf = self.res_root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         if req.resource_path.options.is_empty() {
-            path_buf.set_extension(self.manifest.syntax.get_file_extension());
+            path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
             return Err(Error::MissingResourceKey(req.resource_path.key));
@@ -73,7 +73,7 @@ impl FsDataProvider {
         if !req.resource_path.options.is_empty() {
             // TODO: Implement proper locale fallback
             path_buf.extend(req.resource_path.options.get_components().iter());
-            path_buf.set_extension(self.manifest.syntax.get_file_extension());
+            path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
             return Err(Error::MissingResourceOptions(req.clone()));
@@ -109,13 +109,13 @@ where
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(self.manifest.syntax.get_buffer_format());
+        metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {
             metadata,
             payload: Some(
                 DataPayload::try_from_rc_buffer(
                     rc_buffer,
-                    deserializer::deserialize_zero_copy::<M>(&self.manifest.syntax),
+                    deserializer::deserialize_zero_copy::<M>(self.manifest.buffer_format),
                 )
                 .map_err(|e: deserializer::Error| e.into_resource_error(&path_buf))?,
             ),
@@ -130,11 +130,11 @@ impl SerdeDeDataProvider for FsDataProvider {
         receiver: &mut dyn SerdeDeDataReceiver,
     ) -> Result<DataResponseMetadata, DataError> {
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
-        deserializer::deserialize_into_receiver(rc_buffer, &self.manifest.syntax, receiver)
+        deserializer::deserialize_into_receiver(rc_buffer, self.manifest.buffer_format, receiver)
             .map_err(|err| err.into_resource_error(&path_buf))?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(self.manifest.syntax.get_buffer_format());
+        metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(metadata)
     }
 }

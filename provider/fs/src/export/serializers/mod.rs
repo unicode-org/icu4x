@@ -7,8 +7,8 @@ pub mod json;
 #[cfg(feature = "provider_bincode")]
 pub mod bincode;
 
-use crate::manifest::SyntaxOption;
 use displaydoc::Display;
+use icu_provider::serde::BufferFormat;
 use std::io;
 use std::ops::Deref;
 
@@ -36,7 +36,8 @@ impl From<erased_serde::Error> for Error {
 }
 
 /// A simple serializer trait that works on whole objects.
-pub trait AbstractSerializer: Deref<Target = SyntaxOption> {
+/// TODO: This shouldn't be Deref.
+pub trait AbstractSerializer: Deref<Target = BufferFormat> {
     /// Serializes an object to a sink.
     fn serialize(
         &self,

@@ -4,14 +4,14 @@
 
 use super::AbstractSerializer;
 use super::Error;
-use crate::manifest::SyntaxOption;
 use bincode::config::Options as _;
+use icu_provider::serde::BufferFormat;
 use std::io;
 use std::ops::Deref;
 
 /// A serializer for Bincode.
 pub struct Serializer {
-    syntax: SyntaxOption,
+    syntax: BufferFormat,
 }
 
 /// Options bag for initializing a [`bincode::Serializer`].
@@ -26,7 +26,7 @@ impl Default for Options {
 }
 
 impl Deref for Serializer {
-    type Target = SyntaxOption;
+    type Target = BufferFormat;
 
     fn deref(&self) -> &Self::Target {
         &self.syntax
@@ -52,7 +52,7 @@ impl AbstractSerializer for Serializer {
 impl Serializer {
     pub fn new(_options: Options) -> Self {
         Self {
-            syntax: SyntaxOption::Bincode,
+            syntax: BufferFormat::Bincode1,
         }
     }
 }
