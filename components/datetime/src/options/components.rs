@@ -120,8 +120,20 @@ impl Bag {
     /// the UTS 35 table - https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
     pub(crate) fn to_vec_fields(&self) -> Vec<Field> {
         let mut fields = Vec::new();
-        if let Some(_era) = self.era {
-            unimplemented!("FieldSymbol::Era is needed. See issue #486.")
+        if let Some(era) = self.era {
+            fields.push(Field {
+                symbol: FieldSymbol::Era,
+                length: match era {
+                    // Era name, format length.
+                    //
+                    // G..GGG  AD           Abbreviated
+                    // GGGG    Anno Domini  Wide
+                    // GGGGG   A            Narrow
+                    Text::Short => FieldLength::Abbreviated,
+                    Text::Long => FieldLength::Wide,
+                    Text::Narrow => FieldLength::Narrow,
+                },
+            })
         }
 
         if let Some(year) = self.year {

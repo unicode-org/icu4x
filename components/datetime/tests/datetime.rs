@@ -7,7 +7,7 @@
 mod fixtures;
 mod patterns;
 
-use icu_calendar::Gregorian;
+use icu_calendar::{buddhist::Buddhist, AsCalendar, DateTime, Gregorian};
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
@@ -16,7 +16,7 @@ use icu_datetime::{
         key::{DATE_PATTERNS_V1, DATE_SKELETON_PATTERNS_V1, DATE_SYMBOLS_V1},
     },
     time_zone::TimeZoneFormat,
-    DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
+    CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::provider::PluralRulesV1Marker;
@@ -83,6 +83,7 @@ fn test_fixture(fixture_name: &str) {
     {
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
+        let input_buddhist = input_value.to_calendar(Buddhist);
 
         let description = match fx.description {
             Some(description) => {
@@ -94,25 +95,61 @@ fn test_fixture(fixture_name: &str) {
             None => format!("\n  file: {}.json\n", fixture_name),
         };
         for (locale, output_value) in fx.output.values.into_iter() {
-            let locale: Locale = locale.parse().unwrap();
-            let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options).unwrap();
-            let result = dtf.format_to_string(&input_value);
-
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            dtf.format_to_write(&mut s, &input_value).unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = dtf.format(&input_value);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            if let Some(locale) = locale.strip_prefix("buddhist/") {
+                assert_fixture_element(
+                    locale,
+                    &input_buddhist,
+                    &output_value,
+                    &provider,
+                    &options,
+                    &description,
+                )
+            } else {
+                assert_fixture_element(
+                    &locale,
+                    &input_value,
+                    &output_value,
+                    &provider,
+                    &options,
+                    &description,
+                )
+            }
         }
     }
+}
+
+fn assert_fixture_element<A, D>(
+    locale: &str,
+    input_value: &DateTime<A>,
+    output_value: &str,
+    provider: &D,
+    options: &DateTimeFormatOptions,
+    description: &str,
+) where
+    A: AsCalendar,
+    A::Calendar: CldrCalendar,
+    D: DataProvider<DateSymbolsV1Marker>
+        + DataProvider<DatePatternsV1Marker>
+        + DataProvider<DateSkeletonPatternsV1Marker>
+        + DataProvider<PluralRulesV1Marker>,
+{
+    let locale: Locale = locale.parse().unwrap();
+    let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, options).unwrap();
+    let result = dtf.format_to_string(input_value);
+
+    assert_eq!(result, output_value, "{}", description);
+
+    let mut s = String::new();
+    dtf.format_to_write(&mut s, input_value).unwrap();
+    assert_eq!(s, output_value, "{}", description);
+
+    let fdt = dtf.format(input_value);
+    let s = fdt.to_string();
+    assert_eq!(s, output_value, "{}", description);
+
+    let mut s = String::new();
+    write!(s, "{}", fdt).unwrap();
+    assert_eq!(s, output_value, "{}", description);
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
@@ -433,6 +470,13 @@ fn test_length_fixtures() {
 fn test_lengths_with_preferences() {
     // components/datetime/tests/fixtures/tests/lengths_with_preferences.json
     test_fixture("lengths_with_preferences");
+}
+
+/// Tests simple component::Bag.
+#[test]
+fn test_components() {
+    // components/datetime/tests/fixtures/tests/components.json
+    test_fixture("components");
 }
 
 /// Tests component::Bag configurations that have exact matches to CLDR skeletons.

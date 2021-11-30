@@ -7,6 +7,7 @@
                     "weekday": "long",
                     "month": "long",
                     "day": "two-digit",
+                    "era": "long",
                     "year": "numeric",
                     "hour": "numeric",
                     "minute": "numeric",
@@ -16,7 +17,8 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020 at 8:25:07 AM"
+                "en": "Tuesday, January 21, 2020 Anno Domini at 08:25:07",
+                "buddhist/en": "Tuesday, January 21, 2563 BE at 08:25:07"
             }
         }
     }

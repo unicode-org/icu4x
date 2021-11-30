@@ -269,7 +269,8 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             //  - Time examples: "EBhm" "EBhms" "Ed" "Ehm" "EHm" "Ehms" "EHms"
             //  - Date examples: "GyMMMEd" "MEd" "MMMEd" "MMMMEd" "yMEd" "yMMMEd"
             //  - Solo example: "E"
-            FieldSymbol::Year(_)
+            FieldSymbol::Era
+            | FieldSymbol::Year(_)
             | FieldSymbol::Month(_)
             | FieldSymbol::Week(_)
             | FieldSymbol::Day(_)

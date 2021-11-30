@@ -39,6 +39,7 @@ pub struct Field {
 impl Field {
     pub(crate) fn get_length_type(&self) -> TextOrNumeric {
         match self.symbol {
+            FieldSymbol::Era => TextOrNumeric::Text,
             FieldSymbol::Year(year) => year.get_length_type(self.length),
             FieldSymbol::Month(month) => month.get_length_type(self.length),
             FieldSymbol::Week(week) => week.get_length_type(self.length),

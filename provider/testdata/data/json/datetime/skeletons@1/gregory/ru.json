@@ -1,4 +1,9 @@
 {
+  "Gy": "y г. G",
+  "GyMd": "dd.MM.y GGGGG",
+  "GyMMM": "LLL y г. G",
+  "GyMMMd": "d MMM y г. G",
+  "GyMMMdE": "E, d MMM y г. G",
   "y": "y",
   "yM": "MM.y",
   "yMd": "dd.MM.y",
