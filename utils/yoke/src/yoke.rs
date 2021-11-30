@@ -464,51 +464,6 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         }
     }
 
-    /// Similar to [`Yoke::attach_to_cart()`], except it constructs a `Yoke<Y, Option<C>>`
-    /// instead, where the cart is `Some(..)`.
-    ///
-    /// This allows mixing [`Yoke`]s constructed from owned and borrowed data, when
-    /// paired with [`Yoke::new_owned()`].
-    ///
-    /// This method is currently unusable due to a [compiler bug](https://github.com/rust-lang/rust/issues/84937),
-    /// use [`Yoke::attach_to_option_cart_badly()`] instead
-    pub fn attach_to_option_cart<F>(cart: C, f: F) -> Self
-    where
-        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
-    {
-        let deserialized = f(cart.deref());
-        Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart: Some(cart),
-        }
-    }
-    /// Temporary version of [`Yoke::attach_to_option_cart()`]
-    /// that doesn't hit <https://github.com/rust-lang/rust/issues/84937>
-    ///
-    /// See its docs for more details
-    pub fn attach_to_option_cart_badly(
-        cart: C,
-        f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
-    ) -> Self {
-        let deserialized = f(cart.deref());
-        Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart: Some(cart),
-        }
-    }
-
-    /// Version of [`Yoke::attach_to_option_cart()`] that passes through an error.
-    pub fn try_attach_to_option_cart<E, F>(cart: C, f: F) -> Result<Self, E>
-    where
-        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
-    {
-        let deserialized = f(cart.deref())?;
-        Ok(Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart: Some(cart),
-        })
-    }
-
     /// Obtain the yokeable out of a `Yoke<Y, Option<C>>` if possible.
     ///
     /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,
