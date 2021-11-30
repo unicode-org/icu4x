@@ -253,10 +253,7 @@ enum CaseMappingExceptionSlot {
 
 impl CaseMappingExceptionSlot {
     fn contains_char(&self) -> bool {
-        match self {
-            Self::Lower | Self::Fold | Self::Upper | Self::Title => true,
-            _ => false,
-        }
+	matches!(self, Self::Lower | Self::Fold | Self::Upper | Self::Title)
     }
 }
 
@@ -512,7 +509,7 @@ impl<'data> CaseMappingExceptions<'data> {
             ] {
                 if self.has_slot(idx, slot) {
                     let val = self.slot_value(idx, slot);
-                    if !char::from_u32(val).is_some() {
+                    if char::from_u32(val).is_none() {
                         return Error::invalid("Exceptions: invalid char slot");
                     }
                 }
@@ -652,7 +649,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
                 .ok_or(Error::Validation("Unfold: unpaired surrogate in key"))?;
             let val = Self::decode_string(&row[string_width..])
                 .ok_or(Error::Validation("Unfold: unpaired surrogate in value"))?;
-            if let Some(_) = map.try_append(key.as_ref(), val.as_ref()) {
+            if map.try_append(key.as_ref(), val.as_ref()).is_some() {
                 return Error::invalid("Unfold: keys not sorted/unique");
             }
         }
@@ -661,7 +658,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
 
     // Decode a zero-terminated UTF16 string from a slice of u16.
     fn decode_string(slice: &[u16]) -> Option<String> {
-        let iter = slice.iter().map(|&c| c).take_while(|&c| c != 0);
+        let iter = slice.iter().copied().take_while(|&c| c != 0);
         char::decode_utf16(iter).collect::<Result<String, _>>().ok()
     }
 

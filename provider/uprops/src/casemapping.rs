@@ -195,7 +195,7 @@ mod tests {
         assert_eq!(closure.strings(), vec![String::from("ss")]);
         closure.clear();
 
-	case_mapping.add_string_case_closure("ss", &mut closure);
+        case_mapping.add_string_case_closure("ss", &mut closure);
         assert_eq!(closure.chars(), vec!['\u{df}', '\u{1e9e}']); // lowercase and uppercase sharp s
         assert_eq!(closure.strings(), vec![String::from("ss")]);
         closure.clear();
