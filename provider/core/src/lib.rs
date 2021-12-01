@@ -137,6 +137,9 @@ pub use error::Error as DataError;
 
 pub mod prelude {
     //! Core selection of APIs and structures for [`DataProvider`].
+    pub use crate::buffer_provider::BufferMarker;
+    pub use crate::buffer_provider::BufferProvider;
+    pub use crate::buffer_provider::SerdeBufferProvider;
     pub use crate::data_provider::DataPayload;
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;

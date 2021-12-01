@@ -6,6 +6,7 @@
 #[cfg(feature = "serde")]
 mod test;
 
+use crate::buffer_provider::BufferMarker;
 use crate::error::Error;
 use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
@@ -797,6 +798,14 @@ where
         Ok(DataPayload {
             yoke: self.yoke.try_project_cloned_with_capture(capture, f)?,
         })
+    }
+}
+
+impl DataPayload<BufferMarker> {
+    pub fn from_rc_buffer(buffer: Rc<[u8]>) -> Self {
+        Self {
+            yoke: Yoke::attach_to_rc_cart(buffer).wrap_cart_in_option(),
+        }
     }
 }
 
