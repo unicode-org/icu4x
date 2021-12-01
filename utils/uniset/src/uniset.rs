@@ -348,7 +348,7 @@ impl<'data> UnicodeSet<'data> {
     /// Checks to see the query is in the [`UnicodeSet`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using [`std`] implementation
+    /// in the set using [`core`] implementation
     ///
     /// # Examples
     ///
@@ -371,7 +371,7 @@ impl<'data> UnicodeSet<'data> {
     /// the range from 0 to the maximum valid Unicode Scalar Value.
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using [`std`] implementation
+    /// in the set using [`core`] implementation
     ///
     /// # Examples
     ///
