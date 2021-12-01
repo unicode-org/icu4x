@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638310059471,
+  "lastUpdate": 1638379158451,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13997,6 +13997,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 342066,
             "range": "± 12675",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "910cf452e290e040ea087a1e2f39a3a429990117",
+          "message": "Add GC predicate functions (#1310)",
+          "timestamp": "2021-12-01T09:11:30-08:00",
+          "tree_id": "fa63e1087cfbe9d56b457f0808369c4438a64fb2",
+          "url": "https://github.com/unicode-org/icu4x/commit/910cf452e290e040ea087a1e2f39a3a429990117"
+        },
+        "date": 1638379150606,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 140506,
+            "range": "± 7130",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1650921,
+            "range": "± 83459",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 419263,
+            "range": "± 59508",
             "unit": "ns/iter"
           }
         ]
