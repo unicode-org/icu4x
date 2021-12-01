@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638310039344,
+  "lastUpdate": 1638379150987,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20369,6 +20369,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18880,
             "range": "± 146",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "910cf452e290e040ea087a1e2f39a3a429990117",
+          "message": "Add GC predicate functions (#1310)",
+          "timestamp": "2021-12-01T09:11:30-08:00",
+          "tree_id": "fa63e1087cfbe9d56b457f0808369c4438a64fb2",
+          "url": "https://github.com/unicode-org/icu4x/commit/910cf452e290e040ea087a1e2f39a3a429990117"
+        },
+        "date": 1638379142747,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1184,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5776,
+            "range": "± 413",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21112,
+            "range": "± 1507",
             "unit": "ns/iter"
           }
         ]
