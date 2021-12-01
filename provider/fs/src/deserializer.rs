@@ -136,6 +136,8 @@ where
             Ok(data.0)
         },
 
+        // This will be deleted soon
+        #[allow(unreachable_code)]
         _ => |_| Err(Error::UnknownSyntax(todo!("will be deleted soon"))),
     }
 }
