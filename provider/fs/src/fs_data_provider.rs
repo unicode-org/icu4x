@@ -109,7 +109,6 @@ impl BufferProvider for FsDataProvider {
     }
 }
 
-/// Note: This impl returns `'static` payloads because borrowing is handled by [`Yoke`].
 impl<M> DataProvider<M> for FsDataProvider
 where
     M: DataMarker,
