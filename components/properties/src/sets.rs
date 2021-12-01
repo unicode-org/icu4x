@@ -1477,7 +1477,7 @@ where
         GeneralCategory::EnclosingMark => key::GENERAL_CATEGORY_ENCLOSING_MARK_V1,
         GeneralCategory::NonspacingMark => key::GENERAL_CATEGORY_NONSPACING_MARK_V1,
         GeneralCategory::Number => key::GENERAL_CATEGORY_NUMBER_V1,
-        GeneralCategory::Digit => key::GENERAL_CATEGORY_DIGIT_V1,
+        GeneralCategory::DecimalNumber => key::GENERAL_CATEGORY_DIGIT_V1,
         GeneralCategory::LetterNumber => key::GENERAL_CATEGORY_LETTER_NUMBER_V1,
         GeneralCategory::OtherNumber => key::GENERAL_CATEGORY_OTHER_NUMBER_V1,
         GeneralCategory::Punctuation => key::GENERAL_CATEGORY_PUNCTUATION_V1,

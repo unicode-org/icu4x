@@ -64,7 +64,7 @@ pub enum GeneralSubcategory {
     EnclosingMark = 7,
 
     /// A decimal digit
-    Digit = 9,
+    DecimalNumber = 9,
     /// A letterlike numeric character
     LetterNumber = 10,
     /// A numeric character of other type
@@ -166,13 +166,13 @@ impl GeneralCategory {
         | 1 << (GS::SpacingMark as u32));
 
     /// (`Nd`) A decimal digit
-    pub const Digit: GeneralCategory = GC(1 << (GS::Digit as u32));
+    pub const DecimalNumber: GeneralCategory = GC(1 << (GS::DecimalNumber as u32));
     /// (`Nl`) A letterlike numeric character
     pub const LetterNumber: GeneralCategory = GC(1 << (GS::LetterNumber as u32));
     /// (`No`) A numeric character of other type
     pub const OtherNumber: GeneralCategory = GC(1 << (GS::OtherNumber as u32));
     /// (`N`) The union of all number categories
-    pub const Number: GeneralCategory = GC(1 << (GS::Digit as u32)
+    pub const Number: GeneralCategory = GC(1 << (GS::DecimalNumber as u32)
         | 1 << (GS::LetterNumber as u32)
         | 1 << (GS::OtherNumber as u32));
 
@@ -240,6 +240,57 @@ impl GeneralCategory {
         | 1 << (GS::CurrencySymbol as u32)
         | 1 << (GS::ModifierSymbol as u32)
         | 1 << (GS::OtherSymbol as u32));
+
+    /// Return whether the code point belongs in the provided multi-value category.
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralSubcategory, GeneralCategory};
+    /// use icu_codepointtrie::CodePointTrie;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let payload =
+    ///     maps::get_general_category(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let gc = &data_struct.code_point_trie;
+    ///
+    /// assert_eq!(gc.get('A' as u32), GeneralSubcategory::UppercaseLetter);
+    /// assert!(GeneralCategory::CasedLetter.contains(gc.get('A' as u32)));
+    ///
+    /// // U+0B1E ORIYA LETTER NYA
+    /// assert_eq!(gc.get('ଞ' as u32), GeneralSubcategory::OtherLetter);
+    /// assert!(GeneralCategory::Letter.contains(gc.get('ଞ' as u32)));
+    /// assert!(!GeneralCategory::CasedLetter.contains(gc.get('ଞ' as u32)));
+    ///
+    /// // U+0301 COMBINING ACUTE ACCENT
+    /// assert_eq!(gc.get(0x0301), GeneralSubcategory::NonspacingMark);
+    /// assert!(GeneralCategory::Mark.contains(gc.get(0x0301)));
+    /// assert!(!GeneralCategory::Letter.contains(gc.get(0x0301)));
+    ///
+    /// assert_eq!(gc.get('0' as u32), GeneralSubcategory::DecimalNumber);
+    /// assert!(GeneralCategory::Number.contains(gc.get('0' as u32)));
+    /// assert!(!GeneralCategory::Mark.contains(gc.get('0' as u32)));
+    ///
+    /// assert_eq!(gc.get('(' as u32), GeneralSubcategory::OpenPunctuation);
+    /// assert!(GeneralCategory::Punctuation.contains(gc.get('(' as u32)));
+    /// assert!(!GeneralCategory::Number.contains(gc.get('(' as u32)));
+    ///
+    /// assert_eq!(gc.get('✓' as u32), GeneralSubcategory::OtherSymbol);
+    /// assert!(GeneralCategory::Symbol.contains(gc.get('✓' as u32)));
+    /// assert!(!GeneralCategory::Punctuation.contains(gc.get('✓' as u32)));
+    ///
+    /// assert_eq!(gc.get(' ' as u32), GeneralSubcategory::SpaceSeparator);
+    /// assert!(GeneralCategory::Separator.contains(gc.get(' ' as u32)));
+    /// assert!(!GeneralCategory::Symbol.contains(gc.get(' ' as u32)));
+    ///
+    /// // U+E007F CANCEL TAG
+    /// assert_eq!(gc.get(0xE007F), GeneralSubcategory::Format);
+    /// assert!(GeneralCategory::Other.contains(gc.get(0xE007F)));
+    /// assert!(!GeneralCategory::Separator.contains(gc.get(0xE007F)));
+    /// ```
+    pub fn contains(&self, val: GeneralSubcategory) -> bool {
+        0 != (1 << (val as u32)) & self.0
+    }
 }
 
 impl From<GeneralSubcategory> for GeneralCategory {
