@@ -39,26 +39,28 @@ impl<F: Copy> FormattedStringLike<F, 0> for &str {
 
 /// A string with L levels of formatting annotations.
 #[derive(Debug, PartialEq)]
-pub struct FormattedString<F: Copy, const L: usize> {
+pub struct LayeredFormattedString<F: Copy, const L: usize> {
     // bytes is always valid UTF-8, so from_utf8_unchecked is safe
     bytes: Vec<u8>,
     // The first dimension corresponds to the bytes, the second are the L levels of annotations
     annotations: Vec<[(LocationInPart, F); L]>,
 }
 
-impl<F: Copy, const L: usize> AsRef<str> for FormattedString<F, L> {
+pub type FormattedString<F> = LayeredFormattedString<F, 1>;
+
+impl<F: Copy, const L: usize> AsRef<str> for LayeredFormattedString<F, L> {
     fn as_ref(&self) -> &str {
         unsafe { &str::from_utf8_unchecked(&self.bytes) }
     }
 }
 
-impl<F: Copy, const L: usize> FormattedStringLike<F, L> for FormattedString<F, L> {
+impl<F: Copy, const L: usize> FormattedStringLike<F, L> for LayeredFormattedString<F, L> {
     fn annotation_at(&self, pos: usize) -> &[(LocationInPart, F); L] {
         &self.annotations[pos]
     }
 }
 
-impl<F: Copy, const L: usize> FormattedString<F, L> {
+impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
     pub fn new() -> Self {
         // A FormattedString with 0 annotations doesn't make sense.
         assert!(L > 0);
@@ -143,7 +145,7 @@ impl<F: Copy, const L: usize> FormattedString<F, L> {
     }
 }
 
-impl<F: Copy, const L: usize> Default for FormattedString<F, L> {
+impl<F: Copy, const L: usize> Default for LayeredFormattedString<F, L> {
     fn default() -> Self {
         Self::new()
     }
@@ -163,7 +165,7 @@ mod test {
 
     #[test]
     fn test_basic() {
-        let mut x = FormattedString::<Field, 1>::new();
+        let mut x = FormattedString::<Field>::new();
         x.append(&"world", Field::Word)
             .prepend(&" ", Field::Space)
             .prepend(&"hello", Field::Word);
@@ -182,12 +184,12 @@ mod test {
 
     #[test]
     fn test_multi_level() {
-        let mut x = FormattedString::<Field, 1>::new();
+        let mut x = FormattedString::<Field>::new();
         x.append(&"world", Field::Word)
             .prepend(&" ", Field::Space)
             .prepend(&"hello", Field::Word);
 
-        let mut y = FormattedString::<Field, 2>::new();
+        let mut y = LayeredFormattedString::<Field, 2>::new();
         y.append(&x, Field::Greeting);
 
         assert_eq!(y.as_ref(), "hello world");
@@ -196,7 +198,7 @@ mod test {
 
     #[test]
     fn test_multi_byte() {
-        let mut x = FormattedString::<Field, 1>::new();
+        let mut x = FormattedString::<Field>::new();
         x.append(&"π", Field::Word);
         assert_eq!(
             x.insert(1, &"pi/2", Field::Word).unwrap_err().to_string(),
