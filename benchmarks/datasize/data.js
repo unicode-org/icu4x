@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638309665345,
+  "lastUpdate": 1638378780636,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4583,6 +4583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e5a49da1bb9022134ad07b8c754ed1070655d0bb"
         },
         "date": 1638309655395,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916111,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "910cf452e290e040ea087a1e2f39a3a429990117",
+          "message": "Add GC predicate functions (#1310)",
+          "timestamp": "2021-12-01T09:11:30-08:00",
+          "tree_id": "fa63e1087cfbe9d56b457f0808369c4438a64fb2",
+          "url": "https://github.com/unicode-org/icu4x/commit/910cf452e290e040ea087a1e2f39a3a429990117"
+        },
+        "date": 1638378773357,
         "tool": "ndjson",
         "benches": [
           {
