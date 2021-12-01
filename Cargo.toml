@@ -34,6 +34,7 @@ members = [
     "tools/benchmark/binsize",
     "tools/datagen",
     "utils/codepointtrie",
+    "utils/deduplicating_array",
     "utils/fixed_decimal",
     "utils/litemap",
     "utils/pattern",

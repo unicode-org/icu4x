@@ -480,6 +480,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "deduplicating_array"
+version = "0.5.0"
+dependencies = [
+ "postcard",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "derivative"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1146,6 +1155,7 @@ name = "icu_list"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "deduplicating_array",
  "displaydoc",
  "formatted_string_builder",
  "icu_locid",

@@ -1,0 +1,37 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "deduplicating_array"
+description = "A serde serializtion strategy that uses PartialEq to reduce serialized size."
+version = "0.5.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+serde = { version = "1.0", default-features = false, features = ["alloc", "derive"] }
+
+[dev-dependencies]
+serde_json = "1.0"
+postcard = { version = "0.7", features = ["use-std"] }
+
+[features]
+bench = []
+std = []
+
+[[example]]
+name = "postcard"
