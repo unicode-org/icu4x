@@ -481,6 +481,24 @@ impl Script {
     pub const ZanabazarSquare: Script = Script(177);
 }
 
+/// An internal-use only pseudo-property that represents the values stored in
+/// the trie of the special data structure [`ScriptExtensions`].
+/// 
+/// Note: The will assume a 12-bit layout. The 2 higher order bits in positions
+/// 11..10 will indicate how to deduce the Script value and Script_Extensions,
+/// and the lower 10 bits 9..0 indicate either the Script value or the index
+/// into the `extensions` structure.
+#[derive(Copy, Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[repr(transparent)]
+pub(crate) struct ScriptWithExt(pub u16);
+
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl ScriptWithExt {
+    pub const Unknown: ScriptWithExt = ScriptWithExt(0);
+}
+
 /// Enumerated property East_Asian_Width.
 ///
 /// See "Definition" in UAX #11 for the summary of each property value:
