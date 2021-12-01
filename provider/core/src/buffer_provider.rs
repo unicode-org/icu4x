@@ -20,6 +20,22 @@ pub trait BufferProvider {
     {
         SerdeBufferProvider(self)
     }
+
+    fn as_serde_provider(&self) -> SerdeBufferProvider<&Self>
+    where
+        Self: Sized,
+    {
+        SerdeBufferProvider(&self)
+    }
 }
 
-pub struct SerdeBufferProvider<P: BufferProvider>(pub P);
+impl<P> BufferProvider for &P
+where
+    P: BufferProvider,
+{
+    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, Error> {
+        P::load_buffer(*self, req)
+    }
+}
+
+pub struct SerdeBufferProvider<P: BufferProvider + ?Sized>(pub P);

@@ -119,20 +119,7 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
-        let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(self.manifest.buffer_format);
-        Ok(DataResponse {
-            metadata,
-            payload: Some(
-                DataPayload::try_from_rc_buffer(
-                    rc_buffer,
-                    deserializer::deserialize_zero_copy::<M>(self.manifest.buffer_format),
-                )
-                .map_err(|e: deserializer::Error| e.into_resource_error(&path_buf))?,
-            ),
-        })
+        self.as_serde_provider().load_payload(req)
     }
 }
 

@@ -6,8 +6,6 @@ use displaydoc::Display;
 use icu_provider::prelude::*;
 use icu_provider::serde::BufferFormat;
 use icu_provider::serde::*;
-use icu_provider::yoke::trait_hack::YokeTraitHack;
-use icu_provider::yoke::Yokeable;
 use std::path::Path;
 use std::rc::Rc;
 
@@ -106,39 +104,6 @@ pub fn check_format_supported(buffer_format: BufferFormat) -> Result<(), crate::
         BufferFormat::Bincode1 => Ok(()),
 
         _ => Err(Error::UnknownSyntax(buffer_format)),
-    }
-}
-
-/// Deserialize into a generic type ([`DataProvider`]). Covers all supported data formats.
-#[allow(clippy::type_complexity)]
-pub fn deserialize_zero_copy<'data, M>(
-    buffer_format: BufferFormat,
-) -> for<'de> fn(bytes: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>
-where
-    M: DataMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
-{
-    match buffer_format {
-        #[cfg(feature = "provider_json")]
-        BufferFormat::Json => |bytes| {
-            let mut d = get_json_deserializer_zc!(bytes);
-            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
-            Ok(data.0)
-        },
-
-        #[cfg(feature = "provider_bincode")]
-        BufferFormat::Bincode1 => |bytes| {
-            let mut d = get_bincode_deserializer_zc!(bytes);
-            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
-            Ok(data.0)
-        },
-
-        // This will be deleted soon
-        #[allow(unreachable_code)]
-        _ => |_| Err(Error::UnknownSyntax(todo!("will be deleted soon"))),
     }
 }
 
