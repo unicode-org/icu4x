@@ -13,8 +13,7 @@ use yoke::Yokeable;
 
 fn deserialize_impl<'data, M>(
     // Allow `bytes` to be unused in case all buffer formats are disabled
-    #[allow(unused_variables)]
-    bytes: &'data [u8],
+    #[allow(unused_variables)] bytes: &'data [u8],
     buffer_format: BufferFormat,
     _: PhantomData<&'data ()>,
 ) -> Result<<M::Yokeable as Yokeable<'data>>::Output, Error>
