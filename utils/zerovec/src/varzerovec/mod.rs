@@ -17,6 +17,7 @@ mod ule;
 pub use borrowed::VarZeroVecBorrowed;
 pub use owned::VarZeroVecOwned;
 pub use ule::VarZeroVecULE;
+use crate::zerovec::ZeroVec;
 
 /// A zero-copy vector for variable-width types.
 ///
@@ -563,5 +564,18 @@ where
     #[inline]
     fn eq(&self, other: &&[A]) -> bool {
         self.iter().eq(other.iter().map(|t| t.as_ref()))
+    }
+}
+
+impl<'data, T> VarZeroVec<'data, [T]>
+where [T]: VarULE + Copy,
+      T: Copy
+{
+    pub fn get_as_zv<'a, U>(&'a self, idx1: usize) -> Option<ZeroVec<'a, U>>
+    where U: AsULE<ULE = T>
+    {
+        self.get(idx1).map(|array| {
+            ZeroVec::Borrowed(array)
+        })
     }
 }

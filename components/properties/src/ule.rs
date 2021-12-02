@@ -53,16 +53,6 @@ unsafe impl ULE for GeneralSubcategoryULE {
     }
 }
 
-
-// TODO: if useful, add a method to VarZeroVec<'a, [<T as AsULE>::ULE]> that returns a T
-// for an index, perhaps like
-// ```
-// fn get_as_ule(&self, idx: usize) -> Option<T> {
-//     self.get(idx).map(|ule| T::from_unaligned(ule))
-// }
-// ```
-
-
 impl AsULE for Script {
     type ULE = PlainOldULE<2>;
 
@@ -76,8 +66,6 @@ impl AsULE for Script {
         Script(u16::from_le_bytes(unaligned.0))
     }
 }
-
-
 
 impl AsULE for ScriptWithExt {
     type ULE = PlainOldULE<2>;
