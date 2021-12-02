@@ -33,6 +33,7 @@ all-features = true
 [dependencies]
 icu_locid = { version = "0.4", path = "../locid" }
 icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
+litemap = { version = "0.2", path = "../../utils/litemap" }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
 tinystr = { version = "0.4.10", default-features = false, features = ["alloc", "serde"] }
 
@@ -50,7 +51,7 @@ path = "src/lib.rs"
 [features]
 default = ["provider_serde"]
 bench = []
-provider_serde = ["serde", "icu_locid/serde"]
+provider_serde = ["icu_locid/serde", "litemap/serde_serialize", "serde"]
 
 [[bench]]
 name = "locale_canonicalizer"
