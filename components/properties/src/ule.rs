@@ -53,12 +53,35 @@ unsafe impl ULE for GeneralSubcategoryULE {
     }
 }
 
+
+
+// TODO: learn if/why this works and is necessary
+#[repr(transparent)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub struct ScriptULE(u16);
+
+// TODO: learn if/why this works and is necessary
+unsafe impl ULE for ScriptULE {
+    type Error = ();
+
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+        // Validate the bytes
+        if bytes.len() % 2 == 0 {
+            Ok(())
+        } else {
+            // TODO: How to use ULEError here, if that is the most appropriate choice?
+            Err(())
+        }
+    }
+}
+
+
 impl AsULE for Script {
-    type ULE = PlainOldULE<2>;
+    type ULE = ScriptULE;
 
     #[inline]
     fn as_unaligned(self) -> Self::ULE {
-        PlainOldULE(self.0.to_le_bytes())
+        ScriptULE(self.0.to_le_bytes())
     }
 
     #[inline]
@@ -66,6 +89,8 @@ impl AsULE for Script {
         Script(u16::from_le_bytes(unaligned.0))
     }
 }
+
+
 
 impl AsULE for ScriptWithExt {
     type ULE = PlainOldULE<2>;
