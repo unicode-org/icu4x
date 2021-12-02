@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638379150987,
+  "lastUpdate": 1638429987035,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20411,6 +20411,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21112,
             "range": "± 1507",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc414a8fcaeafe0625c576d90adb8053cdfca7fa",
+          "message": "Replace Vec with LiteMap in locale canoicalizer (#1275)",
+          "timestamp": "2021-12-01T23:18:39-08:00",
+          "tree_id": "afd1597800ce284a07948ddee926a5bc42e22f45",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc414a8fcaeafe0625c576d90adb8053cdfca7fa"
+        },
+        "date": 1638429978700,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1291,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6268,
+            "range": "± 339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21980,
+            "range": "± 1483",
             "unit": "ns/iter"
           }
         ]
