@@ -489,5 +489,4 @@ mod test {
         let offset = today.clone().added(DateDuration::new(0, 0, 0, -1));
         assert_eq!(offset, today_minus_1);
     }
-
 }
