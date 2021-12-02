@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::script::ScriptExtensions;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use icu_uniset::UnicodeSet;
@@ -406,4 +407,19 @@ pub struct UnicodePropertyMapV1Marker<T: TrieValue> {
 
 impl<T: TrieValue> icu_provider::DataMarker for UnicodePropertyMapV1Marker<T> {
     type Yokeable = UnicodePropertyMapV1<'static, T>;
+}
+
+//
+// Script_Extensions
+//
+
+/// A data structure efficiently storing `Script` and `Script_Extensions` property data.
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct ScriptExtensionsPropertyV1<'data> {
+    /// A special data structure for `Script` and `Script_Extensions`.
+    pub data: ScriptExtensions<'data>,
 }

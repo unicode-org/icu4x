@@ -488,8 +488,8 @@ impl Script {
 /// 11..10 will indicate how to deduce the Script value and Script_Extensions,
 /// and the lower 10 bits 9..0 indicate either the Script value or the index
 /// into the `extensions` structure.
-#[derive(Copy, Clone, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Deserialize))]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
 pub(crate) struct ScriptWithExt(pub u16);
 

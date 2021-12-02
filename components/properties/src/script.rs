@@ -7,12 +7,18 @@
 
 use crate::props::{Script, ScriptWithExt};
 use icu_codepointtrie::CodePointTrie;
+use icu_provider::yoke::{self, *};
 use zerovec::VarZeroVec;
+
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// A data structure that represents the data for both Script and 
 /// Script_Extensions properties in an efficient way. This structure matches
 /// the data and data structures that are stored in the corresponding ICU data
 /// file for these properties.
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
 pub struct ScriptExtensions<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
