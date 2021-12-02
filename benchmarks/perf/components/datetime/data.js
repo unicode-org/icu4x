@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638379158451,
+  "lastUpdate": 1638429970705,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14039,6 +14039,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 419263,
             "range": "± 59508",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc414a8fcaeafe0625c576d90adb8053cdfca7fa",
+          "message": "Replace Vec with LiteMap in locale canoicalizer (#1275)",
+          "timestamp": "2021-12-01T23:18:39-08:00",
+          "tree_id": "afd1597800ce284a07948ddee926a5bc42e22f45",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc414a8fcaeafe0625c576d90adb8053cdfca7fa"
+        },
+        "date": 1638429961583,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 137558,
+            "range": "± 7214",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1559078,
+            "range": "± 77363",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 348996,
+            "range": "± 24019",
             "unit": "ns/iter"
           }
         ]
