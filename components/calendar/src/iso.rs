@@ -461,32 +461,32 @@ mod test {
     fn test_offset_at_month_boundary() {
         let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
         let today_plus_2 = Date::new_iso_date_from_integers(2020, 3, 1).unwrap();
-        let offset = today.clone().added(DateDuration::new(0, 0, 0, 2));
+        let offset = today.added(DateDuration::new(0, 0, 0, 2));
         assert_eq!(offset, today_plus_2);
 
         let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
         let today_plus_3 = Date::new_iso_date_from_integers(2020, 3, 2).unwrap();
-        let offset = today.clone().added(DateDuration::new(0, 0, 0, 3));
+        let offset = today.added(DateDuration::new(0, 0, 0, 3));
         assert_eq!(offset, today_plus_3);
 
         let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
         let today_plus_1 = Date::new_iso_date_from_integers(2020, 2, 29).unwrap();
-        let offset = today.clone().added(DateDuration::new(0, 0, 0, 1));
+        let offset = today.added(DateDuration::new(0, 0, 0, 1));
         assert_eq!(offset, today_plus_1);
 
         let today = Date::new_iso_date_from_integers(2019, 2, 28).unwrap();
         let today_plus_2 = Date::new_iso_date_from_integers(2019, 3, 2).unwrap();
-        let offset = today.clone().added(DateDuration::new(0, 0, 0, 2));
+        let offset = today.added(DateDuration::new(0, 0, 0, 2));
         assert_eq!(offset, today_plus_2);
 
         let today = Date::new_iso_date_from_integers(2019, 2, 28).unwrap();
         let today_plus_1 = Date::new_iso_date_from_integers(2019, 3, 1).unwrap();
-        let offset = today.clone().added(DateDuration::new(0, 0, 0, 1));
+        let offset = today.added(DateDuration::new(0, 0, 0, 1));
         assert_eq!(offset, today_plus_1);
 
         let today = Date::new_iso_date_from_integers(2020, 3, 1).unwrap();
         let today_minus_1 = Date::new_iso_date_from_integers(2020, 2, 29).unwrap();
-        let offset = today.clone().added(DateDuration::new(0, 0, 0, -1));
+        let offset = today.added(DateDuration::new(0, 0, 0, -1));
         assert_eq!(offset, today_minus_1);
     }
 }
