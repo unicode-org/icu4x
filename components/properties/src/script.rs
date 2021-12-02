@@ -9,6 +9,7 @@ use crate::props::{Script, ScriptWithExt};
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::yoke::{self, *};
 use zerovec::VarZeroVec;
+use zerovec::ule::AsULE;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -41,5 +42,5 @@ pub struct ScriptExtensions<'data> {
     /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
     /// sub-vector represents the Script_Extensions array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
-    extensions: VarZeroVec<'data, [Script]>,
+    extensions: VarZeroVec<'data, [<Script as AsULE>::ULE]>,
 }

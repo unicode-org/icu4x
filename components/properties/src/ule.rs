@@ -54,34 +54,21 @@ unsafe impl ULE for GeneralSubcategoryULE {
 }
 
 
-
-// TODO: learn if/why this works and is necessary
-#[repr(transparent)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub struct ScriptULE(u16);
-
-// TODO: learn if/why this works and is necessary
-unsafe impl ULE for ScriptULE {
-    type Error = ();
-
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
-        // Validate the bytes
-        if bytes.len() % 2 == 0 {
-            Ok(())
-        } else {
-            // TODO: How to use ULEError here, if that is the most appropriate choice?
-            Err(())
-        }
-    }
-}
+// TODO: if useful, add a method to VarZeroVec<'a, [<T as AsULE>::ULE]> that returns a T
+// for an index, perhaps like
+// ```
+// fn get_as_ule(&self, idx: usize) -> Option<T> {
+//     self.get(idx).map(|ule| T::from_unaligned(ule))
+// }
+// ```
 
 
 impl AsULE for Script {
-    type ULE = ScriptULE;
+    type ULE = PlainOldULE<2>;
 
     #[inline]
     fn as_unaligned(self) -> Self::ULE {
-        ScriptULE(self.0.to_le_bytes())
+        PlainOldULE(self.0.to_le_bytes())
     }
 
     #[inline]
