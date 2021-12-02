@@ -339,12 +339,9 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Given a base index, returns the character stored in a given slot
     fn slot_char(&self, base_idx: u16, slot: CaseMappingExceptionSlot) -> char {
-        let raw = self.slot_value(base_idx, slot);
-
-        // Safety: the exception data is validated on construction.
         debug_assert!(slot.contains_char());
-        debug_assert!(char::from_u32(raw).is_some());
-        unsafe { char::from_u32_unchecked(raw) }
+        let raw = self.slot_value(base_idx, slot);
+        char::from_u32(raw).expect("Checked in validate() (step #1)")
     }
 
     // Given a base index, returns the delta (with the correct sign)
@@ -458,7 +455,7 @@ impl<'data> CaseMappingExceptions<'data> {
         if self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings) {
             let mapping_string = self
                 .full_mapping_string(base_idx, FullMapping::Fold)
-                .expect("Data was validated on construction");
+                .expect("Checked in validate() (step #2)");
             if !mapping_string.is_empty() {
                 set.add_string(&mapping_string);
             }
@@ -467,7 +464,7 @@ impl<'data> CaseMappingExceptions<'data> {
         if self.has_slot(base_idx, CaseMappingExceptionSlot::Closure) {
             for c in self
                 .closure_string(base_idx)
-                .expect("Data was validated on construction")
+                .expect("Checked in validate() (step #3)")
                 .chars()
             {
                 set.add_char(c);
@@ -475,15 +472,12 @@ impl<'data> CaseMappingExceptions<'data> {
         };
     }
 
-    #[cfg(feature = "provider_transform_internals")]
-    fn try_from_icu(raw: &[u16]) -> Result<(Self, Vec<u16>), Error> {
+    #[cfg(any(feature = "provider_transform_internals", test))]
+    fn from_raw(raw: &[u16]) -> Self {
         let raw = ZeroVec::alloc_from_slice(raw);
-        let exceptions = Self { raw };
-        let valid_indices = exceptions.validate()?;
-        Ok((exceptions, valid_indices))
+        Self { raw }
     }
 
-    #[cfg(feature = "provider_transform_internals")]
     fn validate(&self) -> Result<Vec<u16>, Error> {
         let mut valid_indices = vec![];
         let mut idx: u16 = 0;
@@ -502,7 +496,7 @@ impl<'data> CaseMappingExceptions<'data> {
                 return Error::invalid("Exceptions: missing slot data");
             }
 
-            // Validate slots that should contain chars
+            // #1: Validate slots that should contain chars.
             for slot in [
                 CaseMappingExceptionSlot::Lower,
                 CaseMappingExceptionSlot::Fold,
@@ -517,7 +511,7 @@ impl<'data> CaseMappingExceptions<'data> {
                 }
             }
 
-            // Validate full mappings.
+           // #2: Validate full mappings.
             if self.has_slot(idx, CaseMappingExceptionSlot::FullMappings) {
                 for full_mapping in [
                     FullMapping::Lower,
@@ -535,7 +529,7 @@ impl<'data> CaseMappingExceptions<'data> {
                 }
             }
 
-            // Validate closure string.
+            // #3: Validate closure string.
             if self.has_slot(idx, CaseMappingExceptionSlot::Closure) {
                 let closure_len = self.closure_len(idx);
                 if next_idx + closure_len as u16 > data_len {
@@ -554,18 +548,17 @@ impl<'data> CaseMappingExceptions<'data> {
     }
 }
 
-#[cfg(feature = "provider_transform_internals")]
 #[test]
 fn test_exception_validation() {
     let missing_slot_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16)];
-    let result = CaseMappingExceptions::try_from_icu(missing_slot_data);
+    let result = CaseMappingExceptions::from_raw(missing_slot_data).validate();
     assert_eq!(
         result,
         Err(Error::Validation("Exceptions: missing slot data"))
     );
 
     let invalid_char_slot: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16), 0xdf00];
-    let result = CaseMappingExceptions::try_from_icu(invalid_char_slot);
+    let result = CaseMappingExceptions::from_raw(invalid_char_slot).validate();
     assert_eq!(
         result,
         Err(Error::Validation("Exceptions: invalid char slot"))
@@ -573,7 +566,7 @@ fn test_exception_validation() {
 
     let missing_full_mappings: &[u16] =
         &[1 << (CaseMappingExceptionSlot::FullMappings as u16), 0x1111];
-    let result = CaseMappingExceptions::try_from_icu(missing_full_mappings);
+    let result = CaseMappingExceptions::from_raw(missing_full_mappings).validate();
     assert_eq!(
         result,
         Err(Error::Validation("Exceptions: missing full mapping data"))
@@ -584,11 +577,11 @@ fn test_exception_validation() {
         0x1111,
         0xdf00,
     ];
-    let result = CaseMappingExceptions::try_from_icu(full_mapping_unpaired_surrogate);
+    let result = CaseMappingExceptions::from_raw(full_mapping_unpaired_surrogate).validate();
     assert!(matches!(result, Err(Error::DecodeUtf16(_))));
 
     let missing_closure_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1];
-    let result = CaseMappingExceptions::try_from_icu(missing_closure_data);
+    let result = CaseMappingExceptions::from_raw(missing_closure_data).validate();
     assert_eq!(
         result,
         Err(Error::Validation("Exceptions: missing closure data"))
@@ -596,7 +589,7 @@ fn test_exception_validation() {
 
     let closure_unpaired_surrogate: &[u16] =
         &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1, 0xdf00];
-    let result = CaseMappingExceptions::try_from_icu(closure_unpaired_surrogate);
+    let result = CaseMappingExceptions::from_raw(closure_unpaired_surrogate).validate();
     assert!(matches!(result, Err(Error::DecodeUtf16(_))));
 }
 
@@ -723,8 +716,7 @@ impl<'data> CaseMapping<'data> {
         exceptions: &[u16],
         unfold: &[u16],
     ) -> Result<Self, Error> {
-        let (exceptions, valid_exception_indices) =
-            CaseMappingExceptions::try_from_icu(exceptions)?;
+        let exceptions = CaseMappingExceptions::from_raw(exceptions);
         let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
 
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
@@ -732,20 +724,56 @@ impl<'data> CaseMapping<'data> {
             .iter()
             .map(|&i| CaseMappingData(i))
             .collect::<ZeroVec<_>>();
-
-        for data in trie_data.iter() {
-            if data.has_exception() && !valid_exception_indices.contains(&data.exception_index()) {
-                return Error::invalid("Invalid exception index in trie data");
-            }
-        }
-
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
-        Ok(Self {
+	let result = Self {
             trie,
             exceptions,
             unfold,
-        })
+        };
+	result.validate()?;
+	Ok(result)
+    }
+
+    /// Given an existing CaseMapping, validates that the data is
+    /// consistent.  A CaseMapping created by the ICU transformer has
+    /// already been validated. Calling this function is only
+    /// necessary if you are concerned about data corruption after
+    /// deserializing.
+    pub fn validate(&self) -> Result<(), Error> {
+	// First, validate that exception data is well-formed.
+	let valid_exception_indices = self.exceptions.validate()?;
+
+	let validate_delta = |c: char, delta: i32| -> Result<(), Error> {
+	    let new_c = u32::try_from(c as i32 + delta)
+		.map_err(|_| Error::Validation("Delta larger than character"))?;
+	    char::from_u32(new_c)
+		.ok_or(Error::Validation("Invalid delta"))?;
+	    Ok(())
+	};
+
+	for i in 0..char::MAX as u32 {
+	    if let Some(c) = char::from_u32(i) {
+		let data = self.lookup_data(c);
+
+		if data.has_exception() {
+		    let idx = data.exception_index();
+		    // Verify that the exception index points to a valid exception header.
+		    if !valid_exception_indices.contains(&idx) {
+			return Error::invalid("Invalid exception index in trie data");
+		    }
+		    if self.exceptions.has_slot(idx, CaseMappingExceptionSlot::Delta) {
+			validate_delta(c, self.exceptions.delta(idx))?;
+		    }
+		} else {
+		    validate_delta(c, data.delta() as i32)?;
+		}
+	    }
+	}
+
+	// The unfold data is structurally guaranteed to be valid,
+	// so there is nothing left to check.
+	Ok(())
     }
 
     fn lookup_data(&self, c: char) -> CaseMappingData {
@@ -760,7 +788,7 @@ impl<'data> CaseMapping<'data> {
         if !data.has_exception() {
             if data.is_upper_or_title() {
                 let lower = c as i32 + data.delta() as i32;
-                char::from_u32(lower as u32).expect("Character should be valid")
+                char::from_u32(lower as u32).expect("Checked in validate()")
             } else {
                 c
             }
@@ -772,7 +800,7 @@ impl<'data> CaseMapping<'data> {
                     .has_slot(idx, CaseMappingExceptionSlot::Delta)
             {
                 let lower = c as i32 + self.exceptions.delta(idx);
-                char::from_u32(lower as u32).expect("Character should be valid")
+                char::from_u32(lower as u32).expect("Checked in validate()")
             } else if self
                 .exceptions
                 .has_slot(idx, CaseMappingExceptionSlot::Lower)
@@ -793,7 +821,7 @@ impl<'data> CaseMapping<'data> {
         if !data.has_exception() {
             if data.case_type() == CaseType::Lower {
                 let upper = c as i32 + data.delta() as i32;
-                char::from_u32(upper as u32).expect("Character should be valid")
+                char::from_u32(upper as u32).expect("Checked in validate()")
             } else {
                 c
             }
@@ -805,7 +833,7 @@ impl<'data> CaseMapping<'data> {
                     .has_slot(idx, CaseMappingExceptionSlot::Delta)
             {
                 let upper = c as i32 + self.exceptions.delta(idx);
-                char::from_u32(upper as u32).expect("Character should be valid")
+                char::from_u32(upper as u32).expect("Checked in validate()")
             } else if self
                 .exceptions
                 .has_slot(idx, CaseMappingExceptionSlot::Upper)
@@ -827,7 +855,7 @@ impl<'data> CaseMapping<'data> {
             // In general, titlecase is the same as uppercase.
             if data.case_type() == CaseType::Lower {
                 let upper = c as i32 + data.delta() as i32;
-                char::from_u32(upper as u32).expect("Character should be valid")
+                char::from_u32(upper as u32).expect("Checked in validate()")
             } else {
                 c
             }
@@ -839,7 +867,7 @@ impl<'data> CaseMapping<'data> {
                     .has_slot(idx, CaseMappingExceptionSlot::Delta)
             {
                 let upper = c as i32 + self.exceptions.delta(idx);
-                char::from_u32(upper as u32).expect("Character should be valid")
+                char::from_u32(upper as u32).expect("Checked in validate()")
             } else if self
                 .exceptions
                 .has_slot(idx, CaseMappingExceptionSlot::Title)
@@ -864,7 +892,7 @@ impl<'data> CaseMapping<'data> {
         if !data.has_exception() {
             if data.is_upper_or_title() {
                 let folded = c as i32 + data.delta() as i32;
-                char::from_u32(folded as u32).expect("Character should be valid")
+                char::from_u32(folded as u32).expect("Checked in validate()")
             } else {
                 c
             }
@@ -880,7 +908,7 @@ impl<'data> CaseMapping<'data> {
                     .has_slot(idx, CaseMappingExceptionSlot::Delta)
             {
                 let folded = c as i32 + self.exceptions.delta(idx);
-                char::from_u32(folded as u32).expect("Character should be valid")
+                char::from_u32(folded as u32).expect("Checked in validate()")
             } else if self
                 .exceptions
                 .has_slot(idx, CaseMappingExceptionSlot::Fold)
@@ -1000,7 +1028,7 @@ impl<'data> CaseMapping<'data> {
                     // Add the one simple case mapping, no matter what type it is.
                     let codepoint = c as i32 + delta;
                     let mapped =
-                        char::from_u32(codepoint as u32).expect("Character should be valid");
+                        char::from_u32(codepoint as u32).expect("Checked in validate()");
                     set.add_char(mapped);
                 }
             }
@@ -1027,7 +1055,7 @@ impl<'data> CaseMapping<'data> {
             .has_slot(idx, CaseMappingExceptionSlot::Delta)
         {
             let codepoint = c as i32 + self.exceptions.delta(idx);
-            let mapped = char::from_u32(codepoint as u32).expect("Character should be valid");
+            let mapped = char::from_u32(codepoint as u32).expect("Checked in validate()");
             set.add_char(mapped);
         }
 
