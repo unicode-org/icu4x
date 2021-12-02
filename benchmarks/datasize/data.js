@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638378780636,
+  "lastUpdate": 1638429624839,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4613,6 +4613,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/910cf452e290e040ea087a1e2f39a3a429990117"
         },
         "date": 1638378773357,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916111,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc414a8fcaeafe0625c576d90adb8053cdfca7fa",
+          "message": "Replace Vec with LiteMap in locale canoicalizer (#1275)",
+          "timestamp": "2021-12-01T23:18:39-08:00",
+          "tree_id": "afd1597800ce284a07948ddee926a5bc42e22f45",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc414a8fcaeafe0625c576d90adb8053cdfca7fa"
+        },
+        "date": 1638429616913,
         "tool": "ndjson",
         "benches": [
           {
