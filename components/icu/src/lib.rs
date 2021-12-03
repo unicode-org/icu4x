@@ -382,7 +382,7 @@ pub mod properties {
     //! ## Property data as `UnicodeSet`s
     //!
     //! ```
-    //! use icu::properties::{sets, GeneralCategoryGroup};
+    //! use icu::properties::{sets, GeneralCategory};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
@@ -400,7 +400,7 @@ pub mod properties {
     //! // An individual enumerated property value as a `UnicodeSet`
     //!
     //! let payload =
-    //!     sets::get_for_general_category(&provider, GeneralCategoryGroup::LineSeparator)
+    //!     sets::get_for_general_category(&provider, GeneralCategory::LineSeparator)
     //!         .expect("The data should be valid");
     //! let data_struct = payload.get();
     //! let line_sep = &data_struct.inv_list;

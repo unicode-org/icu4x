@@ -1448,52 +1448,64 @@ where
 // Enumerated property getter fns
 //
 
+/// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property. See [`GeneralCategory`].
+///
+/// [`UnicodeSet`]: icu_uniset::UnicodeSet
+pub fn get_for_general_category<D>(provider: &D, enum_val: GeneralCategory) -> UnisetResult
+where
+    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+{
+    let key = match enum_val {
+        GeneralCategory::Control => key::GENERAL_CATEGORY_CONTROL_V1,
+        GeneralCategory::Format => key::GENERAL_CATEGORY_FORMAT_V1,
+        GeneralCategory::Unassigned => key::GENERAL_CATEGORY_UNASSIGNED_V1,
+        GeneralCategory::PrivateUse => key::GENERAL_CATEGORY_PRIVATE_USE_V1,
+        GeneralCategory::Surrogate => key::GENERAL_CATEGORY_SURROGATE_V1,
+        GeneralCategory::LowercaseLetter => key::GENERAL_CATEGORY_LOWERCASE_LETTER_V1,
+        GeneralCategory::ModifierLetter => key::GENERAL_CATEGORY_MODIFIER_LETTER_V1,
+        GeneralCategory::OtherLetter => key::GENERAL_CATEGORY_OTHER_LETTER_V1,
+        GeneralCategory::TitlecaseLetter => key::GENERAL_CATEGORY_TITLECASE_LETTER_V1,
+        GeneralCategory::UppercaseLetter => key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1,
+        GeneralCategory::SpacingMark => key::GENERAL_CATEGORY_SPACING_MARK_V1,
+        GeneralCategory::EnclosingMark => key::GENERAL_CATEGORY_ENCLOSING_MARK_V1,
+        GeneralCategory::NonspacingMark => key::GENERAL_CATEGORY_NONSPACING_MARK_V1,
+        GeneralCategory::DecimalNumber => key::GENERAL_CATEGORY_DIGIT_V1,
+        GeneralCategory::LetterNumber => key::GENERAL_CATEGORY_LETTER_NUMBER_V1,
+        GeneralCategory::OtherNumber => key::GENERAL_CATEGORY_OTHER_NUMBER_V1,
+        GeneralCategory::ConnectorPunctuation => key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1,
+        GeneralCategory::DashPunctuation => key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1,
+        GeneralCategory::ClosePunctuation => key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1,
+        GeneralCategory::FinalPunctuation => key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1,
+        GeneralCategory::InitialPunctuation => key::GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1,
+        GeneralCategory::OtherPunctuation => key::GENERAL_CATEGORY_OTHER_PUNCTUATION_V1,
+        GeneralCategory::OpenPunctuation => key::GENERAL_CATEGORY_OPEN_PUNCTUATION_V1,
+        GeneralCategory::CurrencySymbol => key::GENERAL_CATEGORY_CURRENCY_SYMBOL_V1,
+        GeneralCategory::ModifierSymbol => key::GENERAL_CATEGORY_MODIFIER_SYMBOL_V1,
+        GeneralCategory::MathSymbol => key::GENERAL_CATEGORY_MATH_SYMBOL_V1,
+        GeneralCategory::OtherSymbol => key::GENERAL_CATEGORY_OTHER_SYMBOL_V1,
+        GeneralCategory::LineSeparator => key::GENERAL_CATEGORY_LINE_SEPARATOR_V1,
+        GeneralCategory::ParagraphSeparator => key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1,
+        GeneralCategory::SpaceSeparator => key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1,
+    };
+    get_uniset(provider, key)
+}
+
 /// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property. See [`GeneralCategoryGroup`].
 ///
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
-pub fn get_for_general_category<D>(provider: &D, enum_val: GeneralCategoryGroup) -> UnisetResult
+pub fn get_for_general_category_group<D>(provider: &D, enum_val: GeneralCategoryGroup) -> UnisetResult
 where
     D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     let key = match enum_val {
         GeneralCategoryGroup::Other => key::GENERAL_CATEGORY_OTHER_V1,
-        GeneralCategoryGroup::Control => key::GENERAL_CATEGORY_CONTROL_V1,
-        GeneralCategoryGroup::Format => key::GENERAL_CATEGORY_FORMAT_V1,
-        GeneralCategoryGroup::Unassigned => key::GENERAL_CATEGORY_UNASSIGNED_V1,
-        GeneralCategoryGroup::PrivateUse => key::GENERAL_CATEGORY_PRIVATE_USE_V1,
-        GeneralCategoryGroup::Surrogate => key::GENERAL_CATEGORY_SURROGATE_V1,
         GeneralCategoryGroup::Letter => key::GENERAL_CATEGORY_LETTER_V1,
         GeneralCategoryGroup::CasedLetter => key::GENERAL_CATEGORY_CASED_LETTER_V1,
-        GeneralCategoryGroup::LowercaseLetter => key::GENERAL_CATEGORY_LOWERCASE_LETTER_V1,
-        GeneralCategoryGroup::ModifierLetter => key::GENERAL_CATEGORY_MODIFIER_LETTER_V1,
-        GeneralCategoryGroup::OtherLetter => key::GENERAL_CATEGORY_OTHER_LETTER_V1,
-        GeneralCategoryGroup::TitlecaseLetter => key::GENERAL_CATEGORY_TITLECASE_LETTER_V1,
-        GeneralCategoryGroup::UppercaseLetter => key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1,
         GeneralCategoryGroup::Mark => key::GENERAL_CATEGORY_MARK_V1,
-        GeneralCategoryGroup::SpacingMark => key::GENERAL_CATEGORY_SPACING_MARK_V1,
-        GeneralCategoryGroup::EnclosingMark => key::GENERAL_CATEGORY_ENCLOSING_MARK_V1,
-        GeneralCategoryGroup::NonspacingMark => key::GENERAL_CATEGORY_NONSPACING_MARK_V1,
         GeneralCategoryGroup::Number => key::GENERAL_CATEGORY_NUMBER_V1,
-        GeneralCategoryGroup::DecimalNumber => key::GENERAL_CATEGORY_DIGIT_V1,
-        GeneralCategoryGroup::LetterNumber => key::GENERAL_CATEGORY_LETTER_NUMBER_V1,
-        GeneralCategoryGroup::OtherNumber => key::GENERAL_CATEGORY_OTHER_NUMBER_V1,
         GeneralCategoryGroup::Punctuation => key::GENERAL_CATEGORY_PUNCTUATION_V1,
-        GeneralCategoryGroup::ConnectorPunctuation => key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1,
-        GeneralCategoryGroup::DashPunctuation => key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1,
-        GeneralCategoryGroup::ClosePunctuation => key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1,
-        GeneralCategoryGroup::FinalPunctuation => key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1,
-        GeneralCategoryGroup::InitialPunctuation => key::GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1,
-        GeneralCategoryGroup::OtherPunctuation => key::GENERAL_CATEGORY_OTHER_PUNCTUATION_V1,
-        GeneralCategoryGroup::OpenPunctuation => key::GENERAL_CATEGORY_OPEN_PUNCTUATION_V1,
         GeneralCategoryGroup::Symbol => key::GENERAL_CATEGORY_SYMBOL_V1,
-        GeneralCategoryGroup::CurrencySymbol => key::GENERAL_CATEGORY_CURRENCY_SYMBOL_V1,
-        GeneralCategoryGroup::ModifierSymbol => key::GENERAL_CATEGORY_MODIFIER_SYMBOL_V1,
-        GeneralCategoryGroup::MathSymbol => key::GENERAL_CATEGORY_MATH_SYMBOL_V1,
-        GeneralCategoryGroup::OtherSymbol => key::GENERAL_CATEGORY_OTHER_SYMBOL_V1,
         GeneralCategoryGroup::Separator => key::GENERAL_CATEGORY_SEPARATOR_V1,
-        GeneralCategoryGroup::LineSeparator => key::GENERAL_CATEGORY_LINE_SEPARATOR_V1,
-        GeneralCategoryGroup::ParagraphSeparator => key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1,
-        GeneralCategoryGroup::SpaceSeparator => key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1,
         _ => return Err(PropertiesError::UnknownGeneralCategoryGroupSet(enum_val.0)),
     };
     get_uniset(provider, key)
