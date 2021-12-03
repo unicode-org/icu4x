@@ -554,6 +554,14 @@ where
     }
 }
 
+impl<'a, T> Eq for VarZeroVec<'a, T>
+where
+    T: VarULE,
+    T: ?Sized,
+    T: PartialEq,
+{
+}
+
 impl<T, A> PartialEq<&'_ [A]> for VarZeroVec<'_, T>
 where
     T: VarULE + ?Sized,
