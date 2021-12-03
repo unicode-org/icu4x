@@ -98,6 +98,7 @@ cldr_json_data_provider!(
     numbers: decimal::NumbersProvider,
     plurals: plurals::PluralsProvider,
     time_zones: time_zones::TimeZonesProvider,
+    week_data: datetime::week_data::WeekDataProvider,
     list: list::ListProvider,
 );
 
@@ -112,4 +113,5 @@ cldr_json_data_provider!(
     numbers: decimal::NumbersProvider,
     plurals: plurals::PluralsProvider,
     time_zones: time_zones::TimeZonesProvider,
+    week_data: datetime::week_data::WeekDataProvider,
 );
