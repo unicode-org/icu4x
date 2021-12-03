@@ -421,5 +421,6 @@ impl<T: TrieValue> icu_provider::DataMarker for UnicodePropertyMapV1Marker<T> {
 )]
 pub struct ScriptExtensionsPropertyV1<'data> {
     /// A special data structure for `Script` and `Script_Extensions`.
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ScriptExtensions<'data>,
 }
