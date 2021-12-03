@@ -14,6 +14,9 @@ where
     T: AsULE,
 {
     /// Get this [`ZeroVecULE`] as a borrowed [`ZeroVec`]
+    ///
+    /// [`ZeroVecULE`] does not have most of the methods that [`ZeroVec`] does,
+    /// so it is recommended to convert it to a [`ZeroVec`] before doing anything.
     #[inline]
     pub fn as_zerovec(&self) -> ZeroVec<'_, T> {
         ZeroVec::Borrowed(&self.0)
@@ -78,5 +81,56 @@ unsafe impl<T: AsULE + 'static> VarULE for ZeroVecULE<T> {
     #[inline]
     fn as_byte_slice(&self) -> &[u8] {
         T::ULE::as_byte_slice(&self.0)
+    }
+}
+
+impl<T> Eq for ZeroVecULE<T> where T: AsULE + Eq {}
+
+impl<T> PartialEq<ZeroVecULE<T>> for ZeroVecULE<T>
+where
+    T: AsULE + PartialEq,
+{
+    #[inline]
+    fn eq(&self, other: &ZeroVecULE<T>) -> bool {
+        self.as_zerovec().eq(&other.as_zerovec())
+    }
+}
+
+impl<T> PartialEq<&[T]> for ZeroVecULE<T>
+where
+    T: AsULE + PartialEq,
+{
+    #[inline]
+    fn eq(&self, other: &&[T]) -> bool {
+        self.iter().eq(other.iter().copied())
+    }
+}
+
+impl<'a, T> PartialEq<ZeroVec<'a, T>> for ZeroVecULE<T>
+where
+    T: AsULE + PartialEq,
+{
+    #[inline]
+    fn eq(&self, other: &ZeroVec<'a, T>) -> bool {
+        self.as_zerovec().eq(other)
+    }
+}
+
+impl<'a, T> PartialEq<ZeroVecULE<T>> for ZeroVec<'a, T>
+where
+    T: AsULE + PartialEq,
+{
+    #[inline]
+    fn eq(&self, other: &ZeroVecULE<T>) -> bool {
+        self.eq(&other.as_zerovec())
+    }
+}
+
+impl<T> fmt::Debug for ZeroVecULE<T>
+where
+    T: AsULE + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.as_zerovec().fmt(f)
     }
 }
