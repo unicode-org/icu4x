@@ -5,8 +5,13 @@
 #[cfg(feature = "serde")]
 mod serde;
 
+mod ule;
+
+pub use ule::ZeroVecULE;
+
 use crate::ule::*;
 use alloc::vec::Vec;
+use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::iter::FromIterator;
 
@@ -127,6 +132,18 @@ impl<'a, T: AsULE> Default for ZeroVec<'a, T> {
     #[inline]
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl<'a, T: AsULE + PartialOrd> PartialOrd for ZeroVec<'a, T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.iter().partial_cmp(other.iter())
+    }
+}
+
+impl<'a, T: AsULE + Ord> Ord for ZeroVec<'a, T> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.iter().cmp(other.iter())
     }
 }
 
