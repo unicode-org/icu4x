@@ -134,6 +134,7 @@ macro_rules! impl_byte_slice_type {
                 <$type>::from_unaligned(*self).serialize(serializer)
             }
         }
+
         #[cfg(feature = "serde")]
         impl<'de> serde::Deserialize<'de> for $ule_type {
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
