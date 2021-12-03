@@ -4,6 +4,7 @@
 
 use super::{ZeroVec, ZeroVecULE};
 use crate::ule::*;
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
