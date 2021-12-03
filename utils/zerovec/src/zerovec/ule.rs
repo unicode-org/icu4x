@@ -134,3 +134,15 @@ where
         self.as_zerovec().fmt(f)
     }
 }
+
+impl<'a, T: AsULE + PartialOrd> PartialOrd for ZeroVecULE<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.iter().partial_cmp(other.iter())
+    }
+}
+
+impl<T: AsULE + Ord> Ord for ZeroVecULE<T> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.iter().cmp(other.iter())
+    }
+}
