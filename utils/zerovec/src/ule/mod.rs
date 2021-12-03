@@ -149,6 +149,10 @@ pub trait AsULE: Copy {
     /// `PlainOldULE` with the desired width; for example, `u32` uses `PlainOldULE<4>`.
     ///
     /// Types that are not well-defined for all bit values should implement a custom ULE.
+    ///
+    /// If this ULE type is being used in `VarZeroVec<[ULE]>` and you want serialization to work
+    /// appropriately, make sure that the serializer impls on the `ULE` type are the same as those
+    /// on `Self`. If not, it might be worth using a wrapped type for the `ULE` type.
     type ULE: ULE;
 
     /// Converts from `&Self` to `Self::ULE`.
