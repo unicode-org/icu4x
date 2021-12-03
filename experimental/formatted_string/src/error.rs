@@ -6,8 +6,8 @@ use displaydoc::Display;
 
 #[derive(PartialEq, Debug, Display)]
 pub enum Error {
-    #[displaydoc("attempted to insert at an index that is not a character boundary: {0} in {1:?}")]
+    /// index {0} is not a character boundary in {1:?}
     PositionNotCharBoundary(usize, String),
-    #[displaydoc("attempted to insert at index {0} which is outside the string")]
+    /// index {0} is out of bounds
     IndexOutOfBounds(usize),
 }

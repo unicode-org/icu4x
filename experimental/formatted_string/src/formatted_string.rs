@@ -14,7 +14,7 @@ pub enum LocationInPart {
 }
 
 /// A string with L levels of annotations of type F. For N = 0, this is
-/// implemented for `&str`, for higher N see LayeredFormttedString.
+/// implemented for `&str`, for higher N see LayeredFormattedString.
 pub trait FormattedStringLike<F: Copy, const L: usize>: AsRef<str> {
     fn fields_at(&self, pos: usize) -> [F; L] {
         self.annotation_at(pos).map(|(_, field)| field)
@@ -44,7 +44,7 @@ impl<F: Copy> FormattedStringLike<F, 0> for &str {
 pub struct LayeredFormattedString<F: Copy, const L: usize> {
     // bytes is always valid UTF-8, so from_utf8_unchecked is safe
     bytes: Vec<u8>,
-    // The first dimension corresponds to the bytes, the second are the L levels of annotations
+    // The vector dimension corresponds to the bytes, the array dimension are the L levels of annotations
     annotations: Vec<[(LocationInPart, F); L]>,
 }
 
@@ -64,7 +64,7 @@ impl<F: Copy, const L: usize> FormattedStringLike<F, L> for LayeredFormattedStri
 
 impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
     pub fn new() -> Self {
-        // A FormattedString with 0 annotations doesn't make sense.
+        // A LayeredFormattedString with 0 annotations doesn't make sense.
         assert!(L > 0);
         Self {
             bytes: Vec::with_capacity(40),
@@ -116,7 +116,7 @@ impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
         }
     }
 
-    // Precondition here is that pos is a char boundary and < buffer_len.
+    // Precondition here is that pos is a char boundary and < bytes.len().
     fn insert_internal<S, const L1: usize>(&mut self, pos: usize, string: &S, field: F) -> &mut Self
     where
         S: FormattedStringLike<F, L1>,
@@ -204,7 +204,7 @@ mod test {
         x.append(&"π", Field::Word);
         assert_eq!(
             x.insert(1, &"pi/2", Field::Word).unwrap_err().to_string(),
-            "attempted to insert at an index that is not a character boundary: 1 in \"π\""
+            "index 1 is not a character boundary in \"π\"",
         );
 
         assert_eq!(x.as_ref(), "π");
