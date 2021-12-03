@@ -193,18 +193,19 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
+    use crate::zerovec::ZeroVecULE;
     use super::super::*;
 
     #[derive(::serde::Serialize, ::serde::Deserialize)]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
-        _data: ZeroMap<'data, str, [u8]>,
+        _data: ZeroMap<'data, str, ZeroVecULE<u8>>,
     }
 
     #[derive(::serde::Serialize, ::serde::Deserialize)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]
-        _data: ZeroMapBorrowed<'data, str, [u8]>,
+        _data: ZeroMapBorrowed<'data, str, ZeroVecULE<u8>>,
     }
 
     const JSON_STR: &str = "{\"1\":\"uno\",\"2\":\"dos\",\"3\":\"tres\"}";

@@ -96,12 +96,12 @@ where
     }
 }
 
-impl<T> PartialEq<&[T]> for ZeroVecULE<T>
+impl<T> PartialEq<[T]> for ZeroVecULE<T>
 where
     T: AsULE + PartialEq,
 {
     #[inline]
-    fn eq(&self, other: &&[T]) -> bool {
+    fn eq(&self, other: &[T]) -> bool {
         self.iter().eq(other.iter().copied())
     }
 }
@@ -144,5 +144,11 @@ impl<'a, T: AsULE + PartialOrd> PartialOrd for ZeroVecULE<T> {
 impl<T: AsULE + Ord> Ord for ZeroVecULE<T> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.iter().cmp(other.iter())
+    }
+}
+
+impl<T: AsULE> AsRef<ZeroVecULE<T>> for Vec<T::ULE> {
+    fn as_ref(&self) -> &ZeroVecULE<T> {
+        ZeroVecULE::<T>::from_slice(&**self)
     }
 }

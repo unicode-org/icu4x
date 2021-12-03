@@ -213,6 +213,7 @@ where
 #[allow(non_camel_case_types)]
 mod test {
     use super::*;
+    use crate::zerovec::ZeroVecULE;
 
     #[derive(yoke::Yokeable)]
     struct DeriveTest_ZeroVec<'data> {
@@ -232,12 +233,12 @@ mod test {
     #[derive(yoke::Yokeable)]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap<'data> {
-        _data: ZeroMap<'data, [u8], str>,
+        _data: ZeroMap<'data, ZeroVecULE<u8>, str>,
     }
 
     #[derive(yoke::Yokeable)]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
-        _data: ZeroMapBorrowed<'data, [u8], str>,
+        _data: ZeroMapBorrowed<'data, ZeroVecULE<u8>, str>,
     }
 }

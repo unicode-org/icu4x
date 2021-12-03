@@ -24,8 +24,8 @@ pub use ule::VarZeroVecULE;
 /// desirable to borrow data from an unaligned byte slice, such as zero-copy deserialization, and
 /// where `T`'s data is variable-length (e.g. `String`)
 ///
-/// `T` must implement [`VarULE`], which is already implemented for [`str`] and `[T]` where
-/// `T` implements [`ULE`]. It is also implemented on `VarZeroVecULE<T>` for nesting.
+/// `T` must implement [`VarULE`], which is already implemented for [`str`] and `ZeroVecULE<T>` where
+/// `T` implements [`AsULE`]. It is also implemented on `VarZeroVecULE<T>` for nesting.
 ///
 /// `VarZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from owned data
 /// but can also borrow from some buffer.
@@ -76,26 +76,26 @@ pub use ule::VarZeroVecULE;
 /// # use zerovec::VarZeroVecError;
 /// use zerovec::VarZeroVec;
 /// use zerovec::ZeroVec;
+/// use zerovec::zerovec::ZeroVecULE;
 /// use zerovec::ule::*;
 ///
-/// // The little-endian bytes correspond to the list of integers.
-/// let numbers: Vec<Vec<PlainOldULE<4>>> = vec![
-///     vec![12.into(), 25.into(), 38.into()],
-///     vec![39179.into(), 100.into()],
-///     vec![42.into(), 55555.into()],
-///     vec![12345.into(), 54321.into(), 9.into()],
+/// // The structured list correspond to the list of integers.
+/// let numbers: Vec<Vec<u32>> = vec![
+///     vec![12, 25, 38],
+///     vec![39179, 100],
+///     vec![42, 55555],
+///     vec![12345, 54321, 9],
 /// ];
 /// let bytes = &[4, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 20, 0, 0, 0, 28, 0, 0, 0,
 ///              12, 0, 0, 0, 25, 0, 0, 0, 38, 0, 0, 0, 11, 153, 0, 0, 100, 0,
 ///              0, 0, 42, 0, 0, 0, 3, 217, 0, 0, 57, 48, 0, 0, 49, 212, 0, 0,
 ///              9, 0, 0, 0];
 ///
-/// let zerovec: VarZeroVec<[PlainOldULE<4>]> = VarZeroVec::parse_byte_slice(bytes)?;
+/// let zerovec: VarZeroVec<ZeroVecULE<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
 ///
-/// assert_eq!(zerovec.get(2).and_then(|v| v.get(1)), Some(&55555.into()));
-/// assert_eq!(zerovec, &*numbers);
+/// assert_eq!(zerovec.get(2).and_then(|v| v.get(1)), Some(55555));
 /// for (zv, v) in zerovec.iter().zip(numbers.iter()) {
-///     assert_eq!(zv, v);   
+///     assert_eq!(zv, &**v);   
 /// }
 /// # Ok::<(), VarZeroVecError<ULEError<_>>>(())
 /// ```
