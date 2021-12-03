@@ -150,8 +150,9 @@ pub trait AsULE: Copy {
     ///
     /// Types that are not well-defined for all bit values should implement a custom ULE.
     ///
-    /// If this ULE type is being used in `VarZeroVec<[ULE]>` and you want serialization to work
-    /// appropriately, make sure that the serializer impls on the `ULE` type are the same as those
+    /// If this ULE type is being used in `VarZeroVec<[ULE]>` and you want human readable
+    /// serialization to work identically to that of the `Self`,
+    /// make sure that the serializer impls on the `ULE` type are the same as those
     /// on `Self`. If not, it might be worth using a wrapped type for the `ULE` type.
     type ULE: ULE;
 
