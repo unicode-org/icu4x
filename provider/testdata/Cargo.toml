@@ -66,7 +66,9 @@ locales = [
 
     # French:
     # - Often the first non-English locale to receive new data in CLDR
+    # - Belgian region has non default weekData.
     "fr",
+    "fr-BE",
 
     # Filipino:
     # - Week of month/year have plural variants.

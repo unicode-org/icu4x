@@ -1,0 +1,8 @@
+{
+  "defaults": {},
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "UTC"
+    }
+  }
+}
