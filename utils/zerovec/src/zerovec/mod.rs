@@ -7,6 +7,8 @@ mod serde;
 
 mod ule;
 
+pub use ule::ZeroVecULE;
+
 use crate::ule::*;
 use alloc::vec::Vec;
 use core::fmt;
