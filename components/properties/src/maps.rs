@@ -19,8 +19,7 @@ use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 
 /// TODO(#1239): Finalize this API.
-pub type CodePointMapResult<T> =
-    Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
+pub type CodePointMapResult<T> = Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
 
 fn get_cp_map<D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<T>
 where
@@ -30,10 +29,7 @@ where
     let data_req = DataRequest {
         resource_path: ResourcePath {
             key: resc_key,
-            options: ResourceOptions {
-                variant: None,
-                langid: None,
-            },
+            options: ResourceOptions { variant: None, langid: None },
         },
     };
 
@@ -43,12 +39,12 @@ where
     Ok(property_payload)
 }
 
-/// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
+/// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategoryGroup`].
 ///
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, GeneralSubcategory};
+/// use icu::properties::{maps, GeneralCategory};
 /// use icu_codepointtrie::CodePointTrie;
 ///
 /// let provider = icu_testdata::get_provider();
@@ -58,14 +54,14 @@ where
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let gc = &data_struct.code_point_trie;
-/// assert_eq!(gc.get('木' as u32), GeneralSubcategory::OtherLetter);  // U+6728
-/// assert_eq!(gc.get('🎃' as u32), GeneralSubcategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+/// assert_eq!(gc.get('木' as u32), GeneralCategory::OtherLetter);  // U+6728
+/// assert_eq!(gc.get('🎃' as u32), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralSubcategory>
+pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralCategory>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }

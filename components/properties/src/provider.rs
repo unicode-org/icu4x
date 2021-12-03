@@ -339,10 +339,7 @@ pub mod key {
 /// A set of characters with a particular property.
 #[icu_provider::data_struct]
 #[derive(Debug, Eq, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnicodePropertyV1<'data> {
     /// The set of characters, represented as an inversion list
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
@@ -377,10 +374,7 @@ impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
 
 /// A map efficiently storing data about individual characters.
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
     #[cfg_attr(feature = "provider_serde", serde(borrow))]

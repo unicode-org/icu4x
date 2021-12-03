@@ -2,10 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
-    WordBreak,
-};
+use crate::{EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak};
 use core::convert::TryInto;
 use core::num::TryFromIntError;
 use icu_codepointtrie::TrieValue;
@@ -13,13 +10,13 @@ use num_enum::TryFromPrimitiveError;
 
 use core::convert::TryFrom;
 
-impl TrieValue for GeneralSubcategory {
-    const DATA_GET_ERROR_VALUE: GeneralSubcategory = GeneralSubcategory::Unassigned;
+impl TrieValue for GeneralCategory {
+    const DATA_GET_ERROR_VALUE: GeneralCategory = GeneralCategory::Unassigned;
     type TryFromU32Error = TryFromPrimitiveError<Self>;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        // If the u32 is out of range, fall back to u8::MAX, which is out of range of the GeneralSubcategory enum.
-        GeneralSubcategory::try_from(i.try_into().unwrap_or(u8::MAX))
+        // If the u32 is out of range, fall back to u8::MAX, which is out of range of the GeneralCategory enum.
+        GeneralCategory::try_from(i.try_into().unwrap_or(u8::MAX))
     }
 }
 

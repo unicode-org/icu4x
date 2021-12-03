@@ -16,7 +16,7 @@ APIs that return a [`CodePointTrie`] exist for certain enumerated properties. Se
 ### Property data as `UnicodeSet`s
 
 ```rust
-use icu::properties::{sets, GeneralCategory};
+use icu::properties::{sets, GeneralCategoryGroup};
 
 let provider = icu_testdata::get_provider();
 
@@ -34,7 +34,7 @@ assert!(!emoji.contains('木'));  // U+6728
 // An individual enumerated property value as a `UnicodeSet`
 
 let payload =
-    sets::get_for_general_category(&provider, GeneralCategory::LineSeparator)
+    sets::get_for_general_category(&provider, GeneralCategoryGroup::LineSeparator)
         .expect("The data should be valid");
 let data_struct = payload.get();
 let line_sep = &data_struct.inv_list;
