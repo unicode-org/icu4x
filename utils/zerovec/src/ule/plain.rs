@@ -124,6 +124,25 @@ macro_rules! impl_byte_slice_type {
         // EqULE is true because $type and PlainOldULE<$size>
         // have the same byte sequence on little-endian
         unsafe impl EqULE for $type {}
+
+        #[cfg(feature = "serde")]
+        impl serde::Serialize for $ule_type {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer,
+            {
+                <$type>::from_unaligned(*self).serialize(serializer)
+            }
+        }
+        #[cfg(feature = "serde")]
+        impl<'de> serde::Deserialize<'de> for $ule_type {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                Ok(<$type>::as_unaligned(<$type>::deserialize(deserializer)?))
+            }
+        }
     };
 }
 
