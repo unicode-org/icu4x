@@ -483,7 +483,7 @@ impl Script {
 
 /// An internal-use only pseudo-property that represents the values stored in
 /// the trie of the special data structure [`ScriptExtensions`].
-/// 
+///
 /// Note: The will assume a 12-bit layout. The 2 higher order bits in positions
 /// 11..10 will indicate how to deduce the Script value and Script_Extensions,
 /// and the lower 10 bits 9..0 indicate either the Script value or the index

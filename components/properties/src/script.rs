@@ -8,12 +8,12 @@
 use crate::props::{Script, ScriptWithExt};
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::yoke::{self, *};
-use zerovec::{VarZeroVec, zerovec::ZeroVecULE};
+use zerovec::{zerovec::ZeroVecULE, VarZeroVec};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// A data structure that represents the data for both Script and 
+/// A data structure that represents the data for both Script and
 /// Script_Extensions properties in an efficient way. This structure matches
 /// the data and data structures that are stored in the corresponding ICU data
 /// file for these properties.
@@ -22,22 +22,22 @@ use serde::{Deserialize, Serialize};
 pub struct ScriptExtensions<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
-    /// Script_Extensions value, nearly matching the representation 
+    /// Script_Extensions value, nearly matching the representation
     /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
-    /// 
+    ///
     /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
     /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
     /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
     /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
     /// | 1                       | Script=Common                                          | Entire sub-array, index given by lower 10 bits                 |
     /// | 0                       | Value in lower 10 bits                                 | `[ Script value ]` single-element array                        |
-    /// 
+    ///
     /// When the lower 10 bits of the value are used as an index, that index is
     /// used for the outer-level vector of the nested `extensions` structure.
     #[cfg_attr(feature = "serde", serde(borrow))]
     trie: CodePointTrie<'data, ScriptWithExt>,
 
-    /// This companion structure stores Script_Extensions values, which are 
+    /// This companion structure stores Script_Extensions values, which are
     /// themselves arrays / vectors. This structure only stores the values for
     /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
     /// sub-vector represents the Script_Extensions array value for a code point,

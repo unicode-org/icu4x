@@ -4,7 +4,7 @@
 
 use crate::{
     EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, ScriptWithExt,
-    SentenceBreak,WordBreak,
+    SentenceBreak, WordBreak,
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;
