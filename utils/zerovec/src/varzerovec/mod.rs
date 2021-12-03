@@ -69,7 +69,7 @@ pub use ule::VarZeroVecULE;
 /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
 /// ```
 ///
-/// Here's another example with `[T]`:
+/// Here's another example with `ZeroVecULE<T>` (similar to `[T]`):
 ///
 /// ```rust
 /// # use std::str::Utf8Error;
