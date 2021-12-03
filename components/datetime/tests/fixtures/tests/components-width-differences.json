@@ -46,9 +46,9 @@
         },
         "output": {
             "values": {
-                "en": "week 1 of 03",
-                "fil": "ika-1 linggo ng 03",
-                "fr": "semaine 1 de 03"
+                "en": "week 53 of 02",
+                "fil": "linggo 53 ng 02",
+                "fr-BE": "semaine 1 de 03"
             }
         }
     },
@@ -65,9 +65,9 @@
         },
         "output": {
             "values": {
-                "en": "week 1 of 02",
-                "fil": "ika-1 linggo ng 02",
-                "fr": "semaine 1 de 02"
+                "en": "week 53 of 02",
+                "fil": "linggo 53 ng 02",
+                "fr-BE": "semaine 1 de 02"
             }
         }
     },
