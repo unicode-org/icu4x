@@ -91,6 +91,25 @@ impl AsULE for char {
 // as CharULE on little-endian platforms.
 unsafe impl EqULE for char {}
 
+#[cfg(feature = "serde")]
+impl serde::Serialize for CharULE {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        char::from_unaligned(*self).serialize(serializer)
+    }
+}
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for CharULE {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        Ok(char::as_unaligned(char::deserialize(deserializer)?))
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
