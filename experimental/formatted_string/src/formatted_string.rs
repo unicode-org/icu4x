@@ -13,6 +13,8 @@ pub enum LocationInPart {
     Extend,
 }
 
+/// A string with L levels of annotations of type F. For N = 0, this is
+/// implemented for `&str`, for higher N see LayeredFormttedString.
 pub trait FormattedStringLike<F: Copy, const L: usize>: AsRef<str> {
     fn fields_at(&self, pos: usize) -> [F; L] {
         self.annotation_at(pos).map(|(_, field)| field)
@@ -173,7 +175,7 @@ mod test {
         assert_eq!(x.as_ref(), "hello world");
 
         for i in 0.."hello".len() {
-            assert_eq!(x.field_at(i), Field::Word);
+            assert_eq!(x.field_at(6 + i), Field::Word);
         }
         assert_eq!(x.field_at(5), Field::Space);
         for i in 0.."world".len() {
