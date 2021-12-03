@@ -18,12 +18,12 @@ macro_rules! map_access {
                 Q: Ord,
                 Cow<'data, $key>: core::borrow::Borrow<Q>,
             {
-                self.0.get(key)
+                self.defaults.get(key)
             }
 
             /// Check if the underlying data is empty.
             pub fn is_empty(&self) -> bool {
-                self.0.is_empty()
+                self.defaults.is_empty()
             }
         }
 
@@ -34,7 +34,7 @@ macro_rules! map_access {
         {
             type Output = $inner;
             fn index(&self, key: &Q) -> &Self::Output {
-                self.0.get(key).unwrap()
+                self.defaults.get(key).unwrap()
             }
         }
     };
@@ -74,7 +74,9 @@ pub struct TimeZoneFormatsV1<'data> {
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct ExemplarCitiesV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
+pub struct ExemplarCitiesV1<'data>{
+    pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>
+}
 map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the long-form generic metazone names.
@@ -86,7 +88,10 @@ map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneGenericNamesLongV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
+pub struct MetaZoneGenericNamesLongV1<'data>{
+    pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+    pub overwrites: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+}
 map_access!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the short-form generic metazone names.
@@ -98,7 +103,10 @@ map_access!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneGenericNamesShortV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
+pub struct MetaZoneGenericNamesShortV1<'data>{
+    pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+    pub overwrites: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+}
 map_access!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the long-form specific metazone names.
@@ -111,9 +119,10 @@ map_access!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesLongV1<'data>(
-    pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
-);
+pub struct MetaZoneSpecificNamesLongV1<'data>{
+    pub defaults: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+    pub overwrites: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+}
 map_access!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
 /// An ICU4X mapping to the short-form specific metazone names.
@@ -126,9 +135,10 @@ map_access!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesShortV1<'data>(
-    pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
-);
+pub struct MetaZoneSpecificNamesShortV1<'data>{
+    pub defaults: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+    pub overwrites: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+}
 map_access!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
 /// A general struct to hold metazone specific name variants.
@@ -141,5 +151,7 @@ map_access!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesV1<'data>(pub LiteMap<Cow<'data, TinyStr8>, Cow<'data, str>>);
+pub struct MetaZoneSpecificNamesV1<'data>{
+    pub defaults: LiteMap<Cow<'data, TinyStr8>, Cow<'data, str>>
+}
 map_access!(MetaZoneSpecificNamesV1<'data>[TinyStr8] => Cow<'data, str>: 'data);

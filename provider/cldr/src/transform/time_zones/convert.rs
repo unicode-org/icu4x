@@ -109,7 +109,7 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
 
 impl From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
-        match other.metazone {
+        default: match other.metazone {
             None => Self(LiteMap::new()),
             Some(metazones) => Self(
                 metazones
@@ -124,13 +124,36 @@ impl From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'_> {
                     })
                     .collect(),
             ),
-        }
+        },
+        overwrites: other.zone
+            .0
+            .iter()  
+            .filter_map(|(zone_key, region)| {
+                region
+                    .0
+                    .iter() 
+                    .filter_map(|region_key, losr| match losr { 
+                        Location(location) => {
+                            location.long.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+                        },
+                        SubRegion(sub_region) => {
+                            sub_region
+                            .iter()
+                            .filter_map(|sub_region_key, sub_region_location| { 
+                                sub_region_location.long.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+                            }        
+                        }
+                    })
+                    .map(|format| (region_key.clone().into(), format.clone().into()))
+                    .collect()
+            })
+            .collect(),
     }
 }
 
 impl From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
-        match other.metazone {
+        default: match other.metazone {
             None => Self(LiteMap::new()),
             Some(metazones) => Self(
                 metazones
@@ -145,7 +168,30 @@ impl From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'_> {
                     })
                     .collect(),
             ),
-        }
+        },
+        overwrites: other.zone
+            .0
+            .iter()  
+            .filter_map(|(zone_key, region)| {
+                region
+                    .0
+                    .iter() 
+                    .filter_map(|region_key, losr| match losr { 
+                        Location(location) => {
+                            location.short.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+                        },
+                        SubRegion(sub_region) => {
+                            sub_region
+                            .iter()
+                            .filter_map(|sub_region_key, sub_region_location| { 
+                                sub_region_location.short.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+                            }        
+                        }
+                    })
+                    .map(|format| (region_key.clone().into(), format.clone().into()))
+                    .collect()
+            })
+            .collect(),
     }
 }
 
