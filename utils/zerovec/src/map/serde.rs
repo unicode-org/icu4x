@@ -193,8 +193,8 @@ where
 #[cfg(test)]
 #[allow(non_camel_case_types)]
 mod test {
-    use crate::zerovec::ZeroVecULE;
     use super::super::*;
+    use crate::zerovec::ZeroVecULE;
 
     #[derive(::serde::Serialize, ::serde::Deserialize)]
     struct DeriveTest_ZeroMap<'data> {

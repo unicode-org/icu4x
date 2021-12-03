@@ -5,7 +5,12 @@
 use super::*;
 use alloc::boxed::Box;
 
-/// A type similar to [`ZeroVec`] that can be used inside `VarZeroVec<T>`
+/// A type similar to [`ZeroVec`] that can be used inside `VarZeroVec<T>`.
+///
+/// This essentially allows for the construction of zero-copy types isomorphic to
+/// `Vec<Vec<T>>` by instead using `VarZeroVec<ZeroVecULE<T>>`.
+///
+/// See the [`VarZeroVec`] docs for an example.
 #[repr(transparent)]
 pub struct ZeroVecULE<T: AsULE>(pub [T::ULE]);
 
