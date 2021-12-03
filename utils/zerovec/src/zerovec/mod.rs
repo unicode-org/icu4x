@@ -5,6 +5,8 @@
 #[cfg(feature = "serde")]
 mod serde;
 
+mod ule;
+
 use crate::ule::*;
 use alloc::vec::Vec;
 use core::fmt;
