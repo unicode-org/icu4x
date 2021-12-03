@@ -12,12 +12,40 @@ use super::*;
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct PlainOldULE<const N: usize>(pub [u8; N]);
 
+/// A signed version of [`PlainOldULE`]. This primarily exists so that complex types
+/// like `VarZeroVec<[SignedPlainOldULE]>` will correctly serialize in a human-readable
+/// fashion.
+#[repr(transparent)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub struct SignedPlainOldULE<const N: usize>(pub PlainOldULE<N>);
+
+// These impls exist to make the macros simpler
+impl<const N: usize> PlainOldULE<N> {
+    #[inline]
+    fn into_bytes(self) -> [u8; N] {
+        self.0
+    }
+}
+
+impl<const N: usize> SignedPlainOldULE<N> {
+    #[inline]
+    fn into_bytes(self) -> [u8; N] {
+        self.0 .0
+    }
+}
+
 macro_rules! impl_byte_slice_size {
     ($size:literal) => {
         impl From<[u8; $size]> for PlainOldULE<$size> {
             #[inline]
             fn from(le_bytes: [u8; $size]) -> Self {
                 Self(le_bytes)
+            }
+        }
+        impl From<[u8; $size]> for SignedPlainOldULE<$size> {
+            #[inline]
+            fn from(le_bytes: [u8; $size]) -> Self {
+                Self(le_bytes.into())
             }
         }
         impl PlainOldULE<$size> {
@@ -52,6 +80,16 @@ macro_rules! impl_byte_slice_size {
             }
         }
 
+        /// Forwards to above impl and is safe for the same reason
+        unsafe impl ULE for SignedPlainOldULE<$size> {
+            type Error = ULEError<core::convert::Infallible>;
+
+            #[inline]
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+                PlainOldULE::<$size>::validate_byte_slice(bytes)
+            }
+        }
+
         impl PlainOldULE<$size> {
             #[inline]
             pub fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
@@ -65,22 +103,22 @@ macro_rules! impl_byte_slice_size {
 }
 
 macro_rules! impl_byte_slice_type {
-    ($type:ty, $size:literal) => {
-        impl From<$type> for PlainOldULE<$size> {
+    ($type:ty, $ule_type:ty) => {
+        impl From<$type> for $ule_type {
             #[inline]
             fn from(value: $type) -> Self {
-                Self(value.to_le_bytes())
+                value.to_le_bytes().into()
             }
         }
         impl AsULE for $type {
-            type ULE = PlainOldULE<$size>;
+            type ULE = $ule_type;
             #[inline]
             fn as_unaligned(self) -> Self::ULE {
-                PlainOldULE(self.to_le_bytes())
+                self.to_le_bytes().into()
             }
             #[inline]
             fn from_unaligned(unaligned: Self::ULE) -> Self {
-                <$type>::from_le_bytes(unaligned.0)
+                <$type>::from_le_bytes(unaligned.into_bytes())
             }
         }
         // EqULE is true because $type and PlainOldULE<$size>
@@ -94,15 +132,15 @@ impl_byte_slice_size!(4);
 impl_byte_slice_size!(8);
 impl_byte_slice_size!(16);
 
-impl_byte_slice_type!(u16, 2);
-impl_byte_slice_type!(u32, 4);
-impl_byte_slice_type!(u64, 8);
-impl_byte_slice_type!(u128, 16);
+impl_byte_slice_type!(u16, PlainOldULE<2>);
+impl_byte_slice_type!(u32, PlainOldULE<4>);
+impl_byte_slice_type!(u64, PlainOldULE<8>);
+impl_byte_slice_type!(u128, PlainOldULE<16>);
 
-impl_byte_slice_type!(i16, 2);
-impl_byte_slice_type!(i32, 4);
-impl_byte_slice_type!(i64, 8);
-impl_byte_slice_type!(i128, 16);
+impl_byte_slice_type!(i16, SignedPlainOldULE<2>);
+impl_byte_slice_type!(i32, SignedPlainOldULE<4>);
+impl_byte_slice_type!(i64, SignedPlainOldULE<8>);
+impl_byte_slice_type!(i128, SignedPlainOldULE<16>);
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. u8 does not include any uninitialized or padding bytes.

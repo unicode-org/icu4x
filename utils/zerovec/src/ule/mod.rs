@@ -16,7 +16,7 @@ mod vec;
 pub use chars::CharULE;
 pub use error::ULEError;
 pub use pair::{PairULE, PairULEError};
-pub use plain::PlainOldULE;
+pub use plain::{PlainOldULE, SignedPlainOldULE};
 
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;
