@@ -5,9 +5,11 @@
 //! Data and APIs for supporting both Script and Script_Extensions property
 //! values in an efficient structure.
 
+use crate::error::PropertiesError;
 use crate::props::Script;
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::yoke::{self, *};
+use zerovec::ule::{AsULE, PlainOldULE};
 use zerovec::{zerovec::ZeroVecULE, VarZeroVec};
 
 #[cfg(feature = "serde")]
@@ -29,6 +31,20 @@ pub struct ScriptWithExt(pub u16);
 #[allow(non_upper_case_globals)]
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
+}
+
+impl AsULE for ScriptWithExt {
+    type ULE = PlainOldULE<2>;
+
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        PlainOldULE(self.0.to_le_bytes())
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        ScriptWithExt(u16::from_le_bytes(unaligned.0))
+    }
 }
 
 /// A data structure that represents the data for both Script and
@@ -62,4 +78,15 @@ pub struct ScriptExtensions<'data> {
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
     extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
+}
+
+impl<'data> ScriptExtensions<'data> {
+    pub fn try_new(
+        trie: CodePointTrie<'data, ScriptWithExt>,
+        extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
+    ) -> Result<ScriptExtensions<'data>, PropertiesError> {
+        // TODO: do validation here
+
+        Ok(ScriptExtensions { trie, extensions })
+    }
 }
