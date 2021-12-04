@@ -22,6 +22,7 @@ mod enum_codepointtrie;
 mod enum_uniset;
 mod provider;
 mod reader;
+mod script;
 mod uprops_helpers;
 mod uprops_serde;
 

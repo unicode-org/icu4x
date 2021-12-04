@@ -414,7 +414,8 @@ impl<T: TrieValue> icu_provider::DataMarker for UnicodePropertyMapV1Marker<T> {
 //
 
 /// A data structure efficiently storing `Script` and `Script_Extensions` property data.
-#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
+#[icu_provider::data_struct]
+#[derive(Debug, Eq, PartialEq)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
