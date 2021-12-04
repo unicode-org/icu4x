@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638379090924,
+  "lastUpdate": 1638612532884,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14549,6 +14549,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 150142,
             "range": "± 6443",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a0f78c5dcea33368cd89c06332e1b59e335e4de3",
+          "message": "Year of week-of-year support (#1206)\n\n* feat(datetime): Add support for week of year (this previously just used the calendar year).\r\n\r\n* feat(datetime): Add year of week-of-year to components::Bag & fix width adjustments for it.\r\n\r\nTo do this I've loosened get_best_available_format_pattern() to match on\r\nFieldSymbol enums but not their data. From the function's greater/lesser\r\nmatching this is apparently what the function tried to do all along. Without\r\nthis Year::NumericWeekOf wouldn't match as CLDR skeletons use 'y' even for\r\npatterns with 'Y'\r\n\r\nThis accessorily improves full & long time_h11_h12/time_h23_h24\r\npatterns: the h11_h12/h23_h24 coercion logic matches adjusted patterns\r\nagainst skeletons & previously 'z' was not matched againts 'v' leading\r\nto the time zone being dropped.\r\n\r\nIf we don't care to expose the week-of year variants in components::Bag\r\n& don't care about coerced time patterns then only\r\nadjust_pattern_field_lengths() need be adjusted.\r\n\r\n* doc(datetime): add examples to the descriptions of datetime::options::components::Year.\r\n\r\n* fix(datetime): remove serde renames & further expand the documentation of datetime::options::components::Year\r\n\r\n* fix(datetime): also update year enum names in benches.\r\n\r\n* fix(datetime): swich datetime::options::components::Year & Week to kebab case for serialization\r\n\r\n* style(datetime): use is_eq instead of == Ordering:::Equal\r\n\r\n* fix(datetime): use kebab-case for all options::components enums\r\n\r\n* tests(datetime): add extra locales to some test cases\r\n\r\n* fix(datetime): Return an error in DateTimeFormat::try_new instead of an empty pattern if there are no matches.",
+          "timestamp": "2021-12-04T02:01:23-08:00",
+          "tree_id": "db0214ac36483d76bfc51ef378fdda271fc23dbe",
+          "url": "https://github.com/unicode-org/icu4x/commit/a0f78c5dcea33368cd89c06332e1b59e335e4de3"
+        },
+        "date": 1638612524452,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 132170,
+            "range": "± 13195",
             "unit": "ns/iter"
           }
         ]
