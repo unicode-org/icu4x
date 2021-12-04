@@ -75,7 +75,7 @@ mod test {
     #[test]
     fn test_skeleton_matching() {
         let components = components::Bag {
-            year: Some(components::Numeric::Numeric),
+            year: Some(components::Year::Numeric),
             month: Some(components::Month::Long),
             day: Some(components::Numeric::Numeric),
 
@@ -132,7 +132,7 @@ mod test {
     #[should_panic]
     fn test_missing_append_items_support() {
         let components = components::Bag {
-            year: Some(components::Numeric::Numeric),
+            year: Some(components::Year::Numeric),
             month: Some(components::Month::Long),
             day: Some(components::Numeric::Numeric),
             // This will be appended.
