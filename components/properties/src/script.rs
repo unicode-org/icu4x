@@ -7,18 +7,17 @@
 
 use crate::error::PropertiesError;
 use crate::props::Script;
+
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use zerovec::ule::{AsULE, PlainOldULE};
-use zerovec::{zerovec::ZeroVecULE, VarZeroVec};
+use zerovec::{zerovec::ZeroVecULE, VarZeroVec, ZeroVec};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-const SCRIPT_X_WITH_OTHER: u16 = 0x0C00;
-const SCRIPT_X_WITH_COMMON: u16 = 0x0400;
-const SCRIPT_X_WITH_INHERITED: u16 = 0x0800;
 const SCRIPT_X_SCRIPT_VAL: u16 = 0x03FF;
+const SCRIPT_VAL_LENGTH: u16 = 10;
 
 /// An internal-use only pseudo-property that represents the values stored in
 /// the trie of the special data structure [`ScriptExtensions`].
@@ -49,6 +48,20 @@ impl AsULE for ScriptWithExt {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         ScriptWithExt(u16::from_le_bytes(unaligned.0))
+    }
+}
+
+impl ScriptWithExt {
+    pub fn is_common(&self) -> bool {
+        self.0 >> SCRIPT_VAL_LENGTH == 1
+    }
+
+    pub fn is_inherited(&self) -> bool {
+        self.0 >> SCRIPT_VAL_LENGTH == 2
+    }
+
+    pub fn is_other(&self) -> bool {
+        self.0 >> SCRIPT_VAL_LENGTH == 3
     }
 }
 
@@ -90,32 +103,81 @@ impl<'data> ScriptExtensions<'data> {
         trie: CodePointTrie<'data, ScriptWithExt>,
         extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
     ) -> Result<ScriptExtensions<'data>, PropertiesError> {
-
         // TODO: do validation here
 
         Ok(ScriptExtensions { trie, extensions })
     }
 
     pub fn get_script_val(&self, code_point: u32) -> Script {
-        let val = self.trie.get(code_point).0;
+        let sc_with_ext = self.trie.get(code_point);
 
-        if val & SCRIPT_X_WITH_OTHER != 0 {
+        if sc_with_ext.is_other() {
             // We must check OTHER mask first because COMMON mask and INHERITED
             // mask bit patterns are subsets and thus will also match.
-            let ext_idx = val & SCRIPT_X_SCRIPT_VAL;
+            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let scx_val = self.extensions.get(ext_idx as usize);
             let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
 
             let default_sc_val = <Script as TrieValue>::DATA_GET_ERROR_VALUE;
 
             scx_first_sc.unwrap_or(default_sc_val)
-        } else if val & SCRIPT_X_WITH_COMMON != 0 {
+        } else if sc_with_ext.is_common() {
             Script::Common
-        } else if val & SCRIPT_X_WITH_INHERITED != 0 {
+        } else if sc_with_ext.is_inherited() {
             Script::Inherited
         } else {
-            let script_val = val & SCRIPT_X_SCRIPT_VAL;
+            let script_val = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             Script(script_val)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_common() {
+        assert!(ScriptWithExt(0x04FF).is_common());
+        assert!(ScriptWithExt(0x0400).is_common());
+
+        assert!(!ScriptWithExt(0x08FF).is_common());
+        assert!(!ScriptWithExt(0x0800).is_common());
+
+        assert!(!ScriptWithExt(0x0CFF).is_common());
+        assert!(!ScriptWithExt(0x0C00).is_common());
+
+        assert!(!ScriptWithExt(0xFF).is_common());
+        assert!(!ScriptWithExt(0x0).is_common());
+    }
+
+    #[test]
+    fn test_is_inherited() {
+        assert!(!ScriptWithExt(0x04FF).is_inherited());
+        assert!(!ScriptWithExt(0x0400).is_inherited());
+
+        assert!(ScriptWithExt(0x08FF).is_inherited());
+        assert!(ScriptWithExt(0x0800).is_inherited());
+        
+        assert!(!ScriptWithExt(0x0CFF).is_inherited());
+        assert!(!ScriptWithExt(0x0C00).is_inherited());
+        
+        assert!(!ScriptWithExt(0xFF).is_inherited());
+        assert!(!ScriptWithExt(0x0).is_inherited());
+    }
+
+    #[test]
+    fn test_is_other() {
+        assert!(!ScriptWithExt(0x04FF).is_other());
+        assert!(!ScriptWithExt(0x0400).is_other());
+
+        assert!(!ScriptWithExt(0x08FF).is_other());
+        assert!(!ScriptWithExt(0x0800).is_other());
+
+        assert!(ScriptWithExt(0x0CFF).is_other());
+        assert!(ScriptWithExt(0x0C00).is_other());
+
+        assert!(!ScriptWithExt(0xFF).is_other());
+        assert!(!ScriptWithExt(0x0).is_other());
     }
 }

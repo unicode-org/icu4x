@@ -131,14 +131,6 @@ mod tests {
         assert_eq!(scx.get_script_val(0x200D), Script::Inherited); // ZERO WIDTH JOINER
         assert_eq!(scx.get_script_val('௫' as u32), Script::Tamil); // U+0BEB TAMIL DIGIT FIVE
         assert_eq!(scx.get_script_val(0x11303), Script::Grantha); // GRANTHA SIGN VISARGA
-
-        // TODO: why does this test pass? U+1DFA is in ScriptExtensions.txt, but where is it in Scripts.txt?
-
-        assert_eq!(scx.get_script_val(0x1DFA), Script::Syriac); // U+1DFA COMBINING DOT BELOW LEFT
-
-        // TODO: why doesn't this test pass? U+30A0 is listed as Common in ScriptExtensions.txt and Scripts.txt
-
         assert_eq!(scx.get_script_val(0x30A0), Script::Common); // U+30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN
-        
     }
 }
