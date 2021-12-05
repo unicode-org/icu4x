@@ -7,13 +7,18 @@
 
 use crate::error::PropertiesError;
 use crate::props::Script;
-use icu_codepointtrie::CodePointTrie;
+use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use zerovec::ule::{AsULE, PlainOldULE};
 use zerovec::{zerovec::ZeroVecULE, VarZeroVec};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+
+const SCRIPT_X_WITH_OTHER: u16     = 0x0C00;
+const SCRIPT_X_WITH_COMMON: u16    = 0x0400;
+const SCRIPT_X_WITH_INHERITED: u16 = 0x0800;
+const SCRIPT_X_SCRIPT_VAL: u16     = 0x03FF;
 
 /// An internal-use only pseudo-property that represents the values stored in
 /// the trie of the special data structure [`ScriptExtensions`].
@@ -69,7 +74,7 @@ pub struct ScriptExtensions<'data> {
     /// When the lower 10 bits of the value are used as an index, that index is
     /// used for the outer-level vector of the nested `extensions` structure.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    trie: CodePointTrie<'data, ScriptWithExt>,
+    pub trie: CodePointTrie<'data, ScriptWithExt>,
 
     /// This companion structure stores Script_Extensions values, which are
     /// themselves arrays / vectors. This structure only stores the values for
@@ -77,7 +82,7 @@ pub struct ScriptExtensions<'data> {
     /// sub-vector represents the Script_Extensions array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
+    pub extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
 }
 
 impl<'data> ScriptExtensions<'data> {
@@ -85,8 +90,32 @@ impl<'data> ScriptExtensions<'data> {
         trie: CodePointTrie<'data, ScriptWithExt>,
         extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
     ) -> Result<ScriptExtensions<'data>, PropertiesError> {
+
         // TODO: do validation here
 
         Ok(ScriptExtensions { trie, extensions })
+    }
+
+    pub fn get_script_val(&self, code_point: u32) -> Script {
+        let val = self.trie.get(code_point).0;
+
+        if val & SCRIPT_X_WITH_OTHER != 0 {
+            // We must check OTHER mask first because COMMON mask and INHERITED 
+            // mask bit patterns are subsets and thus will also match.
+            let ext_idx = val & SCRIPT_X_SCRIPT_VAL;
+            let scx_val = self.extensions.get(ext_idx as usize);
+            let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
+
+            let default_sc_val = <Script as TrieValue>::DATA_GET_ERROR_VALUE;
+
+            scx_first_sc.unwrap_or(default_sc_val)
+        } else if val & SCRIPT_X_WITH_COMMON != 0 {
+            Script::Common
+        } else if val & SCRIPT_X_WITH_INHERITED != 0 {
+            Script::Inherited
+        } else {
+            let script_val = val & SCRIPT_X_SCRIPT_VAL;
+            Script(script_val)
+        }
     }
 }

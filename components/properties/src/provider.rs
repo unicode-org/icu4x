@@ -331,6 +331,16 @@ pub mod key {
         (SENTENCE_BREAK_V1, "SB"),
 
     );
+
+    define_resource_keys!(ALL_SCRIPT_EXTENSIONS_KEYS; 1;
+        //
+        // Script_Extensions + Script data
+        //
+
+        // ResourceKey subcategory string is the short alias of Script_Extensions
+
+        (SCRIPT_EXTENSIONS_V1, "scx"),
+    );
 }
 
 //

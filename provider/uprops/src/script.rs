@@ -43,9 +43,8 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
     fn try_from(
         scx_data: &ScriptExtensionsProperty,
     ) -> Result<ScriptExtensions<'static>, DataError> {
-        let toml_data = scx_data;
-        let cpt_data = &toml_data.code_point_trie;
-        let scx_array_data = &toml_data.script_code_array;
+        let cpt_data = &scx_data.code_point_trie;
+        let scx_array_data = &scx_data.script_code_array;
 
         let trie = CodePointTrie::<ScriptWithExt>::try_from(cpt_data)?;
 
@@ -90,15 +89,56 @@ impl DataProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsProperty
     ) -> Result<DataResponse<ScriptExtensionsPropertyV1Marker>, DataError> {
         debug_assert_eq!(&tinystr16!("scx"), &req.resource_path.key.sub_category);
 
-        Err(DataError::Resource("unimplemented".to_string()))
+        let source_scx_data = &self.data;
+
+        let data_struct = ScriptExtensionsPropertyV1::try_from(source_scx_data)?;
+
+        Ok(DataResponse {
+            metadata: DataResponseMetadata {
+                data_langid: req.resource_path.options.langid.clone(),
+            },
+            payload: Some(DataPayload::from_owned(data_struct)),
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use icu_properties::provider::key;
 
     #[test]
-    fn test_() {
-        unimplemented!();
+    fn test_script_val_from_script_extensions() {
+        let root_dir = icu_testdata::paths::uprops_toml_root();
+        let provider = ScriptExtensionsPropertyProvider::try_new(&root_dir)
+            .expect("TOML should load successfully");
+
+        let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: key::SCRIPT_EXTENSIONS_V1,
+                    options: ResourceOptions::default(),
+                },
+            })
+            .expect("The data should be valid")
+            .take_payload()
+            .expect("Loading was successful");
+
+        let scx: &ScriptExtensions = &payload.get().data;
+
+        assert_eq!(scx.get_script_val('𐓐' as u32), Script::Osage); // U+104D0 OSAGE CAPITAL LETTER KHA
+        assert_eq!(scx.get_script_val('🥳' as u32), Script::Common); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+        assert_eq!(scx.get_script_val(0x200D), Script::Inherited); // ZERO WIDTH JOINER
+        assert_eq!(scx.get_script_val('௫' as u32), Script::Tamil); // U+0BEB TAMIL DIGIT FIVE
+        assert_eq!(scx.get_script_val(0x11303), Script::Grantha); // GRANTHA SIGN VISARGA
+
+        // TODO: why does this test pass? U+1DFA is in ScriptExtensions.txt, but where is it in Scripts.txt?
+        
+        assert_eq!(scx.get_script_val(0x1DFA), Script::Syriac); // U+1DFA COMBINING DOT BELOW LEFT
+
+        // TODO: why doesn't this test pass? U+30A0 is listed as Common in ScriptExtensions.txt and Scripts.txt
+
+        assert_eq!(scx.get_script_val(0x30A0), Script::Common); // U+30A0 KATAKANA-HIRAGANA DOUBLE HYPHEN
+        
     }
 }
