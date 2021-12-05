@@ -15,10 +15,10 @@ use zerovec::{zerovec::ZeroVecULE, VarZeroVec};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-const SCRIPT_X_WITH_OTHER: u16     = 0x0C00;
-const SCRIPT_X_WITH_COMMON: u16    = 0x0400;
+const SCRIPT_X_WITH_OTHER: u16 = 0x0C00;
+const SCRIPT_X_WITH_COMMON: u16 = 0x0400;
 const SCRIPT_X_WITH_INHERITED: u16 = 0x0800;
-const SCRIPT_X_SCRIPT_VAL: u16     = 0x03FF;
+const SCRIPT_X_SCRIPT_VAL: u16 = 0x03FF;
 
 /// An internal-use only pseudo-property that represents the values stored in
 /// the trie of the special data structure [`ScriptExtensions`].
@@ -100,7 +100,7 @@ impl<'data> ScriptExtensions<'data> {
         let val = self.trie.get(code_point).0;
 
         if val & SCRIPT_X_WITH_OTHER != 0 {
-            // We must check OTHER mask first because COMMON mask and INHERITED 
+            // We must check OTHER mask first because COMMON mask and INHERITED
             // mask bit patterns are subsets and thus will also match.
             let ext_idx = val & SCRIPT_X_SCRIPT_VAL;
             let scx_val = self.extensions.get(ext_idx as usize);

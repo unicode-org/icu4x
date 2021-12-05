@@ -133,7 +133,7 @@ mod tests {
         assert_eq!(scx.get_script_val(0x11303), Script::Grantha); // GRANTHA SIGN VISARGA
 
         // TODO: why does this test pass? U+1DFA is in ScriptExtensions.txt, but where is it in Scripts.txt?
-        
+
         assert_eq!(scx.get_script_val(0x1DFA), Script::Syriac); // U+1DFA COMBINING DOT BELOW LEFT
 
         // TODO: why doesn't this test pass? U+30A0 is listed as Common in ScriptExtensions.txt and Scripts.txt
