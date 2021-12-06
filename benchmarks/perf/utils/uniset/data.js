@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638612510977,
+  "lastUpdate": 1638802354376,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15659,6 +15659,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 49317644,
             "range": "± 2917095",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bffe5bad6d78ee37fed4c7f5b44ed730600b6c17",
+          "message": "Install (and cache) grcov before loading overridden coverage toolchain (#1359)",
+          "timestamp": "2021-12-06T08:45:05-06:00",
+          "tree_id": "4e22e629b9a363169e6808373147c27d00ec111b",
+          "url": "https://github.com/unicode-org/icu4x/commit/bffe5bad6d78ee37fed4c7f5b44ed730600b6c17"
+        },
+        "date": 1638802346563,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36276048,
+            "range": "± 1493173",
             "unit": "ns/iter"
           }
         ]
