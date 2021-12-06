@@ -72,7 +72,10 @@
 //! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::{
+    fields::{self, Field, FieldLength, FieldSymbol},
+    pattern::{runtime::PatternPlurals, PatternItem},
+};
 
 use alloc::vec::Vec;
 
@@ -486,6 +489,183 @@ impl From<TimeZoneName> for Field {
                 length: FieldLength::Wide,
             },
         }
+    }
+}
+
+/// Get the resolved components for a DateTimeFormat, via the PatternPlurals. In the case of
+/// plurals resolve off of the required `other` pattern.
+impl<'data> From<&PatternPlurals<'data>> for Bag {
+    fn from(other: &PatternPlurals) -> Self {
+        let pattern = match other {
+            PatternPlurals::SinglePattern(pattern) => pattern,
+            PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
+        };
+
+        let mut bag: Bag = Default::default();
+
+        // Transform the fields into components per:
+        // https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
+        for item in pattern.items.iter() {
+            let field = match item {
+                PatternItem::Field(ref field) => field,
+                PatternItem::Literal(_) => continue,
+            };
+            match field.symbol {
+                FieldSymbol::Era => {
+                    bag.era = Some(match field.length {
+                        FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
+                            Text::Short
+                        }
+                        FieldLength::Wide => Text::Long,
+                        FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                    });
+                }
+                FieldSymbol::Year(year) => {
+                    bag.year = Some(match year {
+                        fields::Year::Calendar => match field.length {
+                            FieldLength::TwoDigit => Year::TwoDigit,
+                            _ => Year::Numeric,
+                        },
+                        fields::Year::WeekOf => match field.length {
+                            FieldLength::TwoDigit => Year::TwoDigitWeekOf,
+                            _ => Year::NumericWeekOf,
+                        },
+                    });
+                }
+                FieldSymbol::Month(_) => {
+                    // `Month::StandAlone` is only relevant in the pattern, so only differentiate
+                    // on the field length.
+                    bag.month = Some(match field.length {
+                        FieldLength::One => Month::Numeric,
+                        FieldLength::TwoDigit => Month::TwoDigit,
+                        FieldLength::Abbreviated => Month::Short,
+                        FieldLength::Wide => Month::Long,
+                        FieldLength::Narrow | FieldLength::Six => Month::Narrow,
+                    });
+                }
+                FieldSymbol::Week(week) => {
+                    bag.week = Some(match week {
+                        fields::Week::WeekOfYear => match field.length {
+                            FieldLength::TwoDigit => Week::TwoDigitWeekOfYear,
+                            _ => Week::NumericWeekOfYear,
+                        },
+                        fields::Week::WeekOfMonth => Week::WeekOfMonth,
+                    });
+                }
+                FieldSymbol::Day(day) => {
+                    bag.day = Some(match day {
+                        fields::Day::DayOfMonth => match field.length {
+                            FieldLength::TwoDigit => Numeric::TwoDigit,
+                            _ => Numeric::Numeric,
+                        },
+                        fields::Day::DayOfYear => unimplemented!("fields::Day::DayOfYear #591"),
+                        fields::Day::DayOfWeekInMonth => {
+                            unimplemented!("fields::Day::DayOfWeekInMonth #592")
+                        }
+                        fields::Day::ModifiedJulianDay => {
+                            unimplemented!("fields::Day::ModifiedJulianDay")
+                        }
+                    });
+                }
+                FieldSymbol::Weekday(weekday) => {
+                    bag.weekday = Some(match weekday {
+                        fields::Weekday::Format => match field.length {
+                            FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
+                                Text::Short
+                            }
+                            FieldLength::Wide => Text::Long,
+                            _ => Text::Narrow,
+                        },
+                        fields::Weekday::StandAlone => match field.length {
+                            FieldLength::One | FieldLength::TwoDigit => {
+                                // Stand-alone fields also support a numeric 1 digit per UTS-35, but there is
+                                // no way to request it using the current system. As of 2021-12-06
+                                // no skeletons resolve to patterns containing this symbol.
+                                //
+                                // All resolved patterns from cldr-json:
+                                // https://github.com/gregtatum/cldr-json/blob/d4779f9611a4cc1e3e6a0a4597e92ead32d9f118/stand-alone-week.js
+                                //     'ccc',
+                                //     'ccc d. MMM',
+                                //     'ccc d. MMMM',
+                                //     'cccc d. MMMM y',
+                                //     'd, ccc',
+                                //     'cccနေ့',
+                                //     'ccc, d MMM',
+                                //     "ccc, d 'de' MMMM",
+                                //     "ccc, d 'de' MMMM 'de' y",
+                                //     'ccc, h:mm B',
+                                //     'ccc, h:mm:ss B',
+                                //     'ccc, d',
+                                //     "ccc, dd.MM.y 'г'.",
+                                //     'ccc, d.MM.y',
+                                //     'ccc, MMM d. y'
+                                unimplemented!("Numeric stand-alone fields are not supported.")
+                            }
+                            FieldLength::Abbreviated => Text::Short,
+                            FieldLength::Wide => Text::Long,
+                            FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                        },
+                        fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),
+                    });
+                }
+                FieldSymbol::DayPeriod(_) => {
+                    // Day period does not affect the resolved components.
+                }
+                FieldSymbol::Hour(hour) => {
+                    bag.hour = Some(match field.length {
+                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        _ => Numeric::Numeric,
+                    });
+                    bag.preferences = Some(preferences::Bag {
+                        hour_cycle: Some(match hour {
+                            fields::Hour::H11 => preferences::HourCycle::H11,
+                            fields::Hour::H12 => preferences::HourCycle::H12,
+                            fields::Hour::H23 => preferences::HourCycle::H23,
+                            fields::Hour::H24 => preferences::HourCycle::H24,
+                        }),
+                    });
+                }
+                FieldSymbol::Minute => {
+                    bag.minute = Some(match field.length {
+                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        _ => Numeric::Numeric,
+                    });
+                }
+                FieldSymbol::Second(second) => {
+                    bag.second = Some(match second {
+                        fields::Second::Second => match field.length {
+                            FieldLength::TwoDigit => Numeric::TwoDigit,
+                            _ => Numeric::Numeric,
+                        },
+                        fields::Second::FractionalSecond => {
+                            unimplemented!("fields::Second::FractionalSecond. #1360")
+                        }
+                        fields::Second::Millisecond => {
+                            unimplemented!("fields::Second::Millisecond")
+                        }
+                    });
+                }
+                FieldSymbol::TimeZone(time_zone_name) => {
+                    bag.time_zone_name = Some(match time_zone_name {
+                        fields::TimeZone::LowerZ => match field.length {
+                            FieldLength::One => TimeZoneName::ShortSpecific,
+                            _ => TimeZoneName::LongSpecific,
+                        },
+                        fields::TimeZone::LowerV => match field.length {
+                            FieldLength::One => TimeZoneName::ShortGeneric,
+                            _ => TimeZoneName::LongGeneric,
+                        },
+                        fields::TimeZone::UpperO => TimeZoneName::GmtOffset,
+                        fields::TimeZone::UpperZ => unimplemented!("fields::TimeZone::UpperZ"),
+                        fields::TimeZone::UpperV => unimplemented!("fields::TimeZone::UpperV"),
+                        fields::TimeZone::LowerX => unimplemented!("fields::TimeZone::LowerX"),
+                        fields::TimeZone::UpperX => unimplemented!("fields::TimeZone::UpperX"),
+                    });
+                }
+            }
+        }
+
+        bag
     }
 }
 

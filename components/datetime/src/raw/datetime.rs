@@ -7,6 +7,7 @@
 
 use crate::{
     format::datetime,
+    options::components,
     options::DateTimeFormatOptions,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
@@ -152,5 +153,11 @@ impl DateTimeFormat {
         self.format_to_write(&mut s, value)
             .expect("Failed to write to a String.");
         s
+    }
+
+    /// Returns a [`components::Bag`] that represents the resolved components for the
+    /// options that were provided to the [`DateTimeFormat`].
+    pub fn resolve_components(&self) -> components::Bag {
+        components::Bag::from(&self.patterns.get().0)
     }
 }
