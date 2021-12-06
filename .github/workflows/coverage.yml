@@ -23,6 +23,26 @@ jobs:
 
       ## Coverage steps
 
+      - name: Get grcov version
+        id: grcov-version
+        run: |
+          echo "::set-output name=hash::$(cargo search grcov | grep '^grcov =' | md5sum)"
+        shell: bash
+      - name: Attempt to load cached grcov
+        uses: actions/cache@v2
+        id: grcov-cache
+        with:
+          path: |
+            ~/.cargo/bin/grcov
+            ~/.cargo/bin/grcov.exe
+          key: ${{ runner.os }}-make-${{ steps.grcov-version.outputs.hash }}
+      - name: Install grcov
+        if: steps.grcov-cache.outputs.cache-hit != 'true'
+        uses: actions-rs/install@v0.1.2
+        with:
+          crate: grcov
+          version: latest
+  
       - uses:                   actions-rs/toolchain@v1
         with:
           toolchain:            nightly-2021-09-22
