@@ -60,6 +60,12 @@ impl<'a> ZeroMapKV<'a> for str {
     type OwnedType = Box<str>;
 }
 
+impl<'a> ZeroMapKV<'a> for [u8] {
+    type Container = VarZeroVec<'a, [u8]>;
+    type GetType = [u8];
+    type OwnedType = Box<[u8]>;
+}
+
 impl<'a, T: AsULE + 'static + Ord> ZeroMapKV<'a> for ZeroVecULE<T> {
     type Container = VarZeroVec<'a, ZeroVecULE<T>>;
     type GetType = ZeroVecULE<T>;
