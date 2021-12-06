@@ -10,7 +10,6 @@ use crate::props::Script;
 
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
-use zerovec::ule::{AsULE, PlainOldULE};
 use zerovec::{zerovec::ZeroVecULE, VarZeroVec, ZeroVec};
 
 #[cfg(feature = "serde")]
@@ -35,20 +34,6 @@ pub struct ScriptWithExt(pub u16);
 #[allow(non_upper_case_globals)]
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
-}
-
-impl AsULE for ScriptWithExt {
-    type ULE = PlainOldULE<2>;
-
-    #[inline]
-    fn as_unaligned(self) -> Self::ULE {
-        PlainOldULE(self.0.to_le_bytes())
-    }
-
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        ScriptWithExt(u16::from_le_bytes(unaligned.0))
-    }
 }
 
 impl ScriptWithExt {
@@ -112,8 +97,6 @@ impl<'data> ScriptExtensions<'data> {
         let sc_with_ext = self.trie.get(code_point);
 
         if sc_with_ext.is_other() {
-            // We must check OTHER mask first because COMMON mask and INHERITED
-            // mask bit patterns are subsets and thus will also match.
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let scx_val = self.extensions.get(ext_idx as usize);
             let scx_first_sc = scx_val.and_then(|scx| scx.get(0));

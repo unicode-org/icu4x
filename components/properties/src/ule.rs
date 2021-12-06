@@ -6,6 +6,7 @@ use crate::{
     EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
     WordBreak,
 };
+use crate::script::ScriptWithExt;
 
 use core::convert::TryFrom;
 use num_enum::TryFromPrimitiveError;
@@ -64,6 +65,20 @@ impl AsULE for Script {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         Script(u16::from_le_bytes(unaligned.0))
+    }
+}
+
+impl AsULE for ScriptWithExt {
+    type ULE = PlainOldULE<2>;
+
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        PlainOldULE(self.0.to_le_bytes())
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        ScriptWithExt(u16::from_le_bytes(unaligned.0))
     }
 }
 
