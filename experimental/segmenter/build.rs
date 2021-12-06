@@ -10,25 +10,6 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-// state machine define using code point
-// {
-//   "codepoint": [32, 33, ...]
-// }
-//
-// state machine define for combined state
-// {
-//   "left": "Double_Quote",
-//   "right": "ALetter"
-// }
-#[derive(Deserialize, Debug)]
-struct SegmenterPropertyValueMap {
-    // If codepoint is defined, this is custom define, not builtin define.
-    codepoint: Option<Vec<u32>>,
-    // If left and right are defined, this define is combined state.
-    left: Option<String>,
-    right: Option<String>,
-}
-
 // state machine name define by builtin name
 // [[tables]]
 // name = "Double_Quote"
@@ -36,19 +17,34 @@ struct SegmenterPropertyValueMap {
 // state machine name define by custom data or combined state.
 // [[tables]]
 // name = "Double_Quote"
-// [[tables.value]]
 // ...
+//
+// state machine define for combined state
+//
+// [[tables]]
+// name = "Double_Quote_ALetter"
+// left = "Double_Quote"
+// right = "ALetter"
+//
+// state machine define using code point
+// [[tables]]
+// name = "ABC"
+// codepoint = [32, 33, ...]
 #[derive(Deserialize, Debug)]
 struct SegmenterProperty {
     name: String,
-    value: Option<SegmenterPropertyValueMap>,
+    // If codepoint is defined, this is custom define, not builtin define.
+    codepoint: Option<Vec<u32>>,
+    // If left and right are defined, this define is combined state.
+    left: Option<String>,
+    right: Option<String>,
 }
 
 // state machine break result define
 // The follow is "Double_Quote x Double_Quote".
 // [[tables]]
-// left = "Double_Qoute"
-// right = "Double_Qoute"
+// left = [ "Double_Qoute" ]
+// right = [ "Double_Qoute" ]
 // break_state = true # true if break opportunity.
 #[derive(Deserialize, Debug)]
 struct SegmenterState {
@@ -59,15 +55,15 @@ struct SegmenterState {
 
 // rule based segmenter define
 //
-// type: builtin type. word, sentence or graphme.
+// segmenter_type: builtin type. word, sentence or graphme.
 // tables: state machine name defines.
 // rules: state machine rules.
 //
-// {
-//   "type": "word",
-//   "tables": [{"name":...}, {...}, ...],
-//   "rules": [{"left":..,...}, {...}, ...]
-// }
+// segmenter_type = "word"
+// [[tables]]
+// ...
+// [[rules]]
+// ...
 #[derive(Deserialize, Debug)]
 struct SegmenterRuleTable {
     segmenter_type: String,
@@ -140,8 +136,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     let payload = maps::get_line_break(provider).expect("The data should be valid!");
     let lb = &payload.get().code_point_trie;
 
-    let segmenter: SegmenterRuleTable =
-        toml::de::from_slice(toml_data).expect("TOML syntax error");
+    let segmenter: SegmenterRuleTable = toml::de::from_slice(toml_data).expect("TOML syntax error");
 
     properties_names.push("Unknown".to_string());
     simple_properties_count += 1;
@@ -155,8 +150,8 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
             continue;
         }
 
-        if p.value.is_none() {
-            // If value isn't set, this is builtin type.
+        if p.left.is_none() && p.right.is_none() && p.codepoint.is_none() {
+            // If any values aren't set, this is builtin type.
             simple_properties_count += 1;
 
             match &*segmenter.segmenter_type {
@@ -201,7 +196,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
             }
         }
 
-        if let Some(codepoint) = &p.value.as_ref().unwrap().codepoint {
+        if let Some(codepoint) = &p.codepoint {
             simple_properties_count += 1;
             for c in codepoint {
                 let c = *c as usize;
@@ -308,15 +303,13 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
     // State machine alias
     for p in &segmenter.tables {
-        if let Some(value) = &p.value {
-            if let Some(left) = &value.left {
-                if let Some(right) = &value.right {
-                    let right_index = get_index_from_name(&properties_names, right).unwrap();
-                    let left_index = get_index_from_name(&properties_names, left).unwrap();
+        if let Some(left) = &p.left {
+            if let Some(right) = &p.right {
+                let right_index = get_index_from_name(&properties_names, right).unwrap();
+                let left_index = get_index_from_name(&properties_names, left).unwrap();
 
-                    let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
-                    break_state_table[left_index * property_length + right_index] = index as i8;
-                }
+                let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
+                break_state_table[left_index * property_length + right_index] = index as i8;
             }
         }
     }
