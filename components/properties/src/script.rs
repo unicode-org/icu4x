@@ -158,10 +158,10 @@ mod tests {
 
         assert!(ScriptWithExt(0x08FF).is_inherited());
         assert!(ScriptWithExt(0x0800).is_inherited());
-        
+
         assert!(!ScriptWithExt(0x0CFF).is_inherited());
         assert!(!ScriptWithExt(0x0C00).is_inherited());
-        
+
         assert!(!ScriptWithExt(0xFF).is_inherited());
         assert!(!ScriptWithExt(0x0).is_inherited());
     }
