@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::script::ScriptWithExt;
 use crate::{
     EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
     WordBreak,
 };
-use crate::script::ScriptWithExt;
 use core::convert::TryInto;
 use core::num::TryFromIntError;
 use icu_codepointtrie::TrieValue;

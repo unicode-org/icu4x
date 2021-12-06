@@ -8,6 +8,7 @@
 use crate::error::PropertiesError;
 use crate::props::Script;
 
+use core::iter::FromIterator;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use zerovec::{zerovec::ZeroVecULE, VarZeroVec, ZeroVec};
@@ -111,6 +112,45 @@ impl<'data> ScriptExtensions<'data> {
         } else {
             let script_val = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             Script(script_val)
+        }
+    }
+
+    pub fn get_script_extensions_val(&self, code_point: u32) -> ZeroVec<Script> {
+        let sc_with_ext = self.trie.get(code_point);
+
+        if sc_with_ext.is_other() {
+            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let ext_subarray = self
+                .extensions
+                .get(ext_idx as usize)
+                .map(|zvule| zvule.as_zerovec())
+                .unwrap_or_default();
+            // In the OTHER case, where the 2 higher-order bits of the
+            // `ScriptWithExt` value in the trie doesn't indicate the Script value,
+            // the Script value is copied/inserted into the first position of the
+            // `extensions` array. So we must remove it to return the actual scx array val.
+            let scx_val_iter = ext_subarray.iter().skip(1);
+            let scx_val: ZeroVec<Script> = ZeroVec::<Script>::from_iter(scx_val_iter);
+            scx_val
+        } else if sc_with_ext.is_common() {
+            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let scx_val = self
+                .extensions
+                .get(ext_idx as usize)
+                .map(|zvule| zvule.as_zerovec())
+                .unwrap_or_default();
+            scx_val
+        } else if sc_with_ext.is_inherited() {
+            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let scx_val = self
+                .extensions
+                .get(ext_idx as usize)
+                .map(|zvule| zvule.as_zerovec())
+                .unwrap_or_default();
+            scx_val
+        } else {
+            let scx_vec = [self.get_script_val(code_point)];
+            ZeroVec::alloc_from_slice(&scx_vec)
         }
     }
 }
