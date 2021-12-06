@@ -21,7 +21,10 @@ use core::iter::FromIterator;
 /// desirable to borrow data from an unaligned byte slice, such as zero-copy deserialization.
 ///
 /// `T` must implement [`AsULE`], which is auto-implemented for a number of built-in types,
-/// including all fixed-width multibyte integers.
+/// including all fixed-width multibyte integers. For variable-width types like [`str`],
+/// see [`VarZeroVec`](crate::VarZeroVec).
+///
+/// Typically, the zero-copy equivalent of a `Vec<T>` will simply be `ZeroVec<'a, T>`.
 ///
 /// # How it Works
 ///
