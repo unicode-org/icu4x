@@ -30,15 +30,14 @@ struct SegmenterPropertyValueMap {
 }
 
 // state machine name define by builtin name
-// {
-//    "name": "Double_Quote"
-// }
+// [[tables]]
+// name = "Double_Quote"
 //
 // state machine name define by custom data or combined state.
-// {
-//    "name": "Double_Quote",
-//    "value": { ... }
-// }
+// [[tables]]
+// name = "Double_Quote"
+// [[tables.value]]
+// ...
 #[derive(Deserialize, Debug)]
 struct SegmenterProperty {
     name: String,
@@ -47,11 +46,10 @@ struct SegmenterProperty {
 
 // state machine break result define
 // The follow is "Double_Quote x Double_Quote".
-// {
-//   "left": "Double_Qoute",
-//   "right": "Double_Qoute",
-//   "break_state": true, <- true if break opportunity.
-// }
+// [[tables]]
+// left = "Double_Qoute"
+// right = "Double_Qoute"
+// break_state = true # true if break opportunity.
 #[derive(Deserialize, Debug)]
 struct SegmenterState {
     left: Vec<String>,
@@ -128,7 +126,7 @@ fn get_word_segmenter_value_from_name(name: &str) -> WordBreak {
     }
 }
 
-fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &FsDataProvider) {
+fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &FsDataProvider) {
     let mut properties_map: [u8; CODEPOINT_TABLE_LEN] = [0; CODEPOINT_TABLE_LEN];
     let mut properties_names = Vec::<String>::new();
     let mut simple_properties_count = 0;
@@ -143,7 +141,7 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
     let lb = &payload.get().code_point_trie;
 
     let segmenter: SegmenterRuleTable =
-        serde_json::from_slice(json_data).expect("JSON syntax error");
+        toml::de::from_slice(toml_data).expect("TOML syntax error");
 
     properties_names.push("Unknown".to_string());
     simple_properties_count += 1;
@@ -458,8 +456,8 @@ fn generate_rule_segmenter_table(file_name: &str, json_data: &[u8], provider: &F
 }
 
 fn main() {
-    const WORD_SEGMENTER_JSON: &[u8] = include_bytes!("data/word.json");
+    const WORD_SEGMENTER_TOML: &[u8] = include_bytes!("data/word.toml");
 
     let provider = icu_testdata::get_provider();
-    generate_rule_segmenter_table("generated_word_table.rs", WORD_SEGMENTER_JSON, &provider);
+    generate_rule_segmenter_table("generated_word_table.rs", WORD_SEGMENTER_TOML, &provider);
 }
