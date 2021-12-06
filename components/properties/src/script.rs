@@ -89,6 +89,7 @@ impl<'data> ScriptExtensions<'data> {
         trie: CodePointTrie<'data, ScriptWithExt>,
         extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
     ) -> Result<ScriptExtensions<'data>, PropertiesError> {
+        
         // TODO: do validation here
 
         Ok(ScriptExtensions { trie, extensions })

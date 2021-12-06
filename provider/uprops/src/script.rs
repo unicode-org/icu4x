@@ -160,7 +160,7 @@ mod tests {
             ZeroVec::<Script>::alloc_from_slice(&[Script::Osage])
         );
         assert_eq!(
-            scx.get_script_extensions_val('🥳' as u32), // U+1F973 FACE WITH PARTY HORN AND
+            scx.get_script_extensions_val('🥳' as u32), // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
             ZeroVec::<Script>::alloc_from_slice(&[Script::Common])
         );
         assert_eq!(
