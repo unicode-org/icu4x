@@ -1,3 +1,6 @@
+# These word boundary rules are based on UAX #29, Unicode Version 14.0.0.
+# https://www.unicode.org/reports/tr29/tr29-39.html
+
 segmenter_type = "word"
 
 [[tables]]
@@ -701,5 +704,3 @@ break_state = true
 left = [ "ALetter_ZWJ" ]
 right = [ "WSegSpace" ]
 break_state = true
-
-

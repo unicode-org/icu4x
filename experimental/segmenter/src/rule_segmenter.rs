@@ -161,14 +161,13 @@ macro_rules! break_iterator_impl {
         }
 
         impl<'a> $name<'a> {
-            fn get_break_state_from_table(&mut self, left: u8, right: u8) -> i8 {
+            fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
                 self.break_state_table
                     [(left as usize) * self.rule_property_count + (right as usize)]
             }
 
             fn is_break_from_table(&self, left: u8, right: u8) -> bool {
-                let rule = self.break_state_table
-                    [(left as usize) * self.rule_property_count + (right as usize)];
+                let rule = self.get_break_state_from_table(left, right);
                 if rule == KEEP_RULE {
                     return false;
                 }

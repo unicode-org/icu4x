@@ -14,13 +14,7 @@ use std::path::Path;
 // [[tables]]
 // name = "Double_Quote"
 //
-// state machine name define by custom data or combined state.
-// [[tables]]
-// name = "Double_Quote"
-// ...
-//
 // state machine define for combined state
-//
 // [[tables]]
 // name = "Double_Quote_ALetter"
 // left = "Double_Quote"
@@ -55,7 +49,7 @@ struct SegmenterState {
 
 // rule based segmenter define
 //
-// segmenter_type: builtin type. word, sentence or graphme.
+// segmenter_type: builtin type. word, sentence or grapheme.
 // tables: state machine name defines.
 // rules: state machine rules.
 //
