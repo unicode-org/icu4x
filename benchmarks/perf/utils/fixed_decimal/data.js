@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638802334562,
+  "lastUpdate": 1638875410925,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14609,6 +14609,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 138138,
             "range": "± 1434",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc9c9ffec1e492407a7e23fc9b8d08b12b0ae5c0",
+          "message": "Custom fallbacks (#1309)",
+          "timestamp": "2021-12-07T03:03:23-08:00",
+          "tree_id": "fc4695f8f16e7fc01525bc01b851d0991df11380",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc9c9ffec1e492407a7e23fc9b8d08b12b0ae5c0"
+        },
+        "date": 1638875401415,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 125187,
+            "range": "± 6233",
             "unit": "ns/iter"
           }
         ]
