@@ -5,7 +5,7 @@
 use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use formatted_string::*;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -50,23 +50,25 @@ impl ListFormatter {
         &'c self,
         values: &[&str],
         empty: fn() -> B,
-        single: fn(&str) -> B,
+        single: fn(&str, usize) -> B,
         apply_pattern: fn(&str, &PatternParts<'c>, B) -> B,
     ) -> B {
         let pattern = &self.data.get();
+        let size_hint = values.iter().map(|s| s.len()).sum::<usize>()
+            + pattern.size_hint(self.width, values.len());
         match values.len() {
             0 => empty(),
-            1 => single(values[0]),
+            1 => single(values[0], size_hint),
             2 => apply_pattern(
                 values[0],
                 &pattern.pair(self.width).parts(values[1]),
-                single(values[1]),
+                single(values[1], size_hint),
             ),
             n => {
                 let mut builder = apply_pattern(
                     values[n - 2],
                     &pattern.end(self.width).parts(values[n - 1]),
-                    single(values[n - 1]),
+                    single(values[n - 1], size_hint),
                 );
                 let middle = pattern.middle(self.width);
                 for i in (1..n - 2).rev() {
@@ -84,8 +86,12 @@ impl ListFormatter {
     pub fn format(&self, values: &[&str]) -> String {
         self.format_internal(
             values,
-            || "".to_string(),
-            |value| value.to_string(),
+            || String::with_capacity(0),
+            |value, size_hint| {
+                let mut b = String::with_capacity(size_hint);
+                b.push_str(value);
+                b
+            },
             |value, (between, after), mut builder| {
                 builder = builder + after;
                 builder.insert_str(0, between);
@@ -98,9 +104,9 @@ impl ListFormatter {
     pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType> {
         self.format_internal(
             values,
-            FormattedString::<FieldType>::new,
-            |value| {
-                let mut builder = FormattedString::<FieldType>::new();
+            || FormattedString::<FieldType>::with_capacity(0),
+            |value, size_hint| {
+                let mut builder = FormattedString::<FieldType>::with_capacity(size_hint);
                 builder.append(&value, FieldType::Element);
                 builder
             },
@@ -117,38 +123,21 @@ impl ListFormatter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::str::FromStr;
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
-    fn formatter() -> ListFormatter {
-        let pattern = ListFormatterPatternsV1::new([
-            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
-                .unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
-                .unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
-                .unwrap(),
-        ]);
-
+    fn formatter(width: Width) -> ListFormatter {
         ListFormatter {
-            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(pattern),
-            width: Width::default(),
+            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
+                crate::provider::test::test_patterns(),
+            ),
+            width: width,
         }
     }
 
     #[test]
     fn test_format() {
-        let formatter = formatter();
+        let formatter = formatter(Width::Wide);
         assert_eq!(formatter.format(&VALUES[0..0]), "");
         assert_eq!(formatter.format(&VALUES[0..1]), "one");
         assert_eq!(formatter.format(&VALUES[0..2]), "one; two");
@@ -159,7 +148,7 @@ mod tests {
 
     #[test]
     fn test_format_to_parts() {
-        let formatter = formatter();
+        let formatter = formatter(Width::Wide);
 
         assert_eq!(formatter.format_to_parts(&VALUES[0..0]).as_ref(), "");
         assert_eq!(formatter.format_to_parts(&VALUES[0..1]).as_ref(), "one");
@@ -192,8 +181,17 @@ mod tests {
 
     #[test]
     fn test_conditional() {
-        let formatter = formatter();
+        let formatter = formatter(Width::Narrow);
 
         assert_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
+    }
+
+    #[test]
+    fn strings_dont_have_spare_capacity() {
+        let string = formatter(Width::Short).format(VALUES);
+        assert_eq!(string.capacity(), string.len());
+
+        let labelled_string = formatter(Width::Short).format(VALUES);
+        assert_eq!(labelled_string.capacity(), labelled_string.len());
     }
 }

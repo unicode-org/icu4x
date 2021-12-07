@@ -64,12 +64,26 @@ impl<F: Copy, const L: usize> FormattedStringLike<F, L> for LayeredFormattedStri
 
 impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
     pub fn new() -> Self {
+        Self::with_capacity(40)
+    }
+
+    pub fn with_capacity(capacity: usize) -> Self {
         // A LayeredFormattedString with 0 annotations doesn't make sense.
         assert!(L > 0);
         Self {
-            bytes: Vec::with_capacity(40),
-            annotations: Vec::with_capacity(40),
+            bytes: Vec::with_capacity(capacity),
+            annotations: Vec::with_capacity(capacity),
         }
+    }
+
+    pub fn capacity(&self) -> usize {
+        assert_eq!(self.bytes.capacity(), self.annotations.capacity());
+        self.bytes.capacity()
+    }
+
+    pub fn len(&self) -> usize {
+        assert_eq!(self.bytes.len(), self.annotations.len());
+        self.bytes.len()
     }
 
     pub fn append<S, const L1: usize>(&mut self, string: &S, field: F) -> &mut Self
