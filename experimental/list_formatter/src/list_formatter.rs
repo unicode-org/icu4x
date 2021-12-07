@@ -122,7 +122,7 @@ mod tests {
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
     fn formatter() -> ListFormatter {
-        let pattern = ListFormatterPatternsV1::new(
+        let pattern = ListFormatterPatternsV1::new([
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
@@ -138,7 +138,7 @@ mod tests {
             ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
             ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
                 .unwrap(),
-        );
+        ]);
 
         ListFormatter {
             data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(pattern),
