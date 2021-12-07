@@ -215,7 +215,13 @@ mod tests {
         let string = formatter(Width::Short).format(VALUES);
         assert_eq!(string.capacity(), string.len());
 
+        // VecDeq only grows in powers of two, so this is not optimal anymore.
+        // It also always keeps one free slot, so lengths of 2^n are pretty
+        // inefficient.
         let labelled_string = formatter(Width::Short).format_to_parts(VALUES);
-        assert_eq!(labelled_string.capacity(), labelled_string.len());
+        assert_eq!(
+            labelled_string.capacity(),
+            labelled_string.len().next_power_of_two() - 1
+        );
     }
 }
