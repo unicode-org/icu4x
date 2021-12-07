@@ -52,7 +52,7 @@ pub type FormattedString<F> = LayeredFormattedString<F, 1>;
 
 impl<F: Copy, const L: usize> AsRef<str> for LayeredFormattedString<F, L> {
     fn as_ref(&self) -> &str {
-        unsafe { &str::from_utf8_unchecked(&self.bytes) }
+        unsafe { str::from_utf8_unchecked(&self.bytes) }
     }
 }
 
