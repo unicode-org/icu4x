@@ -16,12 +16,3 @@ impl DataMarker for BufferMarker {
 pub trait BufferProvider {
     fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, Error>;
 }
-
-impl<P> BufferProvider for &P
-where
-    P: BufferProvider + ?Sized,
-{
-    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, Error> {
-        P::load_buffer(*self, req)
-    }
-}

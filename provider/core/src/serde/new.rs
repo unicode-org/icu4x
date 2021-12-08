@@ -11,14 +11,14 @@ use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 
-pub struct SerdeBufferProvider<P: ?Sized>(pub P);
+pub struct SerdeBufferProvider<'a, P: ?Sized>(&'a P);
 
 pub trait AsSerdeBufferProvider {
-    fn as_serde_provider(&self) -> SerdeBufferProvider<&Self>;
+    fn as_serde_provider(&self) -> SerdeBufferProvider<Self>;
 }
 
-impl<P> AsSerdeBufferProvider for P where P: BufferProvider {
-    fn as_serde_provider(&self) -> SerdeBufferProvider<&Self> {
+impl<P> AsSerdeBufferProvider for P where P: BufferProvider + ?Sized {
+    fn as_serde_provider(&self) -> SerdeBufferProvider<Self> {
         SerdeBufferProvider(self)
     }
 }
@@ -68,9 +68,9 @@ where
     }
 }
 
-impl<P, M> DataProvider<M> for SerdeBufferProvider<P>
+impl<P, M> DataProvider<M> for SerdeBufferProvider<'_, P>
 where
-    P: BufferProvider,
+    P: BufferProvider + ?Sized,
     M: DataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
@@ -80,7 +80,7 @@ where
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         // TODO(#1077): Remove the `req.clone()` when we start taking `req` by value.
-        let old_response = BufferProvider::load_buffer(&self.0, req.clone())?;
+        let old_response = BufferProvider::load_buffer(self.0, req.clone())?;
         if let Some(old_payload) = old_response.payload {
             let buffer_format = old_response
                 .metadata
