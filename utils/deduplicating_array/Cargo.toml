@@ -4,7 +4,7 @@
 
 [package]
 name = "deduplicating_array"
-description = "A serde serializtion strategy that uses PartialEq to reduce serialized size."
+description = "A serde serialization strategy that uses PartialEq to reduce serialized size."
 version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"

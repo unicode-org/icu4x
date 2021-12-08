@@ -28,10 +28,13 @@
 //! This implies that singleton integer arrays cannot be used as array elements (they do work in Bincode,
 //! but there's really not much point in using them).
 
+#![no_std]
+extern crate alloc;
+
+use alloc::fmt::{Error, Formatter};
+use alloc::format;
 use serde::de::{Deserialize, Deserializer, EnumAccess, Visitor};
 use serde::ser::{Serialize, Serializer};
-
-extern crate alloc;
 
 pub fn serialize<S, T, const N: usize>(array: &[T; N], serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -79,10 +82,9 @@ where
                     // Fallbacks should always be to a previous value,
                     // which makes the assume_init_ref safe
                     if j >= i {
-                        return Err(D::Error::custom(alloc::format!(
+                        return Err(D::Error::custom(format!(
                             "Illegal forward fallback {}->{}",
-                            i,
-                            j
+                            i, j
                         )));
                     }
                     array[i].write(array[j].assume_init_ref().clone());
@@ -101,10 +103,9 @@ where
                     // Fallbacks should always be to a previous value,
                     // which makes the assume_init_ref safe
                     if j >= i {
-                        return Err(D::Error::custom(alloc::format!(
+                        return Err(D::Error::custom(format!(
                             "Illegal forward fallback {}->{}",
-                            i,
-                            j
+                            i, j
                         )));
                     }
                     array[i].write(array[j].assume_init_ref().clone());
@@ -188,10 +189,7 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for MachineDe<T> {
         impl<'de, R: Deserialize<'de>> Visitor<'de> for DedupeVisitor<R> {
             type Value = MachineDe<R>;
 
-            fn expecting(
-                &self,
-                formatter: &mut alloc::fmt::Formatter,
-            ) -> Result<(), alloc::fmt::Error> {
+            fn expecting(&self, formatter: &mut Formatter) -> Result<(), Error> {
                 formatter.write_str("Element or fallback reference.")
             }
 
@@ -219,8 +217,9 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for MachineDe<T> {
 
 #[cfg(test)]
 mod test {
+    use alloc::borrow::Cow;
+    use alloc::string::ToString;
     use serde::*;
-    use std::borrow::Cow;
 
     // Putting a Cow directly into the array doesn't borrow
     // for some reason, even with default array deserialization
