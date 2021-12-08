@@ -67,8 +67,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> ICU4XFixedDecimalFormatResult {
-            let provider = provider.0.as_ref().as_dyn_serde_provider();
-            Self::try_new_impl(locale, &provider, options)
+            use icu_provider::serde::AsSerdeBufferProvider;
+            let provider = provider.0.as_ref();
+            Self::try_new_impl(locale, &provider.as_serde_provider(), options)
         }
 
         /// Creates a new [`ICU4XFixedDecimalFormat`] from a [`ICU4XStaticDataProvider`].

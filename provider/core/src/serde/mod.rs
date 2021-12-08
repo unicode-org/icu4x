@@ -9,6 +9,9 @@ mod old;
 
 pub use old::*;
 
+pub use new::SerdeBufferProvider;
+pub use new::AsSerdeBufferProvider;
+
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
 pub enum BufferFormat {

@@ -4,12 +4,24 @@
 
 use super::BufferFormat;
 use super::Error;
-use crate::buffer_provider::{BufferProvider, SerdeBufferProvider};
+use crate::buffer_provider::BufferProvider;
 use crate::prelude::*;
 use core::marker::PhantomData;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
+
+pub struct SerdeBufferProvider<P: ?Sized>(pub P);
+
+pub trait AsSerdeBufferProvider {
+    fn as_serde_provider(&self) -> SerdeBufferProvider<&Self>;
+}
+
+impl<P> AsSerdeBufferProvider for P where P: BufferProvider {
+    fn as_serde_provider(&self) -> SerdeBufferProvider<&Self> {
+        SerdeBufferProvider(self)
+    }
+}
 
 fn deserialize_impl<'data, M>(
     // Allow `bytes` to be unused in case all buffer formats are disabled

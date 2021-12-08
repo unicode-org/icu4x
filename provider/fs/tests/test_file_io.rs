@@ -96,7 +96,7 @@ fn test_json_dyn_erased_serde() {
         .expect("Loading file from testdata directory");
 
     let plurals_data: DataPayload<PluralRulesV1Marker> = (&provider as &dyn BufferProvider)
-        .as_dyn_serde_provider()
+        .as_serde_provider()
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
         .take_payload()
@@ -198,7 +198,7 @@ fn test_bincode_dyn_erased_serde() {
         .expect("Loading file from testdata directory");
 
     let plurals_data: DataPayload<PluralRulesV1Marker> = (&provider as &dyn BufferProvider)
-        .as_dyn_serde_provider()
+        .as_serde_provider()
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
         .take_payload()

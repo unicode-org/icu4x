@@ -68,7 +68,7 @@ fn json_bench(c: &mut Criterion) {
         b.iter(|| {
             let _: DataPayload<PluralRulesV1Marker> =
                 black_box(&provider as &dyn BufferProvider)
-                    .as_dyn_serde_provider()
+                    .as_serde_provider()
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {
                             key: key::CARDINAL_V1,
@@ -112,7 +112,7 @@ fn bincode_bench(c: &mut Criterion) {
         b.iter(|| {
             let _: DataPayload<PluralRulesV1Marker> =
                 black_box(&provider as &dyn BufferProvider)
-                    .as_dyn_serde_provider()
+                    .as_serde_provider()
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {
                             key: key::CARDINAL_V1,

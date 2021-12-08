@@ -30,8 +30,9 @@ pub mod ffi {
         /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
         pub fn try_get_script(provider: &ICU4XDataProvider) -> ICU4XCodePointMapData16Response {
-            let provider = provider.0.as_ref().as_dyn_serde_provider();
-            Self::prepare_result_from_script(maps::get_script(&provider))
+            use icu_provider::serde::AsSerdeBufferProvider;
+            let provider = provider.0.as_ref();
+            Self::prepare_result_from_script(maps::get_script(&provider.as_serde_provider()))
         }
 
         /// Gets a map for Unicode property Script from a [`ICU4XStaticDataProvider`].

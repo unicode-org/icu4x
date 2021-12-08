@@ -136,7 +136,6 @@ pub mod prelude {
     //! Core selection of APIs and structures for [`DataProvider`].
     pub use crate::buffer_provider::BufferMarker;
     pub use crate::buffer_provider::BufferProvider;
-    pub use crate::buffer_provider::SerdeBufferProvider;
     pub use crate::data_provider::DataPayload;
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
@@ -148,6 +147,9 @@ pub mod prelude {
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
+
+    #[cfg(feature = "provider_serde")]
+    pub use crate::serde::AsSerdeBufferProvider;
 }
 
 /// Re-export of the yoke crate for convenience of downstream implementors.
