@@ -175,11 +175,11 @@ mod test {
         assert_eq!(x.as_ref(), "hello world");
 
         for i in 0.."hello".len() {
-            assert_eq!(x.field_at(6 + i), Field::Word);
+            assert_eq!(x.field_at(i), Field::Word);
         }
         assert_eq!(x.field_at(5), Field::Space);
         for i in 0.."world".len() {
-            assert_eq!(x.field_at(i), Field::Word);
+            assert_eq!(x.field_at(6 + i), Field::Word);
         }
         assert_panics(|| x.field_at(11));
     }
