@@ -70,3 +70,21 @@ impl From<postcard::Error> for Error {
         Error::Postcard07(e)
     }
 }
+
+/// Returns an error if the buffer format is not enabled.
+pub fn check_format_supported(buffer_format: BufferFormat) -> Result<(), Error> {
+    match buffer_format {
+        #[cfg(feature = "provider_json")]
+        BufferFormat::Json => Ok(()),
+
+        #[cfg(feature = "provider_bincode1")]
+        BufferFormat::Bincode1 => Ok(()),
+
+        #[cfg(feature = "provider_postcard07")]
+        BufferFormat::Postcard07 => Ok(()),
+
+        // Allowed for cases in which all features are enabled
+        #[allow(unreachable_patterns)]
+        _ => Err(Error::UnavailableFormat(buffer_format)),
+    }
+}

@@ -31,9 +31,17 @@ pub trait BufferProvider {
     }
 }
 
+impl dyn BufferProvider {
+    #[cfg(feature = "serde")]
+    pub fn as_serde_provider_2(&self) -> SerdeBufferProvider<&Self>
+    {
+        SerdeBufferProvider(self)
+    }
+}
+
 impl<P> BufferProvider for &P
 where
-    P: BufferProvider,
+    P: BufferProvider + ?Sized,
 {
     fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, Error> {
         P::load_buffer(*self, req)

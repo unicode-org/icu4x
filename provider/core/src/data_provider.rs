@@ -807,6 +807,18 @@ impl DataPayload<BufferMarker> {
             yoke: Yoke::attach_to_rc_cart(buffer).wrap_cart_in_option(),
         }
     }
+
+    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>) -> Self {
+        Self {
+            yoke: yoked_buffer.wrap_cart_in_option(),
+        }
+    }
+
+    pub fn from_static_buffer(buffer: &'static [u8]) -> Self {
+        Self {
+            yoke: Yoke::new_owned(buffer)
+        }
+    }
 }
 
 /// A response object containing an object as payload and metadata about it.

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use icu_provider::serde::BufferFormat;
 use std::path::{Path, PathBuf};
 
 #[derive(Display, Debug)]
@@ -17,8 +16,8 @@ pub enum Error {
     #[cfg(feature = "export")]
     #[displaydoc("Serializer error: {0}: {1:?}")]
     Serializer(erased_serde::Error, Option<PathBuf>),
-    #[displaydoc("Unknown syntax {0:?}. Do you need to enable a feature?")]
-    UnknownSyntax(BufferFormat),
+    #[displaydoc("Serde error: {0}")]
+    ProviderSerde(icu_provider::serde::Error),
 }
 
 impl std::error::Error for Error {}
@@ -26,6 +25,12 @@ impl std::error::Error for Error {}
 impl From<icu_provider::DataError> for Error {
     fn from(e: icu_provider::DataError) -> Self {
         Error::DataProvider(e)
+    }
+}
+
+impl From<icu_provider::serde::Error> for Error {
+    fn from(e: icu_provider::serde::Error) -> Self {
+        Error::ProviderSerde(e)
     }
 }
 

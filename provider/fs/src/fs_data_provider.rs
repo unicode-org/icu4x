@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::deserializer;
 use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
@@ -53,7 +52,7 @@ impl FsDataProvider {
         let manifest: Manifest = serde_json_core::from_str(&manifest_str)
             .map(|(obj, _)| obj)
             .map_err(|e| (e, &manifest_path))?;
-        deserializer::check_format_supported(manifest.buffer_format)?;
+        check_format_supported(manifest.buffer_format)?;
         Ok(Self {
             res_root: root_path_buf,
             manifest,
@@ -119,21 +118,5 @@ where
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         self.as_serde_provider().load_payload(req)
-    }
-}
-
-impl SerdeDeDataProvider for FsDataProvider {
-    fn load_to_receiver(
-        &self,
-        req: &DataRequest,
-        receiver: &mut dyn SerdeDeDataReceiver,
-    ) -> Result<DataResponseMetadata, DataError> {
-        let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
-        deserializer::deserialize_into_receiver(rc_buffer, self.manifest.buffer_format, receiver)
-            .map_err(|err| err.into_resource_error(&path_buf))?;
-        let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(self.manifest.buffer_format);
-        Ok(metadata)
     }
 }

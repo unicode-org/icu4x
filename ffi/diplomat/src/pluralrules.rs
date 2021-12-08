@@ -54,8 +54,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             ty: ICU4XPluralRuleType,
         ) -> ICU4XCreatePluralRulesResult {
-            let provider = provider.0.as_ref();
-            Self::try_new_impl(locale, provider, ty)
+            let provider = provider.0.as_ref().as_serde_provider_2();
+            Self::try_new_impl(locale, &provider, ty)
         }
 
         /// Creates a new [`ICU4XPluralRules`] from a [`ICU4XStaticDataProvider`].

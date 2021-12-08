@@ -5,7 +5,7 @@
 use crate::blob_schema::*;
 use crate::path_util;
 use icu_provider::prelude::*;
-use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
+use icu_provider::serde::BufferFormat;
 use serde::de::Deserialize;
 use zerovec::map::ZeroMapBorrowed;
 
@@ -127,19 +127,15 @@ where
     }
 }
 
-impl SerdeDeDataProvider for StaticDataProvider {
-    fn load_to_receiver(
-        &self,
-        req: &DataRequest,
-        receiver: &mut dyn SerdeDeDataReceiver,
-    ) -> Result<DataResponseMetadata, DataError> {
-        let file = self.get_file(req)?;
-        receiver.receive_static(&mut <dyn erased_serde::Deserializer>::erase(
-            &mut postcard::Deserializer::from_bytes(file),
-        ))?;
+impl BufferProvider for StaticDataProvider {
+    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        let static_buffer = self.get_file(&req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(icu_provider::serde::BufferFormat::Postcard07);
-        Ok(metadata)
+        metadata.buffer_format = Some(BufferFormat::Postcard07);
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_static_buffer(static_buffer)),
+        })
     }
 }
