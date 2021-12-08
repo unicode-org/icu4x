@@ -22,7 +22,9 @@ impl<'data> StringMatcher<'data> {
     }
 
     pub(crate) fn test(&self, string: &str) -> bool {
-        Regex::new(&self.0).unwrap().is_match(string)
+        Regex::new(&self.0)
+            .map(|r| r.is_match(string))
+            .unwrap_or(false)
     }
 }
 
