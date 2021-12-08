@@ -14,6 +14,7 @@ impl DataMarker for BufferMarker {
 pub trait BufferProvider {
     fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, Error>;
 
+    #[cfg(feature = "serde")]
     fn into_serde_provider(self) -> SerdeBufferProvider<Self>
     where
         Self: Sized,
@@ -21,6 +22,7 @@ pub trait BufferProvider {
         SerdeBufferProvider(self)
     }
 
+    #[cfg(feature = "serde")]
     fn as_serde_provider(&self) -> SerdeBufferProvider<&Self>
     where
         Self: Sized,
@@ -38,4 +40,5 @@ where
     }
 }
 
+#[cfg(feature = "serde")]
 pub struct SerdeBufferProvider<P: BufferProvider + ?Sized>(pub P);

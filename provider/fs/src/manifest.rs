@@ -23,6 +23,7 @@ pub(crate) struct Manifest {
     /// Strategy for de-duplicating locale data.
     pub aliasing: AliasOption,
     /// Which data serialization file format is used.
+    #[serde(rename = "syntax")]
     pub buffer_format: BufferFormat,
 }
 

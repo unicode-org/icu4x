@@ -60,8 +60,8 @@ criterion = "0.3.3"
 
 [features]
 # Enables JSON or Bincode data storage
-provider_json = ["serde_json"]
-provider_bincode = ["bincode", "std"]
+provider_json = ["serde_json", "icu_provider/provider_json"]
+provider_bincode = ["bincode", "std", "icu_provider/provider_bincode1"]
 # Enables the "export" module and FilesystemExporter
 export = ["static_assertions", "log", "std", "provider_json"]
 std = ["serde_json/std", "serde-json-core/std"]
