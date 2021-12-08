@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638875103816,
+  "lastUpdate": 1638938014905,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4733,6 +4733,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bc9c9ffec1e492407a7e23fc9b8d08b12b0ae5c0"
         },
         "date": 1638875095846,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916288,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3418070e32c024f8f6ce4316d18090507c7a5400",
+          "message": "Add ZeroVecULE, make VarULE impl of `[T: ULE]` work on reflexive ULEs (#1357)",
+          "timestamp": "2021-12-07T20:32:02-08:00",
+          "tree_id": "d376843679d5bf2e8996d02084ac27a51376fa88",
+          "url": "https://github.com/unicode-org/icu4x/commit/3418070e32c024f8f6ce4316d18090507c7a5400"
+        },
+        "date": 1638938008668,
         "tool": "ndjson",
         "benches": [
           {
