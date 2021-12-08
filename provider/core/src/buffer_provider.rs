@@ -7,7 +7,7 @@
 use crate::error::Error;
 use crate::prelude::*;
 
-pub struct BufferMarker {}
+pub struct BufferMarker;
 
 impl DataMarker for BufferMarker {
     type Yokeable = &'static [u8];
