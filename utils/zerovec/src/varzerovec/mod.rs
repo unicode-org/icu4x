@@ -12,11 +12,11 @@ pub(crate) mod borrowed;
 pub(crate) mod owned;
 #[cfg(feature = "serde")]
 mod serde;
-mod ule;
+mod slice;
 
 pub use borrowed::VarZeroVecBorrowed;
 pub use owned::VarZeroVecOwned;
-pub use ule::VarZeroVecULE;
+pub use slice::VarZeroVecULE;
 
 /// A zero-copy vector for variable-width types.
 ///

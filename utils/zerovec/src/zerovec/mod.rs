@@ -5,9 +5,9 @@
 #[cfg(feature = "serde")]
 mod serde;
 
-mod ule;
+mod slice;
 
-pub use ule::ZeroVecULE;
+pub use slice::ZeroVecULE;
 
 use crate::ule::*;
 use alloc::vec::Vec;
