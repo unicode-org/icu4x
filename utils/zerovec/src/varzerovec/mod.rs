@@ -416,7 +416,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     }
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
-    pub fn as_ule(&self) -> &VarZeroSlice<T> {
+    pub fn as_slice(&self) -> &VarZeroSlice<T> {
         let slice = self.get_encoded_slice();
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV

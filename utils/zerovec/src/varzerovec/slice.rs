@@ -26,9 +26,9 @@ use core::mem;
 /// let vzv_2: VarZeroVec<str> = VarZeroVec::from(&*strings_2);
 /// let vzv_3: VarZeroVec<str> = VarZeroVec::from(&*strings_3);
 /// let vzv_4: VarZeroVec<str> = VarZeroVec::from(&*strings_4);
-/// let vzv_12 = VarZeroVec::from(&[vzv_1.as_ule(), vzv_2.as_ule()] as &[_]);
-/// let vzv_34 = VarZeroVec::from(&[vzv_3.as_ule(), vzv_4.as_ule()] as &[_]);
-/// let vzv_all = VarZeroVec::from(&[vzv_12.as_ule(), vzv_34.as_ule()] as &[_]);
+/// let vzv_12 = VarZeroVec::from(&[vzv_1.as_slice(), vzv_2.as_slice()] as &[_]);
+/// let vzv_34 = VarZeroVec::from(&[vzv_3.as_slice(), vzv_4.as_slice()] as &[_]);
+/// let vzv_all = VarZeroVec::from(&[vzv_12.as_slice(), vzv_34.as_slice()] as &[_]);
 ///
 /// let reconstructed: Vec<Vec<Vec<String>>> = vzv_all.iter()
 ///        .map(|v: &VarZeroSlice<VarZeroSlice<str>>| {
