@@ -9,7 +9,7 @@
 //! ```rust
 //! # #[derive(Clone, PartialEq, serde::Deserialize, serde::Serialize)]
 //! # struct Bar(String);
-//! 
+//!
 //! #[derive(serde::Deserialize, serde::Serialize)]
 //! pub struct Foo {
 //!     #[serde(with = "deduplicating_array")]
@@ -25,7 +25,7 @@
 //! Human readable serialization represents skipped values as singleton arrays containing the
 //! target index, e.g. the Rust array `["Foo", "Bar", "Foo"]` will serialize to JSON `["Foo", "Bar", [0]]`.
 //!
-//! This implies that singleton integer arrays cannot be used as array elements (they do work in Bincode, 
+//! This implies that singleton integer arrays cannot be used as array elements (they do work in Bincode,
 //! but there's really not much point in using them).
 
 use serde::de::{Deserialize, Deserializer, EnumAccess, Visitor};
