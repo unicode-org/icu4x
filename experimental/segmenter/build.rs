@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu::properties::{maps, sets, LineBreak, WordBreak};
+use icu::properties::{maps, sets, GraphemeClusterBreak, LineBreak, WordBreak};
 use icu_provider_fs::FsDataProvider;
 use serde::Deserialize;
 use std::env;
@@ -116,6 +116,27 @@ fn get_word_segmenter_value_from_name(name: &str) -> WordBreak {
     }
 }
 
+fn get_grapheme_segmenter_value_from_name(name: &str) -> GraphemeClusterBreak {
+    match name {
+        "Control" => GraphemeClusterBreak::Control,
+        "CR" => GraphemeClusterBreak::CR,
+        "Extend" => GraphemeClusterBreak::Extend,
+        "L" => GraphemeClusterBreak::L,
+        "LF" => GraphemeClusterBreak::LF,
+        "LV" => GraphemeClusterBreak::LV,
+        "LVT" => GraphemeClusterBreak::LVT,
+        "Prepend" => GraphemeClusterBreak::Prepend,
+        "Regional_Indicator" => GraphemeClusterBreak::RegionalIndicator,
+        "SpacingMark" => GraphemeClusterBreak::SpacingMark,
+        "T" => GraphemeClusterBreak::T,
+        "V" => GraphemeClusterBreak::V,
+        "ZWJ" => GraphemeClusterBreak::ZWJ,
+        _ => {
+            panic!("Invalid property name")
+        }
+    }
+}
+
 fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &FsDataProvider) {
     let mut properties_map: [u8; CODEPOINT_TABLE_LEN] = [0; CODEPOINT_TABLE_LEN];
     let mut properties_names = Vec::<String>::new();
@@ -123,6 +144,9 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
     let payload = maps::get_word_break(provider).expect("The data should be valid!");
     let wb = &payload.get().code_point_trie;
+
+    let payload = maps::get_grapheme_cluster_break(provider).expect("The data should be valid!");
+    let gb = &payload.get().code_point_trie;
 
     let payload = sets::get_extended_pictographic(provider).expect("The data should be valid");
     let extended_pictographic = &payload.get().inv_list;
@@ -182,6 +206,30 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                     }
                     continue;
                 }
+
+                "grapheme" => {
+                    // Extended_Pictographic isn't a part of grapheme break property
+                    // Extended pictographic property is within 0..U+0x20000
+                    if p.name == "Extended_Pictographic" {
+                        for i in 0..0x20000 {
+                            if let Some(c) = char::from_u32(i) {
+                                if extended_pictographic.contains(c) {
+                                    properties_map[c as usize] = property_index
+                                }
+                            }
+                        }
+                        continue;
+                    }
+
+                    let prop = get_grapheme_segmenter_value_from_name(&*p.name);
+                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
+                        if gb.get(c) == prop {
+                            properties_map[c as usize] = property_index;
+                        }
+                    }
+                    continue;
+                }
+
                 _ => {
                     // TODO
                     // sentence and grapheme
@@ -427,6 +475,9 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     .ok();
     if let Some(sa_index) = get_index_from_name(&properties_names, "SA") {
         writeln!(out, "pub const PROP_COMPLEX: usize = {};", sa_index,).ok();
+    } else {
+        // complex language isn't handled.
+        writeln!(out, "pub const PROP_COMPLEX: usize = 127;").ok();
     }
 
     for (i, p) in properties_names.iter().enumerate() {
@@ -444,7 +495,13 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
 fn main() {
     const WORD_SEGMENTER_TOML: &[u8] = include_bytes!("data/word.toml");
+    const GRAPHEME_SEGMENTER_TOML: &[u8] = include_bytes!("data/grapheme.toml");
 
     let provider = icu_testdata::get_provider();
     generate_rule_segmenter_table("generated_word_table.rs", WORD_SEGMENTER_TOML, &provider);
+    generate_rule_segmenter_table(
+        "generated_grapheme_table.rs",
+        GRAPHEME_SEGMENTER_TOML,
+        &provider,
+    );
 }
