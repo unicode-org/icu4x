@@ -79,7 +79,7 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
                 .into_iter()
                 .flat_map(|(key, region)| {
                     region.0.into_tuple_vec().into_iter().flat_map(
-                        move |(inner_key, place_or_region)| {
+                        |(inner_key, place_or_region)| {
                             let mut key = key.clone();
                             key.push('/');
                             key.push_str(&inner_key);
@@ -109,10 +109,10 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
 
 impl From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
-        default: match other.metazone {
-            None => Self(LiteMap::new()),
-            Some(metazones) => Self(
-                metazones
+        Self {
+            defaults: match other.metazone {
+                None => LiteMap::new(),
+                Some(metazones) => metazones
                     .0
                     .iter()
                     .filter_map(|(key, metazone)| {
@@ -123,40 +123,48 @@ impl From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'_> {
                             .map(|format| (key.clone().into(), format.clone().into()))
                     })
                     .collect(),
-            ),
-        },
-        overwrites: other.zone
-            .0
-            .iter()  
-            .filter_map(|(zone_key, region)| {
-                region
-                    .0
-                    .iter() 
-                    .filter_map(|region_key, losr| match losr { 
-                        Location(location) => {
-                            location.long.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+            },
+            overwrites: other
+                .zone
+                .0
+                .into_tuple_vec()
+                .into_iter()
+                .flat_map(|(key, region)| {
+                    region.0.into_tuple_vec().into_iter().flat_map(
+                        |(inner_key, place_or_region)| {
+                            let mut key = key.clone();
+                            key.push('/');
+                            key.push_str(&inner_key);
+                            match place_or_region {
+                                LocationOrSubRegion::Location(place) => place
+                                    .long.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+                                    .map(|format| vec![(key.into(), format.into())])
+                                    .unwrap_or_default(),
+                                LocationOrSubRegion::SubRegion(region) => region
+                                    .into_tuple_vec()
+                                    .into_iter()
+                                    .filter_map(|(inner_key, place)| {
+                                        let mut key = key.clone();
+                                        key.push('/');
+                                        key.push_str(&inner_key);
+                                        place.long.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf))).map(|format| (key.into(), format.into()))
+                                    })
+                                    .collect::<Vec<_>>(),
+                            }
                         },
-                        SubRegion(sub_region) => {
-                            sub_region
-                            .iter()
-                            .filter_map(|sub_region_key, sub_region_location| { 
-                                sub_region_location.long.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
-                            }        
-                        }
-                    })
-                    .map(|format| (region_key.clone().into(), format.clone().into()))
-                    .collect()
-            })
-            .collect(),
+                    )
+                })
+                .collect(),
+        }}
     }
 }
 
 impl From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'_> {
     fn from(other: TimeZoneNames) -> Self {
-        default: match other.metazone {
-            None => Self(LiteMap::new()),
-            Some(metazones) => Self(
-                metazones
+        Self {
+            defaults: match other.metazone {
+                None => LiteMap::new(),
+                Some(metazones) => metazones
                     .0
                     .iter()
                     .filter_map(|(key, metazone)| {
@@ -167,31 +175,39 @@ impl From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'_> {
                             .map(|format| (key.clone().into(), format.clone().into()))
                     })
                     .collect(),
-            ),
-        },
-        overwrites: other.zone
-            .0
-            .iter()  
-            .filter_map(|(zone_key, region)| {
-                region
-                    .0
-                    .iter() 
-                    .filter_map(|region_key, losr| match losr { 
-                        Location(location) => {
-                            location.short.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+            },
+            overwrites: other
+                .zone
+                .0
+                .into_tuple_vec()
+                .into_iter()
+                .flat_map(|(key, region)| {
+                    region.0.into_tuple_vec().into_iter().flat_map(
+                        |(inner_key, place_or_region)| {
+                            let mut key = key.clone();
+                            key.push('/');
+                            key.push_str(&inner_key);
+                            match place_or_region {
+                                LocationOrSubRegion::Location(place) => place
+                                    .short.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
+                                    .map(|format| vec![(key.into(), format.into())])
+                                    .unwrap_or_default(),
+                                LocationOrSubRegion::SubRegion(region) => region
+                                    .into_tuple_vec()
+                                    .into_iter()
+                                    .filter_map(|(inner_key, place)| {
+                                        let mut key = key.clone();
+                                        key.push('/');
+                                        key.push_str(&inner_key);
+                                        place.short.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf))).map(|format| (key.into(), format.into()))
+                                    })
+                                    .collect::<Vec<_>>(),
+                            }
                         },
-                        SubRegion(sub_region) => {
-                            sub_region
-                            .iter()
-                            .filter_map(|sub_region_key, sub_region_location| { 
-                                sub_region_location.short.as_ref().and_then(|zf| zf.0.get("generic").or_else(|| type_fallback(zf)))
-                            }        
-                        }
-                    })
-                    .map(|format| (region_key.clone().into(), format.clone().into()))
-                    .collect()
-            })
-            .collect(),
+                    )
+                })
+                .collect(),
+        }}
     }
 }
 
