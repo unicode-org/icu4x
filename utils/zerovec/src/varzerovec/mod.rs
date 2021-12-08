@@ -32,8 +32,8 @@ pub use ule::VarZeroVecULE;
 ///
 /// - `Vec<String>`: `VarZeroVec<'a, str>`
 /// - `Vec<Vec<u8>>>`: `VarZeroVec<'a, [u8]>`
-/// - ``Vec<Vec<u32>>``: `VarZeroVec<'a, ZeroVecULE<u32>>`
-/// - ``Vec<Vec<String>>``: `VarZeroVec<'a, VarZeroVecULE<str>>`
+/// - `Vec<Vec<u32>>`: `VarZeroVec<'a, ZeroVecULE<u32>>`
+/// - `Vec<Vec<String>>`: `VarZeroVec<'a, VarZeroVecULE<str>>`
 ///
 /// For creating zero-copy vectors of fixed-size types, see [`ZeroVec`](crate::ZeroVec).
 ///
@@ -568,7 +568,7 @@ impl<'a, T> Eq for VarZeroVec<'a, T>
 where
     T: VarULE,
     T: ?Sized,
-    T: PartialEq,
+    T: Eq,
 {
 }
 
