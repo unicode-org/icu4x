@@ -12,7 +12,6 @@ use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 use zerovec::map::ZeroMapBorrowed;
-use zerovec::zerovec::ZeroVecULE;
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -64,7 +63,7 @@ use zerovec::zerovec::ZeroVecULE;
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
-    data: Yoke<ZeroMapBorrowed<'static, str, ZeroVecULE<u8>>, Rc<[u8]>>,
+    data: Yoke<ZeroMapBorrowed<'static, str, [u8]>, Rc<[u8]>>,
 }
 
 impl BlobDataProvider {
@@ -89,7 +88,7 @@ impl BlobDataProvider {
         let path = path_util::resource_path_to_string(&req.resource_path);
         self.data
             .try_project_cloned_with_capture::<&'static [u8], String, ()>(path, |zm, path, _| {
-                zm.get(&path).map(|ulevec| &ulevec.0).ok_or(())
+                zm.get(&path).ok_or(())
             })
             .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))
     }

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use zerovec::map::ZeroMapBorrowed;
-use zerovec::zerovec::ZeroVecULE;
 
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -16,5 +15,5 @@ pub enum BlobSchema<'data> {
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct BlobSchemaV1<'data> {
     #[serde(borrow)]
-    pub resources: ZeroMapBorrowed<'data, str, ZeroVecULE<u8>>,
+    pub resources: ZeroMapBorrowed<'data, str, [u8]>,
 }

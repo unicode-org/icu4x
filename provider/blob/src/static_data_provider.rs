@@ -8,7 +8,6 @@ use icu_provider::prelude::*;
 use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
 use zerovec::map::ZeroMapBorrowed;
-use zerovec::zerovec::ZeroVecULE;
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -53,7 +52,7 @@ use zerovec::zerovec::ZeroVecULE;
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
-    data: ZeroMapBorrowed<'static, str, ZeroVecULE<u8>>,
+    data: ZeroMapBorrowed<'static, str, [u8]>,
 }
 
 impl StaticDataProvider {
@@ -104,7 +103,6 @@ impl StaticDataProvider {
         let path = path_util::resource_path_to_string(&req.resource_path);
         self.data
             .get(&path)
-            .map(|ulevec| &ulevec.0)
             .ok_or(DataError::MissingResourceKey(req.resource_path.key))
     }
 }
