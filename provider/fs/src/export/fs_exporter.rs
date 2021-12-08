@@ -98,7 +98,7 @@ impl FilesystemExporter {
             root: options.root,
             manifest: Manifest {
                 aliasing: options.aliasing,
-                buffer_format: *serializer.deref(),
+                buffer_format: serializer.get_buffer_format(),
             },
             alias_collection: None,
             serializer,

@@ -10,7 +10,6 @@ pub mod bincode;
 use displaydoc::Display;
 use icu_provider::serde::BufferFormat;
 use std::io;
-use std::ops::Deref;
 
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
 #[derive(Display, Debug)]
@@ -36,12 +35,14 @@ impl From<erased_serde::Error> for Error {
 }
 
 /// A simple serializer trait that works on whole objects.
-/// TODO: This shouldn't be Deref.
-pub trait AbstractSerializer: Deref<Target = BufferFormat> {
+pub trait AbstractSerializer {
     /// Serializes an object to a sink.
     fn serialize(
         &self,
         obj: &dyn erased_serde::Serialize,
         sink: &mut dyn io::Write,
     ) -> Result<(), Error>;
+
+    /// Gets the buffer format currently being serialized.
+    fn get_buffer_format(&self) -> BufferFormat;
 }

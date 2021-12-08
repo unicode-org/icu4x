@@ -7,29 +7,18 @@ use super::Error;
 use bincode::config::Options as _;
 use icu_provider::serde::BufferFormat;
 use std::io;
-use std::ops::Deref;
 
 /// A serializer for Bincode.
-pub struct Serializer {
-    syntax: BufferFormat,
-}
+pub struct Serializer;
 
 /// Options bag for initializing a [`bincode::Serializer`].
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
-pub struct Options {}
+pub struct Options;
 
 impl Default for Options {
     fn default() -> Self {
         Self {}
-    }
-}
-
-impl Deref for Serializer {
-    type Target = BufferFormat;
-
-    fn deref(&self) -> &Self::Target {
-        &self.syntax
     }
 }
 
@@ -47,12 +36,14 @@ impl AbstractSerializer for Serializer {
         ))?;
         Ok(())
     }
+
+    fn get_buffer_format(&self) -> BufferFormat {
+        BufferFormat::Bincode1
+    }
 }
 
 impl Serializer {
     pub fn new(_options: Options) -> Self {
-        Self {
-            syntax: BufferFormat::Bincode1,
-        }
+        Self {}
     }
 }
