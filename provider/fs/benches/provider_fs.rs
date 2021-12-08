@@ -7,8 +7,6 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_locid_macros::langid;
 use icu_plurals::provider::*;
 use icu_provider::prelude::*;
-#[cfg(feature = "bench")]
-use icu_provider::serde::*;
 use icu_provider_fs::FsDataProvider;
 
 fn overview_bench(c: &mut Criterion) {
@@ -69,7 +67,8 @@ fn json_bench(c: &mut Criterion) {
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
             let _: DataPayload<PluralRulesV1Marker> =
-                black_box(&provider as &dyn SerdeDeDataProvider)
+                black_box(&provider as &dyn BufferProvider)
+                    .as_serde_provider_2()
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {
                             key: key::CARDINAL_V1,
@@ -112,7 +111,8 @@ fn bincode_bench(c: &mut Criterion) {
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
             let _: DataPayload<PluralRulesV1Marker> =
-                black_box(&provider as &dyn SerdeDeDataProvider)
+                black_box(&provider as &dyn BufferProvider)
+                    .as_serde_provider_2()
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {
                             key: key::CARDINAL_V1,

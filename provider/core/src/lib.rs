@@ -59,12 +59,10 @@
 //!
 //! For more information, see the [`iter`] module.
 //!
-//! ### `SerdeDeDataProvider`
+//! ### `BufferProvider`
 //!
-//! *Enabled with the "provider_serde" feature*
-//!
-//! The trait [`SerdeDeDataProvider`] removes the type argument from `DataProvider` and requires
-//! that all data structs be deserializable via Serde. This allows for a Serde-enabled provider
+//! The trait [`BufferProvider`] represents a data provider that produces buffers (`[u8]`), which
+//! are typically deserialized later via Serde. This allows for a Serde-enabled provider
 //! to be saved as a trait object without being specific to a data struct type.
 //!
 //! ### `DataProvider<dyn SerdeSeDataStruct>`
@@ -99,7 +97,6 @@
 //! [`StructProvider`]: struct_provider::StructProvider
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`ErasedDataProvider`]: erased::ErasedDataProvider
-//! [`SerdeDeDataProvider`]: serde::SerdeDeDataProvider
 //! [`SerdeSeDataStruct`]: serde::SerdeSeDataStruct
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dyn_provider!`]: impl_dyn_provider
