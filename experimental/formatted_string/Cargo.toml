@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "formatted_string_builder"
-description = "String builder that keeps track of fields for ECMA-402 formatToParts"
+name = "formatted_string"
+description = "String that can be annotated with arbitrary fields"
 version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
