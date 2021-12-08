@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::AsULE;
-use crate::ZeroVec;
+use crate::{ZeroSlice, ZeroVec};
 
 use core::fmt;
 
@@ -201,14 +201,12 @@ impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
-    V: AsULE + Ord + Copy,
+    V: AsULE + Ord + Copy + 'static,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K) -> Option<V> {
         let index = self.keys.binary_search(key).ok()?;
-        <[V::ULE]>::get(self.values, index)
-            .copied()
-            .map(V::from_unaligned)
+        self.values.get(index)
     }
 
     /// Similar to [`Self::iter()`] except it returns a direct copy of the values instead of references
@@ -216,15 +214,8 @@ where
     pub fn iter_copied_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
-        (0..self.keys.len()).map(move |idx| {
-            (
-                self.keys.get(idx).unwrap(),
-                <[V::ULE]>::get(self.values, idx)
-                    .copied()
-                    .map(V::from_unaligned)
-                    .unwrap(),
-            )
-        })
+        (0..self.keys.len())
+            .map(move |idx| (self.keys.get(idx).unwrap(), self.values.get(idx).unwrap()))
     }
 }
 
@@ -232,26 +223,20 @@ impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + ?Sized,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
-    K: AsULE + Copy + Ord,
-    V: AsULE + Copy + Ord,
+    K: AsULE + Copy + Ord + 'static,
+    V: AsULE + Copy + Ord + 'static,
 {
     /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
     /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
     #[allow(clippy::needless_lifetimes)] // Lifetime is necessary in impl Trait
-    pub fn iter_copied<'b>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
-        let keys = &self.keys;
-        let values = &self.values;
-        let len = <[K::ULE]>::len(keys);
+    pub fn iter_copied<'b: 'a>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
+        let keys = &*self.keys;
+        let values = &*self.values;
+        let len = self.keys.len();
         (0..len).map(move |idx| {
             (
-                <[K::ULE]>::get(keys, idx)
-                    .copied()
-                    .map(K::from_unaligned)
-                    .unwrap(),
-                <[V::ULE]>::get(values, idx)
-                    .copied()
-                    .map(V::from_unaligned)
-                    .unwrap(),
+                ZeroSlice::get(keys, idx).unwrap(),
+                ZeroSlice::get(values, idx).unwrap(),
             )
         })
     }

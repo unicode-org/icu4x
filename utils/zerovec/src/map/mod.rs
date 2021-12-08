@@ -310,8 +310,8 @@ where
         let values = &self.values;
         (0..keys.len()).map(move |idx| {
             (
-                ZeroSlice::get(&*keys, idx).unwrap(),
-                ZeroSlice::get(&*values, idx).unwrap(),
+                ZeroSlice::get(&**keys, idx).unwrap(),
+                ZeroSlice::get(&**values, idx).unwrap(),
             )
         })
     }
