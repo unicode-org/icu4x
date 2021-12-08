@@ -31,7 +31,7 @@ pub mod ffi {
         pub fn try_get_ascii_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> ICU4XCodePointSetDataResult {
-            let provider = provider.0.as_ref().as_serde_provider_2();
+            let provider = provider.0.as_ref().as_dyn_serde_provider();
             Self::prepare_result(sets::get_ascii_hex_digit(&provider))
         }
 

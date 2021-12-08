@@ -33,7 +33,7 @@ pub trait BufferProvider {
 
 impl dyn BufferProvider {
     #[cfg(feature = "serde")]
-    pub fn as_serde_provider_2(&self) -> SerdeBufferProvider<&Self>
+    pub fn as_dyn_serde_provider(&self) -> SerdeBufferProvider<&Self>
     {
         SerdeBufferProvider(self)
     }

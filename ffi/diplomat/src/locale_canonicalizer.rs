@@ -35,7 +35,7 @@ pub mod ffi {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more details.
         pub fn create(provider: &ICU4XDataProvider) -> Option<Box<ICU4XLocaleCanonicalizer>> {
-            let provider = provider.0.as_ref().as_serde_provider_2();
+            let provider = provider.0.as_ref().as_dyn_serde_provider();
             LocaleCanonicalizer::new(&provider)
                 .ok()
                 .map(|lc| Box::new(ICU4XLocaleCanonicalizer(lc)))

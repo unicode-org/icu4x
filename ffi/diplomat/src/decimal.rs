@@ -67,7 +67,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> ICU4XFixedDecimalFormatResult {
-            let provider = provider.0.as_ref().as_serde_provider_2();
+            let provider = provider.0.as_ref().as_dyn_serde_provider();
             Self::try_new_impl(locale, &provider, options)
         }
 
