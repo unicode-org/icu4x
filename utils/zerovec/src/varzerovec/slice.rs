@@ -7,7 +7,15 @@ use super::*;
 use core::marker::PhantomData;
 use core::mem;
 
-/// A VarULE version of VarZeroVec allowing for VarZeroVecs to be nested indefinitely
+/// A zero-copy "slice", that works for unsized types, i.e. the zero-copy version of `[T]`
+/// where `T` is not `Sized`.
+///
+/// This behaves similarly to [`VarZeroVec<T>`], however [`VarZeroVec<T>`] is allowed to contain
+/// owned data and as such is ideal for deserialization since most human readable
+/// serialization formats cannot unconditionally deserialize zero-copy.
+///
+/// This type can be nested within [`VarZeroVec<T>`] to allow for multi-level nested `Vec`s, for
+/// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
 /// use zerovec::VarZeroVec;

@@ -5,12 +5,14 @@
 use super::*;
 use alloc::boxed::Box;
 
-/// A type similar to [`ZeroVec`] that can be used inside `VarZeroVec<T>`.
+/// A zero-copy "slice", i.e. the zero-copy version of `[T]`. This behaves
+/// similarly to [`ZeroVec<T>`], however [`ZeroVec<T>`] is allowed to contain
+/// owned data and as such is ideal for deserialization since most human readable
+/// serialization formats cannot unconditionally deserialize zero-copy.
 ///
-/// This essentially allows for the construction of zero-copy types isomorphic to
-/// `Vec<Vec<T>>` by instead using `VarZeroVec<ZeroSlice<T>>`.
-///
-/// See the [`VarZeroVec`] docs for an example.
+/// This type can be used inside `VarZeroVec<T>`: This essentially allows for
+/// the construction of zero-copy types isomorphic to `Vec<Vec<T>>` by instead
+/// using `VarZeroVec<ZeroSlice<T>>`. See the [`VarZeroVec`](crate::VarZeroVec) docs for an example.
 #[repr(transparent)]
 pub struct ZeroSlice<T: AsULE>(pub [T::ULE]);
 

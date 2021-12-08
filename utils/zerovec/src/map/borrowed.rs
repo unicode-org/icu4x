@@ -92,7 +92,7 @@ where
     /// Creates a new, empty `ZeroMapBorrowed<K, V>`.
     ///
     /// Note: Since [`ZeroMapBorrowed`] is not mutable, the return value will be a stub unless
-    /// converted into a [`ZeroMap`].
+    /// converted into a [`ZeroMap`](super::ZeroMap).
     ///
     /// # Examples
     ///
@@ -127,7 +127,7 @@ where
     ///
     /// This is able to return values that live longer than the map itself
     /// since they borrow directly from the backing buffer. This is the
-    /// primary advantage of using [`ZeroMapBorrowed`] over [`ZeroMap`].
+    /// primary advantage of using [`ZeroMapBorrowed`](super::ZeroMapBorrowed) over [`ZeroMap`](super::ZeroMap).
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
