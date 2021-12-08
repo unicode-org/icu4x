@@ -40,8 +40,9 @@ impl TryFrom<&dyn CldrPaths> for ListProvider {
         }
         Ok(Self {
             data,
-            // TODO this is probably not the correct path for non-testdata
-            uprops_path: cldr_paths.cldr_misc()?.join("../../uprops"),
+            uprops_path: cldr_paths
+                .uprops()?
+                .expect("Value for --uprops-root must be specified"),
         })
     }
 }
