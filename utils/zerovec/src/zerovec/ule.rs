@@ -30,12 +30,16 @@ where
     /// Construct a `&ZeroVecULE<T>` from a slice of ULEs
     #[inline]
     pub fn from_slice(slice: &[T::ULE]) -> &Self {
+        // This is safe because ZeroVecULE is transparent over [T::ULE]
+        // so &ZeroVecULE<T> can be safely cast from &[T::ULE]
         unsafe { &*(slice as *const _ as *const Self) }
     }
 
     /// Construct a `Box<ZeroVecULE<T>>` from a boxed slice of ULEs
     #[inline]
     pub fn from_boxed_slice(slice: Box<[T::ULE]>) -> Box<Self> {
+        // This is safe because ZeroVecULE is transparent over [T::ULE]
+        // so Box<ZeroVecULE<T>> can be safely cast from Box<[T::ULE]>
         unsafe { Box::from_raw(Box::into_raw(slice) as *mut Self) }
     }
 }
