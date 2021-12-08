@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638941745524,
+  "lastUpdate": 1638988759457,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15779,6 +15779,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 33610859,
             "range": "± 1248183",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd504b0bf0264c391823eeb86a39a10a83730518",
+          "message": "Using a trait for FormattedString (#1345)",
+          "timestamp": "2021-12-08T19:31:12+01:00",
+          "tree_id": "aeba2241aaa974589048d758bfc7000965f3b911",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd504b0bf0264c391823eeb86a39a10a83730518"
+        },
+        "date": 1638988751375,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 37359727,
+            "range": "± 1243130",
             "unit": "ns/iter"
           }
         ]
