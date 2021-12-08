@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638875478606,
+  "lastUpdate": 1638938344405,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14207,6 +14207,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 369717,
             "range": "± 28326",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3418070e32c024f8f6ce4316d18090507c7a5400",
+          "message": "Add ZeroVecULE, make VarULE impl of `[T: ULE]` work on reflexive ULEs (#1357)",
+          "timestamp": "2021-12-07T20:32:02-08:00",
+          "tree_id": "d376843679d5bf2e8996d02084ac27a51376fa88",
+          "url": "https://github.com/unicode-org/icu4x/commit/3418070e32c024f8f6ce4316d18090507c7a5400"
+        },
+        "date": 1638938337487,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 105494,
+            "range": "± 379",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1204132,
+            "range": "± 1700",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 298383,
+            "range": "± 2284",
             "unit": "ns/iter"
           }
         ]
