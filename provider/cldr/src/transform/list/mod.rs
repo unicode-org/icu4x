@@ -25,6 +25,7 @@ pub const ALL_KEYS: [ResourceKey; 3] = [
 #[derive(PartialEq, Debug)]
 pub struct ListProvider {
     data: LiteMap<LanguageIdentifier, cldr_serde::list_patterns::LangListPatterns>,
+    uprops_path: std::path::PathBuf,
 }
 
 impl TryFrom<&dyn CldrPaths> for ListProvider {
@@ -37,7 +38,11 @@ impl TryFrom<&dyn CldrPaths> for ListProvider {
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.extend_from_litemap(resource.main.0);
         }
-        Ok(Self { data })
+        Ok(Self {
+            data,
+            // TODO this is probably not the correct path for non-testdata
+            uprops_path: cldr_paths.cldr_misc()?.join("../../uprops"),
+        })
     }
 }
 
@@ -108,7 +113,22 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                 "{0} \u{05D5}{1}".parse().unwrap(), // ״{0} ו {1}״
                 ConditionalListJoinerPattern::from_regex_and_strs(
                     // Starts with a non-Hebrew letter
-                    r"[^\p{IsHebrew}]",
+                    &format!(
+                        "[^{}]",
+                        icu_properties::sets::get_for_script(
+                            &icu_provider_uprops::PropertiesDataProvider::try_new(
+                                &self.uprops_path
+                            )
+                            .map_err(DataError::new_resc_error)?,
+                            icu_properties::Script::Hebrew,
+                        )
+                        .map_err(DataError::new_resc_error)?
+                        .get()
+                        .inv_list
+                        .iter_ranges()
+                        .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
+                        .fold(String::new(), |a, b| a + &b)
+                    ),
                     "{0} \u{05D5}-{1}", // ״{0} ו- {1}״
                     "{0} \u{05D5}{1}",  // ״{0} ו {1}״
                 )
