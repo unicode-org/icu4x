@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638941368473,
+  "lastUpdate": 1638988373840,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4793,6 +4793,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7d774380d73d8726f84259818884dc7c883cdcb3"
         },
         "date": 1638941359783,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916288,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd504b0bf0264c391823eeb86a39a10a83730518",
+          "message": "Using a trait for FormattedString (#1345)",
+          "timestamp": "2021-12-08T19:31:12+01:00",
+          "tree_id": "aeba2241aaa974589048d758bfc7000965f3b911",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd504b0bf0264c391823eeb86a39a10a83730518"
+        },
+        "date": 1638988366403,
         "tool": "ndjson",
         "benches": [
           {
