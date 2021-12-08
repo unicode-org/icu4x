@@ -11,13 +11,16 @@ use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 
+/// A [`BufferProvider`] that deserializes its data using Serde.
 pub struct SerdeBufferProvider<'a, P: ?Sized>(&'a P);
 
+/// Auto-implemented for all [`BufferProvider`] for easy wrapping in [`SerdeBufferProvider`].
 pub trait AsSerdeBufferProvider {
     fn as_serde_provider(&self) -> SerdeBufferProvider<Self>;
 }
 
 impl<P> AsSerdeBufferProvider for P where P: BufferProvider + ?Sized {
+    /// Wrap this [`BufferProvider`] in a [`SerdeBufferProvider`].
     fn as_serde_provider(&self) -> SerdeBufferProvider<Self> {
         SerdeBufferProvider(self)
     }

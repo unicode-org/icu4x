@@ -2,23 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Collection of traits for providers that support serializing or deserializing data.
-//!
-//! ## Deserializing
-//!
-//! Providers that involve a [`serde::Deserializer`] to produce data from an opaque source should
-//! implement [`SerdeDeDataProvider`]. For example, `FsDataProvider` implements [`SerdeDeDataProvider`].
-//!
-//! [`SerdeDeDataProvider`] can be made into a trait object. It is used over FFI.
-//!
-//! ## Serializing
-//!
-//! Providers that have full type information should implement [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
-//! Note that a provider like `FsDataProvider` cannot implement that trait, because type information
-//! on the data structs is required in order to deserialize and then serialize them.
-//!
-//! [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>` is used by data exporters such as `FilesystemExporter`.
-
 use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
