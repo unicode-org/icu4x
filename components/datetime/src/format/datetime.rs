@@ -4,7 +4,7 @@
 
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, Field, FieldLength, FieldSymbol, Week};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, Week, Year};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
@@ -160,15 +160,32 @@ where
     W: fmt::Write + ?Sized,
 {
     match field.symbol {
-        FieldSymbol::Year(..) => format_number(
-            w,
-            datetime
-                .datetime()
-                .year()
-                .ok_or(Error::MissingInputField)?
-                .number as isize,
-            field.length,
-        )?,
+        FieldSymbol::Era => {
+            let symbol = symbols
+                .expect("Expect symbols to be present")
+                .get_symbol_for_era(
+                    field.length,
+                    &datetime
+                        .datetime()
+                        .year()
+                        .ok_or(Error::MissingInputField)?
+                        .era
+                        .0,
+                )?;
+            w.write_str(symbol)?
+        }
+        FieldSymbol::Year(year) => match year {
+            Year::Calendar => format_number(
+                w,
+                datetime
+                    .datetime()
+                    .year()
+                    .ok_or(Error::MissingInputField)?
+                    .number as isize,
+                field.length,
+            )?,
+            Year::WeekOf => format_number(w, datetime.year_week()?.number as isize, field.length)?,
+        },
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
                 w,
@@ -191,7 +208,7 @@ where
                             .ok_or(Error::MissingInputField)?
                             .number as usize
                             - 1,
-                    );
+                    )?;
                 w.write_str(symbol)?
             }
         },
@@ -206,7 +223,7 @@ where
                 .ok_or(Error::MissingInputField)?;
             let symbol = symbols
                 .expect("Expect symbols to be present")
-                .get_symbol_for_weekday(weekday, field.length, dow);
+                .get_symbol_for_weekday(weekday, field.length, dow)?;
             w.write_str(symbol)?
         }
         FieldSymbol::Day(..) => format_number(
@@ -273,7 +290,7 @@ where
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
                     ),
-                );
+                )?;
             w.write_str(symbol)?
         }
         field @ FieldSymbol::TimeZone(_) => return Err(Error::UnsupportedField(field)),
@@ -294,6 +311,7 @@ pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<b
     for field in fields {
         if !requires_symbols {
             requires_symbols = match field.symbol {
+                FieldSymbol::Era => true,
                 FieldSymbol::Month(_) => {
                     !matches!(field.length, FieldLength::One | FieldLength::TwoDigit)
                 }

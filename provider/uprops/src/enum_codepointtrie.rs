@@ -149,7 +149,7 @@ mod tests {
 
         let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().code_point_trie;
 
-        assert_eq!(trie.get('꣓' as u32), GeneralSubcategory::Digit);
+        assert_eq!(trie.get('꣓' as u32), GeneralSubcategory::DecimalNumber);
         assert_eq!(trie.get('≈' as u32), GeneralSubcategory::MathSymbol);
     }
 

@@ -213,15 +213,13 @@ fn update_langid(
 
 macro_rules! maximize_locale {
     ( $langid:ident, $table:expr, $key:expr ) => {{
-        if let Ok(index) = $table.binary_search_by_key(&&$key, |(i1, _)| i1) {
-            let entry = &$table[index].1;
-            return update_langid(entry, $langid);
+        if let Some(language_identifier) = $table.get(&&$key) {
+            return update_langid(language_identifier, $langid);
         }
     }};
     ( $langid:ident, $table:expr, $key1:expr, $key2:expr ) => {{
-        if let Ok(index) = $table.binary_search_by_key(&(&$key1, &$key2), |(i1, i2, _)| (i1, i2)) {
-            let entry = &$table[index].2;
-            return update_langid(entry, $langid);
+        if let Some(language_identifier) = $table.get(&($key1, $key2)) {
+            return update_langid(language_identifier, $langid);
         }
     }};
 }

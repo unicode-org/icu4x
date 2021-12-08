@@ -1,9 +1,9 @@
 {
   "date": {
-    "full": "'GGGG'y年M月d日EEEE",
-    "long": "'GGGG'y年M月d日",
-    "medium": "'G'y/MM/dd",
-    "short": "'G'y/MM/dd"
+    "full": "GGGGy年M月d日EEEE",
+    "long": "GGGGy年M月d日",
+    "medium": "Gy/MM/dd",
+    "short": "Gy/MM/dd"
   },
   "time_h11_h12": {
     "full": "aK:mm:ss",

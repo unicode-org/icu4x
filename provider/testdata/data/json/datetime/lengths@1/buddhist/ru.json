@@ -1,9 +1,9 @@
 {
   "date": {
-    "full": "EEEE, d MMMM y 'г. G'",
-    "long": "d MMMM y 'г. G'",
-    "medium": "d MMM y 'г. G'",
-    "short": "dd.MM.y 'G'"
+    "full": "EEEE, d MMMM y г. G",
+    "long": "d MMMM y г. G",
+    "medium": "d MMM y г. G",
+    "short": "dd.MM.y G"
   },
   "time_h11_h12": {
     "full": "h:mm:ss a",

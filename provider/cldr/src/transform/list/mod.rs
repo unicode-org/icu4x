@@ -107,7 +107,7 @@ impl IterableDataProviderCore for ListProvider {
 fn parse_and_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
-    Ok(ListFormatterPatternsV1::new(
+    Ok(ListFormatterPatternsV1::new([
         raw.standard.start.parse()?,
         raw.standard.middle.parse()?,
         raw.standard.end.parse()?,
@@ -120,13 +120,13 @@ fn parse_and_patterns<'a>(
         raw.standard_narrow.middle.parse()?,
         raw.standard_narrow.end.parse()?,
         raw.standard_narrow.pair.parse()?,
-    ))
+    ]))
 }
 
 fn parse_or_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
-    Ok(ListFormatterPatternsV1::new(
+    Ok(ListFormatterPatternsV1::new([
         raw.or.start.parse()?,
         raw.or.middle.parse()?,
         raw.or.end.parse()?,
@@ -139,13 +139,13 @@ fn parse_or_patterns<'a>(
         raw.or_narrow.middle.parse()?,
         raw.or_narrow.end.parse()?,
         raw.or_narrow.pair.parse()?,
-    ))
+    ]))
 }
 
 fn parse_unit_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
-    Ok(ListFormatterPatternsV1::new(
+    Ok(ListFormatterPatternsV1::new([
         raw.unit.start.parse()?,
         raw.unit.middle.parse()?,
         raw.unit.end.parse()?,
@@ -158,7 +158,7 @@ fn parse_unit_patterns<'a>(
         raw.unit_narrow.middle.parse()?,
         raw.unit_narrow.end.parse()?,
         raw.unit_narrow.pair.parse()?,
-    ))
+    ]))
 }
 
 #[test]

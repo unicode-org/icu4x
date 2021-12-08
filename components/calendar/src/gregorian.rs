@@ -121,13 +121,13 @@ impl DateTime<Gregorian> {
 fn iso_year_as_gregorian(year: IsoYear) -> types::Year {
     if year.0 > 0 {
         types::Year {
-            era: types::Era(tinystr8!("ce")),
+            era: types::Era(tinystr8!("ad")),
             number: year.0,
             related_iso: year.0,
         }
     } else {
         types::Year {
-            era: types::Era(tinystr8!("bce")),
+            era: types::Era(tinystr8!("bc")),
             number: 1 - year.0,
             related_iso: year.0,
         }

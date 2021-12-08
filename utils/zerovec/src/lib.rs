@@ -102,7 +102,7 @@ pub mod map;
 pub mod samples;
 pub mod ule;
 pub mod varzerovec;
-mod zerovec;
+pub mod zerovec;
 
 #[cfg(feature = "yoke")]
 mod yoke_impls;

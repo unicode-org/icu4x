@@ -121,5 +121,19 @@
       "short": null,
       "wide": null
     }
+  },
+  "eras": {
+    "names": {
+      "ad": "Milattan Sonra",
+      "bc": "Milattan Önce"
+    },
+    "abbr": {
+      "ad": "MS",
+      "bc": "MÖ"
+    },
+    "narrow": {
+      "ad": "MS",
+      "bc": "MÖ"
+    }
   }
 }

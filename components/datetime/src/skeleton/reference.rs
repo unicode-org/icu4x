@@ -98,6 +98,7 @@ impl From<&Pattern> for Skeleton {
                     FieldSymbol::Minute
                     | FieldSymbol::Second(_)
                     | FieldSymbol::TimeZone(_)
+                    | FieldSymbol::Era
                     | FieldSymbol::Year(_)
                     | FieldSymbol::Week(_)
                     | FieldSymbol::Day(_) => field.symbol,

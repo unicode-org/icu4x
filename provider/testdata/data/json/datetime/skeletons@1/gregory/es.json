@@ -1,4 +1,12 @@
 {
+  "Gy": "y G",
+  "GyMd": "d/M/y GGGGG",
+  "GyMMM": "MMM y G",
+  "GyMMMd": "d MMM y G",
+  "GyMMMdE": "E, d MMM y G",
+  "GyMMMM": "MMMM 'de' y G",
+  "GyMMMMd": "d 'de' MMMM 'de' y G",
+  "GyMMMMdE": "E, d 'de' MMMM 'de' y G",
   "y": "y",
   "yM": "M/y",
   "yMd": "d/M/y",

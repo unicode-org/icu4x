@@ -5,6 +5,9 @@
 use icu_calendar::{buddhist::Buddhist, Gregorian};
 
 /// A calendar that can be found in CLDR
+///
+/// New implementors of this trait will likely also wish to modify `get_era_code_map()`
+/// in the CLDR transformer to support any new era maps.
 pub trait CldrCalendar {
     /// The Unicode BCP 47 identifier for the calendar
     const IDENTIFIER: &'static str;

@@ -1,4 +1,9 @@
 {
+  "Gy": "G y",
+  "GyMd": "M/d/y GGGGG",
+  "GyMMM": "MMM y G",
+  "GyMMMd": "MMM d, y G",
+  "GyMMMdE": "E, MMM d, y G",
   "y": "y",
   "yM": "M/y",
   "yMd": "M/d/y",

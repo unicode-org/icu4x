@@ -121,5 +121,16 @@
       "short": null,
       "wide": null
     }
+  },
+  "eras": {
+    "names": {
+      "be": "พุทธศักราช"
+    },
+    "abbr": {
+      "be": "พ.ศ."
+    },
+    "narrow": {
+      "be": "พ.ศ."
+    }
   }
 }

@@ -6,6 +6,7 @@ use crate::date::DateTimeError;
 use crate::fields::FieldSymbol;
 use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
+use alloc::string::String;
 use displaydoc::Display;
 use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
@@ -32,12 +33,24 @@ pub enum DateTimeFormatError {
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
+    /// An error due to there being no patterns for the given options.
+    #[displaydoc("Unsupported options")]
+    UnsupportedOptions,
     /// An error originating from [`PluralRules`][icu_plural::PluralRules].
     #[displaydoc("{0}")]
     PluralRules(PluralRulesError),
     /// An error originating from [`DateTimeInput`][icu_datetime::date::DateTimeInput].
     #[displaydoc("{0}")]
     DateTimeInput(DateTimeError),
+    /// An error originating from a missing weekday symbol in the data.
+    #[displaydoc("Data file missing weekday symbol for weekday {0}")]
+    MissingWeekdaySymbol(usize),
+    /// An error originating from a missing month symbol in the data.
+    #[displaydoc("Data file missing month symbol for month code {0}")]
+    MissingMonthSymbol(usize),
+    /// An error originating from a missing era symbol in the data.
+    #[displaydoc("Data file missing era symbol for era code {0}")]
+    MissingEraSymbol(String),
 }
 
 #[cfg(feature = "std")]

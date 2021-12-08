@@ -9,6 +9,7 @@ use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
+use litemap::LiteMap;
 
 use std::convert::TryFrom;
 use tinystr::TinyStr4;
@@ -83,12 +84,12 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
     fn from(other: &cldr_serde::likely_subtags::Resource) -> Self {
         use icu_locid::LanguageIdentifier;
 
-        let mut language_script: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)> = Vec::new();
-        let mut language_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)> = Vec::new();
-        let mut language: Vec<(TinyStr4, LanguageIdentifier)> = Vec::new();
-        let mut script_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)> = Vec::new();
-        let mut script: Vec<(TinyStr4, LanguageIdentifier)> = Vec::new();
-        let mut region: Vec<(TinyStr4, LanguageIdentifier)> = Vec::new();
+        let mut language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
+        let mut language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
+        let mut language: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
+        let mut script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
+        let mut script: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
+        let mut region: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
         let mut und = LanguageIdentifier::default();
 
         // Create a result LanguageIdentifier. We only need to store the delta
@@ -118,34 +119,25 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
         for entry in other.supplemental.likely_subtags.iter() {
             if let Some(lang) = entry.0.language.into() {
                 if let Some(script) = entry.0.script {
-                    language_script.push((lang, script.into(), extract_result(entry)));
+                    language_script.insert((lang, script.into()), extract_result(entry));
                 } else if let Some(region) = entry.0.region {
-                    language_region.push((lang, region.into(), extract_result(entry)));
+                    language_region.insert((lang, region.into()), extract_result(entry));
                 } else {
-                    language.push((lang, extract_result(entry)));
+                    language.insert(lang, extract_result(entry));
                 }
             } else if let Some(scr) = entry.0.script {
                 if let Some(reg) = entry.0.region {
-                    script_region.push((scr.into(), reg.into(), extract_result(entry)));
+                    script_region.insert((scr.into(), reg.into()), extract_result(entry));
                 } else {
-                    script.push((scr.into(), extract_result(entry)));
+                    script.insert(scr.into(), extract_result(entry));
                 }
             } else if let Some(reg) = entry.0.region {
-                region.push((reg.into(), extract_result(entry)));
+                region.insert(reg.into(), extract_result(entry));
             } else {
                 und = entry.1.clone();
             }
         }
 
-        // We sort here to ensure that they are sorted properly by the subtags
-        // we will use to search the data. This is not necessary the order in
-        // the underlying CLDR data.
-        language_script.sort_unstable_by_key(|k| (k.0, k.1));
-        language_region.sort_unstable_by_key(|k| (k.0, k.1));
-        language.sort_unstable_by_key(|k| k.0);
-        script_region.sort_unstable_by_key(|k| (k.0, k.1));
-        script.sort_unstable_by_key(|k| k.0);
-        region.sort_unstable_by_key(|k| k.0);
         Self {
             language_script,
             language_region,
@@ -174,10 +166,8 @@ fn test_basic() {
     let entry = result
         .get()
         .script
-        .binary_search_by_key(&(langid.script.map(|s| s.into())), |(script, _)| {
-            Some(*script)
-        })
+        .get(&(langid.script.unwrap().into()))
         .unwrap();
-    assert_eq!(result.get().script[entry].1.language, "cu");
-    assert_eq!(result.get().script[entry].1.region.unwrap(), "BG");
+    assert_eq!(entry.language, "cu");
+    assert_eq!(entry.region.unwrap(), "BG");
 }

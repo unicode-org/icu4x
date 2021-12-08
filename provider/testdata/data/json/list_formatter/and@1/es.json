@@ -1,20 +1,46 @@
-{
-  "start": null,
-  "middle": null,
-  "end": {
+[
+  {
+    "default": {
+      "string": ", ",
+      "index_1": 2
+    },
+    "special_case": null
+  },
+  [
+    0
+  ],
+  {
     "default": {
       "string": " y ",
       "index_1": 3
     },
     "special_case": null
   },
-  "pair": null,
-  "short_start": null,
-  "short_middle": null,
-  "short_end": null,
-  "short_pair": null,
-  "narrow_start": null,
-  "narrow_middle": null,
-  "narrow_end": null,
-  "narrow_pair": null
-}
+  [
+    2
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    2
+  ],
+  [
+    2
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    2
+  ],
+  [
+    2
+  ]
+]

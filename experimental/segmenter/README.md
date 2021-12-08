@@ -1,8 +1,14 @@
 # icu_segmenter [![crates.io](https://img.shields.io/crates/v/icu_segmenter)](https://crates.io/crates/icu_segmenter)
 
-A line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
+A segmenter implementation for the following rules.
 
-[UAX14]: http://www.unicode.org/reports/tr14/
+- Line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
+- Word breaker that is compatible with [Unicode Standard Annex #29][UAX29].
+
+[UAX14]: https://www.unicode.org/reports/tr14/
+[UAX29]: https://www.unicode.org/reports/tr29/
+
+## Line breaker
 
 ```rust
 use icu_segmenter::LineBreakIterator;
@@ -33,6 +39,27 @@ use icu_segmenter::LineBreakIteratorLatin1;
 
 let s = "Hello World";
 let iter = LineBreakIteratorLatin1::new(s.as_bytes());
+let result: Vec<usize> = iter.collect();
+println!("{:?}", result);
+```
+
+## word breaker
+
+```rust
+use icu_segmenter::WordBreakIterator;
+
+let mut iter = WordBreakIterator::new("Hello World");
+let result: Vec<usize> = iter.collect();
+println!("{:?}", result);
+```
+
+Use Latin 1 string for C binding and etc.
+
+```rust
+use icu_segmenter::WordBreakIteratorLatin1;
+
+let s = "Hello World";
+let iter = WordBreakIteratorLatin1::new(s.as_bytes());
 let result: Vec<usize> = iter.collect();
 println!("{:?}", result);
 ```

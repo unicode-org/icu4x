@@ -5,7 +5,9 @@
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
 use alloc::borrow::Cow;
+use alloc::string::String;
 use icu_provider::yoke::{self, *};
+use litemap::LiteMap;
 
 #[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -20,6 +22,20 @@ pub struct DateSymbolsV1 {
     pub weekdays: weekdays::ContextsV1,
 
     pub day_periods: day_periods::ContextsV1,
+
+    pub eras: Eras,
+}
+
+#[derive(Debug, PartialEq, Clone, Default)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct Eras {
+    // TODO use ZeroMap instead: https://github.com/unicode-org/icu4x/issues/876
+    pub names: LiteMap<String, String>,
+    pub abbr: LiteMap<String, String>,
+    pub narrow: LiteMap<String, String>,
 }
 
 macro_rules! symbols {

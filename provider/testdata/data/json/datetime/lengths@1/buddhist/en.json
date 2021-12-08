@@ -1,9 +1,9 @@
 {
   "date": {
-    "full": "EEEE, MMMM d, y 'G'",
-    "long": "MMMM d, y 'G'",
-    "medium": "MMM d, y 'G'",
-    "short": "M/d/y 'GGGGG'"
+    "full": "EEEE, MMMM d, y G",
+    "long": "MMMM d, y G",
+    "medium": "MMM d, y G",
+    "short": "M/d/y GGGGG"
   },
   "time_h11_h12": {
     "full": "h:mm:ss a zzzz",

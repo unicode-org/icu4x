@@ -1,4 +1,9 @@
 {
+  "Gy": "G y",
+  "GyMd": "GGGGG y-MM-dd",
+  "GyMMM": "G y MMM",
+  "GyMMMd": "G y MMM d",
+  "GyMMMdE": "G y MMM d, E",
   "y": "y",
   "yM": "y-MM",
   "yMd": "y-MM-dd",

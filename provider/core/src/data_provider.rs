@@ -229,7 +229,7 @@ where
         rc_buffer: Rc<[u8]>,
         f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_option_cart(rc_buffer, f)?;
+        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 
@@ -268,7 +268,7 @@ where
         rc_buffer: Rc<[u8]>,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_option_cart(rc_buffer, f)?;
+        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?.wrap_cart_in_option();
         Ok(Self { yoke })
     }
 

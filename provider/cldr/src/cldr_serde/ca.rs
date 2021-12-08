@@ -128,6 +128,16 @@ impl LengthPattern {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
+pub struct Eras {
+    #[serde(rename = "eraNames")]
+    pub names: LiteMap<String, String>,
+    #[serde(rename = "eraAbbr")]
+    pub abbr: LiteMap<String, String>,
+    #[serde(rename = "eraNarrow")]
+    pub narrow: LiteMap<String, String>,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct LengthPatterns {
     pub full: LengthPattern,
     pub long: LengthPattern,
@@ -157,6 +167,7 @@ pub struct AvailableFormats(pub LiteMap<String, String>);
 pub struct Dates {
     pub months: months::Contexts,
     pub days: days::Contexts,
+    pub eras: Eras,
     #[serde(rename = "dayPeriods")]
     pub day_periods: day_periods::Contexts,
     #[serde(rename = "dateFormats")]
