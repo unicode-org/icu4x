@@ -86,7 +86,7 @@ pub use slice::VarZeroSlice;
 /// # use zerovec::ule::ZeroVecError;
 /// use zerovec::VarZeroVec;
 /// use zerovec::ZeroVec;
-/// use zerovec::zerovec::ZeroSlice;
+/// use zerovec::ZeroSlice;
 /// use zerovec::ule::*;
 ///
 /// // The structured list correspond to the list of integers.
