@@ -394,7 +394,11 @@ fn export_cldr(
             uprops_root: matches.value_of("UPROPS_ROOT").map(PathBuf::from),
         })
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        Box::new(CldrPathsAllInOne::for_test())
+        Box::new(CldrPathsAllInOne {
+            cldr_json_root: icu_testdata::paths::cldr_json_root(),
+            locale_subset: "full".to_string(),
+            uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
+        })
     } else {
         eyre::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };

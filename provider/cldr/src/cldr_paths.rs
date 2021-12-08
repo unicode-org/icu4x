@@ -185,12 +185,11 @@ impl CldrPaths for CldrPathsAllInOne {
     }
 }
 
-impl CldrPathsAllInOne {
-    pub fn for_test() -> Self {
-        Self {
-            cldr_json_root: icu_testdata::paths::cldr_json_root(),
-            locale_subset: "full".to_string(),
-            uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
-        }
+#[cfg(test)]
+pub(crate) fn for_test() -> CldrPathsAllInOne {
+    CldrPathsAllInOne {
+        cldr_json_root: icu_testdata::paths::cldr_json_root(),
+        locale_subset: "full".to_string(),
+        uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
     }
 }
