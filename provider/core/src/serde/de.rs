@@ -19,7 +19,10 @@ pub trait AsSerdeBufferProvider {
     fn as_serde_provider(&self) -> SerdeBufferProvider<Self>;
 }
 
-impl<P> AsSerdeBufferProvider for P where P: BufferProvider + ?Sized {
+impl<P> AsSerdeBufferProvider for P
+where
+    P: BufferProvider + ?Sized,
+{
     /// Wrap this [`BufferProvider`] in a [`SerdeBufferProvider`].
     fn as_serde_provider(&self) -> SerdeBufferProvider<Self> {
         SerdeBufferProvider(self)

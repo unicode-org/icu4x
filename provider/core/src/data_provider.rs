@@ -819,7 +819,7 @@ impl DataPayload<BufferMarker> {
     /// Converts a static byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_static_buffer(buffer: &'static [u8]) -> Self {
         Self {
-            yoke: Yoke::new_owned(buffer)
+            yoke: Yoke::new_owned(buffer),
         }
     }
 }

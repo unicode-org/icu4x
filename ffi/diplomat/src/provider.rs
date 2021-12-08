@@ -43,12 +43,10 @@ pub mod ffi {
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
             match FsDataProvider::try_new(path.to_string()) {
-                Ok(fs) => {
-                    ICU4XCreateDataProviderResult {
-                        provider: Some(Box::new(ICU4XDataProvider(Box::new(fs)))),
-                        success: true,
-                    }
-                }
+                Ok(fs) => ICU4XCreateDataProviderResult {
+                    provider: Some(Box::new(ICU4XDataProvider(Box::new(fs)))),
+                    success: true,
+                },
                 Err(_) => ICU4XCreateDataProviderResult {
                     provider: None,
                     success: false,

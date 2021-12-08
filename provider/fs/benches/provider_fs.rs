@@ -66,21 +66,20 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRulesV1Marker> =
-                black_box(&provider as &dyn BufferProvider)
-                    .as_serde_provider()
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: key::CARDINAL_V1,
-                            options: ResourceOptions {
-                                variant: None,
-                                langid: Some(langid!("ru")),
-                            },
+            let _: DataPayload<PluralRulesV1Marker> = black_box(&provider as &dyn BufferProvider)
+                .as_serde_provider()
+                .load_payload(&DataRequest {
+                    resource_path: ResourcePath {
+                        key: key::CARDINAL_V1,
+                        options: ResourceOptions {
+                            variant: None,
+                            langid: Some(langid!("ru")),
                         },
-                    })
-                    .expect("The data should be valid")
-                    .take_payload()
-                    .expect("Loading was successful");
+                    },
+                })
+                .expect("The data should be valid")
+                .take_payload()
+                .expect("Loading was successful");
         });
     });
 }
@@ -110,21 +109,20 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRulesV1Marker> =
-                black_box(&provider as &dyn BufferProvider)
-                    .as_serde_provider()
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: key::CARDINAL_V1,
-                            options: ResourceOptions {
-                                variant: None,
-                                langid: Some(langid!("sr")),
-                            },
+            let _: DataPayload<PluralRulesV1Marker> = black_box(&provider as &dyn BufferProvider)
+                .as_serde_provider()
+                .load_payload(&DataRequest {
+                    resource_path: ResourcePath {
+                        key: key::CARDINAL_V1,
+                        options: ResourceOptions {
+                            variant: None,
+                            langid: Some(langid!("sr")),
                         },
-                    })
-                    .expect("The data should be valid")
-                    .take_payload()
-                    .expect("Loading was successful");
+                    },
+                })
+                .expect("The data should be valid")
+                .take_payload()
+                .expect("Loading was successful");
         });
     });
 }

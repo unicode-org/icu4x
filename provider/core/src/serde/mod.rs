@@ -21,15 +21,15 @@
 //!
 //! [`BufferProvider`]: crate::buffer_provider::BufferProvider
 
-mod ser;
 mod de;
+mod ser;
 
 pub use ser::SerdeSeDataStruct;
 pub use ser::SerdeSeDataStructBox;
 pub use ser::SerdeSeDataStructMarker;
 
-pub use de::SerdeBufferProvider;
 pub use de::AsSerdeBufferProvider;
+pub use de::SerdeBufferProvider;
 
 /// An enum expressing all Serde formats known to ICU4X.
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, serde::Serialize, serde::Deserialize)]
