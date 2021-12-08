@@ -6,7 +6,7 @@ use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
 use crate::varzerovec::VarZeroVecBorrowed;
 use crate::VarZeroVec;
-use crate::ZeroVec;
+use crate::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
@@ -123,13 +123,13 @@ where
         Self::new()
     }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
-        self.binary_search(k)
+        ZeroSlice::binary_search(self, k)
     }
     fn get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
     fn len(&self) -> usize {
-        self.len()
+        ZeroSlice::len(self)
     }
     fn is_ascending(&self) -> bool {
         self.as_slice()

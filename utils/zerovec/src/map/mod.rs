@@ -5,7 +5,7 @@
 //! See [`ZeroMap`] for details.
 
 use crate::ule::AsULE;
-use crate::ZeroVec;
+use crate::{ZeroSlice, ZeroVec};
 use core::cmp::Ordering;
 use core::fmt;
 
@@ -278,7 +278,7 @@ where
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K) -> Option<V> {
         let index = self.keys.binary_search(key).ok()?;
-        ZeroVec::get(&self.values, index)
+        ZeroSlice::get(&*self.values, index)
     }
 
     /// Similar to [`Self::iter()`] except it returns a direct copy of the values instead of references
@@ -289,7 +289,7 @@ where
         (0..self.keys.len()).map(move |idx| {
             (
                 self.keys.get(idx).unwrap(),
-                ZeroVec::get(&self.values, idx).unwrap(),
+                ZeroSlice::get(&*self.values, idx).unwrap(),
             )
         })
     }
@@ -310,8 +310,8 @@ where
         let values = &self.values;
         (0..keys.len()).map(move |idx| {
             (
-                ZeroVec::get(keys, idx).unwrap(),
-                ZeroVec::get(values, idx).unwrap(),
+                ZeroSlice::get(&*keys, idx).unwrap(),
+                ZeroSlice::get(&*values, idx).unwrap(),
             )
         })
     }
