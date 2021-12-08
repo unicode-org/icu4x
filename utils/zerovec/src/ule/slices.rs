@@ -42,16 +42,19 @@ unsafe impl VarULE for str {
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. `[u8]` byte equality is semantic equality
-unsafe impl VarULE for [u8] {
-    type Error = core::convert::Infallible;
+unsafe impl<T> VarULE for [T]
+where
+    T: ULE + AsULE<ULE = T>,
+{
+    type Error = T::Error;
 
     #[inline]
-    fn validate_byte_slice(_: &[u8]) -> Result<(), Self::Error> {
-        Ok(())
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), Self::Error> {
+        T::validate_byte_slice(slice)
     }
 
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        bytes
+        T::from_byte_slice_unchecked(bytes)
     }
 }
