@@ -25,7 +25,7 @@ pub trait BufferProvider {
     where
         Self: Sized,
     {
-        SerdeBufferProvider(&self)
+        SerdeBufferProvider(self)
     }
 }
 
