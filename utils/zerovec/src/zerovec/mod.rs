@@ -7,7 +7,7 @@ mod serde;
 
 mod slice;
 
-pub use slice::ZeroVecULE;
+pub use slice::ZeroSlice;
 
 use crate::ule::*;
 use alloc::vec::Vec;

@@ -8,43 +8,43 @@ use alloc::boxed::Box;
 /// A type similar to [`ZeroVec`] that can be used inside `VarZeroVec<T>`.
 ///
 /// This essentially allows for the construction of zero-copy types isomorphic to
-/// `Vec<Vec<T>>` by instead using `VarZeroVec<ZeroVecULE<T>>`.
+/// `Vec<Vec<T>>` by instead using `VarZeroVec<ZeroSlice<T>>`.
 ///
 /// See the [`VarZeroVec`] docs for an example.
 #[repr(transparent)]
-pub struct ZeroVecULE<T: AsULE>(pub [T::ULE]);
+pub struct ZeroSlice<T: AsULE>(pub [T::ULE]);
 
-impl<T> ZeroVecULE<T>
+impl<T> ZeroSlice<T>
 where
     T: AsULE,
 {
-    /// Get this [`ZeroVecULE`] as a borrowed [`ZeroVec`]
+    /// Get this [`ZeroSlice`] as a borrowed [`ZeroVec`]
     ///
-    /// [`ZeroVecULE`] does not have most of the methods that [`ZeroVec`] does,
+    /// [`ZeroSlice`] does not have most of the methods that [`ZeroVec`] does,
     /// so it is recommended to convert it to a [`ZeroVec`] before doing anything.
     #[inline]
     pub fn as_zerovec(&self) -> ZeroVec<'_, T> {
         ZeroVec::Borrowed(&self.0)
     }
 
-    /// Construct a `&ZeroVecULE<T>` from a slice of ULEs
+    /// Construct a `&ZeroSlice<T>` from a slice of ULEs
     #[inline]
     pub fn from_slice(slice: &[T::ULE]) -> &Self {
-        // This is safe because ZeroVecULE is transparent over [T::ULE]
-        // so &ZeroVecULE<T> can be safely cast from &[T::ULE]
+        // This is safe because ZeroSlice is transparent over [T::ULE]
+        // so &ZeroSlice<T> can be safely cast from &[T::ULE]
         unsafe { &*(slice as *const _ as *const Self) }
     }
 
-    /// Construct a `Box<ZeroVecULE<T>>` from a boxed slice of ULEs
+    /// Construct a `Box<ZeroSlice<T>>` from a boxed slice of ULEs
     #[inline]
     pub fn from_boxed_slice(slice: Box<[T::ULE]>) -> Box<Self> {
-        // This is safe because ZeroVecULE is transparent over [T::ULE]
-        // so Box<ZeroVecULE<T>> can be safely cast from Box<[T::ULE]>
+        // This is safe because ZeroSlice is transparent over [T::ULE]
+        // so Box<ZeroSlice<T>> can be safely cast from Box<[T::ULE]>
         unsafe { Box::from_raw(Box::into_raw(slice) as *mut Self) }
     }
 }
 
-impl<T> ZeroVecULE<T>
+impl<T> ZeroSlice<T>
 where
     T: AsULE,
 {
@@ -62,7 +62,7 @@ where
 }
 
 // Safety (based on the safety checklist on the VarULE trait):
-// (`ZeroVecULE<T>` is a transparent wrapper around [T::ULE])
+// (`ZeroSlice<T>` is a transparent wrapper around [T::ULE])
 //  1. [T::ULE] does not include any uninitialized or padding bytes (achieved by being a slice of a ULE type)
 //  2. [T::ULE] is aligned to 1 byte (achieved by being a slice of a ULE type)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
@@ -70,7 +70,7 @@ where
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
 //  6. `as_byte_slice()` and `parse_byte_slice()` are defaulted
 //  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
-unsafe impl<T: AsULE + 'static> VarULE for ZeroVecULE<T> {
+unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         T::ULE::validate_byte_slice(bytes)
@@ -82,19 +82,19 @@ unsafe impl<T: AsULE + 'static> VarULE for ZeroVecULE<T> {
     }
 }
 
-impl<T> Eq for ZeroVecULE<T> where T: AsULE + Eq {}
+impl<T> Eq for ZeroSlice<T> where T: AsULE + Eq {}
 
-impl<T> PartialEq<ZeroVecULE<T>> for ZeroVecULE<T>
+impl<T> PartialEq<ZeroSlice<T>> for ZeroSlice<T>
 where
     T: AsULE + PartialEq,
 {
     #[inline]
-    fn eq(&self, other: &ZeroVecULE<T>) -> bool {
+    fn eq(&self, other: &ZeroSlice<T>) -> bool {
         self.as_zerovec().eq(&other.as_zerovec())
     }
 }
 
-impl<T> PartialEq<[T]> for ZeroVecULE<T>
+impl<T> PartialEq<[T]> for ZeroSlice<T>
 where
     T: AsULE + PartialEq,
 {
@@ -104,7 +104,7 @@ where
     }
 }
 
-impl<'a, T> PartialEq<ZeroVec<'a, T>> for ZeroVecULE<T>
+impl<'a, T> PartialEq<ZeroVec<'a, T>> for ZeroSlice<T>
 where
     T: AsULE + PartialEq,
 {
@@ -114,17 +114,17 @@ where
     }
 }
 
-impl<'a, T> PartialEq<ZeroVecULE<T>> for ZeroVec<'a, T>
+impl<'a, T> PartialEq<ZeroSlice<T>> for ZeroVec<'a, T>
 where
     T: AsULE + PartialEq,
 {
     #[inline]
-    fn eq(&self, other: &ZeroVecULE<T>) -> bool {
+    fn eq(&self, other: &ZeroSlice<T>) -> bool {
         self.eq(&other.as_zerovec())
     }
 }
 
-impl<T> fmt::Debug for ZeroVecULE<T>
+impl<T> fmt::Debug for ZeroSlice<T>
 where
     T: AsULE + fmt::Debug,
 {
@@ -133,20 +133,20 @@ where
     }
 }
 
-impl<'a, T: AsULE + PartialOrd> PartialOrd for ZeroVecULE<T> {
+impl<'a, T: AsULE + PartialOrd> PartialOrd for ZeroSlice<T> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.iter().partial_cmp(other.iter())
     }
 }
 
-impl<T: AsULE + Ord> Ord for ZeroVecULE<T> {
+impl<T: AsULE + Ord> Ord for ZeroSlice<T> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.iter().cmp(other.iter())
     }
 }
 
-impl<T: AsULE> AsRef<ZeroVecULE<T>> for Vec<T::ULE> {
-    fn as_ref(&self) -> &ZeroVecULE<T> {
-        ZeroVecULE::<T>::from_slice(&**self)
+impl<T: AsULE> AsRef<ZeroSlice<T>> for Vec<T::ULE> {
+    fn as_ref(&self) -> &ZeroSlice<T> {
+        ZeroSlice::<T>::from_slice(&**self)
     }
 }
