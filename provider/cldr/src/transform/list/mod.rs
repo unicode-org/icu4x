@@ -85,7 +85,7 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                     .make_conditional(
                         "{0} y {1}",
                         // Starts with i or (hi but not hia/hie)
-                        "(i|hi[^ae]).*|hi", // "i|hi([^ae]|$)" if prefix-checking
+                        "i|hi([^ae]|$)",
                         "{0} e {1}",
                     )
                     .unwrap(),
@@ -96,7 +96,7 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                         "{0} o {1}",
                         // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
                         // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
-                        r"(o|ho|8|11(\.?\d\d\d)*(,\d*)?[^\.,\d]).*|11(\.?\d\d\d)*(,\d*)?", // "o|ho|8|11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$)" if prefix checking
+                        r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))",
                         "{0} u {1}",
                     )
                     .unwrap(),
@@ -112,7 +112,7 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                     "{0} \u{05D5}{1}", // ״{0} ו {1}״
                     // Starts with a non-Hebrew letter
                     &format!(
-                        "[^{}].*", // "[^{}]" if prefix checking
+                        "[^{}]",
                         icu_properties::sets::get_for_script(
                             &icu_provider_uprops::PropertiesDataProvider::try_new(
                                 &self.uprops_path

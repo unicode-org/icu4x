@@ -15,7 +15,7 @@ pub enum Error {
     #[displaydoc("Illegal pattern: {0}")]
     IllegalPattern(String),
     #[displaydoc("Illegal condition: {0}")]
-    IllegalCondition(regex_automata::Error),
+    IllegalCondition(regex_automata::dfa::Error),
 }
 
 #[cfg(feature = "std")]

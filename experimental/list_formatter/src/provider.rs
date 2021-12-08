@@ -63,7 +63,9 @@ impl<'data> ListFormatterPatternsV1<'data> {
     #[cfg(any(test, feature = "provider_transform_internals"))]
     /// Adds a special case to all `pattern`s that will evaluate to
     /// `alternative_pattern` when `regex` matches the following element.
-    /// The regex is interpreted case-insensitive and has to be a full match.
+    /// The regex is interpreted case-insensitive and anchored to the beginning, but
+    /// to improve efficiency does not search for full matches. If a full match is
+    /// required, use `$`.
     pub fn make_conditional(
         &mut self,
         pattern: &str,
@@ -265,7 +267,7 @@ pub(crate) mod test {
         ])
         .unwrap();
         patterns
-            .make_conditional("{0}. {1}", "A.*", "{0} :o {1}")
+            .make_conditional("{0}. {1}", "A", "{0} :o {1}")
             .unwrap();
         patterns
     }
