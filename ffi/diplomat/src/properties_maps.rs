@@ -31,7 +31,7 @@ pub mod ffi {
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
         pub fn try_get_script(provider: &ICU4XDataProvider) -> ICU4XCodePointMapData16Response {
             use icu_provider::serde::AsSerdeBufferProvider;
-            let provider = provider.0.as_ref().as_serde_provider();
+            let provider = provider.0.as_serde_provider();
             Self::prepare_result_from_script(maps::get_script(&provider))
         }
 

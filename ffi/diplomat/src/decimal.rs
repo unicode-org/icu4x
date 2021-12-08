@@ -68,7 +68,7 @@ pub mod ffi {
             options: ICU4XFixedDecimalFormatOptions,
         ) -> ICU4XFixedDecimalFormatResult {
             use icu_provider::serde::AsSerdeBufferProvider;
-            let provider = provider.0.as_ref().as_serde_provider();
+            let provider = provider.0.as_serde_provider();
             Self::try_new_impl(locale, &provider, options)
         }
 
