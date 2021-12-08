@@ -40,9 +40,7 @@ impl TryFrom<&dyn CldrPaths> for ListProvider {
         }
         Ok(Self {
             data,
-            uprops_path: cldr_paths
-                .uprops()?
-                .expect("Value for --uprops-root must be specified"),
+            uprops_path: cldr_paths.uprops()?,
         })
     }
 }

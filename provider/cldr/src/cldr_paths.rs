@@ -53,7 +53,8 @@ pub trait CldrPaths: std::fmt::Debug {
         vec
     }
 
-    fn uprops(&self) -> Result<Option<PathBuf>, Error>;
+    /// Path to uprops TOML data, which is required by some CLDR transformers
+    fn uprops(&self) -> Result<PathBuf, Error>;
 }
 
 /// An implementation of [`CldrPaths`] for multiple separate local CLDR JSON directories per
@@ -98,8 +99,11 @@ impl CldrPaths for CldrPathsLocal {
     fn cldr_misc(&self) -> Result<PathBuf, Error> {
         self.cldr_misc.clone().map_err(|e| e.into())
     }
-    fn uprops(&self) -> Result<Option<PathBuf>, Error> {
-        Ok(None)
+    fn uprops(&self) -> Result<PathBuf, Error> {
+        Err(Error::Custom(
+            "This implementation does not know about uprops".to_owned(),
+            None,
+        ))
     }
 }
 
@@ -174,16 +178,19 @@ impl CldrPaths for CldrPathsAllInOne {
             .clone()
             .join(format!("cldr-misc-{}", self.locale_subset)))
     }
-    fn uprops(&self) -> Result<Option<PathBuf>, Error> {
-        Ok(self.uprops_root.clone())
+    fn uprops(&self) -> Result<PathBuf, Error> {
+        self.uprops_root
+            .clone()
+            .ok_or_else(|| Error::Custom("The uprops root has not been set".to_owned(), None))
     }
 }
 
-#[cfg(test)]
-pub(crate) fn for_test() -> CldrPathsAllInOne {
-    CldrPathsAllInOne {
-        cldr_json_root: icu_testdata::paths::cldr_json_root(),
-        locale_subset: "full".to_string(),
-        uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
+impl CldrPathsAllInOne {
+    pub fn for_test() -> Self {
+        Self {
+            cldr_json_root: icu_testdata::paths::cldr_json_root(),
+            locale_subset: "full".to_string(),
+            uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
+        }
     }
 }
