@@ -410,9 +410,6 @@ where
     /// type. The function takes a second argument which should be ignored. For more details,
     /// see [`Yoke::project()`].
     ///
-    /// Both `M` and `M2` have the same [`DataMarker::Cart`]. This means that when using
-    /// `map_project`, it is usually necessary to define a custom [`DataMarker`] type.
-    ///
     /// The standard [`DataPayload::map_project()`] function moves `self` and cannot capture any
     /// data from its context. Use one of the sister methods if you need these capabilities:
     ///

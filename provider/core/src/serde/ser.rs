@@ -8,7 +8,7 @@ use alloc::boxed::Box;
 use core::ops::Deref;
 use crate::dynutil::UpcastDataPayload;
 
-/// A wrapper around `Box<`[`SerdeSeDataStruct`]`>` for integration with DataProvider.
+/// A wrapper around `Box<erased_serde::Serialize>` for integration with DataProvider.
 #[derive(yoke::Yokeable)]
 pub struct SerializeBox(Box<dyn erased_serde::Serialize>);
 

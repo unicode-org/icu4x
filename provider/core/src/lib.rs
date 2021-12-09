@@ -65,16 +65,16 @@
 //! are typically deserialized later via Serde. This allows for a Serde-enabled provider
 //! to be saved as a trait object without being specific to a data struct type.
 //!
-//! ### `DataProvider<dyn SerdeSeDataStruct>`
+//! ### `DataProvider<SerializeMarker>`
 //!
 //! *Enabled with the "provider_serde" feature*
 //!
-//! Data providers capable of returning opaque [`SerdeSeDataStruct`] trait objects can be used as
+//! Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be used as
 //! input to a data exporter, such as when writing data to the filesystem.
 //!
 //! This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 //!
-//! ### `DataProvider<dyn ErasedDataStruct>`
+//! ### `DataProvider<ErasedDataStructMarker>`
 //!
 //! The trait [`ErasedDataProvider`] removes the type argument from [`DataProvider`] and requires
 //! that all data structs be convertible to the [`Any`](core::any::Any) type. This enables the processing of data
@@ -97,7 +97,6 @@
 //! [`StructProvider`]: struct_provider::StructProvider
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`ErasedDataProvider`]: erased::ErasedDataProvider
-//! [`SerdeSeDataStruct`]: serde::SerdeSeDataStruct
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dyn_provider!`]: impl_dyn_provider
 
