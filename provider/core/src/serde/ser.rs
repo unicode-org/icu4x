@@ -8,6 +8,22 @@ use alloc::boxed::Box;
 use core::ops::Deref;
 use crate::dynutil::UpcastDataPayload;
 
+/// Error type for serialization.
+#[derive(displaydoc::Display, Debug)]
+pub enum Error {
+    /// An error originating in [`erased_serde`].
+    #[cfg(feature = "provider_json")]
+    #[displaydoc("{0}")]
+    Serde(erased_serde::Error),
+}
+
+#[cfg(feature = "erased-serde")]
+impl From<erased_serde::Error> for Error {
+    fn from(e: erased_serde::Error) -> Self {
+        Error::Serde(e)
+    }
+}
+
 /// A wrapper around `Box<erased_serde::Serialize>` for integration with DataProvider.
 #[derive(yoke::Yokeable)]
 pub struct SerializeBox(Box<dyn erased_serde::Serialize>);
@@ -64,7 +80,7 @@ impl DataPayload<SerializeMarker> {
     /// ).expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
-    pub fn serialize(&self, mut serializer: &mut dyn erased_serde::Serializer) -> Result<(), DataError> {
+    pub fn serialize(&self, mut serializer: &mut dyn erased_serde::Serializer) -> Result<(), Error> {
         self.get().erased_serialize(&mut serializer)?;
         Ok(())
     }

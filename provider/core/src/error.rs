@@ -59,10 +59,10 @@ pub enum Error {
     /// An error occured during serialization or deserialization.
     #[cfg(feature = "erased-serde")]
     #[displaydoc("Serde error: {0}")]
-    Serde(erased_serde::Error),
+    Serialize(crate::serde::SerializeError),
 
     #[displaydoc("Error while deserializing: {0}")]
-    ProviderSerde(crate::serde::Error),
+    Deserialize(crate::serde::DeserializeError),
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
     #[displaydoc("Failed to load resource: {0}")]
@@ -72,16 +72,15 @@ pub enum Error {
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
-#[cfg(feature = "erased-serde")]
-impl From<erased_serde::Error> for Error {
-    fn from(e: erased_serde::Error) -> Self {
-        Error::Serde(e)
+impl From<crate::serde::SerializeError> for Error {
+    fn from(e: crate::serde::SerializeError) -> Self {
+        Error::Serialize(e)
     }
 }
 
-impl From<crate::serde::Error> for Error {
-    fn from(e: crate::serde::Error) -> Self {
-        Error::ProviderSerde(e)
+impl From<crate::serde::DeserializeError> for Error {
+    fn from(e: crate::serde::DeserializeError) -> Self {
+        Error::Deserialize(e)
     }
 }
 
