@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639039212450,
+  "lastUpdate": 1639070207383,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20747,6 +20747,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21543,
             "range": "± 1365",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d9ddad75f72a378881526e0fc2cd3ac0f37c6e0",
+          "message": "Replace SerdeDeDataProvider with BufferProvider (#1369)\n\n- Add buffer_format to DataResponseMetadata\r\n- Migrate fs provider to BufferFormat enum\r\n- impl BufferProvider for FsDataProvider\r\n- Migrate FsDataProvider to use DeserializingProvider for deserialization\r\n- Rename serialization primitives\r\n- Rename features",
+          "timestamp": "2021-12-09T11:08:39-06:00",
+          "tree_id": "591f615255693682b5ded5400247c27665e1954a",
+          "url": "https://github.com/unicode-org/icu4x/commit/1d9ddad75f72a378881526e0fc2cd3ac0f37c6e0"
+        },
+        "date": 1639070200308,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1097,
+            "range": "± 92",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5402,
+            "range": "± 476",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18798,
+            "range": "± 1163",
             "unit": "ns/iter"
           }
         ]
