@@ -74,7 +74,7 @@ pub trait AsSerializingDataProvider<M: DataMarker> {
     fn as_serializing(&self) -> SerializingDataProvider<M>;
 }
 
-impl<M> DataResponse<M>
+impl<M> DataPayload<M>
 where
     M: DataMarker,
     // Actual bound:
@@ -82,21 +82,8 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> &'de <M::Yokeable as Yokeable<'de>>::Output: Serialize,
 {
-    pub fn into_serialized(self, buffer_format: BufferFormat) -> Result<DataResponse<BufferMarker>, DataError> {
-        if let Some(old_payload) = self.payload {
-            let new_payload = serialize_impl(old_payload, buffer_format)?;
-            let mut new_metadata = self.metadata;
-            new_metadata.buffer_format = Some(buffer_format);
-            Ok(DataResponse {
-                metadata: new_metadata,
-                payload: Some(new_payload),
-            })
-        } else {
-            Ok(DataResponse {
-                metadata: self.metadata,
-                payload: None,
-            })
-        }
+    pub fn into_serialized(self, buffer_format: BufferFormat) -> Result<DataPayload<BufferMarker>, Error> {
+        serialize_impl(self, buffer_format)
     }
 }
 
@@ -108,9 +95,23 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> &'de <M::Yokeable as Yokeable<'de>>::Output: Serialize,
 {
-    /// Converts a data struct to a buffer by serializing the to a supported buffer format.
+    /// Converts a data struct to a buffer by serializing it to a supported buffer format.
     fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        self.provider.load_payload(&req)?.into_serialized(self.buffer_format)
+        let old_result = self.provider.load_payload(&req)?;
+        if let Some(old_payload) = old_result.payload {
+            let new_payload = old_payload.into_serialized(self.buffer_format)?;
+            let mut new_metadata = old_result.metadata;
+            new_metadata.buffer_format = Some(self.buffer_format);
+            Ok(DataResponse {
+                metadata: new_metadata,
+                payload: Some(new_payload)
+            })
+        } else {
+            Ok(DataResponse {
+                metadata: old_result.metadata,
+                payload: None,
+            })
+        }
     }
 }
 
