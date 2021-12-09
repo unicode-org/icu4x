@@ -6,6 +6,7 @@
 //!
 //! Every ICU4X component should have its own private submodule and then export the types from here.
 
+mod calendar;
 mod datetime;
 mod decimal;
 mod list;
@@ -13,6 +14,7 @@ mod locale_canonicalizer;
 mod plurals;
 mod time_zones;
 
+pub use calendar::japanese::JapaneseErasProvider;
 pub use datetime::{
     patterns::DatePatternsProvider, skeletons::DateSkeletonPatternsProvider,
     symbols::DateSymbolsProvider,
@@ -35,6 +37,7 @@ use self::time_zones::TimeZonesProvider;
 pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
     result.extend(&locale_canonicalizer::aliases::ALL_KEYS);
+    result.extend(&calendar::japanese::ALL_KEYS);
     result.extend(&datetime::symbols::ALL_KEYS);
     result.extend(&datetime::skeletons::ALL_KEYS);
     result.extend(&datetime::patterns::ALL_KEYS);
@@ -53,6 +56,7 @@ pub struct CldrJsonDataProvider<'a> {
     date_symbols: LazyCldrProvider<DateSymbolsProvider>,
     date_skeletons: LazyCldrProvider<DateSkeletonPatternsProvider>,
     date_patterns: LazyCldrProvider<DatePatternsProvider>,
+    japanese: LazyCldrProvider<JapaneseErasProvider>,
     likelysubtags: LazyCldrProvider<LikelySubtagsProvider>,
     numbers: LazyCldrProvider<NumbersProvider>,
     plurals: LazyCldrProvider<PluralsProvider>,
@@ -68,6 +72,7 @@ impl<'a> CldrJsonDataProvider<'a> {
             date_symbols: Default::default(),
             date_skeletons: Default::default(),
             date_patterns: Default::default(),
+            japanese: Default::default(),
             likelysubtags: Default::default(),
             numbers: Default::default(),
             plurals: Default::default(),
@@ -92,6 +97,9 @@ impl<'a> DataProvider<SerdeSeDataStructMarker> for CldrJsonDataProvider<'a> {
             return Ok(result);
         }
         if let Some(result) = self.date_patterns.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
+        if let Some(result) = self.japanese.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
         if let Some(result) = self.likelysubtags.try_load_serde(req, self.cldr_paths)? {
@@ -143,6 +151,12 @@ impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a> {
             return Ok(Box::new(resp.into_iter()));
         }
         if let Some(resp) = self
+            .japanese
+            .try_supported_options(resc_key, self.cldr_paths)?
+        {
+            return Ok(Box::new(resp.into_iter()));
+        }
+        if let Some(resp) = self
             .likelysubtags
             .try_supported_options(resc_key, self.cldr_paths)?
         {
@@ -179,5 +193,6 @@ impl<'a> KeyedDataProvider for CldrJsonDataProvider<'a> {
             .or_else(|err| DateSymbolsProvider::or_else_supports_key(err, resc_key))
             .or_else(|err| DateSkeletonPatternsProvider::or_else_supports_key(err, resc_key))
             .or_else(|err| DatePatternsProvider::or_else_supports_key(err, resc_key))
+            .or_else(|err| JapaneseErasProvider::or_else_supports_key(err, resc_key))
     }
 }
