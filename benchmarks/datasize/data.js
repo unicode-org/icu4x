@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638988373840,
+  "lastUpdate": 1639038751582,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4828,6 +4828,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 916288,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "64c3859ae91ab7881c3f8161f0f200daba7438f2",
+          "message": "Adding special case data for es and he list formatting (#1365)",
+          "timestamp": "2021-12-09T09:30:49+01:00",
+          "tree_id": "772c336bd1db24fbee280ff02f49d1bde231ca25",
+          "url": "https://github.com/unicode-org/icu4x/commit/64c3859ae91ab7881c3f8161f0f200daba7438f2"
+        },
+        "date": 1639038744171,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916502,
             "unit": "bytes",
             "biggerIsBetter": false
           }
