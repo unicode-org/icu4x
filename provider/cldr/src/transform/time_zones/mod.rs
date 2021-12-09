@@ -103,10 +103,10 @@ macro_rules! impl_data_provider {
                     Some(v) => &v.dates.time_zone_names,
                     None => return Err(DataError::MissingResourceOptions(req.clone())),
                 };
+                let metadata = DataResponseMetadata::default();
+                // TODO(#1109): Set metadata.data_langid correctly.
                 Ok(DataResponse {
-                    metadata: DataResponseMetadata {
-                        data_langid: req.resource_path.options.langid.clone(),
-                    },
+                    metadata,
                     payload: Some(DataPayload::from_owned($id::from(time_zones.clone()))),
                 })
             }

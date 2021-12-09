@@ -15,12 +15,14 @@ test("use create_from_byte_slice to format a simple decimal", async t => {
   const bytes = new Uint8Array(nodeBuffer.buffer, nodeBuffer.byteOffset, nodeBuffer.length);
   const result = ICU4XDataProvider.create_from_byte_slice(bytes);
   t.assert(result.success);
-  const format = ICU4XFixedDecimalFormat.try_new(locale, result.provider, ICU4XFixedDecimalFormatOptions.default()).fdf;
+
+  const format = ICU4XFixedDecimalFormat.try_new(locale, result.provider, ICU4XFixedDecimalFormatOptions.default());
+  t.assert(format.success);
 
   const decimal = ICU4XFixedDecimal.create(1234);
   decimal.multiply_pow10(-2);
 
-  t.is(format.format(decimal), "১২.৩৪");
+  t.is(format.fdf.format(decimal), "১২.৩৪");
 });
 
 test("fail to create from invalid buffer", t => {

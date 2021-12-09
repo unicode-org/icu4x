@@ -23,12 +23,9 @@ pub mod key {
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HelloWorldV1<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub message: Cow<'data, str>,
 }
 
@@ -128,10 +125,10 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
             .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
+        let mut metadata = DataResponseMetadata::default();
+        metadata.data_langid = Some(langid.clone());
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: Some(langid.clone()),
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(data)),
         })
     }
@@ -141,7 +138,7 @@ impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
 }, ERASED);
 
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "serialize")]
 impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
 }, SERDE_SE);

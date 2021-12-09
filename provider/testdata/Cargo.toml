@@ -138,7 +138,7 @@ denylist = ["bench"]
 [dependencies]
 icu_provider = { version = "0.4", path = "../../provider/core" }
 icu_provider_blob = { version = "0.4", path = "../../provider/blob", optional = true }
-icu_provider_fs = { version = "0.4", path = "../../provider/fs", features = ["provider_json"], optional = true }
+icu_provider_fs = { version = "0.4", path = "../../provider/fs", optional = true }
 icu_locid = { version = "0.4", path = "../../components/locid" }
 
 # Dependencies for the "metadata" feature
@@ -165,6 +165,6 @@ metadata = [
     "std"
 ]
 
-fs = ["icu_provider_fs", "std"]
+fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json", "std"]
 static = ["icu_provider_blob"]
 std = ["icu_provider_fs/std"]

@@ -36,7 +36,7 @@ extra_features = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.4", path = "../../provider/core", features = ["provider_serde"] }
+icu_provider = { version = "0.4", path = "../../provider/core", features = ["serialize"] }
 icu_locid = { version = "0.4", path = "../../components/locid" }
 icu_plurals = { version = "0.4", path = "../../components/plurals" }
 icu_datetime = { version = "0.4", path = "../../components/datetime", features = ["provider_transform_internals"] }

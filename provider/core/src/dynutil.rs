@@ -46,12 +46,12 @@ where
 /// Use this macro to add support to your data provider for:
 ///
 /// - [`ErasedDataStruct`] if your provider can return typed objects as [`Any`](core::any::Any)
-/// - [`SerdeSeDataStruct`] if your provider returns objects implementing [`serde::Serialize`]
+/// - [`SerializeMarker`] if your provider returns objects implementing [`serde::Serialize`]
 ///
 /// The second argument is a match-like construction mapping from resource keys to structs. To map
 /// multiple keys to a single data struct, use `_` as the data key.
 ///
-/// The third argument can be either the trait object marker, like [`SerdeSeDataStructMarker`], or the
+/// The third argument can be either the trait object marker, like [`SerializeMarker`], or the
 /// shorthands `ERASED` or `SERDE_SE`.
 ///
 /// Lifetimes:
@@ -124,8 +124,7 @@ where
 ///
 /// [`DataProvider`]: crate::DataProvider
 /// [`ErasedDataStruct`]: (crate::erased::ErasedDataStruct)
-/// [`SerdeSeDataStruct`]: (crate::serde::SerdeSeDataStruct)
-/// [`SerdeSeDataStructMarker`]: (crate::serde::SerdeSeDataStructMarker)
+/// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ERASED) => {
@@ -136,11 +135,11 @@ macro_rules! impl_dyn_provider {
         );
     };
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, SERDE_SE) => {
-        // If this fails to compile, enable the "provider_serde" feature on this crate.
+        // If this fails to compile, enable the "serialize" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
-            $crate::serde::SerdeSeDataStructMarker
+            $crate::serde::SerializeMarker
         );
     };
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, $dyn_m:path) => {

@@ -89,7 +89,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-mod deserializer;
 mod error;
 mod fs_data_provider;
 pub mod manifest;
