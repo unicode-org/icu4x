@@ -58,7 +58,7 @@ pub enum Error {
     /// An error indicating that the desired buffer format is not available. This usually
     /// means that a required feature was not enabled
     #[allow(dead_code)]
-    #[displaydoc("Unavailable buffer format: {0:?} (do you need to enable a feature?)")]
+    #[displaydoc("Unavailable buffer format: {0:?} (does icu4x need to be compiled with an additional feature?)")]
     UnavailableFormat(BufferFormat),
 
     /// An error originating in [`erased_serde`].
