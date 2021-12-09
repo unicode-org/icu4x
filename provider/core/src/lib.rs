@@ -67,7 +67,7 @@
 //!
 //! ### `DataProvider<SerializeMarker>`
 //!
-//! *Enabled with the "provider_serde" feature*
+//! *Enabled with the "serialize" feature*
 //!
 //! Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be used as
 //! input to a data exporter, such as when writing data to the filesystem.
@@ -120,7 +120,7 @@ pub mod inv;
 pub mod iter;
 #[macro_use]
 pub mod marker;
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "serde")]
 pub mod serde;
 pub mod struct_provider;
 
@@ -147,7 +147,7 @@ pub mod prelude {
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
 
-    #[cfg(feature = "provider_serde")]
+    #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 }
 

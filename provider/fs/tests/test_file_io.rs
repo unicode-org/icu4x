@@ -36,7 +36,7 @@ impl From<&PluralRulesTestData> for PluralRulesV1<'_> {
     }
 }
 
-#[cfg(feature = "provider_json")]
+#[cfg(feature = "deserialize_json")]
 const EXPECTED_RU_DATA: PluralRulesTestData = PluralRulesTestData {
     zero: None,
     one: Some("v = 0 and i % 10 = 1 and i % 100 != 11"),
@@ -45,7 +45,7 @@ const EXPECTED_RU_DATA: PluralRulesTestData = PluralRulesTestData {
     many: Some("v = 0 and i % 10 = 0 or v = 0 and i % 10 = 5..9 or v = 0 and i % 100 = 11..14"),
 };
 
-#[cfg(feature = "provider_bincode")]
+#[cfg(feature = "deserialize_bincode_1")]
 const EXPECTED_SR_DATA: PluralRulesTestData = PluralRulesTestData {
     zero: None,
     one: Some("v = 0 and i % 10 = 1 and i % 100 != 11 or f % 10 = 1 and f % 100 != 11"),
@@ -69,13 +69,13 @@ fn get_request(langid: LanguageIdentifier) -> DataRequest {
     }
 }
 
-#[cfg(not(feature = "provider_json"))]
+#[cfg(not(feature = "deserialize_json"))]
 #[test]
 fn test_json_feature() {
     FsDataProvider::try_new("./tests/testdata/json").expect_err("JSON is not enabled");
 }
 
-#[cfg(feature = "provider_json")]
+#[cfg(feature = "deserialize_json")]
 #[test]
 fn test_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
@@ -89,7 +89,7 @@ fn test_json() {
     assert_eq!(plurals_data.get(), &PluralRulesV1::from(&EXPECTED_RU_DATA));
 }
 
-#[cfg(feature = "provider_json")]
+#[cfg(feature = "deserialize_json")]
 #[test]
 fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
@@ -104,7 +104,7 @@ fn test_json_dyn_erased_serde() {
     assert_eq!(plurals_data.get(), &PluralRulesV1::from(&EXPECTED_RU_DATA));
 }
 
-#[cfg(feature = "provider_json")]
+#[cfg(feature = "deserialize_json")]
 #[test]
 fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
@@ -178,7 +178,7 @@ fn test_json_errors() {
 }
 
 #[test]
-#[cfg(feature = "provider_bincode")]
+#[cfg(feature = "deserialize_bincode_1")]
 fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
@@ -192,7 +192,7 @@ fn test_bincode() {
 }
 
 #[test]
-#[cfg(feature = "provider_bincode")]
+#[cfg(feature = "deserialize_bincode_1")]
 fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");

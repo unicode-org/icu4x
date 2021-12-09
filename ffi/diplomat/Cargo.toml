@@ -43,7 +43,7 @@ path = "src/lib.rs"
 default = ["provider_fs", "provider_static"]
 wearos = ["smaller_static", "freertos"]
 
-provider_fs = ["icu_provider_fs", "icu_provider_fs/provider_json"]
+provider_fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
 
@@ -65,7 +65,7 @@ icu_locid = { path = "../../components/locid" }
 icu_locid_macros = { path = "../../components/locid/macros" }
 icu_plurals = { path = "../../components/plurals/" }
 icu_properties = { path = "../../components/properties/" }
-icu_provider = { path = "../../provider/core", features = ["provider_serde"] }
+icu_provider = { path = "../../provider/core" }
 icu_provider_blob = { path = "../../provider/blob" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }

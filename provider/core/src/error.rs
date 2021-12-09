@@ -56,11 +56,13 @@ pub enum Error {
     #[displaydoc("Could not unwrap Rc due to multiple references")]
     MultipleReferences,
 
-    /// An error occured during serialization or deserialization.
-    #[cfg(feature = "erased-serde")]
+    /// An error occurred during serialization.
+    #[cfg(feature = "serialize")]
     #[displaydoc("Serde error: {0}")]
     Serialize(crate::serde::SerializeError),
 
+    /// An error occurred during deserialization.
+    #[cfg(feature = "serde")]
     #[displaydoc("Error while deserializing: {0}")]
     Deserialize(crate::serde::DeserializeError),
 
@@ -72,12 +74,14 @@ pub enum Error {
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
+#[cfg(feature = "serialize")]
 impl From<crate::serde::SerializeError> for Error {
     fn from(e: crate::serde::SerializeError) -> Self {
         Error::Serialize(e)
     }
 }
 
+#[cfg(feature = "serde")]
 impl From<crate::serde::DeserializeError> for Error {
     fn from(e: crate::serde::DeserializeError) -> Self {
         Error::Deserialize(e)

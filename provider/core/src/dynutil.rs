@@ -135,7 +135,7 @@ macro_rules! impl_dyn_provider {
         );
     };
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, SERDE_SE) => {
-        // If this fails to compile, enable the "provider_serde" feature on this crate.
+        // If this fails to compile, enable the "serialize" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },

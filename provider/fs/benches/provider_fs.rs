@@ -34,7 +34,7 @@ fn overview_bench(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         json_bench(c);
-        #[cfg(feature = "provider_bincode")]
+        #[cfg(feature = "deserialize_bincode_1")]
         {
             bincode_bench(c);
         }
@@ -84,7 +84,7 @@ fn json_bench(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench", feature = "provider_bincode"))]
+#[cfg(all(feature = "bench", feature = "deserialize_bincode_1))]
 fn bincode_bench(c: &mut Criterion) {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");

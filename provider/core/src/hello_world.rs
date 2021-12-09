@@ -24,11 +24,11 @@ pub mod key {
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
-    feature = "provider_serde",
+    feature = "serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct HelloWorldV1<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub message: Cow<'data, str>,
 }
 
@@ -141,7 +141,7 @@ impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
 }, ERASED);
 
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "serialize")]
 impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
 }, SERDE_SE);

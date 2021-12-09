@@ -4,7 +4,7 @@
 
 pub mod json;
 
-#[cfg(feature = "provider_bincode")]
+#[cfg(feature = "bincode")]
 pub mod bincode;
 
 use displaydoc::Display;

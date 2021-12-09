@@ -23,16 +23,20 @@
 //! [`BufferProvider`]: crate::buffer_provider::BufferProvider
 
 mod de;
+#[cfg(feature = "serialize")]
 mod ser;
-
-pub use ser::Error as SerializeError;
-pub use ser::SerializeBox;
-pub use ser::SerializeMarker;
 
 pub use de::Error as DeserializeError;
 pub use de::check_format_supported;
 pub use de::AsDeserializingBufferProvider;
 pub use de::DeserializingBufferProvider;
+
+#[cfg(feature = "serialize")]
+pub use ser::Error as SerializeError;
+#[cfg(feature = "serialize")]
+pub use ser::SerializeBox;
+#[cfg(feature = "serialize")]
+pub use ser::SerializeMarker;
 
 /// An enum expressing all Serde formats known to ICU4X.
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, serde::Serialize, serde::Deserialize)]

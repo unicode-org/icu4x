@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(test)]
-#[cfg(feature = "serde")]
+#[cfg(feature = "serialize")]
 mod test;
 
 use crate::buffer_provider::BufferMarker;
@@ -244,7 +244,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
+    /// # #[cfg(feature = "serde_json")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use std::rc::Rc;
@@ -261,7 +261,7 @@ where
     /// .expect("JSON is valid");
     ///
     /// assert_eq!("Hello World", payload.get().message);
-    /// # } // feature = "provider_serde"
+    /// # } // feature = "serde_json"
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_rc_buffer_badly<E>(
@@ -281,7 +281,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
+    /// # #[cfg(feature = "serde_json")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use std::rc::Rc;
@@ -300,7 +300,7 @@ where
     /// .expect("JSON is valid");
     ///
     /// assert_eq!("Hello World", payload.get().message);
-    /// # } // feature = "provider_serde"
+    /// # } // feature = "serde_json"
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_yoked_buffer<T, E>(

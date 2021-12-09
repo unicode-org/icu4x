@@ -14,17 +14,17 @@ use yoke::Yokeable;
 #[derive(displaydoc::Display, Debug)]
 pub enum Error {
     /// An error originating in [`serde_json`].
-    #[cfg(feature = "provider_json")]
+    #[cfg(feature = "deserialize_json")]
     #[displaydoc("{0}")]
     Json(serde_json::error::Error),
 
     /// An error originating in [`bincode`].
-    #[cfg(feature = "provider_bincode1")]
+    #[cfg(feature = "deserialize_bincode_1")]
     #[displaydoc("{0}")]
     Bincode1(bincode::Error),
 
     /// An error originating in [`postcard`].
-    #[cfg(feature = "provider_postcard07")]
+    #[cfg(feature = "deserialize_postcard_07")]
     #[displaydoc("{0}")]
     Postcard07(postcard::Error),
 
@@ -40,21 +40,21 @@ pub enum Error {
     FormatNotSpecified,
 }
 
-#[cfg(feature = "provider_json")]
+#[cfg(feature = "deserialize_json")]
 impl From<serde_json::error::Error> for Error {
     fn from(e: serde_json::error::Error) -> Self {
         Error::Json(e)
     }
 }
 
-#[cfg(feature = "provider_bincode1")]
+#[cfg(feature = "deserialize_bincode_1")]
 impl From<bincode::Error> for Error {
     fn from(e: bincode::Error) -> Self {
         Error::Bincode1(e)
     }
 }
 
-#[cfg(feature = "provider_postcard07")]
+#[cfg(feature = "deserialize_postcard_07")]
 impl From<postcard::Error> for Error {
     fn from(e: postcard::Error) -> Self {
         Error::Postcard07(e)
@@ -64,13 +64,13 @@ impl From<postcard::Error> for Error {
 /// Returns an error if the buffer format is not enabled.
 pub fn check_format_supported(buffer_format: BufferFormat) -> Result<(), Error> {
     match buffer_format {
-        #[cfg(feature = "provider_json")]
+        #[cfg(feature = "deserialize_json")]
         BufferFormat::Json => Ok(()),
 
-        #[cfg(feature = "provider_bincode1")]
+        #[cfg(feature = "deserialize_bincode_1")]
         BufferFormat::Bincode1 => Ok(()),
 
-        #[cfg(feature = "provider_postcard07")]
+        #[cfg(feature = "deserialize_postcard_07")]
         BufferFormat::Postcard07 => Ok(()),
 
         // Allowed for cases in which all features are enabled
@@ -111,14 +111,14 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     match buffer_format {
-        #[cfg(feature = "provider_json")]
+        #[cfg(feature = "deserialize_json")]
         BufferFormat::Json => {
             let mut d = serde_json::Deserializer::from_slice(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         }
 
-        #[cfg(feature = "provider_bincode1")]
+        #[cfg(feature = "deserialize_bincode_1")]
         BufferFormat::Bincode1 => {
             use bincode::Options;
             let options = bincode::DefaultOptions::new()
@@ -129,7 +129,7 @@ where
             Ok(data.0)
         }
 
-        #[cfg(feature = "provider_postcard07")]
+        #[cfg(feature = "deserialize_postcard_07")]
         BufferFormat::Postcard07 => {
             let mut d = postcard::Deserializer::from_bytes(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;

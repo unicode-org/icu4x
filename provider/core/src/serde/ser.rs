@@ -12,7 +12,7 @@ use crate::dynutil::UpcastDataPayload;
 #[derive(displaydoc::Display, Debug)]
 pub enum Error {
     /// An error originating in [`erased_serde`].
-    #[cfg(feature = "provider_json")]
+    #[cfg(feature = "erased-serde")]
     #[displaydoc("{0}")]
     Serde(erased_serde::Error),
 }
