@@ -70,35 +70,47 @@ pub struct SerializingDataProvider<'a, M: DataMarker> {
     pub buffer_format: BufferFormat,
 }
 
-trait AsSerializingDataProvider<M: DataMarker> {
+pub trait AsSerializingDataProvider<M: DataMarker> {
     fn as_serializing(&self) -> SerializingDataProvider<M>;
 }
 
-impl<M> BufferProvider for SerializingDataProvider<'_, M>
+impl<M> DataResponse<M>
 where
     M: DataMarker,
     // Actual bound:
-    //     <M::Yokeable as Yokeable<'de>>::Output: Serialize,
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Serialize,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> &'de <M::Yokeable as Yokeable<'de>>::Output: Serialize,
 {
-    /// Converts a data struct to a buffer by serializing the to a supported buffer format.
-    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let old_response = self.provider.load_payload(&req)?;
-        if let Some(old_payload) = old_response.payload {
-            let new_payload = serialize_impl(old_payload, self.buffer_format)?;
-            let mut new_metadata = old_response.metadata;
-            new_metadata.buffer_format = Some(self.buffer_format);
+    pub fn into_serialized(self, buffer_format: BufferFormat) -> Result<DataResponse<BufferMarker>, DataError> {
+        if let Some(old_payload) = self.payload {
+            let new_payload = serialize_impl(old_payload, buffer_format)?;
+            let mut new_metadata = self.metadata;
+            new_metadata.buffer_format = Some(buffer_format);
             Ok(DataResponse {
                 metadata: new_metadata,
                 payload: Some(new_payload),
             })
         } else {
             Ok(DataResponse {
-                metadata: old_response.metadata,
+                metadata: self.metadata,
                 payload: None,
             })
         }
+    }
+}
+
+impl<M> BufferProvider for SerializingDataProvider<'_, M>
+where
+    M: DataMarker,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Serialize,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> &'de <M::Yokeable as Yokeable<'de>>::Output: Serialize,
+{
+    /// Converts a data struct to a buffer by serializing the to a supported buffer format.
+    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        self.provider.load_payload(&req)?.into_serialized(self.buffer_format)
     }
 }
 

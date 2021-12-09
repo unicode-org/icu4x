@@ -75,6 +75,35 @@ where
     }
 }
 
+impl DataResponse<BufferMarker> {
+    pub fn into_deserialized<M>(self) -> Result<DataResponse<M>, DataError>
+    where
+        M: DataMarker,
+        // Actual bound:
+        //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+        // Necessary workaround bound (see `yoke::trait_hack` docs):
+        for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
+    {
+        if let Some(old_payload) = self.payload {
+            let buffer_format = self
+                .metadata
+                .buffer_format
+                .ok_or(Error::FormatNotSpecified)?;
+            let new_payload =
+                old_payload.try_map_project_with_capture(buffer_format, deserialize_impl::<M>)?;
+            Ok(DataResponse {
+                metadata: self.metadata,
+                payload: Some(new_payload),
+            })
+        } else {
+            Ok(DataResponse {
+                metadata: self.metadata,
+                payload: None,
+            })
+        }
+    }
+}
+
 impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DataMarker,
@@ -87,23 +116,6 @@ where
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         // TODO(#1077): Remove the `req.clone()` when we start taking `req` by value.
-        let old_response = BufferProvider::load_buffer(self.0, req.clone())?;
-        if let Some(old_payload) = old_response.payload {
-            let buffer_format = old_response
-                .metadata
-                .buffer_format
-                .ok_or(Error::FormatNotSpecified)?;
-            let new_payload =
-                old_payload.try_map_project_with_capture(buffer_format, deserialize_impl::<M>)?;
-            Ok(DataResponse {
-                metadata: old_response.metadata,
-                payload: Some(new_payload),
-            })
-        } else {
-            Ok(DataResponse {
-                metadata: old_response.metadata,
-                payload: None,
-            })
-        }
+        BufferProvider::load_buffer(self.0, req.clone())?.into_deserialized()
     }
 }
