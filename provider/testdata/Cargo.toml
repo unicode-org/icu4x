@@ -60,6 +60,7 @@ locales = [
     # Spanish:
     #  - Most popular Romance language
     #  - South American dialect
+    #  - Has context dependent list fragments 
     "es",
     "es-AR",
 
@@ -122,6 +123,7 @@ cldr_json_glob = [
     "cldr-dates-full/main/haw/timeZoneNames.json",
     "cldr-dates-full/main/en-CA/ca-gregorian.json", # alt-variant in skeletons
     "cldr-dates-full/main/en-CA/timeZoneNames.json", # required by en-CA/ca-gregorian.json
+    "cldr-misc-full/main/he/listPatterns.json", # required for list transformer test
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata.

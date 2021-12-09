@@ -383,16 +383,21 @@ fn export_cldr(
 ) -> eyre::Result<()> {
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
+        Box::new(
+            CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?
+                .download(matches.value_of("UPROPS_ROOT").map(PathBuf::from))?,
+        )
     } else if let Some(path) = matches.value_of("CLDR_ROOT") {
         Box::new(CldrPathsAllInOne {
             cldr_json_root: PathBuf::from(path),
             locale_subset: locale_subset.to_string(),
+            uprops_root: matches.value_of("UPROPS_ROOT").map(PathBuf::from),
         })
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
         Box::new(CldrPathsAllInOne {
             cldr_json_root: icu_testdata::paths::cldr_json_root(),
             locale_subset: "full".to_string(),
+            uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
         })
     } else {
         eyre::bail!("Either --cldr-tag or --cldr-root must be specified",)

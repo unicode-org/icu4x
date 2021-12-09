@@ -6,12 +6,9 @@
 
 extern crate alloc;
 
-mod list_formatter;
+mod error;
+mod formatted_string;
 
-pub use crate::list_formatter::ListFormatter;
-#[cfg(feature = "provider_serde")]
-mod deduplicating_array;
-pub mod error;
-pub mod options;
-pub mod provider;
-mod string_matcher;
+pub use crate::formatted_string::FormattedString;
+pub use crate::formatted_string::FormattedStringLike;
+pub use error::Error as FormattedStringError;

@@ -6,7 +6,7 @@ use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
 use alloc::string::{String, ToString};
-use formatted_string_builder::FormattedStringBuilder;
+use formatted_string::*;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
@@ -95,19 +95,19 @@ impl ListFormatter {
         )
     }
 
-    pub fn format_to_parts(&self, values: &[&str]) -> FormattedStringBuilder<FieldType> {
+    pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType> {
         self.format_internal(
             values,
-            FormattedStringBuilder::<FieldType>::new,
+            FormattedString::<FieldType>::new,
             |value| {
-                let mut builder = FormattedStringBuilder::<FieldType>::new();
-                builder.append(value, FieldType::Element);
+                let mut builder = FormattedString::<FieldType>::new();
+                builder.append(&value, FieldType::Element);
                 builder
             },
             |value, (between, after), mut builder| {
                 builder.append(after, FieldType::Literal);
                 builder.prepend(between, FieldType::Literal);
-                builder.prepend(value, FieldType::Element);
+                builder.prepend(&value, FieldType::Element);
                 builder
             },
         )
@@ -126,17 +126,17 @@ mod tests {
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
                 .unwrap(),
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
                 .unwrap(),
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}; {1}")
+            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
                 .unwrap(),
         ]);
 
@@ -161,32 +161,32 @@ mod tests {
     fn test_format_to_parts() {
         let formatter = formatter();
 
-        assert_eq!(formatter.format_to_parts(&VALUES[0..0]).as_str(), "");
-        assert_eq!(formatter.format_to_parts(&VALUES[0..1]).as_str(), "one");
+        assert_eq!(formatter.format_to_parts(&VALUES[0..0]).as_ref(), "");
+        assert_eq!(formatter.format_to_parts(&VALUES[0..1]).as_ref(), "one");
         assert_eq!(
-            formatter.format_to_parts(&VALUES[0..2]).as_str(),
+            formatter.format_to_parts(&VALUES[0..2]).as_ref(),
             "one; two"
         );
         assert_eq!(
-            formatter.format_to_parts(&VALUES[0..3]).as_str(),
+            formatter.format_to_parts(&VALUES[0..3]).as_ref(),
             "one: two. three!"
         );
         assert_eq!(
-            formatter.format_to_parts(&VALUES[0..4]).as_str(),
+            formatter.format_to_parts(&VALUES[0..4]).as_ref(),
             "one: two, three. four!"
         );
         let parts = formatter.format_to_parts(VALUES);
-        assert_eq!(parts.as_str(), "one: two, three, four. five!");
+        assert_eq!(parts.as_ref(), "one: two, three, four. five!");
 
-        assert_eq!(parts.field_at(0), FieldType::Element);
+        assert_eq!(parts.fields_at(0), [FieldType::Element]);
         assert!(parts.is_field_start(0, 0));
-        assert_eq!(parts.field_at(2), FieldType::Element);
+        assert_eq!(parts.fields_at(2), [FieldType::Element]);
         assert!(!parts.is_field_start(2, 0));
-        assert_eq!(parts.field_at(3), FieldType::Literal);
+        assert_eq!(parts.fields_at(3), [FieldType::Literal]);
         assert!(parts.is_field_start(3, 0));
-        assert_eq!(parts.field_at(4), FieldType::Literal);
+        assert_eq!(parts.fields_at(4), [FieldType::Literal]);
         assert!(!parts.is_field_start(4, 0));
-        assert_eq!(parts.field_at(5), FieldType::Element);
+        assert_eq!(parts.fields_at(5), [FieldType::Element]);
         assert!(parts.is_field_start(5, 0));
     }
 

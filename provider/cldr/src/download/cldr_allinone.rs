@@ -34,7 +34,7 @@ use std::path::PathBuf;
 ///     use std::convert::TryFrom;
 ///     use icu_provider::prelude::*;
 ///
-///     let paths = downloader.download()
+///     let paths = downloader.download(None)
 ///         .expect("The data should download successfully");
 ///
 ///     let data_provider = PluralsProvider::try_from(&paths as &dyn CldrPaths)
@@ -97,12 +97,13 @@ impl CldrAllInOneDownloader {
         })
     }
 
-    pub fn download(self) -> Result<CldrPathsAllInOne, Error> {
+    pub fn download(self, uprops_root: Option<PathBuf>) -> Result<CldrPathsAllInOne, Error> {
         // TODO(#297): Implement this async.
         let downloaded = io_util::download_and_unzip(&self.url, &self.cache_dir)?;
         Ok(CldrPathsAllInOne {
             cldr_json_root: downloaded,
             locale_subset: self.locale_subset,
+            uprops_root,
         })
     }
 }

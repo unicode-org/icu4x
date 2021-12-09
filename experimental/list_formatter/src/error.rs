@@ -14,6 +14,8 @@ pub enum Error {
     #[cfg(any(test, feature = "provider_transform_internals"))]
     #[displaydoc("Illegal pattern: {0}")]
     IllegalPattern(String),
+    #[displaydoc("Illegal condition: {0}")]
+    IllegalCondition(regex::Error),
 }
 
 #[cfg(feature = "std")]
