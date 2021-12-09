@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1638988774101,
+  "lastUpdate": 1639039189688,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14333,6 +14333,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 305321,
             "range": "± 380",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "64c3859ae91ab7881c3f8161f0f200daba7438f2",
+          "message": "Adding special case data for es and he list formatting (#1365)",
+          "timestamp": "2021-12-09T09:30:49+01:00",
+          "tree_id": "772c336bd1db24fbee280ff02f49d1bde231ca25",
+          "url": "https://github.com/unicode-org/icu4x/commit/64c3859ae91ab7881c3f8161f0f200daba7438f2"
+        },
+        "date": 1639039182529,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 113660,
+            "range": "± 9717",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1248767,
+            "range": "± 74337",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 398980,
+            "range": "± 26220",
             "unit": "ns/iter"
           }
         ]
