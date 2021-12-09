@@ -132,15 +132,7 @@ impl<'data> ScriptExtensions<'data> {
             let scx_val_iter = ext_subarray.iter().skip(1);
             let scx_val: ZeroVec<Script> = ZeroVec::<Script>::from_iter(scx_val_iter);
             scx_val
-        } else if sc_with_ext.is_common() {
-            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
-            let scx_val = self
-                .extensions
-                .get(ext_idx as usize)
-                .map(|zvule| zvule.as_zerovec())
-                .unwrap_or_default();
-            scx_val
-        } else if sc_with_ext.is_inherited() {
+        } else if sc_with_ext.is_common() || sc_with_ext.is_inherited() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let scx_val = self
                 .extensions
