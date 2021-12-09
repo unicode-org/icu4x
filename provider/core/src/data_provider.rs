@@ -907,7 +907,7 @@ fn test_debug() {
             message: Cow::Borrowed("foo"),
         })),
     };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }
 
 /// A generic data provider that loads a payload of a specific type.
