@@ -8,7 +8,6 @@ use crate::buffer_provider::BufferProvider;
 use crate::prelude::*;
 use core::marker::PhantomData;
 use serde::de::Deserialize;
-use serde::ser::Serialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 

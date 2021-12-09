@@ -6,10 +6,6 @@ use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
 use core::ops::Deref;
-use super::BufferFormat;
-use super::Error;
-use serde::ser::Serialize;
-use alloc::rc::Rc;
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
@@ -49,72 +45,6 @@ where
         self
     }
 }
-
-fn serialize_impl<M>(payload: DataPayload<M>, buffer_format: BufferFormat) -> Result<DataPayload<BufferMarker>, Error>
-where
-    M: DataMarker,
-    // Actual bound:
-    //     <M::Yokeable as Yokeable<'de>>::Output: Serialize,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> &'de <M::Yokeable as Yokeable<'de>>::Output: Serialize,
-{
-    let mut serializer = postcard::Serializer {
-        output: postcard::flavors::AllocVec(Vec::new()),
-    };
-    payload.get().serialize(&mut serializer)?;
-    Ok(DataPayload::from_rc_buffer(serializer.output.0.into()))
-}
-
-pub struct SerializingDataProvider<'a, M: DataMarker> {
-    pub provider: &'a DataProvider<M>,
-    pub buffer_format: BufferFormat,
-}
-
-pub trait AsSerializingDataProvider<M: DataMarker> {
-    fn as_serializing(&self) -> SerializingDataProvider<M>;
-}
-
-impl<M> DataPayload<M>
-where
-    M: DataMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Serialize,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> &'de <M::Yokeable as Yokeable<'de>>::Output: Serialize,
-{
-    pub fn into_serialized(self, buffer_format: BufferFormat) -> Result<DataPayload<BufferMarker>, Error> {
-        serialize_impl(self, buffer_format)
-    }
-}
-
-impl<M> BufferProvider for SerializingDataProvider<'_, M>
-where
-    M: DataMarker,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Serialize,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> &'de <M::Yokeable as Yokeable<'de>>::Output: Serialize,
-{
-    /// Converts a data struct to a buffer by serializing it to a supported buffer format.
-    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let old_result = self.provider.load_payload(&req)?;
-        if let Some(old_payload) = old_result.payload {
-            let new_payload = old_payload.into_serialized(self.buffer_format)?;
-            let mut new_metadata = old_result.metadata;
-            new_metadata.buffer_format = Some(self.buffer_format);
-            Ok(DataResponse {
-                metadata: new_metadata,
-                payload: Some(new_payload)
-            })
-        } else {
-            Ok(DataResponse {
-                metadata: old_result.metadata,
-                payload: None,
-            })
-        }
-    }
-}
-
 
 /// A wrapper around `Box<`[`SerdeSeDataStruct`]`>` for integration with DataProvider.
 #[derive(yoke::Yokeable)]

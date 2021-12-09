@@ -150,9 +150,6 @@ pub mod prelude {
 
     #[cfg(feature = "provider_serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
-
-    #[cfg(feature = "provider_serde")]
-    pub use crate::serde::AsSerializingDataProvider;
 }
 
 /// Re-export of the yoke crate for convenience of downstream implementors.

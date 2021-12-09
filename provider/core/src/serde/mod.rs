@@ -31,9 +31,6 @@ pub use ser::SerdeSeDataStructMarker;
 pub use de::AsDeserializingBufferProvider;
 pub use de::DeserializingBufferProvider;
 
-pub use ser::AsSerializingDataProvider;
-pub use ser::SerializingDataProvider;
-
 /// An enum expressing all Serde formats known to ICU4X.
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
