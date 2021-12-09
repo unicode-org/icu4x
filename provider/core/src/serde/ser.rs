@@ -6,6 +6,7 @@ use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
 use core::ops::Deref;
+use crate::dynutil::UpcastDataPayload;
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
@@ -57,7 +58,7 @@ impl Deref for SerdeSeDataStructBox {
     }
 }
 
-impl<M> crate::dynutil::UpcastDataPayload<M> for SerdeSeDataStructMarker
+impl<M> UpcastDataPayload<M> for SerdeSeDataStructMarker
 where
     M: DataMarker,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
@@ -65,6 +66,23 @@ where
     fn upcast(other: DataPayload<M>) -> DataPayload<SerdeSeDataStructMarker> {
         let owned: Box<dyn SerdeSeDataStruct> = Box::new(other.yoke);
         DataPayload::from_owned(SerdeSeDataStructBox(owned))
+    }
+}
+
+impl<M> DataPayload<M>
+where
+    M: DataMarker,
+    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
+{
+    pub fn into_serializable(self) -> DataPayload<SerdeSeDataStructMarker> {
+        SerdeSeDataStructMarker::upcast(self)
+    }
+}
+
+impl DataPayload<SerdeSeDataStructMarker> {
+    pub fn serialize(&self, mut serializer: &mut dyn erased_serde::Serializer) -> Result<(), DataError> {
+        self.get().as_serialize().erased_serialize(&mut serializer)?;
+        Ok(())
     }
 }
 
