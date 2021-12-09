@@ -28,6 +28,8 @@ skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI
 # Macros feature is not interesting for permutation testing
 denylist = ["bench", "macros"]
+# The serde feature can be used by itself to enable some types and impls
+extra_features = ["serde"]
 
 [package.metadata.docs.rs]
 all-features = true
