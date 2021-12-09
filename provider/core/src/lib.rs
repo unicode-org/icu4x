@@ -149,7 +149,7 @@ pub mod prelude {
     pub use crate::resource::ResourcePath;
 
     #[cfg(feature = "provider_serde")]
-    pub use crate::serde::AsSerdeBufferProvider;
+    pub use crate::serde::AsDeserializingBufferProvider;
 }
 
 /// Re-export of the yoke crate for convenience of downstream implementors.

@@ -8,24 +8,25 @@ use crate::buffer_provider::BufferProvider;
 use crate::prelude::*;
 use core::marker::PhantomData;
 use serde::de::Deserialize;
+use serde::ser::Serialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 
 /// A [`BufferProvider`] that deserializes its data using Serde.
-pub struct SerdeBufferProvider<'a, P: ?Sized>(&'a P);
+pub struct DeserializingBufferProvider<'a, P: ?Sized>(&'a P);
 
-/// Auto-implemented for all [`BufferProvider`] for easy wrapping in [`SerdeBufferProvider`].
-pub trait AsSerdeBufferProvider {
-    fn as_serde_provider(&self) -> SerdeBufferProvider<Self>;
+/// Auto-implemented for all [`BufferProvider`] for easy wrapping in [`DeserializingBufferProvider`].
+pub trait AsDeserializingBufferProvider {
+    fn as_deserializing(&self) -> DeserializingBufferProvider<Self>;
 }
 
-impl<P> AsSerdeBufferProvider for P
+impl<P> AsDeserializingBufferProvider for P
 where
     P: BufferProvider + ?Sized,
 {
-    /// Wrap this [`BufferProvider`] in a [`SerdeBufferProvider`].
-    fn as_serde_provider(&self) -> SerdeBufferProvider<Self> {
-        SerdeBufferProvider(self)
+    /// Wrap this [`BufferProvider`] in a [`DeserializingBufferProvider`].
+    fn as_deserializing(&self) -> DeserializingBufferProvider<Self> {
+        DeserializingBufferProvider(self)
     }
 }
 
@@ -74,10 +75,10 @@ where
     }
 }
 
-impl<P, M> DataProvider<M> for SerdeBufferProvider<'_, P>
+impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
-    P: BufferProvider + ?Sized,
     M: DataMarker,
+    P: BufferProvider + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
