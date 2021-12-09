@@ -266,6 +266,7 @@ impl GeneralCategoryGroup {
     /// assert!(GeneralCategoryGroup::Punctuation.contains(gc.get('(' as u32)));
     /// assert!(!GeneralCategoryGroup::Number.contains(gc.get('(' as u32)));
     ///
+    /// // U+2713 CHECK MARK
     /// assert_eq!(gc.get('✓' as u32), GeneralCategory::OtherSymbol);
     /// assert!(GeneralCategoryGroup::Symbol.contains(gc.get('✓' as u32)));
     /// assert!(!GeneralCategoryGroup::Punctuation.contains(gc.get('✓' as u32)));
