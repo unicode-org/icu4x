@@ -17,8 +17,10 @@ use serde::{Deserialize, Serialize};
 pub enum EnumeratedProperty {
     /// The East_Asian_Width property. See [`EastAsianWidth`].
     EastAsianWidth = 0x1004,
-    /// The General Category property.
-    GeneralCategoryGroup = 0x1005,
+    /// The General_Category property.
+    GeneralCategory = 0x1005,
+    /// A pseudo-property that is used to represent groupings of `GeneralCategory`.
+    GeneralCategoryGroup = 0x2000,
     /// The Line_Break enumerated property. See [`LineBreak`].
     LineBreak = 0x1008,
     /// The Script property. See [`Script`].
