@@ -24,9 +24,8 @@
 mod de;
 mod ser;
 
-pub use ser::SerdeSeDataStruct;
-pub use ser::SerdeSeDataStructBox;
-pub use ser::SerdeSeDataStructMarker;
+pub use ser::SerializeBox;
+pub use ser::SerializeMarker;
 
 pub use de::AsDeserializingBufferProvider;
 pub use de::DeserializingBufferProvider;

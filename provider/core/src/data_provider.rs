@@ -824,6 +824,16 @@ impl DataPayload<BufferMarker> {
     }
 }
 
+impl<M> Default for DataPayload<M>
+where
+    M: DataMarker,
+    M::Yokeable: Default,
+{
+    fn default() -> Self {
+        Self::from_owned(Default::default())
+    }
+}
+
 /// A response object containing an object as payload and metadata about it.
 pub struct DataResponse<M>
 where
