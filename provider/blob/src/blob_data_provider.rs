@@ -7,7 +7,7 @@ use crate::path_util;
 use alloc::rc::Rc;
 use alloc::string::String;
 use icu_provider::prelude::*;
-use icu_provider::serde::BufferFormat;
+use icu_provider::buffer_provider::BufferFormat;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
@@ -113,7 +113,7 @@ where
             })?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(icu_provider::serde::BufferFormat::Postcard07);
+        metadata.buffer_format = Some(BufferFormat::Postcard07);
         Ok(DataResponse {
             metadata,
             payload: Some(payload),

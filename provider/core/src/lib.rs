@@ -107,7 +107,7 @@ extern crate alloc;
 #[macro_use]
 pub mod dynutil;
 
-pub(crate) mod buffer_provider;
+pub mod buffer_provider;
 pub(crate) mod data_provider;
 #[macro_use]
 mod resource;

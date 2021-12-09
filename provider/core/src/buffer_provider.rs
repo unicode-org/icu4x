@@ -16,3 +16,19 @@ impl DataMarker for BufferMarker {
 pub trait BufferProvider {
     fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, Error>;
 }
+
+/// An enum expressing all Serde formats known to ICU4X.
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+#[non_exhaustive]
+pub enum BufferFormat {
+    /// Serialize using JavaScript Object Notation (JSON).
+    Json,
+    /// Serialize using Bincode version 1.
+    Bincode1,
+    /// Serialize using Postcard version 0.7.
+    Postcard07,
+}

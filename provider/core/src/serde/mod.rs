@@ -35,17 +35,7 @@ pub use ser::SerializeBox;
 #[cfg(feature = "serialize")]
 pub use ser::SerializeMarker;
 
-/// An enum expressing all Serde formats known to ICU4X.
-#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, serde::Serialize, serde::Deserialize)]
-#[non_exhaustive]
-pub enum BufferFormat {
-    /// Serialize using JavaScript Object Notation (JSON).
-    Json,
-    /// Serialize using Bincode version 1.
-    Bincode1,
-    /// Serialize using Postcard version 0.7.
-    Postcard07,
-}
+use crate::buffer_provider::BufferFormat;
 
 /// Error type for deserialization.
 #[derive(displaydoc::Display, Debug)]

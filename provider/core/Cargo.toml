@@ -26,7 +26,8 @@ include = [
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
+# Macros feature is not interesting for permutation testing
+denylist = ["bench", "macros"]
 
 [package.metadata.docs.rs]
 all-features = true
