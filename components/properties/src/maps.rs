@@ -39,7 +39,7 @@ where
     Ok(property_payload)
 }
 
-/// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategoryGroup`].
+/// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
 ///
 /// # Example
 ///
