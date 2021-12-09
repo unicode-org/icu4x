@@ -13,8 +13,8 @@ use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::PathBuf;
 use std::ops::Deref;
+use std::path::PathBuf;
 
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]

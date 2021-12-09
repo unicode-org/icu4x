@@ -4,8 +4,8 @@
 
 use crate::blob_schema::*;
 use crate::path_util;
-use icu_provider::prelude::*;
 use icu_provider::buffer_provider::BufferFormat;
+use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use zerovec::map::ZeroMapBorrowed;
 

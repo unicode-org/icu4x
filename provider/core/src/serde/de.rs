@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::Error;
 use crate::buffer_provider::BufferFormat;
 use crate::buffer_provider::BufferProvider;
 use crate::prelude::*;
@@ -9,7 +10,6 @@ use core::marker::PhantomData;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
-use super::Error;
 
 /// Returns an error if the buffer format is not enabled.
 pub fn check_format_supported(buffer_format: BufferFormat) -> Result<(), Error> {
@@ -123,8 +123,7 @@ where
                 .metadata
                 .buffer_format
                 .ok_or(Error::FormatNotSpecified)?;
-            let new_payload =
-                old_payload.into_deserialized(buffer_format)?;
+            let new_payload = old_payload.into_deserialized(buffer_format)?;
             Ok(DataResponse {
                 metadata: old_response.metadata,
                 payload: Some(new_payload),

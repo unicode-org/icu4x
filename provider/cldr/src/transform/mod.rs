@@ -78,10 +78,7 @@ impl<'a> CldrJsonDataProvider<'a> {
 }
 
 impl<'a> DataProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<SerializeMarker>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<SerializeMarker>, DataError> {
         if let Some(result) = self.aliases.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }

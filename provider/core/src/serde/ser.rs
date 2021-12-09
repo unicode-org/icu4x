@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::Error;
+use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
 use core::ops::Deref;
-use crate::dynutil::UpcastDataPayload;
-use super::Error;
 
 /// A wrapper around `Box<erased_serde::Serialize>` for integration with DataProvider.
 #[derive(yoke::Yokeable)]
@@ -37,7 +37,7 @@ where
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
 {
     /// Converts a [`DataPayload`] into something that can be serialized.
-    /// 
+    ///
     /// See [`DataPayload::serialize()`] for an example.
     pub fn into_serializable(self) -> DataPayload<SerializeMarker> {
         SerializeMarker::upcast(self)
@@ -65,7 +65,10 @@ impl DataPayload<SerializeMarker> {
     /// ).expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
-    pub fn serialize(&self, mut serializer: &mut dyn erased_serde::Serializer) -> Result<(), Error> {
+    pub fn serialize(
+        &self,
+        mut serializer: &mut dyn erased_serde::Serializer,
+    ) -> Result<(), Error> {
         self.get().erased_serialize(&mut serializer)?;
         Ok(())
     }
