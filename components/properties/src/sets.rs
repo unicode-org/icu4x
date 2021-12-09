@@ -1506,7 +1506,7 @@ where
         GeneralCategoryGroup::Punctuation => key::GENERAL_CATEGORY_PUNCTUATION_V1,
         GeneralCategoryGroup::Symbol => key::GENERAL_CATEGORY_SYMBOL_V1,
         GeneralCategoryGroup::Separator => key::GENERAL_CATEGORY_SEPARATOR_V1,
-        _ => return Err(PropertiesError::UnknownGeneralCategoryGroupSet(enum_val.0)),
+        _ => return Err(PropertiesError::UnknownGeneralCategoryGroup(enum_val.0)),
     };
     get_uniset(provider, key)
 }
