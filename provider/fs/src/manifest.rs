@@ -34,7 +34,10 @@ impl Manifest {
             BufferFormat::Json => "json",
             BufferFormat::Bincode1 => "bincode",
             BufferFormat::Postcard07 => "postcard",
-            _ => "u",
+            // BufferFormat is non_exhaustive, so we need a catchall case.
+            // This case could be triggered if a new buffer format is added to the core library
+            // before it gets added to FsDataProvider.
+            _ => "und",
         }
     }
 }
