@@ -54,8 +54,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             ty: ICU4XPluralRuleType,
         ) -> ICU4XCreatePluralRulesResult {
-            use icu_provider::serde::AsSerdeBufferProvider;
-            let provider = provider.0.as_serde_provider();
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
             Self::try_new_impl(locale, &provider, ty)
         }
 

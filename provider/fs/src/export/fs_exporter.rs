@@ -10,10 +10,11 @@ use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeSeDataStructMarker;
+use icu_provider::serde::SerializeMarker;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
+use std::ops::Deref;
 
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -65,17 +66,17 @@ impl Drop for FilesystemExporter {
     }
 }
 
-impl DataExporter<SerdeSeDataStructMarker> for FilesystemExporter {
+impl DataExporter<SerializeMarker> for FilesystemExporter {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        obj: DataPayload<SerdeSeDataStructMarker>,
+        obj: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         path_buf.extend(req.resource_path.options.get_components().iter());
         log::trace!("Writing: {}", req);
-        self.write_to_path(path_buf, obj.get().as_serialize())?;
+        self.write_to_path(path_buf, obj.get().deref())?;
         Ok(())
     }
 

@@ -26,13 +26,10 @@ mod de;
 #[cfg(feature = "serialize")]
 mod ser;
 
-pub use de::Error as DeserializeError;
 pub use de::check_format_supported;
 pub use de::AsDeserializingBufferProvider;
 pub use de::DeserializingBufferProvider;
 
-#[cfg(feature = "serialize")]
-pub use ser::Error as SerializeError;
 #[cfg(feature = "serialize")]
 pub use ser::SerializeBox;
 #[cfg(feature = "serialize")]
@@ -48,4 +45,67 @@ pub enum BufferFormat {
     Bincode1,
     /// Serialize using Postcard version 0.7.
     Postcard07,
+}
+
+/// Error type for deserialization.
+#[derive(displaydoc::Display, Debug)]
+pub enum Error {
+    /// An error originating in [`serde_json`].
+    #[cfg(feature = "deserialize_json")]
+    #[displaydoc("{0}")]
+    Json(serde_json::error::Error),
+
+    /// An error originating in [`bincode`].
+    #[cfg(feature = "deserialize_bincode_1")]
+    #[displaydoc("{0}")]
+    Bincode1(bincode::Error),
+
+    /// An error originating in [`postcard`].
+    #[cfg(feature = "deserialize_postcard_07")]
+    #[displaydoc("{0}")]
+    Postcard07(postcard::Error),
+
+    /// An error indicating that the desired buffer format is not available. This usually
+    /// means that a required feature was not enabled
+    #[allow(dead_code)]
+    #[displaydoc("Unavailable buffer format: {0:?} (do you need to enable a feature?)")]
+    UnavailableFormat(BufferFormat),
+
+    /// An error originating in [`erased_serde`].
+    #[cfg(feature = "erased-serde")]
+    #[displaydoc("{0}")]
+    Serde(erased_serde::Error),
+
+    /// An error indicating that the buffer format could not be deduced. This is usually
+    /// unexpected and could indicate a problem with the data pipeline setup.
+    #[displaydoc("Buffer format not specified")]
+    FormatNotSpecified,
+}
+
+#[cfg(feature = "deserialize_json")]
+impl From<serde_json::error::Error> for Error {
+    fn from(e: serde_json::error::Error) -> Self {
+        Error::Json(e)
+    }
+}
+
+#[cfg(feature = "deserialize_bincode_1")]
+impl From<bincode::Error> for Error {
+    fn from(e: bincode::Error) -> Self {
+        Error::Bincode1(e)
+    }
+}
+
+#[cfg(feature = "deserialize_postcard_07")]
+impl From<postcard::Error> for Error {
+    fn from(e: postcard::Error) -> Self {
+        Error::Postcard07(e)
+    }
+}
+
+#[cfg(feature = "erased-serde")]
+impl From<erased_serde::Error> for Error {
+    fn from(e: erased_serde::Error) -> Self {
+        Error::Serde(e)
+    }
 }

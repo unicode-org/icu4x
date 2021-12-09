@@ -7,22 +7,7 @@ use crate::yoke::*;
 use alloc::boxed::Box;
 use core::ops::Deref;
 use crate::dynutil::UpcastDataPayload;
-
-/// Error type for serialization.
-#[derive(displaydoc::Display, Debug)]
-pub enum Error {
-    /// An error originating in [`erased_serde`].
-    #[cfg(feature = "erased-serde")]
-    #[displaydoc("{0}")]
-    Serde(erased_serde::Error),
-}
-
-#[cfg(feature = "erased-serde")]
-impl From<erased_serde::Error> for Error {
-    fn from(e: erased_serde::Error) -> Self {
-        Error::Serde(e)
-    }
-}
+use super::Error;
 
 /// A wrapper around `Box<erased_serde::Serialize>` for integration with DataProvider.
 #[derive(yoke::Yokeable)]

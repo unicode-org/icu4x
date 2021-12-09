@@ -31,8 +31,8 @@ pub mod ffi {
         pub fn try_get_ascii_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> ICU4XCodePointSetDataResult {
-            use icu_provider::serde::AsSerdeBufferProvider;
-            let provider = provider.0.as_serde_provider();
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
             Self::prepare_result(sets::get_ascii_hex_digit(&provider))
         }
 

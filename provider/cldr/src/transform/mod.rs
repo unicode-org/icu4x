@@ -27,7 +27,7 @@ use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeSeDataStructMarker;
+use icu_provider::serde::SerializeMarker;
 
 use self::time_zones::TimeZonesProvider;
 
@@ -77,11 +77,11 @@ impl<'a> CldrJsonDataProvider<'a> {
     }
 }
 
-impl<'a> DataProvider<SerdeSeDataStructMarker> for CldrJsonDataProvider<'a> {
+impl<'a> DataProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<SerdeSeDataStructMarker>, DataError> {
+    ) -> Result<DataResponse<SerializeMarker>, DataError> {
         if let Some(result) = self.aliases.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }

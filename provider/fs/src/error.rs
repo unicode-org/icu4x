@@ -16,8 +16,6 @@ pub enum Error {
     #[cfg(feature = "export")]
     #[displaydoc("Serializer error: {0}: {1:?}")]
     Serializer(erased_serde::Error, Option<PathBuf>),
-    #[displaydoc("Serde error: {0}")]
-    ProviderSerde(icu_provider::serde::Error),
 }
 
 impl std::error::Error for Error {}
@@ -30,7 +28,7 @@ impl From<icu_provider::DataError> for Error {
 
 impl From<icu_provider::serde::Error> for Error {
     fn from(e: icu_provider::serde::Error) -> Self {
-        Error::ProviderSerde(e)
+        Error::DataProvider(icu_provider::DataError::Serde(e))
     }
 }
 

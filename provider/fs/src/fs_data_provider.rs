@@ -117,6 +117,6 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_serde_provider().load_payload(req)
+        self.as_deserializing().load_payload(req)
     }
 }

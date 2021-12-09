@@ -67,7 +67,7 @@ fn json_bench(c: &mut Criterion) {
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
             let _: DataPayload<PluralRulesV1Marker> = black_box(&provider as &dyn BufferProvider)
-                .as_serde_provider()
+                .as_deserializing()
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,
@@ -84,7 +84,7 @@ fn json_bench(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench", feature = "deserialize_bincode_1))]
+#[cfg(all(feature = "bench", feature = "deserialize_bincode_1"))]
 fn bincode_bench(c: &mut Criterion) {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
@@ -110,7 +110,7 @@ fn bincode_bench(c: &mut Criterion) {
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
             let _: DataPayload<PluralRulesV1Marker> = black_box(&provider as &dyn BufferProvider)
-                .as_serde_provider()
+                .as_deserializing()
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,

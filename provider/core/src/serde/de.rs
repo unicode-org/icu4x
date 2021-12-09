@@ -9,57 +9,7 @@ use core::marker::PhantomData;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
-
-/// Error type for deserialization.
-#[derive(displaydoc::Display, Debug)]
-pub enum Error {
-    /// An error originating in [`serde_json`].
-    #[cfg(feature = "deserialize_json")]
-    #[displaydoc("{0}")]
-    Json(serde_json::error::Error),
-
-    /// An error originating in [`bincode`].
-    #[cfg(feature = "deserialize_bincode_1")]
-    #[displaydoc("{0}")]
-    Bincode1(bincode::Error),
-
-    /// An error originating in [`postcard`].
-    #[cfg(feature = "deserialize_postcard_07")]
-    #[displaydoc("{0}")]
-    Postcard07(postcard::Error),
-
-    /// An error indicating that the desired buffer format is not available. This usually
-    /// means that a required feature was not enabled
-    #[allow(dead_code)]
-    #[displaydoc("Unavailable buffer format: {0:?} (do you need to enable a feature?)")]
-    UnavailableFormat(BufferFormat),
-
-    /// An error indicating that the buffer format could not be deduced. This is usually
-    /// unexpected and could indicate a problem with the data pipeline setup.
-    #[displaydoc("Buffer format not specified")]
-    FormatNotSpecified,
-}
-
-#[cfg(feature = "deserialize_json")]
-impl From<serde_json::error::Error> for Error {
-    fn from(e: serde_json::error::Error) -> Self {
-        Error::Json(e)
-    }
-}
-
-#[cfg(feature = "deserialize_bincode_1")]
-impl From<bincode::Error> for Error {
-    fn from(e: bincode::Error) -> Self {
-        Error::Bincode1(e)
-    }
-}
-
-#[cfg(feature = "deserialize_postcard_07")]
-impl From<postcard::Error> for Error {
-    fn from(e: postcard::Error) -> Self {
-        Error::Postcard07(e)
-    }
-}
+use super::Error;
 
 /// Returns an error if the buffer format is not enabled.
 pub fn check_format_supported(buffer_format: BufferFormat) -> Result<(), Error> {
