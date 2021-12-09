@@ -14,7 +14,13 @@
       "string": " o ",
       "index_1": 3
     },
-    "special_case": null
+    "special_case": {
+      "condition": "(?i)^(o|ho|8|(11(\\.?\\d\\d\\d)*(,\\d*)?([^\\.,\\d]|$)))",
+      "pattern": {
+        "string": " u ",
+        "index_1": 3
+      }
+    }
   },
   [
     2

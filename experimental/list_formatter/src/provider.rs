@@ -9,6 +9,7 @@
 #[cfg(any(test, feature = "provider_transform_internals"))]
 use crate::error::Error;
 use crate::options::Width;
+use crate::string_matcher::StringMatcher;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 #[cfg(any(test, feature = "provider_transform_internals"))]
@@ -45,6 +46,18 @@ impl<'data> ListFormatterPatternsV1<'data> {
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
     pub fn new(patterns: [ConditionalListJoinerPattern<'data>; 12]) -> Self {
         Self(patterns)
+    }
+
+    pub fn replace_patterns(
+        &mut self,
+        old: ConditionalListJoinerPattern<'data>,
+        new: ConditionalListJoinerPattern<'data>,
+    ) {
+        for i in 0..12 {
+            if self.0[i] == old {
+                self.0[i] = new.clone();
+            }
+        }
     }
 
     pub fn start(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
@@ -85,7 +98,7 @@ pub struct ConditionalListJoinerPattern<'data> {
 )]
 struct SpecialCasePattern<'data> {
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    condition: Cow<'data, str>, // TODO: Serialize a compiled regex instead
+    condition: StringMatcher<'data>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pattern: ListJoinerPattern<'data>,
 }
@@ -145,6 +158,11 @@ impl<'data> FromStr for ConditionalListJoinerPattern<'data> {
 }
 
 impl<'a> ConditionalListJoinerPattern<'a> {
+    /// Creates a conditional list joiner that will evaluate to the `then_pattern` when
+    /// `regex` matches the following element, and to `else_pattern` otherwise.
+    /// The regex is interpreted case-insensitive and anchored to the beginning, but
+    /// to improve efficiency does not search for full matches. If a full match is
+    /// required, use `$`.
     #[cfg(any(test, feature = "provider_transform_internals"))]
     pub fn from_regex_and_strs(
         regex: &str,
@@ -154,7 +172,7 @@ impl<'a> ConditionalListJoinerPattern<'a> {
         Ok(ConditionalListJoinerPattern {
             default: ListJoinerPattern::from_str(else_pattern)?,
             special_case: Some(SpecialCasePattern {
-                condition: Cow::Owned(regex.into()),
+                condition: StringMatcher::new(regex)?,
                 pattern: ListJoinerPattern::from_str(then_pattern)?,
             }),
         })
@@ -162,11 +180,7 @@ impl<'a> ConditionalListJoinerPattern<'a> {
 
     pub fn parts(&'a self, following_value: &str) -> PatternParts<'a> {
         match &self.special_case {
-            Some(SpecialCasePattern { condition, pattern })
-                if regex::Regex::new(&*condition)
-                    .unwrap()
-                    .is_match(following_value) =>
-            {
+            Some(SpecialCasePattern { condition, pattern }) if condition.test(following_value) => {
                 pattern.borrow_tuple()
             }
             _ => self.default.borrow_tuple(),
@@ -187,10 +201,11 @@ mod test {
     #[test]
     fn produces_correct_parts_conditionally() {
         let pattern =
-            ConditionalListJoinerPattern::from_regex_and_strs("b.*", "{0}c{1}d", "{0}a{1}b")
-                .unwrap();
-        assert_eq!(pattern.parts("a"), ("a", "b"));
-        assert_eq!(pattern.parts("b"), ("c", "d"));
+            ConditionalListJoinerPattern::from_regex_and_strs("b", "{0}c{1}d", "{0}a{1}b").unwrap();
+        // Only matches at the beginning of the string
+        assert_eq!(pattern.parts("ab"), ("a", "b"));
+        // Doesn't require a full match
+        assert_eq!(pattern.parts("ba"), ("c", "d"));
     }
 
     #[test]
