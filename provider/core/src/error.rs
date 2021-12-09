@@ -24,6 +24,10 @@ pub enum Error {
     #[displaydoc("Request {0} needs a variant")]
     NeedsVariant(DataRequest),
 
+    /// Should not have variant or language id
+    #[displaydoc("Requested key should not have a variant or language id: {0}")]
+    ExtraneousVariantOrId(DataRequest),
+
     /// The resource was not returned due to a filter. The resource may or may not be available.
     #[displaydoc("Resource was filtered: {1}: {0}")]
     FilteredResource(DataRequest, String),
