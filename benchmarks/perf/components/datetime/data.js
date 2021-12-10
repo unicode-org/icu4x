@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639114069074,
+  "lastUpdate": 1639132037844,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14459,6 +14459,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 355301,
             "range": "± 5226",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "560dd8e57002226ba9f2a7853e0cb7fe195b6b30",
+          "message": "Enable test-c-tiny in CI (#1382)",
+          "timestamp": "2021-12-10T02:18:30-08:00",
+          "tree_id": "2506eff44cbe6dfbc25995cbb512b2beb010105e",
+          "url": "https://github.com/unicode-org/icu4x/commit/560dd8e57002226ba9f2a7853e0cb7fe195b6b30"
+        },
+        "date": 1639132029807,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 122419,
+            "range": "± 1546",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1477167,
+            "range": "± 19947",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 356684,
+            "range": "± 3513",
             "unit": "ns/iter"
           }
         ]
