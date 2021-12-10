@@ -83,10 +83,6 @@
 
         FFI version of ``PluralRules::try_new()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
 
-    .. cpp:function:: static ICU4XCreatePluralRulesResult try_new_from_static(const ICU4XLocale& locale, const ICU4XStaticDataProvider& provider, ICU4XPluralRuleType ty)
-
-        Creates a new :cpp:class:`ICU4XPluralRules` from a :cpp:class:`ICU4XStaticDataProvider`.
-
     .. cpp:function:: ICU4XPluralCategory select(const ICU4XPluralOperands& op) const
 
         FFI version of ``PluralRules::select()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select>`__ for more details.

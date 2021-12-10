@@ -16,7 +16,6 @@ namespace capi {
 
 class ICU4XDataProvider;
 struct ICU4XCodePointSetDataResult;
-class ICU4XStaticDataProvider;
 
 /**
  * A destruction policy for using ICU4XCodePointSetData with std::unique_ptr.
@@ -36,12 +35,6 @@ class ICU4XCodePointSetData {
   static ICU4XCodePointSetDataResult try_get_ascii_hex_digit(const ICU4XDataProvider& provider);
 
   /**
-   * Gets a set for Unicode property ascii_hex_digit from a [`ICU4XStaticDataProvider`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
-   */
-  static ICU4XCodePointSetDataResult try_get_ascii_hex_digit_from_static(const ICU4XStaticDataProvider& provider);
-
-  /**
    * Checks whether the code point is in the set.
    * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.UnicodeSet.html#method.contains) for more information.
    */
@@ -55,21 +48,9 @@ class ICU4XCodePointSetData {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XCodePointSetDataResult.hpp"
-#include "ICU4XStaticDataProvider.hpp"
 
 inline ICU4XCodePointSetDataResult ICU4XCodePointSetData::try_get_ascii_hex_digit(const ICU4XDataProvider& provider) {
   capi::ICU4XCodePointSetDataResult diplomat_raw_struct_out_value = capi::ICU4XCodePointSetData_try_get_ascii_hex_digit(provider.AsFFI());
-  auto diplomat_optional_raw_out_value_data = diplomat_raw_struct_out_value.data;
-  std::optional<ICU4XCodePointSetData> diplomat_optional_out_value_data;
-  if (diplomat_optional_raw_out_value_data != nullptr) {
-    diplomat_optional_out_value_data = ICU4XCodePointSetData(diplomat_optional_raw_out_value_data);
-  } else {
-    diplomat_optional_out_value_data = std::nullopt;
-  }
-  return ICU4XCodePointSetDataResult{ .data = std::move(diplomat_optional_out_value_data), .success = std::move(diplomat_raw_struct_out_value.success) };
-}
-inline ICU4XCodePointSetDataResult ICU4XCodePointSetData::try_get_ascii_hex_digit_from_static(const ICU4XStaticDataProvider& provider) {
-  capi::ICU4XCodePointSetDataResult diplomat_raw_struct_out_value = capi::ICU4XCodePointSetData_try_get_ascii_hex_digit_from_static(provider.AsFFI());
   auto diplomat_optional_raw_out_value_data = diplomat_raw_struct_out_value.data;
   std::optional<ICU4XCodePointSetData> diplomat_optional_out_value_data;
   if (diplomat_optional_raw_out_value_data != nullptr) {
