@@ -336,14 +336,14 @@ impl<'a, Y: LineBreakType<'a>> Iterator for LineBreakIteratorImpl<'a, Y> {
         }
 
         loop {
-            let mut left_prop = Y::get_linebreak_property(&self);
+            let mut left_prop = Y::get_linebreak_property(self);
             let left_codepoint = self.current_pos_data;
             self.current_pos_data = self.iter.next();
             if self.current_pos_data.is_none() {
                 // EOF
                 return Some(self.len);
             }
-            let right_prop = Y::get_linebreak_property(&self);
+            let right_prop = Y::get_linebreak_property(self);
 
             // CSS word-break property handling
             match self.word_break_rule {
@@ -366,7 +366,7 @@ impl<'a, Y: LineBreakType<'a>> Iterator for LineBreakIteratorImpl<'a, Y> {
             // CSS line-break property handling
             match self.line_break_rule {
                 LineBreakRule::Normal => {
-                    if Y::is_break_by_normal(&self) {
+                    if Y::is_break_by_normal(self) {
                         return Some(self.current_pos_data.unwrap().0);
                     }
                 }
@@ -404,7 +404,7 @@ impl<'a, Y: LineBreakType<'a>> Iterator for LineBreakIteratorImpl<'a, Y> {
 
             // If break_state is equals or grater than 0, it is alias of property.
             let mut break_state = get_break_state(left_prop, right_prop);
-            if break_state >= 0 as i8 {
+            if break_state >= 0_i8 {
                 let mut previous_iter = self.iter.clone();
                 let mut previous_pos_data = self.current_pos_data;
 
@@ -422,7 +422,7 @@ impl<'a, Y: LineBreakType<'a>> Iterator for LineBreakIteratorImpl<'a, Y> {
                         return Some(self.len);
                     }
 
-                    let prop = Y::get_linebreak_property(&self);
+                    let prop = Y::get_linebreak_property(self);
                     break_state = get_break_state(break_state as u8, prop);
                     if break_state < 0 {
                         break;
@@ -458,7 +458,7 @@ impl<'a, Y: LineBreakType<'a>> LineBreakIteratorImpl<'a, Y> {
                 return true;
             }
         }
-        return false;
+        false
     }
 
     // UAX14 doesn't define line break rules for some languages such as Thai.
@@ -480,7 +480,7 @@ impl<'a, Y: LineBreakType<'a>> LineBreakIteratorImpl<'a, Y> {
         // Restore iterator to move to head of complex string
         self.iter = start_iter;
         self.current_pos_data = start_point;
-        let breaks = Y::get_line_break_by_platform_fallback(&self, &s);
+        let breaks = Y::get_line_break_by_platform_fallback(self, &s);
         let mut i = 1;
         self.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
