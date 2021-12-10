@@ -262,7 +262,7 @@ impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
             return Err(DataError::ExtraneousVariantOrId(req.clone()));
         }
         Ok(DataResponse {
-            metadata: DataResponseMetadata { data_langid: None },
+            metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(JapaneseErasV1 {
                 dates_to_eras: self.data.clone(),
                 dates_to_historical_eras: self.historical_data.clone(),
