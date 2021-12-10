@@ -264,222 +264,238 @@ fn use_complex_breaking_utf32(codepoint: u32) -> bool {
 }
 */
 
-macro_rules! break_iterator_impl {
-    ($name:ident, $iter_attr:ty, $char_type:ty) => {
-        #[allow(dead_code)]
-        /// The struct implementing the [`Iterator`] trait over the line break
-        /// opportunities of the given string. Please see the [module-level
-        /// documentation] for its usages.
-        ///
-        /// [`Iterator`]: core::iter::Iterator
-        /// [module-level documentation]: ../index.html
-        pub struct $name<'a> {
-            iter: $iter_attr,
-            len: usize,
-            current_pos_data: Option<(usize, $char_type)>,
-            result_cache: Vec<usize>,
-            line_break_rule: LineBreakRule,
-            word_break_rule: WordBreakRule,
-            ja_zh: bool,
+pub trait LineBreakType<'a> {
+    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
+    type CharType: Copy + Into<u32>;
+
+    fn use_complex_breaking(c: Self::CharType) -> bool;
+
+    fn get_linebreak_property(iterator: &LineBreakIteratorImpl<'a, Self>) -> u8;
+
+    fn get_linebreak_property_with_rule(iterator: &LineBreakIteratorImpl<'a, Self>, c: Self::CharType) -> u8;
+
+    fn is_break_by_normal(iterator: &LineBreakIteratorImpl<'a, Self>) -> bool;
+
+    fn get_line_break_by_platform_fallback(iterator: &LineBreakIteratorImpl<'a, Self>, input: &[u16]) -> Vec<usize>;
+}
+
+#[allow(dead_code)]
+/// The struct implementing the [`Iterator`] trait over the line break
+/// opportunities of the given string. Please see the [module-level
+/// documentation] for its usages.
+///
+/// [`Iterator`]: core::iter::Iterator
+/// [module-level documentation]: ../index.html
+pub struct LineBreakIteratorImpl<'a, Y: LineBreakType<'a> + ?Sized> {
+    iter: Y::IterAttr,
+    len: usize,
+    current_pos_data: Option<(usize, Y::CharType)>,
+    result_cache: Vec<usize>,
+    line_break_rule: LineBreakRule,
+    word_break_rule: WordBreakRule,
+    ja_zh: bool,
+}
+
+impl<'a, Y: LineBreakType<'a>> Iterator for LineBreakIteratorImpl<'a, Y> {
+    type Item = usize;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.is_eof() {
+            return None;
         }
 
-        impl<'a> Iterator for $name<'a> {
-            type Item = usize;
-
-            fn next(&mut self) -> Option<Self::Item> {
-                if self.is_eof() {
-                    return None;
+        if !self.result_cache.is_empty() {
+            // We have break point cache by previous run.
+            let mut i = 0;
+            loop {
+                if i == *self.result_cache.first().unwrap() {
+                    self.result_cache.remove(0);
+                    self.result_cache = self.result_cache.iter().map(|r| r - i).collect();
+                    return Some(self.current_pos_data.unwrap().0);
                 }
+                self.current_pos_data = self.iter.next();
+                if self.current_pos_data.is_none() {
+                    // Reach EOF
+                    self.result_cache.clear();
+                    return Some(self.len);
+                }
+                i += 1;
+            }
+        }
 
-                if !self.result_cache.is_empty() {
-                    // We have break point cache by previous run.
-                    let mut i = 0;
-                    loop {
-                        if i == *self.result_cache.first().unwrap() {
-                            self.result_cache.remove(0);
-                            self.result_cache = self.result_cache.iter().map(|r| r - i).collect();
-                            return Some(self.current_pos_data.unwrap().0);
-                        }
-                        self.current_pos_data = self.iter.next();
-                        if self.current_pos_data.is_none() {
-                            // Reach EOF
-                            self.result_cache.clear();
-                            return Some(self.len);
-                        }
-                        i += 1;
+        loop {
+            let mut left_prop = Y::get_linebreak_property(&self);
+            let left_codepoint = self.current_pos_data;
+            self.current_pos_data = self.iter.next();
+            if self.current_pos_data.is_none() {
+                // EOF
+                return Some(self.len);
+            }
+            let right_prop = Y::get_linebreak_property(&self);
+
+            // CSS word-break property handling
+            match self.word_break_rule {
+                WordBreakRule::BreakAll => {
+                    left_prop = match left_prop {
+                        AL => ID,
+                        NU => ID,
+                        SA => ID,
+                        _ => left_prop,
+                    };
+                }
+                WordBreakRule::KeepAll => {
+                    if is_non_break_by_keepall(left_prop, right_prop) {
+                        continue;
                     }
                 }
+                _ => (),
+            }
+
+            // CSS line-break property handling
+            match self.line_break_rule {
+                LineBreakRule::Normal => {
+                    if Y::is_break_by_normal(&self) {
+                        return Some(self.current_pos_data.unwrap().0);
+                    }
+                }
+                LineBreakRule::Loose => {
+                    if let Some(breakable) = is_break_utf32_by_loose(
+                        left_codepoint.unwrap().1.into(),
+                        self.current_pos_data.unwrap().1.into(),
+                        left_prop,
+                        right_prop,
+                        self.ja_zh,
+                    ) {
+                        if breakable {
+                            return Some(self.current_pos_data.unwrap().0);
+                        }
+                        continue;
+                    }
+                }
+                LineBreakRule::Anywhere => {
+                    return Some(self.current_pos_data.unwrap().0);
+                }
+                _ => (),
+            };
+
+            // UAX14 doesn't have Thai etc, so use another way.
+            if self.word_break_rule != WordBreakRule::BreakAll
+                && Y::use_complex_breaking(left_codepoint.unwrap().1)
+                && Y::use_complex_breaking(self.current_pos_data.unwrap().1)
+            {
+                let result = self.handle_complex_language(left_codepoint.unwrap().1);
+                if result.is_some() {
+                    return result;
+                }
+                // I may have to fetch text until non-SA character?.
+            }
+
+            // If break_state is equals or grater than 0, it is alias of property.
+            let mut break_state = get_break_state(left_prop, right_prop);
+            if break_state >= 0 as i8 {
+                let mut previous_iter = self.iter.clone();
+                let mut previous_pos_data = self.current_pos_data;
 
                 loop {
-                    let mut left_prop = self.get_linebreak_property();
-                    let left_codepoint = self.current_pos_data;
                     self.current_pos_data = self.iter.next();
                     if self.current_pos_data.is_none() {
-                        // EOF
-                        return Some(self.len);
-                    }
-                    let right_prop = self.get_linebreak_property();
-
-                    // CSS word-break property handling
-                    match self.word_break_rule {
-                        WordBreakRule::BreakAll => {
-                            left_prop = match left_prop {
-                                AL => ID,
-                                NU => ID,
-                                SA => ID,
-                                _ => left_prop,
-                            };
-                        }
-                        WordBreakRule::KeepAll => {
-                            if is_non_break_by_keepall(left_prop, right_prop) {
-                                continue;
-                            }
-                        }
-                        _ => (),
-                    }
-
-                    // CSS line-break property handling
-                    match self.line_break_rule {
-                        LineBreakRule::Normal => {
-                            if self.is_break_by_normal() {
-                                return Some(self.current_pos_data.unwrap().0);
-                            }
-                        }
-                        LineBreakRule::Loose => {
-                            if let Some(breakable) = is_break_utf32_by_loose(
-                                left_codepoint.unwrap().1 as u32,
-                                self.current_pos_data.unwrap().1 as u32,
-                                left_prop,
-                                right_prop,
-                                self.ja_zh,
-                            ) {
-                                if breakable {
-                                    return Some(self.current_pos_data.unwrap().0);
-                                }
-                                continue;
-                            }
-                        }
-                        LineBreakRule::Anywhere => {
-                            return Some(self.current_pos_data.unwrap().0);
-                        }
-                        _ => (),
-                    };
-
-                    // UAX14 doesn't have Thai etc, so use another way.
-                    if self.word_break_rule != WordBreakRule::BreakAll
-                        && $name::use_complex_breaking(left_codepoint.unwrap().1)
-                        && $name::use_complex_breaking(self.current_pos_data.unwrap().1)
-                    {
-                        let result = self.handle_complex_language(left_codepoint.unwrap().1);
-                        if result.is_some() {
-                            return result;
-                        }
-                        // I may have to fetch text until non-SA character?.
-                    }
-
-                    // If break_state is equals or grater than 0, it is alias of property.
-                    let mut break_state = get_break_state(left_prop, right_prop);
-                    if break_state >= 0 as i8 {
-                        let mut previous_iter = self.iter.clone();
-                        let mut previous_pos_data = self.current_pos_data;
-
-                        loop {
-                            self.current_pos_data = self.iter.next();
-                            if self.current_pos_data.is_none() {
-                                // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
-                                let break_state = get_break_state(break_state as u8, EOT);
-                                if break_state == PREVIOUS_BREAK_RULE {
-                                    self.iter = previous_iter;
-                                    self.current_pos_data = previous_pos_data;
-                                    return Some(previous_pos_data.unwrap().0);
-                                }
-                                // EOF
-                                return Some(self.len);
-                            }
-
-                            let prop = self.get_linebreak_property();
-                            break_state = get_break_state(break_state as u8, prop);
-                            if break_state < 0 {
-                                break;
-                            }
-
-                            previous_iter = self.iter.clone();
-                            previous_pos_data = self.current_pos_data;
-                        }
-                        if break_state == KEEP_RULE {
-                            continue;
-                        }
+                        // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
+                        let break_state = get_break_state(break_state as u8, EOT);
                         if break_state == PREVIOUS_BREAK_RULE {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
                             return Some(previous_pos_data.unwrap().0);
                         }
-                        return Some(self.current_pos_data.unwrap().0);
-                    }
-
-                    if is_break(left_prop, right_prop) {
-                        return Some(self.current_pos_data.unwrap().0);
-                    }
-                }
-            }
-        }
-
-        impl<'a> $name<'a> {
-            #[inline]
-            fn is_eof(&mut self) -> bool {
-                if self.current_pos_data.is_none() {
-                    self.current_pos_data = self.iter.next();
-                    if self.current_pos_data.is_none() {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            // UAX14 doesn't define line break rules for some languages such as Thai.
-            // These languages uses dictionary-based breaker, so we use OS's line breaker instead.
-            fn handle_complex_language(&mut self, left_codepoint: $char_type) -> Option<usize> {
-                let start_iter = self.iter.clone();
-                let start_point = self.current_pos_data;
-                let mut s = vec![left_codepoint as u16];
-                loop {
-                    s.push(self.current_pos_data.unwrap().1 as u16);
-                    self.current_pos_data = self.iter.next();
-                    if self.current_pos_data.is_none() {
-                        break;
-                    }
-                    if !$name::use_complex_breaking(self.current_pos_data.unwrap().1) {
-                        break;
-                    }
-                }
-                // Restore iterator to move to head of complex string
-                self.iter = start_iter;
-                self.current_pos_data = start_point;
-                let breaks = self.get_line_break_by_platform_fallback(&s);
-                let mut i = 1;
-                self.result_cache = breaks;
-                // result_cache vector is utf-16 index that is in BMP.
-                loop {
-                    if i == *self.result_cache.first().unwrap() {
-                        self.result_cache.remove(0);
-                        self.result_cache = self.result_cache.iter().map(|r| r - i).collect();
-                        return Some(self.current_pos_data.unwrap().0);
-                    }
-                    self.current_pos_data = self.iter.next();
-                    if self.current_pos_data.is_none() {
-                        self.result_cache.clear();
+                        // EOF
                         return Some(self.len);
                     }
-                    i += 1;
+
+                    let prop = Y::get_linebreak_property(&self);
+                    break_state = get_break_state(break_state as u8, prop);
+                    if break_state < 0 {
+                        break;
+                    }
+
+                    previous_iter = self.iter.clone();
+                    previous_pos_data = self.current_pos_data;
                 }
+                if break_state == KEEP_RULE {
+                    continue;
+                }
+                if break_state == PREVIOUS_BREAK_RULE {
+                    self.iter = previous_iter;
+                    self.current_pos_data = previous_pos_data;
+                    return Some(previous_pos_data.unwrap().0);
+                }
+                return Some(self.current_pos_data.unwrap().0);
+            }
+
+            if is_break(left_prop, right_prop) {
+                return Some(self.current_pos_data.unwrap().0);
             }
         }
-    };
+    }
 }
 
-break_iterator_impl!(LineBreakIterator, CharIndices<'a>, char);
+impl<'a, Y: LineBreakType<'a>> LineBreakIteratorImpl<'a, Y> {
+    #[inline]
+    fn is_eof(&mut self) -> bool {
+        if self.current_pos_data.is_none() {
+            self.current_pos_data = self.iter.next();
+            if self.current_pos_data.is_none() {
+                return true;
+            }
+        }
+        return false;
+    }
 
-impl<'a> LineBreakIterator<'a> {
+    // UAX14 doesn't define line break rules for some languages such as Thai.
+    // These languages uses dictionary-based breaker, so we use OS's line breaker instead.
+    fn handle_complex_language(&mut self, left_codepoint: Y::CharType) -> Option<usize> {
+        let start_iter = self.iter.clone();
+        let start_point = self.current_pos_data;
+        let mut s = vec![left_codepoint.into() as u16];
+        loop {
+            s.push(self.current_pos_data.unwrap().1.into() as u16);
+            self.current_pos_data = self.iter.next();
+            if self.current_pos_data.is_none() {
+                break;
+            }
+            if !Y::use_complex_breaking(self.current_pos_data.unwrap().1) {
+                break;
+            }
+        }
+        // Restore iterator to move to head of complex string
+        self.iter = start_iter;
+        self.current_pos_data = start_point;
+        let breaks = Y::get_line_break_by_platform_fallback(&self, &s);
+        let mut i = 1;
+        self.result_cache = breaks;
+        // result_cache vector is utf-16 index that is in BMP.
+        loop {
+            if i == *self.result_cache.first().unwrap() {
+                self.result_cache.remove(0);
+                self.result_cache = self.result_cache.iter().map(|r| r - i).collect();
+                return Some(self.current_pos_data.unwrap().0);
+            }
+            self.current_pos_data = self.iter.next();
+            if self.current_pos_data.is_none() {
+                self.result_cache.clear();
+                return Some(self.len);
+            }
+            i += 1;
+        }
+    }
+}
+
+impl<'a> LineBreakType<'a> for char {
+    type IterAttr = CharIndices<'a>;
+    type CharType = char;
+}
+
+pub type LineBreakIterator<'a> = LineBreakIteratorImpl<'a, char>;
+
+impl<'a> LineBreakIteratorImpl<'a, char> {
     /// Create a line break iterator for an `str` (a UTF-8 string).
     pub fn new(input: &str) -> LineBreakIterator {
         LineBreakIterator {
@@ -563,10 +579,17 @@ impl<'a> LineBreakIterator<'a> {
     */
 }
 
-break_iterator_impl!(LineBreakIteratorLatin1, Latin1Indices<'a>, u8);
+pub struct Latin1Char(pub u8);
+
+impl<'a> LineBreakType<'a> for Latin1Char {
+    type IterAttr = Latin1Indices<'a>;
+    type CharType = u8; // TODO: Latin1Char
+}
+
+pub type LineBreakIteratorLatin1<'a> = LineBreakIteratorImpl<'a, Latin1Char>;
 
 /// Latin-1 version of line break iterator.
-impl<'a> LineBreakIteratorLatin1<'a> {
+impl<'a> LineBreakIteratorImpl<'a, Latin1Char> {
     /// Create a line break iterator for a Latin-1 (8-bit) string.
     pub fn new(input: &[u8]) -> LineBreakIteratorLatin1 {
         LineBreakIteratorLatin1 {
@@ -622,10 +645,18 @@ impl<'a> LineBreakIteratorLatin1<'a> {
     }
 }
 
-break_iterator_impl!(LineBreakIteratorUtf16, Utf16Indices<'a>, u32);
+// TODO: This should be u16
+pub struct Utf16Char(pub u32);
+
+impl<'a> LineBreakType<'a> for Utf16Char {
+    type IterAttr = Utf16Indices<'a>;
+    type CharType = u32; // TODO: Utf16Char
+}
+
+pub type LineBreakIteratorUtf16<'a> = LineBreakIteratorImpl<'a, Utf16Char>;
 
 /// UTF-16 version of line break iterator.
-impl<'a> LineBreakIteratorUtf16<'a> {
+impl<'a> LineBreakIteratorImpl<'a, Utf16Char> {
     /// Create a line break iterator for a UTF-16 string.
     pub fn new(input: &[u16]) -> LineBreakIteratorUtf16 {
         LineBreakIteratorUtf16 {
