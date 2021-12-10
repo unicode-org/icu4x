@@ -13,6 +13,7 @@ use icu_provider::resource_key;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use std::convert::TryFrom;
+use std::env;
 use std::str::FromStr;
 use tinystr::TinyStr16;
 
@@ -20,6 +21,7 @@ use tinystr::TinyStr16;
 // TODO (#1116) move this into icu_calendars
 pub const JAPANESE_ERAS_V1: ResourceKey = resource_key!(Calendar, "japanese", 1);
 
+const JAPANESE_FILE: &'static str = include_str!("./snapshot-japanese@1.json");
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [JAPANESE_ERAS_V1];
 
@@ -148,10 +150,31 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
             }
         }
 
-        Ok(Self {
+        let ret = Self {
             data,
             historical_data,
-        })
+        };
+
+        // Integrity check
+        if env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
+            let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
+                .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
+
+            if snapshot.dates_to_historical_eras != ret.historical_data
+                || snapshot.dates_to_eras != ret.data
+            {
+                return Err(Error::Custom("Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
+                                          changed in an incompatible way, or there is a new Japanese era. Please comment out the integrity \
+                                          check in icu_provider_cldr's japanese.rs and inspect the update to japanese@1.json (resource key `calendar/japanese`) \
+                                          in the generated JSON by rerunning the datagen tool (`cargo make testdata` in the ICU4X repo). \
+                                          Rerun with ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 to regenerate testdata properly, and check which situation \
+                                          it is. If a new era has been introduced, copy over the new testdata to snapshot-japanese@1.json \
+                                          in icu_provider_cldr. If not, it's likely that japanese.rs in icu_provider_cldr will need \
+                                          to be updated to handle the data changes.".to_owned(), None));
+            }
+        }
+
+        Ok(ret)
     }
 }
 
