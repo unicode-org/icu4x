@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak};
+use crate::{
+    EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
+    WordBreak,
+};
 
 use core::convert::TryFrom;
 use num_enum::TryFromPrimitiveError;

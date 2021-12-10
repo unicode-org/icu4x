@@ -30,7 +30,10 @@ where
     let data_req = DataRequest {
         resource_path: ResourcePath {
             key: resc_key,
-            options: ResourceOptions { variant: None, langid: None },
+            options: ResourceOptions {
+                variant: None,
+                langid: None,
+            },
         },
     };
 
@@ -1493,7 +1496,10 @@ where
 /// Return a [`UnicodeSet`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
 ///
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
-pub fn get_for_general_category_group<D>(provider: &D, enum_val: GeneralCategoryGroup) -> UnisetResult
+pub fn get_for_general_category_group<D>(
+    provider: &D,
+    enum_val: GeneralCategoryGroup,
+) -> UnisetResult
 where
     D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
 {
@@ -1520,7 +1526,9 @@ where
         GeneralCategoryGroup::LetterNumber => key::GENERAL_CATEGORY_LETTER_NUMBER_V1,
         GeneralCategoryGroup::OtherNumber => key::GENERAL_CATEGORY_OTHER_NUMBER_V1,
         GeneralCategoryGroup::Punctuation => key::GENERAL_CATEGORY_PUNCTUATION_V1,
-        GeneralCategoryGroup::ConnectorPunctuation => key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1,
+        GeneralCategoryGroup::ConnectorPunctuation => {
+            key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1
+        }
         GeneralCategoryGroup::DashPunctuation => key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1,
         GeneralCategoryGroup::ClosePunctuation => key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1,
         GeneralCategoryGroup::FinalPunctuation => key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1,

@@ -19,7 +19,8 @@ use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 
 /// TODO(#1239): Finalize this API.
-pub type CodePointMapResult<T> = Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
+pub type CodePointMapResult<T> =
+    Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
 
 fn get_cp_map<D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<T>
 where
@@ -29,7 +30,10 @@ where
     let data_req = DataRequest {
         resource_path: ResourcePath {
             key: resc_key,
-            options: ResourceOptions { variant: None, langid: None },
+            options: ResourceOptions {
+                variant: None,
+                langid: None,
+            },
         },
     };
 
