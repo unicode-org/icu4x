@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639113626921,
+  "lastUpdate": 1639131617021,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4913,6 +4913,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/eae3099d496d66f4fdd27168ff89e5211d0b3bc7"
         },
         "date": 1639113620617,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "560dd8e57002226ba9f2a7853e0cb7fe195b6b30",
+          "message": "Enable test-c-tiny in CI (#1382)",
+          "timestamp": "2021-12-10T02:18:30-08:00",
+          "tree_id": "2506eff44cbe6dfbc25995cbb512b2beb010105e",
+          "url": "https://github.com/unicode-org/icu4x/commit/560dd8e57002226ba9f2a7853e0cb7fe195b6b30"
+        },
+        "date": 1639131609010,
         "tool": "ndjson",
         "benches": [
           {
