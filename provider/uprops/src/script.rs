@@ -55,7 +55,7 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
             .iter()
             .map(|v| {
                 v.iter()
-                    .map(|i| ScriptWithExt(*i).as_unaligned())
+                    .map(|i| Script(*i).as_unaligned())
                     .collect::<Vec<PlainOldULE<2>>>()
             })
             .collect::<Vec<Vec<PlainOldULE<2>>>>();
