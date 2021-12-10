@@ -26,7 +26,7 @@ pub struct ScriptExtensionsPropertyProvider {
     data: ScriptExtensionsProperty,
 }
 
-/// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
+/// A data provider reading from .toml files produced by the ICU4C icuexportdata tool.
 /// In particular, it expects a file `scx.toml` for the specially-exported data
 /// structure that represents the combined data for Script / Script_Extensions.
 impl ScriptExtensionsPropertyProvider {
