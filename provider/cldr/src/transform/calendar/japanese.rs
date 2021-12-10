@@ -156,6 +156,10 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
         };
 
         // Integrity check
+        //
+        // Era code generation relies on the English era data which could in theory change; we have an integrity check
+        // to catch such cases. It is relatively rare for a new era to be added, and in those cases the integrity check can
+        // be disabled when generating new data.
         if env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
             let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
                 .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
