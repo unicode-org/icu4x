@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639069814717,
+  "lastUpdate": 1639113626921,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4883,6 +4883,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1d9ddad75f72a378881526e0fc2cd3ac0f37c6e0"
         },
         "date": 1639069808085,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eae3099d496d66f4fdd27168ff89e5211d0b3bc7",
+          "message": "Moving deduplicating_array to its own crate (#1364)",
+          "timestamp": "2021-12-09T21:18:56-08:00",
+          "tree_id": "2b9b89f49d206e34b9782ded38c5359320adc574",
+          "url": "https://github.com/unicode-org/icu4x/commit/eae3099d496d66f4fdd27168ff89e5211d0b3bc7"
+        },
+        "date": 1639113620617,
         "tool": "ndjson",
         "benches": [
           {
