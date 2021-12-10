@@ -38,21 +38,21 @@ optim1.elf: ../../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.c
 optim2.elf: ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a $(ALL_HEADERS) test.c
 	$(CLANG) -flto -fdata-sections -ffunction-sections test.c ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a -g -o optim2.elf -Wl,--gc-sections
 
-optim3.o: $(ALL_HEADERS)
+optim3.o: $(ALL_HEADERS) test.c
 	$(CLANG) -c -flto=thin -fdata-sections -ffunction-sections --target=x86_64-unknown-linux-gnu test.c -g -o optim3.o
 
 # optim3.elf: clang two-step with lld, debug mode
 optim3.elf: optim3.o ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a
 	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim3.elf optim3.o ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a -Wl,--gc-sections
 
-optim4.o: $(ALL_HEADERS)
+optim4.o: $(ALL_HEADERS) test.c
 	$(CLANG) -c -flto=thin -fdata-sections -ffunction-sections --target=x86_64-unknown-linux-gnu test.c -g -o optim4.o
 
 # optim4.elf: clang two-step with lld, release mode with debug symbols
 optim4.elf: optim4.o ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi.a
 	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim4.elf optim4.o ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi.a -Wl,--gc-sections
 
-optim5.o: $(ALL_HEADERS)
+optim5.o: $(ALL_HEADERS) test.c
 	$(CLANG) -c -flto=thin -fdata-sections -ffunction-sections --target=x86_64-unknown-linux-gnu test.c -o optim5.o
 
 # optim5.elf: clang two-step with lld, release mode stripped of debug symbols
