@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639131617021,
+  "lastUpdate": 1639179737630,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -4943,6 +4943,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/560dd8e57002226ba9f2a7853e0cb7fe195b6b30"
         },
         "date": 1639131609010,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a9aea981ca6e85523600ff191562dc4576d7fb1",
+          "message": "Coalesce more impls into the new BufferProvider framework (#1384)",
+          "timestamp": "2021-12-10T15:40:26-08:00",
+          "tree_id": "52f482af5fe17e274e3c4d374c1efecbfebbf884",
+          "url": "https://github.com/unicode-org/icu4x/commit/0a9aea981ca6e85523600ff191562dc4576d7fb1"
+        },
+        "date": 1639179729504,
         "tool": "ndjson",
         "benches": [
           {
