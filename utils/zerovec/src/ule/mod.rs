@@ -10,7 +10,7 @@ pub mod custom;
 mod error;
 mod pair;
 mod plain;
-mod string;
+mod slices;
 
 pub use chars::CharULE;
 pub use error::ULEError;

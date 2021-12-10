@@ -108,6 +108,15 @@ unsafe impl<T: ULE, A: AsULE<ULE = T> + 'static> EncodeAsVarULE<ZeroVecULE<A>> f
     }
 }
 
+unsafe impl<T> EncodeAsVarULE<[T]> for Vec<T>
+where
+    [T]: VarULE,
+{
+    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+        cb(&[<[T] as VarULE>::as_byte_slice(&*self)])
+    }
+}
+
 unsafe impl<'a, T, A: AsULE<ULE = T> + 'static> custom::EncodeAsVarULE<ZeroVecULE<A>>
     for ZeroVec<'a, T>
 where

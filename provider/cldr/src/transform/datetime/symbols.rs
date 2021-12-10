@@ -44,6 +44,8 @@ impl DataProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
     ) -> Result<DataResponse<calendar::DateSymbolsV1Marker>, DataError> {
         DateSymbolsProvider::supports_key(&req.resource_path.key)?;
         let dates = self.0.dates_for(req)?;
+        let metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
         let calendar = req
             .resource_path
             .options
@@ -51,9 +53,7 @@ impl DataProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
             .as_ref()
             .ok_or_else(|| DataError::NeedsVariant(req.clone()))?;
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(convert_dates(dates, calendar))),
         })
     }

@@ -4,9 +4,15 @@
 
 #![warn(missing_docs)]
 
-//! A line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
+//! A segmenter implementation for the following rules.
 //!
-//! [UAX14]: http://www.unicode.org/reports/tr14/
+//! - Line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
+//! - Word breaker that is compatible with [Unicode Standard Annex #29][UAX29].
+//!
+//! [UAX14]: https://www.unicode.org/reports/tr14/
+//! [UAX29]: https://www.unicode.org/reports/tr29/
+//!
+//! # Line breaker
 //!
 //!```rust
 //! use icu_segmenter::LineBreakIterator;
@@ -41,6 +47,27 @@
 //! println!("{:?}", result);
 //! ```
 //!
+//! # word breaker
+//!
+//!```rust
+//! use icu_segmenter::WordBreakIterator;
+//!
+//! let mut iter = WordBreakIterator::new("Hello World");
+//! let result: Vec<usize> = iter.collect();
+//! println!("{:?}", result);
+//! ```
+//!
+//! Use Latin 1 string for C binding and etc.
+//!
+//! ```rust
+//! use icu_segmenter::WordBreakIteratorLatin1;
+//!
+//! let s = "Hello World";
+//! let iter = WordBreakIteratorLatin1::new(s.as_bytes());
+//! let result: Vec<usize> = iter.collect();
+//! println!("{:?}", result);
+//! ```
+//!
 //! # Generating property table
 //!
 //! Copy the following files to `tools` directory. Then run `./generate_properties.py` in `tools` directory (requires Python 3.8+). Machine generated files are moved to `src` directory.
@@ -55,9 +82,13 @@ mod lstm;
 mod properties_defines;
 mod properties_other;
 mod property_table;
+mod rule_segmenter;
 mod rule_table;
+
+mod word;
 
 #[macro_use]
 extern crate lazy_static;
 
 pub use crate::line_breaker::*;
+pub use crate::word::{WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16};

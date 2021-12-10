@@ -30,12 +30,16 @@ where
     /// Construct a `&ZeroVecULE<T>` from a slice of ULEs
     #[inline]
     pub fn from_slice(slice: &[T::ULE]) -> &Self {
+        // This is safe because ZeroVecULE is transparent over [T::ULE]
+        // so &ZeroVecULE<T> can be safely cast from &[T::ULE]
         unsafe { &*(slice as *const _ as *const Self) }
     }
 
     /// Construct a `Box<ZeroVecULE<T>>` from a boxed slice of ULEs
     #[inline]
     pub fn from_boxed_slice(slice: Box<[T::ULE]>) -> Box<Self> {
+        // This is safe because ZeroVecULE is transparent over [T::ULE]
+        // so Box<ZeroVecULE<T>> can be safely cast from Box<[T::ULE]>
         unsafe { Box::from_raw(Box::into_raw(slice) as *mut Self) }
     }
 }
@@ -58,15 +62,14 @@ where
 }
 
 // Safety (based on the safety checklist on the VarULE trait):
-//  1. [T] does not include any uninitialized or padding bytes (achieved by being a slice of a ULE type)
-//  2. [T] is aligned to 1 byte (achieved by being a slice of a ULE type)
+// (`ZeroVecULE<T>` is a transparent wrapper around [T::ULE])
+//  1. [T::ULE] does not include any uninitialized or padding bytes (achieved by being a slice of a ULE type)
+//  2. [T::ULE] is aligned to 1 byte (achieved by being a slice of a ULE type)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
-//  6. `as_byte_slice()` is equivalent to a regular transmute of the underlying data; `parse_byte_slice()`
-//     is equivalent to `validate_byte_slice()` followed by `from_byte_slice_unchecked()` due to
-//     the guarantee from `ULE`
-//  7. `[T]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
+//  6. `as_byte_slice()` and `parse_byte_slice()` are defaulted
+//  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
 unsafe impl<T: AsULE + 'static> VarULE for ZeroVecULE<T> {
     type Error = <T::ULE as ULE>::Error;
 
@@ -76,16 +79,8 @@ unsafe impl<T: AsULE + 'static> VarULE for ZeroVecULE<T> {
     }
 
     #[inline]
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
-        Ok(Self::from_slice(T::ULE::parse_byte_slice(bytes)?))
-    }
-    #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         Self::from_slice(T::ULE::from_byte_slice_unchecked(bytes))
-    }
-    #[inline]
-    fn as_byte_slice(&self) -> &[u8] {
-        T::ULE::as_byte_slice(&self.0)
     }
 }
 

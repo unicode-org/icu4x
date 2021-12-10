@@ -6,7 +6,7 @@ use crate::blob_schema::*;
 use crate::path_util;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeSeDataStructMarker;
+use icu_provider::serde::SerializeMarker;
 use litemap::LiteMap;
 use zerovec::zerovec::ZeroVecULE;
 use zerovec::ZeroMap;
@@ -36,25 +36,19 @@ impl Drop for BlobExporter<'_> {
     }
 }
 
-/// TODO(#837): De-duplicate this code from icu_provider_fs.
-fn serialize(obj: &dyn erased_serde::Serialize) -> Result<Vec<u8>, DataError> {
-    let mut serializer = postcard::Serializer {
-        output: postcard::flavors::AllocVec(Vec::new()),
-    };
-    obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
-    Ok(serializer.output.0)
-}
-
-impl DataExporter<SerdeSeDataStructMarker> for BlobExporter<'_> {
+impl DataExporter<SerializeMarker> for BlobExporter<'_> {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        obj: DataPayload<SerdeSeDataStructMarker>,
+        payload: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
         log::trace!("Adding: {}", path);
-        let buffer = serialize(obj.get().as_serialize())?;
-        self.resources.insert(path, buffer);
+        let mut serializer = postcard::Serializer {
+            output: postcard::flavors::AllocVec(Vec::new()),
+        };
+        payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
+        self.resources.insert(path, serializer.output.0);
         Ok(())
     }
 
@@ -70,8 +64,13 @@ impl DataExporter<SerdeSeDataStructMarker> for BlobExporter<'_> {
             resources: zm.as_borrowed(),
         });
         log::info!("Serializing blob to output stream...");
-        let vec = serialize(&blob)?;
-        self.sink.write(&vec).map_err(|e| e.to_string())?;
+        let mut serializer = postcard::Serializer {
+            output: postcard::flavors::AllocVec(Vec::new()),
+        };
+        serde::Serialize::serialize(&blob, &mut serializer).map_err(DataError::new_resc_error)?;
+        self.sink
+            .write(&serializer.output.0)
+            .map_err(|e| e.to_string())?;
         self.resources.clear();
         Ok(())
     }

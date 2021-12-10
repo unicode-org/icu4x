@@ -33,3 +33,28 @@ unsafe impl VarULE for str {
         str::from_utf8_unchecked(bytes)
     }
 }
+
+// Safety (based on the safety checklist on the VarULE trait):
+//  1. [u8] does not include any uninitialized or padding bytes (achieved by being a slice of a ULE type)
+//  2. [u8] is aligned to 1 byte (achieved by being a slice of a ULE type)
+//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
+//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+//  6. All other methods are defaulted
+//  7. `[u8]` byte equality is semantic equality
+unsafe impl<T> VarULE for [T]
+where
+    T: ULE + AsULE<ULE = T>,
+{
+    type Error = T::Error;
+
+    #[inline]
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), Self::Error> {
+        T::validate_byte_slice(slice)
+    }
+
+    #[inline]
+    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+        T::from_byte_slice_unchecked(bytes)
+    }
+}

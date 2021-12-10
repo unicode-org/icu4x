@@ -16,7 +16,7 @@ members = [
     "components/plurals",
     "components/properties",
     "experimental/bies",
-    "experimental/formatted_string_builder",
+    "experimental/formatted_string",
     "experimental/list_formatter",
     "experimental/segmenter",
     "experimental/segmenter_lstm",

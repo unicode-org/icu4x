@@ -4,9 +4,8 @@
 
 use super::AbstractSerializer;
 use super::Error;
-use crate::manifest::SyntaxOption;
+use icu_provider::buffer_provider::BufferFormat;
 use std::io::{self, Write};
-use std::ops::Deref;
 
 /// A small helper class to convert LF to CRLF on Windows.
 /// Workaround for https://github.com/serde-rs/json/issues/535
@@ -62,7 +61,6 @@ pub enum StyleOption {
 
 /// A serializer for JavaScript Object Notation (JSON).
 pub struct Serializer {
-    syntax: SyntaxOption,
     style: StyleOption,
 }
 
@@ -79,14 +77,6 @@ impl Default for Options {
         Self {
             style: StyleOption::Compact,
         }
-    }
-}
-
-impl Deref for Serializer {
-    type Target = SyntaxOption;
-
-    fn deref(&self) -> &Self::Target {
-        &self.syntax
     }
 }
 
@@ -113,12 +103,15 @@ impl AbstractSerializer for Serializer {
         writeln!(sink)?;
         Ok(())
     }
+
+    fn get_buffer_format(&self) -> BufferFormat {
+        BufferFormat::Json
+    }
 }
 
 impl Serializer {
     pub fn new(options: Options) -> Self {
         Self {
-            syntax: SyntaxOption::Json,
             style: options.style,
         }
     }

@@ -45,7 +45,7 @@
 //! use icu::datetime::options::components;
 //!
 //! let bag = components::Bag {
-//!     year: Some(components::Numeric::Numeric),
+//!     year: Some(components::Year::Numeric),
 //!     month: Some(components::Month::Long),
 //!     day: Some(components::Numeric::Numeric),
 //!
@@ -87,7 +87,7 @@ pub struct Bag {
     /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
     /// Include the year, such as "1970" or "70".
-    pub year: Option<Numeric>,
+    pub year: Option<Year>,
     /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
     /// Include the week, such as "1st" or "1".
@@ -138,12 +138,14 @@ impl Bag {
 
         if let Some(year) = self.year {
             // Unimplemented year fields:
-            // Y - Week of Year
             // u - Extended year
             // U - Cyclic year name
             // r - Related Gregorian year
             fields.push(Field {
-                symbol: FieldSymbol::Year(fields::Year::Calendar),
+                symbol: FieldSymbol::Year(match year {
+                    Year::Numeric | Year::TwoDigit => fields::Year::Calendar,
+                    Year::NumericWeekOf | Year::TwoDigitWeekOf => fields::Year::WeekOf,
+                }),
                 length: match year {
                     // Calendar year (numeric).
                     // y       2, 20, 201, 2017, 20173
@@ -151,8 +153,8 @@ impl Bag {
                     // yyy     002, 020, 201, 2017, 20173    (not implemented)
                     // yyyy    0002, 0020, 0201, 2017, 20173 (not implemented)
                     // yyyyy+  ...                           (not implemented)
-                    Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Year::Numeric | Year::NumericWeekOf => FieldLength::One,
+                    Year::TwoDigit | Year::TwoDigitWeekOf => FieldLength::TwoDigit,
                 },
             });
         }
@@ -325,49 +327,71 @@ impl Bag {
 /// A numeric component for the `components::`[`Bag`]. It is used for the year, day, hour, minute,
 /// and second.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Numeric {
     /// Display the numeric value. For instance in a year this would be "1970".
-    #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
     /// Display the two digit value. For instance in a year this would be "70".
-    #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
 }
 
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Text {
     /// Display the long form of the text, such as "Wednesday" for the weekday.
-    #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
     /// Display the short form of the text, such as "Wed" for the weekday.
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
     /// Display the narrow form of the text, such as "W" for the weekday.
-    #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
+}
+
+/// Options for displaying a Year for the `components::`[`Bag`].
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
+pub enum Year {
+    /// The numeric value of the year, such as "2018" for 2018-12-31.
+    Numeric,
+    /// The two-digit value of the year, such as "18" for 2018-12-31.
+    TwoDigit,
+    /// The numeric value of the year in "week-of-year", such as "2019" in
+    /// "week 01 of 2019" for the week of 2018-12-31 according to the ISO calendar.
+    NumericWeekOf,
+    /// The numeric value of the year in "week-of-year", such as "19" in
+    /// "week 01 '19" for the week of 2018-12-31 according to the ISO calendar.
+    TwoDigitWeekOf,
 }
 
 /// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Month {
     /// The numeric value of the month, such as "4".
-    #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
     /// The two-digit value of the month, such as "04".
-    #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
     /// The two-digit value of the month, such as "April".
-    #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
     /// The short value of the month, such as "Apr".
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
     /// The narrow value of the month, such as "A".
-    #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
 }
 
@@ -378,7 +402,11 @@ pub enum Month {
 #[doc(hidden)]
 // TODO(#488): make visible once fully supported.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Week {
     /// The week of the month, such as "3".
     WeekOfMonth,
@@ -393,19 +421,21 @@ pub enum Week {
 /// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
 /// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum TimeZoneName {
     // UTS-35 fields: z..zzz
     //
     /// Short localized form, without the location. (e.g.: PST, GMT-8)
-    #[cfg_attr(feature = "serde", serde(rename = "shortSpecific"))]
     ShortSpecific,
 
     // UTS-35 fields: zzzz
     // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
     //
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
-    #[cfg_attr(feature = "serde", serde(rename = "longSpecific"))]
     LongSpecific,
 
     // UTS-35 fields: O, OOOO
@@ -417,21 +447,18 @@ pub enum TimeZoneName {
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
     //
     /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
-    #[cfg_attr(feature = "serde", serde(rename = "gmtOffset"))]
     GmtOffset,
 
     // UTS-35 fields: v
     //   * falling back to generic location (See UTS 35 for more specific rules)
     //   * falling back to short localized GMT
     /// Short generic non-location format (e.g.: PT, Los Angeles, Zeit).
-    #[cfg_attr(feature = "serde", serde(rename = "shortGeneric"))]
     ShortGeneric,
 
     // UTS-35 fields: vvvv
     //  * falling back to generic location (See UTS 35 for more specific rules)
     //  * falling back to long localized GMT
     /// Long generic non-location format (e.g.: Pacific Time, Nordamerikanische Westküstenzeit),
-    #[cfg_attr(feature = "serde", serde(rename = "longGeneric"))]
     LongGeneric,
 }
 
@@ -473,7 +500,7 @@ mod test {
     #[test]
     fn test_component_bag_to_vec_field() {
         let bag = Bag {
-            year: Some(Numeric::Numeric),
+            year: Some(Year::Numeric),
             month: Some(Month::Long),
             week: Some(Week::WeekOfMonth),
             day: Some(Numeric::Numeric),
@@ -501,7 +528,7 @@ mod test {
     #[test]
     fn test_component_bag_to_vec_field2() {
         let bag = Bag {
-            year: Some(Numeric::Numeric),
+            year: Some(Year::Numeric),
             month: Some(Month::TwoDigit),
             day: Some(Numeric::Numeric),
             ..Default::default()

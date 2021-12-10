@@ -11,7 +11,7 @@ use icu_provider::filter::Filterable;
 use icu_provider::hello_world::{self, HelloWorldProvider};
 use icu_provider::iter::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeSeDataStructMarker;
+use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_cldr_keys;
@@ -268,7 +268,7 @@ fn main() -> eyre::Result<()> {
 
     let mut anchor1;
     let mut anchor2;
-    let exporter: &mut dyn DataExporter<SerdeSeDataStructMarker> = match format {
+    let exporter: &mut dyn DataExporter<SerializeMarker> = match format {
         "dir" => {
             anchor1 = get_fs_exporter(&matches)?;
             &mut anchor1
@@ -377,22 +377,27 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
 
 fn export_cldr(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
     allowed_keys: Option<&HashSet<&str>>,
 ) -> eyre::Result<()> {
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
+        Box::new(
+            CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?
+                .download(matches.value_of("UPROPS_ROOT").map(PathBuf::from))?,
+        )
     } else if let Some(path) = matches.value_of("CLDR_ROOT") {
         Box::new(CldrPathsAllInOne {
             cldr_json_root: PathBuf::from(path),
             locale_subset: locale_subset.to_string(),
+            uprops_root: matches.value_of("UPROPS_ROOT").map(PathBuf::from),
         })
     } else if matches.is_present("INPUT_FROM_TESTDATA") {
         Box::new(CldrPathsAllInOne {
             cldr_json_root: icu_testdata::paths::cldr_json_root(),
             locale_subset: "full".to_string(),
+            uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
         })
     } else {
         eyre::bail!("Either --cldr-tag or --cldr-root must be specified",)
@@ -410,7 +415,7 @@ fn export_cldr(
 
     let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
     let filtered_provider;
-    let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
+    let provider: &dyn IterableDataProvider<SerializeMarker>;
 
     if let Some(allowlist) = allowed_locales {
         filtered_provider = raw_provider
@@ -431,7 +436,7 @@ fn export_cldr(
 
 fn export_set_props(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for binary properties...");
@@ -473,7 +478,7 @@ fn export_set_props(
 
 fn export_map_props(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
     allowed_keys: Option<&HashSet<&str>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for enumerated properties...");
@@ -515,12 +520,12 @@ fn export_map_props(
 
 fn export_hello_world(
     _: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> eyre::Result<()> {
     let raw_provider = HelloWorldProvider::new_with_placeholder_data();
     let filtered_provider;
-    let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
+    let provider: &dyn IterableDataProvider<SerializeMarker>;
 
     if let Some(allowlist) = allowed_locales {
         filtered_provider = raw_provider

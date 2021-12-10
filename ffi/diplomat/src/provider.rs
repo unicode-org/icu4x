@@ -11,7 +11,7 @@ pub mod ffi {
     ))]
     use alloc::string::ToString;
 
-    use icu_provider::serde::SerdeDeDataProvider;
+    use icu_provider::prelude::BufferProvider;
     use icu_provider_blob::BlobDataProvider;
     use icu_provider_blob::StaticDataProvider;
     #[cfg(all(
@@ -23,7 +23,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/prelude/trait.DataProvider.html) for more information.
-    pub struct ICU4XDataProvider(pub Box<dyn SerdeDeDataProvider + 'static>);
+    pub struct ICU4XDataProvider(pub Box<dyn BufferProvider + 'static>);
 
     /// A result type for `ICU4XDataProvider::create`.
     pub struct ICU4XCreateDataProviderResult {
@@ -43,13 +43,10 @@ pub mod ffi {
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
             match FsDataProvider::try_new(path.to_string()) {
-                Ok(fs) => {
-                    let erased = Box::new(fs);
-                    ICU4XCreateDataProviderResult {
-                        provider: Some(Box::new(ICU4XDataProvider(erased))),
-                        success: true,
-                    }
-                }
+                Ok(fs) => ICU4XCreateDataProviderResult {
+                    provider: Some(Box::new(ICU4XDataProvider(Box::new(fs)))),
+                    success: true,
+                },
                 Err(_) => ICU4XCreateDataProviderResult {
                     provider: None,
                     success: false,
@@ -75,9 +72,8 @@ pub mod ffi {
                 let provider = icu_testdata::get_smaller_static_provider();
                 #[cfg(not(feature = "smaller_static"))]
                 let provider = icu_testdata::get_static_provider();
-                let erased = Box::new(provider);
                 ICU4XCreateDataProviderResult {
-                    provider: Some(Box::new(ICU4XDataProvider(erased))),
+                    provider: Some(Box::new(ICU4XDataProvider(Box::new(provider)))),
                     success: true,
                 }
             }

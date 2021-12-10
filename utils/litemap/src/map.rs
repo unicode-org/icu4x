@@ -232,7 +232,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         self.insert_save_key(key, value).map(|(_, v)| v)
     }
 
-    /// Version of [`Self::insert()`] that returns both the key and the value.
+    /// Version of [`Self::insert()`] that returns both the key and the old value.
     fn insert_save_key(&mut self, key: K, value: V) -> Option<(K, V)> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
             Ok(found) => Some((key, mem::replace(&mut self.values[found].1, value))),

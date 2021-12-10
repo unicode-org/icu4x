@@ -241,4 +241,10 @@ mod test {
     struct DeriveTest_ZeroMapBorrowed<'data> {
         _data: ZeroMapBorrowed<'data, ZeroVecULE<u8>, str>,
     }
+
+    #[derive(yoke::Yokeable)]
+    #[yoke(prove_covariance_manually)]
+    struct DeriveTest_ZeroMapWithULE<'data> {
+        _data: ZeroMap<'data, ZeroVecULE<u32>, str>,
+    }
 }

@@ -6,8 +6,8 @@
     "short": "d/M/yy"
   },
   "time_h11_h12": {
-    "full": "hh:mm:ss",
-    "long": "hh:mm:ss",
+    "full": "h:mm:ss a v",
+    "long": "h:mm:ss a v",
     "medium": "hh:mm:ss",
     "short": "h:mm a"
   },

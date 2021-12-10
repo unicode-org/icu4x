@@ -1,0 +1,74 @@
+[
+    {
+        "description": "Partial match for m -> m:ss",
+        "input": {
+            "value": "2002-12-31T08:05:07.000",
+            "options": {
+                "components": {
+                    "minute": "numeric"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "5:07",
+                "fr": "5:07"
+            }
+        }
+    },
+    {
+        "description": "Partial match for Hs -> H",
+        "input": {
+            "value": "2002-12-31T08:05:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "second": "numeric"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "8",
+                "fr": "8 h"
+            }
+        }
+    },
+    {
+        "description": "Partial match for YEEEE -> y",
+        "input": {
+            "value": "2002-12-31T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric-week-of",
+                    "weekday": "long"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "2002",
+                "fr": "2002"
+            }
+        }
+    },
+    {
+        "description": "Partial match for YwEEEE -> 'week w of Y'",
+        "input": {
+            "value": "2002-12-31T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric-week-of",
+                    "week": "two-digit-week-of-year",
+                    "weekday": "long"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en": "week 01 of 2003",
+                "fr": "semaine 01 de 2003"
+            }
+        }
+    }
+]

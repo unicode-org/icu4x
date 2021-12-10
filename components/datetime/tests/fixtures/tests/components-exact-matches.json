@@ -518,14 +518,32 @@
             "value": "2016-04-13T08:25:07.000",
             "options": {
                 "components": {
-                    "year": "numeric",
-                    "week": "NumericWeekOfYear"
+                    "year": "numeric-week-of",
+                    "week": "numeric-week-of-year"
                 }
             }
         },
         "output": {
             "values": {
                 "en":  "week 15 of 2016"
+            }
+        }
+    },
+    {
+        "description": "Exact match for: yw => week' w 'of' Y with Y different from y",
+        "input": {
+            "locale": "en",
+            "value": "2022-01-01T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric-week-of",
+                    "week": "numeric-week-of-year"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en":  "week 52 of 2021"
             }
         }
     }

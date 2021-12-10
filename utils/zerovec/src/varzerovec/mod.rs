@@ -24,11 +24,21 @@ pub use ule::VarZeroVecULE;
 /// desirable to borrow data from an unaligned byte slice, such as zero-copy deserialization, and
 /// where `T`'s data is variable-length (e.g. `String`)
 ///
-/// `T` must implement [`VarULE`], which is already implemented for [`str`] and `ZeroVecULE<T>` where
-/// `T` implements [`AsULE`]. It is also implemented on `VarZeroVecULE<T>` for nesting.
+/// `T` must implement [`VarULE`], which is already implemented for [`str`] and `[u8]`. For storing more
+/// complicated series of elements, it is implemented on `ZeroVecULE<T>` as well as `VarZeroVecULE<T>`
+/// for nesting.
 ///
-/// `VarZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from owned data
-/// but can also borrow from some buffer.
+/// For example, here are some owned types and their zero-copy equivalents:
+///
+/// - `Vec<String>`: `VarZeroVec<'a, str>`
+/// - `Vec<Vec<u8>>>`: `VarZeroVec<'a, [u8]>`
+/// - `Vec<Vec<u32>>`: `VarZeroVec<'a, ZeroVecULE<u32>>`
+/// - `Vec<Vec<String>>`: `VarZeroVec<'a, VarZeroVecULE<str>>`
+///
+/// For creating zero-copy vectors of fixed-size types, see [`ZeroVec`](crate::ZeroVec).
+///
+/// `VarZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from
+/// owned data (and then mutated!) but can also borrow from some buffer.
 ///
 /// # How it Works
 ///
@@ -558,7 +568,7 @@ impl<'a, T> Eq for VarZeroVec<'a, T>
 where
     T: VarULE,
     T: ?Sized,
-    T: PartialEq,
+    T: Eq,
 {
 }
 
