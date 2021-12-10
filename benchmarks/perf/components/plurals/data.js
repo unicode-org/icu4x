@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639132023890,
+  "lastUpdate": 1639180306738,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20873,6 +20873,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21398,
             "range": "± 1418",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a9aea981ca6e85523600ff191562dc4576d7fb1",
+          "message": "Coalesce more impls into the new BufferProvider framework (#1384)",
+          "timestamp": "2021-12-10T15:40:26-08:00",
+          "tree_id": "52f482af5fe17e274e3c4d374c1efecbfebbf884",
+          "url": "https://github.com/unicode-org/icu4x/commit/0a9aea981ca6e85523600ff191562dc4576d7fb1"
+        },
+        "date": 1639180299262,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1123,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5420,
+            "range": "± 349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20272,
+            "range": "± 2410",
             "unit": "ns/iter"
           }
         ]
