@@ -87,7 +87,9 @@ impl DataProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsProperty
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<ScriptExtensionsPropertyV1Marker>, DataError> {
-        debug_assert_eq!(&tinystr16!("scx"), &req.resource_path.key.sub_category);
+        if req.resource_path.key.sub_category != tinystr16!("scx") {
+            return Err(DataError::MissingResourceKey(req.resource_path.key));
+        }
 
         let source_scx_data = &self.data;
 
