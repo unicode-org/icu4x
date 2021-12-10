@@ -13,10 +13,7 @@ pub mod ffi {
     };
     use icu_provider::prelude::DataProvider;
 
-    use crate::{
-        locale::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider,
-    };
+    use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
     pub struct ICU4XCreatePluralRulesResult {
         pub rules: Option<Box<ICU4XPluralRules>>,
