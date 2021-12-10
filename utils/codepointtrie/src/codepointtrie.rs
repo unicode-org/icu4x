@@ -288,6 +288,26 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
     /// ```
     pub fn get(&self, code_point: u32) -> T {
+        self.get_ule(code_point)
+            .map(|t| T::from_unaligned(*t))
+            .unwrap_or(T::DATA_GET_ERROR_VALUE)
+    }
+
+    /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// assert!(matches!(trie.get_ule(0x41).unwrap(), u8));  // for `u8`, u8::ULE is Self
+    ///
+    /// assert_eq!(&0, trie.get_ule(0x41).unwrap());  // 'A' as u32
+    /// assert_eq!(&0, trie.get_ule(0x13E0).unwrap());  // 'Ꮰ' as u32
+    /// assert_eq!(&1, trie.get_ule(0x10044).unwrap());  // '𐁄' as u32
+    /// ```
+    pub fn get_ule(&self, code_point: u32) -> Option<&T::ULE> {
         // All code points up to the fast max limit are represented
         // individually in the `index` array to hold their `data` array position, and
         // thus only need 2 lookups for a [CodePointTrie::get()](`crate::codepointtrie::CodePointTrie::get`).
@@ -306,9 +326,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // Returns the trie value (or trie's error value).
         // If we cannot read from the data array, then return the associated constant
         // DATA_GET_ERROR_VALUE for the instance type for T: TrieValue.
-        self.data
-            .get(data_pos as usize)
-            .unwrap_or(T::DATA_GET_ERROR_VALUE)
+        self.data.as_slice().get(data_pos as usize)
     }
 
     /// Converts the CodePointTrie into one that returns another type of the same size.
