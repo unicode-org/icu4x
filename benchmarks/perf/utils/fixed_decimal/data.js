@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639070173778,
+  "lastUpdate": 1639113999626,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14789,6 +14789,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 129469,
             "range": "± 7771",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eae3099d496d66f4fdd27168ff89e5211d0b3bc7",
+          "message": "Moving deduplicating_array to its own crate (#1364)",
+          "timestamp": "2021-12-09T21:18:56-08:00",
+          "tree_id": "2b9b89f49d206e34b9782ded38c5359320adc574",
+          "url": "https://github.com/unicode-org/icu4x/commit/eae3099d496d66f4fdd27168ff89e5211d0b3bc7"
+        },
+        "date": 1639113992471,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 133736,
+            "range": "± 2628",
             "unit": "ns/iter"
           }
         ]
