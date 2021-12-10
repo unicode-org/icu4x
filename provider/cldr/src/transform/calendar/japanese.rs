@@ -21,7 +21,7 @@ use tinystr::TinyStr16;
 // TODO (#1116) move this into icu_calendars
 pub const JAPANESE_ERAS_V1: ResourceKey = resource_key!(Calendar, "japanese", 1);
 
-const JAPANESE_FILE: &'static str = include_str!("./snapshot-japanese@1.json");
+const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [JAPANESE_ERAS_V1];
 
