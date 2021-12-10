@@ -15,7 +15,7 @@ pub mod ffi {
 
     use crate::{
         locale::ffi::ICU4XLocale,
-        provider::ffi::{ICU4XDataProvider, ICU4XStaticDataProvider},
+        provider::ffi::ICU4XDataProvider,
     };
 
     pub struct ICU4XCreatePluralRulesResult {
@@ -57,16 +57,6 @@ pub mod ffi {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             Self::try_new_impl(locale, &provider, ty)
-        }
-
-        /// Creates a new [`ICU4XPluralRules`] from a [`ICU4XStaticDataProvider`].
-        pub fn try_new_from_static(
-            locale: &ICU4XLocale,
-            provider: &ICU4XStaticDataProvider,
-            ty: ICU4XPluralRuleType,
-        ) -> ICU4XCreatePluralRulesResult {
-            let provider = provider.0.as_ref();
-            Self::try_new_impl(locale, provider, ty)
         }
 
         fn try_new_impl<D>(

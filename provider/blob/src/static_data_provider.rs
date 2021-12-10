@@ -8,6 +8,7 @@ use icu_provider::buffer_provider::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use zerovec::map::ZeroMapBorrowed;
+use yoke::trait_hack::YokeTraitHack;
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -110,20 +111,13 @@ impl StaticDataProvider {
 impl<M> DataProvider<M> for StaticDataProvider
 where
     M: DataMarker,
-    // 'static is what we want here, because we are deserializing from a static buffer.
-    M::Yokeable: Deserialize<'static>,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let file = self.get_file(req)?;
-        let data = M::Yokeable::deserialize(&mut postcard::Deserializer::from_bytes(file))
-            .map_err(DataError::new_resc_error)?;
-        let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(BufferFormat::Postcard07);
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_owned(data)),
-        })
+        self.as_deserializing().load_payload(req)
     }
 }
 

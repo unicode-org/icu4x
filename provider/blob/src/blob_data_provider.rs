@@ -100,24 +100,10 @@ where
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
+    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let file = self.get_file(req)?;
-        let payload =
-            DataPayload::try_from_yoked_buffer::<(), DataError>(file, (), |bytes, _, _| {
-                let mut d = postcard::Deserializer::from_bytes(bytes);
-                let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)
-                    .map_err(DataError::new_resc_error)?;
-                Ok(data.0)
-            })?;
-        let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        metadata.buffer_format = Some(BufferFormat::Postcard07);
-        Ok(DataResponse {
-            metadata,
-            payload: Some(payload),
-        })
+        self.as_deserializing().load_payload(req)
     }
 }
 
