@@ -1,3 +1,38 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+//! A serde serialization strategy that uses `PartialEq` to reduce serialized size.
+//!
+//! This create can be used with Serde derive like this:
+//!
+//! ```rust
+//! # #[derive(Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+//! # struct Bar(String);
+//!
+//! #[derive(serde::Deserialize, serde::Serialize)]
+//! pub struct Foo {
+//!     #[serde(with = "deduplicating_array")]
+//!     data: [Bar; 12],
+//!     // ...
+//! }
+//! ```
+//!
+//! `Bar`s that are equal to a `Bar`s that appears earlier in the array will not be serialized
+//! (instead, the index of the first occurence is serialized). Deserialization clones the first
+//! `Bar` into all the indices where it occurs (hence `Bar` has to implement `Clone`).
+//!
+//! Human readable serialization represents skipped values as singleton arrays containing the
+//! target index, e.g. the Rust array `["Foo", "Bar", "Foo"]` will serialize to JSON `["Foo", "Bar", [0]]`.
+//!
+//! This implies that singleton integer arrays cannot be used as array elements (they do work in Bincode,
+//! but there's really not much point in using them).
+
+#![no_std]
+extern crate alloc;
+
+use alloc::fmt::{Error, Formatter};
+use alloc::format;
 use serde::de::{Deserialize, Deserializer, EnumAccess, Visitor};
 use serde::ser::{Serialize, Serializer};
 
@@ -47,10 +82,9 @@ where
                     // Fallbacks should always be to a previous value,
                     // which makes the assume_init_ref safe
                     if j >= i {
-                        return Err(D::Error::custom(alloc::format!(
+                        return Err(D::Error::custom(format!(
                             "Illegal forward fallback {}->{}",
-                            i,
-                            j
+                            i, j
                         )));
                     }
                     array[i].write(array[j].assume_init_ref().clone());
@@ -69,10 +103,9 @@ where
                     // Fallbacks should always be to a previous value,
                     // which makes the assume_init_ref safe
                     if j >= i {
-                        return Err(D::Error::custom(alloc::format!(
+                        return Err(D::Error::custom(format!(
                             "Illegal forward fallback {}->{}",
-                            i,
-                            j
+                            i, j
                         )));
                     }
                     array[i].write(array[j].assume_init_ref().clone());
@@ -156,10 +189,7 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for MachineDe<T> {
         impl<'de, R: Deserialize<'de>> Visitor<'de> for DedupeVisitor<R> {
             type Value = MachineDe<R>;
 
-            fn expecting(
-                &self,
-                formatter: &mut alloc::fmt::Formatter,
-            ) -> Result<(), alloc::fmt::Error> {
+            fn expecting(&self, formatter: &mut Formatter) -> Result<(), Error> {
                 formatter.write_str("Element or fallback reference.")
             }
 
@@ -187,8 +217,9 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for MachineDe<T> {
 
 #[cfg(test)]
 mod test {
+    use alloc::borrow::Cow;
+    use alloc::string::ToString;
     use serde::*;
-    use std::borrow::Cow;
 
     // Putting a Cow directly into the array doesn't borrow
     // for some reason, even with default array deserialization

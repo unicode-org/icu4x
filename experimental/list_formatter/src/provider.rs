@@ -36,7 +36,7 @@ pub mod key {
 pub struct ListFormatterPatternsV1<'data>(
     #[cfg_attr(
         feature = "provider_serde",
-        serde(borrow, with = "crate::deduplicating_array")
+        serde(borrow, with = "deduplicating_array")
     )]
     [ConditionalListJoinerPattern<'data>; 12],
 );
@@ -206,41 +206,5 @@ mod test {
         assert_eq!(pattern.parts("ab"), ("a", "b"));
         // Doesn't require a full match
         assert_eq!(pattern.parts("ba"), ("c", "d"));
-    }
-
-    #[test]
-    fn fallbacks_work() {
-        let comma = ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap();
-        let period = ConditionalListJoinerPattern::from_str("{0}. {1}").unwrap();
-        let semicolon = ConditionalListJoinerPattern::from_str("{0}; {1}").unwrap();
-        let colon = ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap();
-
-        // Different fields are returned correctly
-        let pattern = ListFormatterPatternsV1::new([
-            comma.clone(),
-            period.clone(),
-            semicolon.clone(),
-            colon.clone(),
-            comma.clone(),
-            period.clone(),
-            semicolon.clone(),
-            colon.clone(),
-            comma.clone(),
-            period.clone(),
-            semicolon.clone(),
-            colon.clone(),
-        ]);
-        assert_eq!(pattern.start(Width::Wide), &comma);
-        assert_eq!(pattern.start(Width::Short), &comma);
-        assert_eq!(pattern.start(Width::Narrow), &comma);
-        assert_eq!(pattern.middle(Width::Wide), &period);
-        assert_eq!(pattern.middle(Width::Short), &period);
-        assert_eq!(pattern.middle(Width::Narrow), &period);
-        assert_eq!(pattern.end(Width::Wide), &semicolon);
-        assert_eq!(pattern.end(Width::Short), &semicolon);
-        assert_eq!(pattern.end(Width::Narrow), &semicolon);
-        assert_eq!(pattern.pair(Width::Wide), &colon);
-        assert_eq!(pattern.pair(Width::Short), &colon);
-        assert_eq!(pattern.pair(Width::Narrow), &colon);
     }
 }
