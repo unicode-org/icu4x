@@ -241,7 +241,7 @@ impl ZeroCopyFrom<&'_ str> for &'static str {
     }
 }
 
-impl<T> ZeroCopyFrom<[T]> for &'static [T] {
+impl<T> ZeroCopyFrom<[T]> for &'static [T] where T: 'static {
     fn zero_copy_from<'b>(cart: &'b [T]) -> &'b [T] {
         cart
     }
