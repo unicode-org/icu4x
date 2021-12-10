@@ -278,11 +278,17 @@ pub trait LineBreakType<'a> {
 
     fn get_linebreak_property(iterator: &LineBreakIteratorImpl<'a, Self>) -> u8;
 
-    fn get_linebreak_property_with_rule(iterator: &LineBreakIteratorImpl<'a, Self>, c: Self::CharType) -> u8;
+    fn get_linebreak_property_with_rule(
+        iterator: &LineBreakIteratorImpl<'a, Self>,
+        c: Self::CharType,
+    ) -> u8;
 
     fn is_break_by_normal(iterator: &LineBreakIteratorImpl<'a, Self>) -> bool;
 
-    fn get_line_break_by_platform_fallback(iterator: &LineBreakIteratorImpl<'a, Self>, input: &[u16]) -> Vec<usize>;
+    fn get_line_break_by_platform_fallback(
+        iterator: &LineBreakIteratorImpl<'a, Self>,
+        input: &[u16],
+    ) -> Vec<usize>;
 }
 
 #[allow(dead_code)]
@@ -534,7 +540,6 @@ impl<'a> LineBreakIteratorImpl<'a, char> {
     }
 }
 
-
 impl<'a> LineBreakType<'a> for char {
     type IterAttr = CharIndices<'a>;
     type CharType = char;
@@ -647,7 +652,10 @@ impl<'a> LineBreakType<'a> for Latin1Char {
         false
     }
 
-    fn get_line_break_by_platform_fallback(_: &LineBreakIteratorLatin1, _input: &[u16]) -> Vec<usize> {
+    fn get_line_break_by_platform_fallback(
+        _: &LineBreakIteratorLatin1,
+        _input: &[u16],
+    ) -> Vec<usize> {
         panic!("not reachable");
     }
 }
@@ -705,7 +713,11 @@ impl<'a> LineBreakType<'a> for Utf16Char {
     }
 
     fn get_linebreak_property_with_rule(iterator: &LineBreakIteratorUtf16, c: u32) -> u8 {
-        get_linebreak_property_utf32_with_rule(c, iterator.line_break_rule, iterator.word_break_rule)
+        get_linebreak_property_utf32_with_rule(
+            c,
+            iterator.line_break_rule,
+            iterator.word_break_rule,
+        )
     }
 
     fn is_break_by_normal(iterator: &LineBreakIteratorUtf16) -> bool {
@@ -717,7 +729,10 @@ impl<'a> LineBreakType<'a> for Utf16Char {
         use_complex_breaking_utf32(c)
     }
 
-    fn get_line_break_by_platform_fallback(_: &LineBreakIteratorUtf16, input: &[u16]) -> Vec<usize> {
+    fn get_line_break_by_platform_fallback(
+        _: &LineBreakIteratorUtf16,
+        input: &[u16],
+    ) -> Vec<usize> {
         if let Some(mut ret) = get_line_break_utf16(input) {
             ret.push(input.len());
             return ret;
