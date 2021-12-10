@@ -94,9 +94,7 @@ impl DataProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsProperty
         let data_struct = ScriptExtensionsPropertyV1::try_from(source_scx_data)?;
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
+            metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data_struct)),
         })
     }
