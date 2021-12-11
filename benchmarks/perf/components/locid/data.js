@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639180243742,
+  "lastUpdate": 1639265469354,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18533,6 +18533,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3635,
             "range": "± 42",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "61620c52818565dfec760a93f1435f80590f1c3a",
+          "message": "Change break_iterator_impl macro to use a helper trait (#1380)",
+          "timestamp": "2021-12-11T15:18:04-08:00",
+          "tree_id": "1b6c7144be64da71d9a883bd94ebca8255db8360",
+          "url": "https://github.com/unicode-org/icu4x/commit/61620c52818565dfec760a93f1435f80590f1c3a"
+        },
+        "date": 1639265461209,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3093,
+            "range": "± 214",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5024,
+            "range": "± 262",
             "unit": "ns/iter"
           }
         ]
