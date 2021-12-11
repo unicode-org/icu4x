@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![warn(missing_docs)]
+// TODO: Document all exported types in this module
+// #![warn(missing_docs)]
 
 //! A segmenter implementation for the following rules.
 //!
