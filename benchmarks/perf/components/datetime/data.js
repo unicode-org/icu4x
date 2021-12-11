@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639180329538,
+  "lastUpdate": 1639265488420,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14543,6 +14543,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 375132,
             "range": "± 29328",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "61620c52818565dfec760a93f1435f80590f1c3a",
+          "message": "Change break_iterator_impl macro to use a helper trait (#1380)",
+          "timestamp": "2021-12-11T15:18:04-08:00",
+          "tree_id": "1b6c7144be64da71d9a883bd94ebca8255db8360",
+          "url": "https://github.com/unicode-org/icu4x/commit/61620c52818565dfec760a93f1435f80590f1c3a"
+        },
+        "date": 1639265480816,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 146498,
+            "range": "± 9593",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1632429,
+            "range": "± 71381",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 419613,
+            "range": "± 24791",
             "unit": "ns/iter"
           }
         ]
