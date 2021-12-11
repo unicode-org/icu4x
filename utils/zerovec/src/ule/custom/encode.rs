@@ -100,11 +100,23 @@ unsafe impl EncodeAsVarULE<str> for String {
     }
 }
 
-unsafe impl<T: ULE, A: AsULE<ULE = T> + 'static> EncodeAsVarULE<ZeroSlice<A>> for Vec<T> {
-    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[<ZeroSlice<A> as VarULE>::as_byte_slice(
-            ZeroSlice::<A>::from_ule_slice(self),
-        )])
+unsafe impl<T> EncodeAsVarULE<ZeroSlice<T>> for Vec<T>
+where
+    T: EqULE + 'static
+{
+    fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
+        // unnecessary if the other two are implemented
+        unreachable!()
+    }
+
+    fn encode_var_ule_len(&self) -> usize {
+        self.len() * core::mem::size_of::<T>()
+    }
+
+    fn encode_var_ule_write(&self, dst: &mut [u8]) {
+        let zv = ZeroVec::from_slice(&self);
+        debug_assert_eq!(zv.as_bytes().len(), dst.len());
+        dst.copy_from_slice(zv.as_bytes());
     }
 }
 
@@ -117,12 +129,12 @@ where
     }
 }
 
-unsafe impl<'a, T> custom::EncodeAsVarULE<ZeroSlice<T>> for ZeroVec<'a, T>
+unsafe impl<T> EncodeAsVarULE<ZeroSlice<T>> for ZeroVec<'_, T>
 where
     T: AsULE + 'static,
 {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
-        // unnecesessary if the other two are implemented
+        // unnecessary if the other two are implemented
         unreachable!()
     }
 

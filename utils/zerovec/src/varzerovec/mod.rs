@@ -101,12 +101,12 @@ pub use slice::VarZeroSlice;
 ///              0, 0, 42, 0, 0, 0, 3, 217, 0, 0, 57, 48, 0, 0, 49, 212, 0, 0,
 ///              9, 0, 0, 0];
 ///
-/// let zerovec: VarZeroVec<ZeroSlice<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
+/// let zerovec1: VarZeroVec<ZeroSlice<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
+/// assert_eq!(zerovec1.get(2).and_then(|v| v.get(1)), Some(55555));
 ///
-/// assert_eq!(zerovec.get(2).and_then(|v| v.get(1)), Some(55555));
-/// for (zv, v) in zerovec.iter().zip(numbers.iter()) {
-///     assert_eq!(zv, &**v);   
-/// }
+/// let zerovec2: VarZeroVec<ZeroSlice<u32>> = numbers.as_slice().into();
+/// assert_eq!(zerovec1, zerovec2);
+///
 /// # Ok::<(), ZeroVecError>(())
 /// ```
 ///

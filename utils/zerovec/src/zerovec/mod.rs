@@ -448,7 +448,7 @@ where
 
 impl<'a, T> ZeroVec<'a, T>
 where
-    T: AsULE + SliceAsULE,
+    T: EqULE,
 {
     /// Attempts to create a `ZeroVec<'a, T>` from a `&'a [T]` by borrowing the argument.
     ///
