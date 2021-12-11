@@ -847,7 +847,7 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter = LineBreakSegmenter::try_new().expect("Segmenter data is present");
+        let segmenter = LineBreakSegmenter::try_new().expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());

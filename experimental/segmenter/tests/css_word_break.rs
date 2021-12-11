@@ -2,72 +2,46 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::LineBreakIterator;
-use icu_segmenter::LineBreakIteratorUtf16;
 use icu_segmenter::LineBreakRule;
 use icu_segmenter::WordBreakRule;
+use icu_segmenter::LineBreakSegmenter;
+use icu_segmenter::LineBreakOptions;
 
-fn break_all(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
-    let iter = LineBreakIterator::new_with_break_rule(
-        s,
-        LineBreakRule::Strict,
-        WordBreakRule::BreakAll,
-        false,
-    );
+fn check_with_options(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>, options: LineBreakOptions) {
+    let segmenter = LineBreakSegmenter::try_new_with_options(options).expect("Data exists");
+
+    let iter = segmenter.segment_str(s);
     let result: Vec<usize> = iter.collect();
     assert_eq!(expect_utf8, result, "{}", s);
 
     let s_utf16: Vec<u16> = s.encode_utf16().collect();
-    let iter = LineBreakIteratorUtf16::new_with_break_rule(
-        &s_utf16,
-        LineBreakRule::Strict,
-        WordBreakRule::BreakAll,
-        false,
-    );
+    let iter = segmenter.segment_utf16(&s_utf16);
     let result: Vec<usize> = iter.collect();
     assert_eq!(expect_utf16, result, "{}", s);
+}
+
+fn break_all(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
+    let mut options = LineBreakOptions::default();
+    options.line_break_rule = LineBreakRule::Strict;
+    options.word_break_rule = WordBreakRule::BreakAll;
+    options.ja_zh = false;
+    check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
 fn keep_all(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
-    let iter = LineBreakIterator::new_with_break_rule(
-        s,
-        LineBreakRule::Strict,
-        WordBreakRule::KeepAll,
-        false,
-    );
-    let result: Vec<usize> = iter.collect();
-    assert_eq!(expect_utf8, result, "{}", s);
-
-    let s_utf16: Vec<u16> = s.encode_utf16().collect();
-    let iter = LineBreakIteratorUtf16::new_with_break_rule(
-        &s_utf16,
-        LineBreakRule::Strict,
-        WordBreakRule::KeepAll,
-        false,
-    );
-    let result: Vec<usize> = iter.collect();
-    assert_eq!(expect_utf16, result, "{}", s);
+    let mut options = LineBreakOptions::default();
+    options.line_break_rule = LineBreakRule::Strict;
+    options.word_break_rule = WordBreakRule::KeepAll;
+    options.ja_zh = false;
+    check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
 fn normal(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
-    let iter = LineBreakIterator::new_with_break_rule(
-        s,
-        LineBreakRule::Strict,
-        WordBreakRule::Normal,
-        false,
-    );
-    let result: Vec<usize> = iter.collect();
-    assert_eq!(expect_utf8, result, "{}", s);
-
-    let s_utf16: Vec<u16> = s.encode_utf16().collect();
-    let iter = LineBreakIteratorUtf16::new_with_break_rule(
-        &s_utf16,
-        LineBreakRule::Strict,
-        WordBreakRule::Normal,
-        false,
-    );
-    let result: Vec<usize> = iter.collect();
-    assert_eq!(expect_utf16, result, "{}", s);
+    let mut options = LineBreakOptions::default();
+    options.line_break_rule = LineBreakRule::Strict;
+    options.word_break_rule = WordBreakRule::Normal;
+    options.ja_zh = false;
+    check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
 #[test]
