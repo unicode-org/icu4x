@@ -14,6 +14,7 @@ use crate::rule_table::*;
 use core::char;
 use core::str::CharIndices;
 use unicode_width::UnicodeWidthChar;
+use icu_provider::DataError;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line breaker.
@@ -21,7 +22,7 @@ use unicode_width::UnicodeWidthChar;
 /// Each enum value has the same meaning with respect to the `line-break`
 /// property values in the CSS Text spec. See the details in
 /// <https://drafts.csswg.org/css-text-3/#line-break-property>.
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub enum LineBreakRule {
     /// Breaks text using the least restrictive set of line-breaking rules.
     /// Typically used for short lines, such as in newspapers.
@@ -49,7 +50,7 @@ pub enum LineBreakRule {
 /// Each enum value has the same meaning with respect to the `word-break`
 /// property values in the CSS Text spec. See the details in
 /// <https://drafts.csswg.org/css-text-3/#word-break-property>
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub enum WordBreakRule {
     /// Words break according to their customary rules. See the details in
     /// <https://drafts.csswg.org/css-text-3/#valdef-word-break-normal>.
@@ -68,7 +69,10 @@ pub enum WordBreakRule {
 #[non_exhaustive]
 #[derive(Clone, PartialEq, Eq)]
 pub struct LineBreakOptions {
+    /// Strictness of line-breaking rules. See [`LineBreakRule`].
     pub line_break_rule: LineBreakRule,
+
+    /// Line break opportunities between letters. See [`WordBreakRule`].
     pub word_break_rule: WordBreakRule,
 
     /// Use `true` as a hint to the line breaker that the writing
@@ -95,22 +99,22 @@ pub struct LineBreakSegmenter {
 }
 
 impl LineBreakSegmenter {
-    pub fn new() -> Self {
-        // Note: This will return a Result once DataProvider is added
-        Self {
+    pub fn new() -> Result<Self, DataError> {
+        // Note: This will be able to return an Error once DataProvider is added
+        Ok(Self {
             options: Default::default()
-        }
+        })
     }
 
-    pub fn new_with_options(options: LineBreakOptions) -> Self {
-        // Note: This will return a Result once DataProvider is added
-        Self {
+    pub fn new_with_options(options: LineBreakOptions) -> Result<Self, DataError> {
+        // Note: This will be able to return an Error once DataProvider is added
+        Ok(Self {
             options
-        }
+        })
     }
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str(&self, input: &str) -> LineBreakIteratorImpl<char> {
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorImpl<'s, char> {
         LineBreakIteratorImpl {
             iter: input.char_indices(),
             len: input.len(),
@@ -123,7 +127,7 @@ impl LineBreakSegmenter {
     }
 
     /// Create a line break iterator for a Latin-1 (8-bit) string.
-    pub fn segment_latin1(&self, input: &[u8]) -> LineBreakIteratorImpl<Latin1Char> {
+    pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorImpl<'s, Latin1Char> {
         LineBreakIteratorImpl {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -136,7 +140,7 @@ impl LineBreakSegmenter {
     }
 
     /// Create a line break iterator for a UTF-16 string.
-    pub fn segment_utf16(&self, input: &[u16]) -> LineBreakIteratorImpl<Utf16Char> {
+    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorImpl<'s, Utf16Char> {
         LineBreakIteratorImpl {
             iter: Utf16Indices::new(input),
             len: input.len(),
@@ -352,7 +356,7 @@ fn use_complex_breaking_utf32(codepoint: u32) -> bool {
 /// A trait allowing for LineBreakIterator to be generalized to multiple string iteration methods.
 ///
 /// This is implemented by ICU4X for several common string types.
-pub trait LineBreakType<'a> {
+pub trait LineBreakType<'s> {
     /// The iterator over characters.
     type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
 
@@ -361,17 +365,17 @@ pub trait LineBreakType<'a> {
 
     fn use_complex_breaking(c: Self::CharType) -> bool;
 
-    fn get_linebreak_property(iterator: &LineBreakIteratorImpl<'a, Self>) -> u8;
+    fn get_linebreak_property(iterator: &LineBreakIteratorImpl<'s, Self>) -> u8;
 
     fn get_linebreak_property_with_rule(
-        iterator: &LineBreakIteratorImpl<'a, Self>,
+        iterator: &LineBreakIteratorImpl<'s, Self>,
         c: Self::CharType,
     ) -> u8;
 
-    fn is_break_by_normal(iterator: &LineBreakIteratorImpl<'a, Self>) -> bool;
+    fn is_break_by_normal(iterator: &LineBreakIteratorImpl<'s, Self>) -> bool;
 
     fn get_line_break_by_platform_fallback(
-        iterator: &LineBreakIteratorImpl<'a, Self>,
+        iterator: &LineBreakIteratorImpl<'s, Self>,
         input: &[u16],
     ) -> Vec<usize>;
 }
@@ -379,10 +383,15 @@ pub trait LineBreakType<'a> {
 /// The struct implementing the [`Iterator`] trait over the line break
 /// opportunities of the given string. Please see the [module-level
 /// documentation] for its usages.
+/// 
+/// Lifetimes:
+/// 
+/// - `'l` = lifetime of the [`LineBreakSegmenter`] object from which this iterator was created
+/// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
 /// [module-level documentation]: ../index.html
-pub struct LineBreakIteratorImpl<'a, Y: LineBreakType<'a> + ?Sized> {
+pub struct LineBreakIteratorImpl<'s, Y: LineBreakType<'s> + ?Sized> {
     iter: Y::IterAttr,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
@@ -392,7 +401,7 @@ pub struct LineBreakIteratorImpl<'a, Y: LineBreakType<'a> + ?Sized> {
     ja_zh: bool,
 }
 
-impl<'a, Y: LineBreakType<'a>> Iterator for LineBreakIteratorImpl<'a, Y> {
+impl<'s, Y: LineBreakType<'s>> Iterator for LineBreakIteratorImpl<'s, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -533,7 +542,7 @@ impl<'a, Y: LineBreakType<'a>> Iterator for LineBreakIteratorImpl<'a, Y> {
     }
 }
 
-impl<'a, Y: LineBreakType<'a>> LineBreakIteratorImpl<'a, Y> {
+impl<'s, Y: LineBreakType<'s>> LineBreakIteratorImpl<'s, Y> {
     #[inline]
     fn is_eof(&mut self) -> bool {
         if self.current_pos_data.is_none() {
@@ -584,10 +593,10 @@ impl<'a, Y: LineBreakType<'a>> LineBreakIteratorImpl<'a, Y> {
     }
 }
 
-pub type LineBreakIterator<'a> = LineBreakIteratorImpl<'a, char>;
+pub type LineBreakIterator<'s> = LineBreakIteratorImpl<'s, char>;
 
-impl<'a> LineBreakType<'a> for char {
-    type IterAttr = CharIndices<'a>;
+impl<'s> LineBreakType<'s> for char {
+    type IterAttr = CharIndices<'s>;
     type CharType = char;
 
     fn get_linebreak_property(iterator: &LineBreakIterator) -> u8 {
@@ -640,10 +649,10 @@ impl<'a> LineBreakType<'a> for char {
 pub struct Latin1Char(pub u8);
 
 /// Latin-1 version of line break iterator.
-pub type LineBreakIteratorLatin1<'a> = LineBreakIteratorImpl<'a, Latin1Char>;
+pub type LineBreakIteratorLatin1<'s> = LineBreakIteratorImpl<'s, Latin1Char>;
 
-impl<'a> LineBreakType<'a> for Latin1Char {
-    type IterAttr = Latin1Indices<'a>;
+impl<'s> LineBreakType<'s> for Latin1Char {
+    type IterAttr = Latin1Indices<'s>;
     type CharType = u8; // TODO: Latin1Char
 
     fn get_linebreak_property(iterator: &LineBreakIteratorLatin1) -> u8 {
@@ -677,10 +686,10 @@ impl<'a> LineBreakType<'a> for Latin1Char {
 pub struct Utf16Char(pub u32);
 
 /// UTF-16 version of line break iterator.
-pub type LineBreakIteratorUtf16<'a> = LineBreakIteratorImpl<'a, Utf16Char>;
+pub type LineBreakIteratorUtf16<'s> = LineBreakIteratorImpl<'s, Utf16Char>;
 
-impl<'a> LineBreakType<'a> for Utf16Char {
-    type IterAttr = Utf16Indices<'a>;
+impl<'s> LineBreakType<'s> for Utf16Char {
+    type IterAttr = Utf16Indices<'s>;
     type CharType = u32; // TODO: Utf16Char
 
     fn get_linebreak_property(iterator: &LineBreakIteratorUtf16) -> u8 {
@@ -838,82 +847,84 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let mut iter = LineBreakIterator::new("hello world");
+        let segmenter = LineBreakSegmenter::new().expect("Segmenter data is present");
+
+        let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());
         assert_eq!(Some(11), iter.next());
         assert_eq!(None, iter.next());
 
-        iter = LineBreakIterator::new("$10 $10");
+        iter = segmenter.segment_str("$10 $10");
         assert_eq!(Some(4), iter.next());
         assert_eq!(Some(7), iter.next());
 
         // LB10
 
         // LB14
-        iter = LineBreakIterator::new("[  abc def");
+        iter = segmenter.segment_str("[  abc def");
         assert_eq!(Some(7), iter.next());
         assert_eq!(Some(10), iter.next());
         assert_eq!(None, iter.next());
 
         let input: [u8; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
-        let mut iter_u8 = LineBreakIteratorLatin1::new(&input);
+        let mut iter_u8 = segmenter.segment_latin1(&input);
         assert_eq!(Some(7), iter_u8.next());
         assert_eq!(Some(10), iter_u8.next());
         assert_eq!(None, iter_u8.next());
 
         let input: [u16; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
-        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        let mut iter_u16 = segmenter.segment_utf16(&input);
         assert_eq!(Some(7), iter_u16.next());
 
         // LB15
-        iter = LineBreakIterator::new("abc\u{0022}  (def");
+        iter = segmenter.segment_str("abc\u{0022}  (def");
         assert_eq!(Some(10), iter.next());
 
         let input: [u8; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
-        let mut iter_u8 = LineBreakIteratorLatin1::new(&input);
+        let mut iter_u8 = segmenter.segment_latin1(&input);
         assert_eq!(Some(10), iter_u8.next());
 
         let input: [u16; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
-        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        let mut iter_u16 = segmenter.segment_utf16(&input);
         assert_eq!(Some(10), iter_u16.next());
 
         // LB16
-        iter = LineBreakIterator::new("\u{0029}\u{203C}");
+        iter = segmenter.segment_str("\u{0029}\u{203C}");
         assert_eq!(Some(4), iter.next());
-        iter = LineBreakIterator::new("\u{0029}  \u{203C}");
+        iter = segmenter.segment_str("\u{0029}  \u{203C}");
         assert_eq!(Some(6), iter.next());
 
         let input: [u16; 4] = [0x29, 0x20, 0x20, 0x203c];
-        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        let mut iter_u16 = segmenter.segment_utf16(&input);
         assert_eq!(Some(4), iter_u16.next());
 
         // LB17
-        iter = LineBreakIterator::new("\u{2014}\u{2014}aa");
+        iter = segmenter.segment_str("\u{2014}\u{2014}aa");
         assert_eq!(Some(6), iter.next());
-        iter = LineBreakIterator::new("\u{2014}  \u{2014}aa");
+        iter = segmenter.segment_str("\u{2014}  \u{2014}aa");
         assert_eq!(Some(8), iter.next());
 
-        iter = LineBreakIterator::new("\u{2014}\u{2014}  \u{2014}\u{2014}123 abc");
+        iter = segmenter.segment_str("\u{2014}\u{2014}  \u{2014}\u{2014}123 abc");
         assert_eq!(Some(14), iter.next());
         assert_eq!(Some(18), iter.next());
         assert_eq!(Some(21), iter.next());
 
         // LB25
-        let mut iter = LineBreakIterator::new("(0,1)+(2,3)");
+        let mut iter = segmenter.segment_str("(0,1)+(2,3)");
         assert_eq!(Some(11), iter.next());
         let input: [u16; 11] = [
             0x28, 0x30, 0x2C, 0x31, 0x29, 0x2B, 0x28, 0x32, 0x2C, 0x33, 0x29,
         ];
-        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        let mut iter_u16 = segmenter.segment_utf16(&input);
         assert_eq!(Some(11), iter_u16.next());
 
         let input: [u16; 13] = [
             0x2014, 0x2014, 0x20, 0x20, 0x2014, 0x2014, 0x31, 0x32, 0x33, 0x20, 0x61, 0x62, 0x63,
         ];
-        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        let mut iter_u16 = segmenter.segment_utf16(&input);
         assert_eq!(Some(6), iter_u16.next());
 
-        iter = LineBreakIterator::new("\u{1F3FB} \u{1F3FB}");
+        iter = segmenter.segment_str("\u{1F3FB} \u{1F3FB}");
         assert_eq!(Some(5), iter.next());
     }
 }
