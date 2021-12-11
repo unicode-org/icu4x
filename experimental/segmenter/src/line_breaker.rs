@@ -64,6 +64,91 @@ pub enum WordBreakRule {
     KeepAll,
 }
 
+/// Options to tailor line breaking behavior, such as for CSS.
+#[non_exhaustive]
+#[derive(Clone, PartialEq, Eq)]
+pub struct LineBreakOptions {
+    pub line_break_rule: LineBreakRule,
+    pub word_break_rule: WordBreakRule,
+
+    /// Use `true` as a hint to the line breaker that the writing
+    /// system is Chinese or Japanese. This allows more break opportunities when
+    /// `LineBreakRule` is `Normal` or `Loose`. See
+    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
+    /// 
+    /// This option has no effect in Latin-1 mode.
+    pub ja_zh: bool,
+}
+
+impl Default for LineBreakOptions {
+    fn default() -> Self {
+        Self {
+            line_break_rule: LineBreakRule::Strict,
+            word_break_rule: WordBreakRule::Normal,
+            ja_zh: false,
+        }
+    }
+}
+
+pub struct LineBreakSegmenter {
+    options: LineBreakOptions
+}
+
+impl LineBreakSegmenter {
+    pub fn new() -> Self {
+        // Note: This will return a Result once DataProvider is added
+        Self {
+            options: Default::default()
+        }
+    }
+
+    pub fn new_with_options(options: LineBreakOptions) -> Self {
+        // Note: This will return a Result once DataProvider is added
+        Self {
+            options
+        }
+    }
+
+    /// Create a line break iterator for an `str` (a UTF-8 string).
+    pub fn segment_str(&self, input: &str) -> LineBreakIteratorImpl<char> {
+        LineBreakIteratorImpl {
+            iter: input.char_indices(),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            line_break_rule: self.options.line_break_rule,
+            word_break_rule: self.options.word_break_rule,
+            ja_zh: self.options.ja_zh,
+        }
+    }
+
+    /// Create a line break iterator for a Latin-1 (8-bit) string.
+    pub fn segment_latin1(&self, input: &[u8]) -> LineBreakIteratorImpl<Latin1Char> {
+        LineBreakIteratorImpl {
+            iter: Latin1Indices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            line_break_rule: self.options.line_break_rule,
+            word_break_rule: self.options.word_break_rule,
+            ja_zh: self.options.ja_zh,
+        }
+    }
+
+    /// Create a line break iterator for a UTF-16 string.
+    pub fn segment_utf16(&self, input: &[u16]) -> LineBreakIteratorImpl<Utf16Char> {
+        LineBreakIteratorImpl {
+            iter: Utf16Indices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            line_break_rule: self.options.line_break_rule,
+            word_break_rule: self.options.word_break_rule,
+            ja_zh: self.options.ja_zh,
+        }
+    }
+}
+
 fn get_linebreak_property_utf32_with_rule(
     codepoint: u32,
     line_break_rule: LineBreakRule,
@@ -501,44 +586,6 @@ impl<'a, Y: LineBreakType<'a>> LineBreakIteratorImpl<'a, Y> {
 
 pub type LineBreakIterator<'a> = LineBreakIteratorImpl<'a, char>;
 
-impl<'a> LineBreakIteratorImpl<'a, char> {
-    /// Create a line break iterator for an `str` (a UTF-8 string).
-    pub fn new(input: &str) -> LineBreakIterator {
-        LineBreakIterator {
-            iter: input.char_indices(),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            line_break_rule: LineBreakRule::Strict,
-            word_break_rule: WordBreakRule::Normal,
-            ja_zh: false,
-        }
-    }
-
-    /// Create line break iterator with CSS rules for an `str` (a UTF-8 string).
-    ///
-    /// * `ja_zh` - Use `true` as a hint to the line breaker that the writing
-    /// system is Chinese or Japanese. This allows more break opportunities when
-    /// `LineBreakRule` is `Normal` or `Loose`. See
-    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
-    pub fn new_with_break_rule(
-        input: &str,
-        line_break_rule: LineBreakRule,
-        word_break_rule: WordBreakRule,
-        ja_zh: bool,
-    ) -> LineBreakIterator {
-        LineBreakIterator {
-            iter: input.char_indices(),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            line_break_rule,
-            word_break_rule,
-            ja_zh,
-        }
-    }
-}
-
 impl<'a> LineBreakType<'a> for char {
     type IterAttr = CharIndices<'a>;
     type CharType = char;
@@ -595,39 +642,6 @@ pub struct Latin1Char(pub u8);
 /// Latin-1 version of line break iterator.
 pub type LineBreakIteratorLatin1<'a> = LineBreakIteratorImpl<'a, Latin1Char>;
 
-impl<'a> LineBreakIteratorImpl<'a, Latin1Char> {
-    /// Create a line break iterator for a Latin-1 (8-bit) string.
-    pub fn new(input: &[u8]) -> LineBreakIteratorLatin1 {
-        LineBreakIteratorLatin1 {
-            iter: Latin1Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            line_break_rule: LineBreakRule::Strict,
-            word_break_rule: WordBreakRule::Normal,
-            ja_zh: false,
-        }
-    }
-
-    /// Create a line break iterator with CSS rules for a Latin-1 (8-bit)
-    /// string.
-    pub fn new_with_break_rule(
-        input: &[u8],
-        line_break_rule: LineBreakRule,
-        word_break_rule: WordBreakRule,
-    ) -> LineBreakIteratorLatin1 {
-        LineBreakIteratorLatin1 {
-            iter: Latin1Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            line_break_rule,
-            word_break_rule,
-            ja_zh: false,
-        }
-    }
-}
-
 impl<'a> LineBreakType<'a> for Latin1Char {
     type IterAttr = Latin1Indices<'a>;
     type CharType = u8; // TODO: Latin1Char
@@ -664,44 +678,6 @@ pub struct Utf16Char(pub u32);
 
 /// UTF-16 version of line break iterator.
 pub type LineBreakIteratorUtf16<'a> = LineBreakIteratorImpl<'a, Utf16Char>;
-
-impl<'a> LineBreakIteratorImpl<'a, Utf16Char> {
-    /// Create a line break iterator for a UTF-16 string.
-    pub fn new(input: &[u16]) -> LineBreakIteratorUtf16 {
-        LineBreakIteratorUtf16 {
-            iter: Utf16Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            line_break_rule: LineBreakRule::Strict,
-            word_break_rule: WordBreakRule::Normal,
-            ja_zh: false,
-        }
-    }
-
-    /// Create a line break iterator with CSS rules for a UTF-16 string.
-    ///
-    /// * `ja_zh` - Use `true` as a hint to the line breaker that the writing
-    /// system is Chinese or Japanese. This allows more break opportunities when
-    /// [`LineBreakRule`] is `Normal` or `Loose`. See
-    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
-    pub fn new_with_break_rule(
-        input: &[u16],
-        line_break_rule: LineBreakRule,
-        word_break_rule: WordBreakRule,
-        ja_zh: bool,
-    ) -> LineBreakIteratorUtf16 {
-        LineBreakIteratorUtf16 {
-            iter: Utf16Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            line_break_rule,
-            word_break_rule,
-            ja_zh,
-        }
-    }
-}
 
 impl<'a> LineBreakType<'a> for Utf16Char {
     type IterAttr = Utf16Indices<'a>;
@@ -742,14 +718,7 @@ impl<'a> LineBreakType<'a> for Utf16Char {
 
 #[cfg(test)]
 mod tests {
-    use crate::lb_define::*;
-    use crate::line_breaker::get_linebreak_property_with_rule;
-    use crate::line_breaker::is_break;
-    use crate::LineBreakIterator;
-    use crate::LineBreakIteratorLatin1;
-    use crate::LineBreakIteratorUtf16;
-    use crate::LineBreakRule;
-    use crate::WordBreakRule;
+    use super::*;
 
     fn get_linebreak_property(codepoint: char) -> u8 {
         get_linebreak_property_with_rule(codepoint, LineBreakRule::Strict, WordBreakRule::Normal)
