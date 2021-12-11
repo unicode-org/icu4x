@@ -291,7 +291,6 @@ pub trait LineBreakType<'a> {
     ) -> Vec<usize>;
 }
 
-#[allow(dead_code)]
 /// The struct implementing the [`Iterator`] trait over the line break
 /// opportunities of the given string. Please see the [module-level
 /// documentation] for its usages.
