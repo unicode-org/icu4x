@@ -22,7 +22,7 @@ mod visitor;
 ///
 /// ```rust,ignore
 /// #[derive(Yokeable)]
-/// #[yoke(manually_prove_covariance)]
+/// #[yoke(prove_covariance_manually)]
 /// ```
 ///
 /// Beyond this case, if the derive fails to compile due to lifetime issues, it
