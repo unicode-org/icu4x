@@ -99,14 +99,14 @@ pub struct LineBreakSegmenter {
 }
 
 impl LineBreakSegmenter {
-    pub fn new() -> Result<Self, DataError> {
+    pub fn try_new() -> Result<Self, DataError> {
         // Note: This will be able to return an Error once DataProvider is added
         Ok(Self {
             options: Default::default()
         })
     }
 
-    pub fn new_with_options(options: LineBreakOptions) -> Result<Self, DataError> {
+    pub fn try_new_with_options(options: LineBreakOptions) -> Result<Self, DataError> {
         // Note: This will be able to return an Error once DataProvider is added
         Ok(Self {
             options
@@ -847,7 +847,7 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter = LineBreakSegmenter::new().expect("Segmenter data is present");
+        let segmenter = LineBreakSegmenter::try_new().expect("Segmenter data is present");
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());
