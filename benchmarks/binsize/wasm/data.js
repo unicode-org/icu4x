@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639265321397,
+  "lastUpdate": 1639270283885,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26087,6 +26087,150 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/61620c52818565dfec760a93f1435f80590f1c3a"
         },
         "date": 1639265312571,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "simple_static+opt.wasm",
+            "value": 992883,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 989822,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13423,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 9103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 984947,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 1159395,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm",
+            "value": 11466,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 7255,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12313,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10134,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 8840,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30549,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 16201,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 989832,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17500,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13539,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 8740,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 7964,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 1209232,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7e1d77e59e3145175d1267905eef35eefecc34b7",
+          "message": "Fix typo in Yokeable documentation (#1386)",
+          "timestamp": "2021-12-11T16:45:39-08:00",
+          "tree_id": "905795728b12e9ff444346a16fe51a3544626d9f",
+          "url": "https://github.com/unicode-org/icu4x/commit/7e1d77e59e3145175d1267905eef35eefecc34b7"
+        },
+        "date": 1639270276841,
         "tool": "ndjson",
         "benches": [
           {
