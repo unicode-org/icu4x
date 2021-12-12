@@ -118,7 +118,7 @@ impl LineBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            segmenter: &self,
+            segmenter: self,
         }
     }
 
@@ -132,7 +132,7 @@ impl LineBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            segmenter: &self,
+            segmenter: self,
         }
     }
 
@@ -146,7 +146,7 @@ impl LineBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            segmenter: &self,
+            segmenter: self,
         }
     }
 }
