@@ -112,8 +112,8 @@ impl LineBreakSegmenter {
     }
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorImpl<'s, char> {
-        LineBreakIteratorImpl {
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIterator<'s, char> {
+        LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
@@ -128,8 +128,8 @@ impl LineBreakSegmenter {
     pub fn segment_latin1<'l, 's>(
         &'l self,
         input: &'s [u8],
-    ) -> LineBreakIteratorImpl<'s, Latin1Char> {
-        LineBreakIteratorImpl {
+    ) -> LineBreakIterator<'s, Latin1Char> {
+        LineBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -144,8 +144,8 @@ impl LineBreakSegmenter {
     pub fn segment_utf16<'l, 's>(
         &'l self,
         input: &'s [u16],
-    ) -> LineBreakIteratorImpl<'s, Utf16Char> {
-        LineBreakIteratorImpl {
+    ) -> LineBreakIterator<'s, Utf16Char> {
+        LineBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -369,17 +369,17 @@ pub trait LineBreakType<'s> {
 
     fn use_complex_breaking(c: Self::CharType) -> bool;
 
-    fn get_linebreak_property(iterator: &LineBreakIteratorImpl<'s, Self>) -> u8;
+    fn get_linebreak_property(iterator: &LineBreakIterator<'s, Self>) -> u8;
 
     fn get_linebreak_property_with_rule(
-        iterator: &LineBreakIteratorImpl<'s, Self>,
+        iterator: &LineBreakIterator<'s, Self>,
         c: Self::CharType,
     ) -> u8;
 
-    fn is_break_by_normal(iterator: &LineBreakIteratorImpl<'s, Self>) -> bool;
+    fn is_break_by_normal(iterator: &LineBreakIterator<'s, Self>) -> bool;
 
     fn get_line_break_by_platform_fallback(
-        iterator: &LineBreakIteratorImpl<'s, Self>,
+        iterator: &LineBreakIterator<'s, Self>,
         input: &[u16],
     ) -> Vec<usize>;
 }
@@ -395,7 +395,7 @@ pub trait LineBreakType<'s> {
 ///
 /// [`Iterator`]: core::iter::Iterator
 /// [module-level documentation]: ../index.html
-pub struct LineBreakIteratorImpl<'s, Y: LineBreakType<'s> + ?Sized> {
+pub struct LineBreakIterator<'s, Y: LineBreakType<'s> + ?Sized> {
     iter: Y::IterAttr,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
@@ -405,7 +405,7 @@ pub struct LineBreakIteratorImpl<'s, Y: LineBreakType<'s> + ?Sized> {
     ja_zh: bool,
 }
 
-impl<'s, Y: LineBreakType<'s>> Iterator for LineBreakIteratorImpl<'s, Y> {
+impl<'s, Y: LineBreakType<'s>> Iterator for LineBreakIterator<'s, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -546,7 +546,7 @@ impl<'s, Y: LineBreakType<'s>> Iterator for LineBreakIteratorImpl<'s, Y> {
     }
 }
 
-impl<'s, Y: LineBreakType<'s>> LineBreakIteratorImpl<'s, Y> {
+impl<'s, Y: LineBreakType<'s>> LineBreakIterator<'s, Y> {
     #[inline]
     fn is_eof(&mut self) -> bool {
         if self.current_pos_data.is_none() {
@@ -601,15 +601,15 @@ impl<'s> LineBreakType<'s> for char {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
-    fn get_linebreak_property(iterator: &LineBreakIteratorImpl<char>) -> u8 {
+    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
         Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
     }
 
-    fn get_linebreak_property_with_rule(iterator: &LineBreakIteratorImpl<char>, c: char) -> u8 {
+    fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
         get_linebreak_property_with_rule(c, iterator.line_break_rule, iterator.word_break_rule)
     }
 
-    fn is_break_by_normal(iterator: &LineBreakIteratorImpl<char>) -> bool {
+    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
         is_break_utf32_by_normal(iterator.current_pos_data.unwrap().1 as u32, iterator.ja_zh)
     }
 
@@ -618,7 +618,7 @@ impl<'s> LineBreakType<'s> for char {
         use_complex_breaking_utf32(c as u32)
     }
 
-    fn get_line_break_by_platform_fallback(_: &LineBreakIteratorImpl<char>, input: &[u16]) -> Vec<usize> {
+    fn get_line_break_by_platform_fallback(_: &LineBreakIterator<Self>, input: &[u16]) -> Vec<usize> {
         if let Some(mut ret) = get_line_break_utf16(input) {
             ret.push(input.len());
             return ret;
@@ -627,7 +627,7 @@ impl<'s> LineBreakType<'s> for char {
     }
 
     /*
-        fn handle_complex_language(iterator: &LineBreakIteratorImpl<char>, left_codepoint: char) -> Option<usize> {
+        fn handle_complex_language(iterator: &LineBreakIterator<char>, left_codepoint: char) -> Option<usize> {
             let start_iter = self.iter.clone();
             let start_point = self.current_pos_data;
             loop {
@@ -654,17 +654,17 @@ impl<'s> LineBreakType<'s> for Latin1Char {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8; // TODO: Latin1Char
 
-    fn get_linebreak_property(iterator: &LineBreakIteratorImpl<Latin1Char>) -> u8 {
+    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
         // No CJ on Latin1
         Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
     }
 
-    fn get_linebreak_property_with_rule(_: &LineBreakIteratorImpl<Latin1Char>, c: u8) -> u8 {
+    fn get_linebreak_property_with_rule(_: &LineBreakIterator<Self>, c: u8) -> u8 {
         // No CJ on Latin1
         get_linebreak_property_latin1(c)
     }
 
-    fn is_break_by_normal(iterator: &LineBreakIteratorImpl<Latin1Char>) -> bool {
+    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
         is_break_utf32_by_normal(iterator.current_pos_data.unwrap().1 as u32, iterator.ja_zh)
     }
 
@@ -674,7 +674,7 @@ impl<'s> LineBreakType<'s> for Latin1Char {
     }
 
     fn get_line_break_by_platform_fallback(
-        _: &LineBreakIteratorImpl<Latin1Char>,
+        _: &LineBreakIterator<Self>,
         _input: &[u16],
     ) -> Vec<usize> {
         panic!("not reachable");
@@ -688,11 +688,11 @@ impl<'s> LineBreakType<'s> for Utf16Char {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32; // TODO: Utf16Char
 
-    fn get_linebreak_property(iterator: &LineBreakIteratorImpl<Utf16Char>) -> u8 {
+    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
         Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
     }
 
-    fn get_linebreak_property_with_rule(iterator: &LineBreakIteratorImpl<Utf16Char>, c: u32) -> u8 {
+    fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u32) -> u8 {
         get_linebreak_property_utf32_with_rule(
             c,
             iterator.line_break_rule,
@@ -700,7 +700,7 @@ impl<'s> LineBreakType<'s> for Utf16Char {
         )
     }
 
-    fn is_break_by_normal(iterator: &LineBreakIteratorImpl<Utf16Char>) -> bool {
+    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
         is_break_utf32_by_normal(iterator.current_pos_data.unwrap().1 as u32, iterator.ja_zh)
     }
 
@@ -710,7 +710,7 @@ impl<'s> LineBreakType<'s> for Utf16Char {
     }
 
     fn get_line_break_by_platform_fallback(
-        _: &LineBreakIteratorImpl<Utf16Char>,
+        _: &LineBreakIterator<Self>,
         input: &[u16],
     ) -> Vec<usize> {
         if let Some(mut ret) = get_line_break_utf16(input) {
