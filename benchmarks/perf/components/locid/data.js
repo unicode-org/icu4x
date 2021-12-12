@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639265469354,
+  "lastUpdate": 1639270475415,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18569,6 +18569,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5024,
             "range": "± 262",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7e1d77e59e3145175d1267905eef35eefecc34b7",
+          "message": "Fix typo in Yokeable documentation (#1386)",
+          "timestamp": "2021-12-11T16:45:39-08:00",
+          "tree_id": "905795728b12e9ff444346a16fe51a3544626d9f",
+          "url": "https://github.com/unicode-org/icu4x/commit/7e1d77e59e3145175d1267905eef35eefecc34b7"
+        },
+        "date": 1639270467295,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2865,
+            "range": "± 149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5092,
+            "range": "± 289",
             "unit": "ns/iter"
           }
         ]
