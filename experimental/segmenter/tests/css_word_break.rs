@@ -2,12 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::LineBreakRule;
-use icu_segmenter::WordBreakRule;
-use icu_segmenter::LineBreakSegmenter;
 use icu_segmenter::LineBreakOptions;
+use icu_segmenter::LineBreakRule;
+use icu_segmenter::LineBreakSegmenter;
+use icu_segmenter::WordBreakRule;
 
-fn check_with_options(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>, options: LineBreakOptions) {
+fn check_with_options(
+    s: &str,
+    expect_utf8: Vec<usize>,
+    expect_utf16: Vec<usize>,
+    options: LineBreakOptions,
+) {
     let segmenter = LineBreakSegmenter::try_new_with_options(options).expect("Data exists");
 
     let iter = segmenter.segment_str(s);

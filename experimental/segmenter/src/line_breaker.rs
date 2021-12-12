@@ -13,8 +13,8 @@ use crate::rule_table::*;
 
 use core::char;
 use core::str::CharIndices;
-use unicode_width::UnicodeWidthChar;
 use icu_provider::DataError;
+use unicode_width::UnicodeWidthChar;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line breaker.
@@ -79,7 +79,7 @@ pub struct LineBreakOptions {
     /// system is Chinese or Japanese. This allows more break opportunities when
     /// `LineBreakRule` is `Normal` or `Loose`. See
     /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
-    /// 
+    ///
     /// This option has no effect in Latin-1 mode.
     pub ja_zh: bool,
 }
@@ -95,22 +95,20 @@ impl Default for LineBreakOptions {
 }
 
 pub struct LineBreakSegmenter {
-    options: LineBreakOptions
+    options: LineBreakOptions,
 }
 
 impl LineBreakSegmenter {
     pub fn try_new() -> Result<Self, DataError> {
         // Note: This will be able to return an Error once DataProvider is added
         Ok(Self {
-            options: Default::default()
+            options: Default::default(),
         })
     }
 
     pub fn try_new_with_options(options: LineBreakOptions) -> Result<Self, DataError> {
         // Note: This will be able to return an Error once DataProvider is added
-        Ok(Self {
-            options
-        })
+        Ok(Self { options })
     }
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
@@ -127,7 +125,10 @@ impl LineBreakSegmenter {
     }
 
     /// Create a line break iterator for a Latin-1 (8-bit) string.
-    pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorImpl<'s, Latin1Char> {
+    pub fn segment_latin1<'l, 's>(
+        &'l self,
+        input: &'s [u8],
+    ) -> LineBreakIteratorImpl<'s, Latin1Char> {
         LineBreakIteratorImpl {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -140,7 +141,10 @@ impl LineBreakSegmenter {
     }
 
     /// Create a line break iterator for a UTF-16 string.
-    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorImpl<'s, Utf16Char> {
+    pub fn segment_utf16<'l, 's>(
+        &'l self,
+        input: &'s [u16],
+    ) -> LineBreakIteratorImpl<'s, Utf16Char> {
         LineBreakIteratorImpl {
             iter: Utf16Indices::new(input),
             len: input.len(),
@@ -383,9 +387,9 @@ pub trait LineBreakType<'s> {
 /// The struct implementing the [`Iterator`] trait over the line break
 /// opportunities of the given string. Please see the [module-level
 /// documentation] for its usages.
-/// 
+///
 /// Lifetimes:
-/// 
+///
 /// - `'l` = lifetime of the [`LineBreakSegmenter`] object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
 ///

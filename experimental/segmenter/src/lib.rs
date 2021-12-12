@@ -14,7 +14,7 @@
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 //!
 //! # Examples
-//! 
+//!
 //! ## Line Break
 //!
 //! Segment a string with default options:
@@ -55,7 +55,7 @@
 //! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 //! assert_eq!(&breakpoints, &[6, 11]);
 //! ```
-//! 
+//!
 //! ## Word Break
 //!
 //! Segment a string with default options:
