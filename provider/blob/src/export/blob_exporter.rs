@@ -8,7 +8,6 @@ use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use litemap::LiteMap;
-use zerovec::zerovec::ZeroVecULE;
 use zerovec::ZeroMap;
 
 /// A data exporter that writes data to a single-file blob.
@@ -54,11 +53,9 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
 
     fn close(&mut self) -> Result<(), DataError> {
         // Convert from LiteMap<String, Vec<u8>> to ZeroVecBorrowed<&str, &[u8]>
-        let mut zm: ZeroMap<str, ZeroVecULE<u8>> = ZeroMap::with_capacity(self.resources.len());
+        let mut zm: ZeroMap<str, [u8]> = ZeroMap::with_capacity(self.resources.len());
         for (k, v) in self.resources.iter() {
-            zm.try_append(k, ZeroVecULE::from_slice(v))
-                .ok_or(())
-                .expect_err("Same order");
+            zm.try_append(k, v).ok_or(()).expect_err("Same order");
         }
         let blob = BlobSchema::V001(BlobSchemaV1 {
             resources: zm.as_borrowed(),

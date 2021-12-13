@@ -233,13 +233,13 @@ mod test {
     #[derive(yoke::Yokeable)]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap<'data> {
-        _data: ZeroMap<'data, ZeroVecULE<u8>, str>,
+        _data: ZeroMap<'data, [u8], str>,
     }
 
     #[derive(yoke::Yokeable)]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
-        _data: ZeroMapBorrowed<'data, ZeroVecULE<u8>, str>,
+        _data: ZeroMapBorrowed<'data, [u8], str>,
     }
 
     #[derive(yoke::Yokeable)]
