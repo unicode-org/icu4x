@@ -301,8 +301,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
-    /// assert!(matches!(trie.get_ule(0x41).unwrap(), u8));  // for `u8`, u8::ULE is Self
-    ///
     /// assert_eq!(Some(&0), trie.get_ule(0x41));  // 'A' as u32
     /// assert_eq!(Some(&0), trie.get_ule(0x13E0));  // 'Ꮰ' as u32
     /// assert_eq!(Some(&1), trie.get_ule(0x10044));  // '𐁄' as u32
