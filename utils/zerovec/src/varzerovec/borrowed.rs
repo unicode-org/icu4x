@@ -230,7 +230,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 self.things.get(start..end).ok_or(ULEError::FormatError)
             })
             .chain(last)
-            .map(|s| s.and_then(|s| T::parse_byte_slice(s).map_err(|e| e.into())))
+            .map(|s| s.and_then(|s| T::parse_byte_slice(s)))
     }
 
     /// Create an iterator over the Ts contained in VarZeroVecBorrowed

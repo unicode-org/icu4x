@@ -5,7 +5,7 @@
 use super::{GenericPatternItem, PatternItem};
 use crate::fields;
 use core::convert::TryFrom;
-use zerovec::ule::{AsULE, ULE};
+use zerovec::ule::{AsULE, ULEError, ULE};
 
 /// `PatternItemULE` is a type optimized for efficent storing and
 /// deserialization of `DateTimeFormat` `PatternItem` elements using
@@ -93,15 +93,15 @@ impl PatternItemULE {
 //  5. The other ULE methods use the default impl.
 //  6. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
-    type Error = &'static str;
-
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
         let mut chunks = bytes.chunks_exact(3);
 
-        if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
-            || !chunks.remainder().is_empty()
-        {
-            return Err("Invalid byte sequence");
+        if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2]))) {
+            return Err(ULEError::parse::<Self>());
+        }
+
+        if !chunks.remainder().is_empty() {
+            return Err(ULEError::length::<Self>(bytes.len()));
         }
         Ok(())
     }
@@ -228,15 +228,15 @@ impl GenericPatternItemULE {
 //  5. The other ULE methods use the default impl.
 //  6. GenericPatternItemULE byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
-    type Error = &'static str;
-
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
         let mut chunks = bytes.chunks_exact(3);
 
-        if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
-            || !chunks.remainder().is_empty()
-        {
-            return Err("Invalid byte sequence");
+        if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2]))) {
+            return Err(ULEError::parse::<Self>());
+        }
+
+        if !chunks.remainder().is_empty() {
+            return Err(ULEError::length::<Self>(bytes.len()));
         }
         Ok(())
     }
