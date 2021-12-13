@@ -46,8 +46,6 @@
 //! Segment a Latin1 byte string:
 //!
 //! ```rust
-//! use icu_segmenter::LineBreakIteratorLatin1;
-//!
 //! use icu_segmenter::LineBreakSegmenter;
 //!
 //! let segmenter = LineBreakSegmenter::try_new().expect("Data exists");

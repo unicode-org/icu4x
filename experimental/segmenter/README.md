@@ -41,8 +41,6 @@ assert_eq!(&breakpoints, &[1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
 Segment a Latin1 byte string:
 
 ```rust
-use icu_segmenter::LineBreakIteratorLatin1;
-
 use icu_segmenter::LineBreakSegmenter;
 
 let segmenter = LineBreakSegmenter::try_new().expect("Data exists");
