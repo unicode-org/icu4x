@@ -10,6 +10,7 @@ use core::fmt;
 pub enum ULEError {
     InvalidLength { ty: &'static str, len: usize },
     ParseError { ty: &'static str },
+    FormatError,
 }
 
 impl fmt::Display for ULEError {
@@ -21,18 +22,21 @@ impl fmt::Display for ULEError {
             ULEError::ParseError { ty } => {
                 write!(f, "Could not parse data as valud {}", ty)
             }
+            ULEError::FormatError => {
+                write!(f, "Invalid format for VarZeroVec buffer")
+            }
         }
     }
 }
 
 impl ULEError {
-    pub fn parse<T: 'static>() -> ULEError {
+    pub fn parse<T: ?Sized + 'static>() -> ULEError {
         ULEError::ParseError {
             ty: any::type_name::<T>(),
         }
     }
 
-    pub fn length<T: 'static>(len: usize) -> ULEError {
+    pub fn length<T: ?Sized + 'static>(len: usize) -> ULEError {
         ULEError::InvalidLength {
             ty: any::type_name::<T>(),
             len,

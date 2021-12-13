@@ -20,7 +20,7 @@ pub use plain::PlainOldULE;
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
-use core::{fmt, mem, slice};
+use core::{mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
@@ -260,15 +260,12 @@ where
 /// Failure to follow this invariant will cause surprising behavior in `PartialEq`, which may
 /// result in unpredictable operations on `ZeroVec`, `VarZeroVec`, and `ZeroMap`.
 pub unsafe trait VarULE: 'static {
-    /// The error that occurs if a byte array is not valid for this ULE.
-    type Error: fmt::Display;
-
     /// Validates a byte slice, `&[u8]`.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid `&Self`, then `Ok` should
     /// be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), Self::Error>;
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ULEError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime.
     ///
@@ -281,7 +278,7 @@ pub unsafe trait VarULE: 'static {
     /// Note: The following equality should hold: `size_of_val(result) == size_of_val(bytes)`,
     /// where `result` is the successful return value of the method. This means that the return
     /// value spans the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ULEError> {
         Self::validate_byte_slice(bytes)?;
         let result = unsafe { Self::from_byte_slice_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));
