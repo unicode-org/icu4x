@@ -303,9 +303,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// assert!(matches!(trie.get_ule(0x41).unwrap(), u8));  // for `u8`, u8::ULE is Self
     ///
-    /// assert_eq!(&0, trie.get_ule(0x41).unwrap());  // 'A' as u32
-    /// assert_eq!(&0, trie.get_ule(0x13E0).unwrap());  // 'Ꮰ' as u32
-    /// assert_eq!(&1, trie.get_ule(0x10044).unwrap());  // '𐁄' as u32
+    /// assert_eq!(Some(&0), trie.get_ule(0x41));  // 'A' as u32
+    /// assert_eq!(Some(&0), trie.get_ule(0x13E0));  // 'Ꮰ' as u32
+    /// assert_eq!(Some(&1), trie.get_ule(0x10044));  // '𐁄' as u32
     /// ```
     pub fn get_ule(&self, code_point: u32) -> Option<&T::ULE> {
         // All code points up to the fast max limit are represented
