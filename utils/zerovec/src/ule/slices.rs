@@ -46,7 +46,7 @@ unsafe impl<T> VarULE for [T]
 where
     T: ULE + AsULE<ULE = T>,
 {
-    type Error = T::Error;
+    type Error = ULEError;
 
     #[inline]
     fn validate_byte_slice(slice: &[u8]) -> Result<(), Self::Error> {

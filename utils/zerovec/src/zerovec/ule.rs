@@ -71,7 +71,7 @@ where
 //  6. `as_byte_slice()` and `parse_byte_slice()` are defaulted
 //  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
 unsafe impl<T: AsULE + 'static> VarULE for ZeroVecULE<T> {
-    type Error = <T::ULE as ULE>::Error;
+    type Error = ULEError;
 
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {

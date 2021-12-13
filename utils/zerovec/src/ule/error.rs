@@ -2,31 +2,43 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::any;
 use core::fmt;
 
 /// A generic error type to be used for decoding slices of ULE types
 #[derive(Copy, Clone, Debug)]
-pub enum ULEError<E> {
+pub enum ULEError {
     InvalidLength { ty: &'static str, len: usize },
-    ParseError(E),
+    ParseError { ty: &'static str },
 }
 
-impl<E: fmt::Display> fmt::Display for ULEError<E> {
+impl fmt::Display for ULEError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         match *self {
             ULEError::InvalidLength { ty, len } => {
                 write!(f, "Invalid length {} for slice of type {}", len, ty)
             }
-            ULEError::ParseError(ref e) => e.fmt(f),
+            ULEError::ParseError { ty } => {
+                write!(f, "Could not parse data as valud {}", ty)
+            }
         }
     }
 }
 
-impl<E> From<E> for ULEError<E> {
-    fn from(e: E) -> Self {
-        ULEError::ParseError(e)
+impl ULEError {
+    pub fn parse<T: 'static>() -> ULEError {
+        ULEError::ParseError {
+            ty: any::type_name::<T>(),
+        }
+    }
+
+    pub fn length<T: 'static>(len: usize) -> ULEError {
+        ULEError::InvalidLength {
+            ty: any::type_name::<T>(),
+            len,
+        }
     }
 }
 
 #[cfg(feature = "std")]
-impl<E: fmt::Display + fmt::Debug> ::std::error::Error for ULEError<E> {}
+impl ::std::error::Error for ULEError {}

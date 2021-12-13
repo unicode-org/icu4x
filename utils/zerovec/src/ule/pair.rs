@@ -22,17 +22,15 @@ pub struct PairULE<A, B>(pub A, pub B);
 //  6. PairULE byte equality is semantic equality by relying on the ULE equality
 //     invariant on the subfields
 unsafe impl<A: ULE, B: ULE> ULE for PairULE<A, B> {
-    type Error = PairULEError<A::Error, B::Error>;
-
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
         let a_len = mem::size_of::<A>();
         let b_len = mem::size_of::<B>();
         if bytes.len() % (a_len + b_len) != 0 {
-            return Err(PairULEError::IndivisibleLength(a_len + b_len, bytes.len()));
+            return Err(ULEError::length::<Self>(bytes.len()));
         }
         for chunk in bytes.chunks(a_len + b_len) {
-            A::validate_byte_slice(&chunk[..a_len]).map_err(PairULEError::First)?;
-            B::validate_byte_slice(&chunk[a_len..]).map_err(PairULEError::Second)?;
+            A::validate_byte_slice(&chunk[..a_len])?;
+            B::validate_byte_slice(&chunk[a_len..])?;
         }
         Ok(())
     }
@@ -52,27 +50,6 @@ impl<A: AsULE, B: AsULE> AsULE for (A, B) {
             A::from_unaligned(unaligned.0),
             B::from_unaligned(unaligned.1),
         )
-    }
-}
-
-#[derive(Clone, Debug)]
-pub enum PairULEError<E, F> {
-    First(E),
-    Second(F),
-    IndivisibleLength(/* expected */ usize, /* found */ usize),
-}
-
-impl<E: fmt::Display, F: fmt::Display> fmt::Display for PairULEError<E, F> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        match *self {
-            PairULEError::First(ref e) => e.fmt(f),
-            PairULEError::Second(ref e) => e.fmt(f),
-            PairULEError::IndivisibleLength(expected, found) => write!(
-                f,
-                "Indivisible length for PairULE: expected multiple of {} found {}",
-                expected, found
-            ),
-        }
     }
 }
 

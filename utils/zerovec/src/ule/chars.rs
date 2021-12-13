@@ -49,21 +49,16 @@ pub struct CharULE([u8; 4]);
 //  5. The other ULE methods use the default impl.
 //  6. CharULE byte equality is semantic equality
 unsafe impl ULE for CharULE {
-    type Error = ULEError<core::char::CharTryFromError>;
-
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
         if bytes.len() % 4 != 0 {
-            return Err(ULEError::InvalidLength {
-                ty: "char",
-                len: bytes.len(),
-            });
+            return Err(ULEError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
         for chunk in bytes.chunks_exact(4) {
             // TODO: Use slice::as_chunks() when stabilized
             let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
-            char::try_from(u)?;
+            char::try_from(u).map_err(|_| ULEError::parse::<Self>())?;
         }
         Ok(())
     }
