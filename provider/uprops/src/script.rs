@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::uprops_helpers;
-use crate::uprops_serde::script::ScriptExtensionsProperty;
+use crate::uprops_serde::script_extensions::ScriptExtensionsProperty;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{ScriptExtensionsPropertyV1, ScriptExtensionsPropertyV1Marker};
 use icu_properties::script::{ScriptExtensions, ScriptWithExt};

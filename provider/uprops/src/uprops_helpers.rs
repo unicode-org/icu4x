@@ -67,11 +67,11 @@ pub fn load_enumerated_from_dir(root_dir: &Path) -> eyre::Result<TomlEnumerated>
 
 pub fn load_script_extensions_from_dir(
     root_dir: &Path,
-) -> eyre::Result<uprops_serde::script::ScriptExtensionsProperty> {
+) -> eyre::Result<uprops_serde::script_extensions::ScriptExtensionsProperty> {
     let mut path = root_dir.join("scx");
     path.set_extension("toml");
     let toml_str = read_path_to_string(&path)?;
-    let toml_obj: uprops_serde::script::Main =
+    let toml_obj: uprops_serde::script_extensions::Main =
         toml::from_str(&toml_str).wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
 
     toml_obj

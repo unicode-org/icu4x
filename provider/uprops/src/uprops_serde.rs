@@ -83,7 +83,7 @@ pub mod enumerated {
     }
 }
 
-pub mod script {
+pub mod script_extensions {
     use super::enumerated::EnumeratedPropertyCodePointTrie;
 
     #[derive(serde::Deserialize)]
