@@ -182,13 +182,10 @@ impl<'data> FromStr for ListJoinerPattern<'data> {
     type Err = Error;
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
         match (pattern.find("{0}"), pattern.find("{1}")) {
-            (Some(index_0), Some(index_1)) if index_1 - 3 < 256 => {
-                #[cfg(not(test))]
-                assert_eq!(
-                    index_0, 0,
-                    "Found valid pattern {:?} but the data struct cannot currently \
-                 store patterns where the 0 placeholder is not at the beginning.\
-                 To fix, unskip the serialization of ListJoinerPattern.index_0",
+            (Some(index_0), Some(index_1)) => {
+                assert!(
+                    (index_0 == 0 || cfg!(test)) && index_1 - 3 < 256,
+                    "Found valid pattern {:?} that cannot be stored in ListFormatterPatternsV1.",
                     pattern
                 );
                 Ok(ListJoinerPattern {
