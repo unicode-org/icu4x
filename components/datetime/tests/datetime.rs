@@ -477,6 +477,13 @@ fn test_length_fixtures() {
     );
 }
 
+
+#[test]
+fn test_japanese() {
+    // components/datetime/tests/fixtures/tests/japanese.json
+    test_fixture("japanese");
+}
+
 #[test]
 fn test_lengths_with_preferences() {
     // components/datetime/tests/fixtures/tests/lengths_with_preferences.json
