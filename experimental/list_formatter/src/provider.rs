@@ -183,7 +183,7 @@ impl<'a> ConditionalListJoinerPattern<'a> {
         regex: &str,
         then_pattern: &str,
         else_pattern: &str,
-    ) -> Result<Self, crate::error::Error> {
+    ) -> Result<Self, Error> {
         Ok(ConditionalListJoinerPattern {
             default: ListJoinerPattern::from_str(else_pattern)?,
             special_case: Some(SpecialCasePattern {
@@ -237,9 +237,9 @@ pub(crate) mod test {
             // Narrow: conditionals
             ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
             ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}. {1}")
+            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}. {1}")
                 .unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}. {1}")
+            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}. {1}")
                 .unwrap(),
         ])
     }
@@ -252,7 +252,10 @@ pub(crate) mod test {
     #[test]
     fn produces_correct_parts_conditionally() {
         assert_eq!(test_patterns().end(Width::Narrow).parts("A"), (" :o ", ""));
+        assert_eq!(test_patterns().end(Width::Narrow).parts("a"), (" :o ", ""));
+        assert_eq!(test_patterns().end(Width::Narrow).parts("ab"), (" :o ", ""));
         assert_eq!(test_patterns().end(Width::Narrow).parts("B"), (". ", ""));
+        assert_eq!(test_patterns().end(Width::Narrow).parts("BA"), (". ", ""));
     }
 
     #[test]
