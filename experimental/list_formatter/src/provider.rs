@@ -60,20 +60,35 @@ impl<'data> ListFormatterPatternsV1<'data> {
         }
     }
 
-    pub fn start(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub fn start(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize)]
     }
 
-    pub fn middle(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub fn middle(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 1]
     }
 
-    pub fn end(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub fn end(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 2]
     }
 
-    pub fn pair(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub fn pair(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 3]
+    }
+
+    /// The expected number of bytes required by the list literals to join a list of length
+    /// len. If none of the patterns are conditional, this is exact, otherwise it is an
+    /// upper bound.
+    pub fn size_hint(&self, width: Width, len: usize) -> usize {
+        match len {
+            0 | 1 => 0,
+            2 => self.pair(width).size_hint(),
+            n => {
+                self.start(width).size_hint()
+                    + self.middle(width).size_hint() * (n - 3)
+                    + self.end(width).size_hint()
+            }
+        }
     }
 }
 
@@ -186,25 +201,74 @@ impl<'a> ConditionalListJoinerPattern<'a> {
             _ => self.default.borrow_tuple(),
         }
     }
+
+    /// The expected length of this pattern. If the pattern is not conditional, this is
+    /// exact, otherwise it's is an upper bound. Currently special cases only occur in
+    /// the `end` and `pair` positions, meaning they are only used once, so using an upper
+    /// bound won't waste much memory. It guarantees, however, that the buffer never has
+    /// to be reallocated for just a handful of extra bytes.
+    pub fn size_hint(&'a self) -> usize {
+        Ord::max(
+            self.default.string.len(),
+            self.special_case
+                .as_ref()
+                .map(|s| s.pattern.string.len())
+                .unwrap_or(0),
+        )
+    }
 }
 
 #[cfg(test)]
-mod test {
+pub(crate) mod test {
     use super::*;
+
+    pub fn test_patterns() -> ListFormatterPatternsV1<'static> {
+        ListFormatterPatternsV1([
+            // Wide: general
+            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}; {1}").unwrap(),
+            // Short: different pattern lengths
+            ConditionalListJoinerPattern::from_str("{0}1{1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}12{1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}12{1}34").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}123{1}456").unwrap(),
+            // Narrow: conditionals
+            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
+            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
+            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}. {1}")
+                .unwrap(),
+            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}. {1}")
+                .unwrap(),
+        ])
+    }
 
     #[test]
     fn produces_correct_parts() {
-        let pattern = ConditionalListJoinerPattern::from_str("{0}a{1}b").unwrap();
-        assert_eq!(pattern.parts(""), ("a", "b"));
+        assert_eq!(test_patterns().end(Width::Wide).parts(""), (". ", "!"));
     }
 
     #[test]
     fn produces_correct_parts_conditionally() {
-        let pattern =
-            ConditionalListJoinerPattern::from_regex_and_strs("b", "{0}c{1}d", "{0}a{1}b").unwrap();
-        // Only matches at the beginning of the string
-        assert_eq!(pattern.parts("ab"), ("a", "b"));
-        // Doesn't require a full match
-        assert_eq!(pattern.parts("ba"), ("c", "d"));
+        assert_eq!(test_patterns().end(Width::Narrow).parts("A"), (" :o ", ""));
+        assert_eq!(test_patterns().end(Width::Narrow).parts("B"), (". ", ""));
+    }
+
+    #[test]
+    fn size_hint_works() {
+        let pattern = test_patterns();
+
+        assert_eq!(pattern.size_hint(Width::Short, 0), 0);
+        assert_eq!(pattern.size_hint(Width::Short, 1), 0);
+
+        // pair pattern "{0}123{1}456"
+        assert_eq!(pattern.size_hint(Width::Short, 2), 6);
+
+        // patterns "{0}1{1}", "{0}12{1}" (x197), and "{0}12{1}34"
+        assert_eq!(pattern.size_hint(Width::Short, 200), 1 + 2 * 197 + 4);
+
+        // patterns "{0}: {1}", "{0}, {1}" (x197), and "{0} :o {1}" or "{0}. {1}"
+        assert_eq!(pattern.size_hint(Width::Narrow, 200), 2 + 197 * 2 + 4);
     }
 }

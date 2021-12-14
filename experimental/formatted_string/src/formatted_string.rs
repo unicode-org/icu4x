@@ -21,7 +21,7 @@ pub trait FormattedStringLike<F: Copy, const L: usize>: AsRef<str> {
     }
 
     fn is_field_start(&self, pos: usize, level: usize) -> bool {
-        assert!(level < L);
+        debug_assert!(level < L);
         let (location, _) = self.annotation_at(pos)[level];
         location == LocationInPart::Begin
     }
@@ -64,19 +64,37 @@ impl<F: Copy, const L: usize> FormattedStringLike<F, L> for LayeredFormattedStri
 
 impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
     pub fn new() -> Self {
-        // A LayeredFormattedString with 0 annotations doesn't make sense.
-        assert!(L > 0);
+        debug_assert!(L > 0);
         Self {
-            bytes: Vec::with_capacity(40),
-            annotations: Vec::with_capacity(40),
+            bytes: Vec::new(),
+            annotations: Vec::new(),
         }
+    }
+
+    pub fn with_capacity(capacity: usize) -> Self {
+        // A LayeredFormattedString with 0 annotations doesn't make sense.
+        debug_assert!(L > 0);
+        Self {
+            bytes: Vec::with_capacity(capacity),
+            annotations: Vec::with_capacity(capacity),
+        }
+    }
+
+    pub fn capacity(&self) -> usize {
+        debug_assert_eq!(self.bytes.capacity(), self.annotations.capacity());
+        self.bytes.capacity()
+    }
+
+    pub fn len(&self) -> usize {
+        debug_assert_eq!(self.bytes.len(), self.annotations.len());
+        self.bytes.len()
     }
 
     pub fn append<S, const L1: usize>(&mut self, string: &S, field: F) -> &mut Self
     where
         S: FormattedStringLike<F, L1>,
     {
-        assert_eq!(L - 1, L1);
+        debug_assert_eq!(L - 1, L1);
         // len() is always a char boundary
         self.insert_internal(self.bytes.len(), string, field)
     }
@@ -85,7 +103,7 @@ impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
     where
         S: FormattedStringLike<F, L1>,
     {
-        assert_eq!(L - 1, L1);
+        debug_assert_eq!(L - 1, L1);
         // 0 is always a char boundary
         self.insert_internal(0, string, field)
     }
@@ -99,7 +117,7 @@ impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
     where
         S: FormattedStringLike<F, L1>,
     {
-        assert_eq!(L - 1, L1);
+        debug_assert_eq!(L - 1, L1);
         if pos > self.bytes.len() {
             return Err(FormattedStringError::IndexOutOfBounds(pos));
         }
@@ -121,7 +139,7 @@ impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
     where
         S: FormattedStringLike<F, L1>,
     {
-        assert_eq!(L - 1, L1);
+        debug_assert_eq!(L - 1, L1);
         self.bytes.splice(pos..pos, string.as_ref().bytes());
         self.annotations.splice(
             pos..pos,
@@ -211,6 +229,17 @@ mod test {
         assert_eq!(x.field_at(0), Field::Word);
         assert_eq!(x.field_at(1), Field::Word);
         assert_panics(|| x.field_at(2));
+    }
+
+    #[test]
+    fn test_level_assert() {
+        // The correct-depth asserts are (debug) runtime errors as long
+        // as const generics aren't const-evaluatable:
+        // https://github.com/rust-lang/rust/issues/76560
+        assert_panics(|| {
+            let mut x = LayeredFormattedString::<Field, 2>::new();
+            x.append(&"foo", Field::Word);
+        });
     }
 
     fn assert_panics<F: FnOnce() -> R + panic::UnwindSafe, R>(f: F) {

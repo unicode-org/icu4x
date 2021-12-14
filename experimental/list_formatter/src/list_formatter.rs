@@ -5,7 +5,7 @@
 use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use formatted_string::*;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -49,48 +49,58 @@ impl ListFormatter {
     fn format_internal<'c, B>(
         &'c self,
         values: &[&str],
-        empty: fn() -> B,
-        single: fn(&str) -> B,
-        apply_pattern: fn(&str, &PatternParts<'c>, B) -> B,
+        // Empty builder
+        mut builder: B,
+        // Produces value + builder
+        apply_value: fn(&str, B) -> B,
+        // Produces value + parts.between + builder + parts.after
+        apply_pattern: fn(&str, PatternParts<'c>, B) -> B,
     ) -> B {
-        let pattern = &self.data.get();
         match values.len() {
-            0 => empty(),
-            1 => single(values[0]),
+            0 => builder,
+            1 => apply_value(values[0], builder),
             2 => apply_pattern(
                 values[0],
-                &pattern.pair(self.width).parts(values[1]),
-                single(values[1]),
+                self.data.get().pair(self.width).parts(values[1]),
+                apply_value(values[1], builder),
             ),
             n => {
-                let mut builder = apply_pattern(
+                builder = apply_pattern(
                     values[n - 2],
-                    &pattern.end(self.width).parts(values[n - 1]),
-                    single(values[n - 1]),
+                    self.data.get().end(self.width).parts(values[n - 1]),
+                    apply_value(values[n - 1], builder),
                 );
-                let middle = pattern.middle(self.width);
+                let middle = self.data.get().middle(self.width);
                 for i in (1..n - 2).rev() {
-                    builder = apply_pattern(values[i], &middle.parts(values[i + 1]), builder);
+                    builder = apply_pattern(values[i], middle.parts(values[i + 1]), builder);
                 }
                 apply_pattern(
                     values[0],
-                    &pattern.start(self.width).parts(values[1]),
+                    self.data.get().start(self.width).parts(values[1]),
                     builder,
                 )
             }
         }
     }
 
+    fn size_hint(&self, values: &[&str]) -> usize {
+        values.iter().map(|s| s.len()).sum::<usize>()
+            + self.data.get().size_hint(self.width, values.len())
+    }
+
     pub fn format(&self, values: &[&str]) -> String {
         self.format_internal(
             values,
-            || "".to_string(),
-            |value| value.to_string(),
+            String::with_capacity(self.size_hint(values)),
+            |value, mut builder| {
+                builder.push_str(value);
+                builder
+            },
             |value, (between, after), mut builder| {
-                builder = builder + after;
+                // TODO(robertbastian): String doesn't have O(1) prepend
                 builder.insert_str(0, between);
                 builder.insert_str(0, value);
-                builder
+                builder + after
             },
         )
     }
@@ -98,16 +108,16 @@ impl ListFormatter {
     pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType> {
         self.format_internal(
             values,
-            FormattedString::<FieldType>::new,
-            |value| {
-                let mut builder = FormattedString::<FieldType>::new();
+            FormattedString::with_capacity(self.size_hint(values)),
+            |value, mut builder| {
                 builder.append(&value, FieldType::Element);
                 builder
             },
             |value, (between, after), mut builder| {
-                builder.append(after, FieldType::Literal);
-                builder.prepend(between, FieldType::Literal);
+                // TODO(robertbastian): FormattedString doesn't have O(1) prepend
+                builder.prepend(&between, FieldType::Literal);
                 builder.prepend(&value, FieldType::Element);
+                builder.append(&after, FieldType::Literal);
                 builder
             },
         )
@@ -117,38 +127,21 @@ impl ListFormatter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::str::FromStr;
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
-    fn formatter() -> ListFormatter {
-        let pattern = ListFormatterPatternsV1::new([
-            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
-                .unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
-                .unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("A", "{0} :o {1}", "{0}; {1}")
-                .unwrap(),
-        ]);
-
+    fn formatter(width: Width) -> ListFormatter {
         ListFormatter {
-            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(pattern),
-            width: Width::default(),
+            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
+                crate::provider::test::test_patterns(),
+            ),
+            width,
         }
     }
 
     #[test]
     fn test_format() {
-        let formatter = formatter();
+        let formatter = formatter(Width::Wide);
         assert_eq!(formatter.format(&VALUES[0..0]), "");
         assert_eq!(formatter.format(&VALUES[0..1]), "one");
         assert_eq!(formatter.format(&VALUES[0..2]), "one; two");
@@ -159,7 +152,7 @@ mod tests {
 
     #[test]
     fn test_format_to_parts() {
-        let formatter = formatter();
+        let formatter = formatter(Width::Wide);
 
         assert_eq!(formatter.format_to_parts(&VALUES[0..0]).as_ref(), "");
         assert_eq!(formatter.format_to_parts(&VALUES[0..1]).as_ref(), "one");
@@ -192,8 +185,17 @@ mod tests {
 
     #[test]
     fn test_conditional() {
-        let formatter = formatter();
+        let formatter = formatter(Width::Narrow);
 
         assert_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
+    }
+
+    #[test]
+    fn strings_dont_have_spare_capacity() {
+        let string = formatter(Width::Short).format(VALUES);
+        assert_eq!(string.capacity(), string.len());
+
+        let labelled_string = formatter(Width::Short).format(VALUES);
+        assert_eq!(labelled_string.capacity(), labelled_string.len());
     }
 }
