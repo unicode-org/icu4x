@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639512378225,
+  "lastUpdate": 1639517320814,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14963,6 +14963,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 276107,
             "range": "± 2324",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bea61e5d70f41baf52ebe710f57fbe7bab77ccc9",
+          "message": "Rename enums for General_Category (#1355)",
+          "timestamp": "2021-12-14T13:19:55-08:00",
+          "tree_id": "e8ca7cd3fc832646c220e7bdd2fe62dd3edf6f5e",
+          "url": "https://github.com/unicode-org/icu4x/commit/bea61e5d70f41baf52ebe710f57fbe7bab77ccc9"
+        },
+        "date": 1639517313048,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 128507,
+            "range": "± 2557",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1472230,
+            "range": "± 33671",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 364414,
+            "range": "± 8345",
             "unit": "ns/iter"
           }
         ]
