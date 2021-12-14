@@ -262,10 +262,10 @@ mod tests {
 
     #[test]
     fn test_spanish() {
-        let y_parts = (" y ", "");
-        let e_parts = (" e ", "");
-        let o_parts = (" o ", "");
-        let u_parts = (" u ", "");
+        let y_parts = ("", " y ", "");
+        let e_parts = ("", " e ", "");
+        let o_parts = ("", " o ", "");
+        let u_parts = ("", " u ", "");
 
         let payload_and = provide(langid!("es"), key::LIST_FORMAT_AND_V1);
         let and = &payload_and.get().end(Width::Wide);
@@ -322,8 +322,8 @@ mod tests {
 
     #[test]
     fn test_hebrew() {
-        let vav_parts = (" ו", "");
-        let vav_dash_parts = (" ו-", "");
+        let vav_parts = ("", " ו", "");
+        let vav_dash_parts = ("", " ו-", "");
 
         assert_eq!(
             provide(langid!("he"), key::LIST_FORMAT_AND_V1)
