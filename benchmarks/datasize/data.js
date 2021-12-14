@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639446738211,
+  "lastUpdate": 1639456791753,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5068,6 +5068,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 916502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "290e46c3969d5345cebc4587e33638ed1251dd61",
+          "message": "Add (so far unused) Japanese era data (#1375)",
+          "timestamp": "2021-12-13T20:38:17-08:00",
+          "tree_id": "e32846f140d833dfbdbcaf2664a580ed66f5e0df",
+          "url": "https://github.com/unicode-org/icu4x/commit/290e46c3969d5345cebc4587e33638ed1251dd61"
+        },
+        "date": 1639456784773,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 921273,
             "unit": "bytes",
             "biggerIsBetter": false
           }
