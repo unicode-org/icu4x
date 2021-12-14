@@ -315,13 +315,14 @@ pub mod key {
         (SCRIPT_ZANABAZAR_SQUARE_V1, "sc=Zanb"),
     );
 
-    define_resource_keys!(ALL_MAP_KEYS; 7;
+    define_resource_keys!(ALL_MAP_KEYS; 8;
         //
         // Enumerated property CodePointMaps
         //
 
         // ResourceKey subcategory string is the short alias of the property
 
+        (CANONICAL_COMBINING_CLASS_V1, "ccc"),
         (GENERAL_CATEGORY_V1, "gc"),
         (SCRIPT_V1, "sc"),
         (EAST_ASIAN_WIDTH_V1, "ea"),

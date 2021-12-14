@@ -7,12 +7,20 @@ use super::*;
 use core::marker::PhantomData;
 use core::mem;
 
-/// A VarULE version of VarZeroVec allowing for VarZeroVecs to be nested indefinitely
+/// A zero-copy "slice", that works for unsized types, i.e. the zero-copy version of `[T]`
+/// where `T` is not `Sized`.
+///
+/// This behaves similarly to [`VarZeroVec<T>`], however [`VarZeroVec<T>`] is allowed to contain
+/// owned data and as such is ideal for deserialization since most human readable
+/// serialization formats cannot unconditionally deserialize zero-copy.
+///
+/// This type can be nested within [`VarZeroVec<T>`] to allow for multi-level nested `Vec`s, for
+/// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
 /// use zerovec::VarZeroVec;
 /// use zerovec::ZeroVec;
-/// use zerovec::varzerovec::VarZeroVecULE;
+/// use zerovec::varzerovec::VarZeroSlice;
 /// use zerovec::ule::*;
 /// let strings_1: Vec<String> = vec!["foo".into(), "bar".into(), "baz".into()];
 /// let strings_2: Vec<String> = vec!["twelve".into(), "seventeen".into(), "forty two".into()];
@@ -26,37 +34,37 @@ use core::mem;
 /// let vzv_2: VarZeroVec<str> = VarZeroVec::from(&*strings_2);
 /// let vzv_3: VarZeroVec<str> = VarZeroVec::from(&*strings_3);
 /// let vzv_4: VarZeroVec<str> = VarZeroVec::from(&*strings_4);
-/// let vzv_12 = VarZeroVec::from(&[vzv_1.as_ule(), vzv_2.as_ule()] as &[_]);
-/// let vzv_34 = VarZeroVec::from(&[vzv_3.as_ule(), vzv_4.as_ule()] as &[_]);
-/// let vzv_all = VarZeroVec::from(&[vzv_12.as_ule(), vzv_34.as_ule()] as &[_]);
+/// let vzv_12 = VarZeroVec::from(&[vzv_1.as_slice(), vzv_2.as_slice()] as &[_]);
+/// let vzv_34 = VarZeroVec::from(&[vzv_3.as_slice(), vzv_4.as_slice()] as &[_]);
+/// let vzv_all = VarZeroVec::from(&[vzv_12.as_slice(), vzv_34.as_slice()] as &[_]);
 ///
 /// let reconstructed: Vec<Vec<Vec<String>>> = vzv_all.iter()
-///        .map(|v: &VarZeroVecULE<VarZeroVecULE<str>>| {
-///             v.iter().map(|x: &VarZeroVecULE<_>| x.as_varzerovec().iter().map(|s| s.to_owned()).collect::<Vec<String>>())
+///        .map(|v: &VarZeroSlice<VarZeroSlice<str>>| {
+///             v.iter().map(|x: &VarZeroSlice<_>| x.as_varzerovec().iter().map(|s| s.to_owned()).collect::<Vec<String>>())
 ///              .collect::<Vec<_>>()
 ///         }).collect::<Vec<_>>();
 /// assert_eq!(reconstructed, all_strings);
 ///
 /// let bytes = vzv_all.get_encoded_slice();
-/// let vzv_from_bytes: VarZeroVec<VarZeroVecULE<VarZeroVecULE<str>>> = VarZeroVec::parse_byte_slice(bytes).unwrap();
+/// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> = VarZeroVec::parse_byte_slice(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
 /// ```
 //
 // safety invariant: The slice MUST be one which parses to
 // a valid VarZeroVecBorrowed<T>
 #[repr(transparent)]
-pub struct VarZeroVecULE<T: ?Sized> {
+pub struct VarZeroSlice<T: ?Sized> {
     marker: PhantomData<T>,
     /// The original slice this was constructed from
     entire_slice: [u8],
 }
 
-impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
+impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
     #[inline]
     pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
         unsafe {
-            // safety: VarZeroVecULE is guaranteed to parse here
+            // safety: VarZeroSlice is guaranteed to parse here
             VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
         }
     }
@@ -71,32 +79,32 @@ impl<T: VarULE + ?Sized> VarZeroVecULE<T> {
         self.as_borrowed().is_empty()
     }
 
-    /// Obtain an iterator over VarZeroVecULE's elements
+    /// Obtain an iterator over VarZeroSlice's elements
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
         self.as_borrowed().iter()
     }
 
-    /// Get one of VarZeroVecULE's elements, returning None if the index is out of bounds
+    /// Get one of VarZeroSlice's elements, returning None if the index is out of bounds
     pub fn get(&self, idx: usize) -> Option<&T> {
         self.as_borrowed().get(idx)
     }
 
-    /// Get this [`VarZeroVecULE`] as a borrowed [`VarZeroVec`]
+    /// Get this [`VarZeroSlice`] as a borrowed [`VarZeroVec`]
     ///
-    /// If you wish to repeatedly call methods on this [`VarZeroVecULE`],
+    /// If you wish to repeatedly call methods on this [`VarZeroSlice`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
         self.as_borrowed().into()
     }
 }
 
-impl<T> VarZeroVecULE<T>
+impl<T> VarZeroSlice<T>
 where
     T: VarULE,
     T: ?Sized,
     T: Ord,
 {
-    /// Binary searches a sorted `VarZeroVecULE<T>` for the given element. For more information, see
+    /// Binary searches a sorted `VarZeroSlice<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`].
     ///
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
@@ -107,19 +115,17 @@ where
 }
 
 // Safety (based on the safety checklist on the VarULE trait):
-//  1. VarZeroVecULE does not include any uninitialized or padding bytes (achieved by `#[repr(transparent)]` on a
+//  1. VarZeroSlice does not include any uninitialized or padding bytes (achieved by `#[repr(transparent)]` on a
 //     `[u8]` slice which satisfies this invariant)
-//  2. VarZeroVecULE is aligned to 1 byte (achieved by `#[repr(transparent)]` on a
+//  2. VarZeroSlice is aligned to 1 byte (achieved by `#[repr(transparent)]` on a
 //     `[u8]` slice which satisfies this invariant)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
 //  6. `as_byte_slice()` is equivalent to a regular transmute of the underlying data
-//  7. VarZeroVecULE byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
-unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroVecULE<T> {
-    type Error = ParseErrorFor<T>;
-
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+//  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
+unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroSlice<T> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let _: VarZeroVecBorrowed<T> = VarZeroVecBorrowed::parse_byte_slice(bytes)?;
         Ok(())
     }
@@ -134,21 +140,21 @@ unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroVecULE<T> {
     }
 }
 
-impl<T> PartialEq<VarZeroVecULE<T>> for VarZeroVecULE<T>
+impl<T> PartialEq<VarZeroSlice<T>> for VarZeroSlice<T>
 where
     T: VarULE,
     T: ?Sized,
     T: PartialEq,
 {
     #[inline]
-    fn eq(&self, other: &VarZeroVecULE<T>) -> bool {
+    fn eq(&self, other: &VarZeroSlice<T>) -> bool {
         // VarULE has an API guarantee that this is equivalent
         // to `T::VarULE::eq()`
         self.entire_slice.eq(&other.entire_slice)
     }
 }
 
-impl<T: VarULE + ?Sized> fmt::Debug for VarZeroVecULE<T>
+impl<T: VarULE + ?Sized> fmt::Debug for VarZeroSlice<T>
 where
     T: fmt::Debug,
 {
@@ -157,8 +163,8 @@ where
     }
 }
 
-impl<T: ?Sized> AsRef<VarZeroVecULE<T>> for VarZeroVecULE<T> {
-    fn as_ref(&self) -> &VarZeroVecULE<T> {
+impl<T: ?Sized> AsRef<VarZeroSlice<T>> for VarZeroSlice<T> {
+    fn as_ref(&self) -> &VarZeroSlice<T> {
         self
     }
 }

@@ -4,7 +4,7 @@
 
 use super::vecs::MutableZeroVecLike;
 use crate::ule::*;
-use crate::zerovec::{ZeroVec, ZeroVecULE};
+use crate::zerovec::{ZeroSlice, ZeroVec};
 use crate::VarZeroVec;
 use alloc::boxed::Box;
 
@@ -70,8 +70,8 @@ where
     type OwnedType = Box<[T]>;
 }
 
-impl<'a, T: AsULE + 'static + Ord> ZeroMapKV<'a> for ZeroVecULE<T> {
-    type Container = VarZeroVec<'a, ZeroVecULE<T>>;
-    type GetType = ZeroVecULE<T>;
-    type OwnedType = Box<ZeroVecULE<T>>;
+impl<'a, T: AsULE + 'static + Ord> ZeroMapKV<'a> for ZeroSlice<T> {
+    type Container = VarZeroVec<'a, ZeroSlice<T>>;
+    type GetType = ZeroSlice<T>;
+    type OwnedType = Box<ZeroSlice<T>>;
 }

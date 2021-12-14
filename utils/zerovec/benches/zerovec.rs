@@ -48,7 +48,6 @@ fn get_needles_and_haystack() -> (Vec<u32>, Vec<u32>) {
 fn vec_to_unaligned_uvec<'a, T>(vec: &Vec<T>, buffer: &'a mut AlignedBuffer) -> ZeroVec<'a, T>
 where
     T: EqULE + Copy + PartialEq + fmt::Debug,
-    <T::ULE as ULE>::Error: fmt::Debug,
 {
     // Pad with zero to ensure it is not aligned
     buffer.0.push(0);

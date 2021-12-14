@@ -9,8 +9,8 @@ use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue}
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_properties::{
-    EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
-    WordBreak,
+    CanonicalCombiningClass, EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak,
+    Script, SentenceBreak, WordBreak,
 };
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
@@ -114,6 +114,7 @@ impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
 }
 
 icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
+    key::CANONICAL_COMBINING_CLASS_V1 => UnicodePropertyMapV1Marker<CanonicalCombiningClass>,
     key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralSubcategory>,
     key::SCRIPT_V1 => UnicodePropertyMapV1Marker<Script>,
     key::EAST_ASIAN_WIDTH_V1 => UnicodePropertyMapV1Marker<EastAsianWidth>,

@@ -14,17 +14,15 @@ use core::str;
 //  6. `parse_byte_slice()` is equivalent to `validate_byte_slice()` followed by `from_byte_slice_unchecked()`
 //  7. str byte equality is semantic equality
 unsafe impl VarULE for str {
-    type Error = str::Utf8Error;
-
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
-        str::from_utf8(bytes)?;
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        str::from_utf8(bytes).map_err(|_| ZeroVecError::parse::<Self>())?;
         Ok(())
     }
 
     #[inline]
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
-        str::from_utf8(bytes)
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+        str::from_utf8(bytes).map_err(|_| ZeroVecError::parse::<Self>())
     }
     /// Invariant: must be safe to call when called on a slice that previously
     /// succeeded with `parse_byte_slice`
@@ -46,10 +44,8 @@ unsafe impl<T> VarULE for [T]
 where
     T: ULE + AsULE<ULE = T>,
 {
-    type Error = T::Error;
-
     #[inline]
-    fn validate_byte_slice(slice: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
         T::validate_byte_slice(slice)
     }
 

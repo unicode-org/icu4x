@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
-use crate::zerovec::{ZeroVec, ZeroVecULE};
+use crate::zerovec::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -100,10 +100,10 @@ unsafe impl EncodeAsVarULE<str> for String {
     }
 }
 
-unsafe impl<T: ULE, A: AsULE<ULE = T> + 'static> EncodeAsVarULE<ZeroVecULE<A>> for Vec<T> {
+unsafe impl<T: ULE, A: AsULE<ULE = T> + 'static> EncodeAsVarULE<ZeroSlice<A>> for Vec<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[<ZeroVecULE<A> as VarULE>::as_byte_slice(
-            ZeroVecULE::<A>::from_slice(self),
+        cb(&[<ZeroSlice<A> as VarULE>::as_byte_slice(
+            ZeroSlice::<A>::from_ule_slice(self),
         )])
     }
 }
@@ -117,7 +117,7 @@ where
     }
 }
 
-unsafe impl<'a, T, A: AsULE<ULE = T> + 'static> custom::EncodeAsVarULE<ZeroVecULE<A>>
+unsafe impl<'a, T, A: AsULE<ULE = T> + 'static> custom::EncodeAsVarULE<ZeroSlice<A>>
     for ZeroVec<'a, T>
 where
     T: AsULE,

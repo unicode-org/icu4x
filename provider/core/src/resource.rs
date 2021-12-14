@@ -23,6 +23,7 @@ use writeable::{LengthHint, Writeable};
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
 pub enum ResourceCategory {
     Core,
+    Calendar,
     DateTime,
     Decimal,
     LocaleCanonicalizer,
@@ -38,6 +39,7 @@ impl ResourceCategory {
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
             Self::Core => Cow::Borrowed("core"),
+            Self::Calendar => Cow::Borrowed("calendar"),
             Self::DateTime => Cow::Borrowed("datetime"),
             Self::Decimal => Cow::Borrowed("decimal"),
             Self::LocaleCanonicalizer => Cow::Borrowed("locale_canonicalizer"),

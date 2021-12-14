@@ -13,7 +13,7 @@ use core::{
 use icu_provider::yoke::{self, *};
 use num_enum::{IntoPrimitive, TryFromPrimitive, UnsafeFromPrimitive};
 use zerovec::{
-    ule::{custom::EncodeAsVarULE, AsULE, PairULE, PlainOldULE, VarULE, ULE},
+    ule::{custom::EncodeAsVarULE, AsULE, PairULE, PlainOldULE, VarULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
@@ -326,8 +326,8 @@ impl RelationULE {
     }
 
     #[inline]
-    fn validate_andor_polarity_operand(encoded: u8) -> Result<(), &'static str> {
-        Operand::try_from(encoded & 0b0011_1111).map_err(|_| "Failed to decode operand.")?;
+    fn validate_andor_polarity_operand(encoded: u8) -> Result<(), ZeroVecError> {
+        Operand::try_from(encoded & 0b0011_1111).map_err(|_| ZeroVecError::parse::<Self>())?;
         Ok(())
     }
 
@@ -361,8 +361,6 @@ impl RelationULE {
 //  6. The other VarULE methods use the default impl.
 //  7. RelationULE byte equality is semantic equality.
 unsafe impl VarULE for RelationULE {
-    type Error = &'static str;
-
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         let ptr = bytes.as_ptr();
@@ -387,15 +385,14 @@ unsafe impl VarULE for RelationULE {
     }
 
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         RelationULE::validate_andor_polarity_operand(bytes[0])?;
         // Skip bytes 1-4 as they're always valid `u32` for `Modulo`.
         if bytes.len() < 5 {
-            return Err("byte slice is too short");
+            return Err(ZeroVecError::parse::<Self>());
         }
         let remaining = &bytes[5..];
-        RangeOrValueULE::validate_byte_slice(remaining)
-            .map_err(|_| "Invalid list of RangeOrValueULE")?;
+        RangeOrValueULE::validate_byte_slice(remaining)?;
         Ok(())
     }
 }
