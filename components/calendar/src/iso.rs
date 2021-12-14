@@ -6,7 +6,7 @@
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
-use tinystr::tinystr8;
+use tinystr::{tinystr16, tinystr8};
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
@@ -69,7 +69,7 @@ impl From<IsoYear> for i32 {
 impl From<IsoYear> for types::Year {
     fn from(year: IsoYear) -> types::Year {
         types::Year {
-            era: types::Era(tinystr8!("default")),
+            era: types::Era(tinystr16!("default")),
             number: year.0,
             related_iso: year.0,
         }

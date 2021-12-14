@@ -9,11 +9,11 @@ use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::ops::{Add, Sub};
 use core::str::FromStr;
-use tinystr::TinyStr8;
+use tinystr::{TinyStr16, TinyStr8};
 
 /// TODO(#486): Implement era codes.
 #[derive(Clone, Debug, PartialEq)]
-pub struct Era(pub TinyStr8);
+pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.
 #[derive(Clone, Debug, PartialEq)]

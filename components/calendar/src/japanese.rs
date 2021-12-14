@@ -21,7 +21,8 @@ pub struct Japanese {
 pub struct JapaneseDateInner {
     inner: IsoDateInner,
     era: TinyStr16,
-    era_start: EraStartDate,
+    // The year this era started
+    era_start: i32,
 }
 
 impl Japanese {
@@ -51,7 +52,7 @@ impl Calendar for Japanese {
         JapaneseDateInner {
             inner: *iso.inner(),
             era,
-            era_start,
+            era_start: era_start.year,
         }
     }
 
@@ -88,8 +89,12 @@ impl Calendar for Japanese {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, _date: &Self::DateInner) -> types::Year {
-        unimplemented!()
+    fn year(&self, date: &Self::DateInner) -> types::Year {
+        types::Year {
+            era: types::Era(date.era),
+            number: date.adjusted_year(),
+            related_iso: date.inner.year.0,
+        }
     }
 
     /// The calendar-specific month represented by `date`
@@ -109,6 +114,18 @@ impl Calendar for Japanese {
 
     fn debug_name() -> &'static str {
         "Japanese"
+    }
+}
+
+impl JapaneseDateInner {
+    /// Returns the current year relative to the era
+    fn adjusted_year(&self) -> i32 {
+        // The year in which an era starts is Year 1, and it may be short
+        // The only time this function will experience dates that are *before*
+        // the era start date are for the first era (Currently, taika-645),
+        // where we elect to still report the year as year 1 when it is in the same
+        // Gregorian year, and use zero/negative years before that.
+        self.inner.year.0 - self.era_start + 1
     }
 }
 
