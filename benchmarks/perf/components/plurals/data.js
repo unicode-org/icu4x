@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639500352060,
+  "lastUpdate": 1639500625775,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21251,6 +21251,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20795,
             "range": "± 107",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b081f84c087a0d5b94c1ac2cf6b0bc3c78e9079a",
+          "message": "Implement the Canonical_Combining_Class property (#1347)",
+          "timestamp": "2021-12-14T18:41:22+02:00",
+          "tree_id": "b658d80a737985fc9940e3beed7e54fac241c9b2",
+          "url": "https://github.com/unicode-org/icu4x/commit/b081f84c087a0d5b94c1ac2cf6b0bc3c78e9079a"
+        },
+        "date": 1639500618382,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1087,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5510,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20831,
+            "range": "± 15",
             "unit": "ns/iter"
           }
         ]
