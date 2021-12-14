@@ -140,7 +140,11 @@ where
             .map(T::from_unaligned)
     }
 
-    pub(crate) fn get_ule_ref(&self, index: usize) -> Option<&T::ULE> {
+    /// Get a borrowed reference to the underlying ULE type at a specified index.
+    ///
+    /// Prefer [`Self::get()`] over this method where possible since working
+    /// directly with `ULE` types is less ergonomic
+    pub fn get_ule_ref(&self, index: usize) -> Option<&T::ULE> {
         self.as_ule_slice().get(index)
     }
 
