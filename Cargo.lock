@@ -1202,6 +1202,7 @@ dependencies = [
  "regex-automata 0.1.10 (git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174)",
  "serde",
  "serde_json",
+ "writeable",
  "zerovec",
 ]
 
