@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639270423025,
+  "lastUpdate": 1639447082855,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16019,6 +16019,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44554617,
             "range": "± 1662639",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "65fef9e14457d6c744f8dca11fcf22461837c838",
+          "message": "calendars: fix offset handling around month boundaries (#1352)\n\n* calendars: fix offset handling around month boundaries\n\n* fmt\n\n* clippy",
+          "timestamp": "2021-12-14T07:20:31+05:30",
+          "tree_id": "3fde4534287b6868ec554389f622cb7bb3776b75",
+          "url": "https://github.com/unicode-org/icu4x/commit/65fef9e14457d6c744f8dca11fcf22461837c838"
+        },
+        "date": 1639447075794,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 28860589,
+            "range": "± 1495760",
             "unit": "ns/iter"
           }
         ]
