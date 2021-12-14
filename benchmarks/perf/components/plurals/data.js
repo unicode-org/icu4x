@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639447132832,
+  "lastUpdate": 1639457185301,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21041,6 +21041,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20477,
             "range": "± 179",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "290e46c3969d5345cebc4587e33638ed1251dd61",
+          "message": "Add (so far unused) Japanese era data (#1375)",
+          "timestamp": "2021-12-13T20:38:17-08:00",
+          "tree_id": "e32846f140d833dfbdbcaf2664a580ed66f5e0df",
+          "url": "https://github.com/unicode-org/icu4x/commit/290e46c3969d5345cebc4587e33638ed1251dd61"
+        },
+        "date": 1639457178525,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1094,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5353,
+            "range": "± 359",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21149,
+            "range": "± 1486",
             "unit": "ns/iter"
           }
         ]
