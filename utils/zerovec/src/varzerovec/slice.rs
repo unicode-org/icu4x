@@ -125,7 +125,6 @@ where
 //  6. `as_byte_slice()` is equivalent to a regular transmute of the underlying data
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroSlice<T> {
-
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let _: VarZeroVecBorrowed<T> = VarZeroVecBorrowed::parse_byte_slice(bytes)?;
         Ok(())
