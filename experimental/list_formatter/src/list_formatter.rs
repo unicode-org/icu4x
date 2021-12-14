@@ -135,7 +135,7 @@ mod tests {
             data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
                 crate::provider::test::test_patterns(),
             ),
-            width: width,
+            width,
         }
     }
 
