@@ -64,6 +64,7 @@ impl<F: Copy, const L: usize> FormattedStringLike<F, L> for LayeredFormattedStri
 
 impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
     pub fn new() -> Self {
+        debug_assert!(L > 0);
         Self {
             bytes: Vec::new(),
             annotations: Vec::new(),
@@ -228,6 +229,17 @@ mod test {
         assert_eq!(x.field_at(0), Field::Word);
         assert_eq!(x.field_at(1), Field::Word);
         assert_panics(|| x.field_at(2));
+    }
+
+    #[test]
+    fn test_level_assert() {
+        // The correct-depth asserts are (debug) runtime errors as long
+        // as const generics aren't const-evaluatable:
+        // https://github.com/rust-lang/rust/issues/76560
+        assert_panics(|| {
+            let mut x = LayeredFormattedString::<Field, 2>::new();
+            x.append(&"foo", Field::Word);
+        });
     }
 
     fn assert_panics<F: FnOnce() -> R + panic::UnwindSafe, R>(f: F) {
