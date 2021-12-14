@@ -20,7 +20,7 @@ impl fmt::Display for ULEError {
                 write!(f, "Invalid length {} for slice of type {}", len, ty)
             }
             ULEError::ParseError { ty } => {
-                write!(f, "Could not parse data as valud {}", ty)
+                write!(f, "Could not parse bytes to slice of type {}", ty)
             }
             ULEError::FormatError => {
                 write!(f, "Invalid format for VarZeroVec buffer")
