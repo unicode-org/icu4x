@@ -103,7 +103,7 @@ unsafe impl EncodeAsVarULE<str> for String {
 unsafe impl<T: ULE, A: AsULE<ULE = T> + 'static> EncodeAsVarULE<ZeroSlice<A>> for Vec<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[<ZeroSlice<A> as VarULE>::as_byte_slice(
-            ZeroSlice::<A>::from_slice(self),
+            ZeroSlice::<A>::from_ule_slice(self),
         )])
     }
 }

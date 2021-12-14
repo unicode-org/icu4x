@@ -132,7 +132,7 @@ where
         ZeroSlice::len(self)
     }
     fn is_ascending(&self) -> bool {
-        self.as_slice()
+        self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
@@ -152,7 +152,7 @@ where
 {
     type GetType = T::ULE;
     fn new() -> Self {
-        ZeroSlice::from_slice(&[])
+        ZeroSlice::from_ule_slice(&[])
     }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
         ZeroSlice::binary_search(*self, k)
@@ -164,7 +164,7 @@ where
         ZeroSlice::len(*self)
     }
     fn is_ascending(&self) -> bool {
-        self.as_slice()
+        self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
@@ -183,7 +183,7 @@ where
     T: AsULE + Ord + Copy,
 {
     fn get_borrowed(&self, index: usize) -> Option<&'a T::ULE> {
-        self.as_slice().get(index)
+        self.as_ule_slice().get(index)
     }
 }
 
@@ -221,7 +221,7 @@ where
     }
     fn as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
         if let ZeroVec::Borrowed(b) = *self {
-            Some(ZeroSlice::from_slice(b))
+            Some(ZeroSlice::from_ule_slice(b))
         } else {
             None
         }

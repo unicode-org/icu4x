@@ -106,7 +106,7 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
             ZeroVec::Owned(vec) => &**vec,
             ZeroVec::Borrowed(slice) => *slice,
         };
-        ZeroSlice::from_slice(slice)
+        ZeroSlice::from_ule_slice(slice)
     }
 }
 
@@ -442,7 +442,7 @@ where
     /// ```
     #[inline]
     pub fn to_vec(&self) -> Vec<T> {
-        self.as_slice()
+        self.as_ule_slice()
             .iter()
             .copied()
             .map(T::from_unaligned)

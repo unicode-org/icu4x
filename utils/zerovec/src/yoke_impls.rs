@@ -176,7 +176,7 @@ where
 
 impl<'a, T: 'static + AsULE + ?Sized> ZeroCopyFrom<ZeroVec<'a, T>> for ZeroVec<'static, T> {
     fn zero_copy_from<'b>(cart: &'b ZeroVec<'a, T>) -> ZeroVec<'b, T> {
-        ZeroVec::Borrowed(cart.as_slice())
+        ZeroVec::Borrowed(cart.as_ule_slice())
     }
 }
 

@@ -31,7 +31,7 @@ where
 
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs
     #[inline]
-    pub fn from_slice(slice: &[T::ULE]) -> &Self {
+    pub fn from_ule_slice(slice: &[T::ULE]) -> &Self {
         // This is safe because ZeroSlice is transparent over [T::ULE]
         // so &ZeroSlice<T> can be safely cast from &[T::ULE]
         unsafe { &*(slice as *const _ as *const Self) }
@@ -64,12 +64,12 @@ where
     /// ```
     #[inline]
     pub fn as_bytes(&self) -> &[u8] {
-        T::ULE::as_byte_slice(self.as_slice())
+        T::ULE::as_byte_slice(self.as_ule_slice())
     }
 
     /// Dereferences this slice as `&[T::ULE]`.
     #[inline]
-    pub fn as_slice(&self) -> &[T::ULE] {
+    pub fn as_ule_slice(&self) -> &[T::ULE] {
         &self.0
     }
 
@@ -92,7 +92,7 @@ where
     /// ```
     #[inline]
     pub fn len(&self) -> usize {
-        self.as_slice().len()
+        self.as_ule_slice().len()
     }
 
     /// Returns whether this slice is empty.
@@ -111,7 +111,7 @@ where
     /// ```
     #[inline]
     pub fn is_empty(&self) -> bool {
-        self.as_slice().is_empty()
+        self.as_ule_slice().is_empty()
     }
 }
 
@@ -134,11 +134,14 @@ where
     /// ```
     #[inline]
     pub fn get(&self, index: usize) -> Option<T> {
-        self.as_slice().get(index).copied().map(T::from_unaligned)
+        self.as_ule_slice()
+            .get(index)
+            .copied()
+            .map(T::from_unaligned)
     }
 
     pub(crate) fn get_ule_ref(&self, index: usize) -> Option<&T::ULE> {
-        self.as_slice().get(index)
+        self.as_ule_slice().get(index)
     }
 
     /// Gets the first element. Returns None if empty.
@@ -155,7 +158,7 @@ where
     /// ```
     #[inline]
     pub fn first(&self) -> Option<T> {
-        self.as_slice().first().copied().map(T::from_unaligned)
+        self.as_ule_slice().first().copied().map(T::from_unaligned)
     }
 
     /// Gets the last element. Returns None if empty.
@@ -172,7 +175,7 @@ where
     /// ```
     #[inline]
     pub fn last(&self) -> Option<T> {
-        self.as_slice().last().copied().map(T::from_unaligned)
+        self.as_ule_slice().last().copied().map(T::from_unaligned)
     }
 
     /// Gets an iterator over the elements.
@@ -194,7 +197,7 @@ where
     /// ```
     #[inline]
     pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
-        self.as_slice().iter().copied().map(T::from_unaligned)
+        self.as_ule_slice().iter().copied().map(T::from_unaligned)
     }
 }
 
@@ -220,7 +223,7 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.as_slice()
+        self.as_ule_slice()
             .binary_search_by(|probe| T::from_unaligned(*probe).cmp(x))
     }
 }
@@ -242,7 +245,7 @@ unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
 
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        Self::from_slice(T::ULE::from_byte_slice_unchecked(bytes))
+        Self::from_ule_slice(T::ULE::from_byte_slice_unchecked(bytes))
     }
 }
 
@@ -311,6 +314,6 @@ impl<T: AsULE + Ord> Ord for ZeroSlice<T> {
 
 impl<T: AsULE> AsRef<ZeroSlice<T>> for Vec<T::ULE> {
     fn as_ref(&self) -> &ZeroSlice<T> {
-        ZeroSlice::<T>::from_slice(&**self)
+        ZeroSlice::<T>::from_ule_slice(&**self)
     }
 }
