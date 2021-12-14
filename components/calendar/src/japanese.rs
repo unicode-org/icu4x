@@ -108,8 +108,19 @@ impl Calendar for Japanese {
     }
 
     /// Information of the day of the year
-    fn day_of_year_info(&self, _date: &Self::DateInner) -> types::DayOfYearInfo {
-        unimplemented!()
+    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
+        let prev_dec_31 = IsoDateInner::dec_31((date.inner.year.0 - 1).into());
+        let next_jan_1 = IsoDateInner::jan_1((date.inner.year.0 + 1).into());
+
+        let prev_dec_31 = self.date_from_iso(Date::from_raw(prev_dec_31, Iso));
+        let next_jan_1 = self.date_from_iso(Date::from_raw(next_jan_1, Iso));
+        types::DayOfYearInfo {
+            day_of_year: Iso::day_of_year(date.inner),
+            days_in_year: Iso::days_in_year(date.inner.year),
+            prev_year: self.year(&prev_dec_31),
+            days_in_prev_year: Iso::days_in_year(prev_dec_31.inner.year),
+            next_year: self.year(&next_jan_1),
+        }
     }
 
     fn debug_name() -> &'static str {

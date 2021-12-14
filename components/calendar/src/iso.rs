@@ -116,6 +116,22 @@ impl IsoDateInner {
             self.month.0 = (13 + (new_month % 12)) as u8
         }
     }
+
+    pub(crate) fn jan_1(year: IsoYear) -> Self {
+        Self {
+            day: IsoDay(1),
+            month: IsoMonth(1),
+            year,
+        }
+    }
+
+    pub(crate) fn dec_31(year: IsoYear) -> Self {
+        Self {
+            day: IsoDay(31),
+            month: IsoMonth(12),
+            year,
+        }
+    }
 }
 
 impl Calendar for Iso {
