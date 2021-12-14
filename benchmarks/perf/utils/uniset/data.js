@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639497282604,
+  "lastUpdate": 1639499643712,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16139,6 +16139,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 47085656,
             "range": "± 220641",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5002e70343983cc08163b3df2da0b48dadc9856f",
+          "message": "Add LineBreakSegmenter and rewire code to use it (#1387)",
+          "timestamp": "2021-12-14T10:26:06-06:00",
+          "tree_id": "6ea782251c3b62bbbe5c845b771213c7e88d0221",
+          "url": "https://github.com/unicode-org/icu4x/commit/5002e70343983cc08163b3df2da0b48dadc9856f"
+        },
+        "date": 1639499635056,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32720771,
+            "range": "± 2054113",
             "unit": "ns/iter"
           }
         ]
