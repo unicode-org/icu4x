@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639496945904,
+  "lastUpdate": 1639499288989,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5153,6 +5153,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6fac854351da0d609a955603b81853b63a12100f"
         },
         "date": 1639496937238,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 921273,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5002e70343983cc08163b3df2da0b48dadc9856f",
+          "message": "Add LineBreakSegmenter and rewire code to use it (#1387)",
+          "timestamp": "2021-12-14T10:26:06-06:00",
+          "tree_id": "6ea782251c3b62bbbe5c845b771213c7e88d0221",
+          "url": "https://github.com/unicode-org/icu4x/commit/5002e70343983cc08163b3df2da0b48dadc9856f"
+        },
+        "date": 1639499280295,
         "tool": "ndjson",
         "benches": [
           {
