@@ -5,15 +5,39 @@
 //! This module contains types and implementations for the Japanese calendar
 
 use crate::iso::{Iso, IsoDateInner};
+use crate::provider;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use icu_provider::prelude::*;
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Clone, Debug, Default)]
 /// The Japanese Calendar
-pub struct Japanese;
+pub struct Japanese {
+    eras: DataPayload<provider::JapaneseErasV1Marker>,
+}
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 /// The inner date type used for representing Date<Japanese>
 pub struct JapaneseDateInner(IsoDateInner);
+
+impl Japanese {
+    /// Creates a new [`Japanese`] from locale data and an options bag.
+    pub fn try_new<D: DataProvider<provider::JapaneseErasV1Marker> + ?Sized>(
+        data_provider: &D,
+    ) -> Result<Self, DataError> {
+        let eras = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::JAPANESE_ERAS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: None,
+                    },
+                },
+            })?
+            .take_payload()?;
+        Ok(Self { eras })
+    }
+}
 
 impl Calendar for Japanese {
     type DateInner = JapaneseDateInner;
