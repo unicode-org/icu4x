@@ -14,7 +14,7 @@ mod locale_canonicalizer;
 mod plurals;
 mod time_zones;
 
-pub use calendar::japanese::JapaneseErasProvider;
+pub use calendar::japanese::{get_era_code_map as get_japanese_era_code_map, JapaneseErasProvider};
 pub use datetime::{
     patterns::DatePatternsProvider, skeletons::DateSkeletonPatternsProvider,
     symbols::DateSymbolsProvider,

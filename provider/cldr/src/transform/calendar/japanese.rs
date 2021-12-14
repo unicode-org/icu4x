@@ -139,7 +139,8 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
                                           Rerun with ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 to regenerate testdata properly, and check which situation \
                                           it is. If a new era has been introduced, copy over the new testdata to snapshot-japanese@1.json \
                                           in icu_provider_cldr. If not, it's likely that japanese.rs in icu_provider_cldr will need \
-                                          to be updated to handle the data changes.".to_owned(), None));
+                                          to be updated to handle the data changes. Once done, be sure to regenerate datetime/symbols@1 as well if not \
+                                          doing so already".to_owned(), None));
             }
         }
 
@@ -238,4 +239,20 @@ impl IterableDataProviderCore for JapaneseErasProvider {
             .into_iter(),
         ))
     }
+}
+
+pub fn get_era_code_map() -> LiteMap<String, TinyStr16> {
+    let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
+        .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
+    let mut map = LiteMap::new();
+    let mut i = 0;
+    for value in snapshot
+        .dates_to_historical_eras
+        .iter_values()
+        .chain(snapshot.dates_to_eras.iter_values())
+    {
+        map.insert(i.to_string(), *value);
+        i += 1;
+    }
+    map
 }
