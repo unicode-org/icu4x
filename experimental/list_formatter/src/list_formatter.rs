@@ -49,55 +49,58 @@ impl ListFormatter {
     fn format_internal<'c, B>(
         &'c self,
         values: &[&str],
-        // Arguments are the initial content and a size hint for 
-        // the final length of the output.
-        make_buffer: fn(&str, usize) -> B,
-        apply_pattern: fn(&str, &PatternParts<'c>, B) -> B,
+        // Empty builder
+        mut builder: B,
+        // Produces value + builder
+        apply_value: fn(&str, B) -> B,
+        // Produces value + parts.between + builder + parts.after
+        apply_pattern: fn(&str, PatternParts<'c>, B) -> B,
     ) -> B {
-        let pattern = &self.data.get();
-        let size_hint = values.iter().map(|s| s.len()).sum::<usize>()
-            + pattern.size_hint(self.width, values.len());
         match values.len() {
-            0 => make_buffer("", 0),
-            1 => make_buffer(values[0], size_hint),
+            0 => builder,
+            1 => apply_value(values[0], builder),
             2 => apply_pattern(
                 values[0],
-                &pattern.pair(self.width).parts(values[1]),
-                make_buffer(values[1], size_hint),
+                self.data.get().pair(self.width).parts(values[1]),
+                apply_value(values[1], builder),
             ),
             n => {
-                let mut builder = apply_pattern(
+                builder = apply_pattern(
                     values[n - 2],
-                    &pattern.end(self.width).parts(values[n - 1]),
-                    make_buffer(values[n - 1], size_hint),
+                    self.data.get().end(self.width).parts(values[n - 1]),
+                    apply_value(values[n - 1], builder),
                 );
-                let middle = pattern.middle(self.width);
+                let middle = self.data.get().middle(self.width);
                 for i in (1..n - 2).rev() {
-                    builder = apply_pattern(values[i], &middle.parts(values[i + 1]), builder);
+                    builder = apply_pattern(values[i], middle.parts(values[i + 1]), builder);
                 }
                 apply_pattern(
                     values[0],
-                    &pattern.start(self.width).parts(values[1]),
+                    self.data.get().start(self.width).parts(values[1]),
                     builder,
                 )
             }
         }
     }
 
+    fn size_hint(&self, values: &[&str]) -> usize {
+        values.iter().map(|s| s.len()).sum::<usize>()
+            + self.data.get().size_hint(self.width, values.len())
+    }
+
     pub fn format(&self, values: &[&str]) -> String {
         self.format_internal(
             values,
-            |value, size_hint| {
-                let mut b = String::with_capacity(size_hint);
-                b.push_str(value);
-                b
+            String::with_capacity(self.size_hint(values)),
+            |value, mut builder| {
+                builder.push_str(value);
+                builder
             },
             |value, (between, after), mut builder| {
-                builder = builder + after;
                 // TODO(robertbastian): String doesn't have O(1) prepend
                 builder.insert_str(0, between);
                 builder.insert_str(0, value);
-                builder
+                builder + after
             },
         )
     }
@@ -105,16 +108,16 @@ impl ListFormatter {
     pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType> {
         self.format_internal(
             values,
-            |value, size_hint| {
-                let mut builder = FormattedString::<FieldType>::with_capacity(size_hint);
+            FormattedString::with_capacity(self.size_hint(values)),
+            |value, mut builder| {
                 builder.append(&value, FieldType::Element);
                 builder
             },
             |value, (between, after), mut builder| {
-                builder.append(after, FieldType::Literal);
                 // TODO(robertbastian): FormattedString doesn't have O(1) prepend
-                builder.prepend(between, FieldType::Literal);
+                builder.prepend(&between, FieldType::Literal);
                 builder.prepend(&value, FieldType::Element);
+                builder.append(&after, FieldType::Literal);
                 builder
             },
         )
