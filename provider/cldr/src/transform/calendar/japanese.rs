@@ -245,14 +245,13 @@ pub fn get_era_code_map() -> LiteMap<String, TinyStr16> {
     let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
         .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
     let mut map = LiteMap::new();
-    let mut i = 0;
-    for value in snapshot
+    for (i, value) in snapshot
         .dates_to_historical_eras
         .iter_values()
         .chain(snapshot.dates_to_eras.iter_values())
+        .enumerate()
     {
         map.insert(i.to_string(), *value);
-        i += 1;
     }
     map
 }
