@@ -12,6 +12,7 @@ use core::num::TryFromIntError;
 use serde::{Deserialize, Serialize};
 use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ZeroVec;
+use zerovec::ZeroVecError;
 
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
@@ -331,12 +332,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted()
     ///     .expect("infallible");
     /// ```
-    pub fn try_into_converted<P>(
-        self,
-    ) -> Result<
-        CodePointTrie<'trie, P>,
-        <<P as zerovec::ule::AsULE>::ULE as zerovec::ule::ULE>::Error,
-    >
+    pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
     where
         P: TrieValue,
     {

@@ -4,9 +4,10 @@
 
 use crate::blob_schema::*;
 use crate::path_util;
+use icu_provider::buffer_provider::BufferFormat;
 use icu_provider::prelude::*;
-use icu_provider::serde::{SerdeDeDataProvider, SerdeDeDataReceiver};
 use serde::de::Deserialize;
+use yoke::trait_hack::YokeTraitHack;
 use zerovec::map::ZeroMapBorrowed;
 
 /// A data provider loading data statically baked in to the binary.
@@ -110,35 +111,26 @@ impl StaticDataProvider {
 impl<M> DataProvider<M> for StaticDataProvider
 where
     M: DataMarker,
-    // 'static is what we want here, because we are deserializing from a static buffer.
-    M::Yokeable: Deserialize<'static>,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
+        serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let file = self.get_file(req)?;
-        let data = M::Yokeable::deserialize(&mut postcard::Deserializer::from_bytes(file))
-            .map_err(DataError::new_resc_error)?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
-            payload: Some(DataPayload::from_owned(data)),
-        })
+        self.as_deserializing().load_payload(req)
     }
 }
 
-impl SerdeDeDataProvider for StaticDataProvider {
-    fn load_to_receiver(
-        &self,
-        req: &DataRequest,
-        receiver: &mut dyn SerdeDeDataReceiver,
-    ) -> Result<DataResponseMetadata, DataError> {
-        let file = self.get_file(req)?;
-        receiver.receive_static(&mut <dyn erased_serde::Deserializer>::erase(
-            &mut postcard::Deserializer::from_bytes(file),
-        ))?;
-
-        Ok(DataResponseMetadata {
-            data_langid: req.resource_path.options.langid.clone(),
+impl BufferProvider for StaticDataProvider {
+    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        let static_buffer = self.get_file(&req)?;
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(BufferFormat::Postcard07);
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_static_buffer(static_buffer)),
         })
     }
 }

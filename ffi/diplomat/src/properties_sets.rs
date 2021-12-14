@@ -11,7 +11,7 @@ pub mod ffi {
     };
     use icu_provider::prelude::DataPayload;
 
-    use crate::{provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider};
+    use crate::provider::ffi::ICU4XDataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
@@ -31,17 +31,9 @@ pub mod ffi {
         pub fn try_get_ascii_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> ICU4XCodePointSetDataResult {
-            let provider = provider.0.as_ref();
-            Self::prepare_result(sets::get_ascii_hex_digit(provider))
-        }
-
-        /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XStaticDataProvider`].
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
-        pub fn try_get_ascii_hex_digit_from_static(
-            provider: &ICU4XStaticDataProvider,
-        ) -> ICU4XCodePointSetDataResult {
-            let provider = provider.0.as_ref();
-            Self::prepare_result(sets::get_ascii_hex_digit(provider))
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            Self::prepare_result(sets::get_ascii_hex_digit(&provider))
         }
 
         fn prepare_result(result: UnisetResult) -> ICU4XCodePointSetDataResult {

@@ -67,10 +67,6 @@
 
         FFI version of ``PluralRules::try_new()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
 
-    .. js:staticfunction:: try_new_from_static(locale, provider, ty)
-
-        Creates a new :js:class:`ICU4XPluralRules` from a :js:class:`ICU4XStaticDataProvider`.
-
     .. js:function:: select(op)
 
         FFI version of ``PluralRules::select()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select>`__ for more details.

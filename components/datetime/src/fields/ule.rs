@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields;
-use zerovec::ule::{AsULE, ULE};
+use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
 /// `FieldULE` is a type optimized for efficent storing and
 /// deserialization of `DateTimeFormat` `Field` elements using
@@ -70,15 +70,15 @@ impl AsULE for fields::Field {
 //  5 The other ULE methods use the default impl.
 //  6. FieldULE byte equality is semantic equality.
 unsafe impl ULE for FieldULE {
-    type Error = &'static str;
-
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let mut chunks = bytes.chunks_exact(2);
 
-        if !chunks.all(|c| fields::Field::bytes_in_range(&c[0], &c[1]))
-            || !chunks.remainder().is_empty()
-        {
-            return Err("Invalid byte sequence");
+        if !chunks.all(|c| fields::Field::bytes_in_range(&c[0], &c[1])) {
+            return Err(ZeroVecError::parse::<Self>());
+        }
+
+        if !chunks.remainder().is_empty() {
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         Ok(())
     }

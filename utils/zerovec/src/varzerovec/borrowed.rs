@@ -89,7 +89,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
     /// - `indices[len - 1]..things.len()` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
-    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ParseErrorFor<T>> {
+    pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
         if slice.is_empty() {
             return Ok(VarZeroVecBorrowed {
                 indices: &[],
@@ -98,20 +98,20 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 marker: PhantomData,
             });
         }
-        let len_bytes = slice.get(0..4).ok_or(VarZeroVecError::FormatError)?;
+        let len_bytes = slice.get(0..4).ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let len_ule = PlainOldULE::<4>::parse_byte_slice(len_bytes)
-            .map_err(|_| VarZeroVecError::FormatError)?;
+            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
-        let len =
-            u32::from_unaligned(*len_ule.get(0).ok_or(VarZeroVecError::FormatError)?) as usize;
+        let len = u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?)
+            as usize;
         let indices_bytes = slice
             .get(4..4 * len + 4)
-            .ok_or(VarZeroVecError::FormatError)?;
+            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let indices = PlainOldULE::<4>::parse_byte_slice(indices_bytes)
-            .map_err(|_| VarZeroVecError::FormatError)?;
+            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
             .get(4 * len + 4..)
-            .ok_or(VarZeroVecError::FormatError)?;
+            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecBorrowed {
             indices,
@@ -215,7 +215,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
     /// This method is NOT allowed to call any other methods on VarZeroVecBorrowed since all other methods
     /// assume that the slice has been passed through iter_checked
     #[inline]
-    fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ParseErrorFor<T>>> {
+    fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ZeroVecError>> {
         let last = iter::from_fn(move || {
             if !self.is_empty() {
                 let start = usizeify(self.indices[self.len() - 1]);
@@ -223,7 +223,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 Some(
                     self.things
                         .get(start..end)
-                        .ok_or(VarZeroVecError::FormatError),
+                        .ok_or(ZeroVecError::VarZeroVecFormatError),
                 )
             } else {
                 None
@@ -238,10 +238,10 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 // the .get() here automatically verifies that end>=start
                 self.things
                     .get(start..end)
-                    .ok_or(VarZeroVecError::FormatError)
+                    .ok_or(ZeroVecError::VarZeroVecFormatError)
             })
             .chain(last)
-            .map(|s| s.and_then(|s| T::parse_byte_slice(s).map_err(|e| e.into())))
+            .map(|s| s.and_then(|s| T::parse_byte_slice(s)))
     }
 
     /// Create an iterator over the Ts contained in VarZeroVecBorrowed

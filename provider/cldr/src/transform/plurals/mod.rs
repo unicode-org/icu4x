@@ -89,10 +89,10 @@ impl DataProvider<PluralRulesV1Marker> for PluralsProvider {
             Some(v) => v,
             None => return Err(req.clone().into()),
         };
+        let metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(PluralRulesV1::from(r))),
         })
     }

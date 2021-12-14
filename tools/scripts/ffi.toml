@@ -11,8 +11,7 @@ dependencies = [
     "cargo-make-min-version",
     "verify-diplomat-gen",
     "test-c",
-    # TODO(#964): Enable this CI test.
-    # "test-c-tiny",
+    "test-c-tiny",
     "test-cpp",
     "build-wearos-ffi",
     "test-nostd",

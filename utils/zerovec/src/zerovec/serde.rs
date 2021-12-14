@@ -2,11 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::ZeroVec;
+use super::{ZeroSlice, ZeroVec};
 use crate::ule::*;
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
+use core::mem;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
@@ -92,6 +94,34 @@ where
         } else {
             serializer.serialize_bytes(self.as_bytes())
         }
+    }
+}
+
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+impl<'de, T> Deserialize<'de> for Box<ZeroSlice<T>>
+where
+    T: Deserialize<'de> + AsULE + 'static,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let mut zv = ZeroVec::<T>::deserialize(deserializer)?;
+        let vec = mem::take(zv.to_mut());
+        Ok(ZeroSlice::from_boxed_slice(vec.into_boxed_slice()))
+    }
+}
+
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+impl<T> Serialize for ZeroSlice<T>
+where
+    T: Serialize + AsULE,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        self.as_zerovec().serialize(serializer)
     }
 }
 

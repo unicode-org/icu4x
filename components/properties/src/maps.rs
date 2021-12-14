@@ -216,3 +216,27 @@ where
 {
     get_cp_map(provider, key::SENTENCE_BREAK_V1)
 }
+
+/// Return a [`CodePointTrie`] for the Canonical_Combining_Class Unicode property. See
+/// [`CanonicalCombiningClass`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, CanonicalCombiningClass};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_canonical_combining_class(&provider).expect("The data should be valid!");
+/// let sb = &payload.get().code_point_trie;
+///
+/// assert_eq!(sb.get('a' as u32), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
+/// assert_eq!(sb.get(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+pub fn get_canonical_combining_class<D>(provider: &D) -> CodePointMapResult<CanonicalCombiningClass>
+where
+    D: DataProvider<UnicodePropertyMapV1Marker<CanonicalCombiningClass>> + ?Sized,
+{
+    get_cp_map(provider, key::CANONICAL_COMBINING_CLASS_V1)
+}

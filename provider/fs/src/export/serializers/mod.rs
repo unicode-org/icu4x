@@ -4,13 +4,12 @@
 
 pub mod json;
 
-#[cfg(feature = "provider_bincode")]
+#[cfg(feature = "bincode")]
 pub mod bincode;
 
-use crate::manifest::SyntaxOption;
 use displaydoc::Display;
+use icu_provider::buffer_provider::BufferFormat;
 use std::io;
-use std::ops::Deref;
 
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
 #[derive(Display, Debug)]
@@ -36,11 +35,14 @@ impl From<erased_serde::Error> for Error {
 }
 
 /// A simple serializer trait that works on whole objects.
-pub trait AbstractSerializer: Deref<Target = SyntaxOption> {
+pub trait AbstractSerializer {
     /// Serializes an object to a sink.
     fn serialize(
         &self,
         obj: &dyn erased_serde::Serialize,
         sink: &mut dyn io::Write,
     ) -> Result<(), Error>;
+
+    /// Gets the buffer format currently being serialized.
+    fn get_buffer_format(&self) -> BufferFormat;
 }

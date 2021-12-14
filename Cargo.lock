@@ -480,6 +480,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "deduplicating_array"
+version = "0.5.0"
+dependencies = [
+ "postcard",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "derivative"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -684,7 +693,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "formatted_string_builder"
+name = "formatted_string"
 version = "0.1.0"
 dependencies = [
  "criterion",
@@ -1146,12 +1155,15 @@ name = "icu_list"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "deduplicating_array",
  "displaydoc",
- "formatted_string_builder",
+ "formatted_string",
  "icu_locid",
  "icu_provider",
+ "postcard",
  "regex",
  "serde",
+ "serde_json",
  "zerovec",
 ]
 
@@ -1241,12 +1253,14 @@ dependencies = [
 name = "icu_provider"
 version = "0.4.0"
 dependencies = [
+ "bincode",
  "displaydoc",
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
  "icu_provider_macros",
  "litemap",
+ "postcard",
  "serde",
  "serde_json",
  "static_assertions",
@@ -1287,7 +1301,9 @@ dependencies = [
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
+ "icu_properties",
  "icu_provider",
+ "icu_provider_uprops",
  "icu_testdata",
  "itertools",
  "json",
@@ -1358,12 +1374,16 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu",
  "icu_provider",
+ "icu_provider_fs",
  "icu_segmenter_lstm",
+ "icu_testdata",
  "lazy_static",
  "serde",
  "serde-json-core",
  "serde_json",
+ "toml",
  "unicode-width",
 ]
 

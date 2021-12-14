@@ -24,6 +24,10 @@ pub enum Error {
     #[displaydoc("Request {0} needs a variant")]
     NeedsVariant(DataRequest),
 
+    /// Should not have variant or language id
+    #[displaydoc("Requested key should not have a variant or language id: {0}")]
+    ExtraneousVariantOrId(DataRequest),
+
     /// The resource was not returned due to a filter. The resource may or may not be available.
     #[displaydoc("Resource was filtered: {1}: {0}")]
     FilteredResource(DataRequest, String),
@@ -56,10 +60,10 @@ pub enum Error {
     #[displaydoc("Could not unwrap Rc due to multiple references")]
     MultipleReferences,
 
-    /// An error occured during serialization or deserialization.
-    #[cfg(feature = "erased-serde")]
+    /// An error occurred during serialization or deserialization.
+    #[cfg(feature = "serde")]
     #[displaydoc("Serde error: {0}")]
-    Serde(erased_serde::Error),
+    Serde(crate::serde::Error),
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
     #[displaydoc("Failed to load resource: {0}")]
@@ -69,9 +73,9 @@ pub enum Error {
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
-#[cfg(feature = "erased-serde")]
-impl From<erased_serde::Error> for Error {
-    fn from(e: erased_serde::Error) -> Self {
+#[cfg(feature = "serde")]
+impl From<crate::serde::Error> for Error {
+    fn from(e: crate::serde::Error) -> Self {
         Error::Serde(e)
     }
 }

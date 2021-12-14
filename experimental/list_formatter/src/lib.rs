@@ -12,3 +12,4 @@ pub use crate::list_formatter::ListFormatter;
 pub mod error;
 pub mod options;
 pub mod provider;
+mod string_matcher;

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
-use crate::ZeroVec;
+use crate::zerovec::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -100,13 +100,25 @@ unsafe impl EncodeAsVarULE<str> for String {
     }
 }
 
-unsafe impl<T: ULE> EncodeAsVarULE<[T]> for Vec<T> {
+unsafe impl<T: ULE, A: AsULE<ULE = T> + 'static> EncodeAsVarULE<ZeroSlice<A>> for Vec<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[<[T] as VarULE>::as_byte_slice(self)])
+        cb(&[<ZeroSlice<A> as VarULE>::as_byte_slice(
+            ZeroSlice::<A>::from_ule_slice(self),
+        )])
     }
 }
 
-unsafe impl<'a, T> custom::EncodeAsVarULE<[T::ULE]> for ZeroVec<'a, T>
+unsafe impl<T> EncodeAsVarULE<[T]> for Vec<T>
+where
+    [T]: VarULE,
+{
+    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+        cb(&[<[T] as VarULE>::as_byte_slice(&*self)])
+    }
+}
+
+unsafe impl<'a, T, A: AsULE<ULE = T> + 'static> custom::EncodeAsVarULE<ZeroSlice<A>>
+    for ZeroVec<'a, T>
 where
     T: AsULE,
 {

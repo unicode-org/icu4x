@@ -9,10 +9,6 @@
 
         Gets a map for Unicode property Script from a :cpp:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html>`__ for more information.
 
-    .. cpp:function:: static ICU4XCodePointMapData16Response try_get_script_from_static(const ICU4XStaticDataProvider& provider)
-
-        Gets a map for Unicode property Script from a :cpp:class:`ICU4XStaticDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html>`__ for more information.
-
     .. cpp:function:: uint16_t get(char32_t cp) const
 
         Gets the value for a code point. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32>`__ for more information.

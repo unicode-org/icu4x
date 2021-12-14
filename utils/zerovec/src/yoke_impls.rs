@@ -176,7 +176,7 @@ where
 
 impl<'a, T: 'static + AsULE + ?Sized> ZeroCopyFrom<ZeroVec<'a, T>> for ZeroVec<'static, T> {
     fn zero_copy_from<'b>(cart: &'b ZeroVec<'a, T>) -> ZeroVec<'b, T> {
-        ZeroVec::Borrowed(cart.as_slice())
+        ZeroVec::Borrowed(cart.as_ule_slice())
     }
 }
 
@@ -213,6 +213,7 @@ where
 #[allow(non_camel_case_types)]
 mod test {
     use super::*;
+    use crate::zerovec::ZeroSlice;
 
     #[derive(yoke::Yokeable)]
     struct DeriveTest_ZeroVec<'data> {
@@ -239,5 +240,11 @@ mod test {
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         _data: ZeroMapBorrowed<'data, [u8], str>,
+    }
+
+    #[derive(yoke::Yokeable)]
+    #[yoke(prove_covariance_manually)]
+    struct DeriveTest_ZeroMapWithULE<'data> {
+        _data: ZeroMap<'data, ZeroSlice<u32>, str>,
     }
 }

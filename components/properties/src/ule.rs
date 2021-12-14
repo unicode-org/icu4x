@@ -3,13 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
-    WordBreak,
+    CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
+    Script, SentenceBreak, WordBreak,
 };
 
 use core::convert::TryFrom;
-use num_enum::TryFromPrimitiveError;
-use zerovec::ule::{AsULE, PlainOldULE, ULE};
+use zerovec::ule::{AsULE, PlainOldULE, ZeroVecError, ULE};
+
+impl AsULE for CanonicalCombiningClass {
+    type ULE = u8;
+
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        self.0
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(unaligned)
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -42,12 +55,10 @@ impl AsULE for GeneralCategory {
 //  5. The other ULE methods use the default impl.
 //  6. The PartialEq implementation on GeneralCategory uses byte equality.
 unsafe impl ULE for GeneralCategoryULE {
-    type Error = TryFromPrimitiveError<GeneralCategory>;
-
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         // Validate the bytes
         for b in bytes {
-            GeneralCategory::try_from(*b)?;
+            GeneralCategory::try_from(*b).map_err(|_| ZeroVecError::parse::<Self>())?;
         }
         Ok(())
     }

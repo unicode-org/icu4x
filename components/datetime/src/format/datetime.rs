@@ -4,7 +4,7 @@
 
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, Field, FieldLength, FieldSymbol, Week};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, Week, Year};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
@@ -174,15 +174,18 @@ where
                 )?;
             w.write_str(symbol)?
         }
-        FieldSymbol::Year(..) => format_number(
-            w,
-            datetime
-                .datetime()
-                .year()
-                .ok_or(Error::MissingInputField)?
-                .number as isize,
-            field.length,
-        )?,
+        FieldSymbol::Year(year) => match year {
+            Year::Calendar => format_number(
+                w,
+                datetime
+                    .datetime()
+                    .year()
+                    .ok_or(Error::MissingInputField)?
+                    .number as isize,
+                field.length,
+            )?,
+            Year::WeekOf => format_number(w, datetime.year_week()?.number as isize, field.length)?,
+        },
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
                 w,
