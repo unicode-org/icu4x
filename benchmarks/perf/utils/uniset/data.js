@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639500290313,
+  "lastUpdate": 1639500536082,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16199,6 +16199,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36075881,
             "range": "± 58174",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b081f84c087a0d5b94c1ac2cf6b0bc3c78e9079a",
+          "message": "Implement the Canonical_Combining_Class property (#1347)",
+          "timestamp": "2021-12-14T18:41:22+02:00",
+          "tree_id": "b658d80a737985fc9940e3beed7e54fac241c9b2",
+          "url": "https://github.com/unicode-org/icu4x/commit/b081f84c087a0d5b94c1ac2cf6b0bc3c78e9079a"
+        },
+        "date": 1639500529722,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30813882,
+            "range": "± 423592",
             "unit": "ns/iter"
           }
         ]
