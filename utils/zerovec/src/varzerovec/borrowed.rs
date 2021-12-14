@@ -102,8 +102,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         let len_ule = PlainOldULE::<4>::parse_byte_slice(len_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
-        let len =
-            u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?) as usize;
+        let len = u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?)
+            as usize;
         let indices_bytes = slice
             .get(4..4 * len + 4)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;

@@ -7,13 +7,12 @@
 
 mod chars;
 pub mod custom;
-mod error;
 mod pair;
 mod plain;
 mod slices;
 
+pub use super::ZeroVecError;
 pub use chars::CharULE;
-pub use error::ZeroVecError;
 pub use pair::PairULE;
 pub use plain::PlainOldULE;
 
