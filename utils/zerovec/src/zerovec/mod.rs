@@ -442,11 +442,7 @@ where
     /// ```
     #[inline]
     pub fn to_vec(&self) -> Vec<T> {
-        self.as_ule_slice()
-            .iter()
-            .copied()
-            .map(T::from_unaligned)
-            .collect()
+        self.iter().collect()
     }
 }
 

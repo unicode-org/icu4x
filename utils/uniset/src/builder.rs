@@ -445,12 +445,7 @@ impl UnicodeSetBuilder {
     /// assert!(!check.contains('N')); // 78
     /// ```
     pub fn complement_set(&mut self, set: &UnicodeSet) {
-        let inv_list_iter_owned = set
-            .as_inversion_list()
-            .as_ule_slice()
-            .iter()
-            .copied()
-            .map(<u32 as AsULE>::from_unaligned);
+        let inv_list_iter_owned = set.as_inversion_list().iter();
         self.complement_list(inv_list_iter_owned);
     }
 
