@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639499288989,
+  "lastUpdate": 1639499970865,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5183,6 +5183,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5002e70343983cc08163b3df2da0b48dadc9856f"
         },
         "date": 1639499280295,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 921273,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "782f62334153f30b3f360a364f8e7b8c7918ed7a",
+          "message": "Add ZeroSlice and VarZeroSlice, move ZeroVec functionality to ZeroSlice and add Deref (#1371)",
+          "timestamp": "2021-12-14T08:37:44-08:00",
+          "tree_id": "e6bcf82dcb0a032dd3a6b809ee7bfc5825808b33",
+          "url": "https://github.com/unicode-org/icu4x/commit/782f62334153f30b3f360a364f8e7b8c7918ed7a"
+        },
+        "date": 1639499962722,
         "tool": "ndjson",
         "benches": [
           {
