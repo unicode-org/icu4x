@@ -67,7 +67,7 @@ impl ListFormatter {
             }
             n => {
                 // Start(values[0], middle(..., middle(values[n-3], End(values[n-2], values[n-1]))...)) =
-                // start_before + values[0] + start_between + (middle_before + values[1..n-3] + middle_between)* + 
+                // start_before + values[0] + start_between + (middle_before + values[1..n-3] + middle_between)* +
                 // end_before + values[n-2] + end_between + values[n-1] + end_after + middle_after* + start_after
 
                 let (start_before, start_between, start_after) =
