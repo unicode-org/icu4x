@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639497344837,
+  "lastUpdate": 1639499686680,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21167,6 +21167,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22740,
             "range": "± 24",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5002e70343983cc08163b3df2da0b48dadc9856f",
+          "message": "Add LineBreakSegmenter and rewire code to use it (#1387)",
+          "timestamp": "2021-12-14T10:26:06-06:00",
+          "tree_id": "6ea782251c3b62bbbe5c845b771213c7e88d0221",
+          "url": "https://github.com/unicode-org/icu4x/commit/5002e70343983cc08163b3df2da0b48dadc9856f"
+        },
+        "date": 1639499679567,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1088,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5464,
+            "range": "± 93",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22494,
+            "range": "± 16",
             "unit": "ns/iter"
           }
         ]
