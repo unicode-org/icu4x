@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639270044104,
+  "lastUpdate": 1639446738211,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5033,6 +5033,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7e1d77e59e3145175d1267905eef35eefecc34b7"
         },
         "date": 1639270036361,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 916502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "65fef9e14457d6c744f8dca11fcf22461837c838",
+          "message": "calendars: fix offset handling around month boundaries (#1352)\n\n* calendars: fix offset handling around month boundaries\n\n* fmt\n\n* clippy",
+          "timestamp": "2021-12-14T07:20:31+05:30",
+          "tree_id": "3fde4534287b6868ec554389f622cb7bb3776b75",
+          "url": "https://github.com/unicode-org/icu4x/commit/65fef9e14457d6c744f8dca11fcf22461837c838"
+        },
+        "date": 1639446730800,
         "tool": "ndjson",
         "benches": [
           {
