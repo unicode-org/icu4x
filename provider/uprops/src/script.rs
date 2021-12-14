@@ -48,22 +48,18 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
 
         let trie = CodePointTrie::<ScriptWithExt>::try_from(cpt_data)?;
 
-        // Convert the input from Vec<Vec<u16>> to Vec<Vec<PlainOldULE<2>>> so that
+        // Convert the input from Vec<Vec<u16>> to Vec<Vec<Script>> so that
         // we can go through the VarZeroVec construction process for a desired result
         // type of VZV<ZeroSlice<T::ULE>>
-        let ule_scx_array_data: Vec<Vec<PlainOldULE<2>>> = scx_array_data
+        let ule_scx_array_data: Vec<Vec<Script>> = scx_array_data
             .iter()
             .map(|v| {
                 v.iter()
-                    .map(|i| Script(*i).as_unaligned())
-                    .collect::<Vec<PlainOldULE<2>>>()
+                    .map(|i| Script(*i))
+                    .collect::<Vec<Script>>()
             })
-            .collect::<Vec<Vec<PlainOldULE<2>>>>();
-        let bytes =
-            VarZeroVec::<ZeroSlice<Script>>::get_serializable_bytes(&ule_scx_array_data).unwrap();
-        let scx_vzv: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::parse_byte_slice(&bytes)
-            .map_err(DataError::new_resc_error)?
-            .into_owned();
+            .collect::<Vec<Vec<Script>>>();
+        let scx_vzv: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::from(&*ule_scx_array_data);
 
         ScriptExtensions::try_new(trie, scx_vzv).map_err(DataError::new_resc_error)
     }
