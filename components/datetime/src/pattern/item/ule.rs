@@ -5,7 +5,7 @@
 use super::{GenericPatternItem, PatternItem};
 use crate::fields;
 use core::convert::TryFrom;
-use zerovec::ule::{AsULE, ULEError, ULE};
+use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
 /// `PatternItemULE` is a type optimized for efficent storing and
 /// deserialization of `DateTimeFormat` `PatternItem` elements using
@@ -93,15 +93,15 @@ impl PatternItemULE {
 //  5. The other ULE methods use the default impl.
 //  6. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let mut chunks = bytes.chunks_exact(3);
 
         if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2]))) {
-            return Err(ULEError::parse::<Self>());
+            return Err(ZeroVecError::parse::<Self>());
         }
 
         if !chunks.remainder().is_empty() {
-            return Err(ULEError::length::<Self>(bytes.len()));
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         Ok(())
     }
@@ -228,15 +228,15 @@ impl GenericPatternItemULE {
 //  5. The other ULE methods use the default impl.
 //  6. GenericPatternItemULE byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let mut chunks = bytes.chunks_exact(3);
 
         if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2]))) {
-            return Err(ULEError::parse::<Self>());
+            return Err(ZeroVecError::parse::<Self>());
         }
 
         if !chunks.remainder().is_empty() {
-            return Err(ULEError::length::<Self>(bytes.len()));
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         Ok(())
     }

@@ -37,12 +37,12 @@ macro_rules! impl_byte_slice_size {
         //  6. PlainOldULE byte equality is semantic equality
         unsafe impl ULE for PlainOldULE<$size> {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
+            fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
                 if bytes.len() % $size == 0 {
                     // Safe because Self is transparent over [u8; $size]
                     Ok(())
                 } else {
-                    Err(ULEError::length::<Self>(bytes.len()))
+                    Err(ZeroVecError::length::<Self>(bytes.len()))
                 }
             }
         }
@@ -108,11 +108,11 @@ impl_byte_slice_type!(i128, 16);
 //  6. u8 byte equality is semantic equality
 unsafe impl ULE for u8 {
     #[inline]
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ZeroVecError> {
         Ok(())
     }
     #[inline]
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], ULEError> {
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], ZeroVecError> {
         Ok(bytes)
     }
     #[inline]

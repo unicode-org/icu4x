@@ -7,7 +7,7 @@ use core::fmt;
 
 /// A generic error type to be used for decoding slices of ULE types
 #[derive(Copy, Clone, Debug)]
-pub enum ULEError {
+pub enum ZeroVecError {
     /// Attempted to parse a buffer into a slice of the given ULE type but its
     /// length was not compatible
     InvalidLength { ty: &'static str, len: usize },
@@ -17,33 +17,33 @@ pub enum ULEError {
     VZVFormatError,
 }
 
-impl fmt::Display for ULEError {
+impl fmt::Display for ZeroVecError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         match *self {
-            ULEError::InvalidLength { ty, len } => {
+            ZeroVecError::InvalidLength { ty, len } => {
                 write!(f, "Invalid length {} for slice of type {}", len, ty)
             }
-            ULEError::ParseError { ty } => {
+            ZeroVecError::ParseError { ty } => {
                 write!(f, "Could not parse bytes to slice of type {}", ty)
             }
-            ULEError::VZVFormatError => {
+            ZeroVecError::VZVFormatError => {
                 write!(f, "Invalid format for VarZeroVec buffer")
             }
         }
     }
 }
 
-impl ULEError {
+impl ZeroVecError {
     /// Construct a parse error for the given type
-    pub fn parse<T: ?Sized + 'static>() -> ULEError {
-        ULEError::ParseError {
+    pub fn parse<T: ?Sized + 'static>() -> ZeroVecError {
+        ZeroVecError::ParseError {
             ty: any::type_name::<T>(),
         }
     }
 
     /// Construct an "invalid length" error for the given type and length
-    pub fn length<T: ?Sized + 'static>(len: usize) -> ULEError {
-        ULEError::InvalidLength {
+    pub fn length<T: ?Sized + 'static>(len: usize) -> ZeroVecError {
+        ZeroVecError::InvalidLength {
             ty: any::type_name::<T>(),
             len,
         }
@@ -51,4 +51,4 @@ impl ULEError {
 }
 
 #[cfg(feature = "std")]
-impl ::std::error::Error for ULEError {}
+impl ::std::error::Error for ZeroVecError {}

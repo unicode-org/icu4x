@@ -8,7 +8,7 @@ use crate::{
 };
 
 use core::convert::TryFrom;
-use zerovec::ule::{AsULE, PlainOldULE, ULEError, ULE};
+use zerovec::ule::{AsULE, PlainOldULE, ZeroVecError, ULE};
 
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -41,10 +41,10 @@ impl AsULE for GeneralSubcategory {
 //  5. The other ULE methods use the default impl.
 //  6. The PartialEq implementation on GeneralSubcategory uses byte equality.
 unsafe impl ULE for GeneralSubcategoryULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         // Validate the bytes
         for b in bytes {
-            GeneralSubcategory::try_from(*b).map_err(|_| ULEError::parse::<Self>())?;
+            GeneralSubcategory::try_from(*b).map_err(|_| ZeroVecError::parse::<Self>())?;
         }
         Ok(())
     }

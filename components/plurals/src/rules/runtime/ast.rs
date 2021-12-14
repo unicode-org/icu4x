@@ -13,7 +13,7 @@ use core::{
 use icu_provider::yoke::{self, *};
 use num_enum::{IntoPrimitive, TryFromPrimitive, UnsafeFromPrimitive};
 use zerovec::{
-    ule::{custom::EncodeAsVarULE, AsULE, PairULE, PlainOldULE, ULEError, VarULE, ULE},
+    ule::{custom::EncodeAsVarULE, AsULE, PairULE, PlainOldULE, VarULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
@@ -326,8 +326,8 @@ impl RelationULE {
     }
 
     #[inline]
-    fn validate_andor_polarity_operand(encoded: u8) -> Result<(), ULEError> {
-        Operand::try_from(encoded & 0b0011_1111).map_err(|_| ULEError::parse::<Self>())?;
+    fn validate_andor_polarity_operand(encoded: u8) -> Result<(), ZeroVecError> {
+        Operand::try_from(encoded & 0b0011_1111).map_err(|_| ZeroVecError::parse::<Self>())?;
         Ok(())
     }
 
@@ -385,11 +385,11 @@ unsafe impl VarULE for RelationULE {
     }
 
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         RelationULE::validate_andor_polarity_operand(bytes[0])?;
         // Skip bytes 1-4 as they're always valid `u32` for `Modulo`.
         if bytes.len() < 5 {
-            return Err(ULEError::parse::<Self>());
+            return Err(ZeroVecError::parse::<Self>());
         }
         let remaining = &bytes[5..];
         RangeOrValueULE::validate_byte_slice(remaining)?;

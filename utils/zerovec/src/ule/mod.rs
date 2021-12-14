@@ -13,7 +13,7 @@ mod plain;
 mod slices;
 
 pub use chars::CharULE;
-pub use error::ULEError;
+pub use error::ZeroVecError;
 pub use pair::PairULE;
 pub use plain::PlainOldULE;
 
@@ -68,7 +68,7 @@ where
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid slice of `Self`, then `Ok`
     /// should be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError>;
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime.
     ///
@@ -80,7 +80,7 @@ where
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], ULEError> {
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], ZeroVecError> {
         Self::validate_byte_slice(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
         Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
@@ -265,7 +265,7 @@ pub unsafe trait VarULE: 'static {
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid `&Self`, then `Ok` should
     /// be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ULEError>;
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ZeroVecError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime.
     ///
@@ -278,7 +278,7 @@ pub unsafe trait VarULE: 'static {
     /// Note: The following equality should hold: `size_of_val(result) == size_of_val(bytes)`,
     /// where `result` is the successful return value of the method. This means that the return
     /// value spans the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ULEError> {
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
         Self::validate_byte_slice(bytes)?;
         let result = unsafe { Self::from_byte_slice_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));

@@ -72,7 +72,7 @@ where
 //  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
 unsafe impl<T: AsULE + 'static> VarULE for ZeroVecULE<T> {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         T::ULE::validate_byte_slice(bytes)
     }
 

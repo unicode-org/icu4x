@@ -15,14 +15,14 @@ use core::str;
 //  7. str byte equality is semantic equality
 unsafe impl VarULE for str {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
-        str::from_utf8(bytes).map_err(|_| ULEError::parse::<Self>())?;
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        str::from_utf8(bytes).map_err(|_| ZeroVecError::parse::<Self>())?;
         Ok(())
     }
 
     #[inline]
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ULEError> {
-        str::from_utf8(bytes).map_err(|_| ULEError::parse::<Self>())
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+        str::from_utf8(bytes).map_err(|_| ZeroVecError::parse::<Self>())
     }
     /// Invariant: must be safe to call when called on a slice that previously
     /// succeeded with `parse_byte_slice`
@@ -45,7 +45,7 @@ where
     T: ULE + AsULE<ULE = T>,
 {
     #[inline]
-    fn validate_byte_slice(slice: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {
         T::validate_byte_slice(slice)
     }
 

@@ -50,15 +50,15 @@ pub struct CharULE([u8; 4]);
 //  6. CharULE byte equality is semantic equality
 unsafe impl ULE for CharULE {
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         if bytes.len() % 4 != 0 {
-            return Err(ULEError::length::<Self>(bytes.len()));
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
         for chunk in bytes.chunks_exact(4) {
             // TODO: Use slice::as_chunks() when stabilized
             let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
-            char::try_from(u).map_err(|_| ULEError::parse::<Self>())?;
+            char::try_from(u).map_err(|_| ZeroVecError::parse::<Self>())?;
         }
         Ok(())
     }

@@ -22,11 +22,11 @@ pub struct PairULE<A, B>(pub A, pub B);
 //  6. PairULE byte equality is semantic equality by relying on the ULE equality
 //     invariant on the subfields
 unsafe impl<A: ULE, B: ULE> ULE for PairULE<A, B> {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ULEError> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         let a_len = mem::size_of::<A>();
         let b_len = mem::size_of::<B>();
         if bytes.len() % (a_len + b_len) != 0 {
-            return Err(ULEError::length::<Self>(bytes.len()));
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         for chunk in bytes.chunks(a_len + b_len) {
             A::validate_byte_slice(&chunk[..a_len])?;
