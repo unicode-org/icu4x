@@ -157,7 +157,7 @@ struct ListJoinerPattern<'data> {
     /// The index of the first placeholder. Always 0 for CLDR
     /// data, so we don't need to serialize it. In-memory we
     /// have free space for it as index_1 doesn't fill a word.
-    #[serde(skip)]
+    #[cfg_attr(feature = "provider_serde", serde(skip))]
     index_0: u8,
     /// The index of the second placeholder
     index_1: u8,
