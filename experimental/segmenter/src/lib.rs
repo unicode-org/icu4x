@@ -13,42 +13,50 @@
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
 //!
-//! # Line breaker
+//! # Examples
+//!
+//! ## Line Break
+//!
+//! Segment a string with default options:
 //!
 //!```rust
-//! use icu_segmenter::LineBreakIterator;
+//! use icu_segmenter::LineBreakSegmenter;
 //!
-//! let mut iter = LineBreakIterator::new("Hello World");
-//! let result: Vec<usize> = iter.collect();
-//! println!("{:?}", result);
+//! let segmenter = LineBreakSegmenter::try_new().expect("Data exists");
+//!
+//! let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+//! assert_eq!(&breakpoints, &[6, 11]);
 //! ```
 //!
-//! With CSS property.
-//! ```rust
-//! use icu_segmenter::{LineBreakIterator, LineBreakRule, WordBreakRule};
-//!
-//! let iter = LineBreakIterator::new_with_break_rule(
-//!     "Hello World",
-//!     LineBreakRule::Strict,
-//!     WordBreakRule::BreakAll,
-//!     false,
-//! );
-//! let result: Vec<usize> = iter.collect();
-//! println!("{:?}", result);
-//! ```
-//!
-//! Use Latin 1 string for C binding and etc.
+//! Segment a string with CSS option overrides:
 //!
 //! ```rust
-//! use icu_segmenter::LineBreakIteratorLatin1;
+//! use icu_segmenter::{LineBreakSegmenter, LineBreakOptions, LineBreakRule, WordBreakRule};
 //!
-//! let s = "Hello World";
-//! let iter = LineBreakIteratorLatin1::new(s.as_bytes());
-//! let result: Vec<usize> = iter.collect();
-//! println!("{:?}", result);
+//! let mut options = LineBreakOptions::default();
+//! options.line_break_rule = LineBreakRule::Strict;
+//! options.word_break_rule = WordBreakRule::BreakAll;
+//! options.ja_zh = false;
+//! let segmenter = LineBreakSegmenter::try_new_with_options(options).expect("Data exists");
+//!
+//! let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+//! assert_eq!(&breakpoints, &[1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
 //! ```
 //!
-//! # word breaker
+//! Segment a Latin1 byte string:
+//!
+//! ```rust
+//! use icu_segmenter::LineBreakSegmenter;
+//!
+//! let segmenter = LineBreakSegmenter::try_new().expect("Data exists");
+//!
+//! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+//! assert_eq!(&breakpoints, &[6, 11]);
+//! ```
+//!
+//! ## Word Break
+//!
+//! Segment a string with default options:
 //!
 //!```rust
 //! use icu_segmenter::WordBreakIterator;
@@ -58,7 +66,7 @@
 //! println!("{:?}", result);
 //! ```
 //!
-//! Use Latin 1 string for C binding and etc.
+//! Segment a Latin1 byte string:
 //!
 //! ```rust
 //! use icu_segmenter::WordBreakIteratorLatin1;
