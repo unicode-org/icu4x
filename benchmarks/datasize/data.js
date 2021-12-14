@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639500196673,
+  "lastUpdate": 1639511999168,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5243,6 +5243,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b081f84c087a0d5b94c1ac2cf6b0bc3c78e9079a"
         },
         "date": 1639500187893,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 926479,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "472900ff5fa1078ed12fa9f2497f1055f4982164",
+          "message": "Adding size hints to ListFormatter buffer initialization (#1390)",
+          "timestamp": "2021-12-14T20:58:13+01:00",
+          "tree_id": "89f0d6abc4d64789200f31d57e3f3b256f10fd67",
+          "url": "https://github.com/unicode-org/icu4x/commit/472900ff5fa1078ed12fa9f2497f1055f4982164"
+        },
+        "date": 1639511991310,
         "tool": "ndjson",
         "benches": [
           {
