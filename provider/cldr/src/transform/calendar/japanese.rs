@@ -6,57 +6,19 @@ use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
+use icu_calendar::provider::*;
 use icu_locid_macros::langid;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use icu_provider::resource_key;
-use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use std::convert::TryFrom;
 use std::env;
 use std::str::FromStr;
 use tinystr::TinyStr16;
 
-/// A [`ResourceKey`] to [`JapaneseErasV1`]
-// TODO (#1116) move this into icu_calendars
-pub const JAPANESE_ERAS_V1: ResourceKey = resource_key!(Calendar, "japanese", 1);
-
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 /// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [JAPANESE_ERAS_V1];
-
-/// The date at which an era started
-///
-/// The order of fields in this struct is important!
-// TODO (#1116) move this into icu_calendars
-#[derive(
-    Copy,
-    Clone,
-    PartialEq,
-    PartialOrd,
-    Eq,
-    Ord,
-    Hash,
-    Debug,
-    serde::Serialize,
-    serde::Deserialize,
-    Yokeable,
-    ZeroCopyFrom,
-)]
-pub struct EraStartDate {
-    year: i16,
-    month: u8,
-    day: u8,
-}
-
-#[icu_provider::data_struct]
-#[derive(Debug, PartialEq, Clone, Default, serde::Serialize, serde::Deserialize)]
-#[yoke(cloning_zcf)]
-// TODO (#1116) move this into icu_calendars (and make it zero-copy)
-pub struct JapaneseErasV1 {
-    pub dates_to_historical_eras: LiteMap<EraStartDate, TinyStr16>,
-    pub dates_to_eras: LiteMap<EraStartDate, TinyStr16>,
-}
+pub const ALL_KEYS: [ResourceKey; 1] = [key::JAPANESE_ERAS_V1];
 
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug, Default)]
@@ -234,28 +196,9 @@ fn era_to_code(original: &str, year: i16) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-impl FromStr for EraStartDate {
-    type Err = ();
-    fn from_str(mut s: &str) -> Result<Self, ()> {
-        let mut sign = 1;
-        if s.starts_with('-') {
-            s = &s[1..];
-            sign = -1;
-        }
-
-        let mut split = s.split('-');
-        let mut year: i16 = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        year *= sign;
-        let month: u8 = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        let day: u8 = split.next().ok_or(())?.parse().map_err(|_| ())?;
-
-        Ok(EraStartDate { year, month, day })
-    }
-}
-
 impl KeyedDataProvider for JapaneseErasProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        JAPANESE_ERAS_V1.match_key(*resc_key)
+        key::JAPANESE_ERAS_V1.match_key(*resc_key)
     }
 }
 

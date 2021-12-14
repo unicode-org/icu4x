@@ -25,6 +25,7 @@ include = [
 
 [features]
 std = []
+provider_serde = ["serde", "litemap/serde_serialize"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -37,6 +38,9 @@ denylist = ["bench"]
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features = false }
+icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
+litemap = { version = "0.2.2", path = "../../utils/litemap", default-features = false }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]
 icu = { path = "../icu", default-features = false }

@@ -1039,6 +1039,9 @@ version = "0.4.0"
 dependencies = [
  "displaydoc",
  "icu",
+ "icu_provider",
+ "litemap",
+ "serde",
  "tinystr",
 ]
 
@@ -1294,6 +1297,7 @@ version = "0.4.0"
 dependencies = [
  "dirs",
  "displaydoc",
+ "icu_calendar",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
