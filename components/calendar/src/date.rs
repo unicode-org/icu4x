@@ -4,6 +4,7 @@
 
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 use core::fmt;
+use alloc::rc::Rc;
 
 /// Types that contain a calendar
 ///
@@ -21,6 +22,14 @@ impl<C: Calendar> AsCalendar for C {
     #[inline]
     fn as_calendar(&self) -> &Self {
         self
+    }
+}
+
+impl<C: Calendar> AsCalendar for Rc<C> {
+    type Calendar = C;
+    #[inline]
+    fn as_calendar(&self) -> &C {
+        &*self
     }
 }
 
