@@ -85,14 +85,19 @@ fn sum_benches(c: &mut Criterion) {
     assert_eq!(normal_slice.len(), unalign_ule_slice.len());
 
     c.bench_function("zerovec/sum/sample/slice", |b| {
-        b.iter(|| black_box(normal_slice).iter().sum::<u32>());
+        b.iter(|| {
+            black_box(normal_slice)
+                .iter()
+                .copied()
+                .fold(0u32, |sum, val| sum.wrapping_add(val))
+        })
     });
 
     c.bench_function("zerovec/sum/sample/zerovec_aligned", |b| {
         b.iter(|| {
             ZeroVec::<u32>::Borrowed(black_box(aligned_ule_slice))
                 .iter()
-                .sum::<u32>()
+                .fold(0u32, |sum, val| sum.wrapping_add(val))
         });
     });
 
@@ -100,7 +105,7 @@ fn sum_benches(c: &mut Criterion) {
         b.iter(|| {
             ZeroVec::<u32>::Borrowed(black_box(unalign_ule_slice))
                 .iter()
-                .sum::<u32>()
+                .fold(0u32, |sum, val| sum.wrapping_add(val))
         });
     });
 }
