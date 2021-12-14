@@ -325,7 +325,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // Returns the trie value (or trie's error value).
         // If we cannot read from the data array, then return the associated constant
         // DATA_GET_ERROR_VALUE for the instance type for T: TrieValue.
-        self.data.as_slice().get(data_pos as usize)
+        self.data.as_ule_slice().get(data_pos as usize)
     }
 
     /// Converts the CodePointTrie into one that returns another type of the same size.

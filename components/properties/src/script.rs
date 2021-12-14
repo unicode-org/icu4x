@@ -11,7 +11,8 @@ use crate::props::Script;
 use core::iter::FromIterator;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
-use zerovec::{zerovec::ZeroVecULE, VarZeroVec, ZeroVec};
+use zerovec::{ZeroSlice, VarZeroVec, ZeroVec};
+use zerovec::ule::AsULE;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -81,13 +82,19 @@ pub struct ScriptExtensions<'data> {
     /// sub-vector represents the Script_Extensions array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
+    extensions: VarZeroVec<'data, ZeroSlice<Script>>,
+}
+
+impl<'a> From<&'a <ScriptWithExt as AsULE>::ULE> for &'a Script {
+    fn from(swe: &'a <ScriptWithExt as AsULE>::ULE) -> &'a Script {
+        &Script::from_unaligned(*swe)
+    }
 }
 
 impl<'data> ScriptExtensions<'data> {
     pub fn try_new(
         trie: CodePointTrie<'data, ScriptWithExt>,
-        extensions: VarZeroVec<'data, ZeroVecULE<Script>>,
+        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
     ) -> Result<ScriptExtensions<'data>, PropertiesError> {
         // TODO: do validation here
 
@@ -115,34 +122,45 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
-    pub fn get_script_extensions_val(&self, code_point: u32) -> ZeroVec<Script> {
+    pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
         let sc_with_ext = self.trie.get(code_point);
 
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let ext_subarray = self
                 .extensions
-                .get(ext_idx as usize)
-                .map(|zvule| zvule.as_zerovec())
-                .unwrap_or_default();
+                .get(ext_idx as usize);
             // In the OTHER case, where the 2 higher-order bits of the
             // `ScriptWithExt` value in the trie doesn't indicate the Script value,
             // the Script value is copied/inserted into the first position of the
             // `extensions` array. So we must remove it to return the actual scx array val.
-            let scx_val_iter = ext_subarray.iter().skip(1);
-            let scx_val: ZeroVec<Script> = ZeroVec::<Script>::from_iter(scx_val_iter);
+            let scx_slice =
+                match ext_subarray {
+                    Some(zslice) =>
+                        zslice.as_ule_slice()
+                            .get(1..)
+                            .unwrap_or_default(),
+                    None => &[],
+                };
+            let scx_val = ZeroSlice::from_ule_slice(scx_slice);
             scx_val
         } else if sc_with_ext.is_common() || sc_with_ext.is_inherited() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let scx_val = self
                 .extensions
-                .get(ext_idx as usize)
-                .map(|zvule| zvule.as_zerovec())
-                .unwrap_or_default();
-            scx_val
+                .get(ext_idx as usize);
+            scx_val.unwrap_or(ZeroSlice::from_ule_slice(&[]))
         } else {
-            let scx_vec = [self.get_script_val(code_point)];
-            ZeroVec::alloc_from_slice(&scx_vec)
+            let script_ext_ule = self.trie.get_ule(code_point);
+            let script: Option<&Script> = script_ext_ule.map(|seu| seu.into());
+            let script: &Script = script.unwrap_or(&Script::Unknown);
+            let script_ule: &<Script as AsULE>::ULE = &script.as_unaligned();
+            let script_ule_slice = core::slice::from_ref(script_ule);
+            let scx_val = ZeroSlice::from_ule_slice(script_ule_slice);
+            scx_val
+
+            // let scx_vec = [self.get_script_val(code_point)];
+            // ZeroVec::alloc_from_slice(&scx_vec)
         }
     }
 }

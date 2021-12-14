@@ -13,7 +13,7 @@ use std::convert::TryFrom;
 use std::path::Path;
 use tinystr::tinystr16;
 use zerovec::ule::{AsULE, PlainOldULE};
-use zerovec::zerovec::ZeroVecULE;
+use zerovec::zerovec::ZeroSlice;
 use zerovec::VarZeroVec;
 
 /// This data provider returns a [`crate::script::ScriptExtensions`] instance,
@@ -50,7 +50,7 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
 
         // Convert the input from Vec<Vec<u16>> to Vec<Vec<PlainOldULE<2>>> so that
         // we can go through the VarZeroVec construction process for a desired result
-        // type of VZV<ZeroVecULE<T::ULE>>
+        // type of VZV<ZeroSlice<T::ULE>>
         let ule_scx_array_data: Vec<Vec<PlainOldULE<2>>> = scx_array_data
             .iter()
             .map(|v| {
@@ -60,8 +60,8 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
             })
             .collect::<Vec<Vec<PlainOldULE<2>>>>();
         let bytes =
-            VarZeroVec::<ZeroVecULE<Script>>::get_serializable_bytes(&ule_scx_array_data).unwrap();
-        let scx_vzv: VarZeroVec<ZeroVecULE<Script>> = VarZeroVec::parse_byte_slice(&bytes)
+            VarZeroVec::<ZeroSlice<Script>>::get_serializable_bytes(&ule_scx_array_data).unwrap();
+        let scx_vzv: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::parse_byte_slice(&bytes)
             .map_err(DataError::new_resc_error)?
             .into_owned();
 
