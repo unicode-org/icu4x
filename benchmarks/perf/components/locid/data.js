@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639457150242,
+  "lastUpdate": 1639458820429,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18677,6 +18677,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4116,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ae1e6df3178f839840e313b0065dcd1915a151c",
+          "message": "Simplify ZeroVec/VarZeroVec error handling, consolidate ULEError type (#1389)\n\n* Replace all ZeroVec errors with ULEError\r\n\r\n* Use ULEError for VarZeroVec\r\n\r\n* Use new ULE impl everywhere",
+          "timestamp": "2021-12-13T21:05:07-08:00",
+          "tree_id": "ddfe182d74812e7523ff713f0c5be85cb4d287b7",
+          "url": "https://github.com/unicode-org/icu4x/commit/7ae1e6df3178f839840e313b0065dcd1915a151c"
+        },
+        "date": 1639458813592,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2917,
+            "range": "± 354",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4201,
+            "range": "± 573",
             "unit": "ns/iter"
           }
         ]
