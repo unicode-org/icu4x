@@ -192,7 +192,7 @@ where
     /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
     /// assert_eq!(zerovec.get(2), Some(421));
     /// ```
-    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, <<T as AsULE>::ULE as ULE>::Error> {
+    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
         let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
         Ok(Self::Borrowed(slice))
     }
@@ -378,7 +378,7 @@ where
     /// assert!(matches!(zv_u16, ZeroVec::Borrowed(_)));
     /// assert_eq!(zv_u16.get(0), Some(0xF37F));
     /// ```
-    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, <P::ULE as ULE>::Error> {
+    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, ZeroVecError> {
         assert_eq!(
             core::mem::size_of::<<T as AsULE>::ULE>(),
             core::mem::size_of::<<P as AsULE>::ULE>()
@@ -446,7 +446,7 @@ impl<'a> ZeroVec<'a, u8> {
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// assert_eq!(zerovec.get(0), Some(211));
     /// ```
-    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, <T::ULE as ULE>::Error> {
+    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, ZeroVecError> {
         match self {
             ZeroVec::Borrowed(bytes) => {
                 let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
