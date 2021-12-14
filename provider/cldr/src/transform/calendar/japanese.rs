@@ -73,6 +73,9 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
         let mut historical_data = LiteMap::new();
         let mut data = LiteMap::new();
 
+        // The era codes depend on the Latin romanizations of the eras, found
+        // in the `en` locale. We load this data to construct era codes but
+        // actual user code only needs to load the data for the locales it cares about.
         let era_names_path = cldr_paths
             .cldr_dates("japanese")?
             .join("main")
