@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
-use core::fmt;
 use alloc::rc::Rc;
+use core::fmt;
 
 /// Types that contain a calendar
 ///

@@ -477,7 +477,6 @@ fn test_length_fixtures() {
     );
 }
 
-
 #[test]
 fn test_japanese() {
     // components/datetime/tests/fixtures/tests/japanese.json
