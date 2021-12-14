@@ -168,7 +168,7 @@ impl UnicodeSetBuilder {
     #[allow(unused_assignments)]
     pub fn add_set(&mut self, set: &UnicodeSet) {
         set.as_inversion_list()
-            .as_slice()
+            .as_ule_slice()
             .chunks(2)
             .for_each(|pair| {
                 self.add(
@@ -242,7 +242,7 @@ impl UnicodeSetBuilder {
     #[allow(unused_assignments)]
     pub fn remove_set(&mut self, set: &UnicodeSet) {
         set.as_inversion_list()
-            .as_slice()
+            .as_ule_slice()
             .chunks(2)
             .for_each(|pair| {
                 self.remove(
@@ -310,7 +310,7 @@ impl UnicodeSetBuilder {
     #[allow(unused_assignments)]
     pub fn retain_set(&mut self, set: &UnicodeSet) {
         let mut prev = 0;
-        for pair in set.as_inversion_list().as_slice().chunks(2) {
+        for pair in set.as_inversion_list().as_ule_slice().chunks(2) {
             let range_start = AsULE::from_unaligned(pair[0]);
             let range_limit = AsULE::from_unaligned(pair[1]);
             self.remove(prev, range_start);
@@ -447,7 +447,7 @@ impl UnicodeSetBuilder {
     pub fn complement_set(&mut self, set: &UnicodeSet) {
         let inv_list_iter_owned = set
             .as_inversion_list()
-            .as_slice()
+            .as_ule_slice()
             .iter()
             .copied()
             .map(<u32 as AsULE>::from_unaligned);

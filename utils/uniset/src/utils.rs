@@ -12,7 +12,7 @@ use zerovec::ZeroVec;
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
 pub fn is_valid_zv(inv_list_zv: &ZeroVec<'_, u32>) -> bool {
-    let slice = inv_list_zv.as_slice();
+    let slice = inv_list_zv.as_ule_slice();
     slice.is_empty()
         || (slice.len() % 2 == 0
             && slice.windows(2).all(|chunk| {
