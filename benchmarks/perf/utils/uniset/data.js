@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639458796249,
+  "lastUpdate": 1639497282604,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16109,6 +16109,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 33270921,
             "range": "± 1547573",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6fac854351da0d609a955603b81853b63a12100f",
+          "message": "constrain zcf on T: 'static (#1392)",
+          "timestamp": "2021-12-14T10:47:07-05:00",
+          "tree_id": "d3b89d890692c00266455ca107cc7d0521bddb02",
+          "url": "https://github.com/unicode-org/icu4x/commit/6fac854351da0d609a955603b81853b63a12100f"
+        },
+        "date": 1639497275485,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47085656,
+            "range": "± 220641",
             "unit": "ns/iter"
           }
         ]
