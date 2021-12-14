@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639447082855,
+  "lastUpdate": 1639457124580,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16049,6 +16049,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 28860589,
             "range": "± 1495760",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "290e46c3969d5345cebc4587e33638ed1251dd61",
+          "message": "Add (so far unused) Japanese era data (#1375)",
+          "timestamp": "2021-12-13T20:38:17-08:00",
+          "tree_id": "e32846f140d833dfbdbcaf2664a580ed66f5e0df",
+          "url": "https://github.com/unicode-org/icu4x/commit/290e46c3969d5345cebc4587e33638ed1251dd61"
+        },
+        "date": 1639457117272,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44981918,
+            "range": "± 1683624",
             "unit": "ns/iter"
           }
         ]
