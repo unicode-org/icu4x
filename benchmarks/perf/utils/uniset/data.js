@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639499643712,
+  "lastUpdate": 1639500290313,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16169,6 +16169,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 32720771,
             "range": "± 2054113",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "782f62334153f30b3f360a364f8e7b8c7918ed7a",
+          "message": "Add ZeroSlice and VarZeroSlice, move ZeroVec functionality to ZeroSlice and add Deref (#1371)",
+          "timestamp": "2021-12-14T08:37:44-08:00",
+          "tree_id": "e6bcf82dcb0a032dd3a6b809ee7bfc5825808b33",
+          "url": "https://github.com/unicode-org/icu4x/commit/782f62334153f30b3f360a364f8e7b8c7918ed7a"
+        },
+        "date": 1639500282651,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36075881,
+            "range": "± 58174",
             "unit": "ns/iter"
           }
         ]
