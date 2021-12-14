@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639511999168,
+  "lastUpdate": 1639516902485,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5273,6 +5273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/472900ff5fa1078ed12fa9f2497f1055f4982164"
         },
         "date": 1639511991310,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 926479,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bea61e5d70f41baf52ebe710f57fbe7bab77ccc9",
+          "message": "Rename enums for General_Category (#1355)",
+          "timestamp": "2021-12-14T13:19:55-08:00",
+          "tree_id": "e8ca7cd3fc832646c220e7bdd2fe62dd3edf6f5e",
+          "url": "https://github.com/unicode-org/icu4x/commit/bea61e5d70f41baf52ebe710f57fbe7bab77ccc9"
+        },
+        "date": 1639516894221,
         "tool": "ndjson",
         "benches": [
           {
