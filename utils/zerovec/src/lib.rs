@@ -103,12 +103,12 @@ pub mod map;
 pub mod samples;
 pub mod ule;
 pub mod varzerovec;
-pub mod zerovec;
+mod zerovec;
 
 #[cfg(feature = "yoke")]
 mod yoke_impls;
 
 pub use crate::error::ZeroVecError;
 pub use crate::map::ZeroMap;
-pub use crate::varzerovec::VarZeroVec;
-pub use crate::zerovec::ZeroVec;
+pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
+pub use crate::zerovec::{ZeroSlice, ZeroVec};

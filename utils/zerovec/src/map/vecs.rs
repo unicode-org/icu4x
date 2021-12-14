@@ -6,7 +6,7 @@ use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
 use crate::varzerovec::VarZeroVecBorrowed;
 use crate::VarZeroVec;
-use crate::ZeroVec;
+use crate::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
@@ -123,16 +123,16 @@ where
         Self::new()
     }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
-        self.binary_search(k)
+        ZeroSlice::binary_search(self, k)
     }
     fn get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
     fn len(&self) -> usize {
-        self.len()
+        ZeroSlice::len(self)
     }
     fn is_ascending(&self) -> bool {
-        self.as_slice()
+        self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
@@ -146,26 +146,25 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for &'a [T::ULE]
+impl<'a, T> ZeroVecLike<'a, T> for &'a ZeroSlice<T>
 where
     T: AsULE + Ord + Copy,
 {
     type GetType = T::ULE;
     fn new() -> Self {
-        &[]
+        ZeroSlice::from_ule_slice(&[])
     }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
-        ZeroVec::<T>::Borrowed(self).binary_search(k)
+        ZeroSlice::binary_search(*self, k)
     }
     fn get(&self, index: usize) -> Option<&T::ULE> {
-        <[T::ULE]>::get(self, index)
+        self.get_ule_ref(index)
     }
     fn len(&self) -> usize {
-        <[T::ULE]>::len(self)
+        ZeroSlice::len(*self)
     }
     fn is_ascending(&self) -> bool {
-        ZeroVec::<T>::Borrowed(self)
-            .as_slice()
+        self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
@@ -179,21 +178,21 @@ where
     }
 }
 
-impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a [T::ULE]
+impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a ZeroSlice<T>
 where
     T: AsULE + Ord + Copy,
 {
     fn get_borrowed(&self, index: usize) -> Option<&'a T::ULE> {
-        <[T::ULE]>::get(self, index)
+        self.as_ule_slice().get(index)
     }
 }
 
 impl<'a, T> MutableZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
-    T: AsULE + Ord + Copy,
+    T: AsULE + Ord + Copy + 'static,
 {
     type OwnedType = T;
-    type BorrowedVariant = &'a [T::ULE];
+    type BorrowedVariant = &'a ZeroSlice<T>;
     fn insert(&mut self, index: usize, value: &T) {
         self.to_mut().insert(index, value.as_unaligned())
     }
@@ -217,18 +216,18 @@ where
         self.to_mut().reserve(addl)
     }
 
-    fn as_borrowed(&'a self) -> &'a [T::ULE] {
-        self.as_slice()
+    fn as_borrowed(&'a self) -> &'a ZeroSlice<T> {
+        &*self
     }
-    fn as_borrowed_inner(&self) -> Option<&'a [T::ULE]> {
+    fn as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
         if let ZeroVec::Borrowed(b) = *self {
-            Some(b)
+            Some(ZeroSlice::from_ule_slice(b))
         } else {
             None
         }
     }
-    fn from_borrowed(b: &'a [T::ULE]) -> Self {
-        ZeroVec::Borrowed(b)
+    fn from_borrowed(b: &'a ZeroSlice<T>) -> Self {
+        b.as_zerovec()
     }
 
     fn owned_as_t(o: &Self::OwnedType) -> &T {

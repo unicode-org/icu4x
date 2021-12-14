@@ -12,11 +12,11 @@ pub(crate) mod borrowed;
 pub(crate) mod owned;
 #[cfg(feature = "serde")]
 mod serde;
-mod ule;
+mod slice;
 
 pub use borrowed::VarZeroVecBorrowed;
 pub use owned::VarZeroVecOwned;
-pub use ule::VarZeroVecULE;
+pub use slice::VarZeroSlice;
 
 /// A zero-copy vector for variable-width types.
 ///
@@ -25,15 +25,15 @@ pub use ule::VarZeroVecULE;
 /// where `T`'s data is variable-length (e.g. `String`)
 ///
 /// `T` must implement [`VarULE`], which is already implemented for [`str`] and `[u8]`. For storing more
-/// complicated series of elements, it is implemented on `ZeroVecULE<T>` as well as `VarZeroVecULE<T>`
+/// complicated series of elements, it is implemented on `ZeroSlice<T>` as well as `VarZeroSlice<T>`
 /// for nesting.
 ///
 /// For example, here are some owned types and their zero-copy equivalents:
 ///
 /// - `Vec<String>`: `VarZeroVec<'a, str>`
 /// - `Vec<Vec<u8>>>`: `VarZeroVec<'a, [u8]>`
-/// - `Vec<Vec<u32>>`: `VarZeroVec<'a, ZeroVecULE<u32>>`
-/// - `Vec<Vec<String>>`: `VarZeroVec<'a, VarZeroVecULE<str>>`
+/// - `Vec<Vec<u32>>`: `VarZeroVec<'a, ZeroSlice<u32>>`
+/// - `Vec<Vec<String>>`: `VarZeroVec<'a, VarZeroSlice<str>>`
 ///
 /// For creating zero-copy vectors of fixed-size types, see [`ZeroVec`](crate::ZeroVec).
 ///
@@ -79,14 +79,14 @@ pub use ule::VarZeroVecULE;
 /// # Ok::<(), ZeroVecError>(())
 /// ```
 ///
-/// Here's another example with `ZeroVecULE<T>` (similar to `[T]`):
+/// Here's another example with `ZeroSlice<T>` (similar to `[T]`):
 ///
 /// ```rust
 /// # use std::str::Utf8Error;
 /// # use zerovec::ule::ZeroVecError;
 /// use zerovec::VarZeroVec;
 /// use zerovec::ZeroVec;
-/// use zerovec::zerovec::ZeroVecULE;
+/// use zerovec::ZeroSlice;
 /// use zerovec::ule::*;
 ///
 /// // The structured list correspond to the list of integers.
@@ -101,7 +101,7 @@ pub use ule::VarZeroVecULE;
 ///              0, 0, 42, 0, 0, 0, 3, 217, 0, 0, 57, 48, 0, 0, 49, 212, 0, 0,
 ///              9, 0, 0, 0];
 ///
-/// let zerovec: VarZeroVec<ZeroVecULE<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
+/// let zerovec: VarZeroVec<ZeroSlice<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
 ///
 /// assert_eq!(zerovec.get(2).and_then(|v| v.get(1)), Some(55555));
 /// for (zv, v) in zerovec.iter().zip(numbers.iter()) {
@@ -111,7 +111,7 @@ pub use ule::VarZeroVecULE;
 /// ```
 ///
 ///
-/// [`VarZeroVec`]s can be nested infinitely, see the docs of [`VarZeroVecULE`]
+/// [`VarZeroVec`]s can be nested infinitely, see the docs of [`VarZeroSlice`]
 /// for more information.
 ///
 /// [`ule`]: crate::ule
@@ -415,12 +415,12 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         }
     }
 
-    /// Obtain this `VarZeroVec` as a [`VarZeroVecULE`]
-    pub fn as_ule(&self) -> &VarZeroVecULE<T> {
+    /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
+    pub fn as_slice(&self) -> &VarZeroSlice<T> {
         let slice = self.get_encoded_slice();
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
-            VarZeroVecULE::from_byte_slice_unchecked(slice)
+            VarZeroSlice::from_byte_slice_unchecked(slice)
         }
     }
 
