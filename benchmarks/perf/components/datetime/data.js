@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639447186776,
+  "lastUpdate": 1639457177723,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14669,6 +14669,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 413994,
             "range": "± 14747",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "290e46c3969d5345cebc4587e33638ed1251dd61",
+          "message": "Add (so far unused) Japanese era data (#1375)",
+          "timestamp": "2021-12-13T20:38:17-08:00",
+          "tree_id": "e32846f140d833dfbdbcaf2664a580ed66f5e0df",
+          "url": "https://github.com/unicode-org/icu4x/commit/290e46c3969d5345cebc4587e33638ed1251dd61"
+        },
+        "date": 1639457170698,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 112385,
+            "range": "± 170",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1289511,
+            "range": "± 1990",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 314313,
+            "range": "± 1359",
             "unit": "ns/iter"
           }
         ]
