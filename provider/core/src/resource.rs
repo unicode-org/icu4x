@@ -68,7 +68,7 @@ impl writeable::Writeable for ResourceCategory {
     }
 
     fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::Exact(self.as_str().len())
+        writeable::LengthHint::exact(self.as_str().len())
     }
 }
 
@@ -153,7 +153,7 @@ impl Writeable for ResourceKey {
     }
 
     fn write_len(&self) -> LengthHint {
-        LengthHint::Exact(2)
+        LengthHint::exact(2)
             + self.category.as_str().len()
             + self.sub_category.len()
             + self.version.write_len()
@@ -282,7 +282,7 @@ impl writeable::Writeable for ResourceOptions {
             }
             result += component.len();
         }
-        writeable::LengthHint::Exact(result)
+        writeable::LengthHint::exact(result)
     }
 }
 
