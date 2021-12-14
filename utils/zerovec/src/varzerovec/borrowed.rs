@@ -98,15 +98,15 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 marker: PhantomData,
             });
         }
-        let len_bytes = slice.get(0..4).ok_or(ULEError::FormatError)?;
+        let len_bytes = slice.get(0..4).ok_or(ULEError::VZVFormatError)?;
         let len_ule =
-            PlainOldULE::<4>::parse_byte_slice(len_bytes).map_err(|_| ULEError::FormatError)?;
+            PlainOldULE::<4>::parse_byte_slice(len_bytes).map_err(|_| ULEError::VZVFormatError)?;
 
-        let len = u32::from_unaligned(*len_ule.get(0).ok_or(ULEError::FormatError)?) as usize;
-        let indices_bytes = slice.get(4..4 * len + 4).ok_or(ULEError::FormatError)?;
-        let indices =
-            PlainOldULE::<4>::parse_byte_slice(indices_bytes).map_err(|_| ULEError::FormatError)?;
-        let things = slice.get(4 * len + 4..).ok_or(ULEError::FormatError)?;
+        let len = u32::from_unaligned(*len_ule.get(0).ok_or(ULEError::VZVFormatError)?) as usize;
+        let indices_bytes = slice.get(4..4 * len + 4).ok_or(ULEError::VZVFormatError)?;
+        let indices = PlainOldULE::<4>::parse_byte_slice(indices_bytes)
+            .map_err(|_| ULEError::VZVFormatError)?;
+        let things = slice.get(4 * len + 4..).ok_or(ULEError::VZVFormatError)?;
 
         let borrowed = VarZeroVecBorrowed {
             indices,
@@ -215,7 +215,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
             if !self.is_empty() {
                 let start = usizeify(self.indices[self.len() - 1]);
                 let end = self.things.len();
-                Some(self.things.get(start..end).ok_or(ULEError::FormatError))
+                Some(self.things.get(start..end).ok_or(ULEError::VZVFormatError))
             } else {
                 None
             }
@@ -227,7 +227,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 let start = usizeify(win[0]);
                 let end = usizeify(win[1]);
                 // the .get() here automatically verifies that end>=start
-                self.things.get(start..end).ok_or(ULEError::FormatError)
+                self.things.get(start..end).ok_or(ULEError::VZVFormatError)
             })
             .chain(last)
             .map(|s| s.and_then(|s| T::parse_byte_slice(s)))

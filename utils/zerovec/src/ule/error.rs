@@ -8,9 +8,13 @@ use core::fmt;
 /// A generic error type to be used for decoding slices of ULE types
 #[derive(Copy, Clone, Debug)]
 pub enum ULEError {
+    /// Attempted to parse a buffer into a slice of the given ULE type but its
+    /// length was not compatible
     InvalidLength { ty: &'static str, len: usize },
+    /// The byte sequence provided for `ty` failed to parse correctly
     ParseError { ty: &'static str },
-    FormatError,
+    /// The byte buffer was not in the appropriate format for VarZeroVec
+    VZVFormatError,
 }
 
 impl fmt::Display for ULEError {
@@ -22,7 +26,7 @@ impl fmt::Display for ULEError {
             ULEError::ParseError { ty } => {
                 write!(f, "Could not parse bytes to slice of type {}", ty)
             }
-            ULEError::FormatError => {
+            ULEError::VZVFormatError => {
                 write!(f, "Invalid format for VarZeroVec buffer")
             }
         }
@@ -30,12 +34,14 @@ impl fmt::Display for ULEError {
 }
 
 impl ULEError {
+    /// Construct a parse error for the given type
     pub fn parse<T: ?Sized + 'static>() -> ULEError {
         ULEError::ParseError {
             ty: any::type_name::<T>(),
         }
     }
 
+    /// Construct an "invalid length" error for the given type and length
     pub fn length<T: ?Sized + 'static>(len: usize) -> ULEError {
         ULEError::InvalidLength {
             ty: any::type_name::<T>(),
