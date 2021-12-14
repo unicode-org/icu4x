@@ -49,26 +49,27 @@ impl ListFormatter {
     fn format_internal<'c, B>(
         &'c self,
         values: &[&str],
-        empty: fn() -> B,
-        single: fn(&str, usize) -> B,
+        // Arguments are the initial content and a size hint for 
+        // the final length of the output.
+        make_buffer: fn(&str, usize) -> B,
         apply_pattern: fn(&str, &PatternParts<'c>, B) -> B,
     ) -> B {
         let pattern = &self.data.get();
         let size_hint = values.iter().map(|s| s.len()).sum::<usize>()
             + pattern.size_hint(self.width, values.len());
         match values.len() {
-            0 => empty(),
-            1 => single(values[0], size_hint),
+            0 => make_buffer("", 0),
+            1 => make_buffer(values[0], size_hint),
             2 => apply_pattern(
                 values[0],
                 &pattern.pair(self.width).parts(values[1]),
-                single(values[1], size_hint),
+                make_buffer(values[1], size_hint),
             ),
             n => {
                 let mut builder = apply_pattern(
                     values[n - 2],
                     &pattern.end(self.width).parts(values[n - 1]),
-                    single(values[n - 1], size_hint),
+                    make_buffer(values[n - 1], size_hint),
                 );
                 let middle = pattern.middle(self.width);
                 for i in (1..n - 2).rev() {
@@ -86,7 +87,6 @@ impl ListFormatter {
     pub fn format(&self, values: &[&str]) -> String {
         self.format_internal(
             values,
-            || String::with_capacity(0),
             |value, size_hint| {
                 let mut b = String::with_capacity(size_hint);
                 b.push_str(value);
@@ -94,6 +94,7 @@ impl ListFormatter {
             },
             |value, (between, after), mut builder| {
                 builder = builder + after;
+                // TODO(robertbastian): String doesn't have O(1) prepend
                 builder.insert_str(0, between);
                 builder.insert_str(0, value);
                 builder
@@ -104,7 +105,6 @@ impl ListFormatter {
     pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType> {
         self.format_internal(
             values,
-            || FormattedString::<FieldType>::with_capacity(0),
             |value, size_hint| {
                 let mut builder = FormattedString::<FieldType>::with_capacity(size_hint);
                 builder.append(&value, FieldType::Element);
@@ -112,6 +112,7 @@ impl ListFormatter {
             },
             |value, (between, after), mut builder| {
                 builder.append(after, FieldType::Literal);
+                // TODO(robertbastian): FormattedString doesn't have O(1) prepend
                 builder.prepend(between, FieldType::Literal);
                 builder.prepend(&value, FieldType::Element);
                 builder

@@ -60,30 +60,29 @@ impl<'data> ListFormatterPatternsV1<'data> {
         }
     }
 
-    pub fn start(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub fn start(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize)]
     }
 
-    pub fn middle(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub fn middle(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 1]
     }
 
-    pub fn end(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub fn end(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 2]
     }
 
-    pub fn pair(&'data self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub fn pair(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 3]
     }
 
     /// The expected number of bytes required by the list literals to join a list of length
     /// len. If none of the patterns are conditional, this is exact, otherwise it is an
     /// upper bound.
-    pub fn size_hint(&'data self, width: Width, len: usize) -> usize {
+    pub fn size_hint(&self, width: Width, len: usize) -> usize {
         match len {
             0 | 1 => 0,
             2 => self.pair(width).size_hint(),
-            3 => self.start(width).size_hint() + self.end(width).size_hint(),
             n => {
                 self.start(width).size_hint()
                     + self.middle(width).size_hint() * (n - 3)
@@ -265,7 +264,7 @@ pub(crate) mod test {
 
         // pair pattern "{0}123{1}456"
         assert_eq!(pattern.size_hint(Width::Short, 2), 6);
-        
+
         // patterns "{0}1{1}", "{0}12{1}" (x197), and "{0}12{1}34"
         assert_eq!(pattern.size_hint(Width::Short, 200), 1 + 2 * 197 + 4);
 
