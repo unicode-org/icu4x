@@ -45,13 +45,22 @@ macro_rules! map_access {
 macro_rules! map_access_with_overrides {
     ($outer: ty[$key: ty] => $inner: ty: $lt: lifetime) => {
         impl<$lt> $outer {
-            /// Get the data from the key.
+            /// Get the default data from the key.
             pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
             where
                 Q: Ord,
                 Cow<'data, $key>: core::borrow::Borrow<Q>,
             {
                 self.defaults.get(key)
+            }
+
+            /// Get the override data from the key.
+            pub fn get_override<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
+            where
+                Q: Ord,
+                Cow<'data, $key>: core::borrow::Borrow<Q>,
+            {
+                self.overrides.get(key)
             }
 
             /// Check if the underlying data is empty.
@@ -107,7 +116,7 @@ pub struct TimeZoneFormatsV1<'data> {
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct ExemplarCitiesV1<'data>(LiteMap<Cow<'data, str>, Cow<'data, str>>);
+pub struct ExemplarCitiesV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
 map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the long-form generic metazone names.
@@ -119,9 +128,9 @@ map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneGenericNamesLongV1<'data>{
+pub struct MetaZoneGenericNamesLongV1<'data> {
     pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>,
-    pub overwrites: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+    pub overrides: LiteMap<Cow<'data, str>, Cow<'data, str>>,
 }
 map_access_with_overrides!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
 
@@ -134,9 +143,9 @@ map_access_with_overrides!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, 
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneGenericNamesShortV1<'data>{
+pub struct MetaZoneGenericNamesShortV1<'data> {
     pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>,
-    pub overwrites: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+    pub overrides: LiteMap<Cow<'data, str>, Cow<'data, str>>,
 }
 map_access_with_overrides!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
 
@@ -150,9 +159,9 @@ map_access_with_overrides!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data,
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesLongV1<'data>{
+pub struct MetaZoneSpecificNamesLongV1<'data> {
     pub defaults: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
-    pub overwrites: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+    pub overrides: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
 }
 map_access_with_overrides!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
@@ -166,9 +175,9 @@ map_access_with_overrides!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSp
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesShortV1<'data>{
+pub struct MetaZoneSpecificNamesShortV1<'data> {
     pub defaults: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
-    pub overwrites: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+    pub overrides: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
 }
 map_access_with_overrides!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
@@ -182,5 +191,5 @@ map_access_with_overrides!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneS
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesV1<'data>(LiteMap<Cow<'data, TinyStr8>, Cow<'data, str>>);
+pub struct MetaZoneSpecificNamesV1<'data>(pub LiteMap<Cow<'data, TinyStr8>, Cow<'data, str>>);
 map_access!(MetaZoneSpecificNamesV1<'data>[TinyStr8] => Cow<'data, str>: 'data);

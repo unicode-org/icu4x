@@ -536,8 +536,16 @@ impl TimeZoneFormat {
         sink.write_str(
             self.mz_generic_short
                 .as_ref()
-                .map(|p| p.get())
-                .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+                .map(|p| p.get_override())
+                .and_then(|timezones| time_zone.time_zone_id().and_then(|tz| timezones.get(tz)))
+                .or_else(|| {
+                    self.mz_generic_short
+                        .as_ref()
+                        .map(|p| p.get())
+                        .and_then(|metazones| {
+                            time_zone.metazone_id().and_then(|mz| metazones.get(mz))
+                        })
+                })
                 .ok_or(fmt::Error)?,
         )
         .map_err(DateTimeFormatError::from)
@@ -554,8 +562,16 @@ impl TimeZoneFormat {
         sink.write_str(
             self.mz_generic_long
                 .as_ref()
-                .map(|p| p.get())
-                .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+                .map(|p| p.get_override())
+                .and_then(|timezones| time_zone.time_zone_id().and_then(|tz| timezones.get(tz)))
+                .or_else(|| {
+                    self.mz_generic_long
+                        .as_ref()
+                        .map(|p| p.get())
+                        .and_then(|metazones| {
+                            time_zone.metazone_id().and_then(|mz| metazones.get(mz))
+                        })
+                })
                 .ok_or(fmt::Error)?,
         )
         .map_err(DateTimeFormatError::from)
