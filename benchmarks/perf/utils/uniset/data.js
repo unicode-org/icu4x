@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639512369164,
+  "lastUpdate": 1639517236704,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16259,6 +16259,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 41567894,
             "range": "± 1776180",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bea61e5d70f41baf52ebe710f57fbe7bab77ccc9",
+          "message": "Rename enums for General_Category (#1355)",
+          "timestamp": "2021-12-14T13:19:55-08:00",
+          "tree_id": "e8ca7cd3fc832646c220e7bdd2fe62dd3edf6f5e",
+          "url": "https://github.com/unicode-org/icu4x/commit/bea61e5d70f41baf52ebe710f57fbe7bab77ccc9"
+        },
+        "date": 1639517229510,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35904526,
+            "range": "± 64596",
             "unit": "ns/iter"
           }
         ]
