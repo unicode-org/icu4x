@@ -3,12 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
-    WordBreak,
+    CanonicalCombiningClass, EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak,
+    Script, SentenceBreak, WordBreak,
 };
 
 use core::convert::TryFrom;
 use zerovec::ule::{AsULE, PlainOldULE, ZeroVecError, ULE};
+
+impl AsULE for CanonicalCombiningClass {
+    type ULE = u8;
+
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        self.0
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(unaligned)
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]

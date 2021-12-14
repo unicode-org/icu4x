@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
-    WordBreak,
+    CanonicalCombiningClass, EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak,
+    Script, SentenceBreak, WordBreak,
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;
@@ -12,6 +12,15 @@ use icu_codepointtrie::TrieValue;
 use num_enum::TryFromPrimitiveError;
 
 use core::convert::TryFrom;
+
+impl TrieValue for CanonicalCombiningClass {
+    const DATA_GET_ERROR_VALUE: CanonicalCombiningClass = CanonicalCombiningClass::NotReordered;
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u8::try_from(i).map(Self)
+    }
+}
 
 impl TrieValue for GeneralSubcategory {
     const DATA_GET_ERROR_VALUE: GeneralSubcategory = GeneralSubcategory::Unassigned;
