@@ -86,15 +86,17 @@ impl ListFormatter {
                     builder = append_value(builder, values[i]);
                     builder = append_literal(builder, between);
 
-                    if middle_after_count == 0 {
-                        middle_after = Some(after);
-                    } else {
-                        // We're assuming that all middle_afters are the same. If we ever
-                        // use conditional patterns for middle they could actually be
-                        // different, so we'd need to use a stack to track what to append.
-                        debug_assert_eq!(middle_after, Some(after));
+                    if !after.is_empty() {
+                        if middle_after_count == 0 {
+                            middle_after = Some(after);
+                        } else {
+                            // We're assuming that all middle_afters are the same. If we ever
+                            // use conditional patterns for middle they could actually be
+                            // different, so we'd need to use a stack to track what to append.
+                            debug_assert_eq!(middle_after, Some(after));
+                        }
+                        middle_after_count += 1;
                     }
-                    middle_after_count += 1;
                 }
 
                 let (end_before, end_between, end_after) =
