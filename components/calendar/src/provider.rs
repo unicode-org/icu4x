@@ -28,7 +28,7 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct EraStartDate {
-    pub year: i16,
+    pub year: i32,
     pub month: u8,
     pub day: u8,
 }
@@ -55,7 +55,7 @@ impl FromStr for EraStartDate {
         }
 
         let mut split = s.split('-');
-        let mut year: i16 = split.next().ok_or(())?.parse().map_err(|_| ())?;
+        let mut year: i32 = split.next().ok_or(())?.parse().map_err(|_| ())?;
         year *= sign;
         let month: u8 = split.next().ok_or(())?.parse().map_err(|_| ())?;
         let day: u8 = split.next().ok_or(())?.parse().map_err(|_| ())?;

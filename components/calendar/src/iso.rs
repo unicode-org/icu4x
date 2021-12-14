@@ -367,6 +367,16 @@ impl Iso {
     }
 }
 
+impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
+    fn from(other: &'_ IsoDateInner) -> Self {
+        Self {
+            year: other.year.0,
+            month: other.month.0,
+            day: other.day.0,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

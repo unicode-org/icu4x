@@ -5,9 +5,10 @@
 //! This module contains types and implementations for the Japanese calendar
 
 use crate::iso::{Iso, IsoDateInner};
-use crate::provider;
+use crate::provider::{self, EraStartDate};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use icu_provider::prelude::*;
+use tinystr::{tinystr16, TinyStr16};
 
 #[derive(Clone, Debug, Default)]
 /// The Japanese Calendar
@@ -99,5 +100,83 @@ impl Calendar for Japanese {
 
     fn debug_name() -> &'static str {
         "Japanese"
+    }
+}
+
+const MEIJI_START: EraStartDate = EraStartDate {
+    year: 1868,
+    month: 9,
+    day: 8,
+};
+const TAISHO_START: EraStartDate = EraStartDate {
+    year: 1912,
+    month: 7,
+    day: 30,
+};
+const SHOWA_START: EraStartDate = EraStartDate {
+    year: 1926,
+    month: 12,
+    day: 25,
+};
+const HEISEI_START: EraStartDate = EraStartDate {
+    year: 1989,
+    month: 1,
+    day: 8,
+};
+const REIWA_START: EraStartDate = EraStartDate {
+    year: 2019,
+    month: 5,
+    day: 1,
+};
+
+const FALLBACK_ERA: (EraStartDate, TinyStr16) = (REIWA_START, tinystr16!("reiwa"));
+
+impl Japanese {
+    /// Given an ISO date, obtain the era data
+    fn era_for(&self, date: &IsoDateInner) -> (EraStartDate, TinyStr16) {
+        let date: EraStartDate = date.into();
+        let era_data = self.eras.get();
+        let deref_tuple = |x: (&EraStartDate, &TinyStr16)| (*x.0, *x.1);
+        if date >= MEIJI_START {
+            if era_data.dates_to_eras.len() == 5 {
+                // Fast path in case eras have not changed since this code was written
+                if date >= REIWA_START {
+                    (REIWA_START, tinystr16!("reiwa"))
+                } else if date >= HEISEI_START {
+                    (HEISEI_START, tinystr16!("heisei"))
+                } else if date >= SHOWA_START {
+                    (SHOWA_START, tinystr16!("showa"))
+                } else if date >= TAISHO_START {
+                    (TAISHO_START, tinystr16!("taisho"))
+                } else {
+                    (MEIJI_START, tinystr16!("meiji"))
+                }
+            } else {
+                era_data
+                    .dates_to_eras
+                    .iter()
+                    .rev()
+                    .find(|(k, _)| **k < date)
+                    .map(deref_tuple)
+                    .unwrap_or(FALLBACK_ERA)
+            }
+        } else {
+            let historical = &era_data.dates_to_historical_eras;
+            match historical.find_index(&date) {
+                Ok(index) => historical
+                    .get_indexed(index)
+                    .map(deref_tuple)
+                    .unwrap_or(FALLBACK_ERA),
+                Err(index) if index == 0 => historical
+                    .get_indexed(index)
+                    .map(deref_tuple)
+                    .unwrap_or(FALLBACK_ERA),
+                Err(index) => historical
+                    .get_indexed(index - 1)
+                    .or_else(|| historical.get_indexed(historical.len() - 1))
+                    .map(deref_tuple)
+                    .unwrap_or(FALLBACK_ERA),
+            }
+        }
     }
 }

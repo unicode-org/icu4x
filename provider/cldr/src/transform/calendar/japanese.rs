@@ -149,7 +149,7 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
 
 /// See https://docs.google.com/document/d/1vMVhMHgCYRyx2gmwEfKRyXWDg_lrQadd8iMVU9uPK1o/edit?usp=chrome_omnibox&ouid=111665445991279316689
 /// for the era identifier spec
-fn era_to_code(original: &str, year: i16) -> Result<TinyStr16, String> {
+fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     // Some examples of CLDR era names:
     // "Shōryaku (1077–1081)", "Nin’an (1166–1169)", "Tenpyō-kampō (749–749)"
     //
