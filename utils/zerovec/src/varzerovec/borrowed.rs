@@ -98,20 +98,20 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 marker: PhantomData,
             });
         }
-        let len_bytes = slice.get(0..4).ok_or(ZeroVecError::VZVFormatError)?;
+        let len_bytes = slice.get(0..4).ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let len_ule = PlainOldULE::<4>::parse_byte_slice(len_bytes)
-            .map_err(|_| ZeroVecError::VZVFormatError)?;
+            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
         let len =
-            u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VZVFormatError)?) as usize;
+            u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?) as usize;
         let indices_bytes = slice
             .get(4..4 * len + 4)
-            .ok_or(ZeroVecError::VZVFormatError)?;
+            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let indices = PlainOldULE::<4>::parse_byte_slice(indices_bytes)
-            .map_err(|_| ZeroVecError::VZVFormatError)?;
+            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
             .get(4 * len + 4..)
-            .ok_or(ZeroVecError::VZVFormatError)?;
+            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecBorrowed {
             indices,
@@ -223,7 +223,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 Some(
                     self.things
                         .get(start..end)
-                        .ok_or(ZeroVecError::VZVFormatError),
+                        .ok_or(ZeroVecError::VarZeroVecFormatError),
                 )
             } else {
                 None
@@ -238,7 +238,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
                 // the .get() here automatically verifies that end>=start
                 self.things
                     .get(start..end)
-                    .ok_or(ZeroVecError::VZVFormatError)
+                    .ok_or(ZeroVecError::VarZeroVecFormatError)
             })
             .chain(last)
             .map(|s| s.and_then(|s| T::parse_byte_slice(s)))

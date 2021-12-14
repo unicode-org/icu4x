@@ -14,7 +14,7 @@ pub enum ZeroVecError {
     /// The byte sequence provided for `ty` failed to parse correctly
     ParseError { ty: &'static str },
     /// The byte buffer was not in the appropriate format for VarZeroVec
-    VZVFormatError,
+    VarZeroVecFormatError,
 }
 
 impl fmt::Display for ZeroVecError {
@@ -26,7 +26,7 @@ impl fmt::Display for ZeroVecError {
             ZeroVecError::ParseError { ty } => {
                 write!(f, "Could not parse bytes to slice of type {}", ty)
             }
-            ZeroVecError::VZVFormatError => {
+            ZeroVecError::VarZeroVecFormatError => {
                 write!(f, "Invalid format for VarZeroVec buffer")
             }
         }
