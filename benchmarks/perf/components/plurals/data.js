@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639499686680,
+  "lastUpdate": 1639500352060,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21209,6 +21209,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22494,
             "range": "± 16",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "782f62334153f30b3f360a364f8e7b8c7918ed7a",
+          "message": "Add ZeroSlice and VarZeroSlice, move ZeroVec functionality to ZeroSlice and add Deref (#1371)",
+          "timestamp": "2021-12-14T08:37:44-08:00",
+          "tree_id": "e6bcf82dcb0a032dd3a6b809ee7bfc5825808b33",
+          "url": "https://github.com/unicode-org/icu4x/commit/782f62334153f30b3f360a364f8e7b8c7918ed7a"
+        },
+        "date": 1639500344855,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1085,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5470,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20795,
+            "range": "± 107",
             "unit": "ns/iter"
           }
         ]
