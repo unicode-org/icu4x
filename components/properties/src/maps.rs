@@ -48,7 +48,7 @@ where
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, GeneralSubcategory};
+/// use icu::properties::{maps, GeneralCategory};
 /// use icu_codepointtrie::CodePointTrie;
 ///
 /// let provider = icu_testdata::get_provider();
@@ -58,14 +58,14 @@ where
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let gc = &data_struct.code_point_trie;
-/// assert_eq!(gc.get('木' as u32), GeneralSubcategory::OtherLetter);  // U+6728
-/// assert_eq!(gc.get('🎃' as u32), GeneralSubcategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+/// assert_eq!(gc.get('木' as u32), GeneralCategory::OtherLetter);  // U+6728
+/// assert_eq!(gc.get('🎃' as u32), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralSubcategory>
+pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralCategory>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }

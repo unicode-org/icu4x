@@ -16,9 +16,9 @@ pub enum PropertiesError {
     /// An unknown value was used for the [`Script`] property
     #[displaydoc("Unknown script id: {0}")]
     UnknownScriptId(u16),
-    /// An unknown value was used for the [`GeneralCategory`] property
-    #[displaydoc("Unknown general category set: {0}")]
-    UnknownGeneralCategorySet(u32),
+    /// An unknown value was used for the [`GeneralCategoryGroup`] property
+    #[displaydoc("Unknown general category group: {0}")]
+    UnknownGeneralCategoryGroup(u32),
 }
 
 impl From<DataError> for PropertiesError {

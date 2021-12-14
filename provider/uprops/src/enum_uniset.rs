@@ -26,28 +26,28 @@ impl EnumeratedPropertyUnicodeSetDataProvider {
 fn expand_groupings<'a>(prop_name: &str, prop_val: &'a str) -> Vec<&'a str> {
     match prop_name {
         "gc" => match prop_val {
-            // General_Category::CasedLetter
+            // GeneralCategoryGroup::CasedLetter
             "LC" => vec!["Lu", "Ll", "Lt"],
 
-            // General_Category::Letter
+            // GeneralCategoryGroup::Letter
             "L" => vec!["Lu", "Ll", "Lt", "Lm", "Lo"],
 
-            // General_Category::Mark
+            // GeneralCategoryGroup::Mark
             "M" => vec!["Mn", "Mc", "Me"],
 
-            // General_Category::Number
+            // GeneralCategoryGroup::Number
             "N" => vec!["Nd", "Nl", "No"],
 
-            // General_Category::Punctuation
+            // GeneralCategoryGroup::Punctuation
             "P" => vec!["Pc", "Pd", "Ps", "Pe", "Pi", "Pf", "Po"],
 
-            // General_Category::Symbol
+            // GeneralCategoryGroup::Symbol
             "S" => vec!["Sm", "Sc", "Sk", "So"],
 
-            // General_Category::Separator
+            // GeneralCategoryGroup::Separator
             "Z" => vec!["Zs", "Zl", "Zp"],
 
-            // General_Category::Control
+            // GeneralCategoryGroup::Control
             "C" => vec!["Cc", "Cf", "Cs", "Co", "Cn"],
 
             _ => vec![prop_val],
