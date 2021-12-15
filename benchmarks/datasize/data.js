@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639575223225,
+  "lastUpdate": 1639579630358,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5363,6 +5363,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a4717395673f0a8492f2cf677071302e8f9673f2"
         },
         "date": 1639575214048,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 926479,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5c7c7fd7acebd6826d681e85dde3e8cbf6e04ca7",
+          "message": "Add a resolve_components method to DateTimeFormat (#1362)\n\nThis is required for feature compatibility with ECMA-402. The backing\r\nDateTimeFormat implementation needs to be able to return the resolved\r\ncomponents from the given options. These resolved components can differ\r\nbased on locale or the resolution algorithm.",
+          "timestamp": "2021-12-15T08:45:20-06:00",
+          "tree_id": "ba0847a5059f238781197e2d088998b52956e32f",
+          "url": "https://github.com/unicode-org/icu4x/commit/5c7c7fd7acebd6826d681e85dde3e8cbf6e04ca7"
+        },
+        "date": 1639579621679,
         "tool": "ndjson",
         "benches": [
           {
