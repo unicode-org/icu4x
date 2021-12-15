@@ -85,12 +85,6 @@ pub struct ScriptExtensions<'data> {
     extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
-impl<'a> From<&'a <ScriptWithExt as AsULE>::ULE> for &'a Script {
-    fn from(swe: &'a <ScriptWithExt as AsULE>::ULE) -> &'a Script {
-        &Script::from_unaligned(*swe)
-    }
-}
-
 impl<'data> ScriptExtensions<'data> {
     pub fn try_new(
         trie: CodePointTrie<'data, ScriptWithExt>,
@@ -151,16 +145,12 @@ impl<'data> ScriptExtensions<'data> {
                 .get(ext_idx as usize);
             scx_val.unwrap_or(ZeroSlice::from_ule_slice(&[]))
         } else {
-            let script_ext_ule = self.trie.get_ule(code_point);
-            let script: Option<&Script> = script_ext_ule.map(|seu| seu.into());
-            let script: &Script = script.unwrap_or(&Script::Unknown);
-            let script_ule: &<Script as AsULE>::ULE = &script.as_unaligned();
+            let script_with_ext_ule = self.trie.get_ule(code_point);
+            let script_ule: &<Script as AsULE>::ULE = script_with_ext_ule
+                .unwrap_or(&Script::Unknown.as_unaligned());
             let script_ule_slice = core::slice::from_ref(script_ule);
             let scx_val = ZeroSlice::from_ule_slice(script_ule_slice);
             scx_val
-
-            // let scx_vec = [self.get_script_val(code_point)];
-            // ZeroVec::alloc_from_slice(&scx_vec)
         }
     }
 }
