@@ -1,534 +1,547 @@
 {
-  "Acre": {
-    "daylight": "একর গ্রীষ্মকাল সময়",
-    "standard": "একর মানক সময়"
-  },
-  "Afghanistan": {
-    "standard": "আফগানিস্তান সময়"
-  },
-  "Africa_Central": {
-    "standard": "মধ্য আফ্রিকা সময়"
-  },
-  "Africa_Eastern": {
-    "standard": "পূর্ব আফ্রিকা সময়"
-  },
-  "Africa_Southern": {
-    "standard": "দক্ষিণ আফ্রিকা মানক সময়"
-  },
-  "Africa_Western": {
-    "daylight": "পশ্চিম আফ্রিকা গ্রীষ্মকালীন সময়",
-    "standard": "পশ্চিম আফ্রিকা মানক সময়"
-  },
-  "Alaska": {
-    "daylight": "আলাস্কা দিবালোক সময়",
-    "standard": "আলাস্কা মানক সময়"
-  },
-  "Amazon": {
-    "daylight": "অ্যামাজন গ্রীষ্মকালীন সময়",
-    "standard": "আমাজন মানক সময়"
-  },
-  "America_Central": {
-    "daylight": "কেন্দ্রীয় দিবালোক সময়",
-    "standard": "কেন্দ্রীয় মানক সময়"
-  },
-  "America_Eastern": {
-    "daylight": "পূর্বাঞ্চলের দিবালোক সময়",
-    "standard": "পূর্বাঞ্চলের প্রমাণ সময়"
-  },
-  "America_Mountain": {
-    "daylight": "পার্বত্য অঞ্চলের দিনের সময়",
-    "standard": "পার্বত্য অঞ্চলের প্রমাণ সময়"
-  },
-  "America_Pacific": {
-    "daylight": "প্রশান্ত মহাসাগরীয় অঞ্চলের দিনের সময়",
-    "standard": "প্রশান্ত মহাসাগরীয় অঞ্চলের মানক সময়"
-  },
-  "Anadyr": {
-    "daylight": "অনদ্য্র্ গ্রীষ্মকালীন সময়",
-    "standard": "অনদ্য্র্ মানক সময়"
-  },
-  "Apia": {
-    "daylight": "অপিয়া দিনের সময়",
-    "standard": "অপিয়া মানক সময়"
-  },
-  "Arabian": {
-    "daylight": "আরবি দিবালোক সময়",
-    "standard": "আরবি মানক সময়"
-  },
-  "Argentina": {
-    "daylight": "আর্জেন্টিনা গ্রীষ্মকালীন সময়",
-    "standard": "আর্জেন্টিনা মানক সময়"
-  },
-  "Argentina_Western": {
-    "daylight": "পশ্চিমি আর্জেনটিনা গ্রীষ্মকালীন সময়",
-    "standard": "পশ্চিমি আর্জেনটিনার প্রমাণ সময়"
-  },
-  "Armenia": {
-    "daylight": "আর্মেনিয়া গ্রীষ্মকালীন সময়",
-    "standard": "আর্মেনিয়া মানক সময়"
-  },
-  "Atlantic": {
-    "daylight": "অতলান্তিক দিবালোক সময়",
-    "standard": "অতলান্তিক মানক সময়"
-  },
-  "Australia_Central": {
-    "daylight": "অস্ট্রেলীয় কেন্দ্রীয় দিবালোক সময়",
-    "standard": "অস্ট্রেলীয় কেন্দ্রীয় মানক সময়"
-  },
-  "Australia_CentralWestern": {
-    "daylight": "অস্ট্রেলীয় কেন্দ্রীয় পশ্চিমি দিবালোক সময়",
-    "standard": "অস্ট্রেলীয় কেন্দ্রীয় পশ্চিমি মানক সময়"
-  },
-  "Australia_Eastern": {
-    "daylight": "অস্ট্রেলীয় পূর্ব দিবালোক সময়",
-    "standard": "অস্ট্রেলীয় পূর্ব মানক সময়"
-  },
-  "Australia_Western": {
-    "daylight": "অস্ট্রেলীয় পশ্চিমি দিবালোক সময়",
-    "standard": "অস্ট্রেলীয় পশ্চিমি মানক সময়"
-  },
-  "Azerbaijan": {
-    "daylight": "আজারবাইজান গ্রীষ্মকালীন সময়",
-    "standard": "আজারবাইজান মানক সময়"
-  },
-  "Azores": {
-    "daylight": "এজোরেস গ্রীষ্মকালীন সময়",
-    "standard": "এজোরেস মানক সময়"
-  },
-  "Bangladesh": {
-    "daylight": "বাংলাদেশ গ্রীষ্মকালীন সময়",
-    "standard": "বাংলাদেশ মানক সময়"
-  },
-  "Bhutan": {
-    "standard": "ভুটান সময়"
-  },
-  "Bolivia": {
-    "standard": "বোলিভিয়া সময়"
-  },
-  "Brasilia": {
-    "daylight": "ব্রাসিলিয়া গ্রীষ্মকালীন সময়",
-    "standard": "ব্রাসিলিয়া মানক সময়"
-  },
-  "Brunei": {
-    "standard": "ব্রুনেই দারুসসালাম সময়"
-  },
-  "Cape_Verde": {
-    "daylight": "কেপ ভার্দ গ্রীষ্মকালীন সময়",
-    "standard": "কেপ ভার্দ মানক সময়"
-  },
-  "Chamorro": {
-    "standard": "চামেরো মানক সময়"
-  },
-  "Chatham": {
-    "daylight": "চ্যাথাম দিবালোক সময়",
-    "standard": "চ্যাথাম মানক সময়"
-  },
-  "Chile": {
-    "daylight": "চিলি গ্রীষ্মকালীন সময়",
-    "standard": "চিলি মানক সময়"
-  },
-  "China": {
-    "daylight": "চীন দিবালোক সময়",
-    "standard": "চীন মানক সময়"
-  },
-  "Choibalsan": {
-    "daylight": "চয়বালসন গ্রীষ্মকালীন সময়",
-    "standard": "চয়বালসন মানক সময়"
-  },
-  "Christmas": {
-    "standard": "ক্রিসমাস দ্বীপ সময়"
-  },
-  "Cocos": {
-    "standard": "কোকোস দ্বীপপুঞ্জ সময়"
-  },
-  "Colombia": {
-    "daylight": "কোলোম্বিয়া গ্রীষ্মকালীন সময়",
-    "standard": "কোলোম্বিয়া মানক সময়"
-  },
-  "Cook": {
-    "daylight": "কুক দ্বীপপুঞ্জ অর্ধেক গ্রীষ্মকালীন সময়",
-    "standard": "কুক দ্বীপপুঞ্জ মানক সময়"
-  },
-  "Cuba": {
-    "daylight": "কিউবা দিবালোক সময়",
-    "standard": "কিউবা মানক সময়"
-  },
-  "Davis": {
-    "standard": "ডেভিস সময়"
-  },
-  "DumontDUrville": {
-    "standard": "ডুমন্ট-দ্য’উরভিলে সময়"
-  },
-  "East_Timor": {
-    "standard": "পূর্ব টিমর সময়"
-  },
-  "Easter": {
-    "daylight": "ইস্টার দ্বীপ গ্রীষ্মকালীন সময়",
-    "standard": "ইস্টার দ্বীপ মানক সময়"
-  },
-  "Ecuador": {
-    "standard": "ইকুয়েডর সময়"
-  },
-  "Europe_Central": {
-    "daylight": "মধ্য ইউরোপীয় গ্রীষ্মকালীন সময়",
-    "standard": "মধ্য ইউরোপীয় মানক সময়"
-  },
-  "Europe_Eastern": {
-    "daylight": "পূর্ব ইউরোপীয় গ্রীষ্মকালীন সময়",
-    "standard": "পূর্ব ইউরোপীয় মানক সময়"
-  },
-  "Europe_Further_Eastern": {
-    "standard": "প্রান্তীয় পূর্ব ইউরোপীয় সময়"
-  },
-  "Europe_Western": {
-    "daylight": "পশ্চিম ইউরোপীয় গ্রীষ্মকালীন সময়",
-    "standard": "পশ্চিম ইউরোপীয় মানক সময়"
-  },
-  "Falkland": {
-    "daylight": "ফকল্যান্ড দ্বীপপুঞ্জ গ্রীষ্মকালীন সময়",
-    "standard": "ফকল্যান্ড দ্বীপপুঞ্জ মানক সময়"
-  },
-  "Fiji": {
-    "daylight": "ফিজি গ্রীষ্মকালীন সময়",
-    "standard": "ফিজি মানক সময়"
-  },
-  "French_Guiana": {
-    "standard": "ফরাসি গায়ানা সময়"
-  },
-  "French_Southern": {
-    "standard": "ফরাসি দক্ষিণ এবং আন্টার্কটিক সময়"
-  },
-  "GMT": {
-    "standard": "গ্রীনিচ মিন টাইম"
-  },
-  "Galapagos": {
-    "standard": "গালাপাগোস সময়"
-  },
-  "Gambier": {
-    "standard": "গ্যাম্বিয়ার সময়"
-  },
-  "Georgia": {
-    "daylight": "জর্জিয়া গ্রীষ্মকালীন সময়",
-    "standard": "জর্জিয়া মানক সময়"
-  },
-  "Gilbert_Islands": {
-    "standard": "গিলবার্ট দ্বীপপুঞ্জ সময়"
-  },
-  "Greenland_Eastern": {
-    "daylight": "পূর্ব গ্রীনল্যান্ড গ্রীষ্মকালীন সময়",
-    "standard": "পূর্ব গ্রীনল্যান্ড মানক সময়"
-  },
-  "Greenland_Western": {
-    "daylight": "পশ্চিম গ্রীনল্যান্ড গ্রীষ্মকালীন সময়",
-    "standard": "পশ্চিম গ্রীনল্যান্ড মানক সময়"
-  },
-  "Gulf": {
-    "standard": "উপসাগরীয় মানক সময়"
-  },
-  "Guyana": {
-    "standard": "গুয়ানা সময়"
-  },
-  "Hawaii_Aleutian": {
-    "daylight": "হাওয়াই-আলেউত দিবালোক সময়",
-    "standard": "হাওয়াই-আলেউত মানক সময়"
-  },
-  "Hong_Kong": {
-    "daylight": "হং কং গ্রীষ্মকালীন সময়",
-    "standard": "হং কং মানক সময়"
-  },
-  "Hovd": {
-    "daylight": "হোভড গ্রীষ্মকালীন সময়",
-    "standard": "হোভড মানক সময়"
-  },
-  "India": {
-    "standard": "ভারতীয় মানক সময়"
-  },
-  "Indian_Ocean": {
-    "standard": "ভারত মহাসাগরীয় সময়"
-  },
-  "Indochina": {
-    "standard": "ইন্দোচীন সময়"
-  },
-  "Indonesia_Central": {
-    "standard": "কেন্দ্রীয় ইন্দোনেশিয়া সময়"
-  },
-  "Indonesia_Eastern": {
-    "standard": "পূর্ব ইন্দোনেশিয়া সময়"
-  },
-  "Indonesia_Western": {
-    "standard": "পশ্চিমী ইন্দোনেশিয়া সময়"
-  },
-  "Iran": {
-    "daylight": "ইরান দিবালোক সময়",
-    "standard": "ইরান মানক সময়"
-  },
-  "Irkutsk": {
-    "daylight": "ইরকুটস্ক গ্রীষ্মকালীন সময়",
-    "standard": "ইরকুটস্ক মানক সময়"
-  },
-  "Israel": {
-    "daylight": "ইজরায়েল দিবালোক সময়",
-    "standard": "ইজরায়েল মানক সময়"
-  },
-  "Japan": {
-    "daylight": "জাপান দিবালোক সময়",
-    "standard": "জাপান মানক সময়"
-  },
-  "Kamchatka": {
-    "daylight": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি গৃষ্মকালীন সময়",
-    "standard": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি মান সময়"
-  },
-  "Kazakhstan_Eastern": {
-    "standard": "পূর্ব কাজাখাস্তান সময়"
-  },
-  "Kazakhstan_Western": {
-    "standard": "পশ্চিম কাজাখাস্তান সময়"
-  },
-  "Korea": {
-    "daylight": "কোরিয়ান দিবালোক সময়",
-    "standard": "কোরিয়ান মানক সময়"
-  },
-  "Kosrae": {
-    "standard": "কোসরেই সময়"
-  },
-  "Krasnoyarsk": {
-    "daylight": "ক্রাসনোয়ার্স্কি গ্রীষ্মকালীন সময়",
-    "standard": "ক্রাসনোয়ার্স্কি মানক সময়"
-  },
-  "Kyrgystan": {
-    "standard": "কিরগিস্তান সময়"
-  },
-  "Line_Islands": {
-    "standard": "লাইন দ্বীপপুঞ্জ সময়"
-  },
-  "Lord_Howe": {
-    "daylight": "লর্ড হাওয়ে দিবালোক মসয়",
-    "standard": "লর্ড হাওয়ে মানক মসয়"
-  },
-  "Macquarie": {
-    "standard": "ম্যাককুরি দ্বীপ সময়"
-  },
-  "Magadan": {
-    "daylight": "ম্যাগাডান গ্রীষ্মকালীন সময়",
-    "standard": "ম্যাগাডান মানক সময়"
-  },
-  "Malaysia": {
-    "standard": "মালয়েশিয়া সময়"
-  },
-  "Maldives": {
-    "standard": "মালদ্বীপ সময়"
-  },
-  "Marquesas": {
-    "standard": "মার্কেসাস সময়"
-  },
-  "Marshall_Islands": {
-    "standard": "মার্শাল দ্বীপপুঞ্জ সময়"
-  },
-  "Mauritius": {
-    "daylight": "মরিশাস গ্রীষ্মকালীন সময়",
-    "standard": "মরিশাস মানক সময়"
-  },
-  "Mawson": {
-    "standard": "মসন সময়"
-  },
-  "Mexico_Northwest": {
-    "daylight": "উত্তরপশ্চিম মেক্সিকোর দিনের সময়",
-    "standard": "উত্তরপশ্চিম মেক্সিকোর মানক সময়"
-  },
-  "Mexico_Pacific": {
-    "daylight": "মেক্সিকান প্রশান্ত মহাসাগরীয় দিবালোক সময়",
-    "standard": "মেক্সিকান প্রশান্ত মহসাগরীয় মানক সময়"
-  },
-  "Mongolia": {
-    "daylight": "উলান বাতোর গ্রীষ্মকালীন সময়",
-    "standard": "উলান বাতোর মানক সময়"
-  },
-  "Moscow": {
-    "daylight": "মস্কো গ্রীষ্মকালীন সময়",
-    "standard": "মস্কো মানক সময়"
-  },
-  "Myanmar": {
-    "standard": "মায়ানমার সময়"
-  },
-  "Nauru": {
-    "standard": "নাউরু সময়"
-  },
-  "Nepal": {
-    "standard": "নেপাল সময়"
-  },
-  "New_Caledonia": {
-    "daylight": "নিউ ক্যালেডোনিয়া গ্রীষ্মকালীন সময়",
-    "standard": "নিউ ক্যালেডোনিয়া মানক সময়"
-  },
-  "New_Zealand": {
-    "daylight": "নিউজিল্যান্ড দিবালোক সময়",
-    "standard": "নিউজিল্যান্ড মানক সময়"
-  },
-  "Newfoundland": {
-    "daylight": "নিউফাউন্ডল্যান্ড দিবালোক সময়",
-    "standard": "নিউফাউন্ডল্যান্ড মানক সময়"
-  },
-  "Niue": {
-    "standard": "নিউই সময়"
-  },
-  "Norfolk": {
-    "daylight": "নরফোক দ্বীপ দিবালোক সময়",
-    "standard": "নরফোক দ্বীপ মানক সময়"
-  },
-  "Noronha": {
-    "daylight": "ফার্নান্দো ডি নোরোনহা গ্রীষ্মকালীন সময়",
-    "standard": "ফার্নান্দো ডি নোরোনহা মানক সময়"
-  },
-  "Novosibirsk": {
-    "daylight": "নোভোসিবির্স্ক গ্রীষ্মকালীন সময়",
-    "standard": "নোভোসিবির্স্ক মানক সময়"
-  },
-  "Omsk": {
-    "daylight": "ওমস্ক গ্রীষ্মকালীন সময়",
-    "standard": "ওমস্ক মানক সময়"
-  },
-  "Pakistan": {
-    "daylight": "পাকিস্তান গ্রীষ্মকালীন সময়",
-    "standard": "পাকিস্তান মানক সময়"
-  },
-  "Palau": {
-    "standard": "পালাউ সময়"
-  },
-  "Papua_New_Guinea": {
-    "standard": "পাপুয়া নিউ গিনি সময়"
-  },
-  "Paraguay": {
-    "daylight": "প্যারাগুয়ে গ্রীষ্মকালীন সময়",
-    "standard": "প্যারাগুয়ে মানক সময়"
-  },
-  "Peru": {
-    "daylight": "পেরু গ্রীষ্মকালীন সময়",
-    "standard": "পেরু মানক সময়"
-  },
-  "Philippines": {
-    "daylight": "ফিলিপাইন গ্রীষ্মকালীন সময়",
-    "standard": "ফিলিপাইন মানক সময়"
-  },
-  "Phoenix_Islands": {
-    "standard": "ফোনিক্স দ্বীপপুঞ্জ সময়"
-  },
-  "Pierre_Miquelon": {
-    "daylight": "সেন্ট পিয়ের ও মিকেলন দিবালোক সময়",
-    "standard": "সেন্ট পিয়ের ও মিকেলন মানক সময়"
-  },
-  "Pitcairn": {
-    "standard": "পিটকেয়ার্ন সময়"
-  },
-  "Ponape": {
-    "standard": "পোনাপে সময়"
-  },
-  "Pyongyang": {
-    "standard": "পিয়ংইয়াং সময়"
-  },
-  "Reunion": {
-    "standard": "রিইউনিয়ন সময়"
-  },
-  "Rothera": {
-    "standard": "রথেরা সময়"
-  },
-  "Sakhalin": {
-    "daylight": "সাখালিন গ্রীষ্মকালীন সময়",
-    "standard": "সাখালিন মানক সময়"
-  },
-  "Samara": {
-    "daylight": "সামারা গৃষ্মকালীন সময়",
-    "standard": "সামারা মান সময়"
-  },
-  "Samoa": {
-    "daylight": "সামোয়া দিবালোক সময়",
-    "standard": "সামোয়া মানক সময়"
-  },
-  "Seychelles": {
-    "standard": "সেশেলস সময়"
-  },
-  "Singapore": {
-    "standard": "সিঙ্গাপুর মানক সময়"
-  },
-  "Solomon": {
-    "standard": "সলোমন দ্বীপপুঞ্জ সময়"
-  },
-  "South_Georgia": {
-    "standard": "দক্ষিণ জর্জিয়া সময়"
-  },
-  "Suriname": {
-    "standard": "সুরিনাম সময়"
-  },
-  "Syowa": {
-    "standard": "সায়োওয়া সময়"
-  },
-  "Tahiti": {
-    "standard": "তাহিতি সময়"
-  },
-  "Taipei": {
-    "daylight": "তাইপেই দিবালোক সময়",
-    "standard": "তাইপেই মানক সময়"
-  },
-  "Tajikistan": {
-    "standard": "তাজাখাস্তান সময়"
-  },
-  "Tokelau": {
-    "standard": "টোকেলাউ সময়"
-  },
-  "Tonga": {
-    "daylight": "টোঙ্গা গ্রীষ্মকালীন সময়",
-    "standard": "টোঙ্গা মানক সময়"
-  },
-  "Truk": {
-    "standard": "চুক সময়"
-  },
-  "Turkmenistan": {
-    "daylight": "তুর্কমেনিস্তান গ্রীষ্মকালীন সময়",
-    "standard": "তুর্কমেনিস্তান মানক সময়"
-  },
-  "Tuvalu": {
-    "standard": "টুভালু সময়"
-  },
-  "Uruguay": {
-    "daylight": "উরুগুয়ে গ্রীষ্মকালীন সময়",
-    "standard": "উরুগুয়ে মানক সময়"
-  },
-  "Uzbekistan": {
-    "daylight": "উজবেকিস্তান গ্রীষ্মকালীন সময়",
-    "standard": "উজবেকিস্তান মানক সময়"
-  },
-  "Vanuatu": {
-    "daylight": "ভানুয়াতু গ্রীষ্মকালীন সময়",
-    "standard": "ভানুয়াতু মানক সময়"
-  },
-  "Venezuela": {
-    "standard": "ভেনেজুয়েলা সময়"
-  },
-  "Vladivostok": {
-    "daylight": "ভ্লাদিভস্তক গ্রীষ্মকালীন সময়",
-    "standard": "ভ্লাদিভস্তক মানক সময়"
-  },
-  "Volgograd": {
-    "daylight": "ভলগোগ্রাড গ্রীষ্মকালীন সময়",
-    "standard": "ভলগোগ্রাড মানক সময়"
-  },
-  "Vostok": {
-    "standard": "ভসটক সময়"
-  },
-  "Wake": {
-    "standard": "ওয়েক দ্বীপ সময়"
-  },
-  "Wallis": {
-    "standard": "ওয়ালিস এবং ফুটুনা সময়"
-  },
-  "Yakutsk": {
-    "daylight": "ইয়াকুটাস্ক গ্রীষ্মকালীন সময়",
-    "standard": "ইয়াকুটাস্ক মানক সময়"
-  },
-  "Yekaterinburg": {
-    "daylight": "ইয়েকাতেরিনবুর্গ গ্রীষ্মকালীন সময়",
-    "standard": "ইয়েকাতেরিনবুর্গ মানক সময়"
-  },
-  "Yukon": {
-    "standard": "ইউকোন সময়"
+  "defaults": {
+    "Acre": {
+      "daylight": "একর গ্রীষ্মকাল সময়",
+      "standard": "একর মানক সময়"
+    },
+    "Afghanistan": {
+      "standard": "আফগানিস্তান সময়"
+    },
+    "Africa_Central": {
+      "standard": "মধ্য আফ্রিকা সময়"
+    },
+    "Africa_Eastern": {
+      "standard": "পূর্ব আফ্রিকা সময়"
+    },
+    "Africa_Southern": {
+      "standard": "দক্ষিণ আফ্রিকা মানক সময়"
+    },
+    "Africa_Western": {
+      "daylight": "পশ্চিম আফ্রিকা গ্রীষ্মকালীন সময়",
+      "standard": "পশ্চিম আফ্রিকা মানক সময়"
+    },
+    "Alaska": {
+      "daylight": "আলাস্কা দিবালোক সময়",
+      "standard": "আলাস্কা মানক সময়"
+    },
+    "Amazon": {
+      "daylight": "অ্যামাজন গ্রীষ্মকালীন সময়",
+      "standard": "আমাজন মানক সময়"
+    },
+    "America_Central": {
+      "daylight": "কেন্দ্রীয় দিবালোক সময়",
+      "standard": "কেন্দ্রীয় মানক সময়"
+    },
+    "America_Eastern": {
+      "daylight": "পূর্বাঞ্চলের দিবালোক সময়",
+      "standard": "পূর্বাঞ্চলের প্রমাণ সময়"
+    },
+    "America_Mountain": {
+      "daylight": "পার্বত্য অঞ্চলের দিনের সময়",
+      "standard": "পার্বত্য অঞ্চলের প্রমাণ সময়"
+    },
+    "America_Pacific": {
+      "daylight": "প্রশান্ত মহাসাগরীয় অঞ্চলের দিনের সময়",
+      "standard": "প্রশান্ত মহাসাগরীয় অঞ্চলের মানক সময়"
+    },
+    "Anadyr": {
+      "daylight": "অনদ্য্র্ গ্রীষ্মকালীন সময়",
+      "standard": "অনদ্য্র্ মানক সময়"
+    },
+    "Apia": {
+      "daylight": "অপিয়া দিনের সময়",
+      "standard": "অপিয়া মানক সময়"
+    },
+    "Arabian": {
+      "daylight": "আরবি দিবালোক সময়",
+      "standard": "আরবি মানক সময়"
+    },
+    "Argentina": {
+      "daylight": "আর্জেন্টিনা গ্রীষ্মকালীন সময়",
+      "standard": "আর্জেন্টিনা মানক সময়"
+    },
+    "Argentina_Western": {
+      "daylight": "পশ্চিমি আর্জেনটিনা গ্রীষ্মকালীন সময়",
+      "standard": "পশ্চিমি আর্জেনটিনার প্রমাণ সময়"
+    },
+    "Armenia": {
+      "daylight": "আর্মেনিয়া গ্রীষ্মকালীন সময়",
+      "standard": "আর্মেনিয়া মানক সময়"
+    },
+    "Atlantic": {
+      "daylight": "অতলান্তিক দিবালোক সময়",
+      "standard": "অতলান্তিক মানক সময়"
+    },
+    "Australia_Central": {
+      "daylight": "অস্ট্রেলীয় কেন্দ্রীয় দিবালোক সময়",
+      "standard": "অস্ট্রেলীয় কেন্দ্রীয় মানক সময়"
+    },
+    "Australia_CentralWestern": {
+      "daylight": "অস্ট্রেলীয় কেন্দ্রীয় পশ্চিমি দিবালোক সময়",
+      "standard": "অস্ট্রেলীয় কেন্দ্রীয় পশ্চিমি মানক সময়"
+    },
+    "Australia_Eastern": {
+      "daylight": "অস্ট্রেলীয় পূর্ব দিবালোক সময়",
+      "standard": "অস্ট্রেলীয় পূর্ব মানক সময়"
+    },
+    "Australia_Western": {
+      "daylight": "অস্ট্রেলীয় পশ্চিমি দিবালোক সময়",
+      "standard": "অস্ট্রেলীয় পশ্চিমি মানক সময়"
+    },
+    "Azerbaijan": {
+      "daylight": "আজারবাইজান গ্রীষ্মকালীন সময়",
+      "standard": "আজারবাইজান মানক সময়"
+    },
+    "Azores": {
+      "daylight": "এজোরেস গ্রীষ্মকালীন সময়",
+      "standard": "এজোরেস মানক সময়"
+    },
+    "Bangladesh": {
+      "daylight": "বাংলাদেশ গ্রীষ্মকালীন সময়",
+      "standard": "বাংলাদেশ মানক সময়"
+    },
+    "Bhutan": {
+      "standard": "ভুটান সময়"
+    },
+    "Bolivia": {
+      "standard": "বোলিভিয়া সময়"
+    },
+    "Brasilia": {
+      "daylight": "ব্রাসিলিয়া গ্রীষ্মকালীন সময়",
+      "standard": "ব্রাসিলিয়া মানক সময়"
+    },
+    "Brunei": {
+      "standard": "ব্রুনেই দারুসসালাম সময়"
+    },
+    "Cape_Verde": {
+      "daylight": "কেপ ভার্দ গ্রীষ্মকালীন সময়",
+      "standard": "কেপ ভার্দ মানক সময়"
+    },
+    "Chamorro": {
+      "standard": "চামেরো মানক সময়"
+    },
+    "Chatham": {
+      "daylight": "চ্যাথাম দিবালোক সময়",
+      "standard": "চ্যাথাম মানক সময়"
+    },
+    "Chile": {
+      "daylight": "চিলি গ্রীষ্মকালীন সময়",
+      "standard": "চিলি মানক সময়"
+    },
+    "China": {
+      "daylight": "চীন দিবালোক সময়",
+      "standard": "চীন মানক সময়"
+    },
+    "Choibalsan": {
+      "daylight": "চয়বালসন গ্রীষ্মকালীন সময়",
+      "standard": "চয়বালসন মানক সময়"
+    },
+    "Christmas": {
+      "standard": "ক্রিসমাস দ্বীপ সময়"
+    },
+    "Cocos": {
+      "standard": "কোকোস দ্বীপপুঞ্জ সময়"
+    },
+    "Colombia": {
+      "daylight": "কোলোম্বিয়া গ্রীষ্মকালীন সময়",
+      "standard": "কোলোম্বিয়া মানক সময়"
+    },
+    "Cook": {
+      "daylight": "কুক দ্বীপপুঞ্জ অর্ধেক গ্রীষ্মকালীন সময়",
+      "standard": "কুক দ্বীপপুঞ্জ মানক সময়"
+    },
+    "Cuba": {
+      "daylight": "কিউবা দিবালোক সময়",
+      "standard": "কিউবা মানক সময়"
+    },
+    "Davis": {
+      "standard": "ডেভিস সময়"
+    },
+    "DumontDUrville": {
+      "standard": "ডুমন্ট-দ্য’উরভিলে সময়"
+    },
+    "East_Timor": {
+      "standard": "পূর্ব টিমর সময়"
+    },
+    "Easter": {
+      "daylight": "ইস্টার দ্বীপ গ্রীষ্মকালীন সময়",
+      "standard": "ইস্টার দ্বীপ মানক সময়"
+    },
+    "Ecuador": {
+      "standard": "ইকুয়েডর সময়"
+    },
+    "Europe_Central": {
+      "daylight": "মধ্য ইউরোপীয় গ্রীষ্মকালীন সময়",
+      "standard": "মধ্য ইউরোপীয় মানক সময়"
+    },
+    "Europe_Eastern": {
+      "daylight": "পূর্ব ইউরোপীয় গ্রীষ্মকালীন সময়",
+      "standard": "পূর্ব ইউরোপীয় মানক সময়"
+    },
+    "Europe_Further_Eastern": {
+      "standard": "প্রান্তীয় পূর্ব ইউরোপীয় সময়"
+    },
+    "Europe_Western": {
+      "daylight": "পশ্চিম ইউরোপীয় গ্রীষ্মকালীন সময়",
+      "standard": "পশ্চিম ইউরোপীয় মানক সময়"
+    },
+    "Falkland": {
+      "daylight": "ফকল্যান্ড দ্বীপপুঞ্জ গ্রীষ্মকালীন সময়",
+      "standard": "ফকল্যান্ড দ্বীপপুঞ্জ মানক সময়"
+    },
+    "Fiji": {
+      "daylight": "ফিজি গ্রীষ্মকালীন সময়",
+      "standard": "ফিজি মানক সময়"
+    },
+    "French_Guiana": {
+      "standard": "ফরাসি গায়ানা সময়"
+    },
+    "French_Southern": {
+      "standard": "ফরাসি দক্ষিণ এবং আন্টার্কটিক সময়"
+    },
+    "GMT": {
+      "standard": "গ্রীনিচ মিন টাইম"
+    },
+    "Galapagos": {
+      "standard": "গালাপাগোস সময়"
+    },
+    "Gambier": {
+      "standard": "গ্যাম্বিয়ার সময়"
+    },
+    "Georgia": {
+      "daylight": "জর্জিয়া গ্রীষ্মকালীন সময়",
+      "standard": "জর্জিয়া মানক সময়"
+    },
+    "Gilbert_Islands": {
+      "standard": "গিলবার্ট দ্বীপপুঞ্জ সময়"
+    },
+    "Greenland_Eastern": {
+      "daylight": "পূর্ব গ্রীনল্যান্ড গ্রীষ্মকালীন সময়",
+      "standard": "পূর্ব গ্রীনল্যান্ড মানক সময়"
+    },
+    "Greenland_Western": {
+      "daylight": "পশ্চিম গ্রীনল্যান্ড গ্রীষ্মকালীন সময়",
+      "standard": "পশ্চিম গ্রীনল্যান্ড মানক সময়"
+    },
+    "Gulf": {
+      "standard": "উপসাগরীয় মানক সময়"
+    },
+    "Guyana": {
+      "standard": "গুয়ানা সময়"
+    },
+    "Hawaii_Aleutian": {
+      "daylight": "হাওয়াই-আলেউত দিবালোক সময়",
+      "standard": "হাওয়াই-আলেউত মানক সময়"
+    },
+    "Hong_Kong": {
+      "daylight": "হং কং গ্রীষ্মকালীন সময়",
+      "standard": "হং কং মানক সময়"
+    },
+    "Hovd": {
+      "daylight": "হোভড গ্রীষ্মকালীন সময়",
+      "standard": "হোভড মানক সময়"
+    },
+    "India": {
+      "standard": "ভারতীয় মানক সময়"
+    },
+    "Indian_Ocean": {
+      "standard": "ভারত মহাসাগরীয় সময়"
+    },
+    "Indochina": {
+      "standard": "ইন্দোচীন সময়"
+    },
+    "Indonesia_Central": {
+      "standard": "কেন্দ্রীয় ইন্দোনেশিয়া সময়"
+    },
+    "Indonesia_Eastern": {
+      "standard": "পূর্ব ইন্দোনেশিয়া সময়"
+    },
+    "Indonesia_Western": {
+      "standard": "পশ্চিমী ইন্দোনেশিয়া সময়"
+    },
+    "Iran": {
+      "daylight": "ইরান দিবালোক সময়",
+      "standard": "ইরান মানক সময়"
+    },
+    "Irkutsk": {
+      "daylight": "ইরকুটস্ক গ্রীষ্মকালীন সময়",
+      "standard": "ইরকুটস্ক মানক সময়"
+    },
+    "Israel": {
+      "daylight": "ইজরায়েল দিবালোক সময়",
+      "standard": "ইজরায়েল মানক সময়"
+    },
+    "Japan": {
+      "daylight": "জাপান দিবালোক সময়",
+      "standard": "জাপান মানক সময়"
+    },
+    "Kamchatka": {
+      "daylight": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি গৃষ্মকালীন সময়",
+      "standard": "পিত্রেপ্যাভলস্ক- ক্যামচ্যাটস্কি মান সময়"
+    },
+    "Kazakhstan_Eastern": {
+      "standard": "পূর্ব কাজাখাস্তান সময়"
+    },
+    "Kazakhstan_Western": {
+      "standard": "পশ্চিম কাজাখাস্তান সময়"
+    },
+    "Korea": {
+      "daylight": "কোরিয়ান দিবালোক সময়",
+      "standard": "কোরিয়ান মানক সময়"
+    },
+    "Kosrae": {
+      "standard": "কোসরেই সময়"
+    },
+    "Krasnoyarsk": {
+      "daylight": "ক্রাসনোয়ার্স্কি গ্রীষ্মকালীন সময়",
+      "standard": "ক্রাসনোয়ার্স্কি মানক সময়"
+    },
+    "Kyrgystan": {
+      "standard": "কিরগিস্তান সময়"
+    },
+    "Line_Islands": {
+      "standard": "লাইন দ্বীপপুঞ্জ সময়"
+    },
+    "Lord_Howe": {
+      "daylight": "লর্ড হাওয়ে দিবালোক মসয়",
+      "standard": "লর্ড হাওয়ে মানক মসয়"
+    },
+    "Macquarie": {
+      "standard": "ম্যাককুরি দ্বীপ সময়"
+    },
+    "Magadan": {
+      "daylight": "ম্যাগাডান গ্রীষ্মকালীন সময়",
+      "standard": "ম্যাগাডান মানক সময়"
+    },
+    "Malaysia": {
+      "standard": "মালয়েশিয়া সময়"
+    },
+    "Maldives": {
+      "standard": "মালদ্বীপ সময়"
+    },
+    "Marquesas": {
+      "standard": "মার্কেসাস সময়"
+    },
+    "Marshall_Islands": {
+      "standard": "মার্শাল দ্বীপপুঞ্জ সময়"
+    },
+    "Mauritius": {
+      "daylight": "মরিশাস গ্রীষ্মকালীন সময়",
+      "standard": "মরিশাস মানক সময়"
+    },
+    "Mawson": {
+      "standard": "মসন সময়"
+    },
+    "Mexico_Northwest": {
+      "daylight": "উত্তরপশ্চিম মেক্সিকোর দিনের সময়",
+      "standard": "উত্তরপশ্চিম মেক্সিকোর মানক সময়"
+    },
+    "Mexico_Pacific": {
+      "daylight": "মেক্সিকান প্রশান্ত মহাসাগরীয় দিবালোক সময়",
+      "standard": "মেক্সিকান প্রশান্ত মহসাগরীয় মানক সময়"
+    },
+    "Mongolia": {
+      "daylight": "উলান বাতোর গ্রীষ্মকালীন সময়",
+      "standard": "উলান বাতোর মানক সময়"
+    },
+    "Moscow": {
+      "daylight": "মস্কো গ্রীষ্মকালীন সময়",
+      "standard": "মস্কো মানক সময়"
+    },
+    "Myanmar": {
+      "standard": "মায়ানমার সময়"
+    },
+    "Nauru": {
+      "standard": "নাউরু সময়"
+    },
+    "Nepal": {
+      "standard": "নেপাল সময়"
+    },
+    "New_Caledonia": {
+      "daylight": "নিউ ক্যালেডোনিয়া গ্রীষ্মকালীন সময়",
+      "standard": "নিউ ক্যালেডোনিয়া মানক সময়"
+    },
+    "New_Zealand": {
+      "daylight": "নিউজিল্যান্ড দিবালোক সময়",
+      "standard": "নিউজিল্যান্ড মানক সময়"
+    },
+    "Newfoundland": {
+      "daylight": "নিউফাউন্ডল্যান্ড দিবালোক সময়",
+      "standard": "নিউফাউন্ডল্যান্ড মানক সময়"
+    },
+    "Niue": {
+      "standard": "নিউই সময়"
+    },
+    "Norfolk": {
+      "daylight": "নরফোক দ্বীপ দিবালোক সময়",
+      "standard": "নরফোক দ্বীপ মানক সময়"
+    },
+    "Noronha": {
+      "daylight": "ফার্নান্দো ডি নোরোনহা গ্রীষ্মকালীন সময়",
+      "standard": "ফার্নান্দো ডি নোরোনহা মানক সময়"
+    },
+    "Novosibirsk": {
+      "daylight": "নোভোসিবির্স্ক গ্রীষ্মকালীন সময়",
+      "standard": "নোভোসিবির্স্ক মানক সময়"
+    },
+    "Omsk": {
+      "daylight": "ওমস্ক গ্রীষ্মকালীন সময়",
+      "standard": "ওমস্ক মানক সময়"
+    },
+    "Pakistan": {
+      "daylight": "পাকিস্তান গ্রীষ্মকালীন সময়",
+      "standard": "পাকিস্তান মানক সময়"
+    },
+    "Palau": {
+      "standard": "পালাউ সময়"
+    },
+    "Papua_New_Guinea": {
+      "standard": "পাপুয়া নিউ গিনি সময়"
+    },
+    "Paraguay": {
+      "daylight": "প্যারাগুয়ে গ্রীষ্মকালীন সময়",
+      "standard": "প্যারাগুয়ে মানক সময়"
+    },
+    "Peru": {
+      "daylight": "পেরু গ্রীষ্মকালীন সময়",
+      "standard": "পেরু মানক সময়"
+    },
+    "Philippines": {
+      "daylight": "ফিলিপাইন গ্রীষ্মকালীন সময়",
+      "standard": "ফিলিপাইন মানক সময়"
+    },
+    "Phoenix_Islands": {
+      "standard": "ফোনিক্স দ্বীপপুঞ্জ সময়"
+    },
+    "Pierre_Miquelon": {
+      "daylight": "সেন্ট পিয়ের ও মিকেলন দিবালোক সময়",
+      "standard": "সেন্ট পিয়ের ও মিকেলন মানক সময়"
+    },
+    "Pitcairn": {
+      "standard": "পিটকেয়ার্ন সময়"
+    },
+    "Ponape": {
+      "standard": "পোনাপে সময়"
+    },
+    "Pyongyang": {
+      "standard": "পিয়ংইয়াং সময়"
+    },
+    "Reunion": {
+      "standard": "রিইউনিয়ন সময়"
+    },
+    "Rothera": {
+      "standard": "রথেরা সময়"
+    },
+    "Sakhalin": {
+      "daylight": "সাখালিন গ্রীষ্মকালীন সময়",
+      "standard": "সাখালিন মানক সময়"
+    },
+    "Samara": {
+      "daylight": "সামারা গৃষ্মকালীন সময়",
+      "standard": "সামারা মান সময়"
+    },
+    "Samoa": {
+      "daylight": "সামোয়া দিবালোক সময়",
+      "standard": "সামোয়া মানক সময়"
+    },
+    "Seychelles": {
+      "standard": "সেশেলস সময়"
+    },
+    "Singapore": {
+      "standard": "সিঙ্গাপুর মানক সময়"
+    },
+    "Solomon": {
+      "standard": "সলোমন দ্বীপপুঞ্জ সময়"
+    },
+    "South_Georgia": {
+      "standard": "দক্ষিণ জর্জিয়া সময়"
+    },
+    "Suriname": {
+      "standard": "সুরিনাম সময়"
+    },
+    "Syowa": {
+      "standard": "সায়োওয়া সময়"
+    },
+    "Tahiti": {
+      "standard": "তাহিতি সময়"
+    },
+    "Taipei": {
+      "daylight": "তাইপেই দিবালোক সময়",
+      "standard": "তাইপেই মানক সময়"
+    },
+    "Tajikistan": {
+      "standard": "তাজাখাস্তান সময়"
+    },
+    "Tokelau": {
+      "standard": "টোকেলাউ সময়"
+    },
+    "Tonga": {
+      "daylight": "টোঙ্গা গ্রীষ্মকালীন সময়",
+      "standard": "টোঙ্গা মানক সময়"
+    },
+    "Truk": {
+      "standard": "চুক সময়"
+    },
+    "Turkmenistan": {
+      "daylight": "তুর্কমেনিস্তান গ্রীষ্মকালীন সময়",
+      "standard": "তুর্কমেনিস্তান মানক সময়"
+    },
+    "Tuvalu": {
+      "standard": "টুভালু সময়"
+    },
+    "Uruguay": {
+      "daylight": "উরুগুয়ে গ্রীষ্মকালীন সময়",
+      "standard": "উরুগুয়ে মানক সময়"
+    },
+    "Uzbekistan": {
+      "daylight": "উজবেকিস্তান গ্রীষ্মকালীন সময়",
+      "standard": "উজবেকিস্তান মানক সময়"
+    },
+    "Vanuatu": {
+      "daylight": "ভানুয়াতু গ্রীষ্মকালীন সময়",
+      "standard": "ভানুয়াতু মানক সময়"
+    },
+    "Venezuela": {
+      "standard": "ভেনেজুয়েলা সময়"
+    },
+    "Vladivostok": {
+      "daylight": "ভ্লাদিভস্তক গ্রীষ্মকালীন সময়",
+      "standard": "ভ্লাদিভস্তক মানক সময়"
+    },
+    "Volgograd": {
+      "daylight": "ভলগোগ্রাড গ্রীষ্মকালীন সময়",
+      "standard": "ভলগোগ্রাড মানক সময়"
+    },
+    "Vostok": {
+      "standard": "ভসটক সময়"
+    },
+    "Wake": {
+      "standard": "ওয়েক দ্বীপ সময়"
+    },
+    "Wallis": {
+      "standard": "ওয়ালিস এবং ফুটুনা সময়"
+    },
+    "Yakutsk": {
+      "daylight": "ইয়াকুটাস্ক গ্রীষ্মকালীন সময়",
+      "standard": "ইয়াকুটাস্ক মানক সময়"
+    },
+    "Yekaterinburg": {
+      "daylight": "ইয়েকাতেরিনবুর্গ গ্রীষ্মকালীন সময়",
+      "standard": "ইয়েকাতেরিনবুর্গ মানক সময়"
+    },
+    "Yukon": {
+      "standard": "ইউকোন সময়"
+    }
+  },
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "স্থানাংকিত আন্তর্জাতিক সময়"
+    },
+    "Europe/Dublin": {
+      "daylight": "আইরিশ মানক সময়"
+    },
+    "Europe/London": {
+      "daylight": "ব্রিটিশ গ্রীষ্মকালীন সময়"
+    }
   }
 }

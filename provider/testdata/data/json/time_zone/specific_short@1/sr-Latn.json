@@ -1,17 +1,24 @@
 {
-  "Europe_Central": {
-    "daylight": "CEST",
-    "standard": "CET"
+  "defaults": {
+    "Europe_Central": {
+      "daylight": "CEST",
+      "standard": "CET"
+    },
+    "Europe_Eastern": {
+      "daylight": "EEST",
+      "standard": "EET"
+    },
+    "Europe_Western": {
+      "daylight": "WEST",
+      "standard": "WET"
+    },
+    "GMT": {
+      "standard": "GMT"
+    }
   },
-  "Europe_Eastern": {
-    "daylight": "EEST",
-    "standard": "EET"
-  },
-  "Europe_Western": {
-    "daylight": "WEST",
-    "standard": "WET"
-  },
-  "GMT": {
-    "standard": "GMT"
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "UTC"
+    }
   }
 }

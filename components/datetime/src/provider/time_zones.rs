@@ -129,7 +129,9 @@ map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
 )]
 #[yoke(cloning_zcf)]
 pub struct MetaZoneGenericNamesLongV1<'data> {
+    /// The default mapping between metazone id and localized metazone name.
     pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+    /// The override mapping between timezone id and localized metazone name.
     pub overrides: LiteMap<Cow<'data, str>, Cow<'data, str>>,
 }
 map_access_with_overrides!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
@@ -144,7 +146,9 @@ map_access_with_overrides!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, 
 )]
 #[yoke(cloning_zcf)]
 pub struct MetaZoneGenericNamesShortV1<'data> {
+    /// The default mapping between metazone id and localized metazone name.
     pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+    /// The override mapping between timezone id and localized metazone name.
     pub overrides: LiteMap<Cow<'data, str>, Cow<'data, str>>,
 }
 map_access_with_overrides!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
@@ -160,7 +164,9 @@ map_access_with_overrides!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data,
 )]
 #[yoke(cloning_zcf)]
 pub struct MetaZoneSpecificNamesLongV1<'data> {
+    /// The default mapping between metazone id and localized metazone name.
     pub defaults: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+    /// The override mapping between timezone id and localized metazone name.
     pub overrides: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
 }
 map_access_with_overrides!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
@@ -176,7 +182,9 @@ map_access_with_overrides!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSp
 )]
 #[yoke(cloning_zcf)]
 pub struct MetaZoneSpecificNamesShortV1<'data> {
+    /// The default mapping between metazone id and localized metazone name.
     pub defaults: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+    /// The override mapping between timezone id and localized metazone name.
     pub overrides: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
 }
 map_access_with_overrides!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
