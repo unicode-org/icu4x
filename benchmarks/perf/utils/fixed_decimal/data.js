@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639579967027,
+  "lastUpdate": 1639606765984,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15299,6 +15299,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 139059,
             "range": "± 7457",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5217972b3d7eb583317aaef4455bd2f9cd8d91aa",
+          "message": "Remove workaround for rustc bug after upstream fix (#1402)",
+          "timestamp": "2021-12-15T14:12:06-08:00",
+          "tree_id": "ce6eb537cd3daefe7215aeb5a0476801799aff57",
+          "url": "https://github.com/unicode-org/icu4x/commit/5217972b3d7eb583317aaef4455bd2f9cd8d91aa"
+        },
+        "date": 1639606757822,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 127418,
+            "range": "± 5292",
             "unit": "ns/iter"
           }
         ]
