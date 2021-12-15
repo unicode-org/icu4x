@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639517252922,
+  "lastUpdate": 1639560524477,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15209,6 +15209,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 120474,
             "range": "± 5182",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f3db25335e27591a3b1d83d1fd0325bc4403958b",
+          "message": "Making ListFormatterPattern construction more private (#1398)",
+          "timestamp": "2021-12-15T10:21:30+01:00",
+          "tree_id": "30473ad60984458f19b0b97d7e4daeff06551689",
+          "url": "https://github.com/unicode-org/icu4x/commit/f3db25335e27591a3b1d83d1fd0325bc4403958b"
+        },
+        "date": 1639560518305,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 99332,
+            "range": "± 1222",
             "unit": "ns/iter"
           }
         ]
