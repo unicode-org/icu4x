@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639560604283,
+  "lastUpdate": 1639575679108,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15047,6 +15047,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 295605,
             "range": "± 18373",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a4717395673f0a8492f2cf677071302e8f9673f2",
+          "message": "Swapping arguments of assert_writeable_eq (#1399)",
+          "timestamp": "2021-12-15T19:01:46+05:30",
+          "tree_id": "dd75480265fe1df59e621f0dac2550e1ef50412e",
+          "url": "https://github.com/unicode-org/icu4x/commit/a4717395673f0a8492f2cf677071302e8f9673f2"
+        },
+        "date": 1639575670579,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 112214,
+            "range": "± 225",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1280274,
+            "range": "± 1571",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 311391,
+            "range": "± 503",
             "unit": "ns/iter"
           }
         ]
