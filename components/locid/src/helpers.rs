@@ -22,7 +22,7 @@ macro_rules! impl_writeable_for_single_subtag {
 
         #[test]
         fn test_writeable() {
-            writeable::assert_writeable_eq!($sample, &$type::from_str($sample).unwrap());
+            writeable::assert_writeable_eq!(&$type::from_str($sample).unwrap(), $sample);
         }
     };
 }
@@ -64,17 +64,17 @@ macro_rules! impl_writeable_for_subtag_list {
 
         #[test]
         fn test_writeable() {
-            writeable::assert_writeable_eq!("", &$type::default());
+            writeable::assert_writeable_eq!(&$type::default(), "");
             writeable::assert_writeable_eq!(
+                &$type::from_vec_unchecked(alloc::vec![$sample1.parse().unwrap()]),
                 $sample1,
-                &$type::from_vec_unchecked(alloc::vec![$sample1.parse().unwrap()])
             );
             writeable::assert_writeable_eq!(
-                core::concat!($sample1, "-", $sample2),
                 &$type::from_vec_unchecked(alloc::vec![
                     $sample1.parse().unwrap(),
                     $sample2.parse().unwrap()
-                ])
+                ]),
+                core::concat!($sample1, "-", $sample2),
             );
         }
     };
@@ -122,15 +122,15 @@ macro_rules! impl_writeable_for_tinystr_list {
         #[test]
         fn test_writeable() {
             writeable::assert_writeable_eq!(
+                &$type::from_vec_unchecked(vec![$sample1.parse().unwrap()]),
                 $sample1,
-                &$type::from_vec_unchecked(vec![$sample1.parse().unwrap()])
             );
             writeable::assert_writeable_eq!(
-                core::concat!($sample1, "-", $sample2),
                 &$type::from_vec_unchecked(vec![
                     $sample1.parse().unwrap(),
                     $sample2.parse().unwrap()
-                ])
+                ]),
+                core::concat!($sample1, "-", $sample2),
             );
         }
     };
@@ -185,20 +185,20 @@ macro_rules! impl_writeable_for_key_value {
 
         #[test]
         fn test_writeable() {
-            writeable::assert_writeable_eq!("", &$type::default());
+            writeable::assert_writeable_eq!(&$type::default(), "");
             writeable::assert_writeable_eq!(
-                core::concat!($key1, "-", $value1),
                 &$type::from_vec_unchecked(vec![(
                     $key1.parse().unwrap(),
                     $value1.parse().unwrap()
-                )])
+                )]),
+                core::concat!($key1, "-", $value1),
             );
             writeable::assert_writeable_eq!(
-                core::concat!($key1, "-", $value1, "-", $expected2),
                 &$type::from_vec_unchecked(vec![
                     ($key1.parse().unwrap(), $value1.parse().unwrap()),
                     ($key2.parse().unwrap(), "true".parse().unwrap())
-                ])
+                ]),
+                core::concat!($key1, "-", $value1, "-", $expected2),
             );
         }
     };

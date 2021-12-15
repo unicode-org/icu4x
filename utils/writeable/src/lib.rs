@@ -46,7 +46,7 @@
 //! }
 //!
 //! let message = WelcomeMessage { name: "Alice" };
-//! assert_writeable_eq!("Hello, Alice!", &message);
+//! assert_writeable_eq!(&message, "Hello, Alice!");
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -149,12 +149,12 @@ pub trait Writeable {
 ///     }
 /// }
 ///
-/// assert_writeable_eq!("foo", &Demo);
-/// assert_writeable_eq!("foo", &Demo, "Message: {}", "Hello World");
+/// assert_writeable_eq!(&Demo, "foo");
+/// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
 /// ```
 #[macro_export]
 macro_rules! assert_writeable_eq {
-    ($expected_str:expr, $actual_writeable:expr $(,)?) => {
+    ($actual_writeable:expr, $expected_str:expr $(,)?) => {
         {
             use $crate::Writeable;
             let writeable = $actual_writeable;
@@ -165,7 +165,7 @@ macro_rules! assert_writeable_eq {
         }
     };
 
-    ($expected_str:expr, $actual_writeable:expr, $($arg:tt)+) => {
+    ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {
         {
             use $crate::Writeable;
             let writeable = $actual_writeable;

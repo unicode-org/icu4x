@@ -440,7 +440,7 @@ mod tests {
     fn test_options_to_string() {
         for cas in get_key_test_cases().iter() {
             assert_eq!(cas.expected, cas.resc_key.to_string());
-            writeable::assert_writeable_eq!(cas.expected, &cas.resc_key);
+            writeable::assert_writeable_eq!(&cas.resc_key, cas.expected);
             assert_eq!(
                 cas.expected,
                 cas.resc_key
@@ -488,7 +488,7 @@ mod tests {
     fn test_key_to_string() {
         for cas in get_options_test_cases().iter() {
             assert_eq!(cas.expected, cas.resc_options.to_string());
-            writeable::assert_writeable_eq!(cas.expected, &cas.resc_options);
+            writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
             assert_eq!(
                 cas.expected,
                 cas.resc_options
@@ -516,7 +516,7 @@ mod tests {
                     options: options_cas.resc_options.clone(),
                 };
                 assert_eq!(expected, resource_path.to_string());
-                writeable::assert_writeable_eq!(expected, &resource_path);
+                writeable::assert_writeable_eq!(&resource_path, expected);
             }
         }
     }
