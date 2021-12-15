@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639516902485,
+  "lastUpdate": 1639560198638,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5303,6 +5303,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bea61e5d70f41baf52ebe710f57fbe7bab77ccc9"
         },
         "date": 1639516894221,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 926479,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f3db25335e27591a3b1d83d1fd0325bc4403958b",
+          "message": "Making ListFormatterPattern construction more private (#1398)",
+          "timestamp": "2021-12-15T10:21:30+01:00",
+          "tree_id": "30473ad60984458f19b0b97d7e4daeff06551689",
+          "url": "https://github.com/unicode-org/icu4x/commit/f3db25335e27591a3b1d83d1fd0325bc4403958b"
+        },
+        "date": 1639560190585,
         "tool": "ndjson",
         "benches": [
           {
