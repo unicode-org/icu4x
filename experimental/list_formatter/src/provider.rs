@@ -12,8 +12,6 @@ use crate::options::Width;
 use crate::string_matcher::StringMatcher;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
-#[cfg(any(test, feature = "provider_transform_internals"))]
-use std::str::FromStr;
 
 pub mod key {
     //! Resource keys for [`list_formatter`](crate).
@@ -47,18 +45,18 @@ impl<'data> ListFormatterPatternsV1<'data> {
     #[cfg(any(test, feature = "provider_transform_internals"))]
     pub fn try_new(patterns: [&str; 12]) -> Result<Self, Error> {
         Ok(Self([
-            patterns[0].parse()?,
-            patterns[1].parse()?,
-            patterns[2].parse()?,
-            patterns[3].parse()?,
-            patterns[4].parse()?,
-            patterns[5].parse()?,
-            patterns[6].parse()?,
-            patterns[7].parse()?,
-            patterns[8].parse()?,
-            patterns[9].parse()?,
-            patterns[10].parse()?,
-            patterns[11].parse()?,
+            ListJoinerPattern::from_str(patterns[0], true, false)?.into(),
+            ListJoinerPattern::from_str(patterns[1], false, false)?.into(),
+            ListJoinerPattern::from_str(patterns[2], false, true)?.into(),
+            ListJoinerPattern::from_str(patterns[3], true, true)?.into(),
+            ListJoinerPattern::from_str(patterns[4], true, false)?.into(),
+            ListJoinerPattern::from_str(patterns[5], false, false)?.into(),
+            ListJoinerPattern::from_str(patterns[6], false, true)?.into(),
+            ListJoinerPattern::from_str(patterns[7], true, true)?.into(),
+            ListJoinerPattern::from_str(patterns[8], true, false)?.into(),
+            ListJoinerPattern::from_str(patterns[9], false, false)?.into(),
+            ListJoinerPattern::from_str(patterns[10], false, true)?.into(),
+            ListJoinerPattern::from_str(patterns[11], true, true)?.into(),
         ]))
     }
 
@@ -74,12 +72,16 @@ impl<'data> ListFormatterPatternsV1<'data> {
         regex: &str,
         alternative_pattern: &str,
     ) -> Result<(), Error> {
-        let old = pattern.parse()?;
+        let old = ListJoinerPattern::from_str(pattern, true, true)?;
         for i in 0..12 {
-            if self.0[i] == old {
+            if self.0[i].default == old {
                 self.0[i].special_case = Some(SpecialCasePattern {
                     condition: StringMatcher::new(regex)?,
-                    pattern: alternative_pattern.parse()?,
+                    pattern: ListJoinerPattern::from_str(
+                        alternative_pattern,
+                        i % 4 == 0 || i % 4 == 3, // allow_prefix = start or pair
+                        i % 4 == 2 || i % 4 == 3, // allow_suffix = end or pair
+                    )?,
                 });
             }
         }
@@ -175,14 +177,15 @@ impl<'data> ListJoinerPattern<'data> {
             &self.string[index_1..],
         )
     }
-}
 
-#[cfg(any(test, feature = "provider_transform_internals"))]
-impl<'data> FromStr for ListJoinerPattern<'data> {
-    type Err = Error;
-    fn from_str(pattern: &str) -> Result<Self, Self::Err> {
+    #[cfg(any(test, feature = "provider_transform_internals"))]
+    fn from_str(pattern: &str, allow_prefix: bool, allow_suffix: bool) -> Result<Self, Error> {
         match (pattern.find("{0}"), pattern.find("{1}")) {
-            (Some(index_0), Some(index_1)) if index_0 < index_1 => {
+            (Some(index_0), Some(index_1))
+                if index_0 < index_1
+                    && (allow_prefix || index_0 == 0)
+                    && (allow_suffix || index_1 == pattern.len() - 3) =>
+            {
                 assert!(
                     (index_0 == 0 || cfg!(test)) && index_1 - 3 < 256,
                     "Found valid pattern {:?} that cannot be stored in ListFormatterPatternsV1.",
@@ -205,13 +208,9 @@ impl<'data> FromStr for ListJoinerPattern<'data> {
 }
 
 #[cfg(any(test, feature = "provider_transform_internals"))]
-impl<'data> FromStr for ConditionalListJoinerPattern<'data> {
-    type Err = Error;
-    fn from_str(pattern: &str) -> Result<Self, Self::Err> {
-        Ok(ConditionalListJoinerPattern {
-            default: ListJoinerPattern::from_str(pattern)?,
-            special_case: None,
-        })
+impl<'data> From<ListJoinerPattern<'data>> for ConditionalListJoinerPattern<'data> {
+    fn from(default: ListJoinerPattern<'data>) -> Self {
+        Self { default, special_case: None }
     }
 }
 
@@ -272,12 +271,17 @@ pub(crate) mod test {
 
     #[test]
     fn rejects_bad_patterns() {
-        assert!(ConditionalListJoinerPattern::from_str("{0} and").is_err());
-        assert!(ConditionalListJoinerPattern::from_str("and {1}").is_err());
-        assert!(ConditionalListJoinerPattern::from_str("{1} and {0}").is_err());
-        assert!(ConditionalListJoinerPattern::from_str("{1{0}}").is_err());
-        assert!(ConditionalListJoinerPattern::from_str("{0\u{202e}} and {1}").is_err());
-        assert!(ConditionalListJoinerPattern::from_str("{{0}} {{1}}").is_ok());
+        assert!(ListJoinerPattern::from_str("{0} and", true, true).is_err());
+        assert!(ListJoinerPattern::from_str("and {1}", true, true).is_err());
+        assert!(ListJoinerPattern::from_str("{1} and {0}", true, true).is_err());
+        assert!(ListJoinerPattern::from_str("{1{0}}", true, true).is_err());
+        assert!(ListJoinerPattern::from_str("{0\u{202e}} and {1}", true, true).is_err());
+        assert!(ListJoinerPattern::from_str("{{0}} {{1}}", true, true).is_ok());
+
+        assert!(ListJoinerPattern::from_str("{0} and {1} ", true, true).is_ok());
+        assert!(ListJoinerPattern::from_str("{0} and {1} ", true, false).is_err());
+        assert!(ListJoinerPattern::from_str(" {0} and {1}", true, true).is_ok());
+        assert!(ListJoinerPattern::from_str(" {0} and {1}", false, true).is_err());
     }
 
     #[test]
