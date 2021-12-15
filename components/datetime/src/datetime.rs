@@ -6,7 +6,7 @@
 //! Central to this is the [`DateTimeFormat`].
 
 use crate::{
-    options::DateTimeFormatOptions,
+    options::{components, DateTimeFormatOptions},
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     raw,
 };
@@ -196,5 +196,46 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
         self.0.format_to_string(value)
+    }
+
+    /// Returns a [`components::Bag`] that represents the resolved components for the
+    /// options that were provided to the [`DateTimeFormat`]. The developer may request
+    /// a certain set of options for a [`DateTimeFormat`] but the locale and resolution
+    /// algorithm may change certain details of what actually gets resolved.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::{
+    ///     options::{components, length},
+    ///     DateTimeFormat, DateTimeFormatOptions,
+    /// };
+    /// use icu::locid::macros::langid;
+    /// use icu::locid::Locale;
+    ///
+    /// let options = DateTimeFormatOptions::Length(length::Bag {
+    ///     date: Some(length::Date::Medium),
+    ///     time: None,
+    ///     preferences: None,
+    /// });
+    ///
+    /// let locale: Locale = langid!("en").into();
+    /// let provider = icu_testdata::get_provider();
+    /// let dtf = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options)
+    ///     .expect("Failed to create DateTimeFormat instance.");
+    ///
+    /// assert_eq!(
+    ///     dtf.resolve_components(),
+    ///     components::Bag {
+    ///         year: Some(components::Year::Numeric),
+    ///         month: Some(components::Month::Short),
+    ///         day: Some(components::Numeric::Numeric),
+    ///         ..Default::default()
+    ///     }
+    /// );
+    /// ```
+    pub fn resolve_components(&self) -> components::Bag {
+        self.0.resolve_components()
     }
 }
