@@ -277,11 +277,26 @@ pub(crate) mod test {
 
     #[test]
     fn produces_correct_parts_conditionally() {
-        assert_eq!(test_patterns().end(Width::Narrow).parts("A"), ("", " :o ", ""));
-        assert_eq!(test_patterns().end(Width::Narrow).parts("a"), ("", " :o ", ""));
-        assert_eq!(test_patterns().end(Width::Narrow).parts("ab"), ("", " :o ", ""));
-        assert_eq!(test_patterns().end(Width::Narrow).parts("B"), ("", ". ", ""));
-        assert_eq!(test_patterns().end(Width::Narrow).parts("BA"), ("", ". ", ""));
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("A"),
+            ("", " :o ", "")
+        );
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("a"),
+            ("", " :o ", "")
+        );
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("ab"),
+            ("", " :o ", "")
+        );
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("B"),
+            ("", ". ", "")
+        );
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("BA"),
+            ("", ". ", "")
+        );
     }
 
     #[test]

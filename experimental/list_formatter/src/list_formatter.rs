@@ -215,7 +215,7 @@ mod tests {
         let string = formatter(Width::Short).format(VALUES);
         assert_eq!(string.capacity(), string.len());
 
-        let labelled_string = formatter(Width::Short).format(VALUES);
+        let labelled_string = formatter(Width::Short).format_to_parts(VALUES);
         assert_eq!(labelled_string.capacity(), labelled_string.len());
     }
 }
