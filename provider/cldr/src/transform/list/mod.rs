@@ -153,8 +153,11 @@ impl IterableDataProviderCore for ListProvider {
             .iter()
             // ur-IN has a buggy pattern ("{1}, {0}") which violates
             // our invariant that {0} is at index 0 (and rotates the output).
+            // ml has middle and start patterns with suffixes.
             // See https://github.com/unicode-org/icu4x/issues/1282
-            .filter(|(l, _)| *l != &icu_locid_macros::langid!("ur-IN"))
+            .filter(|(l, _)| {
+                *l != &icu_locid_macros::langid!("ur-IN") && *l != &icu_locid_macros::langid!("ml")
+            })
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 langid: Some(l.clone()),

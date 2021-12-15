@@ -67,49 +67,28 @@ impl ListFormatter {
             }
             n => {
                 // Start(values[0], middle(..., middle(values[n-3], End(values[n-2], values[n-1]))...)) =
-                // start_before + values[0] + start_between + (middle_before + values[1..n-3] + middle_between)* +
-                // end_before + values[n-2] + end_between + values[n-1] + end_after + middle_after* + start_after
+                // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
+                // values[n-2] + end_between + values[n-1] + end_after
 
-                let (start_before, start_between, start_after) =
+                let (start_before, start_between, _) =
                     self.data.get().start(self.width).parts(values[1]);
 
                 builder = append_literal(builder, start_before);
                 builder = append_value(builder, values[0]);
                 builder = append_literal(builder, start_between);
+                builder = append_value(builder, values[1]);
 
-                let mut middle_after = None;
-                let mut middle_after_count = 0;
-                for i in 1..n - 2 {
-                    let (before, between, after) =
-                        self.data.get().middle(self.width).parts(values[i + 1]);
-                    builder = append_literal(builder, before);
-                    builder = append_value(builder, values[i]);
+                for value in &values[2..n-1] {
+                    let (_, between, _) = self.data.get().middle(self.width).parts(value);
                     builder = append_literal(builder, between);
-
-                    if !after.is_empty() {
-                        if middle_after_count == 0 {
-                            middle_after = Some(after);
-                        } else {
-                            // We're assuming that all middle_afters are the same. If we ever
-                            // use conditional patterns for middle they could actually be
-                            // different, so we'd need to use a stack to track what to append.
-                            debug_assert_eq!(middle_after, Some(after));
-                        }
-                        middle_after_count += 1;
-                    }
+                    builder = append_value(builder, value);
                 }
 
-                let (end_before, end_between, end_after) =
+                let (_, end_between, end_after) =
                     self.data.get().end(self.width).parts(values[n - 1]);
-                builder = append_literal(builder, end_before);
-                builder = append_value(builder, values[n - 2]);
                 builder = append_literal(builder, end_between);
                 builder = append_value(builder, values[n - 1]);
-                builder = append_literal(builder, end_after);
-                for _ in 0..middle_after_count {
-                    builder = append_literal(builder, middle_after.unwrap());
-                }
-                append_literal(builder, start_after)
+                append_literal(builder, end_after)
             }
         }
     }
@@ -165,9 +144,9 @@ mod tests {
         assert_eq!(formatter.format(&VALUES[0..0]), "");
         assert_eq!(formatter.format(&VALUES[0..1]), "one");
         assert_eq!(formatter.format(&VALUES[0..2]), "$one;two+");
-        assert_eq!(formatter.format(&VALUES[0..3]), "@one:*two.three!#");
-        assert_eq!(formatter.format(&VALUES[0..4]), "@one:&two,*three.four!?#");
-        assert_eq!(formatter.format(VALUES), "@one:&two,&three,*four.five!??#");
+        assert_eq!(formatter.format(&VALUES[0..3]), "@one:two.three!");
+        assert_eq!(formatter.format(&VALUES[0..4]), "@one:two,three.four!");
+        assert_eq!(formatter.format(VALUES), "@one:two,three,four.five!");
     }
 
     #[test]
@@ -182,14 +161,14 @@ mod tests {
         );
         assert_eq!(
             formatter.format_to_parts(&VALUES[0..3]).as_ref(),
-            "@one:*two.three!#"
+            "@one:two.three!"
         );
         assert_eq!(
             formatter.format_to_parts(&VALUES[0..4]).as_ref(),
-            "@one:&two,*three.four!?#"
+            "@one:two,three.four!"
         );
         let parts = formatter.format_to_parts(VALUES);
-        assert_eq!(parts.as_ref(), "@one:&two,&three,*four.five!??#");
+        assert_eq!(parts.as_ref(), "@one:two,three,four.five!");
 
         assert_eq!(parts.fields_at(0), [FieldType::Literal]);
         assert!(parts.is_field_start(0, 0));
@@ -197,10 +176,10 @@ mod tests {
         assert!(!parts.is_field_start(2, 0));
         assert_eq!(parts.fields_at(4), [FieldType::Literal]);
         assert!(parts.is_field_start(4, 0));
-        assert_eq!(parts.fields_at(5), [FieldType::Literal]);
+        assert_eq!(parts.fields_at(5), [FieldType::Element]);
         assert!(parts.is_field_start(5, 0));
         assert_eq!(parts.fields_at(6), [FieldType::Element]);
-        assert!(parts.is_field_start(6, 0));
+        assert!(!parts.is_field_start(6, 0));
     }
 
     #[test]

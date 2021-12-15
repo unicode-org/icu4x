@@ -248,9 +248,9 @@ pub(crate) mod test {
     pub fn test_patterns() -> ListFormatterPatternsV1<'static> {
         let mut patterns = ListFormatterPatternsV1::try_new([
             // Wide: general
-            "@{0}:{1}#",
-            "&{0},{1}?",
-            "*{0}.{1}!",
+            "@{0}:{1}",
+            "{0},{1}",
+            "{0}.{1}!",
             "${0};{1}+",
             // Short: different pattern lengths
             "{0}1{1}",
@@ -282,7 +282,7 @@ pub(crate) mod test {
 
     #[test]
     fn produces_correct_parts() {
-        assert_eq!(test_patterns().end(Width::Wide).parts(""), ("*", ".", "!"));
+        assert_eq!(test_patterns().pair(Width::Wide).parts(""), ("$", ";", "+"));
     }
 
     #[test]
