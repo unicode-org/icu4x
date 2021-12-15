@@ -265,10 +265,14 @@ impl From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'_> {
                             key.push('/');
                             key.push_str(&inner_key);
                             match place_or_region {
-                                LocationOrSubRegion::Location(place) => place
-                                    .long_metazone_names()
-                                    .and_then(|zf| zf.0.into())
-                                    .map(|format| vec![(key.into(), format.into())]),
+                                LocationOrSubRegion::Location(place) => vec![place]
+                                    .into_iter()
+                                    .filter_map(|inner_place| {
+                                        inner_place
+                                            .long_metazone_names()
+                                            .map(|format| (key.clone().into(), format.into()))
+                                    })
+                                    .collect::<Vec<_>>(),
                                 LocationOrSubRegion::SubRegion(region) => region
                                     .into_tuple_vec()
                                     .into_iter()
@@ -278,7 +282,6 @@ impl From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'_> {
                                         key.push_str(&inner_key);
                                         place
                                             .long_metazone_names()
-                                            .and_then(|zf| zf.0.into())
                                             .map(|format| (key.into(), format.into()))
                                     })
                                     .collect::<Vec<_>>(),
@@ -321,10 +324,14 @@ impl From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'_> {
                             key.push('/');
                             key.push_str(&inner_key);
                             match place_or_region {
-                                LocationOrSubRegion::Location(place) => place
-                                    .short_metazone_names()
-                                    .and_then(|zf| zf.0.into())
-                                    .map(|format| vec![(key.into(), format.into())]),
+                                LocationOrSubRegion::Location(place) => vec![place]
+                                    .into_iter()
+                                    .filter_map(|inner_place| {
+                                        inner_place
+                                            .short_metazone_names()
+                                            .map(|format| (key.clone().into(), format.into()))
+                                    })
+                                    .collect::<Vec<_>>(),
                                 LocationOrSubRegion::SubRegion(region) => region
                                     .into_tuple_vec()
                                     .into_iter()
@@ -334,7 +341,6 @@ impl From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'_> {
                                         key.push_str(&inner_key);
                                         place
                                             .short_metazone_names()
-                                            .and_then(|zf| zf.0.into())
                                             .map(|format| (key.into(), format.into()))
                                     })
                                     .collect::<Vec<_>>(),

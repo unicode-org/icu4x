@@ -17,6 +17,9 @@
 # Ephemeral output of `cargo make wasm`
 wasmpkg/
 
+# IDE files
+.idea/
+
 # Benchmarking output
 dhat-heap.json
 /benchmarks

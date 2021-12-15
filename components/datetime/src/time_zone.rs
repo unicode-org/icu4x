@@ -536,8 +536,12 @@ impl TimeZoneFormat {
         sink.write_str(
             self.mz_generic_short
                 .as_ref()
-                .map(|p| p.get_override())
-                .and_then(|timezones| time_zone.time_zone_id().and_then(|tz| timezones.get(tz)))
+                .map(|p| p.get())
+                .and_then(|timezones| {
+                    time_zone
+                        .time_zone_id()
+                        .and_then(|tz| timezones.get_override(tz))
+                })
                 .or_else(|| {
                     self.mz_generic_short
                         .as_ref()
@@ -562,8 +566,12 @@ impl TimeZoneFormat {
         sink.write_str(
             self.mz_generic_long
                 .as_ref()
-                .map(|p| p.get_override())
-                .and_then(|timezones| time_zone.time_zone_id().and_then(|tz| timezones.get(tz)))
+                .map(|p| p.get())
+                .and_then(|timezones| {
+                    time_zone
+                        .time_zone_id()
+                        .and_then(|tz| timezones.get_override(tz))
+                })
                 .or_else(|| {
                     self.mz_generic_long
                         .as_ref()
@@ -589,11 +597,28 @@ impl TimeZoneFormat {
             self.mz_specific_short
                 .as_ref()
                 .map(|p| p.get())
-                .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+                .and_then(|timezones| {
+                    time_zone
+                        .time_zone_id()
+                        .and_then(|tz| timezones.get_override(tz))
+                })
                 .and_then(|specific_names| {
                     time_zone
                         .time_variant()
                         .and_then(|variant| specific_names.get(variant))
+                })
+                .or_else(|| {
+                    self.mz_specific_short
+                        .as_ref()
+                        .map(|p| p.get())
+                        .and_then(|metazones| {
+                            time_zone.metazone_id().and_then(|mz| metazones.get(mz))
+                        })
+                        .and_then(|specific_names| {
+                            time_zone
+                                .time_variant()
+                                .and_then(|variant| specific_names.get(variant))
+                        })
                 })
                 .ok_or_else(|| DateTimeFormatError::from(fmt::Error))?,
         )
@@ -612,11 +637,28 @@ impl TimeZoneFormat {
             self.mz_specific_long
                 .as_ref()
                 .map(|p| p.get())
-                .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+                .and_then(|timezones| {
+                    time_zone
+                        .time_zone_id()
+                        .and_then(|tz| timezones.get_override(tz))
+                })
                 .and_then(|specific_names| {
                     time_zone
                         .time_variant()
                         .and_then(|variant| specific_names.get(variant))
+                })
+                .or_else(|| {
+                    self.mz_specific_long
+                        .as_ref()
+                        .map(|p| p.get())
+                        .and_then(|metazones| {
+                            time_zone.metazone_id().and_then(|mz| metazones.get(mz))
+                        })
+                        .and_then(|specific_names| {
+                            time_zone
+                                .time_variant()
+                                .and_then(|variant| specific_names.get(variant))
+                        })
                 })
                 .ok_or(fmt::Error)?,
         )
