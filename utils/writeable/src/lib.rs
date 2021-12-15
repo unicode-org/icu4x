@@ -202,6 +202,7 @@ macro_rules! assert_writeable_eq {
             assert!(writeable.write_len().0 <= $expected_str.len(), $($arg)+);
             if let Some(upper) = writeable.write_len().1 {
                 assert!($expected_str.len() <= upper, $($arg)+);
-            }        }
+            }
+        }
     };
 }
