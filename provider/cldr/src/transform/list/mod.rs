@@ -256,7 +256,7 @@ mod tests {
                 .get()
                 .end(Width::Wide)
                 .parts(""),
-            (" ou ", "")
+            ("", " ou ", "")
         );
     }
 
