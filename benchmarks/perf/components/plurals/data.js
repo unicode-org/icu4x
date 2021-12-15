@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639560630713,
+  "lastUpdate": 1639575621701,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21419,6 +21419,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20693,
             "range": "± 1852",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a4717395673f0a8492f2cf677071302e8f9673f2",
+          "message": "Swapping arguments of assert_writeable_eq (#1399)",
+          "timestamp": "2021-12-15T19:01:46+05:30",
+          "tree_id": "dd75480265fe1df59e621f0dac2550e1ef50412e",
+          "url": "https://github.com/unicode-org/icu4x/commit/a4717395673f0a8492f2cf677071302e8f9673f2"
+        },
+        "date": 1639575614359,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1095,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 4777,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18500,
+            "range": "± 35",
             "unit": "ns/iter"
           }
         ]
