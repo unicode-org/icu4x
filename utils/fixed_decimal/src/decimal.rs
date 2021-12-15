@@ -1013,7 +1013,7 @@ fn test_round() {
         let mut dec = FixedDecimal::new_from_f64_raw(case.input).unwrap();
         dec.round_trailing_digits(case.round, RoundingMode::HalfExpand)
             .unwrap();
-        writeable::assert_writeable_eq!(case.expected, dec, "{:?}", case);
+        writeable::assert_writeable_eq!(dec, case.expected, "{:?}", case);
     }
 }
 
@@ -1203,7 +1203,7 @@ fn test_float() {
 
     for case in &cases {
         let dec = FixedDecimal::new_from_f64(case.input, case.precision).unwrap();
-        writeable::assert_writeable_eq!(case.expected, dec, "{:?}", case);
+        writeable::assert_writeable_eq!(dec, case.expected, "{:?}", case);
     }
 }
 
@@ -1311,7 +1311,7 @@ fn test_basic() {
         let mut dec: FixedDecimal = cas.input.into();
         // println!("{}", cas.input + 0.01);
         dec.multiply_pow10(cas.delta).unwrap();
-        writeable::assert_writeable_eq!(cas.expected, dec, "{:?}", cas);
+        writeable::assert_writeable_eq!(dec, cas.expected, "{:?}", cas);
     }
 }
 
@@ -1417,7 +1417,7 @@ fn test_isize_limits() {
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        writeable::assert_writeable_eq!(dec_str, dec);
+        writeable::assert_writeable_eq!(dec, dec_str);
     }
 }
 
@@ -1428,14 +1428,14 @@ fn test_ui128_limits() {
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        writeable::assert_writeable_eq!(dec_str, dec);
+        writeable::assert_writeable_eq!(dec, dec_str);
     }
     for num in &[core::u128::MAX, core::u128::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        writeable::assert_writeable_eq!(dec_str, dec);
+        writeable::assert_writeable_eq!(dec, dec_str);
     }
 }
 

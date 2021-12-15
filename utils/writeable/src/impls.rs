@@ -73,19 +73,19 @@ impl Writeable for u16 {
 #[test]
 fn test_u8() {
     use crate::assert_writeable_eq;
-    assert_writeable_eq!("0", &0u8);
-    assert_writeable_eq!("1", &1u8);
-    assert_writeable_eq!("10", &10u8);
-    assert_writeable_eq!("99", &99u8);
-    assert_writeable_eq!("255", &255u8);
+    assert_writeable_eq!(&0u8, "0",);
+    assert_writeable_eq!(&1u8, "1",);
+    assert_writeable_eq!(&10u8, "10",);
+    assert_writeable_eq!(&99u8, "99",);
+    assert_writeable_eq!(&255u8, "255",);
 }
 
 #[test]
 fn test_u16() {
     use crate::assert_writeable_eq;
-    assert_writeable_eq!("0", &0u16);
-    assert_writeable_eq!("1", &1u16);
-    assert_writeable_eq!("10", &10u16);
-    assert_writeable_eq!("99", &99u16);
-    assert_writeable_eq!("65535", &65535u16);
+    assert_writeable_eq!(&0u16, "0",);
+    assert_writeable_eq!(&1u16, "1",);
+    assert_writeable_eq!(&10u16, "10",);
+    assert_writeable_eq!(&99u16, "99",);
+    assert_writeable_eq!(&65535u16, "65535",);
 }

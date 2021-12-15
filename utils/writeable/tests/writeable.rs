@@ -28,5 +28,5 @@ fn test_basic() {
     let message = WriteableMessage {
         message: input_string,
     };
-    assert_writeable_eq!(input_string, &message);
+    assert_writeable_eq!(&message, input_string);
 }

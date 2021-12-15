@@ -217,29 +217,29 @@ impl writeable::Writeable for Locale {
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!("und", Locale::und());
-    assert_writeable_eq!("und-001", Locale::from_str("und-001").unwrap());
-    assert_writeable_eq!("und-Mymr", Locale::from_str("und-Mymr").unwrap());
-    assert_writeable_eq!("my-Mymr-MM", Locale::from_str("my-Mymr-MM").unwrap());
+    assert_writeable_eq!(Locale::und(), "und");
+    assert_writeable_eq!(Locale::from_str("und-001").unwrap(), "und-001");
+    assert_writeable_eq!(Locale::from_str("und-Mymr").unwrap(), "und-Mymr");
+    assert_writeable_eq!(Locale::from_str("my-Mymr-MM").unwrap(), "my-Mymr-MM");
     assert_writeable_eq!(
+        Locale::from_str("my-Mymr-MM-posix").unwrap(),
         "my-Mymr-MM-posix",
-        Locale::from_str("my-Mymr-MM-posix").unwrap()
     );
     assert_writeable_eq!(
+        Locale::from_str("zh-macos-posix").unwrap(),
         "zh-macos-posix",
-        Locale::from_str("zh-macos-posix").unwrap()
     );
     assert_writeable_eq!(
+        Locale::from_str("my-t-my-d0-zawgyi").unwrap(),
         "my-t-my-d0-zawgyi",
-        Locale::from_str("my-t-my-d0-zawgyi").unwrap()
     );
     assert_writeable_eq!(
+        Locale::from_str("ar-SA-u-ca-islamic-civil").unwrap(),
         "ar-SA-u-ca-islamic-civil",
-        Locale::from_str("ar-SA-u-ca-islamic-civil").unwrap()
     );
     assert_writeable_eq!(
+        Locale::from_str("en-001-x-foo-bar").unwrap(),
         "en-001-x-foo-bar",
-        Locale::from_str("en-001-x-foo-bar").unwrap()
     );
 }
 
