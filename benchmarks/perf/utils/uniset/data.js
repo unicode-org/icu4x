@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639560541829,
+  "lastUpdate": 1639575594657,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16319,6 +16319,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 26533426,
             "range": "± 1700959",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a4717395673f0a8492f2cf677071302e8f9673f2",
+          "message": "Swapping arguments of assert_writeable_eq (#1399)",
+          "timestamp": "2021-12-15T19:01:46+05:30",
+          "tree_id": "dd75480265fe1df59e621f0dac2550e1ef50412e",
+          "url": "https://github.com/unicode-org/icu4x/commit/a4717395673f0a8492f2cf677071302e8f9673f2"
+        },
+        "date": 1639575585982,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36851976,
+            "range": "± 944418",
             "unit": "ns/iter"
           }
         ]
