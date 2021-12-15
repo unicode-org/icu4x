@@ -44,20 +44,46 @@ pub struct ListFormatterPatternsV1<'data>(
 impl<'data> ListFormatterPatternsV1<'data> {
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
-    pub fn new(patterns: [ConditionalListJoinerPattern<'data>; 12]) -> Self {
-        Self(patterns)
+    #[cfg(any(test, feature = "provider_transform_internals"))]
+    pub fn try_new(patterns: [&str; 12]) -> Result<Self, Error> {
+        Ok(Self([
+            patterns[0].parse()?,
+            patterns[1].parse()?,
+            patterns[2].parse()?,
+            patterns[3].parse()?,
+            patterns[4].parse()?,
+            patterns[5].parse()?,
+            patterns[6].parse()?,
+            patterns[7].parse()?,
+            patterns[8].parse()?,
+            patterns[9].parse()?,
+            patterns[10].parse()?,
+            patterns[11].parse()?,
+        ]))
     }
 
-    pub fn replace_patterns(
+    #[cfg(any(test, feature = "provider_transform_internals"))]
+    /// Adds a special case to all `pattern`s that will evaluate to
+    /// `alternative_pattern` when `regex` matches the following element.
+    /// The regex is interpreted case-insensitive and anchored to the beginning, but
+    /// to improve efficiency does not search for full matches. If a full match is
+    /// required, use `$`.
+    pub fn make_conditional(
         &mut self,
-        old: ConditionalListJoinerPattern<'data>,
-        new: ConditionalListJoinerPattern<'data>,
-    ) {
+        pattern: &str,
+        regex: &str,
+        alternative_pattern: &str,
+    ) -> Result<(), Error> {
+        let old = pattern.parse()?;
         for i in 0..12 {
             if self.0[i] == old {
-                self.0[i] = new.clone();
+                self.0[i].special_case = Some(SpecialCasePattern {
+                    condition: StringMatcher::new(regex)?,
+                    pattern: alternative_pattern.parse()?,
+                });
             }
         }
+        Ok(())
     }
 
     pub fn start(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
@@ -173,26 +199,6 @@ impl<'data> FromStr for ConditionalListJoinerPattern<'data> {
 }
 
 impl<'a> ConditionalListJoinerPattern<'a> {
-    /// Creates a conditional list joiner that will evaluate to the `then_pattern` when
-    /// `regex` matches the following element, and to `else_pattern` otherwise.
-    /// The regex is interpreted case-insensitive and anchored to the beginning, but
-    /// to improve efficiency does not search for full matches. If a full match is
-    /// required, use `$`.
-    #[cfg(any(test, feature = "provider_transform_internals"))]
-    pub fn from_regex_and_strs(
-        regex: &str,
-        then_pattern: &str,
-        else_pattern: &str,
-    ) -> Result<Self, crate::error::Error> {
-        Ok(ConditionalListJoinerPattern {
-            default: ListJoinerPattern::from_str(else_pattern)?,
-            special_case: Some(SpecialCasePattern {
-                condition: StringMatcher::new(regex)?,
-                pattern: ListJoinerPattern::from_str(then_pattern)?,
-            }),
-        })
-    }
-
     pub fn parts(&'a self, following_value: &str) -> PatternParts<'a> {
         match &self.special_case {
             Some(SpecialCasePattern { condition, pattern }) if condition.test(following_value) => {
@@ -223,25 +229,28 @@ pub(crate) mod test {
     use super::*;
 
     pub fn test_patterns() -> ListFormatterPatternsV1<'static> {
-        ListFormatterPatternsV1([
+        let mut patterns = ListFormatterPatternsV1::try_new([
             // Wide: general
-            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}. {1}!").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}; {1}").unwrap(),
+            "{0}: {1}",
+            "{0}, {1}",
+            "{0}. {1}!",
+            "{0}; {1}",
             // Short: different pattern lengths
-            ConditionalListJoinerPattern::from_str("{0}1{1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}12{1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}12{1}34").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}123{1}456").unwrap(),
+            "{0}1{1}",
+            "{0}12{1}",
+            "{0}12{1}34",
+            "{0}123{1}456",
             // Narrow: conditionals
-            ConditionalListJoinerPattern::from_str("{0}: {1}").unwrap(),
-            ConditionalListJoinerPattern::from_str("{0}, {1}").unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}. {1}")
-                .unwrap(),
-            ConditionalListJoinerPattern::from_regex_and_strs("^A", "{0} :o {1}", "{0}. {1}")
-                .unwrap(),
+            "{0}: {1}",
+            "{0}, {1}",
+            "{0}. {1}",
+            "{0}. {1}",
         ])
+        .unwrap();
+        patterns
+            .make_conditional("{0}. {1}", "A", "{0} :o {1}")
+            .unwrap();
+        patterns
     }
 
     #[test]
@@ -252,7 +261,10 @@ pub(crate) mod test {
     #[test]
     fn produces_correct_parts_conditionally() {
         assert_eq!(test_patterns().end(Width::Narrow).parts("A"), (" :o ", ""));
+        assert_eq!(test_patterns().end(Width::Narrow).parts("a"), (" :o ", ""));
+        assert_eq!(test_patterns().end(Width::Narrow).parts("ab"), (" :o ", ""));
         assert_eq!(test_patterns().end(Width::Narrow).parts("B"), (". ", ""));
+        assert_eq!(test_patterns().end(Width::Narrow).parts("BA"), (". ", ""));
     }
 
     #[test]
