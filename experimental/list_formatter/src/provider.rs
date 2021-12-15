@@ -182,7 +182,7 @@ impl<'data> FromStr for ListJoinerPattern<'data> {
     type Err = Error;
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
         match (pattern.find("{0}"), pattern.find("{1}")) {
-            (Some(index_0), Some(index_1)) => {
+            (Some(index_0), Some(index_1)) if index_0 < index_1 => {
                 assert!(
                     (index_0 == 0 || cfg!(test)) && index_1 - 3 < 256,
                     "Found valid pattern {:?} that cannot be stored in ListFormatterPatternsV1.",
@@ -268,6 +268,16 @@ pub(crate) mod test {
             .make_conditional("{0}. {1}", "A", "{0} :o {1}")
             .unwrap();
         patterns
+    }
+
+    #[test]
+    fn rejects_bad_patterns() {
+        assert!(ConditionalListJoinerPattern::from_str("{0} and").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("and {1}").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("{1} and {0}").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("{1{0}}").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("{0\u{202e}} and {1}").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("{{0}} {{1}}").is_ok());
     }
 
     #[test]
