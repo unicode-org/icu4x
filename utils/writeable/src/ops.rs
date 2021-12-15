@@ -8,18 +8,13 @@ impl core::ops::Add<LengthHint> for LengthHint {
     type Output = Self;
 
     fn add(self, other: LengthHint) -> Self {
-        match self {
-            LengthHint(lower_bound, None) => LengthHint(other.0.saturating_add(lower_bound), None),
-            LengthHint(lower_bound, Some(upper_bound)) => match other {
-                LengthHint(lower_bound2, None) => {
-                    LengthHint(lower_bound.saturating_add(lower_bound2), None)
-                }
-                LengthHint(lower_bound2, Some(upper_bound2)) => LengthHint(
-                    lower_bound.saturating_add(lower_bound2),
-                    upper_bound.checked_add(upper_bound2),
-                ),
+        LengthHint(
+            self.0.saturating_add(other.0),
+            match (self.1, other.1) {
+                (Some(c), Some(d)) => c.checked_add(d),
+                _ => None,
             },
-        }
+        )
     }
 }
 
@@ -49,6 +44,12 @@ impl core::ops::Add<usize> for LengthHint {
     }
 }
 
+impl core::ops::AddAssign<usize> for LengthHint {
+    fn add_assign(&mut self, other: usize) {
+        *self = *self + other;
+    }
+}
+
 impl core::ops::Mul<usize> for LengthHint {
     type Output = Self;
 
@@ -60,9 +61,29 @@ impl core::ops::Mul<usize> for LengthHint {
     }
 }
 
-impl core::ops::AddAssign<usize> for LengthHint {
-    fn add_assign(&mut self, other: usize) {
-        *self = *self + other;
+impl core::ops::MulAssign<usize> for LengthHint {
+    fn mul_assign(&mut self, other: usize) {
+        *self = *self * other;
+    }
+}
+
+impl core::ops::BitOr<LengthHint> for LengthHint {
+    type Output = Self;
+
+    fn bitor(self, other: LengthHint) -> Self {
+        LengthHint(
+            Ord::min(self.0, other.0),
+            match (self.1, other.1) {
+                (Some(c), Some(d)) => Some(Ord::max(c, d)),
+                _ => None,
+            },
+        )
+    }
+}
+
+impl core::ops::BitOrAssign<LengthHint> for LengthHint {
+    fn bitor_assign(&mut self, other: Self) {
+        *self = *self | other;
     }
 }
 
@@ -171,5 +192,77 @@ mod tests {
             lens.iter().copied().sum::<LengthHint>(),
             LengthHint::exact(6)
         );
+    }
+
+    #[test]
+    fn test_mul() {
+        assert_eq!(LengthHint::exact(3) * 2, LengthHint::exact(6));
+
+        assert_eq!(LengthHint::undefined() * 2, LengthHint::undefined());
+
+        assert_eq!(
+            LengthHint::between(48, 92) * 2,
+            LengthHint::between(96, 184)
+        );
+
+        let mut len = LengthHint::exact(5);
+        len *= 2;
+        assert_eq!(len, LengthHint::exact(10));
+
+        assert_eq!(
+            LengthHint::between(usize::MAX - 10, usize::MAX - 5) * 2,
+            LengthHint::at_least(usize::MAX)
+        );
+    }
+
+    #[test]
+    fn test_bitor() {
+        assert_eq!(
+            LengthHint::exact(3) | LengthHint::exact(2),
+            LengthHint::between(2, 3)
+        );
+        assert_eq!(
+            LengthHint::exact(3) | LengthHint::undefined(),
+            LengthHint::undefined()
+        );
+
+        assert_eq!(
+            LengthHint::undefined() | LengthHint::undefined(),
+            LengthHint::undefined()
+        );
+
+        assert_eq!(
+            LengthHint::exact(10) | LengthHint::exact(10),
+            LengthHint::exact(10)
+        );
+
+        assert_eq!(
+            LengthHint::at_least(15) | LengthHint::exact(3),
+            LengthHint::at_least(3)
+        );
+
+        assert_eq!(
+            LengthHint::at_least(15) | LengthHint::at_most(18),
+            LengthHint::undefined()
+        );
+
+        assert_eq!(
+            LengthHint::at_least(15) | LengthHint::at_least(18),
+            LengthHint::at_least(15)
+        );
+
+        assert_eq!(
+            LengthHint::at_most(15) | LengthHint::at_most(18),
+            LengthHint::at_most(18)
+        );
+
+        assert_eq!(
+            LengthHint::between(5, 10) | LengthHint::at_most(3),
+            LengthHint::at_most(10)
+        );
+
+        let mut len = LengthHint::exact(5);
+        len |= LengthHint::exact(3);
+        assert_eq!(len, LengthHint::between(5, 3));
     }
 }
