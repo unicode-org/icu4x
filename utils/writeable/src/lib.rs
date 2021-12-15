@@ -188,7 +188,9 @@ macro_rules! assert_writeable_eq {
             let writeable = $actual_writeable;
             assert_eq!($expected_str, writeable.writeable_to_string());
             assert!(writeable.write_len().0 <= $expected_str.len());
-            writeable.write_len().1.map(|upper| assert!($expected_str.len() <= upper));
+            if let Some(upper) = writeable.write_len().1 {
+                assert!($expected_str.len() <= upper);
+            }
         }
     };
 
@@ -198,7 +200,8 @@ macro_rules! assert_writeable_eq {
             let writeable = $actual_writeable;
             assert_eq!($expected_str, writeable.writeable_to_string(), $($arg)+);
             assert!(writeable.write_len().0 <= $expected_str.len(), $($arg)+);
-            writeable.write_len().1.map(|upper| assert!($expected_str.len() <= upper, $($arg)+));
-        }
+            if let Some(upper) = writeable.write_len().1 {
+                assert!($expected_str.len() <= upper, $($arg)+);
+            }        }
     };
 }
