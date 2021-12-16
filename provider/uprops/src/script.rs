@@ -50,6 +50,8 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
         // Convert the input from Vec<Vec<u16>> to Vec<Vec<PlainOldULE<2>>> so that
         // we can go through the VarZeroVec construction process for a desired result
         // type of VZV<ZeroSlice<T::ULE>>
+        //
+        // TODO(1271): simplify the transformation once #1353 is merged
         let ule_scx_array_data: Vec<Vec<PlainOldULE<2>>> = scx_array_data
             .iter()
             .map(|v| {
