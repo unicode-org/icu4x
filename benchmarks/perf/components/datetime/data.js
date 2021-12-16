@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639696797725,
+  "lastUpdate": 1639699158305,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15215,6 +15215,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 279440,
             "range": "± 16274",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "685622ee653d322b6e824b72d765db2cfd99ef03",
+          "message": "Implement data transformer for Script_Extensions map data (#1353)",
+          "timestamp": "2021-12-16T15:49:38-08:00",
+          "tree_id": "474f7633428f399e7a54d9448fe76c5d94a200f6",
+          "url": "https://github.com/unicode-org/icu4x/commit/685622ee653d322b6e824b72d765db2cfd99ef03"
+        },
+        "date": 1639699149499,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 162344,
+            "range": "± 10501",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1746992,
+            "range": "± 77552",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 429127,
+            "range": "± 22877",
             "unit": "ns/iter"
           }
         ]
