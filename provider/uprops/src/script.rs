@@ -153,27 +153,27 @@ mod tests {
 
         assert_eq!(
             scx.get_script_extensions_val('𐓐' as u32), // U+104D0 OSAGE CAPITAL LETTER KHA
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Osage])
+            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Osage]).as_ule_slice())
         );
         assert_eq!(
             scx.get_script_extensions_val('🥳' as u32), // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Common])
+            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Common]).as_ule_slice())
         );
         assert_eq!(
             scx.get_script_extensions_val(0x200D), // ZERO WIDTH JOINER
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited])
+            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited]).as_ule_slice())
         );
         assert_eq!(
             scx.get_script_extensions_val('௫' as u32), // U+0BEB TAMIL DIGIT FIVE
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
+            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha]).as_ule_slice())
         );
         assert_eq!(
             scx.get_script_extensions_val(0x11303), // GRANTHA SIGN VISARGA
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
+            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha]).as_ule_slice())
         );
         assert_eq!(
             scx.get_script_extensions_val(0x30A0), // KATAKANA-HIRAGANA DOUBLE HYPHEN
-            ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana])
+            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana]).as_ule_slice())
         );
     }
 }

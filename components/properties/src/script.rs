@@ -146,9 +146,9 @@ impl<'data> ScriptExtensions<'data> {
             scx_val.unwrap_or(ZeroSlice::from_ule_slice(&[]))
         } else {
             let script_with_ext_ule = self.trie.get_ule(code_point);
-            let script_ule: &<Script as AsULE>::ULE = script_with_ext_ule
-                .unwrap_or(&Script::Unknown.as_unaligned());
-            let script_ule_slice = core::slice::from_ref(script_ule);
+            let script_with_ext_slice = script_with_ext_ule.map(|swe| core::slice::from_ref(swe));
+            let script_ule_slice = script_with_ext_slice
+                .unwrap_or_default();
             let scx_val = ZeroSlice::from_ule_slice(script_ule_slice);
             scx_val
         }
