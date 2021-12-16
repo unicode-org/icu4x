@@ -9,7 +9,7 @@ use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue}
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_properties::{
-    CanonicalCombiningClass, EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak,
+    CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
     Script, SentenceBreak, WordBreak,
 };
 use icu_provider::iter::IterableDataProviderCore;
@@ -115,7 +115,7 @@ impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
 
 icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
     key::CANONICAL_COMBINING_CLASS_V1 => UnicodePropertyMapV1Marker<CanonicalCombiningClass>,
-    key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralSubcategory>,
+    key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralCategory>,
     key::SCRIPT_V1 => UnicodePropertyMapV1Marker<Script>,
     key::EAST_ASIAN_WIDTH_V1 => UnicodePropertyMapV1Marker<EastAsianWidth>,
     key::LINE_BREAK_V1 => UnicodePropertyMapV1Marker<LineBreak>,
@@ -139,10 +139,10 @@ mod tests {
     use super::*;
     use icu_codepointtrie::CodePointTrie;
     use icu_properties::provider::key;
-    use icu_properties::{GeneralSubcategory, Script};
+    use icu_properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
-    // `GeneralSubcategory` Rust enum, not the `GeneralCategory` Rust enum,
+    // `GeneralCategory` Rust enum, not the `GeneralCategoryGroup` Rust enum,
     // since we must match the representation and value width of the data from
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
@@ -151,7 +151,7 @@ mod tests {
         let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
-        let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralSubcategory>> = provider
+        let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::GENERAL_CATEGORY_V1,
@@ -162,10 +162,10 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().code_point_trie;
+        let trie: &CodePointTrie<GeneralCategory> = &payload.get().code_point_trie;
 
-        assert_eq!(trie.get('꣓' as u32), GeneralSubcategory::DecimalNumber);
-        assert_eq!(trie.get('≈' as u32), GeneralSubcategory::MathSymbol);
+        assert_eq!(trie.get('꣓' as u32), GeneralCategory::DecimalNumber);
+        assert_eq!(trie.get('≈' as u32), GeneralCategory::MathSymbol);
     }
 
     #[test]

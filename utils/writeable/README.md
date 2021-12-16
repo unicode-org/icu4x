@@ -42,7 +42,7 @@ impl<'s> Writeable for WelcomeMessage<'s> {
 }
 
 let message = WelcomeMessage { name: "Alice" };
-assert_writeable_eq!("Hello, Alice!", &message);
+assert_writeable_eq!(&message, "Hello, Alice!");
 ```
 
 [`ICU4X`]: ../icu/index.html

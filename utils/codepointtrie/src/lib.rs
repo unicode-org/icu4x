@@ -35,10 +35,6 @@
 
 extern crate alloc;
 
-// Workaround for https://github.com/rust-lang/rust/issues/87932
-#[cfg(feature = "serde")]
-extern crate serde;
-
 mod codepointtrie;
 pub mod error;
 mod impl_const;

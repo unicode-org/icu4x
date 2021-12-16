@@ -230,9 +230,9 @@ impl writeable::Writeable for Language {
 
 #[test]
 fn test_writeable() {
-    writeable::assert_writeable_eq!("aa", &Language::from_str("aa").unwrap());
-    writeable::assert_writeable_eq!("xyz", &Language::from_str("xyz").unwrap());
-    writeable::assert_writeable_eq!("und", &Language::from_str("und").unwrap());
+    writeable::assert_writeable_eq!(&Language::from_str("aa").unwrap(), "aa");
+    writeable::assert_writeable_eq!(&Language::from_str("xyz").unwrap(), "xyz");
+    writeable::assert_writeable_eq!(&Language::from_str("und").unwrap(), "und");
 }
 
 impl PartialEq<&str> for Language {

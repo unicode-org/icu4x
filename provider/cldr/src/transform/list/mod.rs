@@ -78,29 +78,25 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
             match req.resource_path.key {
                 // Replace " y " with " e " before /i/ sounds.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
-                key::LIST_FORMAT_AND_V1 | key::LIST_FORMAT_UNIT_V1 => patterns.replace_patterns(
-                    "{0} y {1}".parse().unwrap(),
-                    ConditionalListJoinerPattern::from_regex_and_strs(
+                key::LIST_FORMAT_AND_V1 | key::LIST_FORMAT_UNIT_V1 => patterns
+                    .make_conditional(
+                        "{0} y {1}",
                         // Starts with i or (hi but not hia/hie)
                         "i|hi([^ae]|$)",
                         "{0} e {1}",
-                        "{0} y {1}",
                     )
                     .unwrap(),
-                ),
                 // Replace " o " with " u " before /o/ sound.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
-                key::LIST_FORMAT_OR_V1 => patterns.replace_patterns(
-                    "{0} o {1}".parse().unwrap(),
-                    ConditionalListJoinerPattern::from_regex_and_strs(
+                key::LIST_FORMAT_OR_V1 => patterns
+                    .make_conditional(
+                        "{0} o {1}",
                         // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
                         // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
                         r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))",
                         "{0} u {1}",
-                        "{0} o {1}",
                     )
                     .unwrap(),
-                ),
                 _ => unreachable!(),
             }
         }
@@ -108,9 +104,9 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
         if langid.language == langid!("he").language {
             // Add dashes between ו and non-Hebrew characters
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=is%20not%20mute.-,Hebrew,AND,-Use%20%E2%80%98%2D%D7%95%E2%80%99%20instead
-            patterns.replace_patterns(
-                "{0} \u{05D5}{1}".parse().unwrap(), // ״{0} ו {1}״
-                ConditionalListJoinerPattern::from_regex_and_strs(
+            patterns
+                .make_conditional(
+                    "{0} \u{05D5}{1}", // ״{0} ו {1}״
                     // Starts with a non-Hebrew letter
                     &format!(
                         "[^{}]",
@@ -129,10 +125,8 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                         .fold(String::new(), |a, b| a + &b)
                     ),
                     "{0} \u{05D5}-{1}", // ״{0} ו- {1}״
-                    "{0} \u{05D5}{1}",  // ״{0} ו {1}״
                 )
-                .unwrap(),
-            );
+                .unwrap();
         }
 
         let metadata = DataResponseMetadata::default();
@@ -173,58 +167,58 @@ impl IterableDataProviderCore for ListProvider {
 fn parse_and_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
-    Ok(ListFormatterPatternsV1::new([
-        raw.standard.start.parse()?,
-        raw.standard.middle.parse()?,
-        raw.standard.end.parse()?,
-        raw.standard.pair.parse()?,
-        raw.standard_short.start.parse()?,
-        raw.standard_short.middle.parse()?,
-        raw.standard_short.end.parse()?,
-        raw.standard_short.pair.parse()?,
-        raw.standard_narrow.start.parse()?,
-        raw.standard_narrow.middle.parse()?,
-        raw.standard_narrow.end.parse()?,
-        raw.standard_narrow.pair.parse()?,
-    ]))
+    ListFormatterPatternsV1::try_new([
+        &raw.standard.start,
+        &raw.standard.middle,
+        &raw.standard.end,
+        &raw.standard.pair,
+        &raw.standard_short.start,
+        &raw.standard_short.middle,
+        &raw.standard_short.end,
+        &raw.standard_short.pair,
+        &raw.standard_narrow.start,
+        &raw.standard_narrow.middle,
+        &raw.standard_narrow.end,
+        &raw.standard_narrow.pair,
+    ])
 }
 
 fn parse_or_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
-    Ok(ListFormatterPatternsV1::new([
-        raw.or.start.parse()?,
-        raw.or.middle.parse()?,
-        raw.or.end.parse()?,
-        raw.or.pair.parse()?,
-        raw.or_short.start.parse()?,
-        raw.or_short.middle.parse()?,
-        raw.or_short.end.parse()?,
-        raw.or_short.pair.parse()?,
-        raw.or_narrow.start.parse()?,
-        raw.or_narrow.middle.parse()?,
-        raw.or_narrow.end.parse()?,
-        raw.or_narrow.pair.parse()?,
-    ]))
+    ListFormatterPatternsV1::try_new([
+        &raw.or.start,
+        &raw.or.middle,
+        &raw.or.end,
+        &raw.or.pair,
+        &raw.or_short.start,
+        &raw.or_short.middle,
+        &raw.or_short.end,
+        &raw.or_short.pair,
+        &raw.or_narrow.start,
+        &raw.or_narrow.middle,
+        &raw.or_narrow.end,
+        &raw.or_narrow.pair,
+    ])
 }
 
 fn parse_unit_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
 ) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
-    Ok(ListFormatterPatternsV1::new([
-        raw.unit.start.parse()?,
-        raw.unit.middle.parse()?,
-        raw.unit.end.parse()?,
-        raw.unit.pair.parse()?,
-        raw.unit_short.start.parse()?,
-        raw.unit_short.middle.parse()?,
-        raw.unit_short.end.parse()?,
-        raw.unit_short.pair.parse()?,
-        raw.unit_narrow.start.parse()?,
-        raw.unit_narrow.middle.parse()?,
-        raw.unit_narrow.end.parse()?,
-        raw.unit_narrow.pair.parse()?,
-    ]))
+    ListFormatterPatternsV1::try_new([
+        &raw.unit.start,
+        &raw.unit.middle,
+        &raw.unit.end,
+        &raw.unit.pair,
+        &raw.unit_short.start,
+        &raw.unit_short.middle,
+        &raw.unit_short.end,
+        &raw.unit_short.pair,
+        &raw.unit_narrow.start,
+        &raw.unit_narrow.middle,
+        &raw.unit_narrow.end,
+        &raw.unit_narrow.pair,
+    ])
 }
 
 #[cfg(test)]
@@ -260,8 +254,9 @@ mod tests {
         assert_eq!(
             provide(langid!("fr"), key::LIST_FORMAT_OR_V1)
                 .get()
-                .end(Width::Wide),
-            &"{0} ou {1}".parse().unwrap()
+                .end(Width::Wide)
+                .parts(""),
+            (" ou ", "")
         );
     }
 
