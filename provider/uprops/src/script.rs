@@ -49,24 +49,12 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
         // Convert the input from Vec<Vec<u16>> to Vec<ZeroVec<Script>> so that
         // we can go through the VarZeroVec construction process for a desired result
         // type of VZV<ZeroSlice<Script>>
-        //
-        // TODO(#1271): simplify the transformation once #1353 is merged to be from
-        // Vec<ZeroSlice<Script>> to VZV<ZeroSlice<Script>> (?)
         let ule_scx_array_data: Vec<ZeroVec<Script>> = scx_array_data
             .iter()
-            .map(|v| {
-                v.iter()
-                    .map(|i| Script(*i))
-                    .collect::<Vec<Script>>()
-            })
-            .map(|v| ZeroVec::alloc_from_slice(&v))
+            .map(|v| v.iter().map(|i| Script(*i)).collect::<ZeroVec<Script>>())
             .collect::<Vec<ZeroVec<Script>>>();
-        let scx_vzv: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::from(&ule_scx_array_data);
-        // let bytes =
-        //     VarZeroVec::<ZeroSlice<Script>>::get_serializable_bytes(&ule_scx_array_data).unwrap();
-        // let scx_vzv: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::parse_byte_slice(&bytes)
-        //     .map_err(DataError::new_resc_error)?
-        //     .into_owned();
+        let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
+            VarZeroVec::from(ule_scx_array_data.as_slice());
 
         ScriptExtensions::try_new(trie, scx_vzv).map_err(DataError::new_resc_error)
     }
