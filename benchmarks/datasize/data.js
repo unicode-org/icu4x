@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639696049686,
+  "lastUpdate": 1639698671143,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5453,6 +5453,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3f2a96a06472d61e6c7d2f6e688fb2a9a64e14fd"
         },
         "date": 1639696042005,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 926479,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "685622ee653d322b6e824b72d765db2cfd99ef03",
+          "message": "Implement data transformer for Script_Extensions map data (#1353)",
+          "timestamp": "2021-12-16T15:49:38-08:00",
+          "tree_id": "474f7633428f399e7a54d9448fe76c5d94a200f6",
+          "url": "https://github.com/unicode-org/icu4x/commit/685622ee653d322b6e824b72d765db2cfd99ef03"
+        },
+        "date": 1639698664311,
         "tool": "ndjson",
         "benches": [
           {
