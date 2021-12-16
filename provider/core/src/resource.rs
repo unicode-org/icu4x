@@ -29,7 +29,7 @@ pub enum ResourceCategory {
     LocaleCanonicalizer,
     Plurals,
     TimeZone,
-    UnicodeSet,
+    Properties,
     ListFormatter,
     PrivateUse(TinyStr4),
 }
@@ -45,7 +45,7 @@ impl ResourceCategory {
             Self::LocaleCanonicalizer => Cow::Borrowed("locale_canonicalizer"),
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::TimeZone => Cow::Borrowed("time_zone"),
-            Self::UnicodeSet => Cow::Borrowed("uniset"),
+            Self::Properties => Cow::Borrowed("props"),
             Self::ListFormatter => Cow::Borrowed("list_formatter"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
