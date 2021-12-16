@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639606875614,
+  "lastUpdate": 1639696805903,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21545,6 +21545,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 26591,
             "range": "± 1553",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f2a96a06472d61e6c7d2f6e688fb2a9a64e14fd",
+          "message": "Fix EncodeAsVarULE for ZeroVec (#1407)",
+          "timestamp": "2021-12-16T15:05:42-08:00",
+          "tree_id": "947f7f255c540e2363519ab9cc8e4e1e608b7d9b",
+          "url": "https://github.com/unicode-org/icu4x/commit/3f2a96a06472d61e6c7d2f6e688fb2a9a64e14fd"
+        },
+        "date": 1639696798974,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1077,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5225,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20323,
+            "range": "± 147",
             "unit": "ns/iter"
           }
         ]
