@@ -74,6 +74,7 @@ mod error;
 pub mod maps;
 mod props;
 pub mod provider;
+pub mod script;
 pub mod sets;
 mod trievalue;
 mod ule;

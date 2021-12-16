@@ -68,7 +68,7 @@ fn test_basic() {
     use icu_uniset::UnicodeSet;
     use std::convert::TryInto;
 
-    let root_dir = icu_testdata::paths::data_root().join("uprops");
+    let root_dir = icu_testdata::paths::uprops_toml_root();
     let provider = BinaryPropertyUnicodeSetDataProvider::try_new(&root_dir)
         .expect("TOML should load successfully");
 

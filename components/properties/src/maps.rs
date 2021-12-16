@@ -98,7 +98,7 @@ where
 }
 
 /// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
-/// property. See [`East_Asian_Width`].
+/// property. See [`EastAsianWidth`].
 ///
 /// # Example
 ///

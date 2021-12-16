@@ -17,6 +17,8 @@ pub mod binary {
         pub binary_property: Vec<BinaryProperty>,
         #[serde(skip)]
         pub enum_property: (),
+        #[serde(skip)]
+        pub script_extensions: (),
     }
 }
 
@@ -76,5 +78,29 @@ pub mod enumerated {
         pub binary_property: (),
         #[serde(default)]
         pub enum_property: Vec<EnumeratedPropertyMap>,
+        #[serde(skip)]
+        pub script_extensions: (),
+    }
+}
+
+pub mod script_extensions {
+    use super::enumerated::EnumeratedPropertyCodePointTrie;
+
+    #[derive(serde::Deserialize)]
+    pub struct ScriptExtensionsProperty {
+        pub long_name: String,
+        pub short_name: String,
+        pub script_code_array: Vec<Vec<u16>>,
+        pub code_point_trie: EnumeratedPropertyCodePointTrie,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct Main {
+        #[serde(skip)]
+        pub binary_property: (),
+        #[serde(skip)]
+        pub enum_property: (),
+        #[serde(default)]
+        pub script_extensions: Vec<ScriptExtensionsProperty>,
     }
 }

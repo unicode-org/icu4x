@@ -34,12 +34,14 @@ impl EnumeratedPropertyCodePointTrieProvider {
     }
 }
 
-impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodePropertyMapV1<'static, T> {
+// public helper function for doing the TOML->CodePointTrie conversion within
+// the source data -> data struct conversion
+impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for CodePointTrie<'static, T> {
     type Error = DataError;
 
     fn try_from(
         cpt_data: &EnumeratedPropertyCodePointTrie,
-    ) -> Result<UnicodePropertyMapV1<'static, T>, DataError> {
+    ) -> Result<CodePointTrie<'static, T>, Self::Error> {
         let trie_type_enum: TrieType =
             TrieType::try_from(cpt_data.trie_type_enum_val).map_err(DataError::new_resc_error)?;
         let header = CodePointTrieHeader {
@@ -67,12 +69,24 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodeProperty
             };
 
         let data = data.map_err(DataError::new_resc_error)?;
-        let trie =
-            CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error);
+
+        CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error)
+    }
+}
+
+// source data to ICU4X data struct conversion
+impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodePropertyMapV1<'static, T> {
+    type Error = DataError;
+
+    fn try_from(
+        cpt_data: &EnumeratedPropertyCodePointTrie,
+    ) -> Result<UnicodePropertyMapV1<'static, T>, DataError> {
+        let trie = CodePointTrie::<T>::try_from(cpt_data);
         trie.map(|t| UnicodePropertyMapV1 { code_point_trie: t })
     }
 }
 
+// implement data provider
 impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
     for EnumeratedPropertyCodePointTrieProvider
 {
@@ -133,7 +147,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let root_dir = icu_testdata::paths::uprops_toml_root();
         let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
@@ -156,7 +170,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let root_dir = icu_testdata::paths::uprops_toml_root();
         let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 

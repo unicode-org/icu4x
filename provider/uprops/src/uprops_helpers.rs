@@ -5,7 +5,7 @@
 use crate::reader::*;
 
 use crate::uprops_serde;
-use eyre::WrapErr;
+use eyre::{eyre, WrapErr};
 use std::collections::HashMap;
 use std::path::Path;
 use tinystr::TinyStr16;
@@ -63,4 +63,25 @@ pub fn load_enumerated_from_dir(root_dir: &Path) -> eyre::Result<TomlEnumerated>
         }
     }
     Ok(result)
+}
+
+pub fn load_script_extensions_from_dir(
+    root_dir: &Path,
+) -> eyre::Result<uprops_serde::script_extensions::ScriptExtensionsProperty> {
+    let mut path = root_dir.join("scx");
+    path.set_extension("toml");
+    let toml_str = read_path_to_string(&path)?;
+    let toml_obj: uprops_serde::script_extensions::Main =
+        toml::from_str(&toml_str).wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
+
+    toml_obj
+        .script_extensions
+        .into_iter()
+        .next()
+        .ok_or_else(|| {
+            eyre!(
+                "Could not parse Script_Extensions data from TOML {:?}",
+                path
+            )
+        })
 }

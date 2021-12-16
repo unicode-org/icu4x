@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::script::ScriptWithExt;
 use crate::{
     CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
     Script, SentenceBreak, WordBreak,
@@ -38,6 +39,15 @@ impl TrieValue for Script {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u16::try_from(i).map(Script)
+    }
+}
+
+impl TrieValue for ScriptWithExt {
+    const DATA_GET_ERROR_VALUE: ScriptWithExt = ScriptWithExt::Unknown;
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u16::try_from(i).map(Self)
     }
 }
 

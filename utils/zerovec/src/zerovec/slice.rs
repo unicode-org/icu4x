@@ -321,3 +321,12 @@ impl<T: AsULE> AsRef<ZeroSlice<T>> for Vec<T::ULE> {
         ZeroSlice::<T>::from_ule_slice(&**self)
     }
 }
+
+impl<T> Default for &ZeroSlice<T>
+where
+    T: AsULE,
+{
+    fn default() -> Self {
+        ZeroSlice::from_ule_slice(&[])
+    }
+}
