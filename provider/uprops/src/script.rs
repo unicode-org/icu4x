@@ -53,11 +53,7 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
         // type of VZV<ZeroSlice<T::ULE>>
         let ule_scx_array_data: Vec<Vec<Script>> = scx_array_data
             .iter()
-            .map(|v| {
-                v.iter()
-                    .map(|i| Script(*i))
-                    .collect::<Vec<Script>>()
-            })
+            .map(|v| v.iter().map(|i| Script(*i)).collect::<Vec<Script>>())
             .collect::<Vec<Vec<Script>>>();
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> = VarZeroVec::from(&*ule_scx_array_data);
 
@@ -153,27 +149,42 @@ mod tests {
 
         assert_eq!(
             scx.get_script_extensions_val('𐓐' as u32), // U+104D0 OSAGE CAPITAL LETTER KHA
-            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Osage]).as_ule_slice())
+            ZeroSlice::<Script>::from(
+                ZeroVec::<Script>::alloc_from_slice(&[Script::Osage]).as_ule_slice()
+            )
         );
         assert_eq!(
             scx.get_script_extensions_val('🥳' as u32), // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Common]).as_ule_slice())
+            ZeroSlice::<Script>::from(
+                ZeroVec::<Script>::alloc_from_slice(&[Script::Common]).as_ule_slice()
+            )
         );
         assert_eq!(
             scx.get_script_extensions_val(0x200D), // ZERO WIDTH JOINER
-            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited]).as_ule_slice())
+            ZeroSlice::<Script>::from(
+                ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited]).as_ule_slice()
+            )
         );
         assert_eq!(
             scx.get_script_extensions_val('௫' as u32), // U+0BEB TAMIL DIGIT FIVE
-            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha]).as_ule_slice())
+            ZeroSlice::<Script>::from(
+                ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
+                    .as_ule_slice()
+            )
         );
         assert_eq!(
             scx.get_script_extensions_val(0x11303), // GRANTHA SIGN VISARGA
-            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha]).as_ule_slice())
+            ZeroSlice::<Script>::from(
+                ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
+                    .as_ule_slice()
+            )
         );
         assert_eq!(
             scx.get_script_extensions_val(0x30A0), // KATAKANA-HIRAGANA DOUBLE HYPHEN
-            ZeroSlice::<Script>::from(ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana]).as_ule_slice())
+            ZeroSlice::<Script>::from(
+                ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana])
+                    .as_ule_slice()
+            )
         );
     }
 }
