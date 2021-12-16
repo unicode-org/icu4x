@@ -8,11 +8,9 @@
 use crate::error::PropertiesError;
 use crate::props::Script;
 
-use core::iter::FromIterator;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
-use zerovec::ule::AsULE;
-use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
+use zerovec::{VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -130,18 +128,16 @@ impl<'data> ScriptExtensions<'data> {
                 Some(zslice) => zslice.as_ule_slice().get(1..).unwrap_or_default(),
                 None => &[],
             };
-            let scx_val = ZeroSlice::from_ule_slice(scx_slice);
-            scx_val
+            ZeroSlice::from_ule_slice(scx_slice) as _
         } else if sc_with_ext.is_common() || sc_with_ext.is_inherited() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let scx_val = self.extensions.get(ext_idx as usize);
-            scx_val.unwrap_or(ZeroSlice::from_ule_slice(&[]))
+            scx_val.unwrap_or_else(|| ZeroSlice::from_ule_slice(&[]))
         } else {
             let script_with_ext_ule = self.trie.get_ule(code_point);
             let script_with_ext_slice = script_with_ext_ule.map(|swe| core::slice::from_ref(swe));
             let script_ule_slice = script_with_ext_slice.unwrap_or_default();
-            let scx_val = ZeroSlice::from_ule_slice(script_ule_slice);
-            scx_val
+            ZeroSlice::from_ule_slice(script_ule_slice) as _
         }
     }
 }
