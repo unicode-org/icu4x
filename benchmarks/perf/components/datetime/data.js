@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639699158305,
+  "lastUpdate": 1639699188683,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15257,6 +15257,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 429127,
             "range": "± 22877",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "294c66ff679eaf646d9a0fd91888135b54ee8869",
+          "message": "Rename resource key category for properties (#1406)",
+          "timestamp": "2021-12-16T15:50:16-08:00",
+          "tree_id": "b8c91afc9736a504006dd38c159dae3edf411c99",
+          "url": "https://github.com/unicode-org/icu4x/commit/294c66ff679eaf646d9a0fd91888135b54ee8869"
+        },
+        "date": 1639699180416,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 145966,
+            "range": "± 9563",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1565881,
+            "range": "± 50700",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 388978,
+            "range": "± 18487",
             "unit": "ns/iter"
           }
         ]
