@@ -116,11 +116,6 @@ impl LengthHint {
         }
     }
 
-    /// Returns whether the capacity returned by `capacity()` is exact.
-    pub fn is_exact(&self) -> bool {
-        self.1 == Some(self.0)
-    }
-
     /// Returns whether the LengthHint indicates that the string is exactly 0 bytes long.
     pub fn is_zero(&self) -> bool {
         self.1 == Some(0)
@@ -147,9 +142,6 @@ pub trait Writeable {
         let mut output = String::with_capacity(self.write_len().capacity());
         self.write_to(&mut output)
             .expect("impl Write for String is infallible");
-        if !self.write_len().is_exact() {
-            output.shrink_to_fit();
-        }
         output
     }
 }
