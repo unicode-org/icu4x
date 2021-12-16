@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639698671143,
+  "lastUpdate": 1639698716796,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5488,6 +5488,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 926479,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "294c66ff679eaf646d9a0fd91888135b54ee8869",
+          "message": "Rename resource key category for properties (#1406)",
+          "timestamp": "2021-12-16T15:50:16-08:00",
+          "tree_id": "b8c91afc9736a504006dd38c159dae3edf411c99",
+          "url": "https://github.com/unicode-org/icu4x/commit/294c66ff679eaf646d9a0fd91888135b54ee8869"
+        },
+        "date": 1639698709077,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 926222,
             "unit": "bytes",
             "biggerIsBetter": false
           }
