@@ -124,20 +124,20 @@ impl<'data> ScriptExtensions<'data> {
             // `ScriptWithExt` value in the trie doesn't indicate the Script value,
             // the Script value is copied/inserted into the first position of the
             // `extensions` array. So we must remove it to return the actual scx array val.
-            let scx_slice = match ext_subarray {
-                Some(zslice) => zslice.as_ule_slice().get(1..).unwrap_or_default(),
-                None => &[],
-            };
-            ZeroSlice::from_ule_slice(scx_slice) as _
+            let scx_slice = ext_subarray
+                .and_then(|zslice| zslice.as_ule_slice().get(1..))
+                .unwrap_or_default();
+            ZeroSlice::from_ule_slice(scx_slice)
         } else if sc_with_ext.is_common() || sc_with_ext.is_inherited() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let scx_val = self.extensions.get(ext_idx as usize);
-            scx_val.unwrap_or_else(|| ZeroSlice::from_ule_slice(&[]))
+            scx_val.unwrap_or_default()
         } else {
             let script_with_ext_ule = self.trie.get_ule(code_point);
-            let script_with_ext_slice = script_with_ext_ule.map(|swe| core::slice::from_ref(swe));
-            let script_ule_slice = script_with_ext_slice.unwrap_or_default();
-            ZeroSlice::from_ule_slice(script_ule_slice) as _
+            let script_ule_slice = script_with_ext_ule
+                .map(|swe| core::slice::from_ref(swe))
+                .unwrap_or_default();
+            ZeroSlice::from_ule_slice(script_ule_slice)
         }
     }
 }
