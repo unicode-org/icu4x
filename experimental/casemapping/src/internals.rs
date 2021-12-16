@@ -511,7 +511,7 @@ impl<'data> CaseMappingExceptions<'data> {
                 }
             }
 
-           // #2: Validate full mappings.
+            // #2: Validate full mappings.
             if self.has_slot(idx, CaseMappingExceptionSlot::FullMappings) {
                 for full_mapping in [
                     FullMapping::Lower,
@@ -726,13 +726,13 @@ impl<'data> CaseMapping<'data> {
             .collect::<ZeroVec<_>>();
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
-	let result = Self {
+        let result = Self {
             trie,
             exceptions,
             unfold,
         };
-	result.validate()?;
-	Ok(result)
+        result.validate()?;
+        Ok(result)
     }
 
     /// Given an existing CaseMapping, validates that the data is
@@ -741,39 +741,41 @@ impl<'data> CaseMapping<'data> {
     /// necessary if you are concerned about data corruption after
     /// deserializing.
     pub fn validate(&self) -> Result<(), Error> {
-	// First, validate that exception data is well-formed.
-	let valid_exception_indices = self.exceptions.validate()?;
+        // First, validate that exception data is well-formed.
+        let valid_exception_indices = self.exceptions.validate()?;
 
-	let validate_delta = |c: char, delta: i32| -> Result<(), Error> {
-	    let new_c = u32::try_from(c as i32 + delta)
-		.map_err(|_| Error::Validation("Delta larger than character"))?;
-	    char::from_u32(new_c)
-		.ok_or(Error::Validation("Invalid delta"))?;
-	    Ok(())
-	};
+        let validate_delta = |c: char, delta: i32| -> Result<(), Error> {
+            let new_c = u32::try_from(c as i32 + delta)
+                .map_err(|_| Error::Validation("Delta larger than character"))?;
+            char::from_u32(new_c).ok_or(Error::Validation("Invalid delta"))?;
+            Ok(())
+        };
 
-	for i in 0..char::MAX as u32 {
-	    if let Some(c) = char::from_u32(i) {
-		let data = self.lookup_data(c);
+        for i in 0..char::MAX as u32 {
+            if let Some(c) = char::from_u32(i) {
+                let data = self.lookup_data(c);
 
-		if data.has_exception() {
-		    let idx = data.exception_index();
-		    // Verify that the exception index points to a valid exception header.
-		    if !valid_exception_indices.contains(&idx) {
-			return Error::invalid("Invalid exception index in trie data");
-		    }
-		    if self.exceptions.has_slot(idx, CaseMappingExceptionSlot::Delta) {
-			validate_delta(c, self.exceptions.delta(idx))?;
-		    }
-		} else {
-		    validate_delta(c, data.delta() as i32)?;
-		}
-	    }
-	}
+                if data.has_exception() {
+                    let idx = data.exception_index();
+                    // Verify that the exception index points to a valid exception header.
+                    if !valid_exception_indices.contains(&idx) {
+                        return Error::invalid("Invalid exception index in trie data");
+                    }
+                    if self
+                        .exceptions
+                        .has_slot(idx, CaseMappingExceptionSlot::Delta)
+                    {
+                        validate_delta(c, self.exceptions.delta(idx))?;
+                    }
+                } else {
+                    validate_delta(c, data.delta() as i32)?;
+                }
+            }
+        }
 
-	// The unfold data is structurally guaranteed to be valid,
-	// so there is nothing left to check.
-	Ok(())
+        // The unfold data is structurally guaranteed to be valid,
+        // so there is nothing left to check.
+        Ok(())
     }
 
     fn lookup_data(&self, c: char) -> CaseMappingData {
@@ -1027,8 +1029,7 @@ impl<'data> CaseMapping<'data> {
                 if delta != 0 {
                     // Add the one simple case mapping, no matter what type it is.
                     let codepoint = c as i32 + delta;
-                    let mapped =
-                        char::from_u32(codepoint as u32).expect("Checked in validate()");
+                    let mapped = char::from_u32(codepoint as u32).expect("Checked in validate()");
                     set.add_char(mapped);
                 }
             }
