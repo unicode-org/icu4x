@@ -6,6 +6,8 @@ use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
 use core::fmt::{self, Write};
+use alloc::borrow::Borrow;
+use core::marker::PhantomData;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::*;
@@ -43,10 +45,14 @@ impl ListFormatter {
     /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
     /// formatting. The first layer of fields contains `ListFormatter::element()` for input elements,
     /// and `ListFormatter::literal()` for list literals.
-    pub fn format<'a, 'b, W: Writeable>(&'a self, values: &'b [W]) -> List<'a, 'b, W> {
+    pub fn format<'a, W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy>(
+        &'a self,
+        values: I,
+    ) -> List<'a, W, I> {
         List {
             formatter: self,
             values,
+            phantom_data: PhantomData,
         }
     }
 
@@ -65,13 +71,14 @@ impl ListFormatter {
     }
 }
 
-pub struct List<'a, 'b, W> {
+pub struct List<'a, W, I> {
     formatter: &'a ListFormatter,
-    values: &'b [W],
+    values: I,
+    phantom_data: PhantomData<W>,
 }
 
-impl<W: Writeable> Writeable for List<'_, '_, W> {
-    fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
+impl<W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy> Writeable for List<'_, W, I> {
+    fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> core::fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
                 sink.with_part(ListFormatter::literal(), |l| l.write_str($lit))
@@ -83,74 +90,88 @@ impl<W: Writeable> Writeable for List<'_, '_, W> {
             };
         }
 
-        match self.values.len() {
-            0 => Ok(()),
-            1 => value!(self.values[0]),
-            2 => {
-                // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
-                let (before, between, after) = self
-                    .formatter
-                    .data
-                    .get()
-                    .pair(self.formatter.width)
-                    .parts(&self.values[1]);
-                literal!(before)?;
-                value!(self.values[0])?;
-                literal!(between)?;
-                value!(self.values[1])?;
-                literal!(after)
-            }
-            n => {
-                // Start(values[0], middle(..., middle(values[n-3], End(values[n-2], values[n-1]))...)) =
-                // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
-                // values[n-2] + end_between + values[n-1] + end_after
+        let mut values = self.values.into_iter();
 
-                let (start_before, start_between, _) = self
-                    .formatter
-                    .data
-                    .get()
-                    .start(self.formatter.width)
-                    .parts(&self.values[1]);
+        if let Some(first) = values.next() {
+            if let Some(second) = values.next() {
+                if let Some(third) = values.next() {
+                    // Start(values[0], middle(..., middle(values[n-3], End(values[n-2], values[n-1]))...)) =
+                    // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
+                    // values[n-2] + end_between + values[n-1] + end_after
 
-                literal!(start_before)?;
-                value!(self.values[0])?;
-                literal!(start_between)?;
-                value!(self.values[1])?;
-
-                for value in &self.values[2..n - 1] {
-                    let (_, between, _) = self
+                    let (start_before, start_between, _) = self
                         .formatter
                         .data
                         .get()
-                        .middle(self.formatter.width)
-                        .parts(value);
-                    literal!(between)?;
-                    value!(value)?;
-                }
+                        .start(self.formatter.width)
+                        .parts(second.borrow());
 
-                let (_, end_between, end_after) = self
-                    .formatter
-                    .data
-                    .get()
-                    .end(self.formatter.width)
-                    .parts(&self.values[n - 1]);
-                literal!(end_between)?;
-                value!(self.values[n - 1])?;
-                literal!(end_after)
+                    literal!(start_before)?;
+                    value!(first.borrow())?;
+                    literal!(start_between)?;
+                    value!(second.borrow())?;
+
+                    let mut next = third;
+
+                    for next_next in values {
+                        let (_, between, _) = self
+                            .formatter
+                            .data
+                            .get()
+                            .middle(self.formatter.width)
+                            .parts(next.borrow());
+                        literal!(between)?;
+                        value!(next.borrow())?;
+                        next = next_next;
+                    }
+
+                    let (_, end_between, end_after) = self
+                        .formatter
+                        .data
+                        .get()
+                        .end(self.formatter.width)
+                        .parts(next.borrow());
+                    literal!(end_between)?;
+                    value!(next.borrow())?;
+                    literal!(end_after)
+                } else {
+                    // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
+                    let (before, between, after) = self
+                        .formatter
+                        .data
+                        .get()
+                        .pair(self.formatter.width)
+                        .parts(second.borrow());
+                    literal!(before)?;
+                    value!(first.borrow())?;
+                    literal!(between)?;
+                    value!(second.borrow())?;
+                    literal!(after)
+                }
+            } else {
+                value!(first.borrow())
             }
+        } else {
+            Ok(())
         }
     }
 
     fn write_len(&self) -> LengthHint {
-        self.values
-            .iter()
-            .map(|w| w.write_len())
-            .sum::<LengthHint>()
+        let mut count = 0;
+        let item_length = self
+            .values
+            .into_iter()
+            .map(|w| {
+                count += 1;
+                w.borrow().write_len()
+            })
+            .sum::<LengthHint>();
+        item_length
             + self
                 .formatter
                 .data
                 .get()
-                .size_hint(self.formatter.width, self.values.len())
+                .size_hint(self.formatter.width, count)
     }
 }
 
@@ -160,6 +181,13 @@ mod tests {
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
+
+    fn non_sliceable_collection() -> std::collections::vec_deque::VecDeque<u8> {
+        let mut vecdeque = std::collections::vec_deque::VecDeque::<u8>::new();
+        vecdeque.push_back(10);
+        vecdeque.push_front(48);
+        vecdeque
+    }
 
     fn formatter(width: Width) -> ListFormatter {
         ListFormatter {
@@ -173,19 +201,33 @@ mod tests {
     #[test]
     fn test_writeable() {
         let formatter = formatter(Width::Wide);
-        assert_writeable_eq!(formatter.format(&VALUES[0..0]), "");
-        assert_writeable_eq!(formatter.format(&VALUES[0..1]), "one");
-        assert_writeable_eq!(formatter.format(&VALUES[0..2]), "$one;two+");
-        assert_writeable_eq!(formatter.format(&VALUES[0..3]), "@one:two.three!");
-        assert_writeable_eq!(formatter.format(&VALUES[0..4]), "@one:two,three.four!");
-        assert_writeable_eq!(formatter.format(VALUES), "@one:two,three,four.five!");
+
+        assert_writeable_eq!(formatter.format::<&str, _, _>(&VALUES[0..0]), "");
+        assert_writeable_eq!(formatter.format::<&str, _, _>(&VALUES[0..1]), "one");
+        assert_writeable_eq!(formatter.format::<&str, _, _>(&VALUES[0..2]), "$one;two+");
+        assert_writeable_eq!(
+            formatter.format::<&str, _, _>(&VALUES[0..3]),
+            "@one:two.three!"
+        );
+        assert_writeable_eq!(
+            formatter.format::<&str, _, _>(&VALUES[0..4]),
+            "@one:two,three.four!"
+        );
+        assert_writeable_eq!(
+            formatter.format::<&str, _, _>(VALUES),
+            "@one:two,three,four.five!"
+        );
+
+        let data = non_sliceable_collection();
+        assert_writeable_eq!(formatter.format::<u8, _, _>(&data), "$48;10+");
     }
 
     #[test]
     fn test_fmt_writeable() {
         let formatter = formatter(Width::Wide);
+
         assert_writeable_parts_eq!(
-            formatter.format(VALUES),
+            formatter.format::<&str, _, _>(VALUES),
             "@one:two,three,four.five!",
             [
                 (0, 1, ListFormatter::literal()),
@@ -201,12 +243,27 @@ mod tests {
                 (24, 25, ListFormatter::literal())
             ]
         );
+
+        assert_writeable_parts_eq!(
+            formatter.format::<u8, _, _>(&non_sliceable_collection()),
+            "$48;10+",
+            [
+                (0, 1, ListFormatter::literal()),
+                (1, 3, ListFormatter::element()),
+                (3, 4, ListFormatter::literal()),
+                (4, 6, ListFormatter::element()),
+                (6, 7, ListFormatter::literal()),
+            ]
+        );
     }
 
     #[test]
     fn test_conditional() {
         let formatter = formatter(Width::Narrow);
 
-        assert_writeable_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
+        assert_writeable_eq!(
+            formatter.format::<&str, _, _>(&["Beta", "Alpha"]),
+            "Beta :o Alpha"
+        );
     }
 }
