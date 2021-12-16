@@ -39,7 +39,7 @@ impl core::ops::Add<usize> for LengthHint {
     fn add(self, other: usize) -> Self {
         Self(
             self.0.saturating_add(other),
-            self.1.map(|upper| upper.checked_add(other)).flatten(),
+            self.1.and_then(|upper| upper.checked_add(other)),
         )
     }
 }
@@ -56,7 +56,7 @@ impl core::ops::Mul<usize> for LengthHint {
     fn mul(self, other: usize) -> Self {
         Self(
             self.0.saturating_mul(other),
-            self.1.map(|upper| upper.checked_mul(other)).flatten(),
+            self.1.and_then(|upper| upper.checked_mul(other)),
         )
     }
 }
@@ -70,6 +70,27 @@ impl core::ops::MulAssign<usize> for LengthHint {
 impl core::ops::BitOr<LengthHint> for LengthHint {
     type Output = Self;
 
+    /// Returns a new hint that is correct wherever `self` is correct, and wherever
+    /// `other` is correct.
+    ///
+    /// Example:
+    /// ```
+    /// # use writeable::{LengthHint, Writeable};
+    /// # use core::fmt;
+    /// # fn coin_flip() -> bool { true }
+    ///
+    /// struct NonDeterministicWriteable(String, String);
+    ///
+    /// impl Writeable for NonDeterministicWriteable {
+    ///   fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+    ///     sink.write_str(if coin_flip() { &self.0 } else { &self.1 })  
+    ///   }
+    ///   
+    ///   fn write_len(&self) -> LengthHint {
+    ///     LengthHint::exact(self.0.len()) | LengthHint::exact(self.1.len())
+    ///   }
+    /// }
+    /// ```
     fn bitor(self, other: LengthHint) -> Self {
         LengthHint(
             Ord::min(self.0, other.0),
