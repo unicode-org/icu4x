@@ -117,10 +117,9 @@ where
     }
 }
 
-unsafe impl<'a, T, A: AsULE<ULE = T> + 'static> custom::EncodeAsVarULE<ZeroSlice<A>>
-    for ZeroVec<'a, T>
+unsafe impl<'a, T> custom::EncodeAsVarULE<ZeroSlice<T>> for ZeroVec<'a, T>
 where
-    T: AsULE,
+    T: AsULE + 'static,
 {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
         // unnecesessary if the other two are implemented
