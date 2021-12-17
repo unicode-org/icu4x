@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639698716796,
+  "lastUpdate": 1639785116118,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5513,6 +5513,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/294c66ff679eaf646d9a0fd91888135b54ee8869"
         },
         "date": 1639698709077,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 926222,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20b82065bec51661c90d070c6809210bb256b5ed",
+          "message": "Making writeable::LengthHint a range (#1400)",
+          "timestamp": "2021-12-18T00:50:20+01:00",
+          "tree_id": "8671ac01c032f277d7c4393b1df3a6545337eda6",
+          "url": "https://github.com/unicode-org/icu4x/commit/20b82065bec51661c90d070c6809210bb256b5ed"
+        },
+        "date": 1639785109339,
         "tool": "ndjson",
         "benches": [
           {
