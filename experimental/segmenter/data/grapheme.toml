@@ -105,6 +105,7 @@ right = [ "Control", "CR", "Extend", "L", "LV", "LVT", "V", "T" ]
 break_state = true
 
 [[rules]]
+# GB5
 left = [ "Control", "LF" ]
 right = [ "LF" ]
 break_state = true
