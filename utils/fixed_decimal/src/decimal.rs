@@ -517,10 +517,10 @@ impl writeable::Writeable for FixedDecimal {
     ///
     /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
     /// let result = dec.writeable_to_string();
-    /// assert_eq!(LengthHint::Exact(6), dec.write_len());
+    /// assert_eq!(LengthHint::exact(6), dec.write_len());
     /// ```
     fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::Exact(1)
+        writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
             + (if self.is_negative { 1 } else { 0 })
             + (if self.lower_magnitude < 0 { 1 } else { 0 })

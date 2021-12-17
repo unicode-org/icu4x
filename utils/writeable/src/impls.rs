@@ -28,11 +28,11 @@ impl Writeable for u8 {
 
     fn write_len(&self) -> LengthHint {
         if *self < 10 {
-            LengthHint::Exact(1)
+            LengthHint::exact(1)
         } else if *self < 100 {
-            LengthHint::Exact(2)
+            LengthHint::exact(2)
         } else {
-            LengthHint::Exact(3)
+            LengthHint::exact(3)
         }
     }
 }
@@ -57,15 +57,15 @@ impl Writeable for u16 {
 
     fn write_len(&self) -> LengthHint {
         if *self < 10 {
-            LengthHint::Exact(1)
+            LengthHint::exact(1)
         } else if *self < 100 {
-            LengthHint::Exact(2)
+            LengthHint::exact(2)
         } else if *self < 1000 {
-            LengthHint::Exact(3)
+            LengthHint::exact(3)
         } else if *self < 10000 {
-            LengthHint::Exact(4)
+            LengthHint::exact(4)
         } else {
-            LengthHint::Exact(5)
+            LengthHint::exact(5)
         }
     }
 }

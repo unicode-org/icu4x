@@ -122,7 +122,7 @@ impl writeable::Writeable for Other {
     }
 
     fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::LengthHint::Exact(2);
+        let mut result = writeable::LengthHint::exact(2);
         for key in self.0 .1.iter() {
             result += writeable::Writeable::write_len(key) + 1;
         }

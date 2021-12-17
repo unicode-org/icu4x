@@ -215,7 +215,7 @@ impl writeable::Writeable for Extensions {
     }
 
     fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::LengthHint::Exact(0);
+        let mut result = writeable::LengthHint::exact(0);
         result += writeable::Writeable::write_len(&self.transform);
         result += writeable::Writeable::write_len(&self.unicode);
         result += writeable::Writeable::write_len(&self.private);

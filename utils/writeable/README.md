@@ -37,7 +37,7 @@ impl<'s> Writeable for WelcomeMessage<'s> {
 
     fn write_len(&self) -> LengthHint {
         // "Hello, " + '!' + length of name
-        LengthHint::Exact(8 + self.name.len())
+        LengthHint::exact(8 + self.name.len())
     }
 }
 

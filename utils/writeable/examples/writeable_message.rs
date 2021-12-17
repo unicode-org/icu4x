@@ -19,7 +19,7 @@ impl Writeable for WriteableMessage<'_> {
     }
 
     fn write_len(&self) -> LengthHint {
-        LengthHint::Exact(self.message.len())
+        LengthHint::exact(self.message.len())
     }
 }
 
