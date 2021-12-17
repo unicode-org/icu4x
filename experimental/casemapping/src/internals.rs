@@ -8,7 +8,9 @@ use core::char::DecodeUtf16Error;
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
 use core::ops::Range;
-use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieValue};
+use icu_codepointtrie::{CodePointTrie, TrieValue};
+#[cfg(feature = "provider_transform_internals")]
+use icu_codepointtrie::CodePointTrieHeader;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use yoke::{Yokeable, ZeroCopyFrom};
@@ -289,7 +291,7 @@ impl<'data> CaseMappingExceptions<'data> {
     // Returns the array element at the given index
     #[inline(always)]
     fn get(&self, idx: usize) -> u16 {
-        <u16 as AsULE>::from_unaligned(self.raw.as_slice()[idx as usize])
+	self.raw.get(idx).expect("Checked in validate()")
     }
 
     // Given a base index, returns the number of optional slots for the entry at that index
@@ -420,7 +422,7 @@ impl<'data> CaseMappingExceptions<'data> {
     ) -> Result<String, DecodeUtf16Error> {
         debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings));
         let range = self.full_mapping_string_range(base_idx, slot);
-        let iter = self.raw.as_slice()[range]
+        let iter = self.raw.as_ule_slice()[range]
             .iter()
             .map(|&ule| <u16 as AsULE>::from_unaligned(ule));
         char::decode_utf16(iter).collect()
@@ -445,7 +447,7 @@ impl<'data> CaseMappingExceptions<'data> {
             self.slot_index(base_idx, CaseMappingExceptionSlot::Closure) + 1
         };
         let closure_len = self.closure_len(base_idx);
-        let u16_iter = self.raw.as_slice()[start_idx..]
+        let u16_iter = self.raw.as_ule_slice()[start_idx..]
             .iter()
             .map(|&ule| <u16 as AsULE>::from_unaligned(ule));
         char::decode_utf16(u16_iter).take(closure_len).collect()

@@ -44,12 +44,10 @@ impl CaseMappingDataProvider {
 impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     fn load_payload(
         &self,
-        req: &DataRequest,
+        _req: &DataRequest,
     ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
+            metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(CaseMappingV1 {
                 casemap: self.case_mapping.clone(),
             })),
