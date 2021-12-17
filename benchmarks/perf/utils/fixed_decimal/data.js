@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639699084424,
+  "lastUpdate": 1639785493867,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15419,6 +15419,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 114927,
             "range": "± 464",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20b82065bec51661c90d070c6809210bb256b5ed",
+          "message": "Making writeable::LengthHint a range (#1400)",
+          "timestamp": "2021-12-18T00:50:20+01:00",
+          "tree_id": "8671ac01c032f277d7c4393b1df3a6545337eda6",
+          "url": "https://github.com/unicode-org/icu4x/commit/20b82065bec51661c90d070c6809210bb256b5ed"
+        },
+        "date": 1639785486017,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 113273,
+            "range": "± 7535",
             "unit": "ns/iter"
           }
         ]
