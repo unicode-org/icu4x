@@ -174,6 +174,9 @@ impl Japanese {
         let date: EraStartDate = date.into();
         let era_data = self.eras.get();
         let deref_tuple = |x: (&EraStartDate, &TinyStr16)| (*x.0, *x.1);
+        // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
+        // array and also hardcoded. The hardcoded version is not used if data indicates the
+        // presence of newer eras.
         if date >= MEIJI_START {
             if era_data.dates_to_eras.len() == 5 {
                 // Fast path in case eras have not changed since this code was written
