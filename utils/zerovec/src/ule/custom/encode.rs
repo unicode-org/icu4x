@@ -100,7 +100,18 @@ unsafe impl EncodeAsVarULE<str> for String {
     }
 }
 
-unsafe impl<T> EncodeAsVarULE<ZeroSlice<T>> for Vec<T>
+// Note: This impl could technically use `T: AsULE`, but we want users to prefer `ZeroSlice<T>`
+// for cases where T is not a ULE. Therefore, we can use the more efficient `memcpy` impl here.
+unsafe impl<T> EncodeAsVarULE<[T]> for Vec<T>
+where
+    T: ULE,
+{
+    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+        cb(&[<[T] as VarULE>::as_byte_slice(&*self)])
+    }
+}
+
+unsafe impl<T> EncodeAsVarULE<ZeroSlice<T>> for &'_ [T]
 where
     T: AsULE + 'static,
 {
@@ -117,7 +128,7 @@ where
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         #[allow(non_snake_case)]
         let S = core::mem::size_of::<T::ULE>();
-        debug_assert_eq!(self.len(), dst.len() * S);
+        debug_assert_eq!(self.len() * S, dst.len());
         for (item, ref mut chunk) in self.iter().zip(dst.chunks_mut(S)) {
             let ule = item.as_unaligned();
             chunk.copy_from_slice(ULE::as_byte_slice(core::slice::from_ref(&ule)));
@@ -125,12 +136,22 @@ where
     }
 }
 
-unsafe impl<T> EncodeAsVarULE<[T]> for Vec<T>
+unsafe impl<T> EncodeAsVarULE<ZeroSlice<T>> for Vec<T>
 where
-    T: ULE,
+    T: AsULE + 'static,
 {
-    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[<[T] as VarULE>::as_byte_slice(&*self)])
+    fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
+        // unnecessary if the other two are implemented
+        unreachable!()
+    }
+
+    #[inline]
+    fn encode_var_ule_len(&self) -> usize {
+        self.as_slice().encode_var_ule_len()
+    }
+
+    fn encode_var_ule_write(&self, dst: &mut [u8]) {
+        self.as_slice().encode_var_ule_write(dst)
     }
 }
 
