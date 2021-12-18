@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639785553974,
+  "lastUpdate": 1639794139268,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16529,6 +16529,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36355180,
             "range": "± 1228335",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e165d22abc6f636c2e4e9e52097d96357557c1a8",
+          "message": "Implement the Japanese calendar (#1394)\n\n* Make stub japanese calendar\n\n* Move japanese era data struct into icu_calendar\n\n* Add LiteMap::get_indexed() and LiteMap::find_index()\n\n* Load era data into japanese calendar\n\n* Add era_for function\n\n* Store era and era start on japanese dates\n\n* Report correct year from japanese calendar\n\n* Fill in day_of_year_info\n\n* Include japanese testdata\n\n* Update cldr transform to handle japanese eras\n\n* Include japanese calendar data\n\n* Add formatting tests\n\n* Add test fixtures for japanese eras\n\n* fmt\n\n* mention zero-copy issue\n\n* clippy\n\n* mention meiji opt",
+          "timestamp": "2021-12-18T07:45:24+05:30",
+          "tree_id": "2a588b48681453ce1a23613a4e1bbf529cd2fe2e",
+          "url": "https://github.com/unicode-org/icu4x/commit/e165d22abc6f636c2e4e9e52097d96357557c1a8"
+        },
+        "date": 1639794131936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35696126,
+            "range": "± 142682",
             "unit": "ns/iter"
           }
         ]
