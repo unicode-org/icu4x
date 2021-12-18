@@ -359,15 +359,20 @@ where
     let num_elements = u32::try_from(elements.len()).ok().unwrap();
     output[0..4].copy_from_slice(&num_elements.as_unaligned().0);
 
+    // idx_offset = offset from the start of the buffer for the next index
     let mut idx_offset: usize = 4;
-    let dat_start: usize = 4 + elements.len() * 4;
-    let mut dat_offset: usize = dat_start;
+    // first_dat_offset = offset from the start of the buffer of the first data block
+    let first_dat_offset: usize = 4 + elements.len() * 4;
+    // dat_offset = offset from the start of the buffer of the next data block
+    let mut dat_offset: usize = first_dat_offset;
+
     for element in elements.iter() {
         let element_len = element.encode_var_ule_len();
 
         let idx_limit = idx_offset + 4;
         let idx_slice = &mut output[idx_offset..idx_limit];
-        let offset = (dat_offset - dat_start) as u32;
+        // VZV expects data offsets to be stored relative to the first data block
+        let offset = (dat_offset - first_dat_offset) as u32;
         idx_slice.copy_from_slice(&offset.as_unaligned().0);
 
         let dat_limit = dat_offset + element_len;
@@ -378,6 +383,7 @@ where
         idx_offset = idx_limit;
         dat_offset = dat_limit;
     }
+
     debug_assert_eq!(idx_offset, 4 + 4 * elements.len());
     assert_eq!(dat_offset, output.len());
 }
