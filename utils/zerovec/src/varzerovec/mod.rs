@@ -295,6 +295,15 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         Ok(VarZeroVec::Borrowed(borrowed))
     }
 
+    #[inline]
+    pub fn from_elements<'l, A, I>(elements: I) -> Self
+    where
+        A: 'l + custom::EncodeAsVarULE<T>,
+        I: ExactSizeIterator<Item = &'l A>,
+    {
+        VarZeroVecOwned::from_elements(elements).into()
+    }
+
     /// Obtain an iterator over VarZeroVec's elements
     ///
     /// # Example
@@ -514,14 +523,25 @@ impl<'a, T: VarULE + ?Sized> Index<usize> for VarZeroVec<'a, T> {
     }
 }
 
-impl<'a, 'l, T, A, I> From<I> for VarZeroVec<'a, T>
+impl<A, T> From<&Vec<A>> for VarZeroVec<'static, T>
 where
     T: VarULE + ?Sized,
-    A: 'l + custom::EncodeAsVarULE<T>,
-    I: ExactSizeIterator<Item = &'l A>,
+    A: custom::EncodeAsVarULE<T>,
 {
-    fn from(elements: I) -> Self {
-        VarZeroVecOwned::from_elements(elements).into()
+    #[inline]
+    fn from(elements: &Vec<A>) -> Self {
+        Self::from_elements(elements.iter())
+    }
+}
+
+impl<A, T> From<&[A]> for VarZeroVec<'static, T>
+where
+    T: VarULE + ?Sized,
+    A: custom::EncodeAsVarULE<T>,
+{
+    #[inline]
+    fn from(elements: &[A]) -> Self {
+        Self::from_elements(elements.iter())
     }
 }
 
