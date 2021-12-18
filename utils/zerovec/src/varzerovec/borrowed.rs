@@ -329,11 +329,11 @@ where
     }
 }
 
-pub fn get_serializable_bytes<T, A, I>(elements: I) -> Option<Vec<u8>>
+pub fn get_serializable_bytes<'l, T, A, I>(elements: I) -> Option<Vec<u8>>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
-    I: ExactSizeIterator<Item = A>,
+    A: 'l + custom::EncodeAsVarULE<T>,
+    I: ExactSizeIterator<Item = &'l A>,
 {
     // Assume each element is probably around 4 bytes long when estimating the
     // initial size. Performance of this function does not matter *too* much since

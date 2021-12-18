@@ -462,10 +462,10 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
-    pub fn get_serializable_bytes<A, I>(elements: I) -> Option<Vec<u8>>
+    pub fn get_serializable_bytes<'l, A, I>(elements: I) -> Option<Vec<u8>>
     where
-        A: custom::EncodeAsVarULE<T>,
-        I: ExactSizeIterator<Item = A>,
+        A: 'l + custom::EncodeAsVarULE<T>,
+        I: ExactSizeIterator<Item = &'l A>,
     {
         borrowed::get_serializable_bytes(elements)
     }
@@ -521,11 +521,11 @@ impl<'a, T: VarULE + ?Sized> Index<usize> for VarZeroVec<'a, T> {
     }
 }
 
-impl<'a, T, A, I> From<I> for VarZeroVec<'a, T>
+impl<'a, 'l, T, A, I> From<I> for VarZeroVec<'a, T>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
-    I: ExactSizeIterator<Item = A>,
+    A: 'l + custom::EncodeAsVarULE<T>,
+    I: ExactSizeIterator<Item = &'l A>,
 {
     fn from(elements: I) -> Self {
         VarZeroVecOwned::from_elements(elements).into()

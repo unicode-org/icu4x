@@ -53,7 +53,7 @@ where
         while let Some(value) = seq.next_element::<Box<T>>()? {
             vec.push(value);
         }
-        Ok(vec.into_iter().into())
+        Ok(vec.iter().into())
     }
 }
 

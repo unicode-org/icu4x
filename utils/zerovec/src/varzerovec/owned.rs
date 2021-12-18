@@ -57,10 +57,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<A, I>(elements: I) -> Self
+    pub fn from_elements<'l, A, I>(elements: I) -> Self
     where
-        A: custom::EncodeAsVarULE<T>,
-        I: ExactSizeIterator<Item = A>,
+        A: 'l + custom::EncodeAsVarULE<T>,
+        I: ExactSizeIterator<Item = &'l A>,
     {
         Self {
             marker: PhantomData,
