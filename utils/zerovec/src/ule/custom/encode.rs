@@ -7,7 +7,6 @@ use crate::zerovec::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::iter::ExactSizeIterator;
 
 /// Allows types to be encoded as VarULEs. This is highly useful for implementing VarULE on
 /// custom DSTs where the type cannot be obtained as a reference to some other type.
@@ -109,35 +108,6 @@ where
 {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[<[T] as VarULE>::as_byte_slice(&*self)])
-    }
-}
-
-pub struct ExactSizeIteratorEncoder<'l, T: 'l, I: ExactSizeIterator<Item = &'l T>>(pub I);
-
-unsafe impl<'l, T, I> EncodeAsVarULE<ZeroSlice<T>> for ExactSizeIteratorEncoder<'l, T, I>
-where
-    T: 'static + AsULE,
-    // Note: Should this be Copy? https://internals.rust-lang.org/t/should-core-iter-be-copy/15813
-    I: Clone + ExactSizeIterator<Item = &'l T>,
-{
-    fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
-        // unnecessary if the other two are implemented
-        unreachable!()
-    }
-
-    #[inline]
-    fn encode_var_ule_len(&self) -> usize {
-        self.0.len()
-    }
-
-    fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        #[allow(non_snake_case)]
-        let S = core::mem::size_of::<T::ULE>();
-        debug_assert_eq!(self.0.len() * S, dst.len());
-        for (item, ref mut chunk) in self.0.clone().zip(dst.chunks_mut(S)) {
-            let ule = item.as_unaligned();
-            chunk.copy_from_slice(ULE::as_byte_slice(core::slice::from_ref(&ule)));
-        }
     }
 }
 
