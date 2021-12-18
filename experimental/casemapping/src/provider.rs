@@ -13,9 +13,8 @@ pub mod key {
     //! Resource keys for [`icu_casemapping`](crate)
     use icu_provider::{resource_key, ResourceKey};
 
-    // TODO: Rename ResourceCategory::UnicodeSet to UnicodeProperty?
     /// Key for case mapping data
-    pub const CASE_MAPPING_V1: ResourceKey = resource_key!(UnicodeSet, "case_map", 1);
+    pub const CASE_MAPPING_V1: ResourceKey = resource_key!(Properties, "case_map", 1);
 }
 
 #[icu_provider::data_struct]

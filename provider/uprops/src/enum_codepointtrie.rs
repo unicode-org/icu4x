@@ -88,11 +88,11 @@ impl<T: TrieValue> TryFrom<&SerializedCodePointTrie> for CodePointTrie<'static, 
 }
 
 // source data to ICU4X data struct conversion
-impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodePropertyMapV1<'static, T> {
+impl<T: TrieValue> TryFrom<&SerializedCodePointTrie> for UnicodePropertyMapV1<'static, T> {
     type Error = DataError;
 
     fn try_from(
-        cpt_data: &EnumeratedPropertyCodePointTrie,
+        cpt_data: &SerializedCodePointTrie,
     ) -> Result<UnicodePropertyMapV1<'static, T>, DataError> {
         let trie = CodePointTrie::<T>::try_from(cpt_data);
         trie.map(|t| UnicodePropertyMapV1 { code_point_trie: t })

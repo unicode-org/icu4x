@@ -45,4 +45,3 @@ icu_testdata = { version = "0.5", path = "../../provider/testdata" }
 
 [features]
 casemapping = ["icu_casemapping"]
-default = ["casemapping"]

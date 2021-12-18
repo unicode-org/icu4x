@@ -84,14 +84,14 @@ pub mod enumerated {
 }
 
 pub mod script_extensions {
-    use super::enumerated::EnumeratedPropertyCodePointTrie;
+    use super::SerializedCodePointTrie;
 
     #[derive(serde::Deserialize)]
     pub struct ScriptWithExtensionsProperty {
         pub long_name: String,
         pub short_name: String,
         pub script_code_array: Vec<Vec<u16>>,
-        pub code_point_trie: EnumeratedPropertyCodePointTrie,
+        pub code_point_trie: SerializedCodePointTrie,
     }
 
     #[derive(serde::Deserialize)]
