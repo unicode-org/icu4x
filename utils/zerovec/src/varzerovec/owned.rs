@@ -7,6 +7,7 @@ use alloc::vec::Vec;
 
 use super::*;
 use core::fmt;
+use core::iter::ExactSizeIterator;
 use core::marker::PhantomData;
 use core::ops::Range;
 use core::ptr;
@@ -56,7 +57,11 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Self {
+    pub fn from_elements<A, I>(elements: I) -> Self
+    where
+        A: custom::EncodeAsVarULE<T>,
+        I: ExactSizeIterator<Item = A>,
+    {
         Self {
             marker: PhantomData,
             entire_slice: borrowed::get_serializable_bytes(elements).expect(
