@@ -8,9 +8,9 @@ use core::char::DecodeUtf16Error;
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
 use core::ops::Range;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
 #[cfg(feature = "provider_transform_internals")]
 use icu_codepointtrie::CodePointTrieHeader;
+use icu_codepointtrie::{CodePointTrie, TrieValue};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use yoke::{Yokeable, ZeroCopyFrom};
@@ -291,7 +291,7 @@ impl<'data> CaseMappingExceptions<'data> {
     // Returns the array element at the given index
     #[inline(always)]
     fn get(&self, idx: usize) -> u16 {
-	self.raw.get(idx).expect("Checked in validate()")
+        self.raw.get(idx).expect("Checked in validate()")
     }
 
     // Given a base index, returns the number of optional slots for the entry at that index
