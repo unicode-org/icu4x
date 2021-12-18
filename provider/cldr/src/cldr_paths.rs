@@ -54,6 +54,9 @@ pub trait CldrPaths: std::fmt::Debug {
         if let Ok(bud) = self.cldr_dates_buddhist() {
             vec.push(("buddhist", "buddhist", bud));
         }
+        if let Ok(jp) = self.cldr_dates_japanese() {
+            vec.push(("japanese", "japanese", jp));
+        }
         // TODO Japanese is not yet fully supported (#1116)
         // more calendars here
         vec

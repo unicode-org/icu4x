@@ -71,6 +71,14 @@ impl<K, V> LiteMap<K, V> {
     pub fn into_tuple_vec(self) -> Vec<(K, V)> {
         self.values
     }
+
+    /// Get the key-value pair residing at a particular index
+    ///
+    /// In most cases, prefer [`LiteMap::get()`] over this method.
+    #[inline]
+    pub fn get_indexed(&self, index: usize) -> Option<(&K, &V)> {
+        self.values.get(index).map(|(ref k, ref v)| (k, v))
+    }
 }
 
 impl<K: Ord, V> LiteMap<K, V> {
@@ -90,7 +98,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         K: Borrow<Q>,
         Q: Ord,
     {
-        match self.values.binary_search_by(|k| k.0.borrow().cmp(key)) {
+        match self.find_index(key) {
             Ok(found) => Some(&self.values[found].1),
             Err(_) => None,
         }
@@ -112,9 +120,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         K: Borrow<Q>,
         Q: Ord,
     {
-        self.values
-            .binary_search_by(|k| k.0.borrow().cmp(key))
-            .is_ok()
+        self.find_index(key).is_ok()
     }
 
     /// Get the value associated with `key`, if it exists, as a mutable reference.
@@ -135,7 +141,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         K: Borrow<Q>,
         Q: Ord,
     {
-        match self.values.binary_search_by(|k| k.0.borrow().cmp(key)) {
+        match self.find_index(key) {
             Ok(found) => Some(&mut self.values[found].1),
             Err(_) => None,
         }
@@ -330,6 +336,22 @@ impl<K: Ord, V> LiteMap<K, V> {
             }
         }
     }
+
+    /// Obtain the index for a given key, or if the key is not found, the index
+    /// at which it would be inserted.
+    ///
+    /// (The return value works equivalently to [`Vec::binary_search_by()`])
+    ///
+    /// The indices returned can be used with [`Self::get_indexed()`]. Prefer using
+    /// [`Self::get()`] directly where possible.
+    #[inline]
+    pub fn find_index<Q: ?Sized>(&self, key: &Q) -> Result<usize, usize>
+    where
+        K: Borrow<Q>,
+        Q: Ord,
+    {
+        self.values.binary_search_by(|k| k.0.borrow().cmp(key))
+    }
 }
 
 impl<K, V> Default for LiteMap<K, V> {
@@ -368,22 +390,22 @@ impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
 
 impl<K, V> LiteMap<K, V> {
     /// Produce an ordered iterator over key-value pairs
-    pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> {
+    pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> + DoubleEndedIterator {
         self.values.iter().map(|val| (&val.0, &val.1))
     }
 
     /// Produce an ordered iterator over keys
-    pub fn iter_keys(&self) -> impl Iterator<Item = &K> {
+    pub fn iter_keys(&self) -> impl Iterator<Item = &K> + DoubleEndedIterator {
         self.values.iter().map(|val| &val.0)
     }
 
     /// Produce an iterator over values, ordered by their keys
-    pub fn iter_values(&self) -> impl Iterator<Item = &V> {
+    pub fn iter_values(&self) -> impl Iterator<Item = &V> + DoubleEndedIterator {
         self.values.iter().map(|val| &val.1)
     }
 
     /// Produce an ordered mutable iterator over key-value pairs
-    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> {
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> + DoubleEndedIterator {
         self.values.iter_mut().map(|val| (&val.0, &mut val.1))
     }
 }

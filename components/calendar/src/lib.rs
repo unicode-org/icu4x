@@ -25,6 +25,8 @@ mod duration;
 mod error;
 pub mod gregorian;
 pub mod iso;
+pub mod japanese;
+pub mod provider;
 pub mod types;
 
 pub use calendar::Calendar;

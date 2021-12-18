@@ -18,7 +18,9 @@
         "output": {
             "values": {
                 "en": "Tuesday, January 21, 2020 Anno Domini at 08:25:07",
-                "buddhist/en": "Tuesday, January 21, 2563 BE at 08:25:07"
+                "buddhist/en": "Tuesday, January 21, 2563 BE at 08:25:07",
+                "japanese/en": "Tuesday, January 21, 2 Reiwa at 08:25:07",
+                "japanese/ja": "令和2年1月21日火曜日 8:25:07"
             }
         }
     }

@@ -6,7 +6,7 @@
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
-use tinystr::tinystr8;
+use tinystr::{tinystr16, tinystr8};
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
@@ -69,7 +69,7 @@ impl From<IsoYear> for i32 {
 impl From<IsoYear> for types::Year {
     fn from(year: IsoYear) -> types::Year {
         types::Year {
-            era: types::Era(tinystr8!("default")),
+            era: types::Era(tinystr16!("default")),
             number: year.0,
             related_iso: year.0,
         }
@@ -114,6 +114,22 @@ impl IsoDateInner {
             self.year.0 -= 1;
             // adding 13 since months are 1-indexed
             self.month.0 = (13 + (new_month % 12)) as u8
+        }
+    }
+
+    pub(crate) fn jan_1(year: IsoYear) -> Self {
+        Self {
+            day: IsoDay(1),
+            month: IsoMonth(1),
+            year,
+        }
+    }
+
+    pub(crate) fn dec_31(year: IsoYear) -> Self {
+        Self {
+            day: IsoDay(31),
+            month: IsoMonth(12),
+            year,
         }
     }
 }
@@ -364,6 +380,16 @@ impl Iso {
         let prev_month_days = (30 * (date.month.0 as i32 - 1) + offset) as u32;
 
         prev_month_days + date.day.0 as u32
+    }
+}
+
+impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
+    fn from(other: &'_ IsoDateInner) -> Self {
+        Self {
+            year: other.year.0,
+            month: other.month.0,
+            day: other.day.0,
+        }
     }
 }
 
