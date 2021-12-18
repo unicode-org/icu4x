@@ -127,7 +127,7 @@ where
 
 unsafe impl<T> EncodeAsVarULE<[T]> for Vec<T>
 where
-    [T]: VarULE,
+    T: ULE,
 {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[<[T] as VarULE>::as_byte_slice(&*self)])

@@ -32,6 +32,24 @@ unsafe impl VarULE for str {
     }
 }
 
+/// Note: VarULE is well-defined for all `[T]` where `T: ULE`, but [`ZeroSlice`] is more ergonomic
+/// when `T` is a low-level ULE type. For example:
+///
+/// ```no_run
+/// # use zerovec::ZeroSlice;
+/// # use zerovec::VarZeroVec;
+/// # use zerovec::ule::AsULE;
+/// // OK: [u8] is a useful type
+/// let _: VarZeroVec<[u8]> = unimplemented!();
+///
+/// // Technically works, but [u32::ULE] is not very useful
+/// let _: VarZeroVec<[<u32 as AsULE>::ULE]> = unimplemented!();
+///
+/// // Better: ZeroSlice<u32>
+/// let _: VarZeroVec<ZeroSlice<u32>> = unimplemented!();
+/// ```
+///
+/// [`ZeroSlice`]: crate::ZeroSlice
 // Safety (based on the safety checklist on the VarULE trait):
 //  1. [T] does not include any uninitialized or padding bytes (achieved by being a slice of a ULE type)
 //  2. [T] is aligned to 1 byte (achieved by being a slice of a ULE type)

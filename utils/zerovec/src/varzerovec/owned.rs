@@ -582,15 +582,7 @@ mod test {
 
     #[test]
     fn test_remove_integrity() {
-        let mut items: Vec<&str> = vec![
-            "apples",
-            "bananas",
-            "eeples",
-            "",
-            "baneenees",
-            "five",
-            "",
-        ];
+        let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
         let mut zerovec = VarZeroVecOwned::<str>::from_elements(items.iter());
 
         for index in [0, 2, 4, 0, 1, 1, 0] {
@@ -616,15 +608,7 @@ mod test {
 
     #[test]
     fn test_replace_integrity() {
-        let mut items: Vec<&str> = vec![
-            "apples",
-            "bananas",
-            "eeples",
-            "",
-            "baneenees",
-            "five",
-            "",
-        ];
+        let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
         let mut zerovec = VarZeroVecOwned::<str>::from_elements(items.iter());
 
         // Replace with an element of the same size (and the first element)
