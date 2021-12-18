@@ -102,21 +102,26 @@ unsafe impl EncodeAsVarULE<str> for String {
 
 unsafe impl<T> EncodeAsVarULE<ZeroSlice<T>> for Vec<T>
 where
-    T: EqULE + 'static
+    T: AsULE + 'static,
 {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
         // unnecessary if the other two are implemented
         unreachable!()
     }
 
+    #[inline]
     fn encode_var_ule_len(&self) -> usize {
-        self.len() * core::mem::size_of::<T>()
+        self.len() * core::mem::size_of::<T::ULE>()
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        let zv = ZeroVec::from_slice(&self);
-        debug_assert_eq!(zv.as_bytes().len(), dst.len());
-        dst.copy_from_slice(zv.as_bytes());
+        #[allow(non_snake_case)]
+        let S = core::mem::size_of::<T::ULE>();
+        debug_assert_eq!(self.len(), dst.len() * S);
+        for (item, ref mut chunk) in self.iter().zip(dst.chunks_mut(S)) {
+            let ule = item.as_unaligned();
+            chunk.copy_from_slice(ULE::as_byte_slice(core::slice::from_ref(&ule)));
+        }
     }
 }
 
@@ -138,6 +143,7 @@ where
         unreachable!()
     }
 
+    #[inline]
     fn encode_var_ule_len(&self) -> usize {
         self.as_bytes().len()
     }
