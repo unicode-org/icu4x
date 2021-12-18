@@ -6,7 +6,7 @@ use core::any;
 use core::fmt;
 
 /// A generic error type to be used for decoding slices of ULE types
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum ZeroVecError {
     /// Attempted to parse a buffer into a slice of the given ULE type but its
     /// length was not compatible

@@ -187,12 +187,12 @@ where
     }
 
     fn encode_var_ule_len(&self) -> usize {
-        crate::varzerovec::borrowed::compute_serializable_len(self)
+        // TODO: Remove the unwrap somehow
+        crate::varzerovec::borrowed::compute_serializable_len(self).unwrap() as usize
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        let len = crate::varzerovec::borrowed::write_serializable_bytes(self, dst);
-        debug_assert_eq!(len, Some(dst.len() as u32));
+        crate::varzerovec::borrowed::write_serializable_bytes(self, dst)
     }
 }
 
