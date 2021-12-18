@@ -8,7 +8,6 @@ use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::convert::TryInto;
-use core::iter::ExactSizeIterator;
 use core::marker::PhantomData;
 use core::{iter, mem};
 
@@ -330,11 +329,10 @@ where
 }
 
 /// Collects the bytes for a VarZeroSlice into a Vec.
-pub fn get_serializable_bytes<'l, T, A, I>(elements: I) -> Option<Vec<u8>>
+pub fn get_serializable_bytes<T, A>(elements: &[A]) -> Option<Vec<u8>>
 where
     T: VarULE + ?Sized,
-    A: 'l + custom::EncodeAsVarULE<T>,
-    I: ExactSizeIterator<Item = &'l A>,
+    A: custom::EncodeAsVarULE<T>,
 {
     // Assume each element is probably around 4 bytes long when estimating the
     // initial size. Performance of this function does not matter *too* much since
@@ -345,7 +343,7 @@ where
     // Make space for indices
     vec.resize(4 + 4 * elements.len(), 0);
     let mut offset: u32 = 0;
-    for (idx, element) in elements.enumerate() {
+    for (idx, element) in elements.iter().enumerate() {
         let element_len = element.encode_var_ule_len();
         let indices = &mut vec[(4 + 4 * idx)..(4 + 4 * idx + 4)];
         indices.copy_from_slice(&offset.as_unaligned().0);

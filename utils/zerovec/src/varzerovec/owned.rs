@@ -7,7 +7,6 @@ use alloc::vec::Vec;
 
 use super::*;
 use core::fmt;
-use core::iter::ExactSizeIterator;
 use core::marker::PhantomData;
 use core::ops::Range;
 use core::ptr;
@@ -57,10 +56,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<'l, A, I>(elements: I) -> Self
+    pub fn from_elements<A>(elements: &[A]) -> Self
     where
-        A: 'l + custom::EncodeAsVarULE<T>,
-        I: ExactSizeIterator<Item = &'l A>,
+        A: custom::EncodeAsVarULE<T>,
     {
         Self {
             marker: PhantomData,
@@ -583,7 +581,7 @@ mod test {
     #[test]
     fn test_remove_integrity() {
         let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(items.iter());
+        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
 
         for index in [0, 2, 4, 0, 1, 1, 0] {
             items.remove(index);
@@ -594,7 +592,7 @@ mod test {
 
     #[test]
     fn test_removing_last_element_clears() {
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(["buy some apples"].iter());
+        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&["buy some apples"]);
         assert!(!zerovec.as_borrowed().entire_slice().is_empty());
         zerovec.remove(0);
         assert!(zerovec.as_borrowed().entire_slice().is_empty());
@@ -609,7 +607,7 @@ mod test {
     #[test]
     fn test_replace_integrity() {
         let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(items.iter());
+        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
 
         // Replace with an element of the same size (and the first element)
         items[0] = "blablah".into();

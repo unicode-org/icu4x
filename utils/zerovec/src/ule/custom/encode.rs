@@ -188,7 +188,7 @@ where
 
     fn encode_var_ule_len(&self) -> usize {
         // 4 for length + 4 for each offset + the body
-        4 + self.len() * 4 + self.iter().map(|v| v.encode_var_ule_len()).sum()
+        4usize + (self.len() * 4) + self.iter().map(|v| v.encode_var_ule_len()).sum()
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {

@@ -6,7 +6,6 @@ use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
-use core::iter::ExactSizeIterator;
 use core::ops::Index;
 
 pub(crate) mod borrowed;
@@ -296,10 +295,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     }
 
     #[inline]
-    pub fn from_elements<'l, A, I>(elements: I) -> Self
+    pub fn from_elements<A>(elements: &[A]) -> Self
     where
-        A: 'l + custom::EncodeAsVarULE<T>,
-        I: ExactSizeIterator<Item = &'l A>,
+        A: custom::EncodeAsVarULE<T>,
     {
         VarZeroVecOwned::from_elements(elements).into()
     }
@@ -465,10 +463,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
-    pub fn get_serializable_bytes<'l, A, I>(elements: I) -> Option<Vec<u8>>
+    pub fn get_serializable_bytes<'l, A>(elements: &[A]) -> Option<Vec<u8>>
     where
-        A: 'l + custom::EncodeAsVarULE<T>,
-        I: ExactSizeIterator<Item = &'l A>,
+        A: custom::EncodeAsVarULE<T>,
     {
         borrowed::get_serializable_bytes(elements)
     }
@@ -530,7 +527,7 @@ where
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
-        Self::from_elements(elements.iter())
+        Self::from_elements(elements)
     }
 }
 
@@ -541,7 +538,7 @@ where
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
-        Self::from_elements(elements.iter())
+        Self::from_elements(elements)
     }
 }
 
@@ -552,7 +549,7 @@ where
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
-        Self::from_elements(elements.iter())
+        Self::from_elements(elements)
     }
 }
 
