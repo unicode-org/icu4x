@@ -329,6 +329,7 @@ where
     }
 }
 
+/// Collects the bytes for a VarZeroSlice into a Vec.
 pub fn get_serializable_bytes<'l, T, A, I>(elements: I) -> Option<Vec<u8>>
 where
     T: VarULE + ?Sized,
@@ -357,4 +358,18 @@ where
     }
 
     Some(vec)
+}
+
+/// Writes the bytes for a VarZeroSlice into an output buffer.
+///
+/// # Panics
+///
+/// Panics if `output` is not the correct length.
+pub fn write_serializable_bytes<'l, T, A, I>(elements: I, output: &mut [u8])
+where
+    T: VarULE + ?Sized,
+    A: 'l + custom::EncodeAsVarULE<T>,
+    I: ExactSizeIterator<Item = &'l A>,
+{
+    todo!()
 }

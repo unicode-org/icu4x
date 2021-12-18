@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
-use crate::zerovec::{ZeroSlice, ZeroVec};
+use crate::{VarZeroSlice, VarZeroVec, ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -173,5 +173,139 @@ where
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         debug_assert_eq!(self.as_bytes().len(), dst.len());
         dst.copy_from_slice(self.as_bytes());
+    }
+}
+
+unsafe impl<T, E> EncodeAsVarULE<VarZeroSlice<T>> for &'_ [E]
+where
+    T: VarULE + ?Sized,
+    E: EncodeAsVarULE<T>,
+{
+    fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
+        // unnecessary if the other two are implemented
+        unreachable!()
+    }
+
+    fn encode_var_ule_len(&self) -> usize {
+        // 4 for length + 4 for each offset + the body
+        4 + self.len() * 4 + self.iter().map(|v| v.encode_var_ule_len()).sum()
+    }
+
+    fn encode_var_ule_write(&self, dst: &mut [u8]) {
+        crate::varzerovec::borrowed::write_serializable_bytes(self.iter(), dst)
+    }
+}
+
+unsafe impl<T, E> EncodeAsVarULE<VarZeroSlice<T>> for Vec<E>
+where
+    T: VarULE + ?Sized,
+    E: EncodeAsVarULE<T>,
+{
+    fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
+        // unnecessary if the other two are implemented
+        unreachable!()
+    }
+
+    #[inline]
+    fn encode_var_ule_len(&self) -> usize {
+        self.as_slice().encode_var_ule_len()
+    }
+
+    #[inline]
+    fn encode_var_ule_write(&self, dst: &mut [u8]) {
+        self.as_slice().encode_var_ule_write(dst)
+    }
+}
+
+unsafe impl<T> EncodeAsVarULE<VarZeroSlice<T>> for VarZeroVec<'_, T>
+where
+    T: VarULE + ?Sized,
+{
+    fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
+        // unnecessary if the other two are implemented
+        unreachable!()
+    }
+
+    #[inline]
+    fn encode_var_ule_len(&self) -> usize {
+        self.get_encoded_slice().len()
+    }
+
+    #[inline]
+    fn encode_var_ule_write(&self, dst: &mut [u8]) {
+        debug_assert_eq!(self.get_encoded_slice().len(), dst.len());
+        dst.copy_from_slice(self.get_encoded_slice());
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const STRING_ARRAY: [&str; 2] = ["hello", "world"];
+
+    const STRING_SLICE: &[&str] = &STRING_ARRAY;
+
+    const U8_ARRAY: [u8; 8] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07];
+
+    const U8_NESTED_2D_ARRAY: [&[u8]; 2] = [&U8_ARRAY, &U8_ARRAY];
+
+    const U8_NESTED_2D_SLICE: &[&[u8]] = &[&U8_ARRAY, &U8_ARRAY];
+
+    const U8_NESTED_3D_ARRAY: [&[&[u8]]; 2] = [U8_NESTED_2D_SLICE, U8_NESTED_2D_SLICE];
+
+    const U8_NESTED_3D_SLICE: &[&[&[u8]]] = &[U8_NESTED_2D_SLICE, U8_NESTED_2D_SLICE];
+
+    const U32_ARRAY: [u32; 4] = [0x00010203, 0x04050607, 0x08090A0B, 0x0C0D0E0F];
+
+    const U32_NESTED_2D_ARRAY: [&[u32]; 2] = [&U32_ARRAY, &U32_ARRAY];
+
+    const U32_NESTED_2D_SLICE: &[&[u32]] = &[&U32_ARRAY, &U32_ARRAY];
+
+    const U32_NESTED_3D_ARRAY: [&[&[u32]]; 2] = [U32_NESTED_2D_SLICE, U32_NESTED_2D_SLICE];
+
+    const U32_NESTED_3D_SLICE: &[&[&[u32]]] = &[U32_NESTED_2D_SLICE, U32_NESTED_2D_SLICE];
+
+    #[test]
+    fn test_vzv_from() {
+        type VZV<'a, T> = VarZeroVec<'a, T>;
+        type ZS<T> = ZeroSlice<T>;
+        type VZS<T> = VarZeroSlice<T>;
+
+        let u8_nested_2d_vec: Vec<Vec<u8>> = vec![U8_ARRAY.into(), U8_ARRAY.into()];
+        let u8_nested_3d_vec: Vec<Vec<Vec<u8>>> =
+            vec![u8_nested_2d_vec.clone(), u8_nested_2d_vec.clone()];
+
+        let u32_nested_2d_vec: Vec<Vec<u32>> = vec![U32_ARRAY.into(), U32_ARRAY.into()];
+        let u32_nested_3d_vec: Vec<Vec<Vec<u32>>> =
+            vec![u32_nested_2d_vec.clone(), u32_nested_2d_vec.clone()];
+
+        let _: VZV<str> = VarZeroVec::from(&STRING_ARRAY);
+        let _: VZV<str> = VarZeroVec::from(STRING_SLICE);
+        let _: VZV<str> = VarZeroVec::from(&Vec::from(STRING_SLICE));
+
+        let _: VZV<[u8]> = VarZeroVec::from(&U8_NESTED_2D_ARRAY);
+        let _: VZV<[u8]> = VarZeroVec::from(U8_NESTED_2D_SLICE);
+        let _: VZV<[u8]> = VarZeroVec::from(&u8_nested_2d_vec);
+
+        let _: VZV<ZS<u8>> = VarZeroVec::from(&U8_NESTED_2D_ARRAY);
+        let _: VZV<ZS<u8>> = VarZeroVec::from(U8_NESTED_2D_SLICE);
+        let _: VZV<ZS<u8>> = VarZeroVec::from(&u8_nested_2d_vec);
+
+        let _: VZV<VZS<[u8]>> = VarZeroVec::from(&U8_NESTED_3D_ARRAY);
+        let _: VZV<VZS<[u8]>> = VarZeroVec::from(U8_NESTED_3D_SLICE);
+        let _: VZV<VZS<[u8]>> = VarZeroVec::from(&u8_nested_3d_vec);
+
+        let _: VZV<VZS<ZS<u8>>> = VarZeroVec::from(&U8_NESTED_3D_ARRAY);
+        let _: VZV<VZS<ZS<u8>>> = VarZeroVec::from(U8_NESTED_3D_SLICE);
+        let _: VZV<VZS<ZS<u8>>> = VarZeroVec::from(&u8_nested_3d_vec);
+
+        let _: VZV<ZS<u32>> = VarZeroVec::from(&U32_NESTED_2D_ARRAY);
+        let _: VZV<ZS<u32>> = VarZeroVec::from(U32_NESTED_2D_SLICE);
+        let _: VZV<ZS<u32>> = VarZeroVec::from(&u32_nested_2d_vec);
+
+        let _: VZV<VZS<ZS<u32>>> = VarZeroVec::from(&U32_NESTED_3D_ARRAY);
+        let _: VZV<VZS<ZS<u32>>> = VarZeroVec::from(U32_NESTED_3D_SLICE);
+        let _: VZV<VZS<ZS<u32>>> = VarZeroVec::from(&u32_nested_3d_vec);
     }
 }

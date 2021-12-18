@@ -30,13 +30,13 @@ use core::mem;
 /// let strings_34 = vec![strings_3.clone(), strings_4.clone()];
 /// let all_strings = vec![strings_12, strings_34];
 ///
-/// let vzv_1: VarZeroVec<str> = VarZeroVec::from(strings_1.iter());
-/// let vzv_2: VarZeroVec<str> = VarZeroVec::from(strings_2.iter());
-/// let vzv_3: VarZeroVec<str> = VarZeroVec::from(strings_3.iter());
-/// let vzv_4: VarZeroVec<str> = VarZeroVec::from(strings_4.iter());
-/// let vzv_12 = VarZeroVec::from([vzv_1.as_slice(), vzv_2.as_slice()].iter());
-/// let vzv_34 = VarZeroVec::from([vzv_3.as_slice(), vzv_4.as_slice()].iter());
-/// let vzv_all = VarZeroVec::from([vzv_12.as_slice(), vzv_34.as_slice()].iter());
+/// let vzv_1: VarZeroVec<str> = VarZeroVec::from(&strings_1);
+/// let vzv_2: VarZeroVec<str> = VarZeroVec::from(&strings_2);
+/// let vzv_3: VarZeroVec<str> = VarZeroVec::from(&strings_3);
+/// let vzv_4: VarZeroVec<str> = VarZeroVec::from(&strings_4);
+/// let vzv_12 = VarZeroVec::from(&[vzv_1.as_slice(), vzv_2.as_slice()]);
+/// let vzv_34 = VarZeroVec::from(&[vzv_3.as_slice(), vzv_4.as_slice()]);
+/// let vzv_all = VarZeroVec::from(&[vzv_12.as_slice(), vzv_34.as_slice()]);
 ///
 /// let reconstructed: Vec<Vec<Vec<String>>> = vzv_all.iter()
 ///        .map(|v: &VarZeroSlice<VarZeroSlice<str>>| {

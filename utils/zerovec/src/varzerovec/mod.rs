@@ -105,7 +105,7 @@ pub use slice::VarZeroSlice;
 /// let zerovec1: VarZeroVec<ZeroSlice<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
 /// assert_eq!(zerovec1.get(2).and_then(|v| v.get(1)), Some(55555));
 ///
-/// let zerovec2: VarZeroVec<ZeroSlice<u32>> = numbers.iter().into();
+/// let zerovec2: VarZeroVec<ZeroSlice<u32>> = numbers.into();
 /// assert_eq!(zerovec1, zerovec2);
 ///
 /// # Ok::<(), ZeroVecError>(())
@@ -541,6 +541,17 @@ where
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
+        Self::from_elements(elements.iter())
+    }
+}
+
+impl<A, T, const N: usize> From<&[A; N]> for VarZeroVec<'static, T>
+where
+    T: VarULE + ?Sized,
+    A: custom::EncodeAsVarULE<T>,
+{
+    #[inline]
+    fn from(elements: &[A; N]) -> Self {
         Self::from_elements(elements.iter())
     }
 }
