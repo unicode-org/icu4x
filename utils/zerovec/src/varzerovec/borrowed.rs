@@ -7,6 +7,7 @@ use alloc::boxed::Box;
 use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::marker::PhantomData;
 use core::{iter, mem};
@@ -360,14 +361,50 @@ where
 
 /// Writes the bytes for a VarZeroSlice into an output buffer.
 ///
+/// Returns the number of bytes written.
+///
 /// # Panics
 ///
-/// Panics if `output` is not the correct length.
-pub fn write_serializable_bytes<'l, T, A, I>(elements: I, output: &mut [u8])
+/// Panics if `output` is not long enough.
+pub fn write_serializable_bytes<T, A>(elements: &[A], output: &mut [u8]) -> Option<u32>
 where
     T: VarULE + ?Sized,
-    A: 'l + custom::EncodeAsVarULE<T>,
-    I: ExactSizeIterator<Item = &'l A>,
+    A: custom::EncodeAsVarULE<T>,
 {
-    todo!()
+    let mut idx_offset: u32 = 4;
+    let mut dat_offset: u32 = 4u32.checked_add(
+        u32::try_from(elements.len())
+            .ok()
+            .and_then(|l| l.checked_mul(4))?,
+    )?;
+    for element in elements.iter() {
+        let element_len = element.encode_var_ule_len();
+
+        let idx_limit = idx_offset + 4;
+        let idx_slice = &mut output[(idx_offset as usize)..(idx_limit as usize)];
+        idx_slice.copy_from_slice(&dat_offset.as_unaligned().0);
+
+        let dat_limit = dat_offset.checked_add(element_len.try_into().ok()?)?;
+        let dat_slice = &mut output[(dat_offset as usize)..(dat_limit as usize)];
+        element.encode_var_ule_write(dat_slice);
+        debug_assert!(T::validate_byte_slice(dat_slice).is_ok());
+
+        idx_offset = idx_limit;
+        dat_offset = dat_limit;
+    }
+    debug_assert_eq!(idx_offset as usize, 4 + 4 * elements.len());
+    Some(dat_offset)
+}
+
+pub fn compute_serializable_len<T, A>(elements: &[A]) -> usize
+where
+    T: VarULE + ?Sized,
+    A: custom::EncodeAsVarULE<T>,
+{
+    // 4 for length + 4 for each offset + the body
+    4 + (elements.len() * 4)
+        + elements
+            .iter()
+            .map(|v| v.encode_var_ule_len())
+            .sum::<usize>()
 }

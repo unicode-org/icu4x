@@ -187,12 +187,12 @@ where
     }
 
     fn encode_var_ule_len(&self) -> usize {
-        // 4 for length + 4 for each offset + the body
-        4usize + (self.len() * 4) + self.iter().map(|v| v.encode_var_ule_len()).sum()
+        crate::varzerovec::borrowed::compute_serializable_len(self)
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        crate::varzerovec::borrowed::write_serializable_bytes(self.iter(), dst)
+        let len = crate::varzerovec::borrowed::write_serializable_bytes(self, dst);
+        debug_assert_eq!(len, Some(dst.len() as u32));
     }
 }
 
