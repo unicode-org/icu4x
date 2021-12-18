@@ -73,7 +73,7 @@ pub struct DataStruct<'data> {
 
 let data = DataStruct {
     nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
-    strs: VarZeroVec::from(&["hello", "world"] as &[_]),
+    strs: VarZeroVec::from(&["hello", "world"]),
 };
 let bincode_bytes = bincode::serialize(&data)
     .expect("Serialization should be successful");

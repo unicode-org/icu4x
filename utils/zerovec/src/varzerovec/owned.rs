@@ -610,27 +610,27 @@ mod test {
         let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
 
         // Replace with an element of the same size (and the first element)
-        items[0] = "blablah".into();
+        items[0] = "blablah";
         zerovec.replace(0, "blablah");
         assert_eq!(zerovec, &*items);
 
         // Replace with a smaller element
-        items[1] = "twily".into();
+        items[1] = "twily";
         zerovec.replace(1, "twily");
         assert_eq!(zerovec, &*items);
 
         // Replace an empty element
-        items[3] = "aoeuidhtns".into();
+        items[3] = "aoeuidhtns";
         zerovec.replace(3, "aoeuidhtns");
         assert_eq!(zerovec, &*items);
 
         // Replace the last element
-        items[6] = "0123456789".into();
+        items[6] = "0123456789";
         zerovec.replace(6, "0123456789");
         assert_eq!(zerovec, &*items);
 
         // Replace with an empty element
-        items[2] = "".into();
+        items[2] = "";
         zerovec.replace(2, "");
         assert_eq!(zerovec, &*items);
     }

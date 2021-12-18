@@ -294,14 +294,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         Ok(VarZeroVec::Borrowed(borrowed))
     }
 
-    #[inline]
-    pub fn from_elements<A>(elements: &[A]) -> Self
-    where
-        A: custom::EncodeAsVarULE<T>,
-    {
-        VarZeroVecOwned::from_elements(elements).into()
-    }
-
     /// Obtain an iterator over VarZeroVec's elements
     ///
     /// # Example
@@ -463,7 +455,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
-    pub fn get_serializable_bytes<'l, A>(elements: &[A]) -> Option<Vec<u8>>
+    pub fn get_serializable_bytes<A>(elements: &[A]) -> Option<Vec<u8>>
     where
         A: custom::EncodeAsVarULE<T>,
     {
@@ -527,7 +519,7 @@ where
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
-        Self::from_elements(elements)
+        VarZeroVecOwned::from_elements(elements).into()
     }
 }
 
@@ -538,7 +530,7 @@ where
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
-        Self::from_elements(elements)
+        VarZeroVecOwned::from_elements(elements).into()
     }
 }
 
@@ -549,7 +541,7 @@ where
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
-        Self::from_elements(elements)
+        VarZeroVecOwned::from_elements(elements).into()
     }
 }
 

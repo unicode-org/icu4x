@@ -336,7 +336,6 @@ where
 {
     let len = compute_serializable_len(elements)?;
     debug_assert!(len >= 4);
-    debug_assert!(len <= u32::MAX);
     let mut output = Vec::with_capacity(len as usize);
     // Safety: All bytes will be initialized after calling write_serializable_bytes
     unsafe {
