@@ -339,17 +339,19 @@ where
     debug_assert!(len <= u32::MAX);
     let mut output = Vec::with_capacity(len as usize);
     // Safety: All bytes will be initialized after calling write_serializable_bytes
-    unsafe { output.set_len(len as usize); }
+    unsafe {
+        output.set_len(len as usize);
+    }
     write_serializable_bytes(elements, &mut output);
     Some(output)
 }
 
 /// Writes the bytes for a VarZeroSlice into an output buffer.
-/// 
+///
 /// Every byte in the buffer will be initialized after calling this function.
-/// 
+///
 /// # Panics
-/// 
+///
 /// Panics if the buffer is not exactly the correct length.
 pub fn write_serializable_bytes<T, A>(elements: &[A], output: &mut [u8])
 where

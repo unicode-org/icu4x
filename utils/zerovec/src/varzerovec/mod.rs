@@ -586,3 +586,15 @@ where
         self.iter().eq(other.iter().map(|t| t.as_ref()))
     }
 }
+
+impl<T, A, const N: usize> PartialEq<[A; N]> for VarZeroVec<'_, T>
+where
+    T: VarULE + ?Sized,
+    T: PartialEq,
+    A: AsRef<T>,
+{
+    #[inline]
+    fn eq(&self, other: &[A; N]) -> bool {
+        self.iter().eq(other.iter().map(|t| t.as_ref()))
+    }
+}
