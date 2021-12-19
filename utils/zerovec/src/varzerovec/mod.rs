@@ -6,7 +6,7 @@ use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
-use core::ops::{Index, Deref};
+use core::ops::{Deref, Index};
 
 pub(crate) mod borrowed;
 pub(crate) mod owned;
@@ -228,44 +228,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         }
     }
 
-    /// Get the number of elements in this vector
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use std::str::Utf8Error;
-    /// # use zerovec::ule::ZeroVecError;
-    /// # use zerovec::VarZeroVec;
-    ///
-    /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let vec = VarZeroVec::<str>::from(&strings);
-    ///
-    /// assert_eq!(vec.len(), 4);
-    /// # Ok::<(), ZeroVecError>(())
-    /// ```
-    pub fn len(&self) -> usize {
-        self.as_borrowed().len()
-    }
-
-    /// Returns `true` if the vector contains no elements.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use std::str::Utf8Error;
-    /// # use zerovec::ule::ZeroVecError;
-    /// # use zerovec::VarZeroVec;
-    ///
-    /// let strings: Vec<String> = vec![];
-    /// let vec = VarZeroVec::<str>::from(&strings);
-    ///
-    /// assert!(vec.is_empty());
-    /// # Ok::<(), ZeroVecError>(())
-    /// ```
-    pub fn is_empty(&self) -> bool {
-        self.as_borrowed().is_empty()
-    }
-
     /// Parse a VarZeroVec from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroVec::as_encoded_bytes()`].
@@ -295,52 +257,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         let borrowed = VarZeroVecBorrowed::<T>::parse_byte_slice(slice)?;
 
         Ok(VarZeroVec::Borrowed(borrowed))
-    }
-
-    /// Obtain an iterator over VarZeroVec's elements
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use std::str::Utf8Error;
-    /// # use zerovec::ule::ZeroVecError;
-    /// # use zerovec::VarZeroVec;
-    ///
-    /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let vec = VarZeroVec::<str>::from(&strings);
-    ///
-    /// let iter_results: Vec<&str> = vec.iter().collect();
-    /// assert_eq!(iter_results[0], "foo");
-    /// assert_eq!(iter_results[1], "bar");
-    /// assert_eq!(iter_results[2], "baz");
-    /// assert_eq!(iter_results[3], "quux");
-    /// # Ok::<(), ZeroVecError>(())
-    /// ```
-    pub fn iter<'b: 'a>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.as_borrowed().iter()
-    }
-
-    /// Get one of VarZeroVec's elements, returning None if the index is out of bounds
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use std::str::Utf8Error;
-    /// # use zerovec::ule::ZeroVecError;
-    /// # use zerovec::VarZeroVec;
-    ///
-    /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let vec = VarZeroVec::<str>::from(&strings);
-    ///
-    /// assert_eq!(vec.get(0), Some("foo"));
-    /// assert_eq!(vec.get(1), Some("bar"));
-    /// assert_eq!(vec.get(2), Some("baz"));
-    /// assert_eq!(vec.get(3), Some("quux"));
-    /// assert_eq!(vec.get(4), None);
-    /// # Ok::<(), ZeroVecError>(())
-    /// ```
-    pub fn get(&self, idx: usize) -> Option<&T> {
-        self.as_borrowed().get(idx)
     }
 
     /// Convert this into a mutable vector of the owned `T` type, cloning if necessary.
@@ -416,11 +332,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         }
     }
 
-    /// Obtain an owned `Vec<Box<T>>` out of this
-    pub fn to_vec(&self) -> Vec<Box<T>> {
-        self.as_borrowed().to_vec()
-    }
-
     /// Gets a reference to the byte slice representing the encoded data of this VarZeroVec.
     ///
     /// The bytes can be passed back to [`Self::parse_byte_slice()`].
@@ -486,37 +397,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
             VarZeroVec::Owned(..) => true,
             VarZeroVec::Borrowed(..) => false,
         }
-    }
-}
-
-impl<'a, T> VarZeroVec<'a, T>
-where
-    T: VarULE,
-    T: ?Sized,
-    T: Ord,
-{
-    /// Binary searches a sorted `VarZeroVec<T>` for the given element. For more information, see
-    /// the primitive function [`binary_search`].
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use std::str::Utf8Error;
-    /// # use zerovec::ule::ZeroVecError;
-    /// # use zerovec::VarZeroVec;
-    ///
-    /// let strings = vec!["a", "b", "f", "g"];
-    /// let vec: VarZeroVec<str> = VarZeroVec::from(&strings);
-    ///
-    /// assert_eq!(vec.binary_search("f"), Ok(2));
-    /// assert_eq!(vec.binary_search("e"), Err(2));
-    /// # Ok::<(), ZeroVecError>(())
-    /// ```
-    ///
-    /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
-    #[inline]
-    pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.as_borrowed().binary_search(x)
     }
 }
 
