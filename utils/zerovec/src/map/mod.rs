@@ -98,8 +98,8 @@ where
     /// Construct a new [`ZeroMap`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            keys: K::Container::with_capacity(capacity),
-            values: V::Container::with_capacity(capacity),
+            keys: K::Container::zvl_with_capacity(capacity),
+            values: V::Container::zvl_with_capacity(capacity),
         }
     }
 
@@ -123,8 +123,8 @@ where
 
     /// Remove all elements from the [`ZeroMap`]
     pub fn clear(&mut self) {
-        self.keys.clear();
-        self.values.clear();
+        self.keys.zvl_clear();
+        self.values.zvl_clear();
     }
 
     /// Reserve capacity for `additional` more elements to be inserted into
@@ -132,8 +132,8 @@ where
     ///
     /// See [`Vec::reserve()`](alloc::vec::Vec::reserve) for more information.
     pub fn reserve(&mut self, additional: usize) {
-        self.keys.reserve(additional);
-        self.values.reserve(additional);
+        self.keys.zvl_reserve(additional);
+        self.values.zvl_reserve(additional);
     }
 
     /// Get the value associated with `key`, if it exists.
@@ -180,10 +180,10 @@ where
     /// ```
     pub fn insert(&mut self, key: &K, value: &V) -> Option<V::OwnedType> {
         match self.keys.zvl_binary_search(key) {
-            Ok(index) => Some(self.values.replace(index, value)),
+            Ok(index) => Some(self.values.zvl_replace(index, value)),
             Err(index) => {
-                self.keys.insert(index, key);
-                self.values.insert(index, value);
+                self.keys.zvl_insert(index, key);
+                self.values.zvl_insert(index, value);
                 None
             }
         }
@@ -202,8 +202,8 @@ where
     /// ```
     pub fn remove(&mut self, key: &K) -> Option<V::OwnedType> {
         let idx = self.keys.zvl_binary_search(key).ok()?;
-        self.keys.remove(idx);
-        Some(self.values.remove(idx))
+        self.keys.zvl_remove(idx);
+        Some(self.values.zvl_remove(idx))
     }
 
     /// Appends `value` with `key` to the end of the underlying vector, returning
@@ -240,8 +240,8 @@ where
             }
         }
 
-        self.keys.push(key);
-        self.values.push(value);
+        self.keys.zvl_push(key);
+        self.values.zvl_push(value);
         None
     }
 

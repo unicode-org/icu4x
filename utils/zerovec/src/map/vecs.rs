@@ -73,19 +73,19 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
         + Copy;
 
     /// Insert an element at `index`
-    fn insert(&mut self, index: usize, value: &T);
+    fn zvl_insert(&mut self, index: usize, value: &T);
     /// Remove the element at `index` (panicking if nonexistant)
-    fn remove(&mut self, index: usize) -> Self::OwnedType;
+    fn zvl_remove(&mut self, index: usize) -> Self::OwnedType;
     /// Replace the element at `index` with another one, returning the old element
-    fn replace(&mut self, index: usize, value: &T) -> Self::OwnedType;
+    fn zvl_replace(&mut self, index: usize, value: &T) -> Self::OwnedType;
     /// Push an element to the end of this vector
-    fn push(&mut self, value: &T);
+    fn zvl_push(&mut self, value: &T);
     /// Create a new, empty vector, with given capacity
-    fn with_capacity(cap: usize) -> Self;
+    fn zvl_with_capacity(cap: usize) -> Self;
     /// Remove all elements from the vector
-    fn clear(&mut self);
+    fn zvl_clear(&mut self);
     /// Reserve space for `addl` additional elements
-    fn reserve(&mut self, addl: usize);
+    fn zvl_reserve(&mut self, addl: usize);
     /// Construct a borrowed variant by borrowing from `&self`.
     ///
     /// This function behaves like `&'b self -> Self::BorrowedVariant<'b>`,
@@ -193,26 +193,26 @@ where
 {
     type OwnedType = T;
     type BorrowedVariant = &'a ZeroSlice<T>;
-    fn insert(&mut self, index: usize, value: &T) {
+    fn zvl_insert(&mut self, index: usize, value: &T) {
         self.to_mut().insert(index, value.as_unaligned())
     }
-    fn remove(&mut self, index: usize) -> T {
+    fn zvl_remove(&mut self, index: usize) -> T {
         T::from_unaligned(self.to_mut().remove(index))
     }
-    fn replace(&mut self, index: usize, value: &T) -> T {
+    fn zvl_replace(&mut self, index: usize, value: &T) -> T {
         let vec = self.to_mut();
         T::from_unaligned(mem::replace(&mut vec[index], value.as_unaligned()))
     }
-    fn push(&mut self, value: &T) {
+    fn zvl_push(&mut self, value: &T) {
         self.to_mut().push(value.as_unaligned())
     }
-    fn with_capacity(cap: usize) -> Self {
+    fn zvl_with_capacity(cap: usize) -> Self {
         ZeroVec::Owned(Vec::with_capacity(cap))
     }
-    fn clear(&mut self) {
+    fn zvl_clear(&mut self) {
         self.to_mut().clear()
     }
-    fn reserve(&mut self, addl: usize) {
+    fn zvl_reserve(&mut self, addl: usize) {
         self.to_mut().reserve(addl)
     }
 
@@ -340,32 +340,32 @@ where
 {
     type OwnedType = Box<T>;
     type BorrowedVariant = VarZeroVecBorrowed<'a, T>;
-    fn insert(&mut self, index: usize, value: &T) {
+    fn zvl_insert(&mut self, index: usize, value: &T) {
         self.make_mut().insert(index, value)
     }
-    fn remove(&mut self, index: usize) -> Box<T> {
+    fn zvl_remove(&mut self, index: usize) -> Box<T> {
         let vec = self.make_mut();
         let old = vec.get(index).expect("invalid index").to_boxed();
         vec.remove(index);
         old
     }
-    fn replace(&mut self, index: usize, value: &T) -> Box<T> {
+    fn zvl_replace(&mut self, index: usize, value: &T) -> Box<T> {
         let vec = self.make_mut();
         let old = vec.get(index).expect("invalid index").to_boxed();
         vec.replace(index, value);
         old
     }
-    fn push(&mut self, value: &T) {
+    fn zvl_push(&mut self, value: &T) {
         let len = self.len();
         self.make_mut().insert(len, value)
     }
-    fn with_capacity(cap: usize) -> Self {
+    fn zvl_with_capacity(cap: usize) -> Self {
         VarZeroVecOwned::with_capacity(cap).into()
     }
-    fn clear(&mut self) {
+    fn zvl_clear(&mut self) {
         self.make_mut().clear()
     }
-    fn reserve(&mut self, addl: usize) {
+    fn zvl_reserve(&mut self, addl: usize) {
         self.make_mut().reserve(addl)
     }
     fn as_borrowed(&'a self) -> VarZeroVecBorrowed<'a, T> {
