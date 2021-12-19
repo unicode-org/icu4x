@@ -45,7 +45,9 @@ fn overview_bench(c: &mut Criterion) {
     // Same as vzv/char_count/vzv but with different inputs
     let seed = 42;
     let (string_vec, _) = random_alphanums(2..=10, 100, seed);
-    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).get_encoded_slice().to_vec();
+    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec)
+        .get_encoded_slice()
+        .to_vec();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
 
     c.bench_function("vzv/overview", |b| {
@@ -72,7 +74,9 @@ fn overview_bench(c: &mut Criterion) {
 fn char_count_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, _) = random_alphanums(2..=20, 100, seed);
-    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).get_encoded_slice().to_vec();
+    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec)
+        .get_encoded_slice()
+        .to_vec();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
 
     // *** Count chars in vec of 100 strings ***
@@ -99,7 +103,9 @@ fn binary_search_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, seed) = random_alphanums(2..=20, 500, seed);
     let (needles, _) = random_alphanums(2..=20, 10, seed);
-    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).get_encoded_slice().to_vec();
+    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec)
+        .get_encoded_slice()
+        .to_vec();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
     let single_needle = "lmnop".to_string();
 
