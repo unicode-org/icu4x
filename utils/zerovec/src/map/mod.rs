@@ -326,8 +326,8 @@ where
 {
     fn from(other: ZeroMapBorrowed<'a, K, V>) -> Self {
         Self {
-            keys: K::Container::from_borrowed(other.keys),
-            values: V::Container::from_borrowed(other.values),
+            keys: K::Container::zvl_from_borrowed(other.keys),
+            values: V::Container::zvl_from_borrowed(other.values),
         }
     }
 }
