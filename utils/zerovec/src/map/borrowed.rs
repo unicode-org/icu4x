@@ -146,7 +146,7 @@ where
     /// assert_eq!(borrow, Some("one"));
     /// ```
     pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
-        let index = self.keys.binary_search(key).ok()?;
+        let index = self.keys.zvl_binary_search(key).ok()?;
         self.values.get_borrowed(index)
     }
 
@@ -164,7 +164,7 @@ where
     /// assert_eq!(borrowed.contains_key(&3), false);
     /// ```
     pub fn contains_key(&self, key: &K) -> bool {
-        self.keys.binary_search(key).is_ok()
+        self.keys.zvl_binary_search(key).is_ok()
     }
 
     /// Produce an ordered iterator over key-value pairs
@@ -205,7 +205,7 @@ where
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K) -> Option<V> {
-        let index = self.keys.binary_search(key).ok()?;
+        let index = self.keys.zvl_binary_search(key).ok()?;
         self.values.get(index)
     }
 

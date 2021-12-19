@@ -26,7 +26,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
-    fn binary_search(&self, k: &T) -> Result<usize, usize>;
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>;
     /// Get element at `index`
     fn get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
@@ -122,7 +122,7 @@ where
     fn zvl_new() -> Self {
         Self::new()
     }
-    fn binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         ZeroSlice::binary_search(self, k)
     }
     fn get(&self, index: usize) -> Option<&T::ULE> {
@@ -154,7 +154,7 @@ where
     fn zvl_new() -> Self {
         ZeroSlice::from_ule_slice(&[])
     }
-    fn binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         ZeroSlice::binary_search(*self, k)
     }
     fn get(&self, index: usize) -> Option<&T::ULE> {
@@ -245,7 +245,7 @@ where
     fn zvl_new() -> Self {
         Self::new()
     }
-    fn binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         self.binary_search(k)
     }
     fn get(&self, index: usize) -> Option<&T> {
@@ -287,7 +287,7 @@ where
     fn zvl_new() -> Self {
         Self::new()
     }
-    fn binary_search(&self, k: &T) -> Result<usize, usize> {
+    fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         Self::binary_search(self, k)
     }
     fn get(&self, index: usize) -> Option<&T> {
