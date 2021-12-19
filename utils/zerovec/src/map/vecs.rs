@@ -28,7 +28,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// index where it should be inserted to maintain sort order.
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>;
     /// Get element at `index`
-    fn get(&self, index: usize) -> Option<&Self::GetType>;
+    fn zvl_get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
     fn len(&self) -> usize;
     /// Check if this vector is in ascending order according to `T`s `Ord` impl
@@ -56,7 +56,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
 /// longer references to the underlying buffer, for borrowed-only vector types.
 pub trait BorrowedZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// Get element at `index`, with a longer lifetime
-    fn get_borrowed(&self, index: usize) -> Option<&'a Self::GetType>;
+    fn zvl_get_borrowed(&self, index: usize) -> Option<&'a Self::GetType>;
 }
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
@@ -125,7 +125,7 @@ where
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         ZeroSlice::binary_search(self, k)
     }
-    fn get(&self, index: usize) -> Option<&T::ULE> {
+    fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
     fn len(&self) -> usize {
@@ -157,7 +157,7 @@ where
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         ZeroSlice::binary_search(*self, k)
     }
-    fn get(&self, index: usize) -> Option<&T::ULE> {
+    fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
     fn len(&self) -> usize {
@@ -182,7 +182,7 @@ impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a ZeroSlice<T>
 where
     T: AsULE + Ord + Copy,
 {
-    fn get_borrowed(&self, index: usize) -> Option<&'a T::ULE> {
+    fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T::ULE> {
         self.as_ule_slice().get(index)
     }
 }
@@ -248,7 +248,7 @@ where
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         self.binary_search(k)
     }
-    fn get(&self, index: usize) -> Option<&T> {
+    fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
     }
     fn len(&self) -> usize {
@@ -290,7 +290,7 @@ where
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         Self::binary_search(self, k)
     }
-    fn get(&self, index: usize) -> Option<&T> {
+    fn zvl_get(&self, index: usize) -> Option<&T> {
         // using UFCS to avoid accidental recursion
         Self::get(*self, index)
     }
@@ -326,7 +326,7 @@ where
     T: Ord,
     T: ?Sized,
 {
-    fn get_borrowed(&self, index: usize) -> Option<&'a T> {
+    fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T> {
         // using UFCS to avoid accidental recursion
         Self::get(*self, index)
     }

@@ -44,7 +44,7 @@ pub use vecs::{MutableZeroVecLike, ZeroVecLike};
 /// // Deserializing to ZeroMap requires no heap allocations.
 /// let zero_map: ZeroMap<u32, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1), Some("one"));
+/// assert_eq!(zero_map.zvl_get(&1), Some("one"));
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
@@ -144,12 +144,12 @@ where
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
-    /// assert_eq!(map.get(&1), Some("one"));
-    /// assert_eq!(map.get(&3), None);
+    /// assert_eq!(map.zvl_get(&1), Some("one"));
+    /// assert_eq!(map.zvl_get(&3), None);
     /// ```
     pub fn get(&self, key: &K) -> Option<&V::GetType> {
         let index = self.keys.zvl_binary_search(key).ok()?;
-        self.values.get(index)
+        self.values.zvl_get(index)
     }
 
     /// Returns whether `key` is contained in this map
@@ -175,8 +175,8 @@ where
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
-    /// assert_eq!(map.get(&1), Some("one"));
-    /// assert_eq!(map.get(&3), None);
+    /// assert_eq!(map.zvl_get(&1), Some("one"));
+    /// assert_eq!(map.zvl_get(&3), None);
     /// ```
     pub fn insert(&mut self, key: &K, value: &V) -> Option<V::OwnedType> {
         match self.keys.zvl_binary_search(key) {
@@ -198,7 +198,7 @@ where
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
     /// assert_eq!(map.remove(&1), Some("one".to_owned().into_boxed_str()));
-    /// assert_eq!(map.get(&1), None);
+    /// assert_eq!(map.zvl_get(&1), None);
     /// ```
     pub fn remove(&mut self, key: &K) -> Option<V::OwnedType> {
         let idx = self.keys.zvl_binary_search(key).ok()?;
@@ -222,18 +222,18 @@ where
     /// let unsuccessful = map.try_append(&2, "dos");
     /// assert!(unsuccessful.is_some(), "append out of order");
     ///
-    /// assert_eq!(map.get(&1), Some("uno"));
+    /// assert_eq!(map.zvl_get(&1), Some("uno"));
     ///
     /// // contains the original value for the key: 3
-    /// assert_eq!(map.get(&3), Some("tres"));
+    /// assert_eq!(map.zvl_get(&3), Some("tres"));
     ///
     /// // not appended since it wasn't in order
-    /// assert_eq!(map.get(&2), None);
+    /// assert_eq!(map.zvl_get(&2), None);
     /// ```
     #[must_use]
     pub fn try_append<'b>(&mut self, key: &'b K, value: &'b V) -> Option<(&'b K, &'b V)> {
         if self.keys.len() != 0 {
-            if let Some(last) = self.keys.get(self.keys.len() - 1) {
+            if let Some(last) = self.keys.zvl_get(self.keys.len() - 1) {
                 if K::Container::t_cmp_get(key, last) != Ordering::Greater {
                     return Some((key, value));
                 }
@@ -255,17 +255,17 @@ where
         ),
     > {
         (0..self.keys.len())
-            .map(move |idx| (self.keys.get(idx).unwrap(), self.values.get(idx).unwrap()))
+            .map(move |idx| (self.keys.zvl_get(idx).unwrap(), self.values.zvl_get(idx).unwrap()))
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
-        (0..self.keys.len()).map(move |idx| self.keys.get(idx).unwrap())
+        (0..self.keys.len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        (0..self.values.len()).map(move |idx| self.values.get(idx).unwrap())
+        (0..self.values.len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }
 
@@ -288,7 +288,7 @@ where
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
         (0..self.keys.len()).map(move |idx| {
             (
-                self.keys.get(idx).unwrap(),
+                self.keys.zvl_get(idx).unwrap(),
                 ZeroSlice::get(&*self.values, idx).unwrap(),
             )
         })

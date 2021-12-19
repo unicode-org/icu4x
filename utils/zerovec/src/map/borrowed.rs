@@ -30,7 +30,7 @@ pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 /// // Deserializing to ZeroMap requires no heap allocations.
 /// let zero_map: ZeroMapBorrowed<u32, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1), Some("one"));
+/// assert_eq!(zero_map.zvl_get(&1), Some("one"));
 /// ```
 ///
 /// This can be obtained from a [`ZeroMap`](super::ZeroMap) via [`ZeroMap::as_borrowed`](super::ZeroMap::as_borrowed)
@@ -137,17 +137,17 @@ where
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
     /// let borrowed = map.as_borrowed();
-    /// assert_eq!(borrowed.get(&1), Some("one"));
-    /// assert_eq!(borrowed.get(&3), None);
+    /// assert_eq!(borrowed.zvl_get(&1), Some("one"));
+    /// assert_eq!(borrowed.zvl_get(&3), None);
     ///
-    /// let borrow = borrowed.get(&1);
+    /// let borrow = borrowed.zvl_get(&1);
     /// drop(borrowed);
     /// // still exists after the ZeroMapBorrowed has been dropped
     /// assert_eq!(borrow, Some("one"));
     /// ```
     pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
         let index = self.keys.zvl_binary_search(key).ok()?;
-        self.values.get_borrowed(index)
+        self.values.zvl_get_borrowed(index)
     }
 
     /// Returns whether `key` is contained in this map
@@ -178,22 +178,22 @@ where
     > + 'b {
         (0..self.keys.len()).map(move |idx| {
             (
-                self.keys.get_borrowed(idx).unwrap(),
-                self.values.get_borrowed(idx).unwrap(),
+                self.keys.zvl_get_borrowed(idx).unwrap(),
+                self.values.zvl_get_borrowed(idx).unwrap(),
             )
         })
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'a <K as ZeroMapKV<'a>>::GetType> + 'b {
-        (0..self.keys.len()).map(move |idx| self.keys.get_borrowed(idx).unwrap())
+        (0..self.keys.len()).map(move |idx| self.keys.zvl_get_borrowed(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = &'a <V as ZeroMapKV<'a>>::GetType> + 'b {
-        (0..self.values.len()).map(move |idx| self.values.get_borrowed(idx).unwrap())
+        (0..self.values.len()).map(move |idx| self.values.zvl_get_borrowed(idx).unwrap())
     }
 }
 
@@ -215,7 +215,7 @@ where
         &'b self,
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
         (0..self.keys.len())
-            .map(move |idx| (self.keys.get(idx).unwrap(), self.values.get(idx).unwrap()))
+            .map(move |idx| (self.keys.zvl_get(idx).unwrap(), self.values.get(idx).unwrap()))
     }
 }
 
