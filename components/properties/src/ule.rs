@@ -9,7 +9,7 @@ use crate::{
 };
 
 use core::convert::TryFrom;
-use zerovec::ule::{AsULE, PlainOldULE, ZeroVecError, ULE};
+use zerovec::ule::{AsULE, RawBytesULE, ZeroVecError, ULE};
 
 impl AsULE for CanonicalCombiningClass {
     type ULE = u8;
@@ -66,11 +66,11 @@ unsafe impl ULE for GeneralCategoryULE {
 }
 
 impl AsULE for Script {
-    type ULE = PlainOldULE<2>;
+    type ULE = RawBytesULE<2>;
 
     #[inline]
     fn as_unaligned(self) -> Self::ULE {
-        PlainOldULE(self.0.to_le_bytes())
+        RawBytesULE(self.0.to_le_bytes())
     }
 
     #[inline]
@@ -80,11 +80,11 @@ impl AsULE for Script {
 }
 
 impl AsULE for ScriptWithExt {
-    type ULE = PlainOldULE<2>;
+    type ULE = RawBytesULE<2>;
 
     #[inline]
     fn as_unaligned(self) -> Self::ULE {
-        PlainOldULE(self.0.to_le_bytes())
+        RawBytesULE(self.0.to_le_bytes())
     }
 
     #[inline]

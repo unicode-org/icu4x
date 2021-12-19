@@ -13,7 +13,7 @@ use core::{
 use icu_provider::yoke::{self, *};
 use num_enum::{IntoPrimitive, TryFromPrimitive, UnsafeFromPrimitive};
 use zerovec::{
-    ule::{custom::EncodeAsVarULE, AsULE, PairULE, PlainOldULE, VarULE, ZeroVecError, ULE},
+    ule::{custom::EncodeAsVarULE, AsULE, PairULE, RawBytesULE, VarULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
@@ -407,7 +407,7 @@ unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
             RelationULE::encode_andor_polarity_operand(self.and_or, self.polarity, self.operand);
         cb(&[
             &[encoded],
-            PlainOldULE::<4>::as_byte_slice(&[self.modulo.as_unaligned()]),
+            RawBytesULE::<4>::as_byte_slice(&[self.modulo.as_unaligned()]),
             self.range_list.as_bytes(),
         ])
     }
