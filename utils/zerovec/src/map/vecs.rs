@@ -22,7 +22,7 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     type GetType: ?Sized + 'static;
 
     /// Create a new, empty vector
-    fn new() -> Self;
+    fn zvl_new() -> Self;
     /// Search for a key in a sorted vector, returns `Ok(index)` if found,
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
@@ -119,7 +119,7 @@ where
     T: AsULE + Ord + Copy,
 {
     type GetType = T::ULE;
-    fn new() -> Self {
+    fn zvl_new() -> Self {
         Self::new()
     }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
@@ -151,7 +151,7 @@ where
     T: AsULE + Ord + Copy,
 {
     type GetType = T::ULE;
-    fn new() -> Self {
+    fn zvl_new() -> Self {
         ZeroSlice::from_ule_slice(&[])
     }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
@@ -242,7 +242,7 @@ where
     T: ?Sized,
 {
     type GetType = T;
-    fn new() -> Self {
+    fn zvl_new() -> Self {
         Self::new()
     }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {
@@ -284,7 +284,7 @@ where
     T: ?Sized,
 {
     type GetType = T;
-    fn new() -> Self {
+    fn zvl_new() -> Self {
         Self::new()
     }
     fn binary_search(&self, k: &T) -> Result<usize, usize> {

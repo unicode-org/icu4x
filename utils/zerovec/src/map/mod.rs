@@ -90,8 +90,8 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys: K::Container::new(),
-            values: V::Container::new(),
+            keys: K::Container::zvl_new(),
+            values: V::Container::zvl_new(),
         }
     }
 

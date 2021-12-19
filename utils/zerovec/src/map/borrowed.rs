@@ -105,10 +105,10 @@ where
     pub fn new() -> Self {
         Self {
             keys:
-                <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant::new(
+                <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant::zvl_new(
                 ),
             values:
-                <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant::new(
+                <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant::zvl_new(
                 ),
         }
     }
