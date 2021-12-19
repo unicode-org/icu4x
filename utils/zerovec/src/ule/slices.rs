@@ -32,17 +32,35 @@ unsafe impl VarULE for str {
     }
 }
 
+/// Note: VarULE is well-defined for all `[T]` where `T: ULE`, but [`ZeroSlice`] is more ergonomic
+/// when `T` is a low-level ULE type. For example:
+///
+/// ```no_run
+/// # use zerovec::ZeroSlice;
+/// # use zerovec::VarZeroVec;
+/// # use zerovec::ule::AsULE;
+/// // OK: [u8] is a useful type
+/// let _: VarZeroVec<[u8]> = unimplemented!();
+///
+/// // Technically works, but [u32::ULE] is not very useful
+/// let _: VarZeroVec<[<u32 as AsULE>::ULE]> = unimplemented!();
+///
+/// // Better: ZeroSlice<u32>
+/// let _: VarZeroVec<ZeroSlice<u32>> = unimplemented!();
+/// ```
+///
+/// [`ZeroSlice`]: crate::ZeroSlice
 // Safety (based on the safety checklist on the VarULE trait):
-//  1. [u8] does not include any uninitialized or padding bytes (achieved by being a slice of a ULE type)
-//  2. [u8] is aligned to 1 byte (achieved by being a slice of a ULE type)
+//  1. [T] does not include any uninitialized or padding bytes (achieved by being a slice of a ULE type)
+//  2. [T] is aligned to 1 byte (achieved by being a slice of a ULE type)
 //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
 //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
 //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
-//  7. `[u8]` byte equality is semantic equality
+//  7. `[T]` byte equality is semantic equality (achieved by being a slice of a ULE type)
 unsafe impl<T> VarULE for [T]
 where
-    T: ULE + AsULE<ULE = T>,
+    T: ULE,
 {
     #[inline]
     fn validate_byte_slice(slice: &[u8]) -> Result<(), ZeroVecError> {

@@ -56,7 +56,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Self {
+    pub fn from_elements<A>(elements: &[A]) -> Self
+    where
+        A: custom::EncodeAsVarULE<T>,
+    {
         Self {
             marker: PhantomData,
             entire_slice: borrowed::get_serializable_bytes(elements).expect(
@@ -577,15 +580,7 @@ mod test {
 
     #[test]
     fn test_remove_integrity() {
-        let mut items: Vec<String> = vec![
-            "apples".into(),
-            "bananas".into(),
-            "eeples".into(),
-            "".into(),
-            "baneenees".into(),
-            "five".into(),
-            "".into(),
-        ];
+        let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
         let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
 
         for index in [0, 2, 4, 0, 1, 1, 0] {
@@ -597,7 +592,7 @@ mod test {
 
     #[test]
     fn test_removing_last_element_clears() {
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&["buy some apples".to_string()]);
+        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&["buy some apples"]);
         assert!(!zerovec.as_borrowed().entire_slice().is_empty());
         zerovec.remove(0);
         assert!(zerovec.as_borrowed().entire_slice().is_empty());
@@ -611,39 +606,31 @@ mod test {
 
     #[test]
     fn test_replace_integrity() {
-        let mut items: Vec<String> = vec![
-            "apples".into(),
-            "bananas".into(),
-            "eeples".into(),
-            "".into(),
-            "baneenees".into(),
-            "five".into(),
-            "".into(),
-        ];
+        let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
         let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
 
         // Replace with an element of the same size (and the first element)
-        items[0] = "blablah".into();
+        items[0] = "blablah";
         zerovec.replace(0, "blablah");
         assert_eq!(zerovec, &*items);
 
         // Replace with a smaller element
-        items[1] = "twily".into();
+        items[1] = "twily";
         zerovec.replace(1, "twily");
         assert_eq!(zerovec, &*items);
 
         // Replace an empty element
-        items[3] = "aoeuidhtns".into();
+        items[3] = "aoeuidhtns";
         zerovec.replace(3, "aoeuidhtns");
         assert_eq!(zerovec, &*items);
 
         // Replace the last element
-        items[6] = "0123456789".into();
+        items[6] = "0123456789";
         zerovec.replace(6, "0123456789");
         assert_eq!(zerovec, &*items);
 
         // Replace with an empty element
-        items[2] = "".into();
+        items[2] = "";
         zerovec.replace(2, "");
         assert_eq!(zerovec, &*items);
     }

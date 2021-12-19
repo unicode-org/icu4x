@@ -110,6 +110,12 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     }
 }
 
+impl<'a, T: AsULE> AsRef<ZeroSlice<T>> for ZeroVec<'a, T> {
+    fn as_ref(&self) -> &ZeroSlice<T> {
+        self.deref()
+    }
+}
+
 impl<T> fmt::Debug for ZeroVec<'_, T>
 where
     T: AsULE + fmt::Debug,
@@ -448,7 +454,7 @@ where
 
 impl<'a, T> ZeroVec<'a, T>
 where
-    T: AsULE + SliceAsULE,
+    T: EqULE,
 {
     /// Attempts to create a `ZeroVec<'a, T>` from a `&'a [T]` by borrowing the argument.
     ///

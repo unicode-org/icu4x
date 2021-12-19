@@ -66,7 +66,7 @@ pub use slice::VarZeroSlice;
 /// use zerovec::VarZeroVec;
 ///
 /// // The little-endian bytes correspond to the list of strings.
-/// let strings = vec!["w".to_owned(), "ω".to_owned(), "文".to_owned(), "𑄃".to_owned()];
+/// let strings = vec!["w", "ω", "文", "𑄃"];
 /// let bytes = &[
 ///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,  3, 0, 0, 0,
 ///     6, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240, 145, 132, 131,
@@ -101,12 +101,12 @@ pub use slice::VarZeroSlice;
 ///              0, 0, 42, 0, 0, 0, 3, 217, 0, 0, 57, 48, 0, 0, 49, 212, 0, 0,
 ///              9, 0, 0, 0];
 ///
-/// let zerovec: VarZeroVec<ZeroSlice<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
+/// let zerovec1: VarZeroVec<ZeroSlice<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
+/// assert_eq!(zerovec1.get(2).and_then(|v| v.get(1)), Some(55555));
 ///
-/// assert_eq!(zerovec.get(2).and_then(|v| v.get(1)), Some(55555));
-/// for (zv, v) in zerovec.iter().zip(numbers.iter()) {
-///     assert_eq!(zv, &**v);   
-/// }
+/// let zerovec2: VarZeroVec<ZeroSlice<u32>> = (&numbers).into();
+/// assert_eq!(zerovec1, zerovec2);
+///
 /// # Ok::<(), ZeroVecError>(())
 /// ```
 ///
@@ -230,8 +230,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
-    ///                    "baz".to_owned(), "quux".to_owned()];
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
     ///
     /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
@@ -274,8 +273,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
-    ///                    "baz".to_owned(), "quux".to_owned()];
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
     ///
     /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
@@ -305,8 +303,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
-    ///                    "baz".to_owned(), "quux".to_owned()];
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     ///
@@ -330,8 +327,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
-    ///                    "baz".to_owned(), "quux".to_owned()];
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     ///
@@ -357,8 +353,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
-    ///                    "baz".to_owned(), "quux".to_owned()];
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     ///
@@ -397,8 +392,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
-    ///                    "baz".to_owned(), "quux".to_owned()];
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
     /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     ///
@@ -452,7 +446,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings = vec!["foo".to_owned(), "bar".to_owned(), "baz".to_owned()];
+    /// let strings = vec!["foo", "bar", "baz"];
     /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
     ///
     /// let mut borrowed: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
@@ -461,7 +455,10 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
-    pub fn get_serializable_bytes<A: custom::EncodeAsVarULE<T>>(elements: &[A]) -> Option<Vec<u8>> {
+    pub fn get_serializable_bytes<A>(elements: &[A]) -> Option<Vec<u8>>
+    where
+        A: custom::EncodeAsVarULE<T>,
+    {
         borrowed::get_serializable_bytes(elements)
     }
 
@@ -492,8 +489,7 @@ where
     /// # use zerovec::ule::ZeroVecError;
     /// # use zerovec::VarZeroVec;
     ///
-    /// let strings = vec!["a".to_owned(), "b".to_owned(),
-    ///                    "f".to_owned(), "g".to_owned()];
+    /// let strings = vec!["a", "b", "f", "g"];
     /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     ///
@@ -516,14 +512,36 @@ impl<'a, T: VarULE + ?Sized> Index<usize> for VarZeroVec<'a, T> {
     }
 }
 
-impl<'a, A, T> From<&'_ [A]> for VarZeroVec<'a, T>
+impl<A, T> From<&Vec<A>> for VarZeroVec<'static, T>
 where
-    T: VarULE,
-    T: ?Sized,
+    T: VarULE + ?Sized,
     A: custom::EncodeAsVarULE<T>,
 {
-    fn from(other: &'_ [A]) -> Self {
-        VarZeroVecOwned::from_elements(other).into()
+    #[inline]
+    fn from(elements: &Vec<A>) -> Self {
+        VarZeroVecOwned::from_elements(elements).into()
+    }
+}
+
+impl<A, T> From<&[A]> for VarZeroVec<'static, T>
+where
+    T: VarULE + ?Sized,
+    A: custom::EncodeAsVarULE<T>,
+{
+    #[inline]
+    fn from(elements: &[A]) -> Self {
+        VarZeroVecOwned::from_elements(elements).into()
+    }
+}
+
+impl<A, T, const N: usize> From<&[A; N]> for VarZeroVec<'static, T>
+where
+    T: VarULE + ?Sized,
+    A: custom::EncodeAsVarULE<T>,
+{
+    #[inline]
+    fn from(elements: &[A; N]) -> Self {
+        VarZeroVecOwned::from_elements(elements).into()
     }
 }
 
@@ -557,6 +575,18 @@ where
 {
     #[inline]
     fn eq(&self, other: &&[A]) -> bool {
+        self.iter().eq(other.iter().map(|t| t.as_ref()))
+    }
+}
+
+impl<T, A, const N: usize> PartialEq<[A; N]> for VarZeroVec<'_, T>
+where
+    T: VarULE + ?Sized,
+    T: PartialEq,
+    A: AsRef<T>,
+{
+    #[inline]
+    fn eq(&self, other: &[A; N]) -> bool {
         self.iter().eq(other.iter().map(|t| t.as_ref()))
     }
 }

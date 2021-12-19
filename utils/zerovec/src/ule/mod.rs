@@ -146,14 +146,14 @@ pub trait AsULE: Copy {
     /// Types that are not well-defined for all bit values should implement a custom ULE.
     type ULE: ULE;
 
-    /// Converts from `&Self` to `Self::ULE`.
+    /// Converts from `Self` to `Self::ULE`.
     ///
     /// This function may involve byte order swapping (native-endian to little-endian).
     ///
     /// For best performance, mark your implementation of this function `#[inline]`.
     fn as_unaligned(self) -> Self::ULE;
 
-    /// Converts from `&Self::ULE` to `Self`.
+    /// Converts from `Self::ULE` to `Self`.
     ///
     /// This function may involve byte order swapping (little-endian to native-endian).
     ///

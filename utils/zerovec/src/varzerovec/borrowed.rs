@@ -7,7 +7,7 @@ use alloc::boxed::Box;
 use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::convert::TryInto;
+use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::{iter, mem};
 
@@ -328,29 +328,82 @@ where
     }
 }
 
-pub fn get_serializable_bytes<T: VarULE + ?Sized, A: custom::EncodeAsVarULE<T>>(
-    elements: &[A],
-) -> Option<Vec<u8>> {
-    // Assume each element is probably around 4 bytes long when estimating the
-    // initial size. Performance of this function does not matter *too* much since
-    // VarZeroVec mutation is not intended to be performant.
-    let mut vec = Vec::with_capacity(4 + 8 * elements.len());
-    let len_u32: u32 = elements.len().try_into().ok()?;
-    vec.extend(&len_u32.as_unaligned().0);
-    // Make space for indices
-    vec.resize(4 + 4 * elements.len(), 0);
-    let mut offset: u32 = 0;
-    for (idx, element) in elements.iter().enumerate() {
+/// Collects the bytes for a VarZeroSlice into a Vec.
+pub fn get_serializable_bytes<T, A>(elements: &[A]) -> Option<Vec<u8>>
+where
+    T: VarULE + ?Sized,
+    A: custom::EncodeAsVarULE<T>,
+{
+    let len = compute_serializable_len(elements)?;
+    debug_assert!(len >= 4);
+    let mut output = Vec::with_capacity(len as usize);
+    // Safety: All bytes will be initialized after calling write_serializable_bytes
+    unsafe {
+        output.set_len(len as usize);
+    }
+    write_serializable_bytes(elements, &mut output);
+    Some(output)
+}
+
+/// Writes the bytes for a VarZeroSlice into an output buffer.
+///
+/// Every byte in the buffer will be initialized after calling this function.
+///
+/// # Panics
+///
+/// Panics if the buffer is not exactly the correct length.
+pub fn write_serializable_bytes<T, A>(elements: &[A], output: &mut [u8])
+where
+    T: VarULE + ?Sized,
+    A: custom::EncodeAsVarULE<T>,
+{
+    let num_elements = u32::try_from(elements.len()).ok().unwrap();
+    output[0..4].copy_from_slice(&num_elements.as_unaligned().0);
+
+    // idx_offset = offset from the start of the buffer for the next index
+    let mut idx_offset: usize = 4;
+    // first_dat_offset = offset from the start of the buffer of the first data block
+    let first_dat_offset: usize = 4 + elements.len() * 4;
+    // dat_offset = offset from the start of the buffer of the next data block
+    let mut dat_offset: usize = first_dat_offset;
+
+    for element in elements.iter() {
         let element_len = element.encode_var_ule_len();
-        let indices = &mut vec[(4 + 4 * idx)..(4 + 4 * idx + 4)];
-        indices.copy_from_slice(&offset.as_unaligned().0);
-        let element_start = vec.len();
-        vec.resize(element_len + element_start, 0);
-        element.encode_var_ule_write(&mut vec[element_start..]);
-        let len_u32: u32 = element_len.try_into().ok()?;
-        offset = offset.checked_add(len_u32)?;
-        debug_assert!(T::validate_byte_slice(&vec[element_start..]).is_ok());
+
+        let idx_limit = idx_offset + 4;
+        let idx_slice = &mut output[idx_offset..idx_limit];
+        // VZV expects data offsets to be stored relative to the first data block
+        let offset = (dat_offset - first_dat_offset) as u32;
+        idx_slice.copy_from_slice(&offset.as_unaligned().0);
+
+        let dat_limit = dat_offset + element_len;
+        let dat_slice = &mut output[dat_offset..dat_limit];
+        element.encode_var_ule_write(dat_slice);
+        debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));
+
+        idx_offset = idx_limit;
+        dat_offset = dat_limit;
     }
 
-    Some(vec)
+    debug_assert_eq!(idx_offset, 4 + 4 * elements.len());
+    assert_eq!(dat_offset, output.len());
+}
+
+pub fn compute_serializable_len<T, A>(elements: &[A]) -> Option<u32>
+where
+    T: VarULE + ?Sized,
+    A: custom::EncodeAsVarULE<T>,
+{
+    // 4 for length + 4 for each offset + the body
+    let idx_len: u32 = u32::try_from(elements.len())
+        .ok()?
+        .checked_mul(4)?
+        .checked_add(4)?;
+    let data_len: u32 = elements
+        .iter()
+        .map(|v| u32::try_from(v.encode_var_ule_len()).ok())
+        .fold(Some(0u32), |s, v| {
+            s.and_then(|s| v.and_then(|v| s.checked_add(v)))
+        })?;
+    idx_len.checked_add(data_len)
 }
