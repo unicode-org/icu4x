@@ -8,13 +8,13 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::ops::Deref;
 
-pub(crate) mod borrowed;
+pub(crate) mod components;
 pub(crate) mod owned;
 #[cfg(feature = "serde")]
 mod serde;
 mod slice;
 
-pub use borrowed::VarZeroVecBorrowed;
+pub use components::VarZeroVecBorrowed;
 pub use owned::VarZeroVecOwned;
 pub use slice::VarZeroSlice;
 
