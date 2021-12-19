@@ -214,8 +214,12 @@ where
     pub fn iter_copied_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
-        (0..self.keys.zvl_len())
-            .map(move |idx| (self.keys.zvl_get(idx).unwrap(), self.values.get(idx).unwrap()))
+        (0..self.keys.zvl_len()).map(move |idx| {
+            (
+                self.keys.zvl_get(idx).unwrap(),
+                self.values.get(idx).unwrap(),
+            )
+        })
     }
 }
 

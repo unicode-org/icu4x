@@ -254,8 +254,12 @@ where
             &'b <V as ZeroMapKV<'a>>::GetType,
         ),
     > {
-        (0..self.keys.zvl_len())
-            .map(move |idx| (self.keys.zvl_get(idx).unwrap(), self.values.zvl_get(idx).unwrap()))
+        (0..self.keys.zvl_len()).map(move |idx| {
+            (
+                self.keys.zvl_get(idx).unwrap(),
+                self.values.zvl_get(idx).unwrap(),
+            )
+        })
     }
 
     /// Produce an ordered iterator over keys
