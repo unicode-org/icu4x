@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639893474968,
+  "lastUpdate": 1639901897612,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15425,6 +15425,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 415097,
             "range": "± 21844",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a6799976ee0ba76708393f13efd3466f198bed57",
+          "message": "Fail gracefully when building provider_fs on alternate platforms (#1414)",
+          "timestamp": "2021-12-19T00:09:31-08:00",
+          "tree_id": "07ddb9723cef5b64460a026f4969f479f562f407",
+          "url": "https://github.com/unicode-org/icu4x/commit/a6799976ee0ba76708393f13efd3466f198bed57"
+        },
+        "date": 1639901889637,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 137638,
+            "range": "± 6849",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1463139,
+            "range": "± 65089",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 368915,
+            "range": "± 18937",
             "unit": "ns/iter"
           }
         ]
