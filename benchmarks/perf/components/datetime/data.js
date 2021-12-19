@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639903425260,
+  "lastUpdate": 1639914763400,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15551,6 +15551,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 366482,
             "range": "± 92950",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e82c1fbbd9827de1db96334edcc21c5a8a67d5c0",
+          "message": "Add Grapheme segmenter that is a part of UAX29. (#1388)\n\n* Add Grapheme segmenter that is a part of UAX29.\r\n\r\n* Fix review comment.",
+          "timestamp": "2021-12-19T20:42:53+09:00",
+          "tree_id": "6443b26a9bbf0b4643465016869233d9df1f19a1",
+          "url": "https://github.com/unicode-org/icu4x/commit/e82c1fbbd9827de1db96334edcc21c5a8a67d5c0"
+        },
+        "date": 1639914754662,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 135222,
+            "range": "± 3655",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1536432,
+            "range": "± 3777",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 377563,
+            "range": "± 3028",
             "unit": "ns/iter"
           }
         ]
