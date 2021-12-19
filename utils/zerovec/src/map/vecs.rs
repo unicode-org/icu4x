@@ -30,12 +30,12 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Get element at `index`
     fn zvl_get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
-    fn len(&self) -> usize;
+    fn zvl_len(&self) -> usize;
     /// Check if this vector is in ascending order according to `T`s `Ord` impl
     fn is_ascending(&self) -> bool;
     /// Check if this vector is empty
     fn is_empty(&self) -> bool {
-        self.len() == 0
+        self.zvl_len() == 0
     }
 
     /// Compare this type with a `Self::GetType`. This must produce the same result as
@@ -128,7 +128,7 @@ where
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
-    fn len(&self) -> usize {
+    fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
     fn is_ascending(&self) -> bool {
@@ -160,7 +160,7 @@ where
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
-    fn len(&self) -> usize {
+    fn zvl_len(&self) -> usize {
         ZeroSlice::len(*self)
     }
     fn is_ascending(&self) -> bool {
@@ -251,7 +251,7 @@ where
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
     }
-    fn len(&self) -> usize {
+    fn zvl_len(&self) -> usize {
         self.len()
     }
     fn is_ascending(&self) -> bool {
@@ -294,7 +294,7 @@ where
         // using UFCS to avoid accidental recursion
         Self::get(*self, index)
     }
-    fn len(&self) -> usize {
+    fn zvl_len(&self) -> usize {
         Self::len(*self)
     }
     fn is_ascending(&self) -> bool {

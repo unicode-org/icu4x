@@ -113,12 +113,12 @@ where
 
     /// The number of elements in the [`ZeroMap`]
     pub fn len(&self) -> usize {
-        self.values.len()
+        self.values.zvl_len()
     }
 
     /// Whether the [`ZeroMap`] is empty
     pub fn is_empty(&self) -> bool {
-        self.values.len() == 0
+        self.values.zvl_len() == 0
     }
 
     /// Remove all elements from the [`ZeroMap`]
@@ -232,8 +232,8 @@ where
     /// ```
     #[must_use]
     pub fn try_append<'b>(&mut self, key: &'b K, value: &'b V) -> Option<(&'b K, &'b V)> {
-        if self.keys.len() != 0 {
-            if let Some(last) = self.keys.zvl_get(self.keys.len() - 1) {
+        if self.keys.zvl_len() != 0 {
+            if let Some(last) = self.keys.zvl_get(self.keys.zvl_len() - 1) {
                 if K::Container::t_cmp_get(key, last) != Ordering::Greater {
                     return Some((key, value));
                 }
@@ -254,18 +254,18 @@ where
             &'b <V as ZeroMapKV<'a>>::GetType,
         ),
     > {
-        (0..self.keys.len())
+        (0..self.keys.zvl_len())
             .map(move |idx| (self.keys.zvl_get(idx).unwrap(), self.values.zvl_get(idx).unwrap()))
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
-        (0..self.keys.len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
+        (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        (0..self.values.len()).map(move |idx| self.values.zvl_get(idx).unwrap())
+        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }
 
@@ -286,7 +286,7 @@ where
     pub fn iter_copied_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
-        (0..self.keys.len()).map(move |idx| {
+        (0..self.keys.zvl_len()).map(move |idx| {
             (
                 self.keys.zvl_get(idx).unwrap(),
                 ZeroSlice::get(&*self.values, idx).unwrap(),

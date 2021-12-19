@@ -136,7 +136,7 @@ where
         } else {
             let (keys, values): (K::Container, V::Container) =
                 Deserialize::deserialize(deserializer)?;
-            if keys.len() != values.len() {
+            if keys.zvl_len() != values.zvl_len() {
                 return Err(de::Error::custom(
                     "Mismatched key and value sizes in ZeroMap",
                 ));
