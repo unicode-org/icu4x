@@ -94,10 +94,14 @@ mod property_table;
 mod rule_segmenter;
 mod rule_table;
 
+mod grapheme;
 mod word;
 
 #[macro_use]
 extern crate lazy_static;
 
+pub use crate::grapheme::{
+    GraphemeBreakIterator, GraphemeBreakIteratorLatin1, GraphemeBreakIteratorUtf16,
+};
 pub use crate::line_breaker::*;
 pub use crate::word::{WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16};
