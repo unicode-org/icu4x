@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::components::VarZeroVecBorrowed;
+use super::components::VarZeroVecComponents;
 use super::*;
 use core::marker::PhantomData;
 use core::mem;
@@ -52,7 +52,7 @@ use core::ops::Index;
 /// ```
 //
 // safety invariant: The slice MUST be one which parses to
-// a valid VarZeroVecBorrowed<T>
+// a valid VarZeroVecComponents<T>
 #[repr(transparent)]
 pub struct VarZeroSlice<T: ?Sized> {
     marker: PhantomData<T>,
@@ -66,12 +66,12 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
         let arr: &[u8] = &[];
         unsafe { mem::transmute(arr) }
     }
-    /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
+    /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     #[inline]
-    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
+    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
         unsafe {
             // safety: VarZeroSlice is guaranteed to parse here
-            VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
+            VarZeroVecComponents::from_bytes_unchecked(&self.entire_slice)
         }
     }
 
@@ -250,7 +250,7 @@ where
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroSlice<T> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let _: VarZeroVecBorrowed<T> = VarZeroVecBorrowed::parse_byte_slice(bytes)?;
+        let _: VarZeroVecComponents<T> = VarZeroVecComponents::parse_byte_slice(bytes)?;
         Ok(())
     }
 

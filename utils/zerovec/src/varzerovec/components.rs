@@ -24,8 +24,8 @@ fn usizeify(x: RawBytesULE<4>) -> usize {
 /// a `&'a [T::VarULE]`, but since `T::VarULE` is unsized that type does not actually
 /// exist.
 ///
-/// See [`VarZeroVecBorrowed::parse_byte_slice()`] for information on the internal invariants involved
-pub struct VarZeroVecBorrowed<'a, T: ?Sized> {
+/// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
+pub struct VarZeroVecComponents<'a, T: ?Sized> {
     /// The list of indices into the `things` slice
     indices: &'a [RawBytesULE<4>],
     /// The contiguous list of `T::VarULE`s
@@ -37,10 +37,10 @@ pub struct VarZeroVecBorrowed<'a, T: ?Sized> {
 
 // #[derive()] won't work here since we do not want it to be
 // bound on T: Copy
-impl<'a, T: ?Sized> Copy for VarZeroVecBorrowed<'a, T> {}
-impl<'a, T: ?Sized> Clone for VarZeroVecBorrowed<'a, T> {
+impl<'a, T: ?Sized> Copy for VarZeroVecComponents<'a, T> {}
+impl<'a, T: ?Sized> Clone for VarZeroVecComponents<'a, T> {
     fn clone(&self) -> Self {
-        VarZeroVecBorrowed {
+        VarZeroVecComponents {
             indices: self.indices,
             things: self.things,
             entire_slice: self.entire_slice,
@@ -49,25 +49,25 @@ impl<'a, T: ?Sized> Clone for VarZeroVecBorrowed<'a, T> {
     }
 }
 
-impl<'a, T: VarULE + ?Sized> Default for VarZeroVecBorrowed<'a, T> {
+impl<'a, T: VarULE + ?Sized> Default for VarZeroVecComponents<'a, T> {
     #[inline]
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
-    /// Creates a new, empty `VarZeroVecBorrowed<T>`.
+impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
+    /// Creates a new, empty `VarZeroVecComponents<T>`.
     ///
-    /// Note: Since [`VarZeroVecBorrowed`] is not mutable, the return value will be a stub unless
+    /// Note: Since [`VarZeroVecComponents`] is not mutable, the return value will be a stub unless
     /// wrapped in [`VarZeroVec::Borrowed`].
     ///
     /// # Examples
     ///
     /// ```
-    /// use zerovec::varzerovec::VarZeroVecBorrowed;
+    /// use zerovec::varzerovec::VarZeroVecComponents;
     ///
-    /// let vzv: VarZeroVecBorrowed<str> = VarZeroVecBorrowed::new();
+    /// let vzv: VarZeroVecComponents<str> = VarZeroVecComponents::new();
     /// assert!(vzv.is_empty());
     /// ```
     #[inline]
@@ -80,7 +80,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         }
     }
 
-    /// Construct a new VarZeroVecBorrowed, checking invariants about the overall buffer size:
+    /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
     ///
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
     /// - There must be at least `4*length + 4` bytes total, to form the the array `indices` of indices
@@ -91,7 +91,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
     #[inline]
     pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
         if slice.is_empty() {
-            return Ok(VarZeroVecBorrowed {
+            return Ok(VarZeroVecComponents {
                 indices: &[],
                 things: &[],
                 entire_slice: slice,
@@ -113,7 +113,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
             .get(4 * len + 4..)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
-        let borrowed = VarZeroVecBorrowed {
+        let borrowed = VarZeroVecComponents {
             indices,
             things,
             entire_slice: slice,
@@ -127,17 +127,17 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         Ok(borrowed)
     }
 
-    /// Construct a [`VarZeroVecBorrowed`] from a byte slice that has previously
-    /// successfully returned a [`VarZeroVecBorrowed`] when passed to
-    /// [`VarZeroVecBorrowed::parse_byte_slice()`]. Will return the same
-    /// object as one would get from calling [`VarZeroVecBorrowed::parse_byte_slice()`].
+    /// Construct a [`VarZeroVecComponents`] from a byte slice that has previously
+    /// successfully returned a [`VarZeroVecComponents`] when passed to
+    /// [`VarZeroVecComponents::parse_byte_slice()`]. Will return the same
+    /// object as one would get from calling [`VarZeroVecComponents::parse_byte_slice()`].
     ///
     /// # Safety
     /// The bytes must have previously successfully run through
-    /// [`VarZeroVecBorrowed::parse_byte_slice()`]
+    /// [`VarZeroVecComponents::parse_byte_slice()`]
     pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
         if slice.is_empty() {
-            return VarZeroVecBorrowed {
+            return VarZeroVecComponents {
                 indices: &[],
                 things: &[],
                 entire_slice: slice,
@@ -152,7 +152,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         let indices = RawBytesULE::<4>::from_byte_slice_unchecked(indices_bytes);
         let things = slice.get_unchecked(4 * len + 4..);
 
-        VarZeroVecBorrowed {
+        VarZeroVecComponents {
             indices,
             things,
             entire_slice: slice,
@@ -212,7 +212,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         T::from_byte_slice_unchecked(things_slice)
     }
 
-    /// Create an iterator over the Ts contained in VarZeroVecBorrowed, checking internal invariants:
+    /// Create an iterator over the Ts contained in VarZeroVecComponents, checking internal invariants:
     ///
     /// - `indices[i]..indices[i+1]` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
@@ -220,7 +220,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
     ///   `things`, such that it parses to a `T::VarULE`
     /// - `indices` is monotonically increasing
     ///
-    /// This method is NOT allowed to call any other methods on VarZeroVecBorrowed since all other methods
+    /// This method is NOT allowed to call any other methods on VarZeroVecComponents since all other methods
     /// assume that the slice has been passed through iter_checked
     #[inline]
     fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ZeroVecError>> {
@@ -252,7 +252,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
             .map(|s| s.and_then(|s| T::parse_byte_slice(s)))
     }
 
-    /// Create an iterator over the Ts contained in VarZeroVecBorrowed
+    /// Create an iterator over the Ts contained in VarZeroVecComponents
     #[inline]
     pub fn iter(self) -> impl Iterator<Item = &'a T> {
         let last = iter::from_fn(move || {
@@ -289,17 +289,17 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
             .copied()
             .map(u32::from_unaligned)
             .collect::<Vec<_>>();
-        format!("VarZeroVecBorrowed {{ indices: {:?} }}", indices)
+        format!("VarZeroVecComponents {{ indices: {:?} }}", indices)
     }
 }
 
-impl<'a, T> VarZeroVecBorrowed<'a, T>
+impl<'a, T> VarZeroVecComponents<'a, T>
 where
     T: VarULE,
     T: ?Sized,
     T: Ord,
 {
-    /// Binary searches a sorted `VarZeroVecBorrowed<T>` for the given element. For more information, see
+    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This

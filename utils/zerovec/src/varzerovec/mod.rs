@@ -14,7 +14,7 @@ pub(crate) mod owned;
 mod serde;
 mod slice;
 
-pub use components::VarZeroVecBorrowed;
+pub use components::VarZeroVecComponents;
 pub use owned::VarZeroVecOwned;
 pub use slice::VarZeroSlice;
 
@@ -146,7 +146,7 @@ pub enum VarZeroVec<'a, T: ?Sized> {
     /// let vzv: VarZeroVec<str> = VarZeroVec::parse_byte_slice(bytes).unwrap();
     /// assert!(matches!(vzv, VarZeroVec::Borrowed(_)));
     /// ```
-    Borrowed(VarZeroVecBorrowed<'a, T>),
+    Borrowed(VarZeroVecComponents<'a, T>),
 }
 
 impl<'a, T: ?Sized> Clone for VarZeroVec<'a, T> {
@@ -174,8 +174,8 @@ impl<'a, T: ?Sized> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
     }
 }
 
-impl<'a, T: ?Sized> From<VarZeroVecBorrowed<'a, T>> for VarZeroVec<'a, T> {
-    fn from(other: VarZeroVecBorrowed<'a, T>) -> Self {
+impl<'a, T: ?Sized> From<VarZeroVecComponents<'a, T>> for VarZeroVec<'a, T> {
+    fn from(other: VarZeroVecComponents<'a, T>) -> Self {
         VarZeroVec::Borrowed(other)
     }
 }
@@ -217,11 +217,11 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// ```
     #[inline]
     pub fn new() -> Self {
-        Self::Borrowed(VarZeroVecBorrowed::default())
+        Self::Borrowed(VarZeroVecComponents::default())
     }
 
-    /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
-    pub fn as_borrowed<'b>(&'b self) -> VarZeroVecBorrowed<'b, T> {
+    /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
+    pub fn as_borrowed<'b>(&'b self) -> VarZeroVecComponents<'b, T> {
         match self {
             VarZeroVec::Owned(ref owned) => owned.as_borrowed(),
             VarZeroVec::Borrowed(ref borrowed) => *borrowed,
@@ -255,7 +255,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
             return Ok(VarZeroVec::Owned(VarZeroVecOwned::new()));
         }
 
-        let borrowed = VarZeroVecBorrowed::<T>::parse_byte_slice(slice)?;
+        let borrowed = VarZeroVecComponents::<T>::parse_byte_slice(slice)?;
 
         Ok(VarZeroVec::Borrowed(borrowed))
     }

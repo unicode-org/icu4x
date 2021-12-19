@@ -14,10 +14,10 @@ use core::slice;
 
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
-/// [`VarZeroVec`] and [`VarZeroVecBorrowed`].
+/// [`VarZeroVec`] and [`VarZeroSlice`].
 pub struct VarZeroVecOwned<T: ?Sized> {
     marker: PhantomData<Box<T>>,
-    // safety invariant: must parse into a valid VarZeroVecBorrowed
+    // safety invariant: must parse into a valid VarZeroVecComponents
     entire_slice: Vec<u8>,
 }
 
@@ -54,8 +54,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
-    /// Construct a VarZeroVecOwned from a [`VarZeroVecBorrowed`] by cloning the internal data
-    pub fn from_borrowed(borrowed: VarZeroVecBorrowed<T>) -> Self {
+    /// Construct a VarZeroVecOwned from a [`VarZeroVecComponents`] by cloning the internal data
+    pub fn from_borrowed(borrowed: VarZeroVecComponents<T>) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: borrowed.as_bytes().into(),
@@ -103,12 +103,12 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         self.entire_slice.reserve(capacity * 8)
     }
 
-    /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
+    /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     #[inline]
-    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
+    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
         unsafe {
             // safety: VarZeroVecOwned is guaranteed to parse here
-            VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
+            VarZeroVecComponents::from_bytes_unchecked(&self.entire_slice)
         }
     }
 
@@ -488,8 +488,8 @@ where
     }
 }
 
-impl<'a, T: ?Sized + VarULE> From<VarZeroVecBorrowed<'a, T>> for VarZeroVecOwned<T> {
-    fn from(other: VarZeroVecBorrowed<'a, T>) -> Self {
+impl<'a, T: ?Sized + VarULE> From<VarZeroVecComponents<'a, T>> for VarZeroVecOwned<T> {
+    fn from(other: VarZeroVecComponents<'a, T>) -> Self {
         Self::from_borrowed(other)
     }
 }
