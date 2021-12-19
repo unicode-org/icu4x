@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639914763400,
+  "lastUpdate": 1639936824173,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15593,6 +15593,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 377563,
             "range": "± 3028",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "355487a0e0e42493d55373a569f7651791c8cc50",
+          "message": "Change DataRequest to be borrowed in BufferProvider (#1416)",
+          "timestamp": "2021-12-19T11:50:56-06:00",
+          "tree_id": "7e877899a9a8d801d666bfac53fe908e2de00c82",
+          "url": "https://github.com/unicode-org/icu4x/commit/355487a0e0e42493d55373a569f7651791c8cc50"
+        },
+        "date": 1639936816051,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 135162,
+            "range": "± 1245",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1533563,
+            "range": "± 7466",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 380008,
+            "range": "± 3927",
             "unit": "ns/iter"
           }
         ]
