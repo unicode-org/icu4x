@@ -68,7 +68,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     }
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     #[inline]
-    pub fn as_components<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
+    pub(crate) fn as_components<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
         unsafe {
             // safety: VarZeroSlice is guaranteed to parse here
             VarZeroVecComponents::from_bytes_unchecked(&self.entire_slice)

@@ -57,19 +57,6 @@ impl<'a, T: VarULE + ?Sized> Default for VarZeroVecComponents<'a, T> {
 }
 
 impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
-    /// Creates a new, empty `VarZeroVecComponents<T>`.
-    ///
-    /// Note: Since [`VarZeroVecComponents`] is not mutable, the return value will be a stub unless
-    /// wrapped in [`VarZeroVec::Borrowed`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use zerovec::varzerovec::VarZeroVecComponents;
-    ///
-    /// let vzv: VarZeroVecComponents<str> = VarZeroVecComponents::new();
-    /// assert!(vzv.is_empty());
-    /// ```
     #[inline]
     pub fn new() -> Self {
         Self {
@@ -170,20 +157,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     #[inline]
     pub fn is_empty(self) -> bool {
         self.indices.is_empty()
-    }
-
-    /// Get a reference to the entire backing buffer of this vector
-    #[inline]
-    pub fn as_bytes(self) -> &'a [u8] {
-        self.entire_slice
-    }
-
-    pub fn as_slice(&self) -> &'a VarZeroSlice<T> {
-        let slice = self.as_bytes();
-        unsafe {
-            // safety: the slice is known to come from a valid parsed VZV
-            VarZeroSlice::from_byte_slice_unchecked(slice)
-        }
     }
 
     /// Get the idx'th element out of this slice. Returns `None` if out of bounds.

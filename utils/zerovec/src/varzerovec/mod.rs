@@ -14,7 +14,6 @@ pub(crate) mod owned;
 mod serde;
 mod slice;
 
-pub use components::VarZeroVecComponents;
 pub use owned::VarZeroVecOwned;
 pub use slice::VarZeroSlice;
 

@@ -554,9 +554,9 @@ mod test {
     #[test]
     fn test_removing_last_element_clears() {
         let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&["buy some apples"]).unwrap();
-        assert!(!zerovec.as_components().as_bytes().is_empty());
+        assert!(!zerovec.as_bytes().is_empty());
         zerovec.remove(0);
-        assert!(zerovec.as_components().as_bytes().is_empty());
+        assert!(zerovec.as_bytes().is_empty());
     }
 
     #[test]
