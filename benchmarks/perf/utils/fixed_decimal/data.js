@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639901813205,
+  "lastUpdate": 1639901847197,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15539,6 +15539,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 123914,
             "range": "± 4606",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "55aeb880fc1e2dd86717227b0e7b918d2e444ec4",
+          "message": "Rename PlainOldULE to RawBytesULE (#1413)",
+          "timestamp": "2021-12-19T00:09:40-08:00",
+          "tree_id": "6ea2fc3a0e5dbba74634602b8a60a02b88db8121",
+          "url": "https://github.com/unicode-org/icu4x/commit/55aeb880fc1e2dd86717227b0e7b918d2e444ec4"
+        },
+        "date": 1639901840036,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116501,
+            "range": "± 7418",
             "unit": "ns/iter"
           }
         ]
