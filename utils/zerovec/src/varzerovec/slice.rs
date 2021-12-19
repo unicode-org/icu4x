@@ -45,7 +45,7 @@ use core::mem;
 ///         }).collect::<Vec<_>>();
 /// assert_eq!(reconstructed, all_strings);
 ///
-/// let bytes = vzv_all.get_encoded_slice();
+/// let bytes = vzv_all.as_encoded_bytes();
 /// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> = VarZeroVec::parse_byte_slice(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
 /// ```

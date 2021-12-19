@@ -231,9 +231,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
+    /// let vec = VarZeroVec::<str>::from(&strings);
     ///
-    /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     /// assert_eq!(vec.len(), 4);
     /// # Ok::<(), ZeroVecError>(())
     /// ```
@@ -251,9 +250,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings: Vec<String> = vec![];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
+    /// let vec = VarZeroVec::<str>::from(&strings);
     ///
-    /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     /// assert!(vec.is_empty());
     /// # Ok::<(), ZeroVecError>(())
     /// ```
@@ -263,8 +261,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
 
     /// Parse a VarZeroVec from a slice of the appropriate format
     ///
-    /// Slices of the right format can be obtained via [`VarZeroVec::<str>::get_serializable_bytes()`]
-    /// or [`VarZeroVec::as_encoded_bytes()`]
+    /// Slices of the right format can be obtained via [`VarZeroVec::as_encoded_bytes()`].
     ///
     /// # Example
     ///
@@ -274,9 +271,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
+    /// let vec = VarZeroVec::<str>::from(&strings);
     ///
-    /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     /// assert_eq!(&vec[0], "foo");
     /// assert_eq!(&vec[1], "bar");
     /// assert_eq!(&vec[2], "baz");
@@ -304,10 +300,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
-    /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
+    /// let vec = VarZeroVec::<str>::from(&strings);
     ///
-    /// let mut iter_results: Vec<&str> = vec.iter().collect();
+    /// let iter_results: Vec<&str> = vec.iter().collect();
     /// assert_eq!(iter_results[0], "foo");
     /// assert_eq!(iter_results[1], "bar");
     /// assert_eq!(iter_results[2], "baz");
@@ -328,10 +323,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
-    /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
+    /// let vec = VarZeroVec::<str>::from(&strings);
     ///
-    /// let mut iter_results: Vec<&str> = vec.iter().collect();
     /// assert_eq!(vec.get(0), Some("foo"));
     /// assert_eq!(vec.get(1), Some("bar"));
     /// assert_eq!(vec.get(2), Some("baz"));
@@ -354,8 +347,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
-    /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
+    /// let mut vec = VarZeroVec::<str>::from(&strings);
     ///
     /// assert_eq!(vec.len(), 4);
     /// let mutvec = vec.make_mut();
@@ -393,8 +385,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz", "quux"];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
-    /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
+    /// let vec = VarZeroVec::<str>::from(&strings);
     ///
     /// assert_eq!(vec.len(), 4);
     /// // has 'static lifetime
@@ -423,9 +414,26 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         self.as_borrowed().to_vec()
     }
 
-    /// Obtain the internal encoded slice
+    /// Gets a reference to the byte slice representing the encoded data of this VarZeroVec.
     ///
-    /// This can be passed back to [`Self::parse_byte_slice()`]
+    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
+    ///
+    /// To take the bytes as a vector, see [`Self::into_encoded_bytes()`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["foo", "bar", "baz"];
+    /// let vzv = VarZeroVec::<str>::from(&strings);
+    ///
+    /// assert_eq!(vzv, VarZeroVec::parse_byte_slice(vzv.as_encoded_bytes()).unwrap());
+    ///
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
     pub fn as_encoded_bytes(&self) -> &[u8] {
         match self {
             VarZeroVec::Owned(ref vec) => vec.as_encoded_bytes(),
@@ -433,11 +441,12 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
         }
     }
 
-    /// For a slice of `T`, get a list of bytes that can be passed to
-    /// `parse_byte_slice` to recoup the same data.
+    /// Takes the byte vector representing the encoded data of this VarZeroVec. If borrowed,
+    /// this function allocates a byte vector and copies the borrowed bytes into it.
     ///
-    /// Returns `None` if the slice is too large to be represented in a list of
-    /// bytes whose length fits in a `u32`.
+    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
+    ///
+    /// To get a reference to the bytes without moving, see [`Self::as_encoded_bytes()`].
     ///
     /// # Example
     ///
@@ -490,8 +499,7 @@ where
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["a", "b", "f", "g"];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
-    /// let mut vec: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
+    /// let vec: VarZeroVec<str> = VarZeroVec::from(&strings);
     ///
     /// assert_eq!(vec.binary_search("f"), Ok(2));
     /// assert_eq!(vec.binary_search("e"), Err(2));
