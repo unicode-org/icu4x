@@ -167,7 +167,7 @@ fn vzv_precompute_bench(c: &mut Criterion) {
     let (needles, _) = random_alphanums(2..=20, 10, seed);
     let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_encoded_bytes();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
-    let borrowed = vzv.as_borrowed();
+    let borrowed = vzv.as_components();
     let slice = vzv.as_slice();
     let single_needle = "lmnop".to_string();
 

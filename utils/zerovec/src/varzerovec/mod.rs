@@ -14,6 +14,10 @@ pub(crate) mod owned;
 mod serde;
 mod slice;
 
+#[cfg(feature = "bench")]
+#[doc(hidden)]
+pub use components::VarZeroVecComponents;
+
 pub use owned::VarZeroVecOwned;
 pub use slice::VarZeroSlice;
 
@@ -356,6 +360,12 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
             VarZeroVec::Owned(..) => true,
             VarZeroVec::Borrowed(..) => false,
         }
+    }
+
+    #[cfg(feature = "bench")]
+    #[doc(hidden)]
+    pub fn as_components<'b>(&'b self) -> VarZeroVecComponents<'b, T> {
+        self.as_slice().as_components()
     }
 }
 
