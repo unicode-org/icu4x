@@ -192,6 +192,14 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
         self.as_borrowed().into()
     }
+
+    /// Parse a VarZeroSlice from a slice of the appropriate format
+    ///
+    /// Slices of the right format can be obtained via [`VarZeroVec::<str>::get_serializable_bytes()`]
+    /// or [`VarZeroVec::as_bytes()`]
+    pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, ZeroVecError> {
+        <Self as VarULE>::parse_byte_slice(slice)
+    }
 }
 
 impl<T> VarZeroSlice<T>

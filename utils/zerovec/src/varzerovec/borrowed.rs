@@ -178,6 +178,14 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         self.entire_slice
     }
 
+    pub fn as_slice(&self) -> &'a VarZeroSlice<T> {
+        let slice = self.as_bytes();
+        unsafe {
+            // safety: the slice is known to come from a valid parsed VZV
+            VarZeroSlice::from_byte_slice_unchecked(slice)
+        }
+    }
+
     /// Get the idx'th element out of this slice. Returns `None` if out of bounds.
     #[inline]
     pub fn get(self, idx: usize) -> Option<&'a T> {
