@@ -96,8 +96,8 @@ impl FsDataProvider {
 }
 
 impl BufferProvider for FsDataProvider {
-    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let (rc_buffer, _) = self.get_rc_buffer(&req)?;
+    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        let (rc_buffer, _) = self.get_rc_buffer(req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(self.manifest.buffer_format);

@@ -116,8 +116,7 @@ where
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        // TODO(#1077): Remove the `req.clone()` when we start taking `req` by value.
-        let old_response = BufferProvider::load_buffer(self.0, req.clone())?;
+        let old_response = BufferProvider::load_buffer(self.0, req)?;
         if let Some(old_payload) = old_response.payload {
             let buffer_format = old_response
                 .metadata

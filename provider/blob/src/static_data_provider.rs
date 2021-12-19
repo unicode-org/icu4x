@@ -123,8 +123,8 @@ where
 }
 
 impl BufferProvider for StaticDataProvider {
-    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let static_buffer = self.get_file(&req)?;
+    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        let static_buffer = self.get_file(req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard07);
