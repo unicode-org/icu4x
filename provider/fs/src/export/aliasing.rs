@@ -16,6 +16,14 @@ use std::os::unix::fs::symlink as symlink_file;
 #[cfg(target_family = "windows")]
 use std::os::windows::fs::symlink_file;
 
+#[cfg(not(any(target_family = "unix", target_family = "windows")))]
+fn symlink_file<P, Q>(_: P, _: Q) -> std::io::Result<()> {
+    Err(std::io::Error::new(
+        std::io::ErrorKind::Unsupported,
+        "symlink_file not supported on this platform",
+    ))
+}
+
 pub(crate) struct Options<'a> {
     pub root: PathBuf,
     pub symlink_file_extension: &'a str,

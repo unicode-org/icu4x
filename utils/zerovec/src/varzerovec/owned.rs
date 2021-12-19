@@ -149,7 +149,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// ## Safety
     /// No safe functions may be called until `self.as_encoded_bytes()` is well-formed.
     unsafe fn set_len(&mut self, len: u32) {
-        PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[..4])[0] =
+        RawBytesULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[..4])[0] =
             len.into();
     }
 
@@ -162,8 +162,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// ## Safety
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
-    unsafe fn index_data(&self, index: usize) -> &PlainOldULE<4> {
-        &PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
+    unsafe fn index_data(&self, index: usize) -> &RawBytesULE<4> {
+        &RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
             [0]
     }
 
@@ -172,7 +172,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// ## Safety
     /// The index must be valid. self.as_encoded_bytes() must have allocated space
     /// for this index, but need not have its length appropriately set.
-    unsafe fn index_data_mut(&mut self, index: usize) -> &mut PlainOldULE<4> {
+    unsafe fn index_data_mut(&mut self, index: usize) -> &mut RawBytesULE<4> {
         let ptr = self.entire_slice.as_mut_ptr();
         let range = Self::index_range(index);
 
@@ -181,7 +181,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         // if we know the buffer is larger.
         let data = slice::from_raw_parts_mut(ptr.add(range.start), 4);
 
-        &mut PlainOldULE::<4>::from_byte_slice_unchecked_mut(data)[0]
+        &mut RawBytesULE::<4>::from_byte_slice_unchecked_mut(data)[0]
     }
 
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
@@ -192,7 +192,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
         let indices =
-            PlainOldULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[4..4 + 4 * len]);
+            RawBytesULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[4..4 + 4 * len]);
         for idx in &mut indices[starting_index..] {
             *idx = (u32::from_unaligned(*idx).wrapping_add(amount as u32)).into();
         }
@@ -360,7 +360,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
         let len = unsafe {
             u32::from_unaligned(
-                PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
+                RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
             )
         };
         if len == 0 {
@@ -380,7 +380,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         // Test index validity.
         let indices = unsafe {
-            PlainOldULE::<4>::from_byte_slice_unchecked(&self.entire_slice[4..4 + len as usize * 4])
+            RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[4..4 + len as usize * 4])
         };
         for idx in indices {
             if u32::from_unaligned(*idx) > data_len {

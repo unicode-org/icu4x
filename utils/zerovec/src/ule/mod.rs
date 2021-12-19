@@ -14,7 +14,7 @@ mod slices;
 pub use super::ZeroVecError;
 pub use chars::CharULE;
 pub use pair::PairULE;
-pub use plain::PlainOldULE;
+pub use plain::RawBytesULE;
 
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;
@@ -141,7 +141,7 @@ pub trait AsULE: Copy {
     /// The ULE type corresponding to `Self`.
     ///
     /// Types having infallible conversions from all bit values (Plain Old Data) can use
-    /// `PlainOldULE` with the desired width; for example, `u32` uses `PlainOldULE<4>`.
+    /// `RawBytesULE` with the desired width; for example, `u32` uses `RawBytesULE<4>`.
     ///
     /// Types that are not well-defined for all bit values should implement a custom ULE.
     type ULE: ULE;
