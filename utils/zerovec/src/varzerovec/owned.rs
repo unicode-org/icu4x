@@ -54,7 +54,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         }
     }
 
-    /// Construct a VarZeroVecOwned from a [`VarZeroVecComponents`] by cloning the internal data
+    /// Construct a VarZeroVecOwned from a [`VarZeroSlice`] by cloning the internal data
     pub fn from_slice(slice: &VarZeroSlice<T>) -> Self {
         Self {
             marker: PhantomData,

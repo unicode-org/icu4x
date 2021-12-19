@@ -15,9 +15,8 @@ fn usizeify(x: RawBytesULE<4>) -> usize {
     u32::from_unaligned(x) as usize
 }
 
-/// A fully-borrowed [`VarZeroVec`]. This type has the same internal buffer representation
-/// of [`VarZeroVec`], making it cheaply convertible to [`VarZeroVec`] and [`VarZeroVecOwned`];
-/// however, unlike those two, it cannot be mutated.
+/// A more parsed version of `VarZeroSlice`. This type is where most of the VarZeroVec
+/// internal representation code lies.
 ///
 /// This is *basically* an `&'a [u8]` to a zero copy buffer, but split out into
 /// the buffer components. Logically this is capable of behaving as
