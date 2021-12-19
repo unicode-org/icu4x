@@ -264,7 +264,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// Parse a VarZeroVec from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroVec::<str>::get_serializable_bytes()`]
-    /// or [`VarZeroVec::get_encoded_slice()`]
+    /// or [`VarZeroVec::as_encoded_bytes()`]
     ///
     /// # Example
     ///
@@ -411,7 +411,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T> {
-        let slice = self.get_encoded_slice();
+        let slice = self.as_encoded_bytes();
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
             VarZeroSlice::from_byte_slice_unchecked(slice)
@@ -426,10 +426,10 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// Obtain the internal encoded slice
     ///
     /// This can be passed back to [`Self::parse_byte_slice()`]
-    pub fn get_encoded_slice(&self) -> &[u8] {
+    pub fn as_encoded_bytes(&self) -> &[u8] {
         match self {
-            VarZeroVec::Owned(ref vec) => vec.entire_slice(),
-            VarZeroVec::Borrowed(vec) => vec.entire_slice(),
+            VarZeroVec::Owned(ref vec) => vec.as_encoded_bytes(),
+            VarZeroVec::Borrowed(vec) => vec.as_encoded_bytes(),
         }
     }
 
@@ -447,7 +447,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo", "bar", "baz"];
-    /// let bytes = VarZeroVec::<str>::get_serializable_bytes(&strings).unwrap();
+    /// let bytes = VarZeroVec::<str>::from(&strings).into_encoded_bytes();
     ///
     /// let mut borrowed: VarZeroVec<str> = VarZeroVec::parse_byte_slice(&bytes)?;
     /// assert_eq!(borrowed, &*strings);
@@ -455,11 +455,11 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     ///
-    pub fn get_serializable_bytes<A>(elements: &[A]) -> Option<Vec<u8>>
-    where
-        A: custom::EncodeAsVarULE<T>,
-    {
-        borrowed::get_serializable_bytes(elements)
+    pub fn into_encoded_bytes(self) -> Vec<u8> {
+        match self {
+            VarZeroVec::Owned(vec) => vec.into_encoded_bytes(),
+            VarZeroVec::Borrowed(vec) => vec.as_encoded_bytes().to_vec(),
+        }
     }
 
     /// Return whether the [`VarZeroVec`] is operating on owned or borrowed
@@ -555,7 +555,7 @@ where
     fn eq(&self, other: &VarZeroVec<'b, T>) -> bool {
         // VarULE has an API guarantee that this is equivalent
         // to `T::VarULE::eq()`
-        self.get_encoded_slice().eq(other.get_encoded_slice())
+        self.as_encoded_bytes().eq(other.as_encoded_bytes())
     }
 }
 
