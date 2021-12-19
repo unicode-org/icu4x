@@ -165,7 +165,7 @@ fn vzv_precompute_bench(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, seed) = random_alphanums(2..=20, 500, seed);
     let (needles, _) = random_alphanums(2..=20, 10, seed);
-    let bytes: Vec<u8> = VarZeroVec::<str>::get_serializable_bytes(&string_vec).unwrap();
+    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_encoded_bytes();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
     let borrowed = vzv.as_borrowed();
     let slice = vzv.as_slice();
