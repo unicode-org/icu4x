@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639901918638,
+  "lastUpdate": 1639903433302,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21881,6 +21881,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21995,
             "range": "± 1491",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8328551082ea99dda9e32a16ce126991830e81a8",
+          "message": "Add precompute benches for VZV, prefix all ZeroVecLike methods with `zvl_` (#1412)\n\n* Add benches for precomputing\r\n* prefix all ZeroVecLike methods with `zvl_`",
+          "timestamp": "2021-12-19T00:35:01-08:00",
+          "tree_id": "6702de66a80483ab93586c7bb9d8b36bbbebe809",
+          "url": "https://github.com/unicode-org/icu4x/commit/8328551082ea99dda9e32a16ce126991830e81a8"
+        },
+        "date": 1639903425481,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1199,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6121,
+            "range": "± 406",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21574,
+            "range": "± 2389",
             "unit": "ns/iter"
           }
         ]
