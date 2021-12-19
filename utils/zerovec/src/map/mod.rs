@@ -106,8 +106,8 @@ where
     /// Obtain a borrowed version of this map
     pub fn as_borrowed(&'a self) -> ZeroMapBorrowed<'a, K, V> {
         ZeroMapBorrowed {
-            keys: self.keys.as_borrowed(),
-            values: self.values.as_borrowed(),
+            keys: self.keys.zvl_as_borrowed(),
+            values: self.values.zvl_as_borrowed(),
         }
     }
 

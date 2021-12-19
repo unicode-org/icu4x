@@ -94,7 +94,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// Note: We rely on the compiler recognizing `'a` and `'b` as covariant and
     /// casting `&'b Self<'a>` to `&'b Self<'b>` when this gets called, which works
     /// out for `ZeroVec` and `VarZeroVec` containers just fine.
-    fn as_borrowed(&'a self) -> Self::BorrowedVariant;
+    fn zvl_as_borrowed(&'a self) -> Self::BorrowedVariant;
 
     /// Extract the inner borrowed variant if possible. Returns `None` if the data is owned.
     ///
@@ -103,7 +103,7 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     ///
     /// This function is similar to matching the `Borrowed` variant of `ZeroVec`
     /// or `VarZeroVec`, returning the inner borrowed type.
-    fn as_borrowed_inner(&self) -> Option<Self::BorrowedVariant>;
+    fn zvl_as_borrowed_inner(&self) -> Option<Self::BorrowedVariant>;
 
     /// Construct from the borrowed version of the type
     ///
@@ -216,10 +216,10 @@ where
         self.to_mut().reserve(addl)
     }
 
-    fn as_borrowed(&'a self) -> &'a ZeroSlice<T> {
+    fn zvl_as_borrowed(&'a self) -> &'a ZeroSlice<T> {
         &*self
     }
-    fn as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
         if let ZeroVec::Borrowed(b) = *self {
             Some(ZeroSlice::from_ule_slice(b))
         } else {
@@ -368,10 +368,10 @@ where
     fn zvl_reserve(&mut self, addl: usize) {
         self.make_mut().reserve(addl)
     }
-    fn as_borrowed(&'a self) -> VarZeroVecBorrowed<'a, T> {
+    fn zvl_as_borrowed(&'a self) -> VarZeroVecBorrowed<'a, T> {
         self.as_borrowed()
     }
-    fn as_borrowed_inner(&self) -> Option<VarZeroVecBorrowed<'a, T>> {
+    fn zvl_as_borrowed_inner(&self) -> Option<VarZeroVecBorrowed<'a, T>> {
         if let VarZeroVec::Borrowed(b) = *self {
             Some(b)
         } else {
