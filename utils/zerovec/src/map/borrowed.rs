@@ -105,22 +105,22 @@ where
     pub fn new() -> Self {
         Self {
             keys:
-                <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant::new(
+                <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant::zvl_new(
                 ),
             values:
-                <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant::new(
+                <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant::zvl_new(
                 ),
         }
     }
 
     /// The number of elements in the [`ZeroMapBorrowed`]
     pub fn len(&self) -> usize {
-        self.values.len()
+        self.values.zvl_len()
     }
 
     /// Whether the [`ZeroMapBorrowed`] is empty
     pub fn is_empty(&self) -> bool {
-        self.values.len() == 0
+        self.values.zvl_len() == 0
     }
 
     /// Get the value associated with `key`, if it exists.
@@ -146,8 +146,8 @@ where
     /// assert_eq!(borrow, Some("one"));
     /// ```
     pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
-        let index = self.keys.binary_search(key).ok()?;
-        self.values.get_borrowed(index)
+        let index = self.keys.zvl_binary_search(key).ok()?;
+        self.values.zvl_get_borrowed(index)
     }
 
     /// Returns whether `key` is contained in this map
@@ -164,7 +164,7 @@ where
     /// assert_eq!(borrowed.contains_key(&3), false);
     /// ```
     pub fn contains_key(&self, key: &K) -> bool {
-        self.keys.binary_search(key).is_ok()
+        self.keys.zvl_binary_search(key).is_ok()
     }
 
     /// Produce an ordered iterator over key-value pairs
@@ -176,24 +176,24 @@ where
             &'a <V as ZeroMapKV<'a>>::GetType,
         ),
     > + 'b {
-        (0..self.keys.len()).map(move |idx| {
+        (0..self.keys.zvl_len()).map(move |idx| {
             (
-                self.keys.get_borrowed(idx).unwrap(),
-                self.values.get_borrowed(idx).unwrap(),
+                self.keys.zvl_get_borrowed(idx).unwrap(),
+                self.values.zvl_get_borrowed(idx).unwrap(),
             )
         })
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'a <K as ZeroMapKV<'a>>::GetType> + 'b {
-        (0..self.keys.len()).map(move |idx| self.keys.get_borrowed(idx).unwrap())
+        (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get_borrowed(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = &'a <V as ZeroMapKV<'a>>::GetType> + 'b {
-        (0..self.values.len()).map(move |idx| self.values.get_borrowed(idx).unwrap())
+        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get_borrowed(idx).unwrap())
     }
 }
 
@@ -205,7 +205,7 @@ where
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K) -> Option<V> {
-        let index = self.keys.binary_search(key).ok()?;
+        let index = self.keys.zvl_binary_search(key).ok()?;
         self.values.get(index)
     }
 
@@ -214,8 +214,12 @@ where
     pub fn iter_copied_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
-        (0..self.keys.len())
-            .map(move |idx| (self.keys.get(idx).unwrap(), self.values.get(idx).unwrap()))
+        (0..self.keys.zvl_len()).map(move |idx| {
+            (
+                self.keys.zvl_get(idx).unwrap(),
+                self.values.get(idx).unwrap(),
+            )
+        })
     }
 }
 
@@ -232,7 +236,7 @@ where
     pub fn iter_copied<'b: 'a>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
         let keys = &*self.keys;
         let values = &*self.values;
-        let len = self.keys.len();
+        let len = self.keys.zvl_len();
         (0..len).map(move |idx| {
             (
                 ZeroSlice::get(keys, idx).unwrap(),

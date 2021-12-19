@@ -90,41 +90,41 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys: K::Container::new(),
-            values: V::Container::new(),
+            keys: K::Container::zvl_new(),
+            values: V::Container::zvl_new(),
         }
     }
 
     /// Construct a new [`ZeroMap`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            keys: K::Container::with_capacity(capacity),
-            values: V::Container::with_capacity(capacity),
+            keys: K::Container::zvl_with_capacity(capacity),
+            values: V::Container::zvl_with_capacity(capacity),
         }
     }
 
     /// Obtain a borrowed version of this map
     pub fn as_borrowed(&'a self) -> ZeroMapBorrowed<'a, K, V> {
         ZeroMapBorrowed {
-            keys: self.keys.as_borrowed(),
-            values: self.values.as_borrowed(),
+            keys: self.keys.zvl_as_borrowed(),
+            values: self.values.zvl_as_borrowed(),
         }
     }
 
     /// The number of elements in the [`ZeroMap`]
     pub fn len(&self) -> usize {
-        self.values.len()
+        self.values.zvl_len()
     }
 
     /// Whether the [`ZeroMap`] is empty
     pub fn is_empty(&self) -> bool {
-        self.values.len() == 0
+        self.values.zvl_len() == 0
     }
 
     /// Remove all elements from the [`ZeroMap`]
     pub fn clear(&mut self) {
-        self.keys.clear();
-        self.values.clear();
+        self.keys.zvl_clear();
+        self.values.zvl_clear();
     }
 
     /// Reserve capacity for `additional` more elements to be inserted into
@@ -132,8 +132,8 @@ where
     ///
     /// See [`Vec::reserve()`](alloc::vec::Vec::reserve) for more information.
     pub fn reserve(&mut self, additional: usize) {
-        self.keys.reserve(additional);
-        self.values.reserve(additional);
+        self.keys.zvl_reserve(additional);
+        self.values.zvl_reserve(additional);
     }
 
     /// Get the value associated with `key`, if it exists.
@@ -148,8 +148,8 @@ where
     /// assert_eq!(map.get(&3), None);
     /// ```
     pub fn get(&self, key: &K) -> Option<&V::GetType> {
-        let index = self.keys.binary_search(key).ok()?;
-        self.values.get(index)
+        let index = self.keys.zvl_binary_search(key).ok()?;
+        self.values.zvl_get(index)
     }
 
     /// Returns whether `key` is contained in this map
@@ -164,7 +164,7 @@ where
     /// assert_eq!(map.contains_key(&3), false);
     /// ```
     pub fn contains_key(&self, key: &K) -> bool {
-        self.keys.binary_search(key).is_ok()
+        self.keys.zvl_binary_search(key).is_ok()
     }
 
     /// Insert `value` with `key`, returning the existing value if it exists.
@@ -179,11 +179,11 @@ where
     /// assert_eq!(map.get(&3), None);
     /// ```
     pub fn insert(&mut self, key: &K, value: &V) -> Option<V::OwnedType> {
-        match self.keys.binary_search(key) {
-            Ok(index) => Some(self.values.replace(index, value)),
+        match self.keys.zvl_binary_search(key) {
+            Ok(index) => Some(self.values.zvl_replace(index, value)),
             Err(index) => {
-                self.keys.insert(index, key);
-                self.values.insert(index, value);
+                self.keys.zvl_insert(index, key);
+                self.values.zvl_insert(index, value);
                 None
             }
         }
@@ -201,9 +201,9 @@ where
     /// assert_eq!(map.get(&1), None);
     /// ```
     pub fn remove(&mut self, key: &K) -> Option<V::OwnedType> {
-        let idx = self.keys.binary_search(key).ok()?;
-        self.keys.remove(idx);
-        Some(self.values.remove(idx))
+        let idx = self.keys.zvl_binary_search(key).ok()?;
+        self.keys.zvl_remove(idx);
+        Some(self.values.zvl_remove(idx))
     }
 
     /// Appends `value` with `key` to the end of the underlying vector, returning
@@ -232,16 +232,16 @@ where
     /// ```
     #[must_use]
     pub fn try_append<'b>(&mut self, key: &'b K, value: &'b V) -> Option<(&'b K, &'b V)> {
-        if self.keys.len() != 0 {
-            if let Some(last) = self.keys.get(self.keys.len() - 1) {
+        if self.keys.zvl_len() != 0 {
+            if let Some(last) = self.keys.zvl_get(self.keys.zvl_len() - 1) {
                 if K::Container::t_cmp_get(key, last) != Ordering::Greater {
                     return Some((key, value));
                 }
             }
         }
 
-        self.keys.push(key);
-        self.values.push(value);
+        self.keys.zvl_push(key);
+        self.values.zvl_push(value);
         None
     }
 
@@ -254,18 +254,22 @@ where
             &'b <V as ZeroMapKV<'a>>::GetType,
         ),
     > {
-        (0..self.keys.len())
-            .map(move |idx| (self.keys.get(idx).unwrap(), self.values.get(idx).unwrap()))
+        (0..self.keys.zvl_len()).map(move |idx| {
+            (
+                self.keys.zvl_get(idx).unwrap(),
+                self.values.zvl_get(idx).unwrap(),
+            )
+        })
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
-        (0..self.keys.len()).map(move |idx| self.keys.get(idx).unwrap())
+        (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        (0..self.values.len()).map(move |idx| self.values.get(idx).unwrap())
+        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }
 
@@ -277,7 +281,7 @@ where
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K) -> Option<V> {
-        let index = self.keys.binary_search(key).ok()?;
+        let index = self.keys.zvl_binary_search(key).ok()?;
         ZeroSlice::get(&*self.values, index)
     }
 
@@ -286,9 +290,9 @@ where
     pub fn iter_copied_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
-        (0..self.keys.len()).map(move |idx| {
+        (0..self.keys.zvl_len()).map(move |idx| {
             (
-                self.keys.get(idx).unwrap(),
+                self.keys.zvl_get(idx).unwrap(),
                 ZeroSlice::get(&*self.values, idx).unwrap(),
             )
         })
@@ -326,8 +330,8 @@ where
 {
     fn from(other: ZeroMapBorrowed<'a, K, V>) -> Self {
         Self {
-            keys: K::Container::from_borrowed(other.keys),
-            values: V::Container::from_borrowed(other.values),
+            keys: K::Container::zvl_from_borrowed(other.keys),
+            values: V::Container::zvl_from_borrowed(other.values),
         }
     }
 }
