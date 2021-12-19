@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639914782317,
+  "lastUpdate": 1639936825382,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21965,6 +21965,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25677,
             "range": "± 1119",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "355487a0e0e42493d55373a569f7651791c8cc50",
+          "message": "Change DataRequest to be borrowed in BufferProvider (#1416)",
+          "timestamp": "2021-12-19T11:50:56-06:00",
+          "tree_id": "7e877899a9a8d801d666bfac53fe908e2de00c82",
+          "url": "https://github.com/unicode-org/icu4x/commit/355487a0e0e42493d55373a569f7651791c8cc50"
+        },
+        "date": 1639936816265,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1118,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5832,
+            "range": "± 508",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24774,
+            "range": "± 1684",
             "unit": "ns/iter"
           }
         ]
