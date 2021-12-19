@@ -12,11 +12,13 @@ use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::mem;
 
-/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
-/// should not be implementing or calling this trait directly.
+/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
+/// should not be implementing or calling this trait directly.**
 ///
 /// The T type is the type received by [`Self::binary_search()`], as well as the one used
 /// for human-readable serialization.
+///
+/// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
 pub trait ZeroVecLike<'a, T: ?Sized> {
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
@@ -49,21 +51,25 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R;
 }
 
-/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
-/// should not be implementing or calling this trait directly.
+/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
+/// should not be implementing or calling this trait directly.**
 ///
 /// This trait augments [`ZeroVecLike`] with methods allowing for taking
 /// longer references to the underlying buffer, for borrowed-only vector types.
+///
+/// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
 pub trait BorrowedZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// Get element at `index`, with a longer lifetime
     fn zvl_get_borrowed(&self, index: usize) -> Option<&'a Self::GetType>;
 }
 
-/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
-/// should not be implementing or calling this trait directly.
+/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
+/// should not be implementing or calling this trait directly.**
 ///
 /// This trait augments [`ZeroVecLike`] with methods allowing for mutation of the underlying
 /// vector for owned vector types.
+///
+/// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
 pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
