@@ -109,8 +109,8 @@ where
 }
 
 impl BufferProvider for BlobDataProvider {
-    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let yoked_buffer = self.get_file(&req)?;
+    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        let yoked_buffer = self.get_file(req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard07);

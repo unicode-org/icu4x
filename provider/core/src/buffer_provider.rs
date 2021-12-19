@@ -14,7 +14,7 @@ impl DataMarker for BufferMarker {
 }
 
 pub trait BufferProvider {
-    fn load_buffer(&self, req: DataRequest) -> Result<DataResponse<BufferMarker>, Error>;
+    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, Error>;
 }
 
 /// An enum expressing all Serde formats known to ICU4X.
