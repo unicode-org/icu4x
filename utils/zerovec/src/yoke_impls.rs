@@ -8,7 +8,6 @@
 use crate::map::ZeroMapBorrowed;
 use crate::map::ZeroMapKV;
 use crate::ule::*;
-use crate::varzerovec::VarZeroVecBorrowed;
 use crate::{VarZeroVec, ZeroMap, ZeroVec};
 use core::{mem, ptr};
 use yoke::*;
@@ -42,31 +41,6 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
 /// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'static, T> {
     type Output = VarZeroVec<'a, T>;
-    fn transform(&'a self) -> &'a Self::Output {
-        self
-    }
-    fn transform_owned(self) -> Self::Output {
-        self
-    }
-    unsafe fn make(from: Self::Output) -> Self {
-        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
-        let ptr: *const Self = (&from as *const Self::Output).cast();
-        mem::forget(from);
-        ptr::read(ptr)
-    }
-
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
-    }
-}
-
-// This impl is similar to the impl on Cow and is safe for the same reasons
-/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
-unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVecBorrowed<'static, T> {
-    type Output = VarZeroVecBorrowed<'a, T>;
     fn transform(&'a self) -> &'a Self::Output {
         self
     }
@@ -213,7 +187,7 @@ where
 #[allow(non_camel_case_types)]
 mod test {
     use super::*;
-    use crate::zerovec::ZeroSlice;
+    use crate::{VarZeroSlice, ZeroSlice};
 
     #[derive(yoke::Yokeable)]
     struct DeriveTest_ZeroVec<'data> {
@@ -226,8 +200,8 @@ mod test {
     }
 
     #[derive(yoke::Yokeable)]
-    struct DeriveTest_VarZeroVecBorrowed<'data> {
-        _data: VarZeroVecBorrowed<'data, str>,
+    struct DeriveTest_VarZeroSlice<'data> {
+        _data: &'data VarZeroSlice<str>,
     }
 
     #[derive(yoke::Yokeable)]
