@@ -88,7 +88,7 @@ where
     ///
     /// // The little-endian bytes correspond to the numbers on the following line.
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let nums: &[PlainOldULE<2>] = &[211_u16.as_unaligned(), 281_u16.as_unaligned(),
+    /// let nums: &[RawBytesULE<2>] = &[211_u16.as_unaligned(), 281_u16.as_unaligned(),
     ///                                 421_u16.as_unaligned(), 461_u16.as_unaligned()];
     ///
     /// let zerovec = ZeroVec::<u16>::Borrowed(nums);
@@ -726,7 +726,7 @@ mod tests {
                 .unwrap()
                 .get(19)
         );
-        // TODO(#1144): Check for correct slice length in PlainOldULE
+        // TODO(#1144): Check for correct slice length in RawBytesULE
         // assert_eq!(
         //     None,
         //     ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[77..])

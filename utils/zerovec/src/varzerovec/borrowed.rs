@@ -11,7 +11,7 @@ use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::{iter, mem};
 
-fn usizeify(x: PlainOldULE<4>) -> usize {
+fn usizeify(x: RawBytesULE<4>) -> usize {
     u32::from_unaligned(x) as usize
 }
 
@@ -27,7 +27,7 @@ fn usizeify(x: PlainOldULE<4>) -> usize {
 /// See [`VarZeroVecBorrowed::parse_byte_slice()`] for information on the internal invariants involved
 pub struct VarZeroVecBorrowed<'a, T: ?Sized> {
     /// The list of indices into the `things` slice
-    indices: &'a [PlainOldULE<4>],
+    indices: &'a [RawBytesULE<4>],
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
     /// The original slice this was constructed from
@@ -99,7 +99,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
             });
         }
         let len_bytes = slice.get(0..4).ok_or(ZeroVecError::VarZeroVecFormatError)?;
-        let len_ule = PlainOldULE::<4>::parse_byte_slice(len_bytes)
+        let len_ule = RawBytesULE::<4>::parse_byte_slice(len_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
         let len = u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?)
@@ -107,7 +107,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
         let indices_bytes = slice
             .get(4..4 * len + 4)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
-        let indices = PlainOldULE::<4>::parse_byte_slice(indices_bytes)
+        let indices = RawBytesULE::<4>::parse_byte_slice(indices_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
             .get(4 * len + 4..)
@@ -145,11 +145,11 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
             };
         }
         let len_bytes = slice.get_unchecked(0..4);
-        let len_ule = PlainOldULE::<4>::from_byte_slice_unchecked(len_bytes);
+        let len_ule = RawBytesULE::<4>::from_byte_slice_unchecked(len_bytes);
 
         let len = u32::from_unaligned(*len_ule.get_unchecked(0)) as usize;
         let indices_bytes = slice.get_unchecked(4..4 * len + 4);
-        let indices = PlainOldULE::<4>::from_byte_slice_unchecked(indices_bytes);
+        let indices = RawBytesULE::<4>::from_byte_slice_unchecked(indices_bytes);
         let things = slice.get_unchecked(4 * len + 4..);
 
         VarZeroVecBorrowed {

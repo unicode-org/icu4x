@@ -116,12 +116,12 @@ mod test {
 
         // Compare to u32
         let u32s: Vec<u32> = chars.iter().copied().map(u32::from).collect();
-        let u32_ules: Vec<PlainOldULE<4>> = u32s
+        let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
             .map(<u32 as AsULE>::as_unaligned)
             .collect();
-        let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
+        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         assert_eq!(char_bytes, u32_bytes);
 
         // Compare to golden expected data
@@ -135,23 +135,23 @@ mod test {
     fn test_failures() {
         // 119 and 120 are valid, but not 0xD800 (high surrogate)
         let u32s = [119, 0xD800, 120];
-        let u32_ules: Vec<PlainOldULE<4>> = u32s
+        let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
             .map(<u32 as AsULE>::as_unaligned)
             .collect();
-        let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
+        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(matches!(parsed_ules_result, Err(_)));
 
         // 0x20FFFF is out of range for a char
         let u32s = [0x20FFFF];
-        let u32_ules: Vec<PlainOldULE<4>> = u32s
+        let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
             .map(<u32 as AsULE>::as_unaligned)
             .collect();
-        let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
+        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(matches!(parsed_ules_result, Err(_)));
     }
