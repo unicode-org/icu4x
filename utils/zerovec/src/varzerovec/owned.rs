@@ -56,17 +56,18 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<A>(elements: &[A]) -> Self
+    pub fn try_from_elements<A>(elements: &[A]) -> Result<Self, &'static str>
     where
         A: custom::EncodeAsVarULE<T>,
     {
-        Self {
+        Ok(Self {
             marker: PhantomData,
-            entire_slice: borrowed::get_serializable_bytes(elements).expect(
+            // TODO(#1410): Rethink length errors in VZV.
+            entire_slice: borrowed::get_serializable_bytes(elements).ok_or(
                 "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u32 in size",
-            ),
-        }
+            )?,
+        })
     }
 
     /// Try to allocate a buffer with enough capacity for `capacity`
@@ -581,7 +582,7 @@ mod test {
     #[test]
     fn test_remove_integrity() {
         let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
+        let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&items).unwrap();
 
         for index in [0, 2, 4, 0, 1, 1, 0] {
             items.remove(index);
@@ -592,7 +593,7 @@ mod test {
 
     #[test]
     fn test_removing_last_element_clears() {
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&["buy some apples"]);
+        let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&["buy some apples"]).unwrap();
         assert!(!zerovec.as_borrowed().entire_slice().is_empty());
         zerovec.remove(0);
         assert!(zerovec.as_borrowed().entire_slice().is_empty());
@@ -607,7 +608,7 @@ mod test {
     #[test]
     fn test_replace_integrity() {
         let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
+        let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&items).unwrap();
 
         // Replace with an element of the same size (and the first element)
         items[0] = "blablah";

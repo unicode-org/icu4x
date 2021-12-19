@@ -519,7 +519,7 @@ where
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
-        VarZeroVecOwned::from_elements(elements).into()
+        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }
 
@@ -530,7 +530,7 @@ where
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
-        VarZeroVecOwned::from_elements(elements).into()
+        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }
 
@@ -541,7 +541,7 @@ where
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
-        VarZeroVecOwned::from_elements(elements).into()
+        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }
 

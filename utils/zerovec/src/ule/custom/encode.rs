@@ -187,7 +187,7 @@ where
     }
 
     fn encode_var_ule_len(&self) -> usize {
-        // TODO: Remove the unwrap somehow
+        // TODO(#1410): Rethink length errors in VZV.
         crate::varzerovec::borrowed::compute_serializable_len(self).unwrap() as usize
     }
 
