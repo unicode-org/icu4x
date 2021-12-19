@@ -30,7 +30,7 @@ pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 /// // Deserializing to ZeroMap requires no heap allocations.
 /// let zero_map: ZeroMapBorrowed<u32, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.zvl_get(&1), Some("one"));
+/// assert_eq!(zero_map.get(&1), Some("one"));
 /// ```
 ///
 /// This can be obtained from a [`ZeroMap`](super::ZeroMap) via [`ZeroMap::as_borrowed`](super::ZeroMap::as_borrowed)
@@ -137,10 +137,10 @@ where
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
     /// let borrowed = map.as_borrowed();
-    /// assert_eq!(borrowed.zvl_get(&1), Some("one"));
-    /// assert_eq!(borrowed.zvl_get(&3), None);
+    /// assert_eq!(borrowed.get(&1), Some("one"));
+    /// assert_eq!(borrowed.get(&3), None);
     ///
-    /// let borrow = borrowed.zvl_get(&1);
+    /// let borrow = borrowed.get(&1);
     /// drop(borrowed);
     /// // still exists after the ZeroMapBorrowed has been dropped
     /// assert_eq!(borrow, Some("one"));

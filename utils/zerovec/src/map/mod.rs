@@ -44,7 +44,7 @@ pub use vecs::{MutableZeroVecLike, ZeroVecLike};
 /// // Deserializing to ZeroMap requires no heap allocations.
 /// let zero_map: ZeroMap<u32, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.zvl_get(&1), Some("one"));
+/// assert_eq!(zero_map.get(&1), Some("one"));
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
@@ -144,8 +144,8 @@ where
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
-    /// assert_eq!(map.zvl_get(&1), Some("one"));
-    /// assert_eq!(map.zvl_get(&3), None);
+    /// assert_eq!(map.get(&1), Some("one"));
+    /// assert_eq!(map.get(&3), None);
     /// ```
     pub fn get(&self, key: &K) -> Option<&V::GetType> {
         let index = self.keys.zvl_binary_search(key).ok()?;
@@ -175,8 +175,8 @@ where
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
-    /// assert_eq!(map.zvl_get(&1), Some("one"));
-    /// assert_eq!(map.zvl_get(&3), None);
+    /// assert_eq!(map.get(&1), Some("one"));
+    /// assert_eq!(map.get(&3), None);
     /// ```
     pub fn insert(&mut self, key: &K, value: &V) -> Option<V::OwnedType> {
         match self.keys.zvl_binary_search(key) {
@@ -198,7 +198,7 @@ where
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
     /// assert_eq!(map.remove(&1), Some("one".to_owned().into_boxed_str()));
-    /// assert_eq!(map.zvl_get(&1), None);
+    /// assert_eq!(map.get(&1), None);
     /// ```
     pub fn remove(&mut self, key: &K) -> Option<V::OwnedType> {
         let idx = self.keys.zvl_binary_search(key).ok()?;
@@ -222,13 +222,13 @@ where
     /// let unsuccessful = map.try_append(&2, "dos");
     /// assert!(unsuccessful.is_some(), "append out of order");
     ///
-    /// assert_eq!(map.zvl_get(&1), Some("uno"));
+    /// assert_eq!(map.get(&1), Some("uno"));
     ///
     /// // contains the original value for the key: 3
-    /// assert_eq!(map.zvl_get(&3), Some("tres"));
+    /// assert_eq!(map.get(&3), Some("tres"));
     ///
     /// // not appended since it wasn't in order
-    /// assert_eq!(map.zvl_get(&2), None);
+    /// assert_eq!(map.get(&2), None);
     /// ```
     #[must_use]
     pub fn try_append<'b>(&mut self, key: &'b K, value: &'b V) -> Option<(&'b K, &'b V)> {
