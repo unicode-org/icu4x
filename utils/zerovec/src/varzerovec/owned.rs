@@ -105,7 +105,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     #[inline]
-    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
+    pub fn as_components<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
         unsafe {
             // safety: VarZeroVecOwned is guaranteed to parse here
             VarZeroVecComponents::from_bytes_unchecked(&self.entire_slice)
@@ -199,7 +199,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroVecOwned`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        self.as_borrowed().into()
+        self.as_components().into()
     }
 
     /// Empty the vector
@@ -563,9 +563,9 @@ mod test {
     #[test]
     fn test_removing_last_element_clears() {
         let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&["buy some apples"]).unwrap();
-        assert!(!zerovec.as_borrowed().as_bytes().is_empty());
+        assert!(!zerovec.as_components().as_bytes().is_empty());
         zerovec.remove(0);
-        assert!(zerovec.as_borrowed().as_bytes().is_empty());
+        assert!(zerovec.as_components().as_bytes().is_empty());
     }
 
     #[test]

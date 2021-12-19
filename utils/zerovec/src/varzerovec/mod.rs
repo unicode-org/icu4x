@@ -221,9 +221,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     }
 
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
-    pub fn as_borrowed<'b>(&'b self) -> VarZeroVecComponents<'b, T> {
+    pub fn as_components<'b>(&'b self) -> VarZeroVecComponents<'b, T> {
         match self {
-            VarZeroVec::Owned(ref owned) => owned.as_borrowed(),
+            VarZeroVec::Owned(ref owned) => owned.as_components(),
             VarZeroVec::Borrowed(ref borrowed) => *borrowed,
         }
     }

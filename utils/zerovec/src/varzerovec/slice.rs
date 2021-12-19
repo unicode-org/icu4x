@@ -68,7 +68,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     }
     /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     #[inline]
-    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
+    pub fn as_components<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
         unsafe {
             // safety: VarZeroSlice is guaranteed to parse here
             VarZeroVecComponents::from_bytes_unchecked(&self.entire_slice)
@@ -91,7 +91,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn len(&self) -> usize {
-        self.as_borrowed().len()
+        self.as_components().len()
     }
 
     /// Returns `true` if the slice contains no elements.
@@ -110,7 +110,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn is_empty(&self) -> bool {
-        self.as_borrowed().is_empty()
+        self.as_components().is_empty()
     }
 
     /// Obtain an iterator over this slice's elements
@@ -133,7 +133,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.as_borrowed().iter()
+        self.as_components().iter()
     }
 
     /// Get one of this slice's elements, returning None if the index is out of bounds
@@ -157,12 +157,12 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn get(&self, idx: usize) -> Option<&T> {
-        self.as_borrowed().get(idx)
+        self.as_components().get(idx)
     }
 
     /// Obtain an owned `Vec<Box<T>>` out of this
     pub fn to_vec(&self) -> Vec<Box<T>> {
-        self.as_borrowed().to_vec()
+        self.as_components().to_vec()
     }
 
     /// Get a reference to the entire encoded backing buffer of this slice
@@ -195,7 +195,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroSlice`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        self.as_borrowed().into()
+        self.as_components().into()
     }
 
     /// Parse a VarZeroSlice from a slice of the appropriate format
@@ -234,7 +234,7 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.as_borrowed().binary_search(x)
+        self.as_components().binary_search(x)
     }
 }
 
