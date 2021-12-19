@@ -6,7 +6,7 @@ use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
-use core::ops::Index;
+use core::ops::{Index, Deref};
 
 pub(crate) mod borrowed;
 pub(crate) mod owned;
@@ -194,6 +194,13 @@ impl<T: VarULE + ?Sized> Default for VarZeroVec<'_, T> {
     #[inline]
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl<T: VarULE + ?Sized> Deref for VarZeroVec<'_, T> {
+    type Target = VarZeroSlice<T>;
+    fn deref(&self) -> &VarZeroSlice<T> {
+        self.as_slice()
     }
 }
 
