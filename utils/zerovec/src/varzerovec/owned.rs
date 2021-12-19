@@ -58,7 +58,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     pub fn from_borrowed(borrowed: VarZeroVecBorrowed<T>) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: borrowed.as_encoded_bytes().to_vec(),
+            entire_slice: borrowed.as_bytes().to_vec(),
         }
     }
 
@@ -79,7 +79,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T> {
-        let slice: &[u8] = &*self.entire_slice();
+        let slice: &[u8] = &*self.as_bytes();
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
             VarZeroSlice::from_byte_slice_unchecked(slice)
@@ -214,13 +214,13 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
     /// Get a reference to the entire backing buffer of this vector
     #[inline]
-    pub fn as_encoded_bytes(&self) -> &[u8] {
+    pub fn as_bytes(&self) -> &[u8] {
         &self.entire_slice
     }
 
     /// Consume this vector and return the backing buffer
     #[inline]
-    pub fn into_encoded_bytes(self) -> Vec<u8> {
+    pub fn into_bytes(self) -> Vec<u8> {
         self.entire_slice
     }
 
@@ -589,9 +589,9 @@ mod test {
     #[test]
     fn test_removing_last_element_clears() {
         let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&["buy some apples"]).unwrap();
-        assert!(!zerovec.as_borrowed().as_encoded_bytes().is_empty());
+        assert!(!zerovec.as_borrowed().as_bytes().is_empty());
         zerovec.remove(0);
-        assert!(zerovec.as_borrowed().as_encoded_bytes().is_empty());
+        assert!(zerovec.as_borrowed().as_bytes().is_empty());
     }
 
     #[test]

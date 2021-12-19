@@ -122,7 +122,7 @@ where
             }
             seq.end()
         } else {
-            serializer.serialize_bytes(self.as_encoded_bytes())
+            serializer.serialize_bytes(self.as_bytes())
         }
     }
 }
