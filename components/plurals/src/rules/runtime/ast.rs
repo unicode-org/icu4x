@@ -456,7 +456,7 @@ mod serde {
                 let string: String = self.to_string();
                 serializer.serialize_str(&string)
             } else {
-                serializer.serialize_bytes(self.0.get_encoded_slice())
+                serializer.serialize_bytes(self.0.as_encoded_bytes())
             }
         }
     }
@@ -634,7 +634,7 @@ mod test {
         let relations = alloc::vec![relation];
         let vzv = VarZeroVec::from(relations.as_slice());
         assert_eq!(
-            vzv.get_encoded_slice(),
+            vzv.as_encoded_bytes(),
             &[1, 0, 0, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]
         );
     }
