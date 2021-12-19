@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639794266767,
+  "lastUpdate": 1639893444816,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21755,6 +21755,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25932,
             "range": "± 758",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da07d1d672a0ce53c69bc79e52fc33eddba94728",
+          "message": "Improve EncodeAsVarULE (#1385)",
+          "timestamp": "2021-12-18T21:49:10-08:00",
+          "tree_id": "1fff779fa4b2bb235086d18c2aee5d51fa1cf5a2",
+          "url": "https://github.com/unicode-org/icu4x/commit/da07d1d672a0ce53c69bc79e52fc33eddba94728"
+        },
+        "date": 1639893437731,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1147,
+            "range": "± 187",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5615,
+            "range": "± 358",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22245,
+            "range": "± 1934",
             "unit": "ns/iter"
           }
         ]
