@@ -32,9 +32,9 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// The length of this vector
     fn zvl_len(&self) -> usize;
     /// Check if this vector is in ascending order according to `T`s `Ord` impl
-    fn is_ascending(&self) -> bool;
+    fn zvl_is_ascending(&self) -> bool;
     /// Check if this vector is empty
-    fn is_empty(&self) -> bool {
+    fn zvl_is_empty(&self) -> bool {
         self.zvl_len() == 0
     }
 
@@ -131,7 +131,7 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
-    fn is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool {
         self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
@@ -163,7 +163,7 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(*self)
     }
-    fn is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool {
         self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
@@ -254,7 +254,7 @@ where
     fn zvl_len(&self) -> usize {
         self.len()
     }
-    fn is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool {
         if !self.is_empty() {
             let mut prev = self.get(0).unwrap();
             for element in self.iter().skip(1) {
@@ -297,7 +297,7 @@ where
     fn zvl_len(&self) -> usize {
         Self::len(*self)
     }
-    fn is_ascending(&self) -> bool {
+    fn zvl_is_ascending(&self) -> bool {
         if !self.is_empty() {
             let mut prev = self.get(0).unwrap();
             for element in self.iter().skip(1) {

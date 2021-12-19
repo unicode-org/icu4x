@@ -141,7 +141,7 @@ where
                     "Mismatched key and value sizes in ZeroMap",
                 ));
             }
-            if !keys.is_ascending() {
+            if !keys.zvl_is_ascending() {
                 return Err(de::Error::custom("ZeroMap deserializing keys out of order"));
             }
             Ok(Self { keys, values })
