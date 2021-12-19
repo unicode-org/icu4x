@@ -207,10 +207,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         self.entire_slice.clear()
     }
 
-    /// Convert this vector to a regular vector of boxed DSTs
-    pub fn to_vec(&self) -> Vec<Box<T>> {
-        self.as_borrowed().to_vec()
-    }
 
     /// Consume this vector and return the backing buffer
     #[inline]
@@ -462,22 +458,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             let place = self.shift(index, value_len as u32, ShiftType::Replace);
             element.encode_var_ule_write(place);
         }
-    }
-}
-
-impl<T> VarZeroVecOwned<T>
-where
-    T: VarULE,
-    T: ?Sized,
-    T: Ord,
-{
-    /// Binary searches a sorted `VarZeroVecOwned<T>` for the given element. FoGeneralr more information, see
-    /// the primitive function [`binary_search`].
-    ///
-    /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
-    #[inline]
-    pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.as_borrowed().binary_search(x)
     }
 }
 
