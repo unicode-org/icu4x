@@ -38,6 +38,13 @@ enum ShiftType {
     Remove,
 }
 
+impl<T: VarULE + ?Sized> Deref for VarZeroVecOwned<T> {
+    type Target = VarZeroSlice<T>;
+    fn deref(&self) -> &VarZeroSlice<T> {
+        self.as_slice()
+    }
+}
+
 impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Construct an empty VarZeroVecOwned
     pub fn new() -> Self {
@@ -70,6 +77,15 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         })
     }
 
+    /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
+    pub fn as_slice(&self) -> &VarZeroSlice<T> {
+        let slice: &[u8] = &*self.entire_slice();
+        unsafe {
+            // safety: the slice is known to come from a valid parsed VZV
+            VarZeroSlice::from_byte_slice_unchecked(slice)
+        }
+    }
+
     /// Try to allocate a buffer with enough capacity for `capacity`
     /// elements. Since `T` can take up an arbitrary size this will
     /// just allocate enough space for 4-byte Ts
@@ -94,26 +110,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // safety: VarZeroVecOwned is guaranteed to parse here
             VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
         }
-    }
-
-    /// Get the number of elements in this vector
-    pub fn len(&self) -> usize {
-        self.as_borrowed().len()
-    }
-
-    /// Returns `true` if the vector contains no elements.
-    pub fn is_empty(&self) -> bool {
-        self.as_borrowed().is_empty()
-    }
-
-    /// Obtain an iterator over VarZeroVecOwned's elements
-    pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.as_borrowed().iter()
-    }
-
-    /// Get one of VarZeroVecOwned's elements, returning None if the index is out of bounds
-    pub fn get(&self, idx: usize) -> Option<&T> {
-        self.as_borrowed().get(idx)
     }
 
     /// Get the position of a specific element in the data segment.
@@ -496,7 +492,7 @@ where
     T: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_list().entries(self.iter()).finish()
+        VarZeroSlice::fmt(self, f)
     }
 }
 
