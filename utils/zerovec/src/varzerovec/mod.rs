@@ -6,7 +6,7 @@ use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
-use core::ops::{Deref, Index};
+use core::ops::Deref;
 
 pub(crate) mod borrowed;
 pub(crate) mod owned;
@@ -397,13 +397,6 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
             VarZeroVec::Owned(..) => true,
             VarZeroVec::Borrowed(..) => false,
         }
-    }
-}
-
-impl<'a, T: VarULE + ?Sized> Index<usize> for VarZeroVec<'a, T> {
-    type Output = T;
-    fn index(&self, index: usize) -> &Self::Output {
-        self.get(index).expect("Indexing VarZeroVec out of bounds")
     }
 }
 

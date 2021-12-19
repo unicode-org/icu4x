@@ -491,13 +491,6 @@ where
     }
 }
 
-impl<T: VarULE + ?Sized> Index<usize> for VarZeroVecOwned<T> {
-    type Output = T;
-    fn index(&self, index: usize) -> &Self::Output {
-        self.get(index).expect("Indexing VarZeroVec out of bounds")
-    }
-}
-
 impl<T: VarULE + ?Sized> fmt::Debug for VarZeroVecOwned<T>
 where
     T: fmt::Debug,

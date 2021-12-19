@@ -6,6 +6,7 @@ use super::borrowed::VarZeroVecBorrowed;
 use super::*;
 use core::marker::PhantomData;
 use core::mem;
+use core::ops::Index;
 
 /// A zero-copy "slice", that works for unsized types, i.e. the zero-copy version of `[T]`
 /// where `T` is not `Sized`.
@@ -227,6 +228,13 @@ unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroSlice<T> {
 
     fn as_byte_slice(&self) -> &[u8] {
         &self.entire_slice
+    }
+}
+
+impl<T: VarULE + ?Sized> Index<usize> for VarZeroSlice<T> {
+    type Output = T;
+    fn index(&self, index: usize) -> &Self::Output {
+        self.get(index).expect("Indexing VarZeroVec out of bounds")
     }
 }
 
