@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639901477597,
+  "lastUpdate": 1639903008536,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5663,6 +5663,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/55aeb880fc1e2dd86717227b0e7b918d2e444ec4"
         },
         "date": 1639901470208,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8328551082ea99dda9e32a16ce126991830e81a8",
+          "message": "Add precompute benches for VZV, prefix all ZeroVecLike methods with `zvl_` (#1412)\n\n* Add benches for precomputing\r\n* prefix all ZeroVecLike methods with `zvl_`",
+          "timestamp": "2021-12-19T00:35:01-08:00",
+          "tree_id": "6702de66a80483ab93586c7bb9d8b36bbbebe809",
+          "url": "https://github.com/unicode-org/icu4x/commit/8328551082ea99dda9e32a16ce126991830e81a8"
+        },
+        "date": 1639903000313,
         "tool": "ndjson",
         "benches": [
           {
