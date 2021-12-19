@@ -326,37 +326,13 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T> {
-        let slice = self.as_bytes();
+        let slice = match *self {
+            VarZeroVec::Owned(ref owned) => return &**owned,
+            VarZeroVec::Borrowed(b) => b.as_bytes(),
+        };
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
             VarZeroSlice::from_byte_slice_unchecked(slice)
-        }
-    }
-
-    /// Gets a reference to the byte slice representing the encoded data of this VarZeroVec.
-    ///
-    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
-    ///
-    /// To take the bytes as a vector, see [`Self::into_bytes()`].
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// # use std::str::Utf8Error;
-    /// # use zerovec::ule::ZeroVecError;
-    /// # use zerovec::VarZeroVec;
-    ///
-    /// let strings = vec!["foo", "bar", "baz"];
-    /// let vzv = VarZeroVec::<str>::from(&strings);
-    ///
-    /// assert_eq!(vzv, VarZeroVec::parse_byte_slice(vzv.as_bytes()).unwrap());
-    ///
-    /// # Ok::<(), ZeroVecError>(())
-    /// ```
-    pub fn as_bytes(&self) -> &[u8] {
-        match self {
-            VarZeroVec::Owned(ref vec) => vec.as_bytes(),
-            VarZeroVec::Borrowed(vec) => vec.as_bytes(),
         }
     }
 

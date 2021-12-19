@@ -160,6 +160,31 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
         self.as_borrowed().to_vec()
     }
 
+    /// Get a reference to the entire encoded backing buffer of this slice
+    ///
+    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
+    ///
+    /// To take the bytes as a vector, see [`Self::into_bytes()`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["foo", "bar", "baz"];
+    /// let vzv = VarZeroVec::<str>::from(&strings);
+    ///
+    /// assert_eq!(vzv, VarZeroVec::parse_byte_slice(vzv.as_bytes()).unwrap());
+    ///
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
+    #[inline]
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.entire_slice
+    }
+
     /// Get this [`VarZeroSlice`] as a borrowed [`VarZeroVec`]
     ///
     /// If you wish to repeatedly call methods on this [`VarZeroSlice`],

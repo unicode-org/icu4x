@@ -58,7 +58,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     pub fn from_borrowed(borrowed: VarZeroVecBorrowed<T>) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: borrowed.as_bytes().to_vec(),
+            entire_slice: borrowed.as_bytes().into(),
         }
     }
 
@@ -79,7 +79,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T> {
-        let slice: &[u8] = &*self.as_bytes();
+        let slice: &[u8] = &*self.entire_slice;
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
             VarZeroSlice::from_byte_slice_unchecked(slice)
@@ -210,12 +210,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Convert this vector to a regular vector of boxed DSTs
     pub fn to_vec(&self) -> Vec<Box<T>> {
         self.as_borrowed().to_vec()
-    }
-
-    /// Get a reference to the entire backing buffer of this vector
-    #[inline]
-    pub fn as_bytes(&self) -> &[u8] {
-        &self.entire_slice
     }
 
     /// Consume this vector and return the backing buffer
