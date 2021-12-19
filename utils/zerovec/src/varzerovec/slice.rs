@@ -195,7 +195,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroSlice`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        self.as_components().into()
+        self.into()
     }
 
     /// Parse a VarZeroSlice from a slice of the appropriate format

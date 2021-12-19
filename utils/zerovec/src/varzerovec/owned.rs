@@ -55,10 +55,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Construct a VarZeroVecOwned from a [`VarZeroVecComponents`] by cloning the internal data
-    pub fn from_borrowed(borrowed: VarZeroVecComponents<T>) -> Self {
+    pub fn from_slice(slice: &VarZeroSlice<T>) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: borrowed.as_bytes().into(),
+            entire_slice: slice.as_bytes().into(),
         }
     }
 
@@ -101,15 +101,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// just allocate enough space for 4-byte Ts
     pub(crate) fn reserve(&mut self, capacity: usize) {
         self.entire_slice.reserve(capacity * 8)
-    }
-
-    /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
-    #[inline]
-    pub fn as_components<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
-        unsafe {
-            // safety: VarZeroVecOwned is guaranteed to parse here
-            VarZeroVecComponents::from_bytes_unchecked(&self.entire_slice)
-        }
     }
 
     /// Get the position of a specific element in the data segment.
@@ -199,7 +190,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroVecOwned`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        self.as_components().into()
+        self.as_slice().into()
     }
 
     /// Empty the vector
@@ -488,9 +479,9 @@ where
     }
 }
 
-impl<'a, T: ?Sized + VarULE> From<VarZeroVecComponents<'a, T>> for VarZeroVecOwned<T> {
-    fn from(other: VarZeroVecComponents<'a, T>) -> Self {
-        Self::from_borrowed(other)
+impl<'a, T: ?Sized + VarULE> From<&'a VarZeroSlice<T>> for VarZeroVecOwned<T> {
+    fn from(other: &'a VarZeroSlice<T>) -> Self {
+        Self::from_slice(other)
     }
 }
 

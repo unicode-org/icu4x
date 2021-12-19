@@ -146,7 +146,7 @@ pub enum VarZeroVec<'a, T: ?Sized> {
     /// let vzv: VarZeroVec<str> = VarZeroVec::parse_byte_slice(bytes).unwrap();
     /// assert!(matches!(vzv, VarZeroVec::Borrowed(_)));
     /// ```
-    Borrowed(VarZeroVecComponents<'a, T>),
+    Borrowed(&'a VarZeroSlice<T>),
 }
 
 impl<'a, T: ?Sized> Clone for VarZeroVec<'a, T> {
@@ -174,8 +174,8 @@ impl<'a, T: ?Sized> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
     }
 }
 
-impl<'a, T: ?Sized> From<VarZeroVecComponents<'a, T>> for VarZeroVec<'a, T> {
-    fn from(other: VarZeroVecComponents<'a, T>) -> Self {
+impl<'a, T: ?Sized> From<&'a VarZeroSlice<T>> for VarZeroVec<'a, T> {
+    fn from(other: &'a VarZeroSlice<T>) -> Self {
         VarZeroVec::Borrowed(other)
     }
 }
@@ -217,15 +217,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// ```
     #[inline]
     pub fn new() -> Self {
-        Self::Borrowed(VarZeroVecComponents::default())
-    }
-
-    /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
-    pub fn as_components<'b>(&'b self) -> VarZeroVecComponents<'b, T> {
-        match self {
-            VarZeroVec::Owned(ref owned) => owned.as_components(),
-            VarZeroVec::Borrowed(ref borrowed) => *borrowed,
-        }
+        Self::Borrowed(VarZeroSlice::new_empty())
     }
 
     /// Parse a VarZeroVec from a slice of the appropriate format
@@ -250,12 +242,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
-        if slice.is_empty() {
-            // does not allocate
-            return Ok(VarZeroVec::Owned(VarZeroVecOwned::new()));
-        }
-
-        let borrowed = VarZeroVecComponents::<T>::parse_byte_slice(slice)?;
+        let borrowed = VarZeroSlice::<T>::parse_byte_slice(slice)?;
 
         Ok(VarZeroVec::Borrowed(borrowed))
     }
@@ -290,8 +277,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     pub fn make_mut(&mut self) -> &mut VarZeroVecOwned<T> {
         match self {
             VarZeroVec::Owned(ref mut vec) => vec,
-            VarZeroVec::Borrowed(ref borrowed) => {
-                let new_self = VarZeroVecOwned::from_borrowed(*borrowed);
+            VarZeroVec::Borrowed(slice) => {
+                let new_self = VarZeroVecOwned::from_slice(slice);
                 *self = new_self.into();
                 // recursion is limited since we are guaranteed to hit the Owned branch
                 self.make_mut()
@@ -326,13 +313,9 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T> {
-        let slice = match *self {
-            VarZeroVec::Owned(ref owned) => return &**owned,
-            VarZeroVec::Borrowed(b) => b.as_bytes(),
-        };
-        unsafe {
-            // safety: the slice is known to come from a valid parsed VZV
-            VarZeroSlice::from_byte_slice_unchecked(slice)
+        match *self {
+            VarZeroVec::Owned(ref owned) => &**owned,
+            VarZeroVec::Borrowed(b) => b,
         }
     }
 

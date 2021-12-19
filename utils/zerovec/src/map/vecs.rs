@@ -376,7 +376,7 @@ where
     }
     fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
         if let VarZeroVec::Borrowed(b) = *self {
-            Some(b.as_slice())
+            Some(b)
         } else {
             None
         }

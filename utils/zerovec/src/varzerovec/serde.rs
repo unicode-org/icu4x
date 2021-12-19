@@ -95,7 +95,7 @@ where
         } else {
             let deserialized: VarZeroVec<'a, T> = VarZeroVec::deserialize(deserializer)?;
             let borrowed = if let VarZeroVec::Borrowed(b) = deserialized {
-                b.as_slice()
+                b
             } else {
                 return Err(de::Error::custom(
                     "&VarZeroSlice can only deserialize in zero-copy ways",
