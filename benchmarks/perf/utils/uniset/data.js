@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639901831017,
+  "lastUpdate": 1639903349826,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16649,6 +16649,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36010558,
             "range": "± 427740",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8328551082ea99dda9e32a16ce126991830e81a8",
+          "message": "Add precompute benches for VZV, prefix all ZeroVecLike methods with `zvl_` (#1412)\n\n* Add benches for precomputing\r\n* prefix all ZeroVecLike methods with `zvl_`",
+          "timestamp": "2021-12-19T00:35:01-08:00",
+          "tree_id": "6702de66a80483ab93586c7bb9d8b36bbbebe809",
+          "url": "https://github.com/unicode-org/icu4x/commit/8328551082ea99dda9e32a16ce126991830e81a8"
+        },
+        "date": 1639903342635,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36423093,
+            "range": "± 54760",
             "unit": "ns/iter"
           }
         ]
