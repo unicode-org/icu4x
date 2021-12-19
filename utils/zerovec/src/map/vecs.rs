@@ -4,8 +4,7 @@
 
 use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
-use crate::varzerovec::VarZeroVecBorrowed;
-use crate::VarZeroVec;
+use crate::{VarZeroSlice, VarZeroVec};
 use crate::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
@@ -283,7 +282,7 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
+impl<'a, T> ZeroVecLike<'a, T> for &'a VarZeroSlice<T>
 where
     T: VarULE,
     T: Ord,
@@ -291,17 +290,16 @@ where
 {
     type GetType = T;
     fn zvl_new() -> Self {
-        Self::new()
+        VarZeroSlice::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
-        Self::binary_search(self, k)
+        self.binary_search(k)
     }
     fn zvl_get(&self, index: usize) -> Option<&T> {
-        // using UFCS to avoid accidental recursion
-        Self::get(*self, index)
+        self.get(index)
     }
     fn zvl_len(&self) -> usize {
-        Self::len(*self)
+        self.len()
     }
     fn zvl_is_ascending(&self) -> bool {
         if !self.is_empty() {
@@ -326,15 +324,14 @@ where
     }
 }
 
-impl<'a, T> BorrowedZeroVecLike<'a, T> for VarZeroVecBorrowed<'a, T>
+impl<'a, T> BorrowedZeroVecLike<'a, T> for &'a VarZeroSlice<T>
 where
     T: VarULE,
     T: Ord,
     T: ?Sized,
 {
     fn zvl_get_borrowed(&self, index: usize) -> Option<&'a T> {
-        // using UFCS to avoid accidental recursion
-        Self::get(*self, index)
+        self.get(index)
     }
 }
 
@@ -345,7 +342,7 @@ where
     T: ?Sized,
 {
     type OwnedType = Box<T>;
-    type BorrowedVariant = VarZeroVecBorrowed<'a, T>;
+    type BorrowedVariant = &'a VarZeroSlice<T>;
     fn zvl_insert(&mut self, index: usize, value: &T) {
         self.make_mut().insert(index, value)
     }
@@ -374,18 +371,18 @@ where
     fn zvl_reserve(&mut self, addl: usize) {
         self.make_mut().reserve(addl)
     }
-    fn zvl_as_borrowed(&'a self) -> VarZeroVecBorrowed<'a, T> {
-        self.as_borrowed()
+    fn zvl_as_borrowed(&'a self) -> &'a VarZeroSlice<T> {
+        self.as_slice()
     }
-    fn zvl_as_borrowed_inner(&self) -> Option<VarZeroVecBorrowed<'a, T>> {
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
         if let VarZeroVec::Borrowed(b) = *self {
-            Some(b)
+            Some(b.as_slice())
         } else {
             None
         }
     }
-    fn zvl_from_borrowed(b: VarZeroVecBorrowed<'a, T>) -> Self {
-        VarZeroVec::Borrowed(b)
+    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
+        b.as_varzerovec()
     }
 
     fn owned_as_t(o: &Self::OwnedType) -> &T {

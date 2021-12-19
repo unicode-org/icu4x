@@ -208,8 +208,8 @@ mod test {
             VarZeroSlice::parse_byte_slice(BYTES).expect("parse");
         let bincode_buf = bincode::serialize(&zerovec_orig).expect("serialize");
         assert_eq!(BINCODE_BUF, bincode_buf);
-        let zerovec_new: &VarZeroSlice<str> = bincode::deserialize(&bincode_buf)
-            .expect("deserialize from buffer to VarZeroSlice");
+        let zerovec_new: &VarZeroSlice<str> =
+            bincode::deserialize(&bincode_buf).expect("deserialize from buffer to VarZeroSlice");
         assert_eq!(zerovec_orig.to_vec(), zerovec_new.to_vec());
     }
 

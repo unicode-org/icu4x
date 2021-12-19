@@ -61,6 +61,11 @@ pub struct VarZeroSlice<T: ?Sized> {
 }
 
 impl<T: VarULE + ?Sized> VarZeroSlice<T> {
+    /// Construct a new empty VarZeroSlice
+    pub fn new_empty() -> &'static Self {
+        let arr: &[u8] = &[];
+        unsafe { mem::transmute(arr) }
+    }
     /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
     #[inline]
     pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
