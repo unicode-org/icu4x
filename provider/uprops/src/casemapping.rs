@@ -108,9 +108,9 @@ mod tests {
             .take_payload()
             .expect("Loading was succesful");
         let case_mapping = &payload.get().casemap;
-        assert_eq!(case_mapping.is_soft_dotted('a'), false);
-        assert_eq!(case_mapping.is_soft_dotted('i'), true);
-        assert_eq!(case_mapping.is_soft_dotted('j'), true);
+        assert!(!case_mapping.is_soft_dotted('a'));
+        assert!(case_mapping.is_soft_dotted('i'));
+        assert!(case_mapping.is_soft_dotted('j'));
     }
 
     #[derive(Eq, PartialEq, Default)]
