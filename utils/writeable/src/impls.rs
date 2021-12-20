@@ -40,17 +40,19 @@ macro_rules! impl_write_num {
                 if *self < 10 {
                     return LengthHint::exact(1);
                 }
-                // We don't want to compute ⌊log₁₀(self)⌋ + 1 directly, as floating point
-                // operations are expensive on non-floating point hardware.
+                // We want to compute ⌊log₁₀(self)⌋ + 1, but can't do so directly because
+                // we're no_std (so there's no f32::log). However, this approach turns out
+                // to be faster also on systems with the latest fancy floating point
+                // instructions.
                 let b = <$u>::BITS - self.leading_zeros();
-                // self ∈ [2ᵇ⁻¹, 2ᵇ-1] ⟹ [⌊(b-1) log₁₀(2)⌋ + 1, ⌊b log₁₀(2)⌋ + 1].
+                // self ∈ [2ᵇ⁻¹, 2ᵇ-1] ⟹ len ∈ [⌊(b-1) log₁₀(2)⌋ + 1, ⌊b log₁₀(2)⌋ + 1].
                 let low = (b - 1) * 59 / 196 + 1; // correct for b < 682
                 let high = b * 59 / 196 + 1;
 
-                // If the bounds aren't tight (e.g. 87 ∈ [64, 127] ⟹ [2,3]), compare to
-                // 10ʰ⁻¹ (100). This shouldn't happen too often as there are more powers
+                // If the bounds aren't tight (e.g. 87 ∈ [64, 127] ⟹ len ∈ [2,3]), compare
+                // to 10ʰ⁻¹ (100). This shouldn't happen too often as there are more powers
                 // of 2 than 10 (it happens for 14% of u32s).
-                if low == high || *self < (10 as $u).pow(high - 1) {
+                if low == high || *self < (10 as $u).pow(low) {
                     LengthHint::exact(low as usize)
                 } else {
                     LengthHint::exact(high as usize)
