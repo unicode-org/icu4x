@@ -51,22 +51,23 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     pub fn from_borrowed(borrowed: VarZeroVecBorrowed<T>) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: borrowed.entire_slice().into(),
+            entire_slice: borrowed.as_encoded_bytes().to_vec(),
         }
     }
 
     /// Construct a VarZeroVecOwned from a list of elements
-    pub fn from_elements<A>(elements: &[A]) -> Self
+    pub fn try_from_elements<A>(elements: &[A]) -> Result<Self, &'static str>
     where
         A: custom::EncodeAsVarULE<T>,
     {
-        Self {
+        Ok(Self {
             marker: PhantomData,
-            entire_slice: borrowed::get_serializable_bytes(elements).expect(
+            // TODO(#1410): Rethink length errors in VZV.
+            entire_slice: borrowed::get_serializable_bytes(elements).ok_or(
                 "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u32 in size",
-            ),
-        }
+            )?,
+        })
     }
 
     /// Try to allocate a buffer with enough capacity for `capacity`
@@ -120,7 +121,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// If `idx == self.len()`, it will return the size of the data segment (where a new element would go).
     ///
     /// ## Safety
-    /// `idx <= self.len()` and `self.entire_slice()` is well-formed.
+    /// `idx <= self.len()` and `self.as_encoded_bytes()` is well-formed.
     unsafe fn element_position_unchecked(&self, idx: usize) -> usize {
         let len = self.len();
         let out = if idx == len {
@@ -135,7 +136,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Get the range of a specific element in the data segment.
     ///
     /// ## Safety
-    /// `idx < self.len()` and `self.entire_slice()` is well-formed.
+    /// `idx < self.len()` and `self.as_encoded_bytes()` is well-formed.
     unsafe fn element_range_unchecked(&self, idx: usize) -> core::ops::Range<usize> {
         let start = self.element_position_unchecked(idx);
         let end = self.element_position_unchecked(idx + 1);
@@ -146,7 +147,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Set the number of elements in the list without any checks.
     ///
     /// ## Safety
-    /// No safe functions may be called until `self.entire_slice()` is well-formed.
+    /// No safe functions may be called until `self.as_encoded_bytes()` is well-formed.
     unsafe fn set_len(&mut self, len: u32) {
         RawBytesULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[..4])[0] =
             len.into();
@@ -160,7 +161,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Return the slice representing the given `index`.
     ///
     /// ## Safety
-    /// The index must be valid, and self.entire_slice() must be well-formed
+    /// The index must be valid, and self.as_encoded_bytes() must be well-formed
     unsafe fn index_data(&self, index: usize) -> &RawBytesULE<4> {
         &RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
             [0]
@@ -169,7 +170,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Return the mutable slice representing the given `index`.
     ///
     /// ## Safety
-    /// The index must be valid. self.entire_slice() must have allocated space
+    /// The index must be valid. self.as_encoded_bytes() must have allocated space
     /// for this index, but need not have its length appropriately set.
     unsafe fn index_data_mut(&mut self, index: usize) -> &mut RawBytesULE<4> {
         let ptr = self.entire_slice.as_mut_ptr();
@@ -217,8 +218,14 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
     /// Get a reference to the entire backing buffer of this vector
     #[inline]
-    pub fn entire_slice(&self) -> &[u8] {
+    pub fn as_encoded_bytes(&self) -> &[u8] {
         &self.entire_slice
+    }
+
+    /// Consume this vector and return the backing buffer
+    #[inline]
+    pub fn into_encoded_bytes(self) -> Vec<u8> {
+        self.entire_slice
     }
 
     /// Invalidate and resize the data at an index, optionally inserting or removing the index.
@@ -581,7 +588,7 @@ mod test {
     #[test]
     fn test_remove_integrity() {
         let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
+        let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&items).unwrap();
 
         for index in [0, 2, 4, 0, 1, 1, 0] {
             items.remove(index);
@@ -592,10 +599,10 @@ mod test {
 
     #[test]
     fn test_removing_last_element_clears() {
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&["buy some apples"]);
-        assert!(!zerovec.as_borrowed().entire_slice().is_empty());
+        let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&["buy some apples"]).unwrap();
+        assert!(!zerovec.as_borrowed().as_encoded_bytes().is_empty());
         zerovec.remove(0);
-        assert!(zerovec.as_borrowed().entire_slice().is_empty());
+        assert!(zerovec.as_borrowed().as_encoded_bytes().is_empty());
     }
 
     #[test]
@@ -607,7 +614,7 @@ mod test {
     #[test]
     fn test_replace_integrity() {
         let mut items: Vec<&str> = vec!["apples", "bananas", "eeples", "", "baneenees", "five", ""];
-        let mut zerovec = VarZeroVecOwned::<str>::from_elements(&items);
+        let mut zerovec = VarZeroVecOwned::<str>::try_from_elements(&items).unwrap();
 
         // Replace with an element of the same size (and the first element)
         items[0] = "blablah";

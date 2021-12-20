@@ -174,7 +174,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecBorrowed<'a, T> {
 
     /// Get a reference to the entire backing buffer of this vector
     #[inline]
-    pub fn entire_slice(self) -> &'a [u8] {
+    pub fn as_encoded_bytes(self) -> &'a [u8] {
         self.entire_slice
     }
 
