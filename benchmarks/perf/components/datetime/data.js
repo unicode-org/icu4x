@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640032507096,
+  "lastUpdate": 1640035339782,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15719,6 +15719,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 317049,
             "range": "± 2388",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e96204ea6b758acc25b7cad2cbbac5ec705c265b",
+          "message": "Implementing Writeable for all integers (#1408)",
+          "timestamp": "2021-12-20T22:12:52+01:00",
+          "tree_id": "3eb10e05d14aa09c84c18b9250c5fb9c6ffc8a7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/e96204ea6b758acc25b7cad2cbbac5ec705c265b"
+        },
+        "date": 1640035332251,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 111442,
+            "range": "± 1125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1301238,
+            "range": "± 2407",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 310752,
+            "range": "± 534",
             "unit": "ns/iter"
           }
         ]
