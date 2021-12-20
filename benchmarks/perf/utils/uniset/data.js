@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639936770620,
+  "lastUpdate": 1639966042701,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16739,6 +16739,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44821107,
             "range": "± 1305971",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "988f2464b6a40aa72cfe04acc59fe3c98928f088",
+          "message": "Construct VZVs and use as_encoded_bytes instead of the static function (#1411)\n\n* Start migrating clients away from get_serializable_bytes\n\n* fmt\n\n* Rename functions involving VZV bytes\n\n* Update docs\n\n* More fixes\n\n* update bench\n\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2021-12-20T07:28:41+05:30",
+          "tree_id": "74347ebc2561a72e813d4b1f3e8610ed1e846303",
+          "url": "https://github.com/unicode-org/icu4x/commit/988f2464b6a40aa72cfe04acc59fe3c98928f088"
+        },
+        "date": 1639966033591,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36867491,
+            "range": "± 1017463",
             "unit": "ns/iter"
           }
         ]
