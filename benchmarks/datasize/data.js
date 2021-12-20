@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639965628993,
+  "lastUpdate": 1640032023338,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5783,6 +5783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/988f2464b6a40aa72cfe04acc59fe3c98928f088"
         },
         "date": 1639965620669,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "66b20815ed4126800da5183a293e16bbcf634618",
+          "message": "Refactor VZV code to center on (and Deref to) VarZeroSlice; make VZVBorrowed private (#1418)",
+          "timestamp": "2021-12-20T14:24:57-06:00",
+          "tree_id": "13ad1701af5cc287c89f1b737574814d59987732",
+          "url": "https://github.com/unicode-org/icu4x/commit/66b20815ed4126800da5183a293e16bbcf634618"
+        },
+        "date": 1640032015067,
         "tool": "ndjson",
         "benches": [
           {
