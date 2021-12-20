@@ -83,6 +83,26 @@
 //! println!("{:?}", result);
 //! ```
 //!
+//! ## Sentence Break
+//!
+//!```rust
+//! use icu_segmenter::SentenceBreakIterator;
+//!
+//! let mut iter = SentenceBreakIterator::new("Hello World");
+//! let result: Vec<usize> = iter.collect();
+//! println!("{:?}", result);
+//! ```
+//!
+//! Segment a Latin1 byte string:
+//!
+//! ```rust
+//! use icu_segmenter::SentenceBreakIteratorLatin1;
+//! let s = "Hello World";
+//! let iter = SentenceBreakIteratorLatin1::new(s.as_bytes());
+//! let result: Vec<usize> = iter.collect();
+//! println!("{:?}", result);
+//! ```
+//!
 //! # Generating property table
 //!
 //! Copy the following files to `tools` directory. Then run `./generate_properties.py` in `tools` directory (requires Python 3.8+). Machine generated files are moved to `src` directory.
@@ -105,6 +125,7 @@ mod rule_segmenter;
 mod rule_table;
 
 mod grapheme;
+mod sentence;
 mod word;
 
 pub mod provider;
@@ -133,4 +154,7 @@ pub use crate::grapheme::{
     GraphemeBreakIterator, GraphemeBreakIteratorLatin1, GraphemeBreakIteratorUtf16,
 };
 pub use crate::line_breaker::*;
+pub use crate::sentence::{
+    SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
+};
 pub use crate::word::{WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16};
