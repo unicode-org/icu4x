@@ -198,7 +198,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         self.entire_slice.clear()
     }
 
-
     /// Consume this vector and return the backing buffer
     #[inline]
     pub fn into_bytes(self) -> Vec<u8> {
