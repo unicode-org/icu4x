@@ -17,7 +17,7 @@ macro_rules! impl_write_num {
                 // we have to simplify a bit:
                 // ⌊log₁₀($u::MAX)⌋ = ⌊log₁₀(2ᵇ - 1)⌋ ≛ ⌊log₁₀(2ᵇ)⌋ = ⌊b log₁₀(2)⌋
                 // (*) holds because there is no integer in [log₁₀(2ᵇ - 1), log₁₀(2ᵇ)],
-                // if there were, there'd be some 10ⁿ in [2ᵇ - 1, 2ᵇ], but it can't be 
+                // if there were, there'd be some 10ⁿ in [2ᵇ - 1, 2ᵇ], but it can't be
                 // 2ᵇ - 1 due to parity nor 2ᵇ due to prime factors.
                 let mut buf = [b'0'; (<$u>::BITS as f64 * core::f64::consts::LOG10_2) as usize + 1];
                 let mut n = *self;
@@ -36,13 +36,25 @@ macro_rules! impl_write_num {
             }
 
             fn write_len(&self) -> LengthHint {
-                let mut s = *self;
-                let mut len = 1;
-                while s >= 10 {
-                    len += 1;
-                    s /= 10;
+                // We need to special-case 0, so we might as well check < 10
+                if *self < 10 {
+                    return LengthHint::exact(1);
                 }
-                LengthHint::exact(len)
+                // We don't want to compute ⌊log₁₀(self)⌋ + 1 directly, as floating point
+                // operations are expensive on non-floating point hardware.
+                let b = <$u>::BITS - self.leading_zeros();
+                // self ∈ [2ᵇ⁻¹, 2ᵇ-1] ⟹ [⌊(b-1) log₁₀(2)⌋ + 1, ⌊b log₁₀(2)⌋ + 1].
+                let low = (b - 1) * 59 / 196 + 1; // correct for b < 682
+                let high = b * 59 / 196 + 1;
+
+                // If the bounds aren't tight (e.g. 87 ∈ [64, 127] ⟹ [2,3]), compare to
+                // 10ʰ⁻¹ (100). This shouldn't happen too often as there are more powers
+                // of 2 than 10 (it happens for 14% of u32s).
+                if low == high || *self < (10 as $u).pow(high - 1) {
+                    LengthHint::exact(low as usize)
+                } else {
+                    LengthHint::exact(high as usize)
+                }
             }
         }
 
@@ -86,4 +98,11 @@ fn test_ints() {
     assert_writeable_eq!(&u128::MAX, u128::MAX.to_string());
     assert_writeable_eq!(&i128::MAX, i128::MAX.to_string());
     assert_writeable_eq!(&i128::MIN, i128::MIN.to_string());
+}
+
+#[test]
+fn assert_log10_approximation() {
+    for i in 1..u128::BITS {
+        assert_eq!(i * 59 / 196, 2f64.powf(i.into()).log10().floor() as u32);
+    }
 }
