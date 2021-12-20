@@ -188,11 +188,11 @@ where
 
     fn encode_var_ule_len(&self) -> usize {
         // TODO(#1410): Rethink length errors in VZV.
-        crate::varzerovec::borrowed::compute_serializable_len(self).unwrap() as usize
+        crate::varzerovec::components::compute_serializable_len(self).unwrap() as usize
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        crate::varzerovec::borrowed::write_serializable_bytes(self, dst)
+        crate::varzerovec::components::write_serializable_bytes(self, dst)
     }
 }
 
@@ -228,13 +228,13 @@ where
 
     #[inline]
     fn encode_var_ule_len(&self) -> usize {
-        self.as_encoded_bytes().len()
+        self.as_bytes().len()
     }
 
     #[inline]
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        debug_assert_eq!(self.as_encoded_bytes().len(), dst.len());
-        dst.copy_from_slice(self.as_encoded_bytes());
+        debug_assert_eq!(self.as_bytes().len(), dst.len());
+        dst.copy_from_slice(self.as_bytes());
     }
 }
 

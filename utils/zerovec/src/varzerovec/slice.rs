@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::borrowed::VarZeroVecBorrowed;
+use super::components::VarZeroVecComponents;
 use super::*;
 use core::marker::PhantomData;
 use core::mem;
+use core::ops::Index;
 
 /// A zero-copy "slice", that works for unsized types, i.e. the zero-copy version of `[T]`
 /// where `T` is not `Sized`.
@@ -45,13 +46,13 @@ use core::mem;
 ///         }).collect::<Vec<_>>();
 /// assert_eq!(reconstructed, all_strings);
 ///
-/// let bytes = vzv_all.as_encoded_bytes();
+/// let bytes = vzv_all.as_bytes();
 /// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> = VarZeroVec::parse_byte_slice(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
 /// ```
 //
 // safety invariant: The slice MUST be one which parses to
-// a valid VarZeroVecBorrowed<T>
+// a valid VarZeroVecComponents<T>
 #[repr(transparent)]
 pub struct VarZeroSlice<T: ?Sized> {
     marker: PhantomData<T>,
@@ -60,33 +61,133 @@ pub struct VarZeroSlice<T: ?Sized> {
 }
 
 impl<T: VarULE + ?Sized> VarZeroSlice<T> {
-    /// Obtain a [`VarZeroVecBorrowed`] borrowing from the internal buffer
+    /// Construct a new empty VarZeroSlice
+    pub fn new_empty() -> &'static Self {
+        let arr: &[u8] = &[];
+        unsafe { mem::transmute(arr) }
+    }
+    /// Obtain a [`VarZeroVecComponents`] borrowing from the internal buffer
     #[inline]
-    pub fn as_borrowed<'a>(&'a self) -> VarZeroVecBorrowed<'a, T> {
+    pub(crate) fn as_components<'a>(&'a self) -> VarZeroVecComponents<'a, T> {
         unsafe {
             // safety: VarZeroSlice is guaranteed to parse here
-            VarZeroVecBorrowed::from_bytes_unchecked(&self.entire_slice)
+            VarZeroVecComponents::from_bytes_unchecked(&self.entire_slice)
         }
     }
 
-    /// Get the number of elements in this vector
+    /// Get the number of elements in this slice
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// assert_eq!(vec.len(), 4);
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
     pub fn len(&self) -> usize {
-        self.as_borrowed().len()
+        self.as_components().len()
     }
 
-    /// Returns `true` if the vector contains no elements.
+    /// Returns `true` if the slice contains no elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings: Vec<String> = vec![];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// assert!(vec.is_empty());
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
     pub fn is_empty(&self) -> bool {
-        self.as_borrowed().is_empty()
+        self.as_components().is_empty()
     }
 
-    /// Obtain an iterator over VarZeroSlice's elements
+    /// Obtain an iterator over this slice's elements
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// let mut iter_results: Vec<&str> = vec.iter().collect();
+    /// assert_eq!(iter_results[0], "foo");
+    /// assert_eq!(iter_results[1], "bar");
+    /// assert_eq!(iter_results[2], "baz");
+    /// assert_eq!(iter_results[3], "quux");
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
-        self.as_borrowed().iter()
+        self.as_components().iter()
     }
 
-    /// Get one of VarZeroSlice's elements, returning None if the index is out of bounds
+    /// Get one of this slice's elements, returning None if the index is out of bounds
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["foo", "bar", "baz", "quux"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// let mut iter_results: Vec<&str> = vec.iter().collect();
+    /// assert_eq!(vec.get(0), Some("foo"));
+    /// assert_eq!(vec.get(1), Some("bar"));
+    /// assert_eq!(vec.get(2), Some("baz"));
+    /// assert_eq!(vec.get(3), Some("quux"));
+    /// assert_eq!(vec.get(4), None);
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
     pub fn get(&self, idx: usize) -> Option<&T> {
-        self.as_borrowed().get(idx)
+        self.as_components().get(idx)
+    }
+
+    /// Obtain an owned `Vec<Box<T>>` out of this
+    pub fn to_vec(&self) -> Vec<Box<T>> {
+        self.as_components().to_vec()
+    }
+
+    /// Get a reference to the entire encoded backing buffer of this slice
+    ///
+    /// The bytes can be passed back to [`Self::parse_byte_slice()`].
+    ///
+    /// To take the bytes as a vector, see [`Self::into_bytes()`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["foo", "bar", "baz"];
+    /// let vzv = VarZeroVec::<str>::from(&strings);
+    ///
+    /// assert_eq!(vzv, VarZeroVec::parse_byte_slice(vzv.as_bytes()).unwrap());
+    ///
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
+    #[inline]
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.entire_slice
     }
 
     /// Get this [`VarZeroSlice`] as a borrowed [`VarZeroVec`]
@@ -94,7 +195,15 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     /// If you wish to repeatedly call methods on this [`VarZeroSlice`],
     /// it is more efficient to perform this conversion first
     pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
-        self.as_borrowed().into()
+        self.into()
+    }
+
+    /// Parse a VarZeroSlice from a slice of the appropriate format
+    ///
+    /// Slices of the right format can be obtained via [`VarZeroVec::<str>::get_serializable_bytes()`]
+    /// or [`VarZeroVec::as_bytes()`]
+    pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, ZeroVecError> {
+        <Self as VarULE>::parse_byte_slice(slice)
     }
 }
 
@@ -104,13 +213,28 @@ where
     T: ?Sized,
     T: Ord,
 {
-    /// Binary searches a sorted `VarZeroSlice<T>` for the given element. For more information, see
+    /// Binary searches a sorted `VarZeroVec<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["a", "b", "f", "g"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// assert_eq!(vec.binary_search("f"), Ok(2));
+    /// assert_eq!(vec.binary_search("e"), Err(2));
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
     ///
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.as_borrowed().binary_search(x)
+        self.as_components().binary_search(x)
     }
 }
 
@@ -126,7 +250,7 @@ where
 //  7. VarZeroSlice byte equality is semantic equality (relying on the guideline of the underlying VarULE type)
 unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroSlice<T> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let _: VarZeroVecBorrowed<T> = VarZeroVecBorrowed::parse_byte_slice(bytes)?;
+        let _: VarZeroVecComponents<T> = VarZeroVecComponents::parse_byte_slice(bytes)?;
         Ok(())
     }
 
@@ -137,6 +261,13 @@ unsafe impl<T: VarULE + ?Sized + 'static> VarULE for VarZeroSlice<T> {
 
     fn as_byte_slice(&self) -> &[u8] {
         &self.entire_slice
+    }
+}
+
+impl<T: VarULE + ?Sized> Index<usize> for VarZeroSlice<T> {
+    type Output = T;
+    fn index(&self, index: usize) -> &Self::Output {
+        self.get(index).expect("Indexing VarZeroVec out of bounds")
     }
 }
 

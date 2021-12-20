@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{VarZeroVec, VarZeroVecBorrowed};
+use super::{VarZeroSlice, VarZeroVec};
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
@@ -78,7 +78,7 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<'de, 'a, T> Deserialize<'de> for VarZeroVecBorrowed<'a, T>
+impl<'de, 'a, T> Deserialize<'de> for &'a VarZeroSlice<T>
 where
     T: VarULE + ?Sized,
     Box<T>: Deserialize<'de>,
@@ -90,7 +90,7 @@ where
     {
         if deserializer.is_human_readable() {
             Err(de::Error::custom(
-                "VarZeroVecBorrowed cannot be deserialized from human-readable formats",
+                "&VarZeroSlice cannot be deserialized from human-readable formats",
             ))
         } else {
             let deserialized: VarZeroVec<'a, T> = VarZeroVec::deserialize(deserializer)?;
@@ -98,7 +98,7 @@ where
                 b
             } else {
                 return Err(de::Error::custom(
-                    "VarZeroVecBorrowed can only deserialize in zero-copy ways",
+                    "&VarZeroSlice can only deserialize in zero-copy ways",
                 ));
             };
             Ok(borrowed)
@@ -122,13 +122,13 @@ where
             }
             seq.end()
         } else {
-            serializer.serialize_bytes(self.as_encoded_bytes())
+            serializer.serialize_bytes(self.as_bytes())
         }
     }
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<T> Serialize for VarZeroVecBorrowed<'_, T>
+impl<T> Serialize for VarZeroSlice<T>
 where
     T: Serialize + VarULE + ?Sized,
 {
@@ -136,7 +136,7 @@ where
     where
         S: Serializer,
     {
-        VarZeroVec::from(*self).serialize(serializer)
+        self.as_varzerovec().serialize(serializer)
     }
 }
 
@@ -152,9 +152,9 @@ mod test {
     }
 
     #[derive(::serde::Serialize, ::serde::Deserialize)]
-    struct DeriveTest_VarZeroVecBorrowed<'data> {
+    struct DeriveTest_VarZeroSlice<'data> {
         #[serde(borrow)]
-        _data: VarZeroVecBorrowed<'data, str>,
+        _data: &'data VarZeroSlice<str>,
     }
 
     // ["foo", "bar", "baz", "dolor", "quux", "lorem ipsum"];
@@ -204,12 +204,12 @@ mod test {
 
     #[test]
     fn test_vzv_borrowed() {
-        let zerovec_orig: VarZeroVecBorrowed<str> =
-            VarZeroVecBorrowed::parse_byte_slice(BYTES).expect("parse");
+        let zerovec_orig: &VarZeroSlice<str> =
+            VarZeroSlice::parse_byte_slice(BYTES).expect("parse");
         let bincode_buf = bincode::serialize(&zerovec_orig).expect("serialize");
         assert_eq!(BINCODE_BUF, bincode_buf);
-        let zerovec_new: VarZeroVecBorrowed<str> = bincode::deserialize(&bincode_buf)
-            .expect("deserialize from buffer to VarZeroVecBorrowed");
+        let zerovec_new: &VarZeroSlice<str> =
+            bincode::deserialize(&bincode_buf).expect("deserialize from buffer to VarZeroSlice");
         assert_eq!(zerovec_orig.to_vec(), zerovec_new.to_vec());
     }
 
