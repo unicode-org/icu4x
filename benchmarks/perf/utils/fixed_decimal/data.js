@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1639966026873,
+  "lastUpdate": 1640032441656,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15689,6 +15689,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 118070,
             "range": "± 6071",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "66b20815ed4126800da5183a293e16bbcf634618",
+          "message": "Refactor VZV code to center on (and Deref to) VarZeroSlice; make VZVBorrowed private (#1418)",
+          "timestamp": "2021-12-20T14:24:57-06:00",
+          "tree_id": "13ad1701af5cc287c89f1b737574814d59987732",
+          "url": "https://github.com/unicode-org/icu4x/commit/66b20815ed4126800da5183a293e16bbcf634618"
+        },
+        "date": 1640032434330,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115255,
+            "range": "± 460",
             "unit": "ns/iter"
           }
         ]
