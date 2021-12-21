@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640062765953,
+  "lastUpdate": 1640109083005,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19613,6 +19613,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4498,
             "range": "± 498",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a44cebda56a170654ed009c5d934d4c16d41299",
+          "message": "Make icu_segmenter be no_std with lstm feature disabled (#1425)",
+          "timestamp": "2021-12-21T09:42:54-08:00",
+          "tree_id": "3aa733b235ae7b86dbaf95107c3cc01bfe2ad5d9",
+          "url": "https://github.com/unicode-org/icu4x/commit/0a44cebda56a170654ed009c5d934d4c16d41299"
+        },
+        "date": 1640109075779,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2428,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4115,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
