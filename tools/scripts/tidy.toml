@@ -24,7 +24,11 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
+# Check files matching these patterns.
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat"
+
+# Skip the files matching these patterns.
+glob_skip_pattern_array = array "target/**/*.rs" "ffi/diplomat/cpp/docs/source/*.rst" "ffi/diplomat/wasm/docs/*.rst"
 
 blank_line = set ""
 
@@ -58,10 +62,21 @@ license_unicode_hash_line_2 = set "# License & terms of use: http://www.unicode.
 license_unicode_hash_array = array ${license_unicode_hash_line_1} ${license_unicode_hash_line_2}
 license_unicode_hash_str = array_join ${license_unicode_hash_array} "\n"
 
+skip_paths = set_new
+for skip_pattern in ${glob_skip_pattern_array}
+    echo "License header check skipped in files match ${skip_pattern}"
+    paths = glob_array ${skip_pattern}
+    for p in ${paths}
+        set_put ${skip_paths} ${p}
+    end
+end
+
 for pattern in ${glob_pattern_array}
     handle = glob_array ${pattern}
     for path in ${handle}
-        if not starts_with ${path} "target"  # skip paths in target dir
+        should_skip = set_contains ${skip_paths} ${path}
+        should_check_header = eq ${should_skip} false
+        if ${should_check_header}
             text = readfile ${path}
             result_hash = starts_with ${text} ${license_hash_str}
             result_slash = starts_with ${text} ${license_slash_str}
