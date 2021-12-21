@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640108681157,
+  "lastUpdate": 1640117942840,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5903,6 +5903,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0a44cebda56a170654ed009c5d934d4c16d41299"
         },
         "date": 1640108672576,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e7e21843237dade01c42947fa3e4166a911fcb1",
+          "message": "Move BorrowedVariant to ZeroVecLike (#1429)",
+          "timestamp": "2021-12-21T12:17:25-08:00",
+          "tree_id": "5d544310e3b392ee83d3cb3d7f279a53c744ec42",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e7e21843237dade01c42947fa3e4166a911fcb1"
+        },
+        "date": 1640117934364,
         "tool": "ndjson",
         "benches": [
           {
