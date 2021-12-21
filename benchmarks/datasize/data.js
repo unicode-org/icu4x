@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640062338110,
+  "lastUpdate": 1640108681157,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5873,6 +5873,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7769518dc099f1763061aa3be3df86bacffd9cbb"
         },
         "date": 1640062330174,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a44cebda56a170654ed009c5d934d4c16d41299",
+          "message": "Make icu_segmenter be no_std with lstm feature disabled (#1425)",
+          "timestamp": "2021-12-21T09:42:54-08:00",
+          "tree_id": "3aa733b235ae7b86dbaf95107c3cc01bfe2ad5d9",
+          "url": "https://github.com/unicode-org/icu4x/commit/0a44cebda56a170654ed009c5d934d4c16d41299"
+        },
+        "date": 1640108672576,
         "tool": "ndjson",
         "benches": [
           {
