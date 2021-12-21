@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640109164440,
+  "lastUpdate": 1640118336448,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22217,6 +22217,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24434,
             "range": "± 3201",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e7e21843237dade01c42947fa3e4166a911fcb1",
+          "message": "Move BorrowedVariant to ZeroVecLike (#1429)",
+          "timestamp": "2021-12-21T12:17:25-08:00",
+          "tree_id": "5d544310e3b392ee83d3cb3d7f279a53c744ec42",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e7e21843237dade01c42947fa3e4166a911fcb1"
+        },
+        "date": 1640118328939,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1095,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5286,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20571,
+            "range": "± 15",
             "unit": "ns/iter"
           }
         ]
