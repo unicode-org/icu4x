@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640109112356,
+  "lastUpdate": 1640118360335,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15845,6 +15845,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 328982,
             "range": "± 36679",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e7e21843237dade01c42947fa3e4166a911fcb1",
+          "message": "Move BorrowedVariant to ZeroVecLike (#1429)",
+          "timestamp": "2021-12-21T12:17:25-08:00",
+          "tree_id": "5d544310e3b392ee83d3cb3d7f279a53c744ec42",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e7e21843237dade01c42947fa3e4166a911fcb1"
+        },
+        "date": 1640118352350,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 133125,
+            "range": "± 7164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1463064,
+            "range": "± 94873",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 397202,
+            "range": "± 26046",
             "unit": "ns/iter"
           }
         ]
