@@ -53,6 +53,10 @@ bench = false  # This option is required for Benchmark CI
 name = "bench"
 harness = false
 
+[[test]]
+name = "complex_word"
+required-features = ["lstm"]
+
 [features]
 default = []
 lstm = ["icu_segmenter_lstm"]

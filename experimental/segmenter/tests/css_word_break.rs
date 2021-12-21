@@ -134,10 +134,6 @@ fn wordbreak_keepall() {
     let s = "한글이";
     keep_all(s, vec![9], vec![3]);
 
-    // from css/css-text/word-break/word-break-keep-all-003.html
-    let s = "และและ";
-    keep_all(s, vec![9, 18], vec![3, 6]);
-
     // from css/css-text/word-break/word-break-keep-all-005.html
     let s = "字\u{3000}字";
     keep_all(s, vec![6, 9], vec![2, 3]);
@@ -156,6 +152,15 @@ fn wordbreak_keepall() {
 }
 
 #[test]
+#[cfg_attr(not(feature = "lstm"), ignore)]
+fn wordbreak_keepall_lstm() {
+    // from css/css-text/word-break/word-break-keep-all-003.html
+    let s = "และและ";
+    keep_all(s, vec![9, 18], vec![3, 6]);
+}
+
+#[test]
+#[cfg_attr(not(feature = "lstm"), ignore)]
 fn wordbreak_normal() {
     {
         let s = "\u{0e20}\u{0e32}\u{0e29}\u{0e32}\u{0e44}\u{0e17}\u{0e22}\u{0e20}\u{0e32}\u{0e29}\u{0e32}\u{0e44}\u{0e17}\u{0e22}";
