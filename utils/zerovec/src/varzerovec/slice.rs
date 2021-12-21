@@ -7,6 +7,7 @@ use super::*;
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::Index;
+use core::ops::Range;
 
 /// A zero-copy "slice", that works for unsized types, i.e. the zero-copy version of `[T]`
 /// where `T` is not `Sized`.
@@ -214,7 +215,7 @@ where
     T: Ord,
 {
     /// Binary searches a sorted `VarZeroVec<T>` for the given element. For more information, see
-    /// the primitive function [`binary_search`].
+    /// the standard library function [`binary_search`].
     ///
     /// # Example
     ///
@@ -235,6 +236,51 @@ where
     #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
         self.as_components().binary_search(x)
+    }
+
+    /// Binary searches a `VarZeroVec<T>` for the given element within a certain sorted range.
+    ///
+    /// If the range is out of bounds, returns `None`. Otherwise, returns a `Result` according
+    /// to the behavior of the standard library function [`binary_search`].
+    ///
+    /// The index is returned relative to the start of the range.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["a", "b", "f", "g", "m", "n", "q"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// // Same behavior as binary_search when the range covers the whole slice:
+    /// assert_eq!(vec.binary_search_in_range("g", 0..7), Some(Ok(3)));
+    /// assert_eq!(vec.binary_search_in_range("h", 0..7), Some(Err(4)));
+    ///
+    /// // Will not look outside of the range:
+    /// assert_eq!(vec.binary_search_in_range("g", 0..1), Some(Err(1)));
+    /// assert_eq!(vec.binary_search_in_range("g", 6..7), Some(Err(0)));
+    ///
+    /// // Will return indices relative to the start of the range:
+    /// assert_eq!(vec.binary_search_in_range("g", 1..6), Some(Ok(2)));
+    /// assert_eq!(vec.binary_search_in_range("h", 1..6), Some(Err(3)));
+    ///
+    /// // Will return None if the range is out of bounds:
+    /// assert_eq!(vec.binary_search_in_range("x", 100..200), None);
+    /// assert_eq!(vec.binary_search_in_range("x", 0..200), None);
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
+    ///
+    /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
+    #[inline]
+    pub fn binary_search_in_range(
+        &self,
+        x: &T,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.as_components().binary_search_in_range(x, range)
     }
 }
 

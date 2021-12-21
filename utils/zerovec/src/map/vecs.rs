@@ -10,6 +10,7 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::mem;
+use core::ops::Range;
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
 /// should not be implementing or calling this trait directly.**
@@ -32,6 +33,14 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// returns `Err(insert_index)` if not found, where `insert_index` is the
     /// index where it should be inserted to maintain sort order.
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>;
+    /// Search for a key within a certain range in a sorted vector. Returns `None` if the
+    /// range is out of bounds, and `Ok` or `Err` in the same way as `zvl_binary_search`.
+    /// Indices are returned relative to the start of the range.
+    fn zvl_binary_search_in_range(
+        &self,
+        k: &T,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>>;
     /// Get element at `index`
     fn zvl_get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
@@ -133,6 +142,14 @@ where
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         ZeroSlice::binary_search(self, k)
     }
+    fn zvl_binary_search_in_range(
+        &self,
+        k: &T,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        let zs: &ZeroSlice<T> = &*self;
+        zs.zvl_binary_search_in_range(k, range)
+    }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
@@ -180,6 +197,14 @@ where
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         ZeroSlice::binary_search(*self, k)
+    }
+    fn zvl_binary_search_in_range(
+        &self,
+        k: &T,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        let subslice = self.get_subslice(range)?;
+        Some(ZeroSlice::binary_search(subslice, k))
     }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
@@ -269,6 +294,13 @@ where
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         self.binary_search(k)
     }
+    fn zvl_binary_search_in_range(
+        &self,
+        k: &T,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.binary_search_in_range(k, range)
+    }
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
     }
@@ -326,6 +358,13 @@ where
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize> {
         self.binary_search(k)
+    }
+    fn zvl_binary_search_in_range(
+        &self,
+        k: &T,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        self.binary_search_in_range(k, range)
     }
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
@@ -415,5 +454,35 @@ where
 
     fn owned_as_t(o: &Self::OwnedType) -> &T {
         o
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_zerovec_binary_search_in_range() {
+        let zv: ZeroVec<u16> = ZeroVec::from_slice(&[11, 22, 33, 44, 55, 66, 77]);
+
+        // Full range search
+        assert_eq!(zv.zvl_binary_search_in_range(&11, 0..7), Some(Ok(0)));
+        assert_eq!(zv.zvl_binary_search_in_range(&12, 0..7), Some(Err(1)));
+        assert_eq!(zv.zvl_binary_search_in_range(&44, 0..7), Some(Ok(3)));
+        assert_eq!(zv.zvl_binary_search_in_range(&45, 0..7), Some(Err(4)));
+        assert_eq!(zv.zvl_binary_search_in_range(&77, 0..7), Some(Ok(6)));
+        assert_eq!(zv.zvl_binary_search_in_range(&78, 0..7), Some(Err(7)));
+
+        // Out-of-range search
+        assert_eq!(zv.zvl_binary_search_in_range(&44, 0..2), Some(Err(2)));
+        assert_eq!(zv.zvl_binary_search_in_range(&44, 5..7), Some(Err(0)));
+
+        // Offset search
+        assert_eq!(zv.zvl_binary_search_in_range(&44, 2..5), Some(Ok(1)));
+        assert_eq!(zv.zvl_binary_search_in_range(&45, 2..5), Some(Err(2)));
+
+        // Out-of-bounds
+        assert_eq!(zv.zvl_binary_search_in_range(&44, 0..100), None);
+        assert_eq!(zv.zvl_binary_search_in_range(&44, 100..200), None);
     }
 }

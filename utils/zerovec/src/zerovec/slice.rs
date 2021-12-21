@@ -4,6 +4,7 @@
 
 use super::*;
 use alloc::boxed::Box;
+use core::ops::Range;
 
 /// A zero-copy "slice", i.e. the zero-copy version of `[T]`. This behaves
 /// similarly to [`ZeroVec<T>`], however [`ZeroVec<T>`] is allowed to contain
@@ -138,6 +139,28 @@ where
             .get(index)
             .copied()
             .map(T::from_unaligned)
+    }
+
+    /// Gets a subslice of elements within a certain range. Returns None if the range
+    /// is out of bounds of this `ZeroSlice`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///
+    /// assert_eq!(
+    ///     zerovec.get_subslice(1..3),
+    ///     Some(&*ZeroVec::from_slice(&[0x0119, 0x01A5]))
+    /// );
+    /// assert_eq!(zerovec.get_subslice(3..5), None);
+    /// ```
+    #[inline]
+    pub fn get_subslice(&self, range: Range<usize>) -> Option<&ZeroSlice<T>> {
+        self.0.get(range).map(ZeroSlice::from_ule_slice)
     }
 
     /// Get a borrowed reference to the underlying ULE type at a specified index.
