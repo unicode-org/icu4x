@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640035295504,
+  "lastUpdate": 1640062730835,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15749,6 +15749,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 116802,
             "range": "± 4365",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7769518dc099f1763061aa3be3df86bacffd9cbb",
+          "message": "Add missing license block in segmenter. (#1420)",
+          "timestamp": "2021-12-20T20:50:44-08:00",
+          "tree_id": "ba99f339e8e2a26dc5c7fcbb8a15fdda7af1c44f",
+          "url": "https://github.com/unicode-org/icu4x/commit/7769518dc099f1763061aa3be3df86bacffd9cbb"
+        },
+        "date": 1640062719995,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 137945,
+            "range": "± 10986",
             "unit": "ns/iter"
           }
         ]
