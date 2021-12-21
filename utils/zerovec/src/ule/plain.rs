@@ -13,7 +13,7 @@ use super::*;
 pub struct RawBytesULE<const N: usize>(pub [u8; N]);
 
 macro_rules! impl_byte_slice_size {
-    ($size:literal) => {
+    ($unsigned:ty, $size:literal) => {
         impl From<[u8; $size]> for RawBytesULE<$size> {
             #[inline]
             fn from(le_bytes: [u8; $size]) -> Self {
@@ -55,6 +55,30 @@ macro_rules! impl_byte_slice_size {
                 // Safe because Self is transparent over [u8; $size]
                 unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
             }
+
+            /// Adds the given operand to this RawBytesULE, treating it as an unsigned int.
+            ///
+            /// # Example
+            ///
+            /// ```
+            /// # use zerovec::ZeroVec;
+            /// let mut zv: ZeroVec<u32> = ZeroVec::from_slice(&[0, 1, 2, 3]);
+            /// if let Some(ref mut x) = zv.to_mut().as_mut_slice().last_mut() {
+            ///     x.add_unsigned(1)?;
+            /// }
+            /// assert_eq!(zv, [0, 1, 2, 4]);
+            /// # Ok::<(), core::num::TryFromIntError>(())
+            /// ```
+            pub fn add_unsigned(
+                &mut self,
+                operand: isize,
+            ) -> Result<(), core::num::TryFromIntError> {
+                use core::convert::TryInto;
+                let x: $unsigned = <$unsigned as $crate::ule::AsULE>::from_unaligned(*self);
+                let x: $unsigned = ((x as isize) + operand).try_into()?;
+                *self = x.as_unaligned();
+                Ok(())
+            }
         }
     };
 }
@@ -84,10 +108,10 @@ macro_rules! impl_byte_slice_type {
     };
 }
 
-impl_byte_slice_size!(2);
-impl_byte_slice_size!(4);
-impl_byte_slice_size!(8);
-impl_byte_slice_size!(16);
+impl_byte_slice_size!(u16, 2);
+impl_byte_slice_size!(u32, 4);
+impl_byte_slice_size!(u64, 8);
+impl_byte_slice_size!(u128, 16);
 
 impl_byte_slice_type!(u16, 2);
 impl_byte_slice_type!(u32, 4);
