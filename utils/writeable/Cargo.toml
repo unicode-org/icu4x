@@ -28,7 +28,7 @@ all-features = true
 [dev-dependencies]
 criterion = "0.3"
 icu_benchmark_macros = { version = "0.4", path = "../../tools/benchmark/macros" }
-rand = "0.8"
+rand = { version = "0.8", features = ["small_rng"] }
 
 [lib]
 bench = false  # This option is required for Benchmark CI
