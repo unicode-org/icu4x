@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640062813651,
+  "lastUpdate": 1640109112356,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15803,6 +15803,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 408169,
             "range": "± 13490",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a44cebda56a170654ed009c5d934d4c16d41299",
+          "message": "Make icu_segmenter be no_std with lstm feature disabled (#1425)",
+          "timestamp": "2021-12-21T09:42:54-08:00",
+          "tree_id": "3aa733b235ae7b86dbaf95107c3cc01bfe2ad5d9",
+          "url": "https://github.com/unicode-org/icu4x/commit/0a44cebda56a170654ed009c5d934d4c16d41299"
+        },
+        "date": 1640109105565,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 117557,
+            "range": "± 8894",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1280720,
+            "range": "± 57856",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 328982,
+            "range": "± 36679",
             "unit": "ns/iter"
           }
         ]
