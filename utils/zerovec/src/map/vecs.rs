@@ -21,6 +21,10 @@ use core::mem;
 pub trait ZeroVecLike<'a, T: ?Sized> {
     /// The type returned by `Self::get()`
     type GetType: ?Sized + 'static;
+    /// A fully borrowed version of this
+    type BorrowedVariant: ZeroVecLike<'a, T, GetType = Self::GetType>
+        + BorrowedZeroVecLike<'a, T>
+        + Copy;
 
     /// Create a new, empty vector
     fn zvl_new() -> Self;
@@ -38,6 +42,30 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     fn zvl_is_empty(&self) -> bool {
         self.zvl_len() == 0
     }
+
+    /// Construct a borrowed variant by borrowing from `&self`.
+    ///
+    /// This function behaves like `&'b self -> Self::BorrowedVariant<'b>`,
+    /// where `'b` is the lifetime of the reference to this object.
+    ///
+    /// Note: We rely on the compiler recognizing `'a` and `'b` as covariant and
+    /// casting `&'b Self<'a>` to `&'b Self<'b>` when this gets called, which works
+    /// out for `ZeroVec` and `VarZeroVec` containers just fine.
+    fn zvl_as_borrowed(&'a self) -> Self::BorrowedVariant;
+
+    /// Extract the inner borrowed variant if possible. Returns `None` if the data is owned.
+    ///
+    /// This function behaves like `&'_ self -> Self::BorrowedVariant<'a>`,
+    /// where `'a` is the lifetime of this object's borrowed data.
+    ///
+    /// This function is similar to matching the `Borrowed` variant of `ZeroVec`
+    /// or `VarZeroVec`, returning the inner borrowed type.
+    fn zvl_as_borrowed_inner(&self) -> Option<Self::BorrowedVariant>;
+
+    /// Construct from the borrowed version of the type
+    ///
+    /// These are useful to ensure serialization parity between borrowed and owned versions
+    fn zvl_from_borrowed(b: Self::BorrowedVariant) -> Self;
 
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
@@ -72,10 +100,6 @@ pub trait BorrowedZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
 pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     /// The type returned by `Self::remove()` and `Self::replace()`
     type OwnedType;
-    /// A fully borrowed version of this
-    type BorrowedVariant: ZeroVecLike<'a, T, GetType = Self::GetType>
-        + BorrowedZeroVecLike<'a, T>
-        + Copy;
 
     /// Insert an element at `index`
     fn zvl_insert(&mut self, index: usize, value: &T);
@@ -91,29 +115,6 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
     fn zvl_clear(&mut self);
     /// Reserve space for `addl` additional elements
     fn zvl_reserve(&mut self, addl: usize);
-    /// Construct a borrowed variant by borrowing from `&self`.
-    ///
-    /// This function behaves like `&'b self -> Self::BorrowedVariant<'b>`,
-    /// where `'b` is the lifetime of the reference to this object.
-    ///
-    /// Note: We rely on the compiler recognizing `'a` and `'b` as covariant and
-    /// casting `&'b Self<'a>` to `&'b Self<'b>` when this gets called, which works
-    /// out for `ZeroVec` and `VarZeroVec` containers just fine.
-    fn zvl_as_borrowed(&'a self) -> Self::BorrowedVariant;
-
-    /// Extract the inner borrowed variant if possible. Returns `None` if the data is owned.
-    ///
-    /// This function behaves like `&'_ self -> Self::BorrowedVariant<'a>`,
-    /// where `'a` is the lifetime of this object's borrowed data.
-    ///
-    /// This function is similar to matching the `Borrowed` variant of `ZeroVec`
-    /// or `VarZeroVec`, returning the inner borrowed type.
-    fn zvl_as_borrowed_inner(&self) -> Option<Self::BorrowedVariant>;
-
-    /// Construct from the borrowed version of the type
-    ///
-    /// These are useful to ensure serialization parity between borrowed and owned versions
-    fn zvl_from_borrowed(b: Self::BorrowedVariant) -> Self;
 
     /// Convert an owned value to a borrowed T
     fn owned_as_t(o: &Self::OwnedType) -> &T;
@@ -121,9 +122,11 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<'a, T> {
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
 where
-    T: AsULE + Ord + Copy,
+    T: 'a + AsULE + Ord + Copy,
 {
     type GetType = T::ULE;
+    type BorrowedVariant = &'a ZeroSlice<T>;
+
     fn zvl_new() -> Self {
         Self::new()
     }
@@ -142,6 +145,20 @@ where
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
     }
 
+    fn zvl_as_borrowed(&'a self) -> &'a ZeroSlice<T> {
+        &*self
+    }
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
+        if let ZeroVec::Borrowed(b) = *self {
+            Some(ZeroSlice::from_ule_slice(b))
+        } else {
+            None
+        }
+    }
+    fn zvl_from_borrowed(b: &'a ZeroSlice<T>) -> Self {
+        b.as_zerovec()
+    }
+
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(&T::from_unaligned(*g))
     }
@@ -156,6 +173,8 @@ where
     T: AsULE + Ord + Copy,
 {
     type GetType = T::ULE;
+    type BorrowedVariant = &'a ZeroSlice<T>;
+
     fn zvl_new() -> Self {
         ZeroSlice::from_ule_slice(&[])
     }
@@ -172,6 +191,16 @@ where
         self.as_ule_slice()
             .windows(2)
             .all(|w| T::from_unaligned(w[1]).cmp(&T::from_unaligned(w[0])) == Ordering::Greater)
+    }
+
+    fn zvl_as_borrowed(&'a self) -> &'a ZeroSlice<T> {
+        self
+    }
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
+        Some(self)
+    }
+    fn zvl_from_borrowed(b: &'a ZeroSlice<T>) -> Self {
+        b
     }
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
@@ -197,7 +226,6 @@ where
     T: AsULE + Ord + Copy + 'static,
 {
     type OwnedType = T;
-    type BorrowedVariant = &'a ZeroSlice<T>;
     fn zvl_insert(&mut self, index: usize, value: &T) {
         self.to_mut().insert(index, value.as_unaligned())
     }
@@ -221,20 +249,6 @@ where
         self.to_mut().reserve(addl)
     }
 
-    fn zvl_as_borrowed(&'a self) -> &'a ZeroSlice<T> {
-        &*self
-    }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
-        if let ZeroVec::Borrowed(b) = *self {
-            Some(ZeroSlice::from_ule_slice(b))
-        } else {
-            None
-        }
-    }
-    fn zvl_from_borrowed(b: &'a ZeroSlice<T>) -> Self {
-        b.as_zerovec()
-    }
-
     fn owned_as_t(o: &Self::OwnedType) -> &T {
         o
     }
@@ -247,6 +261,8 @@ where
     T: ?Sized,
 {
     type GetType = T;
+    type BorrowedVariant = &'a VarZeroSlice<T>;
+
     fn zvl_new() -> Self {
         Self::new()
     }
@@ -272,6 +288,20 @@ where
         true
     }
 
+    fn zvl_as_borrowed(&'a self) -> &'a VarZeroSlice<T> {
+        self.as_slice()
+    }
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
+        if let VarZeroVec::Borrowed(b) = *self {
+            Some(b)
+        } else {
+            None
+        }
+    }
+    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
+        b.as_varzerovec()
+    }
+
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(g)
     }
@@ -289,6 +319,8 @@ where
     T: ?Sized,
 {
     type GetType = T;
+    type BorrowedVariant = &'a VarZeroSlice<T>;
+
     fn zvl_new() -> Self {
         VarZeroSlice::new_empty()
     }
@@ -312,6 +344,16 @@ where
             }
         }
         true
+    }
+
+    fn zvl_as_borrowed(&'a self) -> &'a VarZeroSlice<T> {
+        self
+    }
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
+        Some(self)
+    }
+    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
+        b
     }
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
@@ -342,7 +384,6 @@ where
     T: ?Sized,
 {
     type OwnedType = Box<T>;
-    type BorrowedVariant = &'a VarZeroSlice<T>;
     fn zvl_insert(&mut self, index: usize, value: &T) {
         self.make_mut().insert(index, value)
     }
@@ -370,19 +411,6 @@ where
     }
     fn zvl_reserve(&mut self, addl: usize) {
         self.make_mut().reserve(addl)
-    }
-    fn zvl_as_borrowed(&'a self) -> &'a VarZeroSlice<T> {
-        self.as_slice()
-    }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
-        if let VarZeroVec::Borrowed(b) = *self {
-            Some(b)
-        } else {
-            None
-        }
-    }
-    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
-        b.as_varzerovec()
     }
 
     fn owned_as_t(o: &Self::OwnedType) -> &T {
