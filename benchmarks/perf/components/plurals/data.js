@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640062806533,
+  "lastUpdate": 1640109164440,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22175,6 +22175,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24856,
             "range": "± 1171",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0a44cebda56a170654ed009c5d934d4c16d41299",
+          "message": "Make icu_segmenter be no_std with lstm feature disabled (#1425)",
+          "timestamp": "2021-12-21T09:42:54-08:00",
+          "tree_id": "3aa733b235ae7b86dbaf95107c3cc01bfe2ad5d9",
+          "url": "https://github.com/unicode-org/icu4x/commit/0a44cebda56a170654ed009c5d934d4c16d41299"
+        },
+        "date": 1640109155427,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1348,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6701,
+            "range": "± 146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24434,
+            "range": "± 3201",
             "unit": "ns/iter"
           }
         ]
