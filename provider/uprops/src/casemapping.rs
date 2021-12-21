@@ -121,12 +121,12 @@ mod tests {
 
     impl SimpleSet {
         pub fn chars(&self) -> Vec<char> {
-            let mut result: Vec<char> = self.chars.iter().map(|&c| c).collect();
-            result.sort();
+            let mut result: Vec<char> = self.chars.iter().copied().collect();
+            result.sort_unstable();
             result
         }
         pub fn strings(&self) -> Vec<String> {
-            let mut result: Vec<String> = self.strings.iter().map(|c| c.clone()).collect();
+            let mut result: Vec<String> = self.strings.iter().cloned().collect();
             result.sort();
             result
         }
