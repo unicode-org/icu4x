@@ -30,7 +30,7 @@ macro_rules! impl_write_num {
             }
 
             fn write_len(&self) -> $crate::LengthHint {
-                // When https://github.com/rust-lang/rust/issues/70887 stabilizes use
+                // https://github.com/unicode-org/icu4x/issues/1428, use
                 // LengthHint::exact(self.checked_log10().unwrap_or(0) as usize + 1).
 
                 // We need to special-case 0, so we might as well check < 10
