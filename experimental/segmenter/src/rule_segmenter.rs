@@ -37,7 +37,7 @@ macro_rules! break_iterator_impl {
             iter: $iter_attr,
             len: usize,
             current_pos_data: Option<(usize, $char_type)>,
-            result_cache: Vec<usize>,
+            result_cache: alloc::vec::Vec<usize>,
             break_state_table: &'a [i8],
             property_table: &'a [&'a [u8; 1024]; 897],
             rule_property_count: usize,
