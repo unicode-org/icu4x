@@ -14,7 +14,7 @@ use icu_codepointtrie::{CodePointTrie, TrieValue};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use yoke::{Yokeable, ZeroCopyFrom};
-use zerovec::ule::{AsULE, PlainOldULE};
+use zerovec::ule::{AsULE, RawBytesULE};
 use zerovec::{ZeroMap, ZeroVec};
 
 use crate::error::Error;
@@ -155,11 +155,11 @@ impl CaseMappingData {
 }
 
 impl AsULE for CaseMappingData {
-    type ULE = PlainOldULE<2>;
+    type ULE = RawBytesULE<2>;
 
     #[inline]
     fn as_unaligned(self) -> Self::ULE {
-        PlainOldULE(self.0.to_le_bytes())
+        RawBytesULE(self.0.to_le_bytes())
     }
 
     #[inline]
