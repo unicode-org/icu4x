@@ -23,10 +23,13 @@ include = [
     "README.md"
 ]
 
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+
 [dependencies]
 unicode-width = "0.1.7"
 icu_provider = { version = "0.4", path = "../../provider/core" }
-icu_segmenter_lstm = { version = "0.1", path = "../segmenter_lstm" }
+icu_segmenter_lstm = { version = "0.1", path = "../segmenter_lstm", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 lazy_static = "1.0"
@@ -52,3 +55,4 @@ harness = false
 
 [features]
 default = []
+lstm = ["icu_segmenter_lstm"]

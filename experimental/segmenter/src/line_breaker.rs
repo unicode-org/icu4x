@@ -7,14 +7,25 @@ extern crate unicode_width;
 use crate::indices::*;
 use crate::language::*;
 use crate::lb_define::*;
-use crate::lstm::*;
 use crate::property_table::*;
 use crate::rule_table::*;
 
+use alloc::vec;
+use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
 use icu_provider::DataError;
 use unicode_width::UnicodeWidthChar;
+
+// Use the LSTM when the feature is enabled.
+#[cfg(feature = "lstm")]
+use crate::lstm::get_line_break_utf16;
+
+// No-op function when LSTM is disabled.
+#[cfg(not(feature = "lstm"))]
+fn get_line_break_utf16(_: &[u16]) -> Option<Vec<usize>> {
+    None
+}
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line breaker.

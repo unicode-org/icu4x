@@ -83,11 +83,14 @@
 //! - <https://www.unicode.org/Public/UCD/latest/ucd/LineBreak.txt>
 //! - <https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt>
 
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
+
 mod indices;
 mod language;
 mod lb_define;
 mod line_breaker;
-mod lstm;
 mod properties_defines;
 mod properties_other;
 mod property_table;
@@ -97,8 +100,25 @@ mod rule_table;
 mod grapheme;
 mod word;
 
+#[cfg(feature = "lstm")]
 #[macro_use]
 extern crate lazy_static;
+
+// Use the LSTM when the feature is enabled.
+#[cfg(feature = "lstm")]
+mod lstm;
+
+// No-op functions when LSTM is disabled.
+#[cfg(not(feature = "lstm"))]
+mod lstm {
+    use alloc::vec::Vec;
+    pub fn get_line_break_utf16(_: &[u16]) -> Option<Vec<usize>> {
+        None
+    }
+    pub fn get_line_break_utf8(_: &str) -> Option<Vec<usize>> {
+        None
+    }
+}
 
 pub use crate::grapheme::{
     GraphemeBreakIterator, GraphemeBreakIteratorLatin1, GraphemeBreakIteratorUtf16,
