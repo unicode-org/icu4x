@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640109067939,
+  "lastUpdate": 1640118297703,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15809,6 +15809,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 136801,
             "range": "± 2837",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e7e21843237dade01c42947fa3e4166a911fcb1",
+          "message": "Move BorrowedVariant to ZeroVecLike (#1429)",
+          "timestamp": "2021-12-21T12:17:25-08:00",
+          "tree_id": "5d544310e3b392ee83d3cb3d7f279a53c744ec42",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e7e21843237dade01c42947fa3e4166a911fcb1"
+        },
+        "date": 1640118288651,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 133428,
+            "range": "± 4666",
             "unit": "ns/iter"
           }
         ]
