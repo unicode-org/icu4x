@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640118329527,
+  "lastUpdate": 1640133684859,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19685,6 +19685,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4816,
             "range": "± 150",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f4fee4264c86ea324e6cf5202632ca8838d6803b",
+          "message": "Add build scripts in Cargo.toml for cargo vendor. (#1424)",
+          "timestamp": "2021-12-22T09:32:46+09:00",
+          "tree_id": "4a6285a9b07b5dd8bc8e49ffa5135480951aea00",
+          "url": "https://github.com/unicode-org/icu4x/commit/f4fee4264c86ea324e6cf5202632ca8838d6803b"
+        },
+        "date": 1640133675399,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3255,
+            "range": "± 254",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5438,
+            "range": "± 431",
             "unit": "ns/iter"
           }
         ]
