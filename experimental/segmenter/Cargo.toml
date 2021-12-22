@@ -14,10 +14,12 @@ license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
+    "data/*",
     "src/**/*",
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
+    "build.rs",
     "Cargo.toml",
     "LICENSE",
     "README.md"
