@@ -9,6 +9,7 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::convert::TryFrom;
 use core::marker::PhantomData;
+use core::ops::Range;
 use core::{iter, mem};
 
 fn usizeify(x: RawBytesULE<4>) -> usize {
@@ -274,6 +275,25 @@ where
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
+        self.binary_search_impl(needle, self.indices)
+    }
+
+    pub fn binary_search_in_range(
+        &self,
+        needle: &T,
+        range: Range<usize>,
+    ) -> Option<Result<usize, usize>> {
+        let indices_slice = self.indices.get(range)?;
+        Some(self.binary_search_impl(needle, indices_slice))
+    }
+
+    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
+    /// the primitive function [`binary_search`](slice::binary_search).
+    fn binary_search_impl(
+        &self,
+        needle: &T,
+        indices_slice: &[RawBytesULE<4>],
+    ) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
         // code is known to the State of California to cause cancer.
         //
@@ -296,8 +316,10 @@ where
         //
         // The alternative to doing this is to implement our own binary search. This is significantly less fun.
 
+        // Note: We always use zero_index relative to the whole indices array, even if we are
+        // only searching a subslice of it.
         let zero_index = self.indices.as_ptr() as *const _ as usize;
-        self.indices.binary_search_by(|probe: &_| {
+        indices_slice.binary_search_by(|probe: &_| {
             // `self.indices` is a vec of unaligned u32s, so we divide by sizeof(u32)
             // to get the actual index
             let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u32>();

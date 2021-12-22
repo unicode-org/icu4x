@@ -151,6 +151,16 @@ where
     }
 }
 
+impl<T, const N: usize> PartialEq<[T; N]> for ZeroVec<'_, T>
+where
+    T: AsULE + PartialEq + ?Sized,
+{
+    #[inline]
+    fn eq(&self, other: &[T; N]) -> bool {
+        self.iter().eq(other.iter().copied())
+    }
+}
+
 impl<'a, T: AsULE> Default for ZeroVec<'a, T> {
     #[inline]
     fn default() -> Self {
