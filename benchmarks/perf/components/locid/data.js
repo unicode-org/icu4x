@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640194224136,
+  "lastUpdate": 1640196496902,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19829,6 +19829,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5300,
             "range": "± 299",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0c1f751b6a50b74fbfa367758f9cf89cda55273a",
+          "message": "Using new list data invariants (#1434)",
+          "timestamp": "2021-12-22T19:00:03+01:00",
+          "tree_id": "9aea966e2390f60b4377c37a1f75d3d72412831f",
+          "url": "https://github.com/unicode-org/icu4x/commit/0c1f751b6a50b74fbfa367758f9cf89cda55273a"
+        },
+        "date": 1640196488950,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2458,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4098,
+            "range": "± 35",
             "unit": "ns/iter"
           }
         ]
