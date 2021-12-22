@@ -14,9 +14,9 @@ mod borrowed;
 // #[cfg(feature = "serde")]
 // mod serde;
 
-// use borrowed::ZeroMap2kBorrowed;
 use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
+pub use borrowed::ZeroMap2kBorrowed;
 
 /// A zero-copy map datastructure that supports two layers of keys.
 ///
@@ -116,15 +116,15 @@ where
         }
     }
 
-    // /// Obtain a borrowed version of this map
-    // pub fn as_borrowed(&'a self) -> ZeroMap2kBorrowed<'a, K0, K1, V> {
-    //     ZeroMap2kBorrowed {
-    //         keys0: self.keys0.zvl_as_borrowed(),
-    //         joiner: self.joiner.as_borrowed(),
-    //         keys1: self.keys1.zvl_as_borrowed(),
-    //         values: self.values.zvl_as_borrowed(),
-    //     }
-    // }
+    /// Obtain a borrowed version of this map
+    pub fn as_borrowed(&'a self) -> ZeroMap2kBorrowed<'a, K0, K1, V> {
+        ZeroMap2kBorrowed {
+            keys0: self.keys0.zvl_as_borrowed(),
+            joiner: &*self.joiner,
+            keys1: self.keys1.zvl_as_borrowed(),
+            values: self.values.zvl_as_borrowed(),
+        }
+    }
 
     /// The number of values in the [`ZeroMap2k`]
     pub fn len(&self) -> usize {
@@ -185,13 +185,13 @@ where
     /// Returns whether `key0` is contained in this map
     ///
     /// ```rust
-    /// use zerovec::ZeroMap;
+    /// use zerovec::ZeroMap2k;
     ///
     /// let mut map = ZeroMap2k::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "two", "bar");
-    /// assert_eq!(map.contains_key(&1), true);
-    /// assert_eq!(map.contains_key(&3), false);
+    /// assert_eq!(map.contains_key0(&1), true);
+    /// assert_eq!(map.contains_key0(&3), false);
     /// ```
     pub fn contains_key0(&self, key0: &K0) -> bool {
         self.keys0.zvl_binary_search(key0).is_ok()
@@ -443,20 +443,24 @@ where
     }
 }
 
-// impl<'a, K, V> From<ZeroMapBorrowed<'a, K, V>> for ZeroMap<'a, K, V>
-// where
-//     K: ZeroMapKV<'a>,
-//     V: ZeroMapKV<'a>,
-//     K: ?Sized,
-//     V: ?Sized,
-// {
-//     fn from(other: ZeroMapBorrowed<'a, K, V>) -> Self {
-//         Self {
-//             keys: K::Container::zvl_from_borrowed(other.keys),
-//             values: V::Container::zvl_from_borrowed(other.values),
-//         }
-//     }
-// }
+impl<'a, K0, K1, V> From<ZeroMap2kBorrowed<'a, K0, K1, V>> for ZeroMap2k<'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a>,
+    K1: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: ?Sized,
+{
+    fn from(other: ZeroMap2kBorrowed<'a, K0, K1, V>) -> Self {
+        Self {
+            keys0: K0::Container::zvl_from_borrowed(other.keys0),
+            joiner: other.joiner.as_zerovec(),
+            keys1: K1::Container::zvl_from_borrowed(other.keys1),
+            values: V::Container::zvl_from_borrowed(other.values),
+        }
+    }
+}
 
 // We can't use the default PartialEq because ZeroMap2k is invariant
 // so otherwise rustc will not automatically allow you to compare ZeroMaps

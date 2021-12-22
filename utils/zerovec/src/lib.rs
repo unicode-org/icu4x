@@ -99,7 +99,7 @@ extern crate alloc;
 
 mod error;
 pub mod map;
-mod map2k;
+pub mod map2k;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;

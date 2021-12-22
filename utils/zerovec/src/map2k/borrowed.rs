@@ -6,9 +6,10 @@ use crate::ule::AsULE;
 use crate::{ZeroSlice, ZeroVec};
 
 use core::fmt;
+use core::ops::Range;
 
 use crate::map::ZeroMapKV;
-use crate::map::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
+use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
 
 /// A borrowed-only version of [`ZeroMap2k`](super::ZeroMap2k)
 ///
@@ -139,160 +140,164 @@ where
         self.values.zvl_len() == 0
     }
 
-    /*
-        /// Get the value associated with `key`, if it exists.
-        ///
-        /// This is able to return values that live longer than the map itself
-        /// since they borrow directly from the backing buffer. This is the
-        /// primary advantage of using [`ZeroMap2kBorrowed`](super::ZeroMap2kBorrowed) over [`ZeroMap2k`](super::ZeroMap2k).
-        ///
-        /// ```rust
-        /// use zerovec::ZeroMap2k;
-        /// use zerovec::map::ZeroMap2kBorrowed;
-        ///
-        /// let mut map = ZeroMap2k::new();
-        /// map.insert(&1, "one");
-        /// map.insert(&2, "two");
-        /// let borrowed = map.as_borrowed();
-        /// assert_eq!(borrowed.get(&1), Some("one"));
-        /// assert_eq!(borrowed.get(&3), None);
-        ///
-        /// let borrow = borrowed.get(&1);
-        /// drop(borrowed);
-        /// // still exists after the ZeroMap2kBorrowed has been dropped
-        /// assert_eq!(borrow, Some("one"));
-        /// ```
-        pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
-            todo!()
-        }
+    /// Get the value associated with `key`, if it exists.
+    ///
+    /// This is able to return values that live longer than the map itself
+    /// since they borrow directly from the backing buffer. This is the
+    /// primary advantage of using [`ZeroMap2kBorrowed`](super::ZeroMap2kBorrowed) over [`ZeroMap2k`](super::ZeroMap2k).
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap2k;
+    /// use zerovec::map2k::ZeroMap2kBorrowed;
+    ///
+    /// let mut map = ZeroMap2k::new();
+    /// map.insert(&1, "one", "foo");
+    /// map.insert(&2, "one", "bar");
+    /// map.insert(&2, "two", "baz");
+    ///
+    /// let borrowed = map.as_borrowed();
+    /// assert_eq!(borrowed.get(&1, "one"), Some("foo"));
+    /// assert_eq!(borrowed.get(&1, "two"), None);
+    /// assert_eq!(borrowed.get(&2, "one"), Some("bar"));
+    /// assert_eq!(borrowed.get(&2, "two"), Some("baz"));
+    /// assert_eq!(borrowed.get(&3, "three"), None);
+    ///
+    /// let borrow = borrowed.get(&1, "one");
+    /// drop(borrowed);
+    /// // still exists after the ZeroMap2kBorrowed has been dropped
+    /// assert_eq!(borrow, Some("foo"));
+    /// ```
+    pub fn get(&self, key0: &K0, key1: &K1) -> Option<&'a V::GetType> {
+        let (_, range) = self.get_range_for_key0(key0)?;
+        debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
+        debug_assert!(range.end <= self.keys1.zvl_len());
+        let index = self
+            .keys1
+            .zvl_binary_search_in_range(key1, range)
+            .unwrap()
+            .ok()?;
+        self.values.zvl_get_borrowed(index)
+    }
 
-        /// Returns whether `key` is contained in this map
-        ///
-        /// ```rust
-        /// use zerovec::ZeroMap2k;
-        /// use zerovec::map::ZeroMap2kBorrowed;
-        ///
-        /// let mut map = ZeroMap2k::new();
-        /// map.insert(&1, "one");
-        /// map.insert(&2, "two");
-        /// let borrowed = map.as_borrowed();
-        /// assert_eq!(borrowed.contains_key(&1), true);
-        /// assert_eq!(borrowed.contains_key(&3), false);
-        /// ```
-        pub fn contains_key(&self, key: &K) -> bool {
-            self.keys.zvl_binary_search(key).is_ok()
-        }
+    /// Returns whether `key0` is contained in this map
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap2k;
+    /// use zerovec::map::ZeroMap2kBorrowed;
+    ///
+    /// let mut map = ZeroMap2k::new();
+    /// map.insert(&1, "one", "foo");
+    /// map.insert(&2, "two", "bar");
+    /// let borrowed = map.as_borrowed();
+    /// assert_eq!(borrowed.contains_key0(&1), true);
+    /// assert_eq!(borrowed.contains_key0(&3), false);
+    /// ```
+    pub fn contains_key0(&self, key0: &K0) -> bool {
+        self.keys0.zvl_binary_search(key0).is_ok()
+    }
 
-        /// Produce an ordered iterator over key-value pairs
-        pub fn iter<'b>(
-            &'b self,
-        ) -> impl Iterator<
-            Item = (
-                &'a <K as ZeroMapKV<'a>>::GetType,
-                &'a <V as ZeroMapKV<'a>>::GetType,
-            ),
-        > + 'b {
-            (0..self.keys.zvl_len()).map(move |idx| {
-                (
-                    self.keys.zvl_get_borrowed(idx).unwrap(),
-                    self.values.zvl_get_borrowed(idx).unwrap(),
-                )
-            })
-        }
+    /// Produce an ordered iterator over keys0
+    pub fn iter_keys0<'b>(&'b self) -> impl Iterator<Item = &'b <K0 as ZeroMapKV<'a>>::GetType> {
+        (0..self.keys0.zvl_len()).map(move |idx| self.keys0.zvl_get(idx).unwrap())
+    }
 
-        /// Produce an ordered iterator over keys
-        pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'a <K as ZeroMapKV<'a>>::GetType> + 'b {
-            (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get_borrowed(idx).unwrap())
-        }
+    /// Produce an ordered iterator over keys1 for a particular key0, if key0 exists
+    pub fn iter_keys1<'b>(
+        &'b self,
+        key0: &K0,
+    ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
+        let (_, range) = self.get_range_for_key0(key0)?;
+        Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
+    }
 
-        /// Produce an iterator over values, ordered by keys
-        pub fn iter_values<'b>(
-            &'b self,
-        ) -> impl Iterator<Item = &'a <V as ZeroMapKV<'a>>::GetType> + 'b {
-            (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get_borrowed(idx).unwrap())
-        }
-    */
+    /// Produce an iterator over values, ordered by the pair (key0,key1)
+    pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
+        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
+    }
+
+    // INTERNAL ROUTINES FOLLOW //
+
+    /// Given a value that may exist in keys0, returns the corresponding range of keys1
+    fn get_range_for_key0(&self, key0: &K0) -> Option<(usize, Range<usize>)> {
+        let key0_index = self.keys0.zvl_binary_search(key0).ok()?;
+        Some((key0_index, self.get_range_for_key0_index(key0_index)))
+    }
+
+    /// Given an index into the joiner array, returns the corresponding range of keys1
+    fn get_range_for_key0_index(&self, key0_index: usize) -> Range<usize> {
+        debug_assert!(key0_index < self.joiner.len());
+        let start = if key0_index == 0 {
+            0
+        } else {
+            // The unwrap is protected by the debug_assert above
+            self.joiner.get(key0_index - 1).unwrap()
+        };
+        // The unwrap is protected by the debug_assert above
+        let limit = self.joiner.get(key0_index).unwrap();
+        (start as usize)..(limit as usize)
+    }
 }
 
-/*
 impl<'a, K0, K1, V> ZeroMap2kBorrowed<'a, K0, K1, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Ord + Copy + 'static,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
-    pub fn get_copied(&self, key: &K) -> Option<V> {
-        let index = self.keys.zvl_binary_search(key).ok()?;
+    pub fn get_copied(&self, key0: &K0, key1: &K1) -> Option<V> {
+        let (_, range) = self.get_range_for_key0(key0)?;
+        debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
+        debug_assert!(range.end <= self.keys1.zvl_len());
+        let index = self
+            .keys1
+            .zvl_binary_search_in_range(key1, range)
+            .unwrap()
+            .ok()?;
         self.values.get(index)
-    }
-
-    /// Similar to [`Self::iter()`] except it returns a direct copy of the values instead of references
-    /// to `V::ULE`, in cases when `V` is fixed-size
-    pub fn iter_copied_values<'b>(
-        &'b self,
-    ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
-        (0..self.keys.zvl_len()).map(move |idx| {
-            (
-                self.keys.zvl_get(idx).unwrap(),
-                self.values.get(idx).unwrap(),
-            )
-        })
-    }
-}
-
-impl<'a, K0, K1, V> ZeroMap2kBorrowed<'a, K0, K1, V>
-where
-    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + ?Sized,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
-    K: AsULE + Copy + Ord + 'static,
-    V: AsULE + Copy + Ord + 'static,
-{
-    /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
-    /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
-    #[allow(clippy::needless_lifetimes)] // Lifetime is necessary in impl Trait
-    pub fn iter_copied<'b: 'a>(&'b self) -> impl Iterator<Item = (K0, K1, V)> + 'b {
-        let keys = &*self.keys;
-        let values = &*self.values;
-        let len = self.keys.zvl_len();
-        (0..len).map(move |idx| {
-            (
-                ZeroSlice::get(keys, idx).unwrap(),
-                ZeroSlice::get(values, idx).unwrap(),
-            )
-        })
     }
 }
 
 // We can't use the default PartialEq because ZeroMap2k is invariant
 // so otherwise rustc will not automatically allow you to compare ZeroMaps
 // with different lifetimes
-impl<'a, 'b, K0, K1, V> PartialEq<ZeroMap2kBorrowed<'b, K0, K1, V>> for ZeroMap2kBorrowed<'a, K0, K1, V>
+impl<'a, 'b, K0, K1, V> PartialEq<ZeroMap2kBorrowed<'b, K0, K1, V>>
+    for ZeroMap2kBorrowed<'a, K0, K1, V>
 where
-    K: for<'c> ZeroMapKV<'c> + ?Sized,
+    K0: for<'c> ZeroMapKV<'c> + ?Sized,
+    K1: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant:
-        PartialEq<<<K as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, K>>::BorrowedVariant>,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K0>>::BorrowedVariant:
+        PartialEq<<<K0 as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, K0>>::BorrowedVariant>,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K1>>::BorrowedVariant:
+        PartialEq<<<K1 as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, K1>>::BorrowedVariant>,
     <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant:
         PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, V>>::BorrowedVariant>,
 {
     fn eq(&self, other: &ZeroMap2kBorrowed<'b, K0, K1, V>) -> bool {
-        self.keys.eq(&other.keys) && self.values.eq(&other.values)
+        self.keys0.eq(&other.keys0)
+            && self.joiner.eq(other.joiner)
+            && self.keys1.eq(&other.keys1)
+            && self.values.eq(&other.values)
     }
 }
 
 impl<'a, K0, K1, V> fmt::Debug for ZeroMap2kBorrowed<'a, K0, K1, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant: fmt::Debug,
+    <<K0 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K0>>::BorrowedVariant: fmt::Debug,
+    <<K1 as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K1>>::BorrowedVariant: fmt::Debug,
     <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMap2kBorrowed")
-            .field("keys", &self.keys)
+            .field("keys0", &self.keys0)
+            .field("joiner", &self.joiner)
+            .field("keys1", &self.keys1)
             .field("values", &self.values)
             .finish()
     }
 }
-*/
