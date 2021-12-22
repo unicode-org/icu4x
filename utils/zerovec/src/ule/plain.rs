@@ -69,7 +69,7 @@ macro_rules! impl_byte_slice_size {
             /// assert_eq!(zv, [0, 1, 2, 4]);
             /// # Ok::<(), core::num::TryFromIntError>(())
             /// ```
-            pub fn add_unsigned(
+            pub fn add_unsigned_int(
                 &mut self,
                 operand: isize,
             ) -> Result<(), core::num::TryFromIntError> {
@@ -78,6 +78,11 @@ macro_rules! impl_byte_slice_size {
                 let x: $unsigned = ((x as isize) + operand).try_into()?;
                 *self = x.as_unaligned();
                 Ok(())
+            }
+
+            /// Gets this RawBytesULE as an unsigned int.
+            pub fn as_unsigned_int(&self) -> $unsigned {
+                <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
             }
         }
     };
