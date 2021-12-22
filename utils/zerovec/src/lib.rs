@@ -99,6 +99,7 @@ extern crate alloc;
 
 mod error;
 pub mod map;
+mod map2k;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;
@@ -110,5 +111,6 @@ mod yoke_impls;
 
 pub use crate::error::ZeroVecError;
 pub use crate::map::ZeroMap;
+pub use crate::map2k::ZeroMap2k;
 pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
