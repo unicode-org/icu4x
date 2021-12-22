@@ -154,17 +154,25 @@ struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     string: Cow<'data, str>,
+    /// The index of the first placeholder. Always 0 for CLDR
+    /// data, so we don't need to serialize it. In-memory we
+    /// have free space for it as index_1 doesn't fill a word.
+    #[cfg_attr(feature = "provider_serde", serde(skip))]
+    index_0: u8,
     /// The index of the second placeholder
     index_1: u8,
 }
 
-pub type PatternParts<'a> = (&'a str, &'a str);
+pub type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'data> ListJoinerPattern<'data> {
     fn borrow_tuple(&'data self) -> PatternParts<'data> {
+        let index_0 = self.index_0 as usize;
+        let index_1 = self.index_1 as usize;
         (
-            &self.string[0..self.index_1 as usize],
-            &self.string[self.index_1 as usize..],
+            &self.string[0..index_0],
+            &self.string[index_0..index_1],
+            &self.string[index_1..],
         )
     }
 }
@@ -174,14 +182,23 @@ impl<'data> FromStr for ListJoinerPattern<'data> {
     type Err = Error;
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
         match (pattern.find("{0}"), pattern.find("{1}")) {
-            (Some(0), Some(index_1)) if index_1 - 3 < 256 => Ok(ListJoinerPattern {
-                string: Cow::Owned(alloc::format!(
-                    "{}{}",
-                    &pattern[3..index_1],
-                    &pattern[index_1 + 3..]
-                )),
-                index_1: (index_1 - 3) as u8,
-            }),
+            (Some(index_0), Some(index_1)) if index_0 < index_1 => {
+                assert!(
+                    (index_0 == 0 || cfg!(test)) && index_1 - 3 < 256,
+                    "Found valid pattern {:?} that cannot be stored in ListFormatterPatternsV1.",
+                    pattern
+                );
+                Ok(ListJoinerPattern {
+                    string: Cow::Owned(alloc::format!(
+                        "{}{}{}",
+                        &pattern[0..index_0],
+                        &pattern[index_0 + 3..index_1],
+                        &pattern[index_1 + 3..]
+                    )),
+                    index_0: index_0 as u8,
+                    index_1: (index_1 - 3) as u8,
+                })
+            }
             _ => Err(Error::IllegalPattern(pattern.into())),
         }
     }
@@ -231,10 +248,10 @@ pub(crate) mod test {
     pub fn test_patterns() -> ListFormatterPatternsV1<'static> {
         let mut patterns = ListFormatterPatternsV1::try_new([
             // Wide: general
-            "{0}: {1}",
-            "{0}, {1}",
-            "{0}. {1}!",
-            "{0}; {1}",
+            "@{0}:{1}#",
+            "&{0},{1}?",
+            "*{0}.{1}!",
+            "${0};{1}+",
             // Short: different pattern lengths
             "{0}1{1}",
             "{0}12{1}",
@@ -254,17 +271,42 @@ pub(crate) mod test {
     }
 
     #[test]
+    fn rejects_bad_patterns() {
+        assert!(ConditionalListJoinerPattern::from_str("{0} and").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("and {1}").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("{1} and {0}").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("{1{0}}").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("{0\u{202e}} and {1}").is_err());
+        assert!(ConditionalListJoinerPattern::from_str("{{0}} {{1}}").is_ok());
+    }
+
+    #[test]
     fn produces_correct_parts() {
-        assert_eq!(test_patterns().end(Width::Wide).parts(""), (". ", "!"));
+        assert_eq!(test_patterns().end(Width::Wide).parts(""), ("*", ".", "!"));
     }
 
     #[test]
     fn produces_correct_parts_conditionally() {
-        assert_eq!(test_patterns().end(Width::Narrow).parts("A"), (" :o ", ""));
-        assert_eq!(test_patterns().end(Width::Narrow).parts("a"), (" :o ", ""));
-        assert_eq!(test_patterns().end(Width::Narrow).parts("ab"), (" :o ", ""));
-        assert_eq!(test_patterns().end(Width::Narrow).parts("B"), (". ", ""));
-        assert_eq!(test_patterns().end(Width::Narrow).parts("BA"), (". ", ""));
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("A"),
+            ("", " :o ", "")
+        );
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("a"),
+            ("", " :o ", "")
+        );
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("ab"),
+            ("", " :o ", "")
+        );
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("B"),
+            ("", ". ", "")
+        );
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("BA"),
+            ("", ". ", "")
+        );
     }
 
     #[test]
