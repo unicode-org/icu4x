@@ -78,7 +78,7 @@ impl ListFormatter {
                 builder = append_literal(builder, start_between);
                 builder = append_value(builder, values[1]);
 
-                for value in &values[2..n-1] {
+                for value in &values[2..n - 1] {
                     let (_, between, _) = self.data.get().middle(self.width).parts(value);
                     builder = append_literal(builder, between);
                     builder = append_value(builder, value);

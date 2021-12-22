@@ -210,7 +210,10 @@ impl<'data> ListJoinerPattern<'data> {
 #[cfg(any(test, feature = "provider_transform_internals"))]
 impl<'data> From<ListJoinerPattern<'data>> for ConditionalListJoinerPattern<'data> {
     fn from(default: ListJoinerPattern<'data>) -> Self {
-        Self { default, special_case: None }
+        Self {
+            default,
+            special_case: None,
+        }
     }
 }
 
