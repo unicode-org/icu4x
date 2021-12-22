@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640193279180,
+  "lastUpdate": 1640193817215,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6023,6 +6023,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5cfbb17701d725fe739afb5164c9a75d565674eb"
         },
         "date": 1640193270166,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7eda44fdb2cef111dc0b1c4abaa769fbc974b7d9",
+          "message": "Fuzz testing integer Writeable (#1421)",
+          "timestamp": "2021-12-22T18:22:07+01:00",
+          "tree_id": "20a0b11d1c1a63d6a27deb96443c73d52f05b236",
+          "url": "https://github.com/unicode-org/icu4x/commit/7eda44fdb2cef111dc0b1c4abaa769fbc974b7d9"
+        },
+        "date": 1640193808604,
         "tool": "ndjson",
         "benches": [
           {
