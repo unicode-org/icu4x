@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640193683671,
+  "lastUpdate": 1640194180340,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22385,6 +22385,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21337,
             "range": "± 2475",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7eda44fdb2cef111dc0b1c4abaa769fbc974b7d9",
+          "message": "Fuzz testing integer Writeable (#1421)",
+          "timestamp": "2021-12-22T18:22:07+01:00",
+          "tree_id": "20a0b11d1c1a63d6a27deb96443c73d52f05b236",
+          "url": "https://github.com/unicode-org/icu4x/commit/7eda44fdb2cef111dc0b1c4abaa769fbc974b7d9"
+        },
+        "date": 1640194173828,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 958,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 4797,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18368,
+            "range": "± 74",
             "unit": "ns/iter"
           }
         ]
