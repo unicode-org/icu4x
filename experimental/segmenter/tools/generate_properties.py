@@ -20,6 +20,11 @@ lb_props = ["XX" for x in range(begin_plane2)]
 # http://www.unicode.org/reports/tr11/#ED7
 ea_props = ["N" for x in range(begin_plane2)]
 
+# Set default value for Extended Pictographic to "N" (No) for all codepoints
+# in Unicode Plane 0 and PlaneA 1
+# http://www.unicode.org/reports/tr51/#def_level1_emoji
+extended_pictographics = [False for x in range(begin_plane2)]
+
 rule = []
 table = []
 
@@ -43,11 +48,11 @@ with open('EastAsianWidth.txt', 'r') as eaw_file:
             for i in range(start, end + 1):
                 ea_props[i] = prop
 
-with open('LineBreak.txt', 'r') as lb_file:
-    range_codepoint_pattern = r"([0-9A-F]{1,6})\.\.([0-9A-F]{1,6})\;([0-9A-Z]{2,})"
-    single_codepoint_pattern = r"([0-9A-F]{1,6})\;([0-9A-Z]{2,})"
+with open('emoji-data.txt', 'r') as emoji_file:
+    range_codepoint_pattern = r"([0-9A-F]{1,6})\.\.([0-9A-F]{1,6})\s*\;\s*([A-ZA-z_]{2,})"
+    single_codepoint_pattern = r"([0-9A-F]{1,6})\s*\;\s*([A-Za-z_]{2,})"
 
-    for line in lb_file.readlines():
+    for line in emoji_file.readlines():
         start = end = prop = None
         if m := re.match(range_codepoint_pattern, line):
             start = int(m[1], 16)
@@ -56,6 +61,32 @@ with open('LineBreak.txt', 'r') as lb_file:
         elif m := re.match(single_codepoint_pattern, line):
             start = end = int(m[1], 16)
             prop = m[2]
+
+        if prop != "Extended_Pictographic":
+            continue
+
+        # We have a success match, property is Extended_Pictographic, and the
+        # codepoints are in plane 0 & 1. Store their Extended_Pictographic
+        # list.
+        if prop and start < begin_plane2:
+            for i in range(start, end + 1):
+                extended_pictographics[i] = True
+
+with open('LineBreak.txt', 'r') as lb_file:
+    range_codepoint_pattern = r"([0-9A-F]{1,6})\.\.([0-9A-F]{1,6})\;([0-9A-Z]{2,})\s*#\s([A-Za-z]{1,})"
+    single_codepoint_pattern = r"([0-9A-F]{1,6})\;([0-9A-Z]{2,})\s*#\s([A-Za-z]{1,})"
+
+    for line in lb_file.readlines():
+        start = end = prop = uni_prop = None
+        if m := re.match(range_codepoint_pattern, line):
+            start = int(m[1], 16)
+            end = int(m[2], 16)
+            prop = m[3]
+            uni_prop = m[4]
+        elif m := re.match(single_codepoint_pattern, line):
+            start = end = int(m[1], 16)
+            prop = m[2]
+            uni_prop = m[3]
 
         # We have a success match, and the codepoints are in plane 0 & 1. Store
         # their line break class.
@@ -73,6 +104,14 @@ with open('LineBreak.txt', 'r') as lb_file:
                     # codepoints 0x0029 and 0x005D with CP line break class both
                     # have EA property "Na".
                     lb_props[i] = "CP_EA"
+                elif uni_prop == "Cn":
+                    # For LB30b
+                    # Unassigned codepoints with Line_Break=ID in some blocks
+                    # are also assigned the Extended_Pictographic property.
+                    if prop == "ID" and extended_pictographics[i]:
+                        lb_props[i] = "ID_CN"
+                    else:
+                        lb_props[i] = prop
                 else:
                     lb_props[i] = prop
 
@@ -310,10 +349,10 @@ for i in prop_type:
             continue
 
         # LB23a
-        if i == "PR" and j in ("ID", "EB", "EM"):
+        if i == "PR" and j in ("ID", "ID_CN", "EB", "EM"):
             rule.append("x")
             continue
-        if i in ("ID", "EB", "EM") and j == "PO":
+        if i in ("ID", "ID_CN", "EB", "EM") and j == "PO":
             rule.append("x")
             continue
 
@@ -381,9 +420,6 @@ for i in prop_type:
             continue
 
         # LB27
-        if i in ("JL", "JV", "JT", "H2", "H3") and j == "IN":
-            rule.append("x")
-            continue
         if i in ("JL", "JV", "JT", "H2", "H3") and j == "PO":
             rule.append("x")
             continue
@@ -421,6 +457,9 @@ for i in prop_type:
 
         # LB30b
         if i == "EB" and j == "EM":
+            rule.append("x")
+            continue
+        if i == "ID_CN" and j == "EM":
             rule.append("x")
             continue
 
