@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640133684859,
+  "lastUpdate": 1640170112148,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19721,6 +19721,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5438,
             "range": "± 431",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b7bb53376d5f67130cd79d7585fc24d93c1daf59",
+          "message": "Update line break table per Unicode 14.0 (#1419)\n\n* Update link break table per Unicode 14.0\r\n\r\nFix https://github.com/unicode-org/icu4x/issues/1122\r\n\r\n* Fix per review comment.",
+          "timestamp": "2021-12-22T19:40:38+09:00",
+          "tree_id": "767e14216ac4ca0edfc9dc18efb10dcef776c4cf",
+          "url": "https://github.com/unicode-org/icu4x/commit/b7bb53376d5f67130cd79d7585fc24d93c1daf59"
+        },
+        "date": 1640170103173,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2930,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4922,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
