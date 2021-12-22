@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640203654181,
+  "lastUpdate": 1640216302925,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6113,6 +6113,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4f4ba6ec0880f97dc9c3f81720485784da460481"
         },
         "date": 1640203646505,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "27ee71234c96033975f07f9d442a74b0629aae63",
+          "message": "Update nightly to 2021-12-22 (#1442)",
+          "timestamp": "2021-12-22T15:36:54-08:00",
+          "tree_id": "523f5c7884991079d1343d7e478815f484102315",
+          "url": "https://github.com/unicode-org/icu4x/commit/27ee71234c96033975f07f9d442a74b0629aae63"
+        },
+        "date": 1640216294125,
         "tool": "ndjson",
         "benches": [
           {
