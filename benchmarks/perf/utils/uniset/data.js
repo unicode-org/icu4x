@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640170050667,
+  "lastUpdate": 1640193638083,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16979,6 +16979,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36302183,
             "range": "± 82356",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5cfbb17701d725fe739afb5164c9a75d565674eb",
+          "message": "Rewriting ListFormatter to only use appends (#1395)",
+          "timestamp": "2021-12-22T18:13:12+01:00",
+          "tree_id": "f3b5d4e6abfb8beea793cd0eed768989808bc5b2",
+          "url": "https://github.com/unicode-org/icu4x/commit/5cfbb17701d725fe739afb5164c9a75d565674eb"
+        },
+        "date": 1640193628616,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 37970309,
+            "range": "± 2180869",
             "unit": "ns/iter"
           }
         ]
