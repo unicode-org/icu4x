@@ -5,6 +5,8 @@
 use super::{ZeroMap2k, ZeroMap2kBorrowed};
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
+use alloc::vec::Vec;
+use core::cell::RefCell;
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{self, MapAccess, Visitor};
@@ -26,16 +28,58 @@ where
         S: Serializer,
     {
         if serializer.is_human_readable() {
-            todo!()
-            // let mut map = serializer.serialize_map(Some(self.len()))?;
-            // for (k0, K1, v) in self.iter() {
-            //     K::Container::t_with_ser(k, |k| map.serialize_key(k))?;
-            //     V::Container::t_with_ser(v, |v| map.serialize_value(v))?;
-            // }
-            // map.end()
+            let mut values_it = self.iter_values();
+            let mut serde_map = serializer.serialize_map(None)?;
+            for (key0_index, key0) in self.iter_keys0().enumerate() {
+                K0::Container::t_with_ser(key0, |k| serde_map.serialize_key(k))?;
+                let inner_map = ZeroMap2kInnerMapSerialize {
+                    key0_index,
+                    map: self,
+                    values_it: RefCell::new(values_it),
+                };
+                serde_map.serialize_value(&inner_map)?;
+                values_it = inner_map.values_it.into_inner();
+            }
+            serde_map.end()
         } else {
             (&self.keys0, &self.joiner, &self.keys1, &self.values).serialize(serializer)
         }
+    }
+}
+
+/// Helper struct for human-serializing the inner map of a ZeroMap2k
+struct ZeroMap2kInnerMapSerialize<'a, 'l, K0, K1, V, I>
+where
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+{
+    pub key0_index: usize,
+    pub map: &'l ZeroMap2k<'a, K0, K1, V>,
+    pub values_it: RefCell<I>,
+}
+
+impl<'a, 'l, K0, K1, V, I> Serialize for ZeroMap2kInnerMapSerialize<'a, 'l, K0, K1, V, I>
+where
+    K0: ZeroMapKV<'a> + Serialize + ?Sized,
+    K1: ZeroMapKV<'a> + Serialize + ?Sized,
+    V: ZeroMapKV<'a> + Serialize + ?Sized,
+    K0::Container: Serialize,
+    K1::Container: Serialize,
+    V::Container: Serialize,
+    I: Iterator<Item = &'l <V as ZeroMapKV<'a>>::GetType>,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut serde_map = serializer.serialize_map(None)?;
+        for key1 in self.map.iter_keys1_by_index(self.key0_index).unwrap() {
+            K1::Container::t_with_ser(key1, |k| serde_map.serialize_key(k))?;
+            let v = self.values_it.borrow_mut().next().unwrap();
+            V::Container::t_with_ser(v, |v| serde_map.serialize_value(v))?;
+        }
+        serde_map.end()
     }
 }
 
@@ -86,6 +130,8 @@ where
     K0: ZeroMapKV<'a> + Ord + ?Sized,
     K1: ZeroMapKV<'a> + Ord + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
+    K1::Container: Deserialize<'de>,
+    V::Container: Deserialize<'de>,
     K0::OwnedType: Deserialize<'de>,
     K1::OwnedType: Deserialize<'de>,
     V::OwnedType: Deserialize<'de>,
@@ -100,29 +146,84 @@ where
     where
         M: MapAccess<'de>,
     {
-        todo!()
-        // let mut map = ZeroMap2k::with_capacity(access.size_hint().unwrap_or(0));
+        let mut map = ZeroMap2k::with_capacity(access.size_hint().unwrap_or(0));
 
-        // // While there are entries remaining in the input, add them
-        // // into our map.
-        // while let Some((key, value)) = access.next_entry::<K::OwnedType, V::OwnedType>()? {
-        //     // Try to append it at the end, hoping for a sorted map.
-        //     // If not sorted, return an error
-        //     // a serialized map that came from another ZeroMap2k
-        //     if map
-        //         .try_append(
-        //             K::Container::owned_as_t(&key),
-        //             V::Container::owned_as_t(&value),
-        //         )
-        //         .is_some()
-        //     {
-        //         return Err(de::Error::custom(
-        //             "ZeroMap2k's keys must be sorted while deserializing",
-        //         ));
-        //     }
-        // }
+        // On the first level, pull out the K0s and a TupleVecMap of the
+        // K1s and Vs, and then collect them into a ZeroMap2k
+        while let Some((key0, inner_map)) =
+            access.next_entry::<K0::OwnedType, TupleVecMap<K1::OwnedType, V::OwnedType>>()?
+        {
+            for (key1, value) in inner_map.entries.iter() {
+                if map
+                    .try_append(
+                        K0::Container::owned_as_t(&key0),
+                        K1::Container::owned_as_t(&key1),
+                        V::Container::owned_as_t(&value),
+                    )
+                    .is_some()
+                {
+                    return Err(de::Error::custom(
+                        "ZeroMap2k's keys must be sorted while deserializing",
+                    ));
+                }
+            }
+        }
 
-        // Ok(map)
+        Ok(map)
+    }
+}
+
+/// Helper struct for human-deserializing the inner map of a ZeroMap2k
+struct TupleVecMap<K1, V> {
+    pub entries: Vec<(K1, V)>,
+}
+
+struct TupleVecMapVisitor<K1, V> {
+    #[allow(clippy::type_complexity)] // it's a marker type, complexity doesn't matter
+    marker: PhantomData<fn() -> (K1, V)>,
+}
+
+impl<K1, V> TupleVecMapVisitor<K1, V> {
+    fn new() -> Self {
+        TupleVecMapVisitor {
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<'de, K1, V> Visitor<'de> for TupleVecMapVisitor<K1, V>
+where
+    K1: Deserialize<'de>,
+    V: Deserialize<'de>,
+{
+    type Value = TupleVecMap<K1, V>;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("an inner map produced by ZeroMap2k")
+    }
+
+    fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
+    where
+        M: MapAccess<'de>,
+    {
+        let mut result = Vec::with_capacity(access.size_hint().unwrap_or(0));
+        while let Some((key1, value)) = access.next_entry::<K1, V>()? {
+            result.push((key1, value));
+        }
+        Ok(TupleVecMap { entries: result })
+    }
+}
+
+impl<'de, K1, V> Deserialize<'de> for TupleVecMap<K1, V>
+where
+    K1: Deserialize<'de>,
+    V: Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_map(TupleVecMapVisitor::<K1, V>::new())
     }
 }
 
@@ -270,7 +371,7 @@ mod test {
         _data: ZeroMap2kBorrowed<'data, u16, str, [u8]>,
     }
 
-    const JSON_STR: &str = "{\"1\":\"uno\",\"2\":\"dos\",\"3\":\"tres\"}";
+    const JSON_STR: &str = "{\"1\":{\"1\":\"uno\"},\"2\":{\"2\":\"dos\",\"3\":\"tres\"}}";
     const BINCODE_BYTES: &[u8] = &[
         8, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0,
         0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 26, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,

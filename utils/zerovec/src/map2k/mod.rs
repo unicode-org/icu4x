@@ -326,17 +326,60 @@ where
         None
     }
 
-    /// Produce an ordered iterator over keys0
+    /// Produce an ordered iterator over keys0.
     pub fn iter_keys0<'b>(&'b self) -> impl Iterator<Item = &'b <K0 as ZeroMapKV<'a>>::GetType> {
         (0..self.keys0.zvl_len()).map(move |idx| self.keys0.zvl_get(idx).unwrap())
     }
 
-    /// Produce an ordered iterator over keys1 for a particular key0, if key0 exists
+    /// Produce an ordered iterator over keys1 for a particular key0, if key0 exists.
     pub fn iter_keys1<'b>(
         &'b self,
         key0: &K0,
     ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
         let (_, range) = self.get_range_for_key0(key0)?;
+        Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
+    }
+
+    /// Produce an ordered iterator over keys1 for a particular key0_index, if key0_index exists.
+    ///
+    /// This method is designed to interoperate with the enumerated key of `iter_keys0`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `key0_index` is out of range.
+    ///
+    /// # Example
+    ///
+    /// Loop over all elements of a ZeroMap2k:
+    ///
+    /// ```
+    /// use zerovec::ZeroMap2k;
+    ///
+    /// let mut map: ZeroMap2k<u16, u16, str> = ZeroMap2k::new();
+    /// map.insert(&1, &1, "foo");
+    /// map.insert(&2, &3, "bar");
+    /// map.insert(&2, &4, "baz");
+    ///
+    /// let mut total_value = 0;
+    ///
+    /// let mut values_it = map.iter_values();
+    /// for (key0_index, key0) in map.iter_keys0().enumerate() {
+    ///     for key1 in map.iter_keys1_by_index(key0_index).unwrap() {
+    ///         // This code runs for every (key0, key1) pair
+    ///         total_value += key0.as_unsigned_int() as usize;
+    ///         total_value += key1.as_unsigned_int() as usize;
+    ///         total_value += values_it.next().unwrap().len();
+    ///     }
+    /// }
+    ///
+    /// assert_eq!(total_value, 22);
+    /// ```
+    pub fn iter_keys1_by_index<'b>(
+        &'b self,
+        key0_index: usize,
+    ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
+        assert!(key0_index < self.keys0.zvl_len());
+        let range = self.get_range_for_key0_index(key0_index);
         Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
     }
 
@@ -402,7 +445,7 @@ where
             .skip(key0_index)
             .for_each(|ref mut v| {
                 // TODO(#1410): Make this fallible
-                v.add_unsigned(1)
+                v.add_unsigned_int(1)
                     .expect("Attempted to add more than 2^32 elements to a ZeroMap2k")
             });
     }
@@ -413,7 +456,10 @@ where
             .to_mut()
             .iter_mut()
             .skip(key0_index)
-            .for_each(|ref mut v| v.add_unsigned(-1).expect("Shrink should always succeed"));
+            .for_each(|ref mut v| {
+                v.add_unsigned_int(-1)
+                    .expect("Shrink should always succeed")
+            });
     }
 }
 
