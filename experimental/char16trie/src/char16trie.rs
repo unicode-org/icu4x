@@ -92,7 +92,7 @@ impl<'data> Char16Trie<'data> {
 
     /// Returns a new [`Char16Iterator`] backed by borrowed data from the `trie` data
     pub fn iter(&self) -> Char16TrieIterator {
-        Char16TrieIterator::new(self.data.as_slice())
+        Char16TrieIterator::new(self.data.as_ule_slice())
     }
 }
 
