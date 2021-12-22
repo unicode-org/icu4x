@@ -10,7 +10,7 @@ use core::cmp::Ordering;
 use core::fmt;
 use core::ops::Range;
 
-// mod borrowed;
+mod borrowed;
 // #[cfg(feature = "serde")]
 // mod serde;
 
