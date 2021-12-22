@@ -239,10 +239,10 @@ impl<'a> Char16TrieIterator<'a> {
     /// assert_eq!(res, TrieResult::NoMatch);
     /// ```
     pub fn next_u16(&mut self, c: u16) -> TrieResult {
-        if self.pos.is_none() {
-            return TrieResult::NoMatch;
-        }
-        let mut pos = self.pos.unwrap();
+        let mut pos = match self.pos {
+            Some(p) => p,
+            None => return TrieResult::NoMatch,
+        };
         if let Some(length) = self.remaining_match_length {
             // Remaining part of a linear-match node
             if c == self.get(pos) {
