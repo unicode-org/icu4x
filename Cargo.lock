@@ -3011,6 +3011,7 @@ version = "0.2.1"
 dependencies = [
  "criterion",
  "icu_benchmark_macros",
+ "rand",
 ]
 
 [[package]]
