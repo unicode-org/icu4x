@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640204003194,
+  "lastUpdate": 1640216664345,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16019,6 +16019,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 99341,
             "range": "± 4215",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "27ee71234c96033975f07f9d442a74b0629aae63",
+          "message": "Update nightly to 2021-12-22 (#1442)",
+          "timestamp": "2021-12-22T15:36:54-08:00",
+          "tree_id": "523f5c7884991079d1343d7e478815f484102315",
+          "url": "https://github.com/unicode-org/icu4x/commit/27ee71234c96033975f07f9d442a74b0629aae63"
+        },
+        "date": 1640216655642,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 125224,
+            "range": "± 5117",
             "unit": "ns/iter"
           }
         ]
