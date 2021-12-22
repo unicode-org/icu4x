@@ -58,6 +58,7 @@ macro_rules! impl_byte_slice_size {
 
             /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
             /// [AsULE::from_unaligned()] on the appropriately sized type.
+            #[inline]
             pub fn as_unsigned_int(&self) -> $unsigned {
                 <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
             }
