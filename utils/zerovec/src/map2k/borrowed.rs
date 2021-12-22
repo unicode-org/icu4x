@@ -251,11 +251,12 @@ where
         let (_, range) = self.get_range_for_key0(key0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
-        let index = self
-            .keys1
-            .zvl_binary_search_in_range(key1, range)
-            .unwrap()
-            .ok()?;
+        let index = range.start
+            + self
+                .keys1
+                .zvl_binary_search_in_range(key1, range)
+                .unwrap()
+                .ok()?;
         self.values.get(index)
     }
 }

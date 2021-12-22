@@ -12,8 +12,8 @@ use core::fmt;
 use core::ops::Range;
 
 mod borrowed;
-// #[cfg(feature = "serde")]
-// mod serde;
+#[cfg(feature = "serde")]
+mod serde;
 
 use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
