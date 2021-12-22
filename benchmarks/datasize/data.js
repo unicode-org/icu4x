@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640196092902,
+  "lastUpdate": 1640203654181,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6083,6 +6083,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0c1f751b6a50b74fbfa367758f9cf89cda55273a"
         },
         "date": 1640196083589,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f4ba6ec0880f97dc9c3f81720485784da460481",
+          "message": "Add various helper functions to zerovec (#1430)\n\n- VZS::binary_search_in_range\r\n- ZV::get_subslice\r\n- RawBytesULE::as_unsigned_int()",
+          "timestamp": "2021-12-22T12:06:15-08:00",
+          "tree_id": "7370bbd9df32f95e9969690514149a4f80b42554",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f4ba6ec0880f97dc9c3f81720485784da460481"
+        },
+        "date": 1640203646505,
         "tool": "ndjson",
         "benches": [
           {
