@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640169729085,
+  "lastUpdate": 1640193279180,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -5993,6 +5993,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b7bb53376d5f67130cd79d7585fc24d93c1daf59"
         },
         "date": 1640169720023,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5cfbb17701d725fe739afb5164c9a75d565674eb",
+          "message": "Rewriting ListFormatter to only use appends (#1395)",
+          "timestamp": "2021-12-22T18:13:12+01:00",
+          "tree_id": "f3b5d4e6abfb8beea793cd0eed768989808bc5b2",
+          "url": "https://github.com/unicode-org/icu4x/commit/5cfbb17701d725fe739afb5164c9a75d565674eb"
+        },
+        "date": 1640193270166,
         "tool": "ndjson",
         "benches": [
           {
