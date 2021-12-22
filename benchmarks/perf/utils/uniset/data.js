@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640196457545,
+  "lastUpdate": 1640204009850,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17069,6 +17069,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36012820,
             "range": "± 71072",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f4ba6ec0880f97dc9c3f81720485784da460481",
+          "message": "Add various helper functions to zerovec (#1430)\n\n- VZS::binary_search_in_range\r\n- ZV::get_subslice\r\n- RawBytesULE::as_unsigned_int()",
+          "timestamp": "2021-12-22T12:06:15-08:00",
+          "tree_id": "7370bbd9df32f95e9969690514149a4f80b42554",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f4ba6ec0880f97dc9c3f81720485784da460481"
+        },
+        "date": 1640204001465,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36100945,
+            "range": "± 132232",
             "unit": "ns/iter"
           }
         ]
