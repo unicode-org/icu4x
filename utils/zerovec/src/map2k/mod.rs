@@ -5,11 +5,10 @@
 //! See [`ZeroMap2k`] for details.
 
 use crate::ule::AsULE;
-use crate::{ZeroSlice, ZeroVec};
+use crate::ZeroVec;
 use core::cmp::Ordering;
 use core::fmt;
 use core::ops::Range;
-use core::convert::TryInto;
 
 // mod borrowed;
 // #[cfg(feature = "serde")]
@@ -20,14 +19,14 @@ use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
 
 /// A zero-copy map datastructure that supports two layers of keys.
-/// 
+///
 /// This is an extension of [`ZeroMap`] that supports two-dimensional keys. For example,
 /// to map a pair of an integer and a string to a buffer, you can write:
-/// 
+///
 /// ```no_run
 /// let _: ZeroMap2k<u32, str, [u8]> = unimplemented!();
 /// ```
-/// 
+///
 /// Internally, `ZeroMap2k` stores four zero-copy vectors, one for each type argument plus
 /// one more to match between the two vectors of keys.
 ///
@@ -175,7 +174,11 @@ where
         let (_, range) = self.get_range_for_key0(key0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
-        let index = self.keys1.zvl_binary_search_in_range(key1, range).unwrap().ok()?;
+        let index = self
+            .keys1
+            .zvl_binary_search_in_range(key1, range)
+            .unwrap()
+            .ok()?;
         self.values.zvl_get(index)
     }
 
@@ -229,7 +232,7 @@ where
         let is_singleton_range = range.start + 1 == range.end;
         let index = match self.keys1.zvl_binary_search_in_range(key1, range).unwrap() {
             Ok(index) => index,
-            Err(index) => return None,
+            Err(_) => return None,
         };
         self.keys1.zvl_remove(index);
         self.values.zvl_remove(index);
@@ -265,8 +268,13 @@ where
     /// assert_eq!(map.get(&2), None);
     /// ```
     #[must_use]
-    pub fn try_append<'b>(&mut self, key0: &'b K0, key1: &'b K1, value: &'b V) -> Option<(&'b K0, &'b K1, &'b V)> {
-        // Get or insert key0
+    pub fn try_append<'b>(
+        &mut self,
+        key0: &'b K0,
+        key1: &'b K1,
+        value: &'b V,
+    ) -> Option<(&'b K0, &'b K1, &'b V)> {
+        // Get or append key0
         let last_key0 = if self.keys0.zvl_len() != 0 {
             self.keys0.zvl_get(self.keys0.zvl_len() - 1)
         } else {
@@ -277,20 +285,20 @@ where
                 Ordering::Less => {
                     // Error case
                     return Some((key0, key1, value));
-                },
-                Ordering::Equal => {}, // Already have a key0
+                }
+                Ordering::Equal => {} // OK: Already have a key0
                 Ordering::Greater => {
                     // Append a new key0
                     self.keys0.zvl_push(key0);
-                    // TODO: Make this fallible
-                    debug_assert!(self.keys1.zvl_len() <= u32::MAX as usize);
-                    let joiner_value: u32 = self.keys1.zvl_len().try_into().unwrap();
+                    debug_assert!(self.joiner.len() > 0);
+                    let joiner_value = self.joiner.last().unwrap();
+                    debug_assert_eq!(joiner_value as usize, self.keys1.zvl_len());
                     self.joiner.to_mut().push(joiner_value.as_unaligned());
-                },
+                }
             }
         }
 
-        // Insert key1
+        // Append key1
         let last_key1 = if self.keys1.zvl_len() != 0 {
             self.keys1.zvl_get(self.keys1.zvl_len() - 1)
         } else {
@@ -301,17 +309,24 @@ where
                 Ordering::Less | Ordering::Equal => {
                     // Error case
                     return Some((key0, key1, value));
-                },
+                }
                 Ordering::Greater => {
                     // Append a new key1
                     self.keys1.zvl_push(key1);
                     self.values.zvl_push(value);
-                },
+                }
             };
         }
 
         // Increment the joiner range
-        self.joiner.to_mut().as_mut_slice().last_mut().unwrap().add_unsigned(1);
+        // TODO(#1410): Make this fallible
+        self.joiner
+            .to_mut()
+            .as_mut_slice()
+            .last_mut()
+            .unwrap()
+            .add_unsigned(1)
+            .expect("Attempted to add more than 2^32 elements to a ZeroMap2k");
 
         None
     }
@@ -322,7 +337,10 @@ where
     }
 
     /// Produce an ordered iterator over keys1 for a particular key0, if key0 exists
-    pub fn iter_keys1<'b>(&'b self, key0: &K0) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
+    pub fn iter_keys1<'b>(
+        &'b self,
+        key0: &K0,
+    ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
         let (_, range) = self.get_range_for_key0(key0)?;
         Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
     }
@@ -357,9 +375,7 @@ where
     /// Same as `get_range_for_key0`, but creates key0 if it doesn't already exist
     fn get_or_insert_range_for_key0(&mut self, key0: &K0) -> (usize, Range<usize>) {
         match self.keys0.zvl_binary_search(key0) {
-            Ok(key0_index) => {
-                (key0_index, self.get_range_for_key0_index(key0_index))
-            },
+            Ok(key0_index) => (key0_index, self.get_range_for_key0_index(key0_index)),
             Err(key0_index) => {
                 // Add an entry to self.keys0 and self.joiner
                 let joiner_value = if key0_index == 0 {
@@ -369,7 +385,9 @@ where
                     self.joiner.get(key0_index - 1).unwrap()
                 };
                 self.keys0.zvl_insert(key0_index, key0);
-                self.joiner.to_mut().insert(key0_index, joiner_value.as_unaligned());
+                self.joiner
+                    .to_mut()
+                    .insert(key0_index, joiner_value.as_unaligned());
                 (key0_index, (joiner_value as usize)..(joiner_value as usize))
             }
         }
@@ -383,125 +401,117 @@ where
 
     /// Shifts all joiner ranges from key0_index onward one index up
     fn joiner_expand(&mut self, key0_index: usize) {
-        self.joiner.to_mut().iter_mut().skip(key0_index).for_each(|ref mut v| {
-            // TODO: Make this fallible
-            v.add_unsigned(1).expect("Attempted to add more than 2^32 elements to a ZeroMap2k")
-        });
+        self.joiner
+            .to_mut()
+            .iter_mut()
+            .skip(key0_index)
+            .for_each(|ref mut v| {
+                // TODO(#1410): Make this fallible
+                v.add_unsigned(1)
+                    .expect("Attempted to add more than 2^32 elements to a ZeroMap2k")
+            });
     }
 
     /// Shifts all joiner ranges from key0_index onward one index down
     fn joiner_shrink(&mut self, key0_index: usize) {
-        self.joiner.to_mut().iter_mut().skip(key0_index).for_each(|ref mut v| {
-            v.add_unsigned(-1).expect("Shrink should always succeed")
-        });
+        self.joiner
+            .to_mut()
+            .iter_mut()
+            .skip(key0_index)
+            .for_each(|ref mut v| v.add_unsigned(-1).expect("Shrink should always succeed"));
     }
 }
-/*
-impl<'a, K, V> ZeroMap<'a, K, V>
+
+impl<'a, K0, K1, V> ZeroMap2k<'a, K0, K1, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
     V: AsULE + Copy,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
-    pub fn get_copied(&self, key: &K) -> Option<V> {
-        let index = self.keys.zvl_binary_search(key).ok()?;
-        ZeroSlice::get(&*self.values, index)
-    }
-
-    /// Similar to [`Self::iter()`] except it returns a direct copy of the values instead of references
-    /// to `V::ULE`, in cases when `V` is fixed-size
-    pub fn iter_copied_values<'b>(
-        &'b self,
-    ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
-        (0..self.keys.zvl_len()).map(move |idx| {
-            (
-                self.keys.zvl_get(idx).unwrap(),
-                ZeroSlice::get(&*self.values, idx).unwrap(),
-            )
-        })
+    pub fn get_copied(&self, key0: &K0, key1: &K1) -> Option<V> {
+        let (_, range) = self.get_range_for_key0(key0)?;
+        debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
+        debug_assert!(range.end <= self.keys1.zvl_len());
+        let index = self
+            .keys1
+            .zvl_binary_search_in_range(key1, range)
+            .unwrap()
+            .ok()?;
+        self.values.get(index)
     }
 }
 
-impl<'a, K, V> ZeroMap<'a, K, V>
-where
-    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + ?Sized,
-    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
-    K: AsULE + Copy,
-    V: AsULE + Copy,
-{
-    /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
-    /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
-    #[allow(clippy::needless_lifetimes)] // Lifetime is necessary in impl Trait
-    pub fn iter_copied<'b>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
-        let keys = &self.keys;
-        let values = &self.values;
-        (0..keys.len()).map(move |idx| {
-            (
-                ZeroSlice::get(&**keys, idx).unwrap(),
-                ZeroSlice::get(&**values, idx).unwrap(),
-            )
-        })
-    }
-}
+// impl<'a, K, V> From<ZeroMapBorrowed<'a, K, V>> for ZeroMap<'a, K, V>
+// where
+//     K: ZeroMapKV<'a>,
+//     V: ZeroMapKV<'a>,
+//     K: ?Sized,
+//     V: ?Sized,
+// {
+//     fn from(other: ZeroMapBorrowed<'a, K, V>) -> Self {
+//         Self {
+//             keys: K::Container::zvl_from_borrowed(other.keys),
+//             values: V::Container::zvl_from_borrowed(other.values),
+//         }
+//     }
+// }
 
-impl<'a, K, V> From<ZeroMapBorrowed<'a, K, V>> for ZeroMap<'a, K, V>
-where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
-    K: ?Sized,
-    V: ?Sized,
-{
-    fn from(other: ZeroMapBorrowed<'a, K, V>) -> Self {
-        Self {
-            keys: K::Container::zvl_from_borrowed(other.keys),
-            values: V::Container::zvl_from_borrowed(other.values),
-        }
-    }
-}
-
-// We can't use the default PartialEq because ZeroMap is invariant
+// We can't use the default PartialEq because ZeroMap2k is invariant
 // so otherwise rustc will not automatically allow you to compare ZeroMaps
 // with different lifetimes
-impl<'a, 'b, K, V> PartialEq<ZeroMap<'b, K, V>> for ZeroMap<'a, K, V>
+impl<'a, 'b, K0, K1, V> PartialEq<ZeroMap2k<'b, K0, K1, V>> for ZeroMap2k<'a, K0, K1, V>
 where
-    K: for<'c> ZeroMapKV<'c> + ?Sized,
+    K0: for<'c> ZeroMapKV<'c> + ?Sized,
+    K1: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <K as ZeroMapKV<'a>>::Container: PartialEq<<K as ZeroMapKV<'b>>::Container>,
+    <K0 as ZeroMapKV<'a>>::Container: PartialEq<<K0 as ZeroMapKV<'b>>::Container>,
+    <K1 as ZeroMapKV<'a>>::Container: PartialEq<<K1 as ZeroMapKV<'b>>::Container>,
     <V as ZeroMapKV<'a>>::Container: PartialEq<<V as ZeroMapKV<'b>>::Container>,
 {
-    fn eq(&self, other: &ZeroMap<'b, K, V>) -> bool {
-        self.keys.eq(&other.keys) && self.values.eq(&other.values)
+    fn eq(&self, other: &ZeroMap2k<'b, K0, K1, V>) -> bool {
+        self.keys0.eq(&other.keys0)
+            && self.joiner.eq(&other.joiner)
+            && self.keys1.eq(&other.keys1)
+            && self.values.eq(&other.values)
     }
 }
 
-impl<'a, K, V> fmt::Debug for ZeroMap<'a, K, V>
+impl<'a, K0, K1, V> fmt::Debug for ZeroMap2k<'a, K0, K1, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <K as ZeroMapKV<'a>>::Container: fmt::Debug,
+    <K0 as ZeroMapKV<'a>>::Container: fmt::Debug,
+    <K1 as ZeroMapKV<'a>>::Container: fmt::Debug,
     <V as ZeroMapKV<'a>>::Container: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        f.debug_struct("ZeroMap")
-            .field("keys", &self.keys)
+        f.debug_struct("ZeroMap2k")
+            .field("keys0", &self.keys0)
+            .field("joiner", &self.joiner)
+            .field("keys1", &self.keys1)
             .field("values", &self.values)
             .finish()
     }
 }
 
-impl<'a, K, V> Clone for ZeroMap<'a, K, V>
+impl<'a, K0, K1, V> Clone for ZeroMap2k<'a, K0, K1, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
+    K0: ZeroMapKV<'a> + ?Sized,
+    K1: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <K as ZeroMapKV<'a>>::Container: Clone,
+    <K0 as ZeroMapKV<'a>>::Container: Clone,
+    <K1 as ZeroMapKV<'a>>::Container: Clone,
     <V as ZeroMapKV<'a>>::Container: Clone,
 {
     fn clone(&self) -> Self {
         Self {
-            keys: self.keys.clone(),
+            keys0: self.keys0.clone(),
+            joiner: self.joiner.clone(),
+            keys1: self.keys1.clone(),
             values: self.values.clone(),
         }
     }
 }
-*/
