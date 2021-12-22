@@ -446,8 +446,11 @@ where
             .skip(key0_index)
             .for_each(|ref mut v| {
                 // TODO(#1410): Make this fallible
-                v.add_unsigned_int(1)
+                **v = v
+                    .as_unsigned_int()
+                    .checked_add(1)
                     .expect("Attempted to add more than 2^32 elements to a ZeroMap2k")
+                    .as_unaligned()
             });
     }
 
@@ -458,8 +461,11 @@ where
             .iter_mut()
             .skip(key0_index)
             .for_each(|ref mut v| {
-                v.add_unsigned_int(-1)
+                **v = v
+                    .as_unsigned_int()
+                    .checked_sub(1)
                     .expect("Shrink should always succeed")
+                    .as_unaligned()
             });
     }
 }
