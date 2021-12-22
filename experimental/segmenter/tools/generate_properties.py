@@ -21,9 +21,9 @@ lb_props = ["XX" for x in range(begin_plane2)]
 ea_props = ["N" for x in range(begin_plane2)]
 
 # Set default value for Extended Pictographic to "N" (No) for all codepoints
-# Asian) for all the codepoints in Unicode Plane 0 and PlaneA 1
+# in Unicode Plane 0 and PlaneA 1
 # http://www.unicode.org/reports/tr51/#def_level1_emoji
-extended_pictographics = ["N" for x in range(begin_plane2)]
+extended_pictographics = [False for x in range(begin_plane2)]
 
 rule = []
 table = []
@@ -70,7 +70,7 @@ with open('emoji-data.txt', 'r') as emoji_file:
         # list.
         if prop and start < begin_plane2:
             for i in range(start, end + 1):
-                extended_pictographics[i] = "Y"
+                extended_pictographics[i] = True
 
 with open('LineBreak.txt', 'r') as lb_file:
     range_codepoint_pattern = r"([0-9A-F]{1,6})\.\.([0-9A-F]{1,6})\;([0-9A-Z]{2,})\s*#\s([A-Za-z]{1,})"
@@ -106,7 +106,9 @@ with open('LineBreak.txt', 'r') as lb_file:
                     lb_props[i] = "CP_EA"
                 elif uni_prop == "Cn":
                     # For LB30b
-                    if prop == "ID" and extended_pictographics[i] == "Y":
+                    # Unassigned codepoints with Line_Break=ID in some blocks
+                    # are also assigned the Extended_Pictographic property.
+                    if prop == "ID" and extended_pictographics[i]:
                         lb_props[i] = "ID_CN"
                     else:
                         lb_props[i] = prop
