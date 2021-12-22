@@ -56,53 +56,8 @@ macro_rules! impl_byte_slice_size {
                 unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
             }
 
-            /// Adds the given operand to this RawBytesULE, treating it as an unsigned int.
-            ///
-            /// # Example
-            ///
-            /// ```
-            /// # use zerovec::ZeroVec;
-            /// let mut zv: ZeroVec<u32> = ZeroVec::from_slice(&[0, 1, 2, 3]);
-            /// if let Some(ref mut x) = zv.to_mut().as_mut_slice().last_mut() {
-            ///     x.add_unsigned_int(1)?;
-            /// }
-            /// assert_eq!(zv, [0, 1, 2, 4]);
-            /// # Ok::<(), ()>(())
-            /// ```
-            pub fn add_unsigned_int(
-                &mut self,
-                operand: $unsigned,
-            ) -> Result<(), ()> {
-                let x: $unsigned = <$unsigned as $crate::ule::AsULE>::from_unaligned(*self);
-                let x: $unsigned = x.checked_add(operand).ok_or(())?;
-                *self = x.as_unaligned();
-                Ok(())
-            }
-
-            /// Subtracts the given operand from this RawBytesULE, treating it as an unsigned int.
-            ///
-            /// # Example
-            ///
-            /// ```
-            /// # use zerovec::ZeroVec;
-            /// let mut zv: ZeroVec<u32> = ZeroVec::from_slice(&[0, 1, 2, 3]);
-            /// if let Some(ref mut x) = zv.to_mut().as_mut_slice().last_mut() {
-            ///     x.sub_unsigned_int(1)?;
-            /// }
-            /// assert_eq!(zv, [0, 1, 2, 2]);
-            /// # Ok::<(), ()>(())
-            /// ```
-            pub fn sub_unsigned_int(
-                &mut self,
-                operand: $unsigned,
-            ) -> Result<(), ()> {
-                let x: $unsigned = <$unsigned as $crate::ule::AsULE>::from_unaligned(*self);
-                let x: $unsigned = x.checked_sub(operand).ok_or(())?;
-                *self = x.as_unaligned();
-                Ok(())
-            }
-
-            /// Gets this RawBytesULE as an unsigned int.
+            /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
+            /// [AsULE::from_unaligned()] on the appropriately sized type.
             pub fn as_unsigned_int(&self) -> $unsigned {
                 <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
             }
