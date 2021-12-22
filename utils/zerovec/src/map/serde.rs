@@ -12,14 +12,10 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
-    K: ?Sized,
-    V: ?Sized,
+    K: ZeroMapKV<'a> + Serialize + ?Sized,
+    V: ZeroMapKV<'a> + Serialize + ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
-    K: Serialize,
-    V: Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -41,14 +37,10 @@ where
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K, V> Serialize for ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
-    K: ?Sized,
-    V: ?Sized,
+    K: ZeroMapKV<'a> + Serialize + ?Sized,
+    V: ZeroMapKV<'a> + Serialize + ?Sized,
     K::Container: Serialize,
     V::Container: Serialize,
-    K: Serialize,
-    V: Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -74,8 +66,7 @@ impl<'a, K: ZeroMapKV<'a> + ?Sized, V: ZeroMapKV<'a> + ?Sized> ZeroMapMapVisitor
 
 impl<'a, 'de, K: ?Sized, V: ?Sized> Visitor<'de> for ZeroMapMapVisitor<'a, K, V>
 where
-    K: Ord,
-    K: ZeroMapKV<'a>,
+    K: ZeroMapKV<'a> + Ord,
     V: ZeroMapKV<'a>,
     K::OwnedType: Deserialize<'de>,
     V::OwnedType: Deserialize<'de>,
@@ -118,11 +109,10 @@ where
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'de, 'a, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMap<'a, K, V>
 where
-    K: Ord,
+    K: ZeroMapKV<'a> + Ord,
+    V: ZeroMapKV<'a>,
     K::Container: Deserialize<'de>,
     V::Container: Deserialize<'de>,
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
     K::OwnedType: Deserialize<'de>,
     V::OwnedType: Deserialize<'de>,
     'de: 'a,
@@ -152,11 +142,10 @@ where
 // /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'de, 'a, K: ?Sized, V: ?Sized> Deserialize<'de> for ZeroMapBorrowed<'a, K, V>
 where
-    K: Ord,
+    K: ZeroMapKV<'a> + Ord,
+    V: ZeroMapKV<'a>,
     K::Container: Deserialize<'de>,
     V::Container: Deserialize<'de>,
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
     K::OwnedType: Deserialize<'de>,
     V::OwnedType: Deserialize<'de>,
     'de: 'a,
