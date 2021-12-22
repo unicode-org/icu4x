@@ -49,21 +49,16 @@ pub struct CharULE([u8; 4]);
 //  5. The other ULE methods use the default impl.
 //  6. CharULE byte equality is semantic equality
 unsafe impl ULE for CharULE {
-    type Error = ULEError<core::char::CharTryFromError>;
-
     #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         if bytes.len() % 4 != 0 {
-            return Err(ULEError::InvalidLength {
-                ty: "char",
-                len: bytes.len(),
-            });
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
         for chunk in bytes.chunks_exact(4) {
             // TODO: Use slice::as_chunks() when stabilized
             let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
-            char::try_from(u)?;
+            char::try_from(u).map_err(|_| ZeroVecError::parse::<Self>())?;
         }
         Ok(())
     }
@@ -121,12 +116,12 @@ mod test {
 
         // Compare to u32
         let u32s: Vec<u32> = chars.iter().copied().map(u32::from).collect();
-        let u32_ules: Vec<PlainOldULE<4>> = u32s
+        let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
             .map(<u32 as AsULE>::as_unaligned)
             .collect();
-        let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
+        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         assert_eq!(char_bytes, u32_bytes);
 
         // Compare to golden expected data
@@ -140,23 +135,23 @@ mod test {
     fn test_failures() {
         // 119 and 120 are valid, but not 0xD800 (high surrogate)
         let u32s = [119, 0xD800, 120];
-        let u32_ules: Vec<PlainOldULE<4>> = u32s
+        let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
             .map(<u32 as AsULE>::as_unaligned)
             .collect();
-        let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
+        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(matches!(parsed_ules_result, Err(_)));
 
         // 0x20FFFF is out of range for a char
         let u32s = [0x20FFFF];
-        let u32_ules: Vec<PlainOldULE<4>> = u32s
+        let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
             .map(<u32 as AsULE>::as_unaligned)
             .collect();
-        let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
+        let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(matches!(parsed_ules_result, Err(_)));
     }

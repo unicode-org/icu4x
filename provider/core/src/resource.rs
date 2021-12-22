@@ -23,12 +23,13 @@ use writeable::{LengthHint, Writeable};
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
 pub enum ResourceCategory {
     Core,
+    Calendar,
     DateTime,
     Decimal,
     LocaleCanonicalizer,
     Plurals,
     TimeZone,
-    UnicodeSet,
+    Properties,
     ListFormatter,
     PrivateUse(TinyStr4),
 }
@@ -38,12 +39,13 @@ impl ResourceCategory {
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
             Self::Core => Cow::Borrowed("core"),
+            Self::Calendar => Cow::Borrowed("calendar"),
             Self::DateTime => Cow::Borrowed("datetime"),
             Self::Decimal => Cow::Borrowed("decimal"),
             Self::LocaleCanonicalizer => Cow::Borrowed("locale_canonicalizer"),
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::TimeZone => Cow::Borrowed("time_zone"),
-            Self::UnicodeSet => Cow::Borrowed("uniset"),
+            Self::Properties => Cow::Borrowed("props"),
             Self::ListFormatter => Cow::Borrowed("list_formatter"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
@@ -66,7 +68,7 @@ impl writeable::Writeable for ResourceCategory {
     }
 
     fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::Exact(self.as_str().len())
+        writeable::LengthHint::exact(self.as_str().len())
     }
 }
 
@@ -151,7 +153,7 @@ impl Writeable for ResourceKey {
     }
 
     fn write_len(&self) -> LengthHint {
-        LengthHint::Exact(2)
+        LengthHint::exact(2)
             + self.category.as_str().len()
             + self.sub_category.len()
             + self.version.write_len()
@@ -280,7 +282,7 @@ impl writeable::Writeable for ResourceOptions {
             }
             result += component.len();
         }
-        writeable::LengthHint::Exact(result)
+        writeable::LengthHint::exact(result)
     }
 }
 
@@ -438,7 +440,7 @@ mod tests {
     fn test_options_to_string() {
         for cas in get_key_test_cases().iter() {
             assert_eq!(cas.expected, cas.resc_key.to_string());
-            writeable::assert_writeable_eq!(cas.expected, &cas.resc_key);
+            writeable::assert_writeable_eq!(&cas.resc_key, cas.expected);
             assert_eq!(
                 cas.expected,
                 cas.resc_key
@@ -486,7 +488,7 @@ mod tests {
     fn test_key_to_string() {
         for cas in get_options_test_cases().iter() {
             assert_eq!(cas.expected, cas.resc_options.to_string());
-            writeable::assert_writeable_eq!(cas.expected, &cas.resc_options);
+            writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
             assert_eq!(
                 cas.expected,
                 cas.resc_options
@@ -514,7 +516,7 @@ mod tests {
                     options: options_cas.resc_options.clone(),
                 };
                 assert_eq!(expected, resource_path.to_string());
-                writeable::assert_writeable_eq!(expected, &resource_path);
+                writeable::assert_writeable_eq!(&resource_path, expected);
             }
         }
     }

@@ -48,7 +48,7 @@ where
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, GeneralSubcategory};
+/// use icu::properties::{maps, GeneralCategory};
 /// use icu_codepointtrie::CodePointTrie;
 ///
 /// let provider = icu_testdata::get_provider();
@@ -58,14 +58,14 @@ where
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let gc = &data_struct.code_point_trie;
-/// assert_eq!(gc.get('木' as u32), GeneralSubcategory::OtherLetter);  // U+6728
-/// assert_eq!(gc.get('🎃' as u32), GeneralSubcategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+/// assert_eq!(gc.get('木' as u32), GeneralCategory::OtherLetter);  // U+6728
+/// assert_eq!(gc.get('🎃' as u32), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
 /// ```
 ///
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
-pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralSubcategory>
+pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralCategory>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<GeneralSubcategory>> + ?Sized,
+    D: DataProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }
@@ -98,7 +98,7 @@ where
 }
 
 /// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
-/// property. See [`East_Asian_Width`].
+/// property. See [`EastAsianWidth`].
 ///
 /// # Example
 ///
@@ -215,4 +215,28 @@ where
     D: DataProvider<UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
 {
     get_cp_map(provider, key::SENTENCE_BREAK_V1)
+}
+
+/// Return a [`CodePointTrie`] for the Canonical_Combining_Class Unicode property. See
+/// [`CanonicalCombiningClass`].
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{maps, CanonicalCombiningClass};
+///
+/// let provider = icu_testdata::get_provider();
+/// let payload = maps::get_canonical_combining_class(&provider).expect("The data should be valid!");
+/// let sb = &payload.get().code_point_trie;
+///
+/// assert_eq!(sb.get('a' as u32), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
+/// assert_eq!(sb.get(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+/// ```
+///
+/// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+pub fn get_canonical_combining_class<D>(provider: &D) -> CodePointMapResult<CanonicalCombiningClass>
+where
+    D: DataProvider<UnicodePropertyMapV1Marker<CanonicalCombiningClass>> + ?Sized,
+{
+    get_cp_map(provider, key::CANONICAL_COMBINING_CLASS_V1)
 }

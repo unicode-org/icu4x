@@ -15,10 +15,14 @@ use serde::{Deserialize, Serialize};
 #[non_exhaustive]
 #[repr(i32)]
 pub enum EnumeratedProperty {
+    /// the Canonical_Combining_Class property.
+    CanonicalCombiningClass = 0x1002,
     /// The East_Asian_Width property. See [`EastAsianWidth`].
     EastAsianWidth = 0x1004,
-    /// The General Category property.
+    /// The General_Category property.
     GeneralCategory = 0x1005,
+    /// A pseudo-property that is used to represent groupings of `GeneralCategory`.
+    GeneralCategoryGroup = 0x2000,
     /// The Line_Break enumerated property. See [`LineBreak`].
     LineBreak = 0x1008,
     /// The Script property. See [`Script`].
@@ -35,216 +39,224 @@ pub enum EnumeratedProperty {
     InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
 }
 
-/// Enumerated Unicode general category types.
-/// GeneralSubcategory only supports specific subcategories (eg `UppercaseLetter`).
-/// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategory`].
-#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[repr(u8)]
-pub enum GeneralSubcategory {
-    /// A reserved unassigned code point or a noncharacter
-    Unassigned = 0,
-
-    /// An uppercase letter
-    UppercaseLetter = 1,
-    /// A lowercase letter
-    LowercaseLetter = 2,
-    /// A digraphic letter, with first part uppercase
-    TitlecaseLetter = 3,
-    /// A modifier letter
-    ModifierLetter = 4,
-    /// Other letters, including syllables and ideographs
-    OtherLetter = 5,
-
-    /// A nonspacing combining mark (zero advance width)
-    NonspacingMark = 6,
-    /// A spacing combining mark (positive advance width)
-    SpacingMark = 8,
-    /// An enclosing combining mark
-    EnclosingMark = 7,
-
-    /// A decimal digit
-    DecimalNumber = 9,
-    /// A letterlike numeric character
-    LetterNumber = 10,
-    /// A numeric character of other type
-    OtherNumber = 11,
-
-    /// A space character (of various non-zero widths)
-    SpaceSeparator = 12,
-    /// U+2028 LINE SEPARATOR only
-    LineSeparator = 13,
-    /// U+2029 PARAGRAPH SEPARATOR only
-    ParagraphSeparator = 14,
-
-    /// A C0 or C1 control code
-    Control = 15,
-    /// A format control character
-    Format = 16,
-    /// A private-use character
-    PrivateUse = 17,
-    /// A surrogate code point
-    Surrogate = 18,
-
-    /// A dash or hyphen punctuation mark
-    DashPunctuation = 19,
-    /// An opening punctuation mark (of a pair)
-    OpenPunctuation = 20,
-    /// A closing punctuation mark (of a pair)
-    ClosePunctuation = 21,
-    /// A connecting punctuation mark, like a tie
-    ConnectorPunctuation = 22,
-    /// An initial quotation mark
-    InitialPunctuation = 28,
-    /// A final quotation mark
-    FinalPunctuation = 29,
-    /// A punctuation mark of other type
-    OtherPunctuation = 23,
-
-    /// A symbol of mathematical use
-    MathSymbol = 24,
-    /// A currency sign
-    CurrencySymbol = 25,
-    /// A non-letterlike modifier symbol
-    ModifierSymbol = 26,
-    /// A symbol of other type
-    OtherSymbol = 27,
-}
-
 /// Enumerated property General_Category.
 ///
 /// General_Category specifies the most general classification of a code point, usually
 /// determined based on the primary characteristic of the assigned character. For example, is the
 /// character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?
 ///
-/// The discriminants correspond to the `U_GC_XX_MASK` constants in ICU4C.
-/// Unlike [`GeneralSubcategory`], this supports groups of general categories: for example, `Letter`
-/// is the union of `UppercaseLetter`, `LowercaseLetter`, etc.
+/// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
+/// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
+#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[repr(u8)]
+pub enum GeneralCategory {
+    /// (`Cn`) A reserved unassigned code point or a noncharacter
+    Unassigned = 0,
+
+    /// (`Lu`) An uppercase letter
+    UppercaseLetter = 1,
+    /// (`Ll`) A lowercase letter
+    LowercaseLetter = 2,
+    /// (`Lt`) A digraphic letter, with first part uppercase
+    TitlecaseLetter = 3,
+    /// (`Lm`) A modifier letter
+    ModifierLetter = 4,
+    /// (`Lo`) Other letters, including syllables and ideographs
+    OtherLetter = 5,
+
+    /// (`Mn`) A nonspacing combining mark (zero advance width)
+    NonspacingMark = 6,
+    /// (`Mc`) A spacing combining mark (positive advance width)
+    SpacingMark = 8,
+    /// (`Me`) An enclosing combining mark
+    EnclosingMark = 7,
+
+    /// (`Nd`) A decimal digit
+    DecimalNumber = 9,
+    /// (`Nl`) A letterlike numeric character
+    LetterNumber = 10,
+    /// (`No`) A numeric character of other type
+    OtherNumber = 11,
+
+    /// (`Zs`) A space character (of various non-zero widths)
+    SpaceSeparator = 12,
+    /// (`Zl`) U+2028 LINE SEPARATOR only
+    LineSeparator = 13,
+    /// (`Zp`) U+2029 PARAGRAPH SEPARATOR only
+    ParagraphSeparator = 14,
+
+    /// (`Cc`) A C0 or C1 control code
+    Control = 15,
+    /// (`Cf`) A format control character
+    Format = 16,
+    /// (`Co`) A private-use character
+    PrivateUse = 17,
+    /// (`Cs`) A surrogate code point
+    Surrogate = 18,
+
+    /// (`Pd`) A dash or hyphen punctuation mark
+    DashPunctuation = 19,
+    /// (`Ps`) An opening punctuation mark (of a pair)
+    OpenPunctuation = 20,
+    /// (`Pe`) A closing punctuation mark (of a pair)
+    ClosePunctuation = 21,
+    /// (`Pc`) A connecting punctuation mark, like a tie
+    ConnectorPunctuation = 22,
+    /// (`Pi`) An initial quotation mark
+    InitialPunctuation = 28,
+    /// (`Pf`) A final quotation mark
+    FinalPunctuation = 29,
+    /// (`Po`) A punctuation mark of other type
+    OtherPunctuation = 23,
+
+    /// (`Sm`) A symbol of mathematical use
+    MathSymbol = 24,
+    /// (`Sc`) A currency sign
+    CurrencySymbol = 25,
+    /// (`Sk`) A non-letterlike modifier symbol
+    ModifierSymbol = 26,
+    /// (`So`) A symbol of other type
+    OtherSymbol = 27,
+}
+
+/// Groupings of multiple General_Category property values.
+///
+/// Instances of `GeneralCategoryGroup` represent the defined multi-category
+/// values that are useful for users in certain contexts, such as regex. In
+/// other words, unlike [`GeneralCategory`], this supports groups of general
+/// categories: for example, `Letter` /// is the union of `UppercaseLetter`,
+/// `LowercaseLetter`, etc.
 ///
 /// See <https://www.unicode.org/reports/tr44/> .
+///
+/// The discriminants correspond to the `U_GC_XX_MASK` constants in ICU4C.
+/// Unlike [`GeneralCategory`], this supports groups of general categories: for example, `Letter`
+/// is the union of `UppercaseLetter`, `LowercaseLetter`, etc.
 ///
 /// See `UCharCategory` and `U_GET_GC_MASK` in ICU4C.
 #[derive(Copy, Clone, PartialEq, Debug, Eq)]
 #[repr(transparent)]
-pub struct GeneralCategory(pub(crate) u32);
+pub struct GeneralCategoryGroup(pub(crate) u32);
 
 use GeneralCategory as GC;
-use GeneralSubcategory as GS;
+use GeneralCategoryGroup as GCG;
 
 #[allow(non_upper_case_globals)]
-impl GeneralCategory {
+impl GeneralCategoryGroup {
     /// (`Lu`) An uppercase letter
-    pub const UppercaseLetter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32));
+    pub const UppercaseLetter: GeneralCategoryGroup = GCG(1 << (GC::UppercaseLetter as u32));
     /// (`Ll`) A lowercase letter
-    pub const LowercaseLetter: GeneralCategory = GC(1 << (GS::LowercaseLetter as u32));
+    pub const LowercaseLetter: GeneralCategoryGroup = GCG(1 << (GC::LowercaseLetter as u32));
     /// (`Lt`) A digraphic letter, with first part uppercase
-    pub const TitlecaseLetter: GeneralCategory = GC(1 << (GS::TitlecaseLetter as u32));
+    pub const TitlecaseLetter: GeneralCategoryGroup = GCG(1 << (GC::TitlecaseLetter as u32));
     /// (`Lm`) A modifier letter
-    pub const ModifierLetter: GeneralCategory = GC(1 << (GS::ModifierLetter as u32));
+    pub const ModifierLetter: GeneralCategoryGroup = GCG(1 << (GC::ModifierLetter as u32));
     /// (`Lo`) Other letters, including syllables and ideographs
-    pub const OtherLetter: GeneralCategory = GC(1 << (GS::OtherLetter as u32));
+    pub const OtherLetter: GeneralCategoryGroup = GCG(1 << (GC::OtherLetter as u32));
     /// (`LC`) The union of UppercaseLetter, LowercaseLetter, and TitlecaseLetter
-    pub const CasedLetter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32)
-        | 1 << (GS::LowercaseLetter as u32)
-        | 1 << (GS::TitlecaseLetter as u32));
+    pub const CasedLetter: GeneralCategoryGroup = GCG(1 << (GC::UppercaseLetter as u32)
+        | 1 << (GC::LowercaseLetter as u32)
+        | 1 << (GC::TitlecaseLetter as u32));
     /// (`L`) The union of all letter categories
-    pub const Letter: GeneralCategory = GC(1 << (GS::UppercaseLetter as u32)
-        | 1 << (GS::LowercaseLetter as u32)
-        | 1 << (GS::TitlecaseLetter as u32)
-        | 1 << (GS::ModifierLetter as u32)
-        | 1 << (GS::OtherLetter as u32));
+    pub const Letter: GeneralCategoryGroup = GCG(1 << (GC::UppercaseLetter as u32)
+        | 1 << (GC::LowercaseLetter as u32)
+        | 1 << (GC::TitlecaseLetter as u32)
+        | 1 << (GC::ModifierLetter as u32)
+        | 1 << (GC::OtherLetter as u32));
 
     /// (`Mn`) A nonspacing combining mark (zero advance width)
-    pub const NonspacingMark: GeneralCategory = GC(1 << (GS::NonspacingMark as u32));
+    pub const NonspacingMark: GeneralCategoryGroup = GCG(1 << (GC::NonspacingMark as u32));
     /// (`Mc`) A spacing combining mark (positive advance width)
-    pub const EnclosingMark: GeneralCategory = GC(1 << (GS::EnclosingMark as u32));
+    pub const EnclosingMark: GeneralCategoryGroup = GCG(1 << (GC::EnclosingMark as u32));
     /// (`Me`) An enclosing combining mark
-    pub const SpacingMark: GeneralCategory = GC(1 << (GS::SpacingMark as u32));
+    pub const SpacingMark: GeneralCategoryGroup = GCG(1 << (GC::SpacingMark as u32));
     /// (`M`) The union of all mark categories
-    pub const Mark: GeneralCategory = GC(1 << (GS::NonspacingMark as u32)
-        | 1 << (GS::EnclosingMark as u32)
-        | 1 << (GS::SpacingMark as u32));
+    pub const Mark: GeneralCategoryGroup = GCG(1 << (GC::NonspacingMark as u32)
+        | 1 << (GC::EnclosingMark as u32)
+        | 1 << (GC::SpacingMark as u32));
 
     /// (`Nd`) A decimal digit
-    pub const DecimalNumber: GeneralCategory = GC(1 << (GS::DecimalNumber as u32));
+    pub const DecimalNumber: GeneralCategoryGroup = GCG(1 << (GC::DecimalNumber as u32));
     /// (`Nl`) A letterlike numeric character
-    pub const LetterNumber: GeneralCategory = GC(1 << (GS::LetterNumber as u32));
+    pub const LetterNumber: GeneralCategoryGroup = GCG(1 << (GC::LetterNumber as u32));
     /// (`No`) A numeric character of other type
-    pub const OtherNumber: GeneralCategory = GC(1 << (GS::OtherNumber as u32));
+    pub const OtherNumber: GeneralCategoryGroup = GCG(1 << (GC::OtherNumber as u32));
     /// (`N`) The union of all number categories
-    pub const Number: GeneralCategory = GC(1 << (GS::DecimalNumber as u32)
-        | 1 << (GS::LetterNumber as u32)
-        | 1 << (GS::OtherNumber as u32));
+    pub const Number: GeneralCategoryGroup = GCG(1 << (GC::DecimalNumber as u32)
+        | 1 << (GC::LetterNumber as u32)
+        | 1 << (GC::OtherNumber as u32));
 
     /// (`Zs`) A space character (of various non-zero widths)
-    pub const SpaceSeparator: GeneralCategory = GC(1 << (GS::SpaceSeparator as u32));
+    pub const SpaceSeparator: GeneralCategoryGroup = GCG(1 << (GC::SpaceSeparator as u32));
     /// (`Zl`) U+2028 LINE SEPARATOR only
-    pub const LineSeparator: GeneralCategory = GC(1 << (GS::LineSeparator as u32));
+    pub const LineSeparator: GeneralCategoryGroup = GCG(1 << (GC::LineSeparator as u32));
     /// (`Zp`) U+2029 PARAGRAPH SEPARATOR only
-    pub const ParagraphSeparator: GeneralCategory = GC(1 << (GS::ParagraphSeparator as u32));
+    pub const ParagraphSeparator: GeneralCategoryGroup = GCG(1 << (GC::ParagraphSeparator as u32));
     /// (`Z`) The union of all separator categories
-    pub const Separator: GeneralCategory = GC(1 << (GS::SpaceSeparator as u32)
-        | 1 << (GS::LineSeparator as u32)
-        | 1 << (GS::ParagraphSeparator as u32));
+    pub const Separator: GeneralCategoryGroup = GCG(1 << (GC::SpaceSeparator as u32)
+        | 1 << (GC::LineSeparator as u32)
+        | 1 << (GC::ParagraphSeparator as u32));
 
     /// (`Cc`) A C0 or C1 control code
-    pub const Control: GeneralCategory = GC(1 << (GS::Control as u32));
+    pub const Control: GeneralCategoryGroup = GCG(1 << (GC::Control as u32));
     /// (`Cf`) A format control character
-    pub const Format: GeneralCategory = GC(1 << (GS::Format as u32));
+    pub const Format: GeneralCategoryGroup = GCG(1 << (GC::Format as u32));
     /// (`Co`) A private-use character
-    pub const PrivateUse: GeneralCategory = GC(1 << (GS::PrivateUse as u32));
+    pub const PrivateUse: GeneralCategoryGroup = GCG(1 << (GC::PrivateUse as u32));
     /// (`Cs`) A surrogate code point
-    pub const Surrogate: GeneralCategory = GC(1 << (GS::Surrogate as u32));
+    pub const Surrogate: GeneralCategoryGroup = GCG(1 << (GC::Surrogate as u32));
     /// (`Cn`) A reserved unassigned code point or a noncharacter
-    pub const Unassigned: GeneralCategory = GC(1 << (GS::Unassigned as u32));
+    pub const Unassigned: GeneralCategoryGroup = GCG(1 << (GC::Unassigned as u32));
     /// (`C`) The union of all control code, reserved, and unassigned categories
-    pub const Other: GeneralCategory = GC(1 << (GS::Control as u32)
-        | 1 << (GS::Format as u32)
-        | 1 << (GS::PrivateUse as u32)
-        | 1 << (GS::Surrogate as u32)
-        | 1 << (GS::Unassigned as u32));
+    pub const Other: GeneralCategoryGroup = GCG(1 << (GC::Control as u32)
+        | 1 << (GC::Format as u32)
+        | 1 << (GC::PrivateUse as u32)
+        | 1 << (GC::Surrogate as u32)
+        | 1 << (GC::Unassigned as u32));
 
     /// (`Pd`) A dash or hyphen punctuation mark
-    pub const DashPunctuation: GeneralCategory = GC(1 << (GS::DashPunctuation as u32));
+    pub const DashPunctuation: GeneralCategoryGroup = GCG(1 << (GC::DashPunctuation as u32));
     /// (`Ps`) An opening punctuation mark (of a pair)
-    pub const OpenPunctuation: GeneralCategory = GC(1 << (GS::OpenPunctuation as u32));
+    pub const OpenPunctuation: GeneralCategoryGroup = GCG(1 << (GC::OpenPunctuation as u32));
     /// (`Pe`) A closing punctuation mark (of a pair)
-    pub const ClosePunctuation: GeneralCategory = GC(1 << (GS::ClosePunctuation as u32));
+    pub const ClosePunctuation: GeneralCategoryGroup = GCG(1 << (GC::ClosePunctuation as u32));
     /// (`Pc`) A connecting punctuation mark, like a tie
-    pub const ConnectorPunctuation: GeneralCategory = GC(1 << (GS::ConnectorPunctuation as u32));
+    pub const ConnectorPunctuation: GeneralCategoryGroup =
+        GCG(1 << (GC::ConnectorPunctuation as u32));
     /// (`Pi`) An initial quotation mark
-    pub const InitialPunctuation: GeneralCategory = GC(1 << (GS::InitialPunctuation as u32));
+    pub const InitialPunctuation: GeneralCategoryGroup = GCG(1 << (GC::InitialPunctuation as u32));
     /// (`Pf`) A final quotation mark
-    pub const FinalPunctuation: GeneralCategory = GC(1 << (GS::FinalPunctuation as u32));
+    pub const FinalPunctuation: GeneralCategoryGroup = GCG(1 << (GC::FinalPunctuation as u32));
     /// (`Po`) A punctuation mark of other type
-    pub const OtherPunctuation: GeneralCategory = GC(1 << (GS::OtherPunctuation as u32));
+    pub const OtherPunctuation: GeneralCategoryGroup = GCG(1 << (GC::OtherPunctuation as u32));
     /// (`P`) The union of all punctuation categories
-    pub const Punctuation: GeneralCategory = GC(1 << (GS::DashPunctuation as u32)
-        | 1 << (GS::OpenPunctuation as u32)
-        | 1 << (GS::ClosePunctuation as u32)
-        | 1 << (GS::ConnectorPunctuation as u32)
-        | 1 << (GS::OtherPunctuation as u32)
-        | 1 << (GS::InitialPunctuation as u32)
-        | 1 << (GS::FinalPunctuation as u32));
+    pub const Punctuation: GeneralCategoryGroup = GCG(1 << (GC::DashPunctuation as u32)
+        | 1 << (GC::OpenPunctuation as u32)
+        | 1 << (GC::ClosePunctuation as u32)
+        | 1 << (GC::ConnectorPunctuation as u32)
+        | 1 << (GC::OtherPunctuation as u32)
+        | 1 << (GC::InitialPunctuation as u32)
+        | 1 << (GC::FinalPunctuation as u32));
 
     /// (`Sm`) A symbol of mathematical use
-    pub const MathSymbol: GeneralCategory = GC(1 << (GS::MathSymbol as u32));
+    pub const MathSymbol: GeneralCategoryGroup = GCG(1 << (GC::MathSymbol as u32));
     /// (`Sc`) A currency sign
-    pub const CurrencySymbol: GeneralCategory = GC(1 << (GS::CurrencySymbol as u32));
+    pub const CurrencySymbol: GeneralCategoryGroup = GCG(1 << (GC::CurrencySymbol as u32));
     /// (`Sk`) A non-letterlike modifier symbol
-    pub const ModifierSymbol: GeneralCategory = GC(1 << (GS::ModifierSymbol as u32));
+    pub const ModifierSymbol: GeneralCategoryGroup = GCG(1 << (GC::ModifierSymbol as u32));
     /// (`So`) A symbol of other type
-    pub const OtherSymbol: GeneralCategory = GC(1 << (GS::OtherSymbol as u32));
+    pub const OtherSymbol: GeneralCategoryGroup = GCG(1 << (GC::OtherSymbol as u32));
     /// (`S`) The union of all symbol categories
-    pub const Symbol: GeneralCategory = GC(1 << (GS::MathSymbol as u32)
-        | 1 << (GS::CurrencySymbol as u32)
-        | 1 << (GS::ModifierSymbol as u32)
-        | 1 << (GS::OtherSymbol as u32));
+    pub const Symbol: GeneralCategoryGroup = GCG(1 << (GC::MathSymbol as u32)
+        | 1 << (GC::CurrencySymbol as u32)
+        | 1 << (GC::ModifierSymbol as u32)
+        | 1 << (GC::OtherSymbol as u32));
 
     /// Return whether the code point belongs in the provided multi-value category.
     ///
     /// ```
-    /// use icu::properties::{maps, GeneralSubcategory, GeneralCategory};
+    /// use icu::properties::{maps, GeneralCategory, GeneralCategoryGroup};
     /// use icu_codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
@@ -254,48 +266,49 @@ impl GeneralCategory {
     /// let data_struct = payload.get();
     /// let gc = &data_struct.code_point_trie;
     ///
-    /// assert_eq!(gc.get('A' as u32), GeneralSubcategory::UppercaseLetter);
-    /// assert!(GeneralCategory::CasedLetter.contains(gc.get('A' as u32)));
+    /// assert_eq!(gc.get('A' as u32), GeneralCategory::UppercaseLetter);
+    /// assert!(GeneralCategoryGroup::CasedLetter.contains(gc.get('A' as u32)));
     ///
     /// // U+0B1E ORIYA LETTER NYA
-    /// assert_eq!(gc.get('ଞ' as u32), GeneralSubcategory::OtherLetter);
-    /// assert!(GeneralCategory::Letter.contains(gc.get('ଞ' as u32)));
-    /// assert!(!GeneralCategory::CasedLetter.contains(gc.get('ଞ' as u32)));
+    /// assert_eq!(gc.get('ଞ' as u32), GeneralCategory::OtherLetter);
+    /// assert!(GeneralCategoryGroup::Letter.contains(gc.get('ଞ' as u32)));
+    /// assert!(!GeneralCategoryGroup::CasedLetter.contains(gc.get('ଞ' as u32)));
     ///
     /// // U+0301 COMBINING ACUTE ACCENT
-    /// assert_eq!(gc.get(0x0301), GeneralSubcategory::NonspacingMark);
-    /// assert!(GeneralCategory::Mark.contains(gc.get(0x0301)));
-    /// assert!(!GeneralCategory::Letter.contains(gc.get(0x0301)));
+    /// assert_eq!(gc.get(0x0301), GeneralCategory::NonspacingMark);
+    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get(0x0301)));
+    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get(0x0301)));
     ///
-    /// assert_eq!(gc.get('0' as u32), GeneralSubcategory::DecimalNumber);
-    /// assert!(GeneralCategory::Number.contains(gc.get('0' as u32)));
-    /// assert!(!GeneralCategory::Mark.contains(gc.get('0' as u32)));
+    /// assert_eq!(gc.get('0' as u32), GeneralCategory::DecimalNumber);
+    /// assert!(GeneralCategoryGroup::Number.contains(gc.get('0' as u32)));
+    /// assert!(!GeneralCategoryGroup::Mark.contains(gc.get('0' as u32)));
     ///
-    /// assert_eq!(gc.get('(' as u32), GeneralSubcategory::OpenPunctuation);
-    /// assert!(GeneralCategory::Punctuation.contains(gc.get('(' as u32)));
-    /// assert!(!GeneralCategory::Number.contains(gc.get('(' as u32)));
+    /// assert_eq!(gc.get('(' as u32), GeneralCategory::OpenPunctuation);
+    /// assert!(GeneralCategoryGroup::Punctuation.contains(gc.get('(' as u32)));
+    /// assert!(!GeneralCategoryGroup::Number.contains(gc.get('(' as u32)));
     ///
-    /// assert_eq!(gc.get('✓' as u32), GeneralSubcategory::OtherSymbol);
-    /// assert!(GeneralCategory::Symbol.contains(gc.get('✓' as u32)));
-    /// assert!(!GeneralCategory::Punctuation.contains(gc.get('✓' as u32)));
+    /// // U+2713 CHECK MARK
+    /// assert_eq!(gc.get('✓' as u32), GeneralCategory::OtherSymbol);
+    /// assert!(GeneralCategoryGroup::Symbol.contains(gc.get('✓' as u32)));
+    /// assert!(!GeneralCategoryGroup::Punctuation.contains(gc.get('✓' as u32)));
     ///
-    /// assert_eq!(gc.get(' ' as u32), GeneralSubcategory::SpaceSeparator);
-    /// assert!(GeneralCategory::Separator.contains(gc.get(' ' as u32)));
-    /// assert!(!GeneralCategory::Symbol.contains(gc.get(' ' as u32)));
+    /// assert_eq!(gc.get(' ' as u32), GeneralCategory::SpaceSeparator);
+    /// assert!(GeneralCategoryGroup::Separator.contains(gc.get(' ' as u32)));
+    /// assert!(!GeneralCategoryGroup::Symbol.contains(gc.get(' ' as u32)));
     ///
     /// // U+E007F CANCEL TAG
-    /// assert_eq!(gc.get(0xE007F), GeneralSubcategory::Format);
-    /// assert!(GeneralCategory::Other.contains(gc.get(0xE007F)));
-    /// assert!(!GeneralCategory::Separator.contains(gc.get(0xE007F)));
+    /// assert_eq!(gc.get(0xE007F), GeneralCategory::Format);
+    /// assert!(GeneralCategoryGroup::Other.contains(gc.get(0xE007F)));
+    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get(0xE007F)));
     /// ```
-    pub fn contains(&self, val: GeneralSubcategory) -> bool {
+    pub fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
     }
 }
 
-impl From<GeneralSubcategory> for GeneralCategory {
-    fn from(subcategory: GeneralSubcategory) -> Self {
-        GeneralCategory(1 << (subcategory as u32))
+impl From<GeneralCategory> for GeneralCategoryGroup {
+    fn from(subcategory: GeneralCategory) -> Self {
+        GeneralCategoryGroup(1 << (subcategory as u32))
     }
 }
 
@@ -674,4 +687,76 @@ impl SentenceBreak {
     pub const Extend: SentenceBreak = SentenceBreak(12); // name="EX"
     pub const LF: SentenceBreak = SentenceBreak(13); // name="LF"
     pub const SContinue: SentenceBreak = SentenceBreak(14); // name="SC"
+}
+
+/// Property Canonical_Combining_Class.
+/// See UAX #15:
+/// <https://www.unicode.org/reports/tr15/>.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[repr(transparent)]
+pub struct CanonicalCombiningClass(pub u8);
+
+// These constant names come from PropertyValueAliases.txt
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl CanonicalCombiningClass {
+    pub const NotReordered: CanonicalCombiningClass = CanonicalCombiningClass(0); // name="NR"
+    pub const Overlay: CanonicalCombiningClass = CanonicalCombiningClass(1); // name="OV"
+    pub const HanReading: CanonicalCombiningClass = CanonicalCombiningClass(6); // name="HANR"
+    pub const Nukta: CanonicalCombiningClass = CanonicalCombiningClass(7); // name="NK"
+    pub const KanaVoicing: CanonicalCombiningClass = CanonicalCombiningClass(8); // name="KV"
+    pub const Virama: CanonicalCombiningClass = CanonicalCombiningClass(9); // name="VR"
+    pub const CCC10: CanonicalCombiningClass = CanonicalCombiningClass(10); // name="CCC10"
+    pub const CCC11: CanonicalCombiningClass = CanonicalCombiningClass(11); // name="CCC11"
+    pub const CCC12: CanonicalCombiningClass = CanonicalCombiningClass(12); // name="CCC12"
+    pub const CCC13: CanonicalCombiningClass = CanonicalCombiningClass(13); // name="CCC13"
+    pub const CCC14: CanonicalCombiningClass = CanonicalCombiningClass(14); // name="CCC14"
+    pub const CCC15: CanonicalCombiningClass = CanonicalCombiningClass(15); // name="CCC15"
+    pub const CCC16: CanonicalCombiningClass = CanonicalCombiningClass(16); // name="CCC16"
+    pub const CCC17: CanonicalCombiningClass = CanonicalCombiningClass(17); // name="CCC17"
+    pub const CCC18: CanonicalCombiningClass = CanonicalCombiningClass(18); // name="CCC18"
+    pub const CCC19: CanonicalCombiningClass = CanonicalCombiningClass(19); // name="CCC19"
+    pub const CCC20: CanonicalCombiningClass = CanonicalCombiningClass(20); // name="CCC20"
+    pub const CCC21: CanonicalCombiningClass = CanonicalCombiningClass(21); // name="CCC21"
+    pub const CCC22: CanonicalCombiningClass = CanonicalCombiningClass(22); // name="CCC22"
+    pub const CCC23: CanonicalCombiningClass = CanonicalCombiningClass(23); // name="CCC23"
+    pub const CCC24: CanonicalCombiningClass = CanonicalCombiningClass(24); // name="CCC24"
+    pub const CCC25: CanonicalCombiningClass = CanonicalCombiningClass(25); // name="CCC25"
+    pub const CCC26: CanonicalCombiningClass = CanonicalCombiningClass(26); // name="CCC26"
+    pub const CCC27: CanonicalCombiningClass = CanonicalCombiningClass(27); // name="CCC27"
+    pub const CCC28: CanonicalCombiningClass = CanonicalCombiningClass(28); // name="CCC28"
+    pub const CCC29: CanonicalCombiningClass = CanonicalCombiningClass(29); // name="CCC29"
+    pub const CCC30: CanonicalCombiningClass = CanonicalCombiningClass(30); // name="CCC30"
+    pub const CCC31: CanonicalCombiningClass = CanonicalCombiningClass(31); // name="CCC31"
+    pub const CCC32: CanonicalCombiningClass = CanonicalCombiningClass(32); // name="CCC32"
+    pub const CCC33: CanonicalCombiningClass = CanonicalCombiningClass(33); // name="CCC33"
+    pub const CCC34: CanonicalCombiningClass = CanonicalCombiningClass(34); // name="CCC34"
+    pub const CCC35: CanonicalCombiningClass = CanonicalCombiningClass(35); // name="CCC35"
+    pub const CCC36: CanonicalCombiningClass = CanonicalCombiningClass(36); // name="CCC36"
+    pub const CCC84: CanonicalCombiningClass = CanonicalCombiningClass(84); // name="CCC84"
+    pub const CCC91: CanonicalCombiningClass = CanonicalCombiningClass(91); // name="CCC91"
+    pub const CCC103: CanonicalCombiningClass = CanonicalCombiningClass(103); // name="CCC103"
+    pub const CCC107: CanonicalCombiningClass = CanonicalCombiningClass(107); // name="CCC107"
+    pub const CCC118: CanonicalCombiningClass = CanonicalCombiningClass(118); // name="CCC118"
+    pub const CCC122: CanonicalCombiningClass = CanonicalCombiningClass(122); // name="CCC122"
+    pub const CCC129: CanonicalCombiningClass = CanonicalCombiningClass(129); // name="CCC129"
+    pub const CCC130: CanonicalCombiningClass = CanonicalCombiningClass(130); // name="CCC130"
+    pub const CCC132: CanonicalCombiningClass = CanonicalCombiningClass(132); // name="CCC132"
+    pub const CCC133: CanonicalCombiningClass = CanonicalCombiningClass(133); // name="CCC133" // RESERVED
+    pub const AttachedBelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(200); // name="ATBL"
+    pub const AttachedBelow: CanonicalCombiningClass = CanonicalCombiningClass(202); // name="ATB"
+    pub const AttachedAbove: CanonicalCombiningClass = CanonicalCombiningClass(214); // name="ATA"
+    pub const AttachedAboveRight: CanonicalCombiningClass = CanonicalCombiningClass(216); // name="ATAR"
+    pub const BelowLeft: CanonicalCombiningClass = CanonicalCombiningClass(218); // name="BL"
+    pub const Below: CanonicalCombiningClass = CanonicalCombiningClass(220); // name="B"
+    pub const BelowRight: CanonicalCombiningClass = CanonicalCombiningClass(222); // name="BR"
+    pub const Left: CanonicalCombiningClass = CanonicalCombiningClass(224); // name="L"
+    pub const Right: CanonicalCombiningClass = CanonicalCombiningClass(226); // name="R"
+    pub const AboveLeft: CanonicalCombiningClass = CanonicalCombiningClass(228); // name="AL"
+    pub const Above: CanonicalCombiningClass = CanonicalCombiningClass(230); // name="A"
+    pub const AboveRight: CanonicalCombiningClass = CanonicalCombiningClass(232); // name="AR"
+    pub const DoubleBelow: CanonicalCombiningClass = CanonicalCombiningClass(233); // name="DB"
+    pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
+    pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
 }

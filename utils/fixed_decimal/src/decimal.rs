@@ -517,10 +517,10 @@ impl writeable::Writeable for FixedDecimal {
     ///
     /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
     /// let result = dec.writeable_to_string();
-    /// assert_eq!(LengthHint::Exact(6), dec.write_len());
+    /// assert_eq!(LengthHint::exact(6), dec.write_len());
     /// ```
     fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::Exact(1)
+        writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
             + (if self.is_negative { 1 } else { 0 })
             + (if self.lower_magnitude < 0 { 1 } else { 0 })
@@ -1013,7 +1013,7 @@ fn test_round() {
         let mut dec = FixedDecimal::new_from_f64_raw(case.input).unwrap();
         dec.round_trailing_digits(case.round, RoundingMode::HalfExpand)
             .unwrap();
-        writeable::assert_writeable_eq!(case.expected, dec, "{:?}", case);
+        writeable::assert_writeable_eq!(dec, case.expected, "{:?}", case);
     }
 }
 
@@ -1203,7 +1203,7 @@ fn test_float() {
 
     for case in &cases {
         let dec = FixedDecimal::new_from_f64(case.input, case.precision).unwrap();
-        writeable::assert_writeable_eq!(case.expected, dec, "{:?}", case);
+        writeable::assert_writeable_eq!(dec, case.expected, "{:?}", case);
     }
 }
 
@@ -1311,7 +1311,7 @@ fn test_basic() {
         let mut dec: FixedDecimal = cas.input.into();
         // println!("{}", cas.input + 0.01);
         dec.multiply_pow10(cas.delta).unwrap();
-        writeable::assert_writeable_eq!(cas.expected, dec, "{:?}", cas);
+        writeable::assert_writeable_eq!(dec, cas.expected, "{:?}", cas);
     }
 }
 
@@ -1417,7 +1417,7 @@ fn test_isize_limits() {
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        writeable::assert_writeable_eq!(dec_str, dec);
+        writeable::assert_writeable_eq!(dec, dec_str);
     }
 }
 
@@ -1428,14 +1428,14 @@ fn test_ui128_limits() {
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        writeable::assert_writeable_eq!(dec_str, dec);
+        writeable::assert_writeable_eq!(dec, dec_str);
     }
     for num in &[core::u128::MAX, core::u128::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        writeable::assert_writeable_eq!(dec_str, dec);
+        writeable::assert_writeable_eq!(dec, dec_str);
     }
 }
 

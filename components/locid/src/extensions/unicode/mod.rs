@@ -199,9 +199,9 @@ impl writeable::Writeable for Unicode {
 
     fn write_len(&self) -> writeable::LengthHint {
         if self.is_empty() {
-            return writeable::LengthHint::Exact(0);
+            return writeable::LengthHint::exact(0);
         }
-        let mut result = writeable::LengthHint::Exact(2);
+        let mut result = writeable::LengthHint::exact(2);
         if !self.attributes.is_empty() {
             result += writeable::Writeable::write_len(&self.attributes) + 1;
         }

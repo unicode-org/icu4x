@@ -98,7 +98,7 @@ impl<'data> UnicodeSet<'data> {
     pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, UnicodeSetError> {
         if is_valid_zv(&inv_list) {
             let size: usize = inv_list
-                .as_slice()
+                .as_ule_slice()
                 .chunks(2)
                 .map(|end_points| {
                     <u32 as AsULE>::from_unaligned(end_points[1])
@@ -262,7 +262,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     pub fn iter_chars(&self) -> impl Iterator<Item = char> + '_ {
         self.inv_list
-            .as_slice()
+            .as_ule_slice()
             .chunks(2)
             .flat_map(|pair| (AsULE::from_unaligned(pair[0])..AsULE::from_unaligned(pair[1])))
             .filter_map(char::from_u32)
@@ -287,7 +287,7 @@ impl<'data> UnicodeSet<'data> {
     /// assert_eq!(None, example_iter_ranges.next());
     /// ```
     pub fn iter_ranges(&self) -> impl ExactSizeIterator<Item = RangeInclusive<u32>> + '_ {
-        self.inv_list.as_slice().chunks(2).map(|pair| {
+        self.inv_list.as_ule_slice().chunks(2).map(|pair| {
             let range_start: u32 = AsULE::from_unaligned(pair[0]);
             let range_limit: u32 = AsULE::from_unaligned(pair[1]);
             RangeInclusive::new(range_start, range_limit - 1)
@@ -348,7 +348,7 @@ impl<'data> UnicodeSet<'data> {
     /// Checks to see the query is in the [`UnicodeSet`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using [`std`] implementation
+    /// in the set using [`core`] implementation
     ///
     /// # Examples
     ///
@@ -371,7 +371,7 @@ impl<'data> UnicodeSet<'data> {
     /// the range from 0 to the maximum valid Unicode Scalar Value.
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using [`std`] implementation
+    /// in the set using [`core`] implementation
     ///
     /// # Examples
     ///

@@ -36,7 +36,7 @@ extra_features = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.4", path = "../../provider/core", features = ["provider_serde"] }
+icu_provider = { version = "0.4", path = "../../provider/core", features = ["serde"] }
 icu_locid = { version = "0.4", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
@@ -59,11 +59,11 @@ serde-json-core = { version = "0.4", features = ["std"] }
 criterion = "0.3.3"
 
 [features]
-# Enables JSON or Bincode data storage
-provider_json = ["serde_json"]
-provider_bincode = ["bincode", "std"]
+# Enables JSON or Bincode data storage for deserialization
+deserialize_json = ["icu_provider/deserialize_json"]
+deserialize_bincode_1 = ["std", "icu_provider/deserialize_bincode_1"]
 # Enables the "export" module and FilesystemExporter
-export = ["static_assertions", "log", "std", "provider_json"]
+export = ["static_assertions", "log", "std", "serde_json", "bincode", "icu_provider/serialize"]
 std = ["serde_json/std", "serde-json-core/std"]
 bench = []
 

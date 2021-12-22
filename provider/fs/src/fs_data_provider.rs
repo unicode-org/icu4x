@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::deserializer;
 use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
@@ -53,7 +52,7 @@ impl FsDataProvider {
         let manifest: Manifest = serde_json_core::from_str(&manifest_str)
             .map(|(obj, _)| obj)
             .map_err(|e| (e, &manifest_path))?;
-        deserializer::check_format_supported(&manifest.syntax)?;
+        check_format_supported(manifest.buffer_format)?;
         Ok(Self {
             res_root: root_path_buf,
             manifest,
@@ -65,7 +64,7 @@ impl FsDataProvider {
         let mut path_buf = self.res_root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         if req.resource_path.options.is_empty() {
-            path_buf.set_extension(self.manifest.syntax.get_file_extension());
+            path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
             return Err(Error::MissingResourceKey(req.resource_path.key));
@@ -73,7 +72,7 @@ impl FsDataProvider {
         if !req.resource_path.options.is_empty() {
             // TODO: Implement proper locale fallback
             path_buf.extend(req.resource_path.options.get_components().iter());
-            path_buf.set_extension(self.manifest.syntax.get_file_extension());
+            path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
             return Err(Error::MissingResourceOptions(req.clone()));
@@ -96,7 +95,19 @@ impl FsDataProvider {
     }
 }
 
-/// Note: This impl returns `'static` payloads because borrowing is handled by [`Yoke`].
+impl BufferProvider for FsDataProvider {
+    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        let (rc_buffer, _) = self.get_rc_buffer(req)?;
+        let mut metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
+        metadata.buffer_format = Some(self.manifest.buffer_format);
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_rc_buffer(rc_buffer)),
+        })
+    }
+}
+
 impl<M> DataProvider<M> for FsDataProvider
 where
     M: DataMarker,
@@ -106,33 +117,6 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
-            payload: Some(
-                DataPayload::try_from_rc_buffer(
-                    rc_buffer,
-                    deserializer::deserialize_zero_copy::<M>(&self.manifest.syntax),
-                )
-                .map_err(|e: deserializer::Error| e.into_resource_error(&path_buf))?,
-            ),
-        })
-    }
-}
-
-impl SerdeDeDataProvider for FsDataProvider {
-    fn load_to_receiver(
-        &self,
-        req: &DataRequest,
-        receiver: &mut dyn SerdeDeDataReceiver,
-    ) -> Result<DataResponseMetadata, DataError> {
-        let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
-        deserializer::deserialize_into_receiver(rc_buffer, &self.manifest.syntax, receiver)
-            .map_err(|err| err.into_resource_error(&path_buf))?;
-        Ok(DataResponseMetadata {
-            data_langid: req.resource_path.options.langid.clone(),
-        })
+        self.as_deserializing().load_payload(req)
     }
 }

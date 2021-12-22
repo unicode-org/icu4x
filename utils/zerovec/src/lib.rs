@@ -76,7 +76,7 @@
 //!
 //! let data = DataStruct {
 //!     nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
-//!     strs: VarZeroVec::from(&["hello", "world"] as &[_]),
+//!     strs: VarZeroVec::from(&["hello", "world"]),
 //! };
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
@@ -97,6 +97,7 @@
 
 extern crate alloc;
 
+mod error;
 pub mod map;
 #[cfg(test)]
 pub mod samples;
@@ -107,6 +108,7 @@ mod zerovec;
 #[cfg(feature = "yoke")]
 mod yoke_impls;
 
+pub use crate::error::ZeroVecError;
 pub use crate::map::ZeroMap;
-pub use crate::varzerovec::{VarZeroVec, VarZeroVecError};
-pub use crate::zerovec::ZeroVec;
+pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
+pub use crate::zerovec::{ZeroSlice, ZeroVec};

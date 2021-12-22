@@ -3,9 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(test)]
-#[cfg(feature = "serde")]
+#[cfg(feature = "serialize")]
 mod test;
 
+use crate::buffer_provider::BufferMarker;
 use crate::error::Error;
 use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
@@ -90,9 +91,12 @@ impl DataRequest {
 
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
+#[non_exhaustive]
 pub struct DataResponseMetadata {
     /// The language of the returned data, or None if the resource key isn't localized.
     pub data_langid: Option<LanguageIdentifier>,
+    /// The format of the buffer for buffer-backed data, if known (for example, JSON).
+    pub buffer_format: Option<crate::buffer_provider::BufferFormat>,
 }
 
 /// A container for data payloads returned from a [`DataProvider`].
@@ -240,7 +244,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
+    /// # #[cfg(feature = "serde_json")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use std::rc::Rc;
@@ -257,7 +261,7 @@ where
     /// .expect("JSON is valid");
     ///
     /// assert_eq!("Hello World", payload.get().message);
-    /// # } // feature = "provider_serde"
+    /// # } // feature = "serde_json"
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_rc_buffer_badly<E>(
@@ -277,7 +281,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
+    /// # #[cfg(feature = "serde_json")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use std::rc::Rc;
@@ -296,7 +300,7 @@ where
     /// .expect("JSON is valid");
     ///
     /// assert_eq!("Hello World", payload.get().message);
-    /// # } // feature = "provider_serde"
+    /// # } // feature = "serde_json"
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_yoked_buffer<T, E>(
@@ -405,9 +409,6 @@ where
     /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data
     /// type. The function takes a second argument which should be ignored. For more details,
     /// see [`Yoke::project()`].
-    ///
-    /// Both `M` and `M2` have the same [`DataMarker::Cart`]. This means that when using
-    /// `map_project`, it is usually necessary to define a custom [`DataMarker`] type.
     ///
     /// The standard [`DataPayload::map_project()`] function moves `self` and cannot capture any
     /// data from its context. Use one of the sister methods if you need these capabilities:
@@ -797,6 +798,39 @@ where
     }
 }
 
+impl DataPayload<BufferMarker> {
+    /// Converts a reference-counted byte buffer into a `DataPayload<BufferMarker>`.
+    pub fn from_rc_buffer(buffer: Rc<[u8]>) -> Self {
+        Self {
+            yoke: Yoke::attach_to_rc_cart(buffer).wrap_cart_in_option(),
+        }
+    }
+
+    /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
+    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], Rc<[u8]>>) -> Self {
+        Self {
+            yoke: yoked_buffer.wrap_cart_in_option(),
+        }
+    }
+
+    /// Converts a static byte buffer into a `DataPayload<BufferMarker>`.
+    pub fn from_static_buffer(buffer: &'static [u8]) -> Self {
+        Self {
+            yoke: Yoke::new_owned(buffer),
+        }
+    }
+}
+
+impl<M> Default for DataPayload<M>
+where
+    M: DataMarker,
+    M::Yokeable: Default,
+{
+    fn default() -> Self {
+        Self::from_owned(Default::default())
+    }
+}
+
 /// A response object containing an object as payload and metadata about it.
 pub struct DataResponse<M>
 where
@@ -880,7 +914,7 @@ fn test_debug() {
             message: Cow::Borrowed("foo"),
         })),
     };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }
 
 /// A generic data provider that loads a payload of a specific type.

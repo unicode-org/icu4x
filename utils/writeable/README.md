@@ -37,12 +37,12 @@ impl<'s> Writeable for WelcomeMessage<'s> {
 
     fn write_len(&self) -> LengthHint {
         // "Hello, " + '!' + length of name
-        LengthHint::Exact(8 + self.name.len())
+        LengthHint::exact(8 + self.name.len())
     }
 }
 
 let message = WelcomeMessage { name: "Alice" };
-assert_writeable_eq!("Hello, Alice!", &message);
+assert_writeable_eq!(&message, "Hello, Alice!");
 ```
 
 [`ICU4X`]: ../icu/index.html

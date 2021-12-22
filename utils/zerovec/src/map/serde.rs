@@ -136,12 +136,12 @@ where
         } else {
             let (keys, values): (K::Container, V::Container) =
                 Deserialize::deserialize(deserializer)?;
-            if keys.len() != values.len() {
+            if keys.zvl_len() != values.zvl_len() {
                 return Err(de::Error::custom(
                     "Mismatched key and value sizes in ZeroMap",
                 ));
             }
-            if !keys.is_ascending() {
+            if !keys.zvl_is_ascending() {
                 return Err(de::Error::custom("ZeroMap deserializing keys out of order"));
             }
             Ok(Self { keys, values })
@@ -171,14 +171,14 @@ where
             ))
         } else {
             let deserialized: ZeroMap<'a, K, V> = ZeroMap::deserialize(deserializer)?;
-            let keys = if let Some(keys) = deserialized.keys.as_borrowed_inner() {
+            let keys = if let Some(keys) = deserialized.keys.zvl_as_borrowed_inner() {
                 keys
             } else {
                 return Err(de::Error::custom(
                     "ZeroMapBorrowed can only deserialize in zero-copy ways",
                 ));
             };
-            let values = if let Some(values) = deserialized.values.as_borrowed_inner() {
+            let values = if let Some(values) = deserialized.values.zvl_as_borrowed_inner() {
                 values
             } else {
                 return Err(de::Error::custom(

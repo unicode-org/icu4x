@@ -7,7 +7,7 @@
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::TryInto;
-use tinystr::tinystr8;
+use tinystr::tinystr16;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
 ///
@@ -128,7 +128,7 @@ impl DateTime<Buddhist> {
 fn iso_year_as_buddhist(year: IsoYear) -> types::Year {
     let buddhist_year = year.0 + BUDDHIST_ERA_OFFSET;
     types::Year {
-        era: types::Era(tinystr8!("be")),
+        era: types::Era(tinystr16!("be")),
         number: buddhist_year,
         related_iso: year.0,
     }

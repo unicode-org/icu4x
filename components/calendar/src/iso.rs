@@ -6,7 +6,7 @@
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
-use tinystr::tinystr8;
+use tinystr::{tinystr16, tinystr8};
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
@@ -69,7 +69,7 @@ impl From<IsoYear> for i32 {
 impl From<IsoYear> for types::Year {
     fn from(year: IsoYear) -> types::Year {
         types::Year {
-            era: types::Era(tinystr8!("default")),
+            era: types::Era(tinystr16!("default")),
             number: year.0,
             related_iso: year.0,
         }
@@ -114,6 +114,22 @@ impl IsoDateInner {
             self.year.0 -= 1;
             // adding 13 since months are 1-indexed
             self.month.0 = (13 + (new_month % 12)) as u8
+        }
+    }
+
+    pub(crate) fn jan_1(year: IsoYear) -> Self {
+        Self {
+            day: IsoDay(1),
+            month: IsoMonth(1),
+            year,
+        }
+    }
+
+    pub(crate) fn dec_31(year: IsoYear) -> Self {
+        Self {
+            day: IsoDay(31),
+            month: IsoMonth(12),
+            year,
         }
     }
 }
@@ -215,7 +231,9 @@ impl Calendar for Iso {
                 }
             } else {
                 let month_days = self.days_in_month(date);
-                if offset.days > month_days as i32 {
+                // >= because we date.day is 1, so adding the number of days in the month
+                // will still have the same effect
+                if offset.days >= month_days as i32 {
                     date.add_months(1);
                     offset.days -= month_days as i32;
                 } else {
@@ -365,6 +383,16 @@ impl Iso {
     }
 }
 
+impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
+    fn from(other: &'_ IsoDateInner) -> Self {
+        Self {
+            year: other.year.0,
+            month: other.month.0,
+            day: other.day.0,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -453,5 +481,38 @@ mod test {
             .clone()
             .added(simple_subtract(&today_minus_5000, &today));
         assert_eq!(offset, today_minus_5000);
+    }
+
+    #[test]
+    fn test_offset_at_month_boundary() {
+        let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
+        let today_plus_2 = Date::new_iso_date_from_integers(2020, 3, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, 0, 0, 2));
+        assert_eq!(offset, today_plus_2);
+
+        let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
+        let today_plus_3 = Date::new_iso_date_from_integers(2020, 3, 2).unwrap();
+        let offset = today.added(DateDuration::new(0, 0, 0, 3));
+        assert_eq!(offset, today_plus_3);
+
+        let today = Date::new_iso_date_from_integers(2020, 2, 28).unwrap();
+        let today_plus_1 = Date::new_iso_date_from_integers(2020, 2, 29).unwrap();
+        let offset = today.added(DateDuration::new(0, 0, 0, 1));
+        assert_eq!(offset, today_plus_1);
+
+        let today = Date::new_iso_date_from_integers(2019, 2, 28).unwrap();
+        let today_plus_2 = Date::new_iso_date_from_integers(2019, 3, 2).unwrap();
+        let offset = today.added(DateDuration::new(0, 0, 0, 2));
+        assert_eq!(offset, today_plus_2);
+
+        let today = Date::new_iso_date_from_integers(2019, 2, 28).unwrap();
+        let today_plus_1 = Date::new_iso_date_from_integers(2019, 3, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, 0, 0, 1));
+        assert_eq!(offset, today_plus_1);
+
+        let today = Date::new_iso_date_from_integers(2020, 3, 1).unwrap();
+        let today_minus_1 = Date::new_iso_date_from_integers(2020, 2, 29).unwrap();
+        let offset = today.added(DateDuration::new(0, 0, 0, -1));
+        assert_eq!(offset, today_minus_1);
     }
 }

@@ -45,7 +45,7 @@
 //! use icu::datetime::options::components;
 //!
 //! let bag = components::Bag {
-//!     year: Some(components::Numeric::Numeric),
+//!     year: Some(components::Year::Numeric),
 //!     month: Some(components::Month::Long),
 //!     day: Some(components::Numeric::Numeric),
 //!
@@ -72,7 +72,10 @@
 //! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::{
+    fields::{self, Field, FieldLength, FieldSymbol},
+    pattern::{runtime::PatternPlurals, PatternItem},
+};
 
 use alloc::vec::Vec;
 
@@ -87,7 +90,7 @@ pub struct Bag {
     /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
     /// Include the year, such as "1970" or "70".
-    pub year: Option<Numeric>,
+    pub year: Option<Year>,
     /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
     /// Include the week, such as "1st" or "1".
@@ -138,12 +141,14 @@ impl Bag {
 
         if let Some(year) = self.year {
             // Unimplemented year fields:
-            // Y - Week of Year
             // u - Extended year
             // U - Cyclic year name
             // r - Related Gregorian year
             fields.push(Field {
-                symbol: FieldSymbol::Year(fields::Year::Calendar),
+                symbol: FieldSymbol::Year(match year {
+                    Year::Numeric | Year::TwoDigit => fields::Year::Calendar,
+                    Year::NumericWeekOf | Year::TwoDigitWeekOf => fields::Year::WeekOf,
+                }),
                 length: match year {
                     // Calendar year (numeric).
                     // y       2, 20, 201, 2017, 20173
@@ -151,8 +156,8 @@ impl Bag {
                     // yyy     002, 020, 201, 2017, 20173    (not implemented)
                     // yyyy    0002, 0020, 0201, 2017, 20173 (not implemented)
                     // yyyyy+  ...                           (not implemented)
-                    Numeric::Numeric => FieldLength::One,
-                    Numeric::TwoDigit => FieldLength::TwoDigit,
+                    Year::Numeric | Year::NumericWeekOf => FieldLength::One,
+                    Year::TwoDigit | Year::TwoDigitWeekOf => FieldLength::TwoDigit,
                 },
             });
         }
@@ -325,49 +330,71 @@ impl Bag {
 /// A numeric component for the `components::`[`Bag`]. It is used for the year, day, hour, minute,
 /// and second.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Numeric {
     /// Display the numeric value. For instance in a year this would be "1970".
-    #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
     /// Display the two digit value. For instance in a year this would be "70".
-    #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
 }
 
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Text {
     /// Display the long form of the text, such as "Wednesday" for the weekday.
-    #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
     /// Display the short form of the text, such as "Wed" for the weekday.
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
     /// Display the narrow form of the text, such as "W" for the weekday.
-    #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
+}
+
+/// Options for displaying a Year for the `components::`[`Bag`].
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
+pub enum Year {
+    /// The numeric value of the year, such as "2018" for 2018-12-31.
+    Numeric,
+    /// The two-digit value of the year, such as "18" for 2018-12-31.
+    TwoDigit,
+    /// The numeric value of the year in "week-of-year", such as "2019" in
+    /// "week 01 of 2019" for the week of 2018-12-31 according to the ISO calendar.
+    NumericWeekOf,
+    /// The numeric value of the year in "week-of-year", such as "19" in
+    /// "week 01 '19" for the week of 2018-12-31 according to the ISO calendar.
+    TwoDigitWeekOf,
 }
 
 /// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Month {
     /// The numeric value of the month, such as "4".
-    #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
     /// The two-digit value of the month, such as "04".
-    #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
     /// The two-digit value of the month, such as "April".
-    #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
     /// The short value of the month, such as "Apr".
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
     /// The narrow value of the month, such as "A".
-    #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
 }
 
@@ -378,7 +405,11 @@ pub enum Month {
 #[doc(hidden)]
 // TODO(#488): make visible once fully supported.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum Week {
     /// The week of the month, such as "3".
     WeekOfMonth,
@@ -393,19 +424,21 @@ pub enum Week {
 /// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
 /// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(rename_all = "kebab-case")
+)]
 pub enum TimeZoneName {
     // UTS-35 fields: z..zzz
     //
     /// Short localized form, without the location. (e.g.: PST, GMT-8)
-    #[cfg_attr(feature = "serde", serde(rename = "shortSpecific"))]
     ShortSpecific,
 
     // UTS-35 fields: zzzz
     // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
     //
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
-    #[cfg_attr(feature = "serde", serde(rename = "longSpecific"))]
     LongSpecific,
 
     // UTS-35 fields: O, OOOO
@@ -417,21 +450,18 @@ pub enum TimeZoneName {
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
     //
     /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
-    #[cfg_attr(feature = "serde", serde(rename = "gmtOffset"))]
     GmtOffset,
 
     // UTS-35 fields: v
     //   * falling back to generic location (See UTS 35 for more specific rules)
     //   * falling back to short localized GMT
     /// Short generic non-location format (e.g.: PT, Los Angeles, Zeit).
-    #[cfg_attr(feature = "serde", serde(rename = "shortGeneric"))]
     ShortGeneric,
 
     // UTS-35 fields: vvvv
     //  * falling back to generic location (See UTS 35 for more specific rules)
     //  * falling back to long localized GMT
     /// Long generic non-location format (e.g.: Pacific Time, Nordamerikanische Westküstenzeit),
-    #[cfg_attr(feature = "serde", serde(rename = "longGeneric"))]
     LongGeneric,
 }
 
@@ -462,6 +492,183 @@ impl From<TimeZoneName> for Field {
     }
 }
 
+/// Get the resolved components for a DateTimeFormat, via the PatternPlurals. In the case of
+/// plurals resolve off of the required `other` pattern.
+impl<'data> From<&PatternPlurals<'data>> for Bag {
+    fn from(other: &PatternPlurals) -> Self {
+        let pattern = match other {
+            PatternPlurals::SinglePattern(pattern) => pattern,
+            PatternPlurals::MultipleVariants(plural_pattern) => &plural_pattern.other,
+        };
+
+        let mut bag: Bag = Default::default();
+
+        // Transform the fields into components per:
+        // https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
+        for item in pattern.items.iter() {
+            let field = match item {
+                PatternItem::Field(ref field) => field,
+                PatternItem::Literal(_) => continue,
+            };
+            match field.symbol {
+                FieldSymbol::Era => {
+                    bag.era = Some(match field.length {
+                        FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
+                            Text::Short
+                        }
+                        FieldLength::Wide => Text::Long,
+                        FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                    });
+                }
+                FieldSymbol::Year(year) => {
+                    bag.year = Some(match year {
+                        fields::Year::Calendar => match field.length {
+                            FieldLength::TwoDigit => Year::TwoDigit,
+                            _ => Year::Numeric,
+                        },
+                        fields::Year::WeekOf => match field.length {
+                            FieldLength::TwoDigit => Year::TwoDigitWeekOf,
+                            _ => Year::NumericWeekOf,
+                        },
+                    });
+                }
+                FieldSymbol::Month(_) => {
+                    // `Month::StandAlone` is only relevant in the pattern, so only differentiate
+                    // on the field length.
+                    bag.month = Some(match field.length {
+                        FieldLength::One => Month::Numeric,
+                        FieldLength::TwoDigit => Month::TwoDigit,
+                        FieldLength::Abbreviated => Month::Short,
+                        FieldLength::Wide => Month::Long,
+                        FieldLength::Narrow | FieldLength::Six => Month::Narrow,
+                    });
+                }
+                FieldSymbol::Week(week) => {
+                    bag.week = Some(match week {
+                        fields::Week::WeekOfYear => match field.length {
+                            FieldLength::TwoDigit => Week::TwoDigitWeekOfYear,
+                            _ => Week::NumericWeekOfYear,
+                        },
+                        fields::Week::WeekOfMonth => Week::WeekOfMonth,
+                    });
+                }
+                FieldSymbol::Day(day) => {
+                    bag.day = Some(match day {
+                        fields::Day::DayOfMonth => match field.length {
+                            FieldLength::TwoDigit => Numeric::TwoDigit,
+                            _ => Numeric::Numeric,
+                        },
+                        fields::Day::DayOfYear => unimplemented!("fields::Day::DayOfYear #591"),
+                        fields::Day::DayOfWeekInMonth => {
+                            unimplemented!("fields::Day::DayOfWeekInMonth #592")
+                        }
+                        fields::Day::ModifiedJulianDay => {
+                            unimplemented!("fields::Day::ModifiedJulianDay")
+                        }
+                    });
+                }
+                FieldSymbol::Weekday(weekday) => {
+                    bag.weekday = Some(match weekday {
+                        fields::Weekday::Format => match field.length {
+                            FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
+                                Text::Short
+                            }
+                            FieldLength::Wide => Text::Long,
+                            _ => Text::Narrow,
+                        },
+                        fields::Weekday::StandAlone => match field.length {
+                            FieldLength::One | FieldLength::TwoDigit => {
+                                // Stand-alone fields also support a numeric 1 digit per UTS-35, but there is
+                                // no way to request it using the current system. As of 2021-12-06
+                                // no skeletons resolve to patterns containing this symbol.
+                                //
+                                // All resolved patterns from cldr-json:
+                                // https://github.com/gregtatum/cldr-json/blob/d4779f9611a4cc1e3e6a0a4597e92ead32d9f118/stand-alone-week.js
+                                //     'ccc',
+                                //     'ccc d. MMM',
+                                //     'ccc d. MMMM',
+                                //     'cccc d. MMMM y',
+                                //     'd, ccc',
+                                //     'cccနေ့',
+                                //     'ccc, d MMM',
+                                //     "ccc, d 'de' MMMM",
+                                //     "ccc, d 'de' MMMM 'de' y",
+                                //     'ccc, h:mm B',
+                                //     'ccc, h:mm:ss B',
+                                //     'ccc, d',
+                                //     "ccc, dd.MM.y 'г'.",
+                                //     'ccc, d.MM.y',
+                                //     'ccc, MMM d. y'
+                                unimplemented!("Numeric stand-alone fields are not supported.")
+                            }
+                            FieldLength::Abbreviated => Text::Short,
+                            FieldLength::Wide => Text::Long,
+                            FieldLength::Narrow | FieldLength::Six => Text::Narrow,
+                        },
+                        fields::Weekday::Local => unimplemented!("fields::Weekday::Local"),
+                    });
+                }
+                FieldSymbol::DayPeriod(_) => {
+                    // Day period does not affect the resolved components.
+                }
+                FieldSymbol::Hour(hour) => {
+                    bag.hour = Some(match field.length {
+                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        _ => Numeric::Numeric,
+                    });
+                    bag.preferences = Some(preferences::Bag {
+                        hour_cycle: Some(match hour {
+                            fields::Hour::H11 => preferences::HourCycle::H11,
+                            fields::Hour::H12 => preferences::HourCycle::H12,
+                            fields::Hour::H23 => preferences::HourCycle::H23,
+                            fields::Hour::H24 => preferences::HourCycle::H24,
+                        }),
+                    });
+                }
+                FieldSymbol::Minute => {
+                    bag.minute = Some(match field.length {
+                        FieldLength::TwoDigit => Numeric::TwoDigit,
+                        _ => Numeric::Numeric,
+                    });
+                }
+                FieldSymbol::Second(second) => {
+                    bag.second = Some(match second {
+                        fields::Second::Second => match field.length {
+                            FieldLength::TwoDigit => Numeric::TwoDigit,
+                            _ => Numeric::Numeric,
+                        },
+                        fields::Second::FractionalSecond => {
+                            unimplemented!("fields::Second::FractionalSecond. #1360")
+                        }
+                        fields::Second::Millisecond => {
+                            unimplemented!("fields::Second::Millisecond")
+                        }
+                    });
+                }
+                FieldSymbol::TimeZone(time_zone_name) => {
+                    bag.time_zone_name = Some(match time_zone_name {
+                        fields::TimeZone::LowerZ => match field.length {
+                            FieldLength::One => TimeZoneName::ShortSpecific,
+                            _ => TimeZoneName::LongSpecific,
+                        },
+                        fields::TimeZone::LowerV => match field.length {
+                            FieldLength::One => TimeZoneName::ShortGeneric,
+                            _ => TimeZoneName::LongGeneric,
+                        },
+                        fields::TimeZone::UpperO => TimeZoneName::GmtOffset,
+                        fields::TimeZone::UpperZ => unimplemented!("fields::TimeZone::UpperZ"),
+                        fields::TimeZone::UpperV => unimplemented!("fields::TimeZone::UpperV"),
+                        fields::TimeZone::LowerX => unimplemented!("fields::TimeZone::LowerX"),
+                        fields::TimeZone::UpperX => unimplemented!("fields::TimeZone::UpperX"),
+                    });
+                }
+            }
+        }
+
+        bag
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -473,7 +680,7 @@ mod test {
     #[test]
     fn test_component_bag_to_vec_field() {
         let bag = Bag {
-            year: Some(Numeric::Numeric),
+            year: Some(Year::Numeric),
             month: Some(Month::Long),
             week: Some(Week::WeekOfMonth),
             day: Some(Numeric::Numeric),
@@ -501,7 +708,7 @@ mod test {
     #[test]
     fn test_component_bag_to_vec_field2() {
         let bag = Bag {
-            year: Some(Numeric::Numeric),
+            year: Some(Year::Numeric),
             month: Some(Month::TwoDigit),
             day: Some(Numeric::Numeric),
             ..Default::default()

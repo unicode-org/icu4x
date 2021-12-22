@@ -18,7 +18,6 @@ class ICU4XLocale;
 class ICU4XDataProvider;
 struct ICU4XFixedDecimalFormatOptions;
 struct ICU4XFixedDecimalFormatResult;
-class ICU4XStaticDataProvider;
 class ICU4XFixedDecimal;
 
 /**
@@ -36,12 +35,6 @@ class ICU4XFixedDecimalFormat {
    * Creates a new [`ICU4XFixedDecimalFormat`] from locale data. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
    */
   static ICU4XFixedDecimalFormatResult try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XFixedDecimalFormatOptions options);
-
-  /**
-   * Creates a new [`ICU4XFixedDecimalFormat`] from a [`ICU4XStaticDataProvider`].
-   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
-   */
-  static ICU4XFixedDecimalFormatResult try_new_from_static(const ICU4XLocale& locale, const ICU4XStaticDataProvider& provider, ICU4XFixedDecimalFormatOptions options);
 
   /**
    * Formats a [`ICU4XFixedDecimal`] to a string. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.format) for more information.
@@ -63,24 +56,11 @@ class ICU4XFixedDecimalFormat {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XFixedDecimalFormatOptions.hpp"
 #include "ICU4XFixedDecimalFormatResult.hpp"
-#include "ICU4XStaticDataProvider.hpp"
 #include "ICU4XFixedDecimal.hpp"
 
 inline ICU4XFixedDecimalFormatResult ICU4XFixedDecimalFormat::try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XFixedDecimalFormatOptions options) {
   ICU4XFixedDecimalFormatOptions diplomat_wrapped_struct_options = options;
   capi::ICU4XFixedDecimalFormatResult diplomat_raw_struct_out_value = capi::ICU4XFixedDecimalFormat_try_new(locale.AsFFI(), provider.AsFFI(), capi::ICU4XFixedDecimalFormatOptions{ .grouping_strategy = static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(diplomat_wrapped_struct_options.grouping_strategy), .sign_display = static_cast<capi::ICU4XFixedDecimalSignDisplay>(diplomat_wrapped_struct_options.sign_display) });
-  auto diplomat_optional_raw_out_value_fdf = diplomat_raw_struct_out_value.fdf;
-  std::optional<ICU4XFixedDecimalFormat> diplomat_optional_out_value_fdf;
-  if (diplomat_optional_raw_out_value_fdf != nullptr) {
-    diplomat_optional_out_value_fdf = ICU4XFixedDecimalFormat(diplomat_optional_raw_out_value_fdf);
-  } else {
-    diplomat_optional_out_value_fdf = std::nullopt;
-  }
-  return ICU4XFixedDecimalFormatResult{ .fdf = std::move(diplomat_optional_out_value_fdf), .success = std::move(diplomat_raw_struct_out_value.success) };
-}
-inline ICU4XFixedDecimalFormatResult ICU4XFixedDecimalFormat::try_new_from_static(const ICU4XLocale& locale, const ICU4XStaticDataProvider& provider, ICU4XFixedDecimalFormatOptions options) {
-  ICU4XFixedDecimalFormatOptions diplomat_wrapped_struct_options = options;
-  capi::ICU4XFixedDecimalFormatResult diplomat_raw_struct_out_value = capi::ICU4XFixedDecimalFormat_try_new_from_static(locale.AsFFI(), provider.AsFFI(), capi::ICU4XFixedDecimalFormatOptions{ .grouping_strategy = static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(diplomat_wrapped_struct_options.grouping_strategy), .sign_display = static_cast<capi::ICU4XFixedDecimalSignDisplay>(diplomat_wrapped_struct_options.sign_display) });
   auto diplomat_optional_raw_out_value_fdf = diplomat_raw_struct_out_value.fdf;
   std::optional<ICU4XFixedDecimalFormat> diplomat_optional_out_value_fdf;
   if (diplomat_optional_raw_out_value_fdf != nullptr) {

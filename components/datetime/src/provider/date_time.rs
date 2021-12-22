@@ -200,7 +200,7 @@ where
             | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(pattern),
             skeleton::BestSkeleton::NoMatch => None,
         }
-        .unwrap_or_default();
+        .ok_or(DateTimeFormatError::UnsupportedOptions)?;
         Ok(DataPayload::from_owned(PatternPluralsV1(
             patterns.into_owned(),
         )))

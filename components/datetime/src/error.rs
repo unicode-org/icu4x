@@ -33,6 +33,9 @@ pub enum DateTimeFormatError {
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
+    /// An error due to there being no patterns for the given options.
+    #[displaydoc("Unsupported options")]
+    UnsupportedOptions,
     /// An error originating from [`PluralRules`][icu_plural::PluralRules].
     #[displaydoc("{0}")]
     PluralRules(PluralRulesError),

@@ -10,9 +10,10 @@ use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeSeDataStructMarker;
+use icu_provider::serde::SerializeMarker;
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::ops::Deref;
 use std::path::PathBuf;
 
 #[non_exhaustive]
@@ -65,17 +66,17 @@ impl Drop for FilesystemExporter {
     }
 }
 
-impl DataExporter<SerdeSeDataStructMarker> for FilesystemExporter {
+impl DataExporter<SerializeMarker> for FilesystemExporter {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        obj: DataPayload<SerdeSeDataStructMarker>,
+        obj: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         path_buf.extend(req.resource_path.options.get_components().iter());
         log::trace!("Writing: {}", req);
-        self.write_to_path(path_buf, obj.get().as_serialize())?;
+        self.write_to_path(path_buf, obj.get().deref())?;
         Ok(())
     }
 
@@ -98,7 +99,7 @@ impl FilesystemExporter {
             root: options.root,
             manifest: Manifest {
                 aliasing: options.aliasing,
-                syntax: serializer.deref().clone(),
+                buffer_format: serializer.get_buffer_format(),
             },
             alias_collection: None,
             serializer,
@@ -136,7 +137,7 @@ impl FilesystemExporter {
         mut path_buf: PathBuf,
         obj: &dyn erased_serde::Serialize,
     ) -> Result<(), Error> {
-        let file_extension = self.serializer.get_file_extension();
+        let file_extension = self.manifest.get_file_extension();
         match self.manifest.aliasing {
             AliasOption::NoAliases => {
                 path_buf.set_extension(file_extension);

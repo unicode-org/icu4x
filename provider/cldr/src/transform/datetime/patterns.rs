@@ -44,10 +44,10 @@ impl DataProvider<calendar::DatePatternsV1Marker> for DatePatternsProvider {
     ) -> Result<DataResponse<calendar::DatePatternsV1Marker>, DataError> {
         DatePatternsProvider::supports_key(&req.resource_path.key)?;
         let dates = self.0.dates_for(req)?;
+        let metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(calendar::DatePatternsV1::from(
                 dates,
             ))),

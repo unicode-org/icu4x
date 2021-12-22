@@ -4,11 +4,14 @@
 
 use crate::language::*;
 
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec::Vec;
+use core::char::decode_utf16;
+use core::str::Chars;
 use icu_provider::DataPayload;
 use icu_segmenter_lstm::lstm::Lstm;
 use icu_segmenter_lstm::structs;
-use std::char::decode_utf16;
-use std::str::Chars;
 
 // TODO:
 // json file is big, So I should use anoher binary format like npy.
@@ -105,7 +108,6 @@ impl Iterator for LstmSegmenterIterator {
 }
 
 impl LstmSegmenterIterator {
-    #[cfg(test)]
     pub fn new(lstm: &Lstm, input: &str) -> Self {
         let lstm_output = lstm.word_segmenter(input);
         Self {
@@ -147,7 +149,6 @@ impl LstmSegmenterIteratorUtf16 {
     }
 }
 
-#[cfg(test)]
 pub fn get_line_break_utf8(input: &str) -> Option<Vec<usize>> {
     let mut result: Vec<usize> = Vec::new();
     let mut lang_iter = LanguageIterator::new(input);

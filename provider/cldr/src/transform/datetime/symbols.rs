@@ -14,6 +14,7 @@ use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
+use tinystr::{tinystr16, TinyStr16};
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [
@@ -44,6 +45,8 @@ impl DataProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
     ) -> Result<DataResponse<calendar::DateSymbolsV1Marker>, DataError> {
         DateSymbolsProvider::supports_key(&req.resource_path.key)?;
         let dates = self.0.dates_for(req)?;
+        let metadata = DataResponseMetadata::default();
+        // TODO(#1109): Set metadata.data_langid correctly.
         let calendar = req
             .resource_path
             .options
@@ -51,9 +54,7 @@ impl DataProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
             .as_ref()
             .ok_or_else(|| DataError::NeedsVariant(req.clone()))?;
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
+            metadata,
             payload: Some(DataPayload::from_owned(convert_dates(dates, calendar))),
         })
     }
@@ -86,24 +87,32 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> calendar::Eras {
     let map = get_era_code_map(calendar);
     let mut out_eras = calendar::Eras::default();
 
-    for (cldr, code) in map.iter() {
-        if let Some(name) = eras.names.get(&**cldr) {
+    for (cldr, code) in map.into_tuple_vec().into_iter() {
+        if let Some(name) = eras.names.get(&cldr) {
             out_eras.names.insert(code.to_string(), name.clone());
         }
-        if let Some(abbr) = eras.abbr.get(&**cldr) {
+        if let Some(abbr) = eras.abbr.get(&cldr) {
             out_eras.abbr.insert(code.to_string(), abbr.clone());
         }
-        if let Some(narrow) = eras.narrow.get(&**cldr) {
+        if let Some(narrow) = eras.narrow.get(&cldr) {
             out_eras.narrow.insert(code.to_string(), narrow.clone());
         }
     }
     out_eras
 }
 
-fn get_era_code_map(calendar: &str) -> LiteMap<&'static str, &'static str> {
+fn get_era_code_map(calendar: &str) -> LiteMap<String, TinyStr16> {
     match calendar {
-        "gregory" => [("0", "bc"), ("1", "ad")].iter().copied().collect(),
-        "buddhist" => [("0", "be")].iter().copied().collect(),
+        "gregory" => vec![
+            ("0".to_string(), tinystr16!("bc")),
+            ("1".to_string(), tinystr16!("ad")),
+        ]
+        .into_iter()
+        .collect(),
+        "buddhist" => vec![("0".to_string(), tinystr16!("be"))]
+            .into_iter()
+            .collect(),
+        "japanese" => crate::transform::get_japanese_era_code_map(),
         _ => panic!("Era map unknown for {}", calendar),
     }
 }

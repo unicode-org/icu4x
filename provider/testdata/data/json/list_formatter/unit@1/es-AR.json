@@ -1,44 +1,56 @@
-{
-  "start": null,
-  "middle": null,
-  "end": {
-    "default": {
-      "string": " y ",
-      "index_1": 3
-    },
-    "special_case": null
-  },
-  "pair": null,
-  "short_start": null,
-  "short_middle": null,
-  "short_end": {
+[
+  {
     "default": {
       "string": ", ",
       "index_1": 2
     },
     "special_case": null
   },
-  "short_pair": {
+  [
+    0
+  ],
+  {
     "default": {
       "string": " y ",
       "index_1": 3
     },
-    "special_case": null
+    "special_case": {
+      "condition": "(?i)^(i|hi([^ae]|$))",
+      "pattern": {
+        "string": " e ",
+        "index_1": 3
+      }
+    }
   },
-  "narrow_start": {
+  [
+    2
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    2
+  ],
+  {
     "default": {
       "string": " ",
       "index_1": 1
     },
     "special_case": null
   },
-  "narrow_middle": null,
-  "narrow_end": {
-    "default": {
-      "string": " ",
-      "index_1": 1
-    },
-    "special_case": null
-  },
-  "narrow_pair": null
-}
+  [
+    8
+  ],
+  [
+    8
+  ],
+  [
+    8
+  ]
+]

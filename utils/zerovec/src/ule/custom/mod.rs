@@ -57,12 +57,11 @@
 //! //  6. The other VarULE methods use the default impl.
 //! //  7. FooULE byte equality is semantic equality
 //! unsafe impl VarULE for FooULE {
-//!     type Error = &'static str; // use strings for simplicity
-//!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error> {
+//!     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
 //!         // validate each field
-//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..4]).map_err(|_| "validating char failed")?;
-//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[4..8]).map_err(|_| "validating u32 failed")?;
-//!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[8..]).map_err(|_| "validating ZeroVec failed")?;
+//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[0..4]).map_err(|_| ZeroVecError::parse::<Self>())?;
+//!         <char as AsULE>::ULE::validate_byte_slice(&bytes[4..8]).map_err(|_| ZeroVecError::parse::<Self>())?;
+//!         let _ = ZeroVec::<u32>::parse_byte_slice(&bytes[8..]).map_err(|_| ZeroVecError::parse::<Self>())?;
 //!         Ok(())
 //!     }
 //!     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
@@ -91,15 +90,15 @@
 //!     let mut foos = vec![Foo {field1: 'u', field2: 983, field3: ZeroVec::alloc_from_slice(&[1212,2309,500,7000])},
 //!                         Foo {field1: 'l', field2: 1010, field3: ZeroVec::alloc_from_slice(&[1932, 0, 8888, 91237])}];
 //!
-//!     let vzv = VarZeroVec::from(&*foos);
+//!     let vzv = VarZeroVec::from(&foos);
 //!
 //!     assert_eq!(char::from_unaligned(vzv.get(0).unwrap().field1), 'u');
 //!     assert_eq!(u32::from_unaligned(vzv.get(0).unwrap().field2), 983);
-//!     assert_eq!(&vzv.get(0).unwrap().field3, ZeroVec::alloc_from_slice(&[1212,2309,500,7000]).as_slice());
+//!     assert_eq!(&vzv.get(0).unwrap().field3, ZeroVec::alloc_from_slice(&[1212,2309,500,7000]).as_ule_slice());
 //!
 //!     assert_eq!(char::from_unaligned(vzv.get(1).unwrap().field1), 'l');
 //!     assert_eq!(u32::from_unaligned(vzv.get(1).unwrap().field2), 1010);
-//!     assert_eq!(&vzv.get(1).unwrap().field3, ZeroVec::alloc_from_slice(&[1932, 0, 8888, 91237]).as_slice());
+//!     assert_eq!(&vzv.get(1).unwrap().field3, ZeroVec::alloc_from_slice(&[1932, 0, 8888, 91237]).as_ule_slice());
 //! }
 //! ```
 

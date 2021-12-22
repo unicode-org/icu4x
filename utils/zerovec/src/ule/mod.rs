@@ -7,21 +7,19 @@
 
 mod chars;
 pub mod custom;
-mod error;
 mod pair;
 mod plain;
-mod string;
-mod vec;
+mod slices;
 
+pub use super::ZeroVecError;
 pub use chars::CharULE;
-pub use error::ULEError;
-pub use pair::{PairULE, PairULEError};
-pub use plain::PlainOldULE;
+pub use pair::PairULE;
+pub use plain::RawBytesULE;
 
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
-use core::{fmt, mem, slice};
+use core::{mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
@@ -64,15 +62,12 @@ where
     Self: Sized,
     Self: Copy + 'static,
 {
-    /// The error that occurs if a byte array is not valid for this ULE.
-    type Error: fmt::Display;
-
     /// Validates a byte slice, `&[u8]`.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid slice of `Self`, then `Ok`
     /// should be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), Self::Error>;
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime.
     ///
@@ -84,7 +79,7 @@ where
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], ZeroVecError> {
         Self::validate_byte_slice(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
         Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
@@ -146,19 +141,19 @@ pub trait AsULE: Copy {
     /// The ULE type corresponding to `Self`.
     ///
     /// Types having infallible conversions from all bit values (Plain Old Data) can use
-    /// `PlainOldULE` with the desired width; for example, `u32` uses `PlainOldULE<4>`.
+    /// `RawBytesULE` with the desired width; for example, `u32` uses `RawBytesULE<4>`.
     ///
     /// Types that are not well-defined for all bit values should implement a custom ULE.
     type ULE: ULE;
 
-    /// Converts from `&Self` to `Self::ULE`.
+    /// Converts from `Self` to `Self::ULE`.
     ///
     /// This function may involve byte order swapping (native-endian to little-endian).
     ///
     /// For best performance, mark your implementation of this function `#[inline]`.
     fn as_unaligned(self) -> Self::ULE;
 
-    /// Converts from `&Self::ULE` to `Self`.
+    /// Converts from `Self::ULE` to `Self`.
     ///
     /// This function may involve byte order swapping (little-endian to native-endian).
     ///
@@ -264,15 +259,12 @@ where
 /// Failure to follow this invariant will cause surprising behavior in `PartialEq`, which may
 /// result in unpredictable operations on `ZeroVec`, `VarZeroVec`, and `ZeroMap`.
 pub unsafe trait VarULE: 'static {
-    /// The error that occurs if a byte array is not valid for this ULE.
-    type Error: fmt::Display;
-
     /// Validates a byte slice, `&[u8]`.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid `&Self`, then `Ok` should
     /// be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), Self::Error>;
+    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), ZeroVecError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime.
     ///
@@ -285,7 +277,7 @@ pub unsafe trait VarULE: 'static {
     /// Note: The following equality should hold: `size_of_val(result) == size_of_val(bytes)`,
     /// where `result` is the successful return value of the method. This means that the return
     /// value spans the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
         Self::validate_byte_slice(bytes)?;
         let result = unsafe { Self::from_byte_slice_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));

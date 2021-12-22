@@ -41,12 +41,12 @@
 //!
 //!     fn write_len(&self) -> LengthHint {
 //!         // "Hello, " + '!' + length of name
-//!         LengthHint::Exact(8 + self.name.len())
+//!         LengthHint::exact(8 + self.name.len())
 //!     }
 //! }
 //!
 //! let message = WelcomeMessage { name: "Alice" };
-//! assert_writeable_eq!("Hello, Alice!", &message);
+//! assert_writeable_eq!(&message, "Hello, Alice!");
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -61,20 +61,44 @@ use core::fmt;
 
 /// A hint to help consumers of Writeable pre-allocate bytes before they call write_to.
 ///
-/// LengthHint implements std::ops::Add and similar traits for easy composition.
+/// This behaves like Iterator::size_hint: it is a tuple where the first element is the
+/// lower bound, and the second element is the upper bound. If the upper bound is `None`
+/// either there is no known upper bound, or the upper bound is larger than usize.
 ///
-/// See this issue for more info: <https://github.com/unicode-org/icu4x/issues/370>.
+/// LengthHint implements std::ops::{Add, Mul} and similar traits for easy composition.
+/// During computation, the lower bound will saturate at usize::MAX, while the upper
+/// bound will become None if usize::MAX is exceeded.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum LengthHint {
-    /// Default value: no hint is provided.
-    Undefined,
-
-    /// An exact length hint. This value is expected to equal the actual length from write_to.
-    Exact(usize),
-}
+pub struct LengthHint(pub usize, pub Option<usize>);
 
 impl LengthHint {
+    pub fn undefined() -> Self {
+        Self(0, None)
+    }
+
+    /// This is the exact length from write_to.
+    pub fn exact(n: usize) -> Self {
+        Self(n, Some(n))
+    }
+
+    /// This is at least the length from write_to.
+    pub fn at_least(n: usize) -> Self {
+        Self(n, None)
+    }
+
+    /// This is at most the length from write_to.
+    pub fn at_most(n: usize) -> Self {
+        Self(0, Some(n))
+    }
+
+    /// The length from write_to is in between n and m.
+    pub fn between(n: usize, m: usize) -> Self {
+        Self(Ord::min(n, m), Some(Ord::max(n, m)))
+    }
+
     /// Returns a recommendation for the number of bytes to pre-allocate.
+    /// If an upper bound exists, this is used, otherwise the lower bound
+    /// (which might be 0).
     ///
     /// # Examples
     ///
@@ -87,17 +111,14 @@ impl LengthHint {
     /// ```
     pub fn capacity(&self) -> usize {
         match self {
-            Self::Undefined => 0,
-            Self::Exact(len) => *len,
+            Self(lower_bound, None) => *lower_bound,
+            Self(_lower_bound, Some(upper_bound)) => *upper_bound,
         }
     }
 
     /// Returns whether the LengthHint indicates that the string is exactly 0 bytes long.
     pub fn is_zero(&self) -> bool {
-        match self {
-            Self::Undefined => false,
-            Self::Exact(len) => *len == 0,
-        }
+        self.1 == Some(0)
     }
 }
 
@@ -110,7 +131,7 @@ pub trait Writeable {
     ///
     /// Override this method if it can be computed quickly.
     fn write_len(&self) -> LengthHint {
-        LengthHint::Undefined
+        LengthHint::undefined()
     }
 
     /// Creates a new String with the data from this Writeable. Like ToString,
@@ -128,8 +149,7 @@ pub trait Writeable {
 /// Testing macro for types implementing Writeable. The first argument should be a string, and
 /// the second argument should be a `&dyn Writeable`.
 ///
-/// The macro tests for equality of both string content and string length. If your Writeable
-/// implementation returns an inexact string length, don't use this macro.
+/// The macro tests for equality of both string content and verifies the size hint.
 ///
 /// # Examples
 ///
@@ -145,33 +165,35 @@ pub trait Writeable {
 ///         sink.write_str("foo")
 ///     }
 ///     fn write_len(&self) -> LengthHint {
-///         LengthHint::Exact(3)
+///         LengthHint::exact(3)
 ///     }
 /// }
 ///
-/// assert_writeable_eq!("foo", &Demo);
-/// assert_writeable_eq!("foo", &Demo, "Message: {}", "Hello World");
+/// assert_writeable_eq!(&Demo, "foo");
+/// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
 /// ```
 #[macro_export]
 macro_rules! assert_writeable_eq {
-    ($expected_str:expr, $actual_writeable:expr $(,)?) => {
+    ($actual_writeable:expr, $expected_str:expr $(,)?) => {
         {
             use $crate::Writeable;
             let writeable = $actual_writeable;
             assert_eq!($expected_str, writeable.writeable_to_string());
-            if let $crate::LengthHint::Exact(len) = writeable.write_len() {
-                assert_eq!($expected_str.len(), len);
+            assert!(writeable.write_len().0 <= $expected_str.len());
+            if let Some(upper) = writeable.write_len().1 {
+                assert!($expected_str.len() <= upper);
             }
         }
     };
 
-    ($expected_str:expr, $actual_writeable:expr, $($arg:tt)+) => {
+    ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {
         {
             use $crate::Writeable;
             let writeable = $actual_writeable;
             assert_eq!($expected_str, writeable.writeable_to_string(), $($arg)+);
-            if let $crate::LengthHint::Exact(len) = writeable.write_len() {
-                assert_eq!($expected_str.len(), len, $($arg)+);
+            assert!(writeable.write_len().0 <= $expected_str.len(), $($arg)+);
+            if let Some(upper) = writeable.write_len().1 {
+                assert!($expected_str.len() <= upper, $($arg)+);
             }
         }
     };

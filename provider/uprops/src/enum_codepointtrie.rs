@@ -9,8 +9,8 @@ use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue}
 use icu_properties::provider::*;
 use icu_properties::provider::{UnicodePropertyMapV1, UnicodePropertyMapV1Marker};
 use icu_properties::{
-    EastAsianWidth, GeneralSubcategory, GraphemeClusterBreak, LineBreak, Script, SentenceBreak,
-    WordBreak,
+    CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
+    Script, SentenceBreak, WordBreak,
 };
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
@@ -34,12 +34,14 @@ impl EnumeratedPropertyCodePointTrieProvider {
     }
 }
 
-impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodePropertyMapV1<'static, T> {
+// public helper function for doing the TOML->CodePointTrie conversion within
+// the source data -> data struct conversion
+impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for CodePointTrie<'static, T> {
     type Error = DataError;
 
     fn try_from(
         cpt_data: &EnumeratedPropertyCodePointTrie,
-    ) -> Result<UnicodePropertyMapV1<'static, T>, DataError> {
+    ) -> Result<CodePointTrie<'static, T>, Self::Error> {
         let trie_type_enum: TrieType =
             TrieType::try_from(cpt_data.trie_type_enum_val).map_err(DataError::new_resc_error)?;
         let header = CodePointTrieHeader {
@@ -67,12 +69,24 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodeProperty
             };
 
         let data = data.map_err(DataError::new_resc_error)?;
-        let trie =
-            CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error);
+
+        CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error)
+    }
+}
+
+// source data to ICU4X data struct conversion
+impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodePropertyMapV1<'static, T> {
+    type Error = DataError;
+
+    fn try_from(
+        cpt_data: &EnumeratedPropertyCodePointTrie,
+    ) -> Result<UnicodePropertyMapV1<'static, T>, DataError> {
+        let trie = CodePointTrie::<T>::try_from(cpt_data);
         trie.map(|t| UnicodePropertyMapV1 { code_point_trie: t })
     }
 }
 
+// implement data provider
 impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
     for EnumeratedPropertyCodePointTrieProvider
 {
@@ -93,16 +107,15 @@ impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
+            metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data_struct)),
         })
     }
 }
 
 icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
-    key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralSubcategory>,
+    key::CANONICAL_COMBINING_CLASS_V1 => UnicodePropertyMapV1Marker<CanonicalCombiningClass>,
+    key::GENERAL_CATEGORY_V1 => UnicodePropertyMapV1Marker<GeneralCategory>,
     key::SCRIPT_V1 => UnicodePropertyMapV1Marker<Script>,
     key::EAST_ASIAN_WIDTH_V1 => UnicodePropertyMapV1Marker<EastAsianWidth>,
     key::LINE_BREAK_V1 => UnicodePropertyMapV1Marker<LineBreak>,
@@ -126,19 +139,19 @@ mod tests {
     use super::*;
     use icu_codepointtrie::CodePointTrie;
     use icu_properties::provider::key;
-    use icu_properties::{GeneralSubcategory, Script};
+    use icu_properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
-    // `GeneralSubcategory` Rust enum, not the `GeneralCategory` Rust enum,
+    // `GeneralCategory` Rust enum, not the `GeneralCategoryGroup` Rust enum,
     // since we must match the representation and value width of the data from
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let root_dir = icu_testdata::paths::uprops_toml_root();
         let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
-        let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralSubcategory>> = provider
+        let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::GENERAL_CATEGORY_V1,
@@ -149,15 +162,15 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let trie: &CodePointTrie<GeneralSubcategory> = &payload.get().code_point_trie;
+        let trie: &CodePointTrie<GeneralCategory> = &payload.get().code_point_trie;
 
-        assert_eq!(trie.get('꣓' as u32), GeneralSubcategory::DecimalNumber);
-        assert_eq!(trie.get('≈' as u32), GeneralSubcategory::MathSymbol);
+        assert_eq!(trie.get('꣓' as u32), GeneralCategory::DecimalNumber);
+        assert_eq!(trie.get('≈' as u32), GeneralCategory::MathSymbol);
     }
 
     #[test]
     fn test_script() {
-        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let root_dir = icu_testdata::paths::uprops_toml_root();
         let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 

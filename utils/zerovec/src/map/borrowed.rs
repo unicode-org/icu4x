@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::AsULE;
-use crate::ZeroVec;
+use crate::{ZeroSlice, ZeroVec};
 
 use core::fmt;
 
@@ -41,10 +41,8 @@ where
     K: ?Sized,
     V: ?Sized,
 {
-    pub(crate) keys:
-        <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant,
-    pub(crate) values:
-        <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant,
+    pub(crate) keys: <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant,
+    pub(crate) values: <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant,
 }
 
 impl<'a, K, V> Copy for ZeroMapBorrowed<'a, K, V>
@@ -92,7 +90,7 @@ where
     /// Creates a new, empty `ZeroMapBorrowed<K, V>`.
     ///
     /// Note: Since [`ZeroMapBorrowed`] is not mutable, the return value will be a stub unless
-    /// converted into a [`ZeroMap`].
+    /// converted into a [`ZeroMap`](super::ZeroMap).
     ///
     /// # Examples
     ///
@@ -104,30 +102,28 @@ where
     /// ```
     pub fn new() -> Self {
         Self {
-            keys:
-                <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant::new(
-                ),
+            keys: <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant::zvl_new(
+            ),
             values:
-                <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant::new(
-                ),
+                <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant::zvl_new(),
         }
     }
 
     /// The number of elements in the [`ZeroMapBorrowed`]
     pub fn len(&self) -> usize {
-        self.values.len()
+        self.values.zvl_len()
     }
 
     /// Whether the [`ZeroMapBorrowed`] is empty
     pub fn is_empty(&self) -> bool {
-        self.values.len() == 0
+        self.values.zvl_len() == 0
     }
 
     /// Get the value associated with `key`, if it exists.
     ///
     /// This is able to return values that live longer than the map itself
     /// since they borrow directly from the backing buffer. This is the
-    /// primary advantage of using [`ZeroMapBorrowed`] over [`ZeroMap`].
+    /// primary advantage of using [`ZeroMapBorrowed`](super::ZeroMapBorrowed) over [`ZeroMap`](super::ZeroMap).
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
@@ -146,8 +142,8 @@ where
     /// assert_eq!(borrow, Some("one"));
     /// ```
     pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
-        let index = self.keys.binary_search(key).ok()?;
-        self.values.get_borrowed(index)
+        let index = self.keys.zvl_binary_search(key).ok()?;
+        self.values.zvl_get_borrowed(index)
     }
 
     /// Returns whether `key` is contained in this map
@@ -164,7 +160,7 @@ where
     /// assert_eq!(borrowed.contains_key(&3), false);
     /// ```
     pub fn contains_key(&self, key: &K) -> bool {
-        self.keys.binary_search(key).is_ok()
+        self.keys.zvl_binary_search(key).is_ok()
     }
 
     /// Produce an ordered iterator over key-value pairs
@@ -176,24 +172,24 @@ where
             &'a <V as ZeroMapKV<'a>>::GetType,
         ),
     > + 'b {
-        (0..self.keys.len()).map(move |idx| {
+        (0..self.keys.zvl_len()).map(move |idx| {
             (
-                self.keys.get_borrowed(idx).unwrap(),
-                self.values.get_borrowed(idx).unwrap(),
+                self.keys.zvl_get_borrowed(idx).unwrap(),
+                self.values.zvl_get_borrowed(idx).unwrap(),
             )
         })
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'a <K as ZeroMapKV<'a>>::GetType> + 'b {
-        (0..self.keys.len()).map(move |idx| self.keys.get_borrowed(idx).unwrap())
+        (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get_borrowed(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = &'a <V as ZeroMapKV<'a>>::GetType> + 'b {
-        (0..self.values.len()).map(move |idx| self.values.get_borrowed(idx).unwrap())
+        (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get_borrowed(idx).unwrap())
     }
 }
 
@@ -201,14 +197,12 @@ impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
-    V: AsULE + Ord + Copy,
+    V: AsULE + Ord + Copy + 'static,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K) -> Option<V> {
-        let index = self.keys.binary_search(key).ok()?;
-        <[V::ULE]>::get(self.values, index)
-            .copied()
-            .map(V::from_unaligned)
+        let index = self.keys.zvl_binary_search(key).ok()?;
+        self.values.get(index)
     }
 
     /// Similar to [`Self::iter()`] except it returns a direct copy of the values instead of references
@@ -216,13 +210,10 @@ where
     pub fn iter_copied_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
-        (0..self.keys.len()).map(move |idx| {
+        (0..self.keys.zvl_len()).map(move |idx| {
             (
-                self.keys.get(idx).unwrap(),
-                <[V::ULE]>::get(self.values, idx)
-                    .copied()
-                    .map(V::from_unaligned)
-                    .unwrap(),
+                self.keys.zvl_get(idx).unwrap(),
+                self.values.get(idx).unwrap(),
             )
         })
     }
@@ -232,26 +223,20 @@ impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + ?Sized,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>> + ?Sized,
-    K: AsULE + Copy + Ord,
-    V: AsULE + Copy + Ord,
+    K: AsULE + Copy + Ord + 'static,
+    V: AsULE + Copy + Ord + 'static,
 {
     /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
     /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
     #[allow(clippy::needless_lifetimes)] // Lifetime is necessary in impl Trait
-    pub fn iter_copied<'b>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
-        let keys = &self.keys;
-        let values = &self.values;
-        let len = <[K::ULE]>::len(keys);
+    pub fn iter_copied<'b: 'a>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
+        let keys = &*self.keys;
+        let values = &*self.values;
+        let len = self.keys.zvl_len();
         (0..len).map(move |idx| {
             (
-                <[K::ULE]>::get(keys, idx)
-                    .copied()
-                    .map(K::from_unaligned)
-                    .unwrap(),
-                <[V::ULE]>::get(values, idx)
-                    .copied()
-                    .map(V::from_unaligned)
-                    .unwrap(),
+                ZeroSlice::get(keys, idx).unwrap(),
+                ZeroSlice::get(values, idx).unwrap(),
             )
         })
     }
@@ -264,10 +249,10 @@ impl<'a, 'b, K, V> PartialEq<ZeroMapBorrowed<'b, K, V>> for ZeroMapBorrowed<'a, 
 where
     K: for<'c> ZeroMapKV<'c> + ?Sized,
     V: for<'c> ZeroMapKV<'c> + ?Sized,
-    <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant:
-        PartialEq<<<K as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, K>>::BorrowedVariant>,
-    <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant:
-        PartialEq<<<V as ZeroMapKV<'b>>::Container as MutableZeroVecLike<'b, V>>::BorrowedVariant>,
+    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant:
+        PartialEq<<<K as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, K>>::BorrowedVariant>,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant:
+        PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, V>>::BorrowedVariant>,
 {
     fn eq(&self, other: &ZeroMapBorrowed<'b, K, V>) -> bool {
         self.keys.eq(&other.keys) && self.values.eq(&other.values)
@@ -278,8 +263,8 @@ impl<'a, K, V> fmt::Debug for ZeroMapBorrowed<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
-    <<K as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, K>>::BorrowedVariant: fmt::Debug,
-    <<V as ZeroMapKV<'a>>::Container as MutableZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
+    <<K as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, K>>::BorrowedVariant: fmt::Debug,
+    <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         f.debug_struct("ZeroMapBorrowed")

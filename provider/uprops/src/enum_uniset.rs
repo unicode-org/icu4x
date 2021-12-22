@@ -26,28 +26,28 @@ impl EnumeratedPropertyUnicodeSetDataProvider {
 fn expand_groupings<'a>(prop_name: &str, prop_val: &'a str) -> Vec<&'a str> {
     match prop_name {
         "gc" => match prop_val {
-            // General_Category::CasedLetter
+            // GeneralCategoryGroup::CasedLetter
             "LC" => vec!["Lu", "Ll", "Lt"],
 
-            // General_Category::Letter
+            // GeneralCategoryGroup::Letter
             "L" => vec!["Lu", "Ll", "Lt", "Lm", "Lo"],
 
-            // General_Category::Mark
+            // GeneralCategoryGroup::Mark
             "M" => vec!["Mn", "Mc", "Me"],
 
-            // General_Category::Number
+            // GeneralCategoryGroup::Number
             "N" => vec!["Nd", "Nl", "No"],
 
-            // General_Category::Punctuation
+            // GeneralCategoryGroup::Punctuation
             "P" => vec!["Pc", "Pd", "Ps", "Pe", "Pi", "Pf", "Po"],
 
-            // General_Category::Symbol
+            // GeneralCategoryGroup::Symbol
             "S" => vec!["Sm", "Sc", "Sk", "So"],
 
-            // General_Category::Separator
+            // GeneralCategoryGroup::Separator
             "Z" => vec!["Zs", "Zl", "Zp"],
 
-            // General_Category::Control
+            // GeneralCategoryGroup::Control
             "C" => vec!["Cc", "Cf", "Cs", "Co", "Cn"],
 
             _ => vec![prop_val],
@@ -92,9 +92,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
         let uniset = builder.build();
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata {
-                data_langid: req.resource_path.options.langid.clone(),
-            },
+            metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(
                 UnicodePropertyV1::from_owned_uniset(uniset),
             )),
@@ -126,7 +124,7 @@ mod tests {
         use icu_uniset::UnicodeSet;
         use std::convert::TryInto;
 
-        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let root_dir = icu_testdata::paths::uprops_toml_root();
         let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
@@ -155,7 +153,7 @@ mod tests {
         use icu_uniset::UnicodeSet;
         use std::convert::TryInto;
 
-        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let root_dir = icu_testdata::paths::uprops_toml_root();
         let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 
@@ -185,7 +183,7 @@ mod tests {
         use std::convert::TryInto;
 
         fn get_uniset_payload(key: ResourceKey) -> DataPayload<UnicodePropertyV1Marker> {
-            let root_dir = icu_testdata::paths::data_root().join("uprops");
+            let root_dir = icu_testdata::paths::uprops_toml_root();
             let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
                 .expect("TOML should load successfully");
             let payload: DataPayload<UnicodePropertyV1Marker> = provider
@@ -298,7 +296,7 @@ mod tests {
         use icu_uniset::UnicodeSet;
         use std::convert::TryInto;
 
-        let root_dir = icu_testdata::paths::data_root().join("uprops");
+        let root_dir = icu_testdata::paths::uprops_toml_root();
         let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
             .expect("TOML should load successfully");
 

@@ -7,7 +7,7 @@
 mod fixtures;
 mod patterns;
 
-use icu_calendar::{buddhist::Buddhist, AsCalendar, DateTime, Gregorian};
+use icu_calendar::{buddhist::Buddhist, japanese::Japanese, AsCalendar, DateTime, Gregorian};
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
@@ -81,9 +81,11 @@ fn test_fixture(fixture_name: &str) {
         .expect("Unable to get fixture.")
         .0
     {
+        let japanese = Japanese::try_new(&provider).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_buddhist = input_value.to_calendar(Buddhist);
+        let input_japanese = input_value.to_calendar(japanese);
 
         let description = match fx.description {
             Some(description) => {
@@ -99,6 +101,15 @@ fn test_fixture(fixture_name: &str) {
                 assert_fixture_element(
                     locale,
                     &input_buddhist,
+                    &output_value,
+                    &provider,
+                    &options,
+                    &description,
+                )
+            } else if let Some(locale) = locale.strip_prefix("japanese/") {
+                assert_fixture_element(
+                    locale,
+                    &input_japanese,
                     &output_value,
                     &provider,
                     &options,
@@ -467,6 +478,12 @@ fn test_length_fixtures() {
 }
 
 #[test]
+fn test_japanese() {
+    // components/datetime/tests/fixtures/tests/japanese.json
+    test_fixture("japanese");
+}
+
+#[test]
 fn test_lengths_with_preferences() {
     // components/datetime/tests/fixtures/tests/lengths_with_preferences.json
     test_fixture("lengths_with_preferences");
@@ -506,11 +523,43 @@ fn test_components_width_differences() {
     test_fixture("components-width-differences");
 }
 
+/// Tests that combine component::Bags options that don't exactly match a pattern.
+#[test]
+fn test_components_partial_matches() {
+    // components/datetime/tests/fixtures/tests/components-partial-matches.json
+    test_fixture("components-partial-matches");
+}
+
 /// Tests that component::Bags can combine a date skeleton, and a time skeleton.
 #[test]
 fn test_components_combine_datetime() {
     // components/datetime/tests/fixtures/tests/components-combine-datetime.json
     test_fixture("components-combine-datetime");
+}
+
+#[test]
+fn constructing_datetime_format_with_missing_pattern_is_err() {
+    use icu_datetime::{
+        options::components::{Bag, Week},
+        DateTimeFormatError, DateTimeFormatOptions,
+    };
+    use icu_locid::Locale;
+    use icu_locid_macros::langid;
+
+    let options = DateTimeFormatOptions::Components(Bag {
+        // There's no pattern for just 'w'.
+        week: Some(Week::NumericWeekOfYear),
+        ..Default::default()
+    });
+
+    let locale: Locale = langid!("en").into();
+    let provider = icu_testdata::get_provider();
+    let result = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
+
+    assert!(matches!(
+        result.err(),
+        Some(DateTimeFormatError::UnsupportedOptions)
+    ));
 }
 
 #[test]

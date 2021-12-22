@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::script::ScriptExtensions;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use icu_uniset::UnicodeSet;
@@ -25,7 +26,7 @@ pub mod key {
         ($allkeys:ident; $count:expr; $(($k:ident, $s:literal)),+,) => {
             $(
                 #[allow(missing_docs)] // These constants don't need individual documentation.
-                pub const $k: ResourceKey = resource_key!(UnicodeSet, $s, 1);
+                pub const $k: ResourceKey = resource_key!(Properties, $s, 1);
             )+
 
             /// The set of all resource keys supported by [`icu_uniset`](crate).
@@ -314,13 +315,14 @@ pub mod key {
         (SCRIPT_ZANABAZAR_SQUARE_V1, "sc=Zanb"),
     );
 
-    define_resource_keys!(ALL_MAP_KEYS; 7;
+    define_resource_keys!(ALL_MAP_KEYS; 8;
         //
         // Enumerated property CodePointMaps
         //
 
         // ResourceKey subcategory string is the short alias of the property
 
+        (CANONICAL_COMBINING_CLASS_V1, "ccc"),
         (GENERAL_CATEGORY_V1, "gc"),
         (SCRIPT_V1, "sc"),
         (EAST_ASIAN_WIDTH_V1, "ea"),
@@ -329,6 +331,16 @@ pub mod key {
         (WORD_BREAK_V1, "WB"),
         (SENTENCE_BREAK_V1, "SB"),
 
+    );
+
+    define_resource_keys!(ALL_SCRIPT_EXTENSIONS_KEYS; 1;
+        //
+        // Script_Extensions + Script data
+        //
+
+        // ResourceKey subcategory string is the short alias of Script_Extensions
+
+        (SCRIPT_EXTENSIONS_V1, "scx"),
     );
 }
 
@@ -406,4 +418,21 @@ pub struct UnicodePropertyMapV1Marker<T: TrieValue> {
 
 impl<T: TrieValue> icu_provider::DataMarker for UnicodePropertyMapV1Marker<T> {
     type Yokeable = UnicodePropertyMapV1<'static, T>;
+}
+
+//
+// Script_Extensions
+//
+
+/// A data structure efficiently storing `Script` and `Script_Extensions` property data.
+#[icu_provider::data_struct]
+#[derive(Debug, Eq, PartialEq)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct ScriptExtensionsPropertyV1<'data> {
+    /// A special data structure for `Script` and `Script_Extensions`.
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub data: ScriptExtensions<'data>,
 }

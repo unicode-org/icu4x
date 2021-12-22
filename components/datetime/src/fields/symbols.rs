@@ -137,6 +137,29 @@ impl FieldSymbol {
             _ => return Err(SymbolError::InvalidIndex(idx)),
         })
     }
+
+    /// Returns the index associated with this FieldSymbol.
+    fn discriminant_idx(&self) -> u8 {
+        match self {
+            FieldSymbol::Era => 0,
+            FieldSymbol::Year(_) => 1,
+            FieldSymbol::Month(_) => 2,
+            FieldSymbol::Week(_) => 3,
+            FieldSymbol::Day(_) => 4,
+            FieldSymbol::Weekday(_) => 5,
+            FieldSymbol::DayPeriod(_) => 6,
+            FieldSymbol::Hour(_) => 7,
+            FieldSymbol::Minute => 8,
+            FieldSymbol::Second(_) => 9,
+            FieldSymbol::TimeZone(_) => 10,
+        }
+    }
+
+    /// Compares this enum with other solely based on the enum variant,
+    /// ignoring the enum's data.
+    pub(crate) fn discriminant_cmp(&self, other: &Self) -> Ordering {
+        self.discriminant_idx().cmp(&other.discriminant_idx())
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]

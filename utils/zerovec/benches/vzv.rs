@@ -45,8 +45,7 @@ fn overview_bench(c: &mut Criterion) {
     // Same as vzv/char_count/vzv but with different inputs
     let seed = 42;
     let (string_vec, _) = random_alphanums(2..=10, 100, seed);
-    let bytes: Vec<u8> =
-        VarZeroVec::<str>::get_serializable_bytes::<String>(string_vec.as_slice()).unwrap();
+    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
 
     c.bench_function("vzv/overview", |b| {
@@ -61,6 +60,7 @@ fn overview_bench(c: &mut Criterion) {
     {
         char_count_benches(c);
         binary_search_benches(c);
+        vzv_precompute_bench(c);
     }
 
     #[cfg(all(feature = "bench", feature = "serde"))]
@@ -73,8 +73,7 @@ fn overview_bench(c: &mut Criterion) {
 fn char_count_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, _) = random_alphanums(2..=20, 100, seed);
-    let bytes: Vec<u8> =
-        VarZeroVec::<str>::get_serializable_bytes::<String>(string_vec.as_slice()).unwrap();
+    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
 
     // *** Count chars in vec of 100 strings ***
@@ -101,8 +100,7 @@ fn binary_search_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, seed) = random_alphanums(2..=20, 500, seed);
     let (needles, _) = random_alphanums(2..=20, 10, seed);
-    let bytes: Vec<u8> =
-        VarZeroVec::<str>::get_serializable_bytes::<String>(string_vec.as_slice()).unwrap();
+    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
     let single_needle = "lmnop".to_string();
 
@@ -158,6 +156,55 @@ fn serde_benches(c: &mut Criterion) {
     // *** Deserialize vec of 100 strings ***
     c.bench_function("vzv/deserialize/string/vzv", |b| {
         b.iter(|| bincode::deserialize::<VarZeroVec<str>>(black_box(&bincode_vzv)));
+    });
+}
+
+#[cfg(feature = "bench")]
+// Testing differences between operating on slices with precomputed/non-precomputed indexing info
+fn vzv_precompute_bench(c: &mut Criterion) {
+    let seed = 2021;
+    let (string_vec, seed) = random_alphanums(2..=20, 500, seed);
+    let (needles, _) = random_alphanums(2..=20, 10, seed);
+    let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
+    let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
+    let borrowed = vzv.as_components();
+    let slice = vzv.as_slice();
+    let single_needle = "lmnop".to_string();
+
+    c.bench_function("vzv_precompute/get/precomputed", |b| {
+        b.iter(|| black_box(&borrowed).get(100));
+    });
+
+    c.bench_function("vzv_precompute/get/slice", |b| {
+        b.iter(|| black_box(&slice).get(100));
+    });
+
+    c.bench_function("vzv_precompute/search/precomputed", |b| {
+        b.iter(|| black_box(&borrowed).binary_search(&single_needle));
+    });
+
+    c.bench_function("vzv_precompute/search/slice", |b| {
+        b.iter(|| black_box(&slice).binary_search(&single_needle));
+    });
+
+    c.bench_function("vzv_precompute/search_multi/precomputed", |b| {
+        b.iter(|| {
+            black_box(&needles)
+                .iter()
+                .map(|needle| black_box(&borrowed).binary_search(needle))
+                .filter(|r| r.is_ok())
+                .count()
+        });
+    });
+
+    c.bench_function("vzv_precompute/search_multi/slice", |b| {
+        b.iter(|| {
+            black_box(&needles)
+                .iter()
+                .map(|needle| black_box(&slice).binary_search(needle))
+                .filter(|r| r.is_ok())
+                .count()
+        });
     });
 }
 

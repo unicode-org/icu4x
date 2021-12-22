@@ -18,7 +18,7 @@ impl Writeable for WriteableMessage<'_> {
     }
 
     fn write_len(&self) -> LengthHint {
-        LengthHint::Exact(self.message.len())
+        LengthHint::exact(self.message.len())
     }
 }
 
@@ -28,5 +28,5 @@ fn test_basic() {
     let message = WriteableMessage {
         message: input_string,
     };
-    assert_writeable_eq!(input_string, &message);
+    assert_writeable_eq!(&message, input_string);
 }

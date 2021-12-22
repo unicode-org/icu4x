@@ -5,10 +5,16 @@
 #[cfg(feature = "serde")]
 mod serde;
 
+mod slice;
+
+pub use slice::ZeroSlice;
+
 use crate::ule::*;
 use alloc::vec::Vec;
+use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::iter::FromIterator;
+use core::ops::Deref;
 
 /// A zero-copy vector for fixed-width types.
 ///
@@ -16,7 +22,12 @@ use core::iter::FromIterator;
 /// desirable to borrow data from an unaligned byte slice, such as zero-copy deserialization.
 ///
 /// `T` must implement [`AsULE`], which is auto-implemented for a number of built-in types,
-/// including all fixed-width multibyte integers.
+/// including all fixed-width multibyte integers. For variable-width types like [`str`],
+/// see [`VarZeroVec`](crate::VarZeroVec).
+///
+/// Typically, the zero-copy equivalent of a `Vec<T>` will simply be `ZeroVec<'a, T>`.
+///
+/// Most of the methods on `ZeroVec<'a, T>` come from its [`Deref`] implementation to [`ZeroSlice<T>`](ZeroSlice)
 ///
 /// # How it Works
 ///
@@ -77,7 +88,7 @@ where
     ///
     /// // The little-endian bytes correspond to the numbers on the following line.
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let nums: &[PlainOldULE<2>] = &[211_u16.as_unaligned(), 281_u16.as_unaligned(),
+    /// let nums: &[RawBytesULE<2>] = &[211_u16.as_unaligned(), 281_u16.as_unaligned(),
     ///                                 421_u16.as_unaligned(), 461_u16.as_unaligned()];
     ///
     /// let zerovec = ZeroVec::<u16>::Borrowed(nums);
@@ -86,6 +97,23 @@ where
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
     Borrowed(&'a [T::ULE]),
+}
+
+impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
+    type Target = ZeroSlice<T>;
+    fn deref(&self) -> &Self::Target {
+        let slice = match self {
+            ZeroVec::Owned(vec) => &**vec,
+            ZeroVec::Borrowed(slice) => *slice,
+        };
+        ZeroSlice::from_ule_slice(slice)
+    }
+}
+
+impl<'a, T: AsULE> AsRef<ZeroSlice<T>> for ZeroVec<'a, T> {
+    fn as_ref(&self) -> &ZeroSlice<T> {
+        self.deref()
+    }
 }
 
 impl<T> fmt::Debug for ZeroVec<'_, T>
@@ -127,6 +155,18 @@ impl<'a, T: AsULE> Default for ZeroVec<'a, T> {
     #[inline]
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl<'a, T: AsULE + PartialOrd> PartialOrd for ZeroVec<'a, T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.iter().partial_cmp(other.iter())
+    }
+}
+
+impl<'a, T: AsULE + Ord> Ord for ZeroVec<'a, T> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.iter().cmp(other.iter())
     }
 }
 
@@ -172,82 +212,9 @@ where
     /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
     /// assert_eq!(zerovec.get(2), Some(421));
     /// ```
-    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, <<T as AsULE>::ULE as ULE>::Error> {
+    pub fn parse_byte_slice(bytes: &'a [u8]) -> Result<Self, ZeroVecError> {
         let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
         Ok(Self::Borrowed(slice))
-    }
-
-    /// Returns a `ZeroVec<T>` as its underlying `&[u8]` byte buffer representation.
-    ///
-    /// Useful for serialization.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// // The little-endian bytes correspond to the numbers on the following line.
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let nums: &[u16] = &[211, 281, 421, 461];
-    ///
-    /// let zerovec = ZeroVec::alloc_from_slice(nums);
-    ///
-    /// assert_eq!(bytes, zerovec.as_bytes());
-    /// ```
-    #[inline]
-    pub fn as_bytes(&self) -> &[u8] {
-        T::ULE::as_byte_slice(self.as_slice())
-    }
-
-    /// Dereferences this `ZeroVec<T>` as `&[T::ULE]`. Most other functions on `ZeroVec<T>` use
-    /// this function as a building block.
-    #[inline]
-    pub fn as_slice(&self) -> &[T::ULE] {
-        match self {
-            Self::Owned(vec) => vec.as_slice(),
-            Self::Borrowed(slice) => slice,
-        }
-    }
-
-    /// Returns the number of elements in this `ZeroVec<T>`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    /// use zerovec::ule::AsULE;
-    ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    ///
-    /// assert_eq!(4, zerovec.len());
-    /// assert_eq!(
-    ///     bytes.len(),
-    ///     zerovec.len() * std::mem::size_of::<<u16 as AsULE>::ULE>()
-    /// );
-    /// ```
-    #[inline]
-    pub fn len(&self) -> usize {
-        self.as_slice().len()
-    }
-
-    /// Returns whether the vec is empty.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// assert!(!zerovec.is_empty());
-    ///
-    /// let emptyvec: ZeroVec<u16> = ZeroVec::parse_byte_slice(&[]).expect("infallible");
-    /// assert!(emptyvec.is_empty());
-    /// ```
-    #[inline]
-    pub fn is_empty(&self) -> bool {
-        self.as_slice().is_empty()
     }
 
     /// Converts a `ZeroVec<T>` into a `ZeroVec<u8>`, retaining the current ownership model.
@@ -358,7 +325,7 @@ where
     /// assert!(matches!(zv_u16, ZeroVec::Borrowed(_)));
     /// assert_eq!(zv_u16.get(0), Some(0xF37F));
     /// ```
-    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, <P::ULE as ULE>::Error> {
+    pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, ZeroVecError> {
         assert_eq!(
             core::mem::size_of::<<T as AsULE>::ULE>(),
             core::mem::size_of::<<P as AsULE>::ULE>()
@@ -426,7 +393,7 @@ impl<'a> ZeroVec<'a, u8> {
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// assert_eq!(zerovec.get(0), Some(211));
     /// ```
-    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, <T::ULE as ULE>::Error> {
+    pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, ZeroVecError> {
         match self {
             ZeroVec::Borrowed(bytes) => {
                 let slice: &'a [T::ULE] = T::ULE::parse_byte_slice(bytes)?;
@@ -481,17 +448,13 @@ where
     /// ```
     #[inline]
     pub fn to_vec(&self) -> Vec<T> {
-        self.as_slice()
-            .iter()
-            .copied()
-            .map(T::from_unaligned)
-            .collect()
+        self.iter().collect()
     }
 }
 
 impl<'a, T> ZeroVec<'a, T>
 where
-    T: AsULE + SliceAsULE,
+    T: EqULE,
 {
     /// Attempts to create a `ZeroVec<'a, T>` from a `&'a [T]` by borrowing the argument.
     ///
@@ -546,84 +509,6 @@ impl<T> ZeroVec<'_, T>
 where
     T: AsULE,
 {
-    /// Gets the element at the specified index. Returns None if out of range.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    ///
-    /// assert_eq!(zerovec.get(2), Some(421));
-    /// assert_eq!(zerovec.get(4), None);
-    /// ```
-    #[inline]
-    pub fn get(&self, index: usize) -> Option<T> {
-        self.as_slice().get(index).copied().map(T::from_unaligned)
-    }
-
-    pub(crate) fn get_ule_ref(&self, index: usize) -> Option<&T::ULE> {
-        self.as_slice().get(index)
-    }
-
-    /// Gets the first element. Returns None if empty.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    ///
-    /// assert_eq!(zerovec.first(), Some(211));
-    /// ```
-    #[inline]
-    pub fn first(&self) -> Option<T> {
-        self.as_slice().first().copied().map(T::from_unaligned)
-    }
-
-    /// Gets the last element. Returns None if empty.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    ///
-    /// assert_eq!(zerovec.last(), Some(461));
-    /// ```
-    #[inline]
-    pub fn last(&self) -> Option<T> {
-        self.as_slice().last().copied().map(T::from_unaligned)
-    }
-
-    /// Gets an iterator over the elements.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// let mut it = zerovec.iter();
-    ///
-    /// assert_eq!(it.next(), Some(211));
-    /// assert_eq!(it.next(), Some(281));
-    /// assert_eq!(it.next(), Some(421));
-    /// assert_eq!(it.next(), Some(461));
-    /// assert_eq!(it.next(), None);
-    /// ```
-    #[inline]
-    pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
-        self.as_slice().iter().copied().map(T::from_unaligned)
-    }
-
     /// Mutates each element according to a given function, meant to be
     /// a more convenient version of calling `.iter_mut()` on
     /// [`ZeroVec::to_mut()`] which serves fewer use cases.
@@ -740,33 +625,6 @@ where
     }
 }
 
-impl<T> ZeroVec<'_, T>
-where
-    T: AsULE + Ord,
-{
-    /// Binary searches a sorted `ZeroVec<T>` for the given element. For more information, see
-    /// the primitive function [`binary_search`].
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ZeroVec;
-    ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    ///
-    /// assert_eq!(zerovec.binary_search(&281), Ok(1));
-    /// assert_eq!(zerovec.binary_search(&282), Err(2));
-    /// ```
-    ///
-    /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
-    #[inline]
-    pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.as_slice()
-            .binary_search_by(|probe| T::from_unaligned(*probe).cmp(x))
-    }
-}
-
 impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
     /// Creates a [`ZeroVec::Owned`] from an iterator of values.
     fn from_iter<I>(iter: I) -> Self
@@ -868,7 +726,7 @@ mod tests {
                 .unwrap()
                 .get(19)
         );
-        // TODO(#1144): Check for correct slice length in PlainOldULE
+        // TODO(#1144): Check for correct slice length in RawBytesULE
         // assert_eq!(
         //     None,
         //     ZeroVec::<u32>::parse_byte_slice(&TEST_BUFFER_LE[77..])

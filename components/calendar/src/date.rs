@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
+use alloc::rc::Rc;
 use core::fmt;
 
 /// Types that contain a calendar
@@ -21,6 +22,14 @@ impl<C: Calendar> AsCalendar for C {
     #[inline]
     fn as_calendar(&self) -> &Self {
         self
+    }
+}
+
+impl<C: Calendar> AsCalendar for Rc<C> {
+    type Calendar = C;
+    #[inline]
+    fn as_calendar(&self) -> &C {
+        &*self
     }
 }
 

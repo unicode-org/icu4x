@@ -212,23 +212,23 @@ impl writeable::Writeable for LanguageIdentifier {
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!("und", LanguageIdentifier::und());
-    assert_writeable_eq!("und-001", LanguageIdentifier::from_str("und-001").unwrap());
+    assert_writeable_eq!(LanguageIdentifier::und(), "und");
+    assert_writeable_eq!(LanguageIdentifier::from_str("und-001").unwrap(), "und-001");
     assert_writeable_eq!(
+        LanguageIdentifier::from_str("und-Mymr").unwrap(),
         "und-Mymr",
-        LanguageIdentifier::from_str("und-Mymr").unwrap()
     );
     assert_writeable_eq!(
+        LanguageIdentifier::from_str("my-Mymr-MM").unwrap(),
         "my-Mymr-MM",
-        LanguageIdentifier::from_str("my-Mymr-MM").unwrap()
     );
     assert_writeable_eq!(
+        LanguageIdentifier::from_str("my-Mymr-MM-posix").unwrap(),
         "my-Mymr-MM-posix",
-        LanguageIdentifier::from_str("my-Mymr-MM-posix").unwrap()
     );
     assert_writeable_eq!(
+        LanguageIdentifier::from_str("zh-macos-posix").unwrap(),
         "zh-macos-posix",
-        LanguageIdentifier::from_str("zh-macos-posix").unwrap()
     );
 }
 
