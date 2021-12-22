@@ -19,12 +19,13 @@ use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
 pub use borrowed::ZeroMap2kBorrowed;
 
-/// A zero-copy map datastructure that supports two layers of keys.
+/// A zero-copy, two-dimensional map datastructure .
 ///
-/// This is an extension of [`ZeroMap`] that supports two-dimensional keys. For example,
+/// This is an extension of [`ZeroMap`] that supports two layers of keys. For example,
 /// to map a pair of an integer and a string to a buffer, you can write:
 ///
 /// ```no_run
+/// # use zerovec::ZeroMap2k;
 /// let _: ZeroMap2k<u32, str, [u8]> = unimplemented!();
 /// ```
 ///
@@ -36,16 +37,16 @@ pub use borrowed::ZeroMap2kBorrowed;
 /// ```
 /// use zerovec::ZeroMap2k;
 ///
-/// // Example byte buffer representing the map { 1: "one" }
-/// let BINCODE_BYTES: &[u8; 31] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
-///     1, 0, 0, 0, 0, 0, 0, 0, 111, 110, 101
+/// // Example byte buffer representing the map { 1: {2: "three" } }
+/// let BINCODE_BYTES: &[u8; 53] = &[
+///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0,
+///     0, 0, 2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
-/// let zero_map: ZeroMap<u32, str> = bincode::deserialize(BINCODE_BYTES)
+/// let zero_map: ZeroMap2k<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1), Some("one"));
+/// assert_eq!(zero_map.get(&1, &2), Some("three"));
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
@@ -481,7 +482,7 @@ where
     /// map.insert(&1, &4, &5);
     /// map.insert(&6, &7, &8);
     ///
-    /// assert_eq!(map.get_copied(&6, &7), 8);
+    /// assert_eq!(map.get_copied(&6, &7), Some(8));
     /// ```
     pub fn get_copied(&self, key0: &K0, key1: &K1) -> Option<V> {
         let (_, range) = self.get_range_for_key0(key0)?;

@@ -170,7 +170,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
     ///
     /// The bytes can be passed back to [`Self::parse_byte_slice()`].
     ///
-    /// To take the bytes as a vector, see [`Self::into_bytes()`].
+    /// To take the bytes as a vector, see [`VarZeroVec::into_bytes()`].
     ///
     /// # Example
     ///
@@ -201,8 +201,7 @@ impl<T: VarULE + ?Sized> VarZeroSlice<T> {
 
     /// Parse a VarZeroSlice from a slice of the appropriate format
     ///
-    /// Slices of the right format can be obtained via [`VarZeroVec::<str>::get_serializable_bytes()`]
-    /// or [`VarZeroVec::as_bytes()`]
+    /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
     pub fn parse_byte_slice<'a>(slice: &'a [u8]) -> Result<&'a Self, ZeroVecError> {
         <Self as VarULE>::parse_byte_slice(slice)
     }

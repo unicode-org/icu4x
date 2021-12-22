@@ -15,7 +15,7 @@ use core::ops::Range;
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
 /// should not be implementing or calling this trait directly.**
 ///
-/// The T type is the type received by [`Self::binary_search()`], as well as the one used
+/// The T type is the type received by [`Self::zvl_binary_search()`], as well as the one used
 /// for human-readable serialization.
 ///
 /// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves

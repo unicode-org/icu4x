@@ -157,8 +157,8 @@ where
                 if map
                     .try_append(
                         K0::Container::owned_as_t(&key0),
-                        K1::Container::owned_as_t(&key1),
-                        V::Container::owned_as_t(&value),
+                        K1::Container::owned_as_t(key1),
+                        V::Container::owned_as_t(value),
                     )
                     .is_some()
                 {
@@ -415,6 +415,22 @@ mod test {
             format!("{:?}", map)
                 .replace("Owned", "Borrowed")
                 .replace("ZeroMap2k", "ZeroMap2kBorrowed")
+        );
+    }
+
+    #[test]
+    fn test_sample_bincode() {
+        // This is the map from the main docs page for ZeroMap2k
+        let mut map: ZeroMap2k<u16, u16, str> = ZeroMap2k::new();
+        map.insert(&1, &2, "three");
+        let bincode_bytes: Vec<u8> = bincode::serialize(&map).expect("serialize");
+        assert_eq!(
+            bincode_bytes.as_slice(),
+            &[
+                2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0,
+                0, 0, 2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101,
+                101
+            ]
         );
     }
 }

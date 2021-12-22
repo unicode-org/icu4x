@@ -20,18 +20,18 @@ use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
 /// # Examples
 ///
 /// ```
-/// use zerovec::map::ZeroMap2kBorrowed;
+/// use zerovec::map2k::ZeroMap2kBorrowed;
 ///
-/// // Example byte buffer representing the map { 1: "one" }
-/// let BINCODE_BYTES: &[u8; 31] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
-///     1, 0, 0, 0, 0, 0, 0, 0, 111, 110, 101
+/// // Example byte buffer representing the map { 1: {2: "three" } }
+/// let BINCODE_BYTES: &[u8; 53] = &[
+///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0,
+///     0, 0, 2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101
 /// ];
 ///
 /// // Deserializing to ZeroMap2k requires no heap allocations.
-/// let zero_map: ZeroMap2kBorrowed<u32, str> = bincode::deserialize(BINCODE_BYTES)
+/// let zero_map: ZeroMap2kBorrowed<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1), Some("one"));
+/// assert_eq!(zero_map.get(&1, &2), Some("three"));
 /// ```
 ///
 /// This can be obtained from a [`ZeroMap2k`](super::ZeroMap2k) via [`ZeroMap2k::as_borrowed`](super::ZeroMap2k::as_borrowed)
@@ -111,9 +111,9 @@ where
     /// # Examples
     ///
     /// ```
-    /// use zerovec::map::ZeroMap2kBorrowed;
+    /// use zerovec::map2k::ZeroMap2kBorrowed;
     ///
-    /// let zm: ZeroMap2kBorrowed<u16, str> = ZeroMap2kBorrowed::new();
+    /// let zm: ZeroMap2kBorrowed<u16, u16, str> = ZeroMap2kBorrowed::new();
     /// assert!(zm.is_empty());
     /// ```
     pub fn new() -> Self {
@@ -184,7 +184,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap2k;
-    /// use zerovec::map::ZeroMap2kBorrowed;
+    /// use zerovec::map2k::ZeroMap2kBorrowed;
     ///
     /// let mut map = ZeroMap2k::new();
     /// map.insert(&1, "one", "foo");

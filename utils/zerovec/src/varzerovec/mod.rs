@@ -225,8 +225,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
 
     /// Parse a VarZeroVec from a slice of the appropriate format
     ///
-    /// Slices of the right format can be obtained via [`VarZeroVec::<str>::get_serializable_bytes()`]
-    /// or [`VarZeroVec::as_bytes()`]
+    /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`].
     ///
     /// # Example
     ///
@@ -327,7 +326,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     ///
     /// The bytes can be passed back to [`Self::parse_byte_slice()`].
     ///
-    /// To get a reference to the bytes without moving, see [`Self::as_encoded_bytes()`].
+    /// To get a reference to the bytes without moving, see [`VarZeroSlice::as_bytes()`].
     ///
     /// # Example
     ///
