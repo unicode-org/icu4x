@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640193628851,
+  "lastUpdate": 1640194224136,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19793,6 +19793,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4115,
             "range": "± 15",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7eda44fdb2cef111dc0b1c4abaa769fbc974b7d9",
+          "message": "Fuzz testing integer Writeable (#1421)",
+          "timestamp": "2021-12-22T18:22:07+01:00",
+          "tree_id": "20a0b11d1c1a63d6a27deb96443c73d52f05b236",
+          "url": "https://github.com/unicode-org/icu4x/commit/7eda44fdb2cef111dc0b1c4abaa769fbc974b7d9"
+        },
+        "date": 1640194214242,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3209,
+            "range": "± 134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5300,
+            "range": "± 299",
             "unit": "ns/iter"
           }
         ]
