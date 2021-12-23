@@ -24,6 +24,7 @@ use smallvec::SmallVec;
 /// The `Field`s are only sorted in the [`Skeleton`] in order to provide a deterministic
 /// serialization strategy, and to provide a faster [`Skeleton`] matching operation.
 #[derive(Debug, Eq, PartialEq, Clone, Ord, PartialOrd)]
+// TODO(#876): Use ZeroVec instead of SmallVec
 pub struct Skeleton(pub(crate) SmallVec<[fields::Field; 5]>);
 
 impl Skeleton {
