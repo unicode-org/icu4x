@@ -11,16 +11,16 @@ use core::ops::Range;
 use crate::map::ZeroMapKV;
 use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
 
-/// A borrowed-only version of [`ZeroMap2k`](super::ZeroMap2k)
+/// A borrowed-only version of [`ZeroMap2d`](super::ZeroMap2d)
 ///
 /// This is useful for fully-zero-copy deserialization from non-human-readable
 /// serialization formats. It also has the advantage that it can return references that live for
-/// the lifetime of the backing buffer as opposed to that of the [`ZeroMap2kBorrowed`] instance.
+/// the lifetime of the backing buffer as opposed to that of the [`ZeroMap2dBorrowed`] instance.
 ///
 /// # Examples
 ///
 /// ```
-/// use zerovec::map2k::ZeroMap2kBorrowed;
+/// use zerovec::map2d::ZeroMap2dBorrowed;
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
 /// let BINCODE_BYTES: &[u8; 53] = &[
@@ -28,14 +28,14 @@ use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
 ///     0, 0, 2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101
 /// ];
 ///
-/// // Deserializing to ZeroMap2k requires no heap allocations.
-/// let zero_map: ZeroMap2kBorrowed<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
+/// // Deserializing to ZeroMap2d requires no heap allocations.
+/// let zero_map: ZeroMap2dBorrowed<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1, &2), Some("three"));
 /// ```
 ///
-/// This can be obtained from a [`ZeroMap2k`](super::ZeroMap2k) via [`ZeroMap2k::as_borrowed`](super::ZeroMap2k::as_borrowed)
-pub struct ZeroMap2kBorrowed<'a, K0, K1, V>
+/// This can be obtained from a [`ZeroMap2d`](super::ZeroMap2d) via [`ZeroMap2d::as_borrowed`](super::ZeroMap2d::as_borrowed)
+pub struct ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -50,7 +50,7 @@ where
     pub(crate) values: <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant,
 }
 
-impl<'a, K0, K1, V> Copy for ZeroMap2kBorrowed<'a, K0, K1, V>
+impl<'a, K0, K1, V> Copy for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -61,7 +61,7 @@ where
 {
 }
 
-impl<'a, K0, K1, V> Clone for ZeroMap2kBorrowed<'a, K0, K1, V>
+impl<'a, K0, K1, V> Clone for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -71,7 +71,7 @@ where
     V: ?Sized,
 {
     fn clone(&self) -> Self {
-        ZeroMap2kBorrowed {
+        ZeroMap2dBorrowed {
             keys0: self.keys0,
             joiner: self.joiner,
             keys1: self.keys1,
@@ -80,7 +80,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> Default for ZeroMap2kBorrowed<'a, K0, K1, V>
+impl<'a, K0, K1, V> Default for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -94,7 +94,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> ZeroMap2kBorrowed<'a, K0, K1, V>
+impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -103,17 +103,17 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
-    /// Creates a new, empty `ZeroMap2kBorrowed<K0, K1, V>`.
+    /// Creates a new, empty `ZeroMap2dBorrowed<K0, K1, V>`.
     ///
-    /// Note: Since [`ZeroMap2kBorrowed`] is not mutable, the return value will be a stub unless
-    /// converted into a [`ZeroMap2k`](super::ZeroMap2k).
+    /// Note: Since [`ZeroMap2dBorrowed`] is not mutable, the return value will be a stub unless
+    /// converted into a [`ZeroMap2d`](super::ZeroMap2d).
     ///
     /// # Examples
     ///
     /// ```
-    /// use zerovec::map2k::ZeroMap2kBorrowed;
+    /// use zerovec::map2d::ZeroMap2dBorrowed;
     ///
-    /// let zm: ZeroMap2kBorrowed<u16, u16, str> = ZeroMap2kBorrowed::new();
+    /// let zm: ZeroMap2dBorrowed<u16, u16, str> = ZeroMap2dBorrowed::new();
     /// assert!(zm.is_empty());
     /// ```
     pub fn new() -> Self {
@@ -130,12 +130,12 @@ where
         }
     }
 
-    /// The number of elements in the [`ZeroMap2kBorrowed`]
+    /// The number of elements in the [`ZeroMap2dBorrowed`]
     pub fn len(&self) -> usize {
         self.values.zvl_len()
     }
 
-    /// Whether the [`ZeroMap2kBorrowed`] is empty
+    /// Whether the [`ZeroMap2dBorrowed`] is empty
     pub fn is_empty(&self) -> bool {
         self.values.zvl_len() == 0
     }
@@ -144,13 +144,13 @@ where
     ///
     /// This is able to return values that live longer than the map itself
     /// since they borrow directly from the backing buffer. This is the
-    /// primary advantage of using [`ZeroMap2kBorrowed`](super::ZeroMap2kBorrowed) over [`ZeroMap2k`](super::ZeroMap2k).
+    /// primary advantage of using [`ZeroMap2dBorrowed`](super::ZeroMap2dBorrowed) over [`ZeroMap2d`](super::ZeroMap2d).
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2k;
-    /// use zerovec::map2k::ZeroMap2kBorrowed;
+    /// use zerovec::ZeroMap2d;
+    /// use zerovec::map2d::ZeroMap2dBorrowed;
     ///
-    /// let mut map = ZeroMap2k::new();
+    /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "one", "bar");
     /// map.insert(&2, "two", "baz");
@@ -164,7 +164,7 @@ where
     ///
     /// let borrow = borrowed.get(&1, "one");
     /// drop(borrowed);
-    /// // still exists after the ZeroMap2kBorrowed has been dropped
+    /// // still exists after the ZeroMap2dBorrowed has been dropped
     /// assert_eq!(borrow, Some("foo"));
     /// ```
     pub fn get(&self, key0: &K0, key1: &K1) -> Option<&'a V::GetType> {
@@ -183,10 +183,10 @@ where
     /// Returns whether `key0` is contained in this map
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2k;
-    /// use zerovec::map2k::ZeroMap2kBorrowed;
+    /// use zerovec::ZeroMap2d;
+    /// use zerovec::map2d::ZeroMap2dBorrowed;
     ///
-    /// let mut map = ZeroMap2k::new();
+    /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "two", "bar");
     /// let borrowed = map.as_borrowed();
@@ -239,7 +239,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> ZeroMap2kBorrowed<'a, K0, K1, V>
+impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
@@ -261,11 +261,11 @@ where
     }
 }
 
-// We can't use the default PartialEq because ZeroMap2k is invariant
+// We can't use the default PartialEq because ZeroMap2d is invariant
 // so otherwise rustc will not automatically allow you to compare ZeroMaps
 // with different lifetimes
-impl<'a, 'b, K0, K1, V> PartialEq<ZeroMap2kBorrowed<'b, K0, K1, V>>
-    for ZeroMap2kBorrowed<'a, K0, K1, V>
+impl<'a, 'b, K0, K1, V> PartialEq<ZeroMap2dBorrowed<'b, K0, K1, V>>
+    for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: for<'c> ZeroMapKV<'c> + ?Sized,
     K1: for<'c> ZeroMapKV<'c> + ?Sized,
@@ -277,7 +277,7 @@ where
     <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant:
         PartialEq<<<V as ZeroMapKV<'b>>::Container as ZeroVecLike<'b, V>>::BorrowedVariant>,
 {
-    fn eq(&self, other: &ZeroMap2kBorrowed<'b, K0, K1, V>) -> bool {
+    fn eq(&self, other: &ZeroMap2dBorrowed<'b, K0, K1, V>) -> bool {
         self.keys0.eq(&other.keys0)
             && self.joiner.eq(other.joiner)
             && self.keys1.eq(&other.keys1)
@@ -285,7 +285,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> fmt::Debug for ZeroMap2kBorrowed<'a, K0, K1, V>
+impl<'a, K0, K1, V> fmt::Debug for ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
@@ -295,7 +295,7 @@ where
     <<V as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, V>>::BorrowedVariant: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        f.debug_struct("ZeroMap2kBorrowed")
+        f.debug_struct("ZeroMap2dBorrowed")
             .field("keys0", &self.keys0)
             .field("joiner", &self.joiner)
             .field("keys1", &self.keys1)

@@ -12,7 +12,7 @@
 //! - [`ZeroVec<T>`](ZeroVec) for fixed-width types like `u32`
 //! - [`VarZeroVec<T>`](VarZeroVec) for variable-width types like `str`
 //! - [`ZeroMap<K, V>`](ZeroMap) to map from `K` to `V`
-//! - [`ZeroMap2k<K0, K1, V>`](ZeroMap2k) to map from the pair `(K0, K1)` to `V`
+//! - [`ZeroMap2d<K0, K1, V>`](ZeroMap2d) to map from the pair `(K0, K1)` to `V`
 //!
 //! The first two are intended as drop-in replacements for `Vec<T>` in Serde structs serialized
 //! with a format supporting a borrowed byte buffer, like Bincode. The third and fourth are
@@ -102,7 +102,7 @@ extern crate alloc;
 
 mod error;
 pub mod map;
-pub mod map2k;
+pub mod map2d;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;
@@ -114,6 +114,6 @@ mod yoke_impls;
 
 pub use crate::error::ZeroVecError;
 pub use crate::map::ZeroMap;
-pub use crate::map2k::ZeroMap2k;
+pub use crate::map2d::ZeroMap2d;
 pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};

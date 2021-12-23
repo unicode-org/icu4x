@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! See [`ZeroMap2k`] for details.
+//! See [`ZeroMap2d`] for details.
 
 use crate::ule::AsULE;
 use crate::ZeroVec;
@@ -17,7 +17,7 @@ mod serde;
 
 use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
-pub use borrowed::ZeroMap2kBorrowed;
+pub use borrowed::ZeroMap2dBorrowed;
 
 /// A zero-copy, two-dimensional map datastructure .
 ///
@@ -25,17 +25,17 @@ pub use borrowed::ZeroMap2kBorrowed;
 /// to map a pair of an integer and a string to a buffer, you can write:
 ///
 /// ```no_run
-/// # use zerovec::ZeroMap2k;
-/// let _: ZeroMap2k<u32, str, [u8]> = unimplemented!();
+/// # use zerovec::ZeroMap2d;
+/// let _: ZeroMap2d<u32, str, [u8]> = unimplemented!();
 /// ```
 ///
-/// Internally, `ZeroMap2k` stores four zero-copy vectors, one for each type argument plus
+/// Internally, `ZeroMap2d` stores four zero-copy vectors, one for each type argument plus
 /// one more to match between the two vectors of keys.
 ///
 /// # Examples
 ///
 /// ```
-/// use zerovec::ZeroMap2k;
+/// use zerovec::ZeroMap2d;
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
 /// let BINCODE_BYTES: &[u8; 53] = &[
@@ -44,14 +44,14 @@ pub use borrowed::ZeroMap2kBorrowed;
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
-/// let zero_map: ZeroMap2k<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
+/// let zero_map: ZeroMap2d<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1, &2), Some("three"));
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
 /// [`ZeroMap`]: crate::ZeroMap
-pub struct ZeroMap2k<'a, K0, K1, V>
+pub struct ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -66,7 +66,7 @@ where
     pub(crate) values: V::Container,
 }
 
-impl<'a, K0, K1, V> Default for ZeroMap2k<'a, K0, K1, V>
+impl<'a, K0, K1, V> Default for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -80,7 +80,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> ZeroMap2k<'a, K0, K1, V>
+impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -89,14 +89,14 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
-    /// Creates a new, empty `ZeroMap2k`.
+    /// Creates a new, empty `ZeroMap2d`.
     ///
     /// # Examples
     ///
     /// ```
-    /// use zerovec::ZeroMap2k;
+    /// use zerovec::ZeroMap2d;
     ///
-    /// let zm: ZeroMap2k<u16, str, str> = ZeroMap2k::new();
+    /// let zm: ZeroMap2d<u16, str, str> = ZeroMap2d::new();
     /// assert!(zm.is_empty());
     /// ```
     pub fn new() -> Self {
@@ -108,7 +108,7 @@ where
         }
     }
 
-    /// Construct a new [`ZeroMap2k`] with a given capacity
+    /// Construct a new [`ZeroMap2d`] with a given capacity
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             keys0: K0::Container::zvl_with_capacity(capacity),
@@ -119,8 +119,8 @@ where
     }
 
     /// Obtain a borrowed version of this map
-    pub fn as_borrowed(&'a self) -> ZeroMap2kBorrowed<'a, K0, K1, V> {
-        ZeroMap2kBorrowed {
+    pub fn as_borrowed(&'a self) -> ZeroMap2dBorrowed<'a, K0, K1, V> {
+        ZeroMap2dBorrowed {
             keys0: self.keys0.zvl_as_borrowed(),
             joiner: &*self.joiner,
             keys1: self.keys1.zvl_as_borrowed(),
@@ -128,17 +128,17 @@ where
         }
     }
 
-    /// The number of values in the [`ZeroMap2k`]
+    /// The number of values in the [`ZeroMap2d`]
     pub fn len(&self) -> usize {
         self.values.zvl_len()
     }
 
-    /// Whether the [`ZeroMap2k`] is empty
+    /// Whether the [`ZeroMap2d`] is empty
     pub fn is_empty(&self) -> bool {
         self.values.zvl_len() == 0
     }
 
-    /// Remove all elements from the [`ZeroMap2k`]
+    /// Remove all elements from the [`ZeroMap2d`]
     pub fn clear(&mut self) {
         self.keys0.zvl_clear();
         self.joiner.clear();
@@ -147,7 +147,7 @@ where
     }
 
     /// Reserve capacity for `additional` more elements to be inserted into
-    /// the [`ZeroMap2k`] to avoid frequent reallocations.
+    /// the [`ZeroMap2d`] to avoid frequent reallocations.
     ///
     /// See [`Vec::reserve()`](alloc::vec::Vec::reserve) for more information.
     pub fn reserve(&mut self, additional: usize) {
@@ -160,9 +160,9 @@ where
     /// Get the value associated with `key0` and `key1`, if it exists.
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2k;
+    /// use zerovec::ZeroMap2d;
     ///
-    /// let mut map = ZeroMap2k::new();
+    /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "one", "bar");
     /// map.insert(&2, "two", "baz");
@@ -188,9 +188,9 @@ where
     /// Returns whether `key0` is contained in this map
     ///
     /// ```rust
-    /// use zerovec::ZeroMap2k;
+    /// use zerovec::ZeroMap2d;
     ///
-    /// let mut map = ZeroMap2k::new();
+    /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "two", "bar");
     /// assert_eq!(map.contains_key0(&1), true);
@@ -312,7 +312,7 @@ where
         }
 
         let joiner_value = u32::try_from(self.keys1.zvl_len() + 1)
-            .expect("Attempted to add more than 2^32 elements to a ZeroMap2k");
+            .expect("Attempted to add more than 2^32 elements to a ZeroMap2d");
 
         // All OK to append
         if key0_cmp == Ordering::Greater {
@@ -351,12 +351,12 @@ where
     ///
     /// # Example
     ///
-    /// Loop over all elements of a ZeroMap2k:
+    /// Loop over all elements of a ZeroMap2d:
     ///
     /// ```
-    /// use zerovec::ZeroMap2k;
+    /// use zerovec::ZeroMap2d;
     ///
-    /// let mut map: ZeroMap2k<u16, u16, str> = ZeroMap2k::new();
+    /// let mut map: ZeroMap2d<u16, u16, str> = ZeroMap2d::new();
     /// map.insert(&1, &1, "foo");
     /// map.insert(&2, &3, "bar");
     /// map.insert(&2, &4, "baz");
@@ -449,7 +449,7 @@ where
                 **v = v
                     .as_unsigned_int()
                     .checked_add(1)
-                    .expect("Attempted to add more than 2^32 elements to a ZeroMap2k")
+                    .expect("Attempted to add more than 2^32 elements to a ZeroMap2d")
                     .as_unaligned()
             });
     }
@@ -470,7 +470,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> ZeroMap2k<'a, K0, K1, V>
+impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
@@ -482,8 +482,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use zerovec::ZeroMap2k;
-    /// let mut map: ZeroMap2k::<u16, u16, u16> = ZeroMap2k::new();
+    /// # use zerovec::ZeroMap2d;
+    /// let mut map: ZeroMap2d::<u16, u16, u16> = ZeroMap2d::new();
     /// map.insert(&1, &2, &3);
     /// map.insert(&1, &4, &5);
     /// map.insert(&6, &7, &8);
@@ -504,7 +504,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> From<ZeroMap2kBorrowed<'a, K0, K1, V>> for ZeroMap2k<'a, K0, K1, V>
+impl<'a, K0, K1, V> From<ZeroMap2dBorrowed<'a, K0, K1, V>> for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
     K1: ZeroMapKV<'a>,
@@ -513,7 +513,7 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
-    fn from(other: ZeroMap2kBorrowed<'a, K0, K1, V>) -> Self {
+    fn from(other: ZeroMap2dBorrowed<'a, K0, K1, V>) -> Self {
         Self {
             keys0: K0::Container::zvl_from_borrowed(other.keys0),
             joiner: other.joiner.as_zerovec(),
@@ -523,10 +523,10 @@ where
     }
 }
 
-// We can't use the default PartialEq because ZeroMap2k is invariant
+// We can't use the default PartialEq because ZeroMap2d is invariant
 // so otherwise rustc will not automatically allow you to compare ZeroMaps
 // with different lifetimes
-impl<'a, 'b, K0, K1, V> PartialEq<ZeroMap2k<'b, K0, K1, V>> for ZeroMap2k<'a, K0, K1, V>
+impl<'a, 'b, K0, K1, V> PartialEq<ZeroMap2d<'b, K0, K1, V>> for ZeroMap2d<'a, K0, K1, V>
 where
     K0: for<'c> ZeroMapKV<'c> + ?Sized,
     K1: for<'c> ZeroMapKV<'c> + ?Sized,
@@ -535,7 +535,7 @@ where
     <K1 as ZeroMapKV<'a>>::Container: PartialEq<<K1 as ZeroMapKV<'b>>::Container>,
     <V as ZeroMapKV<'a>>::Container: PartialEq<<V as ZeroMapKV<'b>>::Container>,
 {
-    fn eq(&self, other: &ZeroMap2k<'b, K0, K1, V>) -> bool {
+    fn eq(&self, other: &ZeroMap2d<'b, K0, K1, V>) -> bool {
         self.keys0.eq(&other.keys0)
             && self.joiner.eq(&other.joiner)
             && self.keys1.eq(&other.keys1)
@@ -543,7 +543,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> fmt::Debug for ZeroMap2k<'a, K0, K1, V>
+impl<'a, K0, K1, V> fmt::Debug for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
@@ -553,7 +553,7 @@ where
     <V as ZeroMapKV<'a>>::Container: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        f.debug_struct("ZeroMap2k")
+        f.debug_struct("ZeroMap2d")
             .field("keys0", &self.keys0)
             .field("joiner", &self.joiner)
             .field("keys1", &self.keys1)
@@ -562,7 +562,7 @@ where
     }
 }
 
-impl<'a, K0, K1, V> Clone for ZeroMap2k<'a, K0, K1, V>
+impl<'a, K0, K1, V> Clone for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + ?Sized,
     K1: ZeroMapKV<'a> + ?Sized,
@@ -587,15 +587,15 @@ mod test {
 
     #[test]
     fn stress_test() {
-        let mut zm2k = ZeroMap2k::<u16, str, str>::new();
+        let mut zm2k = ZeroMap2d::<u16, str, str>::new();
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2k { keys0: ZeroVec::Borrowed([]), joiner: ZeroVec::Borrowed([]), keys1: [], values: [] }");
+        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Borrowed([]), joiner: ZeroVec::Borrowed([]), keys1: [], values: [] }");
         assert_eq!(zm2k.get(&0, ""), None);
 
         let result = zm2k.try_append(&3, "ccc", "CCC");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2k { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
+        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
         assert_eq!(zm2k.get(&0, ""), None);
         assert_eq!(zm2k.get(&3, ""), None);
         assert_eq!(zm2k.get(&3, "ccc"), Some("CCC"));
@@ -604,7 +604,7 @@ mod test {
         let result = zm2k.try_append(&3, "eee", "EEE");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2k { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
+        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
         assert_eq!(zm2k.get(&0, ""), None);
         assert_eq!(zm2k.get(&3, ""), None);
         assert_eq!(zm2k.get(&3, "ccc"), Some("CCC"));
@@ -628,7 +628,7 @@ mod test {
         let result = zm2k.try_append(&9, "yyy", "YYY");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2k { keys0: ZeroVec::Owned([3, 5, 7, 9]), joiner: ZeroVec::Owned([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
+        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 7, 9]), joiner: ZeroVec::Owned([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
         assert_eq!(zm2k.get(&0, ""), None);
         assert_eq!(zm2k.get(&3, ""), None);
         assert_eq!(zm2k.get(&3, "ccc"), Some("CCC"));
@@ -659,7 +659,7 @@ mod test {
         zm2k.insert(&6, "mmm", "MM1");
         zm2k.insert(&6, "nnn", "NNN");
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2k { keys0: ZeroVec::Owned([3, 5, 6, 7, 9]), joiner: ZeroVec::Owned([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
+        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 6, 7, 9]), joiner: ZeroVec::Owned([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
         assert_eq!(zm2k.get(&0, ""), None);
         assert_eq!(zm2k.get(&3, ""), None);
         assert_eq!(zm2k.get(&3, "ccc"), Some("CCC"));
