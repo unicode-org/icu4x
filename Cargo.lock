@@ -1071,6 +1071,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_char16trie"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "toml",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_codepointtrie"
 version = "0.3.0"
 dependencies = [
