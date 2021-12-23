@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640216682792,
+  "lastUpdate": 1640269983620,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17129,6 +17129,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 32797876,
             "range": "± 1519147",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1a87cea77e6e25f27c994ea40ee8bd21342b7534",
+          "message": "Port UCharsTrie (#1264)\n\n* Add ucharstrie to utils\r\n\r\n* Import uchars_trie\r\n\r\nImport of the UCharsTrie implementation as of:\r\nhttps://github.com/makotokato/dictionary_segmenter/commit/4d79bbc7ad65d1f51f3d51d42996b3bc34cc2ae7\r\n\r\n* Rename uchars_trie to ucharstrie and add to lib.\r\n\r\n* Add get_value method\r\n\r\n* Add months unit test\r\n\r\n* Fold trie into ucharstrie\r\n\r\n* Add UCharsTrieIterator\r\n\r\n* Return value as part of TrieResult\r\n\r\n* Don't truncate input character to u16\r\n\r\n* Use ZeroVec\r\n\r\n* Add additional unit tests and fix bugs\r\n\r\n* Rename to Char16Trie and add documentation\r\n\r\n* Remove offset from API, improve documentation\r\n\r\n* Update generated readme\r\n\r\n* Fix issues found in CI\r\n\r\n* Fixup generated readme\r\n\r\n* Address review feedback\r\n\r\n* Bump ZV version\r\n\r\n* Address some review feedback\r\n\r\n* Move char16trie to experimental\r\n\r\n* Add todo for get panic\r\n\r\n* Use as_ule_slice",
+          "timestamp": "2021-12-23T09:25:47-05:00",
+          "tree_id": "6c0d7a257d9df1a1d2296654f9c0f2926e19359c",
+          "url": "https://github.com/unicode-org/icu4x/commit/1a87cea77e6e25f27c994ea40ee8bd21342b7534"
+        },
+        "date": 1640269973115,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32113220,
+            "range": "± 1185302",
             "unit": "ns/iter"
           }
         ]
