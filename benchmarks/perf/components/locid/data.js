@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640270035132,
+  "lastUpdate": 1640295042830,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19973,6 +19973,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4914,
             "range": "± 262",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9cd5870dd444ba64ed6671089e1de4c471d1dd9",
+          "message": "Remove SmallStr and recommend Cow<str> (#1417)",
+          "timestamp": "2021-12-23T13:23:10-08:00",
+          "tree_id": "78ad5c6a020995304aa59d662dc7a9dea4a5302a",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9cd5870dd444ba64ed6671089e1de4c471d1dd9"
+        },
+        "date": 1640295035209,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2450,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4151,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
