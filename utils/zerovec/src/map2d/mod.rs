@@ -19,6 +19,23 @@ use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
 pub use borrowed::ZeroMap2dBorrowed;
 
+// ZeroMap2d contains 4 fields:
+//
+// - keys0 = sorted list of all K0 in the map
+// - joiner = helper vec that maps from a K0 to a range of keys1
+// - keys1 = list of all K1 in the map, sorted in ranges for each K0
+// - values = list of all values in the map, sorted by (K0, K1)
+//
+// For a particular K0 at index i, the range of keys1 corresponding to K0 is
+// (joiner[i-1]..joiner[i]), where the first range starts at 0.
+//
+// Invariants:
+//
+// - len(keys0) == len(joiner)
+// - len(keys1) == len(values)
+// - keys0 is sorted for binary_search
+// - ranges within keys1 are sorted for binary search
+
 /// A zero-copy, two-dimensional map datastructure .
 ///
 /// This is an extension of [`ZeroMap`] that supports two layers of keys. For example,
