@@ -521,11 +521,15 @@ where
             debug_assert_eq!(last_joiner as usize, self.keys1.zvl_len());
         }
         for i in 0..self.joiner.len() {
-            let j0 = if i == 0 { 0 } else { self.joiner.get(i - 1).unwrap() as usize };
+            let j0 = if i == 0 {
+                0
+            } else {
+                self.joiner.get(i - 1).unwrap() as usize
+            };
             let j1 = self.joiner.get(i).unwrap() as usize;
             debug_assert_ne!(j0, j1);
-            for j in (j0+1)..j1 {
-                let m0 = self.keys1.zvl_get(j-1).unwrap();
+            for j in (j0 + 1)..j1 {
+                let m0 = self.keys1.zvl_get(j - 1).unwrap();
                 let m1 = self.keys1.zvl_get(j).unwrap();
                 debug_assert_eq!(Ordering::Less, K1::Container::get_cmp_get(m0, m1));
             }
