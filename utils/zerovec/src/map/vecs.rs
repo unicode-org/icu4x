@@ -80,6 +80,10 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// if `g` were converted to `Self`
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering;
 
+    /// Compare two values of `Self::GetType`. This must produce the same result as
+    /// if both `a` and `b` were converted to `Self`
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering;
+
     /// Obtain a version of T suitable for serialization
     ///
     /// This uses a callback because it's not possible to return owned-or-borrowed
@@ -180,6 +184,10 @@ where
         t.cmp(&T::from_unaligned(*g))
     }
 
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
+        T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
+    }
+
     fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
@@ -230,6 +238,10 @@ where
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(&T::from_unaligned(*g))
+    }
+
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
+        T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
     }
 
     fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
@@ -338,6 +350,10 @@ where
         t.cmp(g)
     }
 
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
+        a.cmp(b)
+    }
+
     #[inline]
     fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
@@ -397,6 +413,10 @@ where
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(g)
+    }
+
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
+        a.cmp(b)
     }
 
     #[inline]

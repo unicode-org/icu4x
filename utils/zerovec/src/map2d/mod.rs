@@ -29,12 +29,21 @@ pub use borrowed::ZeroMap2dBorrowed;
 // For a particular K0 at index i, the range of keys1 corresponding to K0 is
 // (joiner[i-1]..joiner[i]), where the first range starts at 0.
 //
-// Invariants:
+// Required Invariants:
 //
-// - len(keys0) == len(joiner)
-// - len(keys1) == len(values)
-// - keys0 is sorted for binary_search
-// - ranges within keys1 are sorted for binary search
+// 1. len(keys0) == len(joiner)
+// 2. len(keys1) == len(values)
+// 3. joiner is sorted
+// 4. the last element of joiner is the length of keys1
+//
+// Optional Invariants:
+//
+// 5. keys0 is sorted (for binary_search)
+// 6. ranges within keys1 are sorted (for binary_search)
+// 7. every K0 is associated with at least one K1 (no empty ranges)
+//
+// During deserialization, these three invariants are not checked, because they put the
+// ZeroMap2d in a deterministic state, even though it may have unexpected behavior.
 
 /// A zero-copy, two-dimensional map datastructure .
 ///
@@ -193,6 +202,7 @@ where
         let (_, range) = self.get_range_for_key0(key0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
+        // The above debug_assert! protects the unwrap() below
         let index = range.start
             + self
                 .keys1
@@ -224,6 +234,7 @@ where
         let (key0_index, range) = self.get_or_insert_range_for_key0(key0);
         debug_assert!(range.start <= range.end); // '<=' because we may have inserted a new key0
         debug_assert!(range.end <= self.keys1.zvl_len());
+        // The above debug_assert! protects the unwrap() below
         let index = range.start
             + match self.keys1.zvl_binary_search_in_range(key1, range).unwrap() {
                 Ok(index) => return Some(self.values.zvl_replace(index, value)),
@@ -232,24 +243,27 @@ where
         self.keys1.zvl_insert(index, key1);
         self.values.zvl_insert(index, value);
         self.joiner_expand(key0_index);
+        #[cfg(debug_assertions)]
+        self.check_invariants();
         None
     }
 
     /// Remove the value at `key`, returning it if it exists.
     ///
     /// ```rust
-    /// use zerovec::ZeroMap;
+    /// use zerovec::ZeroMap2d;
     ///
-    /// let mut map = ZeroMap::new();
-    /// map.insert(&1, "one");
-    /// map.insert(&2, "two");
-    /// assert_eq!(map.remove(&1), Some("one".to_owned().into_boxed_str()));
-    /// assert_eq!(map.get(&1), None);
+    /// let mut map = ZeroMap2d::new();
+    /// map.insert(&1, "one", "foo");
+    /// map.insert(&2, "two", "bar");
+    /// assert_eq!(map.remove(&1, "one"), Some("foo".to_owned().into_boxed_str()));
+    /// assert_eq!(map.get(&1, "one"), None);
     /// ```
     pub fn remove(&mut self, key0: &K0, key1: &K1) -> Option<V::OwnedType> {
         let (key0_index, range) = self.get_range_for_key0(key0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
+        // The above debug_assert! protects the unwrap() below
         let is_singleton_range = range.start + 1 == range.end;
         let index = range.start
             + match self.keys1.zvl_binary_search_in_range(key1, range).unwrap() {
@@ -257,37 +271,39 @@ where
                 Err(_) => return None,
             };
         self.keys1.zvl_remove(index);
-        self.values.zvl_remove(index);
+        let removed = self.values.zvl_remove(index);
         self.joiner_shrink(key0_index);
         if is_singleton_range {
             self.remove_key0_index(key0_index);
         }
-        None
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+        Some(removed)
     }
 
     /// Appends `value` with `key` to the end of the underlying vector, returning
     /// `key` and `value` _if it failed_. Useful for extending with an existing
     /// sorted list.
     /// ```rust
-    /// use zerovec::ZeroMap;
+    /// use zerovec::ZeroMap2d;
     ///
-    /// let mut map = ZeroMap::new();
-    /// assert!(map.try_append(&1, "uno").is_none());
-    /// assert!(map.try_append(&3, "tres").is_none());
+    /// let mut map = ZeroMap2d::new();
+    /// assert!(map.try_append(&1, "one", "uno").is_none());
+    /// assert!(map.try_append(&3, "three", "tres").is_none());
     ///
-    /// let unsuccessful = map.try_append(&3, "tres-updated");
+    /// let unsuccessful = map.try_append(&3, "three", "tres-updated");
     /// assert!(unsuccessful.is_some(), "append duplicate of last key");
     ///
-    /// let unsuccessful = map.try_append(&2, "dos");
+    /// let unsuccessful = map.try_append(&2, "two", "dos");
     /// assert!(unsuccessful.is_some(), "append out of order");
     ///
-    /// assert_eq!(map.get(&1), Some("uno"));
+    /// assert_eq!(map.get(&1, "one"), Some("uno"));
     ///
     /// // contains the original value for the key: 3
-    /// assert_eq!(map.get(&3), Some("tres"));
+    /// assert_eq!(map.get(&3, "three"), Some("tres"));
     ///
     /// // not appended since it wasn't in order
-    /// assert_eq!(map.get(&2), None);
+    /// assert_eq!(map.get(&2, "two"), None);
     /// ```
     #[must_use]
     pub fn try_append<'b>(
@@ -336,16 +352,21 @@ where
             self.keys0.zvl_push(key0);
             self.joiner.to_mut().push(joiner_value.as_unaligned());
         } else {
+            // This unwrap is protected because we are not empty
             *self.joiner.to_mut().last_mut().unwrap() = joiner_value.as_unaligned();
         }
         self.keys1.zvl_push(key1);
         self.values.zvl_push(value);
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
 
         None
     }
 
     /// Produce an ordered iterator over keys0.
     pub fn iter_keys0<'b>(&'b self) -> impl Iterator<Item = &'b <K0 as ZeroMapKV<'a>>::GetType> {
+        // The unwrap is protected because we are looping over the range of indices in the vec
         (0..self.keys0.zvl_len()).map(move |idx| self.keys0.zvl_get(idx).unwrap())
     }
 
@@ -355,6 +376,7 @@ where
         key0: &K0,
     ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
         let (_, range) = self.get_range_for_key0(key0)?;
+        // The unwrap is protected because all ranges are valid according to invariants 1-4
         Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
     }
 
@@ -398,11 +420,13 @@ where
     ) -> Option<impl Iterator<Item = &'b <K1 as ZeroMapKV<'a>>::GetType>> {
         assert!(key0_index < self.keys0.zvl_len());
         let range = self.get_range_for_key0_index(key0_index);
+        // The unwrap is protected because all ranges are valid according to invariants 1-4
         Some(range.map(move |idx| self.keys1.zvl_get(idx).unwrap()))
     }
 
     /// Produce an iterator over values, ordered by the pair (key0,key1)
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
+        // The unwrap is protected because we are looping over the range of indices in the vec
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 
@@ -438,6 +462,7 @@ where
                     0
                 } else {
                     debug_assert!(key0_index <= self.joiner.len());
+                    // The unwrap is protected by the debug_assert above and key0_index != 0
                     self.joiner.get(key0_index - 1).unwrap()
                 };
                 self.keys0.zvl_insert(key0_index, key0);
@@ -485,6 +510,27 @@ where
                     .as_unaligned()
             });
     }
+
+    #[cfg(debug_assertions)]
+    pub(crate) fn check_invariants(&self) {
+        debug_assert_eq!(self.keys0.zvl_len(), self.joiner.len());
+        debug_assert_eq!(self.keys1.zvl_len(), self.values.zvl_len());
+        debug_assert!(self.keys0.zvl_is_ascending());
+        debug_assert!(self.joiner.zvl_is_ascending());
+        if let Some(last_joiner) = self.joiner.last() {
+            debug_assert_eq!(last_joiner as usize, self.keys1.zvl_len());
+        }
+        for i in 0..self.joiner.len() {
+            let j0 = if i == 0 { 0 } else { self.joiner.get(i - 1).unwrap() as usize };
+            let j1 = self.joiner.get(i).unwrap() as usize;
+            debug_assert_ne!(j0, j1);
+            for j in (j0+1)..j1 {
+                let m0 = self.keys1.zvl_get(j-1).unwrap();
+                let m1 = self.keys1.zvl_get(j).unwrap();
+                debug_assert_eq!(Ordering::Less, K1::Container::get_cmp_get(m0, m1));
+            }
+        }
+    }
 }
 
 impl<'a, K0, K1, V> ZeroMap2d<'a, K0, K1, V>
@@ -511,6 +557,7 @@ where
         let (_, range) = self.get_range_for_key0(key0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
+        // The above debug_assert! protects the unwrap() below
         let index = range.start
             + self
                 .keys1
@@ -604,101 +651,118 @@ mod test {
 
     #[test]
     fn stress_test() {
-        let mut zm2k = ZeroMap2d::<u16, str, str>::new();
+        let mut zm2d = ZeroMap2d::<u16, str, str>::new();
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Borrowed([]), joiner: ZeroVec::Borrowed([]), keys1: [], values: [] }");
-        assert_eq!(zm2k.get(&0, ""), None);
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Borrowed([]), joiner: ZeroVec::Borrowed([]), keys1: [], values: [] }");
+        assert_eq!(zm2d.get(&0, ""), None);
 
-        let result = zm2k.try_append(&3, "ccc", "CCC");
+        let result = zm2d.try_append(&3, "ccc", "CCC");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
-        assert_eq!(zm2k.get(&0, ""), None);
-        assert_eq!(zm2k.get(&3, ""), None);
-        assert_eq!(zm2k.get(&3, "ccc"), Some("CCC"));
-        assert_eq!(zm2k.get(&99, ""), None);
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
+        assert_eq!(zm2d.get(&0, ""), None);
+        assert_eq!(zm2d.get(&3, ""), None);
+        assert_eq!(zm2d.get(&3, "ccc"), Some("CCC"));
+        assert_eq!(zm2d.get(&99, ""), None);
 
-        let result = zm2k.try_append(&3, "eee", "EEE");
+        let result = zm2d.try_append(&3, "eee", "EEE");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
-        assert_eq!(zm2k.get(&0, ""), None);
-        assert_eq!(zm2k.get(&3, ""), None);
-        assert_eq!(zm2k.get(&3, "ccc"), Some("CCC"));
-        assert_eq!(zm2k.get(&3, "eee"), Some("EEE"));
-        assert_eq!(zm2k.get(&3, "five"), None);
-        assert_eq!(zm2k.get(&99, ""), None);
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
+        assert_eq!(zm2d.get(&0, ""), None);
+        assert_eq!(zm2d.get(&3, ""), None);
+        assert_eq!(zm2d.get(&3, "ccc"), Some("CCC"));
+        assert_eq!(zm2d.get(&3, "eee"), Some("EEE"));
+        assert_eq!(zm2d.get(&3, "five"), None);
+        assert_eq!(zm2d.get(&99, ""), None);
 
         // Out of order
-        let result = zm2k.try_append(&3, "ddd", "DD0");
+        let result = zm2d.try_append(&3, "ddd", "DD0");
         assert!(matches!(result, Some(_)));
 
         // Append a few more elements
-        let result = zm2k.try_append(&5, "ddd", "DD1");
+        let result = zm2d.try_append(&5, "ddd", "DD1");
         assert!(matches!(result, None));
-        let result = zm2k.try_append(&7, "ddd", "DD2");
+        let result = zm2d.try_append(&7, "ddd", "DD2");
         assert!(matches!(result, None));
-        let result = zm2k.try_append(&7, "eee", "EEE");
+        let result = zm2d.try_append(&7, "eee", "EEE");
         assert!(matches!(result, None));
-        let result = zm2k.try_append(&7, "www", "WWW");
+        let result = zm2d.try_append(&7, "www", "WWW");
         assert!(matches!(result, None));
-        let result = zm2k.try_append(&9, "yyy", "YYY");
+        let result = zm2d.try_append(&9, "yyy", "YYY");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 7, 9]), joiner: ZeroVec::Owned([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
-        assert_eq!(zm2k.get(&0, ""), None);
-        assert_eq!(zm2k.get(&3, ""), None);
-        assert_eq!(zm2k.get(&3, "ccc"), Some("CCC"));
-        assert_eq!(zm2k.get(&3, "eee"), Some("EEE"));
-        assert_eq!(zm2k.get(&3, "zzz"), None);
-        assert_eq!(zm2k.get(&4, ""), None);
-        assert_eq!(zm2k.get(&5, "aaa"), None);
-        assert_eq!(zm2k.get(&5, "ddd"), Some("DD1"));
-        assert_eq!(zm2k.get(&5, "zzz"), None);
-        assert_eq!(zm2k.get(&6, ""), None);
-        assert_eq!(zm2k.get(&7, "aaa"), None);
-        assert_eq!(zm2k.get(&7, "ddd"), Some("DD2"));
-        assert_eq!(zm2k.get(&7, "eee"), Some("EEE"));
-        assert_eq!(zm2k.get(&7, "www"), Some("WWW"));
-        assert_eq!(zm2k.get(&7, "yyy"), None);
-        assert_eq!(zm2k.get(&7, "zzz"), None);
-        assert_eq!(zm2k.get(&8, ""), None);
-        assert_eq!(zm2k.get(&9, "aaa"), None);
-        assert_eq!(zm2k.get(&9, "www"), None);
-        assert_eq!(zm2k.get(&9, "yyy"), Some("YYY"));
-        assert_eq!(zm2k.get(&9, "zzz"), None);
-        assert_eq!(zm2k.get(&10, ""), None);
-        assert_eq!(zm2k.get(&99, ""), None);
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 7, 9]), joiner: ZeroVec::Owned([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
+        assert_eq!(zm2d.get(&0, ""), None);
+        assert_eq!(zm2d.get(&3, ""), None);
+        assert_eq!(zm2d.get(&3, "ccc"), Some("CCC"));
+        assert_eq!(zm2d.get(&3, "eee"), Some("EEE"));
+        assert_eq!(zm2d.get(&3, "zzz"), None);
+        assert_eq!(zm2d.get(&4, ""), None);
+        assert_eq!(zm2d.get(&5, "aaa"), None);
+        assert_eq!(zm2d.get(&5, "ddd"), Some("DD1"));
+        assert_eq!(zm2d.get(&5, "zzz"), None);
+        assert_eq!(zm2d.get(&6, ""), None);
+        assert_eq!(zm2d.get(&7, "aaa"), None);
+        assert_eq!(zm2d.get(&7, "ddd"), Some("DD2"));
+        assert_eq!(zm2d.get(&7, "eee"), Some("EEE"));
+        assert_eq!(zm2d.get(&7, "www"), Some("WWW"));
+        assert_eq!(zm2d.get(&7, "yyy"), None);
+        assert_eq!(zm2d.get(&7, "zzz"), None);
+        assert_eq!(zm2d.get(&8, ""), None);
+        assert_eq!(zm2d.get(&9, "aaa"), None);
+        assert_eq!(zm2d.get(&9, "www"), None);
+        assert_eq!(zm2d.get(&9, "yyy"), Some("YYY"));
+        assert_eq!(zm2d.get(&9, "zzz"), None);
+        assert_eq!(zm2d.get(&10, ""), None);
+        assert_eq!(zm2d.get(&99, ""), None);
 
         // Insert some elements
-        zm2k.insert(&3, "mmm", "MM0");
-        zm2k.insert(&6, "ddd", "DD3");
-        zm2k.insert(&6, "mmm", "MM1");
-        zm2k.insert(&6, "nnn", "NNN");
+        zm2d.insert(&3, "mmm", "MM0");
+        zm2d.insert(&6, "ddd", "DD3");
+        zm2d.insert(&6, "mmm", "MM1");
+        zm2d.insert(&6, "nnn", "NNN");
 
-        assert_eq!(format!("{:?}", zm2k), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 6, 7, 9]), joiner: ZeroVec::Owned([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
-        assert_eq!(zm2k.get(&0, ""), None);
-        assert_eq!(zm2k.get(&3, ""), None);
-        assert_eq!(zm2k.get(&3, "ccc"), Some("CCC"));
-        assert_eq!(zm2k.get(&3, "eee"), Some("EEE"));
-        assert_eq!(zm2k.get(&3, "zzz"), None);
-        assert_eq!(zm2k.get(&4, ""), None);
-        assert_eq!(zm2k.get(&5, "aaa"), None);
-        assert_eq!(zm2k.get(&5, "ddd"), Some("DD1"));
-        assert_eq!(zm2k.get(&5, "zzz"), None);
-        assert_eq!(zm2k.get(&6, ""), None);
-        assert_eq!(zm2k.get(&7, "aaa"), None);
-        assert_eq!(zm2k.get(&7, "ddd"), Some("DD2"));
-        assert_eq!(zm2k.get(&7, "eee"), Some("EEE"));
-        assert_eq!(zm2k.get(&7, "www"), Some("WWW"));
-        assert_eq!(zm2k.get(&7, "yyy"), None);
-        assert_eq!(zm2k.get(&7, "zzz"), None);
-        assert_eq!(zm2k.get(&8, ""), None);
-        assert_eq!(zm2k.get(&9, "aaa"), None);
-        assert_eq!(zm2k.get(&9, "www"), None);
-        assert_eq!(zm2k.get(&9, "yyy"), Some("YYY"));
-        assert_eq!(zm2k.get(&9, "zzz"), None);
-        assert_eq!(zm2k.get(&10, ""), None);
-        assert_eq!(zm2k.get(&99, ""), None);
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 6, 7, 9]), joiner: ZeroVec::Owned([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
+        assert_eq!(zm2d.get(&0, ""), None);
+        assert_eq!(zm2d.get(&3, ""), None);
+        assert_eq!(zm2d.get(&3, "ccc"), Some("CCC"));
+        assert_eq!(zm2d.get(&3, "eee"), Some("EEE"));
+        assert_eq!(zm2d.get(&3, "mmm"), Some("MM0"));
+        assert_eq!(zm2d.get(&3, "zzz"), None);
+        assert_eq!(zm2d.get(&4, ""), None);
+        assert_eq!(zm2d.get(&5, "aaa"), None);
+        assert_eq!(zm2d.get(&5, "ddd"), Some("DD1"));
+        assert_eq!(zm2d.get(&5, "zzz"), None);
+        assert_eq!(zm2d.get(&6, "aaa"), None);
+        assert_eq!(zm2d.get(&6, "ddd"), Some("DD3"));
+        assert_eq!(zm2d.get(&6, "mmm"), Some("MM1"));
+        assert_eq!(zm2d.get(&6, "nnn"), Some("NNN"));
+        assert_eq!(zm2d.get(&6, "zzz"), None);
+        assert_eq!(zm2d.get(&7, "aaa"), None);
+        assert_eq!(zm2d.get(&7, "ddd"), Some("DD2"));
+        assert_eq!(zm2d.get(&7, "eee"), Some("EEE"));
+        assert_eq!(zm2d.get(&7, "www"), Some("WWW"));
+        assert_eq!(zm2d.get(&7, "yyy"), None);
+        assert_eq!(zm2d.get(&7, "zzz"), None);
+        assert_eq!(zm2d.get(&8, ""), None);
+        assert_eq!(zm2d.get(&9, "aaa"), None);
+        assert_eq!(zm2d.get(&9, "www"), None);
+        assert_eq!(zm2d.get(&9, "yyy"), Some("YYY"));
+        assert_eq!(zm2d.get(&9, "zzz"), None);
+        assert_eq!(zm2d.get(&10, ""), None);
+        assert_eq!(zm2d.get(&99, ""), None);
+
+        // Remove some elements
+        let result = zm2d.remove(&3, "ccc"); // first element
+        assert_eq!(result, Some(String::from("CCC").into_boxed_str()));
+        let result = zm2d.remove(&3, "mmm"); // middle element
+        assert_eq!(result, Some(String::from("MM0").into_boxed_str()));
+        let result = zm2d.remove(&5, "ddd"); // singleton K0
+        assert_eq!(result, Some(String::from("DD1").into_boxed_str()));
+        let result = zm2d.remove(&9, "yyy"); // last element
+        assert_eq!(result, Some(String::from("YYY").into_boxed_str()));
+
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 6, 7]), joiner: ZeroVec::Owned([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }");
     }
 }

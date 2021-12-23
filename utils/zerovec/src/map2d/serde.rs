@@ -254,40 +254,42 @@ where
                 K1::Container,
                 V::Container,
             ) = Deserialize::deserialize(deserializer)?;
+            // Invariant 1: len(keys0) == len(joiner)
             if keys0.zvl_len() != joiner.len() {
                 return Err(de::Error::custom(
                     "Mismatched keys0 and joiner sizes in ZeroMap2d",
                 ));
             }
+            // Invariant 2: len(keys1) == len(values)
             if keys1.zvl_len() != values.zvl_len() {
                 return Err(de::Error::custom(
                     "Mismatched keys1 and value sizes in ZeroMap2d",
                 ));
             }
-            if !keys0.zvl_is_ascending() {
-                return Err(de::Error::custom(
-                    "ZeroMap2d deserializing keys0 out of order",
-                ));
-            }
+            // Invariant 3: joiner is sorted
             if !joiner.zvl_is_ascending() {
                 return Err(de::Error::custom(
                     "ZeroMap2d deserializing joiner array out of order",
                 ));
             }
-            if joiner.last().is_some() && joiner.last().map(|x| x as usize) != Some(keys1.zvl_len())
-            {
-                return Err(de::Error::custom(
-                    "ZeroMap2d deserializing joiner array malformed",
-                ));
+            // Invariant 4: the last element of joiner is the length of keys1
+            if let Some(last_joiner0) = joiner.last() {
+                if keys1.zvl_len() != last_joiner0 as usize {
+                    return Err(de::Error::custom(
+                        "ZeroMap2d deserializing joiner array malformed",
+                    ));
+                }
             }
-            // TODO: Check the following additional invariants:
-            // - keys1 ascending in ranges
-            Ok(Self {
+            let result = Self {
                 keys0,
                 joiner,
                 keys1,
                 values,
-            })
+            };
+            // In debug mode, check the optional invariants, too
+            #[cfg(debug_assertions)]
+            result.check_invariants();
+            Ok(result)
         }
     }
 }
