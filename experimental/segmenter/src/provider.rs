@@ -6,14 +6,13 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
-use icu_provider::yoke::{self, *};
 use crate::property_table::UAX14_PROPERTY_TABLE;
 use crate::rule_table::UAX14_RULE_TABLE;
-use zerovec::ZeroVec;
-use zerovec::ZeroSlice;
 use alloc::boxed::Box;
 use core::ops::Deref;
+use icu_provider::yoke::{self, *};
+use zerovec::ZeroSlice;
+use zerovec::ZeroVec;
 
 pub mod key {
     //! Resource keys for [`icu_decimal`](crate).
@@ -31,27 +30,28 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct LineBreakDataV1<'data> {
-    /// String to prepend before the decimal number.
+    /// Property table for line breaking.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub property_table: LineBreakPropertyTable<'data>,
 
-    /// String to append after the decimal number.
+    /// Rule table for line breaking.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub rule_table: ZeroVec<'data, i8>,
 }
 
+/// Property table for line breaking.
 #[derive(Debug, PartialEq, Clone, Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub(crate) enum LineBreakPropertyTableInner<'data> {
+pub enum LineBreakPropertyTable<'data> {
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     Borrowed(&'data [[u8; 1024]; 128]),
     Owned(Box<[[u8; 1024]; 128]>),
 }
 
-impl Deref for LineBreakPropertyTableInner<'_> {
+impl Deref for LineBreakPropertyTable<'_> {
     type Target = [[u8; 1024]; 128];
     fn deref(&self) -> &Self::Target {
         match self {
@@ -61,26 +61,15 @@ impl Deref for LineBreakPropertyTableInner<'_> {
     }
 }
 
-impl<'a> ZeroCopyFrom<LineBreakPropertyTableInner<'a>> for LineBreakPropertyTableInner<'static> {
-    fn zero_copy_from<'b>(cart: &'b LineBreakPropertyTableInner<'a>) -> <Self as Yokeable<'b>>::Output {
-        LineBreakPropertyTableInner::Borrowed(&*cart)
+impl<'a> ZeroCopyFrom<LineBreakPropertyTable<'a>> for LineBreakPropertyTable<'static> {
+    fn zero_copy_from<'b>(cart: &'b LineBreakPropertyTable<'a>) -> <Self as Yokeable<'b>>::Output {
+        LineBreakPropertyTable::Borrowed(&*cart)
     }
-}
-
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub struct LineBreakPropertyTable<'data> {
-    pub(crate) table: LineBreakPropertyTableInner<'data>,
 }
 
 impl Default for LineBreakDataV1<'static> {
     fn default() -> Self {
-        let property_table = LineBreakPropertyTable {
-            table: LineBreakPropertyTableInner::Borrowed(&UAX14_PROPERTY_TABLE)
-        };
+        let property_table = LineBreakPropertyTable::Borrowed(&UAX14_PROPERTY_TABLE);
         let rule_table = ZeroSlice::from_ule_slice(&UAX14_RULE_TABLE).as_zerovec();
         Self {
             property_table,
