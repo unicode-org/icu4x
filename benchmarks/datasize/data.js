@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640269641004,
+  "lastUpdate": 1640294682255,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6173,6 +6173,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1a87cea77e6e25f27c994ea40ee8bd21342b7534"
         },
         "date": 1640269631341,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9cd5870dd444ba64ed6671089e1de4c471d1dd9",
+          "message": "Remove SmallStr and recommend Cow<str> (#1417)",
+          "timestamp": "2021-12-23T13:23:10-08:00",
+          "tree_id": "78ad5c6a020995304aa59d662dc7a9dea4a5302a",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9cd5870dd444ba64ed6671089e1de4c471d1dd9"
+        },
+        "date": 1640294672951,
         "tool": "ndjson",
         "benches": [
           {
