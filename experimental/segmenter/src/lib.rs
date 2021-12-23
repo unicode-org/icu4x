@@ -101,6 +101,8 @@ mod rule_table;
 mod grapheme;
 mod word;
 
+pub mod provider;
+
 #[cfg(feature = "lstm")]
 #[macro_use]
 extern crate lazy_static;
