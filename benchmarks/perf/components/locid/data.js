@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640295042830,
+  "lastUpdate": 1640321603671,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20008,6 +20008,42 @@ window.BENCHMARK_DATA = {
           {
             "name": "locale/overview",
             "value": 4151,
+            "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "061017f8c2a1e7463dd4bc27d1c7bb2eb9e17e1f",
+          "message": "Fix license header check script (#1423)",
+          "timestamp": "2021-12-23T20:46:21-08:00",
+          "tree_id": "f19a0c864530708a52542031b65bd7b45b7c39c0",
+          "url": "https://github.com/unicode-org/icu4x/commit/061017f8c2a1e7463dd4bc27d1c7bb2eb9e17e1f"
+        },
+        "date": 1640321594888,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2466,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4129,
             "range": "± 8",
             "unit": "ns/iter"
           }
