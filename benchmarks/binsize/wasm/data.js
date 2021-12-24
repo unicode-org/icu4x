@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640321506101,
+  "lastUpdate": 1640390282240,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31991,6 +31991,150 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/061017f8c2a1e7463dd4bc27d1c7bb2eb9e17e1f"
         },
         "date": 1640321496824,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "work_log+opt.wasm",
+            "value": 1624608,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 1677419,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12604,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 1411291,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10538,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30617,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13919,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 8545,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17658,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 9502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 6832,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13520,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 9081,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm",
+            "value": 1414174,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 15749,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 1408950,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 6957,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm",
+            "value": 11724,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 1411289,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4bbbabc6d773396b9aaf2bb57f66136b233a3422",
+          "message": "Update Diplomat (#1447)\n\n* Bump diplomat\n\n* Fix for new diplomat\n\n* Regen diplomat\n\n* fix tests",
+          "timestamp": "2021-12-24T15:52:51-08:00",
+          "tree_id": "e1bb9883099ad179ba06bd5fe13bdab7413eda00",
+          "url": "https://github.com/unicode-org/icu4x/commit/4bbbabc6d773396b9aaf2bb57f66136b233a3422"
+        },
+        "date": 1640390273477,
         "tool": "ndjson",
         "benches": [
           {
