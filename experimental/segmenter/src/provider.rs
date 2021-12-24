@@ -83,7 +83,6 @@ pub struct LineBreakRuleTable<'data> {
     /// Matrix of rules.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub table_data: ZeroVec<'data, i8>,
-    // TODO: Enforce the invariant between this field and the length of table_data.
     /// Number of properties; should be the square root of the length of [`Self::table_data`].
     pub property_count: u8,
 }

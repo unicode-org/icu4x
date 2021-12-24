@@ -357,9 +357,9 @@ fn get_break_state_from_table(
     left: u8,
     right: u8,
 ) -> i8 {
-    // TODO: Protect this from potential panics.
     let idx = ((left as usize) - 1) * (rule_table.property_count as usize) + (right as usize) - 1;
-    rule_table.table_data.as_ule_slice()[idx]
+    // We use unwrap_or to fall back to the base case and prevent panics on bad data.
+    rule_table.table_data.get(idx).unwrap_or(KEEP_RULE)
 }
 
 #[inline]
