@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640294874370,
+  "lastUpdate": 1640321529393,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31847,6 +31847,150 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d9cd5870dd444ba64ed6671089e1de4c471d1dd9"
         },
         "date": 1640294865834,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "postcard+opt.wasm.gz",
+            "value": 5428,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm.gz",
+            "value": 319223,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm.gz",
+            "value": 224184,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm.gz",
+            "value": 3183,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm.gz",
+            "value": 301334,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm.gz",
+            "value": 222008,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm.gz",
+            "value": 223357,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm.gz",
+            "value": 6258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm.gz",
+            "value": 3860,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm.gz",
+            "value": 3103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm.gz",
+            "value": 7119,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm.gz",
+            "value": 5932,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm.gz",
+            "value": 4240,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm.gz",
+            "value": 12928,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm.gz",
+            "value": 4077,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm.gz",
+            "value": 6085,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm.gz",
+            "value": 9269,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm.gz",
+            "value": 4938,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm.gz",
+            "value": 225,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm.gz",
+            "value": 223782,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "061017f8c2a1e7463dd4bc27d1c7bb2eb9e17e1f",
+          "message": "Fix license header check script (#1423)",
+          "timestamp": "2021-12-23T20:46:21-08:00",
+          "tree_id": "f19a0c864530708a52542031b65bd7b45b7c39c0",
+          "url": "https://github.com/unicode-org/icu4x/commit/061017f8c2a1e7463dd4bc27d1c7bb2eb9e17e1f"
+        },
+        "date": 1640321519792,
         "tool": "ndjson",
         "benches": [
           {
