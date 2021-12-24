@@ -32,7 +32,7 @@ int main() {
 
     ICU4XPluralOperands op1 = { .i = 3 };
 
-    ICU4XPluralCategory cat1 = ICU4XPluralRules_select(rules, &op1);
+    ICU4XPluralCategory cat1 = ICU4XPluralRules_select(rules, op1);
 
     printf("Plural Category %d (should be %d)\n", (int)cat1, (int)ICU4XPluralCategory_Few);
 
@@ -43,7 +43,7 @@ int main() {
         return 1;
     }
 
-    ICU4XPluralCategory cat2 = ICU4XPluralRules_select(rules, &op_result.operands);
+    ICU4XPluralCategory cat2 = ICU4XPluralRules_select(rules, op_result.operands);
 
     printf("Plural Category %d (should be %d)\n", (int)cat2, (int)ICU4XPluralCategory_Many);
 

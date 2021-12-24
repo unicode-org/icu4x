@@ -7,7 +7,6 @@
 #include <memory>
 #include <variant>
 #include <optional>
-#include <span>
 #include "diplomat_runtime.hpp"
 
 namespace capi {
@@ -42,6 +41,9 @@ class ICU4XCodePointSetData {
   inline const capi::ICU4XCodePointSetData* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCodePointSetData* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCodePointSetData(capi::ICU4XCodePointSetData* i) : inner(i) {}
+  ICU4XCodePointSetData() = default;
+  ICU4XCodePointSetData(ICU4XCodePointSetData&&) noexcept = default;
+  ICU4XCodePointSetData& operator=(ICU4XCodePointSetData&& other) noexcept = default;
  private:
   std::unique_ptr<capi::ICU4XCodePointSetData, ICU4XCodePointSetDataDeleter> inner;
 };

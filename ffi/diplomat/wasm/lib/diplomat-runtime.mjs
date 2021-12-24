@@ -14,3 +14,10 @@ export function withWriteable(wasm, callback) {
     wasm.diplomat_buffer_writeable_destroy(writeable);
   }
 }
+
+export class FFIError extends Error {
+  constructor(error_value) {
+    super("Error over FFI");
+    this.error_value = error_value; // (2)
+  }
+}

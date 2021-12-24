@@ -83,7 +83,7 @@
 
         FFI version of ``PluralRules::try_new()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
 
-    .. cpp:function:: ICU4XPluralCategory select(const ICU4XPluralOperands& op) const
+    .. cpp:function:: ICU4XPluralCategory select(ICU4XPluralOperands op) const
 
         FFI version of ``PluralRules::select()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select>`__ for more details.
 
