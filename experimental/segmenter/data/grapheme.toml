@@ -1,3 +1,7 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 # These grapheme boundary rules are based on UAX #29, Unicode Version 14.0.0.
 # https://www.unicode.org/reports/tr29/tr29-39.html
 
