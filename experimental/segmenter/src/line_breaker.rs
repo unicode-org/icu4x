@@ -310,11 +310,10 @@ fn is_break_utf32_by_loose(
 #[inline]
 fn is_break_from_table(
     rule_table: &LineBreakRuleTable<'_>,
-    property_count: usize,
     left: u8,
     right: u8,
 ) -> bool {
-    let rule = get_break_state_from_table(rule_table, property_count, left, right);
+    let rule = get_break_state_from_table(rule_table, left, right);
     if rule == KEEP_RULE {
         return false;
     }
@@ -355,13 +354,12 @@ fn is_non_break_by_keepall(left: u8, right: u8) -> bool {
 #[inline]
 fn get_break_state_from_table(
     rule_table: &LineBreakRuleTable<'_>,
-    property_count: usize,
     left: u8,
     right: u8,
 ) -> i8 {
-    // TODO: Protect this from potential panics
-    rule_table.table_data.as_ule_slice()
-        [((left as usize) - 1) * property_count + (right as usize) - 1]
+    // TODO: Protect this from potential panics.
+    let idx = ((left as usize) - 1) * (rule_table.property_count as usize) + (right as usize) - 1;
+    rule_table.table_data.as_ule_slice()[idx]
 }
 
 #[inline]
@@ -528,7 +526,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // If break_state is equals or grater than 0, it is alias of property.
             let mut break_state = get_break_state_from_table(
                 &self.segmenter.payload.get().rule_table,
-                PROP_COUNT,
                 left_prop,
                 right_prop,
             );
@@ -542,7 +539,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                         let break_state = get_break_state_from_table(
                             &self.segmenter.payload.get().rule_table,
-                            PROP_COUNT,
                             break_state as u8,
                             EOT,
                         );
@@ -558,7 +554,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     let prop = Y::get_linebreak_property(self);
                     break_state = get_break_state_from_table(
                         &self.segmenter.payload.get().rule_table,
-                        PROP_COUNT,
                         break_state as u8,
                         prop,
                     );
@@ -582,7 +577,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
 
             if is_break_from_table(
                 &self.segmenter.payload.get().rule_table,
-                PROP_COUNT,
                 left_prop,
                 right_prop,
             ) {
@@ -819,7 +813,7 @@ mod tests {
 
     fn is_break(left: u8, right: u8) -> bool {
         let rule_table = Default::default();
-        is_break_from_table(&rule_table, PROP_COUNT, left, right)
+        is_break_from_table(&rule_table, left, right)
     }
 
     #[test]

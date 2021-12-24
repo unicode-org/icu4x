@@ -80,14 +80,19 @@ impl Default for LineBreakPropertyTable<'static> {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct LineBreakRuleTable<'data> {
+    /// Matrix of rules.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub table_data: ZeroVec<'data, i8>,
+    // TODO: Enforce the invariant between this field and the length of table_data.
+    /// Number of properties; should be the square root of the length of [`Self::table_data`].
+    pub property_count: u8,
 }
 
 impl Default for LineBreakRuleTable<'static> {
     fn default() -> Self {
         Self {
             table_data: ZeroSlice::from_ule_slice(&UAX14_RULE_TABLE).as_zerovec(),
+            property_count: crate::lb_define::PROP_COUNT as u8,
         }
     }
 }
