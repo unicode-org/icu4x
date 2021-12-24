@@ -119,7 +119,7 @@ impl<'data> ListFormatterPatternsV1<'data> {
 }
 
 /// A pattern that can behave conditionally on the next element.
-#[derive(Clone, Debug, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)
@@ -131,17 +131,8 @@ pub struct ConditionalListJoinerPattern<'data> {
     special_case: Option<SpecialCasePattern<'data>>,
 }
 
-impl PartialEq for ConditionalListJoinerPattern<'_> {
-    fn eq(&self, other: &Self) -> bool {
-        match (&self.special_case, &other.special_case) {
-            (None, None) => self.default == other.default,
-            _ => false,
-        }
-    }
-}
-
 /// A pattern that can behave conditionally on the next element.
-#[derive(Clone, Debug, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)

@@ -19,6 +19,26 @@ pub(crate) enum StringMatcher<'data> {
     Precomputed(Cow<'data, [u8]>),
 }
 
+impl PartialEq for StringMatcher<'_> {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (
+                StringMatcher::FromPattern(pattern1, _),
+                StringMatcher::FromPattern(pattern2, _),
+            ) => pattern1 == pattern2,
+            (StringMatcher::Precomputed(bytes1), StringMatcher::FromPattern(_, bytes2)) => {
+                bytes1 == bytes2
+            }
+            (StringMatcher::FromPattern(_, bytes1), StringMatcher::Precomputed(bytes2)) => {
+                bytes1 == bytes2
+            }
+            (StringMatcher::Precomputed(bytes1), StringMatcher::Precomputed(bytes2)) => {
+                bytes1 == bytes2
+            }
+        }
+    }
+}
+
 #[cfg(feature = "provider_serde")]
 impl serde::Serialize for StringMatcher<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -122,28 +142,8 @@ mod test {
         assert!(matcher.test("abcde"));
     }
 
-    impl PartialEq for StringMatcher<'_> {
-        fn eq(&self, other: &Self) -> bool {
-            match (self, other) {
-                (
-                    StringMatcher::FromPattern(pattern1, _),
-                    StringMatcher::FromPattern(pattern2, _),
-                ) => pattern1 == pattern2,
-                (StringMatcher::Precomputed(bytes1), StringMatcher::FromPattern(_, bytes2)) => {
-                    bytes1 == bytes2
-                }
-                (StringMatcher::FromPattern(_, bytes1), StringMatcher::Precomputed(bytes2)) => {
-                    bytes1 == bytes2
-                }
-                (StringMatcher::Precomputed(bytes1), StringMatcher::Precomputed(bytes2)) => {
-                    bytes1 == bytes2
-                }
-            }
-        }
-    }
-
     #[test]
-    fn test_deserialization() {
+    fn test_postcard_serialization() {
         let matcher = StringMatcher::new("abc*").unwrap();
 
         let bytes = postcard::to_stdvec(&matcher).unwrap();
@@ -151,6 +151,11 @@ mod test {
             postcard::from_bytes::<StringMatcher>(&bytes).unwrap(),
             matcher
         );
+    }
+
+    #[test]
+    fn test_json_serialization() {
+        let matcher = StringMatcher::new("abc*").unwrap();
 
         let json = serde_json::to_string(&matcher).unwrap();
         assert_eq!(
