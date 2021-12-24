@@ -22,10 +22,9 @@ pub(crate) enum StringMatcher<'data> {
 impl PartialEq for StringMatcher<'_> {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (
-                StringMatcher::FromPattern(pattern1, _),
-                StringMatcher::FromPattern(pattern2, _),
-            ) => pattern1 == pattern2,
+            (StringMatcher::FromPattern(pattern1, _), StringMatcher::FromPattern(pattern2, _)) => {
+                pattern1 == pattern2
+            }
             (StringMatcher::Precomputed(bytes1), StringMatcher::FromPattern(_, bytes2)) => {
                 bytes1 == bytes2
             }
