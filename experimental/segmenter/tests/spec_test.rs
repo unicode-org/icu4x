@@ -109,7 +109,8 @@ impl Iterator for TestContentIterator {
 #[test]
 fn run_line_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/LineBreakTest.txt");
-    let segmenter = LineBreakSegmenter::try_new().expect("Data exists");
+    let provider = icu_provider::inv::InvariantDataProvider;
+    let segmenter = LineBreakSegmenter::try_new(&provider).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

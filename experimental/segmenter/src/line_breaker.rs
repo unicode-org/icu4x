@@ -8,13 +8,14 @@ use crate::indices::*;
 use crate::language::*;
 use crate::lb_define::*;
 use crate::property_table::*;
+use crate::provider::*;
 use crate::rule_table::*;
 
 use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
 use unicode_width::UnicodeWidthChar;
 
 // Use the LSTM when the feature is enabled.
@@ -107,19 +108,33 @@ impl Default for LineBreakOptions {
 
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
+    payload: DataPayload<LineBreakDataV1Marker>,
 }
 
 impl LineBreakSegmenter {
-    pub fn try_new() -> Result<Self, DataError> {
-        // Note: This will be able to return an Error once DataProvider is added
-        Ok(Self {
-            options: Default::default(),
-        })
+    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+    {
+        Self::try_new_with_options(provider, Default::default())
     }
 
-    pub fn try_new_with_options(options: LineBreakOptions) -> Result<Self, DataError> {
-        // Note: This will be able to return an Error once DataProvider is added
-        Ok(Self { options })
+    pub fn try_new_with_options<D>(
+        provider: &D,
+        options: LineBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+    {
+        let payload = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: key::LINE_BREAK_DATA_V1,
+                    options: Default::default(),
+                },
+            })?
+            .take_payload()?;
+        Ok(Self { options, payload })
     }
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
@@ -862,7 +877,8 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter = LineBreakSegmenter::try_new().expect("Data exists");
+        let provider = icu_provider::inv::InvariantDataProvider;
+        let segmenter = LineBreakSegmenter::try_new(&provider).expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());
