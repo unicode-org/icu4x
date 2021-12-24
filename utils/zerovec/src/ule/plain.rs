@@ -13,7 +13,7 @@ use super::*;
 pub struct RawBytesULE<const N: usize>(pub [u8; N]);
 
 macro_rules! impl_byte_slice_size {
-    ($size:literal) => {
+    ($unsigned:ty, $size:literal) => {
         impl From<[u8; $size]> for RawBytesULE<$size> {
             #[inline]
             fn from(le_bytes: [u8; $size]) -> Self {
@@ -55,6 +55,13 @@ macro_rules! impl_byte_slice_size {
                 // Safe because Self is transparent over [u8; $size]
                 unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
             }
+
+            /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
+            /// [AsULE::from_unaligned()] on the appropriately sized type.
+            #[inline]
+            pub fn as_unsigned_int(&self) -> $unsigned {
+                <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
+            }
         }
     };
 }
@@ -84,10 +91,10 @@ macro_rules! impl_byte_slice_type {
     };
 }
 
-impl_byte_slice_size!(2);
-impl_byte_slice_size!(4);
-impl_byte_slice_size!(8);
-impl_byte_slice_size!(16);
+impl_byte_slice_size!(u16, 2);
+impl_byte_slice_size!(u32, 4);
+impl_byte_slice_size!(u64, 8);
+impl_byte_slice_size!(u128, 16);
 
 impl_byte_slice_type!(u16, 2);
 impl_byte_slice_type!(u32, 4);

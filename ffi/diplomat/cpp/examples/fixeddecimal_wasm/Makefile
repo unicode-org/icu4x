@@ -22,7 +22,7 @@ a.out: ../../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.cpp
 	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi.a -ldl -lpthread -lm -g
 
 ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a: $(ALL_RUST)
-	RUSTFLAGS="-Cpanic=abort" cargo +nightly-2021-09-22 build --release -p icu_capi --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+	RUSTFLAGS="-Cpanic=abort" cargo +nightly-2021-12-22 build --release -p icu_capi --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
 
 web-version.html: ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a $(ALL_HEADERS) test.cpp
 	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a -ldl -lpthread -lm -g  -o web-version.html --bind --emrun -sENVIRONMENT=web -sWASM=1 -sEXPORT_ES6=1 -sMODULARIZE=1

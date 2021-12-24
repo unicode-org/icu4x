@@ -153,8 +153,11 @@ impl IterableDataProviderCore for ListProvider {
             .iter()
             // ur-IN has a buggy pattern ("{1}, {0}") which violates
             // our invariant that {0} is at index 0 (and rotates the output).
+            // ml has middle and start patterns with suffixes.
             // See https://github.com/unicode-org/icu4x/issues/1282
-            .filter(|(l, _)| *l != &icu_locid_macros::langid!("ur-IN"))
+            .filter(|(l, _)| {
+                *l != &icu_locid_macros::langid!("ur-IN") && *l != &icu_locid_macros::langid!("ml")
+            })
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 langid: Some(l.clone()),
@@ -256,16 +259,16 @@ mod tests {
                 .get()
                 .end(Width::Wide)
                 .parts(""),
-            (" ou ", "")
+            ("", " ou ", "")
         );
     }
 
     #[test]
     fn test_spanish() {
-        let y_parts = (" y ", "");
-        let e_parts = (" e ", "");
-        let o_parts = (" o ", "");
-        let u_parts = (" u ", "");
+        let y_parts = ("", " y ", "");
+        let e_parts = ("", " e ", "");
+        let o_parts = ("", " o ", "");
+        let u_parts = ("", " u ", "");
 
         let payload_and = provide(langid!("es"), key::LIST_FORMAT_AND_V1);
         let and = &payload_and.get().end(Width::Wide);
@@ -322,8 +325,8 @@ mod tests {
 
     #[test]
     fn test_hebrew() {
-        let vav_parts = (" ו", "");
-        let vav_dash_parts = (" ו-", "");
+        let vav_parts = ("", " ו", "");
+        let vav_dash_parts = ("", " ו-", "");
 
         assert_eq!(
             provide(langid!("he"), key::LIST_FORMAT_AND_V1)
