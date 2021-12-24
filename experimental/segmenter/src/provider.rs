@@ -36,7 +36,7 @@ pub struct LineBreakDataV1<'data> {
 
     /// Rule table for line breaking.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub rule_table: ZeroVec<'data, i8>,
+    pub rule_table: LineBreakRuleTable<'data>,
 }
 
 /// Property table for line breaking.
@@ -67,13 +67,36 @@ impl<'a> ZeroCopyFrom<LineBreakPropertyTable<'a>> for LineBreakPropertyTable<'st
     }
 }
 
+impl Default for LineBreakPropertyTable<'static> {
+    fn default() -> Self {
+        LineBreakPropertyTable::Borrowed(&UAX14_PROPERTY_TABLE)
+    }
+}
+
+/// Rule table for line breaking.
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct LineBreakRuleTable<'data> {
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub table_data: ZeroVec<'data, i8>,
+}
+
+impl Default for LineBreakRuleTable<'static> {
+    fn default() -> Self {
+        Self {
+            table_data: ZeroSlice::from_ule_slice(&UAX14_RULE_TABLE).as_zerovec(),
+        }
+    }
+}
+
 impl Default for LineBreakDataV1<'static> {
     fn default() -> Self {
-        let property_table = LineBreakPropertyTable::Borrowed(&UAX14_PROPERTY_TABLE);
-        let rule_table = ZeroSlice::from_ule_slice(&UAX14_RULE_TABLE).as_zerovec();
         Self {
-            property_table,
-            rule_table,
+            property_table: Default::default(),
+            rule_table: Default::default(),
         }
     }
 }
