@@ -7,7 +7,6 @@
 #include <memory>
 #include <variant>
 #include <optional>
-#include <span>
 #include "diplomat_runtime.hpp"
 
 namespace capi {
@@ -56,6 +55,9 @@ class ICU4XLocaleCanonicalizer {
   inline const capi::ICU4XLocaleCanonicalizer* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleCanonicalizer* AsFFIMut() { return this->inner.get(); }
   inline ICU4XLocaleCanonicalizer(capi::ICU4XLocaleCanonicalizer* i) : inner(i) {}
+  ICU4XLocaleCanonicalizer() = default;
+  ICU4XLocaleCanonicalizer(ICU4XLocaleCanonicalizer&&) noexcept = default;
+  ICU4XLocaleCanonicalizer& operator=(ICU4XLocaleCanonicalizer&& other) noexcept = default;
  private:
   std::unique_ptr<capi::ICU4XLocaleCanonicalizer, ICU4XLocaleCanonicalizerDeleter> inner;
 };
