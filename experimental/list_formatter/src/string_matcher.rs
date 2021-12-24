@@ -10,7 +10,7 @@ use alloc::vec::Vec;
 use icu_provider::yoke::{self, *};
 use regex_automata::{SparseDFA, DFA};
 
-#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, Yokeable, ZeroCopyFrom)]
 // TODO: Store the actual DFA instead of their serializations. This requires ZCF and Yokeable on them.
 pub(crate) enum StringMatcher<'data> {
     // Constructor-created or deserialized from JSON. Always owned, Cow is required for ZCF.
@@ -56,10 +56,15 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
                 D::Error::custom(e.to_string())
             })
         } else {
-            // TODO: Validate, https://github.com/BurntSushi/regex-automata/issues/20
-            Ok(StringMatcher::Precomputed(<Cow<'de, [u8]>>::deserialize(
-                deserializer,
-            )?))
+            if cfg!(target_endian = "big") {
+                // TODO: Convert LE to BE. For now we just behave like the
+                // accept-nothing DFA on BE systems.
+                return Ok(StringMatcher::Precomputed(Cow::Borrowed(&[])));
+            }
+
+            let bytes = <Cow<'de, [u8]>>::deserialize(deserializer)?;
+            // TODO: Validate, see https://github.com/BurntSushi/regex-automata/issues/20
+            Ok(StringMatcher::Precomputed(bytes))
         }
     }
 }
@@ -90,15 +95,18 @@ impl<'data> StringMatcher<'data> {
         #[cfg(target_endian = "big")]
         return false;
 
-        let dfa_bytes: &[u8] = match self {
-            StringMatcher::FromPattern(_, dfa_bytes) => &dfa_bytes,
-            StringMatcher::Precomputed(dfa_bytes) => dfa_bytes,
+        let dfa = match self {
+            StringMatcher::FromPattern(_, dfa_bytes) => unsafe {
+                // This is safe because we created these bytes ourselves
+                SparseDFA::<&[u8], u16>::from_bytes(&dfa_bytes)
+            },
+            StringMatcher::Precomputed(dfa_bytes) => unsafe {
+                // TODO: This is not safe
+                SparseDFA::<&[u8], u16>::from_bytes(dfa_bytes)
+            },
         };
 
-        // TODO: We've handled endianness, but there could still be other corruptions,
-        // so this is unsafe.
-        unsafe { SparseDFA::<&[u8], u16>::from_bytes(dfa_bytes) }.find(string.as_bytes())
-            == Some(string.len())
+        dfa.find(string.as_bytes()) == Some(string.len())
     }
 }
 
@@ -112,5 +120,43 @@ mod test {
         assert!(!matcher.test("ab"));
         assert!(matcher.test("abc"));
         assert!(matcher.test("abcde"));
+    }
+
+    impl PartialEq for StringMatcher<'_> {
+        fn eq(&self, other: &Self) -> bool {
+            match (self, other) {
+                (
+                    StringMatcher::FromPattern(pattern1, _),
+                    StringMatcher::FromPattern(pattern2, _),
+                ) => pattern1 == pattern2,
+                (StringMatcher::Precomputed(bytes1), StringMatcher::FromPattern(_, bytes2)) => {
+                    bytes1 == bytes2
+                }
+                (StringMatcher::FromPattern(_, bytes1), StringMatcher::Precomputed(bytes2)) => {
+                    bytes1 == bytes2
+                }
+                (StringMatcher::Precomputed(bytes1), StringMatcher::Precomputed(bytes2)) => {
+                    bytes1 == bytes2
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_deserialization() {
+        let matcher = StringMatcher::new("abc*").unwrap();
+
+        let bytes = postcard::to_stdvec(&matcher).unwrap();
+        assert_eq!(
+            postcard::from_bytes::<StringMatcher>(&bytes).unwrap(),
+            matcher
+        );
+
+        let json = serde_json::to_string(&matcher).unwrap();
+        assert_eq!(
+            serde_json::from_str::<StringMatcher>(&json).unwrap(),
+            matcher
+        );
+        assert!(serde_json::from_str::<StringMatcher>(&".*[").is_err());
     }
 }
