@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640321686706,
+  "lastUpdate": 1640390438309,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22679,6 +22679,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22571,
             "range": "± 1459",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4bbbabc6d773396b9aaf2bb57f66136b233a3422",
+          "message": "Update Diplomat (#1447)\n\n* Bump diplomat\n\n* Fix for new diplomat\n\n* Regen diplomat\n\n* fix tests",
+          "timestamp": "2021-12-24T15:52:51-08:00",
+          "tree_id": "e1bb9883099ad179ba06bd5fe13bdab7413eda00",
+          "url": "https://github.com/unicode-org/icu4x/commit/4bbbabc6d773396b9aaf2bb57f66136b233a3422"
+        },
+        "date": 1640390430422,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 967,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5313,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20850,
+            "range": "± 38",
             "unit": "ns/iter"
           }
         ]
