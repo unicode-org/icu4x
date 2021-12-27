@@ -18,7 +18,6 @@ extern crate alloc;
 
 pub mod arithmetic;
 pub mod buddhist;
-pub mod julian;
 mod calendar;
 mod date;
 mod datetime;
@@ -27,6 +26,7 @@ mod error;
 pub mod gregorian;
 pub mod iso;
 pub mod japanese;
+pub mod julian;
 pub mod provider;
 pub mod types;
 
