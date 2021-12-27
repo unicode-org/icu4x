@@ -89,17 +89,17 @@ pub struct AliasesV1 {
 /// `LanguageIdentifier`.
 pub struct LikelySubtagsV1 {
     /// Language and script.
-    pub language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    pub language_script: LiteMap<(TinyStr4, TinyStr4), (TinyStr4, TinyStr4, TinyStr4)>,
     /// Language and region.
-    pub language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    pub language_region: LiteMap<(TinyStr4, TinyStr4), (TinyStr4, TinyStr4, TinyStr4)>,
     /// Just language.
-    pub language: LiteMap<TinyStr4, LanguageIdentifier>,
+    pub language: LiteMap<TinyStr4, (TinyStr4, TinyStr4, TinyStr4)>,
     /// Script and region.
-    pub script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier>,
+    pub script_region: LiteMap<(TinyStr4, TinyStr4), (TinyStr4, TinyStr4, TinyStr4)>,
     /// Just script.
-    pub script: LiteMap<TinyStr4, LanguageIdentifier>,
+    pub script: LiteMap<TinyStr4, (TinyStr4, TinyStr4, TinyStr4)>,
     /// Just region.
-    pub region: LiteMap<TinyStr4, LanguageIdentifier>,
-    /// Undefined.
-    pub und: LanguageIdentifier,
+    pub region: LiteMap<TinyStr4, (TinyStr4, TinyStr4, TinyStr4)>,
+    /// Undefined
+    pub und: Option<TinyStr4>,
 }

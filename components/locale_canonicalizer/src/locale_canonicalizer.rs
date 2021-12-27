@@ -11,8 +11,12 @@ use alloc::vec::Vec;
 use core::mem;
 use icu_locid::{
     extensions::unicode::{Key, Value},
-    subtags, LanguageIdentifier, Locale,
+    subtags,
+    subtags::Region,
+    subtags::Script,
+    LanguageIdentifier, Locale,
 };
+use icu_locid_macros::{region, script};
 use icu_provider::prelude::*;
 use tinystr::{tinystr4, TinyStr4, TinyStr8};
 
@@ -184,23 +188,23 @@ fn uts35_check_language_rules(
 
 #[inline]
 fn update_langid(
-    entry: &LanguageIdentifier,
+    entry: &(TinyStr4, TinyStr4, TinyStr4),
     langid: &mut LanguageIdentifier,
 ) -> CanonicalizationResult {
     let mut modified = false;
 
-    if langid.language.is_empty() && !entry.language.is_empty() {
-        langid.language = entry.language;
+    if langid.language.is_empty() && !entry.0.to_string().is_empty() {
+        langid.language = entry.0.parse().unwrap();
         modified = true;
     }
 
-    if langid.script.is_none() && entry.script.is_some() {
-        langid.script = entry.script;
+    if langid.script.is_none() && !entry.1.to_string().is_empty() {
+        langid.script = script!(entry.1.to_string());
         modified = true;
     }
 
-    if langid.region.is_none() && entry.region.is_some() {
-        langid.region = entry.region;
+    if langid.region.is_none() && !entry.2.to_string().is_empty() {
+        langid.region = region!(entry.2.to_string());
         modified = true;
     }
 

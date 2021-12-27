@@ -84,36 +84,38 @@ impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1 {
     fn from(other: &cldr_serde::likely_subtags::Resource) -> Self {
         use icu_locid::LanguageIdentifier;
 
-        let mut language_script: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut language_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut language: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
-        let mut script_region: LiteMap<(TinyStr4, TinyStr4), LanguageIdentifier> = LiteMap::new();
-        let mut script: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
-        let mut region: LiteMap<TinyStr4, LanguageIdentifier> = LiteMap::new();
+        let mut language_script: LiteMap<(TinyStr4, TinyStr4), (TinyStr4, TinyStr4, TinyStr4)> =
+            LiteMap::new();
+        let mut language_region: LiteMap<(TinyStr4, TinyStr4), (TinyStr4, TinyStr4, TinyStr4)> =
+            LiteMap::new();
+        let mut language: LiteMap<TinyStr4, (TinyStr4, TinyStr4, TinyStr4)> = LiteMap::new();
+        let mut script_region: LiteMap<(TinyStr4, TinyStr4), (TinyStr4, TinyStr4, TinyStr4)> =
+            LiteMap::new();
+        let mut script: LiteMap<TinyStr4, (TinyStr4, TinyStr4, TinyStr4)> = LiteMap::new();
+        let mut region: LiteMap<TinyStr4, (TinyStr4, TinyStr4, TinyStr4)> = LiteMap::new();
         let mut und = LanguageIdentifier::default();
 
         // Create a result LanguageIdentifier. We only need to store the delta
         // between the search LanguageIdentifier and the result LanguageIdentifier.
         let extract_result =
-            |entry: &(LanguageIdentifier, LanguageIdentifier)| -> LanguageIdentifier {
-                LanguageIdentifier {
-                    language: if entry.0.language != entry.1.language {
+            |entry: &(LanguageIdentifier, LanguageIdentifier)| -> (TinyStr4, TinyStr4, TinyStr4) {
+                (
+                    if entry.0.language != entry.1.language {
                         entry.1.language
                     } else {
                         icu_locid::subtags::Language::und()
                     },
-                    script: if entry.0.script != entry.1.script {
+                    if entry.0.script != entry.1.script {
                         entry.1.script
                     } else {
                         None
                     },
-                    region: if entry.0.region != entry.1.region {
+                    if entry.0.region != entry.1.region {
                         entry.1.region
                     } else {
                         None
                     },
-                    variants: icu_locid::subtags::Variants::default(),
-                }
+                )
             };
 
         for entry in other.supplemental.likely_subtags.iter() {
