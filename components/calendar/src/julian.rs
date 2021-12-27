@@ -34,7 +34,11 @@ impl Calendar for Julian {
         );
 
         // Edge case when the year is divisible by 100, and not by 400
-        if date.0.year.0 % 400 == 0 && u8::from(date.0.month) == 2 && u8::from(date.0.day) == 29 {
+        if date.0.year.0 % 100 == 0
+            && date.0.year.0 % 400 != 0
+            && u8::from(date.0.month) == 2
+            && u8::from(date.0.day) == 29
+        {
             date.0.month = 3.try_into().unwrap();
             date.0.day = 1.try_into().unwrap();
         }
@@ -122,13 +126,12 @@ impl Julian {
     }
 
     fn calculate_day_difference_between_calendars(date: IsoDateInner) -> i32 {
-        // March 1st 200 is the first day when both julian and georgian calendar fall on same day.
-        // Using that date as base to calculate slack
-        let year = date.year.0 - 200;
-        let slack = year / 400;
+        // In year 0, the slack is -2
+        let year = date.year.0;
+        let slack = date.year.0 / 100 - date.year.0 / 400 - 2;
 
-        if year % 400 == 0 && u8::from(date.month) <= 2 {
-            slack + 1
+        if year % 100 == 0 && year % 400 != 0 && u8::from(date.month) <= 2 {
+            slack - 1
         } else {
             slack
         }
@@ -231,7 +234,28 @@ impl DateTime<Julian> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::types::IsoWeekday;
+
+    #[test]
+    fn test_day_difference_between_calendars() {
+        let tests = [
+            (1, 2, 1, -2),
+            (100, 2, 1, -2),
+            (100, 3, 1, -1),
+            (400, 2, 1, 1),
+            (400, 3, 1, 1),
+        ];
+
+        for test in tests {
+            assert_eq!(
+                Julian::calculate_day_difference_between_calendars(
+                    *Date::new_iso_date_from_integers(test.0, test.1, test.2)
+                        .unwrap()
+                        .inner()
+                ),
+                test.3
+            );
+        }
+    }
 
     #[test]
     fn test_day_iso_to_julian() {
@@ -241,5 +265,19 @@ mod test {
         assert_eq!(julian_date.0.year.0, 200);
         assert_eq!(u8::from(julian_date.0.month), 3);
         assert_eq!(u8::from(julian_date.0.day), 1);
+
+        // Feb 28th, 200 (iso) = Feb 29th, 200 (julian)
+        let iso_date = Date::new_iso_date_from_integers(200, 2, 28).unwrap();
+        let julian_date = Julian.date_from_iso(iso_date);
+        assert_eq!(julian_date.0.year.0, 200);
+        assert_eq!(u8::from(julian_date.0.month), 2);
+        assert_eq!(u8::from(julian_date.0.day), 29);
+
+        // March 1st 400 (iso) = Feb 29th, 400 (julian)
+        let iso_date = Date::new_iso_date_from_integers(400, 3, 1).unwrap();
+        let julian_date = Julian.date_from_iso(iso_date);
+        assert_eq!(julian_date.0.year.0, 400);
+        assert_eq!(u8::from(julian_date.0.month), 2);
+        assert_eq!(u8::from(julian_date.0.day), 29);
     }
 }
