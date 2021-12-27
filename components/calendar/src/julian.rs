@@ -63,7 +63,7 @@ impl Calendar for Julian {
     }
 
     fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
-        Iso.day_of_week(Julian.date_to_iso(&date).inner())
+        Iso.day_of_week(Julian.date_to_iso(date).inner())
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
@@ -98,7 +98,7 @@ impl Calendar for Julian {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        Iso.day_of_year_info(Julian.date_to_iso(&date).inner())
+        Iso.day_of_year_info(Julian.date_to_iso(date).inner())
     }
 
     fn debug_name() -> &'static str {
