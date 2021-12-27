@@ -128,7 +128,7 @@ impl Julian {
     fn calculate_day_difference_between_calendars(date: IsoDateInner) -> i32 {
         // In year 0, the slack is -2
         let year = date.year.0;
-        let slack = date.year.0 / 100 - date.year.0 / 400 - 2;
+        let slack = year / 100 - year / 400 - 2;
 
         if year % 100 == 0 && year % 400 != 0 && u8::from(date.month) <= 2 {
             slack - 1
@@ -237,6 +237,7 @@ mod test {
 
     #[test]
     fn test_day_difference_between_calendars() {
+        // (year, month, day, expected difference)
         let tests = [
             (1, 2, 1, -2),
             (100, 2, 1, -2),
@@ -279,5 +280,12 @@ mod test {
         assert_eq!(julian_date.0.year.0, 400);
         assert_eq!(u8::from(julian_date.0.month), 2);
         assert_eq!(u8::from(julian_date.0.day), 29);
+
+        // Jan 1st, 2022 (iso) = Dec 19, 2021 (julian)
+        let iso_date = Date::new_iso_date_from_integers(2022, 1, 1).unwrap();
+        let julian_date = Julian.date_from_iso(iso_date);
+        assert_eq!(julian_date.0.year.0, 2021);
+        assert_eq!(u8::from(julian_date.0.month), 12);
+        assert_eq!(u8::from(julian_date.0.day), 19);
     }
 }
