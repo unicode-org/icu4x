@@ -8,6 +8,98 @@ use alloc::string::String;
 use core::any::TypeId;
 use displaydoc::Display;
 
+/// A list specifying general categories of data provider error.
+/// 
+/// Errors may be caused either by a malformed request or by the data provider
+/// not being able to fulfill a well-formed request.
+#[derive(Clone, Copy, Eq, PartialEq, Display, Debug)]
+#[non_exhaustive]
+pub enum DataErrorKind {
+    /// No data for the provided resource key.
+    #[displaydoc("Missing resource key")]
+    MissingResourceKey,
+
+    /// There is data for the key, but not for this particular variant/locale.
+    #[displaydoc("Missing resource options")]
+    MissingResourceOptions,
+
+    /// The request should include a variant field.
+    #[displaydoc("Request needs a variant field")]
+    NeedsVariant,
+
+    /// The request should include a locale.
+    #[displaydoc("Request needs a locale")]
+    NeedsLanguageIdentifier,
+
+    /// The request should not contain a variant and/or locale.
+    #[displaydoc("Request has extraneous information")]
+    ExtraneousResourceOptions,
+
+    /// The resource was blocked by a filter. The resource may or may not be available.
+    #[displaydoc("Resource blocked by filter")]
+    FilteredResource,
+
+    /// The generic type parameter does not match the TypeId. The actual TypeId is stored
+    /// as context when this error is returned.
+    #[displaydoc("Mismatched type information (expected {0:?})")]
+    MismatchedType(TypeId),
+
+    /// The payload is missing. This is usually caused by a previous error.
+    #[displaydoc("Missing payload")]
+    MissingPayload,
+
+    /// An error occurred while serializing or deserializing data with Serde.
+    ///
+    /// Check debug logs for potentially more information.
+    #[displaydoc("Serde error")]
+    Serde,
+
+    /// An error occurred while accessing a system resource.
+    #[displaydoc("I/O error: {0:?}")]
+    #[cfg(feature = "std")]
+    Io(std::io::ErrorKind),
+}
+
+/// The error type for ICU4X data provider operations.
+#[derive(Clone, Copy, Eq, PartialEq, Debug)]
+pub struct DataError {
+    /// Broad category of the error.
+    pub kind: DataErrorKind,
+
+    /// Additional context, if available.
+    pub str_context: Option<&'static str>,
+}
+
+impl core::fmt::Display for DataError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        if let Some(str_context) = self.str_context {
+            write!(f, "ICU4X data provider error: {}: {}", self.kind, str_context)
+        } else {
+            write!(f, "ICU4X data provider error: {}", self.kind)
+        }
+    }
+}
+
+impl DataError {
+    /// Create a new DataError with the specified kind.
+    /// 
+    /// To add context to the error, follow this with a call to [`Self::with_str_context()`].
+    pub const fn new(kind: DataErrorKind) -> Self {
+        Self {
+            kind,
+            str_context: None,
+        }
+    }
+
+    /// Set the string context of a DataError.
+    pub const fn with_str_context(self, str_context: &'static str) -> Self {
+        Self {
+            kind: self.kind,
+            str_context: Some(str_context)
+        }
+    }
+}
+
 /// Error enumeration for DataProvider.
 #[non_exhaustive]
 #[derive(Display, Debug)]
