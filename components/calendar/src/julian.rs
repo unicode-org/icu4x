@@ -98,7 +98,15 @@ impl Calendar for Julian {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        Iso.day_of_year_info(Julian.date_to_iso(date).inner())
+        let prev_year = IsoYear(date.0.year.0 - 1);
+        let next_year = IsoYear(date.0.year.0 + 1);
+        types::DayOfYearInfo {
+            day_of_year: Julian::day_of_year(date.0),
+            days_in_year: Julian::days_in_year(date.0.year),
+            prev_year: prev_year.into(),
+            days_in_prev_year: Julian::days_in_year(prev_year),
+            next_year: next_year.into(),
+        }
     }
 
     fn debug_name() -> &'static str {
@@ -114,6 +122,24 @@ impl Julian {
 
     fn is_leap_year(year: IsoYear) -> bool {
         year.0 % 4 == 0
+    }
+
+    fn days_in_year(year: IsoYear) -> u32 {
+        if Self::is_leap_year(year) {
+            366
+        } else {
+            365
+        }
+    }
+
+    fn day_of_year(date: IsoDateInner) -> u32 {
+        let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
+        let mut offset = month_offset[u8::from(date.month) as usize - 1];
+        if Self::is_leap_year(date.year) && u8::from(date.month) > 2 {
+            offset += 1;
+        }
+        let prev_month_days = (30 * (u8::from(date.month) as i32 - 1) + offset) as u32;
+        prev_month_days + u8::from(date.day) as u32
     }
 
     fn days_in_month(year: IsoYear, month: IsoMonth) -> u8 {
