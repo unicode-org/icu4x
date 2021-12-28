@@ -268,10 +268,13 @@ fn test_mismatched_types() {
             .take_payload()
             .unwrap()
             .downcast();
-    assert!(matches!(response, Err(DataError {
-        kind: DataErrorKind::MismatchedType(_),
-        ..
-    })));
+    assert!(matches!(
+        response,
+        Err(DataError {
+            kind: DataErrorKind::MismatchedType(_),
+            ..
+        })
+    ));
 }
 
 fn check_v1_v2<P>(d: &P)

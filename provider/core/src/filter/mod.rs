@@ -28,7 +28,7 @@
 //!
 //! // Only return German data from a HelloWorldProvider:
 //! HelloWorldProvider::new_with_placeholder_data()
-//!     .filterable()
+//!     .filterable("Demo German-only filter")
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!

@@ -68,6 +68,7 @@ pub enum DataErrorKind {
 
 /// The error type for ICU4X data provider operations.
 #[derive(Clone, Copy, Eq, PartialEq, Debug)]
+#[non_exhaustive]
 pub struct DataError {
     /// Broad category of the error.
     pub kind: DataErrorKind,
@@ -94,7 +95,7 @@ impl core::fmt::Display for DataError {
 
 impl DataErrorKind {
     /// Converts this DataErrorKind into a DataError.
-    /// 
+    ///
     /// If possible, you should attach context to the DataErrorKind using a `with_` function.
     #[inline]
     pub const fn into_error(self) -> DataError {

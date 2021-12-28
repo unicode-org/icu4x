@@ -194,15 +194,30 @@ impl ResourceKey {
     /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!(x, "foo", "baz", 1);
     /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!(x, "bar", "baz", 1);
     ///
-    /// assert!(matches!(FOO_BAR.match_key(FOO_BAR), Ok(())));
-    /// assert!(matches!(FOO_BAR.match_key(FOO_BAZ), Err(DataError::MissingResourceKey(_))));
-    /// assert!(matches!(FOO_BAR.match_key(BAR_BAZ), Err(DataError::MissingResourceKey(_))));
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(FOO_BAR),
+    ///     Ok(())
+    /// ));
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(FOO_BAZ),
+    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+    /// ));
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(BAR_BAZ),
+    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+    /// ));
+    ///
+    /// // The error context contains the argument:
+    /// assert_eq!(
+    ///     FOO_BAR.match_key(BAR_BAZ).unwrap_err().key,
+    ///     Some(BAR_BAZ)
+    /// );
     /// ```
     pub fn match_key(&self, key: Self) -> Result<(), DataError> {
         if *self == key {
             Ok(())
         } else {
-            Err(DataErrorKind::MissingResourceKey.with_key(*self))
+            Err(DataErrorKind::MissingResourceKey.with_key(key))
         }
     }
 }

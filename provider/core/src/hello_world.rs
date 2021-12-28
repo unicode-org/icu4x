@@ -119,7 +119,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
+        key::HELLO_WORLD_V1.match_key(req.resource_path.key)?;
         let langid = req.try_langid()?;
         let data = self
             .map

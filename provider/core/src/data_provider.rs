@@ -77,8 +77,14 @@ impl DataRequest {
     ///     }
     /// };
     ///
-    /// assert!(matches!(req_no_langid.try_langid(), Err(DataError::NeedsLocale(_))));
-    /// assert!(matches!(req_with_langid.try_langid(), Ok(_)));
+    /// assert!(matches!(
+    ///     req_no_langid.try_langid(),
+    ///     Err(DataError { kind: DataErrorKind::NeedsLocale, .. })
+    /// ));
+    /// assert!(matches!(
+    ///     req_with_langid.try_langid(),
+    ///     Ok(_)
+    /// ));
     /// ```
     pub fn try_langid(&self) -> Result<&LanguageIdentifier, DataError> {
         self.resource_path
@@ -850,7 +856,8 @@ where
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
     pub fn take_payload(self) -> Result<DataPayload<M>, DataError> {
-        self.payload.ok_or(DataErrorKind::MissingPayload.with_type_context::<M>())
+        self.payload
+            .ok_or(DataErrorKind::MissingPayload.with_type_context::<M>())
     }
 }
 
