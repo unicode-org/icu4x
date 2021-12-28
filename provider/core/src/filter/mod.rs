@@ -75,10 +75,7 @@ where
         if (self.predicate)(req) {
             self.inner.load_payload(req)
         } else {
-            Err(DataError::FilteredResource(
-                req.clone(),
-                self.description.clone(),
-            ))
+            Err(DataErrorKind::FilteredResource.with_req(req))
         }
     }
 }

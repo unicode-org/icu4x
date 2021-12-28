@@ -4,7 +4,6 @@
 
 //! Traits for data providers that produce opaque buffers.
 
-use crate::error::Error;
 use crate::prelude::*;
 
 pub struct BufferMarker;
@@ -14,7 +13,7 @@ impl DataMarker for BufferMarker {
 }
 
 pub trait BufferProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, Error>;
+    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError>;
 }
 
 /// An enum expressing all Serde formats known to ICU4X.

@@ -108,9 +108,8 @@ extern crate alloc;
 pub mod dynutil;
 
 pub mod buffer_provider;
-pub(crate) mod data_provider;
-#[macro_use]
-mod resource;
+mod data_provider;
+mod error;
 #[macro_use]
 pub mod erased;
 pub mod export;
@@ -120,16 +119,14 @@ pub mod inv;
 pub mod iter;
 #[macro_use]
 pub mod marker;
+#[macro_use]
+mod resource;
 #[cfg(feature = "serde")]
 pub mod serde;
 pub mod struct_provider;
 
 #[cfg(feature = "macros")]
 pub use icu_provider_macros::data_struct;
-
-mod error;
-
-pub use error::Error as DataError;
 
 pub mod prelude {
     //! Core selection of APIs and structures for [`DataProvider`].
@@ -140,7 +137,8 @@ pub mod prelude {
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseMetadata;
-    pub use crate::error::Error as DataError;
+    pub use crate::error::DataError;
+    pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
     pub use crate::resource::ResourceCategory;
     pub use crate::resource::ResourceKey;
@@ -150,6 +148,8 @@ pub mod prelude {
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 }
+
+pub use prelude::*;
 
 /// Re-export of the yoke crate for convenience of downstream implementors.
 pub use yoke;

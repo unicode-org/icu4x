@@ -4,12 +4,12 @@
 
 //! Resource paths and related types.
 
-use crate::error::Error;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::string::String;
 use alloc::string::ToString;
 
+use crate::error::{DataError, DataErrorKind};
 use core::borrow::Borrow;
 use core::default::Default;
 use core::fmt;
@@ -198,11 +198,11 @@ impl ResourceKey {
     /// assert!(matches!(FOO_BAR.match_key(FOO_BAZ), Err(DataError::MissingResourceKey(_))));
     /// assert!(matches!(FOO_BAR.match_key(BAR_BAZ), Err(DataError::MissingResourceKey(_))));
     /// ```
-    pub fn match_key(&self, key: Self) -> Result<(), Error> {
+    pub fn match_key(&self, key: Self) -> Result<(), DataError> {
         if *self == key {
             Ok(())
         } else {
-            Err(Error::MissingResourceKey(*self))
+            Err(DataErrorKind::MissingResourceKey.with_key(*self))
         }
     }
 }

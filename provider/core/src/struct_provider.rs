@@ -4,7 +4,6 @@
 
 //! Data provider always serving the same struct.
 
-use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
@@ -51,7 +50,7 @@ where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),

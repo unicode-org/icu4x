@@ -18,6 +18,7 @@ use litemap::LiteMap;
 
 pub mod key {
     use crate::resource::ResourceKey;
+    use crate::resource_key;
     pub const HELLO_WORLD_V1: ResourceKey = resource_key!(Core, "helloworld", 1);
 }
 
@@ -124,7 +125,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
             .map
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
-            .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
+            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(req))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.data_langid = Some(langid.clone());
         Ok(DataResponse {
