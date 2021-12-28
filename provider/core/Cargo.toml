@@ -39,6 +39,9 @@ std = ["icu_locid/std"]
 serialize = ["serde", "erased-serde"]
 macros = ["icu_provider_macros"]
 
+# Enable logging of additional context of data errors
+log_error_context = ["log"]
+
 # Features for specific serde formats
 deserialize_json = ["serde", "serde_json"]
 deserialize_bincode_1 = ["serde", "bincode", "std"]
@@ -51,6 +54,7 @@ writeable = { version = "0.2.1", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.3.1", path = "../../utils/yoke", features = ["serde", "derive"] }
 litemap = { path = "../../utils/litemap", version = "0.2.1" }
+log = { version = "0.4", optional = true }
 
 icu_provider_macros = { version = "0.4", path = "../macros", optional = true }
 

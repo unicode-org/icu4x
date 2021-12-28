@@ -16,12 +16,12 @@ use displaydoc::Display;
 #[non_exhaustive]
 pub enum DataErrorKind {
     /// No data for the provided resource key.
-    #[displaydoc("Missing resource key")]
-    MissingResourceKey,
+    #[displaydoc("Missing resource key: {0}")]
+    MissingResourceKey(ResourceKey),
 
     /// There is data for the key, but not for this particular variant/locale.
-    #[displaydoc("Missing resource options")]
-    MissingResourceOptions,
+    #[displaydoc("Missing resource options for key: {0}")]
+    MissingResourceOptions(ResourceKey),
 
     /// The request should include a variant field.
     #[displaydoc("Request needs a variant field")]
@@ -84,6 +84,7 @@ impl DataError {
     /// Create a new DataError with the specified kind.
     /// 
     /// To add context to the error, follow this with a call to [`Self::with_str_context()`].
+    #[inline]
     pub const fn new(kind: DataErrorKind) -> Self {
         Self {
             kind,
@@ -91,12 +92,45 @@ impl DataError {
         }
     }
 
-    /// Set the string context of a DataError.
-    pub const fn with_str_context(self, str_context: &'static str) -> Self {
+    /// Set the string context of a DataError, returning a modified error.
+    #[inline]
+    pub const fn with_str_context(self, context: &'static str) -> Self {
         Self {
             kind: self.kind,
-            str_context: Some(str_context)
+            str_context: Some(context)
         }
+    }
+
+    /// Log the data error with the given context, then return self.
+    /// 
+    /// This does not modify the error, but if the "log_error_context" feature is enabled,
+    /// it will print out the context.
+    pub fn with_display_context(self, context: &impl core::fmt::Display) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("{}: {}", self, context);
+        self
+    }
+
+    /// Log the data error with the given context, then return self.
+    /// 
+    /// This does not modify the error, but if the "log_error_context" feature is enabled,
+    /// it will print out the context.
+    pub fn with_debug_context(self, context: &impl core::fmt::Debug) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("{}: {:?}", self, context);
+        self
+    }
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for DataError {}
+
+#[cfg(feature = "serde")]
+impl From<crate::serde::Error> for DataError {
+    fn from(e: crate::serde::Error) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("Serde error: {}", e);
+        DataError::new(DataErrorKind::Serde)
     }
 }
 
