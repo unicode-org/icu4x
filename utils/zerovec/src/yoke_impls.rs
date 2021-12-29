@@ -7,6 +7,7 @@
 
 use crate::map::ZeroMapBorrowed;
 use crate::map::ZeroMapKV;
+use crate::map::ZeroVecLike;
 use crate::map2d::ZeroMap2dBorrowed;
 use crate::ule::*;
 use crate::{VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
@@ -112,8 +113,10 @@ unsafe impl<'a, K, V> Yokeable<'a> for ZeroMapBorrowed<'static, K, V>
 where
     K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
-    <K as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
-    <V as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
+    <<K as ZeroMapKV<'static>>::Container as ZeroVecLike<'static, K>>::BorrowedVariant:
+        for<'b> Yokeable<'b>,
+    <<V as ZeroMapKV<'static>>::Container as ZeroVecLike<'static, V>>::BorrowedVariant:
+        for<'b> Yokeable<'b>,
 {
     type Output = ZeroMapBorrowed<'a, K, V>;
     fn transform(&'a self) -> &'a Self::Output {
@@ -201,9 +204,12 @@ where
     K0: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     K1: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
-    <K0 as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
-    <K1 as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
-    <V as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
+    <<K0 as ZeroMapKV<'static>>::Container as ZeroVecLike<'static, K0>>::BorrowedVariant:
+        for<'b> Yokeable<'b>,
+    <<K1 as ZeroMapKV<'static>>::Container as ZeroVecLike<'static, K1>>::BorrowedVariant:
+        for<'b> Yokeable<'b>,
+    <<V as ZeroMapKV<'static>>::Container as ZeroVecLike<'static, V>>::BorrowedVariant:
+        for<'b> Yokeable<'b>,
 {
     type Output = ZeroMap2dBorrowed<'a, K0, K1, V>;
     fn transform(&'a self) -> &'a Self::Output {
