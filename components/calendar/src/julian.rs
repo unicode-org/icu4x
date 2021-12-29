@@ -13,7 +13,8 @@ use core::convert::TryInto;
 pub struct Julian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-// The inner date type used for representing Date<Georgian>
+// The inner date type used for representing Date<Julian>
+// The inner date uses IsoDateInner, but represent Julian Dates
 pub struct JulianDateInner(IsoDateInner);
 
 impl Calendar for Julian {
@@ -75,11 +76,15 @@ impl Calendar for Julian {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        Iso.until(&date1.0, &date2.0, largest_unit, smallest_unit)
-            .cast_unit()
+        DateDuration::new(
+            date1.0.year.0 - date2.0.year.0,
+            date1.0.year.0 - date2.0.year.0,
+            0,
+            u8::from(date1.0.day) as i32 - u8::from(date2.0.day) as i32,
+        )
     }
 
     /// The calendar-specific year represented by `date`
@@ -151,6 +156,7 @@ impl Julian {
         }
     }
 
+    // Method returns the number of days the iso date (input) is ahead of Julian calendar by.
     fn calculate_day_difference_between_calendars(date: IsoDateInner) -> i32 {
         // In year 0, the slack is -2
         let year = date.year.0;
