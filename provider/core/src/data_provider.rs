@@ -857,7 +857,7 @@ where
     #[inline]
     pub fn take_payload(self) -> Result<DataPayload<M>, DataError> {
         self.payload
-            .ok_or(DataErrorKind::MissingPayload.with_type_context::<M>())
+            .ok_or_else(|| DataErrorKind::MissingPayload.with_type_context::<M>())
     }
 }
 

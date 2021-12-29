@@ -65,7 +65,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
         serde::Serialize::serialize(&blob, &mut serializer)?;
-        self.sink.write(&serializer.output.0)?;
+        self.sink.write_all(&serializer.output.0)?;
         self.resources.clear();
         Ok(())
     }

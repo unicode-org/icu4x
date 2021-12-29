@@ -82,7 +82,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
         let toml_data = &self
             .data
             .get(&prop_name)
-            .ok_or(DataErrorKind::MissingResourceKey.with_req(req))?;
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
 
         let valid_names = expand_groupings(&prop_name, prop_value);
 

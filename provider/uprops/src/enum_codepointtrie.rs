@@ -106,7 +106,7 @@ impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
         let source_cpt_data = &self
             .data
             .get(prop_name)
-            .ok_or(DataErrorKind::MissingResourceKey.with_req(req))?
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?
             .code_point_trie;
 
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
