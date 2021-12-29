@@ -169,4 +169,4 @@ metadata = [
 
 fs = ["icu_provider_fs", "icu_provider_fs/deserialize_json", "std"]
 static = ["icu_provider_blob"]
-std = ["icu_provider_fs/std"]
+std = []
