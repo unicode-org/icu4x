@@ -32,8 +32,7 @@ where
     T: DataProvider<SerializeMarker>
         + IterableDataProviderCore
         + KeyedDataProvider
-        + TryFrom<&'b dyn CldrPaths>,
-    <T as TryFrom<&'b dyn CldrPaths>>::Error: std::fmt::Display,
+        + TryFrom<&'b dyn CldrPaths, Error = crate::error::Error>,
 {
     /// Call [`DataProvider::load_payload()`], initializing `T` if necessary.
     pub fn try_load_serde(
@@ -49,7 +48,7 @@ where
         }
         let mut src = self.src.write()?;
         if src.is_none() {
-            src.replace(T::try_from(cldr_paths).map_err(|e| DataError::custom().with_display_context(&e))?);
+            src.replace(T::try_from(cldr_paths)?);
         }
         let data_provider = src
             .as_ref()
@@ -74,7 +73,7 @@ where
         }
         let mut src = self.src.write()?;
         if src.is_none() {
-            src.replace(T::try_from(cldr_paths).map_err(|e| DataError::custom().with_display_context(&e))?);
+            src.replace(T::try_from(cldr_paths)?);
         }
         let data_provider = src
             .as_ref()

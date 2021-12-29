@@ -44,7 +44,7 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for CodePointTrie<'
     ) -> Result<CodePointTrie<'static, T>, Self::Error> {
         let trie_type_enum: TrieType =
             TrieType::try_from(cpt_data.trie_type_enum_val)
-            .map_err(|e| DataError::custom().with_display_context(&e))?;
+            .map_err(|e| DataError::custom("Could not parse TrieType in TOML").with_display_context(&e))?;
         let header = CodePointTrieHeader {
             high_start: cpt_data.high_start,
             shifted12_high_start: cpt_data.shifted12_high_start,
@@ -62,12 +62,12 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for CodePointTrie<'
             } else if let Some(data_32) = &cpt_data.data_32 {
                 data_32.iter().map(|i| T::try_from_u32(*i as u32)).collect()
             } else {
-                return Err(DataError::custom().with_str_context("Did not find data array for CodePointTrie in TOML"));
+                return Err(DataError::custom("Did not find data array for CodePointTrie in TOML"));
             };
 
-        let data = data.map_err(|e| DataError::custom().with_display_context(&e))?;
+        let data = data.map_err(|e| DataError::custom("Could not parse data array in TOML").with_display_context(&e))?;
 
-        CodePointTrie::<T>::try_new(header, index, data).map_err(|e| DataError::custom().with_display_context(&e))
+        CodePointTrie::<T>::try_new(header, index, data).map_err(|e| DataError::custom("Could not create CodePointTrie from header/index/data array in TOML").with_display_context(&e))
     }
 }
 

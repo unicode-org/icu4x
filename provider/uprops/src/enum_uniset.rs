@@ -71,7 +71,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
                 return Err(DataErrorKind::MissingResourceKey.with_req(req));
             }
             (
-                parts[0].parse().map_err(|e| DataError::custom().with_str_context("Could not parse data request into a Unicode proeprty name").with_error_context(&e))?,
+                parts[0].parse().map_err(|e| DataError::custom("Could not parse data request into a Unicode property name").with_error_context(&e))?,
                 parts[1],
             )
         };

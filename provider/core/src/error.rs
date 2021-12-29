@@ -138,15 +138,13 @@ impl DataErrorKind {
 }
 
 impl DataError {
-    /// Returns a new, empty DataError with kind Custom.
-    /// 
-    /// If possible, add context to the error using one of the `with_` functions.
+    /// Returns a new, empty DataError with kind Custom and a string error message.
     #[inline]
-    pub const fn custom() -> Self {
+    pub const fn custom(str_context: &'static str) -> Self {
         Self {
             kind: DataErrorKind::Custom,
             key: None,
-            str_context: None,
+            str_context: Some(str_context),
         }
     }
 
@@ -245,7 +243,7 @@ impl From<crate::serde::Error> for DataError {
     fn from(e: crate::serde::Error) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("Serde error: {}", e);
-        DataError::custom()
+        DataError::custom("Serde error")
     }
 }
 
@@ -255,7 +253,7 @@ impl From<postcard::Error> for DataError {
     fn from(e: postcard::Error) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("Postcard error: {}", e);
-        DataError::custom()
+        DataError::custom("Postcard error")
     }
 }
 

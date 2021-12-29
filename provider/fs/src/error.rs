@@ -84,16 +84,16 @@ impl From<Error> for DataError {
             Io(e, Some(path_buf)) => DataError::from(e).with_path(&path_buf),
             Io(e, None) => DataError::from(e),
             DataProvider(e) => e,
-            Deserializer(s, Some(path_buf)) => DataError::custom()
+            Deserializer(s, Some(path_buf)) => DataError::custom("FS: Deserializer")
                 .with_display_context(&s)
                 .with_path(&path_buf),
-            Deserializer(s, None) => DataError::custom().with_display_context(&s),
+            Deserializer(s, None) => DataError::custom("FS: Deserializer").with_display_context(&s),
             #[cfg(feature = "export")]
-            Serializer(e, Some(path_buf)) => DataError::custom()
+            Serializer(e, Some(path_buf)) => DataError::custom("FS: Serializer")
                 .with_error_context(&e)
                 .with_path(&path_buf),
             #[cfg(feature = "export")]
-            Serializer(e, None) => DataError::custom().with_display_context(&e),
+            Serializer(e, None) => DataError::custom("FS: Serializer").with_display_context(&e),
         }
     }
 }
