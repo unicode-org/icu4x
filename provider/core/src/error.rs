@@ -107,7 +107,10 @@ pub struct DataError {
 
 impl core::fmt::Display for DataError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "ICU4X data provider error: {}", self.kind)?;
+        write!(f, "ICU4X data error")?;
+        if self.kind != DataErrorKind::Custom {
+            write!(f, ": {}", self.kind)?;
+        }
         if let Some(key) = self.key {
             write!(f, " (key: {})", key)?;
         }
@@ -227,7 +230,7 @@ impl DataError {
     #[inline]
     pub fn with_error_context(self, err: &impl std::error::Error) -> Self {
         #[cfg(feature = "log_error_context")]
-        log::warn!("{}: from {}", self, err);
+        log::warn!("{}: {}", self, err);
         self
     }
 

@@ -90,10 +90,12 @@ impl From<Error> for DataError {
         match err {
             Io(e, Some(path_buf)) => DataError::from(e).with_path(&path_buf),
             Io(e, None) => DataError::from(e),
-            Json(e, Some(path_buf)) => DataError::custom("CLDR JSON: Json")
+            Json(e, Some(path_buf)) => DataError::custom("CLDR JSON: Json Parse Error")
                 .with_error_context(&e)
                 .with_path(&path_buf),
-            Json(e, None) => DataError::custom("CLDR JSON: Json").with_error_context(&e),
+            Json(e, None) => {
+                DataError::custom("CLDR JSON: Json Parse Error").with_error_context(&e)
+            }
             Custom(s, Some(langid)) => DataError::custom("CLDR JSON: Custom")
                 .with_display_context(&s)
                 .with_display_context(&langid),
