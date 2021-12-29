@@ -27,6 +27,11 @@ impl Calendar for Julian {
         )
     }
 
+    // Since March 1st, 200 ISO is always same or ahead of Julian calendar.
+    // For getting the ISO date from Julian, we add the number of days ISO is ahead to the julian date.
+    //
+    // This creates the edge case when if the new date falls on Feb 29th when its a leap year in Julian only,
+    // that case is handled separately.
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let added_days = Self::calculate_day_difference_between_calendars(date.0);
         let mut date = Self::offset_date(
