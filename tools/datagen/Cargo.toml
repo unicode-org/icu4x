@@ -32,7 +32,7 @@ clap = "2.33"
 futures = "0.3"
 icu_locid = { version = "0.4", path = "../../components/locid", features = ["std"]}
 icu_properties = { version = "0.4", path = "../../components/properties", features = ["std"]}
-icu_provider = { version = "0.4", path = "../../provider/core", features = ["std"]}
+icu_provider = { version = "0.4", path = "../../provider/core", features = ["std", "log_error_context"]}
 icu_provider_blob = { version = "0.4", path = "../../provider/blob", features = ["export"] }
 icu_provider_cldr = { version = "0.4", path = "../../provider/cldr", features = ["download"] }
 icu_provider_fs = { version = "0.4", path = "../../provider/fs", features = ["export"] }
