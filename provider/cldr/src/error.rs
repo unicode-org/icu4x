@@ -103,6 +103,7 @@ impl From<Error> for DataError {
             MissingSource(e) => {
                 DataError::custom("CLDR JSON: MissingSource").with_error_context(&e)
             }
+            #[cfg(feature = "download")]
             Download(e) => DataError::custom("CLDR JSON: Download").with_error_context(&e),
         }
     }
