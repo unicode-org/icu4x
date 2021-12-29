@@ -11,6 +11,8 @@ edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "LICENSE"
+categories = ["rust-patterns", "memory-management", "caching", "no-std"]
+keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
 include = [
     "src/**/*",
     "examples/**/*",
