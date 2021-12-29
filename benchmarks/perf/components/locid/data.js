@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640390431371,
+  "lastUpdate": 1640759733346,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20081,6 +20081,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4422,
             "range": "± 367",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b66b28f0f0a3f49a04e26c9b8277c47380f25c7",
+          "message": "Add ZeroMap2d, a two-dimensional zero-copy map (#1432)",
+          "timestamp": "2021-12-29T00:26:43-06:00",
+          "tree_id": "7610c1ff6f6722e8620c8e4027fe046378071172",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b66b28f0f0a3f49a04e26c9b8277c47380f25c7"
+        },
+        "date": 1640759723636,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3071,
+            "range": "± 138",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5260,
+            "range": "± 194",
             "unit": "ns/iter"
           }
         ]
