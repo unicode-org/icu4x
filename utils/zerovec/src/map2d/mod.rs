@@ -19,32 +19,6 @@ use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
 pub use borrowed::ZeroMap2dBorrowed;
 
-// ZeroMap2d contains 4 fields:
-//
-// - keys0 = sorted list of all K0 in the map
-// - joiner = helper vec that maps from a K0 to a range of keys1
-// - keys1 = list of all K1 in the map, sorted in ranges for each K0
-// - values = list of all values in the map, sorted by (K0, K1)
-//
-// For a particular K0 at index i, the range of keys1 corresponding to K0 is
-// (joiner[i-1]..joiner[i]), where the first range starts at 0.
-//
-// Required Invariants:
-//
-// 1. len(keys0) == len(joiner)
-// 2. len(keys1) == len(values)
-// 3. joiner is sorted
-// 4. the last element of joiner is the length of keys1
-//
-// Optional Invariants:
-//
-// 5. keys0 is sorted (for binary_search)
-// 6. ranges within keys1 are sorted (for binary_search)
-// 7. every K0 is associated with at least one K1 (no empty ranges)
-//
-// During deserialization, these three invariants are not checked, because they put the
-// ZeroMap2d in a deterministic state, even though it may have unexpected behavior.
-
 /// A zero-copy, two-dimensional map datastructure .
 ///
 /// This is an extension of [`ZeroMap`] that supports two layers of keys. For example,
@@ -77,6 +51,31 @@ pub use borrowed::ZeroMap2dBorrowed;
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
 /// [`ZeroMap`]: crate::ZeroMap
+// ZeroMap2d contains 4 fields:
+//
+// - keys0 = sorted list of all K0 in the map
+// - joiner = helper vec that maps from a K0 to a range of keys1
+// - keys1 = list of all K1 in the map, sorted in ranges for each K0
+// - values = list of all values in the map, sorted by (K0, K1)
+//
+// For a particular K0 at index i, the range of keys1 corresponding to K0 is
+// (joiner[i-1]..joiner[i]), where the first range starts at 0.
+//
+// Required Invariants:
+//
+// 1. len(keys0) == len(joiner)
+// 2. len(keys1) == len(values)
+// 3. joiner is sorted
+// 4. the last element of joiner is the length of keys1
+//
+// Optional Invariants:
+//
+// 5. keys0 is sorted (for binary_search)
+// 6. ranges within keys1 are sorted (for binary_search)
+// 7. every K0 is associated with at least one K1 (no empty ranges)
+//
+// During deserialization, these three invariants are not checked, because they put the
+// ZeroMap2d in a deterministic state, even though it may have unexpected behavior.
 pub struct ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
