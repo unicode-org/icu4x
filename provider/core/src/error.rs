@@ -54,16 +54,22 @@ pub enum DataErrorKind {
     #[displaydoc("Missing payload")]
     MissingPayload,
 
-    /// An error occurred while serializing or deserializing data with Serde.
+    /// An error involving a lock or mutex occurred.
     ///
     /// Check debug logs for potentially more information.
-    #[displaydoc("Serde error")]
-    Serde,
+    #[displaydoc("Mutex error")]
+    Mutex,
 
     /// An error occurred while accessing a system resource.
     #[displaydoc("I/O error: {0:?}")]
     #[cfg(feature = "std")]
     Io(std::io::ErrorKind),
+
+    /// An unspecified error occurred, such as a Serde error.
+    ///
+    /// Check debug logs for potentially more information.
+    #[displaydoc("Custom")]
+    Custom,
 }
 
 /// The error type for ICU4X data provider operations.
@@ -132,6 +138,18 @@ impl DataErrorKind {
 }
 
 impl DataError {
+    /// Returns a new, empty DataError with kind Custom.
+    /// 
+    /// If possible, add context to the error using one of the `with_` functions.
+    #[inline]
+    pub const fn custom() -> Self {
+        Self {
+            kind: DataErrorKind::Custom,
+            key: None,
+            str_context: None,
+        }
+    }
+
     /// Sets the resource key of a DataError, returning a modified error.
     #[inline]
     pub const fn with_key(self, key: ResourceKey) -> Self {
@@ -227,7 +245,7 @@ impl From<crate::serde::Error> for DataError {
     fn from(e: crate::serde::Error) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("Serde error: {}", e);
-        DataErrorKind::Serde.into_error()
+        DataError::custom()
     }
 }
 
@@ -237,7 +255,7 @@ impl From<postcard::Error> for DataError {
     fn from(e: postcard::Error) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("Postcard error: {}", e);
-        DataErrorKind::Serde.into_error()
+        DataError::custom()
     }
 }
 
@@ -247,5 +265,15 @@ impl From<std::io::Error> for DataError {
         #[cfg(feature = "log_error_context")]
         log::warn!("I/O error: {}", e);
         DataErrorKind::Io(e.kind()).into_error()
+    }
+}
+
+#[cfg(feature = "std")]
+impl<T> From<std::sync::PoisonError<T>> for DataError {
+    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    fn from(e: std::sync::PoisonError<T>) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("Poison error: {}", e);
+        DataErrorKind::Mutex.into_error()
     }
 }

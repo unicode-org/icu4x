@@ -5,6 +5,7 @@
 use displaydoc::Display;
 use icu_locid::LanguageIdentifier;
 use std::path::{Path, PathBuf};
+use icu_provider::DataError;
 
 #[cfg(feature = "download")]
 use crate::download;
@@ -23,8 +24,6 @@ pub enum Error {
     #[cfg(feature = "download")]
     #[displaydoc("{0}")]
     Download(download::Error),
-    #[displaydoc("poisoned lock on CLDR provider")]
-    Poison,
 }
 
 impl std::error::Error for Error {}
@@ -82,5 +81,21 @@ impl<L: AsRef<LanguageIdentifier>> From<(&'static str, L)> for Error {
 impl From<MissingSourceError> for Error {
     fn from(err: MissingSourceError) -> Self {
         Self::MissingSource(err)
+    }
+}
+
+impl From<Error> for DataError {
+    fn from(err: Error) -> Self {
+        use Error::*;
+        match err {
+            Io(e, Some(path_buf)) => DataError::from(e).with_path(&path_buf),
+            Io(e, None) => DataError::from(e),
+            Json(e, Some(path_buf)) => DataError::custom().with_error_context(&e).with_path(&path_buf),
+            Json(e, None) => DataError::custom().with_error_context(&e),
+            Custom(s, Some(langid)) => DataError::custom().with_display_context(&s).with_display_context(&langid),
+            Custom(s, None) => DataError::custom().with_display_context(&s),
+            MissingSource(e) => DataError::custom().with_error_context(&e),
+            Download(e) => DataError::custom().with_error_context(&e)
+        }
     }
 }

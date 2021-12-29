@@ -67,14 +67,14 @@ impl CommonDateProvider {
             .options
             .variant
             .as_ref()
-            .ok_or_else(|| DataError::NeedsVariant(req.clone()))?;
+            .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(req))?;
         let map = self
             .data
             .get(&**variant)
-            .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
+            .ok_or_else(|| DataErrorKind::MissingVariant.with_req(req))?;
         match map.get(langid) {
             Some(date) => Ok(date),
-            None => Err(DataError::MissingResourceOptions(req.clone())),
+            None => Err(DataErrorKind::MissingLocale.with_req(req)),
         }
     }
 }

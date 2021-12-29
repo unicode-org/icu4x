@@ -64,7 +64,7 @@ deserialize_json = ["icu_provider/deserialize_json"]
 deserialize_bincode_1 = ["std", "icu_provider/deserialize_bincode_1"]
 # Enables the "export" module and FilesystemExporter
 export = ["static_assertions", "log", "std", "serde_json", "bincode", "icu_provider/serialize"]
-std = ["serde_json/std", "serde-json-core/std"]
+std = ["serde_json/std", "serde-json-core/std", "icu_provider/std"]
 bench = []
 
 [lib]

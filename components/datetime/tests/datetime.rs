@@ -70,7 +70,7 @@ impl DataProvider<PluralRulesV1Marker> for MultiKeyStructProvider {
         &self,
         _req: &DataRequest,
     ) -> Result<DataResponse<PluralRulesV1Marker>, icu_provider::DataError> {
-        Err(icu_provider::DataError::MissingPayload)
+        Err(DataErrorKind::MissingResourceKey.into_error())
     }
 }
 

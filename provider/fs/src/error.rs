@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use icu_provider::{DataError, DataErrorKind};
+use icu_provider::DataError;
 use std::path::{Path, PathBuf};
 
 #[derive(Display, Debug)]
@@ -84,16 +84,16 @@ impl From<Error> for DataError {
             Io(e, Some(path_buf)) => DataError::from(e).with_path(&path_buf),
             Io(e, None) => DataError::from(e),
             DataProvider(e) => e,
-            Deserializer(s, Some(path_buf)) => DataErrorKind::Serde
-                .into_error()
+            Deserializer(s, Some(path_buf)) => DataError::custom()
                 .with_display_context(&s)
                 .with_path(&path_buf),
-            Deserializer(s, None) => DataErrorKind::Serde.into_error().with_display_context(&s),
-            Serializer(e, Some(path_buf)) => DataErrorKind::Serde
-                .into_error()
+            Deserializer(s, None) => DataError::custom().with_display_context(&s),
+            #[cfg(feature = "export")]
+            Serializer(e, Some(path_buf)) => DataError::custom()
                 .with_error_context(&e)
                 .with_path(&path_buf),
-            Serializer(e, None) => DataErrorKind::Serde.into_error().with_display_context(&e),
+            #[cfg(feature = "export")]
+            Serializer(e, None) => DataError::custom().with_display_context(&e),
         }
     }
 }

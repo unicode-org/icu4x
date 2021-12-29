@@ -26,11 +26,6 @@ impl<T> Default for LazyCldrProvider<T> {
     }
 }
 
-fn map_poison<E>(_err: E) -> DataError {
-    // Can't return the Poison directly because it has lifetime parameters.
-    DataError::new_resc_error(crate::error::Error::Poison)
-}
-
 /// A lazy-initialized CLDR JSON data provider.
 impl<'b, T> LazyCldrProvider<T>
 where
@@ -49,12 +44,12 @@ where
         if T::supports_key(&req.resource_path.key).is_err() {
             return Ok(None);
         }
-        if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
+        if let Some(data_provider) = self.src.read()?.as_ref() {
             return DataProvider::load_payload(data_provider, req).map(Some);
         }
-        let mut src = self.src.write().map_err(map_poison)?;
+        let mut src = self.src.write()?;
         if src.is_none() {
-            src.replace(T::try_from(cldr_paths).map_err(DataError::new_resc_error)?);
+            src.replace(T::try_from(cldr_paths).map_err(|e| DataError::custom().with_display_context(&e))?);
         }
         let data_provider = src
             .as_ref()
@@ -71,15 +66,15 @@ where
         if T::supports_key(resc_key).is_err() {
             return Ok(None);
         }
-        if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
+        if let Some(data_provider) = self.src.read()?.as_ref() {
             return data_provider
                 .supported_options_for_key(resc_key)
                 .map(|i| i.collect())
                 .map(Some);
         }
-        let mut src = self.src.write().map_err(map_poison)?;
+        let mut src = self.src.write()?;
         if src.is_none() {
-            src.replace(T::try_from(cldr_paths).map_err(DataError::new_resc_error)?);
+            src.replace(T::try_from(cldr_paths).map_err(|e| DataError::custom().with_display_context(&e))?);
         }
         let data_provider = src
             .as_ref()

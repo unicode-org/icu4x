@@ -210,7 +210,7 @@ impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
         if req.resource_path.options.langid.is_some() || req.resource_path.options.variant.is_some()
         {
-            return Err(DataError::ExtraneousVariantOrId(req.clone()));
+            return Err(DataErrorKind::ExtraneousResourceOptions.with_req(req));
         }
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),

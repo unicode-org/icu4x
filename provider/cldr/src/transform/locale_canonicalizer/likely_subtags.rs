@@ -61,7 +61,7 @@ impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
                 payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&self.data))),
             })
         } else {
-            Err(DataError::MissingResourceOptions(req.clone()))
+            Err(DataErrorKind::ExtraneousResourceOptions.with_req(req))
         }
     }
 }

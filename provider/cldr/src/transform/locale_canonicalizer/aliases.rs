@@ -66,7 +66,7 @@ impl DataProvider<AliasesV1Marker> for AliasesProvider {
                 payload: Some(DataPayload::from_owned(AliasesV1::from(&self.data))),
             })
         } else {
-            Err(DataError::MissingResourceOptions(req.clone()))
+            Err(DataErrorKind::ExtraneousResourceOptions.with_req(req))
         }
     }
 }
