@@ -64,8 +64,7 @@ impl StaticDataProvider {
                 .map(|blob| {
                     let BlobSchema::V001(blob) = blob;
                     blob.resources
-                })
-                .map_err(DataError::new_resc_error)?,
+                })?,
         })
     }
 
@@ -102,9 +101,10 @@ impl StaticDataProvider {
 
     fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
+        // TODO: Distinguish between missing resource key and missing resource options
         self.data
             .get(&path)
-            .ok_or(DataError::MissingResourceKey(req.resource_path.key))
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))
     }
 }
 

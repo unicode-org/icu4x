@@ -96,7 +96,7 @@ impl core::fmt::Display for DataError {
 impl DataErrorKind {
     /// Converts this DataErrorKind into a DataError.
     ///
-    /// If possible, you should attach context to the DataErrorKind using a `with_` function.
+    /// If possible, you should attach context using a `with_` function.
     #[inline]
     pub const fn into_error(self) -> DataError {
         DataError {
@@ -132,18 +132,6 @@ impl DataErrorKind {
 }
 
 impl DataError {
-    /// Create sa new DataError with the specified kind.
-    ///
-    /// To add context to the error, follow this with a call to [`Self::with_str_context()`].
-    #[inline]
-    pub const fn new(kind: DataErrorKind) -> Self {
-        Self {
-            kind,
-            key: None,
-            str_context: None,
-        }
-    }
-
     /// Sets the resource key of a DataError, returning a modified error.
     #[inline]
     pub const fn with_key(self, key: ResourceKey) -> Self {
@@ -170,6 +158,10 @@ impl DataError {
         self.with_str_context(core::any::type_name::<T>())
     }
 
+    /// Logs the data error with the given request, returning an error containing the resource key.
+    /// 
+    /// If the "log_error_context" feature is enabled, this logs the whole request. Either way,
+    /// it returns an error with the resource key portion of the request as context.
     pub fn with_req(self, req: &DataRequest) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{} (request: {})", self, req);
@@ -180,6 +172,33 @@ impl DataError {
     ///
     /// This does not modify the error, but if the "log_error_context" feature is enabled,
     /// it will print out the context.
+    #[cfg(feature = "std")]
+    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    pub fn with_path(self, path: &impl AsRef<std::path::Path>) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("{} (path: {:?})", self, path.as_ref());
+        self
+    }
+
+    /// Logs the data error with the given context, then return self.
+    ///
+    /// This does not modify the error, but if the "log_error_context" feature is enabled,
+    /// it will print out the context.
+    #[cfg(feature = "std")]
+    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    #[inline]
+    pub fn with_error_context(self, err: &impl std::error::Error) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("{}: from {}", self, err);
+        self
+    }
+
+    /// Logs the data error with the given context, then return self.
+    ///
+    /// This does not modify the error, but if the "log_error_context" feature is enabled,
+    /// it will print out the context.
+    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    #[inline]
     pub fn with_display_context(self, context: &impl core::fmt::Display) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {}", self, context);
@@ -190,6 +209,8 @@ impl DataError {
     ///
     /// This does not modify the error, but if the "log_error_context" feature is enabled,
     /// it will print out the context.
+    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    #[inline]
     pub fn with_debug_context(self, context: &impl core::fmt::Debug) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {:?}", self, context);
@@ -202,9 +223,29 @@ impl std::error::Error for DataError {}
 
 #[cfg(feature = "serde")]
 impl From<crate::serde::Error> for DataError {
+    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
     fn from(e: crate::serde::Error) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("Serde error: {}", e);
-        DataError::new(DataErrorKind::Serde)
+        DataErrorKind::Serde.into_error()
+    }
+}
+
+#[cfg(feature = "postcard")]
+impl From<postcard::Error> for DataError {
+    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    fn from(e: postcard::Error) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("Postcard error: {}", e);
+        DataErrorKind::Serde.into_error()
+    }
+}
+
+#[cfg(feature = "std")]
+impl From<std::io::Error> for DataError {
+    fn from(e: std::io::Error) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("I/O error: {}", e);
+        DataErrorKind::Io(e.kind()).into_error()
     }
 }

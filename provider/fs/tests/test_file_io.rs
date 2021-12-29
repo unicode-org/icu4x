@@ -141,7 +141,10 @@ fn test_json_errors() {
                 }
             },
         ),
-        Err(DataError::MissingResourceOptions(_))
+        Err(DataError {
+            kind: DataErrorKind::MissingResourceOptions,
+            ..
+        })
     ));
 
     assert!(matches!(
@@ -157,7 +160,10 @@ fn test_json_errors() {
                 }
             },
         ),
-        Err(DataError::MissingResourceKey(_))
+        Err(DataError {
+            kind: DataErrorKind::MissingResourceKey,
+            ..
+        })
     ));
 
     assert!(matches!(
@@ -173,7 +179,10 @@ fn test_json_errors() {
                 }
             },
         ),
-        Err(DataError::MissingResourceKey(_))
+        Err(DataError {
+            kind: DataErrorKind::MissingResourceKey,
+            ..
+        })
     ));
 }
 

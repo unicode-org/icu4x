@@ -64,10 +64,9 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
-        serde::Serialize::serialize(&blob, &mut serializer).map_err(DataError::new_resc_error)?;
+        serde::Serialize::serialize(&blob, &mut serializer)?;
         self.sink
-            .write(&serializer.output.0)
-            .map_err(|e| e.to_string())?;
+            .write(&serializer.output.0)?;
         self.resources.clear();
         Ok(())
     }
