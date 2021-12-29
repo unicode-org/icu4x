@@ -463,7 +463,13 @@ fn export_set_props(
     for key in keys.iter() {
         let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
         if matches.is_present("TEST_KEYS")
-            && matches!(result, Err(DataError { kind: DataErrorKind::MissingResourceKey, .. }))
+            && matches!(
+                result,
+                Err(DataError {
+                    kind: DataErrorKind::MissingResourceKey,
+                    ..
+                })
+            )
         {
             // Within testdata, if the data for a particular property is unavailable, skip it for now.
             log::trace!("Skipping key: {}", key);
@@ -505,7 +511,13 @@ fn export_map_props(
     for key in keys.iter() {
         let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
         if matches.is_present("TEST_KEYS")
-            && matches!(result, Err(DataError { kind: DataErrorKind::MissingResourceKey, .. }))
+            && matches!(
+                result,
+                Err(DataError {
+                    kind: DataErrorKind::MissingResourceKey,
+                    ..
+                })
+            )
         {
             // Within testdata, if the data for a particular property is unavailable, skip it for now.
             log::trace!("Skipping key: {}", key);

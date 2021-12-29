@@ -73,6 +73,25 @@ pub enum DataErrorKind {
 }
 
 /// The error type for ICU4X data provider operations.
+///
+/// To create one of these, either start with a [`DataErrorKind`] or use [`DataError::custom()`].
+///
+/// # Example
+///
+/// Create a NeedsVariant error and attach a data request for context:
+///
+/// ```no_run
+/// # use icu_provider::prelude::*;
+/// let req: &DataRequest = unimplemented!();
+/// DataErrorKind::NeedsVariant.with_req(req);
+/// ```
+///
+/// Create a named custom error:
+///
+/// ```
+/// # use icu_provider::prelude::*;
+/// DataError::custom("This is an example error");
+/// ```
 #[derive(Clone, Copy, Eq, PartialEq, Debug)]
 #[non_exhaustive]
 pub struct DataError {
@@ -175,7 +194,7 @@ impl DataError {
     }
 
     /// Logs the data error with the given request, returning an error containing the resource key.
-    /// 
+    ///
     /// If the "log_error_context" feature is enabled, this logs the whole request. Either way,
     /// it returns an error with the resource key portion of the request as context.
     pub fn with_req(self, req: &DataRequest) -> Self {

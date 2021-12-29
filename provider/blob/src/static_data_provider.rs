@@ -60,11 +60,12 @@ impl StaticDataProvider {
     /// Create a [`StaticDataProvider`] from a `'static` blob of ICU4X data.
     pub fn new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(StaticDataProvider {
-            data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob))
-                .map(|blob| {
+            data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob)).map(
+                |blob| {
                     let BlobSchema::V001(blob) = blob;
                     blob.resources
-                })?,
+                },
+            )?,
         })
     }
 

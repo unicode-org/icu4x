@@ -72,7 +72,9 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
             key::LIST_FORMAT_UNIT_V1 => parse_unit_patterns(data),
             _ => unreachable!(),
         }
-        .map_err(|e| DataError::custom("CLDR JSON list pattern parsing").with_display_context(&e))?;
+        .map_err(|e| {
+            DataError::custom("CLDR JSON list pattern parsing").with_display_context(&e)
+        })?;
 
         if langid.language == langid!("es").language {
             match req.resource_path.key {
@@ -114,10 +116,12 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                             &icu_provider_uprops::PropertiesDataProvider::try_new(
                                 &self.uprops_path
                             )
-                            .map_err(|e| DataError::custom("Properties data provider error").with_display_context(&e))?,
+                            .map_err(|e| DataError::custom("Properties data provider error")
+                                .with_display_context(&e))?,
                             icu_properties::Script::Hebrew,
                         )
-                        .map_err(|e| DataError::custom("Could not find Hebrew script set").with_display_context(&e))?
+                        .map_err(|e| DataError::custom("Could not find Hebrew script set")
+                            .with_display_context(&e))?
                         .get()
                         .inv_list
                         .iter_ranges()

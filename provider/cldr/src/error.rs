@@ -4,8 +4,8 @@
 
 use displaydoc::Display;
 use icu_locid::LanguageIdentifier;
-use std::path::{Path, PathBuf};
 use icu_provider::DataError;
+use std::path::{Path, PathBuf};
 
 #[cfg(feature = "download")]
 use crate::download;
@@ -90,12 +90,18 @@ impl From<Error> for DataError {
         match err {
             Io(e, Some(path_buf)) => DataError::from(e).with_path(&path_buf),
             Io(e, None) => DataError::from(e),
-            Json(e, Some(path_buf)) => DataError::custom("CLDR JSON: Json").with_error_context(&e).with_path(&path_buf),
+            Json(e, Some(path_buf)) => DataError::custom("CLDR JSON: Json")
+                .with_error_context(&e)
+                .with_path(&path_buf),
             Json(e, None) => DataError::custom("CLDR JSON: Json").with_error_context(&e),
-            Custom(s, Some(langid)) => DataError::custom("CLDR JSON: Custom").with_display_context(&s).with_display_context(&langid),
+            Custom(s, Some(langid)) => DataError::custom("CLDR JSON: Custom")
+                .with_display_context(&s)
+                .with_display_context(&langid),
             Custom(s, None) => DataError::custom("CLDR JSON: Custom").with_display_context(&s),
-            MissingSource(e) => DataError::custom("CLDR JSON: MissingSource").with_error_context(&e),
-            Download(e) => DataError::custom("CLDR JSON: Download").with_error_context(&e)
+            MissingSource(e) => {
+                DataError::custom("CLDR JSON: MissingSource").with_error_context(&e)
+            }
+            Download(e) => DataError::custom("CLDR JSON: Download").with_error_context(&e),
         }
     }
 }
