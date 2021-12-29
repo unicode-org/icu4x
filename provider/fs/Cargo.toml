@@ -41,7 +41,7 @@ icu_locid = { version = "0.4", path = "../../components/locid", features = ["ser
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
 displaydoc = { version = "0.2.3", default-features = false }
-serde-json-core = { version = "0.4" }
+serde-json-core = { version = "0.4", features = ["std"] }
 
 # Serializers
 serde_json = { version = "1.0", optional = true }
