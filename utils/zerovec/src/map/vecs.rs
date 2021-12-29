@@ -15,7 +15,7 @@ use core::ops::Range;
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). **You
 /// should not be implementing or calling this trait directly.**
 ///
-/// The T type is the type received by [`Self::binary_search()`], as well as the one used
+/// The T type is the type received by [`Self::zvl_binary_search()`], as well as the one used
 /// for human-readable serialization.
 ///
 /// Methods are prefixed with `zvl_*` to avoid clashes with methods on the types themselves
@@ -79,6 +79,10 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering;
+
+    /// Compare two values of `Self::GetType`. This must produce the same result as
+    /// if both `a` and `b` were converted to `Self`
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering;
 
     /// Obtain a version of T suitable for serialization
     ///
@@ -180,6 +184,10 @@ where
         t.cmp(&T::from_unaligned(*g))
     }
 
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
+        T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
+    }
+
     fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
     }
@@ -230,6 +238,10 @@ where
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(&T::from_unaligned(*g))
+    }
+
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
+        T::from_unaligned(*a).cmp(&T::from_unaligned(*b))
     }
 
     fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
@@ -338,6 +350,10 @@ where
         t.cmp(g)
     }
 
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
+        a.cmp(b)
+    }
+
     #[inline]
     fn t_with_ser<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(g)
@@ -397,6 +413,10 @@ where
 
     fn t_cmp_get(t: &T, g: &Self::GetType) -> Ordering {
         t.cmp(g)
+    }
+
+    fn get_cmp_get(a: &Self::GetType, b: &Self::GetType) -> Ordering {
+        a.cmp(b)
     }
 
     #[inline]
