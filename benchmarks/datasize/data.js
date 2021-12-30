@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640834554404,
+  "lastUpdate": 1640895810272,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6353,6 +6353,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4b8496d31067f23cd9446a3df0eab439908568a5"
         },
         "date": 1640834544082,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "59edff5d06e20fe0c71e972d623e2a67ed80ee9e",
+          "message": "Change Writeable::writeable_to_string to return a Cow (#1452)",
+          "timestamp": "2021-12-30T12:22:03-08:00",
+          "tree_id": "996f55c5023a97041e457910acd3c91f30f40b16",
+          "url": "https://github.com/unicode-org/icu4x/commit/59edff5d06e20fe0c71e972d623e2a67ed80ee9e"
+        },
+        "date": 1640895801528,
         "tool": "ndjson",
         "benches": [
           {
