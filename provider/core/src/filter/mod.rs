@@ -81,6 +81,22 @@ where
     }
 }
 
+impl<D, F> BufferProvider for RequestFilterDataProvider<D, F>
+where
+    F: Fn(&DataRequest) -> bool,
+    D: BufferProvider,
+{
+    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        if (self.predicate)(req) {
+            self.inner.load_buffer(req)
+        } else {
+            Err(DataErrorKind::FilteredResource
+                .with_str_context(self.filter_name)
+                .with_req(req))
+        }
+    }
+}
+
 impl<D, F> IterableProvider for RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,
