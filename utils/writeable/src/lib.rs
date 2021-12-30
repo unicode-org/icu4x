@@ -180,12 +180,6 @@ pub trait Writeable {
             .expect("impl Write for String is infallible");
         Cow::Owned(output)
     }
-
-    /// Returns a reference to what will be written. Only implement this is if no allocation
-    /// is required, i.e. for str-like types.
-    fn peek(&self) -> Option<&str> {
-        None
-    }
 }
 
 /// Testing macro for types implementing Writeable. The first argument should be a string, and

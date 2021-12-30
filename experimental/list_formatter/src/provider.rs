@@ -124,14 +124,13 @@ impl<'a> ConditionalListJoinerPattern<'a> {
         following_value: &'b W,
     ) -> (PatternParts<'a>, Option<Cow<'b, str>>) {
         if let Some(special_case) = &self.special_case {
-            let value = following_value.to_str();
+            let value = following_value.writeable_to_string();
             (
                 if special_case.condition.test(&value) {
-                    special_case.pattern
+                    special_case.pattern.borrow_tuple()
                 } else {
-                    self.default
-                }
-                .borrow_tuple(),
+                    self.default.borrow_tuple()
+                },
                 Some(value),
             )
         } else {

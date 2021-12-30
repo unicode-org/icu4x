@@ -11,6 +11,7 @@ use icu_list::{
     ListFormatter,
 };
 use icu_locid_macros::langid;
+use writeable::Writeable;
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
@@ -23,7 +24,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     println!(
         "{}",
-        list_formatter.format(&["España", "Francia", "Suiza", "Italia"])
+        list_formatter
+            .format(&["España", "Francia", "Suiza", "Italia"])
+            .writeable_to_string()
     );
 
     0
