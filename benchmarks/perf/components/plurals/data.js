@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640759754089,
+  "lastUpdate": 1640825679297,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22763,6 +22763,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 23473,
             "range": "± 1382",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fe67c68dcbb6996ac9d68fad4c05946f76a0342d",
+          "message": "Add categories to yoke and zerovec (#1451)\n\n* Add categories to yoke and zerovec\n\n* data-structures",
+          "timestamp": "2021-12-29T16:45:15-08:00",
+          "tree_id": "964a4d62e164f9e759154f7dd9012170e7ac2991",
+          "url": "https://github.com/unicode-org/icu4x/commit/fe67c68dcbb6996ac9d68fad4c05946f76a0342d"
+        },
+        "date": 1640825669459,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1383,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6620,
+            "range": "± 369",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25848,
+            "range": "± 1665",
             "unit": "ns/iter"
           }
         ]
