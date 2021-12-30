@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640759289505,
+  "lastUpdate": 1640825195786,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6293,6 +6293,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6b66b28f0f0a3f49a04e26c9b8277c47380f25c7"
         },
         "date": 1640759280771,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fe67c68dcbb6996ac9d68fad4c05946f76a0342d",
+          "message": "Add categories to yoke and zerovec (#1451)\n\n* Add categories to yoke and zerovec\n\n* data-structures",
+          "timestamp": "2021-12-29T16:45:15-08:00",
+          "tree_id": "964a4d62e164f9e759154f7dd9012170e7ac2991",
+          "url": "https://github.com/unicode-org/icu4x/commit/fe67c68dcbb6996ac9d68fad4c05946f76a0342d"
+        },
+        "date": 1640825187653,
         "tool": "ndjson",
         "benches": [
           {
