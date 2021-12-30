@@ -5,6 +5,7 @@
 use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
+use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt::{self, Write};
 use formatted_string::*;
@@ -58,7 +59,7 @@ impl ListFormatter {
     ) -> fmt::Result {
         // Writes the Writeable or uses the materialized string
         let write_value =
-            move |sink: &mut S, value: &W, materialized: Option<String>| -> fmt::Result {
+            move |sink: &mut S, value: &W, materialized: Option<Cow<str>>| -> fmt::Result {
                 if let Some(p) = materialized {
                     write_m_value(sink, &p)
                 } else {
@@ -114,7 +115,7 @@ impl ListFormatter {
     }
 
     pub fn format_to_string<W: Writeable>(&self, values: &[W]) -> String {
-        self.format(values).writeable_to_string()
+        self.format(values).to_str().into_owned()
     }
 
     pub fn format<'a, 'b: 'a, 'c: 'a, 'd: 'a, W: Writeable + 'd>(
