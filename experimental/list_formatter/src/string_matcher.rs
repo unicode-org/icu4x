@@ -29,7 +29,7 @@ impl serde::Serialize for StringMatcher<'_> {
     where
         S: serde::ser::Serializer,
     {
-        if serializer.is_human_readable() {
+        if cfg!(feature = "provider_serde_json") && serializer.is_human_readable() {
             self.pattern
                 .as_ref()
                 .map(|pattern| pattern.serialize(serializer))
@@ -51,7 +51,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     where
         D: serde::de::Deserializer<'de>,
     {
-        if deserializer.is_human_readable() {
+        if cfg!(feature = "provider_serde_json") && deserializer.is_human_readable() {
             StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
                 use serde::de::Error;
                 D::Error::custom(e.to_string())
