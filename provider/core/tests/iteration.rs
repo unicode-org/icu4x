@@ -31,6 +31,7 @@ fn test_supported_langids() {
             langid!("is"),
             langid!("ja"),
             langid!("la"),
+            langid!("pt"),
             langid!("ro"),
             langid!("ru"),
             langid!("vi"),
