@@ -35,7 +35,6 @@ serde_json = "1"
 postcard = { version = "0.7", features = ["use-std"] }
 icu_testdata = { version = "0.4", path = "../../provider/testdata", features = ["static"] }
 icu_locid_macros = { version = "0.4", path = "../../components/locid/macros"}
-rand = "*"
 
 [lib]
 path = "src/lib.rs"

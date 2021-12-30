@@ -1166,7 +1166,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "postcard",
- "rand",
  "regex",
  "serde",
  "serde_json",
