@@ -115,6 +115,7 @@ mod error;
 pub mod erased;
 pub mod export;
 pub mod filter;
+pub mod fork;
 pub mod hello_world;
 mod helpers;
 pub mod inv;
