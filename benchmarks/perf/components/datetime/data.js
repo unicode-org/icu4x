@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640759756403,
+  "lastUpdate": 1640825657855,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16391,6 +16391,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 420118,
             "range": "± 19849",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fe67c68dcbb6996ac9d68fad4c05946f76a0342d",
+          "message": "Add categories to yoke and zerovec (#1451)\n\n* Add categories to yoke and zerovec\n\n* data-structures",
+          "timestamp": "2021-12-29T16:45:15-08:00",
+          "tree_id": "964a4d62e164f9e759154f7dd9012170e7ac2991",
+          "url": "https://github.com/unicode-org/icu4x/commit/fe67c68dcbb6996ac9d68fad4c05946f76a0342d"
+        },
+        "date": 1640825649281,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 131469,
+            "range": "± 2943",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1519364,
+            "range": "± 27843",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 368546,
+            "range": "± 4683",
             "unit": "ns/iter"
           }
         ]
