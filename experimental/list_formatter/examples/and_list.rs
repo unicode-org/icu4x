@@ -14,5 +14,8 @@ fn main() {
     let list_formatter =
         ListFormatter::try_new(langid!("es"), &provider, Type::And, Width::Wide).unwrap();
 
-    println!("{}", list_formatter.format(&["España", "Francia", "Suiza", "Italia"]));
+    println!(
+        "{}",
+        list_formatter.format(&["España", "Francia", "Suiza", "Italia"])
+    );
 }
