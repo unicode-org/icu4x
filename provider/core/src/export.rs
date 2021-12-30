@@ -4,7 +4,6 @@
 
 //! Types having to do with the exporting of data.
 
-use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;
 
@@ -16,15 +15,15 @@ where
     M: DataMarker,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
-    fn put_payload(&mut self, req: DataRequest, payload: DataPayload<M>) -> Result<(), Error>;
+    fn put_payload(&mut self, req: DataRequest, payload: DataPayload<M>) -> Result<(), DataError>;
 
     /// Function called after a key has been fully dumped into the exporter.
-    fn flush(&mut self) -> Result<(), Error> {
+    fn flush(&mut self) -> Result<(), DataError> {
         Ok(())
     }
 
     /// Function called after all keys have been fully dumped.
-    fn close(&mut self) -> Result<(), Error> {
+    fn close(&mut self) -> Result<(), DataError> {
         Ok(())
     }
 }
@@ -57,14 +56,14 @@ pub fn export_from_iterable<P, E, M>(
     resc_key: &ResourceKey,
     provider: &P,
     exporter: &mut E,
-) -> Result<(), Error>
+) -> Result<(), DataError>
 where
     M: DataMarker,
     P: IterableDataProvider<M> + ?Sized,
     E: DataExporter<M> + ?Sized,
 {
     let it = provider.supported_options_for_key(resc_key)?;
-    let try_export = || -> Result<(), Error> {
+    let try_export = || -> Result<(), DataError> {
         for options in it {
             let req = DataRequest {
                 resource_path: ResourcePath {

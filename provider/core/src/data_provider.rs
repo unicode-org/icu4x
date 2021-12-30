@@ -7,7 +7,7 @@
 mod test;
 
 use crate::buffer_provider::BufferMarker;
-use crate::error::Error;
+use crate::error::{DataError, DataErrorKind};
 use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
@@ -77,15 +77,21 @@ impl DataRequest {
     ///     }
     /// };
     ///
-    /// assert!(matches!(req_no_langid.try_langid(), Err(DataError::NeedsLanguageIdentifier(_))));
-    /// assert!(matches!(req_with_langid.try_langid(), Ok(_)));
+    /// assert!(matches!(
+    ///     req_no_langid.try_langid(),
+    ///     Err(DataError { kind: DataErrorKind::NeedsLocale, .. })
+    /// ));
+    /// assert!(matches!(
+    ///     req_with_langid.try_langid(),
+    ///     Ok(_)
+    /// ));
     /// ```
-    pub fn try_langid(&self) -> Result<&LanguageIdentifier, Error> {
+    pub fn try_langid(&self) -> Result<&LanguageIdentifier, DataError> {
         self.resource_path
             .options
             .langid
             .as_ref()
-            .ok_or_else(|| Error::NeedsLanguageIdentifier(self.clone()))
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(self))
     }
 }
 
@@ -849,8 +855,9 @@ where
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
-    pub fn take_payload(self) -> Result<DataPayload<M>, Error> {
-        self.payload.ok_or(Error::MissingPayload)
+    pub fn take_payload(self) -> Result<DataPayload<M>, DataError> {
+        self.payload
+            .ok_or_else(|| DataErrorKind::MissingPayload.with_type_context::<M>())
     }
 }
 
@@ -858,7 +865,7 @@ impl<M> TryFrom<DataResponse<M>> for DataPayload<M>
 where
     M: DataMarker,
 {
-    type Error = Error;
+    type Error = DataError;
 
     fn try_from(response: DataResponse<M>) -> Result<Self, Self::Error> {
         response.take_payload()
@@ -932,5 +939,5 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, Error>;
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
 }

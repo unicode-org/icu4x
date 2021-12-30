@@ -60,14 +60,13 @@ impl FsDataProvider {
     }
 
     fn get_reader(&self, req: &DataRequest) -> Result<(impl Read, PathBuf), DataError> {
-        type Error = DataError;
         let mut path_buf = self.res_root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         if req.resource_path.options.is_empty() {
             path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
-            return Err(Error::MissingResourceKey(req.resource_path.key));
+            return Err(DataErrorKind::MissingResourceKey.with_req(req));
         }
         if !req.resource_path.options.is_empty() {
             // TODO: Implement proper locale fallback
@@ -75,12 +74,9 @@ impl FsDataProvider {
             path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
-            return Err(Error::MissingResourceOptions(req.clone()));
+            return Err(DataErrorKind::MissingResourceOptions.with_req(req));
         }
-        let file = match File::open(&path_buf) {
-            Ok(file) => file,
-            Err(err) => return Err(Error::new_resc_error(err)),
-        };
+        let file = File::open(&path_buf).map_err(|e| DataError::from(e).with_path(&path_buf))?;
         Ok((BufReader::new(file), path_buf))
     }
 
@@ -89,7 +85,7 @@ impl FsDataProvider {
         let mut buffer = Vec::<u8>::new();
         reader
             .read_to_end(&mut buffer)
-            .map_err(|e| DataError::new_resc_error(Error::Io(e, Some(path_buf.clone()))))?;
+            .map_err(|e| DataError::from(e).with_path(&path_buf))?;
         let rc_buffer: Rc<[u8]> = buffer.into();
         Ok((rc_buffer, path_buf))
     }

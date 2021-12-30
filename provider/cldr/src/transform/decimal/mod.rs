@@ -62,7 +62,7 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
 impl KeyedDataProvider for NumbersProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::Decimal || resc_key.version != 1 {
-            return Err(resc_key.into());
+            return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key));
         }
         Ok(())
     }
@@ -109,13 +109,12 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         let langid = req.try_langid()?;
         let numbers = match self.cldr_numbers_data.get(langid) {
             Some(v) => &v.numbers,
-            None => return Err(DataError::MissingResourceOptions(req.clone())),
+            None => return Err(DataErrorKind::MissingLocale.with_req(req)),
         };
         let nsname = numbers.default_numbering_system;
 
         let mut result = DecimalSymbolsV1::try_from(numbers)
-            .map_err(|s| Error::Custom(s.to_string(), Some(langid.clone())))
-            .map_err(DataError::new_resc_error)?;
+            .map_err(|s| Error::Custom(s.to_string(), Some(langid.clone())))?;
         result.digits = self
             .get_digits_for_numbering_system(nsname)
             .ok_or_else(|| {
@@ -123,8 +122,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
                     format!("Could not process numbering system: {:?}", nsname),
                     Some(langid.clone()),
                 )
-            })
-            .map_err(DataError::new_resc_error)?;
+            })?;
 
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.

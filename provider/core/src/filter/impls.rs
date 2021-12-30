@@ -5,9 +5,6 @@
 use super::*;
 use crate::prelude::*;
 use alloc::boxed::Box;
-use alloc::format;
-use alloc::string::String;
-use alloc::string::ToString;
 
 use icu_locid::LanguageIdentifier;
 
@@ -32,7 +29,7 @@ where
     /// use icu_locid_macros::{language, langid};
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
-    ///     .filterable()
+    ///     .filterable("Demo no-English filter")
     ///     .filter_by_langid(|langid| langid.language != language!("en"));
     ///
     /// // German requests should succeed:
@@ -55,7 +52,10 @@ where
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load_payload(&req_en);
-    /// assert!(matches!(response, Err(DataError::FilteredResource(_, _))));
+    /// assert!(matches!(
+    ///     response,
+    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    /// ));
     ///
     /// // English should not appear in the iterator result:
     /// let supported_langids = provider.supported_options_for_key(&key::HELLO_WORLD_V1)
@@ -72,19 +72,6 @@ where
     where
         F: 'a,
     {
-        self.filter_by_langid_with_description(predicate, "Locale filter".to_string())
-    }
-
-    /// Same as [`Self::filter_by_langid`] but with an extra argument to set a custom
-    /// description for debugging.
-    pub fn filter_by_langid_with_description<'a>(
-        self,
-        predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
-        description: String,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
-    where
-        F: 'a,
-    {
         let old_predicate = self.predicate;
         RequestFilterDataProvider {
             inner: self.inner,
@@ -97,7 +84,7 @@ where
                     None => true,
                 }
             }),
-            description,
+            filter_name: self.filter_name,
         }
     }
 
@@ -120,7 +107,7 @@ where
     ///
     /// let allowlist = vec![langid!("de"), langid!("zh")];
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
-    ///     .filterable()
+    ///     .filterable("Demo German+Chinese filter")
     ///     .filter_by_langid_allowlist_strict(&allowlist);
     ///
     /// // German requests should succeed:
@@ -143,10 +130,13 @@ where
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load_payload(&req_en);
-    /// assert!(matches!(response, Err(DataError::FilteredResource(_, _))));
+    /// assert!(matches!(
+    ///     response,
+    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    /// ));
     /// assert_eq!(
-    ///     "Resource was filtered: Locale filter (allowlist: [de, zh]): core/helloworld@1/en-US",
-    ///     response.unwrap_err().to_string()
+    ///     response.unwrap_err().str_context,
+    ///     Some("Demo German+Chinese filter")
     /// );
     /// ```
     pub fn filter_by_langid_allowlist_strict<'a>(
@@ -168,7 +158,7 @@ where
                     None => true,
                 }
             }),
-            description: format!("Locale filter (allowlist: {:?})", allowlist),
+            filter_name: self.filter_name,
         }
     }
 
@@ -183,7 +173,7 @@ where
     /// use icu_locid_macros::langid;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
-    ///     .filterable()
+    ///     .filterable("Demo require-langid filter")
     ///     .require_langid();
     ///
     /// // Requests with a langid should succeed:
@@ -206,7 +196,10 @@ where
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
     ///     provider.load_payload(&req_no_langid);
-    /// assert!(matches!(response, Err(DataError::FilteredResource(_, _))));
+    /// assert!(matches!(
+    ///     response,
+    ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
+    /// ));
     /// ```
     pub fn require_langid<'a>(
         self,
@@ -223,7 +216,7 @@ where
                 }
                 request.resource_path.options.langid.is_some()
             }),
-            description: "Locale is required".to_string(),
+            filter_name: self.filter_name,
         }
     }
 }

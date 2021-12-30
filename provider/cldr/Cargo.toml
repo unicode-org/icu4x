@@ -57,7 +57,7 @@ tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features 
 displaydoc = { version = "0.2.3", default-features = false }
 icu_locid_macros = { version = "0.4", path = "../../components/locid/macros" }
 icu_provider_uprops = { version = "0.4", path = "../../provider/uprops", features = ["log"] }
-icu_properties = { version = "0.4", path = "../../components/properties", features = ["provider_serde"] }
+icu_properties = { version = "0.4", path = "../../components/properties", features = ["provider_serde", "std"] }
 
 # Dependencies for the download feature
 urlencoding = { version = "1.1", optional = true }

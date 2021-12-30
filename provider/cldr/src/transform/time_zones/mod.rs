@@ -69,7 +69,7 @@ impl TryFrom<&str> for TimeZonesProvider {
 impl KeyedDataProvider for TimeZonesProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::TimeZone || resc_key.version != 1 {
-            return Err(resc_key.into());
+            return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key));
         }
         Ok(())
     }
@@ -101,7 +101,7 @@ macro_rules! impl_data_provider {
                 let langid = req.try_langid()?;
                 let time_zones = match self.data.get(&langid) {
                     Some(v) => &v.dates.time_zone_names,
-                    None => return Err(DataError::MissingResourceOptions(req.clone())),
+                    None => return Err(DataErrorKind::MissingLocale.with_req(req)),
                 };
                 let metadata = DataResponseMetadata::default();
                 // TODO(#1109): Set metadata.data_langid correctly.

@@ -31,7 +31,7 @@ impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvi
         let data = &self
             .data
             .get(&req.resource_path.key.sub_category)
-            .ok_or(DataError::MissingResourceKey(req.resource_path.key))?;
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
 
         let mut builder = UnicodeSetBuilder::new();
         for (start, end) in &data.ranges {

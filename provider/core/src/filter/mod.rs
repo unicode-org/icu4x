@@ -28,7 +28,7 @@
 //!
 //! // Only return German data from a HelloWorldProvider:
 //! HelloWorldProvider::new_with_placeholder_data()
-//!     .filterable()
+//!     .filterable("Demo German-only filter")
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!
@@ -41,7 +41,6 @@ pub use impls::*;
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
 use alloc::boxed::Box;
-use alloc::string::String;
 
 /// A data provider that selectively filters out data requests.
 ///
@@ -61,8 +60,8 @@ where
     /// proceed as normal; a return value of `false` will reject the request.
     pub predicate: F,
 
-    /// A description for this filter, used in error messages.
-    pub description: String,
+    /// A name for this filter, used in error messages.
+    pub filter_name: &'static str,
 }
 
 impl<D, F, M> DataProvider<M> for RequestFilterDataProvider<D, F>
@@ -75,10 +74,9 @@ where
         if (self.predicate)(req) {
             self.inner.load_payload(req)
         } else {
-            Err(DataError::FilteredResource(
-                req.clone(),
-                self.description.clone(),
-            ))
+            Err(DataErrorKind::FilteredResource
+                .with_str_context(self.filter_name)
+                .with_req(req))
         }
     }
 }
@@ -116,21 +114,30 @@ where
 }
 
 pub trait Filterable: Sized {
-    fn filterable(self) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool>;
+    /// Creates a filterable data provider with the given name for debugging.
+    ///
+    /// For more details, see [`icu_provider::filter`].
+    fn filterable(
+        self,
+        filter_name: &'static str,
+    ) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool>;
 }
 
 impl<T> Filterable for T
 where
     T: Sized,
 {
-    fn filterable(self) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool> {
+    fn filterable(
+        self,
+        filter_name: &'static str,
+    ) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool> {
         fn noop(_: &DataRequest) -> bool {
             true
         }
         RequestFilterDataProvider {
             inner: self,
             predicate: noop,
-            description: "some description".into(),
+            filter_name,
         }
     }
 }

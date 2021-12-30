@@ -52,7 +52,7 @@ impl DataProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
             .options
             .variant
             .as_ref()
-            .ok_or_else(|| DataError::NeedsVariant(req.clone()))?;
+            .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(req))?;
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned(convert_dates(dates, calendar))),

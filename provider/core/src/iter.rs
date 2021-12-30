@@ -4,7 +4,6 @@
 
 //! Collection of iteration APIs for [`DataProvider`].
 
-use crate::error::Error;
 use crate::prelude::*;
 use alloc::boxed::Box;
 
@@ -17,7 +16,7 @@ pub trait IterableDataProviderCore {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, Error>;
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError>;
 }
 
 /// A super-trait combining [`DataProvider`] and [`IterableDataProviderCore`], auto-implemented
@@ -44,17 +43,17 @@ where
 pub trait KeyedDataProvider {
     /// Given a [`ResourceKey`], checks whether this type of [`DataProvider`] supports it.
     ///
-    /// Returns Ok if the key is supported, or an Error with more information if not. The Error
-    /// should be [`MissingResourceKey`].
+    /// Returns Ok if the key is supported, or an Error with more information if not.
+    /// The Error should be [`MissingResourceKey`].
     ///
-    /// [`MissingResourceKey`]: crate::error::Error::MissingResourceKey
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), Error>;
+    /// [`MissingResourceKey`]: crate::error::DataErrorKind::MissingResourceKey
+    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError>;
 
     /// Auto-implemented function that enables chaining of [`KeyedDataProviders`] while preserving
     /// [`MissingResourceKey`].
     ///
     /// [`KeyedDataProviders`]: KeyedDataProvider
-    /// [`MissingResourceKey`]: crate::error::Error::MissingResourceKey
+    /// [`MissingResourceKey`]: crate::error::DataErrorKind::MissingResourceKey
     ///
     /// # Examples
     ///
@@ -63,11 +62,11 @@ pub trait KeyedDataProvider {
     ///     .or_else(|err| DataProviderB::or_else_supports_key(err, resc_key))
     ///     .or_else(|err| DataProviderC::or_else_supports_key(err, resc_key))
     /// ```
-    fn or_else_supports_key(err: Error, resc_key: &ResourceKey) -> Result<(), Error> {
+    fn or_else_supports_key(err: DataError, resc_key: &ResourceKey) -> Result<(), DataError> {
         match Self::supports_key(resc_key) {
             Ok(()) => Ok(()),
             Err(new_err) => {
-                if let Error::MissingResourceKey(_) = err {
+                if let DataErrorKind::MissingResourceKey = err.kind {
                     Err(err)
                 } else {
                     Err(new_err)

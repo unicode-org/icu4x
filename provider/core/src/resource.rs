@@ -4,12 +4,12 @@
 
 //! Resource paths and related types.
 
-use crate::error::Error;
 use alloc::borrow::Cow;
 use alloc::format;
 use alloc::string::String;
 use alloc::string::ToString;
 
+use crate::error::{DataError, DataErrorKind};
 use core::borrow::Borrow;
 use core::default::Default;
 use core::fmt;
@@ -194,15 +194,30 @@ impl ResourceKey {
     /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!(x, "foo", "baz", 1);
     /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!(x, "bar", "baz", 1);
     ///
-    /// assert!(matches!(FOO_BAR.match_key(FOO_BAR), Ok(())));
-    /// assert!(matches!(FOO_BAR.match_key(FOO_BAZ), Err(DataError::MissingResourceKey(_))));
-    /// assert!(matches!(FOO_BAR.match_key(BAR_BAZ), Err(DataError::MissingResourceKey(_))));
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(FOO_BAR),
+    ///     Ok(())
+    /// ));
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(FOO_BAZ),
+    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+    /// ));
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(BAR_BAZ),
+    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+    /// ));
+    ///
+    /// // The error context contains the argument:
+    /// assert_eq!(
+    ///     FOO_BAR.match_key(BAR_BAZ).unwrap_err().key,
+    ///     Some(BAR_BAZ)
+    /// );
     /// ```
-    pub fn match_key(&self, key: Self) -> Result<(), Error> {
+    pub fn match_key(&self, key: Self) -> Result<(), DataError> {
         if *self == key {
             Ok(())
         } else {
-            Err(Error::MissingResourceKey(*self))
+            Err(DataErrorKind::MissingResourceKey.with_key(key))
         }
     }
 }

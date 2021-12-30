@@ -114,7 +114,7 @@ impl<'a> DataProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
         if let Some(result) = self.list.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
-        Err(DataError::MissingResourceKey(req.resource_path.key))
+        Err(DataErrorKind::MissingResourceKey.with_req(req))
     }
 }
 
@@ -180,7 +180,7 @@ impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a> {
         if let Some(resp) = self.list.try_supported_options(resc_key, self.cldr_paths)? {
             return Ok(Box::new(resp.into_iter()));
         }
-        Err(DataError::MissingResourceKey(*resc_key))
+        Err(DataErrorKind::MissingResourceKey.with_key(*resc_key))
     }
 }
 

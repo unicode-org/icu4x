@@ -3,14 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
+use icu_provider::DataError;
 use std::path::{Path, PathBuf};
 
 #[derive(Display, Debug)]
+#[non_exhaustive]
 pub enum Error {
     #[displaydoc("{0}: {1:?}")]
     Io(std::io::Error, Option<PathBuf>),
     #[displaydoc("{0}")]
-    DataProvider(icu_provider::DataError),
+    DataProvider(DataError),
     #[displaydoc("Deserializer error: {0}: {1:?}")]
     Deserializer(String, Option<PathBuf>),
     #[cfg(feature = "export")]
@@ -20,15 +22,15 @@ pub enum Error {
 
 impl std::error::Error for Error {}
 
-impl From<icu_provider::DataError> for Error {
-    fn from(e: icu_provider::DataError) -> Self {
+impl From<DataError> for Error {
+    fn from(e: DataError) -> Self {
         Error::DataProvider(e)
     }
 }
 
 impl From<icu_provider::serde::Error> for Error {
     fn from(e: icu_provider::serde::Error) -> Self {
-        Error::DataProvider(icu_provider::DataError::Serde(e))
+        Error::DataProvider(e.into())
     }
 }
 
@@ -75,8 +77,23 @@ impl Error {
     }
 }
 
-impl From<Error> for icu_provider::DataError {
+impl From<Error> for DataError {
     fn from(err: Error) -> Self {
-        Self::new_resc_error(&err)
+        use Error::*;
+        match err {
+            Io(e, Some(path_buf)) => DataError::from(e).with_path(&path_buf),
+            Io(e, None) => DataError::from(e),
+            DataProvider(e) => e,
+            Deserializer(s, Some(path_buf)) => DataError::custom("FS: Deserializer")
+                .with_display_context(&s)
+                .with_path(&path_buf),
+            Deserializer(s, None) => DataError::custom("FS: Deserializer").with_display_context(&s),
+            #[cfg(feature = "export")]
+            Serializer(e, Some(path_buf)) => DataError::custom("FS: Serializer")
+                .with_error_context(&e)
+                .with_path(&path_buf),
+            #[cfg(feature = "export")]
+            Serializer(e, None) => DataError::custom("FS: Serializer").with_display_context(&e),
+        }
     }
 }
