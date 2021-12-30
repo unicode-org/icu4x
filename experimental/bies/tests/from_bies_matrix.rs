@@ -57,7 +57,9 @@ impl<R: Rng> TestDataGenerator<R> {
         } else {
             true_breakpoints
         };
-        let expected_bies = BiesString::from(&expected_breakpoints).writeable_to_string();
+        let expected_bies = BiesString::from(&expected_breakpoints)
+            .writeable_to_string()
+            .into_owned();
         TestCase {
             sample_data: SampleData {
                 matrix,
@@ -132,8 +134,9 @@ impl<R: Rng> TestDataGenerator<R> {
 
     /// Returns a BIES matrix representing the given Breakpoints
     fn bies_matrix_for_breakpoints(&mut self, breakpoints: &Breakpoints, noise: f32) -> BiesMatrix {
-        let bies = BiesString::from(breakpoints).writeable_to_string();
+        let bies = BiesString::from(breakpoints);
         let matrix = bies
+            .writeable_to_string()
             .chars()
             .map(|ch| self.bies_vector_for_char(ch, noise))
             .collect();
@@ -365,8 +368,13 @@ fn get_test_cases() -> Vec<TestCase> {
 #[test]
 fn test_to_bies_string() {
     for test_case in get_test_cases().iter() {
-        let actual_bies = BiesString::from(&test_case.expected_breakpoints).writeable_to_string();
-        assert_eq!(test_case.expected_bies, actual_bies, "{:?}", test_case);
+        let actual_bies = BiesString::from(&test_case.expected_breakpoints);
+        assert_eq!(
+            test_case.expected_bies,
+            actual_bies.writeable_to_string(),
+            "{:?}",
+            test_case
+        );
     }
 }
 

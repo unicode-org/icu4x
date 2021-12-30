@@ -125,8 +125,8 @@ fn test_grouper() {
             };
             let fdf =
                 FixedDecimalFormat::try_new(LanguageIdentifier::und(), &provider, options).unwrap();
-            let actual = fdf.format(&dec).writeable_to_string();
-            assert_eq!(cas.expected[i], actual, "{:?}", cas);
+            let actual = fdf.format(&dec);
+            assert_eq!(cas.expected[i], actual.writeable_to_string(), "{:?}", cas);
         }
     }
 }
