@@ -5,10 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{subtags, LanguageIdentifier};
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use tinystr::{TinyStr4, TinyStr8};

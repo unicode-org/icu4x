@@ -11,7 +11,8 @@ use crate::CldrPaths;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::{pattern, provider::*};
 
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use crate::support::KeyedDataProvider;
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 

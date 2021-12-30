@@ -5,10 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_decimal::provider::*;
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::borrow::Cow;

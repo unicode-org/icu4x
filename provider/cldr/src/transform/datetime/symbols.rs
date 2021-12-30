@@ -10,7 +10,8 @@ use crate::cldr_serde;
 use crate::CldrPaths;
 use icu_datetime::provider::*;
 
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use crate::support::KeyedDataProvider;
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;

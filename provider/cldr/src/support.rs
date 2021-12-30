@@ -3,11 +3,54 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::CldrPaths;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use std::convert::TryFrom;
 use std::sync::RwLock;
+
+/// A [`DataProvider`] whose supported keys are known statically at compile time.
+///
+/// Implementing this trait means that a [`DataProvider`] is built to support a specific set of
+/// keys; for example, by transforming those keys from an external data source.
+///
+/// TODO(#442): Think about a better way to do this. This is not fully supported.
+/// TODO: When const_trait_impl is stable, most implementations of this trait should be const.
+pub trait KeyedDataProvider {
+    /// Given a [`ResourceKey`], checks whether this type of [`DataProvider`] supports it.
+    ///
+    /// Returns Ok if the key is supported, or an Error with more information if not.
+    /// The Error should be [`MissingResourceKey`].
+    ///
+    /// [`MissingResourceKey`]: crate::error::DataErrorKind::MissingResourceKey
+    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError>;
+
+    /// Auto-implemented function that enables chaining of [`KeyedDataProviders`] while preserving
+    /// [`MissingResourceKey`].
+    ///
+    /// [`KeyedDataProviders`]: KeyedDataProvider
+    /// [`MissingResourceKey`]: crate::error::DataErrorKind::MissingResourceKey
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// DataProviderA::supports_key(resc_key)
+    ///     .or_else(|err| DataProviderB::or_else_supports_key(err, resc_key))
+    ///     .or_else(|err| DataProviderC::or_else_supports_key(err, resc_key))
+    /// ```
+    fn or_else_supports_key(err: DataError, resc_key: &ResourceKey) -> Result<(), DataError> {
+        match Self::supports_key(resc_key) {
+            Ok(()) => Ok(()),
+            Err(new_err) => {
+                if let DataErrorKind::MissingResourceKey = err.kind {
+                    Err(err)
+                } else {
+                    Err(new_err)
+                }
+            }
+        }
+    }
+}
 
 pub trait ResourceKeySupport {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError>;

@@ -5,10 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
