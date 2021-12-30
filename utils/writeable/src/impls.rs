@@ -162,17 +162,6 @@ impl Writeable for String {
         LengthHint::exact(self.len())
     }
 
-    /// Returns a borrowed `str`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use writeable::Writeable;
-    /// use std::borrow::Cow;
-    ///
-    /// let cow = "foo".writeable_to_string();
-    /// assert!(matches!(cow, Cow::Borrowed(_)));
-    /// ```
     #[inline]
     fn writeable_to_string(&self) -> Cow<str> {
         Cow::Borrowed(self)
