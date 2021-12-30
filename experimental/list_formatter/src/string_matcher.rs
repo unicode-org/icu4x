@@ -7,8 +7,8 @@ use crate::error::Error;
 use alloc::borrow::Cow;
 use alloc::string::ToString;
 use icu_provider::yoke::{self, *};
-use regex_automata::dfa::Automaton;
 use regex_automata::dfa::sparse::DFA;
+use regex_automata::dfa::Automaton;
 
 #[derive(Clone, Debug, Yokeable, ZeroCopyFrom)]
 pub(crate) struct StringMatcher<'data> {
@@ -67,7 +67,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
             }
 
             let dfa_bytes = <Cow<'de, [u8]>>::deserialize(deserializer)?;
-            
+
             // Verify safety invariant
             DFA::from_bytes(&dfa_bytes).map_err(|e| {
                 use serde::de::Error;
