@@ -19,21 +19,6 @@ pub trait IterableDataProviderCore {
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError>;
 }
 
-/// A super-trait combining [`DataProvider`] and [`IterableDataProviderCore`], auto-implemented
-/// for all types implementing both of those traits.
-pub trait IterableDataProvider<M>: IterableDataProviderCore + DataProvider<M>
-where
-    M: DataMarker,
-{
-}
-
-impl<S, M> IterableDataProvider<M> for S
-where
-    S: IterableDataProviderCore + DataProvider<M>,
-    M: DataMarker,
-{
-}
-
 /// A [`DataProvider`] whose supported keys are known statically at compile time.
 ///
 /// Implementing this trait means that a [`DataProvider`] is built to support a specific set of

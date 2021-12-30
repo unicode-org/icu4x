@@ -4,7 +4,7 @@
 
 //! Types having to do with the exporting of data.
 
-use crate::iter::IterableDataProvider;
+use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
 
 /// An object capable of serializing data payloads to be read by a [`DataProvider`].
@@ -59,7 +59,7 @@ pub fn export_from_iterable<P, E, M>(
 ) -> Result<(), DataError>
 where
     M: DataMarker,
-    P: IterableDataProvider<M> + ?Sized,
+    P: DataProvider<M> + IterableDataProviderCore + ?Sized,
     E: DataExporter<M> + ?Sized,
 {
     let it = provider.supported_options_for_key(resc_key)?;

@@ -109,6 +109,7 @@ pub mod dynutil;
 
 pub mod buffer_provider;
 mod data_provider;
+pub mod either;
 mod error;
 #[macro_use]
 pub mod erased;
