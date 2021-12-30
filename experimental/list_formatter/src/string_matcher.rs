@@ -53,7 +53,6 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     {
         if deserializer.is_human_readable() {
             StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
-                // use alloc::string::ToString;
                 use serde::de::Error;
                 D::Error::custom(e.to_string())
             })
