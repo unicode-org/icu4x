@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::CldrPaths;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use std::convert::TryFrom;
@@ -73,7 +73,7 @@ impl<T> Default for LazyCldrProvider<T> {
 impl<'b, T> LazyCldrProvider<T>
 where
     T: DataProvider<SerializeMarker>
-        + IterableDataProviderCore
+        + IterableProvider
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths, Error = crate::error::Error>,
 {
@@ -99,7 +99,7 @@ where
         DataProvider::load_payload(data_provider, req).map(Some)
     }
 
-    /// Call [`IterableDataProviderCore::supported_options_for_key()`], initializing `T` if necessary.
+    /// Call [`IterableProvider::supported_options_for_key()`], initializing `T` if necessary.
     pub fn try_supported_options(
         &self,
         resc_key: &ResourceKey,

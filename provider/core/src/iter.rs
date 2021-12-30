@@ -11,7 +11,7 @@ use alloc::boxed::Box;
 ///
 /// Implementing this trait means that a [`DataProvider`] knows all of the data it can successfully
 /// return from a load request.
-pub trait IterableDataProviderCore {
+pub trait IterableProvider {
     /// Given a [`ResourceKey`], returns a boxed iterator over [`ResourceOptions`].
     fn supported_options_for_key(
         &self,

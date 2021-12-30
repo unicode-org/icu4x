@@ -4,7 +4,7 @@
 
 //! Helpers for switching between multiple providers.
 
-use crate::iter::IterableDataProviderCore;
+use crate::iter::IterableProvider;
 use crate::prelude::*;
 
 /// A provider that is one of two types determined at runtime.
@@ -40,7 +40,7 @@ impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
     }
 }
 
-impl<P0: IterableDataProviderCore, P1: IterableDataProviderCore> IterableDataProviderCore
+impl<P0: IterableProvider, P1: IterableProvider> IterableProvider
     for EitherProvider<P0, P1>
 {
     #[inline]

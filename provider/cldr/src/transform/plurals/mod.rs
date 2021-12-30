@@ -5,11 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
+use crate::support::KeyedDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -103,7 +103,7 @@ icu_provider::impl_dyn_provider!(PluralsProvider, {
     _ => PluralRulesV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for PluralsProvider {
+impl IterableProvider for PluralsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

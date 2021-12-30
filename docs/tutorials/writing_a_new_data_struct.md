@@ -67,7 +67,7 @@ Source data providers must implement the following traits:
 
 - `DataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
 - `DataProvider<SerdeSeDataStructMarker>`, usually implemented with the macro [`impl_dyn_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dyn_provider.html)
-- [`IterableDataProviderCore`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/iter/trait.IterableDataProviderCore.html), required for the data exporter (see below)
+- [`IterableProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/iter/trait.IterableProvider.html), required for the data exporter (see below)
 
 Source data providers are often complex to write. Rules of thumb:
 
@@ -208,7 +208,7 @@ icu_provider::impl_dyn_provider!(NumbersProvider, {
     _ => DecimalSymbolsV1Marker,
 }, SERDE_SE, 'data);
 
-impl<'data> IterableDataProviderCore for NumbersProvider {
+impl<'data> IterableProvider for NumbersProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -270,7 +270,7 @@ impl<'a, 'data> DataProvider<'data, SerdeSeDataStructMarker> for CldrJsonDataPro
     }
 }
 
-impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a, '_> {
+impl<'a> IterableProvider for CldrJsonDataProvider<'a, '_> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,

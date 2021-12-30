@@ -5,7 +5,7 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_provider::hello_world::*;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 
 #[test]
 fn test_supported_langids() {

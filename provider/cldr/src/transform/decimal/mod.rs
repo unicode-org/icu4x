@@ -5,11 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_decimal::provider::*;
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
+use crate::support::KeyedDataProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::borrow::Cow;
@@ -138,7 +138,7 @@ icu_provider::impl_dyn_provider!(NumbersProvider, {
     _ => DecimalSymbolsV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for NumbersProvider {
+impl IterableProvider for NumbersProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

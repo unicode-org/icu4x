@@ -12,7 +12,7 @@ use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::{pattern, provider::*};
 
 use crate::support::KeyedDataProvider;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -60,7 +60,7 @@ icu_provider::impl_dyn_provider!(DatePatternsProvider, {
     _ => calendar::DatePatternsV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for DatePatternsProvider {
+impl IterableProvider for DatePatternsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

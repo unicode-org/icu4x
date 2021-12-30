@@ -5,7 +5,7 @@
 use crate::bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 use crate::enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
 use icu_properties::provider::UnicodePropertyV1Marker;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 
 use std::path::Path;
@@ -46,7 +46,7 @@ icu_provider::impl_dyn_provider!(PropertiesDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for PropertiesDataProvider {
+impl IterableProvider for PropertiesDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

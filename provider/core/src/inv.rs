@@ -4,7 +4,7 @@
 
 //! Locale-invariant data provider that requires no I/O.
 
-use crate::iter::IterableDataProviderCore;
+use crate::iter::IterableProvider;
 use crate::prelude::*;
 use alloc::boxed::Box;
 use alloc::vec;
@@ -48,7 +48,7 @@ where
     }
 }
 
-impl IterableDataProviderCore for InvariantDataProvider {
+impl IterableProvider for InvariantDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
