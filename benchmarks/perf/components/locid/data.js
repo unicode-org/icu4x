@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640834918724,
+  "lastUpdate": 1640896200943,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20189,6 +20189,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4123,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "59edff5d06e20fe0c71e972d623e2a67ed80ee9e",
+          "message": "Change Writeable::writeable_to_string to return a Cow (#1452)",
+          "timestamp": "2021-12-30T12:22:03-08:00",
+          "tree_id": "996f55c5023a97041e457910acd3c91f30f40b16",
+          "url": "https://github.com/unicode-org/icu4x/commit/59edff5d06e20fe0c71e972d623e2a67ed80ee9e"
+        },
+        "date": 1640896192695,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2427,
+            "range": "± 130",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4059,
+            "range": "± 206",
             "unit": "ns/iter"
           }
         ]
