@@ -159,6 +159,6 @@ mod test {
             serde_json::from_str::<StringMatcher>(&json).unwrap(),
             matcher
         );
-        assert!(serde_json::from_str::<StringMatcher>(&".*[").is_err());
+        assert!(serde_json::from_str::<StringMatcher>(".*[").is_err());
     }
 }
