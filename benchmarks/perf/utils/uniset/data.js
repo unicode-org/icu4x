@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640825612114,
+  "lastUpdate": 1640834888041,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17309,6 +17309,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37873791,
             "range": "± 1478945",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4b8496d31067f23cd9446a3df0eab439908568a5",
+          "message": "Re-write DataError to be Copy and use logging (#1449)",
+          "timestamp": "2021-12-29T19:20:54-08:00",
+          "tree_id": "86a32db4a1ba77fa5086d60842e960a2bc076d68",
+          "url": "https://github.com/unicode-org/icu4x/commit/4b8496d31067f23cd9446a3df0eab439908568a5"
+        },
+        "date": 1640834878710,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29705761,
+            "range": "± 1730453",
             "unit": "ns/iter"
           }
         ]
