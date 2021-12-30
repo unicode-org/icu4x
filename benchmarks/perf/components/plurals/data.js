@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640896233530,
+  "lastUpdate": 1640903470479,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22889,6 +22889,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 23029,
             "range": "± 499",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "714acbd4ed5ce70722a60f102ad693ee48189048",
+          "message": "ListFormatter example (#1456)",
+          "timestamp": "2021-12-30T23:22:43+01:00",
+          "tree_id": "989ecc8c140bb226aa6c7b1cf061a97b20c95fb7",
+          "url": "https://github.com/unicode-org/icu4x/commit/714acbd4ed5ce70722a60f102ad693ee48189048"
+        },
+        "date": 1640903462754,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1097,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5235,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20016,
+            "range": "± 17",
             "unit": "ns/iter"
           }
         ]
