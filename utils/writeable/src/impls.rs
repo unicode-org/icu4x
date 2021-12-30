@@ -194,11 +194,11 @@ fn test_string_impls() {
 
     // test str impl
     let arr: &[&str] = &["", "abc"];
-    check_writeable_slice(&arr);
+    check_writeable_slice(arr);
 
     // test String impl
     let arr: &[String] = &["".to_string(), "abc".to_string()];
-    check_writeable_slice(&arr);
+    check_writeable_slice(arr);
 
     // test &T impl
     let arr: &[&String] = &[&"".to_string(), &"abc".to_string()];
