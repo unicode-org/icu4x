@@ -15,12 +15,13 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::LanguageIdentifier;
-use tinystr::{TinyStr16, TinyStr4};
+use tinystr::{tinystr4, tinystr8, TinyStr16, TinyStr4, TinyStr8};
 use writeable::{LengthHint, Writeable};
 
 /// A top-level collection of related resource keys.
 #[non_exhaustive]
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
+#[repr(C)]
 pub enum ResourceCategory {
     Core,
     Calendar,
@@ -79,10 +80,64 @@ impl writeable::Writeable for ResourceCategory {
 ///
 /// Use [`resource_key!`] as a shortcut to create resource keys in code.
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
+#[repr(C)]
 pub struct ResourceKey {
+    _tag0: TinyStr8,
     pub category: ResourceCategory,
     pub sub_category: TinyStr16,
-    pub version: u16,
+    pub version: u8,
+    _tag1: TinyStr4,
+}
+
+impl ResourceKey {
+    /// Creates a new [`ResourceKey`].
+    pub const fn new(
+        category: ResourceCategory,
+        sub_category: TinyStr16,
+        version: u8,
+    ) -> ResourceKey {
+        ResourceKey {
+            _tag0: tinystr8!("ICURES[["),
+            category,
+            sub_category,
+            version,
+            _tag1: tinystr4!("]]**"),
+        }
+    }
+
+    /// Recovers a [`ResourceKey`] from its `repr(C)` bytes.
+    /// 
+    /// Returns `None` if the bytes are not a valid [`ResourceKey`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let demo_key = icu_provider::resource_key!(Core, "demo", 1);
+    /// // This is safe because we are transmuting to a POD type
+    /// let repr_c_bytes: [u8; 40] = unsafe {
+    ///     core::mem::transmute(demo_key)
+    /// };
+    /// let recovered_key = ResourceKey::from_repr_c(repr_c_bytes)
+    ///     .expect("The bytes are valid");
+    ///
+    /// assert_eq!(demo_key, recovered_key);
+    /// ```
+    pub fn from_repr_c(bytes: [u8; 40]) -> Option<ResourceKey> {
+        // Smoke check
+        if &bytes[0..8] != b"ICURES[[" || &bytes[36..40] != b"]]**" {
+            return None;
+        }
+
+        // TODO(#1457): Use a ULE-like code path here.
+        // TODO(#1457): This is not safe!
+        // - We can't currently verify the ResourceCategory!
+        // - TinyStr does not currently have a function that takes a byte *array* (with NULs).
+        unsafe {
+            Some(core::mem::transmute(bytes))
+        }
+    }
 }
 
 /// Shortcut to construct a const resource identifier.
@@ -119,11 +174,11 @@ macro_rules! resource_key {
         )
     };
     ($category:expr, $sub_category:literal, $version:tt) => {
-        $crate::ResourceKey {
-            category: $category,
-            sub_category: $crate::internal::tinystr16!($sub_category),
-            version: $version,
-        }
+        $crate::ResourceKey::new(
+            $category,
+            $crate::internal::tinystr16!($sub_category),
+            $version,
+        )
     };
 }
 
@@ -433,11 +488,11 @@ mod tests {
                 expected: "core/cardinal@1",
             },
             KeyTestCase {
-                resc_key: ResourceKey {
-                    category: ResourceCategory::PrivateUse(tinystr4!("priv")),
-                    sub_category: tinystr::tinystr16!("cardinal"),
-                    version: 1,
-                },
+                resc_key: ResourceKey::new(
+                    ResourceCategory::PrivateUse(tinystr4!("priv")),
+                    tinystr::tinystr16!("cardinal"),
+                    1,
+                ),
                 expected: "x-priv/cardinal@1",
             },
             KeyTestCase {
@@ -445,8 +500,8 @@ mod tests {
                 expected: "core/maxlengthsubcatg@1",
             },
             KeyTestCase {
-                resc_key: resource_key!(Core, "cardinal", 65535),
-                expected: "core/cardinal@65535",
+                resc_key: resource_key!(Core, "cardinal", 255),
+                expected: "core/cardinal@255",
             },
         ]
     }

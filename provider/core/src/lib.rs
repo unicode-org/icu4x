@@ -113,6 +113,8 @@ mod error;
 #[macro_use]
 pub mod erased;
 pub mod export;
+#[cfg(feature = "std")]
+pub mod extract;
 pub mod filter;
 pub mod hello_world;
 pub mod inv;
