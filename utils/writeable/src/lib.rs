@@ -56,6 +56,7 @@ extern crate alloc;
 mod impls;
 mod ops;
 
+use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt;
 
@@ -137,12 +138,47 @@ pub trait Writeable {
     /// Creates a new String with the data from this Writeable. Like ToString,
     /// but smaller and faster.
     ///
-    /// Not intended to be overriden.
-    fn writeable_to_string(&self) -> String {
+    /// The default impl allocates an owned String. However, if it is possible to return a
+    /// borrowed string, overwrite this method to return a `Cow::Borrowed`.
+    ///
+    /// To remove the `Cow` wrapper, call `.into_owned()`.
+    ///
+    /// # Examples
+    ///
+    /// Inspect a `Writeable` before writing it to the sink:
+    ///
+    /// ```
+    /// use writeable::Writeable;
+    /// use core::fmt::{Write, Result};
+    ///
+    /// fn write_if_ascii<W, S>(w: &W, sink: &mut S) -> Result
+    /// where
+    ///     W: Writeable + ?Sized,
+    ///     S: Write + ?Sized,
+    /// {
+    ///     let s = w.writeable_to_string();
+    ///     if s.is_ascii() {
+    ///         sink.write_str(&s)
+    ///     } else {
+    ///         Ok(())
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// Convert the `Writeable` into a fully owned `String`:
+    ///
+    /// ```
+    /// use writeable::Writeable;
+    ///
+    /// fn make_string(w: &impl Writeable) -> String {
+    ///     w.writeable_to_string().into_owned()
+    /// }
+    /// ```
+    fn writeable_to_string(&self) -> Cow<str> {
         let mut output = String::with_capacity(self.write_len().capacity());
         self.write_to(&mut output)
             .expect("impl Write for String is infallible");
-        output
+        Cow::Owned(output)
     }
 }
 
@@ -176,11 +212,12 @@ pub trait Writeable {
 macro_rules! assert_writeable_eq {
     ($actual_writeable:expr, $expected_str:expr $(,)?) => {
         {
-            use $crate::Writeable;
             let writeable = $actual_writeable;
-            assert_eq!($expected_str, writeable.writeable_to_string());
-            assert!(writeable.write_len().0 <= $expected_str.len());
-            if let Some(upper) = writeable.write_len().1 {
+            let actual = $crate::Writeable::writeable_to_string(&writeable);
+            assert_eq!($expected_str, actual);
+            let length_hint = $crate::Writeable::write_len(&writeable);
+            assert!(length_hint.0 <= $expected_str.len());
+            if let Some(upper) = length_hint.1 {
                 assert!($expected_str.len() <= upper);
             }
         }
@@ -188,11 +225,12 @@ macro_rules! assert_writeable_eq {
 
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {
         {
-            use $crate::Writeable;
             let writeable = $actual_writeable;
-            assert_eq!($expected_str, writeable.writeable_to_string(), $($arg)+);
-            assert!(writeable.write_len().0 <= $expected_str.len(), $($arg)+);
-            if let Some(upper) = writeable.write_len().1 {
+            let actual = $crate::Writeable::writeable_to_string(&writeable);
+            assert_eq!($expected_str, actual, $($arg)+);
+            let length_hint = $crate::Writeable::write_len(&writeable);
+            assert!(length_hint.0 <= $expected_str.len(), $($arg)+);
+            if let Some(upper) = length_hint.1 {
                 assert!($expected_str.len() <= upper, $($arg)+);
             }
         }
