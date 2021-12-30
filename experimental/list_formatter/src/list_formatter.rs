@@ -115,7 +115,7 @@ impl ListFormatter {
     }
 
     pub fn format_to_string<W: Writeable>(&self, values: &[W]) -> String {
-        self.format(values).to_str().into_owned()
+        self.format(values).writeable_to_string().into_owned()
     }
 
     pub fn format<'a, 'b: 'a, 'c: 'a, 'd: 'a, W: Writeable + 'd>(
