@@ -119,25 +119,23 @@ pub type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'a> ConditionalListJoinerPattern<'a> {
     /// Returns the pattern parts, and if materialized, the following value as a string
-    pub fn parts<W: Writeable>(
+    pub fn parts<'b, W: Writeable + ?Sized>(
         &'a self,
-        following_value: &W,
-    ) -> (PatternParts<'a>, Option<alloc::string::String>) {
-        match (&self.special_case, following_value.peek()) {
-            (Some(SpecialCasePattern { condition, pattern }), None) => {
-                let v = following_value.writeable_to_string();
-                if condition.test(&v) {
-                    (pattern.borrow_tuple(), Some(v))
+        following_value: &'b W,
+    ) -> (PatternParts<'a>, Option<Cow<'b, str>>) {
+        if let Some(special_case) = &self.special_case {
+            let value = following_value.to_str();
+            (
+                if special_case.condition.test(&value) {
+                    special_case.pattern
                 } else {
-                    (self.default.borrow_tuple(), Some(v))
+                    self.default
                 }
-            }
-            (Some(SpecialCasePattern { condition, pattern }), Some(peek))
-                if condition.test(peek) =>
-            {
-                (pattern.borrow_tuple(), None)
-            }
-            _ => (self.default.borrow_tuple(), None),
+                .borrow_tuple(),
+                Some(value),
+            )
+        } else {
+            (self.default.borrow_tuple(), None)
         }
     }
 
@@ -304,7 +302,7 @@ pub(crate) mod test {
     #[test]
     fn produces_correct_parts() {
         assert_eq!(
-            test_patterns().pair(Width::Wide).parts(&"").0,
+            test_patterns().pair(Width::Wide).parts("").0,
             ("$", ";", "+")
         );
     }
@@ -312,37 +310,39 @@ pub(crate) mod test {
     #[test]
     fn produces_correct_parts_conditionally() {
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts(&"A").0,
+            test_patterns().end(Width::Narrow).parts("A").0,
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts(&"a").0,
+            test_patterns().end(Width::Narrow).parts("a").0,
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts(&"ab").0,
+            test_patterns().end(Width::Narrow).parts("ab").0,
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts(&"B").0,
+            test_patterns().end(Width::Narrow).parts("B").0,
             ("", ". ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts(&"BA").0,
+            test_patterns().end(Width::Narrow).parts("BA").0,
             ("", ". ", "")
         );
     }
 
     #[test]
-    fn materializes_writeable_if_required() {
-        // &str is peekable, no materialize
-        assert_eq!(test_patterns().end(Width::Narrow).parts(&"A").1, None);
-        // u16 is not peekable, we materialize the string to check the regex
+    fn returns_str_if_conditional() {
+        assert_eq!(
+            test_patterns().end(Width::Narrow).parts("A").1,
+            Some(Cow::Borrowed("A"))
+        );
+        // u16 is not Borrow<str>, so we get an owned Cow
         assert_eq!(
             test_patterns().end(Width::Narrow).parts(&123u16).1,
-            Some("123".to_owned())
+            Some(Cow::Owned("123".to_owned()))
         );
-        // The pattern is not conditional, so we don't materialize
+        // The pattern is not conditional, so we return none
         assert_eq!(test_patterns().end(Width::Wide).parts(&123u16).1, None);
     }
 

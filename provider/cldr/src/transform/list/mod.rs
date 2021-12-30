@@ -282,42 +282,42 @@ mod tests {
         let or = &payload_or.get().end(Width::Wide);
 
         // ... y Mallorca
-        assert_eq!(and.parts(&"Mallorca").0, y_parts);
+        assert_eq!(and.parts("Mallorca").0, y_parts);
         // ... e Ibiza
-        assert_eq!(and.parts(&"Ibiza").0, e_parts);
+        assert_eq!(and.parts("Ibiza").0, e_parts);
         // ... e Hidalgo
-        assert_eq!(and.parts(&"Hidalgo").0, e_parts);
+        assert_eq!(and.parts("Hidalgo").0, e_parts);
         // ... y Hierva
-        assert_eq!(and.parts(&"Hierva").0, y_parts);
+        assert_eq!(and.parts("Hierva").0, y_parts);
 
         // ... o Ibiza
-        assert_eq!(or.parts(&"Ibiza").0, o_parts);
+        assert_eq!(or.parts("Ibiza").0, o_parts);
         // ... u Okinawa
-        assert_eq!(or.parts(&"Okinawa").0, u_parts);
+        assert_eq!(or.parts("Okinawa").0, u_parts);
         // ... u 8 más
-        assert_eq!(or.parts(&"8 más").0, u_parts);
+        assert_eq!(or.parts("8 más").0, u_parts);
         // ... u 8
         assert_eq!(or.parts(&8u8).0, u_parts);
         // ... u 87 más
-        assert_eq!(or.parts(&"87 más").0, u_parts);
+        assert_eq!(or.parts("87 más").0, u_parts);
         // ... u 87
         assert_eq!(or.parts(&87u8).0, u_parts);
         // ... u 11 más
-        assert_eq!(or.parts(&"11 más").0, u_parts);
+        assert_eq!(or.parts("11 más").0, u_parts);
         // ... u 11
         assert_eq!(or.parts(&11u8).0, u_parts);
         // ... o 110 más
-        assert_eq!(or.parts(&"110 más").0, o_parts);
+        assert_eq!(or.parts("110 más").0, o_parts);
         // ... o 110
         assert_eq!(or.parts(&110u8).0, o_parts);
         // ... o 11.000 más
-        assert_eq!(or.parts(&"11.000 más").0, u_parts);
+        assert_eq!(or.parts("11.000 más").0, u_parts);
         // ... o 11.000
-        assert_eq!(or.parts(&"11.000").0, u_parts);
+        assert_eq!(or.parts("11.000").0, u_parts);
         // ... o 11.000,92 más
-        assert_eq!(or.parts(&"11.000,92 más").0, u_parts);
+        assert_eq!(or.parts("11.000,92 más").0, u_parts);
         // ... o 11.000,92
-        assert_eq!(or.parts(&"11.000,92").0, u_parts);
+        assert_eq!(or.parts("11.000,92").0, u_parts);
 
         // Works for all es-* locales
         assert_eq!(
