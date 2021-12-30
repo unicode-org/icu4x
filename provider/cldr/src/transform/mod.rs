@@ -25,10 +25,10 @@ pub use locale_canonicalizer::aliases::AliasesProvider;
 pub use locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
 pub use plurals::PluralsProvider;
 
+use crate::support::KeyedDataProvider;
 use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
 use icu_provider::iter::IterableProvider;
-use crate::support::KeyedDataProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 

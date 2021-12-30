@@ -5,11 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_calendar::provider::*;
 use icu_locid_macros::langid;
 use icu_provider::iter::IterableProvider;
-use crate::support::KeyedDataProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;

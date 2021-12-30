@@ -5,12 +5,12 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_datetime::provider::{key, time_zones::*};
 use icu_locid::LanguageIdentifier;
-use icu_provider::prelude::*;
 use icu_provider::iter::IterableProvider;
-use crate::support::KeyedDataProvider;
+use icu_provider::prelude::*;
 use litemap::LiteMap;
 
 use std::convert::TryFrom;
