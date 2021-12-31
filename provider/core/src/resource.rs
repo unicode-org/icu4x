@@ -106,7 +106,7 @@ impl ResourceKey {
     }
 
     /// Recovers a [`ResourceKey`] from its `repr(C)` bytes.
-    /// 
+    ///
     /// Returns `None` if the bytes are not a valid [`ResourceKey`].
     ///
     /// # Examples
@@ -134,9 +134,7 @@ impl ResourceKey {
         // TODO(#1457): This is not safe!
         // - We can't currently verify the ResourceCategory!
         // - TinyStr does not currently have a function that takes a byte *array* (with NULs).
-        unsafe {
-            Some(core::mem::transmute(*bytes))
-        }
+        unsafe { Some(core::mem::transmute(*bytes)) }
     }
 }
 

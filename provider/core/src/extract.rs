@@ -5,9 +5,9 @@
 //! Utilities for extracting `ResourceKey` objects from a byte stream. Requires the "std" feature.
 
 use crate::prelude::*;
+use std::io;
 use std::io::BufRead;
 use std::io::BufReader;
-use std::io;
 
 pub fn extract_keys_from_byte_stream(stream: impl io::Read) -> io::Result<Vec<ResourceKey>> {
     let mut reader = BufReader::with_capacity(1024, stream);
@@ -20,14 +20,14 @@ pub fn extract_keys_from_byte_stream(stream: impl io::Read) -> io::Result<Vec<Re
         }
         let len = reader_buffer.len();
         // Save 39 bytes from iteration to iteration: one less than a 40-byte window
-        working_buffer[39..(39+len)].copy_from_slice(reader_buffer);
-        for window in working_buffer[..(39+len)].windows(40) {
+        working_buffer[39..(39 + len)].copy_from_slice(reader_buffer);
+        for window in working_buffer[..(39 + len)].windows(40) {
             if &window[0..8] == b"ICURES[[" && &window[36..40] == b"]]**" {
                 let mut bytes: [u8; 40] = [0; 40];
                 bytes.copy_from_slice(window);
                 let resc_key = match ResourceKey::from_repr_c(&bytes) {
                     Some(k) => k,
-                    None => continue
+                    None => continue,
                 };
                 output.push(resc_key);
             }
@@ -50,15 +50,20 @@ mod test {
     #[test]
     fn test_extract_golden() {
         let keys = extract_keys_from_byte_stream(&*GOLDEN_BYTES).unwrap();
-        assert_eq!(keys, vec![
-            resource_key!(DateTime, "skeletons", 1),
-            resource_key!(DateTime, "symbols", 1),
-        ]);
+        assert_eq!(
+            keys,
+            vec![
+                resource_key!(DateTime, "skeletons", 1),
+                resource_key!(DateTime, "symbols", 1),
+            ]
+        );
     }
 
     #[test]
     fn test_extract_large() {
-        let keys: Vec<ResourceKey> = (0u8..=255u8).map(|i| resource_key!(Core, "demo", i)).collect();
+        let keys: Vec<ResourceKey> = (0u8..=255u8)
+            .map(|i| resource_key!(Core, "demo", i))
+            .collect();
         let mut buffer: Vec<u8> = Vec::new();
         for key in keys.iter() {
             // Insert some garbage

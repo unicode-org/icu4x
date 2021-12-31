@@ -24,13 +24,13 @@ use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
 use icu_provider_uprops::{EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider};
 use simple_logger::SimpleLogger;
+use std::borrow::Cow;
 use std::collections::HashSet;
-use std::path::PathBuf;
-use std::str::FromStr;
+use std::fs::File;
 use std::io;
 use std::io::BufRead;
-use std::fs::File;
-use std::borrow::Cow;
+use std::path::PathBuf;
+use std::str::FromStr;
 use writeable::Writeable;
 
 fn main() -> eyre::Result<()> {
@@ -288,7 +288,8 @@ fn main() -> eyre::Result<()> {
     if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
         // eyre::bail!("Key file is not yet supported (see #192)",);
         let allowed_keys = allowed_keys.get_or_insert_with(Default::default);
-        let file = File::open(key_file_path).with_context(|| key_file_path.to_string_lossy().into_owned())?;
+        let file = File::open(key_file_path)
+            .with_context(|| key_file_path.to_string_lossy().into_owned())?;
         for line in io::BufReader::new(file).lines() {
             let line_string = line.with_context(|| key_file_path.to_string_lossy().into_owned())?;
             allowed_keys.insert(Cow::Owned(line_string));
@@ -300,7 +301,12 @@ fn main() -> eyre::Result<()> {
         || matches.is_present("KEY_FILE")
         || matches.is_present("TEST_KEYS")
     {
-        export_cldr(&matches, exporter, locales_vec.as_deref(), allowed_keys.as_ref())?;
+        export_cldr(
+            &matches,
+            exporter,
+            locales_vec.as_deref(),
+            allowed_keys.as_ref(),
+        )?;
         export_set_props(&matches, exporter, allowed_keys.as_ref())?;
         export_map_props(&matches, exporter, allowed_keys.as_ref())?;
     }

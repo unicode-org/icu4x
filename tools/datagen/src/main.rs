@@ -25,9 +25,9 @@
 //!     --format blob \
 //!     --out /tmp/icu4x_data/icu4x_data.postcard
 //! ```
-//! 
+//!
 //! Extract the keys from an executable into a key file:
-//! 
+//!
 //! ```bash
 //! # Run from the icu4x project folder
 //! $ cargo build --example work_log --release
