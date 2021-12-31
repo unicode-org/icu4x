@@ -93,6 +93,7 @@ With the runtime approach, we ship the code and data to perform script fallbacks
 **Pros:**
 
 - No need to pre-minimize or pre-maximize the locale
+- Leverages CLDR's heuristics for what vertical fallbacks are most efficient
 
 **Cons:**
 
@@ -148,6 +149,7 @@ It is likely that if we shipped this option, we would give ICU4X users the abili
 **Pros:**
 
 - Scales well to many data keys
+- Shares code and data with an existing component, rather than introducing a novel chunk of code and data as in the Runtime Approach
 
 **Cons:**
 
