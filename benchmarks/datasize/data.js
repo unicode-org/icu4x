@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640903051595,
+  "lastUpdate": 1640916258190,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6413,6 +6413,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/714acbd4ed5ce70722a60f102ad693ee48189048"
         },
         "date": 1640903042960,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d9f89fcd7df4567e17ddd8c46810b0db287436a",
+          "message": "Add EitherProvider and rename IterableDataProviderCore to IterableProvider (#1455)",
+          "timestamp": "2021-12-30T18:02:47-08:00",
+          "tree_id": "d23c5a53a2948f0032d7293bd0efaf622fe24012",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d9f89fcd7df4567e17ddd8c46810b0db287436a"
+        },
+        "date": 1640916249164,
         "tool": "ndjson",
         "benches": [
           {
