@@ -33,7 +33,7 @@ command = "cargo"
 # Add features here and below if a desired example is not being built
 args = [
     "wasm-build-release", "--examples", "--workspace",
-    "--features", "zerovec/serde",
+    "--features", "zerovec/serde,icu4x_no_human_readable_de",
     "--exclude", "icu_datagen"
 ]
 

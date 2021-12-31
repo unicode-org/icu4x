@@ -6,7 +6,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-#[cfg(any(test, feature = "provider_transform_internals"))]
 use crate::error::Error;
 use crate::options::Width;
 use crate::string_matcher::StringMatcher;
@@ -42,7 +41,6 @@ pub struct ListFormatterPatternsV1<'data>(
 impl<'data> ListFormatterPatternsV1<'data> {
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
-    #[cfg(any(test, feature = "provider_transform_internals"))]
     pub fn try_new(patterns: [&str; 12]) -> Result<Self, Error> {
         Ok(Self([
             ListJoinerPattern::from_str(patterns[0], true, false)?.into(),
@@ -60,7 +58,6 @@ impl<'data> ListFormatterPatternsV1<'data> {
         ]))
     }
 
-    #[cfg(any(test, feature = "provider_transform_internals"))]
     /// Adds a special case to all `pattern`s that will evaluate to
     /// `alternative_pattern` when `regex` matches the following element.
     /// The regex is interpreted case-insensitive and anchored to the beginning, but
@@ -178,7 +175,6 @@ impl<'data> ListJoinerPattern<'data> {
         )
     }
 
-    #[cfg(any(test, feature = "provider_transform_internals"))]
     fn from_str(pattern: &str, allow_prefix: bool, allow_suffix: bool) -> Result<Self, Error> {
         match (pattern.find("{0}"), pattern.find("{1}")) {
             (Some(index_0), Some(index_1))
@@ -207,7 +203,6 @@ impl<'data> ListJoinerPattern<'data> {
     }
 }
 
-#[cfg(any(test, feature = "provider_transform_internals"))]
 impl<'data> From<ListJoinerPattern<'data>> for ConditionalListJoinerPattern<'data> {
     fn from(default: ListJoinerPattern<'data>) -> Self {
         Self {

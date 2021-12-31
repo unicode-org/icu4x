@@ -6,12 +6,12 @@
 
 use displaydoc::Display;
 use icu_provider::DataError;
+use alloc::string::String;
 
 #[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("error loading data: {0}")]
     Data(icu_provider::DataError),
-    #[cfg(any(test, feature = "provider_transform_internals"))]
     #[displaydoc("Illegal pattern: {0}")]
     IllegalPattern(String),
     #[displaydoc("Illegal condition: {0}")]

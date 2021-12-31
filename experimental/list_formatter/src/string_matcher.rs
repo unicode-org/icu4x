@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "provider_serde")]
 use crate::error::Error;
 use alloc::borrow::Cow;
 use alloc::string::ToString;
@@ -29,7 +28,7 @@ impl serde::Serialize for StringMatcher<'_> {
     where
         S: serde::ser::Serializer,
     {
-        if cfg!(feature = "provider_serde_json") && serializer.is_human_readable() {
+        if serializer.is_human_readable() {
             self.pattern
                 .as_ref()
                 .map(|pattern| pattern.serialize(serializer))
@@ -51,7 +50,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     where
         D: serde::de::Deserializer<'de>,
     {
-        if cfg!(feature = "provider_serde_json") && deserializer.is_human_readable() {
+        if !cfg!(feature = "icu4x_no_human_readable_de") && deserializer.is_human_readable() {
             StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
                 use serde::de::Error;
                 D::Error::custom(e.to_string())
@@ -83,7 +82,6 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 }
 
 impl<'data> StringMatcher<'data> {
-    #[cfg(feature = "provider_serde")]
     pub(crate) fn new(pattern: &str) -> Result<Self, Error> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
@@ -151,6 +149,7 @@ mod test {
     }
 
     #[test]
+    #[cfg(not(feature = "icu4x_no_human_readable_de"))]
     fn test_json_serialization() {
         let matcher = StringMatcher::new("abc*").unwrap();
 
