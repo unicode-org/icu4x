@@ -15,6 +15,17 @@ args = [
     "-v",
 ]
 
+[tasks.icu4x-key-extract]
+description = "Build and smoke-test the icu4x-key-extract tool"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-key-extract",
+    "--",
+    "--help",
+]
+
 [tasks.testdata-build-json]
 description = "Build ICU4X JSON from the downloaded CLDR JSON, overwriting the existing ICU4X JSON."
 category = "ICU4X Data"
@@ -65,6 +76,22 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-build-worklog-json]
+description = "Build JSON files for the work_log example"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--input-from-testdata",
+    "--out=tools/datagen/tests/testdata/work_log_json",
+    "--key-file=tools/datagen/tests/testdata/work_log+keys.txt",
+    "--locales=de",
+    "--locales=es",
+    "--overwrite",
+]
+
 [tasks.testdata]
 description = "Rebuild all ICU4X testdata from source data checked into the repository"
 category = "ICU4X Data"
@@ -72,6 +99,7 @@ dependencies = [
     "testdata-build-json",
     "testdata-build-blob",
     "testdata-build-blob-smaller",
+    "testdata-build-worklog-json",
 ]
 
 [tasks.testdata-check]

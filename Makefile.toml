@@ -91,6 +91,8 @@ dependencies = [
     # we have to set up the environment for the emscripten job separately
     # Instead, each of these is called individually.
     "wasm-release",
+    "wasm-test-release",
+    "wasm-compare-worklog-keys",
     "wasm-cpp-emscripten",
 ]
 

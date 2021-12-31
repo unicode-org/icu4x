@@ -124,7 +124,7 @@ impl ResourceKey {
     ///
     /// assert_eq!(demo_key, recovered_key);
     /// ```
-    pub fn from_repr_c(bytes: [u8; 40]) -> Option<ResourceKey> {
+    pub fn from_repr_c(bytes: &[u8; 40]) -> Option<ResourceKey> {
         // Smoke check
         if &bytes[0..8] != b"ICURES[[" || &bytes[36..40] != b"]]**" {
             return None;
@@ -135,7 +135,7 @@ impl ResourceKey {
         // - We can't currently verify the ResourceCategory!
         // - TinyStr does not currently have a function that takes a byte *array* (with NULs).
         unsafe {
-            Some(core::mem::transmute(bytes))
+            Some(core::mem::transmute(*bytes))
         }
     }
 }

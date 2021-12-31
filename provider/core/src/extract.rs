@@ -25,7 +25,7 @@ pub fn extract_keys_from_byte_stream(stream: impl io::Read) -> io::Result<Vec<Re
             if &window[0..8] == b"ICURES[[" && &window[36..40] == b"]]**" {
                 let mut bytes: [u8; 40] = [0; 40];
                 bytes.copy_from_slice(window);
-                let resc_key = match ResourceKey::from_repr_c(bytes) {
+                let resc_key = match ResourceKey::from_repr_c(&bytes) {
                     Some(k) => k,
                     None => continue
                 };

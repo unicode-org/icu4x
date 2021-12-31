@@ -231,6 +231,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Install Node.js v14.17.0
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.17.0
       - name: Load nightly Rust toolchain for WASM.
         run: |
           rustup install nightly-2021-12-22
@@ -320,15 +324,16 @@ jobs:
         with:
           command: make
           args: wasm-release
-      - name: Install Node.js v14.17.0
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.17.0
-      - name: Build
+      - name: Test
         uses: actions-rs/cargo@v1.0.1
         with:
           command: make
           args: wasm-test-release
+      - name: Build Examples and test icu4x-key-extract
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: make
+          args: wasm-compare-worklog-keys
       # This has to be a separate test since the emscripten sdk
       # will otherwise interfere with other node-using tests
       - name: Run emscripten test
