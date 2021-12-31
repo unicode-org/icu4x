@@ -13,6 +13,7 @@ pub mod ffi {
 
     use icu_provider::prelude::BufferProvider;
     use icu_provider_blob::BlobDataProvider;
+    use icu_provider_blob::StaticDataProvider;
     #[cfg(all(
         feature = "provider_fs",
         not(any(target_arch = "wasm32", target_os = "none"))
