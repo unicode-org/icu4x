@@ -72,8 +72,10 @@ CLDR ships data with a small number of meta-regions, which include:
 - `en-001` (parent of `en-GB`, among others)
 - `en-150` (parent of `en-DE`, among others)
 - `es-419` (parent of `es-AR`, among others)
-- `pt-PT` (parent of `pt-MO`, among others)
-- `zh-Hant-HK` (parent of `zh-Hant-MO`)
+- `pt-PT`\* (parent of `pt-MO`, among others)
+- `zh-Hant-HK`\* (parent of `zh-Hant-MO`)
+
+\* *I am lumping pt-PT and zh-HK in with meta-regions because they involve a region-to-region fallback, which is the same mechanism as fallbacks to numeric regions.*
 
 Unlike aliases, meta regions represent well-formed, canonicalized locales, which CLDR declares to have relationships with one another.
 
@@ -130,7 +132,9 @@ With this option, we assume that locales passed into the data provider are in mi
 
 #### Build-Time Option 2: Manually Maximized Locales
 
-With this option, we assume that locales are in maximal form. For example, `sr-ME` should be `sr-Latn-ME`, and `de-LI` should be `de-Latn-LI`. Note that every language still has a default script, so one of the scripts will always pass through during vertical fallback.
+With this option, we assume that locales are in maximal form. For example, `sr-ME` should be `sr-Latn-ME`, and `de-LI` should be `de-Latn-LI`. This means that every locale always has the correct script in its fallback chain. (The default script will continue to be pass-through.)
+
+This solves the problem with Option 1 where locales having a non-default script need to override every single data key. However, locales having a meta-region fallback will still need to carry all relevant overrides. But, I am considering this a much smaller problem than the script overrides, because (1) the data is in the correct script, so only a subset of keys need overrides, and (2) the number of locales having a meta-region in their fallback chain is very limited.
 
 Since maximized locales always have at least three subtags (language, script, and region), we can (and should) check in the data provider whether the input locale is maximized, and if it is not, we can return an error.
 
