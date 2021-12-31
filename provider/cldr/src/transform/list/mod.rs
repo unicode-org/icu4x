@@ -263,7 +263,7 @@ mod tests {
             provide(langid!("fr"), key::LIST_FORMAT_OR_V1)
                 .get()
                 .end(Width::Wide)
-                .parts(&"")
+                .parts("")
                 .0,
             ("", " ou ", "")
         );
@@ -339,7 +339,7 @@ mod tests {
             provide(langid!("he"), key::LIST_FORMAT_AND_V1)
                 .get()
                 .end(Width::Wide)
-                .parts(&"יפו")
+                .parts("יפו")
                 .0,
             vav_parts
         );
@@ -348,7 +348,7 @@ mod tests {
             provide(langid!("he"), key::LIST_FORMAT_AND_V1)
                 .get()
                 .end(Width::Wide)
-                .parts(&"Ibiza")
+                .parts("Ibiza")
                 .0,
             vav_dash_parts
         );
