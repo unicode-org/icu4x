@@ -324,7 +324,7 @@ mod tests {
             provide(langid!("es-AR"), key::LIST_FORMAT_AND_V1)
                 .get()
                 .end(Width::Wide)
-                .parts(&"Ibiza")
+                .parts("Ibiza")
                 .0,
             e_parts
         );
