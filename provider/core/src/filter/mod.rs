@@ -38,14 +38,14 @@ mod impls;
 
 pub use impls::*;
 
-use crate::iter::IterableDataProviderCore;
+use crate::iter::IterableProvider;
 use crate::prelude::*;
 use alloc::boxed::Box;
 
 /// A data provider that selectively filters out data requests.
 ///
 /// Data requests that are rejected by the filter will return [`DataError::FilteredResource`], and
-/// they will not be returned by [`IterableDataProviderCore::supported_options_for_key`].
+/// they will not be returned by [`IterableProvider::supported_options_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -81,10 +81,10 @@ where
     }
 }
 
-impl<D, F> IterableDataProviderCore for RequestFilterDataProvider<D, F>
+impl<D, F> IterableProvider for RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,
-    D: IterableDataProviderCore,
+    D: IterableProvider,
 {
     fn supported_options_for_key(
         &self,

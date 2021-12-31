@@ -5,11 +5,12 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_list::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
@@ -146,7 +147,7 @@ icu_provider::impl_dyn_provider!(ListProvider, {
     _ => ListFormatterPatternsV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for ListProvider {
+impl IterableProvider for ListProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

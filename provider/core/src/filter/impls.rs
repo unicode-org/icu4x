@@ -24,7 +24,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::filter::Filterable;
-    /// use icu_provider::iter::IterableDataProviderCore;
+    /// use icu_provider::iter::IterableProvider;
     /// use icu_locid::LanguageIdentifier;
     /// use icu_locid_macros::{language, langid};
     ///

@@ -6,7 +6,7 @@ use crate::uprops_helpers::{self, TomlBinary};
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
@@ -52,7 +52,7 @@ icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for BinaryPropertyUnicodeSetDataProvider {
+impl IterableProvider for BinaryPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

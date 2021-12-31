@@ -6,7 +6,7 @@ use crate::uprops_helpers::{self, TomlEnumerated};
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
@@ -107,7 +107,7 @@ icu_provider::impl_dyn_provider!(EnumeratedPropertyUnicodeSetDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for EnumeratedPropertyUnicodeSetDataProvider {
+impl IterableProvider for EnumeratedPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

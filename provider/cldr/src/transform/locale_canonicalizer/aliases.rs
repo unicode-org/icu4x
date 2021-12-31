@@ -5,10 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{subtags, LanguageIdentifier};
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use tinystr::{TinyStr4, TinyStr8};
@@ -75,7 +76,7 @@ icu_provider::impl_dyn_provider!(AliasesProvider, {
     _ => AliasesV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for AliasesProvider {
+impl IterableProvider for AliasesProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

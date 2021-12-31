@@ -12,7 +12,7 @@ use icu_properties::{
     CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
     Script, SentenceBreak, WordBreak,
 };
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;
@@ -129,7 +129,7 @@ icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
     key::SENTENCE_BREAK_V1 => UnicodePropertyMapV1Marker<SentenceBreak>,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for EnumeratedPropertyCodePointTrieProvider {
+impl IterableProvider for EnumeratedPropertyCodePointTrieProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

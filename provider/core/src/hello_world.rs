@@ -4,7 +4,7 @@
 
 //! Data provider returning multilingual "Hello World" strings for testing.
 
-use crate::iter::IterableDataProviderCore;
+use crate::iter::IterableProvider;
 use crate::prelude::*;
 use crate::yoke::{self, *};
 use alloc::borrow::Cow;
@@ -144,7 +144,7 @@ impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for HelloWorldProvider {
+impl IterableProvider for HelloWorldProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
