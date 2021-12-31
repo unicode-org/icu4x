@@ -44,6 +44,7 @@ Document | Summary
 [enums_or_ids.md](design/enums_or_ids.md) | When to use enums and when to use identifiers to represent entities in ICU4X
 [principles.md](design/principles.md) | These principles are not cast in stone, but are strong guidelines for developers.
 [string_representation.md](design/string_representation.md) | String representation on the library boundary.
+[vertical_fallback.md](design/vertical_fallback.md) | Locale fallbacks when loading data.
 
 ## Research
 
