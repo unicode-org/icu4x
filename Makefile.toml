@@ -48,7 +48,7 @@ dependencies = [
     "test-all-features",
     "test-docs-default",
     "test-docs",
-    "testdata-build-bincode-all",
+    "testdata-build-worklog-bincode",
     "testdata-check",
 ]
 

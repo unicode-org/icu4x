@@ -83,7 +83,6 @@ dependencies = [
     "testdata-build-json",
     "testdata-build-blob",
     "testdata-build-blob-smaller",
-    "testdata-build-worklog-json",
 ]
 
 [tasks.testdata-check]
