@@ -9,13 +9,21 @@ use std::io;
 use std::io::BufRead;
 use std::io::BufReader;
 
+/// Extracts [`ResourceKey`] objects from a byte stream.
+///
+/// This function looks for all occurrences of the `repr(C)` of `ResourceKey` in the byte stream,
+/// and reads them back as Rust objects.
+///
+/// The byte stream is often the output of a compiler, like a WASM file or an x86 executable.
+///
+/// To run this function as a command-line tool, use `icu4x-key-extract`.
 pub fn extract_keys_from_byte_stream(stream: impl io::Read) -> io::Result<Vec<ResourceKey>> {
     let mut reader = BufReader::with_capacity(1024, stream);
     let mut working_buffer = [0u8; 1024 + 39];
     let mut output = Vec::new();
     loop {
         let reader_buffer = reader.fill_buf()?;
-        if reader_buffer.len() == 0 {
+        if reader_buffer.is_empty() {
             break;
         }
         let len = reader_buffer.len();
