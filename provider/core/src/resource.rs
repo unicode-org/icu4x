@@ -119,7 +119,7 @@ impl ResourceKey {
     /// let repr_c_bytes: [u8; 40] = unsafe {
     ///     core::mem::transmute(demo_key)
     /// };
-    /// let recovered_key = ResourceKey::from_repr_c(repr_c_bytes)
+    /// let recovered_key = ResourceKey::from_repr_c(&repr_c_bytes)
     ///     .expect("The bytes are valid");
     ///
     /// assert_eq!(demo_key, recovered_key);
