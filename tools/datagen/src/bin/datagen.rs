@@ -27,6 +27,10 @@ use simple_logger::SimpleLogger;
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::io;
+use std::io::BufRead;
+use std::fs::File;
+use std::borrow::Cow;
 use writeable::Writeable;
 
 fn main() -> eyre::Result<()> {
@@ -240,10 +244,6 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    if matches.is_present("KEY_FILE") {
-        eyre::bail!("Key file is not yet supported (see #192)",);
-    }
-
     if matches.is_present("DRY_RUN") {
         eyre::bail!("Dry-run is not yet supported");
     }
@@ -280,14 +280,29 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
+    let mut allowed_keys: Option<HashSet<Cow<str>>> = None;
+    if let Some(keys) = matches.values_of("KEYS") {
+        let allowed_keys = allowed_keys.get_or_insert_with(Default::default);
+        allowed_keys.extend(keys.map(|s| Cow::Borrowed(s)));
+    }
+    if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
+        // eyre::bail!("Key file is not yet supported (see #192)",);
+        let allowed_keys = allowed_keys.get_or_insert_with(Default::default);
+        let file = File::open(key_file_path).with_context(|| key_file_path.to_string_lossy().into_owned())?;
+        for line in io::BufReader::new(file).lines() {
+            let line_string = line.with_context(|| key_file_path.to_string_lossy().into_owned())?;
+            allowed_keys.insert(Cow::Owned(line_string));
+        }
+    }
+
     if matches.is_present("ALL_KEYS")
         || matches.is_present("KEYS")
+        || matches.is_present("KEY_FILE")
         || matches.is_present("TEST_KEYS")
     {
-        let keys = matches.values_of("KEYS").map(|values| values.collect());
-        export_cldr(&matches, exporter, locales_vec.as_deref(), keys.as_ref())?;
-        export_set_props(&matches, exporter, keys.as_ref())?;
-        export_map_props(&matches, exporter, keys.as_ref())?;
+        export_cldr(&matches, exporter, locales_vec.as_deref(), allowed_keys.as_ref())?;
+        export_set_props(&matches, exporter, allowed_keys.as_ref())?;
+        export_map_props(&matches, exporter, allowed_keys.as_ref())?;
     }
 
     if matches.is_present("HELLO_WORLD") {
@@ -379,7 +394,7 @@ fn export_cldr(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
-    allowed_keys: Option<&HashSet<&str>>,
+    allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
@@ -437,7 +452,7 @@ fn export_cldr(
 fn export_set_props(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
-    allowed_keys: Option<&HashSet<&str>>,
+    allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for binary properties...");
 
@@ -485,7 +500,7 @@ fn export_set_props(
 fn export_map_props(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
-    allowed_keys: Option<&HashSet<&str>>,
+    allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for enumerated properties...");
 

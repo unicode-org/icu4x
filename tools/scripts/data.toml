@@ -76,22 +76,6 @@ args = [
     "--overwrite",
 ]
 
-[tasks.testdata-build-worklog-json]
-description = "Build JSON files for the work_log example"
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--input-from-testdata",
-    "--out=tools/datagen/tests/testdata/work_log_json",
-    "--key-file=tools/datagen/tests/testdata/work_log+keys.txt",
-    "--locales=de",
-    "--locales=es",
-    "--overwrite",
-]
-
 [tasks.testdata]
 description = "Rebuild all ICU4X testdata from source data checked into the repository"
 category = "ICU4X Data"
@@ -152,6 +136,23 @@ args = [
     "--out-testdata",
     "--test-keys",
     "--all-locales",
+    "--syntax=bincode",
+    "--overwrite",
+]
+
+[tasks.testdata-build-worklog-bincode]
+description = "Build Bincode files for the work_log example"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--input-from-testdata",
+    "--out=tools/datagen/tests/testdata/work_log_bincode",
+    "--key-file=tools/datagen/tests/testdata/work_log+keys.txt",
+    "--locales=de",
+    "--locales=es",
     "--syntax=bincode",
     "--overwrite",
 ]

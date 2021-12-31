@@ -1096,6 +1096,7 @@ name = "icu_datagen"
 version = "0.4.0"
 dependencies = [
  "clap",
+ "either",
  "eyre",
  "futures",
  "icu_locid",
