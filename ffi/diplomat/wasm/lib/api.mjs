@@ -283,6 +283,24 @@ export class ICU4XDataProvider {
     wasm.diplomat_free(blob_diplomat_ptr, blob_diplomat_bytes.length, 1);
     return diplomat_out;
   }
+
+  static create_empty() {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XDataProvider_create_empty(diplomat_receive_buffer);
+      const out = new ICU4XCreateDataProviderResult(diplomat_receive_buffer);
+      const out_provider_value = out.provider;
+      ICU4XDataProvider_box_destroy_registry.register(out_provider_value, out_provider_value.underlying);
+      Object.defineProperty(out, "provider", { value: out_provider_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5,
+        align: 4,
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
 }
 
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {

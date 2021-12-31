@@ -93,5 +93,15 @@ pub mod ffi {
                 },
             }
         }
+
+        /// Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
+        pub fn create_empty() -> ICU4XCreateDataProviderResult {
+            let provider = StaticDataProvider::new_empty();
+            ICU4XCreateDataProviderResult {
+                provider: Some(Box::new(ICU4XDataProvider(Box::new(provider)))),
+                success: true,
+            }
+        }
     }
 }

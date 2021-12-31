@@ -26,3 +26,7 @@
     .. cpp:function:: static ICU4XCreateDataProviderResult create_from_byte_slice(const diplomat::span<uint8_t> blob)
 
         Constructs a ``BlobDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html>`__ for more details.
+
+    .. cpp:function:: static ICU4XCreateDataProviderResult create_empty()
+
+        Constructs an empty ``StaticDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more details.
