@@ -30,10 +30,11 @@
 //! 
 //! ```bash
 //! # Run from the icu4x project folder
-//! $ cargo build --example work_log
+//! $ cargo build --example work_log --release
 //! $ cargo run --bin icu4x-key-extract -- \
-//!     -i target/debug/examples/work_log
+//!     -i target/release/examples/work_log \
 //!     -o /tmp/icu4x_data/work_log+keys.txt
+//! $ cat /tmp/icu4x_data/work_log+keys.txt
 //! ```
 //!
 //! Generate ICU4X JSON file tree from the key file for Spanish and German:
