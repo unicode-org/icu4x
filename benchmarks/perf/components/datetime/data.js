@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640903485529,
+  "lastUpdate": 1640916751401,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16559,6 +16559,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 342613,
             "range": "± 20442",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d9f89fcd7df4567e17ddd8c46810b0db287436a",
+          "message": "Add EitherProvider and rename IterableDataProviderCore to IterableProvider (#1455)",
+          "timestamp": "2021-12-30T18:02:47-08:00",
+          "tree_id": "d23c5a53a2948f0032d7293bd0efaf622fe24012",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d9f89fcd7df4567e17ddd8c46810b0db287436a"
+        },
+        "date": 1640916742393,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 143540,
+            "range": "± 8194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1600666,
+            "range": "± 55263",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 400200,
+            "range": "± 19561",
             "unit": "ns/iter"
           }
         ]
