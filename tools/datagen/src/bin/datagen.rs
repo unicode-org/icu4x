@@ -286,7 +286,6 @@ fn main() -> eyre::Result<()> {
         allowed_keys.extend(keys.map(|s| Cow::Borrowed(s)));
     }
     if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
-        // eyre::bail!("Key file is not yet supported (see #192)",);
         let allowed_keys = allowed_keys.get_or_insert_with(Default::default);
         let file = File::open(key_file_path)
             .with_context(|| key_file_path.to_string_lossy().into_owned())?;
