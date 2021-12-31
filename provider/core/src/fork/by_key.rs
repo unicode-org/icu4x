@@ -69,8 +69,8 @@ use alloc::vec::Vec;
 /// let forking_provider = ForkByKeyProvider(
 ///     HelloWorldProvider::new_with_placeholder_data()
 ///         .into_json_provider()
-///         .filterable("Romanian")
-///         .filter_by_langid(|langid| langid.language == language!("ro")),
+///         .filterable("Chinese")
+///         .filter_by_langid(|langid| langid.language == language!("zh")),
 ///     HelloWorldProvider::new_with_placeholder_data()
 ///         .into_json_provider()
 ///         .filterable("German")
@@ -86,7 +86,7 @@ use alloc::vec::Vec;
 ///             key: key::HELLO_WORLD_V1,
 ///             options: ResourceOptions {
 ///                 variant: None,
-///                 langid: Some(langid!("ro")),
+///                 langid: Some(langid!("zh")),
 ///             }
 ///         }
 ///     })
@@ -94,7 +94,7 @@ use alloc::vec::Vec;
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!("Salut, lume", romanian_hello_world.get().message);
+/// assert_eq!("你好世界", romanian_hello_world.get().message);
 ///
 /// // German is shadowed by Romanian, so this fails
 /// data_provider
@@ -150,8 +150,8 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvide
 ///     providers: vec![
 ///         HelloWorldProvider::new_with_placeholder_data()
 ///             .into_json_provider()
-///             .filterable("Romanian")
-///             .filter_by_langid(|langid| langid.language == language!("ro")),
+///             .filterable("Chinese")
+///             .filter_by_langid(|langid| langid.language == language!("zh")),
 ///         HelloWorldProvider::new_with_placeholder_data()
 ///             .into_json_provider()
 ///             .filterable("German")
@@ -168,7 +168,7 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvide
 ///             key: key::HELLO_WORLD_V1,
 ///             options: ResourceOptions {
 ///                 variant: None,
-///                 langid: Some(langid!("ro")),
+///                 langid: Some(langid!("zh")),
 ///             }
 ///         }
 ///     })
@@ -176,7 +176,7 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvide
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!("Salut, lume", romanian_hello_world.get().message);
+/// assert_eq!("你好世界", romanian_hello_world.get().message);
 ///
 /// // German is shadowed by Romanian, so this fails
 /// data_provider
