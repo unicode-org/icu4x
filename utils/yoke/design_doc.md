@@ -2,7 +2,7 @@
 
 ## Problem statement
 
-Zero-copy deserialization is a very effective way to speed up programs and avoid , however can lead to lifetimes pervasively spreading throughout the codebase, and prevents using diverse memory management techniques like caching.
+Zero-copy deserialization is a very effective way to speed up programs and avoid allocations, however can lead to lifetimes pervasively spreading throughout the codebase, and prevents using diverse memory management techniques like caching.
 
 It would be nice if it were possible to "erase" lifetimes and turn them into dynamically managed lifetimes (similar to type erasure with `dyn`) to allow for more flexible memory management.
 
