@@ -101,7 +101,9 @@ With the runtime approach, we ship the code and data to perform script fallbacks
 
 ### Build-Time Approach
 
-With the build-time approach, we only perform naive vertical fallbacking. All locales for which naive inheritance does not work must therefore have a pointer to the correct data, which are all resolved at build time.
+With the build-time approach, we only perform naive vertical fallbacking at runtime; complex vertical fallbacking is resolved at build time. All locales for which naive inheritance does not work must have a pointer to the correct data.
+
+Note that the build-time approach does not result in duplicated *data*, since we store pointers to the same data buffers that we would eventually find with the full runtime approach; however, it does result in more *metadata* being stored (larger index array).
 
 **Pros:**
 
