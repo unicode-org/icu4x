@@ -190,7 +190,7 @@ The `StableDeref` requirement on the `Cart` type ensures that moving the cart do
 
 [`.with_mut()`][with_mut] just proxies to `Yokeable::transform_mut` and satisfies point 2 for the reasons stated above when describing that method. It also satisfies point 1 due to the `for<'a>` lifetime in the bound; if the function is allowed to be called with any lifetime, it cannot export that data since it will not statically know what the lifetime will be.
 
-[`.project()`] has the following signature (the other project methods are a little bit more complicated to allow for captures, but they work off the same principles):
+[`.project()`][project] has the following signature (the other project methods are a little bit more complicated to allow for captures, but they work off the same principles):
 
 ```rust
 impl Yoke<Y, C> where Y: for<'a> Yokeable<'a> {
