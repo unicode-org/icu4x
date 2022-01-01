@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640916258190,
+  "lastUpdate": 1640995337118,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6443,6 +6443,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7d9f89fcd7df4567e17ddd8c46810b0db287436a"
         },
         "date": 1640916249164,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "11290a0e0ff8a2b909a8d669b43b2ec7df5d3b15",
+          "message": "Add back the empty data provider hook in FFI (#1466)",
+          "timestamp": "2021-12-31T16:00:55-08:00",
+          "tree_id": "414df51f932e56c715bc21748b5b027f1e39b597",
+          "url": "https://github.com/unicode-org/icu4x/commit/11290a0e0ff8a2b909a8d669b43b2ec7df5d3b15"
+        },
+        "date": 1640995329414,
         "tool": "ndjson",
         "benches": [
           {
