@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640916680798,
+  "lastUpdate": 1640995686264,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17429,6 +17429,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36509427,
             "range": "± 964716",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "11290a0e0ff8a2b909a8d669b43b2ec7df5d3b15",
+          "message": "Add back the empty data provider hook in FFI (#1466)",
+          "timestamp": "2021-12-31T16:00:55-08:00",
+          "tree_id": "414df51f932e56c715bc21748b5b027f1e39b597",
+          "url": "https://github.com/unicode-org/icu4x/commit/11290a0e0ff8a2b909a8d669b43b2ec7df5d3b15"
+        },
+        "date": 1640995677406,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 28634958,
+            "range": "± 1771656",
             "unit": "ns/iter"
           }
         ]
