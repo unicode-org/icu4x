@@ -28,3 +28,7 @@
         Constructs a ``BlobDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html>`__ for more details.
 
         - Note: ``blob`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
+    .. js:staticfunction:: create_empty()
+
+        Constructs an empty ``StaticDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more details.
