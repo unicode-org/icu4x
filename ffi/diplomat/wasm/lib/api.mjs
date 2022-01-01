@@ -472,6 +472,75 @@ const ICU4XFixedDecimalSignDisplay_rust_to_js = {
   4: "Negative",
 };
 
+const ICU4XLineBreakIterator_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XLineBreakIterator_destroy(underlying);
+});
+
+export class ICU4XLineBreakIterator {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XLineBreakIterator_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XLineBreakSegmenter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XLineBreakSegmenter_destroy(underlying);
+});
+
+export class ICU4XLineBreakSegmenter {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static try_new() {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XLineBreakSegmenter_try_new(diplomat_receive_buffer);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XLineBreakSegmenter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = {};
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    return diplomat_out;
+  }
+
+  segment_str(input) {
+    let input_diplomat_bytes = (new TextEncoder()).encode(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XLineBreakIterator(wasm.ICU4XLineBreakSegmenter_segment_str(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XLineBreakIterator_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+}
+
 const ICU4XLocale_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XLocale_destroy(underlying);
 });

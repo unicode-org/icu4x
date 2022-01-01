@@ -41,6 +41,7 @@ pub mod pluralrules;
 pub mod properties_maps;
 pub mod properties_sets;
 pub mod provider;
+pub mod segmenter_line;
 
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;
