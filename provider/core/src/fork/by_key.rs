@@ -79,8 +79,8 @@ use alloc::vec::Vec;
 ///
 /// let data_provider: &dyn DataProvider<HelloWorldV1Marker> = &forking_provider.as_deserializing();
 ///
-/// // Romanian is the first provider, so this succeeds
-/// let romanian_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
+/// // Chinese is the first provider, so this succeeds
+/// let chinese_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
 ///     .load_payload(&DataRequest {
 ///         resource_path: ResourcePath {
 ///             key: key::HELLO_WORLD_V1,
@@ -94,9 +94,9 @@ use alloc::vec::Vec;
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!("你好世界", romanian_hello_world.get().message);
+/// assert_eq!("你好世界", chinese_hello_world.get().message);
 ///
-/// // German is shadowed by Romanian, so this fails
+/// // German is shadowed by Chinese, so this fails
 /// data_provider
 ///     .load_payload(&DataRequest {
 ///         resource_path: ResourcePath {
@@ -161,8 +161,8 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvide
 ///
 /// let data_provider: &dyn DataProvider<HelloWorldV1Marker> = &forking_provider.as_deserializing();
 ///
-/// // Romanian is the first provider, so this succeeds
-/// let romanian_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
+/// // Chinese is the first provider, so this succeeds
+/// let chinese_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
 ///     .load_payload(&DataRequest {
 ///         resource_path: ResourcePath {
 ///             key: key::HELLO_WORLD_V1,
@@ -176,9 +176,9 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvide
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!("你好世界", romanian_hello_world.get().message);
+/// assert_eq!("你好世界", chinese_hello_world.get().message);
 ///
-/// // German is shadowed by Romanian, so this fails
+/// // German is shadowed by Chinese, so this fails
 /// data_provider
 ///     .load_payload(&DataRequest {
 ///         resource_path: ResourcePath {
