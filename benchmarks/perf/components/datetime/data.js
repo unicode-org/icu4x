@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640916751401,
+  "lastUpdate": 1640995758565,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16601,6 +16601,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 400200,
             "range": "± 19561",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "11290a0e0ff8a2b909a8d669b43b2ec7df5d3b15",
+          "message": "Add back the empty data provider hook in FFI (#1466)",
+          "timestamp": "2021-12-31T16:00:55-08:00",
+          "tree_id": "414df51f932e56c715bc21748b5b027f1e39b597",
+          "url": "https://github.com/unicode-org/icu4x/commit/11290a0e0ff8a2b909a8d669b43b2ec7df5d3b15"
+        },
+        "date": 1640995749331,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 130752,
+            "range": "± 1042",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1535411,
+            "range": "± 4899",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 367240,
+            "range": "± 3932",
             "unit": "ns/iter"
           }
         ]
