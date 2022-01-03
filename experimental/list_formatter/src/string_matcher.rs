@@ -50,7 +50,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     where
         D: serde::de::Deserializer<'de>,
     {
-        if !cfg!(feature = "icu4x_no_human_readable_de") && deserializer.is_human_readable() {
+        if cfg!(feature = "icu4x_human_readable_de") && deserializer.is_human_readable() {
             StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
                 use serde::de::Error;
                 D::Error::custom(e.to_string())
@@ -105,6 +105,7 @@ impl<'data> StringMatcher<'data> {
     pub(crate) fn test(&self, string: &str) -> bool {
         cfg!(target_endian = "little")
             && matches!(
+                // Safe due to struct invariant.
                 unsafe { DFA::from_bytes_unchecked(&self.dfa_bytes).unwrap().0 }
                     .find_earliest_fwd(string.as_bytes()),
                 Ok(Some(_))
@@ -149,7 +150,7 @@ mod test {
     }
 
     #[test]
-    #[cfg(not(feature = "icu4x_no_human_readable_de"))]
+    #[cfg(feature = "icu4x_human_readable_de")]
     fn test_json_serialization() {
         let matcher = StringMatcher::new("abc*").unwrap();
 
