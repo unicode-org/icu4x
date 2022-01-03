@@ -1170,6 +1170,7 @@ dependencies = [
  "deduplicating_array",
  "displaydoc",
  "formatted_string",
+ "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
  "icu_provider",
