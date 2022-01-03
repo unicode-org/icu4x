@@ -4,9 +4,9 @@
 
 //! Error types for list formatting.
 
+use alloc::string::String;
 use displaydoc::Display;
 use icu_provider::DataError;
-use alloc::string::String;
 
 #[derive(Display, Debug)]
 pub enum Error {
