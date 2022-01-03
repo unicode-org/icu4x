@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1640995764645,
+  "lastUpdate": 1641204224382,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20333,6 +20333,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5668,
             "range": "± 858",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0f7103311a587e423a2b74bf3f5f411d3769ee0f",
+          "message": "Add boilerplate to new ListFormatter example (#1465)",
+          "timestamp": "2022-01-03T10:54:55+01:00",
+          "tree_id": "de7dc85d4baf39f2b86264191e0a371301a6369b",
+          "url": "https://github.com/unicode-org/icu4x/commit/0f7103311a587e423a2b74bf3f5f411d3769ee0f"
+        },
+        "date": 1641204215866,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2641,
+            "range": "± 96",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4437,
+            "range": "± 142",
             "unit": "ns/iter"
           }
         ]
