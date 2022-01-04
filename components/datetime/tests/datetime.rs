@@ -340,9 +340,11 @@ fn test_time_zone_format_configs() {
                     "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
+                    config: `{:?}`,\n\
                     ",
                     langid,
                     test.datetime,
+                    config_input
                 );
             }
         }

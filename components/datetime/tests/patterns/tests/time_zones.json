@@ -201,14 +201,14 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "expected": "London Time"
+        "expected": "GMT"
       },
       {
         "patterns": [],
         "configs": [
           "GenericNonLocationLong"
         ],
-        "expected": "London Time"
+        "expected": "Greenwich Mean Time"
       },
       {
         "patterns": [],
@@ -306,14 +306,14 @@
         "configs": [
           "GenericNonLocationShort"
         ],
-        "expected": "Dublin Time"
+        "expected": "GMT"
       },
       {
         "patterns": [],
         "configs": [
           "GenericNonLocationLong"
         ],
-        "expected": "Dublin Time"
+        "expected": "Greenwich Mean Time"
       },
       {
         "patterns": [],
