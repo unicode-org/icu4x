@@ -12,6 +12,44 @@ impl DataMarker for BufferMarker {
     type Yokeable = &'static [u8];
 }
 
+/// A data provider that returns opaque bytes.
+///
+/// Generally, these bytes are expected to be deserializable with Serde. To get an object
+/// implementing [`DataProvider`] via Serde, use [`as_deserializing()`], which requires
+/// enabling at least one of the Serde features.
+///
+/// Along with [`DataProvider`], this is one of the two foundational traits in this crate.
+///
+/// # Examples
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// use icu_locid_macros::langid;
+///
+/// let buffer_provider = HelloWorldProvider::new_with_placeholder_data()
+///     .into_json_provider();
+///
+/// let data_provider = buffer_provider.as_deserializing();
+///
+/// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
+///     .load_payload(&DataRequest {
+///         resource_path: ResourcePath {
+///             key: key::HELLO_WORLD_V1,
+///             options: ResourceOptions {
+///                 variant: None,
+///                 langid: Some(langid!("de")),
+///             }
+///         }
+///     })
+///     .expect("Loading should succeed")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// ```
+///
+/// [`as_deserializing()`]: crate::serde::de::AsDeserializingBufferProvider::as_deserializing
 pub trait BufferProvider {
     fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError>;
 }
