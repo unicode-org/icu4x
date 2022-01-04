@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641203781635,
+  "lastUpdate": 1641255648841,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6503,6 +6503,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0f7103311a587e423a2b74bf3f5f411d3769ee0f"
         },
         "date": 1641203773160,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9fdbd62e6de1f46f83248533955905a1bca167ad",
+          "message": "Add ForkByKeyProvider, first multi-source data provider (#1463)\n\n* Update HelloWorldProvider and add docs to BufferProvider\r\n* Support BufferProvider in filters",
+          "timestamp": "2022-01-03T18:19:25-06:00",
+          "tree_id": "3bbea7b75819f81bea66ba9e8da9d85e0440113c",
+          "url": "https://github.com/unicode-org/icu4x/commit/9fdbd62e6de1f46f83248533955905a1bca167ad"
+        },
+        "date": 1641255640012,
         "tool": "ndjson",
         "benches": [
           {
