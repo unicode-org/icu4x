@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641204267986,
+  "lastUpdate": 1641256077875,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16685,6 +16685,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 403460,
             "range": "± 22430",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9fdbd62e6de1f46f83248533955905a1bca167ad",
+          "message": "Add ForkByKeyProvider, first multi-source data provider (#1463)\n\n* Update HelloWorldProvider and add docs to BufferProvider\r\n* Support BufferProvider in filters",
+          "timestamp": "2022-01-03T18:19:25-06:00",
+          "tree_id": "3bbea7b75819f81bea66ba9e8da9d85e0440113c",
+          "url": "https://github.com/unicode-org/icu4x/commit/9fdbd62e6de1f46f83248533955905a1bca167ad"
+        },
+        "date": 1641256069255,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 132278,
+            "range": "± 11579",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1397645,
+            "range": "± 110433",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 343368,
+            "range": "± 23415",
             "unit": "ns/iter"
           }
         ]
