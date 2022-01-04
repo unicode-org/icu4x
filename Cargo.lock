@@ -1098,6 +1098,7 @@ dependencies = [
  "displaydoc",
  "icu_codepointtrie",
  "icu_provider",
+ "icu_uniset",
  "serde",
  "yoke",
  "zerovec",

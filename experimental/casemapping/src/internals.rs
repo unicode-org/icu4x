@@ -114,6 +114,14 @@ impl CaseMappingData {
     }
 
     #[inline]
+    fn is_relevant_to(&self, kind: MappingKind) -> bool {
+        match kind {
+            MappingKind::Lower | MappingKind::Fold => self.is_upper_or_title(),
+            MappingKind::Upper | MappingKind::Title => self.case_type() == CaseType::Lower,
+        }
+    }
+
+    #[inline]
     fn is_ignorable(&self) -> bool {
         self.0 & Self::IGNORABLE_FLAG != 0
     }
@@ -242,7 +250,7 @@ struct CaseMappingExceptions<'data> {
 }
 
 #[derive(Copy, Clone, Debug)]
-enum CaseMappingExceptionSlot {
+enum ExceptionSlot {
     Lower = 0,
     Fold = 1,
     Upper = 2,
@@ -253,14 +261,25 @@ enum CaseMappingExceptionSlot {
     FullMappings = 7,
 }
 
-impl CaseMappingExceptionSlot {
+impl ExceptionSlot {
     fn contains_char(&self) -> bool {
         matches!(self, Self::Lower | Self::Fold | Self::Upper | Self::Title)
     }
 }
 
-#[derive(Copy, Clone, Debug)]
-enum FullMapping {
+impl From<MappingKind> for ExceptionSlot {
+    fn from(full: MappingKind) -> Self {
+        match full {
+            MappingKind::Lower => Self::Lower,
+            MappingKind::Fold => Self::Fold,
+            MappingKind::Upper => Self::Upper,
+            MappingKind::Title => Self::Title,
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+enum MappingKind {
     Lower = 0,
     Fold = 1,
     Upper = 2,
@@ -282,7 +301,7 @@ impl<'data> CaseMappingExceptions<'data> {
     const CONDITIONAL_SPECIAL_FLAG: u16 = 0x4000;
     const CONDITIONAL_FOLD_FLAG: u16 = 0x8000;
 
-    const FULL_MAPPINGS_ALL_LENGTHS_MASK: u32 = 0xffff;
+    const MAPPINGS_ALL_LENGTHS_MASK: u32 = 0xffff;
     const FULL_MAPPINGS_LENGTH_MASK: u32 = 0xf;
     const FULL_MAPPINGS_LENGTH_SHIFT: u32 = 4;
 
@@ -302,13 +321,13 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Given a base index, returns true if the given slot exists
     #[inline]
-    fn has_slot(&self, base_idx: u16, slot: CaseMappingExceptionSlot) -> bool {
+    fn has_slot(&self, base_idx: u16, slot: ExceptionSlot) -> bool {
         let bit = 1u16 << (slot as u16);
         self.get(base_idx as usize) & bit != 0
     }
 
     // Given a base index, returns the index of a given slot
-    fn slot_index(&self, base_idx: u16, slot: CaseMappingExceptionSlot) -> usize {
+    fn slot_index(&self, base_idx: u16, slot: ExceptionSlot) -> usize {
         debug_assert!(self.has_slot(base_idx, slot));
         let flags = self.get(base_idx as usize);
 
@@ -327,7 +346,7 @@ impl<'data> CaseMappingExceptions<'data> {
     }
 
     // Given a base index, returns the value stored in a given slot
-    fn slot_value(&self, base_idx: u16, slot: CaseMappingExceptionSlot) -> u32 {
+    fn slot_value(&self, base_idx: u16, slot: ExceptionSlot) -> u32 {
         debug_assert!(self.has_slot(base_idx, slot));
         let slot_idx = self.slot_index(base_idx, slot);
         if self.has_double_slots(base_idx) {
@@ -340,16 +359,36 @@ impl<'data> CaseMappingExceptions<'data> {
     }
 
     // Given a base index, returns the character stored in a given slot
-    fn slot_char(&self, base_idx: u16, slot: CaseMappingExceptionSlot) -> char {
+    fn slot_char(&self, base_idx: u16, slot: ExceptionSlot) -> Option<char> {
         debug_assert!(slot.contains_char());
-        let raw = self.slot_value(base_idx, slot);
-        char::from_u32(raw).expect("Checked in validate() (step #1)")
+        if self.has_slot(base_idx, slot) {
+            let raw = self.slot_value(base_idx, slot);
+            Some(char::from_u32(raw).expect("Checked in validate() (step #1)"))
+        } else {
+            None
+        }
+    }
+
+    fn slot_char_for_kind(&self, base_idx: u16, kind: MappingKind) -> Option<char> {
+        match kind {
+            MappingKind::Lower | MappingKind::Upper => self.slot_char(base_idx, kind.into()),
+            MappingKind::Fold => self
+                .slot_char(base_idx, ExceptionSlot::Fold)
+                .or_else(|| self.slot_char(base_idx, ExceptionSlot::Lower)),
+            MappingKind::Title => self
+                .slot_char(base_idx, ExceptionSlot::Title)
+                .or_else(|| self.slot_char(base_idx, ExceptionSlot::Upper)),
+        }
+    }
+
+    fn has_delta(&self, base_idx: u16) -> bool {
+        self.has_slot(base_idx, ExceptionSlot::Delta)
     }
 
     // Given a base index, returns the delta (with the correct sign)
     fn delta(&self, base_idx: u16) -> i32 {
-        debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::Delta));
-        let raw: i32 = self.slot_value(base_idx, CaseMappingExceptionSlot::Delta) as _;
+        debug_assert!(self.has_slot(base_idx, ExceptionSlot::Delta));
+        let raw: i32 = self.slot_value(base_idx, ExceptionSlot::Delta) as _;
         if self.get(base_idx as usize) & Self::DELTA_IS_NEGATIVE_FLAG != 0 {
             -raw
         } else {
@@ -396,10 +435,10 @@ impl<'data> CaseMappingExceptions<'data> {
     // Given a base index, returns the bounds of the given full mapping string.
     // Used to read full mapping strings, and also to find the start of the closure string.
     #[inline(always)]
-    fn full_mapping_string_range(&self, base_idx: u16, slot: FullMapping) -> Range<usize> {
-        debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings));
-        let mut lengths = self.slot_value(base_idx, CaseMappingExceptionSlot::FullMappings);
-        let mut data_idx = self.slot_index(base_idx, CaseMappingExceptionSlot::FullMappings) + 1;
+    fn full_mapping_string_range(&self, base_idx: u16, slot: MappingKind) -> Range<usize> {
+        debug_assert!(self.has_slot(base_idx, ExceptionSlot::FullMappings));
+        let mut lengths = self.slot_value(base_idx, ExceptionSlot::FullMappings);
+        let mut data_idx = self.slot_index(base_idx, ExceptionSlot::FullMappings) + 1;
 
         // Skip past previous slots
         for _ in 0..(slot as usize) {
@@ -418,9 +457,9 @@ impl<'data> CaseMappingExceptions<'data> {
     fn full_mapping_string(
         &self,
         base_idx: u16,
-        slot: FullMapping,
+        slot: MappingKind,
     ) -> Result<String, DecodeUtf16Error> {
-        debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings));
+        debug_assert!(self.has_slot(base_idx, ExceptionSlot::FullMappings));
         let range = self.full_mapping_string_range(base_idx, slot);
         let iter = self.raw.as_ule_slice()[range]
             .iter()
@@ -430,8 +469,8 @@ impl<'data> CaseMappingExceptions<'data> {
 
     // Given a base index, returns the length of the closure string
     fn closure_len(&self, base_idx: u16) -> usize {
-        debug_assert!(self.has_slot(base_idx, CaseMappingExceptionSlot::Closure));
-        let value = self.slot_value(base_idx, CaseMappingExceptionSlot::Closure);
+        debug_assert!(self.has_slot(base_idx, ExceptionSlot::Closure));
+        let value = self.slot_value(base_idx, ExceptionSlot::Closure);
         (value & Self::CLOSURE_MAX_LENGTH) as usize
     }
 
@@ -440,11 +479,11 @@ impl<'data> CaseMappingExceptions<'data> {
     // closure string (in code points).
     // This function returns an iterator over the characters of the closure string.
     fn closure_string(&self, base_idx: u16) -> Result<String, DecodeUtf16Error> {
-        let start_idx = if self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings) {
-            self.full_mapping_string_range(base_idx, FullMapping::Title)
+        let start_idx = if self.has_slot(base_idx, ExceptionSlot::FullMappings) {
+            self.full_mapping_string_range(base_idx, MappingKind::Title)
                 .end
         } else {
-            self.slot_index(base_idx, CaseMappingExceptionSlot::Closure) + 1
+            self.slot_index(base_idx, ExceptionSlot::Closure) + 1
         };
         let closure_len = self.closure_len(base_idx);
         let u16_iter = self.raw.as_ule_slice()[start_idx..]
@@ -454,16 +493,16 @@ impl<'data> CaseMappingExceptions<'data> {
     }
 
     fn add_full_and_closure_mappings<S: SetAdder>(&self, base_idx: u16, set: &mut S) {
-        if self.has_slot(base_idx, CaseMappingExceptionSlot::FullMappings) {
+        if self.has_slot(base_idx, ExceptionSlot::FullMappings) {
             let mapping_string = self
-                .full_mapping_string(base_idx, FullMapping::Fold)
+                .full_mapping_string(base_idx, MappingKind::Fold)
                 .expect("Checked in validate() (step #2)");
             if !mapping_string.is_empty() {
                 set.add_string(&mapping_string);
             }
         };
 
-        if self.has_slot(base_idx, CaseMappingExceptionSlot::Closure) {
+        if self.has_slot(base_idx, ExceptionSlot::Closure) {
             for c in self
                 .closure_string(base_idx)
                 .expect("Checked in validate() (step #3)")
@@ -500,10 +539,10 @@ impl<'data> CaseMappingExceptions<'data> {
 
             // #1: Validate slots that should contain chars.
             for slot in [
-                CaseMappingExceptionSlot::Lower,
-                CaseMappingExceptionSlot::Fold,
-                CaseMappingExceptionSlot::Upper,
-                CaseMappingExceptionSlot::Title,
+                ExceptionSlot::Lower,
+                ExceptionSlot::Fold,
+                ExceptionSlot::Upper,
+                ExceptionSlot::Title,
             ] {
                 if self.has_slot(idx, slot) {
                     let val = self.slot_value(idx, slot);
@@ -514,12 +553,12 @@ impl<'data> CaseMappingExceptions<'data> {
             }
 
             // #2: Validate full mappings.
-            if self.has_slot(idx, CaseMappingExceptionSlot::FullMappings) {
+            if self.has_slot(idx, ExceptionSlot::FullMappings) {
                 for full_mapping in [
-                    FullMapping::Lower,
-                    FullMapping::Fold,
-                    FullMapping::Upper,
-                    FullMapping::Title,
+                    MappingKind::Lower,
+                    MappingKind::Fold,
+                    MappingKind::Upper,
+                    MappingKind::Title,
                 ] {
                     let range = self.full_mapping_string_range(idx, full_mapping);
                     next_idx += range.len() as u16;
@@ -532,7 +571,7 @@ impl<'data> CaseMappingExceptions<'data> {
             }
 
             // #3: Validate closure string.
-            if self.has_slot(idx, CaseMappingExceptionSlot::Closure) {
+            if self.has_slot(idx, ExceptionSlot::Closure) {
                 let closure_len = self.closure_len(idx);
                 if next_idx + closure_len as u16 > data_len {
                     return Error::invalid("Exceptions: missing closure data");
@@ -552,45 +591,40 @@ impl<'data> CaseMappingExceptions<'data> {
 
 #[test]
 fn test_exception_validation() {
-    let missing_slot_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16)];
+    let missing_slot_data: &[u16] = &[1 << (ExceptionSlot::Lower as u16)];
     let result = CaseMappingExceptions::from_raw(missing_slot_data).validate();
     assert_eq!(
         result,
         Err(Error::Validation("Exceptions: missing slot data"))
     );
 
-    let invalid_char_slot: &[u16] = &[1 << (CaseMappingExceptionSlot::Lower as u16), 0xdf00];
+    let invalid_char_slot: &[u16] = &[1 << (ExceptionSlot::Lower as u16), 0xdf00];
     let result = CaseMappingExceptions::from_raw(invalid_char_slot).validate();
     assert_eq!(
         result,
         Err(Error::Validation("Exceptions: invalid char slot"))
     );
 
-    let missing_full_mappings: &[u16] =
-        &[1 << (CaseMappingExceptionSlot::FullMappings as u16), 0x1111];
+    let missing_full_mappings: &[u16] = &[1 << (ExceptionSlot::FullMappings as u16), 0x1111];
     let result = CaseMappingExceptions::from_raw(missing_full_mappings).validate();
     assert_eq!(
         result,
         Err(Error::Validation("Exceptions: missing full mapping data"))
     );
 
-    let full_mapping_unpaired_surrogate: &[u16] = &[
-        1 << (CaseMappingExceptionSlot::FullMappings as u16),
-        0x1111,
-        0xdf00,
-    ];
+    let full_mapping_unpaired_surrogate: &[u16] =
+        &[1 << (ExceptionSlot::FullMappings as u16), 0x1111, 0xdf00];
     let result = CaseMappingExceptions::from_raw(full_mapping_unpaired_surrogate).validate();
     assert!(matches!(result, Err(Error::DecodeUtf16(_))));
 
-    let missing_closure_data: &[u16] = &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1];
+    let missing_closure_data: &[u16] = &[1 << (ExceptionSlot::Closure as u16), 0x1];
     let result = CaseMappingExceptions::from_raw(missing_closure_data).validate();
     assert_eq!(
         result,
         Err(Error::Validation("Exceptions: missing closure data"))
     );
 
-    let closure_unpaired_surrogate: &[u16] =
-        &[1 << (CaseMappingExceptionSlot::Closure as u16), 0x1, 0xdf00];
+    let closure_unpaired_surrogate: &[u16] = &[1 << (ExceptionSlot::Closure as u16), 0x1, 0xdf00];
     let result = CaseMappingExceptions::from_raw(closure_unpaired_surrogate).validate();
     assert!(matches!(result, Err(Error::DecodeUtf16(_))));
 }
@@ -763,10 +797,7 @@ impl<'data> CaseMapping<'data> {
                     if !valid_exception_indices.contains(&idx) {
                         return Error::invalid("Invalid exception index in trie data");
                     }
-                    if self
-                        .exceptions
-                        .has_slot(idx, CaseMappingExceptionSlot::Delta)
-                    {
+                    if self.exceptions.has_slot(idx, ExceptionSlot::Delta) {
                         validate_delta(c, self.exceptions.delta(idx))?;
                     }
                 } else {
@@ -784,110 +815,44 @@ impl<'data> CaseMapping<'data> {
         self.trie.get(c as u32)
     }
 
-    /// Returns the lowercase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    pub fn to_lower(&self, c: char) -> char {
+    fn simple_helper(&self, c: char, kind: MappingKind) -> char {
         let data = self.lookup_data(c);
         if !data.has_exception() {
-            if data.is_upper_or_title() {
-                let lower = c as i32 + data.delta() as i32;
-                char::from_u32(lower as u32).expect("Checked in validate()")
+            if data.is_relevant_to(kind) {
+                let folded = c as i32 + data.delta() as i32;
+                char::from_u32(folded as u32).expect("Checked in validate()")
             } else {
                 c
             }
         } else {
             let idx = data.exception_index();
-            if data.is_upper_or_title()
-                && self
-                    .exceptions
-                    .has_slot(idx, CaseMappingExceptionSlot::Delta)
-            {
-                let lower = c as i32 + self.exceptions.delta(idx);
-                char::from_u32(lower as u32).expect("Checked in validate()")
-            } else if self
-                .exceptions
-                .has_slot(idx, CaseMappingExceptionSlot::Lower)
-            {
-                self.exceptions
-                    .slot_char(idx, CaseMappingExceptionSlot::Lower)
-            } else {
-                c
+            if data.is_relevant_to(kind) && self.exceptions.has_delta(idx) {
+                let folded = c as i32 + self.exceptions.delta(idx);
+                return char::from_u32(folded as u32).expect("Checked in validate()");
             }
+            self.exceptions.slot_char_for_kind(idx, kind).unwrap_or(c)
         }
+    }
+
+    /// Returns the lowercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    pub fn to_lower(&self, c: char) -> char {
+        self.simple_helper(c, MappingKind::Lower)
     }
 
     /// Returns the uppercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
     pub fn to_upper(&self, c: char) -> char {
-        let data = self.lookup_data(c);
-        if !data.has_exception() {
-            if data.case_type() == CaseType::Lower {
-                let upper = c as i32 + data.delta() as i32;
-                char::from_u32(upper as u32).expect("Checked in validate()")
-            } else {
-                c
-            }
-        } else {
-            let idx = data.exception_index();
-            if data.case_type() == CaseType::Lower
-                && self
-                    .exceptions
-                    .has_slot(idx, CaseMappingExceptionSlot::Delta)
-            {
-                let upper = c as i32 + self.exceptions.delta(idx);
-                char::from_u32(upper as u32).expect("Checked in validate()")
-            } else if self
-                .exceptions
-                .has_slot(idx, CaseMappingExceptionSlot::Upper)
-            {
-                self.exceptions
-                    .slot_char(idx, CaseMappingExceptionSlot::Upper)
-            } else {
-                c
-            }
-        }
+        self.simple_helper(c, MappingKind::Upper)
     }
 
     /// Returns the titlecase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
     pub fn to_title(&self, c: char) -> char {
-        let data = self.lookup_data(c);
-        if !data.has_exception() {
-            // In general, titlecase is the same as uppercase.
-            if data.case_type() == CaseType::Lower {
-                let upper = c as i32 + data.delta() as i32;
-                char::from_u32(upper as u32).expect("Checked in validate()")
-            } else {
-                c
-            }
-        } else {
-            let idx = data.exception_index();
-            if data.case_type() == CaseType::Lower
-                && self
-                    .exceptions
-                    .has_slot(idx, CaseMappingExceptionSlot::Delta)
-            {
-                let upper = c as i32 + self.exceptions.delta(idx);
-                char::from_u32(upper as u32).expect("Checked in validate()")
-            } else if self
-                .exceptions
-                .has_slot(idx, CaseMappingExceptionSlot::Title)
-            {
-                self.exceptions
-                    .slot_char(idx, CaseMappingExceptionSlot::Title)
-            } else if self
-                .exceptions
-                .has_slot(idx, CaseMappingExceptionSlot::Upper)
-            {
-                self.exceptions
-                    .slot_char(idx, CaseMappingExceptionSlot::Upper)
-            } else {
-                c
-            }
-        }
+        self.simple_helper(c, MappingKind::Title)
     }
 
     /// Return the simple case folding mapping of the given char.
@@ -901,30 +866,22 @@ impl<'data> CaseMapping<'data> {
                 c
             }
         } else {
+            // TODO: if we can move conditional fold and no_simple_case_folding into
+	    // simple_helper, this function can just call simple_helper.
             let idx = data.exception_index();
             if self.exceptions.has_conditional_fold(idx) {
                 self.conditional_fold(c, options)
             } else if self.exceptions.no_simple_case_folding(idx) {
                 c
             } else if data.is_upper_or_title()
-                && self
-                    .exceptions
-                    .has_slot(idx, CaseMappingExceptionSlot::Delta)
+                && self.exceptions.has_slot(idx, ExceptionSlot::Delta)
             {
                 let folded = c as i32 + self.exceptions.delta(idx);
                 char::from_u32(folded as u32).expect("Checked in validate()")
-            } else if self
-                .exceptions
-                .has_slot(idx, CaseMappingExceptionSlot::Fold)
+            } else if let Some(slot_char) =
+                self.exceptions.slot_char_for_kind(idx, MappingKind::Fold)
             {
-                self.exceptions
-                    .slot_char(idx, CaseMappingExceptionSlot::Fold)
-            } else if self
-                .exceptions
-                .has_slot(idx, CaseMappingExceptionSlot::Lower)
-            {
-                self.exceptions
-                    .slot_char(idx, CaseMappingExceptionSlot::Lower)
+                slot_char
             } else {
                 c
             }
@@ -934,6 +891,7 @@ impl<'data> CaseMapping<'data> {
     // Special case folding mappings, hardcoded.
     // This handles the special Turkic mappings for uppercase I and dotted uppercase I
     // For non-Turkic languages, this mapping is normally not used.
+
     // For Turkic languages (tr, az), this mapping can be used instead of the normal mapping for these characters.
     fn conditional_fold(&self, c: char, options: FoldOptions) -> char {
         debug_assert!(c == '\u{49}' || c == '\u{130}');
@@ -949,14 +907,6 @@ impl<'data> CaseMapping<'data> {
             // There is no simple case folding for U+130.
             (c, _) => c,
         }
-    }
-
-    fn case_type(&self, c: char) -> CaseType {
-        self.lookup_data(c).case_type()
-    }
-
-    fn is_ignorable(&self, c: char) -> bool {
-        self.lookup_data(c).is_ignorable()
     }
 
     fn dot_type(&self, c: char) -> DotType {
@@ -982,6 +932,230 @@ impl<'data> CaseMapping<'data> {
         } else {
             let idx = data.exception_index();
             self.exceptions.is_sensitive(idx)
+        }
+    }
+
+    #[inline(always)]
+    fn full_helper(
+        &self,
+        c: char,
+        context: ContextIterator,
+        locale: CaseMapLocale,
+        kind: MappingKind,
+    ) -> FullMappingResult {
+        let data = self.lookup_data(c);
+        if !data.has_exception() {
+            if data.is_relevant_to(kind) {
+                let mapped = c as i32 + data.delta() as i32;
+                let mapped = char::from_u32(mapped as u32).expect("Checked in validate()");
+                FullMappingResult::CodePoint(mapped)
+            } else {
+                FullMappingResult::CodePoint(c)
+            }
+        } else {
+            let idx = data.exception_index();
+            if self.exceptions.has_conditional_special(idx) {
+                if let Some(special) = match kind {
+                    MappingKind::Lower => self.to_full_lower_special_case(c, context, locale),
+                    MappingKind::Fold => self.to_full_fold_special_case(c, context, locale),
+                    MappingKind::Upper | MappingKind::Title => self
+                        .to_full_upper_or_title_special_case(
+                            c,
+                            context,
+                            locale,
+                            kind == MappingKind::Title,
+                        ),
+                } {
+                    return special;
+                }
+            }
+            if self.exceptions.has_slot(idx, ExceptionSlot::FullMappings) {
+                let mapped_string = self
+                    .exceptions
+                    .full_mapping_string(idx, kind)
+                    .expect("Checked in validation");
+                if !mapped_string.is_empty() {
+                    return FullMappingResult::String(mapped_string);
+                }
+            }
+            if data.is_relevant_to(kind) && self.exceptions.has_slot(idx, ExceptionSlot::Delta) {
+                let mapped = c as i32 + self.exceptions.delta(idx);
+                let mapped = char::from_u32(mapped as u32).expect("Checked in validate()");
+                return FullMappingResult::CodePoint(mapped);
+            }
+            if kind == MappingKind::Fold && self.exceptions.no_simple_case_folding(idx) {
+                return FullMappingResult::CodePoint(c);
+            }
+
+            if let Some(slot_char) = self.exceptions.slot_char_for_kind(idx, kind) {
+                FullMappingResult::CodePoint(slot_char)
+            } else {
+                FullMappingResult::CodePoint(c)
+            }
+        }
+    }
+
+    pub(crate) fn to_full_lower(
+        &self,
+        c: char,
+        context: ContextIterator,
+        locale: CaseMapLocale,
+    ) -> FullMappingResult {
+        self.full_helper(c, context, locale, MappingKind::Lower)
+    }
+
+    pub(crate) fn to_full_upper(
+        &self,
+        c: char,
+        context: ContextIterator,
+        locale: CaseMapLocale,
+    ) -> FullMappingResult {
+        self.full_helper(c, context, locale, MappingKind::Upper)
+    }
+
+    pub(crate) fn to_full_title(
+        &self,
+        c: char,
+        context: ContextIterator,
+        locale: CaseMapLocale,
+    ) -> FullMappingResult {
+        self.full_helper(c, context, locale, MappingKind::Title)
+    }
+
+    pub(crate) fn to_full_folding(
+        &self,
+        c: char,
+        context: ContextIterator,
+        locale: CaseMapLocale,
+    ) -> FullMappingResult {
+        self.full_helper(c, context, locale, MappingKind::Fold)
+    }
+
+    // These constants are used for hardcoded locale-specific foldings.
+    const I_DOT: &'static str = "\u{69}\u{307}";
+    const J_DOT: &'static str = "\u{6a}\u{307}";
+    const I_OGONEK_DOT: &'static str = "\u{12f}\u{307}";
+    const I_DOT_GRAVE: &'static str = "\u{69}\u{307}\u{300}";
+    const I_DOT_ACUTE: &'static str = "\u{69}\u{307}\u{301}";
+    const I_DOT_TILDE: &'static str = "\u{69}\u{307}\u{303}";
+
+    fn to_full_lower_special_case(
+        &self,
+        c: char,
+        context: ContextIterator,
+        locale: CaseMapLocale,
+    ) -> Option<FullMappingResult> {
+        if locale == CaseMapLocale::Lithuanian {
+            // Lithuanian retains the dot in a lowercase i when followed by accents.
+            // Introduce an explicit dot above when lowercasing capital I's and J's
+            // whenever there are more accents above (of the accents used in
+            // Lithuanian: grave, acute, and tilde above).
+
+            // Check for accents above I, J, and I-with-ogonek.
+            if c == 'I' && context.followed_by_more_above(&self) {
+                return Some(FullMappingResult::string(Self::I_DOT));
+            } else if c == 'J' && context.followed_by_more_above(&self) {
+                return Some(FullMappingResult::string(Self::J_DOT));
+            } else if c == '\u{12e}' && context.followed_by_more_above(&self) {
+                return Some(FullMappingResult::string(Self::I_OGONEK_DOT));
+            }
+
+            // These characters are precomposed with accents above, so we don't
+            // have to look at the context.
+            if c == '\u{cc}' {
+                return Some(FullMappingResult::string(Self::I_DOT_GRAVE));
+            } else if c == '\u{cd}' {
+                return Some(FullMappingResult::string(Self::I_DOT_ACUTE));
+            } else if c == '\u{128}' {
+                return Some(FullMappingResult::string(Self::I_DOT_TILDE));
+            }
+        }
+
+        if locale == CaseMapLocale::Turkish {
+            if c == '\u{130}' {
+                // I and i-dotless; I-dot and i are case pairs in Turkish and Azeri
+                return Some(FullMappingResult::CodePoint('i'));
+            } else if c == '\u{307}' && context.preceded_by_capital_i(&self) {
+                // When lowercasing, remove dot_above in the sequence I + dot_above,
+                // which will turn into i. This matches the behaviour of the
+                // canonically equivalent I-dot_above.
+                return Some(FullMappingResult::Remove);
+            } else if c == 'I' && !context.followed_by_dot_above(&self) {
+                // When lowercasing, unless an I is before a dot_above, it turns
+                // into a dotless i.
+                return Some(FullMappingResult::CodePoint('\u{131}'));
+            }
+        }
+
+        if c == '\u{130}' {
+            // Preserve canonical equivalence for I with dot. Turkic is handled above.
+            return Some(FullMappingResult::string(Self::I_DOT));
+        }
+
+        if c == '\u{3a3}'
+            && context.preceded_by_cased_letter(&self)
+            && !context.followed_by_cased_letter(&self)
+        {
+            // Greek capital sigman maps depending on surrounding cased letters.
+            return Some(FullMappingResult::CodePoint('\u{3c2}'));
+        }
+
+        // No relevant special case mapping. Use a normal mapping.
+        None
+    }
+
+    fn to_full_upper_or_title_special_case(
+        &self,
+        c: char,
+        context: ContextIterator,
+        locale: CaseMapLocale,
+        _is_title: bool,
+    ) -> Option<FullMappingResult> {
+        if locale == CaseMapLocale::Turkish && c == 'i' {
+            // In Turkic languages, i turns into a dotted capital I.
+            return Some(FullMappingResult::CodePoint('\u{130}'));
+        }
+        if locale == CaseMapLocale::Lithuanian
+            && c == '\u{307}'
+            && context.preceded_by_soft_dotted(&self)
+        {
+            // Lithuanian retains the dot in a lowercase i when followed by accents.
+            // Remove dot_above after i with upper or titlecase.
+            return Some(FullMappingResult::Remove);
+        }
+        // TODO: ICU4C has a non-standard extension for Armenian ligature ech-yiwn.
+        // Should we also implement it?
+        // if c == '\u{587}' {
+        //     return match (locale, is_title) {
+        // 	(CaseMapLocale::Armenian, false) => Some(FullMappingResult::string("ԵՎ")),
+        // 	(CaseMapLocale::Armenian, true) => Some(FullMappingResult::string("Եվ")),
+        // 	(_, false) => Some(FullMappingResult::string("ԵՒ")),
+        // 	(_, true) => Some(FullMappingResult::string("Եւ")),
+        //     }
+        // }
+        None
+    }
+
+    fn to_full_fold_special_case(
+        &self,
+        c: char,
+        _context: ContextIterator,
+        locale: CaseMapLocale,
+    ) -> Option<FullMappingResult> {
+        // TODO: In ICU4C, full upper/lower/title mappings decide whether to use
+        // Turkic or non-Turkic mappings for dotless/dotted I based on locale,
+        // but ucase_toFullFolding / ucase_fold use an options argument (with a single
+        // defined bit). Can we somehow unify those two?
+        let is_turkic = locale == CaseMapLocale::Turkish;
+        match (c, is_turkic) {
+            // Turkic mappings
+            ('\u{49}', true) => Some(FullMappingResult::CodePoint('\u{131}')),
+            ('\u{130}', true) => Some(FullMappingResult::CodePoint('\u{69}')),
+
+            // Default mappings
+            ('\u{49}', false) => Some(FullMappingResult::CodePoint('\u{69}')),
+            ('\u{130}', false) => Some(FullMappingResult::string(Self::I_DOT)),
+            (_, _) => None,
         }
     }
 
@@ -1012,7 +1186,7 @@ impl<'data> CaseMapping<'data> {
 
             // Dotted I is in a class with <0069 0307> (for canonical equivalence with <0049 0307>)
             '\u{130}' => {
-                set.add_string("\u{69}\u{307}");
+                set.add_string(Self::I_DOT);
                 return;
             }
 
@@ -1043,20 +1217,16 @@ impl<'data> CaseMapping<'data> {
 
         // Add all simple case mappings.
         for slot in [
-            CaseMappingExceptionSlot::Lower,
-            CaseMappingExceptionSlot::Fold,
-            CaseMappingExceptionSlot::Upper,
-            CaseMappingExceptionSlot::Title,
+            ExceptionSlot::Lower,
+            ExceptionSlot::Fold,
+            ExceptionSlot::Upper,
+            ExceptionSlot::Title,
         ] {
-            if self.exceptions.has_slot(idx, slot) {
-                let simple = self.exceptions.slot_char(idx, slot);
+            if let Some(simple) = self.exceptions.slot_char(idx, slot) {
                 set.add_char(simple);
             }
         }
-        if self
-            .exceptions
-            .has_slot(idx, CaseMappingExceptionSlot::Delta)
-        {
+        if self.exceptions.has_slot(idx, ExceptionSlot::Delta) {
             let codepoint = c as i32 + self.exceptions.delta(idx);
             let mapped = char::from_u32(codepoint as u32).expect("Checked in validate()");
             set.add_char(mapped);
@@ -1093,6 +1263,30 @@ impl<'data> CaseMapping<'data> {
     }
 }
 
+/// TODO: hook this up to locid?
+#[derive(Copy, Clone, Eq, PartialEq)]
+pub(crate) enum CaseMapLocale {
+    Root,
+    Turkish,
+    Lithuanian,
+    Greek,
+    Dutch,
+    Armenian,
+}
+
+pub(crate) enum FullMappingResult {
+    Remove,
+    CodePoint(char),
+    String(String), // TODO: rewrite the exception data to have a sidetable of &str, so that this can be &str
+}
+
+// Temporary helper until FullMappingResult can use &str
+impl FullMappingResult {
+    fn string(s: &str) -> Self {
+        Self::String(String::from(s))
+    }
+}
+
 /// Interface for adding items to a set of chars + strings.
 /// Eventually this may become UnicodeSet, but that can't currently hold strings.
 pub trait SetAdder {
@@ -1100,4 +1294,80 @@ pub trait SetAdder {
     fn add_char(&mut self, c: char);
     /// Add a string to the set
     fn add_string(&mut self, string: &str);
+}
+
+pub(crate) struct ContextIterator<'a> {
+    before: &'a str,
+    after: &'a str,
+}
+
+impl<'a> ContextIterator<'a> {
+    // Returns a context iterator with the characters before
+    // and after the character at a given index.
+    pub fn new(s: &'a str, idx: usize) -> Self {
+        let (before, char_and_after) = s.split_at(idx);
+        let after = &char_and_after[1..];
+        Self { before, after }
+    }
+
+    fn preceded_by_soft_dotted(&self, mapping: &CaseMapping) -> bool {
+        for c in self.before.chars().rev() {
+            match mapping.dot_type(c) {
+                DotType::SoftDotted => return true,
+                DotType::OtherAccent => continue,
+                _ => return false,
+            }
+        }
+        false
+    }
+    fn preceded_by_capital_i(&self, mapping: &CaseMapping) -> bool {
+        for c in self.before.chars().rev() {
+            if c == 'I' {
+                return true;
+            }
+            if mapping.dot_type(c) != DotType::OtherAccent {
+                break;
+            }
+        }
+        false
+    }
+    fn preceded_by_cased_letter(&self, mapping: &CaseMapping) -> bool {
+        for c in self.before.chars().rev() {
+            let data = mapping.lookup_data(c);
+            if !data.is_ignorable() {
+                return data.case_type() != CaseType::None;
+            }
+        }
+        return false;
+    }
+    fn followed_by_cased_letter(&self, mapping: &CaseMapping) -> bool {
+        for c in self.after.chars() {
+            let data = mapping.lookup_data(c);
+            if !data.is_ignorable() {
+                return data.case_type() != CaseType::None;
+            }
+        }
+        return false;
+    }
+    fn followed_by_more_above(&self, mapping: &CaseMapping) -> bool {
+        for c in self.after.chars() {
+            match mapping.dot_type(c) {
+                DotType::Above => return true,
+                DotType::OtherAccent => continue,
+                _ => return false,
+            }
+        }
+        false
+    }
+    fn followed_by_dot_above(&self, mapping: &CaseMapping) -> bool {
+        for c in self.after.chars() {
+            if c == '\u{307}' {
+                return true;
+            }
+            if mapping.dot_type(c) != DotType::OtherAccent {
+                return false;
+            }
+        }
+        false
+    }
 }

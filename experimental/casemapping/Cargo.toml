@@ -26,6 +26,7 @@ include = [
 displaydoc = { version = "0.2.3", default-features = false }
 icu_codepointtrie = { version = "0.3", path = "../../utils/codepointtrie", features = ["serde"] }
 icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
+icu_uniset = { version = "0.4", path = "../../utils/uniset" }
 yoke = { path = "../../utils/yoke", version = "0.3", features = ["derive"] }
 zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
