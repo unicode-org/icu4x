@@ -263,8 +263,7 @@ mod tests {
             provide(langid!("fr"), key::LIST_FORMAT_OR_V1)
                 .get()
                 .end(Width::Wide)
-                .parts("")
-                .0,
+                .parts(""),
             ("", " ou ", "")
         );
     }
@@ -282,50 +281,49 @@ mod tests {
         let or = &payload_or.get().end(Width::Wide);
 
         // ... y Mallorca
-        assert_eq!(and.parts("Mallorca").0, y_parts);
+        assert_eq!(and.parts("Mallorca"), y_parts);
         // ... e Ibiza
-        assert_eq!(and.parts("Ibiza").0, e_parts);
+        assert_eq!(and.parts("Ibiza"), e_parts);
         // ... e Hidalgo
-        assert_eq!(and.parts("Hidalgo").0, e_parts);
+        assert_eq!(and.parts("Hidalgo"), e_parts);
         // ... y Hierva
-        assert_eq!(and.parts("Hierva").0, y_parts);
+        assert_eq!(and.parts("Hierva"), y_parts);
 
         // ... o Ibiza
-        assert_eq!(or.parts("Ibiza").0, o_parts);
+        assert_eq!(or.parts("Ibiza"), o_parts);
         // ... u Okinawa
-        assert_eq!(or.parts("Okinawa").0, u_parts);
+        assert_eq!(or.parts("Okinawa"), u_parts);
         // ... u 8 más
-        assert_eq!(or.parts("8 más").0, u_parts);
+        assert_eq!(or.parts("8 más"), u_parts);
         // ... u 8
-        assert_eq!(or.parts(&8u8).0, u_parts);
+        assert_eq!(or.parts(&8u8), u_parts);
         // ... u 87 más
-        assert_eq!(or.parts("87 más").0, u_parts);
+        assert_eq!(or.parts("87 más"), u_parts);
         // ... u 87
-        assert_eq!(or.parts(&87u8).0, u_parts);
+        assert_eq!(or.parts(&87u8), u_parts);
         // ... u 11 más
-        assert_eq!(or.parts("11 más").0, u_parts);
+        assert_eq!(or.parts("11 más"), u_parts);
         // ... u 11
-        assert_eq!(or.parts(&11u8).0, u_parts);
+        assert_eq!(or.parts(&11u8), u_parts);
         // ... o 110 más
-        assert_eq!(or.parts("110 más").0, o_parts);
+        assert_eq!(or.parts("110 más"), o_parts);
         // ... o 110
-        assert_eq!(or.parts(&110u8).0, o_parts);
+        assert_eq!(or.parts(&110u8), o_parts);
         // ... o 11.000 más
-        assert_eq!(or.parts("11.000 más").0, u_parts);
+        assert_eq!(or.parts("11.000 más"), u_parts);
         // ... o 11.000
-        assert_eq!(or.parts("11.000").0, u_parts);
+        assert_eq!(or.parts("11.000"), u_parts);
         // ... o 11.000,92 más
-        assert_eq!(or.parts("11.000,92 más").0, u_parts);
+        assert_eq!(or.parts("11.000,92 más"), u_parts);
         // ... o 11.000,92
-        assert_eq!(or.parts("11.000,92").0, u_parts);
+        assert_eq!(or.parts("11.000,92"), u_parts);
 
         // Works for all es-* locales
         assert_eq!(
             provide(langid!("es-AR"), key::LIST_FORMAT_AND_V1)
                 .get()
                 .end(Width::Wide)
-                .parts("Ibiza")
-                .0,
+                .parts("Ibiza"),
             e_parts
         );
     }
@@ -339,8 +337,7 @@ mod tests {
             provide(langid!("he"), key::LIST_FORMAT_AND_V1)
                 .get()
                 .end(Width::Wide)
-                .parts("יפו")
-                .0,
+                .parts("יפו"),
             vav_parts
         );
 
@@ -348,8 +345,7 @@ mod tests {
             provide(langid!("he"), key::LIST_FORMAT_AND_V1)
                 .get()
                 .end(Width::Wide)
-                .parts("Ibiza")
-                .0,
+                .parts("Ibiza"),
             vav_dash_parts
         );
     }

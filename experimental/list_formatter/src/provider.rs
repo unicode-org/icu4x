@@ -124,13 +124,11 @@ impl<'a> ConditionalListJoinerPattern<'a> {
         following_value: &'b W,
     ) -> PatternParts<'a> {
         match &self.special_case {
-            Some(special_case)
-                if special_case
-                    .condition
-                    // TODO: Implement lookahead instead of materializing here
-                    .test(following_value.writeable_to_fmt_string().as_str()) =>
+            Some(SpecialCasePattern { condition, pattern })
+                // TODO: Implement lookahead instead of materializing here.
+                if condition.test(following_value.writeable_to_fmt_string().as_str()) =>
             {
-                special_case.pattern.borrow_tuple()
+                pattern.borrow_tuple()
             }
             _ => self.default.borrow_tuple(),
         }
