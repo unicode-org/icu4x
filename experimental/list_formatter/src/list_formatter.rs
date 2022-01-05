@@ -44,65 +44,57 @@ impl ListFormatter {
         sink: &mut S,
         values: &[W],
     ) -> Result<(), S::Error> {
-        // Writes the FormattedWriteable or uses the materialized string
-        let write_value = move |sink: &mut S,
-                                value: &W,
-                                materialized: Option<FormattedString>|
-              -> Result<(), S::Error> {
-            sink.push_field("element")?;
-            if let Some(p) = materialized {
-                sink.write_fmt_str(&p)?;
-            } else {
-                value.fmt_write_to(sink)?;
-            }
-            sink.pop_field()
-        };
-
-        // Writes a literal
-        let write_literal = |sink: &mut S, literal: &str| -> Result<(), S::Error> {
-            sink.push_field("literal")?;
-            sink.write_str(literal)?;
-            sink.pop_field()
-        };
+        macro_rules! literal {
+            ($lit:ident) => {{
+                sink.push_field("literal")?;
+                sink.write_str($lit)?;
+                sink.pop_field()
+            }};
+        }
+        macro_rules! value {
+            ($val:expr) => {{
+                sink.push_field("element")?;
+                $val.fmt_write_to(sink)?;
+                sink.pop_field()
+            }};
+        }
 
         match values.len() {
             0 => Ok(()),
-            1 => write_value(sink, &values[0], None),
+            1 => value!(values[0]),
             2 => {
                 // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
-                let ((before, between, after), materialized) =
-                    self.data.get().pair(self.width).parts(&values[1]);
-                write_literal(sink, before)?;
-                write_value(sink, &values[0], None)?;
-                write_literal(sink, between)?;
-                write_value(sink, &values[1], materialized)?;
-                write_literal(sink, after)
+                let (before, between, after) = self.data.get().pair(self.width).parts(&values[1]);
+                literal!(before)?;
+                value!(values[0])?;
+                literal!(between)?;
+                value!(values[1])?;
+                literal!(after)
             }
             n => {
                 // Start(values[0], middle(..., middle(values[n-3], End(values[n-2], values[n-1]))...)) =
                 // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
                 // values[n-2] + end_between + values[n-1] + end_after
 
-                let ((start_before, start_between, _), materialized_1) =
+                let (start_before, start_between, _) =
                     self.data.get().start(self.width).parts(&values[1]);
 
-                write_literal(sink, start_before)?;
-                write_value(sink, &values[0], None)?;
-                write_literal(sink, start_between)?;
-                write_value(sink, &values[1], materialized_1)?;
+                literal!(start_before)?;
+                value!(values[0])?;
+                literal!(start_between)?;
+                value!(values[1])?;
 
                 for value in &values[2..n - 1] {
-                    let ((_, between, _), materialized_i) =
-                        self.data.get().middle(self.width).parts(value);
-                    write_literal(sink, between)?;
-                    write_value(sink, value, materialized_i)?;
+                    let (_, between, _) = self.data.get().middle(self.width).parts(value);
+                    literal!(between)?;
+                    value!(value)?;
                 }
 
-                let ((_, end_between, end_after), materialized_last) =
+                let (_, end_between, end_after) =
                     self.data.get().end(self.width).parts(&values[n - 1]);
-                write_literal(sink, end_between)?;
-                write_value(sink, &values[n - 1], materialized_last)?;
-                write_literal(sink, end_after)
+                literal!(end_between)?;
+                value!(values[n - 1])?;
+                literal!(end_after)
             }
         }
     }

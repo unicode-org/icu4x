@@ -9,7 +9,7 @@
 use crate::options::Width;
 use crate::string_matcher::StringMatcher;
 use alloc::borrow::Cow;
-use formatted_string::{FormattedString, FormattedWriteable, LengthHint};
+use formatted_string::{FormattedWriteable, LengthHint};
 use icu_provider::yoke::{self, *};
 
 pub mod key {
@@ -122,19 +122,17 @@ impl<'a> ConditionalListJoinerPattern<'a> {
     pub fn parts<'b, W: FormattedWriteable + ?Sized>(
         &'a self,
         following_value: &'b W,
-    ) -> (PatternParts<'a>, Option<FormattedString>) {
-        if let Some(special_case) = &self.special_case {
-            let value = following_value.writeable_to_fmt_string();
-            (
-                if special_case.condition.test(value.as_str()) {
-                    special_case.pattern.borrow_tuple()
-                } else {
-                    self.default.borrow_tuple()
-                },
-                Some(value),
-            )
-        } else {
-            (self.default.borrow_tuple(), None)
+    ) -> PatternParts<'a> {
+        match &self.special_case {
+            Some(special_case)
+                if special_case
+                    .condition
+                    // TODO: Implement lookahead instead of materializing here
+                    .test(following_value.writeable_to_fmt_string().as_str()) =>
+            {
+                special_case.pattern.borrow_tuple()
+            }
+            _ => self.default.borrow_tuple(),
         }
     }
 
@@ -300,45 +298,31 @@ pub(crate) mod test {
 
     #[test]
     fn produces_correct_parts() {
-        assert_eq!(
-            test_patterns().pair(Width::Wide).parts("").0,
-            ("$", ";", "+")
-        );
+        assert_eq!(test_patterns().pair(Width::Wide).parts(""), ("$", ";", "+"));
     }
 
     #[test]
     fn produces_correct_parts_conditionally() {
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("A").0,
+            test_patterns().end(Width::Narrow).parts("A"),
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("a").0,
+            test_patterns().end(Width::Narrow).parts("a"),
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("ab").0,
+            test_patterns().end(Width::Narrow).parts("ab"),
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("B").0,
+            test_patterns().end(Width::Narrow).parts("B"),
             ("", ". ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("BA").0,
+            test_patterns().end(Width::Narrow).parts("BA"),
             ("", ". ", "")
         );
-    }
-
-    #[test]
-    fn returns_str_if_conditional() {
-        // A pattern was evaluated, so 123 was materialzed as a FormattedString
-        assert!(matches!(
-            test_patterns().end(Width::Narrow).parts(&123u16).1,
-            Some(_)
-        ));
-        // The pattern is not conditional, so we return none
-        assert_eq!(test_patterns().end(Width::Wide).parts(&123u16).1, None);
     }
 
     #[test]
