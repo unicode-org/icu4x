@@ -23,6 +23,7 @@ include = [
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
+writeable = { version = "0.2.1", path = "../../utils/writeable" }
 
 [dev-dependencies]
 criterion = "0.3.3"

@@ -2,81 +2,42 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::FormattedStringError;
-use alloc::borrow::ToOwned;
+use crate::FormattedWriteableSink;
 use alloc::vec::Vec;
+use core::fmt;
 use core::str;
 
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum LocationInPart {
+/// A string with L levels of formatting annotations.
+#[derive(Clone, PartialEq)]
+pub struct FormattedString {
+    // bytes is always valid UTF-8, so from_utf8_unchecked is safe
+    bytes: Vec<u8>,
+    // The lists of annotations corresponding to each byte
+    annotations: Vec<Vec<(LocationInPart, &'static str)>>,
+    // The list of annotations for the next byte
+    next_annotation: Vec<(LocationInPart, &'static str)>,
+}
+
+#[derive(Copy, Clone, PartialEq)]
+enum LocationInPart {
     Begin,
     Extend,
 }
 
-/// A string with L levels of annotations of type F. For N = 0, this is
-/// implemented for `&str`, for higher N see LayeredFormattedString.
-pub trait FormattedStringLike<F: Copy, const L: usize>: AsRef<str> {
-    fn fields_at(&self, pos: usize) -> [F; L] {
-        self.annotation_at(pos).map(|(_, field)| field)
-    }
-
-    fn is_field_start(&self, pos: usize, level: usize) -> bool {
-        debug_assert!(level < L);
-        let (location, _) = self.annotation_at(pos)[level];
-        location == LocationInPart::Begin
-    }
-
-    #[doc(hidden)]
-    // This is used to make the inserts more efficient; clients should
-    // use fields_at and is_field_start.
-    fn annotation_at(&self, pos: usize) -> &[(LocationInPart, F); L];
-}
-
-impl<F: Copy> FormattedStringLike<F, 0> for &str {
-    fn annotation_at(&self, _pos: usize) -> &[(LocationInPart, F); 0] {
-        // Yay we can return dangling references for singleton types!
-        &[]
-    }
-}
-
-/// A string with L levels of formatting annotations.
-#[derive(Debug, PartialEq)]
-pub struct LayeredFormattedString<F: Copy, const L: usize> {
-    // bytes is always valid UTF-8, so from_utf8_unchecked is safe
-    bytes: Vec<u8>,
-    // The vector dimension corresponds to the bytes, the array dimension are the L levels of annotations
-    annotations: Vec<[(LocationInPart, F); L]>,
-}
-
-pub type FormattedString<F> = LayeredFormattedString<F, 1>;
-
-impl<F: Copy, const L: usize> AsRef<str> for LayeredFormattedString<F, L> {
-    fn as_ref(&self) -> &str {
-        unsafe { str::from_utf8_unchecked(&self.bytes) }
-    }
-}
-
-impl<F: Copy, const L: usize> FormattedStringLike<F, L> for LayeredFormattedString<F, L> {
-    fn annotation_at(&self, pos: usize) -> &[(LocationInPart, F); L] {
-        &self.annotations[pos]
-    }
-}
-
-impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
+impl FormattedString {
     pub fn new() -> Self {
-        debug_assert!(L > 0);
         Self {
             bytes: Vec::new(),
             annotations: Vec::new(),
+            next_annotation: Vec::new(),
         }
     }
 
     pub fn with_capacity(capacity: usize) -> Self {
-        // A LayeredFormattedString with 0 annotations doesn't make sense.
-        debug_assert!(L > 0);
         Self {
             bytes: Vec::with_capacity(capacity),
             annotations: Vec::with_capacity(capacity),
+            next_annotation: Vec::new(),
         }
     }
 
@@ -90,163 +51,224 @@ impl<F: Copy, const L: usize> LayeredFormattedString<F, L> {
         self.bytes.len()
     }
 
-    pub fn append<S, const L1: usize>(&mut self, string: &S, field: F) -> &mut Self
-    where
-        S: FormattedStringLike<F, L1>,
-    {
-        debug_assert_eq!(L - 1, L1);
-        // len() is always a char boundary
-        self.insert_internal(self.bytes.len(), string, field)
+    pub fn as_str(&self) -> &str {
+        unsafe { str::from_utf8_unchecked(&self.bytes) }
     }
 
-    pub fn prepend<S, const L1: usize>(&mut self, string: &S, field: F) -> &mut Self
-    where
-        S: FormattedStringLike<F, L1>,
-    {
-        debug_assert_eq!(L - 1, L1);
-        // 0 is always a char boundary
-        self.insert_internal(0, string, field)
-    }
-
-    pub fn insert<S, const L1: usize>(
-        &mut self,
-        pos: usize,
-        string: &S,
-        field: F,
-    ) -> Result<&mut Self, FormattedStringError>
-    where
-        S: FormattedStringLike<F, L1>,
-    {
-        debug_assert_eq!(L - 1, L1);
-        if pos > self.bytes.len() {
-            return Err(FormattedStringError::IndexOutOfBounds(pos));
+    fn make_next_annotation_extend(&mut self) {
+        for entry in self.next_annotation.iter_mut() {
+            *entry = (LocationInPart::Extend, entry.1);
         }
-        // bytes is valid UTF-8 precisely because we do this check before
-        // insertion (and string is valid UTF-8)
-        let current = unsafe { str::from_utf8_unchecked(&self.bytes) };
-        if !current.is_char_boundary(pos) {
-            Err(FormattedStringError::PositionNotCharBoundary(
-                pos,
-                current.to_owned(),
-            ))
-        } else {
-            Ok(self.insert_internal(pos, string, field))
-        }
-    }
-
-    // Precondition here is that pos is a char boundary and < bytes.len().
-    fn insert_internal<S, const L1: usize>(&mut self, pos: usize, string: &S, field: F) -> &mut Self
-    where
-        S: FormattedStringLike<F, L1>,
-    {
-        debug_assert_eq!(L - 1, L1);
-        self.bytes.splice(pos..pos, string.as_ref().bytes());
-        self.annotations.splice(
-            pos..pos,
-            (0..string.as_ref().len()).map(|i| {
-                let top_level = (
-                    if i == 0 {
-                        LocationInPart::Begin
-                    } else {
-                        LocationInPart::Extend
-                    },
-                    field,
-                );
-                let mut all_levels = [top_level; L];
-                all_levels[1..L].copy_from_slice(string.annotation_at(i));
-                all_levels
-            }),
-        );
-        self
-    }
-
-    pub fn field_at(&self, pos: usize) -> F {
-        self.fields_at(pos)[0]
     }
 }
 
-impl<F: Copy, const L: usize> Default for LayeredFormattedString<F, L> {
-    fn default() -> Self {
-        Self::new()
+impl FormattedWriteableSink for FormattedString {
+    type Error = core::convert::Infallible;
+
+    fn write_str(&mut self, s: &str) -> Result<(), Self::Error> {
+        self.bytes.extend(s.bytes());
+        self.annotations.reserve(s.len());
+        self.annotations.push(self.next_annotation.clone());
+        self.make_next_annotation_extend();
+        for _ in 1..s.len() {
+            self.annotations.push(self.next_annotation.clone());
+        }
+        Ok(())
+    }
+
+    fn write_fmt_str(&mut self, s: &FormattedString) -> Result<(), Self::Error> {
+        self.bytes.extend(s.bytes.iter().copied());
+        self.annotations.reserve(s.len());
+        self.annotations.push(
+            s.annotations[0]
+                .iter()
+                .chain(self.next_annotation.iter())
+                .copied()
+                .collect(),
+        );
+        self.make_next_annotation_extend();
+        for i in 1..s.len() {
+            self.annotations.push(
+                s.annotations[i]
+                    .iter()
+                    .chain(self.next_annotation.iter())
+                    .copied()
+                    .collect(),
+            );
+        }
+        Ok(())
+    }
+
+    fn push_field(&mut self, field: &'static str) -> Result<(), Self::Error> {
+        self.next_annotation.push((LocationInPart::Begin, field));
+        Ok(())
+    }
+
+    fn pop_field(&mut self) -> Result<(), Self::Error> {
+        self.next_annotation.pop();
+        Ok(())
+    }
+}
+
+impl fmt::Debug for FormattedString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())?;
+        // For each level of annotations
+        for l in 0..self.annotations.iter().map(Vec::len).max().unwrap_or(0) {
+            write!(f, "\n")?;
+            let mut boundaries = Vec::new();
+            let mut begin = None;
+            // Iterating to len()+1 to close the last annotation
+            for byte in 0..self.annotations.len() + 1 {
+                // The "most significant" annotation is last in the lists, but
+                // we want to print if first, so we index from the back.
+                match self
+                    .annotations
+                    .get(byte)
+                    .and_then(|a| a.iter().nth_back(l))
+                {
+                    None => {
+                        // No annotation at this level/byte
+                        if let Some(b) = begin {
+                            boundaries.push((b, byte));
+                        }
+                        begin = None;
+                    }
+                    Some((lip, _)) if lip == &LocationInPart::Begin => {
+                        // New annotation start
+                        if let Some(b) = begin {
+                            boundaries.push((b, byte));
+                        }
+                        begin = Some(byte);
+                    }
+                    _ => {}
+                }
+            }
+
+            let str_len_before = |i: usize| {
+                self.as_str()[if i == 0 { 0 } else { boundaries[i - 1].1 }..boundaries[i].0]
+                    .chars()
+                    .count()
+            };
+            let str_len_of = |i: usize| {
+                self.as_str()[boundaries[i].0..boundaries[i].1]
+                    .chars()
+                    .count()
+            };
+
+            // First row, underlines all annotated chars
+            for i in 0..boundaries.len() {
+                write!(f, "{: <1$}", "", str_len_before(i))?;
+                write!(f, "{:━<1$}", "┏", str_len_of(i))?;
+            }
+            // Prints one annotation per row
+            for k in (0..boundaries.len()).rev() {
+                write!(f, "\n")?;
+                for i in 0..k {
+                    // Lines for later annotations
+                    write!(f, "{: <1$}", "", str_len_before(i))?;
+                    write!(f, "{: <1$}", "┃", str_len_of(i))?;
+                }
+                write!(f, "{: <1$}", "", str_len_before(k))?;
+                write!(
+                    f,
+                    "┗ {}",
+                    self.annotations[boundaries[k].0]
+                        [self.annotations[boundaries[k].0].len() - 1 - l]
+                        .1
+                )?;
+            }
+        }
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use std::{fmt::Debug, panic};
-
-    #[derive(Clone, Copy, Debug, PartialEq)]
-    pub enum Field {
-        Word,
-        Space,
-        Greeting,
-    }
 
     #[test]
     fn test_basic() {
-        let mut x = FormattedString::<Field>::new();
-        x.append(&"world", Field::Word)
-            .prepend(&" ", Field::Space)
-            .prepend(&"hello", Field::Word);
+        let mut x = FormattedString::new();
+        x.push_field("word").unwrap();
+        x.write_str("hello").unwrap();
+        x.pop_field().unwrap();
+        x.push_field("space").unwrap();
+        x.write_str(" ").unwrap();
+        x.pop_field().unwrap();
+        x.push_field("word").unwrap();
+        x.write_str("world").unwrap();
+        x.pop_field().unwrap();
 
-        assert_eq!(x.as_ref(), "hello world");
-
-        for i in 0.."hello".len() {
-            assert_eq!(x.field_at(i), Field::Word);
-        }
-        assert_eq!(x.field_at(5), Field::Space);
-        for i in 0.."world".len() {
-            assert_eq!(x.field_at(6 + i), Field::Word);
-        }
-        assert_panics(|| x.field_at(11));
+        assert_eq!(
+            format!("{:?}", x),
+            "hello world\n\
+             ┏━━━━┏┏━━━━\n\
+             ┃    ┃┗ word\n\
+             ┃    ┗ space\n\
+             ┗ word"
+        );
     }
 
     #[test]
     fn test_multi_level() {
-        let mut x = FormattedString::<Field>::new();
-        x.append(&"world", Field::Word)
-            .prepend(&" ", Field::Space)
-            .prepend(&"hello", Field::Word);
+        let mut x = FormattedString::new();
+        x.push_field("word").unwrap();
+        x.write_str("hello").unwrap();
+        x.pop_field().unwrap();
+        x.write_str(" ").unwrap();
+        x.push_field("word").unwrap();
+        x.write_str("world").unwrap();
+        x.pop_field().unwrap();
 
-        let mut y = LayeredFormattedString::<Field, 2>::new();
-        y.append(&x, Field::Greeting);
+        // hello world
+        // ┏━━━━ ┏━━━━
+        // ┃     ┗ word
+        // ┗ word
 
-        assert_eq!(y.as_ref(), "hello world");
-        assert_eq!(y.fields_at(0), [Field::Greeting, Field::Word]);
+        let mut y = FormattedString::new();
+        y.push_field("greeting").unwrap();
+        y.write_fmt_str(&x).unwrap();
+        y.pop_field().unwrap();
+        y.push_field("punctuation").unwrap();
+        y.write_str("!").unwrap();
+        y.pop_field().unwrap();
+
+        // Note that the second level is not complete, the space
+        // and exclamation mark aren't annotated.
+        assert_eq!(
+            format!("{:?}", y),
+            "hello world!\n\
+             ┏━━━━━━━━━━┏\n\
+             ┃          ┗ punctuation\n\
+             ┗ greeting\n\
+             ┏━━━━ ┏━━━━\n\
+             ┃     ┗ word\n\
+             ┗ word"
+        );
     }
 
     #[test]
     fn test_multi_byte() {
-        let mut x = FormattedString::<Field>::new();
-        x.append(&"π", Field::Word);
+        let mut x = FormattedString::new();
+        x.push_field("variable").unwrap();
+        x.write_str("π").unwrap();
+        x.pop_field().unwrap();
+        x.write_str(" ").unwrap();
+        x.push_field("operation").unwrap();
+        x.write_str("*").unwrap();
+        x.pop_field().unwrap();
+        x.write_str(" ").unwrap();
+        x.push_field("variable").unwrap();
+        x.write_str("x").unwrap();
+
         assert_eq!(
-            x.insert(1, &"pi/2", Field::Word).unwrap_err().to_string(),
-            "index 1 is not a character boundary in \"π\"",
+            format!("{:?}", x),
+            "π * x\n\
+             ┏ ┏ ┏\n\
+             ┃ ┃ ┗ variable\n\
+             ┃ ┗ operation\n\
+             ┗ variable"
         );
-
-        assert_eq!(x.as_ref(), "π");
-        assert_eq!(x.field_at(0), Field::Word);
-        assert_eq!(x.field_at(1), Field::Word);
-        assert_panics(|| x.field_at(2));
-    }
-
-    #[test]
-    fn test_level_assert() {
-        // The correct-depth asserts are (debug) runtime errors as long
-        // as const generics aren't const-evaluatable:
-        // https://github.com/rust-lang/rust/issues/76560
-        assert_panics(|| {
-            let mut x = LayeredFormattedString::<Field, 2>::new();
-            x.append(&"foo", Field::Word);
-        });
-    }
-
-    fn assert_panics<F: FnOnce() -> R + panic::UnwindSafe, R>(f: F) {
-        let prev_hook = panic::take_hook();
-        panic::set_hook(Box::new(|_| {}));
-        let result = panic::catch_unwind(f);
-        panic::set_hook(prev_hook);
-        assert!(result.is_err());
     }
 }
