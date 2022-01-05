@@ -368,6 +368,68 @@ impl Iso {
         }
     }
 
+    pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
+        // Calculate days per year
+        let mut fixed: i32 = 365 * (date.year.0 - 1);
+        // Adjust for leap year logic
+        fixed =
+            fixed + ((date.year.0 - 1) / 4) - ((date.year.0 - 1) / 100) + ((date.year.0 - 1) / 400);
+        // Days of current year
+        fixed = fixed + (367 * (date.month.0 as i32) - 362) / 12;
+        // Leap year adjustment for the current year
+        fixed = fixed
+            + if date.month.0 <= 2 {
+                0
+            } else if Self::is_leap_year(date.year) {
+                -1
+            } else {
+                -2
+            };
+        // Days passed in current month
+        fixed + (date.day.0 as i32)
+    }
+
+    fn fixed_from_iso_integers(year: i32, month: i32, day: i32) -> i32 {
+        Self::fixed_from_iso(
+            *Date::new_iso_date_from_integers(year, month as u8, day as u8)
+                .unwrap()
+                .inner(),
+        )
+    }
+
+    fn iso_year_from_fixed(date: i32) -> i32 {
+        let n_400 = date / 145097;
+        let d1 = date % 146097;
+        let n_100 = d1 / 36524;
+        let d2 = d1 % 36524;
+        let n4 = d2 / 1461;
+        let d3 = d2 % 1461;
+        let n1 = d3 / 365;
+
+        let year = 400 * n_400 + 100 * n_100 + 4 * n4 + n1;
+
+        year
+    }
+
+    fn iso_new_year(year: i32) -> i32 {
+        Self::fixed_from_iso_integers(year, 1, 1)
+    }
+
+    pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
+        let year = Self::iso_year_from_fixed(date);
+        let prior_days = date - Self::iso_new_year(year);
+        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1) {
+            0
+        } else if Self::is_leap_year(IsoYear::from(year)) {
+            1
+        } else {
+            2
+        };
+        let month = (12 * (prior_days + correction)) / 367 + 373;
+        let day = date - Self::fixed_from_iso_integers(year, month, 1) + 1;
+        Date::new_iso_date_from_integers(year, month as u8, day as u8).unwrap()
+    }
+
     pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
         // Cumulatively how much are dates in each month
         // offset from "30 days in each month" (in non leap years)

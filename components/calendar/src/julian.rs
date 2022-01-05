@@ -20,36 +20,13 @@ pub struct JulianDateInner(IsoDateInner);
 impl Calendar for Julian {
     type DateInner = JulianDateInner;
     fn date_from_iso(&self, iso: Date<Iso>) -> JulianDateInner {
-        let added_days = Self::calculate_day_difference_between_calendars(*iso.inner());
-        Self::offset_date(
-            &mut JulianDateInner(*iso.inner()),
-            DateDuration::new(0, 0, 0, -added_days),
-        )
+        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        Self::julian_from_fixed(fixed_iso)
     }
 
-    // Since March 1st, 200 ISO is always same or ahead of Julian calendar.
-    // For getting the ISO date from Julian, we add the number of days ISO is ahead to the julian date.
-    //
-    // This creates the edge case when if the new date falls on Feb 29th when its a leap year in Julian only,
-    // that case is handled separately.
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let added_days = Self::calculate_day_difference_between_calendars(date.0);
-        let mut date = Self::offset_date(
-            &mut JulianDateInner(date.0),
-            DateDuration::new(0, 0, 0, added_days),
-        );
-
-        // Edge case when the year is divisible by 100, and not by 400
-        if date.0.year.0 % 100 == 0
-            && date.0.year.0 % 400 != 0
-            && u8::from(date.0.month) == 2
-            && u8::from(date.0.day) == 29
-        {
-            date.0.month = 3.try_into().unwrap();
-            date.0.day = 1.try_into().unwrap();
-        }
-
-        Date::from_raw(date.0, Iso)
+        let fixed_julian = Julian::fixed_from_julian(date.0);
+        Iso::iso_from_fixed(fixed_julian)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -159,6 +136,48 @@ impl Julian {
             2 => 28,
             _ => 31,
         }
+    }
+
+    fn fixed_from_julian(date: IsoDateInner) -> i32 {
+        let mut fixed: i32 = -1 + 365 * (date.year.0 - 1) + (date.year.0 - 1) / 4;
+        fixed = fixed + (367 * (u8::from(date.month) as i32) - 362);
+        fixed = fixed
+            + if u8::from(date.month) <= 2 {
+                0
+            } else if Self::is_leap_year(date.year) {
+                -1
+            } else {
+                2
+            };
+
+        return fixed + u8::from(date.day) as i32;
+    }
+
+    fn fixed_from_julian_integers(year: i32, month: i32, day: i32) -> i32 {
+        Self::fixed_from_julian(
+            *Date::new_iso_date_from_integers(year, month as u8, day as u8)
+                .unwrap()
+                .inner(),
+        )
+    }
+
+    fn julian_from_fixed(date: i32) -> JulianDateInner {
+        let approx = 1464 + (4 * date) / 1461;
+        let year = if approx <= 0 { approx - 1 } else { approx };
+        let prior_days = date - Self::fixed_from_julian_integers(year, 1, 1);
+        let correction = if date < Self::fixed_from_julian_integers(year, 3, 1) {
+            0
+        } else if Self::is_leap_year(IsoYear::from(year)) {
+            1
+        } else {
+            2
+        };
+        let month = 12 * (prior_days + correction) / 367 + 373;
+        let day = date - Self::fixed_from_julian_integers(year, month, 1) + 1;
+
+        *Date::new_julian_date_from_integers(year, month as u8, day as u8)
+            .unwrap()
+            .inner()
     }
 
     // Method returns the number of days the iso date (input) is ahead of Julian calendar by.
