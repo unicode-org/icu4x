@@ -6,6 +6,8 @@
 
 icu_benchmark_macros::static_setup!();
 
+
+use formatted_string::FormattedWriteable;
 use icu_list::{
     options::{Type, Width},
     ListFormatter,
@@ -26,6 +28,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         "{}",
         list_formatter
             .format(&["España", "Francia", "Suiza", "Italia"])
+            .as_writeable()
             .writeable_to_string()
     );
 

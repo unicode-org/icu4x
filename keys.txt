@@ -1,5 +1,0 @@
-plurals/ordinal@1
-plurals/cardinal@1
-datetime/symbols@1
-datetime/lengths@1
-datetime/skeletons@1

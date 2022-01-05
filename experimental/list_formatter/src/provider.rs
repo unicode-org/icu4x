@@ -9,8 +9,8 @@
 use crate::options::Width;
 use crate::string_matcher::StringMatcher;
 use alloc::borrow::Cow;
+use formatted_string::{FormattedString, FormattedWriteable, LengthHint};
 use icu_provider::yoke::{self, *};
-use writeable::{LengthHint, Writeable};
 
 pub mod key {
     //! Resource keys for [`list_formatter`](crate).
@@ -119,14 +119,14 @@ pub type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'a> ConditionalListJoinerPattern<'a> {
     /// Returns the pattern parts, and if materialized, the following value as a string
-    pub fn parts<'b, W: Writeable + ?Sized>(
+    pub fn parts<'b, W: FormattedWriteable + ?Sized>(
         &'a self,
         following_value: &'b W,
-    ) -> (PatternParts<'a>, Option<Cow<'b, str>>) {
+    ) -> (PatternParts<'a>, Option<FormattedString>) {
         if let Some(special_case) = &self.special_case {
-            let value = following_value.writeable_to_string();
+            let value = following_value.writeable_to_fmt_string();
             (
-                if special_case.condition.test(&value) {
+                if special_case.condition.test(value.as_str()) {
                     special_case.pattern.borrow_tuple()
                 } else {
                     self.default.borrow_tuple()
@@ -332,15 +332,11 @@ pub(crate) mod test {
 
     #[test]
     fn returns_str_if_conditional() {
-        assert_eq!(
-            test_patterns().end(Width::Narrow).parts("A").1,
-            Some(Cow::Borrowed("A"))
-        );
-        // u16 is not Borrow<str>, so we get an owned Cow
-        assert_eq!(
+        // A pattern was evaluated, so 123 was materialzed as a FormattedString
+        assert!(matches!(
             test_patterns().end(Width::Narrow).parts(&123u16).1,
-            Some(Cow::Owned("123".to_owned()))
-        );
+            Some(_)
+        ));
         // The pattern is not conditional, so we return none
         assert_eq!(test_patterns().end(Width::Wide).parts(&123u16).1, None);
     }

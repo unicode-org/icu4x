@@ -5,19 +5,9 @@
 use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
-use alloc::borrow::Cow;
-use alloc::string::String;
-use core::fmt::{self, Write};
 use formatted_string::*;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-use writeable::{LengthHint, Writeable};
-
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum FieldType {
-    Element,
-    Literal,
-}
 
 pub struct ListFormatter {
     data: DataPayload<ListFormatterPatternsV1Marker>,
@@ -49,23 +39,31 @@ impl ListFormatter {
         Ok(Self { data, width })
     }
 
-    fn format_internal<'c, W: Writeable, S: ?Sized>(
-        &'c self,
-        values: &[W],
+    fn format_internal<W: FormattedWriteable, S: FormattedWriteableSink>(
+        &self,
         sink: &mut S,
-        write_w_value: fn(&mut S, &W) -> fmt::Result,
-        write_m_value: fn(&mut S, &str) -> fmt::Result,
-        write_literal: fn(&mut S, &str) -> fmt::Result,
-    ) -> fmt::Result {
-        // Writes the Writeable or uses the materialized string
-        let write_value =
-            move |sink: &mut S, value: &W, materialized: Option<Cow<str>>| -> fmt::Result {
-                if let Some(p) = materialized {
-                    write_m_value(sink, &p)
-                } else {
-                    write_w_value(sink, value)
-                }
-            };
+        values: &[W],
+    ) -> Result<(), S::Error> {
+        // Writes the FormattedWriteable or uses the materialized string
+        let write_value = move |sink: &mut S,
+                                value: &W,
+                                materialized: Option<FormattedString>|
+              -> Result<(), S::Error> {
+            sink.push_field("element")?;
+            if let Some(p) = materialized {
+                sink.write_fmt_str(&p)?;
+            } else {
+                value.fmt_write_to(sink)?;
+            }
+            sink.pop_field()
+        };
+
+        // Writes a literal
+        let write_literal = |sink: &mut S, literal: &str| -> Result<(), S::Error> {
+            sink.push_field("literal")?;
+            sink.write_str(literal)?;
+            sink.pop_field()
+        };
 
         match values.len() {
             0 => Ok(()),
@@ -109,37 +107,33 @@ impl ListFormatter {
         }
     }
 
-    fn size_hint<W: Writeable>(&self, values: &[W]) -> LengthHint {
-        values.iter().map(|w| w.write_len()).sum::<LengthHint>()
-            + self.data.get().size_hint(self.width, values.len())
-    }
-
-    pub fn format_to_string<W: Writeable>(&self, values: &[W]) -> String {
-        self.format(values).writeable_to_string().into_owned()
-    }
-
-    pub fn format<'a, 'b: 'a, 'c: 'a, 'd: 'a, W: Writeable + 'd>(
+    pub fn format<'a, 'b: 'a, 'c: 'a, 'd: 'a, W: FormattedWriteable + 'd>(
         &'b self,
         values: &'c [W],
-    ) -> impl Writeable + 'a {
-        struct ListFormatterWriteable<'e, 'f, V> {
-            formatter: &'e ListFormatter,
-            values: &'f [V],
+    ) -> impl FormattedWriteable + 'a {
+        struct ListFormatterWriteable<'a, 'b, W> {
+            formatter: &'a ListFormatter,
+            values: &'b [W],
         }
 
-        impl<'e, 'f: 'e, 'g: 'e, V: Writeable + 'g> Writeable for ListFormatterWriteable<'e, 'f, V> {
-            fn write_to<S: Write + ?Sized>(&self, sink: &mut S) -> fmt::Result {
-                self.formatter.format_internal(
-                    self.values,
-                    sink,
-                    |s, w| w.write_to(s),
-                    |s, m| s.write_str(m),
-                    |s, l| s.write_str(l),
-                )
+        impl<W: FormattedWriteable> FormattedWriteable for ListFormatterWriteable<'_, '_, W> {
+            fn write_len(&self) -> LengthHint {
+                self.values
+                    .iter()
+                    .map(|w| w.write_len())
+                    .sum::<LengthHint>()
+                    + self
+                        .formatter
+                        .data
+                        .get()
+                        .size_hint(self.formatter.width, self.values.len())
             }
 
-            fn write_len(&self) -> LengthHint {
-                self.formatter.size_hint(self.values)
+            fn fmt_write_to<S: FormattedWriteableSink>(
+                &self,
+                sink: &mut S,
+            ) -> Result<(), S::Error> {
+                self.formatter.format_internal(sink, self.values)
             }
         }
 
@@ -147,33 +141,6 @@ impl ListFormatter {
             formatter: self,
             values,
         }
-    }
-
-    pub fn format_to_parts<W: Writeable>(&self, values: &[W]) -> FormattedString<FieldType> {
-        struct Wrapper<'a>(&'a mut FormattedString<FieldType>);
-
-        impl<'a> Write for Wrapper<'a> {
-            fn write_str(&mut self, s: &str) -> fmt::Result {
-                self.0.append(&s, FieldType::Element);
-                Ok(())
-            }
-        }
-
-        let mut output = FormattedString::with_capacity(self.size_hint(values).capacity());
-
-        self.format_internal(
-            values,
-            &mut output,
-            |s, w| w.write_to(&mut Wrapper(s)),
-            |s, m| Wrapper(s).write_str(m),
-            |s, l| {
-                s.append(&l, FieldType::Literal);
-                Ok(())
-            },
-        )
-        .unwrap();
-
-        output
     }
 }
 
@@ -194,62 +161,54 @@ mod tests {
     }
 
     #[test]
-    fn test_format() {
+    fn test_writeable() {
         let formatter = formatter(Width::Wide);
-        assert_writeable_eq!(formatter.format(&VALUES[0..0]), "");
-        assert_writeable_eq!(formatter.format(&VALUES[0..1]), "one");
-        assert_writeable_eq!(formatter.format(&VALUES[0..2]), "$one;two+");
-        assert_writeable_eq!(formatter.format(&VALUES[0..3]), "@one:two.three!");
-        assert_writeable_eq!(formatter.format(&VALUES[0..4]), "@one:two,three.four!");
-        assert_writeable_eq!(formatter.format(VALUES), "@one:two,three,four.five!");
+        assert_writeable_eq!(formatter.format(&VALUES[0..0]).as_writeable(), "");
+        assert_writeable_eq!(formatter.format(&VALUES[0..1]).as_writeable(), "one");
+        assert_writeable_eq!(formatter.format(&VALUES[0..2]).as_writeable(), "$one;two+");
+        assert_writeable_eq!(
+            formatter.format(&VALUES[0..3]).as_writeable(),
+            "@one:two.three!"
+        );
+        assert_writeable_eq!(
+            formatter.format(&VALUES[0..4]).as_writeable(),
+            "@one:two,three.four!"
+        );
+        assert_writeable_eq!(
+            formatter.format(VALUES).as_writeable(),
+            "@one:two,three,four.five!"
+        );
     }
 
     #[test]
-    fn test_format_to_parts() {
+    fn test_fmt_writeable() {
         let formatter = formatter(Width::Wide);
 
-        assert_eq!(formatter.format_to_parts(&VALUES[0..0]).as_ref(), "");
-        assert_eq!(formatter.format_to_parts(&VALUES[0..1]).as_ref(), "one");
         assert_eq!(
-            formatter.format_to_parts(&VALUES[0..2]).as_ref(),
-            "$one;two+"
+            format!("{:?}", formatter.format(VALUES).writeable_to_fmt_string()),
+            "@one:two,three,four.five!\n\
+             ┏┏━━┏┏━━┏┏━━━━┏┏━━━┏┏━━━┏\n\
+             ┃┃  ┃┃  ┃┃    ┃┃   ┃┃   ┗ literal\n\
+             ┃┃  ┃┃  ┃┃    ┃┃   ┃┗ element\n\
+             ┃┃  ┃┃  ┃┃    ┃┃   ┗ literal\n\
+             ┃┃  ┃┃  ┃┃    ┃┗ element\n\
+             ┃┃  ┃┃  ┃┃    ┗ literal\n\
+             ┃┃  ┃┃  ┃┗ element\n\
+             ┃┃  ┃┃  ┗ literal\n\
+             ┃┃  ┃┗ element\n\
+             ┃┃  ┗ literal\n\
+             ┃┗ element\n\
+             ┗ literal"
         );
-        assert_eq!(
-            formatter.format_to_parts(&VALUES[0..3]).as_ref(),
-            "@one:two.three!"
-        );
-        assert_eq!(
-            formatter.format_to_parts(&VALUES[0..4]).as_ref(),
-            "@one:two,three.four!"
-        );
-        let parts = formatter.format_to_parts(VALUES);
-        assert_eq!(parts.as_ref(), "@one:two,three,four.five!");
-
-        assert_eq!(parts.fields_at(0), [FieldType::Literal]);
-        assert!(parts.is_field_start(0, 0));
-        assert_eq!(parts.fields_at(2), [FieldType::Element]);
-        assert!(!parts.is_field_start(2, 0));
-        assert_eq!(parts.fields_at(4), [FieldType::Literal]);
-        assert!(parts.is_field_start(4, 0));
-        assert_eq!(parts.fields_at(5), [FieldType::Element]);
-        assert!(parts.is_field_start(5, 0));
-        assert_eq!(parts.fields_at(6), [FieldType::Element]);
-        assert!(!parts.is_field_start(6, 0));
     }
 
     #[test]
     fn test_conditional() {
         let formatter = formatter(Width::Narrow);
 
-        assert_writeable_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
-    }
-
-    #[test]
-    fn strings_dont_have_spare_capacity() {
-        let string = formatter(Width::Short).format_to_string(VALUES);
-        assert_eq!(string.capacity(), string.len());
-
-        let labelled_string = formatter(Width::Short).format_to_parts(VALUES);
-        assert_eq!(labelled_string.capacity(), labelled_string.len());
+        assert_writeable_eq!(
+            formatter.format(&["Beta", "Alpha"]).as_writeable(),
+            "Beta :o Alpha"
+        );
     }
 }
