@@ -74,9 +74,9 @@ impl FormattedWriteableSink for FormattedString {
             self.annotations.push(self.next_annotation.clone());
         }
         Ok(())
-    }    
-    
-    fn write_char(&mut self, c: char) -> Result<(), Self::Error> { 
+    }
+
+    fn write_char(&mut self, c: char) -> Result<(), Self::Error> {
         let len = c.len_utf8();
         self.bytes.resize(self.bytes.len() + len, 0);
         c.encode_utf8(&mut self.bytes[self.annotations.len()..]);
