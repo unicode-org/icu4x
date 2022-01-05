@@ -50,38 +50,44 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
     where
         D: serde::de::Deserializer<'de>,
     {
-        if cfg!(feature = "icu4x_human_readable_de") && deserializer.is_human_readable() {
-            StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
+        #[cfg(feature = "icu4x_human_readable_de")]
+        if deserializer.is_human_readable() {
+            return StringMatcher::new(<&str>::deserialize(deserializer)?).map_err(|e| {
                 use serde::de::Error;
                 D::Error::custom(e.to_string())
-            })
-        } else {
-            if cfg!(target_endian = "big") {
-                // TODO: Convert LE to BE. For now we just behave like the
-                // accept-nothing DFA on BE systems.
-                return Ok(StringMatcher {
-                    dfa_bytes: Cow::Borrowed(&[]),
-                    pattern: None,
-                });
-            }
-
-            let dfa_bytes = <Cow<'de, [u8]>>::deserialize(deserializer)?;
-
-            // Verify safety invariant
-            DFA::from_bytes(&dfa_bytes).map_err(|e| {
-                use serde::de::Error;
-                D::Error::custom(alloc::format!("Invalid DFA bytes: {}", e))
-            })?;
-
-            Ok(StringMatcher {
-                dfa_bytes,
-                pattern: None,
-            })
+            });
         }
+
+        if cfg!(target_endian = "big") {
+            // TODO: Convert LE to BE. For now we just behave like the
+            // accept-nothing DFA on BE systems.
+            return Ok(StringMatcher {
+                dfa_bytes: Cow::Borrowed(&[]),
+                pattern: None,
+            });
+        }
+
+        let dfa_bytes = <Cow<'de, [u8]>>::deserialize(deserializer)?;
+
+        // Verify safety invariant
+        DFA::from_bytes(&dfa_bytes).map_err(|e| {
+            use serde::de::Error;
+            D::Error::custom(alloc::format!("Invalid DFA bytes: {}", e))
+        })?;
+
+        Ok(StringMatcher {
+            dfa_bytes,
+            pattern: None,
+        })
     }
 }
 
 impl<'data> StringMatcher<'data> {
+    #[cfg(any(
+        test,
+        feature = "provider_transform_internal",
+        feature = "icu4x_human_readable_de"
+    ))]
     pub(crate) fn new(pattern: &str) -> Result<Self, Error> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
