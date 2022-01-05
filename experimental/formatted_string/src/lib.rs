@@ -48,6 +48,9 @@ pub trait FormattedWriteableSink {
     /// Writes a string, which is annotated with the currently active fields
     fn write_str(&mut self, s: &str) -> Result<(), Self::Error>;
 
+    /// Writes a char, which is annotated with the currently active fields
+    fn write_char(&mut self, c: char) -> Result<(), Self::Error>;
+
     /// Adds a field to the currently active fields
     fn push_field(&mut self, field: &'static str) -> Result<(), Self::Error>;
 
@@ -104,12 +107,12 @@ impl<T: FormattedWriteable> Writeable for FormattedWriteableAsWriteable<T> {
         impl<W: fmt::Write + ?Sized> FormattedWriteableSink for CoreWriteAsFormattedWriteableSink<W> {
             type Error = fmt::Error;
 
-            fn write_fmt_str(&mut self, s: &FormattedString) -> Result<(), Self::Error> {
-                self.0.write_str(s.as_str())
-            }
-
             fn write_str(&mut self, s: &str) -> Result<(), Self::Error> {
                 self.0.write_str(s)
+            }
+
+            fn write_char(&mut self, c: char) -> Result<(), Self::Error> {
+                self.0.write_char(c)
             }
 
             fn push_field(&mut self, _field: &'static str) -> Result<(), Self::Error> {
@@ -118,6 +121,10 @@ impl<T: FormattedWriteable> Writeable for FormattedWriteableAsWriteable<T> {
 
             fn pop_field(&mut self) -> Result<(), Self::Error> {
                 Ok(())
+            }
+
+            fn write_fmt_str(&mut self, s: &FormattedString) -> Result<(), Self::Error> {
+                self.0.write_str(s.as_str())
             }
         }
         self.0

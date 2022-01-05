@@ -74,6 +74,18 @@ impl FormattedWriteableSink for FormattedString {
             self.annotations.push(self.next_annotation.clone());
         }
         Ok(())
+    }    
+    
+    fn write_char(&mut self, c: char) -> Result<(), Self::Error> { 
+        let len = c.len_utf8();
+        self.bytes.resize(self.bytes.len() + len, 0);
+        c.encode_utf8(&mut self.bytes[self.annotations.len()..]);
+        self.annotations.push(self.next_annotation.clone());
+        self.make_next_annotation_extend();
+        for _ in 1..len {
+            self.annotations.push(self.next_annotation.clone());
+        }
+        Ok(())
     }
 
     fn write_fmt_str(&mut self, s: &FormattedString) -> Result<(), Self::Error> {
@@ -230,17 +242,17 @@ mod test {
         y.push_field("greeting").unwrap();
         y.write_fmt_str(&x).unwrap();
         y.pop_field().unwrap();
-        y.push_field("punctuation").unwrap();
-        y.write_str("!").unwrap();
+        y.push_field("emoji").unwrap();
+        y.write_char('😅').unwrap();
         y.pop_field().unwrap();
 
         // Note that the second level is not complete, the space
-        // and exclamation mark aren't annotated.
+        // and emoji aren't annotated.
         assert_eq!(
             format!("{:?}", y),
-            "hello world!\n\
+            "hello world😅\n\
              ┏━━━━━━━━━━┏\n\
-             ┃          ┗ punctuation\n\
+             ┃          ┗ emoji\n\
              ┗ greeting\n\
              ┏━━━━ ┏━━━━\n\
              ┃     ┗ word\n\
