@@ -27,7 +27,7 @@ icu_provider = { version = "0.4", path = "../../provider/core", features = ["mac
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["yoke"] }
 deduplicating_array = { version = "0.5", path = "../../utils/deduplicating_array", optional = true }
-regex-automata = { version = "0.1", git = "https://github.com/burntsushi/regex-automata", rev = "d8eee1279fac79514f6e366b6976f97ad7b37174" }
+regex-automata = { version = "0.1", git = "https://github.com/burntsushi/regex-automata", rev = "d8eee1279fac79514f6e366b6976f97ad7b37174", default-features = false }
 
 [dev-dependencies]
 criterion = "0.3.3"
@@ -45,5 +45,5 @@ std = ["icu_provider/std", "icu_locid/std"]
 default = ["icu4x_human_readable_de"]
 bench = []
 provider_serde = ["serde", "zerovec/serde", "deduplicating_array"]
-provider_transform_internals = ["provider_serde"]
-icu4x_human_readable_de = ["provider_serde"]
+provider_transform_internals = ["provider_serde", "regex-automata/alloc"]
+icu4x_human_readable_de = ["provider_serde", "regex-automata/alloc"]
