@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641256077875,
+  "lastUpdate": 1641431637610,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16727,6 +16727,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 343368,
             "range": "± 23415",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0521917d5d6d75b927fd40bd3462a6275bde94e5",
+          "message": "Remove almost empty and unused package-lock.json file from root directory. (#1469)",
+          "timestamp": "2022-01-05T17:04:02-08:00",
+          "tree_id": "7a0cff1cfa1f315add0e480dc6dc63da3bb4f6e7",
+          "url": "https://github.com/unicode-org/icu4x/commit/0521917d5d6d75b927fd40bd3462a6275bde94e5"
+        },
+        "date": 1641431628752,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 137603,
+            "range": "± 14048",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1529693,
+            "range": "± 95948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 334957,
+            "range": "± 12652",
             "unit": "ns/iter"
           }
         ]
