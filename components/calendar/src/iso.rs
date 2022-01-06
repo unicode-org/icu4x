@@ -379,19 +379,17 @@ impl Iso {
         // Calculate days per year
         let mut fixed: i32 = EPOCH - 1 + 365 * (date.year.0 - 1);
         // Adjust for leap year logic
-        fixed =
-            fixed + ((date.year.0 - 1) / 4) - ((date.year.0 - 1) / 100) + ((date.year.0 - 1) / 400);
+        fixed += ((date.year.0 - 1) / 4) - ((date.year.0 - 1) / 100) + ((date.year.0 - 1) / 400);
         // Days of current year
-        fixed = fixed + (367 * (date.month.0 as i32) - 362) / 12;
+        fixed += (367 * (date.month.0 as i32) - 362) / 12;
         // Leap year adjustment for the current year
-        fixed = fixed
-            + if date.month.0 <= 2 {
-                0
-            } else if Self::is_leap_year(date.year) {
-                -1
-            } else {
-                -2
-            };
+        fixed += if date.month.0 <= 2 {
+            0
+        } else if Self::is_leap_year(date.year) {
+            -1
+        } else {
+            -2
+        };
         // Days passed in current month
         fixed + (date.day.0 as i32)
     }

@@ -152,17 +152,16 @@ impl Julian {
             date.year.0
         };
         let mut fixed: i32 = JULIAN_EPOCH - 1 + 365 * (year - 1) + (year - 1) / 4;
-        fixed = fixed + (367 * (u8::from(date.month) as i32) - 362) / 12;
-        fixed = fixed
-            + if u8::from(date.month) <= 2 {
-                0
-            } else if Self::is_leap_year(date.year) {
-                -1
-            } else {
-                -2
-            };
+        fixed += (367 * (u8::from(date.month) as i32) - 362) / 12;
+        fixed += if u8::from(date.month) <= 2 {
+            0
+        } else if Self::is_leap_year(date.year) {
+            -1
+        } else {
+            -2
+        };
 
-        return fixed + u8::from(date.day) as i32;
+        fixed + u8::from(date.day) as i32
     }
 
     fn fixed_from_julian_integers(year: i32, month: i32, day: i32) -> i32 {
