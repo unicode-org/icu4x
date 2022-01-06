@@ -14,6 +14,10 @@ pub enum Error {
     Data(icu_provider::DataError),
     #[displaydoc("Illegal pattern: {0}")]
     IllegalPattern(String),
+    #[cfg(any(
+        feature = "provider_transform_internals",
+        feature = "icu4x_human_readable_de"
+    ))]
     #[displaydoc("Illegal condition: {0}")]
     IllegalCondition(regex_automata::dfa::Error),
 }
