@@ -4,6 +4,7 @@
 
 //! Error types for list formatting.
 
+#[cfg(feature = "provider_transform_internals")]
 use alloc::string::String;
 use displaydoc::Display;
 use icu_provider::DataError;
@@ -12,6 +13,7 @@ use icu_provider::DataError;
 pub enum Error {
     #[displaydoc("error loading data: {0}")]
     Data(icu_provider::DataError),
+    #[cfg(feature = "provider_transform_internals")]
     #[displaydoc("Illegal pattern: {0}")]
     IllegalPattern(String),
     #[cfg(any(
