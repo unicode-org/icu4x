@@ -27,7 +27,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         "{}",
         list_formatter
             .format(&["España", "Francia", "Suiza", "Italia"])
-            .as_writeable()
+            .to_writeable()
             .writeable_to_string()
     );
 

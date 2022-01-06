@@ -155,19 +155,19 @@ mod tests {
     #[test]
     fn test_writeable() {
         let formatter = formatter(Width::Wide);
-        assert_writeable_eq!(formatter.format(&VALUES[0..0]).as_writeable(), "");
-        assert_writeable_eq!(formatter.format(&VALUES[0..1]).as_writeable(), "one");
-        assert_writeable_eq!(formatter.format(&VALUES[0..2]).as_writeable(), "$one;two+");
+        assert_writeable_eq!(formatter.format(&VALUES[0..0]).to_writeable(), "");
+        assert_writeable_eq!(formatter.format(&VALUES[0..1]).to_writeable(), "one");
+        assert_writeable_eq!(formatter.format(&VALUES[0..2]).to_writeable(), "$one;two+");
         assert_writeable_eq!(
-            formatter.format(&VALUES[0..3]).as_writeable(),
+            formatter.format(&VALUES[0..3]).to_writeable(),
             "@one:two.three!"
         );
         assert_writeable_eq!(
-            formatter.format(&VALUES[0..4]).as_writeable(),
+            formatter.format(&VALUES[0..4]).to_writeable(),
             "@one:two,three.four!"
         );
         assert_writeable_eq!(
-            formatter.format(VALUES).as_writeable(),
+            formatter.format(VALUES).to_writeable(),
             "@one:two,three,four.five!"
         );
     }
@@ -199,7 +199,7 @@ mod tests {
         let formatter = formatter(Width::Narrow);
 
         assert_writeable_eq!(
-            formatter.format(&["Beta", "Alpha"]).as_writeable(),
+            formatter.format(&["Beta", "Alpha"]).to_writeable(),
             "Beta :o Alpha"
         );
     }
