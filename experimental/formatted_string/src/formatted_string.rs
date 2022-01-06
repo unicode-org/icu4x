@@ -2,20 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::FormattedWriteableSink;
+use crate::{Field, FormattedWriteableSink};
 use alloc::vec::Vec;
 use core::fmt;
 use core::str;
 
-/// A string with L levels of formatting annotations.
+/// A string with formatting annotations.
 #[derive(Clone, PartialEq)]
 pub struct FormattedString {
     // bytes is always valid UTF-8, so from_utf8_unchecked is safe
     bytes: Vec<u8>,
     // The lists of annotations corresponding to each byte
-    annotations: Vec<Vec<(LocationInPart, &'static str)>>,
+    annotations: Vec<Vec<(LocationInPart, Field)>>,
     // The list of annotations for the next byte
-    next_annotation: Vec<(LocationInPart, &'static str)>,
+    next_annotation: Vec<(LocationInPart, Field)>,
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -111,7 +111,7 @@ impl FormattedWriteableSink for FormattedString {
         Ok(())
     }
 
-    fn push_field(&mut self, field: &'static str) -> Result<(), Self::Error> {
+    fn push_field(&mut self, field: Field) -> Result<(), Self::Error> {
         self.next_annotation.push((LocationInPart::Begin, field));
         Ok(())
     }
@@ -184,7 +184,7 @@ impl fmt::Debug for FormattedString {
                 write!(f, "{: <1$}", "", str_len_before(k))?;
                 write!(
                     f,
-                    "┗ {}",
+                    "┗ {:?}",
                     self.annotations[boundaries[k].0]
                         [self.annotations[boundaries[k].0].len() - 1 - l]
                         .1

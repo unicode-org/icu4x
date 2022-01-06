@@ -46,14 +46,14 @@ impl ListFormatter {
     ) -> Result<(), S::Error> {
         macro_rules! literal {
             ($lit:ident) => {{
-                sink.push_field("literal")?;
+                sink.push_field(Field("literal"))?;
                 sink.write_str($lit)?;
                 sink.pop_field()
             }};
         }
         macro_rules! value {
             ($val:expr) => {{
-                sink.push_field("element")?;
+                sink.push_field(Field("element"))?;
                 $val.fmt_write_to(sink)?;
                 sink.pop_field()
             }};
@@ -109,10 +109,10 @@ impl ListFormatter {
         }
 
         impl<W: FormattedWriteable> FormattedWriteable for ListFormatterWriteable<'_, '_, W> {
-            fn write_len(&self) -> LengthHint {
+            fn fmt_write_len(&self) -> LengthHint {
                 self.values
                     .iter()
-                    .map(|w| w.write_len())
+                    .map(|w| w.fmt_write_len())
                     .sum::<LengthHint>()
                     + self
                         .formatter
