@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641431587238,
+  "lastUpdate": 1641502561292,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20441,6 +20441,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4154,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "625b0f97a2336cb3eb3782d6ad8e14b8ec162082",
+          "message": "Skip node_modules in license header check (#1454)",
+          "timestamp": "2022-01-06T12:47:37-08:00",
+          "tree_id": "1927edaee3a477f8840d996fae3ea493b7f848ab",
+          "url": "https://github.com/unicode-org/icu4x/commit/625b0f97a2336cb3eb3782d6ad8e14b8ec162082"
+        },
+        "date": 1641502549636,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2976,
+            "range": "± 471",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5643,
+            "range": "± 562",
             "unit": "ns/iter"
           }
         ]
