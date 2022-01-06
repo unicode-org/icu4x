@@ -51,6 +51,11 @@ impl FormattedString {
         self.bytes.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        debug_assert_eq!(self.bytes.is_empty(), self.annotations.is_empty());
+        self.bytes.is_empty()
+    }
+
     pub fn as_str(&self) -> &str {
         unsafe { str::from_utf8_unchecked(&self.bytes) }
     }
@@ -59,6 +64,12 @@ impl FormattedString {
         for entry in self.next_annotation.iter_mut() {
             *entry = (LocationInPart::Extend, entry.1);
         }
+    }
+}
+
+impl Default for FormattedString {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -127,7 +138,7 @@ impl fmt::Debug for FormattedString {
         write!(f, "{}", self.as_str())?;
         // For each level of annotations
         for l in 0..self.annotations.iter().map(Vec::len).max().unwrap_or(0) {
-            write!(f, "\n")?;
+            writeln!(f)?;
             let mut boundaries = Vec::new();
             let mut begin = None;
             // Iterating to len()+1 to close the last annotation
@@ -175,7 +186,7 @@ impl fmt::Debug for FormattedString {
             }
             // Prints one annotation per row
             for k in (0..boundaries.len()).rev() {
-                write!(f, "\n")?;
+                writeln!(f)?;
                 for i in 0..k {
                     // Lines for later annotations
                     write!(f, "{: <1$}", "", str_len_before(i))?;
@@ -184,7 +195,7 @@ impl fmt::Debug for FormattedString {
                 write!(f, "{: <1$}", "", str_len_before(k))?;
                 write!(
                     f,
-                    "┗ {:?}",
+                    "┗ {}",
                     self.annotations[boundaries[k].0]
                         [self.annotations[boundaries[k].0].len() - 1 - l]
                         .1
@@ -202,13 +213,13 @@ mod test {
     #[test]
     fn test_basic() {
         let mut x = FormattedString::new();
-        x.push_field("word").unwrap();
+        x.push_field(Field("word")).unwrap();
         x.write_str("hello").unwrap();
         x.pop_field().unwrap();
-        x.push_field("space").unwrap();
+        x.push_field(Field("space")).unwrap();
         x.write_str(" ").unwrap();
         x.pop_field().unwrap();
-        x.push_field("word").unwrap();
+        x.push_field(Field("word")).unwrap();
         x.write_str("world").unwrap();
         x.pop_field().unwrap();
 
@@ -225,11 +236,11 @@ mod test {
     #[test]
     fn test_multi_level() {
         let mut x = FormattedString::new();
-        x.push_field("word").unwrap();
+        x.push_field(Field("word")).unwrap();
         x.write_str("hello").unwrap();
         x.pop_field().unwrap();
         x.write_str(" ").unwrap();
-        x.push_field("word").unwrap();
+        x.push_field(Field("word")).unwrap();
         x.write_str("world").unwrap();
         x.pop_field().unwrap();
 
@@ -239,10 +250,10 @@ mod test {
         // ┗ word
 
         let mut y = FormattedString::new();
-        y.push_field("greeting").unwrap();
+        y.push_field(Field("greeting")).unwrap();
         y.write_fmt_str(&x).unwrap();
         y.pop_field().unwrap();
-        y.push_field("emoji").unwrap();
+        y.push_field(Field("emoji")).unwrap();
         y.write_char('😅').unwrap();
         y.pop_field().unwrap();
 
@@ -263,15 +274,15 @@ mod test {
     #[test]
     fn test_multi_byte() {
         let mut x = FormattedString::new();
-        x.push_field("variable").unwrap();
+        x.push_field(Field("variable")).unwrap();
         x.write_str("π").unwrap();
         x.pop_field().unwrap();
         x.write_str(" ").unwrap();
-        x.push_field("operation").unwrap();
+        x.push_field(Field("operation")).unwrap();
         x.write_str("*").unwrap();
         x.pop_field().unwrap();
         x.write_str(" ").unwrap();
-        x.push_field("variable").unwrap();
+        x.push_field(Field("variable")).unwrap();
         x.write_str("x").unwrap();
 
         assert_eq!(

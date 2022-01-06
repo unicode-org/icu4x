@@ -16,9 +16,10 @@ pub use writeable::{LengthHint, Writeable};
 #[derive(Clone, Copy, PartialEq)]
 pub struct Field(pub &'static str);
 
-impl fmt::Debug for Field {
+impl fmt::Display for Field {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
+        <str as fmt::Display>::fmt(self.0, f)
     }
 }
 
@@ -42,7 +43,7 @@ pub trait FormattedWriteable {
         output
     }
 
-    fn as_writeable(self) -> FormattedWriteableAsWriteable<Self>
+    fn to_writeable(self) -> FormattedWriteableAsWriteable<Self>
     where
         Self: Sized,
     {
