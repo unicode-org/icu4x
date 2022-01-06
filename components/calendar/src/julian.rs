@@ -8,6 +8,9 @@ use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::TryInto;
 
+// Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
+const JULIAN_EPOCH: i32 = -1;
+
 #[derive(Copy, Clone, Debug, Default)]
 // The Julian calendar
 pub struct Julian;
@@ -138,16 +141,25 @@ impl Julian {
         }
     }
 
+    // Fixed is day count representation of calendars starting from Jan 1st of year 1 of Georgian Calendar.
+    // The fixed calculations algorithms are from the Calendrical Calculations book
+    //
+    // Lips code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1738
     fn fixed_from_julian(date: IsoDateInner) -> i32 {
-        let mut fixed: i32 = -1 + 365 * (date.year.0 - 1) + (date.year.0 - 1) / 4;
-        fixed = fixed + (367 * (u8::from(date.month) as i32) - 362);
+        let year = if date.year.0 < 0 {
+            date.year.0 + 1
+        } else {
+            date.year.0
+        };
+        let mut fixed: i32 = JULIAN_EPOCH - 1 + 365 * (year - 1) + (year - 1) / 4;
+        fixed = fixed + (367 * (u8::from(date.month) as i32) - 362) / 12;
         fixed = fixed
             + if u8::from(date.month) <= 2 {
                 0
             } else if Self::is_leap_year(date.year) {
                 -1
             } else {
-                2
+                -2
             };
 
         return fixed + u8::from(date.day) as i32;
@@ -162,7 +174,7 @@ impl Julian {
     }
 
     fn julian_from_fixed(date: i32) -> JulianDateInner {
-        let approx = 1464 + (4 * date) / 1461;
+        let approx = ((4 * date) + 1464) / 1461;
         let year = if approx <= 0 { approx - 1 } else { approx };
         let prior_days = date - Self::fixed_from_julian_integers(year, 1, 1);
         let correction = if date < Self::fixed_from_julian_integers(year, 3, 1) {
@@ -172,25 +184,12 @@ impl Julian {
         } else {
             2
         };
-        let month = 12 * (prior_days + correction) / 367 + 373;
+        let month = (12 * (prior_days + correction) + 373) / 367;
         let day = date - Self::fixed_from_julian_integers(year, month, 1) + 1;
 
         *Date::new_julian_date_from_integers(year, month as u8, day as u8)
             .unwrap()
             .inner()
-    }
-
-    // Method returns the number of days the iso date (input) is ahead of Julian calendar by.
-    fn calculate_day_difference_between_calendars(date: IsoDateInner) -> i32 {
-        // In year 0, the slack is -2
-        let year = date.year.0;
-        let slack = year / 100 - year / 400 - 2;
-
-        if year % 100 == 0 && year % 400 != 0 && u8::from(date.month) <= 2 {
-            slack - 1
-        } else {
-            slack
-        }
     }
 
     fn offset_date(date: &mut JulianDateInner, mut offset: DateDuration<Self>) -> JulianDateInner {
@@ -290,29 +289,6 @@ impl DateTime<Julian> {
 #[cfg(test)]
 mod test {
     use super::*;
-
-    #[test]
-    fn test_day_difference_between_calendars() {
-        // (year, month, day, expected difference)
-        let tests = [
-            (1, 2, 1, -2),
-            (100, 2, 1, -2),
-            (100, 3, 1, -1),
-            (400, 2, 1, 1),
-            (400, 3, 1, 1),
-        ];
-
-        for test in tests {
-            assert_eq!(
-                Julian::calculate_day_difference_between_calendars(
-                    *Date::new_iso_date_from_integers(test.0, test.1, test.2)
-                        .unwrap()
-                        .inner()
-                ),
-                test.3
-            );
-        }
-    }
 
     #[test]
     fn test_day_iso_to_julian() {

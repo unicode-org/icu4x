@@ -8,6 +8,9 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Dat
 use core::convert::{TryFrom, TryInto};
 use tinystr::{tinystr16, tinystr8};
 
+// The georgian epoch is equivalent to first day in fixed day measurement
+const EPOCH: i32 = 1;
+
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
 pub struct Iso;
@@ -368,9 +371,13 @@ impl Iso {
         }
     }
 
+    // Fixed is day count representation of calendars starting from Jan 1st of year 1.
+    // The fixed calculations algorithms are from the Calendrical Calculations book.
+    //
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1217
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
         // Calculate days per year
-        let mut fixed: i32 = 365 * (date.year.0 - 1);
+        let mut fixed: i32 = EPOCH - 1 + 365 * (date.year.0 - 1);
         // Adjust for leap year logic
         fixed =
             fixed + ((date.year.0 - 1) / 4) - ((date.year.0 - 1) / 100) + ((date.year.0 - 1) / 400);
@@ -398,17 +405,27 @@ impl Iso {
     }
 
     fn iso_year_from_fixed(date: i32) -> i32 {
-        let n_400 = date / 145097;
-        let d1 = date % 146097;
-        let n_100 = d1 / 36524;
-        let d2 = d1 % 36524;
-        let n4 = d2 / 1461;
-        let d3 = d2 % 1461;
-        let n1 = d3 / 365;
+        // 400 year cycles have 146097 days
+        let n_400 = date / 146097;
+        let date = date % 146097;
 
-        let year = 400 * n_400 + 100 * n_100 + 4 * n4 + n1;
+        // 100 year cycles have 36524 days
+        let n_100 = date / 36524;
+        let date = date % 36524;
 
-        year
+        // 4 year cycles have 1461 days
+        let n_4 = date / 1461;
+        let date = date % 1461;
+
+        let n_1 = date / 365;
+
+        let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
+
+        if n_400 == 4 || n_4 == 1 {
+            year
+        } else {
+            year + 1
+        }
     }
 
     fn iso_new_year(year: i32) -> i32 {
@@ -425,7 +442,7 @@ impl Iso {
         } else {
             2
         };
-        let month = (12 * (prior_days + correction)) / 367 + 373;
+        let month = (12 * (prior_days + correction) + 373) / 367;
         let day = date - Self::fixed_from_iso_integers(year, month, 1) + 1;
         Date::new_iso_date_from_integers(year, month as u8, day as u8).unwrap()
     }
