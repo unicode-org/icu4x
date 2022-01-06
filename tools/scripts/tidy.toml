@@ -28,7 +28,7 @@ exit_on_error true
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat"
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/wasm/docs/**/*"
+glob_skip_pattern_array = array "target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/wasm/docs/**/*" "**/node_modules/**/*"
 
 blank_line = set ""
 
