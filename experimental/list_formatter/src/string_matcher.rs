@@ -2,15 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::Error;
 use alloc::borrow::Cow;
+#[cfg(any(
+    feature = "icu4x_human_readable_de",
+    feature = "provider_transform_internals"
+))]
 use alloc::string::ToString;
 use icu_provider::yoke::{self, *};
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
 #[derive(Clone, Debug, Yokeable, ZeroCopyFrom)]
-pub(crate) struct StringMatcher<'data> {
+pub struct StringMatcher<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
     dfa_bytes: Cow<'data, [u8]>,
     pattern: Option<Cow<'data, str>>,
@@ -84,15 +87,16 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 
 impl<'data> StringMatcher<'data> {
     #[cfg(any(
-        test,
-        feature = "provider_transform_internal",
-        feature = "icu4x_human_readable_de"
+        feature = "provider_transform_internals",
+        feature = "icu4x_human_readable_de",
     ))]
-    pub(crate) fn new(pattern: &str) -> Result<Self, Error> {
+    pub fn new(pattern: &str) -> Result<Self, crate::error::Error> {
+        use crate::error::Error;
         use regex_automata::{
             dfa::dense::{Builder, Config},
             SyntaxConfig,
         };
+
         let mut builder = Builder::new();
         let dfa = builder
             .syntax(SyntaxConfig::new().case_insensitive(true))
@@ -108,7 +112,7 @@ impl<'data> StringMatcher<'data> {
         })
     }
 
-    pub(crate) fn test(&self, string: &str) -> bool {
+    pub fn test(&self, string: &str) -> bool {
         cfg!(target_endian = "little")
             && matches!(
                 // Safe due to struct invariant.
@@ -156,7 +160,6 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "icu4x_human_readable_de")]
     fn test_json_serialization() {
         let matcher = StringMatcher::new("abc*").unwrap();
 
