@@ -13,6 +13,16 @@ pub use crate::formatted_string::FormattedString;
 use core::fmt;
 pub use writeable::{LengthHint, Writeable};
 
+#[derive(Clone, Copy, PartialEq)]
+pub struct Field(pub &'static str);
+
+impl fmt::Debug for Field {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
+
+}
+
 /// Similar to Writeable, but also produces field annotations
 pub trait FormattedWriteable {
     /// Write bytes and field annotations to the given FormattedWriteableSink. Errors from
@@ -22,12 +32,12 @@ pub trait FormattedWriteable {
     /// Returns a hint for the number of bytes that will be written to the sink.
     ///
     /// Override this method if it can be computed quickly.
-    fn write_len(&self) -> LengthHint {
+    fn fmt_write_len(&self) -> LengthHint {
         LengthHint::undefined()
     }
 
     fn writeable_to_fmt_string(&self) -> FormattedString {
-        let mut output = FormattedString::with_capacity(self.write_len().capacity());
+        let mut output = FormattedString::with_capacity(self.fmt_write_len().capacity());
         self.fmt_write_to(&mut output)
             .expect("impl FormattedSink for FormattedString is infallible");
         output
@@ -52,7 +62,7 @@ pub trait FormattedWriteableSink {
     fn write_char(&mut self, c: char) -> Result<(), Self::Error>;
 
     /// Adds a field to the currently active fields
-    fn push_field(&mut self, field: &'static str) -> Result<(), Self::Error>;
+    fn push_field(&mut self, field: Field) -> Result<(), Self::Error>;
 
     /// Removes the last added field from the currently active fields
     fn pop_field(&mut self) -> Result<(), Self::Error>;
@@ -90,7 +100,7 @@ impl<W: Writeable + ?Sized> FormattedWriteable for W {
         }
     }
 
-    fn write_len(&self) -> LengthHint {
+    fn fmt_write_len(&self) -> LengthHint {
         self.write_len()
     }
 }
@@ -99,7 +109,7 @@ pub struct FormattedWriteableAsWriteable<T: FormattedWriteable>(T);
 
 impl<T: FormattedWriteable> Writeable for FormattedWriteableAsWriteable<T> {
     fn write_len(&self) -> LengthHint {
-        self.0.write_len()
+        self.0.fmt_write_len()
     }
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         struct CoreWriteAsFormattedWriteableSink<W: fmt::Write + ?Sized>(W);
@@ -115,7 +125,7 @@ impl<T: FormattedWriteable> Writeable for FormattedWriteableAsWriteable<T> {
                 self.0.write_char(c)
             }
 
-            fn push_field(&mut self, _field: &'static str) -> Result<(), Self::Error> {
+            fn push_field(&mut self, _field: Field) -> Result<(), Self::Error> {
                 Ok(())
             }
 
