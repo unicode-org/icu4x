@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641431157805,
+  "lastUpdate": 1641502163205,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6563,6 +6563,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0521917d5d6d75b927fd40bd3462a6275bde94e5"
         },
         "date": 1641431148078,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1393792,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "625b0f97a2336cb3eb3782d6ad8e14b8ec162082",
+          "message": "Skip node_modules in license header check (#1454)",
+          "timestamp": "2022-01-06T12:47:37-08:00",
+          "tree_id": "1927edaee3a477f8840d996fae3ea493b7f848ab",
+          "url": "https://github.com/unicode-org/icu4x/commit/625b0f97a2336cb3eb3782d6ad8e14b8ec162082"
+        },
+        "date": 1641502150552,
         "tool": "ndjson",
         "benches": [
           {
