@@ -6,7 +6,6 @@
 
 icu_benchmark_macros::static_setup!();
 
-
 use formatted_string::FormattedWriteable;
 use icu_list::{
     options::{Type, Width},
