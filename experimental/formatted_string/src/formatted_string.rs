@@ -78,12 +78,14 @@ impl FormattedWriteableSink for FormattedString {
     type Error = core::convert::Infallible;
 
     fn write_str(&mut self, s: &str) -> Result<(), Self::Error> {
-        self.bytes.extend(s.bytes());
-        self.annotations.reserve(s.len());
-        self.annotations.push(self.next_annotation.clone());
-        self.make_next_annotation_extend();
-        for _ in 1..s.len() {
+        if !s.is_empty() {
+            self.bytes.extend(s.bytes());
+            self.annotations.reserve(s.len());
             self.annotations.push(self.next_annotation.clone());
+            self.make_next_annotation_extend();
+            for _ in 1..s.len() {
+                self.annotations.push(self.next_annotation.clone());
+            }
         }
         Ok(())
     }
@@ -102,24 +104,26 @@ impl FormattedWriteableSink for FormattedString {
     }
 
     fn write_fmt_str(&mut self, s: &FormattedString) -> Result<(), Self::Error> {
-        self.bytes.extend(s.bytes.iter().copied());
-        self.annotations.reserve(s.len());
-        self.annotations.push(
-            self.next_annotation
-                .iter()
-                .chain(s.annotations[0].iter())
-                .copied()
-                .collect(),
-        );
-        self.make_next_annotation_extend();
-        for i in 1..s.len() {
+        if !s.is_empty() {
+            self.bytes.extend(s.bytes.iter().copied());
+            self.annotations.reserve(s.len());
             self.annotations.push(
                 self.next_annotation
                     .iter()
-                    .chain(s.annotations[i].iter())
+                    .chain(s.annotations[0].iter())
                     .copied()
                     .collect(),
             );
+            self.make_next_annotation_extend();
+            for i in 1..s.len() {
+                self.annotations.push(
+                    self.next_annotation
+                        .iter()
+                        .chain(s.annotations[i].iter())
+                        .copied()
+                        .collect(),
+                );
+            }
         }
         Ok(())
     }
@@ -145,8 +149,6 @@ impl fmt::Debug for FormattedString {
             let mut begin = None;
             // Iterating to len()+1 to close the last annotation
             for byte in 0..self.annotations.len() + 1 {
-                // The "most significant" annotation is last in the lists, but
-                // we want to print if first, so we index from the back.
                 match self.annotations.get(byte).and_then(|a| a.get(l)) {
                     None => {
                         // No annotation at this level/byte
@@ -155,8 +157,8 @@ impl fmt::Debug for FormattedString {
                         }
                         begin = None;
                     }
-                    Some((lip, _)) if lip == &LocationInPart::Begin => {
-                        // New annotation start
+                    Some((LocationInPart::Begin, _)) => {
+                        // New annotation
                         if let Some(b) = begin {
                             boundaries.push((b, byte));
                         }
