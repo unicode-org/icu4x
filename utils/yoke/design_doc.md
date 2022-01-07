@@ -1,4 +1,4 @@
-# Yoke: Self-Referential Borrowing for Rust
+# Yoke: Enabling Self-Referential Borrowing via Lifetime Erasure in Rust
 
 ## Problem statement
 
@@ -7,7 +7,7 @@ Zero-copy deserialization is a very effective way to speed up programs and avoid
 1. All data types that contain zero-copy data, even indirectly, need to carry a lifetime parameter
 2. Certain memory management techniques are hampered, like caching.
 
-The goal of Yoke is to allow the borrowing of data from self, so that we don't need lifetime parameters to track data ownership, and to enable reference-counted data that can be safely dropped from a cache.
+Yoke utilizes *lifetime erasure* to allow the borrowing of data from self. This means we don't need lifetime parameters to track data ownership, and that we can carry reference-counted data that can be safely dropped from a cache.
 
 ## Background
 
