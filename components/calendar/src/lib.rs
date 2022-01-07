@@ -26,6 +26,7 @@ mod error;
 pub mod gregorian;
 pub mod iso;
 pub mod japanese;
+pub mod julian;
 pub mod provider;
 pub mod types;
 

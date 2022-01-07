@@ -8,6 +8,9 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Dat
 use core::convert::{TryFrom, TryInto};
 use tinystr::{tinystr16, tinystr8};
 
+// The georgian epoch is equivalent to first day in fixed day measurement
+const EPOCH: i32 = 1;
+
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
 pub struct Iso;
@@ -101,7 +104,7 @@ pub struct IsoDateInner {
 }
 
 impl IsoDateInner {
-    fn add_months(&mut self, months: i32) {
+    pub fn add_months(&mut self, months: i32) {
         // Get a zero-indexed new month
         let new_month = (self.month.0 as i32 - 1) + months;
         if new_month >= 0 {
@@ -366,6 +369,82 @@ impl Iso {
         } else {
             365
         }
+    }
+
+    // Fixed is day count representation of calendars starting from Jan 1st of year 1.
+    // The fixed calculations algorithms are from the Calendrical Calculations book.
+    //
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
+    pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
+        // Calculate days per year
+        let mut fixed: i32 = EPOCH - 1 + 365 * (date.year.0 - 1);
+        // Adjust for leap year logic
+        fixed += ((date.year.0 - 1) / 4) - ((date.year.0 - 1) / 100) + ((date.year.0 - 1) / 400);
+        // Days of current year
+        fixed += (367 * (date.month.0 as i32) - 362) / 12;
+        // Leap year adjustment for the current year
+        fixed += if date.month.0 <= 2 {
+            0
+        } else if Self::is_leap_year(date.year) {
+            -1
+        } else {
+            -2
+        };
+        // Days passed in current month
+        fixed + (date.day.0 as i32)
+    }
+
+    fn fixed_from_iso_integers(year: i32, month: i32, day: i32) -> i32 {
+        Self::fixed_from_iso(
+            *Date::new_iso_date_from_integers(year, month as u8, day as u8)
+                .unwrap()
+                .inner(),
+        )
+    }
+
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
+    fn iso_year_from_fixed(date: i32) -> i32 {
+        // 400 year cycles have 146097 days
+        let n_400 = date / 146097;
+        let date = date % 146097;
+
+        // 100 year cycles have 36524 days
+        let n_100 = date / 36524;
+        let date = date % 36524;
+
+        // 4 year cycles have 1461 days
+        let n_4 = date / 1461;
+        let date = date % 1461;
+
+        let n_1 = date / 365;
+
+        let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
+
+        if n_400 == 4 || n_4 == 1 {
+            year
+        } else {
+            year + 1
+        }
+    }
+
+    fn iso_new_year(year: i32) -> i32 {
+        Self::fixed_from_iso_integers(year, 1, 1)
+    }
+
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
+    pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
+        let year = Self::iso_year_from_fixed(date);
+        let prior_days = date - Self::iso_new_year(year);
+        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1) {
+            0
+        } else if Self::is_leap_year(IsoYear::from(year)) {
+            1
+        } else {
+            2
+        };
+        let month = (12 * (prior_days + correction) + 373) / 367;
+        let day = date - Self::fixed_from_iso_integers(year, month, 1) + 1;
+        Date::new_iso_date_from_integers(year, month as u8, day as u8).unwrap()
     }
 
     pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
