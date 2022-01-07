@@ -90,7 +90,7 @@ As usual with zero-copy deserialization, it is good to use types that have both 
 
 ### Mutation
 
-It is possible to mutate `Yoke`s using the [`.with_mut()`](with_mut) method. This cannot be used to introduce _new_ borrowed data, however one can freely mutate values (or parts of values) into their owned variants:
+It is possible to mutate `Yoke`s using the [`.with_mut()`](with_mut) method. This cannot be used to introduce _new_ borrowed data, but one can freely mutate values (or parts of values) into their owned variants:
 
 ```rust
 // yoke is a Yoke<Cow<str>, _>
@@ -202,14 +202,14 @@ impl Yoke<Y, C> where Y: for<'a> Yokeable<'a> {
 }
 ```
 
-This is a fair bit more complicated. First off the bat, the `PhantomData` can be ignored completely, it exists to satisfy the compiler (which needs the lifetime `'a` to be used in a more concrete place).
+This is a fair bit more complicated. First off the bat, the `PhantomData` can be ignored completely; it exists to satisfy the compiler, which needs the lifetime `'a` to be used in a more concrete place.
 
 What this function does is take a closure that, for all `'a`, can convert `Y<'a>` to `P<'a>`. The `for<'a>` here has the same effect as in `Yoke::attach_to_cart()`: it pins down a lifetime flow such that all borrowed data in `P<'a>` _must_ have come from `Y<'a>` and nowhere else, satisfying safety point 2. There's no chance for `f` to smuggle any borrowed out so safety point 1 is also satisfied. The `with_capture` variants of this are able to enforce that no data of the wrong lifetime is smuggled out by relying on the `for<'a>` again: any data being smuggled out would not have a statically known lifetime and cannot be stuffed into the capture since that would give the capture a statically unknown lifetime.
 
 
 ### ZeroCopyFrom
 
-The `yoke` crate comes with an additional trait, [`ZeroCopyFrom`], which can be used to reborrow cow-like zero-copy types. It is not directly used by [`Yoke`], however it is a useful utility to pair with it.
+The `yoke` crate comes with an additional trait, [`ZeroCopyFrom`]. Implementing this trait allows one to define a canonical, infallible implementation of Yoke's `attach_to_cart` function, enabling various additional constructors on Yoke for convenience, including `Yoke::attach_to_borrowed_cart()`, `Yoke::attach_to_box_cart()`, and `Yoke::attach_to_rc_cart()`.
 
 Using this trait, for example, one can generically talk about taking a `Cow<'a, T>` and borrowing it to produce a `Cow<'b, T>` that is `Cow::Borrowed`, borrowing from the original `Cow`, regardless of whether or not the original `Cow` was owned or borrowed.
 
