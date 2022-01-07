@@ -154,9 +154,13 @@ impl<'data> ListJoinerPattern<'data> {
             &self.string[index_1..],
         )
     }
+
+    fn size_hint(&self) -> LengthHint {
+        LengthHint::exact(self.string.len())
+    }
 }
 
-#[cfg(any(test, feature = "provider_transform_internals"))]
+#[cfg(feature = "provider_transform_internals")]
 mod datagen {
     use super::*;
     use crate::error::Error;
@@ -250,7 +254,7 @@ mod datagen {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "provider_transform_internals"))]
 pub(crate) mod test {
     use super::*;
 
