@@ -12,9 +12,10 @@ use core::str;
 pub struct FormattedString {
     // bytes is always valid UTF-8, so from_utf8_unchecked is safe
     bytes: Vec<u8>,
-    // The lists of annotations corresponding to each byte
+    // The lists of annotations corresponding to each byte.
     annotations: Vec<Vec<(LocationInPart, Field)>>,
-    // The list of annotations for the next byte
+    // The list of annotations for the next byte.
+    // The first entry is the top level.
     next_annotation: Vec<(LocationInPart, Field)>,
 }
 
@@ -91,6 +92,7 @@ impl FormattedWriteableSink for FormattedString {
         let len = c.len_utf8();
         self.bytes.resize(self.bytes.len() + len, 0);
         c.encode_utf8(&mut self.bytes[self.annotations.len()..]);
+        self.annotations.reserve(len);
         self.annotations.push(self.next_annotation.clone());
         self.make_next_annotation_extend();
         for _ in 1..len {
@@ -103,18 +105,18 @@ impl FormattedWriteableSink for FormattedString {
         self.bytes.extend(s.bytes.iter().copied());
         self.annotations.reserve(s.len());
         self.annotations.push(
-            s.annotations[0]
+            self.next_annotation
                 .iter()
-                .chain(self.next_annotation.iter())
+                .chain(s.annotations[0].iter())
                 .copied()
                 .collect(),
         );
         self.make_next_annotation_extend();
         for i in 1..s.len() {
             self.annotations.push(
-                s.annotations[i]
+                self.next_annotation
                     .iter()
-                    .chain(self.next_annotation.iter())
+                    .chain(s.annotations[i].iter())
                     .copied()
                     .collect(),
             );
@@ -145,11 +147,7 @@ impl fmt::Debug for FormattedString {
             for byte in 0..self.annotations.len() + 1 {
                 // The "most significant" annotation is last in the lists, but
                 // we want to print if first, so we index from the back.
-                match self
-                    .annotations
-                    .get(byte)
-                    .and_then(|a| a.iter().nth_back(l))
-                {
+                match self.annotations.get(byte).and_then(|a| a.get(l)) {
                     None => {
                         // No annotation at this level/byte
                         if let Some(b) = begin {
@@ -193,13 +191,7 @@ impl fmt::Debug for FormattedString {
                     write!(f, "{: <1$}", "┃", str_len_of(i))?;
                 }
                 write!(f, "{: <1$}", "", str_len_before(k))?;
-                write!(
-                    f,
-                    "┗ {}",
-                    self.annotations[boundaries[k].0]
-                        [self.annotations[boundaries[k].0].len() - 1 - l]
-                        .1
-                )?;
+                write!(f, "┗ {}", self.annotations[boundaries[k].0][l].1)?;
             }
         }
         Ok(())

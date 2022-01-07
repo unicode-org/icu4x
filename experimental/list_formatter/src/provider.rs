@@ -118,7 +118,6 @@ struct ListJoinerPattern<'data> {
 pub type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'a> ConditionalListJoinerPattern<'a> {
-    /// Returns the pattern parts, and if materialized, the following value as a string
     pub fn parts<'b, W: FormattedWriteable + ?Sized>(
         &'a self,
         following_value: &'b W,
@@ -160,7 +159,7 @@ impl<'data> ListJoinerPattern<'data> {
     }
 }
 
-#[cfg(feature = "provider_transform_internals")]
+#[cfg(any(test, feature = "provider_transform_internals"))]
 mod datagen {
     use super::*;
     use crate::error::Error;
@@ -254,7 +253,7 @@ mod datagen {
     }
 }
 
-#[cfg(all(test, feature = "provider_transform_internals"))]
+#[cfg(test)]
 pub(crate) mod test {
     use super::*;
 
