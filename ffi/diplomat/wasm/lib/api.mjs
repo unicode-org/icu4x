@@ -349,6 +349,69 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
+  static from_float(f) {
+    const diplomat_out = (() => {
+      const option_value = wasm.ICU4XFixedDecimal_from_float(f)
+      if (option_value !== 0) {
+        const inhabited_value = (() => {
+          const out = (() => {
+            const out = new ICU4XFixedDecimal(option_value);
+            out.owner = null;
+            return out;
+          })();
+          ICU4XFixedDecimal_box_destroy_registry.register(out, out.underlying)
+          return out;
+        })();
+        return inhabited_value;
+      } else {
+        return null;
+      }
+    })();
+    return diplomat_out;
+  }
+
+  static from_float_with_precision(f, precision, rounding_mode) {
+    const diplomat_out = (() => {
+      const option_value = wasm.ICU4XFixedDecimal_from_float_with_precision(f, precision, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode])
+      if (option_value !== 0) {
+        const inhabited_value = (() => {
+          const out = (() => {
+            const out = new ICU4XFixedDecimal(option_value);
+            out.owner = null;
+            return out;
+          })();
+          ICU4XFixedDecimal_box_destroy_registry.register(out, out.underlying)
+          return out;
+        })();
+        return inhabited_value;
+      } else {
+        return null;
+      }
+    })();
+    return diplomat_out;
+  }
+
+  static from_float_with_digits(f, digits, rounding_mode) {
+    const diplomat_out = (() => {
+      const option_value = wasm.ICU4XFixedDecimal_from_float_with_digits(f, digits, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode])
+      if (option_value !== 0) {
+        const inhabited_value = (() => {
+          const out = (() => {
+            const out = new ICU4XFixedDecimal(option_value);
+            out.owner = null;
+            return out;
+          })();
+          ICU4XFixedDecimal_box_destroy_registry.register(out, out.underlying)
+          return out;
+        })();
+        return inhabited_value;
+      } else {
+        return null;
+      }
+    })();
+    return diplomat_out;
+  }
+
   static create_fromstr(v) {
     let v_diplomat_bytes = (new TextEncoder()).encode(v);
     let v_diplomat_ptr = wasm.diplomat_alloc(v_diplomat_bytes.length, 1);
@@ -383,6 +446,10 @@ export class ICU4XFixedDecimal {
 
   negate() {
     const diplomat_out = wasm.ICU4XFixedDecimal_negate(this.underlying);
+  }
+
+  pad_or_truncate_left(shift) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_pad_or_truncate_left(this.underlying, shift);
   }
 
   to_string() {
@@ -505,6 +572,15 @@ const ICU4XFixedDecimalGroupingStrategy_rust_to_js = {
   1: "Never",
   2: "Always",
   3: "Min2",
+};
+
+const ICU4XFixedDecimalRoundingMode_js_to_rust = {
+  "Truncate": 0,
+  "HalfExpand": 1,
+};
+const ICU4XFixedDecimalRoundingMode_rust_to_js = {
+  0: "Truncate",
+  1: "HalfExpand",
 };
 
 const ICU4XFixedDecimalSignDisplay_js_to_rust = {
