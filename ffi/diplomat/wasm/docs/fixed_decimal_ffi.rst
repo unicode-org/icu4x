@@ -20,17 +20,17 @@
         Construct an :js:class:`ICU4XFixedDecimal` from an integer.
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html>`__ for more information.
 
-    .. js:staticfunction:: from_float(f)
+    .. js:staticfunction:: create_from_f64(f)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, with enough digits to recover the original floating point in IEEE 754 without needing trailing zeros
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.
 
-    .. js:staticfunction:: from_float_with_precision(f, precision, rounding_mode)
+    .. js:staticfunction:: create_from_f64_with_precision(f, precision, rounding_mode)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, with a given power of 10 for precision
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.
 
-    .. js:staticfunction:: from_float_with_digits(f, digits, rounding_mode)
+    .. js:staticfunction:: create_from_f64_with_digits(f, digits, rounding_mode)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, for a given number of digits
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.

@@ -16,11 +16,11 @@ typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
 
 ICU4XFixedDecimal* ICU4XFixedDecimal_create(int32_t v);
 
-ICU4XFixedDecimal* ICU4XFixedDecimal_from_float(double f);
+ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64(double f);
 
-ICU4XFixedDecimal* ICU4XFixedDecimal_from_float_with_precision(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
+ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_precision(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
 
-ICU4XFixedDecimal* ICU4XFixedDecimal_from_float_with_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
+ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
 
 ICU4XCreateFixedDecimalResult ICU4XFixedDecimal_create_fromstr(const char* v_data, size_t v_len);
 

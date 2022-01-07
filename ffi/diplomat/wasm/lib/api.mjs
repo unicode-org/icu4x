@@ -349,9 +349,9 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  static from_float(f) {
+  static create_from_f64(f) {
     const diplomat_out = (() => {
-      const option_value = wasm.ICU4XFixedDecimal_from_float(f)
+      const option_value = wasm.ICU4XFixedDecimal_create_from_f64(f)
       if (option_value !== 0) {
         const inhabited_value = (() => {
           const out = (() => {
@@ -370,9 +370,9 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  static from_float_with_precision(f, precision, rounding_mode) {
+  static create_from_f64_with_precision(f, precision, rounding_mode) {
     const diplomat_out = (() => {
-      const option_value = wasm.ICU4XFixedDecimal_from_float_with_precision(f, precision, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode])
+      const option_value = wasm.ICU4XFixedDecimal_create_from_f64_with_precision(f, precision, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode])
       if (option_value !== 0) {
         const inhabited_value = (() => {
           const out = (() => {
@@ -391,9 +391,9 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  static from_float_with_digits(f, digits, rounding_mode) {
+  static create_from_f64_with_digits(f, digits, rounding_mode) {
     const diplomat_out = (() => {
-      const option_value = wasm.ICU4XFixedDecimal_from_float_with_digits(f, digits, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode])
+      const option_value = wasm.ICU4XFixedDecimal_create_from_f64_with_digits(f, digits, ICU4XFixedDecimalRoundingMode_js_to_rust[rounding_mode])
       if (option_value !== 0) {
         const inhabited_value = (() => {
           const out = (() => {

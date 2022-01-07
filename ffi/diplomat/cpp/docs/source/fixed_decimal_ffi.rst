@@ -20,17 +20,17 @@
         Construct an :cpp:class:`ICU4XFixedDecimal` from an integer.
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html>`__ for more information.
 
-    .. cpp:function:: static std::optional<ICU4XFixedDecimal> from_float(double f)
+    .. cpp:function:: static std::optional<ICU4XFixedDecimal> create_from_f64(double f)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an float, with enough digits to recover the original floating point in IEEE 754 without needing trailing zeros
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.
 
-    .. cpp:function:: static std::optional<ICU4XFixedDecimal> from_float_with_precision(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode)
+    .. cpp:function:: static std::optional<ICU4XFixedDecimal> create_from_f64_with_precision(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an float, with a given power of 10 for precision
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.
 
-    .. cpp:function:: static std::optional<ICU4XFixedDecimal> from_float_with_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode)
+    .. cpp:function:: static std::optional<ICU4XFixedDecimal> create_from_f64_with_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an float, for a given number of digits
         See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64>`__ for more information.
