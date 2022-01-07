@@ -296,19 +296,19 @@ mod tests {
         // ... u 8 más
         assert_eq!(or.parts("8 más"), u_parts);
         // ... u 8
-        assert_eq!(or.parts(&8u8), u_parts);
+        assert_eq!(or.parts("8"), u_parts);
         // ... u 87 más
         assert_eq!(or.parts("87 más"), u_parts);
         // ... u 87
-        assert_eq!(or.parts(&87u8), u_parts);
+        assert_eq!(or.parts("87"), u_parts);
         // ... u 11 más
         assert_eq!(or.parts("11 más"), u_parts);
         // ... u 11
-        assert_eq!(or.parts(&11u8), u_parts);
+        assert_eq!(or.parts("11"), u_parts);
         // ... o 110 más
         assert_eq!(or.parts("110 más"), o_parts);
         // ... o 110
-        assert_eq!(or.parts(&110u8), o_parts);
+        assert_eq!(or.parts("110"), o_parts);
         // ... o 11.000 más
         assert_eq!(or.parts("11.000 más"), u_parts);
         // ... o 11.000

@@ -5,9 +5,9 @@
 use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
-use formatted_string::*;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
+use writeable::*;
 
 pub struct ListFormatter {
     data: DataPayload<ListFormatterPatternsV1Marker>,
@@ -39,11 +39,24 @@ impl ListFormatter {
         Ok(Self { data, width })
     }
 
-    fn format_internal<W: FormattedWriteable, S: FormattedWriteableSink>(
-        &self,
-        sink: &mut S,
-        values: &[W],
-    ) -> Result<(), S::Error> {
+    /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
+    /// formatting. The first layer of fields contains `Field("element")` for input elements,
+    /// and `Field("literal")` for list literals.
+    pub fn format<'a, 'b, W: Writeable>(&'a self, values: &'b [W]) -> List<'a, 'b, W> {
+        List {
+            formatter: self,
+            values,
+        }
+    }
+}
+
+pub struct List<'a, 'b, W> {
+    formatter: &'a ListFormatter,
+    values: &'b [W],
+}
+
+impl<W: Writeable> Writeable for List<'_, '_, W> {
+    fn write_to_fmt<V: WriteFormatted + ?Sized>(&self, sink: &mut V) -> core::fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {{
                 sink.push_field(Field("literal"))?;
@@ -54,21 +67,26 @@ impl ListFormatter {
         macro_rules! value {
             ($val:expr) => {{
                 sink.push_field(Field("element"))?;
-                $val.fmt_write_to(sink)?;
+                $val.write_to_fmt(sink)?;
                 sink.pop_field()
             }};
         }
 
-        match values.len() {
+        match self.values.len() {
             0 => Ok(()),
-            1 => value!(values[0]),
+            1 => value!(self.values[0]),
             2 => {
                 // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
-                let (before, between, after) = self.data.get().pair(self.width).parts(&values[1]);
+                let (before, between, after) = self
+                    .formatter
+                    .data
+                    .get()
+                    .pair(self.formatter.width)
+                    .parts(&self.values[1]);
                 literal!(before)?;
-                value!(values[0])?;
+                value!(self.values[0])?;
                 literal!(between)?;
-                value!(values[1])?;
+                value!(self.values[1])?;
                 literal!(after)
             }
             n => {
@@ -76,70 +94,59 @@ impl ListFormatter {
                 // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
                 // values[n-2] + end_between + values[n-1] + end_after
 
-                let (start_before, start_between, _) =
-                    self.data.get().start(self.width).parts(&values[1]);
+                let (start_before, start_between, _) = self
+                    .formatter
+                    .data
+                    .get()
+                    .start(self.formatter.width)
+                    .parts(&self.values[1]);
 
                 literal!(start_before)?;
-                value!(values[0])?;
+                value!(self.values[0])?;
                 literal!(start_between)?;
-                value!(values[1])?;
+                value!(self.values[1])?;
 
-                for value in &values[2..n - 1] {
-                    let (_, between, _) = self.data.get().middle(self.width).parts(value);
+                for value in &self.values[2..n - 1] {
+                    let (_, between, _) = self
+                        .formatter
+                        .data
+                        .get()
+                        .middle(self.formatter.width)
+                        .parts(value);
                     literal!(between)?;
                     value!(value)?;
                 }
 
-                let (_, end_between, end_after) =
-                    self.data.get().end(self.width).parts(&values[n - 1]);
+                let (_, end_between, end_after) = self
+                    .formatter
+                    .data
+                    .get()
+                    .end(self.formatter.width)
+                    .parts(&self.values[n - 1]);
                 literal!(end_between)?;
-                value!(values[n - 1])?;
+                value!(self.values[n - 1])?;
                 literal!(end_after)
             }
         }
     }
 
-    pub fn format<'a, 'b: 'a, 'c: 'a, 'd: 'a, W: FormattedWriteable + 'd>(
-        &'b self,
-        values: &'c [W],
-    ) -> impl FormattedWriteable + 'a {
-        struct ListFormatterWriteable<'a, 'b, W> {
-            formatter: &'a ListFormatter,
-            values: &'b [W],
-        }
-
-        impl<W: FormattedWriteable> FormattedWriteable for ListFormatterWriteable<'_, '_, W> {
-            fn fmt_write_len(&self) -> LengthHint {
-                self.values
-                    .iter()
-                    .map(|w| w.fmt_write_len())
-                    .sum::<LengthHint>()
-                    + self
-                        .formatter
-                        .data
-                        .get()
-                        .size_hint(self.formatter.width, self.values.len())
-            }
-
-            fn fmt_write_to<S: FormattedWriteableSink>(
-                &self,
-                sink: &mut S,
-            ) -> Result<(), S::Error> {
-                self.formatter.format_internal(sink, self.values)
-            }
-        }
-
-        ListFormatterWriteable {
-            formatter: self,
-            values,
-        }
+    fn write_len(&self) -> LengthHint {
+        self.values
+            .iter()
+            .map(|w| w.write_len())
+            .sum::<LengthHint>()
+            + self
+                .formatter
+                .data
+                .get()
+                .size_hint(self.formatter.width, self.values.len())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use writeable::assert_writeable_eq;
+    use writeable::{assert_writeable_eq, assert_writeable_fmt_eq};
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
@@ -155,30 +162,19 @@ mod tests {
     #[test]
     fn test_writeable() {
         let formatter = formatter(Width::Wide);
-        assert_writeable_eq!(formatter.format(&VALUES[0..0]).to_writeable(), "");
-        assert_writeable_eq!(formatter.format(&VALUES[0..1]).to_writeable(), "one");
-        assert_writeable_eq!(formatter.format(&VALUES[0..2]).to_writeable(), "$one;two+");
-        assert_writeable_eq!(
-            formatter.format(&VALUES[0..3]).to_writeable(),
-            "@one:two.three!"
-        );
-        assert_writeable_eq!(
-            formatter.format(&VALUES[0..4]).to_writeable(),
-            "@one:two,three.four!"
-        );
-        assert_writeable_eq!(
-            formatter.format(VALUES).to_writeable(),
-            "@one:two,three,four.five!"
-        );
+        assert_writeable_eq!(formatter.format(&VALUES[0..0]), "");
+        assert_writeable_eq!(formatter.format(&VALUES[0..1]), "one");
+        assert_writeable_eq!(formatter.format(&VALUES[0..2]), "$one;two+");
+        assert_writeable_eq!(formatter.format(&VALUES[0..3]), "@one:two.three!");
+        assert_writeable_eq!(formatter.format(&VALUES[0..4]), "@one:two,three.four!");
+        assert_writeable_eq!(formatter.format(VALUES), "@one:two,three,four.five!");
     }
 
     #[test]
     fn test_fmt_writeable() {
-        assert_eq!(
-            formatter(Width::Wide)
-                .format(VALUES)
-                .writeable_to_fmt_string()
-                .all_fields(),
+        assert_writeable_fmt_eq!(
+            formatter(Width::Wide).format(VALUES),
+            "@one:two,three,four.five!",
             [
                 (0, 1, Field("literal")),
                 (1, 4, Field("element")),
@@ -199,9 +195,6 @@ mod tests {
     fn test_conditional() {
         let formatter = formatter(Width::Narrow);
 
-        assert_writeable_eq!(
-            formatter.format(&["Beta", "Alpha"]).to_writeable(),
-            "Beta :o Alpha"
-        );
+        assert_writeable_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
     }
 }

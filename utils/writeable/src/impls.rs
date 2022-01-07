@@ -175,6 +175,11 @@ impl<'a, T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
+    fn write_to_fmt<W: WriteFormatted + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        (*self).write_to_fmt(sink)
+    }
+
+    #[inline]
     fn write_len(&self) -> LengthHint {
         (*self).write_len()
     }

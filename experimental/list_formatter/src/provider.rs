@@ -9,8 +9,8 @@
 use crate::options::Width;
 use crate::string_matcher::StringMatcher;
 use alloc::borrow::Cow;
-use formatted_string::{FormattedWriteable, LengthHint};
 use icu_provider::yoke::{self, *};
+use writeable::{LengthHint, Writeable};
 
 pub mod key {
     //! Resource keys for [`list_formatter`](crate).
@@ -118,14 +118,11 @@ struct ListJoinerPattern<'data> {
 pub type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'a> ConditionalListJoinerPattern<'a> {
-    pub fn parts<'b, W: FormattedWriteable + ?Sized>(
-        &'a self,
-        following_value: &'b W,
-    ) -> PatternParts<'a> {
+    pub fn parts<'b, W: Writeable + ?Sized>(&'a self, following_value: &'b W) -> PatternParts<'a> {
         match &self.special_case {
             Some(SpecialCasePattern { condition, pattern })
                 // TODO: Implement lookahead instead of materializing here.
-                if condition.test(following_value.writeable_to_fmt_string().as_str()) =>
+                if condition.test(&*following_value.writeable_to_string()) =>
             {
                 pattern.borrow_tuple()
             }
