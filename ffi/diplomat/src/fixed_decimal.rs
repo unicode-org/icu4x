@@ -42,7 +42,7 @@ pub mod ffi {
         /// the original floating point in IEEE 754 without needing trailing zeros
         ///
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
-        pub fn from_float(f: f64) -> Option<Box<ICU4XFixedDecimal>> {
+        pub fn create_from_f64(f: f64) -> Option<Box<ICU4XFixedDecimal>> {
             Some(Box::new(ICU4XFixedDecimal(
                 FixedDecimal::new_from_f64(f, DoublePrecision::Maximum).ok()?,
             )))
@@ -51,7 +51,7 @@ pub mod ffi {
         /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for precision
         ///
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
-        pub fn from_float_with_precision(
+        pub fn create_from_f64_with_precision(
             f: f64,
             precision: i16,
             rounding_mode: ICU4XFixedDecimalRoundingMode,
@@ -68,7 +68,7 @@ pub mod ffi {
         /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of digits
         ///
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
-        pub fn from_float_with_digits(
+        pub fn create_from_f64_with_digits(
             f: f64,
             digits: u8,
             rounding_mode: ICU4XFixedDecimalRoundingMode,
