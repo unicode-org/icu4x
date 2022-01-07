@@ -19,13 +19,7 @@ args = [
 description = "Extracts ICU4X resource keys used by a binary."
 category = "ICU4X Data"
 script_runner = "bash"
-script = """
-    # TODO(#1106): Implement this
-    echo "datetime/lengths@1" > ${2}
-    echo "datetime/skeletons@1" >> ${2}
-    echo "datetime/symbols@1" >> ${2}
-    echo "plurals/ordinal@1" >> ${2}
-"""
+script = '''strings ${1} | grep -e "icu4x_key_tag\w" | sed s/icu4x_key_tag// | sort > ${2}'''
 
 [tasks.testdata-build-json]
 description = "Build ICU4X JSON from the downloaded CLDR JSON, overwriting the existing ICU4X JSON."

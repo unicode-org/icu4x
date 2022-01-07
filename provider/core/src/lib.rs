@@ -149,6 +149,7 @@ pub mod prelude {
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
+    pub use crate::{leading_tag, resource_key, tagged, trailing_tag};
 
     pub use crate::any::AsDataProviderAnyMarkerWrap;
     pub use crate::any::AsDowncastingAnyProvider;
