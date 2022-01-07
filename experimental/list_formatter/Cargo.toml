@@ -20,7 +20,6 @@ include = [
 ]
 
 [dependencies]
-formatted_string = { path = "../formatted_string" }
 displaydoc = { version = "0.2.3", default-features = false }
 icu_locid = { version = "0.4", path = "../../components/locid" }
 icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }

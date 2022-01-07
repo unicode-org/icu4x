@@ -123,10 +123,60 @@ impl LengthHint {
     }
 }
 
+#[derive(Clone, Copy, PartialEq)]
+pub struct Field(pub &'static str);
+
+impl fmt::Display for Field {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        <str as fmt::Display>::fmt(self.0, f)
+    }
+}
+
+/// A sink that supports annotation parts of the string with fields.
+pub trait FormattedWriteableSink: fmt::Write {
+    /// Adds a field to the currently active fields
+    fn push_field(&mut self, field: Field) -> fmt::Result;
+
+    /// Removes the last added field from the currently active fields
+    fn pop_field(&mut self) -> fmt::Result;
+}
+
 /// Writeable is an alternative to std::fmt::Display with the addition of a length function.
 pub trait Writeable {
-    /// Writes bytes to the given sink. Errors from the sink are bubbled up.
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result;
+    /// Writes bytes to the given sink. Errors from the sink are bubbled up. The default implementation
+    /// delegates to write_to_fmt, ignoring the field information. write_to_fmt delegates back, so one
+    /// of these has to be implemented.
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        struct CoreWriteAsFormattedWriteableSink<W: fmt::Write + ?Sized>(W);
+        impl<W: fmt::Write + ?Sized> fmt::Write for CoreWriteAsFormattedWriteableSink<W> {
+            fn write_str(&mut self, s: &str) -> fmt::Result {
+                self.0.write_str(s)
+            }
+
+            fn write_char(&mut self, c: char) -> fmt::Result {
+                self.0.write_char(c)
+            }
+        }
+
+        impl<W: fmt::Write + ?Sized> FormattedWriteableSink for CoreWriteAsFormattedWriteableSink<W> {
+            fn push_field(&mut self, _field: Field) -> fmt::Result {
+                Ok(())
+            }
+
+            fn pop_field(&mut self) -> fmt::Result {
+                Ok(())
+            }
+        }
+        self.write_to_fmt(&mut CoreWriteAsFormattedWriteableSink(sink))
+    }
+
+    /// Write bytes and field annotations to the given FormattedWriteableSink. Errors from the sink are
+    /// bubbled up. The default implementation delegates to write_to, and doesn't produce any field
+    /// annotations. write_to delegates back, so one of these has to be implemented.
+    fn write_to_fmt<S: FormattedWriteableSink + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        self.write_to(sink)
+    }
 
     /// Returns a hint for the number of bytes that will be written to the sink.
     ///
@@ -182,10 +232,12 @@ pub trait Writeable {
     }
 }
 
-/// Testing macro for types implementing Writeable. The first argument should be a string, and
-/// the second argument should be a `&dyn Writeable`.
+/// Testing macros for types implementing Writeable. The first argument should be a
+/// `&dyn Writeable`, and the second argument either a string (assert_writeable_eq),
+/// or a formatted debug string (assert_writeable_fmt_eq).
 ///
-/// The macro tests for equality of both string content and verifies the size hint.
+/// The macros tests for equality of string content, annotations (*_fmt_eq only), and
+/// verify the size hint.
 ///
 /// # Examples
 ///
@@ -193,12 +245,15 @@ pub trait Writeable {
 /// use writeable::Writeable;
 /// use writeable::LengthHint;
 /// use writeable::assert_writeable_eq;
+/// use writeable::assert_writeable_fmt_eq;
 /// use std::fmt;
 ///
 /// struct Demo;
 /// impl Writeable for Demo {
 ///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-///         sink.write_str("foo")
+///         sink.push_field(Field("word"))?;
+///         sink.write_str("foo")?;
+///         sink.pop_field()
 ///     }
 ///     fn write_len(&self) -> LengthHint {
 ///         LengthHint::exact(3)
@@ -207,6 +262,22 @@ pub trait Writeable {
 ///
 /// assert_writeable_eq!(&Demo, "foo");
 /// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
+///
+///
+/// assert_writeable_fmt_eq!(
+///     &Demo,
+///     "foo\n\
+///      ┏━━\n\
+///      ┗ word"
+/// );
+/// assert_writeable_fmt_eq!(
+///     &Demo,
+///     "foo\n\
+///      ┏━━\n\
+///      ┗ word",
+///     "Message: {}",
+///     "Hello World"
+/// );
 /// ```
 #[macro_export]
 macro_rules! assert_writeable_eq {
@@ -216,9 +287,9 @@ macro_rules! assert_writeable_eq {
             let actual = $crate::Writeable::writeable_to_string(&writeable);
             assert_eq!($expected_str, actual);
             let length_hint = $crate::Writeable::write_len(&writeable);
-            assert!(length_hint.0 <= $expected_str.len());
+            assert!(length_hint.0 <= actual.len());
             if let Some(upper) = length_hint.1 {
-                assert!($expected_str.len() <= upper);
+                assert!(actual.len() <= upper);
             }
         }
     };
@@ -232,6 +303,40 @@ macro_rules! assert_writeable_eq {
             assert!(length_hint.0 <= $expected_str.len(), $($arg)+);
             if let Some(upper) = length_hint.1 {
                 assert!($expected_str.len() <= upper, $($arg)+);
+            }
+        }
+    };
+}
+
+pub mod formatted_string;
+
+#[macro_export]
+macro_rules! assert_writeable_fmt_eq {
+    ($actual_writeable:expr, $expected_fmt_str:expr $(,)?) => {
+        {
+            let writeable = $actual_writeable;
+            let expected = $expected_fmt_str;
+            let actual = $crate::formatted_string::FormattedString::from_writeable(&writeable).unwrap();
+            let debug_actual = format!("{:?}", actual);
+            assert!(debug_actual == expected, "Expected:\n{}\nActual:\n{}", expected, debug_actual);
+            let length_hint = $crate::Writeable::write_len(&writeable);
+            assert!(length_hint.0 <= actual.len());
+            if let Some(upper) = length_hint.1 {
+                assert!(actual.len() <= upper);
+            }
+        }
+    };
+    ($actual_writeable:expr, $expected_fmt_str:expr, $($arg:tt)+) => {
+        {
+            let writeable = $actual_writeable;
+            let expected = $expected_fmt_str;
+            let actual = $crate::formatted_string::FormattedString::from_writeable(&writeable).unwrap();
+            let debug_actual = format!("{:?}", actual);
+            assert!(debug_actual == expected, "Expected:\n{}\nActual:\n{}\n{}", expected, debug_actual, format!($($arg)+));
+            let length_hint = $crate::Writeable::write_len(&writeable);
+            assert!(length_hint.0 <= actual.len(), $($arg)+);
+            if let Some(upper) = length_hint.1 {
+                assert!(actual.len() <= upper, $($arg)+);
             }
         }
     };

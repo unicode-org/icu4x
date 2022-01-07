@@ -17,7 +17,6 @@ members = [
     "components/properties",
     "experimental/bies",
     "experimental/char16trie",
-    "experimental/formatted_string",
     "experimental/list_formatter",
     "experimental/segmenter",
     "experimental/segmenter_lstm",

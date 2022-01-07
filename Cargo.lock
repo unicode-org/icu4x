@@ -693,15 +693,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "formatted_string"
-version = "0.1.0"
-dependencies = [
- "criterion",
- "displaydoc",
- "writeable",
-]
-
-[[package]]
 name = "freertos-rust"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1170,7 +1161,6 @@ dependencies = [
  "criterion",
  "deduplicating_array",
  "displaydoc",
- "formatted_string",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",

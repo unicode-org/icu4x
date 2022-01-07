@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Field, FormattedWriteableSink};
+use crate::{Field, FormattedWriteableSink, Writeable};
 use alloc::vec::Vec;
-use core::fmt;
+use core::fmt::{self, Write};
 use core::str;
 
 /// A string with formatting annotations.
@@ -41,6 +41,12 @@ impl FormattedString {
         }
     }
 
+    pub fn from_writeable<W: Writeable + ?Sized>(w: &W) -> Result<Self, fmt::Error> {
+        let mut sink = Self::with_capacity(w.write_len().capacity());
+        w.write_to_fmt(&mut sink)?;
+        Ok(sink)
+    }
+
     pub fn capacity(&self) -> usize {
         debug_assert_eq!(self.bytes.capacity(), self.annotations.capacity());
         self.bytes.capacity()
@@ -73,10 +79,8 @@ impl Default for FormattedString {
     }
 }
 
-impl FormattedWriteableSink for FormattedString {
-    type Error = core::convert::Infallible;
-
-    fn write_str(&mut self, s: &str) -> Result<(), Self::Error> {
+impl Write for FormattedString {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
         self.bytes.extend(s.bytes());
         self.annotations.reserve(s.len());
         self.annotations.push(self.next_annotation.clone());
@@ -87,7 +91,7 @@ impl FormattedWriteableSink for FormattedString {
         Ok(())
     }
 
-    fn write_char(&mut self, c: char) -> Result<(), Self::Error> {
+    fn write_char(&mut self, c: char) -> fmt::Result {
         let len = c.len_utf8();
         self.bytes.resize(self.bytes.len() + len, 0);
         c.encode_utf8(&mut self.bytes[self.annotations.len()..]);
@@ -98,36 +102,15 @@ impl FormattedWriteableSink for FormattedString {
         }
         Ok(())
     }
+}
 
-    fn write_fmt_str(&mut self, s: &FormattedString) -> Result<(), Self::Error> {
-        self.bytes.extend(s.bytes.iter().copied());
-        self.annotations.reserve(s.len());
-        self.annotations.push(
-            s.annotations[0]
-                .iter()
-                .chain(self.next_annotation.iter())
-                .copied()
-                .collect(),
-        );
-        self.make_next_annotation_extend();
-        for i in 1..s.len() {
-            self.annotations.push(
-                s.annotations[i]
-                    .iter()
-                    .chain(self.next_annotation.iter())
-                    .copied()
-                    .collect(),
-            );
-        }
-        Ok(())
-    }
-
-    fn push_field(&mut self, field: Field) -> Result<(), Self::Error> {
+impl FormattedWriteableSink for FormattedString {
+    fn push_field(&mut self, field: Field) -> fmt::Result {
         self.next_annotation.push((LocationInPart::Begin, field));
         Ok(())
     }
 
-    fn pop_field(&mut self) -> Result<(), Self::Error> {
+    fn pop_field(&mut self) -> fmt::Result {
         self.next_annotation.pop();
         Ok(())
     }
@@ -145,11 +128,7 @@ impl fmt::Debug for FormattedString {
             for byte in 0..self.annotations.len() + 1 {
                 // The "most significant" annotation is last in the lists, but
                 // we want to print if first, so we index from the back.
-                match self
-                    .annotations
-                    .get(byte)
-                    .and_then(|a| a.iter().nth_back(l))
-                {
+                match self.annotations.get(byte).and_then(|a| a.get(l)) {
                     None => {
                         // No annotation at this level/byte
                         if let Some(b) = begin {
@@ -193,13 +172,7 @@ impl fmt::Debug for FormattedString {
                     write!(f, "{: <1$}", "┃", str_len_of(i))?;
                 }
                 write!(f, "{: <1$}", "", str_len_before(k))?;
-                write!(
-                    f,
-                    "┗ {}",
-                    self.annotations[boundaries[k].0]
-                        [self.annotations[boundaries[k].0].len() - 1 - l]
-                        .1
-                )?;
+                write!(f, "┗ {}", self.annotations[boundaries[k].0][l].1)?;
             }
         }
         Ok(())
@@ -211,20 +184,38 @@ mod test {
     use super::*;
 
     #[test]
+    fn test_no_annotations() {
+        assert_eq!(
+            format!("{:?}", FormattedString::from_writeable(&17).unwrap()),
+            "17"
+        );
+    }
+
+    #[test]
     fn test_basic() {
-        let mut x = FormattedString::new();
-        x.push_field(Field("word")).unwrap();
-        x.write_str("hello").unwrap();
-        x.pop_field().unwrap();
-        x.push_field(Field("space")).unwrap();
-        x.write_str(" ").unwrap();
-        x.pop_field().unwrap();
-        x.push_field(Field("word")).unwrap();
-        x.write_str("world").unwrap();
-        x.pop_field().unwrap();
+        struct TestWriteable;
+        impl Writeable for TestWriteable {
+            fn write_to_fmt<S: FormattedWriteableSink + ?Sized>(
+                &self,
+                sink: &mut S,
+            ) -> fmt::Result {
+                sink.push_field(Field("word"))?;
+                sink.write_str("hello")?;
+                sink.pop_field()?;
+                sink.push_field(Field("space"))?;
+                sink.write_str(" ")?;
+                sink.pop_field()?;
+                sink.push_field(Field("word"))?;
+                sink.write_str("world")?;
+                sink.pop_field()
+            }
+        }
 
         assert_eq!(
-            format!("{:?}", x),
+            format!(
+                "{:?}",
+                FormattedString::from_writeable(&TestWriteable).unwrap()
+            ),
             "hello world\n\
              ┏━━━━┏┏━━━━\n\
              ┃    ┃┗ word\n\
@@ -235,32 +226,34 @@ mod test {
 
     #[test]
     fn test_multi_level() {
-        let mut x = FormattedString::new();
-        x.push_field(Field("word")).unwrap();
-        x.write_str("hello").unwrap();
-        x.pop_field().unwrap();
-        x.write_str(" ").unwrap();
-        x.push_field(Field("word")).unwrap();
-        x.write_str("world").unwrap();
-        x.pop_field().unwrap();
-
-        // hello world
-        // ┏━━━━ ┏━━━━
-        // ┃     ┗ word
-        // ┗ word
-
-        let mut y = FormattedString::new();
-        y.push_field(Field("greeting")).unwrap();
-        y.write_fmt_str(&x).unwrap();
-        y.pop_field().unwrap();
-        y.push_field(Field("emoji")).unwrap();
-        y.write_char('😅').unwrap();
-        y.pop_field().unwrap();
+        struct TestWriteable;
+        impl Writeable for TestWriteable {
+            fn write_to_fmt<S: FormattedWriteableSink + ?Sized>(
+                &self,
+                sink: &mut S,
+            ) -> fmt::Result {
+                sink.push_field(Field("greeting"))?;
+                sink.push_field(Field("word"))?;
+                sink.write_str("hello")?;
+                sink.pop_field()?;
+                sink.write_str(" ")?;
+                sink.push_field(Field("word"))?;
+                sink.write_str("world")?;
+                sink.pop_field()?;
+                sink.pop_field()?;
+                sink.push_field(Field("emoji"))?;
+                sink.write_char('😅')?;
+                sink.pop_field()
+            }
+        }
 
         // Note that the second level is not complete, the space
         // and emoji aren't annotated.
         assert_eq!(
-            format!("{:?}", y),
+            format!(
+                "{:?}",
+                FormattedString::from_writeable(&TestWriteable).unwrap()
+            ),
             "hello world😅\n\
              ┏━━━━━━━━━━┏\n\
              ┃          ┗ emoji\n\
@@ -273,20 +266,30 @@ mod test {
 
     #[test]
     fn test_multi_byte() {
-        let mut x = FormattedString::new();
-        x.push_field(Field("variable")).unwrap();
-        x.write_str("π").unwrap();
-        x.pop_field().unwrap();
-        x.write_str(" ").unwrap();
-        x.push_field(Field("operation")).unwrap();
-        x.write_str("*").unwrap();
-        x.pop_field().unwrap();
-        x.write_str(" ").unwrap();
-        x.push_field(Field("variable")).unwrap();
-        x.write_str("x").unwrap();
+        struct TestWriteable;
+        impl Writeable for TestWriteable {
+            fn write_to_fmt<S: FormattedWriteableSink + ?Sized>(
+                &self,
+                sink: &mut S,
+            ) -> fmt::Result {
+                sink.push_field(Field("variable"))?;
+                sink.write_str("π")?;
+                sink.pop_field()?;
+                sink.write_str(" ")?;
+                sink.push_field(Field("operation"))?;
+                sink.write_str("*")?;
+                sink.pop_field()?;
+                sink.write_str(" ")?;
+                sink.push_field(Field("variable"))?;
+                sink.write_str("x")
+            }
+        }
 
         assert_eq!(
-            format!("{:?}", x),
+            format!(
+                "{:?}",
+                FormattedString::from_writeable(&TestWriteable).unwrap()
+            ),
             "π * x\n\
              ┏ ┏ ┏\n\
              ┃ ┃ ┗ variable\n\
