@@ -175,28 +175,18 @@ fn week_of_month<T: DateInput>(
     datetime: &T,
     first_weekday: IsoWeekday,
 ) -> Result<WeekOfMonth, DateTimeError> {
-    // This value isn't used by week_of() given that we use a calendar with min_week_days = 1.
-    const UNUSED_DAYS_IN_MONTH: u16 = 60;
-
-    let calendar = week_of::CalendarInfo {
-        first_weekday,
-        min_week_days: 1,
-    };
-
     let day_of_month = datetime
         .day_of_month()
         .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
 
-    let week = week_of::week_of(
-        &calendar,
-        UNUSED_DAYS_IN_MONTH,
-        UNUSED_DAYS_IN_MONTH,
+    let week = week_of::simple_week_of(
+        first_weekday,
         day_of_month.0 as u16,
         datetime
             .iso_weekday()
             .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?,
-    )?;
-    Ok(WeekOfMonth(u32::from(week.week)))
+    );
+    Ok(WeekOfMonth(u32::from(week)))
 }
 
 impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
