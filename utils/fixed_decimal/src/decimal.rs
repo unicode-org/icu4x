@@ -340,6 +340,37 @@ impl FixedDecimal {
         self
     }
 
+    /// Zero-pad the number on the left to a particular magnitude
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(42);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// dec.padded_left_to(3);
+    /// assert_eq!("0042", dec.to_string());
+    ///
+    /// dec.padded_left_to(2);
+    /// assert_eq!("042", dec.to_string());
+    ///
+    /// dec.padded_left_to(1);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// dec.padded_left_to(0);
+    /// assert_eq!("42", dec.to_string());
+    /// ```
+    pub fn padded_left_to(&mut self, mut magnitude: i16) {
+        // Do not truncate
+        if magnitude <= self.magnitude {
+            magnitude = self.magnitude;
+        }
+
+        self.upper_magnitude = magnitude;
+    }
+
     /// Add or remove digits from the left side of the decimal (before the decimal point).
     ///
     /// # Examples
