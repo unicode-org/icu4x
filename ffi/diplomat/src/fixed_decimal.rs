@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use fixed_decimal::decimal::RoundingMode;
+
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use fixed_decimal::FixedDecimal;
+    use fixed_decimal::decimal::{DoublePrecision, FixedDecimal};
     use writeable::Writeable;
 
     #[diplomat::opaque]
@@ -19,11 +21,65 @@ pub mod ffi {
         pub success: bool,
     }
 
+    /// How to round digits when constructing an ICU4XFixedDecimal from a
+    /// floating point number
+    pub enum ICU4XFixedDecimalRoundingMode {
+        /// Truncate leftover digits
+        Truncate,
+        ///  Round up from 0.5
+        HalfExpand,
+    }
+
     impl ICU4XFixedDecimal {
         /// Construct an [`ICU4XFixedDecimal`] from an integer.
+        ///
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
         pub fn create(v: i32) -> Box<ICU4XFixedDecimal> {
             Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
+        }
+
+        /// Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
+        /// the original floating point in IEEE 754 without needing trailing zeros
+        ///
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+        pub fn from_float(f: f64) -> Option<Box<ICU4XFixedDecimal>> {
+            Some(Box::new(ICU4XFixedDecimal(
+                FixedDecimal::new_from_f64(f, DoublePrecision::Maximum).ok()?,
+            )))
+        }
+
+        /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for precision
+        ///
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+        pub fn from_float_with_precision(
+            f: f64,
+            precision: i16,
+            rounding_mode: ICU4XFixedDecimalRoundingMode,
+        ) -> Option<Box<ICU4XFixedDecimal>> {
+            Some(Box::new(ICU4XFixedDecimal(
+                FixedDecimal::new_from_f64(
+                    f,
+                    DoublePrecision::Magnitude(precision, rounding_mode.into()),
+                )
+                .ok()?,
+            )))
+        }
+
+        /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of digits
+        ///
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
+        pub fn from_float_with_digits(
+            f: f64,
+            digits: u8,
+            rounding_mode: ICU4XFixedDecimalRoundingMode,
+        ) -> Option<Box<ICU4XFixedDecimal>> {
+            Some(Box::new(ICU4XFixedDecimal(
+                FixedDecimal::new_from_f64(
+                    f,
+                    DoublePrecision::SignificantDigits(digits, rounding_mode.into()),
+                )
+                .ok()?,
+            )))
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from a string.
@@ -56,6 +112,15 @@ pub mod ffi {
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWriteable) {
             self.0.write_to(to).unwrap();
+        }
+    }
+}
+
+impl From<ffi::ICU4XFixedDecimalRoundingMode> for RoundingMode {
+    fn from(other: ffi::ICU4XFixedDecimalRoundingMode) -> Self {
+        match other {
+            ffi::ICU4XFixedDecimalRoundingMode::Truncate => Self::Truncate,
+            ffi::ICU4XFixedDecimalRoundingMode::HalfExpand => Self::HalfExpand,
         }
     }
 }
