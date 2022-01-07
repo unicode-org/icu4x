@@ -1,19 +1,17 @@
-# Yoke: Lifetime Erasure for Rust
+# Yoke: Self-Referential Borrowing for Rust
 
 ## Problem statement
 
-Zero-copy deserialization is a very effective way to speed up programs and avoid allocations, however can lead to lifetimes pervasively spreading throughout the codebase, and prevents using diverse memory management techniques like caching.
+Zero-copy deserialization is a very effective way to speed up programs and avoid allocations. However, the requirement that data is borrowed from somewhere else means that:
 
-It would be nice if it were possible to "erase" lifetimes and turn them into dynamically managed lifetimes (similar to type erasure with `dyn`) to allow for more flexible memory management.
+1. All data types that contain zero-copy data, even indirectly, need to carry a lifetime parameter
+2. Certain memory management techniques are hampered, like caching.
+
+The goal of Yoke is to allow the borrowing of data from self, so that we don't need lifetime parameters to track data ownership, and to enable reference-counted data that can be safely dropped from a cache.
 
 ## Background
 
 [ICU4X](https://github.com/unicode-org/icu4x) is an internationalization library that has pluggable data loading as a core value proposition. Internationalization often needs a lot of data, and we want to make sure data loading can be fast and efficient. Zero-copy deserialization is quite attractive as a way to reduce this load.
-
-Unfortunately, zero-copy deserialization leads to pervasive lifetimes in anything that consumes this data. The user has to hold on to the data source for as long as the deserialized data is needed, which can be a pain. More sophisticated memory management strategies, like using `Rc<T>` to dynamically cache the source of the data for as long as it's needed, cannot work since lifetimes are purely static constructs.
-
-It would be nice if it were possible to "erase" lifetimes and allow for memory management of zero-copy deserialized data.
-
 
 ## Requirements
 
@@ -30,13 +28,13 @@ The `yoke` crate provides the [`Yoke<Y, C>`][`Yoke`] and [`Yokeable<'a>`][`Yokea
 
 `Yoke<Y, C>` allows one to "yoke" a zero-copy deserialized object (say, a `Cow<'a, str>`) to the source it was deserialized from, (say, an `Rc<[u8]>`), known as a "cart", producing a type that looks like `Yoke<Cow<'static, str>, Rc<[u8]>>` and can be moved around with impunity.
 
-The `'static` is somewhat of a lie, the lifetime of the data the `Cow` borrows from is the lifetime of the `Yoke`, however since this `Cow` cannot be normally extracted from the `Yoke` the lifetime does not matter.
+The `'static` is somewhat of a lie: it is actually a self-referential lifetime. The `Cow` is allowed to borrow data from the cart (the `Rc<[u8]>`), but the Rust compiler does not allow this, so we use `'static`. Since this `Cow` cannot be normally extracted from the `Yoke`, the lifetime is considered an implementation detail.
 
 Most of the time the yokeable `Y` type will be some kind of zero-copy deserializable abstraction, potentially with an owned variant (like `Cow`, [`ZeroVec`](https://docs.rs/zerovec), or an aggregate containing such types), and the cart `C` will be some smart pointer like `Box<T>`, `Rc<T>`, or `Arc<T>`, potentially wrapped in an `Option<T>`.
 
 ### Basic functionality
 
-The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type, e.g. `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`). One can use `Yokeable::Output` on this trait to obtain the "lifetime'd" value of the `Cow<'static, T>`, e.g. `<Cow<'static, T> as Yokeable<'a>'>::Output` is `Cow<'a, T>`.
+The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type; for example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`). One can use `Yokeable::Output` on this trait to obtain the "lifetime'd" value of the `Cow<'static, T>`, e.g. `<Cow<'static, T> as Yokeable<'a>'>::Output` is `Cow<'a, T>`.
 
 The key behind this crate is [`Yoke::get()`][get], with a signature as follows:
 
