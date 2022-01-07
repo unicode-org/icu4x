@@ -136,7 +136,7 @@ impl ListFormatter {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "provider_transform_internals"))]
 mod tests {
     use super::*;
     use writeable::assert_writeable_eq;
