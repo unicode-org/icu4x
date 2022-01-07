@@ -374,7 +374,7 @@ impl Iso {
     // Fixed is day count representation of calendars starting from Jan 1st of year 1.
     // The fixed calculations algorithms are from the Calendrical Calculations book.
     //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1217
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> i32 {
         // Calculate days per year
         let mut fixed: i32 = EPOCH - 1 + 365 * (date.year.0 - 1);
@@ -402,6 +402,7 @@ impl Iso {
         )
     }
 
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
         // 400 year cycles have 146097 days
         let n_400 = date / 146097;
@@ -430,6 +431,7 @@ impl Iso {
         Self::fixed_from_iso_integers(year, 1, 1)
     }
 
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
         let prior_days = date - Self::iso_new_year(year);

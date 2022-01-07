@@ -9,6 +9,7 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Dat
 use core::convert::TryInto;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
+// 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
 const JULIAN_EPOCH: i32 = -1;
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -144,7 +145,7 @@ impl Julian {
     // Fixed is day count representation of calendars starting from Jan 1st of year 1 of Georgian Calendar.
     // The fixed calculations algorithms are from the Calendrical Calculations book
     //
-    // Lips code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1738
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709
     fn fixed_from_julian(date: IsoDateInner) -> i32 {
         let year = if date.year.0 < 0 {
             date.year.0 + 1
@@ -172,6 +173,7 @@ impl Julian {
         )
     }
 
+    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
     fn julian_from_fixed(date: i32) -> JulianDateInner {
         let approx = ((4 * date) + 1464) / 1461;
         let year = if approx <= 0 { approx - 1 } else { approx };
