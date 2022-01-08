@@ -18,9 +18,9 @@ ICU4XFixedDecimal* ICU4XFixedDecimal_create(int32_t v);
 
 ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_max_precision(double f);
 
-ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_precision(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
+ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
 
-ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
+ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
 
 ICU4XCreateFixedDecimalResult ICU4XFixedDecimal_create_fromstr(const char* v_data, size_t v_len);
 

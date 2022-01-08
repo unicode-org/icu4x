@@ -48,7 +48,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_precision(100.0006, -2, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(100.0006, -2, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value from precision 2 is " << out << std::endl;
     if (out != "১০০.০০") {
@@ -56,7 +56,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_digits(100.0006, 5, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_significant_digits(100.0006, 5, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value with 5 digits is " << out << std::endl;
     if (out != "১০০.০০") {

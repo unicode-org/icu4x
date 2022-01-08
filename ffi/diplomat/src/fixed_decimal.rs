@@ -48,10 +48,10 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for precision
+        /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
         ///
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
-        pub fn create_from_f64_with_precision(
+        pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             precision: i16,
             rounding_mode: ICU4XFixedDecimalRoundingMode,
@@ -65,10 +65,10 @@ pub mod ffi {
             )))
         }
 
-        /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of digits
+        /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
         ///
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
-        pub fn create_from_f64_with_digits(
+        pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
             rounding_mode: ICU4XFixedDecimalRoundingMode,

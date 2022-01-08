@@ -44,18 +44,18 @@ class ICU4XFixedDecimal {
   static std::optional<ICU4XFixedDecimal> create_from_f64_with_max_precision(double f);
 
   /**
-   * Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for precision
+   * Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
    * 
    * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */
-  static std::optional<ICU4XFixedDecimal> create_from_f64_with_precision(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
+  static std::optional<ICU4XFixedDecimal> create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
 
   /**
-   * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of digits
+   * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
    * 
    * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */
-  static std::optional<ICU4XFixedDecimal> create_from_f64_with_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
+  static std::optional<ICU4XFixedDecimal> create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from a string.
@@ -111,8 +111,8 @@ inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_
   }
   return diplomat_optional_out_value;
 }
-inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_precision(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_precision(f, precision, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
+inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode) {
+  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, precision, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
   std::optional<ICU4XFixedDecimal> diplomat_optional_out_value;
   if (diplomat_optional_raw_out_value != nullptr) {
     diplomat_optional_out_value = ICU4XFixedDecimal(diplomat_optional_raw_out_value);
@@ -121,8 +121,8 @@ inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_
   }
   return diplomat_optional_out_value;
 }
-inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_digits(f, digits, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
+inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_significant_digits(double f, uint8_t digits, ICU4XFixedDecimalRoundingMode rounding_mode) {
+  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits, static_cast<capi::ICU4XFixedDecimalRoundingMode>(rounding_mode));
   std::optional<ICU4XFixedDecimal> diplomat_optional_out_value;
   if (diplomat_optional_raw_out_value != nullptr) {
     diplomat_optional_out_value = ICU4XFixedDecimal(diplomat_optional_raw_out_value);
