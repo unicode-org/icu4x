@@ -7,11 +7,9 @@ use crate::Yokeable;
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
 #[cfg(feature = "alloc")]
-use alloc::boxed::Box;
-#[cfg(feature = "alloc")]
-use alloc::rc::Rc;
-#[cfg(feature = "alloc")]
 use alloc::string::String;
+use core::ops::Deref;
+use stable_deref_trait::StableDeref;
 
 /// Trait for types that can be crated from a reference to a cart type `C` with no allocations.
 ///
@@ -85,15 +83,21 @@ pub trait ZeroCopyFrom<C: ?Sized>: for<'a> Yokeable<'a> {
     fn zero_copy_from<'b>(cart: &'b C) -> <Self as Yokeable<'b>>::Output;
 }
 
-impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b C> {
-    /// Construct a [`Yoke`]`<Y, &C>` from a borrowed cart by zero-copy cloning the cart to `Y` and
-    /// then yokeing that object to the cart.
+impl<'b, 's, Y, C> Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a> + ZeroCopyFrom<<C as Deref>::Target>,
+    C: StableDeref + Deref,
+{
+    /// Construct a [`Yoke`]`<Y, C>` from a cart implementing `StableDeref` by zero-copy cloning
+    /// the cart to `Y` and then yokeing that object to the cart.
     ///
-    /// This results in a [`Yoke`] bound to the lifetime of the reference to the borrowed cart.
-    ///
-    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
+    /// The type `Y` must implement [`ZeroCopyFrom`]`<C::Target>`. This trait is auto-implemented
+    /// on many common types and can be custom implemented or derived in order to make it easier
+    /// to construct a `Yoke`.
     ///
     /// # Example
+    ///
+    /// Attach to a cart:
     ///
     /// ```
     /// use yoke::Yoke;
@@ -101,74 +105,14 @@ impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b C
     ///  
     /// let yoke = Yoke::<
     ///     Cow<'static, str>,
-    ///     &str
-    /// >::attach_to_borrowed_cart("demo");
+    ///     String
+    /// >::attach_to_zero_copy_cart("demo".to_string());
     ///
     /// assert_eq!("demo", yoke.get());
     /// ```
-    pub fn attach_to_borrowed_cart(cart: &'b C) -> Self {
-        Yoke::<Y, &'b C>::attach_to_cart_badly(cart, Y::zero_copy_from)
-    }
-}
-
-#[cfg(feature = "alloc")]
-impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Box<C>> {
-    /// Construct a [`Yoke`]`<Y, Box<C>>` from a boxed cart by zero-copy cloning the cart to `Y` and
-    /// then yokeing that object to the cart.
-    ///
-    /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
-    /// fully owned, then the resulting [`Yoke`] will be `'static`.
-    ///
-    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use yoke::Yoke;
-    /// use std::borrow::Cow;
-    ///
-    /// let box_cart = Box::new("demo".to_string());
-    ///  
-    /// let yoke = Yoke::<
-    ///     Cow<'static, str>,
-    ///     Box<String>
-    /// >::attach_to_box_cart(box_cart);
-    ///
-    /// assert_eq!("demo", yoke.get());
-    /// ```
-    pub fn attach_to_box_cart(cart: Box<C>) -> Self {
-        Yoke::<Y, Box<C>>::attach_to_cart_badly(cart, Y::zero_copy_from)
-    }
-}
-
-#[cfg(feature = "alloc")]
-impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Rc<C>> {
-    /// Construct a [`Yoke`]`<Y, Rc<C>>` from a reference-counted cart by zero-copy cloning the
-    /// cart to `Y` and then yokeing that object to the cart.
-    ///
-    /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
-    /// fully owned, then the resulting [`Yoke`] will be `'static`.
-    ///
-    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use yoke::Yoke;
-    /// use std::borrow::Cow;
-    /// use std::rc::Rc;
-    ///
-    /// let rc_cart = Rc::from("demo".to_string());
-    ///  
-    /// let yoke = Yoke::<
-    ///     Cow<'static, str>,
-    ///     Rc<String>
-    /// >::attach_to_rc_cart(rc_cart);
-    ///
-    /// assert_eq!("demo", yoke.get());
-    /// ```
-    pub fn attach_to_rc_cart(cart: Rc<C>) -> Self {
-        Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Y::zero_copy_from)
+    #[inline]
+    pub fn attach_to_zero_copy_cart(cart: C) -> Self {
+        Yoke::<Y, C>::attach_to_cart_badly(cart, Y::zero_copy_from)
     }
 }
 

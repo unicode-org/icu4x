@@ -238,7 +238,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// let yoke = Yoke::<
     ///     &'static str,
     ///     Box<String>
-    /// >::attach_to_box_cart(Box::new(local_data));
+    /// >::attach_to_zero_copy_cart(Box::new(local_data));
     /// assert_eq!(*yoke.get(), "foo");
     ///
     /// // Get back the cart
@@ -256,7 +256,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// let mut yoke = Yoke::<
     ///     Cow<'static, str>,
     ///     Box<String>
-    /// >::attach_to_box_cart(Box::new(local_data));
+    /// >::attach_to_zero_copy_cart(Box::new(local_data));
     /// assert_eq!(yoke.get(), "foo");
     ///
     /// // Override data in the cart
@@ -529,7 +529,7 @@ unsafe impl<'b, Y: for<'a> Yokeable<'a>, C: IsCovariant<'b>> IsCovariant<'b> for
 #[test]
 fn test_clone() {
     let local_data = "foo".to_string();
-    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_rc_cart(Rc::new(
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(Rc::new(
         local_data,
     ));
 
