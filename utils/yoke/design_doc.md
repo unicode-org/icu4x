@@ -1,4 +1,4 @@
-# Yoke: "Lifetime Erasure" in Rust
+# Yoke: Targeted Lifetime Erasure in Rust
 
 ## Problem statement
 
@@ -7,7 +7,7 @@ Zero-copy deserialization is a very effective way to speed up programs and avoid
 1. All data types that contain zero-copy data, even indirectly, need to carry a lifetime parameter
 2. Certain memory management techniques are hampered, like caching.
 
-Similar to how `dyn` enables Rust programs to perform "type erasure": turning compile-time types into "erased" runtime ones, `Yoke` enables Rust programs to perform the analogous "lifetime erasure": turning compile-time lifetimes into "erased" runtime ones. This means we don't need lifetime parameters to track data ownership, and that we can carry reference-counted data that can be safely dropped from a cache.
+Similar to how `dyn` enables Rust programs to perform "type erasure": turning compile-time types into "erased" runtime ones, `Yoke` enables Rust programs to perform the analogous "lifetime erasure": turning specific compile-time lifetimes into "erased" runtime ones. This means we don't need lifetime parameters to track data ownership, and that we can carry reference-counted data that can be safely dropped from a cache.
 
 ## Background
 
