@@ -3,6 +3,18 @@
     "daylight": "เวลาฤดูร้อนอาเกร",
     "standard": "เวลามาตรฐานอาเกร"
   },
+  "Afghanistan": {
+    "standard": "เวลาอัฟกานิสถาน"
+  },
+  "Africa_Central": {
+    "standard": "เวลาแอฟริกากลาง"
+  },
+  "Africa_Eastern": {
+    "standard": "เวลาแอฟริกาตะวันออก"
+  },
+  "Africa_Southern": {
+    "standard": "เวลาแอฟริกาใต้"
+  },
   "Africa_Western": {
     "daylight": "เวลาฤดูร้อนแอฟริกาตะวันตก",
     "standard": "เวลามาตรฐานแอฟริกาตะวันตก"
@@ -99,13 +111,28 @@
     "daylight": "เวลาฤดูร้อนบังกลาเทศ",
     "standard": "เวลามาตรฐานบังกลาเทศ"
   },
+  "Bhutan": {
+    "standard": "เวลาภูฏาน"
+  },
+  "Bolivia": {
+    "standard": "เวลาโบลิเวีย"
+  },
   "Brasilia": {
     "daylight": "เวลาฤดูร้อนบราซิเลีย",
     "standard": "เวลามาตรฐานบราซิเลีย"
   },
+  "Brunei": {
+    "standard": "เวลาบรูไนดารุสซาลาม"
+  },
   "Cape_Verde": {
     "daylight": "เวลาฤดูร้อนเคปเวิร์ด",
     "standard": "เวลามาตรฐานเคปเวิร์ด"
+  },
+  "Casey": {
+    "standard": "เวลาเคซีย์"
+  },
+  "Chamorro": {
+    "standard": "เวลาชามอร์โร"
   },
   "Chatham": {
     "daylight": "เวลาออมแสงแชทัม",
@@ -123,6 +150,12 @@
     "daylight": "เวลาฤดูร้อนชอยปาลชาน",
     "standard": "เวลามาตรฐานชอยปาลชาน"
   },
+  "Christmas": {
+    "standard": "เวลาเกาะคริสต์มาส"
+  },
+  "Cocos": {
+    "standard": "เวลาหมู่เกาะโคโคส"
+  },
   "Colombia": {
     "daylight": "เวลาฤดูร้อนโคลอมเบีย",
     "standard": "เวลามาตรฐานโคลอมเบีย"
@@ -135,9 +168,21 @@
     "daylight": "เวลาออมแสงของคิวบา",
     "standard": "เวลามาตรฐานคิวบา"
   },
+  "Davis": {
+    "standard": "เวลาเดวิส"
+  },
+  "DumontDUrville": {
+    "standard": "เวลาดูมองต์ดูร์วิลล์"
+  },
+  "East_Timor": {
+    "standard": "เวลาติมอร์ตะวันออก"
+  },
   "Easter": {
     "daylight": "เวลาฤดูร้อนเกาะอีสเตอร์",
     "standard": "เวลามาตรฐานเกาะอีสเตอร์"
+  },
+  "Ecuador": {
+    "standard": "เวลาเอกวาดอร์"
   },
   "Europe_Central": {
     "daylight": "เวลาฤดูร้อนยุโรปกลาง",
@@ -146,6 +191,9 @@
   "Europe_Eastern": {
     "daylight": "เวลาฤดูร้อนยุโรปตะวันออก",
     "standard": "เวลามาตรฐานยุโรปตะวันออก"
+  },
+  "Europe_Further_Eastern": {
+    "standard": "เวลายุโรปตะวันออกไกล"
   },
   "Europe_Western": {
     "daylight": "เวลาฤดูร้อนยุโรปตะวันตก",
@@ -159,9 +207,27 @@
     "daylight": "เวลาฤดูร้อนฟิจิ",
     "standard": "เวลามาตรฐานฟิจิ"
   },
+  "French_Guiana": {
+    "standard": "เวลาเฟรนช์เกียนา"
+  },
+  "French_Southern": {
+    "standard": "เวลาเฟรนช์เซาเทิร์นและแอนตาร์กติก"
+  },
+  "GMT": {
+    "standard": "เวลามาตรฐานกรีนิช"
+  },
+  "Galapagos": {
+    "standard": "เวลากาลาปาโกส"
+  },
+  "Gambier": {
+    "standard": "เวลาแกมเบียร์"
+  },
   "Georgia": {
     "daylight": "เวลาฤดูร้อนจอร์เจีย",
     "standard": "เวลามาตรฐานจอร์เจีย"
+  },
+  "Gilbert_Islands": {
+    "standard": "เวลาหมู่เกาะกิลเบิร์ต"
   },
   "Greenland_Eastern": {
     "daylight": "เวลาฤดูร้อนกรีนแลนด์ตะวันออก",
@@ -170,6 +236,15 @@
   "Greenland_Western": {
     "daylight": "เวลาฤดูร้อนกรีนแลนด์ตะวันตก",
     "standard": "เวลามาตรฐานกรีนแลนด์ตะวันตก"
+  },
+  "Guam": {
+    "standard": "เวลากวม"
+  },
+  "Gulf": {
+    "standard": "เวลากัลฟ์"
+  },
+  "Guyana": {
+    "standard": "เวลากายอานา"
   },
   "Hawaii_Aleutian": {
     "daylight": "เวลาออมแสงฮาวาย-อะลูเชียน",
@@ -182,6 +257,24 @@
   "Hovd": {
     "daylight": "เวลาฤดูร้อนฮอฟด์",
     "standard": "เวลามาตรฐานฮอฟด์"
+  },
+  "India": {
+    "standard": "เวลาอินเดีย"
+  },
+  "Indian_Ocean": {
+    "standard": "เวลามหาสมุทรอินเดีย"
+  },
+  "Indochina": {
+    "standard": "เวลาอินโดจีน"
+  },
+  "Indonesia_Central": {
+    "standard": "เวลาอินโดนีเซียตอนกลาง"
+  },
+  "Indonesia_Eastern": {
+    "standard": "เวลาอินโดนีเซียฝั่งตะวันออก"
+  },
+  "Indonesia_Western": {
+    "standard": "เวลาอินโดนีเซียฝั่งตะวันตก"
   },
   "Iran": {
     "daylight": "เวลาออมแสงอิหร่าน",
@@ -203,13 +296,31 @@
     "daylight": "เวลาฤดูร้อนเปโตรปัฟลอฟสค์-คัมชัตสกี",
     "standard": "เวลาเปโตรปัฟลอฟสค์-คัมชัตสกี"
   },
+  "Kazakhstan_Eastern": {
+    "standard": "เวลาคาซัคสถานตะวันออก"
+  },
+  "Kazakhstan_Western": {
+    "standard": "เวลาคาซัคสถานตะวันตก"
+  },
   "Korea": {
     "daylight": "เวลาออมแสงเกาหลี",
     "standard": "เวลามาตรฐานเกาหลี"
   },
+  "Kosrae": {
+    "standard": "เวลาคอสไร"
+  },
   "Krasnoyarsk": {
     "daylight": "เวลาฤดูร้อนครัสโนยาสค์",
     "standard": "เวลามาตรฐานครัสโนยาสค์"
+  },
+  "Kyrgystan": {
+    "standard": "เวลาคีร์กีซสถาน"
+  },
+  "Lanka": {
+    "standard": "เวลาลังกา"
+  },
+  "Line_Islands": {
+    "standard": "เวลาหมู่เกาะไลน์"
   },
   "Lord_Howe": {
     "daylight": "เวลาออมแสงลอร์ดโฮว์",
@@ -219,13 +330,31 @@
     "daylight": "เวลาฤดูร้อนมาเก๊า",
     "standard": "เวลามาตรฐานมาเก๊า"
   },
+  "Macquarie": {
+    "standard": "เวลาเกาะแมกควอรี"
+  },
   "Magadan": {
     "daylight": "เวลาฤดูร้อนมากาดาน",
     "standard": "เวลามาตรฐานมากาดาน"
   },
+  "Malaysia": {
+    "standard": "เวลามาเลเซีย"
+  },
+  "Maldives": {
+    "standard": "เวลามัลดีฟส์"
+  },
+  "Marquesas": {
+    "standard": "เวลามาร์เคซัส"
+  },
+  "Marshall_Islands": {
+    "standard": "เวลาหมู่เกาะมาร์แชลล์"
+  },
   "Mauritius": {
     "daylight": "เวลาฤดูร้อนของมอริเชียส",
     "standard": "เวลามาตรฐานมอริเชียส"
+  },
+  "Mawson": {
+    "standard": "เวลามอว์สัน"
   },
   "Mexico_Northwest": {
     "daylight": "เวลาออมแสงเม็กซิโกตะวันตกเฉียงเหนือ",
@@ -243,6 +372,15 @@
     "daylight": "เวลาฤดูร้อนมอสโก",
     "standard": "เวลามาตรฐานมอสโก"
   },
+  "Myanmar": {
+    "standard": "เวลาพม่า"
+  },
+  "Nauru": {
+    "standard": "เวลานาอูรู"
+  },
+  "Nepal": {
+    "standard": "เวลาเนปาล"
+  },
   "New_Caledonia": {
     "daylight": "เวลาฤดูร้อนนิวแคลิโดเนีย",
     "standard": "เวลามาตรฐานนิวแคลิโดเนีย"
@@ -255,6 +393,9 @@
     "daylight": "เวลาออมแสงนิวฟันด์แลนด์",
     "standard": "เวลามาตรฐานนิวฟันด์แลนด์"
   },
+  "Niue": {
+    "standard": "เวลานีอูเอ"
+  },
   "Norfolk": {
     "daylight": "เวลาออมแสงเกาะนอร์ฟอล์ก",
     "standard": "เวลามาตรฐานเกาะนอร์ฟอล์ก"
@@ -262,6 +403,9 @@
   "Noronha": {
     "daylight": "เวลาฤดูร้อนของหมู่เกาะเฟอร์นันโด",
     "standard": "เวลามาตรฐานหมู่เกาะเฟอร์นันโด"
+  },
+  "North_Mariana": {
+    "standard": "เวลาหมู่เกาะมาเรียนาเหนือ"
   },
   "Novosibirsk": {
     "daylight": "เวลาฤดูร้อนโนโวซีบีสค์",
@@ -275,6 +419,12 @@
     "daylight": "เวลาฤดูร้อนปากีสถาน",
     "standard": "เวลามาตรฐานปากีสถาน"
   },
+  "Palau": {
+    "standard": "เวลาปาเลา"
+  },
+  "Papua_New_Guinea": {
+    "standard": "เวลาปาปัวนิวกินี"
+  },
   "Paraguay": {
     "daylight": "เวลาฤดูร้อนปารากวัย",
     "standard": "เวลามาตรฐานปารากวัย"
@@ -287,13 +437,31 @@
     "daylight": "เวลาฤดูร้อนฟิลิปปินส์",
     "standard": "เวลามาตรฐานฟิลิปปินส์"
   },
+  "Phoenix_Islands": {
+    "standard": "เวลาหมู่เกาะฟินิกซ์"
+  },
   "Pierre_Miquelon": {
     "daylight": "เวลาออมแสงของแซงปีแยร์และมีเกอลง",
     "standard": "เวลามาตรฐานแซงปีแยร์และมีเกอลง"
   },
+  "Pitcairn": {
+    "standard": "เวลาพิตแคร์น"
+  },
+  "Ponape": {
+    "standard": "เวลาโปนาเป"
+  },
+  "Pyongyang": {
+    "standard": "เวลาเปียงยาง"
+  },
   "Qyzylorda": {
     "daylight": "เวลาฤดูร้อนคืยซิลออร์ดา",
     "standard": "เวลามาตรฐานคืยซิลออร์ดา"
+  },
+  "Reunion": {
+    "standard": "เวลาเรอูนียง"
+  },
+  "Rothera": {
+    "standard": "เวลาโรธีรา"
   },
   "Sakhalin": {
     "daylight": "เวลาฤดูร้อนซาคาลิน",
@@ -307,17 +475,50 @@
     "daylight": "เวลาฤดูร้อนซามัว",
     "standard": "เวลามาตรฐานซามัว"
   },
+  "Seychelles": {
+    "standard": "เวลาเซเชลส์"
+  },
+  "Singapore": {
+    "standard": "เวลาสิงคโปร์"
+  },
+  "Solomon": {
+    "standard": "เวลาหมู่เกาะโซโลมอน"
+  },
+  "South_Georgia": {
+    "standard": "เวลาเซาท์จอร์เจีย"
+  },
+  "Suriname": {
+    "standard": "เวลาซูรินาเม"
+  },
+  "Syowa": {
+    "standard": "เวลาไซโยวา"
+  },
+  "Tahiti": {
+    "standard": "เวลาตาฮีตี"
+  },
   "Taipei": {
     "daylight": "เวลาออมแสงไทเป",
     "standard": "เวลามาตรฐานไทเป"
+  },
+  "Tajikistan": {
+    "standard": "เวลาทาจิกิสถาน"
+  },
+  "Tokelau": {
+    "standard": "เวลาโตเกเลา"
   },
   "Tonga": {
     "daylight": "เวลาฤดูร้อนตองกา",
     "standard": "เวลามาตรฐานตองกา"
   },
+  "Truk": {
+    "standard": "เวลาชุก"
+  },
   "Turkmenistan": {
     "daylight": "เวลาฤดูร้อนเติร์กเมนิสถาน",
     "standard": "เวลามาตรฐานเติร์กเมนิสถาน"
+  },
+  "Tuvalu": {
+    "standard": "เวลาตูวาลู"
   },
   "Uruguay": {
     "daylight": "เวลาฤดูร้อนอุรุกวัย",
@@ -331,6 +532,9 @@
     "daylight": "เวลาฤดูร้อนวานูอาตู",
     "standard": "เวลามาตรฐานวานูอาตู"
   },
+  "Venezuela": {
+    "standard": "เวลาเวเนซุเอลา"
+  },
   "Vladivostok": {
     "daylight": "เวลาฤดูร้อนวลาดีวอสตอค",
     "standard": "เวลามาตรฐานวลาดีวอสตอค"
@@ -339,6 +543,15 @@
     "daylight": "เวลาฤดูร้อนวอลโกกราด",
     "standard": "เวลามาตรฐานวอลโกกราด"
   },
+  "Vostok": {
+    "standard": "เวลาวอสตอค"
+  },
+  "Wake": {
+    "standard": "เวลาเกาะเวก"
+  },
+  "Wallis": {
+    "standard": "เวลาวาลลิสและฟุตูนา"
+  },
   "Yakutsk": {
     "daylight": "เวลาฤดูร้อนยาคุตสค์",
     "standard": "เวลามาตรฐานยาคุตสค์"
@@ -346,5 +559,8 @@
   "Yekaterinburg": {
     "daylight": "เวลาฤดูร้อนเยคาเตรินบูร์ก",
     "standard": "เวลามาตรฐานเยคาเตรินบูร์ก"
+  },
+  "Yukon": {
+    "standard": "เวลายูคอน"
   }
 }

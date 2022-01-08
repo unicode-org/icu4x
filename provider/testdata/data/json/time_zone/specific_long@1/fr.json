@@ -3,6 +3,18 @@
     "daylight": "heure d’été de l’Acre",
     "standard": "heure normale de l’Acre"
   },
+  "Afghanistan": {
+    "standard": "heure de l’Afghanistan"
+  },
+  "Africa_Central": {
+    "standard": "heure normale d’Afrique centrale"
+  },
+  "Africa_Eastern": {
+    "standard": "heure normale d’Afrique de l’Est"
+  },
+  "Africa_Southern": {
+    "standard": "heure normale d’Afrique méridionale"
+  },
   "Africa_Western": {
     "daylight": "heure d’été d’Afrique de l’Ouest",
     "standard": "heure normale d’Afrique de l’Ouest"
@@ -99,13 +111,25 @@
     "daylight": "heure d’été du Bangladesh",
     "standard": "heure normale du Bangladesh"
   },
+  "Bhutan": {
+    "standard": "heure du Bhoutan"
+  },
+  "Bolivia": {
+    "standard": "heure de Bolivie"
+  },
   "Brasilia": {
     "daylight": "heure d’été de Brasilia",
     "standard": "heure normale de Brasilia"
   },
+  "Brunei": {
+    "standard": "heure du Brunéi"
+  },
   "Cape_Verde": {
     "daylight": "heure d’été du Cap-Vert",
     "standard": "heure normale du Cap-Vert"
+  },
+  "Chamorro": {
+    "standard": "heure des Chamorro"
   },
   "Chatham": {
     "daylight": "heure d’été des îles Chatham",
@@ -123,6 +147,12 @@
     "daylight": "heure d’été de Choibalsan",
     "standard": "heure normale de Choibalsan"
   },
+  "Christmas": {
+    "standard": "heure de l’île Christmas"
+  },
+  "Cocos": {
+    "standard": "heure des îles Cocos"
+  },
   "Colombia": {
     "daylight": "heure d’été de Colombie",
     "standard": "heure normale de Colombie"
@@ -135,9 +165,21 @@
     "daylight": "heure d’été de Cuba",
     "standard": "heure normale de Cuba"
   },
+  "Davis": {
+    "standard": "heure de Davis"
+  },
+  "DumontDUrville": {
+    "standard": "heure de Dumont-d’Urville"
+  },
+  "East_Timor": {
+    "standard": "heure du Timor oriental"
+  },
   "Easter": {
     "daylight": "heure d’été de l’île de Pâques",
     "standard": "heure normale de l’île de Pâques"
+  },
+  "Ecuador": {
+    "standard": "heure de l’Équateur"
   },
   "Europe_Central": {
     "daylight": "heure d’été d’Europe centrale",
@@ -146,6 +188,9 @@
   "Europe_Eastern": {
     "daylight": "heure d’été d’Europe de l’Est",
     "standard": "heure normale d’Europe de l’Est"
+  },
+  "Europe_Further_Eastern": {
+    "standard": "heure de Kaliningrad"
   },
   "Europe_Western": {
     "daylight": "heure d’été d’Europe de l’Ouest",
@@ -159,9 +204,27 @@
     "daylight": "heure d’été des îles Fidji",
     "standard": "heure normale des îles Fidji"
   },
+  "French_Guiana": {
+    "standard": "heure de la Guyane française"
+  },
+  "French_Southern": {
+    "standard": "heure des Terres australes et antarctiques françaises"
+  },
+  "GMT": {
+    "standard": "heure moyenne de Greenwich"
+  },
+  "Galapagos": {
+    "standard": "heure des îles Galápagos"
+  },
+  "Gambier": {
+    "standard": "heure des îles Gambier"
+  },
   "Georgia": {
     "daylight": "heure d’été de Géorgie",
     "standard": "heure normale de la Géorgie"
+  },
+  "Gilbert_Islands": {
+    "standard": "heure des îles Gilbert"
   },
   "Greenland_Eastern": {
     "daylight": "heure d’été de l’Est du Groenland",
@@ -170,6 +233,15 @@
   "Greenland_Western": {
     "daylight": "heure d’été de l’Ouest du Groenland",
     "standard": "heure normale de l’Ouest du Groenland"
+  },
+  "Guam": {
+    "standard": "heure de Guam"
+  },
+  "Gulf": {
+    "standard": "heure du Golfe"
+  },
+  "Guyana": {
+    "standard": "heure du Guyana"
   },
   "Hawaii_Aleutian": {
     "daylight": "heure d’été d’Hawaii - Aléoutiennes",
@@ -182,6 +254,24 @@
   "Hovd": {
     "daylight": "heure d’été de Hovd",
     "standard": "heure normale de Hovd"
+  },
+  "India": {
+    "standard": "heure de l’Inde"
+  },
+  "Indian_Ocean": {
+    "standard": "heure de l’Océan Indien"
+  },
+  "Indochina": {
+    "standard": "heure d’Indochine"
+  },
+  "Indonesia_Central": {
+    "standard": "heure du Centre indonésien"
+  },
+  "Indonesia_Eastern": {
+    "standard": "heure de l’Est indonésien"
+  },
+  "Indonesia_Western": {
+    "standard": "heure de l’Ouest indonésien"
   },
   "Iran": {
     "daylight": "heure d’été d’Iran",
@@ -203,25 +293,58 @@
     "daylight": "heure d’été de Petropavlovsk-Kamchatski",
     "standard": "heure normale de Petropavlovsk-Kamchatski"
   },
+  "Kazakhstan_Eastern": {
+    "standard": "heure de l’Est du Kazakhstan"
+  },
+  "Kazakhstan_Western": {
+    "standard": "heure de l’Ouest du Kazakhstan"
+  },
   "Korea": {
     "daylight": "heure d’été de Corée",
     "standard": "heure normale de la Corée"
+  },
+  "Kosrae": {
+    "standard": "heure de Kosrae"
   },
   "Krasnoyarsk": {
     "daylight": "heure d’été de Krasnoïarsk",
     "standard": "heure normale de Krasnoïarsk"
   },
+  "Kyrgystan": {
+    "standard": "heure du Kirghizistan"
+  },
+  "Line_Islands": {
+    "standard": "heure des îles de la Ligne"
+  },
   "Lord_Howe": {
     "daylight": "heure d’été de Lord Howe",
     "standard": "heure normale de Lord Howe"
+  },
+  "Macquarie": {
+    "standard": "heure de l’île Macquarie"
   },
   "Magadan": {
     "daylight": "heure d’été de Magadan",
     "standard": "heure normale de Magadan"
   },
+  "Malaysia": {
+    "standard": "heure de la Malaisie"
+  },
+  "Maldives": {
+    "standard": "heure des Maldives"
+  },
+  "Marquesas": {
+    "standard": "heure des îles Marquises"
+  },
+  "Marshall_Islands": {
+    "standard": "heure des îles Marshall"
+  },
   "Mauritius": {
     "daylight": "heure d’été de Maurice",
     "standard": "heure normale de Maurice"
+  },
+  "Mawson": {
+    "standard": "heure de Mawson"
   },
   "Mexico_Northwest": {
     "daylight": "heure d’été du Nord-Ouest du Mexique",
@@ -239,6 +362,15 @@
     "daylight": "heure d’été de Moscou",
     "standard": "heure normale de Moscou"
   },
+  "Myanmar": {
+    "standard": "heure du Myanmar"
+  },
+  "Nauru": {
+    "standard": "heure de Nauru"
+  },
+  "Nepal": {
+    "standard": "heure du Népal"
+  },
   "New_Caledonia": {
     "daylight": "heure d’été de Nouvelle-Calédonie",
     "standard": "heure normale de la Nouvelle-Calédonie"
@@ -251,6 +383,9 @@
     "daylight": "heure d’été de Terre-Neuve",
     "standard": "heure normale de Terre-Neuve"
   },
+  "Niue": {
+    "standard": "heure de Nioué"
+  },
   "Norfolk": {
     "daylight": "heure d’été de l’île Norfolk",
     "standard": "heure normale de l’île Norfolk"
@@ -258,6 +393,9 @@
   "Noronha": {
     "daylight": "heure d’été de Fernando de Noronha",
     "standard": "heure normale de Fernando de Noronha"
+  },
+  "North_Mariana": {
+    "standard": "heure des îles Mariannes du Nord"
   },
   "Novosibirsk": {
     "daylight": "heure d’été de Novossibirsk",
@@ -271,6 +409,12 @@
     "daylight": "heure d’été du Pakistan",
     "standard": "heure normale du Pakistan"
   },
+  "Palau": {
+    "standard": "heure des Palaos"
+  },
+  "Papua_New_Guinea": {
+    "standard": "heure de la Papouasie-Nouvelle-Guinée"
+  },
   "Paraguay": {
     "daylight": "heure d’été du Paraguay",
     "standard": "heure normale du Paraguay"
@@ -283,9 +427,27 @@
     "daylight": "heure d’été des Philippines",
     "standard": "heure normale des Philippines"
   },
+  "Phoenix_Islands": {
+    "standard": "heure des îles Phoenix"
+  },
   "Pierre_Miquelon": {
     "daylight": "heure d’été de Saint-Pierre-et-Miquelon",
     "standard": "heure normale de Saint-Pierre-et-Miquelon"
+  },
+  "Pitcairn": {
+    "standard": "heure des îles Pitcairn"
+  },
+  "Ponape": {
+    "standard": "heure de l’île de Pohnpei"
+  },
+  "Pyongyang": {
+    "standard": "heure de Pyongyang"
+  },
+  "Reunion": {
+    "standard": "heure de La Réunion"
+  },
+  "Rothera": {
+    "standard": "heure de Rothera"
   },
   "Sakhalin": {
     "daylight": "heure d’été de Sakhaline",
@@ -299,17 +461,50 @@
     "daylight": "heure d’été des Samoa",
     "standard": "heure normale des Samoa"
   },
+  "Seychelles": {
+    "standard": "heure des Seychelles"
+  },
+  "Singapore": {
+    "standard": "heure de Singapour"
+  },
+  "Solomon": {
+    "standard": "heure des îles Salomon"
+  },
+  "South_Georgia": {
+    "standard": "heure de Géorgie du Sud"
+  },
+  "Suriname": {
+    "standard": "heure du Suriname"
+  },
+  "Syowa": {
+    "standard": "heure de Syowa"
+  },
+  "Tahiti": {
+    "standard": "heure de Tahiti"
+  },
   "Taipei": {
     "daylight": "heure d’été de Taipei",
     "standard": "heure normale de Taipei"
+  },
+  "Tajikistan": {
+    "standard": "heure du Tadjikistan"
+  },
+  "Tokelau": {
+    "standard": "heure de Tokelau"
   },
   "Tonga": {
     "daylight": "heure d’été de Tonga",
     "standard": "heure normale des Tonga"
   },
+  "Truk": {
+    "standard": "heure de Chuuk"
+  },
   "Turkmenistan": {
     "daylight": "heure d’été du Turkménistan",
     "standard": "heure normale du Turkménistan"
+  },
+  "Tuvalu": {
+    "standard": "heure des Tuvalu"
   },
   "Uruguay": {
     "daylight": "heure d’été de l’Uruguay",
@@ -323,6 +518,9 @@
     "daylight": "heure d’été de Vanuatu",
     "standard": "heure normale du Vanuatu"
   },
+  "Venezuela": {
+    "standard": "heure du Venezuela"
+  },
   "Vladivostok": {
     "daylight": "heure d’été de Vladivostok",
     "standard": "heure normale de Vladivostok"
@@ -331,6 +529,15 @@
     "daylight": "heure d’été de Volgograd",
     "standard": "heure normale de Volgograd"
   },
+  "Vostok": {
+    "standard": "heure de Vostok"
+  },
+  "Wake": {
+    "standard": "heure de l’île Wake"
+  },
+  "Wallis": {
+    "standard": "heure de Wallis-et-Futuna"
+  },
   "Yakutsk": {
     "daylight": "heure d’été de Iakoutsk",
     "standard": "heure normale de Iakoutsk"
@@ -338,5 +545,8 @@
   "Yekaterinburg": {
     "daylight": "heure d’été d’Ekaterinbourg",
     "standard": "heure normale d’Ekaterinbourg"
+  },
+  "Yukon": {
+    "standard": "heure normale du Yukon"
   }
 }

@@ -10,5 +10,8 @@
   "Europe_Western": {
     "daylight": "WEST",
     "standard": "WET"
+  },
+  "GMT": {
+    "standard": "GMT"
   }
 }

@@ -3,6 +3,18 @@
     "daylight": "Acre Yaz Saati",
     "standard": "Acre Standart Saati"
   },
+  "Afghanistan": {
+    "standard": "Afganistan Saati"
+  },
+  "Africa_Central": {
+    "standard": "Orta Afrika Saati"
+  },
+  "Africa_Eastern": {
+    "standard": "Doğu Afrika Saati"
+  },
+  "Africa_Southern": {
+    "standard": "Güney Afrika Standart Saati"
+  },
   "Africa_Western": {
     "daylight": "Batı Afrika Yaz Saati",
     "standard": "Batı Afrika Standart Saati"
@@ -99,13 +111,28 @@
     "daylight": "Bangladeş Yaz Saati",
     "standard": "Bangladeş Standart Saati"
   },
+  "Bhutan": {
+    "standard": "Butan Saati"
+  },
+  "Bolivia": {
+    "standard": "Bolivya Saati"
+  },
   "Brasilia": {
     "daylight": "Brasilia Yaz Saati",
     "standard": "Brasilia Standart Saati"
   },
+  "Brunei": {
+    "standard": "Brunei Darü’s-Selam Saati"
+  },
   "Cape_Verde": {
     "daylight": "Cape Verde Yaz Saati",
     "standard": "Cape Verde Standart Saati"
+  },
+  "Casey": {
+    "standard": "Casey Saati"
+  },
+  "Chamorro": {
+    "standard": "Chamorro Saati"
   },
   "Chatham": {
     "daylight": "Chatham Yaz Saati",
@@ -123,6 +150,12 @@
     "daylight": "Çoybalsan Yaz Saati",
     "standard": "Çoybalsan Standart Saati"
   },
+  "Christmas": {
+    "standard": "Christmas Adası Saati"
+  },
+  "Cocos": {
+    "standard": "Cocos Adaları Saati"
+  },
   "Colombia": {
     "daylight": "Kolombiya Yaz Saati",
     "standard": "Kolombiya Standart Saati"
@@ -135,9 +168,21 @@
     "daylight": "Küba Yaz Saati",
     "standard": "Küba Standart Saati"
   },
+  "Davis": {
+    "standard": "Davis Saati"
+  },
+  "DumontDUrville": {
+    "standard": "Dumont-d’Urville Saati"
+  },
+  "East_Timor": {
+    "standard": "Doğu Timor Saati"
+  },
   "Easter": {
     "daylight": "Paskalya Adası Yaz Saati",
     "standard": "Paskalya Adası Standart Saati"
+  },
+  "Ecuador": {
+    "standard": "Ekvador Saati"
   },
   "Europe_Central": {
     "daylight": "Orta Avrupa Yaz Saati",
@@ -146,6 +191,9 @@
   "Europe_Eastern": {
     "daylight": "Doğu Avrupa Yaz Saati",
     "standard": "Doğu Avrupa Standart Saati"
+  },
+  "Europe_Further_Eastern": {
+    "standard": "İleri Doğu Avrupa Saati"
   },
   "Europe_Western": {
     "daylight": "Batı Avrupa Yaz Saati",
@@ -159,9 +207,27 @@
     "daylight": "Fiji Yaz Saati",
     "standard": "Fiji Standart Saati"
   },
+  "French_Guiana": {
+    "standard": "Fransız Guyanası Saati"
+  },
+  "French_Southern": {
+    "standard": "Fransız Güney ve Antarktika Saati"
+  },
+  "GMT": {
+    "standard": "Greenwich Ortalama Saati"
+  },
+  "Galapagos": {
+    "standard": "Galapagos Saati"
+  },
+  "Gambier": {
+    "standard": "Gambier Saati"
+  },
   "Georgia": {
     "daylight": "Gürcistan Yaz Saati",
     "standard": "Gürcistan Standart Saati"
+  },
+  "Gilbert_Islands": {
+    "standard": "Gilbert Adaları Saati"
   },
   "Greenland_Eastern": {
     "daylight": "Doğu Grönland Yaz Saati",
@@ -170,6 +236,15 @@
   "Greenland_Western": {
     "daylight": "Batı Grönland Yaz Saati",
     "standard": "Batı Grönland Standart Saati"
+  },
+  "Guam": {
+    "standard": "Guam Standart Saati"
+  },
+  "Gulf": {
+    "standard": "Körfez Saati"
+  },
+  "Guyana": {
+    "standard": "Guyana Saati"
   },
   "Hawaii_Aleutian": {
     "daylight": "Hawaii-Aleut Yaz Saati",
@@ -182,6 +257,24 @@
   "Hovd": {
     "daylight": "Hovd Yaz Saati",
     "standard": "Hovd Standart Saati"
+  },
+  "India": {
+    "standard": "Hindistan Standart Saati"
+  },
+  "Indian_Ocean": {
+    "standard": "Hint Okyanusu Saati"
+  },
+  "Indochina": {
+    "standard": "Hindiçin Saati"
+  },
+  "Indonesia_Central": {
+    "standard": "Orta Endonezya Saati"
+  },
+  "Indonesia_Eastern": {
+    "standard": "Doğu Endonezya Saati"
+  },
+  "Indonesia_Western": {
+    "standard": "Batı Endonezya Saati"
   },
   "Iran": {
     "daylight": "İran Yaz Saati",
@@ -203,13 +296,31 @@
     "daylight": "Petropavlovsk-Kamçatski Yaz Saati",
     "standard": "Petropavlovsk-Kamçatski Standart Saati"
   },
+  "Kazakhstan_Eastern": {
+    "standard": "Doğu Kazakistan Saati"
+  },
+  "Kazakhstan_Western": {
+    "standard": "Batı Kazakistan Saati"
+  },
   "Korea": {
     "daylight": "Kore Yaz Saati",
     "standard": "Kore Standart Saati"
   },
+  "Kosrae": {
+    "standard": "Kosrae Saati"
+  },
   "Krasnoyarsk": {
     "daylight": "Krasnoyarsk Yaz Saati",
     "standard": "Krasnoyarsk Standart Saati"
+  },
+  "Kyrgystan": {
+    "standard": "Kırgızistan Saati"
+  },
+  "Lanka": {
+    "standard": "Lanka Saati"
+  },
+  "Line_Islands": {
+    "standard": "Line Adaları Saati"
   },
   "Lord_Howe": {
     "daylight": "Lord Howe Yaz Saati",
@@ -219,13 +330,31 @@
     "daylight": "Makao Yaz Saati",
     "standard": "Makao Standart Saati"
   },
+  "Macquarie": {
+    "standard": "Macquarie Adası Saati"
+  },
   "Magadan": {
     "daylight": "Magadan Yaz Saati",
     "standard": "Magadan Standart Saati"
   },
+  "Malaysia": {
+    "standard": "Malezya Saati"
+  },
+  "Maldives": {
+    "standard": "Maldivler Saati"
+  },
+  "Marquesas": {
+    "standard": "Markiz Adaları Saati"
+  },
+  "Marshall_Islands": {
+    "standard": "Marshall Adaları Saati"
+  },
   "Mauritius": {
     "daylight": "Mauritius Yaz Saati",
     "standard": "Mauritius Standart Saati"
+  },
+  "Mawson": {
+    "standard": "Mawson Saati"
   },
   "Mexico_Northwest": {
     "daylight": "Kuzeybatı Meksika Yaz Saati",
@@ -243,6 +372,15 @@
     "daylight": "Moskova Yaz Saati",
     "standard": "Moskova Standart Saati"
   },
+  "Myanmar": {
+    "standard": "Myanmar Saati"
+  },
+  "Nauru": {
+    "standard": "Nauru Saati"
+  },
+  "Nepal": {
+    "standard": "Nepal Saati"
+  },
   "New_Caledonia": {
     "daylight": "Yeni Kaledonya Yaz Saati",
     "standard": "Yeni Kaledonya Standart Saati"
@@ -255,6 +393,9 @@
     "daylight": "Newfoundland Yaz Saati",
     "standard": "Newfoundland Standart Saati"
   },
+  "Niue": {
+    "standard": "Niue Saati"
+  },
   "Norfolk": {
     "daylight": "Norfolk Adası Yaz Saati",
     "standard": "Norfolk Adası Standart Saati"
@@ -262,6 +403,9 @@
   "Noronha": {
     "daylight": "Fernando de Noronha Yaz Saati",
     "standard": "Fernando de Noronha Standart Saati"
+  },
+  "North_Mariana": {
+    "standard": "Kuzey Mariana Adaları Saati"
   },
   "Novosibirsk": {
     "daylight": "Novosibirsk Yaz Saati",
@@ -275,6 +419,12 @@
     "daylight": "Pakistan Yaz Saati",
     "standard": "Pakistan Standart Saati"
   },
+  "Palau": {
+    "standard": "Palau Saati"
+  },
+  "Papua_New_Guinea": {
+    "standard": "Papua Yeni Gine Saati"
+  },
   "Paraguay": {
     "daylight": "Paraguay Yaz Saati",
     "standard": "Paraguay Standart Saati"
@@ -287,13 +437,31 @@
     "daylight": "Filipinler Yaz Saati",
     "standard": "Filipinler Standart Saati"
   },
+  "Phoenix_Islands": {
+    "standard": "Phoenix Adaları Saati"
+  },
   "Pierre_Miquelon": {
     "daylight": "Saint Pierre ve Miquelon Yaz Saati",
     "standard": "Saint Pierre ve Miquelon Standart Saati"
   },
+  "Pitcairn": {
+    "standard": "Pitcairn Saati"
+  },
+  "Ponape": {
+    "standard": "Ponape Saati"
+  },
+  "Pyongyang": {
+    "standard": "Pyongyang Saati"
+  },
   "Qyzylorda": {
     "daylight": "Kızılorda Yaz Saati",
     "standard": "Kızılorda Standart Saati"
+  },
+  "Reunion": {
+    "standard": "Reunion Saati"
+  },
+  "Rothera": {
+    "standard": "Rothera Saati"
   },
   "Sakhalin": {
     "daylight": "Sahalin Yaz Saati",
@@ -307,17 +475,50 @@
     "daylight": "Samoa Yaz Saati",
     "standard": "Samoa Standart Saati"
   },
+  "Seychelles": {
+    "standard": "Seyşeller Saati"
+  },
+  "Singapore": {
+    "standard": "Singapur Standart Saati"
+  },
+  "Solomon": {
+    "standard": "Solomon Adaları Saati"
+  },
+  "South_Georgia": {
+    "standard": "Güney Georgia Saati"
+  },
+  "Suriname": {
+    "standard": "Surinam Saati"
+  },
+  "Syowa": {
+    "standard": "Showa Saati"
+  },
+  "Tahiti": {
+    "standard": "Tahiti Saati"
+  },
   "Taipei": {
     "daylight": "Taipei Yaz Saati",
     "standard": "Taipei Standart Saati"
+  },
+  "Tajikistan": {
+    "standard": "Tacikistan Saati"
+  },
+  "Tokelau": {
+    "standard": "Tokelau Saati"
   },
   "Tonga": {
     "daylight": "Tonga Yaz Saati",
     "standard": "Tonga Standart Saati"
   },
+  "Truk": {
+    "standard": "Chuuk Saati"
+  },
   "Turkmenistan": {
     "daylight": "Türkmenistan Yaz Saati",
     "standard": "Türkmenistan Standart Saati"
+  },
+  "Tuvalu": {
+    "standard": "Tuvalu Saati"
   },
   "Uruguay": {
     "daylight": "Uruguay Yaz Saati",
@@ -331,6 +532,9 @@
     "daylight": "Vanuatu Yaz Saati",
     "standard": "Vanuatu Standart Saati"
   },
+  "Venezuela": {
+    "standard": "Venezuela Saati"
+  },
   "Vladivostok": {
     "daylight": "Vladivostok Yaz Saati",
     "standard": "Vladivostok Standart Saati"
@@ -339,6 +543,15 @@
     "daylight": "Volgograd Yaz Saati",
     "standard": "Volgograd Standart Saati"
   },
+  "Vostok": {
+    "standard": "Vostok Saati"
+  },
+  "Wake": {
+    "standard": "Wake Adası Saati"
+  },
+  "Wallis": {
+    "standard": "Wallis ve Futuna Saati"
+  },
   "Yakutsk": {
     "daylight": "Yakutsk Yaz Saati",
     "standard": "Yakutsk Standart Saati"
@@ -346,5 +559,8 @@
   "Yekaterinburg": {
     "daylight": "Yekaterinburg Yaz Saati",
     "standard": "Yekaterinburg Standart Saati"
+  },
+  "Yukon": {
+    "standard": "Yukon Saati"
   }
 }
