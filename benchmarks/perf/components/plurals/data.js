@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641583202401,
+  "lastUpdate": 1641602973870,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23309,6 +23309,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20013,
             "range": "± 92",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "899c90f463a41996758b969fa0f58159c8443452",
+          "message": "Fix bug for time-zones provider specific variants (#1405)\n\nFixes a bug in which time-zone data was not being included if \"standard\"/\"daylight\" variants were present, but \"generic\" was not present.",
+          "timestamp": "2022-01-07T16:39:47-08:00",
+          "tree_id": "7897afdb70c979fdae1ce64fe6838d56abad530c",
+          "url": "https://github.com/unicode-org/icu4x/commit/899c90f463a41996758b969fa0f58159c8443452"
+        },
+        "date": 1641602963652,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1381,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6999,
+            "range": "± 262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25265,
+            "range": "± 963",
             "unit": "ns/iter"
           }
         ]
