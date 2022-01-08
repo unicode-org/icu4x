@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641602483714,
+  "lastUpdate": 1641603055729,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6713,6 +6713,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/899c90f463a41996758b969fa0f58159c8443452"
         },
         "date": 1641602474216,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1467214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96601c93b793a604608243be81cb10b44dc9f95a",
+          "message": "Add FFI for constructing fixed decimals from float (#1483)\n\n* Expose fixed decimal construction functions from f32\r\n\r\n* float -> f64\r\n\r\n* regen\r\n\r\n* update method\r\n\r\n* regen\r\n\r\n* Update names",
+          "timestamp": "2022-01-07T16:49:05-08:00",
+          "tree_id": "eada95e71c75e562da4f2940079c985972bea299",
+          "url": "https://github.com/unicode-org/icu4x/commit/96601c93b793a604608243be81cb10b44dc9f95a"
+        },
+        "date": 1641603045639,
         "tool": "ndjson",
         "benches": [
           {
