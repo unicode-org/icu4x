@@ -1,4 +1,4 @@
-# Yoke: Lifetime Erasure in Rust
+# Yoke: "Lifetime Erasure" in Rust
 
 ## Problem statement
 
