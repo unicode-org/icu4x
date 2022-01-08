@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641604378346,
+  "lastUpdate": 1641610043481,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6778,6 +6778,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 1467214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "89ce5f09b461ce302c4c7372e82a482a61007bbb",
+          "message": "Retrieve localized metazone info from timeZoneNames.json (#1354)\n\nAdds functionality and data to have local overrides for metazone formatting, such as Europe/London formatting preferring to use \"British Summer Time\" for its \"daylight\" variant, instead of the default GMT metazone formatting.",
+          "timestamp": "2022-01-07T18:45:48-08:00",
+          "tree_id": "03c6822a228b060905d833db1f231b3de5bd7881",
+          "url": "https://github.com/unicode-org/icu4x/commit/89ce5f09b461ce302c4c7372e82a482a61007bbb"
+        },
+        "date": 1641610034198,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
             "unit": "bytes",
             "biggerIsBetter": false
           }
