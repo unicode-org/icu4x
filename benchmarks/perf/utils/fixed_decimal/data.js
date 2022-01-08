@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641602885545,
+  "lastUpdate": 1641603369379,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16619,6 +16619,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 133315,
             "range": "± 10355",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96601c93b793a604608243be81cb10b44dc9f95a",
+          "message": "Add FFI for constructing fixed decimals from float (#1483)\n\n* Expose fixed decimal construction functions from f32\r\n\r\n* float -> f64\r\n\r\n* regen\r\n\r\n* update method\r\n\r\n* regen\r\n\r\n* Update names",
+          "timestamp": "2022-01-07T16:49:05-08:00",
+          "tree_id": "eada95e71c75e562da4f2940079c985972bea299",
+          "url": "https://github.com/unicode-org/icu4x/commit/96601c93b793a604608243be81cb10b44dc9f95a"
+        },
+        "date": 1641603361066,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 102208,
+            "range": "± 5327",
             "unit": "ns/iter"
           }
         ]
