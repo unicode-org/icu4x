@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641603433665,
+  "lastUpdate": 1641604821716,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20657,6 +20657,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5117,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "66fe4b7cfdd97c71d8dac308576cb14c826da2f4",
+          "message": "Write design doc for yoke (#1459)\n\n* Add design doc\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* Manually apply a few changes\r\n\r\n* More feedback edited directly into the doc\r\n\r\n* Feedback\r\n\r\n* clarify lifetime erasure\r\n\r\n* quotes\r\n\r\n* mention targeting\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-01-07T17:11:19-08:00",
+          "tree_id": "11b3bc8a3678246dad4e0464e3d635e1d7226519",
+          "url": "https://github.com/unicode-org/icu4x/commit/66fe4b7cfdd97c71d8dac308576cb14c826da2f4"
+        },
+        "date": 1641604811384,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3046,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5188,
+            "range": "± 196",
             "unit": "ns/iter"
           }
         ]
