@@ -28,7 +28,9 @@ use alloc::sync::Arc;
 /// not the actual lifetime of the data, rather it is a convenient way to erase
 /// the lifetime and make it dynamic.
 ///
-/// `C` is the "cart", which `Y` may contain references to.
+/// `C` is the "cart", which `Y` may contain references to. After the yoke is constructed,
+/// the cart serves little purpose except to guarantee that `Y`'s references remain valid
+/// for as long as the yoke remains in memory.
 ///
 /// The primary constructor for [`Yoke`] is [`Yoke::attach_to_cart()`]. Several variants of that
 /// constructor are provided to serve numerous types of call sites and `Yoke` signatures.
