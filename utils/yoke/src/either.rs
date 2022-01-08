@@ -12,8 +12,14 @@ use stable_deref_trait::StableDeref;
 
 /// A cart that can be one type or the other. Enables ergonomic polymorphic carts.
 ///
+/// `EitherCart` enables yokes originating from different data sources and therefore
+/// having different cart types to be merged into the same yoke type, but still being
+/// able to recover the original cart type if necessary.
+///
 /// All relevant Cart traits are implemented for `EitherCart`, and carts can be
 /// safely wrapped in an `EitherCart`.
+///
+/// Also see [`Yoke::erase_box_cart()`].
 ///
 /// # Examples
 ///
