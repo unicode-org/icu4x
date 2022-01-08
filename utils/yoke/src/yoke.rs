@@ -289,6 +289,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// `Yoke` only really cares about destructors for its carts so it's fine to erase other
     /// information about the cart, as long as the backing data will still be destroyed at the
     /// same time.
+    #[inline]
     pub unsafe fn replace_cart<C2>(self, f: impl FnOnce(C) -> C2) -> Yoke<Y, C2> {
         Yoke {
             yokeable: self.yokeable,
@@ -387,6 +388,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 
     /// Helper function allowing one to wrap the cart type in an `Option<T>`.
+    #[inline]
     pub fn wrap_cart_in_option(self) -> Yoke<Y, Option<C>> {
         unsafe {
             // safe because the cart is preserved, just wrapped
@@ -529,9 +531,9 @@ unsafe impl<'b, Y: for<'a> Yokeable<'a>, C: IsCovariant<'b>> IsCovariant<'b> for
 #[test]
 fn test_clone() {
     let local_data = "foo".to_string();
-    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(Rc::new(
-        local_data,
-    ));
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(
+        Rc::new(local_data),
+    );
 
     // Test basic clone
     let y2 = y1.clone();
@@ -864,21 +866,23 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
 
 #[cfg(feature = "alloc")]
 impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
-    /// Helper function allowing one to wrap the cart type in a `Box<T>`,
-    /// can be paired with [`Yoke::erase_box_cart()`]
+    /// Helper function allowing one to wrap the cart type in a `Box<T>`.
+    /// Can be paired with [`Yoke::erase_box_cart()`]
     ///
     /// Available with the `"alloc"` feature enabled.
+    #[inline]
     pub fn wrap_cart_in_box(self) -> Yoke<Y, Box<C>> {
         unsafe {
             // safe because the cart is preserved, just wrapped
             self.replace_cart(Box::new)
         }
     }
-    /// Helper function allowing one to wrap the cart type in an `Rc<T>`,
-    /// can be paired with [`Yoke::erase_rc_cart()`], or generally used
+    /// Helper function allowing one to wrap the cart type in an `Rc<T>`.
+    /// Can be paired with [`Yoke::erase_rc_cart()`], or generally used
     /// to make the [`Yoke`] cloneable.
     ///
     /// Available with the `"alloc"` feature enabled.
+    #[inline]
     pub fn wrap_cart_in_rc(self) -> Yoke<Y, Rc<C>> {
         unsafe {
             // safe because the cart is preserved, just wrapped
