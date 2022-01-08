@@ -23,6 +23,9 @@
     "daylight": "ADT",
     "standard": "AST"
   },
+  "GMT": {
+    "standard": "GMT"
+  },
   "Hawaii_Aleutian": {
     "daylight": "HADT",
     "standard": "HAST"

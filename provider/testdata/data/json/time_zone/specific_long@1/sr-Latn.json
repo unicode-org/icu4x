@@ -3,6 +3,18 @@
     "daylight": "Akre letnje računanje vremena",
     "standard": "Akre standardno vreme"
   },
+  "Afghanistan": {
+    "standard": "Avganistan vreme"
+  },
+  "Africa_Central": {
+    "standard": "Centralno-afričko vreme"
+  },
+  "Africa_Eastern": {
+    "standard": "Istočno-afričko vreme"
+  },
+  "Africa_Southern": {
+    "standard": "Južno-afričko vreme"
+  },
   "Africa_Western": {
     "daylight": "Zapadno-afričko letnje vreme",
     "standard": "Zapadno-afričko standardno vreme"
@@ -99,13 +111,25 @@
     "daylight": "Bangladeš, letnje vreme",
     "standard": "Bangladeš, standardno vreme"
   },
+  "Bhutan": {
+    "standard": "Butan vreme"
+  },
+  "Bolivia": {
+    "standard": "Bolivija vreme"
+  },
   "Brasilia": {
     "daylight": "Brazilija, letnje vreme",
     "standard": "Brazilija, standardno vreme"
   },
+  "Brunei": {
+    "standard": "Brunej Darusalum vreme"
+  },
   "Cape_Verde": {
     "daylight": "Zelenortska Ostrva, letnje vreme",
     "standard": "Zelenortska Ostrva, standardno vreme"
+  },
+  "Chamorro": {
+    "standard": "Čamoro vreme"
   },
   "Chatham": {
     "daylight": "Čatam, letnje vreme",
@@ -123,6 +147,12 @@
     "daylight": "Čojbalsan, letnje vreme",
     "standard": "Čojbalsan, standardno vreme"
   },
+  "Christmas": {
+    "standard": "Božićno ostrvo vreme"
+  },
+  "Cocos": {
+    "standard": "Kokos (Keling) Ostrva vreme"
+  },
   "Colombia": {
     "daylight": "Kolumbija, letnje vreme",
     "standard": "Kolumbija, standardno vreme"
@@ -135,9 +165,21 @@
     "daylight": "Kuba, letnje vreme",
     "standard": "Kuba, standardno vreme"
   },
+  "Davis": {
+    "standard": "Dejvis vreme"
+  },
+  "DumontDUrville": {
+    "standard": "Dimon d’Urvil vreme"
+  },
+  "East_Timor": {
+    "standard": "Istočni timor vreme"
+  },
   "Easter": {
     "daylight": "Uskršnja ostrva, letnje vreme",
     "standard": "Uskršnja ostrva, standardno vreme"
+  },
+  "Ecuador": {
+    "standard": "Ekvador vreme"
   },
   "Europe_Central": {
     "daylight": "Srednjeevropsko letnje vreme",
@@ -146,6 +188,9 @@
   "Europe_Eastern": {
     "daylight": "Istočnoevropsko letnje vreme",
     "standard": "Istočnoevropsko standardno vreme"
+  },
+  "Europe_Further_Eastern": {
+    "standard": "Vreme daljeg istoka Evrope"
   },
   "Europe_Western": {
     "daylight": "Zapadnoevropsko letnje vreme",
@@ -159,9 +204,27 @@
     "daylight": "Fidži, letnje vreme",
     "standard": "Fidži, standardno vreme"
   },
+  "French_Guiana": {
+    "standard": "Francuska Gvajana vreme"
+  },
+  "French_Southern": {
+    "standard": "Francusko južno i antarktičko vreme"
+  },
+  "GMT": {
+    "standard": "Srednje vreme po Griniču"
+  },
+  "Galapagos": {
+    "standard": "Galapagos vreme"
+  },
+  "Gambier": {
+    "standard": "Gambije vreme"
+  },
   "Georgia": {
     "daylight": "Gruzija, letnje vreme",
     "standard": "Gruzija, standardno vreme"
+  },
+  "Gilbert_Islands": {
+    "standard": "Gilbert ostrva vreme"
   },
   "Greenland_Eastern": {
     "daylight": "Istočni Grenland, letnje vreme",
@@ -170,6 +233,15 @@
   "Greenland_Western": {
     "daylight": "Zapadni Grenland, letnje vreme",
     "standard": "Zapadni Grenland, standardno vreme"
+  },
+  "Guam": {
+    "standard": "Guam standardno vreme"
+  },
+  "Gulf": {
+    "standard": "Zalivsko vreme"
+  },
+  "Guyana": {
+    "standard": "Gvajana vreme"
   },
   "Hawaii_Aleutian": {
     "daylight": "Havajsko-aleutsko letnje vreme",
@@ -182,6 +254,24 @@
   "Hovd": {
     "daylight": "Hovd, letnje vreme",
     "standard": "Hovd, standardno vreme"
+  },
+  "India": {
+    "standard": "Indijsko standardno vreme"
+  },
+  "Indian_Ocean": {
+    "standard": "Indijsko okeansko vreme"
+  },
+  "Indochina": {
+    "standard": "Indokina vreme"
+  },
+  "Indonesia_Central": {
+    "standard": "Centralno-indonezijsko vreme"
+  },
+  "Indonesia_Eastern": {
+    "standard": "Istočno-indonezijsko vreme"
+  },
+  "Indonesia_Western": {
+    "standard": "Zapadno-indonezijsko vreme"
   },
   "Iran": {
     "daylight": "Iran, letnje vreme",
@@ -203,13 +293,31 @@
     "daylight": "Petropavlovsko-kamčatsko letnje računanje vremena",
     "standard": "Petropavlovsko-kamčatsko standardno vreme"
   },
+  "Kazakhstan_Eastern": {
+    "standard": "Istočno-kazahstansko vreme"
+  },
+  "Kazakhstan_Western": {
+    "standard": "Zapadno-kazahstansko vreme"
+  },
   "Korea": {
     "daylight": "Korejsko letnje vreme",
     "standard": "Korejsko standardno vreme"
   },
+  "Kosrae": {
+    "standard": "Košre vreme"
+  },
   "Krasnoyarsk": {
     "daylight": "Krasnojarsk, letnje vreme",
     "standard": "Krasnojarsk, standardno vreme"
+  },
+  "Kyrgystan": {
+    "standard": "Kirgistan vreme"
+  },
+  "Lanka": {
+    "standard": "Šri Lanka vreme"
+  },
+  "Line_Islands": {
+    "standard": "Ostrva Lajn vreme"
   },
   "Lord_Howe": {
     "daylight": "Lord Hov, letnje vreme",
@@ -219,13 +327,31 @@
     "daylight": "Makao letnje računanje vremena",
     "standard": "Makao standardno vreme"
   },
+  "Macquarie": {
+    "standard": "Ostrvo Makveri vreme"
+  },
   "Magadan": {
     "daylight": "Magadan, letnje vreme",
     "standard": "Magadan, standardno vreme"
   },
+  "Malaysia": {
+    "standard": "Malezija vreme"
+  },
+  "Maldives": {
+    "standard": "Maldivi vreme"
+  },
+  "Marquesas": {
+    "standard": "Markiz vreme"
+  },
+  "Marshall_Islands": {
+    "standard": "Maršalska Ostrva vreme"
+  },
   "Mauritius": {
     "daylight": "Mauricijus, letnje vreme",
     "standard": "Mauricijus, standardno vreme"
+  },
+  "Mawson": {
+    "standard": "Moson vreme"
   },
   "Mexico_Northwest": {
     "daylight": "Severozapadni Meksiko, letnje vreme",
@@ -243,6 +369,15 @@
     "daylight": "Moskva, letnje vreme",
     "standard": "Moskva, standardno vreme"
   },
+  "Myanmar": {
+    "standard": "Mijanmar vreme"
+  },
+  "Nauru": {
+    "standard": "Nauru vreme"
+  },
+  "Nepal": {
+    "standard": "Nepal vreme"
+  },
   "New_Caledonia": {
     "daylight": "Nova Kaledonija, letnje vreme",
     "standard": "Nova Kaledonija, standardno vreme"
@@ -255,6 +390,9 @@
     "daylight": "Njufaundlend, letnje vreme",
     "standard": "Njufaundlend, standardno vreme"
   },
+  "Niue": {
+    "standard": "Niue vreme"
+  },
   "Norfolk": {
     "daylight": "Norfolk Ostrvo, letnje vreme",
     "standard": "Norfolk Ostrvo, standardno vreme"
@@ -262,6 +400,9 @@
   "Noronha": {
     "daylight": "Fernando de Noronja, letnje vreme",
     "standard": "Fernando de Noronja, standardno vreme"
+  },
+  "North_Mariana": {
+    "standard": "Severna Marijanska Ostrva vreme"
   },
   "Novosibirsk": {
     "daylight": "Novosibirsk, letnje vreme",
@@ -275,6 +416,12 @@
     "daylight": "Pakistan, letnje vreme",
     "standard": "Pakistan, standardno vreme"
   },
+  "Palau": {
+    "standard": "Palau vreme"
+  },
+  "Papua_New_Guinea": {
+    "standard": "Papua Nova Gvineja vreme"
+  },
   "Paraguay": {
     "daylight": "Paragvaj, letnje vreme",
     "standard": "Paragvaj, standardno vreme"
@@ -287,13 +434,31 @@
     "daylight": "Filipini, letnje vreme",
     "standard": "Filipini, standardno vreme"
   },
+  "Phoenix_Islands": {
+    "standard": "Feniks ostrva vreme"
+  },
   "Pierre_Miquelon": {
     "daylight": "Sen Pjer i Mikelon, letnje vreme",
     "standard": "Sen Pjer i Mikelon, standardno vreme"
   },
+  "Pitcairn": {
+    "standard": "Pitkern vreme"
+  },
+  "Ponape": {
+    "standard": "Ponpej vreme"
+  },
+  "Pyongyang": {
+    "standard": "Pjongjanško vreme"
+  },
   "Qyzylorda": {
     "daylight": "Kizilorda letnje računanje vremena",
     "standard": "Kizilorda standardno vreme"
+  },
+  "Reunion": {
+    "standard": "Reinion vreme"
+  },
+  "Rothera": {
+    "standard": "Rotera vreme"
   },
   "Sakhalin": {
     "daylight": "Sahalin, letnje vreme",
@@ -307,17 +472,50 @@
     "daylight": "Samoa, letnje vreme",
     "standard": "Samoa, standardno vreme"
   },
+  "Seychelles": {
+    "standard": "Sejšeli vreme"
+  },
+  "Singapore": {
+    "standard": "Singapur, standardno vreme"
+  },
+  "Solomon": {
+    "standard": "Solomonska Ostrva vreme"
+  },
+  "South_Georgia": {
+    "standard": "Južna Džordžija vreme"
+  },
+  "Suriname": {
+    "standard": "Surinam vreme"
+  },
+  "Syowa": {
+    "standard": "Šova vreme"
+  },
+  "Tahiti": {
+    "standard": "Tahiti vreme"
+  },
   "Taipei": {
     "daylight": "Tajpej, letnje vreme",
     "standard": "Tajpej, standardno vreme"
+  },
+  "Tajikistan": {
+    "standard": "Tadžikistan vreme"
+  },
+  "Tokelau": {
+    "standard": "Tokelau vreme"
   },
   "Tonga": {
     "daylight": "Tonga, letnje vreme",
     "standard": "Tonga, standardno vreme"
   },
+  "Truk": {
+    "standard": "Čuuk vreme"
+  },
   "Turkmenistan": {
     "daylight": "Turkmenistan, letnje vreme",
     "standard": "Turkmenistan, standardno vreme"
+  },
+  "Tuvalu": {
+    "standard": "Tuvalu vreme"
   },
   "Uruguay": {
     "daylight": "Urugvaj, letnje vreme",
@@ -331,6 +529,9 @@
     "daylight": "Vanuatu, letnje vreme",
     "standard": "Vanuatu, standardno vreme"
   },
+  "Venezuela": {
+    "standard": "Venecuela vreme"
+  },
   "Vladivostok": {
     "daylight": "Vladivostok, letnje vreme",
     "standard": "Vladivostok, standardno vreme"
@@ -339,6 +540,15 @@
     "daylight": "Volgograd, letnje vreme",
     "standard": "Volgograd, standardno vreme"
   },
+  "Vostok": {
+    "standard": "Vostok vreme"
+  },
+  "Wake": {
+    "standard": "Vejk ostrvo vreme"
+  },
+  "Wallis": {
+    "standard": "Valis i Futuna Ostrva vreme"
+  },
   "Yakutsk": {
     "daylight": "Jakutsk, letnje vreme",
     "standard": "Jakutsk, standardno vreme"
@@ -346,5 +556,8 @@
   "Yekaterinburg": {
     "daylight": "Jekaterinburg, letnje vreme",
     "standard": "Jekaterinburg, standardno vreme"
+  },
+  "Yukon": {
+    "standard": "Jukon"
   }
 }

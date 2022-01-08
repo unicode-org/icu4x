@@ -195,13 +195,12 @@ impl From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'_> {
 
 impl From<ZoneFormat> for MetaZoneSpecificNamesV1<'_> {
     fn from(other: ZoneFormat) -> Self {
-        let len = other.0.len();
         Self(
             other
                 .0
                 .into_tuple_vec()
                 .into_iter()
-                .filter(|(key, _)| len > 1 && !key.eq("generic"))
+                .filter(|(key, _)| !key.eq("generic"))
                 .map(|(key, value)| {
                     (
                         Cow::Owned(
