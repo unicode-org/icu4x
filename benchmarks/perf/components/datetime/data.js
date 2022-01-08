@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641603476948,
+  "lastUpdate": 1641604831895,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17021,6 +17021,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 484666,
             "range": "± 34268",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "66fe4b7cfdd97c71d8dac308576cb14c826da2f4",
+          "message": "Write design doc for yoke (#1459)\n\n* Add design doc\r\n\r\n* fix\r\n\r\n* fix\r\n\r\n* Manually apply a few changes\r\n\r\n* More feedback edited directly into the doc\r\n\r\n* Feedback\r\n\r\n* clarify lifetime erasure\r\n\r\n* quotes\r\n\r\n* mention targeting\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-01-07T17:11:19-08:00",
+          "tree_id": "11b3bc8a3678246dad4e0464e3d635e1d7226519",
+          "url": "https://github.com/unicode-org/icu4x/commit/66fe4b7cfdd97c71d8dac308576cb14c826da2f4"
+        },
+        "date": 1641604822219,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 127171,
+            "range": "± 2995",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1418414,
+            "range": "± 56398",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 406609,
+            "range": "± 19134",
             "unit": "ns/iter"
           }
         ]
