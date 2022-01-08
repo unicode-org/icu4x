@@ -40,7 +40,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64(100.01).value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(100.01).value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value is " << out << std::endl;
     if (out != "১০০.০১") {

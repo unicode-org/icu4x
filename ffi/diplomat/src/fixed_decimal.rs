@@ -42,7 +42,7 @@ pub mod ffi {
         /// the original floating point in IEEE 754 without needing trailing zeros
         ///
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
-        pub fn create_from_f64(f: f64) -> Option<Box<ICU4XFixedDecimal>> {
+        pub fn create_from_f64_with_max_precision(f: f64) -> Option<Box<ICU4XFixedDecimal>> {
             Some(Box::new(ICU4XFixedDecimal(
                 FixedDecimal::new_from_f64(f, DoublePrecision::Maximum).ok()?,
             )))
