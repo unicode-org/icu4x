@@ -41,7 +41,7 @@ class ICU4XFixedDecimal {
    * 
    * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.from_f64) for more information.
    */
-  static std::optional<ICU4XFixedDecimal> create_from_f64(double f);
+  static std::optional<ICU4XFixedDecimal> create_from_f64_with_max_precision(double f);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for precision
@@ -101,8 +101,8 @@ class ICU4XFixedDecimal {
 inline ICU4XFixedDecimal ICU4XFixedDecimal::create(int32_t v) {
   return ICU4XFixedDecimal(capi::ICU4XFixedDecimal_create(v));
 }
-inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64(double f) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64(f);
+inline std::optional<ICU4XFixedDecimal> ICU4XFixedDecimal::create_from_f64_with_max_precision(double f) {
+  auto diplomat_optional_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_max_precision(f);
   std::optional<ICU4XFixedDecimal> diplomat_optional_out_value;
   if (diplomat_optional_raw_out_value != nullptr) {
     diplomat_optional_out_value = ICU4XFixedDecimal(diplomat_optional_raw_out_value);

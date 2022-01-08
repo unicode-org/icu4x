@@ -16,7 +16,7 @@ typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
 
 ICU4XFixedDecimal* ICU4XFixedDecimal_create(int32_t v);
 
-ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64(double f);
+ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_max_precision(double f);
 
 ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_f64_with_precision(double f, int16_t precision, ICU4XFixedDecimalRoundingMode rounding_mode);
 

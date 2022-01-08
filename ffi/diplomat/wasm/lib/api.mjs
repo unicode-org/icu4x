@@ -349,9 +349,9 @@ export class ICU4XFixedDecimal {
     return diplomat_out;
   }
 
-  static create_from_f64(f) {
+  static create_from_f64_with_max_precision(f) {
     const diplomat_out = (() => {
-      const option_value = wasm.ICU4XFixedDecimal_create_from_f64(f)
+      const option_value = wasm.ICU4XFixedDecimal_create_from_f64_with_max_precision(f)
       if (option_value !== 0) {
         const inhabited_value = (() => {
           const out = (() => {
