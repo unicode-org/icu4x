@@ -442,7 +442,6 @@ impl FixedDecimal {
     pub fn padded_right(&mut self, negative_magnitude: u16) {
         let mut magnitude = -(negative_magnitude as i16);
         let bottom_magnitude = self.magnitude - self.digits.len() as i16 + 1;
-        println!("{:?}", bottom_magnitude);
         // Do not truncate nonzero digits
         if magnitude >= bottom_magnitude {
             magnitude = bottom_magnitude;
