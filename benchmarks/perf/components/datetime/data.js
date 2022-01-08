@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641610515213,
+  "lastUpdate": 1641675915439,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17105,6 +17105,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 511869,
             "range": "± 20656",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ef4125d78f71bbe26d3c9f891e93e92d1b227f00",
+          "message": "Add EitherCart and rename Yoke ZCF constructors (#1484)\n\n* Centralize ZCF constructors into attach_to_zero_copy_cart",
+          "timestamp": "2022-01-08T14:56:43-06:00",
+          "tree_id": "6b18a215fceceb911830b792602347d1f15f02a6",
+          "url": "https://github.com/unicode-org/icu4x/commit/ef4125d78f71bbe26d3c9f891e93e92d1b227f00"
+        },
+        "date": 1641675905936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 127039,
+            "range": "± 15621",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1362184,
+            "range": "± 159111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 457184,
+            "range": "± 38771",
             "unit": "ns/iter"
           }
         ]
