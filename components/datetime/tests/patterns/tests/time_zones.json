@@ -154,6 +154,216 @@
     ]
   },
   {
+    "locale": "en",
+    "config": {
+      "time_zone_id": "Europe/London",
+      "metazone_id": "GMT",
+      "time_variant": "daylight"
+    },
+    "datetime": "2021-01-11T12:00:00.000-07:00",
+    "expectations": [
+      {
+        "patterns": [],
+        "configs": [
+          "SpecificNonLocationShort"
+        ],
+        "expected": "GMT-07:00"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "SpecificNonLocationLong"
+        ],
+        "expected": "British Summer Time"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "LocalizedGMT"
+        ],
+        "expected": "GMT-07:00"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Optional"
+            ]
+          }
+        ],
+        "expected": "-07:00"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "GenericNonLocationShort"
+        ],
+        "expected": "GMT"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "GenericNonLocationLong"
+        ],
+        "expected": "Greenwich Mean Time"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "GenericLocation"
+        ],
+        "expected": "London Time"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Optional",
+              "Never"
+            ]
+          }
+        ],
+        "expected": "-07"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
+        "expected": "-0700"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          {
+            "Iso8601": [
+              "Extended",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
+        "expected": "-07:00"
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "config": {
+      "time_zone_id": "Europe/Dublin",
+      "metazone_id": "GMT",
+      "time_variant": "daylight"
+    },
+    "datetime": "2021-01-11T12:00:00.000-07:00",
+    "expectations": [
+      {
+        "patterns": [],
+        "configs": [
+          "SpecificNonLocationShort"
+        ],
+        "expected": "GMT-07:00"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "SpecificNonLocationLong"
+        ],
+        "expected": "Irish Standard Time"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "LocalizedGMT"
+        ],
+        "expected": "GMT-07:00"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          {
+            "Iso8601": [
+              "UtcExtended",
+              "Required",
+              "Optional"
+            ]
+          }
+        ],
+        "expected": "-07:00"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "GenericNonLocationShort"
+        ],
+        "expected": "GMT"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "GenericNonLocationLong"
+        ],
+        "expected": "Greenwich Mean Time"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          "GenericLocation"
+        ],
+        "expected": "Dublin Time"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Optional",
+              "Never"
+            ]
+          }
+        ],
+        "expected": "-07"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          {
+            "Iso8601": [
+              "Basic",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
+        "expected": "-0700"
+      },
+      {
+        "patterns": [],
+        "configs": [
+          {
+            "Iso8601": [
+              "Extended",
+              "Required",
+              "Never"
+            ]
+          }
+        ],
+        "expected": "-07:00"
+      }
+    ]
+  },
+  {
     "locale": "ja",
     "config": {
       "time_zone_id": "Asia/Tokyo",

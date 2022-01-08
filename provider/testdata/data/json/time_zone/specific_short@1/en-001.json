@@ -1,5 +1,12 @@
 {
-  "GMT": {
-    "standard": "GMT"
+  "defaults": {
+    "GMT": {
+      "standard": "GMT"
+    }
+  },
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "UTC"
+    }
   }
 }

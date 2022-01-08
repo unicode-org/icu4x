@@ -1,536 +1,549 @@
 {
-  "Afghanistan": {
-    "standard": "توقيت أفغانستان"
-  },
-  "Africa_Central": {
-    "standard": "توقيت وسط أفريقيا"
-  },
-  "Africa_Eastern": {
-    "standard": "توقيت شرق أفريقيا"
-  },
-  "Africa_Southern": {
-    "standard": "توقيت جنوب أفريقيا"
-  },
-  "Africa_Western": {
-    "daylight": "توقيت غرب أفريقيا الصيفي",
-    "standard": "توقيت غرب أفريقيا الرسمي"
-  },
-  "Alaska": {
-    "daylight": "توقيت ألاسكا الصيفي",
-    "standard": "التوقيت الرسمي لألاسكا"
-  },
-  "Amazon": {
-    "daylight": "توقيت الأمازون الصيفي",
-    "standard": "توقيت الأمازون الرسمي"
-  },
-  "America_Central": {
-    "daylight": "التوقيت الصيفي المركزي لأمريكا الشمالية",
-    "standard": "التوقيت الرسمي المركزي لأمريكا الشمالية"
-  },
-  "America_Eastern": {
-    "daylight": "التوقيت الصيفي الشرقي لأمريكا الشمالية",
-    "standard": "التوقيت الرسمي الشرقي لأمريكا الشمالية"
-  },
-  "America_Mountain": {
-    "daylight": "التوقيت الجبلي الصيفي لأمريكا الشمالية",
-    "standard": "التوقيت الجبلي الرسمي لأمريكا الشمالية"
-  },
-  "America_Pacific": {
-    "daylight": "توقيت المحيط الهادي الصيفي",
-    "standard": "توقيت المحيط الهادي الرسمي"
-  },
-  "Anadyr": {
-    "daylight": "التوقيت الصيفي لأنادير",
-    "standard": "توقيت أنادير الرسمي"
-  },
-  "Apia": {
-    "daylight": "التوقيت الصيفي لأبيا",
-    "standard": "التوقيت الرسمي لآبيا"
-  },
-  "Arabian": {
-    "daylight": "التوقيت العربي الصيفي",
-    "standard": "التوقيت العربي الرسمي"
-  },
-  "Argentina": {
-    "daylight": "توقيت الأرجنتين الصيفي",
-    "standard": "توقيت الأرجنتين الرسمي"
-  },
-  "Argentina_Western": {
-    "daylight": "توقيت غرب الأرجنتين الصيفي",
-    "standard": "توقيت غرب الأرجنتين الرسمي"
-  },
-  "Armenia": {
-    "daylight": "توقيت أرمينيا الصيفي",
-    "standard": "توقيت أرمينيا الرسمي"
-  },
-  "Atlantic": {
-    "daylight": "التوقيت الصيفي الأطلسي",
-    "standard": "التوقيت الرسمي الأطلسي"
-  },
-  "Australia_Central": {
-    "daylight": "توقيت وسط أستراليا الصيفي",
-    "standard": "توقيت وسط أستراليا الرسمي"
-  },
-  "Australia_CentralWestern": {
-    "daylight": "توقيت غرب وسط أستراليا الصيفي",
-    "standard": "توقيت غرب وسط أستراليا الرسمي"
-  },
-  "Australia_Eastern": {
-    "daylight": "توقيت شرق أستراليا الصيفي",
-    "standard": "توقيت شرق أستراليا الرسمي"
-  },
-  "Australia_Western": {
-    "daylight": "توقيت غرب أستراليا الصيفي",
-    "standard": "توقيت غرب أستراليا الرسمي"
-  },
-  "Azerbaijan": {
-    "daylight": "توقيت أذربيجان الصيفي",
-    "standard": "توقيت أذربيجان الرسمي"
-  },
-  "Azores": {
-    "daylight": "توقيت أزورس الصيفي",
-    "standard": "توقيت أزورس الرسمي"
-  },
-  "Bangladesh": {
-    "daylight": "توقيت بنغلاديش الصيفي",
-    "standard": "توقيت بنغلاديش الرسمي"
-  },
-  "Bhutan": {
-    "standard": "توقيت بوتان"
-  },
-  "Bolivia": {
-    "standard": "توقيت بوليفيا"
-  },
-  "Brasilia": {
-    "daylight": "توقيت برازيليا الصيفي",
-    "standard": "توقيت برازيليا الرسمي"
-  },
-  "Brunei": {
-    "standard": "توقيت بروناي"
-  },
-  "Cape_Verde": {
-    "daylight": "توقيت الرأس الأخضر الصيفي",
-    "standard": "توقيت الرأس الأخضر الرسمي"
-  },
-  "Chamorro": {
-    "standard": "توقيت تشامورو"
-  },
-  "Chatham": {
-    "daylight": "توقيت تشاتام الصيفي",
-    "standard": "توقيت تشاتام الرسمي"
-  },
-  "Chile": {
-    "daylight": "توقيت تشيلي الصيفي",
-    "standard": "توقيت تشيلي الرسمي"
-  },
-  "China": {
-    "daylight": "توقيت الصين الصيفي",
-    "standard": "توقيت الصين الرسمي"
-  },
-  "Choibalsan": {
-    "daylight": "التوقيت الصيفي لشويبالسان",
-    "standard": "توقيت شويبالسان الرسمي"
-  },
-  "Christmas": {
-    "standard": "توقيت جزر الكريسماس"
-  },
-  "Cocos": {
-    "standard": "توقيت جزر كوكوس"
-  },
-  "Colombia": {
-    "daylight": "توقيت كولومبيا الصيفي",
-    "standard": "توقيت كولومبيا الرسمي"
-  },
-  "Cook": {
-    "daylight": "توقيت جزر كوك الصيفي",
-    "standard": "توقيت جزر كوك الرسمي"
-  },
-  "Cuba": {
-    "daylight": "توقيت كوبا الصيفي",
-    "standard": "توقيت كوبا الرسمي"
-  },
-  "Davis": {
-    "standard": "توقيت دافيز"
-  },
-  "DumontDUrville": {
-    "standard": "توقيت دي مونت دو روفيل"
-  },
-  "East_Timor": {
-    "standard": "توقيت تيمور الشرقية"
-  },
-  "Easter": {
-    "daylight": "توقيت جزيرة استر الصيفي",
-    "standard": "توقيت جزيرة استر الرسمي"
-  },
-  "Ecuador": {
-    "standard": "توقيت الإكوادور"
-  },
-  "Europe_Central": {
-    "daylight": "توقيت وسط أوروبا الصيفي",
-    "standard": "توقيت وسط أوروبا الرسمي"
-  },
-  "Europe_Eastern": {
-    "daylight": "توقيت شرق أوروبا الصيفي",
-    "standard": "توقيت شرق أوروبا الرسمي"
-  },
-  "Europe_Further_Eastern": {
-    "standard": "التوقيت الأوروبي (أكثر شرقًا)"
-  },
-  "Europe_Western": {
-    "daylight": "توقيت غرب أوروبا الصيفي",
-    "standard": "توقيت غرب أوروبا الرسمي"
-  },
-  "Falkland": {
-    "daylight": "توقيت جزر فوكلاند الصيفي",
-    "standard": "توقيت جزر فوكلاند الرسمي"
-  },
-  "Fiji": {
-    "daylight": "توقيت فيجي الصيفي",
-    "standard": "توقيت فيجي الرسمي"
-  },
-  "French_Guiana": {
-    "standard": "توقيت غويانا الفرنسية"
-  },
-  "French_Southern": {
-    "standard": "توقيت المقاطعات الفرنسية الجنوبية والأنتارتيكية"
-  },
-  "GMT": {
-    "standard": "توقيت غرينتش"
-  },
-  "Galapagos": {
-    "standard": "توقيت غلاباغوس"
-  },
-  "Gambier": {
-    "standard": "توقيت جامبير"
-  },
-  "Georgia": {
-    "daylight": "توقيت جورجيا الصيفي",
-    "standard": "توقيت جورجيا الرسمي"
-  },
-  "Gilbert_Islands": {
-    "standard": "توقيت جزر جيلبرت"
-  },
-  "Greenland_Eastern": {
-    "daylight": "توقيت شرق غرينلاند الصيفي",
-    "standard": "توقيت شرق غرينلاند الرسمي"
-  },
-  "Greenland_Western": {
-    "daylight": "توقيت غرب غرينلاند الصيفي",
-    "standard": "توقيت غرب غرينلاند الرسمي"
-  },
-  "Guam": {
-    "standard": "توقيت غوام"
-  },
-  "Gulf": {
-    "standard": "توقيت الخليج"
-  },
-  "Guyana": {
-    "standard": "توقيت غيانا"
-  },
-  "Hawaii_Aleutian": {
-    "daylight": "توقيت هاواي ألوتيان الصيفي",
-    "standard": "توقيت هاواي ألوتيان الرسمي"
-  },
-  "Hong_Kong": {
-    "daylight": "توقيت هونغ كونغ الصيفي",
-    "standard": "توقيت هونغ كونغ الرسمي"
-  },
-  "Hovd": {
-    "daylight": "توقيت هوفد الصيفي",
-    "standard": "توقيت هوفد الرسمي"
-  },
-  "India": {
-    "standard": "توقيت الهند"
-  },
-  "Indian_Ocean": {
-    "standard": "توقيت المحيط الهندي"
-  },
-  "Indochina": {
-    "standard": "توقيت الهند الصينية"
-  },
-  "Indonesia_Central": {
-    "standard": "توقيت وسط إندونيسيا"
-  },
-  "Indonesia_Eastern": {
-    "standard": "توقيت شرق إندونيسيا"
-  },
-  "Indonesia_Western": {
-    "standard": "توقيت غرب إندونيسيا"
-  },
-  "Iran": {
-    "daylight": "توقيت إيران الصيفي",
-    "standard": "توقيت إيران الرسمي"
-  },
-  "Irkutsk": {
-    "daylight": "توقيت إركوتسك الصيفي",
-    "standard": "توقيت إركوتسك الرسمي"
-  },
-  "Israel": {
-    "daylight": "توقيت إسرائيل الصيفي",
-    "standard": "توقيت إسرائيل الرسمي"
-  },
-  "Japan": {
-    "daylight": "توقيت اليابان الصيفي",
-    "standard": "توقيت اليابان الرسمي"
-  },
-  "Kamchatka": {
-    "daylight": "توقيت بيتروبافلوفسك-كامتشاتسكي الصيفي",
-    "standard": "توقيت بيتروبافلوفسك-كامتشاتسكي"
-  },
-  "Kazakhstan_Eastern": {
-    "standard": "توقيت شرق كازاخستان"
-  },
-  "Kazakhstan_Western": {
-    "standard": "توقيت غرب كازاخستان"
-  },
-  "Korea": {
-    "daylight": "توقيت كوريا الصيفي",
-    "standard": "توقيت كوريا الرسمي"
-  },
-  "Kosrae": {
-    "standard": "توقيت كوسرا"
-  },
-  "Krasnoyarsk": {
-    "daylight": "التوقيت الصيفي لكراسنويارسك",
-    "standard": "توقيت كراسنويارسك الرسمي"
-  },
-  "Kyrgystan": {
-    "standard": "توقيت قيرغيزستان"
-  },
-  "Line_Islands": {
-    "standard": "توقيت جزر لاين"
-  },
-  "Lord_Howe": {
-    "daylight": "التوقيت الصيفي للورد هاو",
-    "standard": "توقيت لورد هاو الرسمي"
-  },
-  "Macquarie": {
-    "standard": "توقيت ماكواري"
-  },
-  "Magadan": {
-    "daylight": "توقيت ماغادان الصيفي",
-    "standard": "توقيت ماغادان الرسمي"
-  },
-  "Malaysia": {
-    "standard": "توقيت ماليزيا"
-  },
-  "Maldives": {
-    "standard": "توقيت جزر المالديف"
-  },
-  "Marquesas": {
-    "standard": "توقيت ماركيساس"
-  },
-  "Marshall_Islands": {
-    "standard": "توقيت جزر مارشال"
-  },
-  "Mauritius": {
-    "daylight": "توقيت موريشيوس الصيفي",
-    "standard": "توقيت موريشيوس الرسمي"
-  },
-  "Mawson": {
-    "standard": "توقيت ماوسون"
-  },
-  "Mexico_Northwest": {
-    "daylight": "التوقيت الصيفي لشمال غرب المكسيك",
-    "standard": "التوقيت الرسمي لشمال غرب المكسيك"
-  },
-  "Mexico_Pacific": {
-    "daylight": "توقيت المحيط الهادي الصيفي للمكسيك",
-    "standard": "توقيت المحيط الهادي الرسمي للمكسيك"
-  },
-  "Mongolia": {
-    "daylight": "توقيت أولان باتور الصيفي",
-    "standard": "توقيت أولان باتور الرسمي"
-  },
-  "Moscow": {
-    "daylight": "توقيت موسكو الصيفي",
-    "standard": "توقيت موسكو الرسمي"
-  },
-  "Myanmar": {
-    "standard": "توقيت ميانمار"
-  },
-  "Nauru": {
-    "standard": "توقيت ناورو"
-  },
-  "Nepal": {
-    "standard": "توقيت نيبال"
-  },
-  "New_Caledonia": {
-    "daylight": "توقيت كاليدونيا الجديدة الصيفي",
-    "standard": "توقيت كاليدونيا الجديدة الرسمي"
-  },
-  "New_Zealand": {
-    "daylight": "توقيت نيوزيلندا الصيفي",
-    "standard": "توقيت نيوزيلندا الرسمي"
-  },
-  "Newfoundland": {
-    "daylight": "توقيت نيوفاوندلاند الصيفي",
-    "standard": "توقيت نيوفاوندلاند الرسمي"
-  },
-  "Niue": {
-    "standard": "توقيت نيوي"
-  },
-  "Norfolk": {
-    "daylight": "توقيت جزيرة نورفولك الصيفي",
-    "standard": "توقيت جزيرة نورفولك الرسمي"
-  },
-  "Noronha": {
-    "daylight": "توقيت فرناندو دي نورونها الصيفي",
-    "standard": "توقيت فرناندو دي نورونها الرسمي"
-  },
-  "North_Mariana": {
-    "standard": "توقيت جزر ماريانا الشمالية"
-  },
-  "Novosibirsk": {
-    "daylight": "توقيت نوفوسيبيرسك الصيفي",
-    "standard": "توقيت نوفوسيبيرسك الرسمي"
-  },
-  "Omsk": {
-    "daylight": "توقيت أومسك الصيفي",
-    "standard": "توقيت أومسك الرسمي"
-  },
-  "Pakistan": {
-    "daylight": "توقيت باكستان الصيفي",
-    "standard": "توقيت باكستان الرسمي"
-  },
-  "Palau": {
-    "standard": "توقيت بالاو"
-  },
-  "Papua_New_Guinea": {
-    "standard": "توقيت بابوا غينيا الجديدة"
-  },
-  "Paraguay": {
-    "daylight": "توقيت باراغواي الصيفي",
-    "standard": "توقيت باراغواي الرسمي"
-  },
-  "Peru": {
-    "daylight": "توقيت بيرو الصيفي",
-    "standard": "توقيت بيرو الرسمي"
-  },
-  "Philippines": {
-    "daylight": "توقيت الفيلبين الصيفي",
-    "standard": "توقيت الفيلبين الرسمي"
-  },
-  "Phoenix_Islands": {
-    "standard": "توقيت جزر فينكس"
-  },
-  "Pierre_Miquelon": {
-    "daylight": "توقيت سانت بيير وميكولون الصيفي",
-    "standard": "توقيت سانت بيير وميكولون الرسمي"
-  },
-  "Pitcairn": {
-    "standard": "توقيت بيتكيرن"
-  },
-  "Ponape": {
-    "standard": "توقيت بونابي"
-  },
-  "Pyongyang": {
-    "standard": "توقيت بيونغ يانغ"
-  },
-  "Reunion": {
-    "standard": "توقيت روينيون"
-  },
-  "Rothera": {
-    "standard": "توقيت روثيرا"
-  },
-  "Sakhalin": {
-    "daylight": "توقيت ساخالين الصيفي",
-    "standard": "توقيت ساخالين الرسمي"
-  },
-  "Samara": {
-    "daylight": "توقيت سمارا الصيفي",
-    "standard": "توقيت سمارا"
-  },
-  "Samoa": {
-    "daylight": "توقيت ساموا الصيفي",
-    "standard": "توقيت ساموا الرسمي"
-  },
-  "Seychelles": {
-    "standard": "توقيت سيشل"
-  },
-  "Singapore": {
-    "standard": "توقيت سنغافورة"
-  },
-  "Solomon": {
-    "standard": "توقيت جزر سليمان"
-  },
-  "South_Georgia": {
-    "standard": "توقيت جنوب جورجيا"
-  },
-  "Suriname": {
-    "standard": "توقيت سورينام"
-  },
-  "Syowa": {
-    "standard": "توقيت سايووا"
-  },
-  "Tahiti": {
-    "standard": "توقيت تاهيتي"
-  },
-  "Taipei": {
-    "daylight": "توقيت تايبيه الصيفي",
-    "standard": "توقيت تايبيه الرسمي"
-  },
-  "Tajikistan": {
-    "standard": "توقيت طاجكستان"
-  },
-  "Tokelau": {
-    "standard": "توقيت توكيلاو"
-  },
-  "Tonga": {
-    "daylight": "توقيت تونغا الصيفي",
-    "standard": "توقيت تونغا الرسمي"
-  },
-  "Truk": {
-    "standard": "توقيت شوك"
-  },
-  "Turkmenistan": {
-    "daylight": "توقيت تركمانستان الصيفي",
-    "standard": "توقيت تركمانستان الرسمي"
-  },
-  "Tuvalu": {
-    "standard": "توقيت توفالو"
-  },
-  "Uruguay": {
-    "daylight": "توقيت أوروغواي الصيفي",
-    "standard": "توقيت أوروغواي الرسمي"
-  },
-  "Uzbekistan": {
-    "daylight": "توقيت أوزبكستان الصيفي",
-    "standard": "توقيت أوزبكستان الرسمي"
-  },
-  "Vanuatu": {
-    "daylight": "توقيت فانواتو الصيفي",
-    "standard": "توقيت فانواتو الرسمي"
-  },
-  "Venezuela": {
-    "standard": "توقيت فنزويلا"
-  },
-  "Vladivostok": {
-    "daylight": "توقيت فلاديفوستوك الصيفي",
-    "standard": "توقيت فلاديفوستوك الرسمي"
-  },
-  "Volgograd": {
-    "daylight": "توقيت فولغوغراد الصيفي",
-    "standard": "توقيت فولغوغراد الرسمي"
-  },
-  "Vostok": {
-    "standard": "توقيت فوستوك"
-  },
-  "Wake": {
-    "standard": "توقيت جزيرة ويك"
-  },
-  "Wallis": {
-    "standard": "توقيت واليس و فوتونا"
-  },
-  "Yakutsk": {
-    "daylight": "توقيت ياكوتسك الصيفي",
-    "standard": "توقيت ياكوتسك الرسمي"
-  },
-  "Yekaterinburg": {
-    "daylight": "توقيت يكاترينبورغ الصيفي",
-    "standard": "توقيت يكاترينبورغ الرسمي"
-  },
-  "Yukon": {
-    "standard": "توقيت يوكون"
+  "defaults": {
+    "Afghanistan": {
+      "standard": "توقيت أفغانستان"
+    },
+    "Africa_Central": {
+      "standard": "توقيت وسط أفريقيا"
+    },
+    "Africa_Eastern": {
+      "standard": "توقيت شرق أفريقيا"
+    },
+    "Africa_Southern": {
+      "standard": "توقيت جنوب أفريقيا"
+    },
+    "Africa_Western": {
+      "daylight": "توقيت غرب أفريقيا الصيفي",
+      "standard": "توقيت غرب أفريقيا الرسمي"
+    },
+    "Alaska": {
+      "daylight": "توقيت ألاسكا الصيفي",
+      "standard": "التوقيت الرسمي لألاسكا"
+    },
+    "Amazon": {
+      "daylight": "توقيت الأمازون الصيفي",
+      "standard": "توقيت الأمازون الرسمي"
+    },
+    "America_Central": {
+      "daylight": "التوقيت الصيفي المركزي لأمريكا الشمالية",
+      "standard": "التوقيت الرسمي المركزي لأمريكا الشمالية"
+    },
+    "America_Eastern": {
+      "daylight": "التوقيت الصيفي الشرقي لأمريكا الشمالية",
+      "standard": "التوقيت الرسمي الشرقي لأمريكا الشمالية"
+    },
+    "America_Mountain": {
+      "daylight": "التوقيت الجبلي الصيفي لأمريكا الشمالية",
+      "standard": "التوقيت الجبلي الرسمي لأمريكا الشمالية"
+    },
+    "America_Pacific": {
+      "daylight": "توقيت المحيط الهادي الصيفي",
+      "standard": "توقيت المحيط الهادي الرسمي"
+    },
+    "Anadyr": {
+      "daylight": "التوقيت الصيفي لأنادير",
+      "standard": "توقيت أنادير الرسمي"
+    },
+    "Apia": {
+      "daylight": "التوقيت الصيفي لأبيا",
+      "standard": "التوقيت الرسمي لآبيا"
+    },
+    "Arabian": {
+      "daylight": "التوقيت العربي الصيفي",
+      "standard": "التوقيت العربي الرسمي"
+    },
+    "Argentina": {
+      "daylight": "توقيت الأرجنتين الصيفي",
+      "standard": "توقيت الأرجنتين الرسمي"
+    },
+    "Argentina_Western": {
+      "daylight": "توقيت غرب الأرجنتين الصيفي",
+      "standard": "توقيت غرب الأرجنتين الرسمي"
+    },
+    "Armenia": {
+      "daylight": "توقيت أرمينيا الصيفي",
+      "standard": "توقيت أرمينيا الرسمي"
+    },
+    "Atlantic": {
+      "daylight": "التوقيت الصيفي الأطلسي",
+      "standard": "التوقيت الرسمي الأطلسي"
+    },
+    "Australia_Central": {
+      "daylight": "توقيت وسط أستراليا الصيفي",
+      "standard": "توقيت وسط أستراليا الرسمي"
+    },
+    "Australia_CentralWestern": {
+      "daylight": "توقيت غرب وسط أستراليا الصيفي",
+      "standard": "توقيت غرب وسط أستراليا الرسمي"
+    },
+    "Australia_Eastern": {
+      "daylight": "توقيت شرق أستراليا الصيفي",
+      "standard": "توقيت شرق أستراليا الرسمي"
+    },
+    "Australia_Western": {
+      "daylight": "توقيت غرب أستراليا الصيفي",
+      "standard": "توقيت غرب أستراليا الرسمي"
+    },
+    "Azerbaijan": {
+      "daylight": "توقيت أذربيجان الصيفي",
+      "standard": "توقيت أذربيجان الرسمي"
+    },
+    "Azores": {
+      "daylight": "توقيت أزورس الصيفي",
+      "standard": "توقيت أزورس الرسمي"
+    },
+    "Bangladesh": {
+      "daylight": "توقيت بنغلاديش الصيفي",
+      "standard": "توقيت بنغلاديش الرسمي"
+    },
+    "Bhutan": {
+      "standard": "توقيت بوتان"
+    },
+    "Bolivia": {
+      "standard": "توقيت بوليفيا"
+    },
+    "Brasilia": {
+      "daylight": "توقيت برازيليا الصيفي",
+      "standard": "توقيت برازيليا الرسمي"
+    },
+    "Brunei": {
+      "standard": "توقيت بروناي"
+    },
+    "Cape_Verde": {
+      "daylight": "توقيت الرأس الأخضر الصيفي",
+      "standard": "توقيت الرأس الأخضر الرسمي"
+    },
+    "Chamorro": {
+      "standard": "توقيت تشامورو"
+    },
+    "Chatham": {
+      "daylight": "توقيت تشاتام الصيفي",
+      "standard": "توقيت تشاتام الرسمي"
+    },
+    "Chile": {
+      "daylight": "توقيت تشيلي الصيفي",
+      "standard": "توقيت تشيلي الرسمي"
+    },
+    "China": {
+      "daylight": "توقيت الصين الصيفي",
+      "standard": "توقيت الصين الرسمي"
+    },
+    "Choibalsan": {
+      "daylight": "التوقيت الصيفي لشويبالسان",
+      "standard": "توقيت شويبالسان الرسمي"
+    },
+    "Christmas": {
+      "standard": "توقيت جزر الكريسماس"
+    },
+    "Cocos": {
+      "standard": "توقيت جزر كوكوس"
+    },
+    "Colombia": {
+      "daylight": "توقيت كولومبيا الصيفي",
+      "standard": "توقيت كولومبيا الرسمي"
+    },
+    "Cook": {
+      "daylight": "توقيت جزر كوك الصيفي",
+      "standard": "توقيت جزر كوك الرسمي"
+    },
+    "Cuba": {
+      "daylight": "توقيت كوبا الصيفي",
+      "standard": "توقيت كوبا الرسمي"
+    },
+    "Davis": {
+      "standard": "توقيت دافيز"
+    },
+    "DumontDUrville": {
+      "standard": "توقيت دي مونت دو روفيل"
+    },
+    "East_Timor": {
+      "standard": "توقيت تيمور الشرقية"
+    },
+    "Easter": {
+      "daylight": "توقيت جزيرة استر الصيفي",
+      "standard": "توقيت جزيرة استر الرسمي"
+    },
+    "Ecuador": {
+      "standard": "توقيت الإكوادور"
+    },
+    "Europe_Central": {
+      "daylight": "توقيت وسط أوروبا الصيفي",
+      "standard": "توقيت وسط أوروبا الرسمي"
+    },
+    "Europe_Eastern": {
+      "daylight": "توقيت شرق أوروبا الصيفي",
+      "standard": "توقيت شرق أوروبا الرسمي"
+    },
+    "Europe_Further_Eastern": {
+      "standard": "التوقيت الأوروبي (أكثر شرقًا)"
+    },
+    "Europe_Western": {
+      "daylight": "توقيت غرب أوروبا الصيفي",
+      "standard": "توقيت غرب أوروبا الرسمي"
+    },
+    "Falkland": {
+      "daylight": "توقيت جزر فوكلاند الصيفي",
+      "standard": "توقيت جزر فوكلاند الرسمي"
+    },
+    "Fiji": {
+      "daylight": "توقيت فيجي الصيفي",
+      "standard": "توقيت فيجي الرسمي"
+    },
+    "French_Guiana": {
+      "standard": "توقيت غويانا الفرنسية"
+    },
+    "French_Southern": {
+      "standard": "توقيت المقاطعات الفرنسية الجنوبية والأنتارتيكية"
+    },
+    "GMT": {
+      "standard": "توقيت غرينتش"
+    },
+    "Galapagos": {
+      "standard": "توقيت غلاباغوس"
+    },
+    "Gambier": {
+      "standard": "توقيت جامبير"
+    },
+    "Georgia": {
+      "daylight": "توقيت جورجيا الصيفي",
+      "standard": "توقيت جورجيا الرسمي"
+    },
+    "Gilbert_Islands": {
+      "standard": "توقيت جزر جيلبرت"
+    },
+    "Greenland_Eastern": {
+      "daylight": "توقيت شرق غرينلاند الصيفي",
+      "standard": "توقيت شرق غرينلاند الرسمي"
+    },
+    "Greenland_Western": {
+      "daylight": "توقيت غرب غرينلاند الصيفي",
+      "standard": "توقيت غرب غرينلاند الرسمي"
+    },
+    "Guam": {
+      "standard": "توقيت غوام"
+    },
+    "Gulf": {
+      "standard": "توقيت الخليج"
+    },
+    "Guyana": {
+      "standard": "توقيت غيانا"
+    },
+    "Hawaii_Aleutian": {
+      "daylight": "توقيت هاواي ألوتيان الصيفي",
+      "standard": "توقيت هاواي ألوتيان الرسمي"
+    },
+    "Hong_Kong": {
+      "daylight": "توقيت هونغ كونغ الصيفي",
+      "standard": "توقيت هونغ كونغ الرسمي"
+    },
+    "Hovd": {
+      "daylight": "توقيت هوفد الصيفي",
+      "standard": "توقيت هوفد الرسمي"
+    },
+    "India": {
+      "standard": "توقيت الهند"
+    },
+    "Indian_Ocean": {
+      "standard": "توقيت المحيط الهندي"
+    },
+    "Indochina": {
+      "standard": "توقيت الهند الصينية"
+    },
+    "Indonesia_Central": {
+      "standard": "توقيت وسط إندونيسيا"
+    },
+    "Indonesia_Eastern": {
+      "standard": "توقيت شرق إندونيسيا"
+    },
+    "Indonesia_Western": {
+      "standard": "توقيت غرب إندونيسيا"
+    },
+    "Iran": {
+      "daylight": "توقيت إيران الصيفي",
+      "standard": "توقيت إيران الرسمي"
+    },
+    "Irkutsk": {
+      "daylight": "توقيت إركوتسك الصيفي",
+      "standard": "توقيت إركوتسك الرسمي"
+    },
+    "Israel": {
+      "daylight": "توقيت إسرائيل الصيفي",
+      "standard": "توقيت إسرائيل الرسمي"
+    },
+    "Japan": {
+      "daylight": "توقيت اليابان الصيفي",
+      "standard": "توقيت اليابان الرسمي"
+    },
+    "Kamchatka": {
+      "daylight": "توقيت بيتروبافلوفسك-كامتشاتسكي الصيفي",
+      "standard": "توقيت بيتروبافلوفسك-كامتشاتسكي"
+    },
+    "Kazakhstan_Eastern": {
+      "standard": "توقيت شرق كازاخستان"
+    },
+    "Kazakhstan_Western": {
+      "standard": "توقيت غرب كازاخستان"
+    },
+    "Korea": {
+      "daylight": "توقيت كوريا الصيفي",
+      "standard": "توقيت كوريا الرسمي"
+    },
+    "Kosrae": {
+      "standard": "توقيت كوسرا"
+    },
+    "Krasnoyarsk": {
+      "daylight": "التوقيت الصيفي لكراسنويارسك",
+      "standard": "توقيت كراسنويارسك الرسمي"
+    },
+    "Kyrgystan": {
+      "standard": "توقيت قيرغيزستان"
+    },
+    "Line_Islands": {
+      "standard": "توقيت جزر لاين"
+    },
+    "Lord_Howe": {
+      "daylight": "التوقيت الصيفي للورد هاو",
+      "standard": "توقيت لورد هاو الرسمي"
+    },
+    "Macquarie": {
+      "standard": "توقيت ماكواري"
+    },
+    "Magadan": {
+      "daylight": "توقيت ماغادان الصيفي",
+      "standard": "توقيت ماغادان الرسمي"
+    },
+    "Malaysia": {
+      "standard": "توقيت ماليزيا"
+    },
+    "Maldives": {
+      "standard": "توقيت جزر المالديف"
+    },
+    "Marquesas": {
+      "standard": "توقيت ماركيساس"
+    },
+    "Marshall_Islands": {
+      "standard": "توقيت جزر مارشال"
+    },
+    "Mauritius": {
+      "daylight": "توقيت موريشيوس الصيفي",
+      "standard": "توقيت موريشيوس الرسمي"
+    },
+    "Mawson": {
+      "standard": "توقيت ماوسون"
+    },
+    "Mexico_Northwest": {
+      "daylight": "التوقيت الصيفي لشمال غرب المكسيك",
+      "standard": "التوقيت الرسمي لشمال غرب المكسيك"
+    },
+    "Mexico_Pacific": {
+      "daylight": "توقيت المحيط الهادي الصيفي للمكسيك",
+      "standard": "توقيت المحيط الهادي الرسمي للمكسيك"
+    },
+    "Mongolia": {
+      "daylight": "توقيت أولان باتور الصيفي",
+      "standard": "توقيت أولان باتور الرسمي"
+    },
+    "Moscow": {
+      "daylight": "توقيت موسكو الصيفي",
+      "standard": "توقيت موسكو الرسمي"
+    },
+    "Myanmar": {
+      "standard": "توقيت ميانمار"
+    },
+    "Nauru": {
+      "standard": "توقيت ناورو"
+    },
+    "Nepal": {
+      "standard": "توقيت نيبال"
+    },
+    "New_Caledonia": {
+      "daylight": "توقيت كاليدونيا الجديدة الصيفي",
+      "standard": "توقيت كاليدونيا الجديدة الرسمي"
+    },
+    "New_Zealand": {
+      "daylight": "توقيت نيوزيلندا الصيفي",
+      "standard": "توقيت نيوزيلندا الرسمي"
+    },
+    "Newfoundland": {
+      "daylight": "توقيت نيوفاوندلاند الصيفي",
+      "standard": "توقيت نيوفاوندلاند الرسمي"
+    },
+    "Niue": {
+      "standard": "توقيت نيوي"
+    },
+    "Norfolk": {
+      "daylight": "توقيت جزيرة نورفولك الصيفي",
+      "standard": "توقيت جزيرة نورفولك الرسمي"
+    },
+    "Noronha": {
+      "daylight": "توقيت فرناندو دي نورونها الصيفي",
+      "standard": "توقيت فرناندو دي نورونها الرسمي"
+    },
+    "North_Mariana": {
+      "standard": "توقيت جزر ماريانا الشمالية"
+    },
+    "Novosibirsk": {
+      "daylight": "توقيت نوفوسيبيرسك الصيفي",
+      "standard": "توقيت نوفوسيبيرسك الرسمي"
+    },
+    "Omsk": {
+      "daylight": "توقيت أومسك الصيفي",
+      "standard": "توقيت أومسك الرسمي"
+    },
+    "Pakistan": {
+      "daylight": "توقيت باكستان الصيفي",
+      "standard": "توقيت باكستان الرسمي"
+    },
+    "Palau": {
+      "standard": "توقيت بالاو"
+    },
+    "Papua_New_Guinea": {
+      "standard": "توقيت بابوا غينيا الجديدة"
+    },
+    "Paraguay": {
+      "daylight": "توقيت باراغواي الصيفي",
+      "standard": "توقيت باراغواي الرسمي"
+    },
+    "Peru": {
+      "daylight": "توقيت بيرو الصيفي",
+      "standard": "توقيت بيرو الرسمي"
+    },
+    "Philippines": {
+      "daylight": "توقيت الفيلبين الصيفي",
+      "standard": "توقيت الفيلبين الرسمي"
+    },
+    "Phoenix_Islands": {
+      "standard": "توقيت جزر فينكس"
+    },
+    "Pierre_Miquelon": {
+      "daylight": "توقيت سانت بيير وميكولون الصيفي",
+      "standard": "توقيت سانت بيير وميكولون الرسمي"
+    },
+    "Pitcairn": {
+      "standard": "توقيت بيتكيرن"
+    },
+    "Ponape": {
+      "standard": "توقيت بونابي"
+    },
+    "Pyongyang": {
+      "standard": "توقيت بيونغ يانغ"
+    },
+    "Reunion": {
+      "standard": "توقيت روينيون"
+    },
+    "Rothera": {
+      "standard": "توقيت روثيرا"
+    },
+    "Sakhalin": {
+      "daylight": "توقيت ساخالين الصيفي",
+      "standard": "توقيت ساخالين الرسمي"
+    },
+    "Samara": {
+      "daylight": "توقيت سمارا الصيفي",
+      "standard": "توقيت سمارا"
+    },
+    "Samoa": {
+      "daylight": "توقيت ساموا الصيفي",
+      "standard": "توقيت ساموا الرسمي"
+    },
+    "Seychelles": {
+      "standard": "توقيت سيشل"
+    },
+    "Singapore": {
+      "standard": "توقيت سنغافورة"
+    },
+    "Solomon": {
+      "standard": "توقيت جزر سليمان"
+    },
+    "South_Georgia": {
+      "standard": "توقيت جنوب جورجيا"
+    },
+    "Suriname": {
+      "standard": "توقيت سورينام"
+    },
+    "Syowa": {
+      "standard": "توقيت سايووا"
+    },
+    "Tahiti": {
+      "standard": "توقيت تاهيتي"
+    },
+    "Taipei": {
+      "daylight": "توقيت تايبيه الصيفي",
+      "standard": "توقيت تايبيه الرسمي"
+    },
+    "Tajikistan": {
+      "standard": "توقيت طاجكستان"
+    },
+    "Tokelau": {
+      "standard": "توقيت توكيلاو"
+    },
+    "Tonga": {
+      "daylight": "توقيت تونغا الصيفي",
+      "standard": "توقيت تونغا الرسمي"
+    },
+    "Truk": {
+      "standard": "توقيت شوك"
+    },
+    "Turkmenistan": {
+      "daylight": "توقيت تركمانستان الصيفي",
+      "standard": "توقيت تركمانستان الرسمي"
+    },
+    "Tuvalu": {
+      "standard": "توقيت توفالو"
+    },
+    "Uruguay": {
+      "daylight": "توقيت أوروغواي الصيفي",
+      "standard": "توقيت أوروغواي الرسمي"
+    },
+    "Uzbekistan": {
+      "daylight": "توقيت أوزبكستان الصيفي",
+      "standard": "توقيت أوزبكستان الرسمي"
+    },
+    "Vanuatu": {
+      "daylight": "توقيت فانواتو الصيفي",
+      "standard": "توقيت فانواتو الرسمي"
+    },
+    "Venezuela": {
+      "standard": "توقيت فنزويلا"
+    },
+    "Vladivostok": {
+      "daylight": "توقيت فلاديفوستوك الصيفي",
+      "standard": "توقيت فلاديفوستوك الرسمي"
+    },
+    "Volgograd": {
+      "daylight": "توقيت فولغوغراد الصيفي",
+      "standard": "توقيت فولغوغراد الرسمي"
+    },
+    "Vostok": {
+      "standard": "توقيت فوستوك"
+    },
+    "Wake": {
+      "standard": "توقيت جزيرة ويك"
+    },
+    "Wallis": {
+      "standard": "توقيت واليس و فوتونا"
+    },
+    "Yakutsk": {
+      "daylight": "توقيت ياكوتسك الصيفي",
+      "standard": "توقيت ياكوتسك الرسمي"
+    },
+    "Yekaterinburg": {
+      "daylight": "توقيت يكاترينبورغ الصيفي",
+      "standard": "توقيت يكاترينبورغ الرسمي"
+    },
+    "Yukon": {
+      "standard": "توقيت يوكون"
+    }
+  },
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "التوقيت العالمي المنسق"
+    },
+    "Europe/Dublin": {
+      "daylight": "توقيت أيرلندا الرسمي"
+    },
+    "Europe/London": {
+      "daylight": "توقيت بريطانيا الصيفي"
+    }
   }
 }
