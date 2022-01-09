@@ -58,6 +58,7 @@ mod ops;
 
 use alloc::borrow::Cow;
 use alloc::string::String;
+use alloc::vec::Vec;
 use core::fmt;
 
 /// A hint to help consumers of Writeable pre-allocate bytes before they call write_to.
@@ -231,6 +232,45 @@ pub trait Writeable {
             .expect("impl Write for String is infallible");
         Cow::Owned(output)
     }
+
+    fn writeable_to_parts(&self) -> Result<(String, Vec<(usize, usize, Part)>), fmt::Error> {
+        struct State {
+            string: alloc::string::String,
+            parts: Vec<(usize, usize, Part)>,
+        }
+
+        impl fmt::Write for State {
+            fn write_str(&mut self, s: &str) -> fmt::Result {
+                self.string.write_str(s)
+            }
+            fn write_char(&mut self, c: char) -> fmt::Result {
+                self.string.write_char(c)
+            }
+        }
+
+        impl PartsWrite for State {
+            type SubPartsWrite = Self;
+            fn with_part(
+                &mut self,
+                part: Part,
+                mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+            ) -> fmt::Result {
+                let start = self.string.len();
+                f(self)?;
+                self.parts.push((start, self.string.len(), part));
+                Ok(())
+            }
+        }
+
+        let mut state = State {
+            string: alloc::string::String::new(),
+            parts: Vec::new(),
+        };
+        self.write_to_parts(&mut state)?;
+        // Sort by first open and last closed
+        state.parts.sort_unstable_by_key(|(begin, end, _)| (*begin, end.wrapping_neg()));
+        Ok((state.string, state.parts))
+    }
 }
 
 /// Testing macros for types implementing Writeable. The first argument should be a
@@ -283,23 +323,69 @@ macro_rules! assert_writeable_eq {
     }};
 }
 
-#[doc(hidden)] // Macro use only
-pub mod formatted_string;
-
 #[macro_export]
 macro_rules! assert_writeable_fmt_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
         $crate::assert_writeable_fmt_eq!($actual_writeable, $expected_str, $expected_parts, "");
     };
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
-        let actual = $crate::formatted_string::FormattedString::from_writeable(&$actual_writeable).unwrap();
-        assert_eq!(&actual.as_str(), &$expected_str, $($arg)+);
-        assert_eq!(&actual.as_str(), &$actual_writeable.writeable_to_string(), $($arg)+);
-        assert_eq!(actual.parts(), $expected_parts, $($arg)+);
+        let (actual_str, actual_parts) = $crate::Writeable::writeable_to_parts(&$actual_writeable).unwrap();
+        assert_eq!(&actual_str, &$expected_str, $($arg)+);
+        assert_eq!(&actual_str, &$actual_writeable.writeable_to_string(), $($arg)+);
+        assert_eq!(actual_parts, $expected_parts, $($arg)+);
         let length_hint = $crate::Writeable::write_len(&$actual_writeable);
-        assert!(length_hint.0 <= actual.as_str().len(), $($arg)+);
+        assert!(length_hint.0 <= actual_str.len(), $($arg)+);
         if let Some(upper) = length_hint.1 {
-            assert!(actual.as_str().len() <= upper, $($arg)+);
+            assert!(actual_str.len() <= upper, $($arg)+);
         }
     }};
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use fmt::Write;
+
+    #[test]
+    fn test() {
+        struct TestWriteable;
+        const GREETING: Part = Part {
+            category: "meaning",
+            value: "greeting",
+        };
+        const WORD: Part = Part {
+            category: "type",
+            value: "word",
+        };
+        const NUMBER: Part = Part {
+            category: "type",
+            value: "number",
+        };
+        const EMOJI: Part = Part {
+            category: "meaning",
+            value: "emoji",
+        };
+
+        impl Writeable for TestWriteable {
+            fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+                sink.with_part(GREETING, |g| {
+                    g.with_part(WORD, |w| w.write_str("hello"))?;
+                    g.write_str(" ")?;
+                    g.with_part(NUMBER, |n| 360.write_to(n))
+                })?;
+                sink.write_char(' ')?;
+                sink.with_part(EMOJI, |e| e.write_char('😅'))
+            }
+        }
+
+        assert_writeable_fmt_eq!(TestWriteable, "hello 360 😅",
+            [
+                (0, 9, GREETING),
+                (0, 5, WORD),
+                (6, 9, NUMBER),
+                (10, 14, EMOJI),
+            ]
+        );
+    }
 }
