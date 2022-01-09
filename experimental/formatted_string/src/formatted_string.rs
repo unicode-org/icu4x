@@ -66,6 +66,34 @@ impl FormattedString {
             *entry = (LocationInPart::Extend, entry.1);
         }
     }
+
+    pub fn all_fields(&self) -> Vec<(usize, usize, Field)> {
+        let mut output = Vec::<(usize, usize, Field)>::new();
+        for l in 0..self.annotations.iter().map(Vec::len).max().unwrap_or(0) {
+            let mut begin = None;
+            // Iterating to len()+1 to close the last annotation
+            for byte in 0..self.annotations.len() + 1 {
+                match self.annotations.get(byte).and_then(|a| a.get(l)) {
+                    None => {
+                        // No annotation at this level/byte
+                        if let Some(b) = begin {
+                            output.push((b, byte, self.annotations[b][l].1));
+                        }
+                        begin = None;
+                    }
+                    Some((LocationInPart::Begin, _)) => {
+                        // New field
+                        if let Some(b) = begin {
+                            output.push((b, byte, self.annotations[b][l].1));
+                        }
+                        begin = Some(byte);
+                    }
+                    _ => {}
+                }
+            }
+        }
+        output
+    }
 }
 
 impl Default for FormattedString {
@@ -142,59 +170,16 @@ impl FormattedWriteableSink for FormattedString {
 impl fmt::Debug for FormattedString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.as_str())?;
-        // For each level of annotations
-        for l in 0..self.annotations.iter().map(Vec::len).max().unwrap_or(0) {
-            writeln!(f)?;
-            let mut boundaries = Vec::new();
-            let mut begin = None;
-            // Iterating to len()+1 to close the last annotation
-            for byte in 0..self.annotations.len() + 1 {
-                match self.annotations.get(byte).and_then(|a| a.get(l)) {
-                    None => {
-                        // No annotation at this level/byte
-                        if let Some(b) = begin {
-                            boundaries.push((b, byte));
-                        }
-                        begin = None;
-                    }
-                    Some((LocationInPart::Begin, _)) => {
-                        // New annotation
-                        if let Some(b) = begin {
-                            boundaries.push((b, byte));
-                        }
-                        begin = Some(byte);
-                    }
-                    _ => {}
-                }
-            }
-
-            let str_len_before = |i: usize| {
-                self.as_str()[if i == 0 { 0 } else { boundaries[i - 1].1 }..boundaries[i].0]
-                    .chars()
-                    .count()
-            };
-            let str_len_of = |i: usize| {
-                self.as_str()[boundaries[i].0..boundaries[i].1]
-                    .chars()
-                    .count()
-            };
-
-            // First row, underlines all annotated chars
-            for i in 0..boundaries.len() {
-                write!(f, "{: <1$}", "", str_len_before(i))?;
-                write!(f, "{:━<1$}", "┏", str_len_of(i))?;
-            }
-            // Prints one annotation per row
-            for k in (0..boundaries.len()).rev() {
-                writeln!(f)?;
-                for i in 0..k {
-                    // Lines for later annotations
-                    write!(f, "{: <1$}", "", str_len_before(i))?;
-                    write!(f, "{: <1$}", "┃", str_len_of(i))?;
-                }
-                write!(f, "{: <1$}", "", str_len_before(k))?;
-                write!(f, "┗ {}", self.annotations[boundaries[k].0][l].1)?;
-            }
+        for (begin, end, field) in self.all_fields() {
+            write!(
+                f,
+                "\n{: <3$}{: <4$}) {}",
+                "",
+                "[",
+                field,
+                self.as_str()[..begin].chars().count(),
+                self.as_str()[begin..end].chars().count()
+            )?;
         }
         Ok(())
     }
@@ -205,30 +190,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_basic() {
-        let mut x = FormattedString::new();
-        x.push_field(Field("word")).unwrap();
-        x.write_str("hello").unwrap();
-        x.pop_field().unwrap();
-        x.push_field(Field("space")).unwrap();
-        x.write_str(" ").unwrap();
-        x.pop_field().unwrap();
-        x.push_field(Field("word")).unwrap();
-        x.write_str("world").unwrap();
-        x.pop_field().unwrap();
-
-        assert_eq!(
-            format!("{:?}", x),
-            "hello world\n\
-             ┏━━━━┏┏━━━━\n\
-             ┃    ┃┗ word\n\
-             ┃    ┗ space\n\
-             ┗ word"
-        );
-    }
-
-    #[test]
-    fn test_multi_level() {
+    fn test() {
         let mut x = FormattedString::new();
         x.push_field(Field("word")).unwrap();
         x.write_str("hello").unwrap();
@@ -237,11 +199,6 @@ mod test {
         x.push_field(Field("word")).unwrap();
         x.write_str("world").unwrap();
         x.pop_field().unwrap();
-
-        // hello world
-        // ┏━━━━ ┏━━━━
-        // ┃     ┗ word
-        // ┗ word
 
         let mut y = FormattedString::new();
         y.push_field(Field("greeting")).unwrap();
@@ -251,41 +208,16 @@ mod test {
         y.write_char('😅').unwrap();
         y.pop_field().unwrap();
 
-        // Note that the second level is not complete, the space
-        // and emoji aren't annotated.
-        assert_eq!(
-            format!("{:?}", y),
-            "hello world😅\n\
-             ┏━━━━━━━━━━┏\n\
-             ┃          ┗ emoji\n\
-             ┗ greeting\n\
-             ┏━━━━ ┏━━━━\n\
-             ┃     ┗ word\n\
-             ┗ word"
-        );
-    }
-
-    #[test]
-    fn test_multi_byte() {
-        let mut x = FormattedString::new();
-        x.push_field(Field("variable")).unwrap();
-        x.write_str("π").unwrap();
-        x.pop_field().unwrap();
-        x.write_str(" ").unwrap();
-        x.push_field(Field("operation")).unwrap();
-        x.write_str("*").unwrap();
-        x.pop_field().unwrap();
-        x.write_str(" ").unwrap();
-        x.push_field(Field("variable")).unwrap();
-        x.write_str("x").unwrap();
+        assert_eq!(y.as_str(), "hello world😅");
 
         assert_eq!(
-            format!("{:?}", x),
-            "π * x\n\
-             ┏ ┏ ┏\n\
-             ┃ ┃ ┗ variable\n\
-             ┃ ┗ operation\n\
-             ┗ variable"
+            y.all_fields(),
+            [
+                (0, 11, Field("greeting")),
+                (11, 15, Field("emoji")),
+                (0, 5, Field("word")),
+                (6, 11, Field("word"))
+            ]
         );
     }
 }

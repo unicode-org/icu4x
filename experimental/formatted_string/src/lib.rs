@@ -13,7 +13,7 @@ pub use crate::formatted_string::FormattedString;
 use core::fmt;
 pub use writeable::{LengthHint, Writeable};
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Field(pub &'static str);
 
 impl fmt::Display for Field {

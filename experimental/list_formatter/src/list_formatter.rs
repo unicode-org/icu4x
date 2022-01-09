@@ -174,23 +174,24 @@ mod tests {
 
     #[test]
     fn test_fmt_writeable() {
-        let formatter = formatter(Width::Wide);
-
         assert_eq!(
-            format!("{:?}", formatter.format(VALUES).writeable_to_fmt_string()),
-            "@one:two,three,four.five!\n\
-             ┏┏━━┏┏━━┏┏━━━━┏┏━━━┏┏━━━┏\n\
-             ┃┃  ┃┃  ┃┃    ┃┃   ┃┃   ┗ literal\n\
-             ┃┃  ┃┃  ┃┃    ┃┃   ┃┗ element\n\
-             ┃┃  ┃┃  ┃┃    ┃┃   ┗ literal\n\
-             ┃┃  ┃┃  ┃┃    ┃┗ element\n\
-             ┃┃  ┃┃  ┃┃    ┗ literal\n\
-             ┃┃  ┃┃  ┃┗ element\n\
-             ┃┃  ┃┃  ┗ literal\n\
-             ┃┃  ┃┗ element\n\
-             ┃┃  ┗ literal\n\
-             ┃┗ element\n\
-             ┗ literal"
+            formatter(Width::Wide)
+                .format(VALUES)
+                .writeable_to_fmt_string()
+                .all_fields(),
+            [
+                (0, 1, Field("literal")),
+                (1, 4, Field("element")),
+                (4, 5, Field("literal")),
+                (5, 8, Field("element")),
+                (8, 9, Field("literal")),
+                (9, 14, Field("element")),
+                (14, 15, Field("literal")),
+                (15, 19, Field("element")),
+                (19, 20, Field("literal")),
+                (20, 24, Field("element")),
+                (24, 25, Field("literal"))
+            ]
         );
     }
 
