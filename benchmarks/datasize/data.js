@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641675490801,
+  "lastUpdate": 1641808385422,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6833,6 +6833,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ef4125d78f71bbe26d3c9f891e93e92d1b227f00"
         },
         "date": 1641675483070,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf216a8c9140a44ed61ffea6148d1c63927eb0af",
+          "message": "Fixing test without --all-features (#1489)",
+          "timestamp": "2022-01-10T10:51:25+01:00",
+          "tree_id": "41b734a4f2c8f9333335f12ef4bfd79699fb3a52",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf216a8c9140a44ed61ffea6148d1c63927eb0af"
+        },
+        "date": 1641808376053,
         "tool": "ndjson",
         "benches": [
           {
