@@ -594,17 +594,47 @@ const ICU4XFixedDecimalSignDisplay_rust_to_js = {
   4: "Negative",
 };
 
-const ICU4XLineBreakIterator_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XLineBreakIterator_destroy(underlying);
+const ICU4XLineBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XLineBreakIteratorLatin1_destroy(underlying);
 });
 
-export class ICU4XLineBreakIterator {
+export class ICU4XLineBreakIteratorLatin1 {
   constructor(underlying) {
     this.underlying = underlying;
   }
 
   next() {
-    const diplomat_out = wasm.ICU4XLineBreakIterator_next(this.underlying);
+    const diplomat_out = wasm.ICU4XLineBreakIteratorLatin1_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XLineBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XLineBreakIteratorUtf16_destroy(underlying);
+});
+
+export class ICU4XLineBreakIteratorUtf16 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XLineBreakIteratorUtf16_next(this.underlying);
+    return diplomat_out;
+  }
+}
+
+const ICU4XLineBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XLineBreakIteratorUtf8_destroy(underlying);
+});
+
+export class ICU4XLineBreakIteratorUtf8 {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  next() {
+    const diplomat_out = wasm.ICU4XLineBreakIteratorUtf8_next(this.underlying);
     return diplomat_out;
   }
 }
@@ -708,18 +738,54 @@ export class ICU4XLineBreakSegmenter {
     return diplomat_out;
   }
 
-  segment_str(input) {
+  segment_utf8(input) {
     let input_diplomat_bytes = (new TextEncoder()).encode(input);
     let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
     let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
     input_diplomat_buf.set(input_diplomat_bytes, 0);
     const diplomat_out = (() => {
       const out = (() => {
-        const out = new ICU4XLineBreakIterator(wasm.ICU4XLineBreakSegmenter_segment_str(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        const out = new ICU4XLineBreakIteratorUtf8(wasm.ICU4XLineBreakSegmenter_segment_utf8(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
         out.owner = null;
         return out;
       })();
-      ICU4XLineBreakIterator_box_destroy_registry.register(out, out.underlying)
+      ICU4XLineBreakIteratorUtf8_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
+    return diplomat_out;
+  }
+
+  segment_utf16(input) {
+    let input_diplomat_bytes = new Uint8Array(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 2);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XLineBreakIteratorUtf16(wasm.ICU4XLineBreakSegmenter_segment_utf16(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XLineBreakIteratorUtf16_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 2);
+    return diplomat_out;
+  }
+
+  segment_latin1(input) {
+    let input_diplomat_bytes = new Uint8Array(input);
+    let input_diplomat_ptr = wasm.diplomat_alloc(input_diplomat_bytes.length, 1);
+    let input_diplomat_buf = new Uint8Array(wasm.memory.buffer, input_diplomat_ptr, input_diplomat_bytes.length);
+    input_diplomat_buf.set(input_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XLineBreakIteratorLatin1(wasm.ICU4XLineBreakSegmenter_segment_latin1(this.underlying, input_diplomat_ptr, input_diplomat_bytes.length));
+        out.owner = null;
+        return out;
+      })();
+      ICU4XLineBreakIteratorLatin1_box_destroy_registry.register(out, out.underlying)
       return out;
     })();
     wasm.diplomat_free(input_diplomat_ptr, input_diplomat_bytes.length, 1);
