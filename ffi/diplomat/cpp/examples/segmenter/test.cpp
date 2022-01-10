@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "../../include/ICU4XLineBreakIterator.hpp"
 #include "../../include/ICU4XLineBreakSegmenter.hpp"
 #include "../../include/ICU4XDataProvider.hpp"
 
@@ -36,7 +35,7 @@ int main(int argc, char* argv[]) {
     }
     std::cout << std::endl;
 
-    ICU4XLineBreakIterator iterator = segmenter.segment_str(str);
+    ICU4XLineBreakIteratorUtf8 iterator = segmenter.segment_utf8(str);
 
     std::cout << "Breakpoints:";
     while (true) {
