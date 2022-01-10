@@ -12,9 +12,12 @@ extern "C" {
 
 typedef struct ICU4XLineBreakSegmenter ICU4XLineBreakSegmenter;
 #include "result_box_ICU4XLineBreakSegmenter_void.h"
+#include "ICU4XLineBreakOptions.h"
 #include "ICU4XLineBreakIterator.h"
 
 segmenter_line_ffi_result_box_ICU4XLineBreakSegmenter_void ICU4XLineBreakSegmenter_try_new();
+
+segmenter_line_ffi_result_box_ICU4XLineBreakSegmenter_void ICU4XLineBreakSegmenter_try_new_with_options(ICU4XLineBreakOptions options);
 
 ICU4XLineBreakIterator* ICU4XLineBreakSegmenter_segment_str(const ICU4XLineBreakSegmenter* self, const char* input_data, size_t input_len);
 void ICU4XLineBreakSegmenter_destroy(ICU4XLineBreakSegmenter* self);
