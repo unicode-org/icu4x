@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde::{
+    self,
+    week_data::{Territory, DEFAULT_TERRITORY},
+};
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::support::KeyedDataProvider;
@@ -15,128 +19,11 @@ use std::collections::HashSet;
 use std::convert::TryFrom;
 use tinystr::TinyStr4;
 
-mod cldr_json {
-    use core::convert::TryFrom;
-    use serde::{Deserialize, Deserializer};
-    use std::collections::BTreeMap;
-    use std::num::ParseIntError;
-    use std::str::FromStr;
-    use tinystr::{tinystr4, TinyStr4};
-
-    #[derive(Debug, Deserialize)]
-    #[serde(rename_all = "camelCase")]
-    pub enum Weekday {
-        Mon,
-        Tue,
-        Wed,
-        Thu,
-        Fri,
-        Sat,
-        Sun,
-    }
-
-    impl From<&Weekday> for icu_calendar::types::IsoWeekday {
-        fn from(day: &Weekday) -> Self {
-            use icu_calendar::types::IsoWeekday;
-            match day {
-                Weekday::Mon => IsoWeekday::Monday,
-                Weekday::Tue => IsoWeekday::Tuesday,
-                Weekday::Wed => IsoWeekday::Wednesday,
-                Weekday::Thu => IsoWeekday::Thursday,
-                Weekday::Fri => IsoWeekday::Friday,
-                Weekday::Sat => IsoWeekday::Saturday,
-                Weekday::Sun => IsoWeekday::Sunday,
-            }
-        }
-    }
-
-    #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
-    pub enum Territory {
-        Region(TinyStr4),
-        AltVariantRegion(TinyStr4),
-    }
-
-    /// The string used to represent the default territory.
-    pub const DEFAULT_TERRITORY: Territory = Territory::Region(tinystr4!("001"));
-
-    /// Suffix used to denote alternative week data variants for a given territory (e.g. English BC/AD v English BCE/CE).
-    const ALT_VARIANT_SUFFIX: &str = "-alt-variant";
-
-    impl<'de> Deserialize<'de> for Territory {
-        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            struct TerritoryVisitor;
-
-            impl<'de> serde::de::Visitor<'de> for TerritoryVisitor {
-                type Value = Territory;
-
-                fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                    write!(
-                        formatter,
-                        "a valid Unicode Language Identifier or default territory literal"
-                    )
-                }
-
-                fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-                where
-                    E: serde::de::Error,
-                {
-                    if let Some(prefix) = s.strip_suffix(ALT_VARIANT_SUFFIX) {
-                        return Ok(Territory::AltVariantRegion(
-                            prefix
-                                .parse::<TinyStr4>()
-                                .map_err(serde::de::Error::custom)?,
-                        ));
-                    }
-
-                    Ok(Territory::Region(
-                        s.parse::<TinyStr4>().map_err(serde::de::Error::custom)?,
-                    ))
-                }
-            }
-
-            deserializer.deserialize_string(TerritoryVisitor)
-        }
-    }
-
-    #[derive(Debug, Deserialize)]
-    #[serde(try_from = "String")]
-    pub struct U8(pub u8);
-
-    impl TryFrom<String> for U8 {
-        type Error = ParseIntError;
-
-        fn try_from(s: String) -> Result<Self, Self::Error> {
-            Ok(Self(u8::from_str(&s)?))
-        }
-    }
-
-    #[derive(Debug, Deserialize)]
-    #[serde(rename_all = "camelCase")]
-    pub struct WeekData {
-        pub min_days: BTreeMap<Territory, U8>,
-        pub first_day: BTreeMap<Territory, Weekday>,
-    }
-
-    #[derive(Deserialize)]
-    #[serde(rename_all = "camelCase")]
-    pub struct Supplemental {
-        pub week_data: WeekData,
-    }
-
-    #[derive(Deserialize)]
-    pub struct Resource {
-        pub supplemental: Supplemental,
-    }
-}
-
 /// A data provider reading from CLDR JSON weekData files.
 #[derive(Debug)]
 pub struct WeekDataProvider {
     default: CalendarInfo,
-    week_data: cldr_json::WeekData,
+    week_data: cldr_serde::week_data::WeekData,
 }
 
 impl TryFrom<&dyn CldrPaths> for WeekDataProvider {
@@ -144,14 +31,14 @@ impl TryFrom<&dyn CldrPaths> for WeekDataProvider {
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let path = cldr_paths.cldr_core()?.join("supplemental/weekData.json");
 
-        let resource: cldr_json::Resource =
+        let resource: cldr_serde::week_data::Resource =
             serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
         let week_data = resource.supplemental.week_data;
 
         let default = CalendarInfo {
             first_weekday: week_data
                 .first_day
-                .get(&cldr_json::DEFAULT_TERRITORY)
+                .get(&DEFAULT_TERRITORY)
                 .ok_or_else(|| {
                     Error::Custom(
                         "Missing default entry for firstDay in weekData.json".to_string(),
@@ -161,7 +48,7 @@ impl TryFrom<&dyn CldrPaths> for WeekDataProvider {
                 .into(),
             min_week_days: week_data
                 .min_days
-                .get(&cldr_json::DEFAULT_TERRITORY)
+                .get(&DEFAULT_TERRITORY)
                 .ok_or_else(|| {
                     Error::Custom(
                         "Missing default entry for minDays in weekData.json".to_string(),
@@ -193,8 +80,8 @@ impl IterableProvider for WeekDataProvider {
             .keys()
             .chain(self.week_data.first_day.keys())
             .filter_map(|t| match t {
-                &cldr_json::DEFAULT_TERRITORY => Some(None),
-                cldr_json::Territory::Region(r) => Some(Some(*r)),
+                &DEFAULT_TERRITORY => Some(None),
+                Territory::Region(r) => Some(Some(*r)),
                 _ => None,
             })
             .collect();
@@ -216,15 +103,15 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
             .options
             .variant
             .as_ref()
-            .map(|v| -> Result<cldr_json::Territory, DataError> {
-                Ok(cldr_json::Territory::Region(
+            .map(|v| -> Result<Territory, DataError> {
+                Ok(Territory::Region(
                     TinyStr4::from_bytes(v.as_bytes()).map_err(|_| {
                         DataErrorKind::MissingVariant.with_req(WeekDataV1Marker::KEY, req)
                     })?,
                 ))
             })
             .transpose()?
-            .unwrap_or_else(|| cldr_json::DEFAULT_TERRITORY.clone());
+            .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
 
         Ok(DataResponse {
             metadata,
