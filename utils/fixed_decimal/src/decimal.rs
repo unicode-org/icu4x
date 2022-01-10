@@ -340,8 +340,7 @@ impl FixedDecimal {
         self
     }
 
-    /// Zero-pad the number on the left to a particular positive magnitude. Will truncate
-    /// leading zeros if necessary, but will not truncate other digits.
+    /// Zero-pad the number on the left to a particular number of integer digits.
     ///
     /// # Examples
     ///
@@ -351,20 +350,23 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.padded_left(3);
+    /// dec.padded_left(4);
     /// assert_eq!("0042", dec.to_string());
     ///
-    /// dec.padded_left(2);
+    /// dec.padded_left(3);
     /// assert_eq!("042", dec.to_string());
+    ///
+    /// dec.padded_left(2);
+    /// assert_eq!("42", dec.to_string());
     ///
     /// dec.padded_left(1);
     /// assert_eq!("42", dec.to_string());
-    ///
-    /// dec.padded_left(0);
-    /// assert_eq!("42", dec.to_string());
     /// ```
-    pub fn padded_left(&mut self, magnitude: u16) {
-        let mut magnitude = magnitude as i16;
+    pub fn padded_left(&mut self, digits: u16) {
+        let mut magnitude = digits as i16 - 1;
+        if magnitude < 0 {
+            magnitude = 0;
+        }
         // Do not truncate nonzero digits
         if magnitude <= self.magnitude {
             magnitude = self.magnitude;
