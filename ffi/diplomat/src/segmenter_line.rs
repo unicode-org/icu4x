@@ -44,13 +44,13 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    pub struct ICU4XLineBreakIteratorUtf8<'a, 'b>(LineBreakIterator<'a, 'b, char>);
+    pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIterator<'a, 'a, char>);
 
     #[diplomat::opaque]
-    pub struct ICU4XLineBreakIteratorUtf16<'a, 'b>(LineBreakIterator<'a, 'b, Utf16Char>);
+    pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIterator<'a, 'a, Utf16Char>);
 
     #[diplomat::opaque]
-    pub struct ICU4XLineBreakIteratorLatin1<'a, 'b>(LineBreakIterator<'a, 'b, Latin1Char>);
+    pub struct ICU4XLineBreakIteratorLatin1<'a>(LineBreakIterator<'a, 'a, Latin1Char>);
 
     impl ICU4XLineBreakSegmenter {
         /// Construct a [`ICU4XLineBreakSegmenter`] with default options.
@@ -73,33 +73,33 @@ pub mod ffi {
 
         /// Segments a UTF-8 string.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_str) for more information.
-        pub fn segment_utf8<'a, 'b>(
+        pub fn segment_utf8<'a>(
             &'a self,
-            input: &'b str,
-        ) -> Box<ICU4XLineBreakIteratorUtf8<'a, 'b>> {
+            input: &'a str,
+        ) -> Box<ICU4XLineBreakIteratorUtf8<'a>> {
             Box::new(ICU4XLineBreakIteratorUtf8(self.0.segment_str(input)))
         }
 
         /// Segments a UTF-16 string.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_utf16) for more information.
-        pub fn segment_utf16<'a, 'b>(
+        pub fn segment_utf16<'a>(
             &'a self,
-            input: &'b [u16],
-        ) -> Box<ICU4XLineBreakIteratorUtf16<'a, 'b>> {
+            input: &'a [u16],
+        ) -> Box<ICU4XLineBreakIteratorUtf16<'a>> {
             Box::new(ICU4XLineBreakIteratorUtf16(self.0.segment_utf16(input)))
         }
 
         /// Segments a Latin-1 string.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_latin1) for more information.
-        pub fn segment_latin1<'a, 'b>(
+        pub fn segment_latin1<'a>(
             &'a self,
-            input: &'b [u8],
-        ) -> Box<ICU4XLineBreakIteratorLatin1<'a, 'b>> {
+            input: &'a [u8],
+        ) -> Box<ICU4XLineBreakIteratorLatin1<'a>> {
             Box::new(ICU4XLineBreakIteratorLatin1(self.0.segment_latin1(input)))
         }
     }
 
-    impl<'a, 'b> ICU4XLineBreakIteratorUtf8<'a, 'b> {
+    impl<'a> ICU4XLineBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
@@ -111,7 +111,7 @@ pub mod ffi {
         }
     }
 
-    impl<'a, 'b> ICU4XLineBreakIteratorUtf16<'a, 'b> {
+    impl<'a> ICU4XLineBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
@@ -123,7 +123,7 @@ pub mod ffi {
         }
     }
 
-    impl<'a, 'b> ICU4XLineBreakIteratorLatin1<'a, 'b> {
+    impl<'a> ICU4XLineBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
