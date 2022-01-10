@@ -1738,4 +1738,24 @@ fn test_truncate() {
 
     dec.truncated_left(3);
     assert_eq!("0", dec.to_string());
+
+
+    let mut dec = FixedDecimal::from_str("0.456").unwrap();
+    assert_eq!("0.456", dec.to_string());
+
+    dec.truncated_left(0);
+    assert_eq!("0.456", dec.to_string());
+
+    dec.truncated_left(-1);
+    assert_eq!("0.456", dec.to_string());
+
+    dec.truncated_left(-2);
+    assert_eq!("0.056", dec.to_string());
+
+    dec.truncated_left(-3);
+    assert_eq!("0.006", dec.to_string());
+
+    dec.truncated_left(-4);
+    assert_eq!("0.000", dec.to_string());
+
 }
