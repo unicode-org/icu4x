@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641675809997,
+  "lastUpdate": 1641808745560,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16739,6 +16739,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 115353,
             "range": "± 506",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf216a8c9140a44ed61ffea6148d1c63927eb0af",
+          "message": "Fixing test without --all-features (#1489)",
+          "timestamp": "2022-01-10T10:51:25+01:00",
+          "tree_id": "41b734a4f2c8f9333335f12ef4bfd79699fb3a52",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf216a8c9140a44ed61ffea6148d1c63927eb0af"
+        },
+        "date": 1641808737671,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115365,
+            "range": "± 1768",
             "unit": "ns/iter"
           }
         ]
