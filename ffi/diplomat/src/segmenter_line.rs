@@ -11,9 +11,9 @@ pub mod ffi {
     use alloc::boxed::Box;
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
+    use icu_segmenter::Latin1Char;
     use icu_segmenter::LineBreakIterator;
     use icu_segmenter::LineBreakSegmenter;
-    use icu_segmenter::Latin1Char;
     use icu_segmenter::Utf16Char;
 
     #[diplomat::opaque]
@@ -64,19 +64,18 @@ pub mod ffi {
 
         /// Construct a [`ICU4XLineBreakSegmenter`] with custom options.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options) for more information.
-        pub fn try_new_with_options(options: ICU4XLineBreakOptions) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
+        pub fn try_new_with_options(
+            options: ICU4XLineBreakOptions,
+        ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
             LineBreakSegmenter::try_new_with_options(options.into())
-            .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
-            .map_err(|_| ())
-            .into()
+                .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
+                .map_err(|_| ())
+                .into()
         }
 
         /// Segments a UTF-8 string.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_str) for more information.
-        pub fn segment_utf8<'a>(
-            &'a self,
-            input: &'a str,
-        ) -> Box<ICU4XLineBreakIteratorUtf8<'a>> {
+        pub fn segment_utf8<'a>(&'a self, input: &'a str) -> Box<ICU4XLineBreakIteratorUtf8<'a>> {
             Box::new(ICU4XLineBreakIteratorUtf8(self.0.segment_str(input)))
         }
 
