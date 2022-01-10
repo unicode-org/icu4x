@@ -1,1 +1,12 @@
-{}
+{
+  "defaults": {
+    "India": {
+      "standard": "IST"
+    }
+  },
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "UTC"
+    }
+  }
+}

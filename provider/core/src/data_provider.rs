@@ -297,7 +297,7 @@ where
     /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
     ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
-    ///     Yoke::attach_to_rc_cart(json_rc_buffer),
+    ///     Yoke::attach_to_zero_copy_cart(json_rc_buffer),
     ///     (),
     ///     |bytes, _, _| {
     ///         serde_json::from_slice(bytes)
@@ -808,7 +808,7 @@ impl DataPayload<BufferMarker> {
     /// Converts a reference-counted byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_rc_buffer(buffer: Rc<[u8]>) -> Self {
         Self {
-            yoke: Yoke::attach_to_rc_cart(buffer).wrap_cart_in_option(),
+            yoke: Yoke::attach_to_zero_copy_cart(buffer).wrap_cart_in_option(),
         }
     }
 
@@ -854,10 +854,23 @@ where
     M: DataMarker,
 {
     /// Takes ownership of the underlying payload. Error if not present.
+    ///
+    /// To take the metadata, too, use [`Self::take_metadata_and_payload()`].
     #[inline]
     pub fn take_payload(self) -> Result<DataPayload<M>, DataError> {
-        self.payload
-            .ok_or_else(|| DataErrorKind::MissingPayload.with_type_context::<M>())
+        Ok(self.take_metadata_and_payload()?.1)
+    }
+
+    /// Takes ownership of the underlying metadata and payload. Error if payload is not present.
+    #[inline]
+    pub fn take_metadata_and_payload(
+        self,
+    ) -> Result<(DataResponseMetadata, DataPayload<M>), DataError> {
+        Ok((
+            self.metadata,
+            self.payload
+                .ok_or_else(|| DataErrorKind::MissingPayload.with_type_context::<M>())?,
+        ))
     }
 }
 

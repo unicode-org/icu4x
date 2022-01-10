@@ -1,1 +1,12 @@
-{}
+{
+  "defaults": {
+    "Gulf": {
+      "standard": "GST"
+    }
+  },
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "UTC"
+    }
+  }
+}

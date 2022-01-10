@@ -1,6 +1,13 @@
 {
-  "Japan": {
-    "daylight": "JDT",
-    "standard": "JST"
+  "defaults": {
+    "Japan": {
+      "daylight": "JDT",
+      "standard": "JST"
+    }
+  },
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "UTC"
+    }
   }
 }

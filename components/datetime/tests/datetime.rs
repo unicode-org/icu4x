@@ -326,7 +326,6 @@ fn test_time_zone_format_configs() {
         } in &test.expectations
         {
             for &config_input in configs {
-                extern crate std;
                 let tzf = TimeZoneFormat::try_from_config(
                     langid.clone(),
                     config_input.into(),
@@ -341,9 +340,11 @@ fn test_time_zone_format_configs() {
                     "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
+                    config: `{:?}`,\n\
                     ",
                     langid,
                     test.datetime,
+                    config_input
                 );
             }
         }
