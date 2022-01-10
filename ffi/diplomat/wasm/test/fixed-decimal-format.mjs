@@ -8,7 +8,7 @@ import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFor
 
 const locale = ICU4XLocale.create("bn");
 const dataProvider = ICU4XDataProvider.create_static().provider;
-const format = ICU4XFixedDecimalFormat.try_new(locale, dataProvider, ICU4XFixedDecimalFormatOptions.default()).fdf;
+const format = ICU4XFixedDecimalFormat.try_new(locale, dataProvider, ICU4XFixedDecimalFormatOptions.default());
 
 test("format a simple decimal", t => {
   const decimal = ICU4XFixedDecimal.create(1234);
