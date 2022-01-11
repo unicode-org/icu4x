@@ -21,10 +21,10 @@ LLD := lld-12
 	cargo build
 
 ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=clang -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny
 
 ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=clang -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features smaller_static --release
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features smaller_static --release
 
 # Naive target: no optimizations, full std
 optim0.elf: ../../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.c
@@ -38,21 +38,21 @@ optim1.elf: ../../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.c
 optim2.elf: ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a $(ALL_HEADERS) test.c
 	$(CLANG) -flto -fdata-sections -ffunction-sections test.c ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a -g -o optim2.elf -Wl,--gc-sections
 
-optim3.o: $(ALL_HEADERS)
+optim3.o: $(ALL_HEADERS) test.c
 	$(CLANG) -c -flto=thin -fdata-sections -ffunction-sections --target=x86_64-unknown-linux-gnu test.c -g -o optim3.o
 
 # optim3.elf: clang two-step with lld, debug mode
 optim3.elf: optim3.o ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a
 	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim3.elf optim3.o ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a -Wl,--gc-sections
 
-optim4.o: $(ALL_HEADERS)
+optim4.o: $(ALL_HEADERS) test.c
 	$(CLANG) -c -flto=thin -fdata-sections -ffunction-sections --target=x86_64-unknown-linux-gnu test.c -g -o optim4.o
 
 # optim4.elf: clang two-step with lld, release mode with debug symbols
 optim4.elf: optim4.o ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi.a
 	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim4.elf optim4.o ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi.a -Wl,--gc-sections
 
-optim5.o: $(ALL_HEADERS)
+optim5.o: $(ALL_HEADERS) test.c
 	$(CLANG) -c -flto=thin -fdata-sections -ffunction-sections --target=x86_64-unknown-linux-gnu test.c -o optim5.o
 
 # optim5.elf: clang two-step with lld, release mode stripped of debug symbols
