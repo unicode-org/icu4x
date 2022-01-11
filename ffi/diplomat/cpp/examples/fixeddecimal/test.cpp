@@ -3,8 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XFixedDecimalFormat.hpp"
+#include "../../include/ICU4XDataStruct.hpp"
 
 #include <iostream>
+#include <array>
 
 const std::string_view path = "../../../../../provider/testdata/data/json/";
 
@@ -63,5 +65,10 @@ int main() {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    std::array<char32_t, 10> digits = {U'a', U'b', U'c', U'd', U'e', U'f', U'g', U'h', U'i', U'j'};
+
+    auto data = ICU4XDataStruct::create_decimal_symbols("+", "", "-", "", "/", "_", 4, 2, 4, digits);
+
     return 0;
 }
