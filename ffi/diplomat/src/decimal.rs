@@ -8,15 +8,17 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_decimal::{
         options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
-        provider::DecimalSymbolsV1Marker,
+        provider::{key::SYMBOLS_V1, DecimalSymbolsV1Marker},
         FixedDecimalFormat,
     };
+    use icu_locid::Locale;
     use icu_provider::prelude::DataProvider;
+    use icu_provider::struct_provider::StructProvider;
     use writeable::Writeable;
 
     use crate::{
-        fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider,
+        data_struct::ffi::ICU4XDataStruct, fixed_decimal::ffi::ICU4XFixedDecimal,
+        locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
     };
 
     #[diplomat::opaque]
@@ -63,6 +65,33 @@ pub mod ffi {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             Self::try_new_impl(locale, &provider, options)
+        }
+
+        /// Creates a new [`ICU4XFixedDecimalFormat`] from preconstructed locale data in the form of an [`ICU4XDataStruct`]
+        /// constructed from `ICU4XDataStruct::create_decimal_symbols()`.
+        ///
+        /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
+        /// Passing a consumed struct to this method will return an error.
+        pub fn try_new_from_struct(
+            data_struct: &mut ICU4XDataStruct,
+            options: ICU4XFixedDecimalFormatOptions,
+        ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()> {
+            let data = if let Some(data) = data_struct.0.take() {
+                data
+            } else {
+                return Err(()).into();
+            };
+
+            let data = if let Ok(data) = data.downcast::<DecimalSymbolsV1Marker>() {
+                data
+            } else {
+                return Err(()).into();
+            };
+            let provider = StructProvider {
+                key: SYMBOLS_V1,
+                data,
+            };
+            Self::try_new_impl(&ICU4XLocale(Locale::und()), &provider, options)
         }
 
         fn try_new_impl<D>(

@@ -21,7 +21,7 @@ pub mod ffi {
     /// A generic data struct to be used by ICU4X
     ///
     /// This can be used to construct a StructDataProvider.
-    pub struct ICU4XDataStruct(Option<DataPayload<ErasedDataStructMarker>>);
+    pub struct ICU4XDataStruct(pub(crate) Option<DataPayload<ErasedDataStructMarker>>);
 
     impl ICU4XDataStruct {
         /// Construct a new DecimalSymbolsV1 data struct.
