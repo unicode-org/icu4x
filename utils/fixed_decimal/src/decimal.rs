@@ -1715,13 +1715,13 @@ fn test_pad() {
     let mut dec = FixedDecimal::from_str("-0.42").unwrap();
     assert_eq!("-0.42", dec.to_string());
 
-    dec.padded_left(0);
+    dec.padded_left(1);
     assert_eq!("-0.42", dec.to_string());
 
-    dec.padded_left(3);
+    dec.padded_left(4);
     assert_eq!("-0000.42", dec.to_string());
 
-    dec.padded_left(1);
+    dec.padded_left(2);
     assert_eq!("-00.42", dec.to_string());
 }
 
