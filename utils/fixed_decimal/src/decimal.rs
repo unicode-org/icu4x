@@ -340,7 +340,8 @@ impl FixedDecimal {
         self
     }
 
-    /// Add or remove digits from the left side of the decimal (before the decimal point).
+    /// Zero-pad the number on the left to a particular number of integer digits,
+    /// returning the result.
     ///
     /// # Examples
     ///
@@ -350,65 +351,197 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.pad_or_truncate_left(2);
-    /// assert_eq!("0042", dec.to_string());
+    /// ;
+    /// assert_eq!("0042", dec.clone().padded_left(4).to_string());
     ///
-    /// dec.pad_or_truncate_left(-2);
-    /// assert_eq!("42", dec.to_string());    
+    /// assert_eq!("042", dec.clone().padded_left(3).to_string());
     ///
-    /// dec.pad_or_truncate_left(-1);
-    /// assert_eq!("2", dec.to_string());
+    /// assert_eq!("42", dec.clone().padded_left(2).to_string());
+    ///
+    /// assert_eq!("42", dec.clone().padded_left(1).to_string());
     /// ```
-    pub fn pad_or_truncate_left(&mut self, shift: i16) {
-        self.upper_magnitude = match shift >= 0 {
-            true => self.upper_magnitude.checked_add(shift).unwrap_or(i16::MAX),
-            false => self.upper_magnitude.checked_add(shift).unwrap_or(0),
-        };
-
-        // upper_magnitude must be greater than or equal zero.
-        if self.upper_magnitude < 0 {
-            self.upper_magnitude = 0;
-        }
-
-        if self.upper_magnitude >= self.magnitude {
-            return;
-        }
-
-        // how many digits need to be deleted from the start.
-        let cut = self.magnitude - self.upper_magnitude;
-
-        self.magnitude = self.upper_magnitude;
-        if cut >= self.digits.len() as i16 {
-            self.digits.clear();
-            self.magnitude = 0;
-            return;
-        }
-
-        self.digits.drain(0..(cut as usize));
+    pub fn padded_left(mut self, digits: u16) -> Self {
+        self.pad_left(digits);
+        self
     }
 
-    /// Add or remove digits from the left side of the decimal (before the decimal point).
+    /// Zero-pad the number on the left to a particular number of integer digits.
     ///
     /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let dec = FixedDecimal::from(42);
+    /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// let dec = dec.padded_or_truncated_left(2);
+    /// dec.pad_left(4);
     /// assert_eq!("0042", dec.to_string());
     ///
-    /// let dec = dec.padded_or_truncated_left(-2);
+    /// dec.pad_left(3);
+    /// assert_eq!("042", dec.to_string());
+    ///
+    /// dec.pad_left(2);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// let dec = dec.padded_or_truncated_left(-1);
-    /// assert_eq!("2", dec.to_string());
+    /// dec.pad_left(1);
+    /// assert_eq!("42", dec.to_string());
     /// ```
-    pub fn padded_or_truncated_left(mut self, magnitude: i16) -> Self {
-        self.pad_or_truncate_left(magnitude);
+    pub fn pad_left(&mut self, digits: u16) {
+        let mut magnitude = if digits == 0 {
+            0
+        } else if digits > (i16::MAX as u16) + 1 {
+            i16::MAX
+        } else {
+            (digits - 1) as i16
+        };
+        if magnitude < 0 {
+            magnitude = 0;
+        }
+        // Do not truncate nonzero digits
+        if magnitude <= self.magnitude {
+            magnitude = self.magnitude;
+        }
+
+        self.upper_magnitude = magnitude;
+    }
+
+    /// Truncate the number on the left to a particular magnitude, deleting
+    /// digits if necessary, returning the result.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(4235);
+    /// assert_eq!("4235", dec.to_string());
+    ///
+    /// assert_eq!("4235", dec.clone().truncated_left(5).to_string());
+    ///
+    /// assert_eq!("235", dec.clone().truncated_left(2).to_string());
+    ///
+    /// assert_eq!("35", dec.clone().truncated_left(1).to_string());
+    ///
+    /// assert_eq!("5", dec.clone().truncated_left(0).to_string());
+    ///
+    /// assert_eq!("0", dec.clone().truncated_left(-1).to_string());
+    /// ```
+    pub fn truncated_left(mut self, magnitude: i16) -> Self {
+        self.truncate_left(magnitude);
         self
+    }
+
+    /// Truncate the number on the left to a particular magnitude, deleting
+    /// digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(4235);
+    /// assert_eq!("4235", dec.to_string());
+    ///
+    /// dec.truncate_left(5);
+    /// assert_eq!("4235", dec.to_string());
+    ///
+    /// dec.truncate_left(2);
+    /// assert_eq!("235", dec.to_string());
+    ///
+    /// dec.truncate_left(1);
+    /// assert_eq!("35", dec.to_string());
+    ///
+    /// dec.truncate_left(0);
+    /// assert_eq!("5", dec.to_string());
+    ///
+    /// dec.truncate_left(-1);
+    /// assert_eq!("0", dec.to_string());
+    /// ```
+    pub fn truncate_left(&mut self, magnitude: i16) {
+        if self.magnitude >= magnitude {
+            let positive_magnitude = if magnitude > 0 { magnitude } else { 0 };
+            let cut = ((self.magnitude as i32) - (magnitude as i32)) as usize;
+            if cut >= self.digits.len() {
+                self.digits.clear();
+                self.magnitude = 0;
+                self.upper_magnitude = positive_magnitude;
+                #[cfg(debug_assertions)]
+                self.check_invariants();
+                return;
+            }
+            let _ = self.digits.drain(0..cut as usize).count();
+            self.magnitude = magnitude;
+            self.upper_magnitude = positive_magnitude;
+        }
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    /// Zero-pad the number on the right to a particular (negative) magnitude. Will truncate
+    /// trailing zeros if necessary, but will not truncate other digits, returning the result.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
+    /// assert_eq!("123.456", dec.to_string());
+    ///
+    /// assert_eq!("123.456", dec.clone().padded_right(1).to_string());
+    ///
+    /// assert_eq!("123.456", dec.clone().padded_right(2).to_string());
+    ///
+    /// assert_eq!("123.4560", dec.clone().padded_right(4).to_string());
+    ///
+    /// assert_eq!("123.456000", dec.clone().padded_right(6).to_string());
+    /// ```
+    pub fn padded_right(mut self, negative_magnitude: u16) -> Self {
+        self.pad_right(negative_magnitude);
+        self
+    }
+
+    /// Zero-pad the number on the right to a particular (negative) magnitude. Will truncate
+    /// trailing zeros if necessary, but will not truncate other digits.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
+    /// assert_eq!("123.456", dec.to_string());
+    ///
+    /// dec.pad_right(1);
+    /// assert_eq!("123.456", dec.to_string());
+    ///
+    /// dec.pad_right(2);
+    /// assert_eq!("123.456", dec.to_string());
+    ///
+    /// dec.pad_right(4);
+    /// assert_eq!("123.4560", dec.to_string());
+    ///
+    /// dec.pad_right(6);
+    /// assert_eq!("123.456000", dec.to_string());
+    /// ```
+    pub fn pad_right(&mut self, negative_magnitude: u16) {
+        let mut magnitude = if negative_magnitude > (i16::MAX as u16) {
+            i16::MIN
+        } else {
+            -(negative_magnitude as i16)
+        };
+        let bottom_magnitude = (self.magnitude as i32 - self.digits.len() as i32 + 1) as i16;
+        // Do not truncate nonzero digits
+        if magnitude >= bottom_magnitude {
+            magnitude = bottom_magnitude;
+        }
+
+        self.lower_magnitude = magnitude;
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Returns the [Signum][Signum] of this FixedDecimal.
@@ -1670,55 +1803,49 @@ fn test_signum_zero() {
 }
 
 #[test]
-fn test_pad_or_truncate_left() {
-    let mut dec = FixedDecimal::from(1000);
-    assert_eq!("1000", dec.to_string());
-
-    dec.pad_or_truncate_left(-1);
-    assert_eq!("000", dec.to_string());
-
-    dec.pad_or_truncate_left(-10000);
-    assert_eq!("0", dec.to_string());
-
-    dec.pad_or_truncate_left(3);
-    assert_eq!("0000", dec.to_string());
-
+fn test_pad() {
     let mut dec = FixedDecimal::from_str("-0.42").unwrap();
     assert_eq!("-0.42", dec.to_string());
 
-    dec.pad_or_truncate_left(-1);
+    dec.pad_left(1);
     assert_eq!("-0.42", dec.to_string());
 
-    dec.pad_or_truncate_left(3);
+    dec.pad_left(4);
     assert_eq!("-0000.42", dec.to_string());
 
-    dec.pad_or_truncate_left(-3);
-    assert_eq!("-0.42", dec.to_string());
+    dec.pad_left(2);
+    assert_eq!("-00.42", dec.to_string());
 }
 
 #[test]
-fn test_padded_or_truncated_left() {
-    let dec = FixedDecimal::from(1000);
+fn test_truncate() {
+    let mut dec = FixedDecimal::from(1000);
     assert_eq!("1000", dec.to_string());
 
-    let dec = dec.padded_or_truncated_left(-1);
+    dec.truncate_left(2);
     assert_eq!("000", dec.to_string());
 
-    let dec = dec.padded_or_truncated_left(-10000);
+    dec.truncate_left(0);
     assert_eq!("0", dec.to_string());
 
-    let dec = dec.padded_or_truncated_left(3);
-    assert_eq!("0000", dec.to_string());
+    dec.truncate_left(3);
+    assert_eq!("0", dec.to_string());
 
-    let dec = FixedDecimal::from_str("-0.42").unwrap();
-    assert_eq!("-0.42", dec.to_string());
+    let mut dec = FixedDecimal::from_str("0.456").unwrap();
+    assert_eq!("0.456", dec.to_string());
 
-    let dec = dec.padded_or_truncated_left(-1);
-    assert_eq!("-0.42", dec.to_string());
+    dec.truncate_left(0);
+    assert_eq!("0.456", dec.to_string());
 
-    let dec = dec.padded_or_truncated_left(3);
-    assert_eq!("-0000.42", dec.to_string());
+    dec.truncate_left(-1);
+    assert_eq!("0.456", dec.to_string());
 
-    let dec = dec.padded_or_truncated_left(-3);
-    assert_eq!("-0.42", dec.to_string());
+    dec.truncate_left(-2);
+    assert_eq!("0.056", dec.to_string());
+
+    dec.truncate_left(-3);
+    assert_eq!("0.006", dec.to_string());
+
+    dec.truncate_left(-4);
+    assert_eq!("0.000", dec.to_string());
 }
