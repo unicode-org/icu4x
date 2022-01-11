@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641935380932,
+  "lastUpdate": 1641935410852,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20873,6 +20873,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4529,
             "range": "± 414",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8b26c199bcc07cb383ccbe6a41772e6fce714bc4",
+          "message": "Make most Yokeable impls inline (#1493)",
+          "timestamp": "2022-01-11T13:02:02-08:00",
+          "tree_id": "0e2a30c9c0739e991de1733b2e4b7dabcc4a48ce",
+          "url": "https://github.com/unicode-org/icu4x/commit/8b26c199bcc07cb383ccbe6a41772e6fce714bc4"
+        },
+        "date": 1641935401174,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2677,
+            "range": "± 179",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4703,
+            "range": "± 218",
             "unit": "ns/iter"
           }
         ]
