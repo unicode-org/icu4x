@@ -308,11 +308,7 @@ fn is_break_utf32_by_loose(
 }
 
 #[inline]
-fn is_break_from_table(
-    rule_table: &LineBreakRuleTable<'_>,
-    left: u8,
-    right: u8,
-) -> bool {
+fn is_break_from_table(rule_table: &LineBreakRuleTable<'_>, left: u8, right: u8) -> bool {
     let rule = get_break_state_from_table(rule_table, left, right);
     if rule == KEEP_RULE {
         return false;
@@ -352,11 +348,7 @@ fn is_non_break_by_keepall(left: u8, right: u8) -> bool {
 }
 
 #[inline]
-fn get_break_state_from_table(
-    rule_table: &LineBreakRuleTable<'_>,
-    left: u8,
-    right: u8,
-) -> i8 {
+fn get_break_state_from_table(rule_table: &LineBreakRuleTable<'_>, left: u8, right: u8) -> i8 {
     let idx = ((left as usize) - 1) * (rule_table.property_count as usize) + (right as usize) - 1;
     // We use unwrap_or to fall back to the base case and prevent panics on bad data.
     rule_table.table_data.get(idx).unwrap_or(KEEP_RULE)
