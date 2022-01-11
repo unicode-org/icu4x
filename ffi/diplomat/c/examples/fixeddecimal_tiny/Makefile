@@ -21,10 +21,10 @@ LLD := lld-12
 	cargo build
 
 ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(clang) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny
 
 ../../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(clang) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features smaller_static --release
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2021-12-22 panic-abort-build --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --features smaller_static --release
 
 # Naive target: no optimizations, full std
 optim0.elf: ../../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.c
