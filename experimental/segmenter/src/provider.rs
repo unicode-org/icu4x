@@ -56,7 +56,7 @@ impl Deref for LineBreakPropertyTable<'_> {
     fn deref(&self) -> &Self::Target {
         match self {
             Self::Borrowed(v) => v,
-            Self::Owned(v) => &v,
+            Self::Owned(v) => v,
         }
     }
 }

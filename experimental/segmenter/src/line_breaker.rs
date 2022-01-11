@@ -142,7 +142,7 @@ impl LineBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: &self.payload.get(),
+            data: self.payload.get(),
             options: &self.options,
         }
     }
@@ -157,7 +157,7 @@ impl LineBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: &self.payload.get(),
+            data: self.payload.get(),
             options: &self.options,
         }
     }
@@ -172,7 +172,7 @@ impl LineBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: &self.payload.get(),
+            data: self.payload.get(),
             options: &self.options,
         }
     }
