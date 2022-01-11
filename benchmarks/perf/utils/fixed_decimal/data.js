@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641935356712,
+  "lastUpdate": 1641941076945,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -16859,6 +16859,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 114871,
             "range": "± 8579",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6a9402a015fa39b08123ca89ca370986c4a7563",
+          "message": "Add API for padding to a minimum number of decimal digits (#1482)\n\n* Add API for padding to a minimum number of decimal digits\r\n\r\n* Add padded_left, truncated_left, padded_right\r\n\r\n* rm print\r\n\r\n* magnitude -> digits\r\n\r\n* tests\r\n\r\n* fix test\r\n\r\n* Update utils/fixed_decimal/src/decimal.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update utils/fixed_decimal/src/decimal.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* cut\r\n\r\n* Add self -> self methods\r\n\r\n* fmt\r\n\r\n* invariants\r\n\r\n* invariants2\r\n\r\n* fix clippy\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-01-11T14:36:15-08:00",
+          "tree_id": "510eeca73d373d57d727db867e268e352f53704f",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6a9402a015fa39b08123ca89ca370986c4a7563"
+        },
+        "date": 1641941066727,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130404,
+            "range": "± 4404",
             "unit": "ns/iter"
           }
         ]
