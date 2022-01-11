@@ -17,12 +17,11 @@ test("use create_from_byte_slice to format a simple decimal", async t => {
   t.assert(result.success);
 
   const format = ICU4XFixedDecimalFormat.try_new(locale, result.provider, ICU4XFixedDecimalFormatOptions.default());
-  t.assert(format.success);
 
   const decimal = ICU4XFixedDecimal.create(1234);
   decimal.multiply_pow10(-2);
 
-  t.is(format.fdf.format(decimal), "১২.৩৪");
+  t.is(format.format(decimal), "১২.৩৪");
 });
 
 test("fail to create from invalid buffer", t => {

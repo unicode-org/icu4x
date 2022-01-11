@@ -24,13 +24,6 @@ pub mod ffi {
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html) for more information.
     pub struct ICU4XFixedDecimalFormat(pub FixedDecimalFormat);
 
-    pub struct ICU4XFixedDecimalFormatResult {
-        /// The [`ICU4XFixedDecimalFormat`], exists if creation was successful.
-        pub fdf: Option<Box<ICU4XFixedDecimalFormat>>,
-        /// Whether creating the [`ICU4XFixedDecimalFormat`] was successful.
-        pub success: bool,
-    }
-
     pub enum ICU4XFixedDecimalGroupingStrategy {
         Auto,
         Never,
@@ -66,7 +59,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
             options: ICU4XFixedDecimalFormatOptions,
-        ) -> ICU4XFixedDecimalFormatResult {
+        ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
             Self::try_new_impl(locale, &provider, options)
@@ -76,7 +69,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             provider: &D,
             options: ICU4XFixedDecimalFormatOptions,
-        ) -> ICU4XFixedDecimalFormatResult
+        ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()>
         where
             D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
         {
@@ -101,15 +94,9 @@ pub mod ffi {
                     },
                 },
             ) {
-                ICU4XFixedDecimalFormatResult {
-                    fdf: Some(Box::new(ICU4XFixedDecimalFormat(fdf))),
-                    success: true,
-                }
+                Ok(Box::new(ICU4XFixedDecimalFormat(fdf))).into()
             } else {
-                ICU4XFixedDecimalFormatResult {
-                    fdf: None,
-                    success: false,
-                }
+                Err(()).into()
             }
         }
 
