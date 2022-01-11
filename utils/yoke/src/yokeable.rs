@@ -234,16 +234,17 @@ where
     <T as ToOwned>::Owned: Sized,
 {
     type Output = Cow<'a, T>;
+    #[inline]
     fn transform(&'a self) -> &'a Cow<'a, T> {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
     }
-
+    #[inline]
     fn transform_owned(self) -> Cow<'a, T> {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
     }
-
+    #[inline]
     unsafe fn make(from: Cow<'a, T>) -> Self {
         // i hate this
         // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
@@ -253,7 +254,7 @@ where
         mem::forget(from);
         core::ptr::read(ptr)
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
@@ -265,20 +266,21 @@ where
 
 unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
     type Output = &'a T;
+    #[inline]
     fn transform(&'a self) -> &'a &'a T {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
     }
-
+    #[inline]
     fn transform_owned(self) -> &'a T {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
     }
-
+    #[inline]
     unsafe fn make(from: &'a T) -> Self {
         mem::transmute(from)
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
