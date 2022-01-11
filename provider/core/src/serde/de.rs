@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::Error;
-use crate::buffer_provider::BufferFormat;
-use crate::buffer_provider::BufferProvider;
+use crate::buf::BufferFormat;
+use crate::buf::BufferProvider;
 use crate::prelude::*;
 use core::marker::PhantomData;
 use serde::de::Deserialize;

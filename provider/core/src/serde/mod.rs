@@ -20,7 +20,7 @@
 //! [`DataProvider`]`<`[`SerializeMarker`]`>` is used by data exporters such as `FilesystemExporter`.
 //!
 //! [`DataProvider`]: crate::data_provider::DataProvider
-//! [`BufferProvider`]: crate::buffer_provider::BufferProvider
+//! [`BufferProvider`]: crate::buf::BufferProvider
 
 mod de;
 #[cfg(feature = "serialize")]
@@ -35,7 +35,7 @@ pub use ser::SerializeBox;
 #[cfg(feature = "serialize")]
 pub use ser::SerializeMarker;
 
-use crate::buffer_provider::BufferFormat;
+use crate::buf::BufferFormat;
 
 /// Error type for deserialization.
 #[derive(displaydoc::Display, Debug)]

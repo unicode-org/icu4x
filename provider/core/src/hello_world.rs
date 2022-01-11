@@ -4,7 +4,7 @@
 
 //! Data provider returning multilingual "Hello World" strings for testing.
 
-use crate::buffer_provider::BufferFormat;
+use crate::buf::BufferFormat;
 use crate::helpers;
 use crate::iter::IterableProvider;
 use crate::prelude::*;

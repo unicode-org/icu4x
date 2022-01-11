@@ -6,7 +6,7 @@ use crate::blob_schema::BlobSchema;
 use crate::path_util;
 use alloc::rc::Rc;
 use alloc::string::String;
-use icu_provider::buffer_provider::BufferFormat;
+use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;

@@ -4,7 +4,7 @@
 
 use super::AbstractSerializer;
 use super::Error;
-use icu_provider::buffer_provider::BufferFormat;
+use icu_provider::buf::BufferFormat;
 use std::io::{self, Write};
 
 /// A small helper class to convert LF to CRLF on Windows.

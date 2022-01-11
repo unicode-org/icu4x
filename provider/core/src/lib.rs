@@ -107,7 +107,7 @@ extern crate alloc;
 #[macro_use]
 pub mod dynutil;
 
-pub mod buffer_provider;
+pub mod buf;
 mod data_provider;
 pub mod either;
 mod error;
@@ -133,8 +133,8 @@ pub use icu_provider_macros::data_struct;
 
 pub mod prelude {
     //! Core selection of APIs and structures for [`DataProvider`].
-    pub use crate::buffer_provider::BufferMarker;
-    pub use crate::buffer_provider::BufferProvider;
+    pub use crate::buf::BufferMarker;
+    pub use crate::buf::BufferProvider;
     pub use crate::data_provider::DataPayload;
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
