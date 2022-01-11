@@ -388,7 +388,13 @@ impl FixedDecimal {
     /// assert_eq!("42", dec.to_string());
     /// ```
     pub fn pad_left(&mut self, digits: u16) {
-        let mut magnitude = if digits == 0 { 0 } else if digits > (i16::MAX as u16) + 1 { i16::MAX } else { (digits - 1) as i16 };
+        let mut magnitude = if digits == 0 {
+            0
+        } else if digits > (i16::MAX as u16) + 1 {
+            i16::MAX
+        } else {
+            (digits - 1) as i16
+        };
         if magnitude < 0 {
             magnitude = 0;
         }
@@ -518,7 +524,11 @@ impl FixedDecimal {
     /// assert_eq!("123.456000", dec.to_string());
     /// ```
     pub fn pad_right(&mut self, negative_magnitude: u16) {
-        let mut magnitude = if negative_magnitude >= (i16::MAX as u16) + 1 { i16::MIN } else { -(negative_magnitude as i16) };
+        let mut magnitude = if negative_magnitude >= (i16::MAX as u16) + 1 {
+            i16::MIN
+        } else {
+            -(negative_magnitude as i16)
+        };
         let bottom_magnitude = (self.magnitude as i32 - self.digits.len() as i32 + 1) as i16;
         // Do not truncate nonzero digits
         if magnitude >= bottom_magnitude {
@@ -1815,7 +1825,6 @@ fn test_truncate() {
     dec.truncate_left(3);
     assert_eq!("0", dec.to_string());
 
-
     let mut dec = FixedDecimal::from_str("0.456").unwrap();
     assert_eq!("0.456", dec.to_string());
 
@@ -1833,5 +1842,4 @@ fn test_truncate() {
 
     dec.truncate_left(-4);
     assert_eq!("0.000", dec.to_string());
-
 }
