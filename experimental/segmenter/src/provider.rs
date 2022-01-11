@@ -15,10 +15,10 @@ use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
 pub mod key {
-    //! Resource keys for [`icu_decimal`](crate).
+    //! Resource keys for [`icu_segmenter`](crate).
     use icu_provider::{resource_key, ResourceKey};
 
-    /// Resource key: symbols used for basic decimal formatting.
+    /// Resource key: data for line breaking.
     pub const LINE_BREAK_DATA_V1: ResourceKey = resource_key!(Segmenter, "line", 1);
 }
 
