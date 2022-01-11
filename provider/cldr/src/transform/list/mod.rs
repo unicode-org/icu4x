@@ -5,11 +5,12 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_list::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
@@ -63,7 +64,7 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
         let langid = req.try_langid()?;
         let data = match self.data.get(langid) {
             Some(v) => &v.list_patterns,
-            None => return Err(DataError::MissingResourceOptions(req.clone())),
+            None => return Err(DataErrorKind::MissingLocale.with_req(req)),
         };
 
         let mut patterns = match req.resource_path.key {
@@ -72,7 +73,9 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
             key::LIST_FORMAT_UNIT_V1 => parse_unit_patterns(data),
             _ => unreachable!(),
         }
-        .map_err(DataError::new_resc_error)?;
+        .map_err(|e| {
+            DataError::custom("CLDR JSON list pattern parsing").with_display_context(&e)
+        })?;
 
         if langid.language == langid!("es").language {
             match req.resource_path.key {
@@ -114,10 +117,12 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                             &icu_provider_uprops::PropertiesDataProvider::try_new(
                                 &self.uprops_path
                             )
-                            .map_err(DataError::new_resc_error)?,
+                            .map_err(|e| DataError::custom("Properties data provider error")
+                                .with_display_context(&e))?,
                             icu_properties::Script::Hebrew,
                         )
-                        .map_err(DataError::new_resc_error)?
+                        .map_err(|e| DataError::custom("Could not find Hebrew script set")
+                            .with_display_context(&e))?
                         .get()
                         .inv_list
                         .iter_ranges()
@@ -142,7 +147,7 @@ icu_provider::impl_dyn_provider!(ListProvider, {
     _ => ListFormatterPatternsV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for ListProvider {
+impl IterableProvider for ListProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

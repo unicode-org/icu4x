@@ -5,16 +5,19 @@ Zero-copy vector abstractions over byte arrays.
 `zerovec` enable vectors of multibyte types to be backed by a byte array, abstracting away
 issues including memory alignment and endianness.
 
-This crate has three main types:
+This crate has four main types:
 
 - [`ZeroVec<T>`](ZeroVec) for fixed-width types like `u32`
 - [`VarZeroVec<T>`](VarZeroVec) for variable-width types like `str`
 - [`ZeroMap<K, V>`](ZeroMap) to map from `K` to `V`
+- [`ZeroMap2d<K0, K1, V>`](ZeroMap2d) to map from the pair `(K0, K1)` to `V`
 
 The first two are intended as drop-in replacements for `Vec<T>` in Serde structs serialized
-with a format supporting a borrowed byte buffer, like Bincode. The third is indended as a
-replacement for `HashMap` or `LiteMap`. Clients upgrading to `ZeroVec`, `VarZeroVec`, or
-`ZeroMap` benefit from zero heap allocations when deserializing read-only data.
+with a format supporting a borrowed byte buffer, like Bincode. The third and fourth are
+intended as a replacement for `HashMap` or `LiteMap`.
+
+Clients upgrading to `zerovec` benefit from zero heap allocations when deserializing
+read-only data.
 
 This crate has two optional features: `serde` and `yoke`. `serde` allows serializing and deserializing
 `zerovec`'s abstractions via [`serde`](https://docs.rs/serde), and `yoke` enables implementations of `Yokeable`

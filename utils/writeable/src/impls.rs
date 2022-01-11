@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::*;
+use alloc::borrow::Cow;
+use core::fmt;
+
 macro_rules! impl_write_num {
     ($u:ty, $i:ty, $test:ident, $log10:ident) => {
         impl $crate::Writeable for $u {
@@ -117,4 +121,86 @@ fn assert_log10_approximation() {
     for i in 1..u128::BITS {
         assert_eq!(i * 59 / 196, 2f64.powf(i.into()).log10().floor() as u32);
     }
+}
+
+impl Writeable for str {
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        sink.write_str(self)
+    }
+
+    #[inline]
+    fn write_len(&self) -> LengthHint {
+        LengthHint::exact(self.len())
+    }
+
+    /// Returns a borrowed `str`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use writeable::Writeable;
+    /// use std::borrow::Cow;
+    ///
+    /// let cow = "foo".writeable_to_string();
+    /// assert!(matches!(cow, Cow::Borrowed(_)));
+    /// ```
+    #[inline]
+    fn writeable_to_string(&self) -> Cow<str> {
+        Cow::Borrowed(self)
+    }
+}
+
+impl Writeable for String {
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        sink.write_str(self)
+    }
+
+    #[inline]
+    fn write_len(&self) -> LengthHint {
+        LengthHint::exact(self.len())
+    }
+
+    #[inline]
+    fn writeable_to_string(&self) -> Cow<str> {
+        Cow::Borrowed(self)
+    }
+}
+
+impl<'a, T: Writeable + ?Sized> Writeable for &T {
+    #[inline]
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        (*self).write_to(sink)
+    }
+
+    #[inline]
+    fn write_len(&self) -> LengthHint {
+        (*self).write_len()
+    }
+
+    #[inline]
+    fn writeable_to_string(&self) -> Cow<str> {
+        (*self).writeable_to_string()
+    }
+}
+
+#[test]
+fn test_string_impls() {
+    fn check_writeable_slice<W: Writeable>(writeables: &[W]) {
+        assert_writeable_eq!(&writeables[0], "");
+        assert_writeable_eq!(&writeables[1], "abc");
+    }
+
+    // test str impl
+    let arr: &[&str] = &["", "abc"];
+    check_writeable_slice(arr);
+
+    // test String impl
+    let arr: &[String] = &["".to_string(), "abc".to_string()];
+    check_writeable_slice(arr);
+
+    // test &T impl
+    let arr: &[&String] = &[&"".to_string(), &"abc".to_string()];
+    check_writeable_slice(arr);
 }

@@ -17,7 +17,7 @@ mod vecs;
 
 pub use borrowed::ZeroMapBorrowed;
 pub use kv::ZeroMapKV;
-pub use vecs::{MutableZeroVecLike, ZeroVecLike};
+pub use vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 
 /// A zero-copy map datastructure, built on sorted binary-searchable [`ZeroVec`]
 /// and [`VarZeroVec`].

@@ -6,10 +6,10 @@ use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
 use icu_locid::LanguageIdentifier;
 use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SET_KEYS};
+use icu_provider::either::EitherProvider;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
 use icu_provider::hello_world::{self, HelloWorldProvider};
-use icu_provider::iter::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::export::BlobExporter;
@@ -414,21 +414,18 @@ fn export_cldr(
     };
 
     let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
-    let filtered_provider;
-    let provider: &dyn IterableDataProvider<SerializeMarker>;
-
-    if let Some(allowlist) = allowed_locales {
-        filtered_provider = raw_provider
-            .filterable()
+    let provider: EitherProvider<_, _> = if let Some(allowlist) = allowed_locales {
+        let filtered_provider = raw_provider
+            .filterable("icu4x-datagen langid allowlist")
             .filter_by_langid_allowlist_strict(allowlist);
-        provider = &filtered_provider;
+        EitherProvider::A(filtered_provider)
     } else {
-        provider = &raw_provider;
-    }
+        EitherProvider::B(raw_provider)
+    };
 
     for key in keys.iter() {
         log::info!("Writing key: {}", key);
-        icu_provider::export::export_from_iterable(key, provider, exporter)?;
+        icu_provider::export::export_from_iterable(key, &provider, exporter)?;
     }
 
     Ok(())
@@ -463,7 +460,13 @@ fn export_set_props(
     for key in keys.iter() {
         let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
         if matches.is_present("TEST_KEYS")
-            && matches!(result, Err(DataError::MissingResourceKey(_)))
+            && matches!(
+                result,
+                Err(DataError {
+                    kind: DataErrorKind::MissingResourceKey,
+                    ..
+                })
+            )
         {
             // Within testdata, if the data for a particular property is unavailable, skip it for now.
             log::trace!("Skipping key: {}", key);
@@ -505,7 +508,13 @@ fn export_map_props(
     for key in keys.iter() {
         let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
         if matches.is_present("TEST_KEYS")
-            && matches!(result, Err(DataError::MissingResourceKey(_)))
+            && matches!(
+                result,
+                Err(DataError {
+                    kind: DataErrorKind::MissingResourceKey,
+                    ..
+                })
+            )
         {
             // Within testdata, if the data for a particular property is unavailable, skip it for now.
             log::trace!("Skipping key: {}", key);
@@ -524,21 +533,18 @@ fn export_hello_world(
     allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> eyre::Result<()> {
     let raw_provider = HelloWorldProvider::new_with_placeholder_data();
-    let filtered_provider;
-    let provider: &dyn IterableDataProvider<SerializeMarker>;
-
-    if let Some(allowlist) = allowed_locales {
-        filtered_provider = raw_provider
-            .filterable()
+    let provider: EitherProvider<_, _> = if let Some(allowlist) = allowed_locales {
+        let filtered_provider = raw_provider
+            .filterable("icu4x-datagen langid allowlist")
             .filter_by_langid_allowlist_strict(allowlist);
-        provider = &filtered_provider;
+        EitherProvider::A(filtered_provider)
     } else {
-        provider = &raw_provider;
-    }
+        EitherProvider::B(raw_provider)
+    };
 
     let key = hello_world::key::HELLO_WORLD_V1;
     log::info!("Writing key: {}", key);
-    icu_provider::export::export_from_iterable(&key, provider, exporter)?;
+    icu_provider::export::export_from_iterable(&key, &provider, exporter)?;
 
     Ok(())
 }

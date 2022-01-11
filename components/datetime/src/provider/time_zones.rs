@@ -7,8 +7,8 @@ use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::TinyStr8;
 
-/// Provides a few common map accessor methods to new-type structs that wrap a map type.
-/// The methods are all pass-through calls to the internal methods of the same name.
+/// Provides a few common map accessor methods to new-type structs that wrap a map type with single
+/// field. The methods are all pass-through calls to the internal methods of the same name.
 macro_rules! map_access {
     ($outer: ty[$key: ty] => $inner: ty: $lt: lifetime) => {
         impl<$lt> $outer {
@@ -35,6 +35,48 @@ macro_rules! map_access {
             type Output = $inner;
             fn index(&self, key: &Q) -> &Self::Output {
                 self.0.get(key).unwrap()
+            }
+        }
+    };
+}
+
+/// Provides a few common map accessor methods to new-type structs that wrap a map type with
+/// overrides field. The methods are all pass-through calls to the internal methods of the same name.
+macro_rules! map_access_with_overrides {
+    ($outer: ty[$key: ty] => $inner: ty: $lt: lifetime) => {
+        impl<$lt> $outer {
+            /// Get the default data from the key.
+            pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
+            where
+                Q: Ord,
+                Cow<'data, $key>: core::borrow::Borrow<Q>,
+            {
+                self.defaults.get(key)
+            }
+
+            /// Get the override data from the key.
+            pub fn get_override<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
+            where
+                Q: Ord,
+                Cow<'data, $key>: core::borrow::Borrow<Q>,
+            {
+                self.overrides.get(key)
+            }
+
+            /// Check if the underlying data is empty.
+            pub fn is_empty(&self) -> bool {
+                self.defaults.is_empty()
+            }
+        }
+
+        impl<$lt, Q: ?Sized> core::ops::Index<&Q> for $outer
+        where
+            Q: Ord,
+            Cow<'data, $key>: core::borrow::Borrow<Q>,
+        {
+            type Output = $inner;
+            fn index(&self, key: &Q) -> &Self::Output {
+                self.defaults.get(key).unwrap()
             }
         }
     };
@@ -86,8 +128,13 @@ map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneGenericNamesLongV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
-map_access!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
+pub struct MetaZoneGenericNamesLongV1<'data> {
+    /// The default mapping between metazone id and localized metazone name.
+    pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+    /// The override mapping between timezone id and localized metazone name.
+    pub overrides: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+}
+map_access_with_overrides!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the short-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
@@ -98,8 +145,13 @@ map_access!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneGenericNamesShortV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
-map_access!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
+pub struct MetaZoneGenericNamesShortV1<'data> {
+    /// The default mapping between metazone id and localized metazone name.
+    pub defaults: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+    /// The override mapping between timezone id and localized metazone name.
+    pub overrides: LiteMap<Cow<'data, str>, Cow<'data, str>>,
+}
+map_access_with_overrides!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the long-form specific metazone names.
 /// Specific names include time variants such as "daylight."
@@ -111,10 +163,13 @@ map_access!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesLongV1<'data>(
-    pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
-);
-map_access!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
+pub struct MetaZoneSpecificNamesLongV1<'data> {
+    /// The default mapping between metazone id and localized metazone name.
+    pub defaults: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+    /// The override mapping between timezone id and localized metazone name.
+    pub overrides: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+}
+map_access_with_overrides!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
 /// An ICU4X mapping to the short-form specific metazone names.
 /// Specific names include time variants such as "daylight."
@@ -126,10 +181,13 @@ map_access!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesShortV1<'data>(
-    pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
-);
-map_access!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
+pub struct MetaZoneSpecificNamesShortV1<'data> {
+    /// The default mapping between metazone id and localized metazone name.
+    pub defaults: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+    /// The override mapping between timezone id and localized metazone name.
+    pub overrides: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+}
+map_access_with_overrides!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
 /// A general struct to hold metazone specific name variants.
 /// Specific names include time variants such as "daylight."

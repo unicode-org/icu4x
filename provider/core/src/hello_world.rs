@@ -4,11 +4,15 @@
 
 //! Data provider returning multilingual "Hello World" strings for testing.
 
-use crate::iter::IterableDataProviderCore;
+use crate::buffer_provider::BufferFormat;
+use crate::helpers;
+use crate::iter::IterableProvider;
 use crate::prelude::*;
 use crate::yoke::{self, *};
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
+use alloc::rc::Rc;
+use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::fmt::Debug;
@@ -18,6 +22,7 @@ use litemap::LiteMap;
 
 pub mod key {
     use crate::resource::ResourceKey;
+    use crate::resource_key;
     pub const HELLO_WORLD_V1: ResourceKey = resource_key!(Core, "helloworld", 1);
 }
 
@@ -96,7 +101,8 @@ impl HelloWorldProvider {
                 ("is", "Halló, heimur"),
                 ("ja", "こんにちは世界"),
                 ("la", "Ave, munde"),
-                ("ro", "Salut,lume!"),
+                ("pt", "Olá, mundo"),
+                ("ro", "Salut, lume"),
                 ("ru", "Привет, мир"),
                 ("vi", "Xin chào thế giới"),
                 ("zh", "你好世界"),
@@ -111,6 +117,11 @@ impl HelloWorldProvider {
             .collect(),
         }
     }
+
+    /// Converts this provider into one that serves JSON blobs of the same data.
+    pub fn into_json_provider(self) -> HelloWorldJsonProvider {
+        HelloWorldJsonProvider(self)
+    }
 }
 
 impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
@@ -118,13 +129,13 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
+        key::HELLO_WORLD_V1.match_key(req.resource_path.key)?;
         let langid = req.try_langid()?;
         let data = self
             .map
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
-            .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
+            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(req))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.data_langid = Some(langid.clone());
         Ok(DataResponse {
@@ -143,7 +154,27 @@ impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for HelloWorldProvider {
+pub struct HelloWorldJsonProvider(HelloWorldProvider);
+
+impl BufferProvider for HelloWorldJsonProvider {
+    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+        let result = self.0.load_payload(req)?;
+        let (mut metadata, old_payload) =
+            DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
+        metadata.buffer_format = Some(BufferFormat::Json);
+        let mut buffer = String::new();
+        buffer.push_str("{\"message\":\"");
+        helpers::escape_for_json(&old_payload.get().message, &mut buffer);
+        buffer.push_str("\"}");
+        let boxed_u8: Box<[u8]> = buffer.into_boxed_str().into();
+        Ok(DataResponse {
+            metadata,
+            payload: Some(DataPayload::from_rc_buffer(Rc::from(boxed_u8))),
+        })
+    }
+}
+
+impl IterableProvider for HelloWorldProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

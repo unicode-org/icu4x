@@ -49,14 +49,22 @@ template<> struct WriteableTrait<std::string> {
 
 template<class T> struct Ok {
   T inner;
-  Ok(T&& i): inner(i) {}
-  explicit Ok() {}
+  Ok(T&& i): inner(std::move(i)) {}
+  Ok() = default;
+  Ok(Ok&&) noexcept = default;
+  Ok(const Ok &) = default;
+  Ok& operator=(const Ok&) = default;
+  Ok& operator=(Ok&&) noexcept = default;
 };
 
 template<class T> struct Err {
   T inner;
-  Err(T&& i): inner(i) {}
-  explicit Err() {}
+  Err(T&& i): inner(std::move(i)) {}
+  Err() = default;
+  Err(Err&&) noexcept = default;
+  Err(const Err &) = default;
+  Err& operator=(const Err&) = default;
+  Err& operator=(Err&&) noexcept = default;
 };
 
 template<class T, class E>
@@ -64,16 +72,12 @@ class result {
 private:
     std::variant<Ok<T>, Err<E>> val;
 public:
-  result(bool is_ok) {
-    if (is_ok) {
-      this->val = std::variant<Ok<T>, Err<E>>(Ok<T>());
-    } else {
-      this->val = std::variant<Ok<T>, Err<E>>(Err<E>());
-    }
-  }
   result(Ok<T>&& v): val(std::move(v)) {}
   result(Err<E>&& v): val(std::move(v)) {}
+  result() = default;
   result(const result &) = default;
+  result& operator=(const result&) = default;
+  result& operator=(result&&) noexcept = default;
   result(result &&) noexcept = default;
   ~result() = default;
   bool is_ok() const {
@@ -83,17 +87,17 @@ public:
     return std::holds_alternative<Err<E>>(this->val);
   };
 
-  std::optional<T> ok() const {
+  std::optional<T> ok() && {
     if (!this->is_ok()) {
       return std::nullopt;
     }
-    return std::make_optional(std::get<Ok<T>>(this->val).inner);
+    return std::make_optional(std::move(std::get<Ok<T>>(std::move(this->val)).inner));
   };
-  std::optional<E> err() const {
+  std::optional<E> err() && {
     if (!this->is_err()) {
       return std::nullopt;
     }
-    return std::make_optional(std::get<Err<E>>(this->val).inner);
+    return std::make_optional(std::move(std::get<Err<E>>(std::move(this->val)).inner));
   }
 
   void set_ok(T&& t) {
@@ -107,7 +111,7 @@ public:
   template<typename T2>
   result<T2, E> replace_ok(T2&& t) {
     if (this->is_err()) {
-      return result<T2, E>(Err<E>(std::get<Err<E>>(this->val)));
+      return result<T2, E>(Err<E>(std::get<Err<E>>(std::move(this->val))));
     } else {
       return result<T2, E>(Ok<T2>(std::move(t)));
     }

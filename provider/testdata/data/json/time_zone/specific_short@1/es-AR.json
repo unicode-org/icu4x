@@ -1,10 +1,17 @@
 {
-  "Argentina": {
-    "daylight": "ARST",
-    "standard": "ART"
+  "defaults": {
+    "Argentina": {
+      "daylight": "ARST",
+      "standard": "ART"
+    },
+    "Argentina_Western": {
+      "daylight": "WARST",
+      "standard": "WART"
+    }
   },
-  "Argentina_Western": {
-    "daylight": "WARST",
-    "standard": "WART"
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "UTC"
+    }
   }
 }

@@ -10,7 +10,7 @@ authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "LICENSE"
-categories = ["data-structures"]
+categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
 include = [
     "src/**/*",

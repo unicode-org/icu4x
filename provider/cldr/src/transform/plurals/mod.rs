@@ -5,10 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -56,7 +57,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
 impl KeyedDataProvider for PluralsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::Plurals || resc_key.version != 1 {
-            return Err(resc_key.into());
+            return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key));
         }
         Ok(())
     }
@@ -71,9 +72,9 @@ impl PluralsProvider {
         match *resc_key {
             key::CARDINAL_V1 => self.cardinal_rules.as_ref(),
             key::ORDINAL_V1 => self.ordinal_rules.as_ref(),
-            _ => return Err(resc_key.into()),
+            _ => return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key)),
         }
-        .ok_or_else(|| resc_key.into())
+        .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(*resc_key))
     }
 }
 
@@ -87,7 +88,7 @@ impl DataProvider<PluralRulesV1Marker> for PluralsProvider {
         let langid = req.try_langid()?;
         let r = match cldr_rules.0.get(langid) {
             Some(v) => v,
-            None => return Err(req.clone().into()),
+            None => return Err(DataErrorKind::MissingLocale.with_req(req)),
         };
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
@@ -102,7 +103,7 @@ icu_provider::impl_dyn_provider!(PluralsProvider, {
     _ => PluralRulesV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for PluralsProvider {
+impl IterableProvider for PluralsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,

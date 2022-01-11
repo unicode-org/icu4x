@@ -10,7 +10,6 @@ use serde::{Deserialize, Serialize};
 use super::*;
 use crate::erased::*;
 use crate::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Marker};
-use crate::prelude::*;
 use crate::yoke;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
@@ -196,7 +195,10 @@ fn test_warehouse_owned_dyn_erased_alt() {
     let response = get_payload_alt(&warehouse as &dyn ErasedDataProvider);
     assert!(matches!(
         response,
-        Err(DataError::MissingResourceKey { .. })
+        Err(DataError {
+            kind: DataErrorKind::MissingResourceKey,
+            ..
+        })
     ));
 }
 
@@ -266,7 +268,13 @@ fn test_mismatched_types() {
             .take_payload()
             .unwrap()
             .downcast();
-    assert!(matches!(response, Err(DataError::MismatchedType { .. })));
+    assert!(matches!(
+        response,
+        Err(DataError {
+            kind: DataErrorKind::MismatchedType(_),
+            ..
+        })
+    ));
 }
 
 fn check_v1_v2<P>(d: &P)

@@ -6,7 +6,7 @@ use crate::uprops_helpers::{self, TomlEnumerated};
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
@@ -68,10 +68,13 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
         let (prop_name, prop_value) = {
             let parts = key.split('=').collect::<Vec<_>>();
             if parts.len() != 2 {
-                return Err(DataError::MissingResourceKey(req.resource_path.key));
+                return Err(DataErrorKind::MissingResourceKey.with_req(req));
             }
             (
-                parts[0].parse().map_err(DataError::new_resc_error)?,
+                parts[0].parse().map_err(|e| {
+                    DataError::custom("Could not parse data request into a Unicode property name")
+                        .with_error_context(&e)
+                })?,
                 parts[1],
             )
         };
@@ -79,7 +82,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
         let toml_data = &self
             .data
             .get(&prop_name)
-            .ok_or(DataError::MissingResourceKey(req.resource_path.key))?;
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
 
         let valid_names = expand_groupings(&prop_name, prop_value);
 
@@ -104,7 +107,7 @@ icu_provider::impl_dyn_provider!(EnumeratedPropertyUnicodeSetDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for EnumeratedPropertyUnicodeSetDataProvider {
+impl IterableProvider for EnumeratedPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

@@ -7,7 +7,6 @@
 #include <memory>
 #include <variant>
 #include <optional>
-#include <span>
 #include "diplomat_runtime.hpp"
 
 namespace capi {
@@ -48,6 +47,9 @@ class ICU4XFixedDecimalFormat {
   inline const capi::ICU4XFixedDecimalFormat* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XFixedDecimalFormat* AsFFIMut() { return this->inner.get(); }
   inline ICU4XFixedDecimalFormat(capi::ICU4XFixedDecimalFormat* i) : inner(i) {}
+  ICU4XFixedDecimalFormat() = default;
+  ICU4XFixedDecimalFormat(ICU4XFixedDecimalFormat&&) noexcept = default;
+  ICU4XFixedDecimalFormat& operator=(ICU4XFixedDecimalFormat&& other) noexcept = default;
  private:
   std::unique_ptr<capi::ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatDeleter> inner;
 };
@@ -73,14 +75,24 @@ inline ICU4XFixedDecimalFormatResult ICU4XFixedDecimalFormat::try_new(const ICU4
 template<typename W> inline diplomat::result<std::monostate, std::monostate> ICU4XFixedDecimalFormat::format_to_writeable(const ICU4XFixedDecimal& value, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormat_format(this->inner.get(), value.AsFFI(), &write_writer);
-  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err(std::monostate());
+  }
   return diplomat_result_out_value;
 }
 inline diplomat::result<std::string, std::monostate> ICU4XFixedDecimalFormat::format(const ICU4XFixedDecimal& value) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormat_format(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err(std::monostate());
+  }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 #endif

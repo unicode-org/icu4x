@@ -77,8 +77,7 @@ impl BlobDataProvider {
                         blob.resources
                     },
                 )
-            })
-            .map_err(DataError::new_resc_error)?,
+            })?,
         })
     }
 
@@ -86,11 +85,12 @@ impl BlobDataProvider {
     /// to the buffer backing the BlobSchema.
     fn get_file(&self, req: &DataRequest) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
+        // TODO: Distinguish between missing resource key and missing resource options
         self.data
             .try_project_cloned_with_capture::<&'static [u8], String, ()>(path, |zm, path, _| {
                 zm.get(&path).ok_or(())
             })
-            .map_err(|_| DataError::MissingResourceKey(req.resource_path.key))
+            .map_err(|_| DataErrorKind::MissingResourceKey.with_req(req))
     }
 }
 

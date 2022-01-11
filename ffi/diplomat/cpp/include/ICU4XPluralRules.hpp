@@ -7,7 +7,6 @@
 #include <memory>
 #include <variant>
 #include <optional>
-#include <span>
 #include "diplomat_runtime.hpp"
 
 namespace capi {
@@ -43,7 +42,7 @@ class ICU4XPluralRules {
    * FFI version of `PluralRules::select()`.
    * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select) for more details.
    */
-  ICU4XPluralCategory select(const ICU4XPluralOperands& op) const;
+  ICU4XPluralCategory select(ICU4XPluralOperands op) const;
 
   /**
    * FFI version of `PluralRules::categories()`.
@@ -53,6 +52,9 @@ class ICU4XPluralRules {
   inline const capi::ICU4XPluralRules* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XPluralRules* AsFFIMut() { return this->inner.get(); }
   inline ICU4XPluralRules(capi::ICU4XPluralRules* i) : inner(i) {}
+  ICU4XPluralRules() = default;
+  ICU4XPluralRules(ICU4XPluralRules&&) noexcept = default;
+  ICU4XPluralRules& operator=(ICU4XPluralRules&& other) noexcept = default;
  private:
   std::unique_ptr<capi::ICU4XPluralRules, ICU4XPluralRulesDeleter> inner;
 };
@@ -74,8 +76,9 @@ inline ICU4XCreatePluralRulesResult ICU4XPluralRules::try_new(const ICU4XLocale&
   }
   return ICU4XCreatePluralRulesResult{ .rules = std::move(diplomat_optional_out_value_rules), .success = std::move(diplomat_raw_struct_out_value.success) };
 }
-inline ICU4XPluralCategory ICU4XPluralRules::select(const ICU4XPluralOperands& op) const {
-  return static_cast<ICU4XPluralCategory>(capi::ICU4XPluralRules_select(this->inner.get(), (capi::ICU4XPluralOperands*) &op));
+inline ICU4XPluralCategory ICU4XPluralRules::select(ICU4XPluralOperands op) const {
+  ICU4XPluralOperands diplomat_wrapped_struct_op = op;
+  return static_cast<ICU4XPluralCategory>(capi::ICU4XPluralRules_select(this->inner.get(), capi::ICU4XPluralOperands{ .i = diplomat_wrapped_struct_op.i, .v = diplomat_wrapped_struct_op.v, .w = diplomat_wrapped_struct_op.w, .f = diplomat_wrapped_struct_op.f, .t = diplomat_wrapped_struct_op.t, .c = diplomat_wrapped_struct_op.c }));
 }
 inline ICU4XPluralCategories ICU4XPluralRules::categories() const {
   capi::ICU4XPluralCategories diplomat_raw_struct_out_value = capi::ICU4XPluralRules_categories(this->inner.get());

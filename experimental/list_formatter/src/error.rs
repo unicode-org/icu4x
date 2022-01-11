@@ -4,6 +4,8 @@
 
 //! Error types for list formatting.
 
+#[cfg(feature = "provider_transform_internals")]
+use alloc::string::String;
 use displaydoc::Display;
 use icu_provider::DataError;
 
@@ -14,8 +16,13 @@ pub enum Error {
     #[cfg(any(test, feature = "provider_transform_internals"))]
     #[displaydoc("Illegal pattern: {0}")]
     IllegalPattern(String),
+    #[cfg(any(
+        test,
+        feature = "provider_transform_internals",
+        feature = "icu4x_human_readable_de"
+    ))]
     #[displaydoc("Illegal condition: {0}")]
-    IllegalCondition(regex::Error),
+    IllegalCondition(regex_automata::dfa::Error),
 }
 
 #[cfg(feature = "std")]

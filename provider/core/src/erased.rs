@@ -4,14 +4,12 @@
 
 //! Collection of traits for providers that support type erasure of data structs.
 
-use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
 use alloc::rc::Rc;
 
 use core::any::Any;
-use core::any::TypeId;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///
@@ -126,7 +124,7 @@ impl DataPayload<ErasedDataStructMarker> {
     ///
     /// assert_eq!("Hallo Welt", downcast_payload.get().message);
     /// ```
-    pub fn downcast<M>(self) -> Result<DataPayload<M>, Error>
+    pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
         M: DataMarker,
     {
@@ -143,10 +141,9 @@ impl DataPayload<ErasedDataStructMarker> {
         let maybe_yoke = any_box.downcast::<Yoke<M::Yokeable, Option<Rc<[u8]>>>>();
         match maybe_yoke {
             Ok(yoke) => Ok(DataPayload { yoke: *yoke }),
-            Err(any_box) => Err(Error::MismatchedType {
-                actual: Some(any_box.type_id()),
-                generic: Some(TypeId::of::<M::Yokeable>()),
-            }),
+            Err(any_box) => {
+                Err(DataErrorKind::MismatchedType(any_box.type_id()).with_type_context::<M>())
+            }
         }
     }
 }
@@ -178,10 +175,12 @@ where
 pub trait ErasedDataProvider {
     /// Query the provider for data, returning the result as an [`ErasedDataStruct`] trait object.
     ///
-    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
-    /// Error with more information.
-    fn load_erased(&self, req: &DataRequest)
-        -> Result<DataResponse<ErasedDataStructMarker>, Error>;
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns a
+    /// DataError with more information.
+    fn load_erased(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<ErasedDataStructMarker>, DataError>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
@@ -192,7 +191,7 @@ where
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<ErasedDataStructMarker>, Error> {
+    ) -> Result<DataResponse<ErasedDataStructMarker>, DataError> {
         DataProvider::<ErasedDataStructMarker>::load_payload(self, req)
     }
 }
@@ -203,7 +202,7 @@ where
     <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         let result = ErasedDataProvider::load_erased(self, req)?;
         Ok(DataResponse {
             metadata: result.metadata,

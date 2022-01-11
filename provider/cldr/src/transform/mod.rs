@@ -25,9 +25,10 @@ pub use locale_canonicalizer::aliases::AliasesProvider;
 pub use locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
 pub use plurals::PluralsProvider;
 
+use crate::support::KeyedDataProvider;
 use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 
@@ -114,11 +115,11 @@ impl<'a> DataProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
         if let Some(result) = self.list.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
-        Err(DataError::MissingResourceKey(req.resource_path.key))
+        Err(DataErrorKind::MissingResourceKey.with_req(req))
     }
 }
 
-impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a> {
+impl<'a> IterableProvider for CldrJsonDataProvider<'a> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
@@ -180,7 +181,7 @@ impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a> {
         if let Some(resp) = self.list.try_supported_options(resc_key, self.cldr_paths)? {
             return Ok(Box::new(resp.into_iter()));
         }
-        Err(DataError::MissingResourceKey(*resc_key))
+        Err(DataErrorKind::MissingResourceKey.with_key(*resc_key))
     }
 }
 

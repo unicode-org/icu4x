@@ -73,6 +73,7 @@ fn writeable_benches(c: &mut Criterion) {
                 message: black_box(SHORT_STR),
             }
             .writeable_to_string()
+            .into_owned()
         });
     });
     c.bench_function("writeable/to_string/medium", |b| {
@@ -81,6 +82,7 @@ fn writeable_benches(c: &mut Criterion) {
                 message: black_box(MEDIUM_STR),
             }
             .writeable_to_string()
+            .into_owned()
         });
     });
     c.bench_function("writeable/to_string/long", |b| {
@@ -89,6 +91,7 @@ fn writeable_benches(c: &mut Criterion) {
                 message: black_box(LONG_STR),
             }
             .writeable_to_string()
+            .into_owned()
         });
     });
 }

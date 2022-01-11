@@ -37,7 +37,7 @@ fn overview_bench(c: &mut Criterion) {
             nums.iter()
                 .map(|v| black_box(*v))
                 .map(FixedDecimal::from)
-                .map(|n| fdf.format(&n).writeable_to_string())
+                .map(|n| fdf.format(&n).writeable_to_string().into_owned())
                 .count();
         });
     });

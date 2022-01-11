@@ -185,7 +185,7 @@ where
     T: AsULE + ?Sized,
 {
     #[inline]
-    /// Creates a new, empty `ZeroVec<T>`.
+    /// Creates a new, borrowed, empty `ZeroVec<T>`.
     ///
     /// # Examples
     ///
@@ -197,6 +197,11 @@ where
     /// ```
     pub fn new() -> Self {
         Self::Borrowed(&[])
+    }
+
+    /// Creates a new, owned, empty `ZeroVec<T>`, with a certain capacity pre-allocated.
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self::Owned(Vec::with_capacity(capacity))
     }
 
     /// Parses a `&[u8]` buffer into a `ZeroVec<T>`.
@@ -632,6 +637,11 @@ where
                 self.to_mut()
             }
         }
+    }
+
+    /// Remove all elements from this ZeroVec and reset it to an empty borrowed state.
+    pub fn clear(&mut self) {
+        *self = Self::Borrowed(&[])
     }
 }
 

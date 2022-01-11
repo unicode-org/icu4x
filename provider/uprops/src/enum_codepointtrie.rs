@@ -12,7 +12,7 @@ use icu_properties::{
     CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
     Script, SentenceBreak, WordBreak,
 };
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;
@@ -43,7 +43,9 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for CodePointTrie<'
         cpt_data: &EnumeratedPropertyCodePointTrie,
     ) -> Result<CodePointTrie<'static, T>, Self::Error> {
         let trie_type_enum: TrieType =
-            TrieType::try_from(cpt_data.trie_type_enum_val).map_err(DataError::new_resc_error)?;
+            TrieType::try_from(cpt_data.trie_type_enum_val).map_err(|e| {
+                DataError::custom("Could not parse TrieType in TOML").with_display_context(&e)
+            })?;
         let header = CodePointTrieHeader {
             high_start: cpt_data.high_start,
             shifted12_high_start: cpt_data.shifted12_high_start,
@@ -61,16 +63,19 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for CodePointTrie<'
             } else if let Some(data_32) = &cpt_data.data_32 {
                 data_32.iter().map(|i| T::try_from_u32(*i as u32)).collect()
             } else {
-                return Err(DataError::new_resc_error(
-                    icu_codepointtrie::error::Error::FromDeserialized {
-                        reason: "Did not find data array for CodePointTrie in TOML",
-                    },
+                return Err(DataError::custom(
+                    "Did not find data array for CodePointTrie in TOML",
                 ));
             };
 
-        let data = data.map_err(DataError::new_resc_error)?;
+        let data = data.map_err(|e| {
+            DataError::custom("Could not parse data array in TOML").with_display_context(&e)
+        })?;
 
-        CodePointTrie::<T>::try_new(header, index, data).map_err(DataError::new_resc_error)
+        CodePointTrie::<T>::try_new(header, index, data).map_err(|e| {
+            DataError::custom("Could not create CodePointTrie from header/index/data array in TOML")
+                .with_display_context(&e)
+        })
     }
 }
 
@@ -101,7 +106,7 @@ impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
         let source_cpt_data = &self
             .data
             .get(prop_name)
-            .ok_or(DataError::MissingResourceKey(req.resource_path.key))?
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?
             .code_point_trie;
 
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
@@ -124,7 +129,7 @@ icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
     key::SENTENCE_BREAK_V1 => UnicodePropertyMapV1Marker<SentenceBreak>,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for EnumeratedPropertyCodePointTrieProvider {
+impl IterableProvider for EnumeratedPropertyCodePointTrieProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

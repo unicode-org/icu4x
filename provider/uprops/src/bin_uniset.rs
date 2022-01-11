@@ -6,7 +6,7 @@ use crate::uprops_helpers::{self, TomlBinary};
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
-use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
@@ -31,7 +31,7 @@ impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvi
         let data = &self
             .data
             .get(&req.resource_path.key.sub_category)
-            .ok_or(DataError::MissingResourceKey(req.resource_path.key))?;
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
 
         let mut builder = UnicodeSetBuilder::new();
         for (start, end) in &data.ranges {
@@ -52,7 +52,7 @@ icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
     _ => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for BinaryPropertyUnicodeSetDataProvider {
+impl IterableProvider for BinaryPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

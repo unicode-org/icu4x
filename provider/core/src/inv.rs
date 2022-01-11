@@ -4,8 +4,7 @@
 
 //! Locale-invariant data provider that requires no I/O.
 
-use crate::error::Error;
-use crate::iter::IterableDataProviderCore;
+use crate::iter::IterableProvider;
 use crate::prelude::*;
 use alloc::boxed::Box;
 use alloc::vec;
@@ -41,7 +40,7 @@ where
     M: DataMarker,
     M::Yokeable: Default,
 {
-    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<M>, Error> {
+    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(M::Yokeable::default())),
@@ -49,11 +48,11 @@ where
     }
 }
 
-impl IterableDataProviderCore for InvariantDataProvider {
+impl IterableProvider for InvariantDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error> {
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
         Ok(Box::new(list.into_iter()))
     }

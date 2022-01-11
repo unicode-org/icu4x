@@ -5,10 +5,11 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_calendar::provider::*;
 use icu_locid_macros::langid;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
@@ -210,7 +211,7 @@ impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
         if req.resource_path.options.langid.is_some() || req.resource_path.options.variant.is_some()
         {
-            return Err(DataError::ExtraneousVariantOrId(req.clone()));
+            return Err(DataErrorKind::ExtraneousResourceOptions.with_req(req));
         }
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -226,7 +227,7 @@ icu_provider::impl_dyn_provider!(JapaneseErasProvider, {
     _ => JapaneseErasV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for JapaneseErasProvider {
+impl IterableProvider for JapaneseErasProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

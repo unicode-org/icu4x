@@ -39,5 +39,29 @@ int main() {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(100.01).value();
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted float value is " << out << std::endl;
+    if (out != "১০০.০১") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
+    decimal = ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(100.0006, -2, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted float value from precision 2 is " << out << std::endl;
+    if (out != "১০০.০০") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
+    decimal = ICU4XFixedDecimal::create_from_f64_with_significant_digits(100.0006, 5, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted float value with 5 digits is " << out << std::endl;
+    if (out != "১০০.০০") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
     return 0;
 }

@@ -1,6 +1,25 @@
 {
-  "Africa_Western": {
-    "daylight": "WAST",
-    "standard": "WAT"
+  "defaults": {
+    "Africa_Central": {
+      "standard": "CAT"
+    },
+    "Africa_Eastern": {
+      "standard": "EAT"
+    },
+    "Africa_Southern": {
+      "standard": "SAST"
+    },
+    "Africa_Western": {
+      "daylight": "WAST",
+      "standard": "WAT"
+    },
+    "GMT": {
+      "standard": "GMT"
+    }
+  },
+  "overrides": {
+    "Etc/UTC": {
+      "standard": "UTC"
+    }
   }
 }

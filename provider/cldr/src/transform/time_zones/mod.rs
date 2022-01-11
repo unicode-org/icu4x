@@ -5,13 +5,12 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
+use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_datetime::provider::{key, time_zones::*};
 use icu_locid::LanguageIdentifier;
-use icu_provider::{
-    iter::{IterableDataProviderCore, KeyedDataProvider},
-    prelude::*,
-};
+use icu_provider::iter::IterableProvider;
+use icu_provider::prelude::*;
 use litemap::LiteMap;
 
 use std::convert::TryFrom;
@@ -69,13 +68,13 @@ impl TryFrom<&str> for TimeZonesProvider {
 impl KeyedDataProvider for TimeZonesProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::TimeZone || resc_key.version != 1 {
-            return Err(resc_key.into());
+            return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key));
         }
         Ok(())
     }
 }
 
-impl IterableDataProviderCore for TimeZonesProvider {
+impl IterableProvider for TimeZonesProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
@@ -101,7 +100,7 @@ macro_rules! impl_data_provider {
                 let langid = req.try_langid()?;
                 let time_zones = match self.data.get(&langid) {
                     Some(v) => &v.dates.time_zone_names,
-                    None => return Err(DataError::MissingResourceOptions(req.clone())),
+                    None => return Err(DataErrorKind::MissingLocale.with_req(req)),
                 };
                 let metadata = DataResponseMetadata::default();
                 // TODO(#1109): Set metadata.data_langid correctly.

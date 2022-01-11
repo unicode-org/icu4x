@@ -1,7 +1,12 @@
 {
-  "Africa_Central": "CAT",
-  "Africa_Eastern": "EAT",
-  "Africa_Southern": "SAST",
-  "Africa_Western": "WAT",
-  "GMT": "GMT"
+  "defaults": {
+    "Africa_Central": "CAT",
+    "Africa_Eastern": "EAT",
+    "Africa_Southern": "SAST",
+    "Africa_Western": "WAT",
+    "GMT": "GMT"
+  },
+  "overrides": {
+    "Etc/UTC": "UTC"
+  }
 }

@@ -9,8 +9,9 @@ use crate::cldr_serde;
 use crate::CldrPaths;
 use icu_datetime::{provider::*, skeleton::SkeletonError};
 
+use crate::support::KeyedDataProvider;
 use icu_plurals::PluralCategory;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -58,7 +59,7 @@ icu_provider::impl_dyn_provider!(DateSkeletonPatternsProvider, {
     _ => calendar::DateSkeletonPatternsV1Marker,
 }, SERDE_SE);
 
-impl IterableDataProviderCore for DateSkeletonPatternsProvider {
+impl IterableProvider for DateSkeletonPatternsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
