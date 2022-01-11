@@ -404,7 +404,7 @@ impl FixedDecimal {
     pub fn truncated_left(&mut self, magnitude: i16) {
         if self.magnitude >= magnitude {
             let positive_magnitude = if magnitude > 0 { magnitude } else { 0 };
-            let cut = self.magnitude - magnitude;
+            let cut = ((self.magnitude as i32) - (magnitude as i32)) as usize;
             if cut >= self.digits.len() as i16 {
                 self.digits.clear();
                 self.magnitude = 0;
