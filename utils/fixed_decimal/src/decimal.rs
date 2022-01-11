@@ -363,7 +363,7 @@ impl FixedDecimal {
     /// assert_eq!("42", dec.to_string());
     /// ```
     pub fn padded_left(&mut self, digits: u16) {
-        let mut magnitude = digits as i16 - 1;
+        let mut magnitude = if digits == 0 { 0 } else if digits > (i16::MAX as u16) + 1 { i16::MAX } else { (digits - 1) as i16 };
         if magnitude < 0 {
             magnitude = 0;
         }
