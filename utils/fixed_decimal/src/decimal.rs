@@ -528,7 +528,7 @@ impl FixedDecimal {
     /// assert_eq!("123.456000", dec.to_string());
     /// ```
     pub fn pad_right(&mut self, negative_magnitude: u16) {
-        let mut magnitude = if negative_magnitude >= (i16::MAX as u16) + 1 {
+        let mut magnitude = if negative_magnitude > (i16::MAX as u16) {
             i16::MIN
         } else {
             -(negative_magnitude as i16)
