@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641808789398,
+  "lastUpdate": 1641928157070,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20801,6 +20801,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4272,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f7d03669cfdb5bc7582051bb2aba36df7cc3d382",
+          "message": "Update FDF FFI to use DiplomatResult (#1491)\n\n* Update FDF FFI to use DiplomatResult\r\n\r\n* regen",
+          "timestamp": "2022-01-11T10:56:56-08:00",
+          "tree_id": "86ee59a77a16308573735c2a3e6905169572fd7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/f7d03669cfdb5bc7582051bb2aba36df7cc3d382"
+        },
+        "date": 1641928147709,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2409,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4264,
+            "range": "± 213",
             "unit": "ns/iter"
           }
         ]
