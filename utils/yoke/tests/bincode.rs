@@ -36,20 +36,21 @@ struct Bar<'a> {
 
 unsafe impl<'a> Yokeable<'a> for Bar<'static> {
     type Output = Bar<'a>;
+    #[inline]
     fn transform(&'a self) -> &'a Bar<'a> {
         self
     }
-
+    #[inline]
     fn transform_owned(self) -> Bar<'a> {
         self
     }
-
+    #[inline]
     unsafe fn make(from: Bar<'a>) -> Self {
         let ret = mem::transmute_copy(&from);
         mem::forget(from);
         ret
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + FnOnce(&'a mut Self::Output),

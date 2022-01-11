@@ -11,15 +11,19 @@ use core::{mem, ptr};
 
 macro_rules! copy_yoke_impl {
     () => {
+        #[inline]
         fn transform(&self) -> &Self::Output {
             self
         }
+        #[inline]
         fn transform_owned(self) -> Self::Output {
             self
         }
+        #[inline]
         unsafe fn make(this: Self::Output) -> Self {
             this
         }
+        #[inline]
         fn transform_mut<F>(&'a mut self, f: F)
         where
             F: 'static + for<'b> FnOnce(&'b mut Self::Output),
@@ -35,6 +39,7 @@ macro_rules! impl_copy_type {
             copy_yoke_impl!();
         }
         impl ZeroCopyFrom<$ty> for $ty {
+            #[inline]
             fn zero_copy_from(this: &Self) -> Self {
                 // Essentially only works when the struct is fully Copy
                 *this
