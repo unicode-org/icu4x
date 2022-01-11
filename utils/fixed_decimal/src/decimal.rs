@@ -442,8 +442,8 @@ impl FixedDecimal {
     /// assert_eq!("123.456000", dec.to_string());
     /// ```
     pub fn padded_right(&mut self, negative_magnitude: u16) {
-        let mut magnitude = -(negative_magnitude as i16);
-        let bottom_magnitude = self.magnitude - self.digits.len() as i16 + 1;
+        let mut magnitude = if negative_magnitude >= (i16::MAX as u16) + 1 { i16::MIN } else { -(negative_magnitude as i16) };
+        let bottom_magnitude = (self.magnitude as i32 - self.digits.len() as i32 + 1) as i16;
         // Do not truncate nonzero digits
         if magnitude >= bottom_magnitude {
             magnitude = bottom_magnitude;
