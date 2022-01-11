@@ -466,12 +466,16 @@ impl FixedDecimal {
                 self.digits.clear();
                 self.magnitude = 0;
                 self.upper_magnitude = positive_magnitude;
+                #[cfg(debug_assertions)]
+                self.check_invariants();
                 return;
             }
             let _ = self.digits.drain(0..cut as usize).count();
             self.magnitude = magnitude;
             self.upper_magnitude = positive_magnitude;
         }
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Zero-pad the number on the right to a particular (negative) magnitude. Will truncate
