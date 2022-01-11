@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641934968559,
+  "lastUpdate": 1641935016311,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6923,6 +6923,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/247b113f749ad327c15edb84e925b916ae7f75a1"
         },
         "date": 1641934959052,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8b26c199bcc07cb383ccbe6a41772e6fce714bc4",
+          "message": "Make most Yokeable impls inline (#1493)",
+          "timestamp": "2022-01-11T13:02:02-08:00",
+          "tree_id": "0e2a30c9c0739e991de1733b2e4b7dabcc4a48ce",
+          "url": "https://github.com/unicode-org/icu4x/commit/8b26c199bcc07cb383ccbe6a41772e6fce714bc4"
+        },
+        "date": 1641935007706,
         "tool": "ndjson",
         "benches": [
           {
