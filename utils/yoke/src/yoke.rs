@@ -211,6 +211,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// let yoke: Yoke<Cow<str>, _> = load_object("filename.bincode");
     /// assert_eq!(yoke.get(), "hello");
     /// ```
+    #[inline]
     pub fn get<'a>(&'a self) -> &'a <Y as Yokeable<'a>>::Output {
         self.yokeable.transform()
     }

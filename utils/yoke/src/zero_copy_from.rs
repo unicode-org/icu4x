@@ -123,6 +123,7 @@ where
 
 #[cfg(feature = "alloc")]
 impl ZeroCopyFrom<str> for Cow<'static, str> {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b str) -> Cow<'b, str> {
         Cow::Borrowed(cart)
     }
@@ -130,12 +131,14 @@ impl ZeroCopyFrom<str> for Cow<'static, str> {
 
 #[cfg(feature = "alloc")]
 impl ZeroCopyFrom<String> for Cow<'static, str> {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b String) -> Cow<'b, str> {
         Cow::Borrowed(cart)
     }
 }
 
 impl ZeroCopyFrom<str> for &'static str {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b str) -> &'b str {
         cart
     }
@@ -143,6 +146,7 @@ impl ZeroCopyFrom<str> for &'static str {
 
 #[cfg(feature = "alloc")]
 impl ZeroCopyFrom<String> for &'static str {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b String) -> &'b str {
         cart
     }
@@ -174,18 +178,21 @@ impl<C1, T1: ZeroCopyFrom<C1>, C2, T2: ZeroCopyFrom<C2>> ZeroCopyFrom<(C1, C2)> 
 // enough type information to figure this out on its own.
 #[cfg(feature = "alloc")]
 impl<B: ToOwned + ?Sized + 'static> ZeroCopyFrom<Cow<'_, B>> for Cow<'static, B> {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b Cow<'_, B>) -> Cow<'b, B> {
         Cow::Borrowed(cart)
     }
 }
 
 impl ZeroCopyFrom<&'_ str> for &'static str {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b &'_ str) -> &'b str {
         cart
     }
 }
 
 impl<T: 'static> ZeroCopyFrom<[T]> for &'static [T] {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b [T]) -> &'b [T] {
         cart
     }

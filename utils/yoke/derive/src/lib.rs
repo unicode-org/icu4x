@@ -52,15 +52,19 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             // This is safe because there are no lifetime parameters.
             unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#static_bounds),* {
                 type Output = Self;
+                #[inline]
                 fn transform(&self) -> &Self::Output {
                     self
                 }
+                #[inline]
                 fn transform_owned(self) -> Self::Output {
                     self
                 }
+                #[inline]
                 unsafe fn make(this: Self::Output) -> Self {
                     this
                 }
+                #[inline]
                 fn transform_mut<F>(&'a mut self, f: F)
                 where
                     F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
@@ -129,6 +133,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     where #(#static_bounds,)*
                     #(#yoke_bounds,)* {
                     type Output = #name<'a, #(#typarams),*>;
+                    #[inline]
                     fn transform(&'a self) -> &'a Self::Output {
                         unsafe {
                             // safety: we have asserted covariance in
@@ -136,9 +141,11 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                             ::core::mem::transmute(self)
                         }
                     }
+                    #[inline]
                     fn transform_owned(self) -> Self::Output {
                         match self { #body }
                     }
+                    #[inline]
                     unsafe fn make(this: Self::Output) -> Self {
                         use core::{mem, ptr};
                         // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
@@ -148,6 +155,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         mem::forget(this);
                         ptr::read(ptr)
                     }
+                    #[inline]
                     fn transform_mut<F>(&'a mut self, f: F)
                     where
                         F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
@@ -167,12 +175,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             // necessary
             unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*> where #(#static_bounds),* {
                 type Output = #name<'a, #(#typarams),*>;
+                #[inline]
                 fn transform(&'a self) -> &'a Self::Output {
                     self
                 }
+                #[inline]
                 fn transform_owned(self) -> Self::Output {
                     self
                 }
+                #[inline]
                 unsafe fn make(this: Self::Output) -> Self {
                     use core::{mem, ptr};
                     // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
@@ -182,6 +193,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     mem::forget(this);
                     ptr::read(ptr)
                 }
+                #[inline]
                 fn transform_mut<F>(&'a mut self, f: F)
                 where
                     F: 'static + for<'b> FnOnce(&'b mut Self::Output) {

@@ -18,19 +18,22 @@ use yoke::*;
 /// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T> {
     type Output = ZeroVec<'a, T>;
+    #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         self
     }
+    #[inline]
     fn transform_owned(self) -> Self::Output {
         self
     }
+    #[inline]
     unsafe fn make(from: Self::Output) -> Self {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
         ptr::read(ptr)
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
@@ -43,19 +46,22 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
 /// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'static, T> {
     type Output = VarZeroVec<'a, T>;
+    #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         self
     }
+    #[inline]
     fn transform_owned(self) -> Self::Output {
         self
     }
+    #[inline]
     unsafe fn make(from: Self::Output) -> Self {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
         ptr::read(ptr)
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
@@ -74,6 +80,7 @@ where
     <V as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
 {
     type Output = ZeroMap<'a, K, V>;
+    #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         unsafe {
             // Unfortunately, because K and V are generic, rustc is
@@ -82,6 +89,7 @@ where
             mem::transmute::<&Self, &Self::Output>(self)
         }
     }
+    #[inline]
     fn transform_owned(self) -> Self::Output {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         unsafe {
@@ -92,13 +100,14 @@ where
             ptr::read(ptr)
         }
     }
+    #[inline]
     unsafe fn make(from: Self::Output) -> Self {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
         ptr::read(ptr)
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
@@ -119,6 +128,7 @@ where
         for<'b> Yokeable<'b>,
 {
     type Output = ZeroMapBorrowed<'a, K, V>;
+    #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         unsafe {
             // Unfortunately, because K and V are generic, rustc is
@@ -127,6 +137,7 @@ where
             mem::transmute::<&Self, &Self::Output>(self)
         }
     }
+    #[inline]
     fn transform_owned(self) -> Self::Output {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         unsafe {
@@ -137,13 +148,14 @@ where
             ptr::read(ptr)
         }
     }
+    #[inline]
     unsafe fn make(from: Self::Output) -> Self {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
         ptr::read(ptr)
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
@@ -164,6 +176,7 @@ where
     <V as ZeroMapKV<'static>>::Container: for<'b> Yokeable<'b>,
 {
     type Output = ZeroMap2d<'a, K0, K1, V>;
+    #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         unsafe {
             // Unfortunately, because K and V are generic, rustc is
@@ -172,6 +185,7 @@ where
             mem::transmute::<&Self, &Self::Output>(self)
         }
     }
+    #[inline]
     fn transform_owned(self) -> Self::Output {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         unsafe {
@@ -182,13 +196,14 @@ where
             ptr::read(ptr)
         }
     }
+    #[inline]
     unsafe fn make(from: Self::Output) -> Self {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
         ptr::read(ptr)
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
@@ -212,6 +227,7 @@ where
         for<'b> Yokeable<'b>,
 {
     type Output = ZeroMap2dBorrowed<'a, K0, K1, V>;
+    #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         unsafe {
             // Unfortunately, because K and V are generic, rustc is
@@ -220,6 +236,7 @@ where
             mem::transmute::<&Self, &Self::Output>(self)
         }
     }
+    #[inline]
     fn transform_owned(self) -> Self::Output {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         unsafe {
@@ -230,13 +247,14 @@ where
             ptr::read(ptr)
         }
     }
+    #[inline]
     unsafe fn make(from: Self::Output) -> Self {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
         ptr::read(ptr)
     }
-
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
@@ -246,12 +264,14 @@ where
 }
 
 impl<'a, T: 'static + AsULE + ?Sized> ZeroCopyFrom<ZeroVec<'a, T>> for ZeroVec<'static, T> {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b ZeroVec<'a, T>) -> ZeroVec<'b, T> {
         ZeroVec::Borrowed(cart.as_ule_slice())
     }
 }
 
 impl<'a, T: 'static + VarULE + ?Sized> ZeroCopyFrom<VarZeroVec<'a, T>> for VarZeroVec<'static, T> {
+    #[inline]
     fn zero_copy_from<'b>(cart: &'b VarZeroVec<'a, T>) -> VarZeroVec<'b, T> {
         cart.as_slice().into()
     }
