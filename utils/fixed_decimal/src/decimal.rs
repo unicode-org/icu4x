@@ -540,6 +540,8 @@ impl FixedDecimal {
         }
 
         self.lower_magnitude = magnitude;
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Returns the [Signum][Signum] of this FixedDecimal.
