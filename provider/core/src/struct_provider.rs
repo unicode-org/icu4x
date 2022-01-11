@@ -7,6 +7,7 @@
 use crate::prelude::*;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
+use alloc::rc::Rc;
 
 /// A data provider that returns clones of a constant data payload.
 ///
@@ -37,15 +38,15 @@ use crate::yoke::*;
 ///
 /// assert_eq!(payload.get().message, "hello world");
 /// ```
-pub struct StructProvider<M>
+pub struct StructProviderRc<M>
 where
     M: DataMarker,
 {
     pub key: ResourceKey,
-    pub data: DataPayload<M>,
+    pub data: Rc<DataPayload<M>>,
 }
 
-impl<M> DataProvider<M> for StructProvider<M>
+impl<M> DataProvider<M> for StructProviderRc<M>
 where
     M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
@@ -54,7 +55,61 @@ where
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(self.data.clone()),
+            payload: Some((*self.data).clone()),
+        })
+    }
+}
+
+impl<M> AnyProvider for StructProviderRc<M>
+where
+    M: DataMarker + 'static,
+    M::Yokeable: Clone,
+{
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        req.resource_path.key.match_key(self.key)?;
+        let payload: AnyPayload = AnyPayload::from_rc_payload(self.data.clone());
+        Ok(AnyResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(payload),
+        })
+    }
+}
+
+pub struct StructProviderStatic<M>
+where
+    M: DataMarker,
+{
+    pub key: ResourceKey,
+    pub data: &'static M::Yokeable,
+}
+
+impl<M> DataProvider<M> for StructProviderStatic<M>
+where
+    M: DataMarker,
+    M::Yokeable: Clone,
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        req.resource_path.key.match_key(self.key)?;
+        // TODO: Use ZeroCopyFrom
+        let payload: DataPayload<M> = DataPayload::from_owned(self.data.clone());
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(payload),
+        })
+    }
+}
+
+impl<M> AnyProvider for StructProviderStatic<M>
+where
+    M: DataMarker,
+    M::Yokeable: Clone,
+{
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        req.resource_path.key.match_key(self.key)?;
+        let payload: AnyPayload = AnyPayload::from_static_ref(self.data);
+        Ok(AnyResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(payload),
         })
     }
 }

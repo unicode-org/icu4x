@@ -9,7 +9,6 @@ use alloc::rc::Rc;
 use core::any::Any;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
-use yoke::ZeroCopyFrom;
 
 /// Representations of the `Any` trait object.
 ///
@@ -30,7 +29,7 @@ pub struct AnyPayload {
 }
 
 impl AnyPayload {
-    /// Transforms a type-erased `AnyPayload` to a concrete `DataPayload`.
+    /// Transforms a type-erased `AnyPayload` into a concrete `DataPayload`.
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
         M: DataMarker + 'static,
@@ -58,6 +57,24 @@ impl AnyPayload {
             }
         }
     }
+
+    pub fn from_static_ref<Y>(static_ref: &'static Y) -> Self
+    where
+        Y: for<'a> Yokeable<'a>,
+    {
+        AnyPayload {
+            inner: AnyPayloadInner::StructRef(static_ref),
+        }
+    }
+
+    pub fn from_rc_payload<M>(rc_payload: Rc<DataPayload<M>>) -> Self
+    where
+        M: DataMarker + 'static,
+    {
+        AnyPayload {
+            inner: AnyPayloadInner::PayloadRc(rc_payload),
+        }
+    }
 }
 
 impl<M> DataPayload<M>
@@ -66,7 +83,7 @@ where
 {
     pub fn into_any_payload(self) -> AnyPayload {
         AnyPayload {
-            inner: AnyPayloadInner::PayloadRc(Rc::from(self))
+            inner: AnyPayloadInner::PayloadRc(Rc::from(self)),
         }
     }
 }
@@ -82,7 +99,7 @@ pub struct AnyResponse {
 }
 
 impl AnyResponse {
-    /// Transforms a type-erased `AnyResponse` to a concrete `DataResponse`.
+    /// Transforms a type-erased `AnyResponse` into a concrete `DataResponse`.
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker + 'static,
@@ -98,5 +115,5 @@ impl AnyResponse {
 
 /// An object-safe data provider that returns Rust objects cast to `dyn Any` trait objects.
 pub trait AnyProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }
