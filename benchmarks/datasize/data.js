@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641808385422,
+  "lastUpdate": 1641927524099,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6863,6 +6863,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cf216a8c9140a44ed61ffea6148d1c63927eb0af"
         },
         "date": 1641808376053,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f7d03669cfdb5bc7582051bb2aba36df7cc3d382",
+          "message": "Update FDF FFI to use DiplomatResult (#1491)\n\n* Update FDF FFI to use DiplomatResult\r\n\r\n* regen",
+          "timestamp": "2022-01-11T10:56:56-08:00",
+          "tree_id": "86ee59a77a16308573735c2a3e6905169572fd7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/f7d03669cfdb5bc7582051bb2aba36df7cc3d382"
+        },
+        "date": 1641927515006,
         "tool": "ndjson",
         "benches": [
           {
