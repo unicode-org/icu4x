@@ -10,11 +10,15 @@ use core::any::Any;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 
+/// Representations of the `Any` trait object.
+///
+/// **Important Note:** The types enclosed by `StructRef` and `PayloadRc` are NOT the same!
+/// The first refers to the struct itself, whereas the second refers to a `DataPayload`.
 enum AnyPayloadInner {
     /// A reference to `M::Yokeable`
-    AnyRef(&'static dyn Any),
-    /// A boxed `DataPayload<M>`
-    AnyRc(Rc<dyn Any>),
+    StructRef(&'static dyn Any),
+    /// A boxed `DataPayload<M>`.
+    PayloadRc(Rc<dyn Any>),
 }
 
 /// A type-erased data payload.
@@ -31,14 +35,14 @@ impl AnyPayload {
     {
         use AnyPayloadInner::*;
         match self.inner {
-            AnyRef(any_ref) => {
+            StructRef(any_ref) => {
                 let down_ref: &'static M::Yokeable = any_ref.downcast_ref().ok_or_else(|| {
                     DataErrorKind::MismatchedType(any_ref.type_id()).with_type_context::<M>()
                 })?;
                 // TODO: ZCC
                 Ok(DataPayload::from_owned(down_ref.clone()))
             }
-            AnyRc(any_rc) => {
+            PayloadRc(any_rc) => {
                 let down_rc: Rc<DataPayload<M>> = any_rc.downcast().map_err(|any_rc| {
                     DataErrorKind::MismatchedType(any_rc.type_id()).with_type_context::<M>()
                 })?;
