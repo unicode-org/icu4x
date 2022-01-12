@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642021669767,
+  "lastUpdate": 1642027855149,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23897,6 +23897,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 19241,
             "range": "± 25",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "57c44dda588faedaad36fd0bc7243b0ab6f85f8c",
+          "message": "Remove Yokeable::Output from ZeroCopyFrom trait (#1499)",
+          "timestamp": "2022-01-12T14:42:36-08:00",
+          "tree_id": "ef938f00c370fd83da7356112adac7ff27345dcd",
+          "url": "https://github.com/unicode-org/icu4x/commit/57c44dda588faedaad36fd0bc7243b0ab6f85f8c"
+        },
+        "date": 1642027844810,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1081,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5511,
+            "range": "± 380",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18737,
+            "range": "± 1309",
             "unit": "ns/iter"
           }
         ]
