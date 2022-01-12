@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641950273379,
+  "lastUpdate": 1641951819378,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17399,6 +17399,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 425016,
             "range": "± 9918",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "821af5a5cceabf839e76d1c3af9a062ba753a491",
+          "message": "Update diplomat (#1498)\n\n* Update Diplomat\n\n* regen\n\n* fix update",
+          "timestamp": "2022-01-11T17:35:17-08:00",
+          "tree_id": "1182a2a34b89f067621b2e6cadf3b1c835da9a82",
+          "url": "https://github.com/unicode-org/icu4x/commit/821af5a5cceabf839e76d1c3af9a062ba753a491"
+        },
+        "date": 1641951810540,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 115299,
+            "range": "± 9283",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1331563,
+            "range": "± 74957",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 393235,
+            "range": "± 50411",
             "unit": "ns/iter"
           }
         ]
