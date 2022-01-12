@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641940671847,
+  "lastUpdate": 1641949827920,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -6983,6 +6983,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c6a9402a015fa39b08123ca89ca370986c4a7563"
         },
         "date": 1641940662551,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "07e35af5c204695f6f8d78c49b00b91199c31d6c",
+          "message": "Wire DataProvider into LineBreakSegmenter (#1446)",
+          "timestamp": "2022-01-11T17:08:46-08:00",
+          "tree_id": "beb0d3e564aa3389316d28d686b5aa7fa618451c",
+          "url": "https://github.com/unicode-org/icu4x/commit/07e35af5c204695f6f8d78c49b00b91199c31d6c"
+        },
+        "date": 1641949818784,
         "tool": "ndjson",
         "benches": [
           {
