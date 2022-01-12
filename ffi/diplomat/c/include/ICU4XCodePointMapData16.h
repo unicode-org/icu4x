@@ -1,7 +1,6 @@
 #ifndef ICU4XCodePointMapData16_H
 #define ICU4XCodePointMapData16_H
 #include <stdio.h>
-#include <uchar.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>

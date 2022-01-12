@@ -1,7 +1,6 @@
 #ifndef ICU4XCodePointSetDataResult_H
 #define ICU4XCodePointSetDataResult_H
 #include <stdio.h>
-#include <uchar.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
