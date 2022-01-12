@@ -336,7 +336,7 @@ export class ICU4XDataStruct {
     this.underlying = underlying;
   }
 
-  static create_decimal_symbols(plus_sign_prefix, plus_sign_suffix, minus_sign_prefix, minus_sign_suffix, decimal_separator, grouping_separator, primary_group_size, secondary_group_size, min_group_size, digits) {
+  static create_decimal_symbols_v1(plus_sign_prefix, plus_sign_suffix, minus_sign_prefix, minus_sign_suffix, decimal_separator, grouping_separator, primary_group_size, secondary_group_size, min_group_size, digits) {
     let plus_sign_prefix_diplomat_bytes = (new TextEncoder()).encode(plus_sign_prefix);
     let plus_sign_prefix_diplomat_ptr = wasm.diplomat_alloc(plus_sign_prefix_diplomat_bytes.length, 1);
     let plus_sign_prefix_diplomat_buf = new Uint8Array(wasm.memory.buffer, plus_sign_prefix_diplomat_ptr, plus_sign_prefix_diplomat_bytes.length);
@@ -373,7 +373,7 @@ export class ICU4XDataStruct {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XDataStruct_create_decimal_symbols(diplomat_receive_buffer, plus_sign_prefix_diplomat_ptr, plus_sign_prefix_diplomat_bytes.length, plus_sign_suffix_diplomat_ptr, plus_sign_suffix_diplomat_bytes.length, minus_sign_prefix_diplomat_ptr, minus_sign_prefix_diplomat_bytes.length, minus_sign_suffix_diplomat_ptr, minus_sign_suffix_diplomat_bytes.length, decimal_separator_diplomat_ptr, decimal_separator_diplomat_bytes.length, grouping_separator_diplomat_ptr, grouping_separator_diplomat_bytes.length, primary_group_size, secondary_group_size, min_group_size, digits_diplomat_ptr, digits_diplomat_bytes.length);
+      wasm.ICU4XDataStruct_create_decimal_symbols_v1(diplomat_receive_buffer, plus_sign_prefix_diplomat_ptr, plus_sign_prefix_diplomat_bytes.length, plus_sign_suffix_diplomat_ptr, plus_sign_suffix_diplomat_bytes.length, minus_sign_prefix_diplomat_ptr, minus_sign_prefix_diplomat_bytes.length, minus_sign_suffix_diplomat_ptr, minus_sign_suffix_diplomat_bytes.length, decimal_separator_diplomat_ptr, decimal_separator_diplomat_bytes.length, grouping_separator_diplomat_ptr, grouping_separator_diplomat_bytes.length, primary_group_size, secondary_group_size, min_group_size, digits_diplomat_ptr, digits_diplomat_bytes.length);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
