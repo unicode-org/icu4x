@@ -28,7 +28,7 @@ pub mod ffi {
         ///
         /// See the [rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more details.
         #[allow(clippy::too_many_arguments)]
-        pub fn create_decimal_symbols(
+        pub fn create_decimal_symbols_v1(
             plus_sign_prefix: &str,
             plus_sign_suffix: &str,
             minus_sign_prefix: &str,
