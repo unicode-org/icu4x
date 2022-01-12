@@ -116,6 +116,57 @@ where
     }
 }
 
+use crate::trait_hack::YokeTraitHack;
+
+pub trait ZeroCopyFromV2<'a, C: ?Sized>: 'a {
+    fn zero_copy_from_v2(cart: &'a C) -> Self;
+}
+
+impl<'a, C: ?Sized, T> ZeroCopyFromV2<'a, C> for YokeTraitHack<T>
+where
+    T: ZeroCopyFromV2<'a, C>
+{
+    #[inline]
+    fn zero_copy_from_v2(cart: &'a C) -> Self {
+        YokeTraitHack(T::zero_copy_from_v2(cart))
+    }
+}
+
+impl<Y, C> Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: ZeroCopyFromV2<'a, <C as Deref>::Target>,
+    C: StableDeref + Deref,
+{
+    /// Construct a [`Yoke`]`<Y, C>` from a cart implementing `StableDeref` by zero-copy cloning
+    /// the cart to `Y` and then yokeing that object to the cart.
+    ///
+    /// The type `Y` must implement [`ZeroCopyFrom`]`<C::Target>`. This trait is auto-implemented
+    /// on many common types and can be custom implemented or derived in order to make it easier
+    /// to construct a `Yoke`.
+    ///
+    /// # Example
+    ///
+    /// Attach to a cart:
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    ///  
+    /// let yoke = Yoke::<
+    ///     Cow<'static, str>,
+    ///     String
+    /// >::attach_to_zero_copy_v2_cart("demo".to_string());
+    ///
+    /// assert_eq!("demo", yoke.get());
+    /// ```
+    pub fn attach_to_zero_copy_v2_cart(cart: C) -> Self {
+        Yoke::<Y, C>::attach_to_cart(cart, |c| {
+            YokeTraitHack::<<Y as Yokeable>::Output>::zero_copy_from_v2(c).0
+        })
+    }
+}
+
 // Note: The following could be blanket implementations, but that would require constraining the
 // blanket `T` on `T: 'static`, which may not be desirable for all downstream users who may wish
 // to customize their `ZeroCopyFrom` impl. The blanket implementation may be safe once Rust has
@@ -130,6 +181,14 @@ impl ZeroCopyFrom<str> for Cow<'static, str> {
 }
 
 #[cfg(feature = "alloc")]
+impl<'a> ZeroCopyFromV2<'a, str> for Cow<'a, str> {
+    #[inline]
+    fn zero_copy_from_v2(cart: &'a str) -> Self {
+        Cow::Borrowed(cart)
+    }
+}
+
+#[cfg(feature = "alloc")]
 impl ZeroCopyFrom<String> for Cow<'static, str> {
     #[inline]
     fn zero_copy_from<'b>(cart: &'b String) -> Cow<'b, str> {
@@ -137,9 +196,24 @@ impl ZeroCopyFrom<String> for Cow<'static, str> {
     }
 }
 
+#[cfg(feature = "alloc")]
+impl<'a> ZeroCopyFromV2<'a, String> for Cow<'a, str> {
+    #[inline]
+    fn zero_copy_from_v2(cart: &'a String) -> Self {
+        Cow::Borrowed(cart)
+    }
+}
+
 impl ZeroCopyFrom<str> for &'static str {
     #[inline]
     fn zero_copy_from<'b>(cart: &'b str) -> &'b str {
+        cart
+    }
+}
+
+impl<'a> ZeroCopyFromV2<'a, str> for &'a str {
+    #[inline]
+    fn zero_copy_from_v2(cart: &'a str) -> Self {
         cart
     }
 }
@@ -152,10 +226,25 @@ impl ZeroCopyFrom<String> for &'static str {
     }
 }
 
+#[cfg(feature = "alloc")]
+impl<'a> ZeroCopyFromV2<'a, String> for &'a str {
+    #[inline]
+    fn zero_copy_from_v2(cart: &'a String) -> Self {
+        cart
+    }
+}
+
 impl<C, T: ZeroCopyFrom<C>> ZeroCopyFrom<Option<C>> for Option<T> {
     fn zero_copy_from<'b>(cart: &'b Option<C>) -> Option<<T as Yokeable<'b>>::Output> {
         cart.as_ref()
             .map(|c| <T as ZeroCopyFrom<C>>::zero_copy_from(c))
+    }
+}
+
+impl<'a, C, T: ZeroCopyFromV2<'a, C>> ZeroCopyFromV2<'a, Option<C>> for Option<T> {
+    fn zero_copy_from_v2(cart: &'a Option<C>) -> Self {
+        cart.as_ref()
+            .map(|c| <T as ZeroCopyFromV2<C>>::zero_copy_from_v2(c))
     }
 }
 
@@ -166,6 +255,17 @@ impl<C1, T1: ZeroCopyFrom<C1>, C2, T2: ZeroCopyFrom<C2>> ZeroCopyFrom<(C1, C2)> 
         (
             <T1 as ZeroCopyFrom<C1>>::zero_copy_from(&cart.0),
             <T2 as ZeroCopyFrom<C2>>::zero_copy_from(&cart.1),
+        )
+    }
+}
+
+impl<'a, C1, T1: ZeroCopyFromV2<'a, C1>, C2, T2: ZeroCopyFromV2<'a, C2>> ZeroCopyFromV2<'a, (C1, C2)> for (T1, T2) {
+    fn zero_copy_from_v2(
+        cart: &'a (C1, C2),
+    ) -> Self {
+        (
+            <T1 as ZeroCopyFromV2<C1>>::zero_copy_from_v2(&cart.0),
+            <T2 as ZeroCopyFromV2<C2>>::zero_copy_from_v2(&cart.1),
         )
     }
 }
@@ -184,6 +284,14 @@ impl<B: ToOwned + ?Sized + 'static> ZeroCopyFrom<Cow<'_, B>> for Cow<'static, B>
     }
 }
 
+#[cfg(feature = "alloc")]
+impl<'a, B: ToOwned + ?Sized> ZeroCopyFromV2<'a, Cow<'_, B>> for Cow<'a, B> {
+    #[inline]
+    fn zero_copy_from_v2(cart: &'a Cow<'_, B>) -> Self {
+        Cow::Borrowed(cart)
+    }
+}
+
 impl ZeroCopyFrom<&'_ str> for &'static str {
     #[inline]
     fn zero_copy_from<'b>(cart: &'b &'_ str) -> &'b str {
@@ -191,9 +299,32 @@ impl ZeroCopyFrom<&'_ str> for &'static str {
     }
 }
 
-impl<T: 'static> ZeroCopyFrom<[T]> for &'static [T] {
+impl<'a> ZeroCopyFromV2<'a, &'_ str> for &'a str {
+    #[inline]
+    fn zero_copy_from_v2(cart: &'a &'_ str) -> &'a str {
+        cart
+    }
+}
+
+impl<T> ZeroCopyFrom<[T]> for &'static [T] {
     #[inline]
     fn zero_copy_from<'b>(cart: &'b [T]) -> &'b [T] {
         cart
     }
+}
+
+impl<'a, T> ZeroCopyFromV2<'a, [T]> for &'a [T] {
+    #[inline]
+    fn zero_copy_from_v2(cart: &'a [T]) -> &'a [T] {
+        cart
+    }
+}
+
+#[test]
+fn test_v2() {
+    let yoke = Yoke::<
+        Cow<'static, str>,
+        String
+    >::attach_to_zero_copy_v2_cart("demo".to_string());
+    assert_eq!("demo", yoke.get());
 }
