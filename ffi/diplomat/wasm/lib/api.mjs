@@ -519,6 +519,18 @@ export class ICU4XFixedDecimal {
     const diplomat_out = wasm.ICU4XFixedDecimal_negate(this.underlying);
   }
 
+  pad_left(digits) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_pad_left(this.underlying, digits);
+  }
+
+  truncate_left(magnitude) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_truncate_left(this.underlying, magnitude);
+  }
+
+  pad_right(negative_magnitude) {
+    const diplomat_out = wasm.ICU4XFixedDecimal_pad_right(this.underlying, negative_magnitude);
+  }
+
   to_string() {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return wasm.ICU4XFixedDecimal_to_string(this.underlying, writeable);
