@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642021698520,
+  "lastUpdate": 1642027850141,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17525,6 +17525,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 410522,
             "range": "± 13636",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "57c44dda588faedaad36fd0bc7243b0ab6f85f8c",
+          "message": "Remove Yokeable::Output from ZeroCopyFrom trait (#1499)",
+          "timestamp": "2022-01-12T14:42:36-08:00",
+          "tree_id": "ef938f00c370fd83da7356112adac7ff27345dcd",
+          "url": "https://github.com/unicode-org/icu4x/commit/57c44dda588faedaad36fd0bc7243b0ab6f85f8c"
+        },
+        "date": 1642027841622,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 115494,
+            "range": "± 11146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1339785,
+            "range": "± 80961",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 399670,
+            "range": "± 19969",
             "unit": "ns/iter"
           }
         ]
