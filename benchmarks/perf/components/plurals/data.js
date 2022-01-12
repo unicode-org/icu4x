@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641951864197,
+  "lastUpdate": 1641975194342,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23813,6 +23813,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24526,
             "range": "± 2018",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f8f05c2bc7c04fecc49dc51a2aefa9e5784cec36",
+          "message": "Add FFI for constructing Data Structs, including decimal data structs (#1497)\n\n* Add ICU4XDataStruct and hook into DecimalSymbolsV1\r\n\r\n* Add ICU4XResourceKey\r\n\r\n* clip\r\n\r\n* Add ICU4XFDF::try_new_from_struct()\r\n\r\n* rm resource_key\r\n\r\n* rename function\r\n\r\n* regen\r\n\r\n* change string\r\n\r\n* rename+\r\n\r\n* regen",
+          "timestamp": "2022-01-12T00:04:26-08:00",
+          "tree_id": "480741a91646ce708c9131fa8a6f04afe5a99a37",
+          "url": "https://github.com/unicode-org/icu4x/commit/f8f05c2bc7c04fecc49dc51a2aefa9e5784cec36"
+        },
+        "date": 1641975185272,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1095,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5506,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 19200,
+            "range": "± 17",
             "unit": "ns/iter"
           }
         ]
