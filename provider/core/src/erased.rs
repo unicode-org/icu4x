@@ -53,9 +53,8 @@ pub trait ErasedDataStruct: 'static {
     fn as_any(&self) -> &dyn Any;
 }
 
-impl ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
-    #[allow(clippy::needless_lifetimes)]
-    fn zero_copy_from<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
+impl<'zcf> ZeroCopyFrom<'zcf, dyn ErasedDataStruct> for &'zcf dyn ErasedDataStruct {
+    fn zero_copy_from(this: &'zcf (dyn ErasedDataStruct)) -> &'zcf dyn ErasedDataStruct {
         this
     }
 }

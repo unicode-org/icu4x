@@ -61,8 +61,8 @@ impl Deref for LineBreakPropertyTable<'_> {
     }
 }
 
-impl<'a> ZeroCopyFrom<LineBreakPropertyTable<'a>> for LineBreakPropertyTable<'static> {
-    fn zero_copy_from<'b>(cart: &'b LineBreakPropertyTable<'a>) -> <Self as Yokeable<'b>>::Output {
+impl<'zcf> ZeroCopyFrom<'zcf, LineBreakPropertyTable<'_>> for LineBreakPropertyTable<'zcf> {
+    fn zero_copy_from(cart: &'zcf LineBreakPropertyTable<'_>) -> Self {
         LineBreakPropertyTable::Borrowed(&*cart)
     }
 }
