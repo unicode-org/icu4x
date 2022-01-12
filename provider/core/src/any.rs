@@ -9,6 +9,7 @@ use alloc::rc::Rc;
 use core::any::Any;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
+use yoke::ZeroCopyFrom;
 
 /// Representations of the `Any` trait object.
 ///
@@ -33,7 +34,9 @@ impl AnyPayload {
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
         M: DataMarker + 'static,
-        M::Yokeable: Clone,
+        // For the StructRef case:
+        M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
+        // For the PayloadRc case:
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     {
         use AnyPayloadInner::*;
@@ -42,12 +45,7 @@ impl AnyPayload {
                 let down_ref: &'static M::Yokeable = any_ref.downcast_ref().ok_or_else(|| {
                     DataErrorKind::MismatchedType(any_ref.type_id()).with_type_context::<M>()
                 })?;
-                // TODO: Use ZeroCopyFrom here.
-                // Although the Clone impl is expected to perform a zero-copy clone since we have
-                // a reference to a const-constructed object, (1) there is no guarantee that it
-                // does not clone, and (2) ZeroCopyFrom only builds the zero-copy code, not the
-                // potentially heavier full-clone code.
-                Ok(DataPayload::from_owned(down_ref.clone()))
+                Ok(DataPayload::from_owned(M::Yokeable::zero_copy_from(down_ref)))
             }
             PayloadRc(any_rc) => {
                 let down_rc: Rc<DataPayload<M>> = any_rc.downcast().map_err(|any_rc| {
@@ -103,8 +101,8 @@ impl AnyResponse {
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker + 'static,
-        M::Yokeable: Clone,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+        M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
     {
         Ok(DataResponse {
             metadata: self.metadata,
