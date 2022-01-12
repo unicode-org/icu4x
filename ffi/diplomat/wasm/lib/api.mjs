@@ -470,21 +470,25 @@ export class ICU4XFixedDecimalFormat {
     const diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display = options["sign_display"];
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XFixedDecimalFormat_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy], ICU4XFixedDecimalSignDisplay_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display]);
-      const out = new ICU4XFixedDecimalFormatResult(diplomat_receive_buffer);
-      if (out.fdf.underlying !== 0) {
-        const out_fdf_value = out.fdf;
-        ICU4XFixedDecimalFormat_box_destroy_registry.register(out_fdf_value, out_fdf_value.underlying);
-        Object.defineProperty(out, "fdf", { value: out_fdf_value });
-      } else {
-        Object.defineProperty(out, "fdf", { value: null });
-      }
-      diplomat_alloc_destroy_registry.register(out, {
-        ptr: out.underlying,
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
         size: 5,
         align: 4,
       });
-      return out;
+      wasm.ICU4XFixedDecimalFormat_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy], ICU4XFixedDecimalSignDisplay_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display]);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XFixedDecimalFormat((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = {};
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
     })();
     return diplomat_out;
   }
@@ -532,28 +536,6 @@ export class ICU4XFixedDecimalFormatOptions {
 
   get sign_display() {
     return ICU4XFixedDecimalSignDisplay_rust_to_js[(new Int32Array(wasm.memory.buffer, this.underlying + 4, 1))[0]];
-  }
-}
-
-const ICU4XFixedDecimalFormatResult_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XFixedDecimalFormatResult_destroy(underlying);
-});
-
-export class ICU4XFixedDecimalFormatResult {
-  constructor(underlying) {
-    this.underlying = underlying;
-  }
-
-  get fdf() {
-    return (() => {
-      const out = new ICU4XFixedDecimalFormat((new Uint32Array(wasm.memory.buffer, this.underlying + 0, 1))[0]);
-      out.owner = null;
-      return out;
-    })();
-  }
-
-  get success() {
-    return (new Uint8Array(wasm.memory.buffer, this.underlying + 4, 1))[0] == 1;
   }
 }
 

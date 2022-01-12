@@ -18,12 +18,12 @@ int main() {
 
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy_Auto, ICU4XFixedDecimalSignDisplay_Auto};
 
-    ICU4XFixedDecimalFormatResult fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
-    if (!fdf_result.success)  {
+    decimal_ffi_result_box_ICU4XFixedDecimalFormat_void fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
+    if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormat\n");
         return 1;
     }
-    ICU4XFixedDecimalFormat* fdf = fdf_result.fdf;
+    ICU4XFixedDecimalFormat* fdf = fdf_result.ok;
     char output[40];
 
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);

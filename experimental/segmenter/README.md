@@ -17,7 +17,9 @@ Segment a string with default options:
 ```rust
 use icu_segmenter::LineBreakSegmenter;
 
-let segmenter = LineBreakSegmenter::try_new().expect("Data exists");
+let provider = icu_provider::inv::InvariantDataProvider;
+let segmenter = LineBreakSegmenter::try_new(&provider)
+    .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
 assert_eq!(&breakpoints, &[6, 11]);
@@ -32,7 +34,9 @@ let mut options = LineBreakOptions::default();
 options.line_break_rule = LineBreakRule::Strict;
 options.word_break_rule = WordBreakRule::BreakAll;
 options.ja_zh = false;
-let segmenter = LineBreakSegmenter::try_new_with_options(options).expect("Data exists");
+let provider = icu_provider::inv::InvariantDataProvider;
+let segmenter = LineBreakSegmenter::try_new_with_options(&provider, options)
+    .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
 assert_eq!(&breakpoints, &[1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
@@ -43,7 +47,9 @@ Segment a Latin1 byte string:
 ```rust
 use icu_segmenter::LineBreakSegmenter;
 
-let segmenter = LineBreakSegmenter::try_new().expect("Data exists");
+let provider = icu_provider::inv::InvariantDataProvider;
+let segmenter = LineBreakSegmenter::try_new(&provider)
+    .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 assert_eq!(&breakpoints, &[6, 11]);

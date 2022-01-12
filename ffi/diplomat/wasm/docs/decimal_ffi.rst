@@ -21,16 +21,6 @@
 
     .. js:staticfunction:: default()
 
-.. js:class:: ICU4XFixedDecimalFormatResult
-
-    .. js:attribute:: fdf
-
-        The :js:class:`ICU4XFixedDecimalFormat`, exists if creation was successful.
-
-    .. js:attribute:: success
-
-        Whether creating the :js:class:`ICU4XFixedDecimalFormat` was successful.
-
 .. js:class:: ICU4XFixedDecimalGroupingStrategy
 
 .. js:class:: ICU4XFixedDecimalSignDisplay
