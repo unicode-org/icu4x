@@ -116,7 +116,7 @@ pub mod ffi {
 
         /// Truncate the [`ICU4XFixedDecimal`] on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years
         /// ("2022" -> "22")
-        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left) for more information.
         pub fn truncate_left(&mut self, magnitude: i16) {
             self.0.truncate_left(magnitude)
         }
