@@ -3,8 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XFixedDecimalFormat.hpp"
+#include "../../include/ICU4XDataStruct.hpp"
 
 #include <iostream>
+#include <array>
 
 const std::string_view path = "../../../../../provider/testdata/data/json/";
 
@@ -63,5 +65,27 @@ int main() {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    std::array<char32_t, 10> digits = {U'a', U'b', U'c', U'd', U'e', U'f', U'g', U'h', U'i', U'j'};
+
+    auto data = ICU4XDataStruct::create_decimal_symbols_v1("+", "", "-", "", "/", "_", 4, 2, 4, digits).ok().value();
+
+    fdf = ICU4XFixedDecimalFormat::try_new_from_decimal_symbols_v1(data, opts).ok().value();
+
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).value();
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
+    if (out != "bcdefg/ijab") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123451234567.8901).value();
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
+    if (out != "bc_de_fb_cd_efgh/ijab") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
     return 0;
 }

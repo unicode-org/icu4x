@@ -5,6 +5,7 @@ Documentation
    :maxdepth: 3
    :caption: Modules:
 
+   data_struct_ffi
    decimal_ffi
    fixed_decimal_ffi
    locale_ffi
