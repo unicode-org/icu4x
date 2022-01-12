@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641951409242,
+  "lastUpdate": 1641974768015,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7043,6 +7043,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/821af5a5cceabf839e76d1c3af9a062ba753a491"
         },
         "date": 1641951401055,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f8f05c2bc7c04fecc49dc51a2aefa9e5784cec36",
+          "message": "Add FFI for constructing Data Structs, including decimal data structs (#1497)\n\n* Add ICU4XDataStruct and hook into DecimalSymbolsV1\r\n\r\n* Add ICU4XResourceKey\r\n\r\n* clip\r\n\r\n* Add ICU4XFDF::try_new_from_struct()\r\n\r\n* rm resource_key\r\n\r\n* rename function\r\n\r\n* regen\r\n\r\n* change string\r\n\r\n* rename+\r\n\r\n* regen",
+          "timestamp": "2022-01-12T00:04:26-08:00",
+          "tree_id": "480741a91646ce708c9131fa8a6f04afe5a99a37",
+          "url": "https://github.com/unicode-org/icu4x/commit/f8f05c2bc7c04fecc49dc51a2aefa9e5784cec36"
+        },
+        "date": 1641974757857,
         "tool": "ndjson",
         "benches": [
           {
