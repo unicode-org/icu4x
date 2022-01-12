@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641941172190,
+  "lastUpdate": 1641950289936,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23729,6 +23729,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22980,
             "range": "± 1803",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "07e35af5c204695f6f8d78c49b00b91199c31d6c",
+          "message": "Wire DataProvider into LineBreakSegmenter (#1446)",
+          "timestamp": "2022-01-11T17:08:46-08:00",
+          "tree_id": "beb0d3e564aa3389316d28d686b5aa7fa618451c",
+          "url": "https://github.com/unicode-org/icu4x/commit/07e35af5c204695f6f8d78c49b00b91199c31d6c"
+        },
+        "date": 1641950280255,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1289,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6376,
+            "range": "± 489",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20269,
+            "range": "± 1526",
             "unit": "ns/iter"
           }
         ]
