@@ -76,6 +76,25 @@ class ICU4XFixedDecimal {
   void negate();
 
   /**
+   * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular number of integer digits
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
+   */
+  void pad_left(uint16_t digits);
+
+  /**
+   * Truncate the [`ICU4XFixedDecimal`] on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years
+   * ("2022" -> "22")
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
+   */
+  void truncate_left(int16_t magnitude);
+
+  /**
+   * Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular (negative) magnitude
+   * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right) for more information.
+   */
+  void pad_right(uint16_t negative_magnitude);
+
+  /**
    * Format the [`ICU4XFixedDecimal`] as a string.
    * See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
    */
@@ -147,6 +166,15 @@ inline bool ICU4XFixedDecimal::multiply_pow10(int16_t power) {
 }
 inline void ICU4XFixedDecimal::negate() {
   capi::ICU4XFixedDecimal_negate(this->inner.get());
+}
+inline void ICU4XFixedDecimal::pad_left(uint16_t digits) {
+  capi::ICU4XFixedDecimal_pad_left(this->inner.get(), digits);
+}
+inline void ICU4XFixedDecimal::truncate_left(int16_t magnitude) {
+  capi::ICU4XFixedDecimal_truncate_left(this->inner.get(), magnitude);
+}
+inline void ICU4XFixedDecimal::pad_right(uint16_t negative_magnitude) {
+  capi::ICU4XFixedDecimal_pad_right(this->inner.get(), negative_magnitude);
 }
 template<typename W> inline void ICU4XFixedDecimal::to_string_to_writeable(W& to) const {
   capi::DiplomatWriteable to_writer = diplomat::WriteableTrait<W>::Construct(to);

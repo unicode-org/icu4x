@@ -29,6 +29,12 @@ bool ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
 
 void ICU4XFixedDecimal_negate(ICU4XFixedDecimal* self);
 
+void ICU4XFixedDecimal_pad_left(ICU4XFixedDecimal* self, uint16_t digits);
+
+void ICU4XFixedDecimal_truncate_left(ICU4XFixedDecimal* self, int16_t magnitude);
+
+void ICU4XFixedDecimal_pad_right(ICU4XFixedDecimal* self, uint16_t negative_magnitude);
+
 void ICU4XFixedDecimal_to_string(const ICU4XFixedDecimal* self, DiplomatWriteable* to);
 void ICU4XFixedDecimal_destroy(ICU4XFixedDecimal* self);
 
