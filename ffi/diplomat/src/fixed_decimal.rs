@@ -108,6 +108,25 @@ pub mod ffi {
             self.0.negate()
         }
 
+        /// Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular number of integer digits
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
+        pub fn pad_left(&mut self, digits: u16) {
+            self.0.pad_left(digits)
+        }
+
+        /// Truncate the [`ICU4XFixedDecimal`] on the left to a particular magnitude, deleting digits if necessary. This is useful for, e.g. abbreviating years
+        /// ("2022" -> "22")
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
+        pub fn truncate_left(&mut self, magnitude: i16) {
+            self.0.truncate_left(magnitude)
+        }
+
+        /// Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular (negative) magnitude
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right) for more information.
+        pub fn pad_right(&mut self, negative_magnitude: u16) {
+            self.0.pad_right(negative_magnitude)
+        }
+
         /// Format the [`ICU4XFixedDecimal`] as a string.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWriteable) {

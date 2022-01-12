@@ -50,6 +50,30 @@ int main() {
         return 1;
     }
 
+    decimal.pad_right(4);
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted left-padded float value is " << out << std::endl;
+    if (out != "১০০.০১০০") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
+    decimal.pad_left(4);
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted right-padded float value is " << out << std::endl;
+    if (out != "০,১০০.০১০০") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
+    decimal.truncate_left(2);
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted truncated float value is " << out << std::endl;
+    if (out != "১০০.০১০০") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
     decimal = ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(100.0006, -2, ICU4XFixedDecimalRoundingMode::HalfExpand).value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value from precision 2 is " << out << std::endl;
