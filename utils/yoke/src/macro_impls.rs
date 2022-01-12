@@ -38,9 +38,9 @@ macro_rules! impl_copy_type {
             type Output = Self;
             copy_yoke_impl!();
         }
-        impl ZeroCopyFrom<$ty> for $ty {
+        impl<'a> ZeroCopyFrom<'a, $ty> for $ty {
             #[inline]
-            fn zero_copy_from(this: &Self) -> Self {
+            fn zero_copy_from(this: &'a Self) -> Self {
                 // Essentially only works when the struct is fully Copy
                 *this
             }
@@ -117,8 +117,8 @@ unsafe impl<'a, T: Yokeable<'a>, const N: usize> Yokeable<'a> for [T; N] {
 // https://github.com/rust-lang/rust/issues/76118
 macro_rules! array_zcf_impl {
     ($n:expr; $($i:expr),+) => {
-        impl<C, T: ZeroCopyFrom<C>> ZeroCopyFrom<[C; $n]> for [T; $n] {
-            fn zero_copy_from<'b>(this: &'b [C; $n]) -> [<T as Yokeable<'b>>::Output; $n] {
+        impl<'a, C, T: ZeroCopyFrom<'a, C>> ZeroCopyFrom<'a, [C; $n]> for [T; $n] {
+            fn zero_copy_from(this: &'a [C; $n]) -> Self {
                 [
                     $(
                         <T as ZeroCopyFrom<C>>::zero_copy_from(&this[$i])
