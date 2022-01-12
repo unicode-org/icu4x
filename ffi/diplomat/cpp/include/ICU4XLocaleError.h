@@ -1,6 +1,7 @@
 #ifndef ICU4XLocaleError_H
 #define ICU4XLocaleError_H
 #include <stdio.h>
+#include <uchar.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>

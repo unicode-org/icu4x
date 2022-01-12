@@ -71,8 +71,8 @@ tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "4d8450f575a7839e3bc2d48aedae5408f1825c30" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "4d8450f575a7839e3bc2d48aedae5408f1825c30" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "283c0807dbc3d5edbe4f9d7e635e8d02649fb77b" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "283c0807dbc3d5edbe4f9d7e635e8d02649fb77b" }
 icu_testdata = { version = "0.4", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
 
 # This cfg originates in dlmalloc/lib.rs
