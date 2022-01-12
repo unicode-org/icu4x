@@ -72,7 +72,7 @@ pub mod ffi {
         ///
         /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
         /// Passing a consumed struct to this method will return an error.
-        pub fn try_new_from_struct(
+        pub fn try_new_from_decimal_symbols_v1(
             data_struct: &mut ICU4XDataStruct,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()> {

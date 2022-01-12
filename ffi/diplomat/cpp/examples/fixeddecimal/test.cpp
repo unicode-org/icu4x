@@ -70,7 +70,7 @@ int main() {
 
     auto data = ICU4XDataStruct::create_decimal_symbols("+", "", "-", "", "/", "_", 4, 2, 4, digits).ok().value();
 
-    fdf = ICU4XFixedDecimalFormat::try_new_from_struct(data, opts).ok().value();
+    fdf = ICU4XFixedDecimalFormat::try_new_from_decimal_symbols_v1(data, opts).ok().value();
 
     decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).value();
     out = fdf.format(decimal).ok().value();
