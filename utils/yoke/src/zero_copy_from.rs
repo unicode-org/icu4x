@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::trait_hack::YokeTraitHack;
 use crate::Yoke;
 use crate::Yokeable;
 #[cfg(feature = "alloc")]
@@ -10,7 +11,6 @@ use alloc::borrow::{Cow, ToOwned};
 use alloc::string::String;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
-use crate::trait_hack::YokeTraitHack;
 
 /// Trait for types that can be crated from a reference to a cart type `C` with no allocations.
 ///
@@ -86,7 +86,7 @@ pub trait ZeroCopyFrom<'a, C: ?Sized>: 'a {
 
 impl<'a, C: ?Sized, T> ZeroCopyFrom<'a, C> for YokeTraitHack<T>
 where
-    T: ZeroCopyFrom<'a, C>
+    T: ZeroCopyFrom<'a, C>,
 {
     #[inline]
     fn zero_copy_from(cart: &'a C) -> Self {
@@ -172,10 +172,10 @@ impl<'a, C, T: ZeroCopyFrom<'a, C>> ZeroCopyFrom<'a, Option<C>> for Option<T> {
     }
 }
 
-impl<'a, C1, T1: ZeroCopyFrom<'a, C1>, C2, T2: ZeroCopyFrom<'a, C2>> ZeroCopyFrom<'a, (C1, C2)> for (T1, T2) {
-    fn zero_copy_from(
-        cart: &'a (C1, C2),
-    ) -> Self {
+impl<'a, C1, T1: ZeroCopyFrom<'a, C1>, C2, T2: ZeroCopyFrom<'a, C2>> ZeroCopyFrom<'a, (C1, C2)>
+    for (T1, T2)
+{
+    fn zero_copy_from(cart: &'a (C1, C2)) -> Self {
         (
             <T1 as ZeroCopyFrom<C1>>::zero_copy_from(&cart.0),
             <T2 as ZeroCopyFrom<C2>>::zero_copy_from(&cart.1),
