@@ -265,7 +265,7 @@ where
 
 impl<'zcf, T> ZeroCopyFrom<'zcf, ZeroVec<'_, T>> for ZeroVec<'zcf, T>
 where
-    T: 'zcf + AsULE + ?Sized,
+    T: 'static + AsULE + ?Sized,
 {
     #[inline]
     fn zero_copy_from(cart: &'zcf ZeroVec<'_, T>) -> Self {
@@ -285,8 +285,8 @@ where
 
 impl<'zcf, 's, K, V> ZeroCopyFrom<'zcf, ZeroMap<'s, K, V>> for ZeroMap<'zcf, K, V>
 where
-    K: 'zcf + for<'b> ZeroMapKV<'b> + ?Sized,
-    V: 'zcf + for<'b> ZeroMapKV<'b> + ?Sized,
+    K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
+    V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     <K as ZeroMapKV<'zcf>>::Container: ZeroCopyFrom<'zcf, <K as ZeroMapKV<'s>>::Container>,
     <V as ZeroMapKV<'zcf>>::Container: ZeroCopyFrom<'zcf, <V as ZeroMapKV<'s>>::Container>,
 {
@@ -301,9 +301,9 @@ where
 impl<'zcf, 's, K0, K1, V> ZeroCopyFrom<'zcf, ZeroMap2d<'s, K0, K1, V>>
     for ZeroMap2d<'zcf, K0, K1, V>
 where
-    K0: 'zcf + for<'b> ZeroMapKV<'b> + ?Sized,
-    K1: 'zcf + for<'b> ZeroMapKV<'b> + ?Sized,
-    V: 'zcf + for<'b> ZeroMapKV<'b> + ?Sized,
+    K0: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
+    K1: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
+    V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     <K0 as ZeroMapKV<'zcf>>::Container: ZeroCopyFrom<'zcf, <K0 as ZeroMapKV<'s>>::Container>,
     <K1 as ZeroMapKV<'zcf>>::Container: ZeroCopyFrom<'zcf, <K1 as ZeroMapKV<'s>>::Container>,
     <V as ZeroMapKV<'zcf>>::Container: ZeroCopyFrom<'zcf, <V as ZeroMapKV<'s>>::Container>,
