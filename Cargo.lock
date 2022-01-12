@@ -1402,6 +1402,7 @@ dependencies = [
  "serde_json",
  "toml",
  "unicode-width",
+ "zerovec",
 ]
 
 [[package]]

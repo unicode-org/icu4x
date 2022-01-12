@@ -31,6 +31,7 @@ pub enum ResourceCategory {
     TimeZone,
     Properties,
     ListFormatter,
+    Segmenter,
     PrivateUse(TinyStr4),
 }
 
@@ -47,6 +48,7 @@ impl ResourceCategory {
             Self::TimeZone => Cow::Borrowed("time_zone"),
             Self::Properties => Cow::Borrowed("props"),
             Self::ListFormatter => Cow::Borrowed("list_formatter"),
+            Self::Segmenter => Cow::Borrowed("segmenter"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());

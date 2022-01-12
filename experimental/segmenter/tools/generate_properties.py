@@ -535,9 +535,9 @@ with open('property_table.rs', 'w') as table_file:
     table_file.write("use crate::properties_defines::*;\n");
     table_file.write("use crate::properties_other::*;\n\n");
 
-    table_file.write("pub const UAX14_PROPERTY_TABLE: [&[u8; 1024]; 128] = [\n")
+    table_file.write("pub const UAX14_PROPERTY_TABLE: [[u8; 1024]; 128] = [\n")
     for i in table:
-        table_file.write("  &%s,\n" % i)
+        table_file.write("  %s,\n" % i)
     table_file.write("];\n")
 
 with open('rule_table.rs', 'w') as table_file:
