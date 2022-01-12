@@ -51,7 +51,7 @@ pub struct HasTuples<'data> {
 }
 
 pub fn assert_zcf_tuples<'b, 'data>(x: &'b HasTuples<'data>) -> HasTuples<'b> {
-    HasTuples::<'b>::zero_copy_from(x)
+    HasTuples::zero_copy_from(x)
 }
 pub fn assert_zcf_generics<'a, 'b>(
     x: &'b ZeroVecExampleWithGenerics<'a, u8>,
@@ -78,7 +78,7 @@ pub struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
 pub fn assert_zcf_map<'a, 'b>(
     x: &'b ZeroMapGenericExample<'a, str>,
 ) -> ZeroMapGenericExample<'b, str> {
-    ZeroMapGenericExample::<'b, str>::zero_copy_from(x)
+    ZeroMapGenericExample::zero_copy_from(x)
 }
 
 #[derive(Yokeable, Clone, ZeroCopyFrom)]

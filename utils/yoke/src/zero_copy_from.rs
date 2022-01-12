@@ -36,31 +36,6 @@ use stable_deref_trait::StableDeref;
 ///     message: Cow<'data, str>,
 /// }
 ///
-/// unsafe impl<'a> Yokeable<'a> for MyStruct<'static> {
-///     // (not shown; see `Yokeable` for examples)
-/// #    type Output = MyStruct<'a>;
-/// #    fn transform(&'a self) -> &'a Self::Output {
-/// #        self
-/// #    }
-/// #    fn transform_owned(self) -> MyStruct<'a> {
-/// #        // covariant lifetime cast, can be done safely
-/// #        self
-/// #    }
-/// #    unsafe fn make(from: Self::Output) -> Self {
-/// #        std::mem::transmute(from)
-/// #    }
-/// #    fn transform_mut<F>(&'a mut self, f: F)
-/// #    where
-/// #        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-/// #    {
-/// #        unsafe {
-/// #            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
-/// #                self,
-/// #            ))
-/// #        }
-/// #    }
-/// }
-///
 /// // Reference from a borrowed version of self
 /// impl<'zcf> ZeroCopyFrom<'zcf, MyStruct<'_>> for MyStruct<'zcf> {
 ///     fn zero_copy_from(cart: &'zcf MyStruct<'_>) -> Self {
