@@ -51,12 +51,12 @@ pub struct HasTuples<'data> {
 }
 
 pub fn assert_zcf_tuples<'b, 'data>(x: &'b HasTuples<'data>) -> HasTuples<'b> {
-    HasTuples::<'static>::zero_copy_from(x)
+    HasTuples::<'b>::zero_copy_from(x)
 }
 pub fn assert_zcf_generics<'a, 'b>(
     x: &'b ZeroVecExampleWithGenerics<'a, u8>,
 ) -> ZeroVecExampleWithGenerics<'b, u8> {
-    ZeroVecExampleWithGenerics::<'static, u8>::zero_copy_from(x)
+    ZeroVecExampleWithGenerics::<'b, u8>::zero_copy_from(x)
 }
 
 // Since ZeroMap has generic parameters, the Rust compiler cannot
@@ -78,7 +78,7 @@ pub struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
 pub fn assert_zcf_map<'a, 'b>(
     x: &'b ZeroMapGenericExample<'a, str>,
 ) -> ZeroMapGenericExample<'b, str> {
-    ZeroMapGenericExample::<'static, str>::zero_copy_from(x)
+    ZeroMapGenericExample::<'b, str>::zero_copy_from(x)
 }
 
 #[derive(Yokeable, Clone, ZeroCopyFrom)]

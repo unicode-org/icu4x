@@ -253,8 +253,8 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .map(|ty| parse_quote!(#ty: #clone_trait + 'static))
             .collect();
         quote! {
-            impl<#(#tybounds),*> ZeroCopyFrom<#name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
-                fn zero_copy_from(this: &Self) -> Self {
+            impl<'zcf, #(#tybounds),*> ZeroCopyFrom<'zcf, #name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
+                fn zero_copy_from(this: &'zcf Self) -> Self {
                     #clone
                 }
             }
@@ -269,8 +269,8 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         }
         if has_clone {
             return quote! {
-                impl<'data> ZeroCopyFrom<#name<'data>> for #name<'static> {
-                    fn zero_copy_from<'b>(this: &'b #name<'data>) -> #name<'b> {
+                impl<'zcf> ZeroCopyFrom<'zcf, #name<'_>> for #name<'zcf> {
+                    fn zero_copy_from(this: &'zcf #name<'_>) -> Self {
                         this.clone()
                     }
                 }
@@ -279,10 +279,6 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
         let structure = Structure::new(input);
         let generics_env = typarams.iter().cloned().collect();
-        let static_bounds: Vec<WherePredicate> = typarams
-            .iter()
-            .map(|ty| parse_quote!(#ty: 'static))
-            .collect();
 
         let mut zcf_bounds: Vec<WherePredicate> = vec![];
         let body = structure.each_variant(|vi| {
@@ -292,46 +288,42 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
 
-
                 if binding_cloning {
                     quote! {
                         #field.clone()
                     }
                 } else {
-                    let fty = replace_lifetime(&f.ty, static_lt());
-                    let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'data"));
+                    let fty = replace_lifetime(&f.ty, custom_lt("'zcf"));
+                    let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'zcf_inner"));
 
                     let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
                     if has_ty {
                         // For types without type parameters, the compiler can figure out that the field implements
                         // ZeroCopyFrom on its own. However, if there are type parameters, there may be complex preconditions
                         // to `FieldTy: ZeroCopyFrom` that need to be satisfied. We get them to be satisfied by requiring
-                        // `FieldTy<'static>: ZeroCopyFrom<FieldTy<'data>>` as well as
-                        // `for<'data_hrtb> FieldTy<'static>: Yokeable<'data_hrtb, Output = FieldTy<'data_hrtb>>`
+                        // `FieldTy<'zcf>: ZeroCopyFrom<'zcf, FieldTy<'zcf_inner>>`
                         if has_lt {
-                            let hrtb_ty = replace_lifetime(&f.ty, custom_lt("'data_hrtb"));
-                            zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#lifetime_ty>));
-                            zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #hrtb_ty>));
+                            zcf_bounds
+                                .push(parse_quote!(#fty: yoke::ZeroCopyFrom<'zcf, #lifetime_ty>));
                         } else {
-                            zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<#fty>));
-                            zcf_bounds.push(parse_quote!(for<'data_hrtb> #fty: yoke::Yokeable<'data_hrtb, Output = #fty>));
+                            zcf_bounds.push(parse_quote!(#fty: yoke::ZeroCopyFrom<'zcf, #fty>));
                         }
                     }
 
                     // By doing this we essentially require ZCF to be implemented
                     // on all fields
                     quote! {
-                        <#fty as yoke::ZeroCopyFrom<#lifetime_ty>>::zero_copy_from(#field)
+                        <#fty as yoke::ZeroCopyFrom<'zcf, #lifetime_ty>>::zero_copy_from(#field)
                     }
                 }
             })
         });
 
         quote! {
-            impl<'data, #(#tybounds),*> yoke::ZeroCopyFrom<#name<'data, #(#typarams),*>> for #name<'static, #(#typarams),*>
-                where #(#static_bounds,)*
+            impl<'zcf, 'zcf_inner, #(#tybounds),*> yoke::ZeroCopyFrom<'zcf, #name<'zcf_inner, #(#typarams),*>> for #name<'zcf, #(#typarams),*>
+                where
                 #(#zcf_bounds,)* {
-                fn zero_copy_from<'b>(this: &'b #name<'data, #(#typarams),*>) -> #name<'b, #(#typarams),*> {
+                fn zero_copy_from(this: &'zcf #name<'zcf_inner, #(#typarams),*>) -> Self {
                     match *this { #body }
                 }
             }

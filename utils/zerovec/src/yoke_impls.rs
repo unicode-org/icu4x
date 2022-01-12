@@ -263,43 +263,40 @@ where
     }
 }
 
-impl<'a, T: 'static + AsULE + ?Sized> ZeroCopyFrom<ZeroVec<'a, T>> for ZeroVec<'static, T> {
+impl<'a, T: 'static + AsULE + ?Sized> ZeroCopyFrom<'a, ZeroVec<'_, T>> for ZeroVec<'a, T> {
     #[inline]
-    fn zero_copy_from<'b>(cart: &'b ZeroVec<'a, T>) -> ZeroVec<'b, T> {
+    fn zero_copy_from(cart: &'a ZeroVec<'_, T>) -> Self {
         ZeroVec::Borrowed(cart.as_ule_slice())
     }
 }
 
-impl<'a, T: 'static + VarULE + ?Sized> ZeroCopyFrom<VarZeroVec<'a, T>> for VarZeroVec<'static, T> {
+impl<'a, T: 'static + VarULE + ?Sized> ZeroCopyFrom<'a, VarZeroVec<'_, T>> for VarZeroVec<'a, T> {
     #[inline]
-    fn zero_copy_from<'b>(cart: &'b VarZeroVec<'a, T>) -> VarZeroVec<'b, T> {
+    fn zero_copy_from(cart: &'a VarZeroVec<'_, T>) -> Self {
         cart.as_slice().into()
     }
 }
 
-impl<'a, K, V> ZeroCopyFrom<ZeroMap<'a, K, V>> for ZeroMap<'static, K, V>
+impl<'a, 's, K, V> ZeroCopyFrom<'a, ZeroMap<'s, K, V>> for ZeroMap<'a, K, V>
 where
     K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
     V: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
-    <K as ZeroMapKV<'static>>::Container: for<'b> ZeroCopyFrom<<K as ZeroMapKV<'b>>::Container>,
-    <V as ZeroMapKV<'static>>::Container: for<'b> ZeroCopyFrom<<V as ZeroMapKV<'b>>::Container>,
-    <K as ZeroMapKV<'static>>::Container:
-        for<'b> Yokeable<'b, Output = <K as ZeroMapKV<'b>>::Container>,
-    <V as ZeroMapKV<'static>>::Container:
-        for<'b> Yokeable<'b, Output = <V as ZeroMapKV<'b>>::Container>,
+    <K as ZeroMapKV<'a>>::Container: ZeroCopyFrom<'a, <K as ZeroMapKV<'s>>::Container>,
+    <V as ZeroMapKV<'a>>::Container: ZeroCopyFrom<'a, <V as ZeroMapKV<'s>>::Container>,
 {
-    fn zero_copy_from<'b>(cart: &'b ZeroMap<'a, K, V>) -> ZeroMap<'b, K, V> {
+    fn zero_copy_from(cart: &'a ZeroMap<'s, K, V>) -> Self {
         ZeroMap {
-            keys: <<K as ZeroMapKV<'static>>::Container as ZeroCopyFrom<_>>::zero_copy_from(
+            keys: <<K as ZeroMapKV<'a>>::Container as ZeroCopyFrom<_>>::zero_copy_from(
                 &cart.keys,
             ),
-            values: <<V as ZeroMapKV<'static>>::Container as ZeroCopyFrom<_>>::zero_copy_from(
+            values: <<V as ZeroMapKV<'a>>::Container as ZeroCopyFrom<_>>::zero_copy_from(
                 &cart.values,
             ),
         }
     }
 }
 
+/*
 impl<'a, K0, K1, V> ZeroCopyFrom<ZeroMap2d<'a, K0, K1, V>> for ZeroMap2d<'static, K0, K1, V>
 where
     K0: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
@@ -330,6 +327,7 @@ where
         }
     }
 }
+*/
 
 #[cfg(test)]
 #[allow(non_camel_case_types)]
