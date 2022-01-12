@@ -62,8 +62,8 @@ use stable_deref_trait::StableDeref;
 /// }
 ///
 /// // Reference from a borrowed version of self
-/// impl<'a> ZeroCopyFrom<MyStruct<'a>> for MyStruct<'a> {
-///     fn zero_copy_from(cart: &'a MyStruct<'a>) -> Self {
+/// impl<'zcf> ZeroCopyFrom<'zcf, MyStruct<'_>> for MyStruct<'zcf> {
+///     fn zero_copy_from(cart: &'zcf MyStruct<'_>) -> Self {
 ///         MyStruct {
 ///             message: Cow::Borrowed(&cart.message)
 ///         }
@@ -71,25 +71,25 @@ use stable_deref_trait::StableDeref;
 /// }
 ///
 /// // Reference from a string slice directly
-/// impl<'a> ZeroCopyFrom<'a, str> for MyStruct<'a> {
-///     fn zero_copy_from(cart: &'a str) -> Self {
+/// impl<'zcf> ZeroCopyFrom<'zcf, str> for MyStruct<'zcf> {
+///     fn zero_copy_from(cart: &'zcf str) -> Self {
 ///         MyStruct {
 ///             message: Cow::Borrowed(cart)
 ///         }
 ///     }
 /// }
 /// ```
-pub trait ZeroCopyFrom<'a, C: ?Sized>: 'a {
+pub trait ZeroCopyFrom<'zcf, C: ?Sized>: 'zcf {
     /// Clone the cart `C` into a struct that may retain references into `C`.
-    fn zero_copy_from(cart: &'a C) -> Self;
+    fn zero_copy_from(cart: &'zcf C) -> Self;
 }
 
-impl<'a, C: ?Sized, T> ZeroCopyFrom<'a, C> for YokeTraitHack<T>
+impl<'zcf, C: ?Sized, T> ZeroCopyFrom<'zcf, C> for YokeTraitHack<T>
 where
-    T: ZeroCopyFrom<'a, C>,
+    T: ZeroCopyFrom<'zcf, C>,
 {
     #[inline]
-    fn zero_copy_from(cart: &'a C) -> Self {
+    fn zero_copy_from(cart: &'zcf C) -> Self {
         YokeTraitHack(T::zero_copy_from(cart))
     }
 }
@@ -135,47 +135,47 @@ where
 // specialization.
 
 #[cfg(feature = "alloc")]
-impl<'a> ZeroCopyFrom<'a, str> for Cow<'a, str> {
+impl<'zcf> ZeroCopyFrom<'zcf, str> for Cow<'zcf, str> {
     #[inline]
-    fn zero_copy_from(cart: &'a str) -> Self {
+    fn zero_copy_from(cart: &'zcf str) -> Self {
         Cow::Borrowed(cart)
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<'a> ZeroCopyFrom<'a, String> for Cow<'a, str> {
+impl<'zcf> ZeroCopyFrom<'zcf, String> for Cow<'zcf, str> {
     #[inline]
-    fn zero_copy_from(cart: &'a String) -> Self {
+    fn zero_copy_from(cart: &'zcf String) -> Self {
         Cow::Borrowed(cart)
     }
 }
 
-impl<'a> ZeroCopyFrom<'a, str> for &'a str {
+impl<'zcf> ZeroCopyFrom<'zcf, str> for &'zcf str {
     #[inline]
-    fn zero_copy_from(cart: &'a str) -> Self {
+    fn zero_copy_from(cart: &'zcf str) -> Self {
         cart
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<'a> ZeroCopyFrom<'a, String> for &'a str {
+impl<'zcf> ZeroCopyFrom<'zcf, String> for &'zcf str {
     #[inline]
-    fn zero_copy_from(cart: &'a String) -> Self {
+    fn zero_copy_from(cart: &'zcf String) -> Self {
         cart
     }
 }
 
-impl<'a, C, T: ZeroCopyFrom<'a, C>> ZeroCopyFrom<'a, Option<C>> for Option<T> {
-    fn zero_copy_from(cart: &'a Option<C>) -> Self {
+impl<'zcf, C, T: ZeroCopyFrom<'zcf, C>> ZeroCopyFrom<'zcf, Option<C>> for Option<T> {
+    fn zero_copy_from(cart: &'zcf Option<C>) -> Self {
         cart.as_ref()
             .map(|c| <T as ZeroCopyFrom<C>>::zero_copy_from(c))
     }
 }
 
-impl<'a, C1, T1: ZeroCopyFrom<'a, C1>, C2, T2: ZeroCopyFrom<'a, C2>> ZeroCopyFrom<'a, (C1, C2)>
-    for (T1, T2)
+impl<'zcf, C1, T1: ZeroCopyFrom<'zcf, C1>, C2, T2: ZeroCopyFrom<'zcf, C2>>
+    ZeroCopyFrom<'zcf, (C1, C2)> for (T1, T2)
 {
-    fn zero_copy_from(cart: &'a (C1, C2)) -> Self {
+    fn zero_copy_from(cart: &'zcf (C1, C2)) -> Self {
         (
             <T1 as ZeroCopyFrom<C1>>::zero_copy_from(&cart.0),
             <T2 as ZeroCopyFrom<C2>>::zero_copy_from(&cart.1),
@@ -190,23 +190,23 @@ impl<'a, C1, T1: ZeroCopyFrom<'a, C1>, C2, T2: ZeroCopyFrom<'a, C2>> ZeroCopyFro
 // or inference are involved, and the proc macro does not necessarily have
 // enough type information to figure this out on its own.
 #[cfg(feature = "alloc")]
-impl<'a, B: ToOwned + ?Sized> ZeroCopyFrom<'a, Cow<'_, B>> for Cow<'a, B> {
+impl<'zcf, B: ToOwned + ?Sized> ZeroCopyFrom<'zcf, Cow<'_, B>> for Cow<'zcf, B> {
     #[inline]
-    fn zero_copy_from(cart: &'a Cow<'_, B>) -> Self {
+    fn zero_copy_from(cart: &'zcf Cow<'_, B>) -> Self {
         Cow::Borrowed(cart)
     }
 }
 
-impl<'a> ZeroCopyFrom<'a, &'_ str> for &'a str {
+impl<'zcf> ZeroCopyFrom<'zcf, &'_ str> for &'zcf str {
     #[inline]
-    fn zero_copy_from(cart: &'a &'_ str) -> &'a str {
+    fn zero_copy_from(cart: &'zcf &'_ str) -> &'zcf str {
         cart
     }
 }
 
-impl<'a, T> ZeroCopyFrom<'a, [T]> for &'a [T] {
+impl<'zcf, T> ZeroCopyFrom<'zcf, [T]> for &'zcf [T] {
     #[inline]
-    fn zero_copy_from(cart: &'a [T]) -> &'a [T] {
+    fn zero_copy_from(cart: &'zcf [T]) -> &'zcf [T] {
         cart
     }
 }
