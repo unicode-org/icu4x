@@ -74,14 +74,14 @@ int main() {
 
     decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).value();
     out = fdf.format(decimal).ok().value();
-    std::cout << "Formatted float value is " << out << std::endl;
+    std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
     if (out != "bcdefg/ijab") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
     decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123451234567.8901).value();
     out = fdf.format(decimal).ok().value();
-    std::cout << "Formatted float value is " << out << std::endl;
+    std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
     if (out != "bc_de_fb_cd_efgh/ijab") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
