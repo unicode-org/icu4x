@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641974768015,
+  "lastUpdate": 1642021313085,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7073,6 +7073,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f8f05c2bc7c04fecc49dc51a2aefa9e5784cec36"
         },
         "date": 1641974757857,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "51c9f467379e1d961c788ecac4f5c8d52d7369e5",
+          "message": "Add padding/truncation to FFI (#1501)\n\n* Add padding/truncation to FFI\r\n\r\n* regen\r\n\r\n* fix link\r\n\r\n* regen",
+          "timestamp": "2022-01-12T12:59:54-08:00",
+          "tree_id": "56c23103ad082c2fb390a9400fad5198f70ce95e",
+          "url": "https://github.com/unicode-org/icu4x/commit/51c9f467379e1d961c788ecac4f5c8d52d7369e5"
+        },
+        "date": 1642021302108,
         "tool": "ndjson",
         "benches": [
           {
