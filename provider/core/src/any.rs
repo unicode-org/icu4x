@@ -20,6 +20,10 @@ enum AnyPayloadInner {
     /// A reference to `M::Yokeable`
     StructRef(&'static dyn Any),
     /// A boxed `DataPayload<M>`.
+    ///
+    /// Note: This needs to be an `Rc`, not a `Box`, so that `AnyPayload` is cloneable.
+    /// If an `AnyPayload` is cloned, the actual cloning of the data is delayed until
+    /// `downcast()` is invoked (at which point we have the concrete type).
     PayloadRc(Rc<dyn Any>),
 }
 
@@ -56,6 +60,25 @@ impl AnyPayload {
         }
     }
 
+    /// Creates an `AnyPayload` from a static reference to a data struct.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::borrow::Cow;
+    ///
+    /// const HELLO_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+    ///     message: Cow::Borrowed("Custom Hello World")
+    /// };
+    ///
+    /// let any_payload = AnyPayload::from_static_ref(&HELLO_DATA);
+    ///
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
+    ///     .expect("TypeId matches");
+    /// assert_eq!("Custom Hello World", payload.get().message);
+    /// ```
     pub fn from_static_ref<Y>(static_ref: &'static Y) -> Self
     where
         Y: for<'a> Yokeable<'a>,
