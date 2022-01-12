@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641975241374,
+  "lastUpdate": 1642021698520,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17483,6 +17483,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 487666,
             "range": "± 83773",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "51c9f467379e1d961c788ecac4f5c8d52d7369e5",
+          "message": "Add padding/truncation to FFI (#1501)\n\n* Add padding/truncation to FFI\r\n\r\n* regen\r\n\r\n* fix link\r\n\r\n* regen",
+          "timestamp": "2022-01-12T12:59:54-08:00",
+          "tree_id": "56c23103ad082c2fb390a9400fad5198f70ce95e",
+          "url": "https://github.com/unicode-org/icu4x/commit/51c9f467379e1d961c788ecac4f5c8d52d7369e5"
+        },
+        "date": 1642021689221,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 117524,
+            "range": "± 4249",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1405000,
+            "range": "± 59119",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 410522,
+            "range": "± 13636",
             "unit": "ns/iter"
           }
         ]
