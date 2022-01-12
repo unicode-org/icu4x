@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642021313085,
+  "lastUpdate": 1642027458163,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7103,6 +7103,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/51c9f467379e1d961c788ecac4f5c8d52d7369e5"
         },
         "date": 1642021302108,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "57c44dda588faedaad36fd0bc7243b0ab6f85f8c",
+          "message": "Remove Yokeable::Output from ZeroCopyFrom trait (#1499)",
+          "timestamp": "2022-01-12T14:42:36-08:00",
+          "tree_id": "ef938f00c370fd83da7356112adac7ff27345dcd",
+          "url": "https://github.com/unicode-org/icu4x/commit/57c44dda588faedaad36fd0bc7243b0ab6f85f8c"
+        },
+        "date": 1642027447774,
         "tool": "ndjson",
         "benches": [
           {
