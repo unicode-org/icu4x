@@ -5,6 +5,13 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+// uchar.h doesn't always exist, but char32_t is always available
+// in C++ anyway
+#ifndef __cplusplus
+#include<uchar.h>
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
