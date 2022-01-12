@@ -56,7 +56,8 @@ pub mod ffi {
         /// Construct a [`ICU4XLineBreakSegmenter`] with default options.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new) for more information.
         pub fn try_new() -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
-            LineBreakSegmenter::try_new()
+            let provider = icu_provider::inv::InvariantDataProvider;
+            LineBreakSegmenter::try_new(&provider)
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
                 .map_err(|_| ())
                 .into()
@@ -67,7 +68,8 @@ pub mod ffi {
         pub fn try_new_with_options(
             options: ICU4XLineBreakOptions,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()> {
-            LineBreakSegmenter::try_new_with_options(options.into())
+            let provider = icu_provider::inv::InvariantDataProvider;
+            LineBreakSegmenter::try_new_with_options(&provider, options.into())
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
                 .map_err(|_| ())
                 .into()
