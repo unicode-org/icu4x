@@ -327,6 +327,77 @@ export class ICU4XDataProvider {
   }
 }
 
+const ICU4XDataStruct_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XDataStruct_destroy(underlying);
+});
+
+export class ICU4XDataStruct {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static create_decimal_symbols(plus_sign_prefix, plus_sign_suffix, minus_sign_prefix, minus_sign_suffix, decimal_separator, grouping_separator, primary_group_size, secondary_group_size, min_group_size, digits) {
+    let plus_sign_prefix_diplomat_bytes = (new TextEncoder()).encode(plus_sign_prefix);
+    let plus_sign_prefix_diplomat_ptr = wasm.diplomat_alloc(plus_sign_prefix_diplomat_bytes.length, 1);
+    let plus_sign_prefix_diplomat_buf = new Uint8Array(wasm.memory.buffer, plus_sign_prefix_diplomat_ptr, plus_sign_prefix_diplomat_bytes.length);
+    plus_sign_prefix_diplomat_buf.set(plus_sign_prefix_diplomat_bytes, 0);
+    let plus_sign_suffix_diplomat_bytes = (new TextEncoder()).encode(plus_sign_suffix);
+    let plus_sign_suffix_diplomat_ptr = wasm.diplomat_alloc(plus_sign_suffix_diplomat_bytes.length, 1);
+    let plus_sign_suffix_diplomat_buf = new Uint8Array(wasm.memory.buffer, plus_sign_suffix_diplomat_ptr, plus_sign_suffix_diplomat_bytes.length);
+    plus_sign_suffix_diplomat_buf.set(plus_sign_suffix_diplomat_bytes, 0);
+    let minus_sign_prefix_diplomat_bytes = (new TextEncoder()).encode(minus_sign_prefix);
+    let minus_sign_prefix_diplomat_ptr = wasm.diplomat_alloc(minus_sign_prefix_diplomat_bytes.length, 1);
+    let minus_sign_prefix_diplomat_buf = new Uint8Array(wasm.memory.buffer, minus_sign_prefix_diplomat_ptr, minus_sign_prefix_diplomat_bytes.length);
+    minus_sign_prefix_diplomat_buf.set(minus_sign_prefix_diplomat_bytes, 0);
+    let minus_sign_suffix_diplomat_bytes = (new TextEncoder()).encode(minus_sign_suffix);
+    let minus_sign_suffix_diplomat_ptr = wasm.diplomat_alloc(minus_sign_suffix_diplomat_bytes.length, 1);
+    let minus_sign_suffix_diplomat_buf = new Uint8Array(wasm.memory.buffer, minus_sign_suffix_diplomat_ptr, minus_sign_suffix_diplomat_bytes.length);
+    minus_sign_suffix_diplomat_buf.set(minus_sign_suffix_diplomat_bytes, 0);
+    let decimal_separator_diplomat_bytes = (new TextEncoder()).encode(decimal_separator);
+    let decimal_separator_diplomat_ptr = wasm.diplomat_alloc(decimal_separator_diplomat_bytes.length, 1);
+    let decimal_separator_diplomat_buf = new Uint8Array(wasm.memory.buffer, decimal_separator_diplomat_ptr, decimal_separator_diplomat_bytes.length);
+    decimal_separator_diplomat_buf.set(decimal_separator_diplomat_bytes, 0);
+    let grouping_separator_diplomat_bytes = (new TextEncoder()).encode(grouping_separator);
+    let grouping_separator_diplomat_ptr = wasm.diplomat_alloc(grouping_separator_diplomat_bytes.length, 1);
+    let grouping_separator_diplomat_buf = new Uint8Array(wasm.memory.buffer, grouping_separator_diplomat_ptr, grouping_separator_diplomat_bytes.length);
+    grouping_separator_diplomat_buf.set(grouping_separator_diplomat_bytes, 0);
+    let digits_diplomat_bytes = new Uint8Array(digits);
+    let digits_diplomat_ptr = wasm.diplomat_alloc(digits_diplomat_bytes.length, 4);
+    let digits_diplomat_buf = new Uint8Array(wasm.memory.buffer, digits_diplomat_ptr, digits_diplomat_bytes.length);
+    digits_diplomat_buf.set(digits_diplomat_bytes, 0);
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XDataStruct_create_decimal_symbols(diplomat_receive_buffer, plus_sign_prefix_diplomat_ptr, plus_sign_prefix_diplomat_bytes.length, plus_sign_suffix_diplomat_ptr, plus_sign_suffix_diplomat_bytes.length, minus_sign_prefix_diplomat_ptr, minus_sign_prefix_diplomat_bytes.length, minus_sign_suffix_diplomat_ptr, minus_sign_suffix_diplomat_bytes.length, decimal_separator_diplomat_ptr, decimal_separator_diplomat_bytes.length, grouping_separator_diplomat_ptr, grouping_separator_diplomat_bytes.length, primary_group_size, secondary_group_size, min_group_size, digits_diplomat_ptr, digits_diplomat_bytes.length);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XDataStruct((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = {};
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    wasm.diplomat_free(plus_sign_prefix_diplomat_ptr, plus_sign_prefix_diplomat_bytes.length, 1);
+    wasm.diplomat_free(plus_sign_suffix_diplomat_ptr, plus_sign_suffix_diplomat_bytes.length, 1);
+    wasm.diplomat_free(minus_sign_prefix_diplomat_ptr, minus_sign_prefix_diplomat_bytes.length, 1);
+    wasm.diplomat_free(minus_sign_suffix_diplomat_ptr, minus_sign_suffix_diplomat_bytes.length, 1);
+    wasm.diplomat_free(decimal_separator_diplomat_ptr, decimal_separator_diplomat_bytes.length, 1);
+    wasm.diplomat_free(grouping_separator_diplomat_ptr, grouping_separator_diplomat_bytes.length, 1);
+    wasm.diplomat_free(digits_diplomat_ptr, digits_diplomat_bytes.length, 4);
+    return diplomat_out;
+  }
+}
+
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XFixedDecimal_destroy(underlying);
 });
@@ -477,6 +548,34 @@ export class ICU4XFixedDecimalFormat {
         align: 4,
       });
       wasm.ICU4XFixedDecimalFormat_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy], ICU4XFixedDecimalSignDisplay_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display]);
+      const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
+      if (is_ok) {
+        const ok_value = (() => {
+          const out = new ICU4XFixedDecimalFormat((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          out.owner = result_tag;
+          return out;
+        })();
+        return ok_value;
+      } else {
+        const throw_value = {};
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    return diplomat_out;
+  }
+
+  static try_new_from_decimal_symbols_v1(data_struct, options) {
+    const diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy = options["grouping_strategy"];
+    const diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display = options["sign_display"];
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      const result_tag = {};
+      diplomat_alloc_destroy_registry.register(result_tag, {
+        ptr: diplomat_receive_buffer,
+        size: 5,
+        align: 4,
+      });
+      wasm.ICU4XFixedDecimalFormat_try_new_from_decimal_symbols_v1(diplomat_receive_buffer, data_struct.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy], ICU4XFixedDecimalSignDisplay_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display]);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
