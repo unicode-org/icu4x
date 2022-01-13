@@ -73,31 +73,6 @@ impl AnyPayload {
         }
     }
 
-    /// The type name string of the Yokeable being encoded. This is purely for debugging purposes
-    /// (error messages) and serves no other use at runtime.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use std::borrow::Cow;
-    /// use std::rc::Rc;
-    ///
-    /// const HELLO_DATA: HelloWorldV1<'static> = HelloWorldV1 {
-    ///     message: Cow::Borrowed("Custom Hello World")
-    /// };
-    ///
-    /// let any_payload_1 = AnyPayload::from_static_ref(&HELLO_DATA);
-    /// assert_eq!(
-    ///     "icu_provider::hello_world::HelloWorldV1",
-    ///     any_payload_1.type_name_for_debug()
-    /// );
-    /// ```
-    pub fn type_name_for_debug(&self) -> &'static str {
-        self.type_name
-    }
-
     /// Creates an `AnyPayload` from a static reference to a data struct.
     ///
     /// # Examples
