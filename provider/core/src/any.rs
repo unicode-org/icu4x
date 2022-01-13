@@ -39,6 +39,13 @@ pub struct AnyPayload {
     type_name: &'static str,
 }
 
+/// The [`DataMarker`] marker type for [`AnyPayload`].
+pub struct AnyMarker;
+
+impl DataMarker for AnyMarker {
+    type Yokeable = AnyPayload;
+}
+
 impl AnyPayload {
     /// Transforms a type-erased `AnyPayload` into a concrete `DataPayload`.
     ///
@@ -170,17 +177,7 @@ where
     }
 }
 
-/// A response object containing an object as payload and metadata about it.
-#[derive(Debug, Clone)]
-pub struct AnyResponse {
-    /// Metadata about the returned object.
-    pub metadata: DataResponseMetadata,
-
-    /// The object itself; None if it was not loaded.
-    pub payload: Option<AnyPayload>,
-}
-
-impl AnyResponse {
+impl DataResponse<AnyMarker> {
     /// Transforms a type-erased `AnyResponse` into a concrete `DataResponse`.
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
@@ -190,22 +187,13 @@ impl AnyResponse {
     {
         Ok(DataResponse {
             metadata: self.metadata,
-            payload: self.payload.map(|p| p.downcast()).transpose()?,
+            payload: self
+                .payload
+                .map(|p| p.try_unwrap_owned())
+                .transpose()?
+                .map(|p| p.downcast())
+                .transpose()?,
         })
-    }
-}
-
-impl<M> DataResponse<M>
-where
-    M: DataMarker + 'static,
-{
-    /// Wraps the inner DataPayload in an `Rc` and returns a DataResponse.
-    #[inline]
-    pub fn into_any_response(self) -> AnyResponse {
-        AnyResponse {
-            metadata: self.metadata,
-            payload: self.payload.map(|payload| payload.wrap_in_any_payload()),
-        }
     }
 }
 
@@ -245,28 +233,7 @@ where
 ///
 /// [`StructProviderStatic`]: crate::struct_provider::StructProviderStatic
 pub trait AnyProvider {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
-}
-
-pub struct AnyMarker {}
-
-impl DataMarker for AnyMarker {
-    type Yokeable = AnyPayload;
-}
-
-pub struct AnyMarkerProvider<'a, P: ?Sized>(pub &'a P);
-
-impl<P> DataProvider<AnyMarker> for AnyMarkerProvider<'_, P>
-where
-    P: AnyProvider,
-{
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
-        let any_response = self.0.load_any(req)?;
-        Ok(DataResponse {
-            metadata: any_response.metadata,
-            payload: any_response.payload.map(|p| DataPayload::from_owned(p)),
-        })
-    }
+    fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError>;
 }
 
 #[cfg(test)]

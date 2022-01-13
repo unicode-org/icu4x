@@ -65,12 +65,12 @@ impl<M> AnyProvider for StructProviderRc<M>
 where
     M: DataMarker + 'static,
 {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
         req.resource_path.key.match_key(self.key)?;
         let payload: AnyPayload = AnyPayload::from_rc_payload(self.data.clone());
-        Ok(AnyResponse {
+        Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(payload),
+            payload: Some(DataPayload::from_owned(payload)),
         })
     }
 }
@@ -132,12 +132,12 @@ impl<M> AnyProvider for StructProviderStatic<M>
 where
     M: DataMarker,
 {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
         req.resource_path.key.match_key(self.key)?;
         let payload: AnyPayload = AnyPayload::from_static_ref(self.data);
-        Ok(AnyResponse {
+        Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(payload),
+            payload: Some(DataPayload::from_owned(payload)),
         })
     }
 }

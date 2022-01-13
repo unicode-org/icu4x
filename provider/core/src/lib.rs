@@ -132,6 +132,7 @@ pub use icu_provider_macros::data_struct;
 
 pub mod prelude {
     //! Core selection of APIs and structures for [`DataProvider`].
+    pub use crate::any::AnyMarker;
     pub use crate::any::AnyPayload;
     pub use crate::any::AnyProvider;
     pub use crate::any::AnyResponse;
