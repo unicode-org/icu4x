@@ -246,6 +246,50 @@ pub trait AnyProvider {
     fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError>;
 }
 
+pub struct DataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
+
+pub trait AsDataProviderAnyMarkerWrap {
+    fn as_any_provider(&self) -> DataProviderAnyMarkerWrap<Self>;
+}
+
+impl<P> AsDataProviderAnyMarkerWrap for P where P: DataProvider<AnyMarker> {
+    fn as_any_provider(&self) -> DataProviderAnyMarkerWrap<P> {
+        DataProviderAnyMarkerWrap(self)
+    }
+}
+
+impl<P> AnyProvider for DataProviderAnyMarkerWrap<'_, P> where P: DataProvider<AnyMarker> + ?Sized {
+    #[inline]
+    fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
+        self.0.load_payload(req)
+    }
+}
+
+pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
+
+pub trait AsDowncastingAnyProvider {
+    fn as_downcasting(&self) -> DowncastingAnyProvider<Self>;
+}
+
+impl<P> AsDowncastingAnyProvider for P where P: AnyProvider {
+    fn as_downcasting(&self) -> DowncastingAnyProvider<P> {
+        DowncastingAnyProvider(self)
+    }
+}
+
+impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
+where
+    P: AnyProvider + ?Sized,
+    M: DataMarker + 'static,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
+{
+    #[inline]
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.0.load_any(req)?.downcast()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

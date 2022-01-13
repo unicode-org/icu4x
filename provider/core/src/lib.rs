@@ -150,6 +150,8 @@ pub mod prelude {
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
 
+    pub use crate::any::AsDataProviderAnyMarkerWrap;
+    pub use crate::any::AsDowncastingAnyProvider;
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 }
