@@ -254,21 +254,21 @@ impl AnyResponse {
 ///
 /// # Examples
 ///
-/// [`StructProviderStatic`] implements `AnyProvider`.
+/// [`AnyPayloadProvider`] implements `AnyProvider`.
 ///
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::struct_provider::StructProviderStatic;
+/// use icu_provider::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
 /// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
 ///     message: Cow::Borrowed("Custom Hello World"),
 /// };
 ///
-/// let provider = StructProviderStatic::<HelloWorldV1Marker> {
+/// let provider = AnyPayloadProvider {
 ///     key: key::HELLO_WORLD_V1,
-///     data: &CONST_DATA,
+///     data: AnyPayload::from_static_ref(&CONST_DATA),
 /// };
 ///
 /// let any_response = provider.load_any(&DataRequest::from(key::HELLO_WORLD_V1))

@@ -30,10 +30,10 @@ use crate::prelude::*;
 ///
 /// let payload: DataPayload<HelloWorldV1Marker> = provider.load_any(&DataRequest::from(SAMPLE_KEY))
 ///     .expect("Load should succeed")
-///     .take_payload()
-///     .expect("Data should be present")
 ///     .downcast()
-///     .expect("Types should match");
+///     .expect("Types should match")
+///     .take_payload()
+///     .expect("Data should be present");
 ///
 /// assert_eq!(payload.get().message, "hello world");
 /// ```
