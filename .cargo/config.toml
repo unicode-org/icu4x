@@ -9,9 +9,7 @@ tidy = "make tidy"
 
 # Run Clippy on all code paths
 # Keep args in sync with `clippy` job in .github/workflows/build-test.yml
-# unknown-clippy-lints: to allow us to work with nightly clippy lints that we don't CI
-# field-reassign-with-default: https://github.com/rust-lang/rust-clippy/issues/6559 (fixed in nightly but not stable)
-clippy-all = "clippy --all-features --all-targets -- -D warnings -Aclippy::field-reassign-with-default"
+clippy-all = "clippy --all-features --all-targets -- -D warnings"
 
 # Build configurations for small binary size
 panic-abort-build = "build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort"
