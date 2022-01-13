@@ -262,12 +262,10 @@ fn test_mismatched_types() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     // Request is for v2, but type argument is for v1
-    let response: Result<DataPayload<HelloWorldV1Marker>, DataError> =
+    let response: Result<DataResponse<HelloWorldV1Marker>, DataError> =
         AnyProvider::load_any(&provider.as_any_provider(), &get_request_alt())
             .unwrap()
-            .downcast()
-            .unwrap()
-            .take_payload();
+            .downcast();
     assert!(matches!(
         response,
         Err(DataError {

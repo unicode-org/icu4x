@@ -187,8 +187,22 @@ where
     }
 }
 
+impl DataPayload<AnyMarker> {
+    /// Transforms a type-erased `DataResponse<AnyMarker>` into a concrete `DataResponse<M>`.
+    #[inline]
+    pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
+    where
+        M: DataMarker + 'static,
+        for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+        M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
+    {
+        self.try_unwrap_owned()?.downcast()
+    }
+}
+
 impl DataResponse<AnyMarker> {
-    /// Transforms a type-erased `AnyResponse` into a concrete `DataResponse`.
+    /// Transforms a type-erased `DataResponse<AnyMarker>` into a concrete `DataResponse<M>`.
+    #[inline]
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker + 'static,
@@ -199,8 +213,6 @@ impl DataResponse<AnyMarker> {
             metadata: self.metadata,
             payload: self
                 .payload
-                .map(|p| p.try_unwrap_owned())
-                .transpose()?
                 .map(|p| p.downcast())
                 .transpose()?,
         })

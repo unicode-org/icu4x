@@ -63,7 +63,6 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::erased::ErasedDataStructMarker;
 /// use icu_provider::marker::CowStrMarker;
 /// use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
@@ -81,14 +80,14 @@ where
 ///     }
 /// }
 ///
-/// // Implement DataProvider<ErasedDataStructMarker>
+/// // Implement DataProvider<AnyMarker>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => CowStrMarker,
 /// }, ANY);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
-/// let resp: DataResponse<ErasedDataStructMarker> = provider
+/// let resp: DataResponse<AnyMarker> = provider
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
 /// let payload: DataPayload<CowStrMarker> = resp
