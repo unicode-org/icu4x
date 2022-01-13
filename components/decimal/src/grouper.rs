@@ -117,14 +117,21 @@ fn test_grouper() {
             };
             let provider = AnyPayloadProvider {
                 key: crate::provider::key::SYMBOLS_V1,
-                data: DataPayload::from_owned(data_struct).wrap_into_any_payload(),
+                data: DataPayload::<crate::provider::DecimalSymbolsV1Marker>::from_owned(
+                    data_struct,
+                )
+                .wrap_into_any_payload(),
             };
             let options = options::FixedDecimalFormatOptions {
                 grouping_strategy: cas.strategy,
                 ..Default::default()
             };
-            let fdf =
-                FixedDecimalFormat::try_new(LanguageIdentifier::und(), &provider, options).unwrap();
+            let fdf = FixedDecimalFormat::try_new(
+                LanguageIdentifier::und(),
+                &provider.as_downcasting(),
+                options,
+            )
+            .unwrap();
             let actual = fdf.format(&dec);
             assert_eq!(cas.expected[i], actual.writeable_to_string(), "{:?}", cas);
         }

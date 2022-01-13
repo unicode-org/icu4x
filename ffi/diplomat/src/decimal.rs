@@ -81,7 +81,11 @@ pub mod ffi {
                 key: SYMBOLS_V1,
                 data: data_struct.0.clone(),
             };
-            Self::try_new_impl(&ICU4XLocale(Locale::und()), &provider.as_downcasting(), options)
+            Self::try_new_impl(
+                &ICU4XLocale(Locale::und()),
+                &provider.as_downcasting(),
+                options,
+            )
         }
 
         fn try_new_impl<D>(

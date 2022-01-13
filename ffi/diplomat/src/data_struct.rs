@@ -70,8 +70,7 @@ pub mod ffi {
             };
 
             let payload: DataPayload<DecimalSymbolsV1Marker> = DataPayload::from_owned(symbols);
-            Ok(Box::new(ICU4XDataStruct(payload.wrap_into_any_payload())))
-            .into()
+            Ok(Box::new(ICU4XDataStruct(payload.wrap_into_any_payload()))).into()
         }
     }
 }

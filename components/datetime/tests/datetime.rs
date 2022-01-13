@@ -20,9 +20,9 @@ use icu_datetime::{
 };
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::provider::PluralRulesV1Marker;
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::prelude::*;
 use icu_provider::struct_provider::AnyPayloadProvider;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -243,7 +243,7 @@ fn test_dayperiod_patterns() {
                                     key: DATE_PATTERNS_V1,
                                     data: patterns_data.clone().wrap_into_any_payload(),
                                 },
-                            ]
+                            ],
                         };
                         let dtf = DateTimeFormat::<Gregorian>::try_new(
                             langid.clone(),
@@ -398,7 +398,7 @@ fn test_time_zone_patterns() {
                             key: DATE_PATTERNS_V1,
                             data: patterns_data.clone().wrap_into_any_payload(),
                         },
-                    ]
+                    ],
                 };
 
                 let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
