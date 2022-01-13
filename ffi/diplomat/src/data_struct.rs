@@ -13,15 +13,14 @@ pub mod ffi {
     use icu_decimal::provider::{
         AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
     };
-    use icu_provider::dynutil::UpcastDataPayload;
-    use icu_provider::erased::ErasedDataStructMarker;
+    use icu_provider::prelude::AnyPayload;
     use icu_provider::prelude::DataPayload;
 
     #[diplomat::opaque]
     /// A generic data struct to be used by ICU4X
     ///
     /// This can be used to construct a StructDataProvider.
-    pub struct ICU4XDataStruct(pub(crate) Option<DataPayload<ErasedDataStructMarker>>);
+    pub struct ICU4XDataStruct(pub(crate) AnyPayload);
 
     impl ICU4XDataStruct {
         /// Construct a new DecimalSymbolsV1 data struct.
@@ -71,9 +70,7 @@ pub mod ffi {
             };
 
             let payload: DataPayload<DecimalSymbolsV1Marker> = DataPayload::from_owned(symbols);
-            Ok(Box::new(ICU4XDataStruct(Some(UpcastDataPayload::upcast(
-                payload,
-            )))))
+            Ok(Box::new(ICU4XDataStruct(payload.wrap_in_any_payload())))
             .into()
         }
     }

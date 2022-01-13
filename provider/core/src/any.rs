@@ -57,7 +57,7 @@ where
 }
 
 impl AnyPayload {
-    /// Transforms a type-erased `AnyPayload` into a concrete `DataPayload`.
+    /// Transforms a type-erased `AnyPayload` into a concrete `DataPayload<M>`.
     ///
     /// Because it is expected that the call site knows the identity of the AnyPayload (e.g., from
     /// the data request), this function returns a `DataError` if the generic type does not match
@@ -188,7 +188,7 @@ where
 }
 
 impl DataPayload<AnyMarker> {
-    /// Transforms a type-erased `DataResponse<AnyMarker>` into a concrete `DataResponse<M>`.
+    /// Transforms a type-erased `DataPayload<AnyMarker>` into a concrete `DataPayload<M>`.
     #[inline]
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
@@ -267,6 +267,7 @@ pub trait AsDataProviderAnyMarkerWrap {
 }
 
 impl<P> AsDataProviderAnyMarkerWrap for P where P: DataProvider<AnyMarker> {
+    #[inline]
     fn as_any_provider(&self) -> DataProviderAnyMarkerWrap<P> {
         DataProviderAnyMarkerWrap(self)
     }
@@ -288,6 +289,7 @@ pub trait AsDowncastingAnyProvider {
 }
 
 impl<P> AsDowncastingAnyProvider for P where P: AnyProvider {
+    #[inline]
     fn as_downcasting(&self) -> DowncastingAnyProvider<P> {
         DowncastingAnyProvider(self)
     }
