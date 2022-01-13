@@ -168,7 +168,7 @@ fn test_warehouse_owned() {
 #[test]
 fn test_warehouse_owned_dyn_erased() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn ErasedDataProvider).unwrap();
+    let hello_data = get_payload_v1(&warehouse as &dyn AnyProvider).unwrap();
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -192,7 +192,7 @@ fn test_warehouse_owned_dyn_generic() {
 #[test]
 fn test_warehouse_owned_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
-    let response = get_payload_alt(&warehouse as &dyn ErasedDataProvider);
+    let response = get_payload_alt(&warehouse as &dyn AnyProvider);
     assert!(matches!(
         response,
         Err(DataError {
@@ -219,7 +219,7 @@ fn test_provider2() {
 fn test_provider2_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn ErasedDataProvider).unwrap();
+    let hello_data = get_payload_v1(&provider as &dyn AnyProvider).unwrap();
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -232,7 +232,7 @@ fn test_provider2_dyn_erased() {
 fn test_provider2_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
-    let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider).unwrap();
+    let hello_data = get_payload_alt(&provider as &dyn AnyProvider).unwrap();
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
 
@@ -263,7 +263,7 @@ fn test_mismatched_types() {
     let provider = DataProvider2::from(warehouse);
     // Request is for v2, but type argument is for v1
     let response: Result<DataPayload<HelloWorldV1Marker>, DataError> =
-        ErasedDataProvider::load_erased(&provider, &get_request_alt())
+        AnyProvider::load_any(&provider, &get_request_alt())
             .unwrap()
             .take_payload()
             .unwrap()
@@ -307,5 +307,5 @@ fn test_v1_v2_generic() {
 fn test_v1_v2_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
-    check_v1_v2(&provider as &dyn ErasedDataProvider);
+    check_v1_v2(&provider as &dyn AnyProvider);
 }
