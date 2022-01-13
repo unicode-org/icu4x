@@ -229,7 +229,7 @@ impl From<AnyResponse> for DataResponse<AnyMarker> {
     fn from(other: AnyResponse) -> Self {
         Self {
             metadata: other.metadata,
-            payload: other.payload.map(|p| DataPayload::from_owned(p)),
+            payload: other.payload.map(DataPayload::from_owned),
         }
     }
 }
