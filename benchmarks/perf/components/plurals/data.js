@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642028416380,
+  "lastUpdate": 1642047327709,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23981,6 +23981,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 21275,
             "range": "± 1312",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "05235a6119b6ecd5b3aae2d55e328879950376c6",
+          "message": "Remove obsolete clippy arguments in CI scirpts (#1503)\n\nThe fix to false positive `clippy::field-reassign-with-default` should reach\r\nRust stable now.\r\n\r\n`clippy::unknown-clippy-lints` is already removed in config.toml, so I assume\r\nits not needed anymore.",
+          "timestamp": "2022-01-12T20:07:08-08:00",
+          "tree_id": "bdb2b9dccbfff73ad9edeed12555fc9c246df34b",
+          "url": "https://github.com/unicode-org/icu4x/commit/05235a6119b6ecd5b3aae2d55e328879950376c6"
+        },
+        "date": 1642047318598,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1088,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5520,
+            "range": "± 344",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18857,
+            "range": "± 2051",
             "unit": "ns/iter"
           }
         ]
