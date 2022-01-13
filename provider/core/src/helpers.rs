@@ -76,3 +76,70 @@ fn test_escape_for_json() {
         escape_for_json("ab\u{001F}c", &mut String::new())
     );
 }
+
+/// Const function to compute the FxHash of a byte array with little-endian byte order.
+#[allow(dead_code)]
+pub const fn fxhash_32(bytes: &[u8]) -> u32 {
+    // This code is adapted from https://github.com/rust-lang/rustc-hash,
+    // whose license text is reproduced below.
+    //
+    // Copyright 2015 The Rust Project Developers. See the COPYRIGHT
+    // file at the top-level directory of this distribution and at
+    // http://rust-lang.org/COPYRIGHT.
+    //
+    // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+    // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+    // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+    // option. This file may not be copied, modified, or distributed
+    // except according to those terms.
+
+    #[inline]
+    const fn hash_word_32(mut hash: u32, word: u32) -> u32 {
+        const ROTATE: u32 = 5;
+        const SEED32: u32 = 0x9e_37_79_b9;
+        hash = hash.rotate_left(ROTATE);
+        hash ^= word;
+        hash = hash.wrapping_mul(SEED32);
+        hash
+    }
+
+    let mut cursor = 0;
+    let mut hash = 0;
+
+    while bytes.len() - cursor >= 4 {
+        let word = u32::from_le_bytes([
+            bytes[cursor],
+            bytes[cursor + 1],
+            bytes[cursor + 2],
+            bytes[cursor + 3],
+        ]);
+        hash = hash_word_32(hash, word);
+        cursor += 4;
+    }
+
+    if bytes.len() - cursor >= 2 {
+        let word = u16::from_le_bytes([bytes[cursor], bytes[cursor + 1]]);
+        hash = hash_word_32(hash, word as u32);
+        cursor += 2;
+    }
+
+    if bytes.len() - cursor >= 1 {
+        hash = hash_word_32(hash, bytes[cursor] as u32);
+    }
+
+    hash
+}
+
+#[test]
+fn test_hash_word_32() {
+    assert_eq!(0, fxhash_32(b""));
+    assert_eq!(0xF3051F19, fxhash_32(b"a"));
+    assert_eq!(0x2F9DF119, fxhash_32(b"ab"));
+    assert_eq!(0xCB1D9396, fxhash_32(b"abc"));
+    assert_eq!(0x8628F119, fxhash_32(b"abcd"));
+    assert_eq!(0xBEBDB56D, fxhash_32(b"abcde"));
+    assert_eq!(0x1CE8476D, fxhash_32(b"abcdef"));
+    assert_eq!(0xC0F176A4, fxhash_32(b"abcdefg"));
+    assert_eq!(0x09AB476D, fxhash_32(b"abcdefgh"));
+    assert_eq!(0xB72F5D88, fxhash_32(b"abcdefghi"));
+}
