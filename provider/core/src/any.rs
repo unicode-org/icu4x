@@ -46,6 +46,16 @@ impl DataMarker for AnyMarker {
     type Yokeable = AnyPayload;
 }
 
+impl<M> crate::dynutil::UpcastDataPayload<M> for AnyMarker
+where
+    M: DataMarker + 'static,
+{
+    #[inline]
+    fn upcast(other: DataPayload<M>) -> DataPayload<AnyMarker> {
+        DataPayload::from_owned(other.wrap_in_any_payload())
+    }
+}
+
 impl AnyPayload {
     /// Transforms a type-erased `AnyPayload` into a concrete `DataPayload`.
     ///

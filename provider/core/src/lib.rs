@@ -135,7 +135,6 @@ pub mod prelude {
     pub use crate::any::AnyMarker;
     pub use crate::any::AnyPayload;
     pub use crate::any::AnyProvider;
-    pub use crate::any::AnyResponse;
     pub use crate::buf::BufferMarker;
     pub use crate::buf::BufferProvider;
     pub use crate::data_provider::DataPayload;

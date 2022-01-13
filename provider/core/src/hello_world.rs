@@ -202,7 +202,8 @@ impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
     ) -> Result<(), DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
-        let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
+        let downcast_payload: DataPayload<HelloWorldV1Marker> =
+            payload.try_unwrap_owned()?.downcast()?;
         self.map.insert(
             langid.clone(),
             Cow::Owned(downcast_payload.get().message.to_string()),
