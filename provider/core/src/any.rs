@@ -195,6 +195,20 @@ impl AnyResponse {
     }
 }
 
+impl<M> DataResponse<M>
+where
+    M: DataMarker + 'static,
+{
+    /// Wraps the inner DataPayload in an `Rc` and returns a DataResponse.
+    #[inline]
+    pub fn into_any_response(self) -> AnyResponse {
+        AnyResponse {
+            metadata: self.metadata,
+            payload: self.payload.map(|payload| payload.into_any_payload())
+        }
+    }
+}
+
 /// An object-safe data provider that returns Rust objects cast to `dyn Any` trait objects.
 pub trait AnyProvider {
     fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
