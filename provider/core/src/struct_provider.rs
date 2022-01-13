@@ -90,7 +90,8 @@ where
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         req.resource_path.key.match_key(self.key)?;
-        let payload: DataPayload<M> = DataPayload::from_owned(M::Yokeable::zero_copy_from(self.data));
+        let payload: DataPayload<M> =
+            DataPayload::from_owned(M::Yokeable::zero_copy_from(self.data));
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(payload),

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use core::any::TypeId;
 use displaydoc::Display;
 
 /// A list specifying general categories of data provider error.
@@ -45,10 +44,10 @@ pub enum DataErrorKind {
     #[displaydoc("Resource blocked by filter")]
     FilteredResource,
 
-    /// The generic type parameter does not match the TypeId. The actual TypeId is stored
+    /// The generic type parameter does not match the TypeId. The actual type name is stored
     /// as context when this error is returned.
-    #[displaydoc("Mismatched type information (expected {0:?})")]
-    MismatchedType(TypeId),
+    #[displaydoc("Mismatched type information: expected {0}, but got something else")]
+    MismatchedType(&'static str),
 
     /// The payload is missing. This is usually caused by a previous error.
     #[displaydoc("Missing payload")]

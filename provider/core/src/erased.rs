@@ -140,9 +140,7 @@ impl DataPayload<ErasedDataStructMarker> {
         let maybe_yoke = any_box.downcast::<Yoke<M::Yokeable, Option<Rc<[u8]>>>>();
         match maybe_yoke {
             Ok(yoke) => Ok(DataPayload { yoke: *yoke }),
-            Err(any_box) => {
-                Err(DataErrorKind::MismatchedType(any_box.type_id()).with_type_context::<M>())
-            }
+            Err(_) => Err(DataErrorKind::MismatchedType("").with_type_context::<M>()),
         }
     }
 }

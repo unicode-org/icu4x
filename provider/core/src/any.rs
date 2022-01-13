@@ -28,13 +28,23 @@ enum AnyPayloadInner {
 }
 
 /// A type-erased data payload.
+///
+/// The only useful method on this type is [`AnyPayload::downcast()`], which transforms this into
+/// a normal `DataPayload` which you can subsequently access or mutate.
+///
+/// As with `DataPayload`, cloning is designed to be cheap.
 #[derive(Debug, Clone)]
 pub struct AnyPayload {
     inner: AnyPayloadInner,
+    type_name: &'static str,
 }
 
 impl AnyPayload {
     /// Transforms a type-erased `AnyPayload` into a concrete `DataPayload`.
+    ///
+    /// Because it is expected that the call site knows the identity of the AnyPayload (e.g., from
+    /// the data request), this function returns a `DataError` if the generic type does not match
+    /// the type stored in the `AnyPayload`.
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
         M: DataMarker + 'static,
@@ -44,25 +54,53 @@ impl AnyPayload {
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     {
         use AnyPayloadInner::*;
+        let type_name = self.type_name;
         match self.inner {
             StructRef(any_ref) => {
                 let down_ref: &'static M::Yokeable = any_ref.downcast_ref().ok_or_else(|| {
-                    DataErrorKind::MismatchedType(any_ref.type_id()).with_type_context::<M>()
+                    DataErrorKind::MismatchedType(type_name).with_type_context::<M>()
                 })?;
-                Ok(DataPayload::from_owned(M::Yokeable::zero_copy_from(down_ref)))
+                Ok(DataPayload::from_owned(M::Yokeable::zero_copy_from(
+                    down_ref,
+                )))
             }
             PayloadRc(any_rc) => {
-                let down_rc: Rc<DataPayload<M>> = any_rc.downcast().map_err(|any_rc| {
-                    DataErrorKind::MismatchedType(any_rc.type_id()).with_type_context::<M>()
+                let down_rc: Rc<DataPayload<M>> = any_rc.downcast().map_err(|_| {
+                    DataErrorKind::MismatchedType(type_name).with_type_context::<M>()
                 })?;
                 Ok(Rc::try_unwrap(down_rc).unwrap_or_else(|down_rc| (*down_rc).clone()))
             }
         }
     }
 
+    /// The type name string of the Yokeable being encoded. This is purely for debugging purposes
+    /// (error messages) and serves no other use at runtime.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::borrow::Cow;
+    /// use std::rc::Rc;
+    ///
+    /// const HELLO_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+    ///     message: Cow::Borrowed("Custom Hello World")
+    /// };
+    ///
+    /// let any_payload_1 = AnyPayload::from_static_ref(&HELLO_DATA);
+    /// assert_eq!(
+    ///     "icu_provider::hello_world::HelloWorldV1",
+    ///     any_payload_1.type_name_for_debug()
+    /// );
+    /// ```
+    pub fn type_name_for_debug(&self) -> &'static str {
+        self.type_name
+    }
+
     /// Creates an `AnyPayload` from a static reference to a data struct.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
@@ -85,15 +123,39 @@ impl AnyPayload {
     {
         AnyPayload {
             inner: AnyPayloadInner::StructRef(static_ref),
+            type_name: core::any::type_name::<Y>(),
         }
     }
 
+    /// Creates an `AnyPayload` from a [`DataPayload`] stored in an [`Rc`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::borrow::Cow;
+    /// use std::rc::Rc;
+    ///
+    /// let payload: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Custom Hello World")
+    ///     });
+    /// let rc_payload = Rc::from(payload);
+    ///
+    /// let any_payload = AnyPayload::from_rc_payload(rc_payload);
+    ///
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
+    ///     .expect("TypeId matches");
+    /// assert_eq!("Custom Hello World", payload.get().message);
+    /// ```
     pub fn from_rc_payload<M>(rc_payload: Rc<DataPayload<M>>) -> Self
     where
         M: DataMarker + 'static,
     {
         AnyPayload {
             inner: AnyPayloadInner::PayloadRc(rc_payload),
+            type_name: core::any::type_name::<M::Yokeable>(),
         }
     }
 }
@@ -102,9 +164,31 @@ impl<M> DataPayload<M>
 where
     M: DataMarker + 'static,
 {
+    /// Wraps this DataPayload in an `Rc` and returns it as an `AnyPayload`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::borrow::Cow;
+    /// use std::rc::Rc;
+    ///
+    /// let payload: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Custom Hello World")
+    ///     });
+    ///
+    /// let any_payload = payload.into_any_payload();
+    ///
+    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
+    ///     .expect("TypeId matches");
+    /// assert_eq!("Custom Hello World", payload.get().message);
+    /// ```
     pub fn into_any_payload(self) -> AnyPayload {
         AnyPayload {
             inner: AnyPayloadInner::PayloadRc(Rc::from(self)),
+            type_name: core::any::type_name::<M::Yokeable>(),
         }
     }
 }
@@ -137,4 +221,31 @@ impl AnyResponse {
 /// An object-safe data provider that returns Rust objects cast to `dyn Any` trait objects.
 pub trait AnyProvider {
     fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::hello_world::*;
+    use alloc::borrow::Cow;
+    use crate::marker::CowStrMarker;
+
+    #[test]
+    fn test_debug() {
+        let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+            message: Cow::Borrowed("Custom Hello World"),
+        });
+
+        let any_payload = payload.into_any_payload();
+        assert_eq!(
+            "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1\" }",
+            format!("{:?}", any_payload)
+        );
+
+        let err = any_payload.downcast::<CowStrMarker>().unwrap_err();
+        assert_eq!(
+            "ICU4X data error: Mismatched type information: expected icu_provider::hello_world::HelloWorldV1, but got something else: icu_provider::marker::impls::CowStrMarker",
+            format!("{}", err)
+        );
+    }
 }
