@@ -365,6 +365,10 @@ mod test {
     use crate::marker::CowStrMarker;
     use alloc::borrow::Cow;
 
+    const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+        message: Cow::Borrowed("Custom Hello World"),
+    };
+
     #[test]
     fn test_debug() {
         let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
@@ -382,5 +386,26 @@ mod test {
             "ICU4X data error: Mismatched types: tried to downcast with icu_provider::marker::impls::CowStrMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
             format!("{}", err)
         );
+    }
+
+    #[test]
+    fn test_non_owned_any_marker() {
+        // This test demonstrates a code path that can trigger the InvalidState error kind.
+        let rc_buffer: Rc<[u8]> = Rc::from([]);
+        let payload_result: Result<DataPayload<AnyMarker>, core::convert::Infallible> =
+            DataPayload::try_from_rc_buffer_badly(rc_buffer, |_| {
+                Ok(AnyPayload::from_static_ref(&CONST_DATA))
+            });
+        let err = payload_result
+            .expect("infallible")
+            .downcast::<HelloWorldV1Marker>()
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            DataError {
+                kind: DataErrorKind::InvalidState,
+                ..
+            }
+        ));
     }
 }

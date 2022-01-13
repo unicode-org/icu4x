@@ -59,11 +59,9 @@ pub enum DataErrorKind {
     #[displaydoc("Mutex error")]
     Mutex,
 
-    /// An error involving a [`Yoke`] occurred.
-    ///
-    /// [`Yoke`]: yoke::Yoke
-    #[displaydoc("Yoke error")]
-    Yoke,
+    /// A data provider object was given to an operation in an invalid state.
+    #[displaydoc("Invalid state")]
+    InvalidState,
 
     /// An unspecified error occurred, such as a Serde error.
     ///

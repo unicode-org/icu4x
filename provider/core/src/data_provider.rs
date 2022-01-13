@@ -348,7 +348,7 @@ where
     pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
         self.yoke
             .try_into_yokeable()
-            .map_err(|_| DataErrorKind::Yoke.with_str_context("try_unwrap_owned"))
+            .map_err(|_| DataErrorKind::InvalidState.with_str_context("try_unwrap_owned"))
     }
 
     /// Mutate the data contained in this DataPayload.
