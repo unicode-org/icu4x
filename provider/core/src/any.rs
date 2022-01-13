@@ -10,6 +10,8 @@ use core::any::Any;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use yoke::ZeroCopyFrom;
+use core::convert::TryFrom;
+use core::convert::TryInto;
 
 /// Representations of the `Any` trait object.
 ///
@@ -200,7 +202,33 @@ impl DataPayload<AnyMarker> {
     }
 }
 
-impl DataResponse<AnyMarker> {
+pub struct AnyResponse {
+    pub metadata: DataResponseMetadata,
+    pub payload: Option<AnyPayload>,
+}
+
+impl TryFrom<DataResponse<AnyMarker>> for AnyResponse {
+    type Error = DataError;
+    #[inline]
+    fn try_from(other: DataResponse<AnyMarker>) -> Result<Self, Self::Error> {
+        Ok(Self {
+            metadata: other.metadata,
+            payload: other.payload.map(|p| p.try_unwrap_owned()).transpose()?,
+        })
+    }
+}
+
+impl From<AnyResponse> for DataResponse<AnyMarker> {
+    #[inline]
+    fn from(other: AnyResponse) -> Self {
+        Self {
+            metadata: other.metadata,
+            payload: other.payload.map(|p| DataPayload::from_owned(p)),
+        }
+    }
+}
+
+impl AnyResponse {
     /// Transforms a type-erased `DataResponse<AnyMarker>` into a concrete `DataResponse<M>`.
     #[inline]
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
@@ -252,7 +280,7 @@ impl DataResponse<AnyMarker> {
 ///
 /// [`StructProviderStatic`]: crate::struct_provider::StructProviderStatic
 pub trait AnyProvider {
-    fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError>;
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }
 
 impl<P> DataProvider<AnyMarker> for P
@@ -261,7 +289,7 @@ where
 {
     #[inline]
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
-        self.load_any(req)
+        self.load_any(req).map(|r| r.into())
     }
 }
 
@@ -288,8 +316,8 @@ where
     P: DataProvider<AnyMarker> + ?Sized,
 {
     #[inline]
-    fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
-        self.0.load_payload(req)
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        self.0.load_payload(req)?.try_into()
     }
 }
 

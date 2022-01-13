@@ -43,11 +43,11 @@ pub struct AnyPayloadProvider {
 }
 
 impl AnyProvider for AnyPayloadProvider {
-    fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
         req.resource_path.key.match_key(self.key)?;
-        Ok(DataResponse {
+        Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(self.data.clone())),
+            payload: Some(self.data.clone()),
         })
     }
 }
