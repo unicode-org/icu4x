@@ -202,8 +202,14 @@ impl DataPayload<AnyMarker> {
     }
 }
 
+/// A [`DataResponse`] for type-erased values.
+///
+/// Convertible to and from `DataResponse<AnyMarker>`.
 pub struct AnyResponse {
+    /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
+
+    /// The object itself; None if it was not loaded.
     pub payload: Option<AnyPayload>,
 }
 
