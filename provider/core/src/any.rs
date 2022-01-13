@@ -54,7 +54,7 @@ where
 {
     #[inline]
     fn upcast(other: DataPayload<M>) -> DataPayload<AnyMarker> {
-        DataPayload::from_owned(other.wrap_in_any_payload())
+        DataPayload::from_owned(other.wrap_into_any_payload())
     }
 }
 
@@ -175,13 +175,13 @@ where
     ///         message: Cow::Borrowed("Custom Hello World")
     ///     });
     ///
-    /// let any_payload = payload.wrap_in_any_payload();
+    /// let any_payload = payload.wrap_into_any_payload();
     ///
     /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
     ///     .expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
-    pub fn wrap_in_any_payload(self) -> AnyPayload {
+    pub fn wrap_into_any_payload(self) -> AnyPayload {
         AnyPayload {
             inner: AnyPayloadInner::PayloadRc(Rc::from(self)),
             type_name: core::any::type_name::<M>(),
@@ -371,7 +371,7 @@ mod test {
             message: Cow::Borrowed("Custom Hello World"),
         });
 
-        let any_payload = payload.wrap_in_any_payload();
+        let any_payload = payload.wrap_into_any_payload();
         assert_eq!(
             "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
             format!("{:?}", any_payload)

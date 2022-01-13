@@ -233,15 +233,15 @@ fn test_dayperiod_patterns() {
                             providers: vec![
                                 AnyPayloadProvider {
                                     key: DATE_SYMBOLS_V1,
-                                    data: symbols_data.clone().wrap_in_any_payload(),
+                                    data: symbols_data.clone().wrap_into_any_payload(),
                                 },
                                 AnyPayloadProvider {
                                     key: DATE_SKELETON_PATTERNS_V1,
-                                    data: skeleton_data.clone().wrap_in_any_payload(),
+                                    data: skeleton_data.clone().wrap_into_any_payload(),
                                 },
                                 AnyPayloadProvider {
                                     key: DATE_PATTERNS_V1,
-                                    data: patterns_data.clone().wrap_in_any_payload(),
+                                    data: patterns_data.clone().wrap_into_any_payload(),
                                 },
                             ]
                         };
@@ -388,15 +388,15 @@ fn test_time_zone_patterns() {
                     providers: vec![
                         AnyPayloadProvider {
                             key: DATE_SYMBOLS_V1,
-                            data: symbols_data.clone().wrap_in_any_payload(),
+                            data: symbols_data.clone().wrap_into_any_payload(),
                         },
                         AnyPayloadProvider {
                             key: DATE_SKELETON_PATTERNS_V1,
-                            data: skeleton_data.clone().wrap_in_any_payload(),
+                            data: skeleton_data.clone().wrap_into_any_payload(),
                         },
                         AnyPayloadProvider {
                             key: DATE_PATTERNS_V1,
-                            data: patterns_data.clone().wrap_in_any_payload(),
+                            data: patterns_data.clone().wrap_into_any_payload(),
                         },
                     ]
                 };

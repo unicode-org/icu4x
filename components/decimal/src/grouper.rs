@@ -117,7 +117,7 @@ fn test_grouper() {
             };
             let provider = AnyPayloadProvider {
                 key: crate::provider::key::SYMBOLS_V1,
-                data: DataPayload::from_owned(data_struct).wrap_in_any_payload(),
+                data: DataPayload::from_owned(data_struct).wrap_into_any_payload(),
             };
             let options = options::FixedDecimalFormatOptions {
                 grouping_strategy: cas.strategy,
