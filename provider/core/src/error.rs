@@ -44,9 +44,9 @@ pub enum DataErrorKind {
     #[displaydoc("Resource blocked by filter")]
     FilteredResource,
 
-    /// The generic type parameter does not match the TypeId. The actual type name is stored
+    /// The generic type parameter does not match the TypeId. The expected type name is stored
     /// as context when this error is returned.
-    #[displaydoc("Mismatched type information: expected {0}, but got something else")]
+    #[displaydoc("Mismatched types: tried to downcast with {0}, but actual type is different")]
     MismatchedType(&'static str),
 
     /// The payload is missing. This is usually caused by a previous error.
@@ -255,6 +255,14 @@ impl DataError {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {:?}", self, context);
         self
+    }
+
+    pub(crate) fn for_type<T>() -> DataError {
+        DataError {
+            kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
+            key: None,
+            str_context: None,
+        }
     }
 }
 

@@ -58,7 +58,7 @@ impl AnyPayload {
         match self.inner {
             StructRef(any_ref) => {
                 let down_ref: &'static M::Yokeable = any_ref.downcast_ref().ok_or_else(|| {
-                    DataErrorKind::MismatchedType(type_name).with_type_context::<M>()
+                    DataError::for_type::<M>().with_str_context(type_name)
                 })?;
                 Ok(DataPayload::from_owned(M::Yokeable::zero_copy_from(
                     down_ref,
@@ -66,7 +66,7 @@ impl AnyPayload {
             }
             PayloadRc(any_rc) => {
                 let down_rc: Rc<DataPayload<M>> = any_rc.downcast().map_err(|_| {
-                    DataErrorKind::MismatchedType(type_name).with_type_context::<M>()
+                    DataError::for_type::<M>().with_str_context(type_name)
                 })?;
                 Ok(Rc::try_unwrap(down_rc).unwrap_or_else(|down_rc| (*down_rc).clone()))
             }
@@ -98,6 +98,8 @@ impl AnyPayload {
     {
         AnyPayload {
             inner: AnyPayloadInner::StructRef(static_ref),
+            // Note: This records the Yokeable type rather than the DataMarker type,
+            // but that is okay since this is only for debugging
             type_name: core::any::type_name::<Y>(),
         }
     }
@@ -130,7 +132,7 @@ impl AnyPayload {
     {
         AnyPayload {
             inner: AnyPayloadInner::PayloadRc(rc_payload),
-            type_name: core::any::type_name::<M::Yokeable>(),
+            type_name: core::any::type_name::<M>(),
         }
     }
 }
@@ -163,7 +165,7 @@ where
     pub fn into_any_payload(self) -> AnyPayload {
         AnyPayload {
             inner: AnyPayloadInner::PayloadRc(Rc::from(self)),
-            type_name: core::any::type_name::<M::Yokeable>(),
+            type_name: core::any::type_name::<M>(),
         }
     }
 }
@@ -202,8 +204,8 @@ pub trait AnyProvider {
 mod test {
     use super::*;
     use crate::hello_world::*;
-    use alloc::borrow::Cow;
     use crate::marker::CowStrMarker;
+    use alloc::borrow::Cow;
 
     #[test]
     fn test_debug() {
@@ -213,13 +215,13 @@ mod test {
 
         let any_payload = payload.into_any_payload();
         assert_eq!(
-            "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1\" }",
+            "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
             format!("{:?}", any_payload)
         );
 
         let err = any_payload.downcast::<CowStrMarker>().unwrap_err();
         assert_eq!(
-            "ICU4X data error: Mismatched type information: expected icu_provider::hello_world::HelloWorldV1, but got something else: icu_provider::marker::impls::CowStrMarker",
+            "ICU4X data error: Mismatched types: tried to downcast with icu_provider::marker::impls::CowStrMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
             format!("{}", err)
         );
     }
