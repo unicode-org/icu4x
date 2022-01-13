@@ -57,17 +57,17 @@ impl AnyPayload {
         let type_name = self.type_name;
         match self.inner {
             StructRef(any_ref) => {
-                let down_ref: &'static M::Yokeable = any_ref.downcast_ref().ok_or_else(|| {
-                    DataError::for_type::<M>().with_str_context(type_name)
-                })?;
+                let down_ref: &'static M::Yokeable = any_ref
+                    .downcast_ref()
+                    .ok_or_else(|| DataError::for_type::<M>().with_str_context(type_name))?;
                 Ok(DataPayload::from_owned(M::Yokeable::zero_copy_from(
                     down_ref,
                 )))
             }
             PayloadRc(any_rc) => {
-                let down_rc: Rc<DataPayload<M>> = any_rc.downcast().map_err(|_| {
-                    DataError::for_type::<M>().with_str_context(type_name)
-                })?;
+                let down_rc: Rc<DataPayload<M>> = any_rc
+                    .downcast()
+                    .map_err(|_| DataError::for_type::<M>().with_str_context(type_name))?;
                 Ok(Rc::try_unwrap(down_rc).unwrap_or_else(|down_rc| (*down_rc).clone()))
             }
         }
@@ -204,12 +204,46 @@ where
     pub fn into_any_response(self) -> AnyResponse {
         AnyResponse {
             metadata: self.metadata,
-            payload: self.payload.map(|payload| payload.into_any_payload())
+            payload: self.payload.map(|payload| payload.into_any_payload()),
         }
     }
 }
 
-/// An object-safe data provider that returns Rust objects cast to `dyn Any` trait objects.
+/// An object-safe data provider that returns data structs cast to `dyn Any` trait objects.
+///
+/// # Examples
+///
+/// [`StructProviderStatic`] implements `AnyProvider`.
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::struct_provider::StructProviderStatic;
+/// use std::borrow::Cow;
+///
+/// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+///     message: Cow::Borrowed("Custom Hello World"),
+/// };
+///
+/// let provider = StructProviderStatic::<HelloWorldV1Marker> {
+///     key: key::HELLO_WORLD_V1,
+///     data: &CONST_DATA,
+/// };
+///
+/// let any_response = provider.load_any(&DataRequest::from(key::HELLO_WORLD_V1))
+///     .expect("Load should succeed");
+///
+/// // Downcast to something useful
+/// let response: DataResponse<HelloWorldV1Marker> = any_response.downcast()
+///     .expect("Types match");
+///
+/// let payload = response.take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!(payload.get().message, "Custom Hello World");
+/// ```
+///
+/// [`StructProviderStatic`]: crate::struct_provider::StructProviderStatic
 pub trait AnyProvider {
     fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }
