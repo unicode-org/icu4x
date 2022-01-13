@@ -211,10 +211,7 @@ impl DataResponse<AnyMarker> {
     {
         Ok(DataResponse {
             metadata: self.metadata,
-            payload: self
-                .payload
-                .map(|p| p.downcast())
-                .transpose()?,
+            payload: self.payload.map(|p| p.downcast()).transpose()?,
         })
     }
 }
@@ -258,6 +255,16 @@ pub trait AnyProvider {
     fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError>;
 }
 
+impl<P> DataProvider<AnyMarker> for P
+where
+    P: AnyProvider + ?Sized,
+{
+    #[inline]
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
+        self.load_any(req)
+    }
+}
+
 /// A wrapper over `DataProvider<AnyMarker>` that implements `AnyProvider`
 pub struct DataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
@@ -266,14 +273,20 @@ pub trait AsDataProviderAnyMarkerWrap {
     fn as_any_provider(&self) -> DataProviderAnyMarkerWrap<Self>;
 }
 
-impl<P> AsDataProviderAnyMarkerWrap for P where P: DataProvider<AnyMarker> {
+impl<P> AsDataProviderAnyMarkerWrap for P
+where
+    P: DataProvider<AnyMarker>,
+{
     #[inline]
     fn as_any_provider(&self) -> DataProviderAnyMarkerWrap<P> {
         DataProviderAnyMarkerWrap(self)
     }
 }
 
-impl<P> AnyProvider for DataProviderAnyMarkerWrap<'_, P> where P: DataProvider<AnyMarker> + ?Sized {
+impl<P> AnyProvider for DataProviderAnyMarkerWrap<'_, P>
+where
+    P: DataProvider<AnyMarker> + ?Sized,
+{
     #[inline]
     fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
         self.0.load_payload(req)
@@ -288,7 +301,10 @@ pub trait AsDowncastingAnyProvider {
     fn as_downcasting(&self) -> DowncastingAnyProvider<Self>;
 }
 
-impl<P> AsDowncastingAnyProvider for P where P: AnyProvider {
+impl<P> AsDowncastingAnyProvider for P
+where
+    P: AnyProvider,
+{
     #[inline]
     fn as_downcasting(&self) -> DowncastingAnyProvider<P> {
         DowncastingAnyProvider(self)

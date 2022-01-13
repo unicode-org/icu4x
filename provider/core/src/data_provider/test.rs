@@ -8,8 +8,8 @@ use core::fmt::Debug;
 use serde::{Deserialize, Serialize};
 
 use super::*;
-use crate::prelude::*;
 use crate::hello_world::*;
+use crate::prelude::*;
 use crate::yoke;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
