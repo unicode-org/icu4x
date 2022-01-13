@@ -16,8 +16,9 @@ use alloc::rc::Rc;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::struct_provider::StructProvider;
+/// use icu_provider::struct_provider::StructProviderRc;
 /// use std::borrow::Cow;
+/// use std::rc::Rc;
 ///
 /// let local_data = HelloWorldV1 {
 ///     message: Cow::Owned("hello world".to_string()),
@@ -26,9 +27,9 @@ use alloc::rc::Rc;
 /// // A placeholder key to use to serve the data struct
 /// const SAMPLE_KEY: ResourceKey = icu_provider::resource_key!(x, "xyz", "example", 1);
 ///
-/// let provider = StructProvider {
+/// let provider = StructProviderRc {
 ///     key: SAMPLE_KEY,
-///     data: DataPayload::from_owned(local_data),
+///     data: Rc::from(DataPayload::from_owned(local_data)),
 /// };
 ///
 /// let payload: DataPayload<HelloWorldV1Marker> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
@@ -63,7 +64,6 @@ where
 impl<M> AnyProvider for StructProviderRc<M>
 where
     M: DataMarker + 'static,
-    M::Yokeable: Clone,
 {
     fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
         req.resource_path.key.match_key(self.key)?;
@@ -75,6 +75,35 @@ where
     }
 }
 
+/// A data provider that returns static references to a constant data payload.
+///
+/// # Examples
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::struct_provider::StructProviderStatic;
+/// use std::borrow::Cow;
+///
+/// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+///     message: Cow::Borrowed("hello world"),
+/// };
+///
+/// // A placeholder key to use to serve the data struct
+/// const SAMPLE_KEY: ResourceKey = icu_provider::resource_key!(x, "xyz", "example", 1);
+///
+/// let provider = StructProviderStatic {
+///     key: SAMPLE_KEY,
+///     data: &CONST_DATA,
+/// };
+///
+/// let payload: DataPayload<HelloWorldV1Marker> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
+///     .expect("Load should succeed")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!(payload.get().message, "hello world");
+/// ```
 pub struct StructProviderStatic<M>
 where
     M: DataMarker,
@@ -102,7 +131,6 @@ where
 impl<M> AnyProvider for StructProviderStatic<M>
 where
     M: DataMarker,
-    M::Yokeable: Clone,
 {
     fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
         req.resource_path.key.match_key(self.key)?;
