@@ -60,6 +60,10 @@ impl DataProvider<HelloWorldV1Marker> for DataWarehouse {
     }
 }
 
+crate::impl_dyn_provider!(DataWarehouse, {
+    HELLO_WORLD_V1 => HelloWorldV1Marker,
+}, ERASED);
+
 /// A DataProvider that supports both HELLO_WORLD_V1 and HELLO_ALT.
 #[derive(Debug)]
 struct DataProvider2 {
@@ -94,6 +98,11 @@ impl DataProvider<HelloAltMarker> for DataProvider2 {
         })
     }
 }
+
+crate::impl_dyn_provider!(DataProvider2, {
+    HELLO_WORLD_V1 => HelloWorldV1Marker,
+    HELLO_ALT_KEY => HelloAltMarker,
+}, ERASED);
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{
