@@ -246,9 +246,11 @@ pub trait AnyProvider {
     fn load_any(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError>;
 }
 
+/// A wrapper over `DataProvider<AnyMarker>` that implements `AnyProvider`
 pub struct DataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
 pub trait AsDataProviderAnyMarkerWrap {
+    /// Returns an object implementing `AnyProvider` when called on `DataProvider<AnyMarker>`
     fn as_any_provider(&self) -> DataProviderAnyMarkerWrap<Self>;
 }
 
@@ -265,9 +267,11 @@ impl<P> AnyProvider for DataProviderAnyMarkerWrap<'_, P> where P: DataProvider<A
     }
 }
 
+/// A wrapper over `AnyProvider` that implements `DataProvider<M>` via downcasting
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
 pub trait AsDowncastingAnyProvider {
+    /// Returns an object implementing `DataProvider<M>` when called on `AnyProvider`
     fn as_downcasting(&self) -> DowncastingAnyProvider<Self>;
 }
 
