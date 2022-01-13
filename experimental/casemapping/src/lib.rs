@@ -7,6 +7,11 @@
 
 mod error;
 
+mod exceptions;
+
+// TODO: #[cfg(feature = "provider_transform_internals")]
+mod exceptions_builder;
+
 /// TODO: This module is only public to enable testing internal functions in the provider crate.
 /// After we have finalized the public API, this can be made private.
 pub mod internals;

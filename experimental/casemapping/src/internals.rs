@@ -4,10 +4,10 @@
 
 #![allow(dead_code)]
 
-use core::char::DecodeUtf16Error;
+#[cfg(feature = "provider_transform_internals")]
+use std::collections::HashMap;
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
-use core::ops::Range;
 #[cfg(feature = "provider_transform_internals")]
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
@@ -15,13 +15,26 @@ use icu_codepointtrie::{CodePointTrie, TrieValue};
 use serde::{Deserialize, Serialize};
 use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ule::{AsULE, RawBytesULE};
-use zerovec::{ZeroMap, ZeroVec};
+use zerovec::ZeroMap;
+#[cfg(feature = "provider_transform_internals")]
+use zerovec::ZeroVec;
 
 use crate::error::Error;
+use crate::exceptions::{ExceptionSlot, CaseMappingExceptions};
+#[cfg(feature = "provider_transform_internals")]
+use crate::exceptions_builder::CaseMappingExceptionsBuilder;
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub(crate) enum MappingKind {
+    Lower = 0,
+    Fold = 1,
+    Upper = 2,
+    Title = 3,
+}
 
 /// The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-enum CaseType {
+pub(crate) enum CaseType {
     /// Not a cased letter
     None = 0,
     /// Lowercase letter
@@ -54,7 +67,7 @@ impl CaseType {
 /// letters (like `i` and `j`) combine with accents placed above the
 /// letter.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum DotType {
+pub(crate) enum DotType {
     /// Normal characters with combining class 0
     NoDot = 0,
     /// Soft-dotted characters with combining class 0
@@ -66,14 +79,14 @@ pub enum DotType {
 }
 
 impl DotType {
-    const DOT_MASK: u16 = 0x3;
+    pub const DOT_MASK: u16 = 0x3;
 
     // The dot type is stored in either the codepoint trie or the
     // exception table as two bits.  After shifting and masking them
     // to get a value between 0 and 3, this function converts to
     // DotType.
     #[inline]
-    fn from_masked_bits(b: u16) -> Self {
+    pub fn from_masked_bits(b: u16) -> Self {
         debug_assert!(b & Self::DOT_MASK == b);
         match b {
             0 => DotType::NoDot,
@@ -98,6 +111,8 @@ impl CaseMappingData {
 
     const DELTA_SHIFT: usize = 7;
     const EXCEPTION_SHIFT: usize = 4;
+
+    const NON_EXCEPTION_MASK: u16 = CaseType::CASE_MASK | Self::IGNORABLE_FLAG | Self::EXCEPTION_FLAG;
 
     #[inline]
     fn case_type(&self) -> CaseType {
@@ -160,6 +175,17 @@ impl CaseMappingData {
         debug_assert!(self.has_exception());
         self.0 >> Self::EXCEPTION_SHIFT
     }
+
+    #[cfg(feature = "provider_transform_internals")]
+    fn with_updated_exception(self, updates: &HashMap<u16, u16>) -> Self {
+        if self.has_exception() {
+            if let Some(updated_exception) = updates.get(&self.exception_index()) {
+                let non_exception = self.0 & Self::NON_EXCEPTION_MASK;
+                return Self(updated_exception << Self::EXCEPTION_SHIFT | non_exception);
+            }
+        }
+        self
+    }
 }
 
 impl AsULE for CaseMappingData {
@@ -183,450 +209,6 @@ impl TrieValue for CaseMappingData {
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u16::try_from(i).map(CaseMappingData)
     }
-}
-
-// Case mapping exceptions that can't be represented as a delta applied to the original
-// code point. Following ICU4C, data is stored as a u16 array. The codepoint trie in
-// CaseMapping stores offsets into this array. The u16 at that index contains a set of
-// flags describing the subsequent data.
-//
-//   [idx + 0]  Header word:
-//       Bits:
-//         0..7  Flag bits indicating which optional slots are present (if any):
-//               0: Lowercase mapping (code point)
-//               4: Case folding (code point)
-//               2: Uppercase mapping (code point)
-//               3: Titlecase mapping (code point)
-//               4: Delta to simple case mapping (code point) (sign stored separately)
-//               5: [RESERVED]
-//               6: Closure mappings (see below)
-//               7: Full mappings (see below)
-//            8  Double-width slots. If set, then each optional slot is stored as two
-//               elements of the array (high and low halves of 32-bit values) instead of
-//               a single element.
-//            9  Has no simple case folding, even if there is a simple lowercase mapping
-//           10  The value in the delta slot is negative
-//           11  Is case-sensitive
-//       12..13  Dot type
-//           14  Has conditional special casing
-//           15  Has conditional case folding
-//
-//   If double-width slots is false:
-//
-//   [idx + 1] First optional slot
-//   [idx + 2] Second optional slot
-//   [idx + 3] Third optional slot
-//   ...
-//
-//   If double-width slots is true:
-//
-//   [idx + 1] First optional slot
-//   [idx + 3] Second optional slot
-//   [idx + 5] Third optional slot
-//   ...
-//
-//   Full mappings: If there is at least one full (string) case mapping, then the lengths
-//   of the mappings are encoded as nibbles in the full mappings slot:
-//       Bits:
-//          0..4   Length of lowercase string
-//          5..7   Length of case mapping string
-//          8..11  Length of uppercase string
-//          12..15 Length of titlecase string
-//   Mappings that do not exist have length 0. The strings themselves are stored in the
-//   above order immediately following the last optional slot, encoded as UTF16.
-//
-//   Case closure mappings: If the case closure for a code point includes code points
-//   that are not included in the simple or full mappings, then bits 0..3 of the closure
-//   mappings slot will contain the number of codepoints in the closure string. (Other
-//   bits are reserved.) The closure string itself is encoded as UTF16 and stored
-//   following the full mappings data (if it exists) or the final optional slot.
-//
-//   This representation is generated by casepropsbuilder.cpp in ICU.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
-struct CaseMappingExceptions<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    raw: ZeroVec<'data, u16>,
-}
-
-#[derive(Copy, Clone, Debug)]
-enum ExceptionSlot {
-    Lower = 0,
-    Fold = 1,
-    Upper = 2,
-    Title = 3,
-    Delta = 4,
-    // Slot 5 is reserved
-    Closure = 6,
-    FullMappings = 7,
-}
-
-impl ExceptionSlot {
-    fn contains_char(&self) -> bool {
-        matches!(self, Self::Lower | Self::Fold | Self::Upper | Self::Title)
-    }
-}
-
-impl From<MappingKind> for ExceptionSlot {
-    fn from(full: MappingKind) -> Self {
-        match full {
-            MappingKind::Lower => Self::Lower,
-            MappingKind::Fold => Self::Fold,
-            MappingKind::Upper => Self::Upper,
-            MappingKind::Title => Self::Title,
-        }
-    }
-}
-
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-enum MappingKind {
-    Lower = 0,
-    Fold = 1,
-    Upper = 2,
-    Title = 3,
-}
-
-impl<'data> CaseMappingExceptions<'data> {
-    const SLOTS_MASK: u16 = 0xff;
-
-    // Each slot is 2 u16 elements instead of 1
-    const DOUBLE_SLOTS_FLAG: u16 = 0x100;
-
-    const NO_SIMPLE_CASE_FOLDING_FLAG: u16 = 0x200;
-    const DELTA_IS_NEGATIVE_FLAG: u16 = 0x400;
-    const SENSITIVE_FLAG: u16 = 0x800;
-
-    const DOT_SHIFT: u16 = 12;
-
-    const CONDITIONAL_SPECIAL_FLAG: u16 = 0x4000;
-    const CONDITIONAL_FOLD_FLAG: u16 = 0x8000;
-
-    const MAPPINGS_ALL_LENGTHS_MASK: u32 = 0xffff;
-    const FULL_MAPPINGS_LENGTH_MASK: u32 = 0xf;
-    const FULL_MAPPINGS_LENGTH_SHIFT: u32 = 4;
-
-    const CLOSURE_MAX_LENGTH: u32 = 0xf;
-
-    // Returns the array element at the given index
-    #[inline(always)]
-    fn get(&self, idx: usize) -> u16 {
-        self.raw.get(idx).expect("Checked in validate()")
-    }
-
-    // Given a base index, returns the number of optional slots for the entry at that index
-    fn num_slots(&self, base_idx: u16) -> u16 {
-        let slot_bits = self.get(base_idx as usize) & Self::SLOTS_MASK;
-        slot_bits.count_ones() as u16
-    }
-
-    // Given a base index, returns true if the given slot exists
-    #[inline]
-    fn has_slot(&self, base_idx: u16, slot: ExceptionSlot) -> bool {
-        let bit = 1u16 << (slot as u16);
-        self.get(base_idx as usize) & bit != 0
-    }
-
-    // Given a base index, returns the index of a given slot
-    fn slot_index(&self, base_idx: u16, slot: ExceptionSlot) -> usize {
-        debug_assert!(self.has_slot(base_idx, slot));
-        let flags = self.get(base_idx as usize);
-
-        let slot_bit = 1u16 << (slot as u16);
-        let previous_slot_mask = slot_bit - 1;
-        let previous_slots = flags & previous_slot_mask;
-        let slot_num = previous_slots.count_ones() as usize;
-
-        let offset = if self.has_double_slots(base_idx) {
-            slot_num * 2
-        } else {
-            slot_num
-        };
-
-        base_idx as usize + 1 + offset
-    }
-
-    // Given a base index, returns the value stored in a given slot
-    fn slot_value(&self, base_idx: u16, slot: ExceptionSlot) -> u32 {
-        debug_assert!(self.has_slot(base_idx, slot));
-        let slot_idx = self.slot_index(base_idx, slot);
-        if self.has_double_slots(base_idx) {
-            let hi = self.get(slot_idx) as u32;
-            let lo = self.get(slot_idx + 1) as u32;
-            hi << 16 | lo
-        } else {
-            self.get(slot_idx) as u32
-        }
-    }
-
-    // Given a base index, returns the character stored in a given slot
-    fn slot_char(&self, base_idx: u16, slot: ExceptionSlot) -> Option<char> {
-        debug_assert!(slot.contains_char());
-        if self.has_slot(base_idx, slot) {
-            let raw = self.slot_value(base_idx, slot);
-            Some(char::from_u32(raw).expect("Checked in validate() (step #1)"))
-        } else {
-            None
-        }
-    }
-
-    fn slot_char_for_kind(&self, base_idx: u16, kind: MappingKind) -> Option<char> {
-        match kind {
-            MappingKind::Lower | MappingKind::Upper => self.slot_char(base_idx, kind.into()),
-            MappingKind::Fold => self
-                .slot_char(base_idx, ExceptionSlot::Fold)
-                .or_else(|| self.slot_char(base_idx, ExceptionSlot::Lower)),
-            MappingKind::Title => self
-                .slot_char(base_idx, ExceptionSlot::Title)
-                .or_else(|| self.slot_char(base_idx, ExceptionSlot::Upper)),
-        }
-    }
-
-    fn has_delta(&self, base_idx: u16) -> bool {
-        self.has_slot(base_idx, ExceptionSlot::Delta)
-    }
-
-    // Given a base index, returns the delta (with the correct sign)
-    fn delta(&self, base_idx: u16) -> i32 {
-        debug_assert!(self.has_slot(base_idx, ExceptionSlot::Delta));
-        let raw: i32 = self.slot_value(base_idx, ExceptionSlot::Delta) as _;
-        if self.get(base_idx as usize) & Self::DELTA_IS_NEGATIVE_FLAG != 0 {
-            -raw
-        } else {
-            raw
-        }
-    }
-
-    // Given a base index, returns whether the entry beginning at that index has double-width slots.
-    fn has_double_slots(&self, base_idx: u16) -> bool {
-        self.get(base_idx as usize) & Self::DOUBLE_SLOTS_FLAG != 0
-    }
-
-    // Given a base index, returns whether there is a simple case folding
-    fn no_simple_case_folding(&self, base_idx: u16) -> bool {
-        self.get(base_idx as usize) & Self::NO_SIMPLE_CASE_FOLDING_FLAG != 0
-    }
-
-    // Given a base index, returns whether this code point is case-sensitive.
-    // (Note that this information is stored in the trie for code points without
-    // exception data, but the exception index requires more bits than the delta.)
-    fn is_sensitive(&self, base_idx: u16) -> bool {
-        self.get(base_idx as usize) & Self::SENSITIVE_FLAG != 0
-    }
-
-    // Given a base index, returns whether there is a conditional case fold.
-    // (This is used for Turkic mappings for dotted/dotless i.)
-    fn has_conditional_fold(&self, base_idx: u16) -> bool {
-        self.get(base_idx as usize) & Self::CONDITIONAL_FOLD_FLAG != 0
-    }
-
-    // Given a base index, returns whether there is a language-specific case mapping.
-    fn has_conditional_special(&self, base_idx: u16) -> bool {
-        self.get(base_idx as usize) & Self::CONDITIONAL_SPECIAL_FLAG != 0
-    }
-
-    // Given a base index, returns the dot type.
-    // (Note that this information is stored in the trie for code points without
-    // exception data, but the exception index requires more bits than the delta.)
-    fn dot_type(&self, base_idx: u16) -> DotType {
-        let masked_bits = (self.get(base_idx as usize) >> Self::DOT_SHIFT) & DotType::DOT_MASK;
-        DotType::from_masked_bits(masked_bits)
-    }
-
-    // Given a base index, returns the bounds of the given full mapping string.
-    // Used to read full mapping strings, and also to find the start of the closure string.
-    #[inline(always)]
-    fn full_mapping_string_range(&self, base_idx: u16, slot: MappingKind) -> Range<usize> {
-        debug_assert!(self.has_slot(base_idx, ExceptionSlot::FullMappings));
-        let mut lengths = self.slot_value(base_idx, ExceptionSlot::FullMappings);
-        let mut data_idx = self.slot_index(base_idx, ExceptionSlot::FullMappings) + 1;
-
-        // Skip past previous slots
-        for _ in 0..(slot as usize) {
-            let str_len = lengths & Self::FULL_MAPPINGS_LENGTH_MASK;
-            data_idx += str_len as usize;
-            lengths >>= Self::FULL_MAPPINGS_LENGTH_SHIFT;
-        }
-
-        // Return range of this string
-        let str_len = (lengths & Self::FULL_MAPPINGS_LENGTH_MASK) as usize;
-        data_idx..(data_idx + str_len)
-    }
-
-    // Full mapping strings are stored as UTF16 immediately following the full mappings slot.
-    // The length of each full mapping string (in code units) is stored in a nibble of the slot.
-    fn full_mapping_string(
-        &self,
-        base_idx: u16,
-        slot: MappingKind,
-    ) -> Result<String, DecodeUtf16Error> {
-        debug_assert!(self.has_slot(base_idx, ExceptionSlot::FullMappings));
-        let range = self.full_mapping_string_range(base_idx, slot);
-        let iter = self.raw.as_ule_slice()[range]
-            .iter()
-            .map(|&ule| <u16 as AsULE>::from_unaligned(ule));
-        char::decode_utf16(iter).collect()
-    }
-
-    // Given a base index, returns the length of the closure string
-    fn closure_len(&self, base_idx: u16) -> usize {
-        debug_assert!(self.has_slot(base_idx, ExceptionSlot::Closure));
-        let value = self.slot_value(base_idx, ExceptionSlot::Closure);
-        (value & Self::CLOSURE_MAX_LENGTH) as usize
-    }
-
-    // The closure string is stored as UTF16 following the full mappings (if they exist) or the
-    // closure slot (if no full mappings are present). The closure slot stores the length of the
-    // closure string (in code points).
-    // This function returns an iterator over the characters of the closure string.
-    fn closure_string(&self, base_idx: u16) -> Result<String, DecodeUtf16Error> {
-        let start_idx = if self.has_slot(base_idx, ExceptionSlot::FullMappings) {
-            self.full_mapping_string_range(base_idx, MappingKind::Title)
-                .end
-        } else {
-            self.slot_index(base_idx, ExceptionSlot::Closure) + 1
-        };
-        let closure_len = self.closure_len(base_idx);
-        let u16_iter = self.raw.as_ule_slice()[start_idx..]
-            .iter()
-            .map(|&ule| <u16 as AsULE>::from_unaligned(ule));
-        char::decode_utf16(u16_iter).take(closure_len).collect()
-    }
-
-    fn add_full_and_closure_mappings<S: SetAdder>(&self, base_idx: u16, set: &mut S) {
-        if self.has_slot(base_idx, ExceptionSlot::FullMappings) {
-            let mapping_string = self
-                .full_mapping_string(base_idx, MappingKind::Fold)
-                .expect("Checked in validate() (step #2)");
-            if !mapping_string.is_empty() {
-                set.add_string(&mapping_string);
-            }
-        };
-
-        if self.has_slot(base_idx, ExceptionSlot::Closure) {
-            for c in self
-                .closure_string(base_idx)
-                .expect("Checked in validate() (step #3)")
-                .chars()
-            {
-                set.add_char(c);
-            }
-        };
-    }
-
-    #[cfg(any(feature = "provider_transform_internals", test))]
-    fn from_raw(raw: &[u16]) -> Self {
-        let raw = ZeroVec::alloc_from_slice(raw);
-        Self { raw }
-    }
-
-    fn validate(&self) -> Result<Vec<u16>, Error> {
-        let mut valid_indices = vec![];
-        let mut idx: u16 = 0;
-
-        let data_len = self.raw.len() as u16;
-
-        while idx < data_len {
-            let mut slot_len = self.num_slots(idx);
-            if self.has_double_slots(idx) {
-                slot_len *= 2;
-            }
-
-            // Validate that we can read slot data without reading out of bounds.
-            let mut next_idx = idx + 1 + slot_len;
-            if next_idx > data_len {
-                return Error::invalid("Exceptions: missing slot data");
-            }
-
-            // #1: Validate slots that should contain chars.
-            for slot in [
-                ExceptionSlot::Lower,
-                ExceptionSlot::Fold,
-                ExceptionSlot::Upper,
-                ExceptionSlot::Title,
-            ] {
-                if self.has_slot(idx, slot) {
-                    let val = self.slot_value(idx, slot);
-                    if char::from_u32(val).is_none() {
-                        return Error::invalid("Exceptions: invalid char slot");
-                    }
-                }
-            }
-
-            // #2: Validate full mappings.
-            if self.has_slot(idx, ExceptionSlot::FullMappings) {
-                for full_mapping in [
-                    MappingKind::Lower,
-                    MappingKind::Fold,
-                    MappingKind::Upper,
-                    MappingKind::Title,
-                ] {
-                    let range = self.full_mapping_string_range(idx, full_mapping);
-                    next_idx += range.len() as u16;
-                    if next_idx > data_len {
-                        return Error::invalid("Exceptions: missing full mapping data");
-                    }
-
-                    self.full_mapping_string(idx, full_mapping)?;
-                }
-            }
-
-            // #3: Validate closure string.
-            if self.has_slot(idx, ExceptionSlot::Closure) {
-                let closure_len = self.closure_len(idx);
-                if next_idx + closure_len as u16 > data_len {
-                    return Error::invalid("Exceptions: missing closure data");
-                }
-
-                for c in self.closure_string(idx)?.chars() {
-                    next_idx += c.len_utf16() as u16;
-                }
-            }
-
-            valid_indices.push(idx);
-            idx = next_idx;
-        }
-        Ok(valid_indices)
-    }
-}
-
-#[test]
-fn test_exception_validation() {
-    let missing_slot_data: &[u16] = &[1 << (ExceptionSlot::Lower as u16)];
-    let result = CaseMappingExceptions::from_raw(missing_slot_data).validate();
-    assert_eq!(
-        result,
-        Err(Error::Validation("Exceptions: missing slot data"))
-    );
-
-    let invalid_char_slot: &[u16] = &[1 << (ExceptionSlot::Lower as u16), 0xdf00];
-    let result = CaseMappingExceptions::from_raw(invalid_char_slot).validate();
-    assert_eq!(
-        result,
-        Err(Error::Validation("Exceptions: invalid char slot"))
-    );
-
-    let missing_full_mappings: &[u16] = &[1 << (ExceptionSlot::FullMappings as u16), 0x1111];
-    let result = CaseMappingExceptions::from_raw(missing_full_mappings).validate();
-    assert_eq!(
-        result,
-        Err(Error::Validation("Exceptions: missing full mapping data"))
-    );
-
-    let full_mapping_unpaired_surrogate: &[u16] =
-        &[1 << (ExceptionSlot::FullMappings as u16), 0x1111, 0xdf00];
-    let result = CaseMappingExceptions::from_raw(full_mapping_unpaired_surrogate).validate();
-    assert!(matches!(result, Err(Error::DecodeUtf16(_))));
-
-    let missing_closure_data: &[u16] = &[1 << (ExceptionSlot::Closure as u16), 0x1];
-    let result = CaseMappingExceptions::from_raw(missing_closure_data).validate();
-    assert_eq!(
-        result,
-        Err(Error::Validation("Exceptions: missing closure data"))
-    );
-
-    let closure_unpaired_surrogate: &[u16] = &[1 << (ExceptionSlot::Closure as u16), 0x1, 0xdf00];
-    let result = CaseMappingExceptions::from_raw(closure_unpaired_surrogate).validate();
-    assert!(matches!(result, Err(Error::DecodeUtf16(_))));
 }
 
 /// Reverse case folding data. Maps from multi-character strings back to code-points that fold to those
@@ -752,13 +334,17 @@ impl<'data> CaseMapping<'data> {
         exceptions: &[u16],
         unfold: &[u16],
     ) -> Result<Self, Error> {
-        let exceptions = CaseMappingExceptions::from_raw(exceptions);
+        let exceptions_builder = CaseMappingExceptionsBuilder::new(exceptions);
+        let (exceptions, idx_map) = exceptions_builder.build()?;
+
         let unfold = CaseMappingUnfoldData::try_from_icu(unfold)?;
 
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
         let trie_data = trie_data
             .iter()
-            .map(|&i| CaseMappingData(i))
+            .map(|&i| {
+                CaseMappingData(i).with_updated_exception(&idx_map)
+            })
             .collect::<ZeroVec<_>>();
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
@@ -867,7 +453,7 @@ impl<'data> CaseMapping<'data> {
             }
         } else {
             // TODO: if we can move conditional fold and no_simple_case_folding into
-	    // simple_helper, this function can just call simple_helper.
+	        // simple_helper, this function can just call simple_helper.
             let idx = data.exception_index();
             if self.exceptions.has_conditional_fold(idx) {
                 self.conditional_fold(c, options)
@@ -972,8 +558,7 @@ impl<'data> CaseMapping<'data> {
             if self.exceptions.has_slot(idx, ExceptionSlot::FullMappings) {
                 let mapped_string = self
                     .exceptions
-                    .full_mapping_string(idx, kind)
-                    .expect("Checked in validation");
+                    .full_mapping_string(idx, kind);
                 if !mapped_string.is_empty() {
                     return FullMappingResult::String(mapped_string);
                 }
@@ -1053,21 +638,21 @@ impl<'data> CaseMapping<'data> {
 
             // Check for accents above I, J, and I-with-ogonek.
             if c == 'I' && context.followed_by_more_above(&self) {
-                return Some(FullMappingResult::string(Self::I_DOT));
+                return Some(FullMappingResult::String(Self::I_DOT));
             } else if c == 'J' && context.followed_by_more_above(&self) {
-                return Some(FullMappingResult::string(Self::J_DOT));
+                return Some(FullMappingResult::String(Self::J_DOT));
             } else if c == '\u{12e}' && context.followed_by_more_above(&self) {
-                return Some(FullMappingResult::string(Self::I_OGONEK_DOT));
+                return Some(FullMappingResult::String(Self::I_OGONEK_DOT));
             }
 
             // These characters are precomposed with accents above, so we don't
             // have to look at the context.
             if c == '\u{cc}' {
-                return Some(FullMappingResult::string(Self::I_DOT_GRAVE));
+                return Some(FullMappingResult::String(Self::I_DOT_GRAVE));
             } else if c == '\u{cd}' {
-                return Some(FullMappingResult::string(Self::I_DOT_ACUTE));
+                return Some(FullMappingResult::String(Self::I_DOT_ACUTE));
             } else if c == '\u{128}' {
-                return Some(FullMappingResult::string(Self::I_DOT_TILDE));
+                return Some(FullMappingResult::String(Self::I_DOT_TILDE));
             }
         }
 
@@ -1089,7 +674,7 @@ impl<'data> CaseMapping<'data> {
 
         if c == '\u{130}' {
             // Preserve canonical equivalence for I with dot. Turkic is handled above.
-            return Some(FullMappingResult::string(Self::I_DOT));
+            return Some(FullMappingResult::String(Self::I_DOT));
         }
 
         if c == '\u{3a3}'
@@ -1127,10 +712,10 @@ impl<'data> CaseMapping<'data> {
         // Should we also implement it?
         // if c == '\u{587}' {
         //     return match (locale, is_title) {
-        // 	(CaseMapLocale::Armenian, false) => Some(FullMappingResult::string("ԵՎ")),
-        // 	(CaseMapLocale::Armenian, true) => Some(FullMappingResult::string("Եվ")),
-        // 	(_, false) => Some(FullMappingResult::string("ԵՒ")),
-        // 	(_, true) => Some(FullMappingResult::string("Եւ")),
+        // 	(CaseMapLocale::Armenian, false) => Some(FullMappingResult::String("ԵՎ")),
+        // 	(CaseMapLocale::Armenian, true) => Some(FullMappingResult::String("Եվ")),
+        // 	(_, false) => Some(FullMappingResult::String("ԵՒ")),
+        // 	(_, true) => Some(FullMappingResult::String("Եւ")),
         //     }
         // }
         None
@@ -1154,7 +739,7 @@ impl<'data> CaseMapping<'data> {
 
             // Default mappings
             ('\u{49}', false) => Some(FullMappingResult::CodePoint('\u{69}')),
-            ('\u{130}', false) => Some(FullMappingResult::string(Self::I_DOT)),
+            ('\u{130}', false) => Some(FullMappingResult::String(Self::I_DOT)),
             (_, _) => None,
         }
     }
@@ -1274,17 +859,10 @@ pub(crate) enum CaseMapLocale {
     Armenian,
 }
 
-pub(crate) enum FullMappingResult {
+pub(crate) enum FullMappingResult<'a> {
     Remove,
     CodePoint(char),
-    String(String), // TODO: rewrite the exception data to have a sidetable of &str, so that this can be &str
-}
-
-// Temporary helper until FullMappingResult can use &str
-impl FullMappingResult {
-    fn string(s: &str) -> Self {
-        Self::String(String::from(s))
-    }
+    String(&'a str),
 }
 
 /// Interface for adding items to a set of chars + strings.
