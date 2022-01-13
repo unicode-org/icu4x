@@ -21,7 +21,8 @@ use icu_datetime::{
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::provider::PluralRulesV1Marker;
 use icu_provider::prelude::*;
-use icu_provider::struct_provider::StructProvider;
+use icu_provider::struct_provider::AnyPayloadProvider;
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -31,48 +32,6 @@ use patterns::{
 };
 use std::fmt::Write;
 use tinystr::tinystr8;
-
-struct MultiKeyStructProvider {
-    pub symbols: StructProvider<DateSymbolsV1Marker>,
-    pub skeletons: StructProvider<DateSkeletonPatternsV1Marker>,
-    pub patterns: StructProvider<DatePatternsV1Marker>,
-}
-
-impl DataProvider<DateSymbolsV1Marker> for MultiKeyStructProvider {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<DateSymbolsV1Marker>, icu_provider::DataError> {
-        self.symbols.load_payload(req)
-    }
-}
-
-impl DataProvider<DateSkeletonPatternsV1Marker> for MultiKeyStructProvider {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<DateSkeletonPatternsV1Marker>, icu_provider::DataError> {
-        self.skeletons.load_payload(req)
-    }
-}
-
-impl DataProvider<DatePatternsV1Marker> for MultiKeyStructProvider {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<DatePatternsV1Marker>, icu_provider::DataError> {
-        self.patterns.load_payload(req)
-    }
-}
-
-impl DataProvider<PluralRulesV1Marker> for MultiKeyStructProvider {
-    fn load_payload(
-        &self,
-        _req: &DataRequest,
-    ) -> Result<DataResponse<PluralRulesV1Marker>, icu_provider::DataError> {
-        Err(DataErrorKind::MissingResourceKey.into_error())
-    }
-}
 
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
@@ -270,23 +229,25 @@ fn test_dayperiod_patterns() {
                             data.time_h11_h12.long = new_pattern1;
                             data.time_h23_h24.long = new_pattern2;
                         });
-                        let local_provider = MultiKeyStructProvider {
-                            symbols: StructProvider {
-                                key: DATE_SYMBOLS_V1,
-                                data: symbols_data.clone(),
-                            },
-                            skeletons: StructProvider {
-                                key: DATE_SKELETON_PATTERNS_V1,
-                                data: skeleton_data.clone(),
-                            },
-                            patterns: StructProvider {
-                                key: DATE_PATTERNS_V1,
-                                data: patterns_data.clone(),
-                            },
+                        let local_provider = MultiForkByKeyProvider {
+                            providers: vec![
+                                AnyPayloadProvider {
+                                    key: DATE_SYMBOLS_V1,
+                                    data: symbols_data.clone().wrap_in_any_payload(),
+                                },
+                                AnyPayloadProvider {
+                                    key: DATE_SKELETON_PATTERNS_V1,
+                                    data: skeleton_data.clone().wrap_in_any_payload(),
+                                },
+                                AnyPayloadProvider {
+                                    key: DATE_PATTERNS_V1,
+                                    data: patterns_data.clone().wrap_in_any_payload(),
+                                },
+                            ]
                         };
                         let dtf = DateTimeFormat::<Gregorian>::try_new(
                             langid.clone(),
-                            &local_provider,
+                            &local_provider.as_downcasting(),
                             &format_options,
                         )
                         .unwrap();
@@ -423,24 +384,26 @@ fn test_time_zone_patterns() {
                     data.time_h11_h12.long = new_pattern1;
                     data.time_h23_h24.long = new_pattern2;
                 });
-                let local_provider = MultiKeyStructProvider {
-                    symbols: StructProvider {
-                        key: DATE_SYMBOLS_V1,
-                        data: symbols_data.clone(),
-                    },
-                    skeletons: StructProvider {
-                        key: DATE_SKELETON_PATTERNS_V1,
-                        data: skeleton_data.clone(),
-                    },
-                    patterns: StructProvider {
-                        key: DATE_PATTERNS_V1,
-                        data: patterns_data.clone(),
-                    },
+                let local_provider = MultiForkByKeyProvider {
+                    providers: vec![
+                        AnyPayloadProvider {
+                            key: DATE_SYMBOLS_V1,
+                            data: symbols_data.clone().wrap_in_any_payload(),
+                        },
+                        AnyPayloadProvider {
+                            key: DATE_SKELETON_PATTERNS_V1,
+                            data: skeleton_data.clone().wrap_in_any_payload(),
+                        },
+                        AnyPayloadProvider {
+                            key: DATE_PATTERNS_V1,
+                            data: patterns_data.clone().wrap_in_any_payload(),
+                        },
+                    ]
                 };
 
                 let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
                     langid.clone(),
-                    &local_provider,
+                    &local_provider.as_downcasting(),
                     &zone_provider,
                     &plural_provider,
                     &format_options,

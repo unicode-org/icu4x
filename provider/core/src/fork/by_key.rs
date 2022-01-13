@@ -128,6 +128,23 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvide
     }
 }
 
+impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1> {
+    #[inline]
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        let result = self.0.load_any(req);
+        if !matches!(
+            result,
+            Err(DataError {
+                kind: DataErrorKind::MissingResourceKey,
+                ..
+            })
+        ) {
+            return result;
+        }
+        self.1.load_any(req)
+    }
+}
+
 /// A provider that returns data from the first child provider supporting the key.
 ///
 /// The result of the first provider that supports a particular [`ResourceKey`] will be returned,
@@ -200,6 +217,25 @@ impl<P: BufferProvider> BufferProvider for MultiForkByKeyProvider<P> {
     fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_buffer(req);
+            if !matches!(
+                result,
+                Err(DataError {
+                    kind: DataErrorKind::MissingResourceKey,
+                    ..
+                })
+            ) {
+                return result;
+            }
+        }
+        Err(DataErrorKind::MissingResourceKey.with_req(req))
+    }
+}
+
+impl<P: AnyProvider> AnyProvider for MultiForkByKeyProvider<P> {
+    #[inline]
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        for provider in self.providers.iter() {
+            let result = provider.load_any(req);
             if !matches!(
                 result,
                 Err(DataError {
