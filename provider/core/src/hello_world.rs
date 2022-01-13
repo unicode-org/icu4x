@@ -147,7 +147,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
 
 impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
-}, ERASED);
+}, ANY);
 
 #[cfg(feature = "serialize")]
 impl_dyn_provider!(HelloWorldProvider, {

@@ -51,7 +51,7 @@ where
 /// multiple keys to a single data struct, use `_` as the data key.
 ///
 /// The third argument can be either the trait object marker, like [`SerializeMarker`], or the
-/// shorthands `ERASED` or `SERDE_SE`.
+/// shorthands `ANY` or `SERDE_SE`.
 ///
 /// Lifetimes:
 ///
@@ -84,7 +84,7 @@ where
 /// // Implement DataProvider<ErasedDataStructMarker>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => CowStrMarker,
-/// }, ERASED);
+/// }, ANY);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
@@ -118,7 +118,7 @@ where
 /// // Send all keys to the `CowStrMarker` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     _ => CowStrMarker,
-/// }, ERASED);
+/// }, ANY);
 /// ```
 ///
 /// [`DataProvider`]: crate::DataProvider
@@ -126,7 +126,7 @@ where
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {
-    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ERASED) => {
+    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ANY) => {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
