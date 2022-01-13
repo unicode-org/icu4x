@@ -263,12 +263,24 @@ impl DataError {
         self
     }
 
+    #[inline]
     pub(crate) fn for_type<T>() -> DataError {
         DataError {
             kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
             key: None,
             str_context: None,
         }
+    }
+
+    #[inline]
+    pub(crate) fn result_is_err_missing_resource_key<T>(result: &Result<T, DataError>) -> bool {
+        matches!(
+            result,
+            Err(DataError {
+                kind: DataErrorKind::MissingResourceKey,
+                ..
+            })
+        )
     }
 }
 
