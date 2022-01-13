@@ -132,11 +132,6 @@ pub struct DataResponseMetadata {
 /// To transform a [`DataPayload`] to a different type backed by the same data store (cart), use
 /// [`DataPayload::map_project()`] or one of its sister methods.
 ///
-/// ## Downcasting from a trait object
-///
-/// If you have a [`DataPayload`]`<`[`ErasedDataStructMarker`]`>`, use [`DataPayload::downcast()`]
-/// to transform it into a payload of a concrete type.
-///
 /// # Examples
 ///
 /// Basic usage, using the `CowStrMarker` marker:
@@ -150,8 +145,6 @@ pub struct DataResponseMetadata {
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
-///
-/// [`ErasedDataStructMarker`]: crate::erased::ErasedDataStructMarker
 pub struct DataPayload<M>
 where
     M: DataMarker,
@@ -348,6 +341,14 @@ where
         Self {
             yoke: Yoke::new_owned(data),
         }
+    }
+
+    /// Convert a DataPayload that was created via [`DataPayload::from_owned()`] back into the
+    /// concrete type used to construct it.
+    pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
+        self.yoke
+            .try_into_yokeable()
+            .map_err(|_| DataErrorKind::Yoke.with_str_context("try_unwrap_owned"))
     }
 
     /// Mutate the data contained in this DataPayload.

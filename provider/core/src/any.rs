@@ -33,7 +33,7 @@ enum AnyPayloadInner {
 /// a normal `DataPayload` which you can subsequently access or mutate.
 ///
 /// As with `DataPayload`, cloning is designed to be cheap.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Yokeable)]
 pub struct AnyPayload {
     inner: AnyPayloadInner,
     type_name: &'static str,
@@ -156,13 +156,13 @@ where
     ///         message: Cow::Borrowed("Custom Hello World")
     ///     });
     ///
-    /// let any_payload = payload.into_any_payload();
+    /// let any_payload = payload.wrap_in_any_payload();
     ///
     /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast()
     ///     .expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
-    pub fn into_any_payload(self) -> AnyPayload {
+    pub fn wrap_in_any_payload(self) -> AnyPayload {
         AnyPayload {
             inner: AnyPayloadInner::PayloadRc(Rc::from(self)),
             type_name: core::any::type_name::<M>(),
@@ -204,7 +204,7 @@ where
     pub fn into_any_response(self) -> AnyResponse {
         AnyResponse {
             metadata: self.metadata,
-            payload: self.payload.map(|payload| payload.into_any_payload()),
+            payload: self.payload.map(|payload| payload.wrap_in_any_payload()),
         }
     }
 }
@@ -248,6 +248,27 @@ pub trait AnyProvider {
     fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }
 
+pub struct AnyMarker {}
+
+impl DataMarker for AnyMarker {
+    type Yokeable = AnyPayload;
+}
+
+pub struct AnyMarkerProvider<'a, P: ?Sized>(pub &'a P);
+
+impl<P> DataProvider<AnyMarker> for AnyMarkerProvider<'_, P>
+where
+    P: AnyProvider,
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
+        let any_response = self.0.load_any(req)?;
+        Ok(DataResponse {
+            metadata: any_response.metadata,
+            payload: any_response.payload.map(|p| DataPayload::from_owned(p)),
+        })
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -261,7 +282,7 @@ mod test {
             message: Cow::Borrowed("Custom Hello World"),
         });
 
-        let any_payload = payload.into_any_payload();
+        let any_payload = payload.wrap_in_any_payload();
         assert_eq!(
             "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
             format!("{:?}", any_payload)

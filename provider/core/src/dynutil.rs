@@ -6,8 +6,8 @@
 
 /// Trait to allow conversion from `DataPayload<T>` to `DataPayload<S>` where `T` implements `S`.
 ///
-/// This is used internally by [`impl_dyn_provider!`] and is not intended to be called from userland
-/// code. You may be looking for [`DataPayload::downcast`], which converts in the other direction.
+/// This is used internally by [`impl_dyn_provider!`] and is not intended to be called from
+/// userland code.
 ///
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
@@ -16,27 +16,6 @@ where
     Self: Sized + crate::prelude::DataMarker,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
-    ///
-    /// # Examples
-    ///
-    /// Upcast and then downcast a data struct of type `Cow<str>` (cart type `String`) via
-    /// [`ErasedDataStruct`](crate::erased::ErasedDataStruct):
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::*;
-    /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::marker::CowStrMarker;
-    /// use std::borrow::Cow;
-    ///
-    /// let data = "foo".to_string();
-    /// let original = DataPayload::<CowStrMarker>::from_owned(Cow::Owned(data));
-    /// let upcasted = ErasedDataStructMarker::upcast(original);
-    /// let downcasted = upcasted
-    ///     .downcast::<CowStrMarker>()
-    ///     .expect("Type conversion");
-    /// assert_eq!(downcasted.get(), "foo");
-    /// ```
     fn upcast(other: crate::prelude::DataPayload<M>) -> crate::prelude::DataPayload<Self>;
 }
 
@@ -45,14 +24,13 @@ where
 ///
 /// Use this macro to add support to your data provider for:
 ///
-/// - [`ErasedDataStruct`] if your provider can return typed objects as [`Any`](core::any::Any)
 /// - [`SerializeMarker`] if your provider returns objects implementing [`serde::Serialize`]
 ///
 /// The second argument is a match-like construction mapping from resource keys to structs. To map
 /// multiple keys to a single data struct, use `_` as the data key.
 ///
 /// The third argument can be either the trait object marker, like [`SerializeMarker`], or the
-/// shorthands `ERASED` or `SERDE_SE`.
+/// shorthand `SERDE_SE`.
 ///
 /// Lifetimes:
 ///
@@ -64,7 +42,7 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::erased::ErasedDataStructMarker;
+/// use icu_provider::serde::SerializeMarker;
 /// use icu_provider::marker::CowStrMarker;
 /// use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
@@ -82,22 +60,27 @@ where
 ///     }
 /// }
 ///
-/// // Implement DataProvider<ErasedDataStructMarker>
+/// // Implement DataProvider<SerializeMarker>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => CowStrMarker,
-/// }, ERASED);
+/// }, SERDE_SE);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
-/// let resp: DataResponse<ErasedDataStructMarker> = provider
+/// let payload: DataPayload<SerializeMarker> = provider
 ///     .load_payload(&DEMO_KEY.into())
-///     .expect("Loading should succeed");
-/// let payload: DataPayload<CowStrMarker> = resp
+///     .expect("Loading should succeed")
 ///     .take_payload()
-///     .expect("Payload should be present")
-///     .downcast()
-///     .expect("Type should downcast successfully");
-/// assert_eq!("demo", payload.get());
+///     .expect("Payload should be present");
+///
+/// // Serialize the payload to a JSON string
+/// let mut buffer: Vec<u8> = vec![];
+/// let json_str = payload.serialize(
+///     &mut <dyn erased_serde::Serializer>::erase(
+///         &mut serde_json::Serializer::new(&mut buffer)
+///     )
+/// ).expect("Serialization should succeed");
+/// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
 /// ```
 ///
 /// Using the wildcard `_` match:
@@ -119,21 +102,13 @@ where
 /// // Send all keys to the `CowStrMarker` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     _ => CowStrMarker,
-/// }, ERASED);
+/// }, SERDE_SE);
 /// ```
 ///
 /// [`DataProvider`]: crate::DataProvider
-/// [`ErasedDataStruct`]: (crate::erased::ErasedDataStruct)
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {
-    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ERASED) => {
-        $crate::impl_dyn_provider!(
-            $provider,
-            { $($pat => $struct_m),+, },
-            $crate::erased::ErasedDataStructMarker
-        );
-    };
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, SERDE_SE) => {
         // If this fails to compile, enable the "serialize" feature on this crate.
         $crate::impl_dyn_provider!(

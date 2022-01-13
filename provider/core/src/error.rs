@@ -59,16 +59,22 @@ pub enum DataErrorKind {
     #[displaydoc("Mutex error")]
     Mutex,
 
-    /// An error occurred while accessing a system resource.
-    #[displaydoc("I/O error: {0:?}")]
-    #[cfg(feature = "std")]
-    Io(std::io::ErrorKind),
+    /// An error involving a [`Yoke`] occurred.
+    ///
+    /// [`Yoke`]: yoke::Yoke
+    #[displaydoc("Yoke error")]
+    Yoke,
 
     /// An unspecified error occurred, such as a Serde error.
     ///
     /// Check debug logs for potentially more information.
     #[displaydoc("Custom")]
     Custom,
+
+    /// An error occurred while accessing a system resource.
+    #[displaydoc("I/O error: {0:?}")]
+    #[cfg(feature = "std")]
+    Io(std::io::ErrorKind),
 }
 
 /// The error type for ICU4X data provider operations.

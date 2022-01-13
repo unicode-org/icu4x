@@ -120,15 +120,6 @@ icu_provider::impl_dyn_provider!(TimeZonesProvider, {
     key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1Marker,
     key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1Marker,
     key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1Marker,
-}, ERASED);
-
-icu_provider::impl_dyn_provider!(TimeZonesProvider, {
-    key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1Marker,
-    key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1Marker,
-    key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1Marker,
-    key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1Marker,
-    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1Marker,
-    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1Marker,
 }, SERDE_SE);
 
 impl_data_provider!(TimeZoneFormatsV1, TimeZoneFormatsV1Marker);

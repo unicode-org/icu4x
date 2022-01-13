@@ -145,10 +145,6 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     }
 }
 
-impl_dyn_provider!(HelloWorldProvider, {
-    _ => HelloWorldV1Marker,
-}, ERASED);
-
 #[cfg(feature = "serialize")]
 impl_dyn_provider!(HelloWorldProvider, {
     _ => HelloWorldV1Marker,
@@ -193,16 +189,17 @@ impl IterableProvider for HelloWorldProvider {
     }
 }
 
-/// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl crate::export::DataExporter<crate::erased::ErasedDataStructMarker> for HelloWorldProvider {
+/// Adds entries to a [`HelloWorldProvider`] from [`AnyMarker`](crate::erased::AnyMarker)
+impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        payload: DataPayload<crate::erased::ErasedDataStructMarker>,
+        payload: DataPayload<crate::any::AnyMarker>,
     ) -> Result<(), DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
-        let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
+        let downcast_payload: DataPayload<HelloWorldV1Marker> =
+            payload.try_unwrap_owned()?.downcast()?;
         self.map.insert(
             langid.clone(),
             Cow::Owned(downcast_payload.get().message.to_string()),
