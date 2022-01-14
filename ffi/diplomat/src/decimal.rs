@@ -73,12 +73,13 @@ pub mod ffi {
         /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
         /// Passing a consumed struct to this method will return an error.
         pub fn try_new_from_decimal_symbols_v1(
-            data_struct: &mut ICU4XDataStruct,
+            data_struct: &ICU4XDataStruct,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()> {
             use icu_provider::prelude::AsDowncastingAnyProvider;
             let provider = AnyPayloadProvider {
                 key: SYMBOLS_V1,
+                // None: This clone is free, since cloning AnyPayload is free.
                 data: data_struct.0.clone(),
             };
             Self::try_new_impl(
