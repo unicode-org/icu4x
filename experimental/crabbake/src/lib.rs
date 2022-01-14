@@ -45,6 +45,18 @@ where
     }
 }
 
+impl<'a, T, const N: usize> Bakeable for [T; N]
+where
+    T: Bakeable,
+{
+    fn bake(&self) -> TokenStream {
+        let data = self.iter().map(|d| d.bake());
+        quote! {
+            [#(#data),*]
+        }
+    }
+}
+
 impl<T> Bakeable for Option<T>
 where
     T: Bakeable,

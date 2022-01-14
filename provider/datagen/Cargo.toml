@@ -67,6 +67,8 @@ serde-aux = "2.1.1"
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = "0.5"
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde_serialize", "yoke"] }
+quote = "1.0.9"
+crabbake = { path = "../../experimental/crabbake"}
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }

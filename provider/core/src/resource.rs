@@ -104,7 +104,7 @@ unsafe impl EqULE for ResourceKeyHash {}
 /// # use icu_provider::prelude::ResourceKey;
 /// const K: ResourceKey = icu_provider::resource_key!("foo/../bar@1");
 /// ```
-#[derive(PartialEq, Eq, Copy, Clone)]
+#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
 pub struct ResourceKey {
     // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
     // in a compiled binary.

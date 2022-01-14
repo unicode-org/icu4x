@@ -32,6 +32,7 @@ all-features = true
 [dependencies]
 stable_deref_trait = { version = "1.2.0", features = ["alloc"], default-features = false }
 serde = { version = "1.0", optional = true, default-features = false }
+crabbake = { path = "../../experimental/crabbake", optional = true }
 yoke-derive = { path = "./derive", version = "0.5.0", optional = true }
 zerofrom = { path = "../zerofrom", version = "0.1.0", default-features = false, optional = true} 
 

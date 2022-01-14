@@ -172,6 +172,41 @@ macro_rules! create_datagen_provider {
     }};
 }
 
+use crabbake::TokenStream;
+use quote::quote;
+use std::path::PathBuf;
+
+// TODO: find a better way to do this.
+pub(crate) fn get_crate(key: ResourceKey) -> (TokenStream, PathBuf) {
+    match key {
+        icu_list::provider::OrListV1Marker::KEY
+        | icu_list::provider::AndListV1Marker::KEY
+        | icu_list::provider::UnitListV1Marker::KEY => {
+            (quote! { icu_list }, PathBuf::from("components/list"))
+        }
+        _ => todo!(),
+    }
+}
+
+// TODO: find a better way to do this.
+pub(crate) fn get_struct_name(key: ResourceKey) -> (TokenStream, TokenStream) {
+    match key {
+        icu_list::provider::OrListV1Marker::KEY => (
+            quote! { ListFormatterPatternsV1<'static> },
+            quote! { OrListV1Marker },
+        ),
+        icu_list::provider::AndListV1Marker::KEY => (
+            quote! { ListFormatterPatternsV1<'static> },
+            quote! { AndListV1Marker },
+        ),
+        icu_list::provider::UnitListV1Marker::KEY => (
+            quote! { ListFormatterPatternsV1<'static> },
+            quote! { UnitListV1Marker },
+        ),
+        _ => todo!(),
+    }
+}
+
 #[test]
 fn no_key_collisions() {
     let mut map = std::collections::BTreeMap::new();

@@ -52,6 +52,7 @@ members = [
     "utils/zerovec",
     "utils/zerovec/derive",
 ]
+exclude = ["provider/testdata/data/const"]
 
 # Enable lto for WASM.
 # 2020-10-30: This currently doesn't work in .cargo/config:

@@ -361,6 +361,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "const"
+version = "1.0.0"
+dependencies = [
+ "icu_list",
+ "icu_provider",
+ "writeable",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -402,11 +411,9 @@ name = "crabbake"
 version = "0.4.0"
 dependencies = [
  "crabbake-derive",
- "icu_provider",
  "proc-macro2",
  "quote",
  "syn",
- "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1234,6 +1241,7 @@ version = "0.5.0"
 dependencies = [
  "cached-path",
  "clap",
+ "crabbake",
  "dhat 0.3.0",
  "displaydoc",
  "elsa",
@@ -1259,6 +1267,7 @@ dependencies = [
  "litemap",
  "log",
  "pathdiff",
+ "quote",
  "rayon",
  "serde",
  "serde-aux",
@@ -1332,6 +1341,7 @@ dependencies = [
 name = "icu_list"
 version = "0.5.0"
 dependencies = [
+ "crabbake",
  "criterion",
  "deduplicating_array",
  "displaydoc",
@@ -1425,6 +1435,7 @@ name = "icu_provider"
 version = "0.5.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "dhat 0.3.0",
  "displaydoc",
  "erased-serde",
@@ -1534,6 +1545,7 @@ version = "0.5.0"
 dependencies = [
  "cargo_metadata",
  "clap",
+ "const",
  "displaydoc",
  "eyre",
  "futures",
@@ -3151,6 +3163,7 @@ name = "yoke"
 version = "0.5.0"
 dependencies = [
  "bincode",
+ "crabbake",
  "serde",
  "stable_deref_trait",
  "yoke-derive",

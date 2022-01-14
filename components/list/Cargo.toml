@@ -28,12 +28,13 @@ zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
 deduplicating_array = { version = "0.1", path = "../../utils/deduplicating_array", optional = true }
 regex-automata = { version = "0.2", default-features = false }
 writeable = { version = "0.3", path = "../../utils/writeable" }
+crabbake = { path = "../../experimental/crabbake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 criterion = "0.3.3"
 serde_json = "1"
 postcard = { version = "0.7", features = ["use-std"] }
-icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
+icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["const"] }
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 
 [lib]
@@ -43,8 +44,7 @@ path = "src/lib.rs"
 std = ["icu_provider/std", "icu_locid/std", "regex-automata/std", "regex-automata/alloc"]
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "deduplicating_array"]
 serde_human = ["serde", "regex-automata/alloc"]
-datagen = ["serde", "std"]
+datagen = ["serde", "std", "crabbake"]
 
 [[example]]
 name = "and_list"
-required-features = ["serde"]

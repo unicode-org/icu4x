@@ -5,10 +5,12 @@
 The crate exposes a data provider with stable data useful for unit testing. The data is
 based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 
-There are three modes of operation, enabled by features:
+There are four modes of operation, enabled by features:
 * `fs` (default) exposes [`get_json_provider`] with alias [`get_provider`]. In this mode you
   can optionally specify your own test data with the `ICU4X_TESTDATA_DIR` environment variable.
 * `static` exposes [`get_postcard_provider`] with alias [`get_provider`] (unless `fs` is
+  also enabled).
+* `const` exposes [`get_const_provider`] with alias [`get_provider`] (unless `fs` or `static are
   also enabled).
 * `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
   and the list of included locales.

@@ -7,10 +7,12 @@
 //! The crate exposes a data provider with stable data useful for unit testing. The data is
 //! based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 //!
-//! There are three modes of operation, enabled by features:
+//! There are four modes of operation, enabled by features:
 //! * `fs` (default) exposes [`get_json_provider`] with alias [`get_provider`]. In this mode you
 //!   can optionally specify your own test data with the `ICU4X_TESTDATA_DIR` environment variable.
 //! * `static` exposes [`get_postcard_provider`] with alias [`get_provider`] (unless `fs` is
+//!   also enabled).
+//! * `const` exposes [`get_const_provider`] with alias [`get_provider`] (unless `fs` or `static are
 //!   also enabled).
 //! * `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
 //!   and the list of included locales.
@@ -118,11 +120,26 @@ pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider 
     .unwrap()
 }
 
+#[cfg(feature = "const")]
+pub const fn get_const_provider() -> r#const::ConstProvider {
+    r#const::PROVIDER
+}
+
+// get_provider is the first of get_json_provider, get_postcard_provider, get_const_provider
+// This might change in the future.
+#[cfg(all(feature = "const", all(not(feature = "static"), not(feature = "fs"))))]
+pub use get_const_provider as get_provider;
 #[cfg(feature = "fs")]
 pub use get_json_provider as get_provider;
 #[cfg(all(feature = "static", not(feature = "fs")))]
 pub use get_postcard_provider as get_provider;
+
+// get_static_provider is the first of get_postcard_provider, get_const_provider
+// This might change in the future.
+#[cfg(all(feature = "const", not(feature = "static")))]
+pub use get_const_provider as get_static_provider;
 #[cfg(feature = "static")]
 pub use get_postcard_provider as get_static_provider;
+
 #[cfg(feature = "static")]
 pub use get_smaller_postcard_provider as get_smaller_static_provider;

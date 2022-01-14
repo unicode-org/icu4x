@@ -32,7 +32,8 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .possible_value("dir")
                 .possible_value("blob")
-                .help("Output to a directory on the filesystem or a single blob.")
+                .possible_value("crate")
+                .help("Output to a directory on the filesystem, a single blob, or a Rust crate.")
                 .default_value("dir"),
         )
         .arg(
@@ -300,6 +301,12 @@ fn main() -> eyre::Result<()> {
         } else {
             Box::new(std::io::stdout())
         }),
+        "crate" => icu_datagen::Out::Crate(
+            matches
+                .value_of_os("OUTPUT")
+                .map(PathBuf::from)
+                .ok_or_else(|| eyre::eyre!("--out must be specified for --format=mod"))?,
+        ),
         _ => unreachable!(),
     };
 

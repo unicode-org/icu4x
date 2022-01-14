@@ -44,6 +44,7 @@
 
 #![warn(missing_docs)]
 
+mod crabbake;
 mod error;
 mod registry;
 mod source;
@@ -57,7 +58,6 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDynProvider;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerializeMarker;
 use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers;
 use rayon::prelude::*;
@@ -136,6 +136,8 @@ pub enum Out {
     },
     /// Output as a postcard blob to the given sink.
     Blob(Box<dyn std::io::Write + Sync>),
+    /// Output a Rust crate to the given directory.
+    Crate(PathBuf),
 }
 
 /// Runs ICU4X datagen.
@@ -158,18 +160,7 @@ pub fn datagen(
     out: Out,
     ignore_missing_resource_keys: bool,
 ) -> Result<(), DataError> {
-    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> =
-        Box::new(create_datagen_provider!(*sources));
-
-    if let Some(locales) = locales.as_ref() {
-        provider = Box::new(
-            provider
-                .filterable("icu4x-datagen locales")
-                .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
-        );
-    }
-
-    let mut exporter: Box<dyn DataExporter<_>> = match out {
+    match out {
         Out::Fs {
             output_path,
             serializer,
@@ -181,14 +172,53 @@ pub fn datagen(
                 options.overwrite =
                     icu_provider_fs::export::fs_exporter::OverwriteOption::RemoveAndReplace
             }
-            Box::new(icu_provider_fs::export::FilesystemExporter::try_new(
-                serializer, options,
-            )?)
+            datagen_internal(
+                locales,
+                keys,
+                ignore_missing_resource_keys,
+                Box::new(create_datagen_provider!(*sources)),
+                Box::new(icu_provider_fs::export::FilesystemExporter::try_new(
+                    serializer, options,
+                )?),
+            )
         }
-        Out::Blob(write) => Box::new(icu_provider_blob::export::BlobExporter::new_with_sink(
-            write,
-        )),
-    };
+        Out::Blob(write) => datagen_internal(
+            locales,
+            keys,
+            ignore_missing_resource_keys,
+            Box::new(create_datagen_provider!(*sources)),
+            Box::new(icu_provider_blob::export::BlobExporter::new_with_sink(
+                write,
+            )),
+        ),
+        Out::Crate(dir) => datagen_internal(
+            locales,
+            keys,
+            ignore_missing_resource_keys,
+            Box::new(create_datagen_provider!(
+                *sources,
+                [crate::transform::cldr::ListProvider,]
+            )),
+            Box::new(crabbake::ConstExporter::new(dir)?),
+        ),
+    }
+}
+
+fn datagen_internal<M: DataMarker + 'static>(
+    locales: Option<&[LanguageIdentifier]>,
+    keys: &[ResourceKey],
+    ignore_missing_resource_keys: bool,
+    mut provider: Box<dyn IterableDynProvider<M> + Sync>,
+    mut exporter: Box<dyn DataExporter<M>>,
+) -> Result<(), DataError> {
+    if let Some(locales) = locales {
+        let locales = locales.to_vec();
+        provider = Box::new(
+            provider
+                .filterable("icu4x-datagen locales")
+                .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
+        );
+    }
 
     keys.into_par_iter().try_for_each(|&key| {
         let result = provider.supported_options_for_key(key).and_then(|iter| {

@@ -10,10 +10,13 @@ use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
 #[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(crabbake::Bakeable))]
+#[doc(hidden)]
+#[allow(clippy::exhaustive_structs)] // not a public API
 pub struct StringMatcher<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
-    dfa_bytes: Cow<'data, [u8]>,
-    pattern: Option<Cow<'data, str>>,
+    pub dfa_bytes: Cow<'data, [u8]>,
+    pub pattern: Option<Cow<'data, str>>,
 }
 
 impl PartialEq for StringMatcher<'_> {

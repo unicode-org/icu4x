@@ -42,6 +42,8 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+#[cfg(feature = "crabbake")]
+mod crabbake;
 pub mod either;
 #[cfg(feature = "alloc")]
 pub mod erased;

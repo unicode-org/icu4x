@@ -21,7 +21,8 @@ use litemap::LiteMap;
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
 pub struct HelloWorldV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub message: Cow<'data, str>,
@@ -138,7 +139,9 @@ impl_dyn_provider!(
     HelloWorldProvider,
     [HelloWorldV1Marker,],
     SERDE_SE,
+    CRABBAKE,
     ITERABLE_SERDE_SE,
+    ITERABLE_CRABBAKE,
     DATA_CONVERTER
 );
 

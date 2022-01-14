@@ -30,7 +30,9 @@ fn main() {
         File::create(paths::data_root().join("testdata.postcard")).unwrap(),
     ));
 
-    for out in [json_out, blob_out] {
+    let crate_out = icu_datagen::Out::Crate(paths::data_root().join("const"));
+
+    for out in [json_out, blob_out, crate_out] {
         icu_datagen::datagen(
             Some(&locales),
             &icu_datagen::get_all_keys(),

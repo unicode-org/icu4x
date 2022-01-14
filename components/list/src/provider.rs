@@ -9,12 +9,14 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::string_matcher::StringMatcher;
 use crate::ListStyle;
 use alloc::borrow::Cow;
 use icu_provider::DataMarker;
 use icu_provider::{yoke, zerofrom};
 use writeable::{LengthHint, Writeable};
+
+#[doc(hidden)]
+pub use crate::string_matcher::StringMatcher;
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 #[icu_provider::data_struct(
@@ -23,12 +25,12 @@ use writeable::{LengthHint, Writeable};
     UnitListV1Marker = "list/unit@1"
 )]
 #[derive(Clone, Debug)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
 pub struct ListFormatterPatternsV1<'data>(
     #[cfg_attr(feature = "datagen", serde(with = "deduplicating_array"))]
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
-    [ConditionalListJoinerPattern<'data>; 12],
+    pub [ConditionalListJoinerPattern<'data>; 12],
 );
 
 #[cfg(feature = "serde")]
@@ -91,40 +93,43 @@ impl<'data> ListFormatterPatternsV1<'data> {
 
 /// A pattern that can behave conditionally on the next element.
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub(crate) struct ConditionalListJoinerPattern<'data> {
+#[doc(hidden)]
+pub struct ConditionalListJoinerPattern<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    default: ListJoinerPattern<'data>,
+    pub default: ListJoinerPattern<'data>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    special_case: Option<SpecialCasePattern<'data>>,
+    pub special_case: Option<SpecialCasePattern<'data>>,
 }
 
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-struct SpecialCasePattern<'data> {
+#[doc(hidden)]
+pub struct SpecialCasePattern<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    condition: StringMatcher<'data>,
+    pub condition: StringMatcher<'data>,
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pattern: ListJoinerPattern<'data>,
+    pub pattern: ListJoinerPattern<'data>,
 }
 
 /// A pattern containing two numeric placeholders ("{0}, and {1}.")
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, crabbake::Bakeable))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-struct ListJoinerPattern<'data> {
+#[doc(hidden)]
+pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders
     #[cfg_attr(feature = "serde", serde(borrow))]
-    string: Cow<'data, str>,
+    pub string: Cow<'data, str>,
     /// The index of the first placeholder. Always 0 for CLDR
     /// data, so we don't need to serialize it. In-memory we
     /// have free space for it as index_1 doesn't fill a word.
     #[cfg_attr(feature = "serde", serde(skip))]
-    index_0: u8,
+    pub index_0: u8,
     /// The index of the second placeholder
-    index_1: u8,
+    pub index_1: u8,
 }
 
 pub(crate) type PatternParts<'a> = (&'a str, &'a str, &'a str);

@@ -12,9 +12,12 @@ use icu_list::{ListFormatter, ListStyle};
 use icu_locid::locale;
 use writeable::Writeable;
 
-let provider = icu_testdata::get_provider();
-let list_formatter = ListFormatter::try_new_and(locale!("es"), &provider, ListStyle::Wide)
-    .expect("Data should load successfully");
+let list_formatter = ListFormatter::try_new_and(
+    locale!("es"),
+    &icu_testdata::get_static_provider(),
+    ListStyle::Wide,
+)
+.expect("Data should load successfully");
 
 assert_eq!(
     list_formatter.format(["España", "Suiza"].iter())

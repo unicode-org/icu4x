@@ -28,7 +28,7 @@ exit_on_error true
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat"
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/wasm/docs/**/*" "**/node_modules/**/*"
+glob_skip_pattern_array = array "target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/wasm/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*"
 
 blank_line = set ""
 
@@ -107,6 +107,8 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
+skip_paths = set_new "provider/testdata/data/const/Cargo.toml"
+
 template = canonicalize README.tpl
 
 cargo_list = exec cargo --list
@@ -116,10 +118,12 @@ end
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
-    root_dir = dirname ${path}
-    if not is_empty ${root_dir}
-        echo "Automatically generating ${root_dir}/README.md"
-        exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
+    if not set_contains ${skip_paths} ${path}
+        root_dir = dirname ${path}
+        if not is_empty ${root_dir}
+            echo "Automatically generating ${root_dir}/README.md"
+            exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
+        end
     end
 end
 '''

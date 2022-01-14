@@ -31,7 +31,7 @@ fn bakeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
         quote! {
             #(#recursive_bakes)*
-            quote! { #constructor }
+            crabbake::quote! { #constructor }
         }
     });
 
@@ -39,7 +39,7 @@ fn bakeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     structure.gen_impl(quote! {
         gen impl crabbake::Bakeable for @Self {
-            fn bake(&self) -> proc_macro2::TokenStream {
+            fn bake(&self) -> crabbake::TokenStream {
                 match self {
                     #body
                 }

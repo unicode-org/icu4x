@@ -14,10 +14,12 @@ use writeable::Writeable;
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let provider = icu_testdata::get_static_provider();
-
-    let list_formatter =
-        ListFormatter::try_new_and(locale!("es"), &provider, ListStyle::Wide).unwrap();
+    let list_formatter = ListFormatter::try_new_and(
+        locale!("es"),
+        &icu_testdata::get_static_provider(),
+        ListStyle::Wide,
+    )
+    .unwrap();
 
     println!(
         "{}",
