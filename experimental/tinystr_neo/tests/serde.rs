@@ -21,8 +21,8 @@ macro_rules! test_roundtrip {
 
             let post = postcard::to_stdvec(&tiny).unwrap();
             assert_eq!(post, &tiny.all_bytes()[..]);
-            let debin: TinyAsciiStr<$n> = postcard::from_bytes(&post).unwrap();
-            assert_eq!(&*tiny, &*debin);
+            let unpost: TinyAsciiStr<$n> = postcard::from_bytes(&post).unwrap();
+            assert_eq!(&*tiny, &*unpost);
         }
     };
 }
