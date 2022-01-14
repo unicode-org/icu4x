@@ -63,6 +63,15 @@ The trait [`BufferProvider`] represents a data provider that produces buffers (`
 are typically deserialized later via Serde. This allows for a Serde-enabled provider
 to be saved as a trait object without being specific to a data struct type.
 
+#### `AnyProvider`
+
+The trait [`AnyProvider`] removes the type argument from [`DataProvider`] and requires
+that all data structs be convertible to the [`Any`](core::any::Any) type. This enables the
+processing of data without the caller knowing the underlying data struct.
+
+Since [`AnyProvider`] is not specific to a single type, it can be useful for caches or
+other bulk data operations.
+
 #### `DataProvider<SerializeMarker>`
 
 *Enabled with the "serialize" feature*
@@ -71,15 +80,6 @@ Data providers capable of returning opaque `erased_serde::Serialize` trait objec
 input to a data exporter, such as when writing data to the filesystem.
 
 This trait is normally implemented using the [`impl_dyn_provider!`] macro.
-
-#### `DataProvider<ErasedDataStructMarker>`
-
-The trait [`ErasedDataProvider`] removes the type argument from [`DataProvider`] and requires
-that all data structs be convertible to the [`Any`](core::any::Any) type. This enables the processing of data
-without the caller knowing the underlying data struct.
-
-Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for caches or
-other bulk data operations.
 
 This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 
@@ -94,7 +94,7 @@ This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 [`InvariantDataProvider`]: inv::InvariantDataProvider
 [`StructProvider`]: struct_provider::StructProvider
 [`HelloWorldProvider`]: hello_world::HelloWorldProvider
-[`ErasedDataProvider`]: erased::ErasedDataProvider
+[`AnyProvider`]: any::AnyProvider
 [`Yokeable`]: yoke::Yokeable
 [`impl_dyn_provider!`]: impl_dyn_provider
 

@@ -9,7 +9,7 @@
 
         Creates a new :cpp:class:`ICU4XFixedDecimalFormat` from locale data. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new>`__ for more information.
 
-    .. cpp:function:: static diplomat::result<ICU4XFixedDecimalFormat, std::monostate> try_new_from_decimal_symbols_v1(ICU4XDataStruct& data_struct, ICU4XFixedDecimalFormatOptions options)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimalFormat, std::monostate> try_new_from_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalFormatOptions options)
 
         Creates a new :cpp:class:`ICU4XFixedDecimalFormat` from preconstructed locale data in the form of an :cpp:class:`ICU4XDataStruct` constructed from ``ICU4XDataStruct::create_decimal_symbols()``.
         The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed. Passing a consumed struct to this method will return an error.

@@ -5,54 +5,47 @@
 //! Data provider always serving the same struct.
 
 use crate::prelude::*;
-use crate::yoke::trait_hack::YokeTraitHack;
-use crate::yoke::*;
 
-/// A data provider that returns clones of a constant data payload.
+/// A data provider that returns clones of a constant type-erased payload.
 ///
 /// # Examples
 ///
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::struct_provider::StructProvider;
+/// use icu_provider::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
-/// let local_data = HelloWorldV1 {
-///     message: Cow::Owned("hello world".to_string()),
+/// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+///     message: Cow::Borrowed("hello world"),
 /// };
 ///
 /// // A placeholder key to use to serve the data struct
 /// const SAMPLE_KEY: ResourceKey = icu_provider::resource_key!(x, "xyz", "example", 1);
 ///
-/// let provider = StructProvider {
+/// let provider = AnyPayloadProvider {
 ///     key: SAMPLE_KEY,
-///     data: DataPayload::from_owned(local_data),
+///     data: AnyPayload::from_static_ref(&CONST_DATA),
 /// };
 ///
-/// let payload: DataPayload<HelloWorldV1Marker> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
+/// let payload: DataPayload<HelloWorldV1Marker> = provider.load_any(&DataRequest::from(SAMPLE_KEY))
 ///     .expect("Load should succeed")
+///     .downcast()
+///     .expect("Types should match")
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
 /// assert_eq!(payload.get().message, "hello world");
 /// ```
-pub struct StructProvider<M>
-where
-    M: DataMarker,
-{
+pub struct AnyPayloadProvider {
     pub key: ResourceKey,
-    pub data: DataPayload<M>,
+    pub data: AnyPayload,
 }
 
-impl<M> DataProvider<M> for StructProvider<M>
-where
-    M: DataMarker,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-{
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+impl AnyProvider for AnyPayloadProvider {
+    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
         req.resource_path.key.match_key(self.key)?;
-        Ok(DataResponse {
+        Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(self.data.clone()),
         })

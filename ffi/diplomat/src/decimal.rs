@@ -13,7 +13,7 @@ pub mod ffi {
     };
     use icu_locid::Locale;
     use icu_provider::prelude::DataProvider;
-    use icu_provider::struct_provider::StructProvider;
+    use icu_provider::struct_provider::AnyPayloadProvider;
     use writeable::Writeable;
 
     use crate::{
@@ -73,25 +73,20 @@ pub mod ffi {
         /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
         /// Passing a consumed struct to this method will return an error.
         pub fn try_new_from_decimal_symbols_v1(
-            data_struct: &mut ICU4XDataStruct,
+            data_struct: &ICU4XDataStruct,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()> {
-            let data = if let Some(data) = data_struct.0.take() {
-                data
-            } else {
-                return Err(()).into();
-            };
-
-            let data = if let Ok(data) = data.downcast::<DecimalSymbolsV1Marker>() {
-                data
-            } else {
-                return Err(()).into();
-            };
-            let provider = StructProvider {
+            use icu_provider::prelude::AsDowncastingAnyProvider;
+            let provider = AnyPayloadProvider {
                 key: SYMBOLS_V1,
-                data,
+                // None: This clone is free, since cloning AnyPayload is free.
+                data: data_struct.0.clone(),
             };
-            Self::try_new_impl(&ICU4XLocale(Locale::und()), &provider, options)
+            Self::try_new_impl(
+                &ICU4XLocale(Locale::und()),
+                &provider.as_downcasting(),
+                options,
+            )
         }
 
         fn try_new_impl<D>(

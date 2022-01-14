@@ -4,10 +4,9 @@
 
 //! Utilities for using trait objects with `DataPayload`.
 
-/// Trait to allow conversion from `DataPayload<T>` to `DataPayload<S>` where `T` implements `S`.
+/// Trait to allow conversion from `DataPayload<T>` to `DataPayload<S>`.
 ///
-/// This is used internally by [`impl_dyn_provider!`] and is not intended to be called from userland
-/// code. You may be looking for [`DataPayload::downcast`], which converts in the other direction.
+/// This trait can be manually implemented in order to enable [`impl_dyn_provider`].
 ///
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
@@ -20,18 +19,17 @@ where
     /// # Examples
     ///
     /// Upcast and then downcast a data struct of type `Cow<str>` (cart type `String`) via
-    /// [`ErasedDataStruct`](crate::erased::ErasedDataStruct):
+    /// [`AnyPayload`](crate::any::AnyPayload):
     ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
     /// use icu_provider::marker::CowStrMarker;
     /// use std::borrow::Cow;
     ///
     /// let data = "foo".to_string();
     /// let original = DataPayload::<CowStrMarker>::from_owned(Cow::Owned(data));
-    /// let upcasted = ErasedDataStructMarker::upcast(original);
+    /// let upcasted = AnyMarker::upcast(original);
     /// let downcasted = upcasted
     ///     .downcast::<CowStrMarker>()
     ///     .expect("Type conversion");
@@ -40,19 +38,20 @@ where
     fn upcast(other: crate::prelude::DataPayload<M>) -> crate::prelude::DataPayload<Self>;
 }
 
-/// Implement [`DataProvider`] for a trait object `S` on a type that already implements [`DataProvider`]
-/// for one or more `M`, where `M` is a concrete type that implements the trait `S`.
+/// Implements [`DataProvider`] for a marker type `S` on a type that already implements
+/// [`DataProvider`] for one or more `M`, where `M` is a concrete type that is convertible to `S`
+/// via [`UpcastDataPayload`].
 ///
 /// Use this macro to add support to your data provider for:
 ///
-/// - [`ErasedDataStruct`] if your provider can return typed objects as [`Any`](core::any::Any)
+/// - [`AnyPayload`] if your provider can return typed objects as [`Any`](core::any::Any)
 /// - [`SerializeMarker`] if your provider returns objects implementing [`serde::Serialize`]
 ///
 /// The second argument is a match-like construction mapping from resource keys to structs. To map
 /// multiple keys to a single data struct, use `_` as the data key.
 ///
 /// The third argument can be either the trait object marker, like [`SerializeMarker`], or the
-/// shorthands `ERASED` or `SERDE_SE`.
+/// shorthands `ANY` or `SERDE_SE`.
 ///
 /// Lifetimes:
 ///
@@ -64,7 +63,6 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::erased::ErasedDataStructMarker;
 /// use icu_provider::marker::CowStrMarker;
 /// use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
@@ -82,14 +80,14 @@ where
 ///     }
 /// }
 ///
-/// // Implement DataProvider<ErasedDataStructMarker>
+/// // Implement DataProvider<AnyMarker>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => CowStrMarker,
-/// }, ERASED);
+/// }, ANY);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
-/// let resp: DataResponse<ErasedDataStructMarker> = provider
+/// let resp: DataResponse<AnyMarker> = provider
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
 /// let payload: DataPayload<CowStrMarker> = resp
@@ -119,19 +117,19 @@ where
 /// // Send all keys to the `CowStrMarker` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     _ => CowStrMarker,
-/// }, ERASED);
+/// }, ANY);
 /// ```
 ///
 /// [`DataProvider`]: crate::DataProvider
-/// [`ErasedDataStruct`]: (crate::erased::ErasedDataStruct)
+/// [`AnyPayload`]: (crate::any::AnyPayload)
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {
-    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ERASED) => {
+    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ANY) => {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
-            $crate::erased::ErasedDataStructMarker
+            $crate::any::AnyMarker
         );
     };
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, SERDE_SE) => {

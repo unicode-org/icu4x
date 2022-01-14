@@ -65,6 +65,15 @@
 //! are typically deserialized later via Serde. This allows for a Serde-enabled provider
 //! to be saved as a trait object without being specific to a data struct type.
 //!
+//! ### `AnyProvider`
+//!
+//! The trait [`AnyProvider`] removes the type argument from [`DataProvider`] and requires
+//! that all data structs be convertible to the [`Any`](core::any::Any) type. This enables the
+//! processing of data without the caller knowing the underlying data struct.
+//!
+//! Since [`AnyProvider`] is not specific to a single type, it can be useful for caches or
+//! other bulk data operations.
+//!
 //! ### `DataProvider<SerializeMarker>`
 //!
 //! *Enabled with the "serialize" feature*
@@ -73,15 +82,6 @@
 //! input to a data exporter, such as when writing data to the filesystem.
 //!
 //! This trait is normally implemented using the [`impl_dyn_provider!`] macro.
-//!
-//! ### `DataProvider<ErasedDataStructMarker>`
-//!
-//! The trait [`ErasedDataProvider`] removes the type argument from [`DataProvider`] and requires
-//! that all data structs be convertible to the [`Any`](core::any::Any) type. This enables the processing of data
-//! without the caller knowing the underlying data struct.
-//!
-//! Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for caches or
-//! other bulk data operations.
 //!
 //! This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 //!
@@ -96,7 +96,7 @@
 //! [`InvariantDataProvider`]: inv::InvariantDataProvider
 //! [`StructProvider`]: struct_provider::StructProvider
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
-//! [`ErasedDataProvider`]: erased::ErasedDataProvider
+//! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dyn_provider!`]: impl_dyn_provider
 
@@ -107,12 +107,11 @@ extern crate alloc;
 #[macro_use]
 pub mod dynutil;
 
-pub mod buffer_provider;
+pub mod any;
+pub mod buf;
 mod data_provider;
 pub mod either;
 mod error;
-#[macro_use]
-pub mod erased;
 pub mod export;
 pub mod filter;
 pub mod fork;
@@ -133,8 +132,12 @@ pub use icu_provider_macros::data_struct;
 
 pub mod prelude {
     //! Core selection of APIs and structures for [`DataProvider`].
-    pub use crate::buffer_provider::BufferMarker;
-    pub use crate::buffer_provider::BufferProvider;
+    pub use crate::any::AnyMarker;
+    pub use crate::any::AnyPayload;
+    pub use crate::any::AnyProvider;
+    pub use crate::any::AnyResponse;
+    pub use crate::buf::BufferMarker;
+    pub use crate::buf::BufferProvider;
     pub use crate::data_provider::DataPayload;
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
@@ -148,6 +151,8 @@ pub mod prelude {
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
 
+    pub use crate::any::AsDataProviderAnyMarkerWrap;
+    pub use crate::any::AsDowncastingAnyProvider;
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 }

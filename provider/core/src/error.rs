@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use core::any::TypeId;
 use displaydoc::Display;
 
 /// A list specifying general categories of data provider error.
@@ -45,10 +44,10 @@ pub enum DataErrorKind {
     #[displaydoc("Resource blocked by filter")]
     FilteredResource,
 
-    /// The generic type parameter does not match the TypeId. The actual TypeId is stored
+    /// The generic type parameter does not match the TypeId. The expected type name is stored
     /// as context when this error is returned.
-    #[displaydoc("Mismatched type information (expected {0:?})")]
-    MismatchedType(TypeId),
+    #[displaydoc("Mismatched types: tried to downcast with {0}, but actual type is different")]
+    MismatchedType(&'static str),
 
     /// The payload is missing. This is usually caused by a previous error.
     #[displaydoc("Missing payload")]
@@ -60,16 +59,20 @@ pub enum DataErrorKind {
     #[displaydoc("Mutex error")]
     Mutex,
 
-    /// An error occurred while accessing a system resource.
-    #[displaydoc("I/O error: {0:?}")]
-    #[cfg(feature = "std")]
-    Io(std::io::ErrorKind),
+    /// A data provider object was given to an operation in an invalid state.
+    #[displaydoc("Invalid state")]
+    InvalidState,
 
     /// An unspecified error occurred, such as a Serde error.
     ///
     /// Check debug logs for potentially more information.
     #[displaydoc("Custom")]
     Custom,
+
+    /// An error occurred while accessing a system resource.
+    #[displaydoc("I/O error: {0:?}")]
+    #[cfg(feature = "std")]
+    Io(std::io::ErrorKind),
 }
 
 /// The error type for ICU4X data provider operations.
@@ -256,6 +259,26 @@ impl DataError {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {:?}", self, context);
         self
+    }
+
+    #[inline]
+    pub(crate) fn for_type<T>() -> DataError {
+        DataError {
+            kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
+            key: None,
+            str_context: None,
+        }
+    }
+
+    #[inline]
+    pub(crate) fn result_is_err_missing_resource_key<T>(result: &Result<T, DataError>) -> bool {
+        matches!(
+            result,
+            Err(DataError {
+                kind: DataErrorKind::MissingResourceKey,
+                ..
+            })
+        )
     }
 }
 

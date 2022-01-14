@@ -8,7 +8,7 @@ pub mod json;
 pub mod bincode;
 
 use displaydoc::Display;
-use icu_provider::buffer_provider::BufferFormat;
+use icu_provider::buf::BufferFormat;
 use std::io;
 
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames

@@ -5,7 +5,7 @@
 use super::AbstractSerializer;
 use super::Error;
 use bincode::config::Options as _;
-use icu_provider::buffer_provider::BufferFormat;
+use icu_provider::buf::BufferFormat;
 use std::io;
 
 /// A serializer for Bincode.
