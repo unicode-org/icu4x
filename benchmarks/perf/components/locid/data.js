@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642047285093,
+  "lastUpdate": 1642133282069,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21197,6 +21197,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4120,
             "range": "± 26",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f13e0948790b0f7adf52adf6d700c2953eeddaa9",
+          "message": "Rewrite ErasedDataProvider as AnyProvider (#1495)",
+          "timestamp": "2022-01-13T21:59:49-06:00",
+          "tree_id": "2896593f232beb400d779d553b9a640eaa53d43b",
+          "url": "https://github.com/unicode-org/icu4x/commit/f13e0948790b0f7adf52adf6d700c2953eeddaa9"
+        },
+        "date": 1642133271346,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3034,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5148,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
