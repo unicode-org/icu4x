@@ -2640,6 +2640,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "tinystr-neo"
+version = "0.3.1"
+dependencies = [
+ "displaydoc",
+]
+
+[[package]]
 name = "tinystr-raw"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
