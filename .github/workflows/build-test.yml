@@ -453,7 +453,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         # keep args in sync with `clippy-all` in .cargo/config.toml
-        args: --all-targets --all-features -- -D warnings -Aclippy::unknown-clippy-lints -Aclippy::field-reassign-with-default
+        args: --all-targets --all-features -- -D warnings
 
   # Benchmarking & dashboards job
 

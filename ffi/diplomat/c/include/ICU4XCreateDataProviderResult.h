@@ -1,7 +1,6 @@
 #ifndef ICU4XCreateDataProviderResult_H
 #define ICU4XCreateDataProviderResult_H
 #include <stdio.h>
-#include <uchar.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>

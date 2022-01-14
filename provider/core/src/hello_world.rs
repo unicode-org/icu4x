@@ -136,8 +136,10 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(req))?;
-        let mut metadata = DataResponseMetadata::default();
-        metadata.data_langid = Some(langid.clone());
+        let metadata = DataResponseMetadata {
+            data_langid: Some(langid.clone()),
+            ..Default::default()
+        };
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned(data)),
