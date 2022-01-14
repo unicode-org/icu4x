@@ -24,7 +24,7 @@ pub mod key {
 
 /// Pre-processed Unicode data in the form of tables to be used for line breaking.
 #[icu_provider::data_struct]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -92,15 +92,6 @@ impl Default for LineBreakRuleTable<'static> {
         Self {
             table_data: ZeroSlice::from_ule_slice(&UAX14_RULE_TABLE).as_zerovec(),
             property_count: crate::lb_define::PROP_COUNT as u8,
-        }
-    }
-}
-
-impl Default for LineBreakDataV1<'static> {
-    fn default() -> Self {
-        Self {
-            property_table: Default::default(),
-            rule_table: Default::default(),
         }
     }
 }
