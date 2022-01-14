@@ -471,8 +471,14 @@ impl FixedDecimal {
                 return;
             }
             let _ = self.digits.drain(0..cut as usize).count();
-            self.magnitude = magnitude;
+            // Count number of leading zeroes
+            let extra_zeroes = self.digits.iter().position(|x| *x != 0).unwrap_or(0);
+            let _ = self.digits.drain(0..extra_zeroes).count();
+            self.magnitude = magnitude - extra_zeroes as i16;
             self.upper_magnitude = positive_magnitude;
+            if self.lower_magnitude > self.magnitude {
+                self.lower_magnitude = self.magnitude;
+            }
         }
         #[cfg(debug_assertions)]
         self.check_invariants();
@@ -1848,4 +1854,8 @@ fn test_truncate() {
 
     dec.truncate_left(-4);
     assert_eq!("0.000", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("100.01").unwrap();
+    dec.truncate_left(1);
+    assert_eq!("00.01", dec.to_string());
 }
