@@ -17,6 +17,8 @@ members = [
     "components/properties",
     "experimental/bies",
     "experimental/char16trie",
+    "experimental/crabbake",
+    "experimental/crabbake/derive",
     "experimental/formatted_string",
     "experimental/list_formatter",
     "experimental/segmenter",
