@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642047327709,
+  "lastUpdate": 1642133277864,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24023,6 +24023,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18857,
             "range": "± 2051",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f13e0948790b0f7adf52adf6d700c2953eeddaa9",
+          "message": "Rewrite ErasedDataProvider as AnyProvider (#1495)",
+          "timestamp": "2022-01-13T21:59:49-06:00",
+          "tree_id": "2896593f232beb400d779d553b9a640eaa53d43b",
+          "url": "https://github.com/unicode-org/icu4x/commit/f13e0948790b0f7adf52adf6d700c2953eeddaa9"
+        },
+        "date": 1642133269060,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1086,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5455,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 19416,
+            "range": "± 35",
             "unit": "ns/iter"
           }
         ]
