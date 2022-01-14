@@ -43,7 +43,7 @@ class ICU4XFixedDecimalFormat {
    * The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
    * Passing a consumed struct to this method will return an error.
    */
-  static diplomat::result<ICU4XFixedDecimalFormat, std::monostate> try_new_from_decimal_symbols_v1(ICU4XDataStruct& data_struct, ICU4XFixedDecimalFormatOptions options);
+  static diplomat::result<ICU4XFixedDecimalFormat, std::monostate> try_new_from_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalFormatOptions options);
 
   /**
    * Formats a [`ICU4XFixedDecimal`] to a string. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.format) for more information.
@@ -81,9 +81,9 @@ inline diplomat::result<ICU4XFixedDecimalFormat, std::monostate> ICU4XFixedDecim
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XFixedDecimalFormat, std::monostate> ICU4XFixedDecimalFormat::try_new_from_decimal_symbols_v1(ICU4XDataStruct& data_struct, ICU4XFixedDecimalFormatOptions options) {
+inline diplomat::result<ICU4XFixedDecimalFormat, std::monostate> ICU4XFixedDecimalFormat::try_new_from_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalFormatOptions options) {
   ICU4XFixedDecimalFormatOptions diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormat_try_new_from_decimal_symbols_v1(data_struct.AsFFIMut(), capi::ICU4XFixedDecimalFormatOptions{ .grouping_strategy = static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(diplomat_wrapped_struct_options.grouping_strategy), .sign_display = static_cast<capi::ICU4XFixedDecimalSignDisplay>(diplomat_wrapped_struct_options.sign_display) });
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormat_try_new_from_decimal_symbols_v1(data_struct.AsFFI(), capi::ICU4XFixedDecimalFormatOptions{ .grouping_strategy = static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(diplomat_wrapped_struct_options.grouping_strategy), .sign_display = static_cast<capi::ICU4XFixedDecimalSignDisplay>(diplomat_wrapped_struct_options.sign_display) });
   diplomat::result<ICU4XFixedDecimalFormat, std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(ICU4XFixedDecimalFormat(diplomat_result_raw_out_value.ok));

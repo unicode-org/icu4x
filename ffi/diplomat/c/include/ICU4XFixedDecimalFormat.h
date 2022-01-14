@@ -21,7 +21,7 @@ typedef struct ICU4XFixedDecimalFormat ICU4XFixedDecimalFormat;
 
 decimal_ffi_result_box_ICU4XFixedDecimalFormat_void ICU4XFixedDecimalFormat_try_new(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XFixedDecimalFormatOptions options);
 
-decimal_ffi_result_box_ICU4XFixedDecimalFormat_void ICU4XFixedDecimalFormat_try_new_from_decimal_symbols_v1(ICU4XDataStruct* data_struct, ICU4XFixedDecimalFormatOptions options);
+decimal_ffi_result_box_ICU4XFixedDecimalFormat_void ICU4XFixedDecimalFormat_try_new_from_decimal_symbols_v1(const ICU4XDataStruct* data_struct, ICU4XFixedDecimalFormatOptions options);
 
 decimal_ffi_result_void_void ICU4XFixedDecimalFormat_format(const ICU4XFixedDecimalFormat* self, const ICU4XFixedDecimal* value, DiplomatWriteable* write);
 void ICU4XFixedDecimalFormat_destroy(ICU4XFixedDecimalFormat* self);
