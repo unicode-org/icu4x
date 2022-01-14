@@ -127,9 +127,7 @@ impl Private {
     pub(crate) fn try_from_iter<'a>(
         iter: &mut impl Iterator<Item = &'a [u8]>,
     ) -> Result<Self, ParserError> {
-        let keys = iter
-            .map(|subtag| Key::from_bytes(subtag))
-            .collect::<Result<Vec<_>, _>>()?;
+        let keys = iter.map(Key::from_bytes).collect::<Result<Vec<_>, _>>()?;
 
         Ok(Self::from_vec_unchecked(keys))
     }

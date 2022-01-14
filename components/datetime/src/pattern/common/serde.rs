@@ -229,6 +229,7 @@ mod runtime {
         /// A helper struct that is shaped exactly like `runtime::PatternPlurals`
         /// and is used to aid in quick deserialization.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+        #[allow(clippy::large_enum_variant)]
         enum PatternPluralsForSerde<'data> {
             #[serde(borrow)]
             MultipleVariants(PluralPattern<'data>),

@@ -119,7 +119,7 @@ impl Transform {
     }
 
     pub(crate) fn try_from_iter<'a>(
-        mut iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
+        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
     ) -> Result<Self, ParserError> {
         let mut tlang = None;
         let mut tfields = vec![];
@@ -127,7 +127,7 @@ impl Transform {
         if let Some(subtag) = iter.peek() {
             if Language::from_bytes(subtag).is_ok() {
                 tlang = Some(parse_language_identifier_from_iter(
-                    &mut iter,
+                    iter,
                     ParserMode::Partial,
                 )?);
             }

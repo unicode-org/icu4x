@@ -135,7 +135,7 @@ impl<'data> ScriptExtensions<'data> {
         } else {
             let script_with_ext_ule = self.trie.get_ule(code_point);
             let script_ule_slice = script_with_ext_ule
-                .map(|swe| core::slice::from_ref(swe))
+                .map(core::slice::from_ref)
                 .unwrap_or_default();
             ZeroSlice::from_ule_slice(script_ule_slice)
         }
