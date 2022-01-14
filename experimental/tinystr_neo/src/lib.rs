@@ -9,6 +9,12 @@ mod macros;
 mod ascii;
 mod error;
 
+#[cfg(feature = "serde")]
+mod serde;
+
+#[cfg(feature = "serde")]
+extern crate alloc;
+
 pub use ascii::TinyAsciiStr;
 pub use error::TinyStrError;
 

@@ -4,7 +4,7 @@
 
 use crate::TinyStrError;
 use core::ops::Deref;
-use core::str;
+use core::str::{self, FromStr};
 
 #[repr(transparent)]
 #[derive(PartialEq, Eq, Ord, PartialOrd, Copy, Clone, Debug, Hash)]
@@ -48,11 +48,26 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub fn as_bytes(&self) -> &[u8] {
         &self.bytes[0..self.len()]
     }
+
+    pub fn all_bytes(&self) -> &[u8; N] {
+        &self.bytes
+    }
+
+    pub const unsafe fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
+        Self { bytes }
+    }
 }
 
 impl<const N: usize> Deref for TinyAsciiStr<N> {
     type Target = str;
     fn deref(&self) -> &str {
         unsafe { str::from_utf8_unchecked(&self.as_bytes()) }
+    }
+}
+
+impl<const N: usize> FromStr for TinyAsciiStr<N> {
+    type Err = TinyStrError;
+    fn from_str(s: &str) -> Result<Self, TinyStrError> {
+        Self::from_str(s)
     }
 }

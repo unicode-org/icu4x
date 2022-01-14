@@ -2644,6 +2644,7 @@ name = "tinystr-neo"
 version = "0.3.1"
 dependencies = [
  "displaydoc",
+ "serde",
 ]
 
 [[package]]

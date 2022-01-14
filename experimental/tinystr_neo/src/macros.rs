@@ -6,8 +6,10 @@
 macro_rules! tinystr {
     ($n:literal, $s:literal) => {
         ({
+            // Force it into a const context; otherwise it may get evaluated at runtime instead.
             const TINYSTR_MACRO_CONST: Result<$crate::TinyAsciiStr<$n>, $crate::TinyStrError> = $crate::TinyAsciiStr::from_str($s);
             TINYSTR_MACRO_CONST
+        // Note: Rust 1.57 allows panics in consts, until we update to that version we have to panic outside of the const and hope it optimizes away
         }).unwrap()
     }
 }

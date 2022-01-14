@@ -26,3 +26,4 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
+serde = { version = "1.0.123", optional = true, default-features = false, features = ["alloc"] }
