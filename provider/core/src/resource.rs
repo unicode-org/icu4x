@@ -274,32 +274,36 @@ impl fmt::Display for ResourceOptions {
     }
 }
 
-impl writeable::Writeable for ResourceOptions {
+impl Writeable for ResourceOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         let mut initial = true;
-        for component in self.get_components().iter() {
-            if initial {
-                initial = false;
-            } else {
+        if let Some(variant) = &self.variant {
+            variant.write_to(sink)?;
+            initial = false;
+        }
+        if let Some(langid) = &self.langid {
+            if !initial {
                 sink.write_char('/')?;
             }
-            sink.write_str(component)?;
+            langid.write_to(sink)?;
         }
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = 0;
+    fn write_len(&self) -> LengthHint {
+        let mut length_hint = LengthHint::exact(0);
         let mut initial = true;
-        for component in self.get_components().iter() {
-            if initial {
-                initial = false;
-            } else {
-                result += 1;
-            }
-            result += component.len();
+        if let Some(variant) = &self.variant {
+            length_hint += variant.write_len();
+            initial = false;
         }
-        writeable::LengthHint::exact(result)
+        if let Some(langid) = &self.langid {
+            if !initial {
+                length_hint += 1;
+            }
+            length_hint += langid.write_len();
+        }
+        length_hint
     }
 }
 
