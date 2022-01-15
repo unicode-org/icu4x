@@ -5,17 +5,15 @@
 //! Resource paths and related types.
 
 use alloc::borrow::Cow;
-use alloc::format;
 use alloc::string::String;
 use alloc::string::ToString;
 
 use crate::error::{DataError, DataErrorKind};
-use core::borrow::Borrow;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::LanguageIdentifier;
-use tinystr::{TinyStr16, TinyStr4};
+use tinystr::{TinyStr4};
 use writeable::{LengthHint, Writeable};
 use crate::helpers;
 
@@ -394,33 +392,6 @@ impl ResourceOptions {
     }
 }
 
-/// The standard components of a [`ResourceOptions`] path.
-pub struct ResourceOptionsComponents {
-    components: [Option<Cow<'static, str>>; 2],
-}
-
-impl ResourceOptionsComponents {
-    pub fn iter(&self) -> impl Iterator<Item = &str> {
-        self.components
-            .iter()
-            .filter_map(|option| option.as_ref().map(|cow| cow.borrow()))
-    }
-}
-
-impl From<&ResourceOptions> for ResourceOptionsComponents {
-    fn from(resc_options: &ResourceOptions) -> Self {
-        Self {
-            components: [
-                resc_options.variant.as_ref().cloned(),
-                resc_options
-                    .langid
-                    .as_ref()
-                    .map(|s| Cow::Owned(s.to_string())),
-            ],
-        }
-    }
-}
-
 #[derive(Clone, PartialEq)]
 pub struct ResourcePath {
     pub key: ResourceKey,
@@ -461,7 +432,6 @@ impl writeable::Writeable for ResourcePath {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tinystr::tinystr4;
 
     struct KeyTestCase {
         pub resc_key: ResourceKey,

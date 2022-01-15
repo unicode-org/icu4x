@@ -164,11 +164,3 @@ pub use yoke;
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
-
-pub mod internal {
-    //! Macro dependencies; not intended to be used directly.
-    /// Re-export tinystr16 for macro resource_key!()
-    pub use tinystr::tinystr16;
-    /// Re-export tinystr4 for macro resource_key!()
-    pub use tinystr::tinystr4;
-}
