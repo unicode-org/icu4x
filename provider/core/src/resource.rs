@@ -75,47 +75,60 @@ impl writeable::Writeable for ResourceCategory {
     }
 }
 
-/// A category, subcategory, and version, used for requesting data from a
-/// [`DataProvider`](crate::DataProvider).
-///
-/// The fields in a [`ResourceKey`] should generally be known at compile time.
-///
-/// Use [`resource_key!`] as a shortcut to create resource keys in code.
-#[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
-pub struct ResourceKey {
-    pub category: ResourceCategory,
-    pub sub_category: TinyStr16,
-    pub version: u16,
-}
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+/// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
+#[repr(transparent)]
 pub struct ResourceKeyHash([u8; 4]);
 
 impl ResourceKeyHash {
-    pub const fn compute_from_str(path: &str) -> Self {
+    const fn compute_from_str(path: &str) -> Self {
         Self(helpers::fxhash_32(path.as_bytes()).to_le_bytes())
     }
 }
 
+/// The resource key used for loading data from an ICU4X data provider.
+///
+/// A resource key is tightly coupled with the code that uses it to load data at runtime.
+/// Executables can be searched for ResourceKey instances to produce optimized data files.
+/// Therefore, users should not generally create ResourceKey instances; they should instead use
+/// the ones exported by a component.
+#[derive(PartialEq, Eq, Copy, Clone)]
 #[repr(C)]
-pub struct ResourceKey2 {
+pub struct ResourceKey {
     path: &'static str,
     _tag0: [u8; 8],
     hash: ResourceKeyHash,
     _tag1: [u8; 2],
 }
 
-impl ResourceKey2 {
+impl ResourceKey {
+    /// Gets a human-readable representation of a [`ResourceKey`].
+    /// 
+    /// The human-readable path string always contains at least one '/', and it ends with '@'
+    /// followed by one or more digits. Paths do not contain characters other than lowercase
+    /// ASCII, '_', '/', and '@'.
+    /// 
+    /// Useful for reading and writing data to a file system.
     #[inline]
     pub const fn get_path(&self) -> &str {
         self.path
     }
 
+    /// Gets a machine-readable representation of a [`ResourceKey`].
+    ///
+    /// The machine-readable hash is 4 bytes and can be used as the key in a map.
+    ///
+    /// The hash is a 32-bit FxHash of the path, computed as if on a little-endian platform.
     #[inline]
     pub const fn get_hash(&self) -> ResourceKeyHash {
         self.hash
     }
 
+    /// Creates a new ResourceKey from a path, panicking if the path is invalid.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the syntax of the path is not valid.
     #[inline]
     pub const fn new(path: &'static str) -> Self {
         match Self::try_new(path) {
@@ -124,6 +137,7 @@ impl ResourceKey2 {
         }
     }
 
+    /// Creates a new ResourceKey from a path, returning an error if the path is invalid.
     #[inline]
     pub const fn try_new(path: &'static str) -> Result<Self, ()> {
         match Self::check_path_syntax(path) {
@@ -151,9 +165,9 @@ impl ResourceKey2 {
         while i < path_bytes.len() {
             let c = path_bytes[i];
             state = match (state, c) {
-                (0 | 1, b'a'..=b'z' | b'_') => 1,
+                (0 | 1, b'a'..=b'z' | b'0'..=b'9' | b'_') => 1,
                 (1, b'/') => 2,
-                (2 | 3, b'a'..=b'z' | b'_') => 3,
+                (2 | 3, b'a'..=b'z' | b'0'..=b'9' | b'_') => 3,
                 (3, b'/') => 2,
                 (3, b'@') => 4,
                 (4 | 5, b'0'..=b'9') => 5,
@@ -168,60 +182,25 @@ impl ResourceKey2 {
     }
 }
 
-#[macro_export]
-macro_rules! resource_key_2 {
-    ($path_without_version:literal, $version:tt) => {
-        // $crate::ResourceKey2 {
-        ResourceKey2::new(concat!($path_without_version, "@", stringify!($version)))
-    };
-}
-
 #[test]
-fn test_resource_key_2() {
-    const KEY: ResourceKey2 = resource_key_2!("decimal/symbols", 1);
-    assert_eq!(KEY.get_path(), "decimal/symbols@1");
-}
+fn test_path_syntax() {
+    // Valid keys:
+    assert!(matches!(ResourceKey::try_new("hello/world@1"), Ok(_)));
+    assert!(matches!(ResourceKey::try_new("hello/world/foo@1"), Ok(_)));
+    assert!(matches!(ResourceKey::try_new("hello/world@999"), Ok(_)));
+    assert!(matches!(ResourceKey::try_new("hello_world/foo@1"), Ok(_)));
+    assert!(matches!(ResourceKey::try_new("hello_458/world@1"), Ok(_)));
 
-/// Shortcut to construct a const resource identifier.
-///
-/// # Examples
-///
-/// Create a private-use ResourceKey:
-///
-/// ```
-/// use icu_provider::prelude::*;
-///
-/// const MY_PRIVATE_USE_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
-/// assert_eq!("x-foo/bar@1", format!("{}", MY_PRIVATE_USE_KEY));
-/// ```
-///
-/// Create a ResourceKey for a specific [`ResourceCategory`] (for ICU4X library code only):
-///
-/// ```
-/// use icu_provider::prelude::*;
-///
-/// const MY_PRIVATE_USE_KEY: ResourceKey = icu_provider::resource_key!(Plurals, "ordinal", 1);
-/// assert_eq!("plurals/ordinal@1", format!("{}", MY_PRIVATE_USE_KEY));
-/// ```
-#[macro_export]
-macro_rules! resource_key {
-    ($category:ident, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::$category, $sub_category, $version)
-    };
-    (x, $pu:literal, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!(
-            $crate::ResourceCategory::PrivateUse($crate::internal::tinystr4!($pu)),
-            $sub_category,
-            $version
-        )
-    };
-    ($category:expr, $sub_category:literal, $version:tt) => {
-        $crate::ResourceKey {
-            category: $category,
-            sub_category: $crate::internal::tinystr16!($sub_category),
-            version: $version,
-        }
-    };
+    // No slash:
+    assert!(matches!(ResourceKey::try_new("hello_world@1"), Err(_)));
+
+    // No version:
+    assert!(matches!(ResourceKey::try_new("hello/world"), Err(_)));
+    assert!(matches!(ResourceKey::try_new("hello/world@"), Err(_)));
+    assert!(matches!(ResourceKey::try_new("hello/world@foo"), Err(_)));
+
+    // Invalid characters:
+    assert!(matches!(ResourceKey::try_new("你好/世界@1"), Err(_)));
 }
 
 impl fmt::Debug for ResourceKey {
@@ -241,19 +220,11 @@ impl fmt::Display for ResourceKey {
 
 impl Writeable for ResourceKey {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(&self.category.as_str())?;
-        sink.write_char('/')?;
-        sink.write_str(self.sub_category.as_str())?;
-        sink.write_char('@')?;
-        self.version.write_to(sink)?;
-        Ok(())
+        self.path.write_to(sink)
     }
 
     fn write_len(&self) -> LengthHint {
-        LengthHint::exact(2)
-            + self.category.as_str().len()
-            + self.sub_category.len()
-            + self.version.write_len()
+        self.path.write_len()
     }
 }
 
@@ -267,15 +238,18 @@ impl ResourceKey {
     /// use icu_provider::prelude::*;
     ///
     /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
-    /// let components = resc_key.get_components();
+    /// let components: Vec<String> = resc_key
+    ///     .iter_components()
+    ///     .map(|x| x.into_owned())
+    ///     .collect();
     ///
     /// assert_eq!(
     ///     ["core", "helloworld@1"],
-    ///     components.iter().collect::<Vec<&str>>()[..]
+    ///     components[..]
     /// );
     /// ```
-    pub fn get_components(&self) -> ResourceKeyComponents {
-        self.into()
+    pub fn iter_components(&self) -> impl Iterator<Item = Cow<str>> {
+        self.get_path().split('/').map(|s| Cow::Borrowed(s))
     }
 
     /// Returns [`Ok`] if this data key matches the argument, or the appropriate error.
@@ -287,9 +261,9 @@ impl ResourceKey {
     /// ```
     /// use icu_provider::prelude::*;
     ///
-    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
-    /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!(x, "foo", "baz", 1);
-    /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!(x, "bar", "baz", 1);
+    /// const FOO_BAR: ResourceKey = ResourceKey::new("foo/bar@1");
+    /// const FOO_BAZ: ResourceKey = ResourceKey::new("foo/baz@1");
+    /// const BAR_BAZ: ResourceKey = ResourceKey::new("bar/baz@1");
     ///
     /// assert!(matches!(
     ///     FOO_BAR.match_key(FOO_BAR),
@@ -315,33 +289,6 @@ impl ResourceKey {
             Ok(())
         } else {
             Err(DataErrorKind::MissingResourceKey.with_key(key))
-        }
-    }
-}
-
-/// The standard components of a [`ResourceKey`] path.
-pub struct ResourceKeyComponents {
-    components: [Cow<'static, str>; 2],
-}
-
-impl ResourceKeyComponents {
-    pub fn iter(&self) -> impl Iterator<Item = &str> {
-        self.components.iter().map(|cow| cow.borrow())
-    }
-}
-
-impl From<&ResourceKey> for ResourceKeyComponents {
-    fn from(resc_key: &ResourceKey) -> Self {
-        Self {
-            components: [
-                resc_key.category.as_str(),
-                // TODO: Evalute the size penalty of this format!
-                Cow::Owned(format!(
-                    "{}@{}",
-                    resc_key.sub_category.as_str(),
-                    resc_key.version
-                )),
-            ],
         }
     }
 }
@@ -372,13 +319,13 @@ impl fmt::Display for ResourceOptions {
 impl writeable::Writeable for ResourceOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         let mut initial = true;
-        for component in self.get_components().iter() {
+        for component in self.iter_components() {
             if initial {
                 initial = false;
             } else {
                 sink.write_char('/')?;
             }
-            sink.write_str(component)?;
+            sink.write_str(&*component)?;
         }
         Ok(())
     }
@@ -386,7 +333,7 @@ impl writeable::Writeable for ResourceOptions {
     fn write_len(&self) -> writeable::LengthHint {
         let mut result = 0;
         let mut initial = true;
-        for component in self.get_components().iter() {
+        for component in self.iter_components() {
             if initial {
                 initial = false;
             } else {
@@ -423,15 +370,22 @@ impl ResourceOptions {
     ///     variant: Some(Cow::Borrowed("GBP")),
     ///     langid: Some(langid!("pt_BR")),
     /// };
-    /// let components = resc_options.get_components();
+    /// let components: Vec<String> = resc_options
+    ///     .iter_components()
+    ///     .map(|s| s.into_owned())
+    ///     .collect();
     ///
     /// assert_eq!(
     ///     ["GBP", "pt-BR"],
-    ///     components.iter().collect::<Vec<&str>>()[..]
+    ///     components[..]
     /// );
     /// ```
-    pub fn get_components(&self) -> ResourceOptionsComponents {
-        self.into()
+    pub fn iter_components(&self) -> impl Iterator<Item = Cow<str>> {
+        let components_array: [Option<Cow<str>>; 2] = [
+            self.variant.clone(),
+            self.langid.as_ref().map(|s| Cow::Owned(s.to_string())),
+        ];
+        IntoIterator::into_iter(components_array).filter_map(|x| x)
     }
 
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
@@ -514,26 +468,18 @@ mod tests {
         pub expected: &'static str,
     }
 
-    fn get_key_test_cases() -> [KeyTestCase; 4] {
+    fn get_key_test_cases() -> [KeyTestCase; 3] {
         [
             KeyTestCase {
-                resc_key: resource_key!(Core, "cardinal", 1),
+                resc_key: ResourceKey::new("core/cardinal@1"),
                 expected: "core/cardinal@1",
             },
             KeyTestCase {
-                resc_key: ResourceKey {
-                    category: ResourceCategory::PrivateUse(tinystr4!("priv")),
-                    sub_category: tinystr::tinystr16!("cardinal"),
-                    version: 1,
-                },
-                expected: "x-priv/cardinal@1",
-            },
-            KeyTestCase {
-                resc_key: resource_key!(Core, "maxlengthsubcatg", 1),
+                resc_key: ResourceKey::new("core/maxlengthsubcatg@1"),
                 expected: "core/maxlengthsubcatg@1",
             },
             KeyTestCase {
-                resc_key: resource_key!(Core, "cardinal", 65535),
+                resc_key: ResourceKey::new("core/cardinal@65535"),
                 expected: "core/cardinal@65535",
             },
         ]
@@ -547,9 +493,8 @@ mod tests {
             assert_eq!(
                 cas.expected,
                 cas.resc_key
-                    .get_components()
-                    .iter()
-                    .collect::<Vec<&str>>()
+                    .iter_components()
+                    .collect::<Vec<Cow<str>>>()
                     .join("/")
             );
         }
@@ -595,9 +540,8 @@ mod tests {
             assert_eq!(
                 cas.expected,
                 cas.resc_options
-                    .get_components()
-                    .iter()
-                    .collect::<Vec<&str>>()
+                    .iter_components()
+                    .collect::<Vec<Cow<str>>>()
                     .join("/")
             );
         }

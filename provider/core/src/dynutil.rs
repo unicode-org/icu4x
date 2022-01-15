@@ -65,7 +65,7 @@ where
 /// use icu_provider::prelude::*;
 /// use icu_provider::marker::CowStrMarker;
 /// use std::borrow::Cow;
-/// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
+/// const DEMO_KEY: ResourceKey = ResourceKey::new("foo/bar@1");
 ///
 /// // A small DataProvider that returns owned strings
 /// struct MyProvider(pub String);

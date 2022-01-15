@@ -21,7 +21,7 @@ use crate::prelude::*;
 /// };
 ///
 /// // A placeholder key to use to serve the data struct
-/// const SAMPLE_KEY: ResourceKey = icu_provider::resource_key!(x, "xyz", "example", 1);
+/// const SAMPLE_KEY: ResourceKey = ResourceKey::new("xyz/example@1");
 ///
 /// let provider = AnyPayloadProvider {
 ///     key: SAMPLE_KEY,
