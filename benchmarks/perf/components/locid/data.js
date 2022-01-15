@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642133282069,
+  "lastUpdate": 1642206359002,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21233,6 +21233,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5148,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "61c588988256a9be8894714906dc4a89b69c39af",
+          "message": "Bump Rust toolchain to 1.58 (#1509)",
+          "timestamp": "2022-01-14T16:17:04-08:00",
+          "tree_id": "6380320e7dae25349ba323079c27c89dc21ca44f",
+          "url": "https://github.com/unicode-org/icu4x/commit/61c588988256a9be8894714906dc4a89b69c39af"
+        },
+        "date": 1642206348746,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2195,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4497,
+            "range": "± 259",
             "unit": "ns/iter"
           }
         ]
