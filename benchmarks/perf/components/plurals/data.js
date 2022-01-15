@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642206405326,
+  "lastUpdate": 1642229227216,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24107,6 +24107,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18596,
             "range": "± 1146",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a0c80db85e5157535a2f4fc591bc0e93a653fd16",
+          "message": "Improve Writeable impl for ResourceOptions (#1510)",
+          "timestamp": "2022-01-15T00:37:37-06:00",
+          "tree_id": "2b7d7231d3b1386be7690942f8ed5d21b8e83617",
+          "url": "https://github.com/unicode-org/icu4x/commit/a0c80db85e5157535a2f4fc591bc0e93a653fd16"
+        },
+        "date": 1642229217730,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1049,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6180,
+            "range": "± 288",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18495,
+            "range": "± 1507",
             "unit": "ns/iter"
           }
         ]
