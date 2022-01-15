@@ -255,7 +255,7 @@ impl From<&ResourceKey> for ResourceKeyComponents {
 /// [`DataProvider`](crate::DataProvider).
 ///
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Default)]
 pub struct ResourceOptions {
     // TODO: Consider making multiple variant fields.
     pub variant: Option<Cow<'static, str>>,
@@ -300,15 +300,6 @@ impl writeable::Writeable for ResourceOptions {
             result += component.len();
         }
         writeable::LengthHint::exact(result)
-    }
-}
-
-impl Default for ResourceOptions {
-    fn default() -> Self {
-        Self {
-            variant: None,
-            langid: None,
-        }
     }
 }
 

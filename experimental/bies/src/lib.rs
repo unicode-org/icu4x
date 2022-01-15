@@ -54,7 +54,7 @@ use std::fmt;
 use strum::EnumIter;
 use writeable::{LengthHint, Writeable};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub struct Breakpoints {
     /// An ascending list of breakpoints. All elements must be between 0 and length exclusive.
     pub breakpoints: Vec<usize>,
@@ -90,15 +90,6 @@ pub enum Algorithm {
 
     /// Algorithm 3: exhaustively check all combinations of breakpoints to find the highest true probability
     Alg3a,
-}
-
-impl Default for Breakpoints {
-    fn default() -> Self {
-        Self {
-            breakpoints: vec![],
-            length: 0,
-        }
-    }
 }
 
 impl Breakpoints {
