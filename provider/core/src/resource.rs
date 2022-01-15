@@ -17,6 +17,7 @@ use core::fmt::Write;
 use icu_locid::LanguageIdentifier;
 use tinystr::{TinyStr16, TinyStr4};
 use writeable::{LengthHint, Writeable};
+use crate::helpers;
 
 /// A top-level collection of related resource keys.
 #[non_exhaustive]
@@ -85,6 +86,100 @@ pub struct ResourceKey {
     pub category: ResourceCategory,
     pub sub_category: TinyStr16,
     pub version: u16,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct ResourceKeyHash([u8; 4]);
+
+impl ResourceKeyHash {
+    pub const fn compute_from_str(path: &str) -> Self {
+        Self(helpers::fxhash_32(path.as_bytes()).to_le_bytes())
+    }
+}
+
+#[repr(C)]
+pub struct ResourceKey2 {
+    path: &'static str,
+    _tag0: [u8; 8],
+    hash: ResourceKeyHash,
+    _tag1: [u8; 2],
+}
+
+impl ResourceKey2 {
+    #[inline]
+    pub const fn get_path(&self) -> &str {
+        self.path
+    }
+
+    #[inline]
+    pub const fn get_hash(&self) -> ResourceKeyHash {
+        self.hash
+    }
+
+    #[inline]
+    pub const fn new(path: &'static str) -> Self {
+        match Self::try_new(path) {
+            Ok(v) => v,
+            Err(_) => panic!("{}", path) // Invalid syntax!
+        }
+    }
+
+    #[inline]
+    pub const fn try_new(path: &'static str) -> Result<Self, ()> {
+        match Self::check_path_syntax(path) {
+            Ok(_) => Ok(Self {
+                path,
+                _tag0: *b"ICU4XK[\x02",
+                hash: ResourceKeyHash::compute_from_str(path),
+                _tag1: *b"\x03]",
+            }),
+            Err(_) => Err(())
+        }
+    }
+
+    const fn check_path_syntax(path: &str) -> Result<(), ()> {
+        // Approximate regex: \w+(/\w+)*@\d+
+        // State 0 = start of string
+        // State 1 = after first character
+        // State 2 = after a slash
+        // State 3 = after a character after a slash
+        // State 4 = after @
+        // State 5 = after a digit after @
+        let mut i = 0;
+        let mut state = 0;
+        let path_bytes = path.as_bytes();
+        while i < path_bytes.len() {
+            let c = path_bytes[i];
+            state = match (state, c) {
+                (0 | 1, b'a'..=b'z' | b'_') => 1,
+                (1, b'/') => 2,
+                (2 | 3, b'a'..=b'z' | b'_') => 3,
+                (3, b'/') => 2,
+                (3, b'@') => 4,
+                (4 | 5, b'0'..=b'9') => 5,
+                _ => return Err(())
+            };
+            i += 1;
+        }
+        if state != 5 {
+            return Err(())
+        }
+        Ok(())
+    }
+}
+
+#[macro_export]
+macro_rules! resource_key_2 {
+    ($path_without_version:literal, $version:tt) => {
+        // $crate::ResourceKey2 {
+        ResourceKey2::new(concat!($path_without_version, "@", stringify!($version)))
+    };
+}
+
+#[test]
+fn test_resource_key_2() {
+    const KEY: ResourceKey2 = resource_key_2!("decimal/symbols", 1);
+    assert_eq!(KEY.get_path(), "decimal/symbols@1");
 }
 
 /// Shortcut to construct a const resource identifier.
