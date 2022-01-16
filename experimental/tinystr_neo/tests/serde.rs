@@ -4,7 +4,7 @@ use tinystr_neo::*;
 // https://github.com/zbraniecki/tinystr/blob/4e4eab55dd6bded7f29a18b41452c506c461716c/tests/serde.rs
 
 macro_rules! test_roundtrip {
-    ($f:ident, $n:literal, $val:expr, $bytes:expr) => {
+    ($f:ident, $n:literal, $val:expr) => {
         #[test]
         fn $f() {
             let tiny: TinyAsciiStr<$n> = $val.parse().unwrap();
@@ -27,32 +27,25 @@ macro_rules! test_roundtrip {
     };
 }
 
-test_roundtrip!(test_roundtrip4_1, 4, "en", [101, 110, 0, 0]);
-test_roundtrip!(test_roundtrip4_2, 4, "Latn", [76, 97, 116, 110]);
+test_roundtrip!(test_roundtrip4_1, 4, "en");
+test_roundtrip!(test_roundtrip4_2, 4, "Latn");
 test_roundtrip!(
     test_roundtrip8,
     8,
-    "calendar",
-    [99, 97, 108, 101, 110, 100, 97, 114]
+    "calendar"
 );
 test_roundtrip!(
     test_roundtrip16,
     16,
-    "verylongstring",
-    [118, 101, 114, 121, 108, 111, 110, 103, 115, 116, 114, 105, 110, 103, 0, 0]
+    "verylongstring"
 );
 test_roundtrip!(
     test_roundtrip10,
     11,
-    "shortstring",
-    [115, 104, 111, 114, 116, 115, 116, 114, 105, 110, 103]
+    "shortstring"
 );
 test_roundtrip!(
     test_roundtrip30,
     24,
-    "veryveryverylongstring",
-    [
-        118, 101, 114, 121, 118, 101, 114, 121, 118, 101, 114, 121, 108, 111, 110, 103, 115, 116,
-        114, 105, 110, 103, 0, 0
-    ]
+    "veryveryverylongstring"
 );
