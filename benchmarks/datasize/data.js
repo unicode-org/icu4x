@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642228753900,
+  "lastUpdate": 1642361172482,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7283,6 +7283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a0c80db85e5157535a2f4fc591bc0e93a653fd16"
         },
         "date": 1642228743800,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d1e9add0a88b06e73c025bb972e2485b4fd269d9",
+          "message": "Add handling of leading zeroes to truncate_left() (#1507)\n\n* Add handling of leading zeroes to truncate_left()\n\n* rm extra condition",
+          "timestamp": "2022-01-16T11:24:33-08:00",
+          "tree_id": "4deebba894862cb09892d9ff8ce33877d35d7ac2",
+          "url": "https://github.com/unicode-org/icu4x/commit/d1e9add0a88b06e73c025bb972e2485b4fd269d9"
+        },
+        "date": 1642361161101,
         "tool": "ndjson",
         "benches": [
           {
