@@ -476,9 +476,6 @@ impl FixedDecimal {
             let _ = self.digits.drain(0..extra_zeroes).count();
             self.magnitude = magnitude - extra_zeroes as i16;
             self.upper_magnitude = positive_magnitude;
-            if self.lower_magnitude > self.magnitude {
-                self.lower_magnitude = self.magnitude;
-            }
         }
         #[cfg(debug_assertions)]
         self.check_invariants();
