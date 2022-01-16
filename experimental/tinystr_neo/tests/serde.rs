@@ -29,23 +29,7 @@ macro_rules! test_roundtrip {
 
 test_roundtrip!(test_roundtrip4_1, 4, "en");
 test_roundtrip!(test_roundtrip4_2, 4, "Latn");
-test_roundtrip!(
-    test_roundtrip8,
-    8,
-    "calendar"
-);
-test_roundtrip!(
-    test_roundtrip16,
-    16,
-    "verylongstring"
-);
-test_roundtrip!(
-    test_roundtrip10,
-    11,
-    "shortstring"
-);
-test_roundtrip!(
-    test_roundtrip30,
-    24,
-    "veryveryverylongstring"
-);
+test_roundtrip!(test_roundtrip8, 8, "calendar");
+test_roundtrip!(test_roundtrip16, 16, "verylongstring");
+test_roundtrip!(test_roundtrip10, 11, "shortstring");
+test_roundtrip!(test_roundtrip30, 24, "veryveryverylongstring");
