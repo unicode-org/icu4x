@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642361647789,
+  "lastUpdate": 1642461714817,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24191,6 +24191,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 19000,
             "range": "± 505",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "521ac66e80c6ddade400d9a8c2a2b626dd535285",
+          "message": "Adding `Bakeable` trait and derive (#1448)",
+          "timestamp": "2022-01-18T00:10:51+01:00",
+          "tree_id": "629ae38b30e04bed0c4d10848d33e02eae3b026e",
+          "url": "https://github.com/unicode-org/icu4x/commit/521ac66e80c6ddade400d9a8c2a2b626dd535285"
+        },
+        "date": 1642461703992,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 957,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6566,
+            "range": "± 349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18050,
+            "range": "± 572",
             "unit": "ns/iter"
           }
         ]
