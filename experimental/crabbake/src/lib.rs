@@ -100,7 +100,7 @@ where
     T: Bakeable,
 {
     fn bake(&self) -> TokenStream {
-        let t = <T as Bakeable>::bake(&*self);
+        let t = <T as Bakeable>::bake(*self);
         quote! {
             &#t
         }
