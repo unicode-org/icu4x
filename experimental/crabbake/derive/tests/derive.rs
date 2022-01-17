@@ -47,7 +47,7 @@ fn test_cow_example() {
         CowExample {
             x: 17,
             y: "foo",
-            z: Cow::Borrowed(&"bar"),
+            z: Cow::Borrowed("bar"),
             w: Cow::Borrowed(&[1, 2, 3]),
         }
         .bake()
