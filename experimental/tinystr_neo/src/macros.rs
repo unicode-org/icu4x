@@ -6,8 +6,13 @@
 macro_rules! tinystr {
     ($n:literal, $s:literal) => {{
         // Force it into a const context; otherwise it may get evaluated at runtime instead.
-        const TINYSTR_MACRO_CONST: $crate::TinyAsciiStr<$n> =
-            $crate::TinyAsciiStr::from_str_panicky($s);
+        const TINYSTR_MACRO_CONST: $crate::TinyAsciiStr<$n> = {
+            match $crate::TinyAsciiStr::from_bytes($s.as_bytes()) {
+                Ok(s) => s,
+                // Cannot format the error since formatting isn't const yet
+                Err(_) => panic!(concat!("Failed to construct tinystr from ", $s)),
+            }
+        };
         TINYSTR_MACRO_CONST
     }};
 }
