@@ -53,6 +53,10 @@ impl<const N: usize> TinyAsciiStr<N> {
         self.bytes.iter().position(|x| *x == 0).unwrap_or(N)
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.bytes[0] == 0
+    }
+
     pub fn as_bytes(&self) -> &[u8] {
         &self.bytes[0..self.len()]
     }
@@ -61,6 +65,9 @@ impl<const N: usize> TinyAsciiStr<N> {
         &self.bytes
     }
 
+    /// # Safety
+    /// Must be called with a bytes array made of valid ASCII bytes, with no null bytes
+    /// between ASCII characters
     pub const unsafe fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
         Self { bytes }
     }
@@ -69,7 +76,7 @@ impl<const N: usize> TinyAsciiStr<N> {
 impl<const N: usize> Deref for TinyAsciiStr<N> {
     type Target = str;
     fn deref(&self) -> &str {
-        unsafe { str::from_utf8_unchecked(&self.as_bytes()) }
+        unsafe { str::from_utf8_unchecked(self.as_bytes()) }
     }
 }
 
