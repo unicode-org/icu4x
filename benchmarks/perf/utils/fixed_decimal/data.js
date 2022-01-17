@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642361511853,
+  "lastUpdate": 1642461588747,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17219,6 +17219,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 92063,
             "range": "± 6835",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "521ac66e80c6ddade400d9a8c2a2b626dd535285",
+          "message": "Adding `Bakeable` trait and derive (#1448)",
+          "timestamp": "2022-01-18T00:10:51+01:00",
+          "tree_id": "629ae38b30e04bed0c4d10848d33e02eae3b026e",
+          "url": "https://github.com/unicode-org/icu4x/commit/521ac66e80c6ddade400d9a8c2a2b626dd535285"
+        },
+        "date": 1642461578318,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 114450,
+            "range": "± 6093",
             "unit": "ns/iter"
           }
         ]
