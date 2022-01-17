@@ -41,6 +41,14 @@ impl<const N: usize> TinyAsciiStr<N> {
         Self::from_bytes(s.as_bytes())
     }
 
+    pub const fn from_str_panicky(s: &str) -> Self {
+        match Self::from_bytes(s.as_bytes()) {
+            Ok(s) => s,
+            // Cannot format the error since formatting isn't const yet
+            Err(_) => panic!("Failed to construct tinystr"),
+        }
+    }
+
     pub fn len(&self) -> usize {
         self.bytes.iter().position(|x| *x == 0).unwrap_or(N)
     }
