@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642541977347,
+  "lastUpdate": 1642545013443,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17945,6 +17945,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 281511,
             "range": "± 785",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6cc59be97eee8512b4e75f02817ef78539174a86",
+          "message": "Add sentence segmenter that is a part of UAX29. (#1500)",
+          "timestamp": "2022-01-18T14:20:06-08:00",
+          "tree_id": "e0efa017015bdedb6b45babbac85074fb1f03c4a",
+          "url": "https://github.com/unicode-org/icu4x/commit/6cc59be97eee8512b4e75f02817ef78539174a86"
+        },
+        "date": 1642545001453,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 107293,
+            "range": "± 5993",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1098229,
+            "range": "± 50202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 391880,
+            "range": "± 38532",
             "unit": "ns/iter"
           }
         ]
