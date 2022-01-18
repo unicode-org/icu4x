@@ -5,6 +5,7 @@
 use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
+use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::*;
@@ -56,20 +57,16 @@ pub struct List<'a, 'b, W> {
 }
 
 impl<W: Writeable> Writeable for List<'_, '_, W> {
-    fn write_to_fmt<V: WriteFormatted + ?Sized>(&self, sink: &mut V) -> core::fmt::Result {
+    fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
-            ($lit:ident) => {{
-                sink.push_field(Field("literal"))?;
-                sink.write_str($lit)?;
-                sink.pop_field()
-            }};
+            ($lit:ident) => {
+                sink.with_part(Field("literal"), |l| l.write_str($lit))
+            };
         }
         macro_rules! value {
-            ($val:expr) => {{
-                sink.push_field(Field("element"))?;
-                $val.write_to_fmt(sink)?;
-                sink.pop_field()
-            }};
+            ($val:expr) => {
+                sink.with_part(Field("element"), |e| $val.write_to_parts(e))
+            };
         }
 
         match self.values.len() {

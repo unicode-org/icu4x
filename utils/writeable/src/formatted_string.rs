@@ -103,44 +103,18 @@ impl Write for FormattedString {
     }
 }
 
-impl<'a> PartsWrite<'a> for FormattedString {
-    type SubPartsWrite = FormattedStringPart<'a>;
+impl PartsWrite for FormattedString {
+    type SubPartsWrite = FormattedString;
 
-    fn with_part(&'a mut self, part: Field) -> Self::SubPartsWrite {
-        FormattedStringPart::new(self, part)
-    }
-}
-
-pub struct FormattedStringPart<'a>(&'a mut FormattedString);
-
-impl<'a> FormattedStringPart<'a> {
-    fn new(fmt_str: &'a mut FormattedString, part: Field) -> Self {
-        fmt_str.next_annotation.push((LocationInPart::Begin, part));
-        Self(fmt_str)
-    }
-}
-
-impl<'a> Drop for FormattedStringPart<'a> {
-    fn drop(&mut self) {
-        self.0.next_annotation.pop();
-    }
-}
-
-impl<'a> Write for FormattedStringPart<'a> {
-    fn write_str(&mut self, s: &str) -> fmt::Result {
-        self.0.write_str(s)
-    }
-
-    fn write_char(&mut self, c: char) -> fmt::Result {
-        self.0.write_char(c)
-    }
-}
-
-impl<'a> PartsWrite<'a> for FormattedStringPart<'a> {
-    type SubPartsWrite = FormattedStringPart<'a>;
-
-    fn with_part(&'a mut self, part: Field) -> Self::SubPartsWrite {
-        FormattedStringPart::new(self.0, part)
+    fn with_part(
+        &mut self,
+        part: Field,
+        mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+    ) -> fmt::Result {
+        self.next_annotation.push((LocationInPart::Begin, part));
+        f(self)?;
+        self.next_annotation.pop();
+        Ok(())
     }
 }
 
@@ -152,26 +126,15 @@ mod test {
     fn test() {
         struct TestWriteable;
         impl Writeable for TestWriteable {
-            fn write_to_parts<'a, W: PartsWrite<'a> + ?Sized>(&self, sink: &'a mut W) -> fmt::Result {
-                {                
-                    let mut greeting = sink.with_part(Field("greeting"));
-                    {
-                        let mut word = greeting.with_part(Field("word"));
-                        word.write_str("hello")?;
-                    }
-                    greeting.write_str(" ")?;
-                    {
-                        let mut number = greeting.with_part(Field("number"));
-                        360.write_to(&mut number)?;
-                    }
-                }
+            fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+                sink.with_part(Field("greeting"), |g| {
+                    g.with_part(Field("word"), |w| w.write_str("hello"))?;
+                    g.write_str(" ")?;
+                    g.with_part(Field("number"), |n| 360.write_to(n))
+                })?;
                 sink.write_char(' ')?;
-                {
-                    let mut emoji = sink.with_part(Field("emoji"));
-                    emoji.write_char('😅')
-                }
+                sink.with_part(Field("emoji"), |e| e.write_char('😅'))
             }
-            
         }
 
         let materialized = FormattedString::from_writeable(&TestWriteable).unwrap();

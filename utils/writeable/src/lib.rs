@@ -127,9 +127,14 @@ impl LengthHint {
 pub struct Field(pub &'static str);
 
 /// A sink that supports annotating parts of the string with fields.
-pub trait PartsWrite<'a>: fmt::Write {
-    type SubPartsWrite: PartsWrite<'a> + 'a;
-    fn with_part(&'a mut self, part: Field) -> Self::SubPartsWrite;
+pub trait PartsWrite: fmt::Write {
+    type SubPartsWrite: PartsWrite + ?Sized;
+
+    fn with_part(
+        &mut self,
+        part: Field,
+        f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+    ) -> fmt::Result;
 }
 
 /// Writeable is an alternative to std::fmt::Display with the addition of a length function.
@@ -138,8 +143,8 @@ pub trait Writeable {
     /// The default implementation delegates to write_to_parts, and discards any
     /// field annotations.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        struct CoreWriteAsPartsWrite<'a, W: fmt::Write + ?Sized>(&'a mut W);
-        impl<'a, W: fmt::Write + ?Sized> fmt::Write for CoreWriteAsPartsWrite<'a, W> {
+        struct CoreWriteAsPartsWrite<W: fmt::Write + ?Sized>(W);
+        impl<W: fmt::Write + ?Sized> fmt::Write for CoreWriteAsPartsWrite<W> {
             fn write_str(&mut self, s: &str) -> fmt::Result {
                 self.0.write_str(s)
             }
@@ -149,11 +154,15 @@ pub trait Writeable {
             }
         }
 
-        impl<'a, W: fmt::Write + ?Sized> PartsWrite<'a> for CoreWriteAsPartsWrite<'a, W> {
-            type SubPartsWrite = CoreWriteAsPartsWrite<'a, W>;
+        impl<W: fmt::Write + ?Sized> PartsWrite for CoreWriteAsPartsWrite<W> {
+            type SubPartsWrite = CoreWriteAsPartsWrite<W>;
 
-            fn with_part(&'a mut self, _part: Field) -> Self::SubPartsWrite {
-                CoreWriteAsPartsWrite(self.0)
+            fn with_part(
+                &mut self,
+                _part: Field,
+                mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+            ) -> fmt::Result {
+                f(self)
             }
         }
 
@@ -163,7 +172,7 @@ pub trait Writeable {
     /// Write bytes and field annotations to the given sink. Errors from the
     /// sink are bubbled up. The default implementation delegates to write_to,
     /// and doesn't produce any field annotations.
-    fn write_to_parts<'a, S: PartsWrite<'a> + ?Sized>(&self, sink: &'a mut S) -> fmt::Result {
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
         self.write_to(sink)
     }
 
@@ -236,14 +245,12 @@ pub trait Writeable {
 /// # use writeable::Field;
 /// # use writeable::assert_writeable_eq;
 /// # use writeable::assert_writeable_fmt_eq;
-/// # use std::fmt;
+/// # use std::fmt::{self, Write};
 ///
 /// struct Demo;
 /// impl Writeable for Demo {
 ///     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
-///         sink.push_field(Field("word"))?;
-///         sink.write_str("foo")?;
-///         sink.pop_field()
+///         sink.with_part(Field("word"), |w| w.write_str("foo"))
 ///     }
 ///     fn write_len(&self) -> LengthHint {
 ///         LengthHint::exact(3)
