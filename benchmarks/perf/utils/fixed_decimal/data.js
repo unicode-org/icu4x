@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642461588747,
+  "lastUpdate": 1642529453345,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17249,6 +17249,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 114450,
             "range": "± 6093",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30a3f07f203328ab54d54aade2e64fcac4b9730c",
+          "message": "Add tinystr-neo to experimental/ (#1508)\n\n* Add tinystr_neo experimental crate\r\n\r\n* Basic TinyAsciiStr type\r\n\r\n* Add serde impls\r\n\r\n* Add tests for serde\r\n\r\n* fix var name\r\n\r\n* rm bytes\r\n\r\n* fmt\r\n\r\n* tidy\r\n\r\n* Make macro panic at compile time\r\n\r\n* clippy\r\n\r\n* move panic\r\n\r\n* clip",
+          "timestamp": "2022-01-18T10:02:35-08:00",
+          "tree_id": "0dc986cb8a4646323a529c63a6bdff44f7b54404",
+          "url": "https://github.com/unicode-org/icu4x/commit/30a3f07f203328ab54d54aade2e64fcac4b9730c"
+        },
+        "date": 1642529444434,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 109526,
+            "range": "± 268",
             "unit": "ns/iter"
           }
         ]
