@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642529607840,
+  "lastUpdate": 1642542023668,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24275,6 +24275,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16971,
             "range": "± 1080",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7c1a36c74a8ded45d533ff5d7d6919855fa05e3b",
+          "message": "Fix cargo check --all-targets --no-default-features (#1514)",
+          "timestamp": "2022-01-18T13:30:49-08:00",
+          "tree_id": "d026ff0eaaed6a7aba28c35ef772f4d7905fbb86",
+          "url": "https://github.com/unicode-org/icu4x/commit/7c1a36c74a8ded45d533ff5d7d6919855fa05e3b"
+        },
+        "date": 1642542014918,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 934,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5386,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16337,
+            "range": "± 90",
             "unit": "ns/iter"
           }
         ]
