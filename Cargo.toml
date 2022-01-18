@@ -23,6 +23,7 @@ members = [
     "experimental/list_formatter",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
+    "experimental/tinystr_neo",
     "ffi/diplomat",
     "ffi/ecma402",
     "provider/blob",
