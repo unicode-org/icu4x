@@ -97,10 +97,9 @@
 //!
 //! ```rust
 //! use icu_segmenter::SentenceBreakIteratorLatin1;
-//! let s = "Hello World";
-//! let iter = SentenceBreakIteratorLatin1::new(s.as_bytes());
+//! let iter = SentenceBreakIteratorLatin1::new(b"Hello World");
 //! let result: Vec<usize> = iter.collect();
-//! println!("{:?}", result);
+//! assert_eq!(&result, &[0, 11]);
 //! ```
 //!
 //! # Generating property table

@@ -32,7 +32,7 @@ struct SegmenterProperty {
     // If left and right are defined, this define is combined state.
     left: Option<String>,
     right: Option<String>,
-    // This combine state is intermediate match rule.
+    // This combine state is an intermediate match rule.
     interm_break_state: Option<bool>,
 }
 
@@ -72,7 +72,9 @@ const BREAK_RULE: i8 = -128;
 const UNKNOWN_RULE: i8 = -127;
 const NOT_MATCH_RULE: i8 = -2;
 const KEEP_RULE: i8 = -1;
-const INTERMEDIATE_MATCH_RULE: i8 = 64; // match rule and may have other rules. This is mask bit.
+// This is a mask bit chosen sufficiently large than all other concrete states.
+// If a break state contains this bit, we have to look ahead one more character.
+const INTERMEDIATE_MATCH_RULE: i8 = 64;
 
 // UAX29 defines break property until U+0xE01EF
 const CODEPOINT_TABLE_LEN: usize = 0xe0400;

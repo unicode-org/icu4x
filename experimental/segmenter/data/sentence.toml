@@ -1,4 +1,4 @@
-# These word boundary rules are based on UAX #29, Unicode Version 14.0.0.
+# These sentence boundary rules are based on UAX #29, Unicode Version 14.0.0.
 # https://www.unicode.org/reports/tr29/tr29-39.html
 
 segmenter_type = "sentence"
@@ -366,11 +366,13 @@ left = "ATerm_Close_Sp_SB8"
 right = "Close"
 
 [[tables]]
+# SB8
 name = "ATerm_Close_Sp_SB8"
 left = "ATerm_Close_Sp_SB8"
 right = "Format"
 
 [[tables]]
+# SB8
 name = "ATerm_Close_Sp_SB8"
 left = "ATerm_Close_Sp_SB8"
 right = "Numeric"
@@ -431,6 +433,7 @@ right = [
 break_state = true
 
 [[rules]]
+# SB4
 left = [ "Sep", "LF", "ATerm_Close", "ATerm_Close_Sp" ]
 right = [ "LF" ]
 break_state = true
@@ -506,7 +509,7 @@ right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm" ]
 break_state = true
 
 [[rules]]
-# SB 11
+# SB11
 left = [ "ATerm_Close_Sp", "STerm_Close_Sp" ]
 right = [ "Numeric", "Upper", "Close" ]
 break_state = true
