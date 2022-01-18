@@ -175,8 +175,8 @@ impl<'a, T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
-    fn write_to_fmt<W: WriteFormatted + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        (*self).write_to_fmt(sink)
+    fn write_to_parts<'b, W: PartsWrite<'b> + ?Sized>(&self, sink: &'b mut W) -> fmt::Result {
+        (*self).write_to_parts(sink)
     }
 
     #[inline]

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Field, WriteFormatted, Writeable};
+use crate::{Field, PartsWrite, Writeable};
 use alloc::vec::Vec;
 use core::fmt::{self, Write};
 use core::str;
@@ -32,7 +32,7 @@ impl FormattedString {
             annotations: Vec::with_capacity(len),
             next_annotation: Vec::new(),
         };
-        w.write_to_fmt(&mut sink)?;
+        w.write_to_parts(&mut sink)?;
         Ok(sink)
     }
 
@@ -103,15 +103,44 @@ impl Write for FormattedString {
     }
 }
 
-impl WriteFormatted for FormattedString {
-    fn push_field(&mut self, field: Field) -> fmt::Result {
-        self.next_annotation.push((LocationInPart::Begin, field));
-        Ok(())
+impl<'a> PartsWrite<'a> for FormattedString {
+    type SubPartsWrite = FormattedStringPart<'a>;
+
+    fn with_part(&'a mut self, part: Field) -> Self::SubPartsWrite {
+        FormattedStringPart::new(self, part)
+    }
+}
+
+pub struct FormattedStringPart<'a>(&'a mut FormattedString);
+
+impl<'a> FormattedStringPart<'a> {
+    fn new(fmt_str: &'a mut FormattedString, part: Field) -> Self {
+        fmt_str.next_annotation.push((LocationInPart::Begin, part));
+        Self(fmt_str)
+    }
+}
+
+impl<'a> Drop for FormattedStringPart<'a> {
+    fn drop(&mut self) {
+        self.0.next_annotation.pop();
+    }
+}
+
+impl<'a> Write for FormattedStringPart<'a> {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.0.write_str(s)
     }
 
-    fn pop_field(&mut self) -> fmt::Result {
-        self.next_annotation.pop();
-        Ok(())
+    fn write_char(&mut self, c: char) -> fmt::Result {
+        self.0.write_char(c)
+    }
+}
+
+impl<'a> PartsWrite<'a> for FormattedStringPart<'a> {
+    type SubPartsWrite = FormattedStringPart<'a>;
+
+    fn with_part(&'a mut self, part: Field) -> Self::SubPartsWrite {
+        FormattedStringPart::new(self.0, part)
     }
 }
 
@@ -123,21 +152,26 @@ mod test {
     fn test() {
         struct TestWriteable;
         impl Writeable for TestWriteable {
-            fn write_to_fmt<W: WriteFormatted + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-                sink.push_field(Field("greeting"))?;
-                sink.push_field(Field("word"))?;
-                sink.write_str("hello")?;
-                sink.pop_field()?;
-                sink.write_str(" ")?;
-                sink.push_field(Field("number"))?;
-                360.write_to(sink)?;
-                sink.pop_field()?;
-                sink.pop_field()?;
+            fn write_to_parts<'a, W: PartsWrite<'a> + ?Sized>(&self, sink: &'a mut W) -> fmt::Result {
+                {                
+                    let mut greeting = sink.with_part(Field("greeting"));
+                    {
+                        let mut word = greeting.with_part(Field("word"));
+                        word.write_str("hello")?;
+                    }
+                    greeting.write_str(" ")?;
+                    {
+                        let mut number = greeting.with_part(Field("number"));
+                        360.write_to(&mut number)?;
+                    }
+                }
                 sink.write_char(' ')?;
-                sink.push_field(Field("emoji"))?;
-                sink.write_char('😅')?;
-                sink.pop_field()
+                {
+                    let mut emoji = sink.with_part(Field("emoji"));
+                    emoji.write_char('😅')
+                }
             }
+            
         }
 
         let materialized = FormattedString::from_writeable(&TestWriteable).unwrap();
