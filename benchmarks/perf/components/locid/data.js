@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642529533598,
+  "lastUpdate": 1642541997891,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21413,6 +21413,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4501,
             "range": "± 202",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7c1a36c74a8ded45d533ff5d7d6919855fa05e3b",
+          "message": "Fix cargo check --all-targets --no-default-features (#1514)",
+          "timestamp": "2022-01-18T13:30:49-08:00",
+          "tree_id": "d026ff0eaaed6a7aba28c35ef772f4d7905fbb86",
+          "url": "https://github.com/unicode-org/icu4x/commit/7c1a36c74a8ded45d533ff5d7d6919855fa05e3b"
+        },
+        "date": 1642541987412,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2063,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4241,
+            "range": "± 339",
             "unit": "ns/iter"
           }
         ]
