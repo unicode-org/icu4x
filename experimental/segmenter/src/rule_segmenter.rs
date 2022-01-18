@@ -141,6 +141,11 @@ macro_rules! break_iterator_impl {
                                 previous_iter = self.iter.clone();
                                 previous_pos_data = self.current_pos_data;
                             }
+                            if (break_state & INTERMEDIATE_MATCH_RULE) != 0 {
+                                break_state -= INTERMEDIATE_MATCH_RULE;
+                                previous_iter = self.iter.clone();
+                                previous_pos_data = self.current_pos_data;
+                            }
                         }
                         if break_state == KEEP_RULE {
                             continue;

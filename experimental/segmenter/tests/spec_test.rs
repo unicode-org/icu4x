@@ -6,6 +6,9 @@ use icu_segmenter::GraphemeBreakIterator;
 use icu_segmenter::GraphemeBreakIteratorLatin1;
 use icu_segmenter::GraphemeBreakIteratorUtf16;
 use icu_segmenter::LineBreakSegmenter;
+use icu_segmenter::SentenceBreakIterator;
+use icu_segmenter::SentenceBreakIteratorLatin1;
+use icu_segmenter::SentenceBreakIteratorUtf16;
 use icu_segmenter::WordBreakIterator;
 use icu_segmenter::WordBreakIteratorLatin1;
 use icu_segmenter::WordBreakIteratorUtf16;
@@ -188,6 +191,36 @@ fn run_grapheme_break_test() {
         // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
         if let Some(break_result_latin1) = test.break_result_latin1 {
             let iter = GraphemeBreakIteratorLatin1::new(&test.latin1_vec);
+            let result: Vec<usize> = iter.collect();
+            assert_eq!(
+                result, break_result_latin1,
+                "Latin1: {}",
+                test.original_line
+            );
+        }
+    }
+}
+
+#[test]
+fn run_sentence_break_test() {
+    let test_iter = TestContentIterator::new("./tests/testdata/SentenceBreakTest.txt");
+    for test in test_iter {
+        let s: String = test.utf8_vec.into_iter().collect();
+        let iter = SentenceBreakIterator::new(&s);
+        let result: Vec<usize> = iter.collect();
+        assert_eq!(result, test.break_result_utf8, "{}", test.original_line);
+
+        let iter = SentenceBreakIteratorUtf16::new(&test.utf16_vec);
+        let result: Vec<usize> = iter.collect();
+        assert_eq!(
+            result, test.break_result_utf16,
+            "UTF16: {}",
+            test.original_line
+        );
+
+        // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
+        if let Some(break_result_latin1) = test.break_result_latin1 {
+            let iter = SentenceBreakIteratorLatin1::new(&test.latin1_vec);
             let result: Vec<usize> = iter.collect();
             assert_eq!(
                 result, break_result_latin1,
