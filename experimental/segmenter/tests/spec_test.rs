@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::GraphemeBreakIterator;
-use icu_segmenter::GraphemeBreakIteratorLatin1;
-use icu_segmenter::GraphemeBreakIteratorUtf16;
+use icu_segmenter::GraphemeClusterBreakIterator;
+use icu_segmenter::GraphemeClusterBreakIteratorLatin1;
+use icu_segmenter::GraphemeClusterBreakIteratorUtf16;
 use icu_segmenter::LineBreakSegmenter;
 use icu_segmenter::SentenceBreakIterator;
 use icu_segmenter::SentenceBreakIteratorLatin1;
@@ -176,11 +176,11 @@ fn run_grapheme_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/GraphemeBreakTest.txt");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
-        let iter = GraphemeBreakIterator::new(&s);
+        let iter = GraphemeClusterBreakIterator::new(&s);
         let result: Vec<usize> = iter.collect();
         assert_eq!(result, test.break_result_utf8, "{}", test.original_line);
 
-        let iter = GraphemeBreakIteratorUtf16::new(&test.utf16_vec);
+        let iter = GraphemeClusterBreakIteratorUtf16::new(&test.utf16_vec);
         let result: Vec<usize> = iter.collect();
         assert_eq!(
             result, test.break_result_utf16,
@@ -190,7 +190,7 @@ fn run_grapheme_break_test() {
 
         // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
         if let Some(break_result_latin1) = test.break_result_latin1 {
-            let iter = GraphemeBreakIteratorLatin1::new(&test.latin1_vec);
+            let iter = GraphemeClusterBreakIteratorLatin1::new(&test.latin1_vec);
             let result: Vec<usize> = iter.collect();
             assert_eq!(
                 result, break_result_latin1,

@@ -12,9 +12,9 @@ use crate::rule_segmenter::*;
 include!(concat!(env!("OUT_DIR"), "/generated_grapheme_table.rs"));
 
 // UTF-8 version of grapheme break iterator using rule based segmenter.
-break_iterator_impl!(GraphemeBreakIterator, CharIndices<'a>, char);
+break_iterator_impl!(GraphemeClusterBreakIterator, CharIndices<'a>, char);
 
-impl<'a> GraphemeBreakIterator<'a> {
+impl<'a> GraphemeClusterBreakIterator<'a> {
     /// Create grapheme break iterator
     pub fn new(input: &'a str) -> Self {
         Self {
@@ -46,9 +46,9 @@ impl<'a> GraphemeBreakIterator<'a> {
 }
 
 // Latin-1 version of grapheme break iterator using rule based segmenter.
-break_iterator_impl!(GraphemeBreakIteratorLatin1, Latin1Indices<'a>, u8);
+break_iterator_impl!(GraphemeClusterBreakIteratorLatin1, Latin1Indices<'a>, u8);
 
-impl<'a> GraphemeBreakIteratorLatin1<'a> {
+impl<'a> GraphemeClusterBreakIteratorLatin1<'a> {
     /// Create grapheme break iterator using Latin-1/8-bit string.
     pub fn new(input: &'a [u8]) -> Self {
         Self {
@@ -81,9 +81,9 @@ impl<'a> GraphemeBreakIteratorLatin1<'a> {
 }
 
 // UTF-16 version of grapheme break iterator using rule based segmenter.
-break_iterator_impl!(GraphemeBreakIteratorUtf16, Utf16Indices<'a>, u32);
+break_iterator_impl!(GraphemeClusterBreakIteratorUtf16, Utf16Indices<'a>, u32);
 
-impl<'a> GraphemeBreakIteratorUtf16<'a> {
+impl<'a> GraphemeClusterBreakIteratorUtf16<'a> {
     /// Create grapheme break iterator using UTF-16 string.
     pub fn new(input: &'a [u16]) -> Self {
         Self {

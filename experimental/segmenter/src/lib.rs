@@ -150,7 +150,8 @@ mod lstm {
 }
 
 pub use crate::grapheme::{
-    GraphemeBreakIterator, GraphemeBreakIteratorLatin1, GraphemeBreakIteratorUtf16,
+    GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
+    GraphemeClusterBreakIteratorUtf16,
 };
 pub use crate::line_breaker::*;
 pub use crate::sentence::{
