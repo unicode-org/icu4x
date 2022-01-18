@@ -30,7 +30,7 @@ impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvi
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         let data = &self
             .data
-            .get(&req.resource_path.key.sub_category)
+            .get(req.resource_path.key.get_last_component_no_version())
             .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
 
         let mut builder = UnicodeSetBuilder::new();

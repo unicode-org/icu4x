@@ -34,7 +34,7 @@ impl DataProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        if req.resource_path.key.sub_category.contains('=') {
+        if req.resource_path.key.get_last_component_no_version().contains('=') {
             self.enumerated.load_payload(req)
         } else {
             self.binary.load_payload(req)

@@ -43,8 +43,8 @@ impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
     ///
     /// The human-readable path string always contains at least one '/', and it ends with '@'
-    /// followed by one or more digits. Paths do not contain characters other than lowercase
-    /// ASCII, '_', '/', and '@'.
+    /// followed by one or more digits. Paths do not contain characters other than ASCII,
+    /// '_', '/', '=', and '@'.
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
@@ -106,9 +106,9 @@ impl ResourceKey {
         while i < path_bytes.len() {
             let c = path_bytes[i];
             state = match (state, c) {
-                (0 | 1, b'a'..=b'z' | b'0'..=b'9' | b'_') => 1,
+                (0 | 1, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=') => 1,
                 (1, b'/') => 2,
-                (2 | 3, b'a'..=b'z' | b'0'..=b'9' | b'_') => 3,
+                (2 | 3, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=') => 3,
                 (3, b'/') => 2,
                 (3, b'@') => 4,
                 (4 | 5, b'0'..=b'9') => 5,
@@ -246,9 +246,8 @@ impl ResourceKey {
     /// use icu_provider::prelude::*;
     ///
     /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
-    /// let components: Vec<String> = resc_key
+    /// let components: Vec<&str> = resc_key
     ///     .iter_components()
-    ///     .map(|x| x.into_owned())
     ///     .collect();
     ///
     /// assert_eq!(
@@ -256,8 +255,53 @@ impl ResourceKey {
     ///     components[..]
     /// );
     /// ```
-    pub fn iter_components(&self) -> impl Iterator<Item = Cow<str>> {
-        self.get_path().split('/').map(|s| Cow::Borrowed(s))
+    pub fn iter_components(&self) -> impl Iterator<Item = &str> {
+        self.get_path().split('/')
+    }
+
+    /// Gets the first path component of a [`ResourceKey`].
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// 
+    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
+    /// assert_eq!("core", resc_key.get_component_0());
+    /// ```
+    pub fn get_component_0(&self) -> &str {
+        // This cannot fail because of the preconditions on path (at least one '/')
+        self.iter_components().next().unwrap()
+    }
+
+    /// Gets the second path component of a [`ResourceKey`].
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// 
+    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
+    /// assert_eq!("helloworld@1", resc_key.get_component_1());
+    /// ```
+    pub fn get_component_1(&self) -> &str {
+        // This cannot fail because of the preconditions on path (at least one '/')
+        self.iter_components().nth(1).unwrap()
+    }
+
+    /// Gets the last path component of a [`ResourceKey`] without the version suffix.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// 
+    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
+    /// assert_eq!("helloworld", resc_key.get_last_component_no_version());
+    /// ```
+    pub fn get_last_component_no_version(&self) -> &str {
+        // This cannot fail because of the preconditions on path (at least one '/' and '@')
+        self.iter_components().last().unwrap().split('@').next().unwrap()
     }
 
     /// Returns [`Ok`] if this data key matches the argument, or the appropriate error.
@@ -474,7 +518,7 @@ mod tests {
                 cas.expected,
                 cas.resc_key
                     .iter_components()
-                    .collect::<Vec<Cow<str>>>()
+                    .collect::<Vec<&str>>()
                     .join("/")
             );
         }

@@ -8,27 +8,18 @@ use crate::uprops_serde;
 use eyre::{eyre, WrapErr};
 use std::collections::HashMap;
 use std::path::Path;
-use tinystr::TinyStr16;
 
-pub type TomlEnumerated = HashMap<TinyStr16, uprops_serde::enumerated::EnumeratedPropertyMap>;
-pub type TomlBinary = HashMap<TinyStr16, uprops_serde::binary::BinaryProperty>;
+pub type TomlEnumerated = HashMap<String, uprops_serde::enumerated::EnumeratedPropertyMap>;
+pub type TomlBinary = HashMap<String, uprops_serde::binary::BinaryProperty>;
 
 pub fn load_binary_from_dir(root_dir: &Path) -> eyre::Result<TomlBinary> {
     let mut result = HashMap::new();
     for path in get_dir_contents(root_dir)? {
-        let option_key: Option<TinyStr16> = path
+        let key: String = path
             .file_stem()
             .and_then(|p| p.to_str())
             .ok_or_else(|| eyre::eyre!("Invalid file name: {:?}", path))?
-            .parse()
-            .ok();
-        let key = if let Some(k) = option_key {
-            k
-        } else {
-            #[cfg(feature = "log")]
-            log::trace!("Filename does not fit in TinyStr16: {:?}", path);
-            continue;
-        };
+            .to_string();
         let toml_str = read_path_to_string(&path)?;
         let toml_obj: uprops_serde::binary::Main = toml::from_str(&toml_str)
             .wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;
@@ -42,19 +33,11 @@ pub fn load_binary_from_dir(root_dir: &Path) -> eyre::Result<TomlBinary> {
 pub fn load_enumerated_from_dir(root_dir: &Path) -> eyre::Result<TomlEnumerated> {
     let mut result = HashMap::new();
     for path in get_dir_contents(root_dir)? {
-        let option_key: Option<TinyStr16> = path
+        let key: String = path
             .file_stem()
             .and_then(|p| p.to_str())
             .ok_or_else(|| eyre::eyre!("Invalid file name: {:?}", path))?
-            .parse()
-            .ok();
-        let key = if let Some(k) = option_key {
-            k
-        } else {
-            #[cfg(feature = "log")]
-            log::trace!("Filename does not fit in TinyStr16: {:?}", path);
-            continue;
-        };
+            .to_string();
         let toml_str = read_path_to_string(&path)?;
         let toml_obj: uprops_serde::enumerated::Main = toml::from_str(&toml_str)
             .wrap_err_with(|| format!("Could not parse TOML: {:?}", path))?;

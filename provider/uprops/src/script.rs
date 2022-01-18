@@ -11,7 +11,6 @@ use icu_properties::Script;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;
-use tinystr::tinystr16;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 /// This data provider returns a [`crate::script::ScriptExtensions`] instance,
@@ -81,7 +80,7 @@ impl DataProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsProperty
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<ScriptExtensionsPropertyV1Marker>, DataError> {
-        if req.resource_path.key.sub_category != tinystr16!("scx") {
+        if req.resource_path.key.get_last_component_no_version() != "scx" {
             return Err(DataErrorKind::MissingResourceKey.with_req(req));
         }
 

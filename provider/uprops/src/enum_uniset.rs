@@ -61,7 +61,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        let key = &req.resource_path.key.sub_category;
+        let key = &req.resource_path.key.get_last_component_no_version();
 
         // ResourceKey subcategory strings for enumerated properties are
         // of the form "name=value", using the short name for both.
@@ -71,17 +71,14 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
                 return Err(DataErrorKind::MissingResourceKey.with_req(req));
             }
             (
-                parts[0].parse().map_err(|e| {
-                    DataError::custom("Could not parse data request into a Unicode property name")
-                        .with_error_context(&e)
-                })?,
+                parts[0],
                 parts[1],
             )
         };
 
         let toml_data = &self
             .data
-            .get(&prop_name)
+            .get(prop_name)
             .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
 
         let valid_names = expand_groupings(&prop_name, prop_value);
