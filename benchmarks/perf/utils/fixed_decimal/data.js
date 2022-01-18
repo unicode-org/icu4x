@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642544895924,
+  "lastUpdate": 1642549795512,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17339,6 +17339,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 109610,
             "range": "± 326",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "55f95e12c3f5bdc05784ee9d2adafc029c697e8f",
+          "message": "Add fxhash_32 (#1504)",
+          "timestamp": "2022-01-18T15:41:43-08:00",
+          "tree_id": "bd47416425bc015198eee3904cd2d2d5a0b84f22",
+          "url": "https://github.com/unicode-org/icu4x/commit/55f95e12c3f5bdc05784ee9d2adafc029c697e8f"
+        },
+        "date": 1642549786211,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 109457,
+            "range": "± 809",
             "unit": "ns/iter"
           }
         ]
