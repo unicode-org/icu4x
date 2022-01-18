@@ -33,7 +33,6 @@ impl ResourceKeyHash {
 /// Therefore, users should not generally create ResourceKey instances; they should instead use
 /// the ones exported by a component.
 #[derive(PartialEq, Eq, Copy, Clone)]
-#[repr(C)]
 pub struct ResourceKey {
     path: &'static str,
     hash: ResourceKeyHash,
@@ -259,36 +258,6 @@ impl ResourceKey {
         self.get_path().split('/')
     }
 
-    /// Gets the first path component of a [`ResourceKey`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
-    /// assert_eq!("core", resc_key.get_component_0());
-    /// ```
-    pub fn get_component_0(&self) -> &str {
-        // This cannot fail because of the preconditions on path (at least one '/')
-        self.iter_components().next().unwrap()
-    }
-
-    /// Gets the second path component of a [`ResourceKey`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
-    /// assert_eq!("helloworld@1", resc_key.get_component_1());
-    /// ```
-    pub fn get_component_1(&self) -> &str {
-        // This cannot fail because of the preconditions on path (at least one '/')
-        self.iter_components().nth(1).unwrap()
-    }
-
     /// Gets the last path component of a [`ResourceKey`] without the version suffix.
     ///
     /// # Examples
@@ -301,6 +270,7 @@ impl ResourceKey {
     /// ```
     pub fn get_last_component_no_version(&self) -> &str {
         // This cannot fail because of the preconditions on path (at least one '/' and '@')
+        // TODO(#1515): Consider deleting this method.
         self.iter_components()
             .last()
             .unwrap()
