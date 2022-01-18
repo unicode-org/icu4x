@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642529535960,
+  "lastUpdate": 1642541977347,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17903,6 +17903,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 320028,
             "range": "± 367",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7c1a36c74a8ded45d533ff5d7d6919855fa05e3b",
+          "message": "Fix cargo check --all-targets --no-default-features (#1514)",
+          "timestamp": "2022-01-18T13:30:49-08:00",
+          "tree_id": "d026ff0eaaed6a7aba28c35ef772f4d7905fbb86",
+          "url": "https://github.com/unicode-org/icu4x/commit/7c1a36c74a8ded45d533ff5d7d6919855fa05e3b"
+        },
+        "date": 1642541968488,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 76746,
+            "range": "± 150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 820733,
+            "range": "± 15210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 281511,
+            "range": "± 785",
             "unit": "ns/iter"
           }
         ]
