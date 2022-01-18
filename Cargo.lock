@@ -357,6 +357,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "crabbake"
+version = "0.4.0"
+dependencies = [
+ "crabbake-derive",
+ "icu_provider",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "tinystr",
+]
+
+[[package]]
+name = "crabbake-derive"
+version = "0.4.0"
+dependencies = [
+ "crabbake",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+]
+
+[[package]]
 name = "crc32fast"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2637,6 +2660,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f65be51117c325c2b58eec529be7a0857d11527a9029973b58810a4c63e77a6"
 dependencies = [
  "tinystr-raw",
+]
+
+[[package]]
+name = "tinystr-neo"
+version = "0.3.1"
+dependencies = [
+ "bincode",
+ "displaydoc",
+ "postcard",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
