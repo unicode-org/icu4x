@@ -82,13 +82,13 @@ impl ResourceKey {
     /// assert_eq!(k1, k2);
     /// ```
     #[inline]
-    pub const fn try_new(path: &'static str) -> Result<Self, ()> {
+    pub const fn try_new(path: &'static str) -> Result<Self, DataError> {
         match Self::check_path_syntax(path) {
             Ok(_) => Ok(Self {
                 path,
                 hash: ResourceKeyHash::compute_from_str(path),
             }),
-            Err(_) => Err(()),
+            Err(_) => Err(DataError::custom("resource key syntax error")),
         }
     }
 
@@ -446,7 +446,7 @@ impl ResourceOptions {
             self.variant.clone(),
             self.langid.as_ref().map(|s| Cow::Owned(s.to_string())),
         ];
-        IntoIterator::into_iter(components_array).filter_map(|x| x)
+        IntoIterator::into_iter(components_array).flatten()
     }
 
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).

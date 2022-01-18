@@ -78,7 +78,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
             .get(prop_name)
             .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
 
-        let valid_names = expand_groupings(&prop_name, prop_value);
+        let valid_names = expand_groupings(prop_name, prop_value);
 
         let mut builder = UnicodeSetBuilder::new();
         for range in &toml_data.ranges {
