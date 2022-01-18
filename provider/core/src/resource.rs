@@ -203,8 +203,22 @@ fn test_path_syntax() {
 }
 
 /// Shortcut to construct a const resource identifier.
+///
+/// For example, see [`ResourceKey::try_new()`].
 #[macro_export]
 macro_rules! resource_key {
+    ($path:literal) => {{
+        // Force the ResourceKey into a const context
+        const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
+            match $crate::ResourceKey::try_new($path) {
+                Ok(v) => v,
+                Err(_) => panic!(concat!("Invalid resource key: ", $path)),
+            }
+        };
+        RESOURCE_KEY_MACRO_CONST
+    }};
+    // TODO(#570): Migrate call sites to the all-in-one string version of the macro above,
+    // and then delete all of the macro branches that follow.
     (Core, $sub_category:literal, $version:tt) => {
         $crate::resource_key!("core", $sub_category, $version)
     };
@@ -235,15 +249,20 @@ macro_rules! resource_key {
     (Segmenter, $sub_category:literal, $version:tt) => {
         $crate::resource_key!("segmenter", $sub_category, $version)
     };
-    ($category:literal, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!(concat!($category, "/", $sub_category, "@", $version))
-    };
-    ($path:literal) => {{
+    ($category:literal, $sub_category:literal, $version:tt) => {{
         // Force the ResourceKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
-            match $crate::ResourceKey::try_new($path) {
+            // Note: concat!() does not seem to work as a literal argument to another macro call.
+            // This branch will be deleted anyway in #570.
+            match $crate::ResourceKey::try_new(concat!(
+                $category,
+                "/",
+                $sub_category,
+                "@",
+                $version
+            )) {
                 Ok(v) => v,
-                Err(_) => panic!(concat!("Invalid resource key: ", $path)),
+                Err(_) => panic!(concat!("Invalid resource key")),
             }
         };
         RESOURCE_KEY_MACRO_CONST
