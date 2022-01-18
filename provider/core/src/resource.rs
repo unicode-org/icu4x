@@ -260,12 +260,12 @@ impl ResourceKey {
     }
 
     /// Gets the first path component of a [`ResourceKey`].
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// 
+    ///
     /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
     /// assert_eq!("core", resc_key.get_component_0());
     /// ```
@@ -275,12 +275,12 @@ impl ResourceKey {
     }
 
     /// Gets the second path component of a [`ResourceKey`].
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// 
+    ///
     /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
     /// assert_eq!("helloworld@1", resc_key.get_component_1());
     /// ```
@@ -290,18 +290,23 @@ impl ResourceKey {
     }
 
     /// Gets the last path component of a [`ResourceKey`] without the version suffix.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// 
+    ///
     /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
     /// assert_eq!("helloworld", resc_key.get_last_component_no_version());
     /// ```
     pub fn get_last_component_no_version(&self) -> &str {
         // This cannot fail because of the preconditions on path (at least one '/' and '@')
-        self.iter_components().last().unwrap().split('@').next().unwrap()
+        self.iter_components()
+            .last()
+            .unwrap()
+            .split('@')
+            .next()
+            .unwrap()
     }
 
     /// Returns [`Ok`] if this data key matches the argument, or the appropriate error.

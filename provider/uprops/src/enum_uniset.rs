@@ -70,10 +70,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
             if parts.len() != 2 {
                 return Err(DataErrorKind::MissingResourceKey.with_req(req));
             }
-            (
-                parts[0],
-                parts[1],
-            )
+            (parts[0], parts[1])
         };
 
         let toml_data = &self

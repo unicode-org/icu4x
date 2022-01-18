@@ -70,7 +70,12 @@ impl FsDataProvider {
         }
         if !req.resource_path.options.is_empty() {
             // TODO: Implement proper locale fallback
-            path_buf.extend(req.resource_path.options.iter_components().map(|s| PathBuf::from(&*s)));
+            path_buf.extend(
+                req.resource_path
+                    .options
+                    .iter_components()
+                    .map(|s| PathBuf::from(&*s)),
+            );
             path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
