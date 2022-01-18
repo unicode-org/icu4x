@@ -22,7 +22,7 @@ use litemap::LiteMap;
 
 pub mod key {
     use crate::resource::ResourceKey;
-    pub const HELLO_WORLD_V1: ResourceKey = ResourceKey::new("core/helloworld@1");
+    pub const HELLO_WORLD_V1: ResourceKey = crate::resource_key!("core/helloworld@1");
 }
 
 /// A struct containing "Hello World" in the requested language.

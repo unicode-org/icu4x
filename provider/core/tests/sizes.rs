@@ -8,4 +8,4 @@ use static_assertions::const_assert_eq;
 const_assert_eq!(8, core::mem::size_of::<ResourceCategory>());
 const_assert_eq!(16, core::mem::size_of::<tinystr::TinyStr16>());
 const_assert_eq!(4, core::mem::size_of::<u32>());
-const_assert_eq!(32, core::mem::size_of::<ResourceKey>());
+const_assert_eq!(24, core::mem::size_of::<ResourceKey>());

@@ -9,13 +9,13 @@ use alloc::string::String;
 use alloc::string::ToString;
 
 use crate::error::{DataError, DataErrorKind};
+use crate::helpers;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::LanguageIdentifier;
-use tinystr::{TinyStr4};
+use tinystr::TinyStr4;
 use writeable::{LengthHint, Writeable};
-use crate::helpers;
 
 /// A top-level collection of related resource keys.
 #[non_exhaustive]
@@ -94,18 +94,16 @@ impl ResourceKeyHash {
 #[repr(C)]
 pub struct ResourceKey {
     path: &'static str,
-    _tag0: [u8; 8],
     hash: ResourceKeyHash,
-    _tag1: [u8; 2],
 }
 
 impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
-    /// 
+    ///
     /// The human-readable path string always contains at least one '/', and it ends with '@'
     /// followed by one or more digits. Paths do not contain characters other than lowercase
     /// ASCII, '_', '/', and '@'.
-    /// 
+    ///
     /// Useful for reading and writing data to a file system.
     #[inline]
     pub const fn get_path(&self) -> &str {
@@ -122,30 +120,33 @@ impl ResourceKey {
         self.hash
     }
 
-    /// Creates a new ResourceKey from a path, panicking if the path is invalid.
-    /// 
-    /// # Panics
-    /// 
-    /// Panics if the syntax of the path is not valid.
-    #[inline]
-    pub const fn new(path: &'static str) -> Self {
-        match Self::try_new(path) {
-            Ok(v) => v,
-            Err(_) => panic!("{}", path) // Invalid syntax!
-        }
-    }
-
     /// Creates a new ResourceKey from a path, returning an error if the path is invalid.
+    ///
+    /// It is intended that `ResourceKey` objects are const-constructed. To force construction
+    /// into a const context, use [`resource_key!()`]. Doing so ensures that compile-time key
+    /// extraction functions as expected.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// // Const constructed (preferred):
+    /// const k1: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+    ///
+    /// // Runtime constructed:
+    /// let k2: ResourceKey = ResourceKey::try_new("foo/bar@1").unwrap();
+    ///
+    /// assert_eq!(k1, k2);
+    /// ```
     #[inline]
     pub const fn try_new(path: &'static str) -> Result<Self, ()> {
         match Self::check_path_syntax(path) {
             Ok(_) => Ok(Self {
                 path,
-                _tag0: *b"ICU4XK[\x02",
                 hash: ResourceKeyHash::compute_from_str(path),
-                _tag1: *b"\x03]",
             }),
-            Err(_) => Err(())
+            Err(_) => Err(()),
         }
     }
 
@@ -169,12 +170,12 @@ impl ResourceKey {
                 (3, b'/') => 2,
                 (3, b'@') => 4,
                 (4 | 5, b'0'..=b'9') => 5,
-                _ => return Err(())
+                _ => return Err(()),
             };
             i += 1;
         }
         if state != 5 {
-            return Err(())
+            return Err(());
         }
         Ok(())
     }
@@ -199,6 +200,54 @@ fn test_path_syntax() {
 
     // Invalid characters:
     assert!(matches!(ResourceKey::try_new("你好/世界@1"), Err(_)));
+}
+
+/// Shortcut to construct a const resource identifier.
+#[macro_export]
+macro_rules! resource_key {
+    (Core, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("core", $sub_category, $version)
+    };
+    (Calendar, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("calendar", $sub_category, $version)
+    };
+    (DateTime, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("datetime", $sub_category, $version)
+    };
+    (Decimal, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("decimal", $sub_category, $version)
+    };
+    (LocaleCanonicalizer, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("locale_canonicalizer", $sub_category, $version)
+    };
+    (Plurals, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("plurals", $sub_category, $version)
+    };
+    (TimeZone, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("time_zone", $sub_category, $version)
+    };
+    (Properties, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("props", $sub_category, $version)
+    };
+    (ListFormatter, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("list_formatter", $sub_category, $version)
+    };
+    (Segmenter, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!("segmenter", $sub_category, $version)
+    };
+    ($category:literal, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!(concat!($category, "/", $sub_category, "@", $version))
+    };
+    ($path:literal) => {{
+        // Force the ResourceKey into a const context
+        const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
+            match $crate::ResourceKey::try_new($path) {
+                Ok(v) => v,
+                Err(_) => panic!(concat!("Invalid resource key: ", $path)),
+            }
+        };
+        RESOURCE_KEY_MACRO_CONST
+    }};
 }
 
 impl fmt::Debug for ResourceKey {
@@ -259,9 +308,9 @@ impl ResourceKey {
     /// ```
     /// use icu_provider::prelude::*;
     ///
-    /// const FOO_BAR: ResourceKey = ResourceKey::new("foo/bar@1");
-    /// const FOO_BAZ: ResourceKey = ResourceKey::new("foo/baz@1");
-    /// const BAR_BAZ: ResourceKey = ResourceKey::new("bar/baz@1");
+    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+    /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!("foo/baz@1");
+    /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!("bar/baz@1");
     ///
     /// assert!(matches!(
     ///     FOO_BAR.match_key(FOO_BAR),
@@ -441,15 +490,15 @@ mod tests {
     fn get_key_test_cases() -> [KeyTestCase; 3] {
         [
             KeyTestCase {
-                resc_key: ResourceKey::new("core/cardinal@1"),
+                resc_key: resource_key!("core/cardinal@1"),
                 expected: "core/cardinal@1",
             },
             KeyTestCase {
-                resc_key: ResourceKey::new("core/maxlengthsubcatg@1"),
+                resc_key: resource_key!("core/maxlengthsubcatg@1"),
                 expected: "core/maxlengthsubcatg@1",
             },
             KeyTestCase {
-                resc_key: ResourceKey::new("core/cardinal@65535"),
+                resc_key: resource_key!("core/cardinal@65535"),
                 expected: "core/cardinal@65535",
             },
         ]
