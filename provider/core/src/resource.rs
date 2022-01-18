@@ -255,6 +255,7 @@ impl ResourceKey {
     /// );
     /// ```
     pub fn iter_components(&self) -> impl Iterator<Item = &str> {
+        // TODO(#1516): Consider alternatives to this method.
         self.get_path().split('/')
     }
 
@@ -412,6 +413,7 @@ impl ResourceOptions {
     /// );
     /// ```
     pub fn iter_components(&self) -> impl Iterator<Item = Cow<str>> {
+        // TODO(#1516): Consider alternatives to this method.
         let components_array: [Option<Cow<str>>; 2] = [
             self.variant.clone(),
             self.langid.as_ref().map(|s| Cow::Owned(s.to_string())),
