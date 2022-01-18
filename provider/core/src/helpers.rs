@@ -78,6 +78,20 @@ fn test_escape_for_json() {
 }
 
 /// Const function to compute the FxHash of a byte array with little-endian byte order.
+///
+/// FxHash is a speedy hash algorithm used within rustc. The algorithm is satisfactory for our
+/// use case since the strings being hashed originate from a trusted source (the ICU4X
+/// components), and the hashes are computed at compile time, so we can check for collisions.
+///
+/// We could have considered a SHA or other cryptographic hash function. However, we are using
+/// FxHash because:
+///
+/// 1. There is precedent for this algorithm in Rust
+/// 2. The algorithm is easy to implement as a const function
+/// 3. The amount of code is small enough that we can reasonably keep the algorithm in-tree
+/// 4. FxHash is designed to output 32-bit or 64-bit values, whereas SHA outputs more bits,
+///    such that truncation would be required in order to fit into a u32, partially reducing
+///    the benefit of a cryptographically secure algorithm
 #[allow(dead_code)]
 pub const fn fxhash_32(bytes: &[u8]) -> u32 {
     // This code is adapted from https://github.com/rust-lang/rustc-hash,
