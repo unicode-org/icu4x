@@ -5,7 +5,6 @@
 //! Resource paths and related types.
 
 use alloc::borrow::Cow;
-use alloc::string::String;
 use alloc::string::ToString;
 
 use crate::error::{DataError, DataErrorKind};
@@ -14,64 +13,7 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
 use icu_locid::LanguageIdentifier;
-use tinystr::TinyStr4;
 use writeable::{LengthHint, Writeable};
-
-/// A top-level collection of related resource keys.
-#[non_exhaustive]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
-pub enum ResourceCategory {
-    Core,
-    Calendar,
-    DateTime,
-    Decimal,
-    LocaleCanonicalizer,
-    Plurals,
-    TimeZone,
-    Properties,
-    ListFormatter,
-    Segmenter,
-    PrivateUse(TinyStr4),
-}
-
-impl ResourceCategory {
-    /// Gets or builds a string form of this [`ResourceCategory`].
-    pub fn as_str(&self) -> Cow<'static, str> {
-        match self {
-            Self::Core => Cow::Borrowed("core"),
-            Self::Calendar => Cow::Borrowed("calendar"),
-            Self::DateTime => Cow::Borrowed("datetime"),
-            Self::Decimal => Cow::Borrowed("decimal"),
-            Self::LocaleCanonicalizer => Cow::Borrowed("locale_canonicalizer"),
-            Self::Plurals => Cow::Borrowed("plurals"),
-            Self::TimeZone => Cow::Borrowed("time_zone"),
-            Self::Properties => Cow::Borrowed("props"),
-            Self::ListFormatter => Cow::Borrowed("list_formatter"),
-            Self::Segmenter => Cow::Borrowed("segmenter"),
-            Self::PrivateUse(id) => {
-                let mut result = String::from("x-");
-                result.push_str(id.as_str());
-                Cow::Owned(result)
-            }
-        }
-    }
-}
-
-impl fmt::Display for ResourceCategory {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str(&self.as_str())
-    }
-}
-
-impl writeable::Writeable for ResourceCategory {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_str(&self.as_str())
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::exact(self.as_str().len())
-    }
-}
 
 /// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
