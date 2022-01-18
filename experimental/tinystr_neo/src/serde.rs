@@ -56,7 +56,7 @@ impl<'de, const N: usize> Visitor<'de> for TinyAsciiStrVisitor<N> {
     {
         let mut bytes = [0u8; N];
         let mut zeroes = false;
-        for i in 0..N {
+        for out in &mut bytes.iter_mut().take(N) {
             let byte = seq
                 .next_element()?
                 .ok_or_else(|| Error::invalid_length(N, &self))?;
@@ -69,7 +69,7 @@ impl<'de, const N: usize> Visitor<'de> for TinyAsciiStrVisitor<N> {
             if byte >= 0x80 {
                 return Err(Error::custom("TinyAsciiStr cannot contain non-ascii bytes"));
             }
-            bytes[i] = byte;
+            *out = byte;
         }
 
         Ok(unsafe { TinyAsciiStr::from_bytes_unchecked(bytes) })
