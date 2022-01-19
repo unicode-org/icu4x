@@ -56,10 +56,12 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
 
 impl KeyedDataProvider for PluralsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::Plurals || resc_key.version != 1 {
-            return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key));
+        // TODO(#442): Clean up KeyedDataProvider
+        match *resc_key {
+            key::CARDINAL_V1 => Ok(()),
+            key::ORDINAL_V1 => Ok(()),
+            _ => Err(DataErrorKind::MissingResourceKey.with_key(*resc_key)),
         }
-        Ok(())
     }
 }
 

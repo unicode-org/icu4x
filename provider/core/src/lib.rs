@@ -146,7 +146,6 @@ pub mod prelude {
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
-    pub use crate::resource::ResourceCategory;
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
@@ -164,11 +163,3 @@ pub use yoke;
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
-
-pub mod internal {
-    //! Macro dependencies; not intended to be used directly.
-    /// Re-export tinystr16 for macro resource_key!()
-    pub use tinystr::tinystr16;
-    /// Re-export tinystr4 for macro resource_key!()
-    pub use tinystr::tinystr4;
-}

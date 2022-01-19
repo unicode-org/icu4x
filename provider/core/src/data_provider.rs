@@ -58,7 +58,7 @@ impl DataRequest {
     /// ```
     /// use icu_provider::prelude::*;
     ///
-    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
+    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
     ///
     /// let req_no_langid = DataRequest {
     ///     resource_path: ResourcePath {

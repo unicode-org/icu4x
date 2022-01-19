@@ -62,10 +62,7 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
 
 impl KeyedDataProvider for NumbersProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::Decimal || resc_key.version != 1 {
-            return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key));
-        }
-        Ok(())
+        resc_key.match_key(key::SYMBOLS_V1)
     }
 }
 
