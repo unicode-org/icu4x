@@ -183,8 +183,9 @@ mod tests {
 
     #[test]
     fn test_fmt_writeable() {
+        let formatter = formatter(Width::Wide);
         assert_writeable_parts_eq!(
-            formatter(Width::Wide).format(VALUES),
+            formatter.format(VALUES),
             "@one:two,three,four.five!",
             [
                 (0, 1, ListFormatter::literal()),

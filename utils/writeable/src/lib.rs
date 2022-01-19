@@ -235,10 +235,10 @@ pub trait Writeable {
 }
 
 /// Testing macros for types implementing Writeable. The first argument should be a
-/// `&dyn Writeable`, and the second argument either a string (assert_writeable_eq),
-/// or a formatted debug string (assert_writeable_fmt_eq).
+/// `Writeable`, the second argument a string, and the third argument (*_parts_eq only)
+/// a list of parts (`[(usize, usize, Part)]`).
 ///
-/// The macros tests for equality of string content, annotations (*_fmt_eq only), and
+/// The macros tests for equality of string content, parts (*_parts_eq only), and
 /// verify the size hint.
 ///
 /// # Examples
@@ -275,11 +275,33 @@ macro_rules! assert_writeable_eq {
         $crate::assert_writeable_eq!($actual_writeable, $expected_str, "");
     };
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
-        assert_eq!(&$crate::Writeable::writeable_to_string(&$actual_writeable), &$expected_str, $($arg)*);
-        let length_hint = $crate::Writeable::write_len(&$actual_writeable);
-        assert!(length_hint.0 <= $expected_str.len(), $($arg)*);
+        let actual_writeable = &$actual_writeable;
+        let (actual_str, _) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
+        assert_eq!(actual_str, $expected_str, $($arg)*);
+        assert_eq!(actual_str, $crate::Writeable::writeable_to_string(actual_writeable), $($arg)+);
+        let length_hint = $crate::Writeable::write_len(actual_writeable);
+        assert!(length_hint.0 <= actual_str.len(), $($arg)*);
         if let Some(upper) = length_hint.1 {
-            assert!($expected_str.len() <= upper, $($arg)*);
+            assert!(actual_str.len() <= upper, $($arg)*);
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! assert_writeable_parts_eq {
+    ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
+        $crate::assert_writeable_parts_eq!($actual_writeable, $expected_str, $expected_parts, "");
+    };
+    ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
+        let actual_writeable = &$actual_writeable;
+        let (actual_str, actual_parts) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
+        assert_eq!(actual_str, $expected_str, $($arg)+);
+        assert_eq!(actual_str, $crate::Writeable::writeable_to_string(actual_writeable), $($arg)+);
+        assert_eq!(actual_parts, $expected_parts, $($arg)+);
+        let length_hint = $crate::Writeable::write_len(actual_writeable);
+        assert!(length_hint.0 <= actual_str.len(), $($arg)+);
+        if let Some(upper) = length_hint.1 {
+            assert!(actual_str.len() <= upper, $($arg)+);
         }
     }};
 }
@@ -328,72 +350,4 @@ pub fn writeable_to_parts_for_test<W: Writeable>(
         .parts
         .sort_unstable_by_key(|(begin, end, _)| (*begin, end.wrapping_neg()));
     Ok((state.string, state.parts))
-}
-
-#[macro_export]
-macro_rules! assert_writeable_parts_eq {
-    ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
-        $crate::assert_writeable_parts_eq!($actual_writeable, $expected_str, $expected_parts, "");
-    };
-    ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
-        let (actual_str, actual_parts) = $crate::writeable_to_parts_for_test(&$actual_writeable).unwrap();
-        assert_eq!(&actual_str, &$expected_str, $($arg)+);
-        assert_eq!(&actual_str, &$actual_writeable.writeable_to_string(), $($arg)+);
-        assert_eq!(actual_parts, $expected_parts, $($arg)+);
-        let length_hint = $crate::Writeable::write_len(&$actual_writeable);
-        assert!(length_hint.0 <= actual_str.len(), $($arg)+);
-        if let Some(upper) = length_hint.1 {
-            assert!(actual_str.len() <= upper, $($arg)+);
-        }
-    }};
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use fmt::Write;
-
-    #[test]
-    fn test() {
-        struct TestWriteable;
-        const GREETING: Part = Part {
-            category: "meaning",
-            value: "greeting",
-        };
-        const WORD: Part = Part {
-            category: "type",
-            value: "word",
-        };
-        const NUMBER: Part = Part {
-            category: "type",
-            value: "number",
-        };
-        const EMOJI: Part = Part {
-            category: "meaning",
-            value: "emoji",
-        };
-
-        impl Writeable for TestWriteable {
-            fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-                sink.with_part(GREETING, |g| {
-                    g.with_part(WORD, |w| w.write_str("hello"))?;
-                    g.write_str(" ")?;
-                    g.with_part(NUMBER, |n| 360.write_to(n))
-                })?;
-                sink.write_char(' ')?;
-                sink.with_part(EMOJI, |e| e.write_char('😅'))
-            }
-        }
-
-        assert_writeable_parts_eq!(
-            TestWriteable,
-            "hello 360 😅",
-            [
-                (0, 9, GREETING),
-                (0, 5, WORD),
-                (6, 9, NUMBER),
-                (10, 14, EMOJI),
-            ]
-        );
-    }
 }
