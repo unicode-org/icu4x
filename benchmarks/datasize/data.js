@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642552324404,
+  "lastUpdate": 1642612421088,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7493,6 +7493,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/26089b27d7e08e29dc615f0246a4ececcc88961f"
         },
         "date": 1642552313816,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1278cefb0949bddd59f5e22d630f2d6e144234c3",
+          "message": "Fixing doc tests (#1520)",
+          "timestamp": "2022-01-19T18:12:12+01:00",
+          "tree_id": "33076332ced3f3b69f9fcbcf2c3722ac43168f6d",
+          "url": "https://github.com/unicode-org/icu4x/commit/1278cefb0949bddd59f5e22d630f2d6e144234c3"
+        },
+        "date": 1642612412530,
         "tool": "ndjson",
         "benches": [
           {
