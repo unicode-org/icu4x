@@ -21,6 +21,7 @@ use alloc::vec::Vec;
 /// Normal usage:
 ///
 /// ```
+/// # #[cfg(feature = "deserialize_json")] {
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_locid_macros::langid;
@@ -55,11 +56,13 @@ use alloc::vec::Vec;
 ///     .expect("Data should be present");
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// # }
 /// ```
 ///
 /// Stops at the first provider supporting a key, even if the locale is not supported:
 ///
 /// ```
+/// # #[cfg(feature = "deserialize_json")] {
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_locid_macros::{language, langid};
@@ -108,6 +111,7 @@ use alloc::vec::Vec;
 ///         }
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
+/// # }
 /// ```
 pub struct ForkByKeyProvider<P0, P1>(pub P0, pub P1);
 
@@ -143,6 +147,7 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1>
 /// # Examples
 ///
 /// ```
+/// # #[cfg(feature = "deserialize_json")] {
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_locid_macros::{language, langid};
@@ -193,6 +198,7 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1>
 ///         }
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
+/// # }
 /// ```
 pub struct MultiForkByKeyProvider<P> {
     pub providers: Vec<P>,
