@@ -13,11 +13,10 @@ use icu_provider::DataError;
 pub enum Error {
     #[displaydoc("error loading data: {0}")]
     Data(icu_provider::DataError),
-    #[cfg(any(test, feature = "provider_transform_internals"))]
+    #[cfg(feature = "provider_transform_internals")]
     #[displaydoc("Illegal pattern: {0}")]
     IllegalPattern(String),
     #[cfg(any(
-        test,
         feature = "provider_transform_internals",
         feature = "icu4x_human_readable_de"
     ))]

@@ -6,25 +6,28 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_list::{
-    options::{Type, Width},
-    ListFormatter,
-};
-use icu_locid_macros::langid;
-
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let provider = icu_testdata::get_static_provider();
+    #[cfg(feature = "provider_serde")]
+    {
+        use icu_list::{
+            options::{Type, Width},
+            ListFormatter,
+        };
+        use icu_locid_macros::langid;
 
-    let list_formatter =
-        ListFormatter::try_new(langid!("es"), &provider, Type::And, Width::Wide).unwrap();
+        let provider = icu_testdata::get_static_provider();
 
-    println!(
-        "{}",
-        list_formatter.format(&["España", "Francia", "Suiza", "Italia"])
-    );
+        let list_formatter =
+            ListFormatter::try_new(langid!("es"), &provider, Type::And, Width::Wide).unwrap();
+
+        println!(
+            "{}",
+            list_formatter.format(&["España", "Francia", "Suiza", "Italia"])
+        );
+    }
 
     0
 }

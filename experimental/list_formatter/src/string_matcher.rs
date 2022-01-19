@@ -123,7 +123,7 @@ impl<'data> StringMatcher<'data> {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "provider_transform_internals"))]
 mod test {
     use super::*;
 
@@ -160,6 +160,7 @@ mod test {
     }
 
     #[test]
+    #[cfg(feature = "icu4x_human_readable_de")]
     fn test_json_serialization() {
         let matcher = StringMatcher::new("abc*").unwrap();
 
