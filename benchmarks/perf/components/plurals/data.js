@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642613007401,
+  "lastUpdate": 1642614719415,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24485,6 +24485,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17457,
             "range": "± 1677",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3dc15352de8242f156f93daed922c84c90bdb580",
+          "message": "Adding parts functionality to `Writeable` and using it for `ListFormatter` (#1438)",
+          "timestamp": "2022-01-19T18:43:02+01:00",
+          "tree_id": "672fcb91101db257f59d01cd41cfa4b486d6e8b6",
+          "url": "https://github.com/unicode-org/icu4x/commit/3dc15352de8242f156f93daed922c84c90bdb580"
+        },
+        "date": 1642614711114,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 824,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5413,
+            "range": "± 241",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15998,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
