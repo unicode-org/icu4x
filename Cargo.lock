@@ -2663,6 +2663,7 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
+ "zerovec",
 ]
 
 [[package]]

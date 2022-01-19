@@ -12,6 +12,9 @@ mod error;
 #[cfg(feature = "serde")]
 mod serde;
 
+#[cfg(feature = "zerovec")]
+mod ule;
+
 #[cfg(feature = "serde")]
 extern crate alloc;
 
