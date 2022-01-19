@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642614810219,
+  "lastUpdate": 1642633626114,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21665,6 +21665,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4136,
             "range": "± 142",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f46172f403b4456bc8abaed8e000a7b44d6e5234",
+          "message": "Simplifying `assert_writeable_parts_eq` (#1522)",
+          "timestamp": "2022-01-19T23:56:38+01:00",
+          "tree_id": "14072e932c76438785b022379f8422b17e4100cc",
+          "url": "https://github.com/unicode-org/icu4x/commit/f46172f403b4456bc8abaed8e000a7b44d6e5234"
+        },
+        "date": 1642633614464,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2206,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4800,
+            "range": "± 198",
             "unit": "ns/iter"
           }
         ]
