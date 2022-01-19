@@ -33,7 +33,7 @@ zerovec = { version = "0.5.0", path = "../../utils/zerovec", optional = true }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 bincode = "1.3"
 postcard = { version = "0.7", features = ["use-std"] }
-tinystr_old = { version = "0.4", package = "tinystr" }
+tinystr_old = { version = "0.4", package = "tinystr", features = ["serde"] }
 criterion = "0.3"
 
 [[test]]
@@ -47,3 +47,8 @@ harness = false
 [[bench]]
 name = "read"
 harness = false
+
+[[bench]]
+name = "serde"
+harness = false
+required-features = ["serde"]
