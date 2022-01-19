@@ -157,7 +157,7 @@ impl<W: Writeable> Writeable for List<'_, '_, W> {
 #[cfg(all(test, feature = "provider_transform_internals"))]
 mod tests {
     use super::*;
-    use writeable::{assert_writeable_eq, assert_writeable_fmt_eq};
+    use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
@@ -183,7 +183,7 @@ mod tests {
 
     #[test]
     fn test_fmt_writeable() {
-        assert_writeable_fmt_eq!(
+        assert_writeable_parts_eq!(
             formatter(Width::Wide).format(VALUES),
             "@one:two,three,four.five!",
             [
