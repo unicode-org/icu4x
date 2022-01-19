@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642552772588,
+  "lastUpdate": 1642612910315,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21557,6 +21557,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4423,
             "range": "± 238",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1278cefb0949bddd59f5e22d630f2d6e144234c3",
+          "message": "Fixing doc tests (#1520)",
+          "timestamp": "2022-01-19T18:12:12+01:00",
+          "tree_id": "33076332ced3f3b69f9fcbcf2c3722ac43168f6d",
+          "url": "https://github.com/unicode-org/icu4x/commit/1278cefb0949bddd59f5e22d630f2d6e144234c3"
+        },
+        "date": 1642612899528,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2110,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4323,
+            "range": "± 25",
             "unit": "ns/iter"
           }
         ]
