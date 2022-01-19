@@ -6,7 +6,6 @@ use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
 use core::fmt::{self, Write};
-use core::marker::PhantomData;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::*;
@@ -42,16 +41,18 @@ impl ListFormatter {
     }
 
     /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
-    /// formatting. The first layer of fields contains `ListFormatter::element()` for input elements,
-    /// and `ListFormatter::literal()` for list literals.
-    pub fn format<'a, 'b: 'a, 'c: 'a, W: Writeable + 'b, I: Iterator<Item = W> + Clone>(
+    /// formatting. The first layer of fields contains `ListFormatter::element()` for input
+    /// elements, and `ListFormatter::literal()` for list literals.
+    pub fn format<'a, 'b: 'a, 'c: 'a, W: Writeable + 'b, I: IntoIterator<Item = W>>(
         &'c self,
         values: I,
-    ) -> List<'a, W, I> {
+    ) -> List<'a, W, I::IntoIter>
+    where
+        I::IntoIter: Clone, // The iterator has to be usable multiple times
+    {
         List {
             formatter: self,
-            values,
-            phantom_data: PhantomData,
+            values: values.into_iter(),
         }
     }
 
@@ -70,15 +71,12 @@ impl ListFormatter {
     }
 }
 
-pub struct List<'a, W, I> {
+pub struct List<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
     formatter: &'a ListFormatter,
     values: I,
-    phantom_data: PhantomData<W>,
 }
 
-impl<'a, 'b: 'a, 'c: 'a, W: Writeable + 'b, I: Iterator<Item = W> + Clone> Writeable
-    for List<'a, W, I>
-{
+impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for List<'a, W, I> {
     fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
@@ -181,15 +179,6 @@ mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
-
-    fn non_sliceable_collection() -> std::collections::vec_deque::VecDeque<u8> {
-        let mut vecdeque = std::collections::vec_deque::VecDeque::<u8>::new();
-        vecdeque.push_back(10);
-        vecdeque.push_front(48);
-        vecdeque
-    }
-
     fn formatter(width: Width) -> ListFormatter {
         ListFormatter {
             data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
@@ -200,29 +189,20 @@ mod tests {
     }
 
     #[test]
-    fn test_writeable() {
+    fn test_slices() {
         let formatter = formatter(Width::Wide);
+        let values = ["one", "two", "three", "four", "five"];
 
-        assert_writeable_eq!(formatter.format(VALUES[0..0].iter()), "");
-        assert_writeable_eq!(formatter.format(VALUES[0..1].iter()), "one");
-        assert_writeable_eq!(formatter.format(VALUES[0..2].iter()), "$one;two+");
-        assert_writeable_eq!(formatter.format(VALUES[0..3].iter()), "@one:two.three!");
-        assert_writeable_eq!(
-            formatter.format(VALUES[0..4].iter()),
-            "@one:two,three.four!"
-        );
-        assert_writeable_eq!(formatter.format(VALUES.iter()), "@one:two,three,four.five!");
+        // Borrow
+        assert_writeable_eq!(formatter.format(&values[0..0]), "");
+        assert_writeable_eq!(formatter.format(&values[0..1]), "one");
+        assert_writeable_eq!(formatter.format(&values[0..2]), "$one;two+");
+        assert_writeable_eq!(formatter.format(&values[0..3]), "@one:two.three!");
+        assert_writeable_eq!(formatter.format(&values[0..4]), "@one:two,three.four!");
 
-        let data = non_sliceable_collection();
-        assert_writeable_eq!(formatter.format(data.iter()), "$48;10+");
-    }
-
-    #[test]
-    fn test_fmt_writeable() {
-        let formatter = formatter(Width::Wide);
-
+        // Move
         assert_writeable_parts_eq!(
-            formatter.format(VALUES.iter()),
+            formatter.format(values),
             "@one:two,three,four.five!",
             [
                 (0, 1, ListFormatter::literal()),
@@ -238,9 +218,22 @@ mod tests {
                 (24, 25, ListFormatter::literal())
             ]
         );
+    }
 
+    #[test]
+    fn test_into_iterator() {
+        let formatter = formatter(Width::Wide);
+
+        let mut vecdeque = std::collections::vec_deque::VecDeque::<u8>::new();
+        vecdeque.push_back(10);
+        vecdeque.push_front(48);
+
+        // Borrow
+        formatter.format(&vecdeque);
+
+        // Move
         assert_writeable_parts_eq!(
-            formatter.format(non_sliceable_collection().iter()),
+            formatter.format(vecdeque),
             "$48;10+",
             [
                 (0, 1, ListFormatter::literal()),
@@ -253,9 +246,26 @@ mod tests {
     }
 
     #[test]
+    fn test_iterator() {
+        let formatter = formatter(Width::Wide);
+
+        assert_writeable_parts_eq!(
+            formatter.format(core::iter::repeat(5).take(2)),
+            "$5;5+",
+            [
+                (0, 1, ListFormatter::literal()),
+                (1, 2, ListFormatter::element()),
+                (2, 3, ListFormatter::literal()),
+                (3, 4, ListFormatter::element()),
+                (4, 5, ListFormatter::literal()),
+            ]
+        );
+    }
+
+    #[test]
     fn test_conditional() {
         let formatter = formatter(Width::Narrow);
 
-        assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
+        assert_writeable_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
     }
 }
