@@ -2,20 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Field, PartsWrite, Writeable};
+use crate::{Part, PartsWrite, Writeable};
 use alloc::vec::Vec;
 use core::fmt::{self, Write};
 use core::str;
 
-/// A test utility that collects a Writeable  to a string and field annotations.
+/// A test utility that collects a Writeable  to a string and Part annotations.
 pub struct FormattedString {
     // bytes is always valid UTF-8, so from_utf8_unchecked is safe
     bytes: Vec<u8>,
     // The lists of annotations corresponding to each byte.
-    annotations: Vec<Vec<(LocationInPart, Field)>>,
+    annotations: Vec<Vec<(LocationInPart, Part)>>,
     // The list of annotations for the next byte.
     // The first entry is the top level.
-    next_annotation: Vec<(LocationInPart, Field)>,
+    next_annotation: Vec<(LocationInPart, Part)>,
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -40,8 +40,8 @@ impl FormattedString {
         unsafe { str::from_utf8_unchecked(&self.bytes) }
     }
 
-    pub fn fields(&self) -> Vec<(usize, usize, Field)> {
-        let mut output = Vec::<(usize, usize, Field)>::new();
+    pub fn parts(&self) -> Vec<(usize, usize, Part)> {
+        let mut output = Vec::<(usize, usize, Part)>::new();
         for l in 0..self.annotations.iter().map(Vec::len).max().unwrap_or(0) {
             let mut begin = None;
             // Iterating to len()+1 to close the last annotation
@@ -55,7 +55,7 @@ impl FormattedString {
                         begin = None;
                     }
                     Some((LocationInPart::Begin, _)) => {
-                        // New field
+                        // New Part
                         if let Some(b) = begin {
                             output.push((b, byte, self.annotations[b][l].1));
                         }
@@ -108,7 +108,7 @@ impl PartsWrite for FormattedString {
 
     fn with_part(
         &mut self,
-        part: Field,
+        part: Part,
         mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
     ) -> fmt::Result {
         self.next_annotation.push((LocationInPart::Begin, part));
@@ -125,15 +125,32 @@ mod test {
     #[test]
     fn test() {
         struct TestWriteable;
+        const GREETING: Part = Part {
+            category: "meaning",
+            value: "greeting",
+        };
+        const WORD: Part = Part {
+            category: "type",
+            value: "word",
+        };
+        const NUMBER: Part = Part {
+            category: "type",
+            value: "number",
+        };
+        const EMOJI: Part = Part {
+            category: "meaning",
+            value: "emoji",
+        };
+
         impl Writeable for TestWriteable {
             fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-                sink.with_part(Field("greeting"), |g| {
-                    g.with_part(Field("word"), |w| w.write_str("hello"))?;
+                sink.with_part(GREETING, |g| {
+                    g.with_part(WORD, |w| w.write_str("hello"))?;
                     g.write_str(" ")?;
-                    g.with_part(Field("number"), |n| 360.write_to(n))
+                    g.with_part(NUMBER, |n| 360.write_to(n))
                 })?;
                 sink.write_char(' ')?;
-                sink.with_part(Field("emoji"), |e| e.write_char('😅'))
+                sink.with_part(EMOJI, |e| e.write_char('😅'))
             }
         }
 
@@ -141,12 +158,12 @@ mod test {
 
         assert_eq!(materialized.as_str(), "hello 360 😅");
         assert_eq!(
-            materialized.fields(),
+            materialized.parts(),
             [
-                (0, 9, Field("greeting")),
-                (10, 14, Field("emoji")),
-                (0, 5, Field("word")),
-                (6, 9, Field("number"))
+                (0, 9, GREETING),
+                (10, 14, EMOJI),
+                (0, 5, WORD),
+                (6, 9, NUMBER)
             ]
         );
     }

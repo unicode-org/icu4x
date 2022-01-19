@@ -41,8 +41,8 @@ impl ListFormatter {
     }
 
     /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
-    /// formatting. The first layer of fields contains `Field("element")` for input elements,
-    /// and `Field("literal")` for list literals.
+    /// formatting. The first layer of fields contains `ELEMENT` for input elements,
+    /// and `LITERAL` for list literals.
     pub fn format<'a, 'b, W: Writeable>(&'a self, values: &'b [W]) -> List<'a, 'b, W> {
         List {
             formatter: self,
@@ -56,16 +56,25 @@ pub struct List<'a, 'b, W> {
     values: &'b [W],
 }
 
+pub const ELEMENT: Part = Part {
+    category: "list",
+    value: "element",
+};
+pub const LITERAL: Part = Part {
+    category: "list",
+    value: "literal",
+};
+
 impl<W: Writeable> Writeable for List<'_, '_, W> {
     fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
-                sink.with_part(Field("literal"), |l| l.write_str($lit))
+                sink.with_part(LITERAL, |l| l.write_str($lit))
             };
         }
         macro_rules! value {
             ($val:expr) => {
-                sink.with_part(Field("element"), |e| $val.write_to_parts(e))
+                sink.with_part(ELEMENT, |e| $val.write_to_parts(e))
             };
         }
 
@@ -173,17 +182,17 @@ mod tests {
             formatter(Width::Wide).format(VALUES),
             "@one:two,three,four.five!",
             [
-                (0, 1, Field("literal")),
-                (1, 4, Field("element")),
-                (4, 5, Field("literal")),
-                (5, 8, Field("element")),
-                (8, 9, Field("literal")),
-                (9, 14, Field("element")),
-                (14, 15, Field("literal")),
-                (15, 19, Field("element")),
-                (19, 20, Field("literal")),
-                (20, 24, Field("element")),
-                (24, 25, Field("literal"))
+                (0, 1, LITERAL),
+                (1, 4, ELEMENT),
+                (4, 5, LITERAL),
+                (5, 8, ELEMENT),
+                (8, 9, LITERAL),
+                (9, 14, ELEMENT),
+                (14, 15, LITERAL),
+                (15, 19, ELEMENT),
+                (19, 20, LITERAL),
+                (20, 24, ELEMENT),
+                (24, 25, LITERAL)
             ]
         );
     }
