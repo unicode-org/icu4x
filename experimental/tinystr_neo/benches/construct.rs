@@ -4,6 +4,9 @@
 
 // This file was adapted from https://github.com/zbraniecki/tinystr
 
+mod common;
+use common::*;
+
 use criterion::black_box;
 use criterion::criterion_group;
 use criterion::criterion_main;
@@ -11,61 +14,6 @@ use criterion::Bencher;
 use criterion::Criterion;
 
 use tinystr_neo::TinyAsciiStr;
-
-static STRINGS_4: &[&str] = &[
-    "US", "GB", "AR", "Hans", "CN", "AT", "PL", "FR", "AT", "Cyrl", "SR", "NO", "FR", "MK", "UK",
-];
-
-static STRINGS_8: &[&str] = &[
-    "Latn", "windows", "AR", "Hans", "macos", "AT", "pl", "FR", "en", "Cyrl", "SR", "NO", "419",
-    "und", "UK",
-];
-
-static STRINGS_16: &[&str] = &[
-    "Latn",
-    "windows",
-    "AR",
-    "Hans",
-    "macos",
-    "AT",
-    "infiniband",
-    "FR",
-    "en",
-    "Cyrl",
-    "FromIntegral",
-    "NO",
-    "419",
-    "MacintoshOSX2019",
-    "UK",
-];
-
-macro_rules! bench_block {
-    ($c:expr, $name:expr, $action:ident) => {
-        let mut group4 = $c.benchmark_group(&format!("{}/4", $name));
-        group4.bench_function("String", $action!(String, STRINGS_4));
-        group4.bench_function("TinyAsciiStr<4>", $action!(TinyAsciiStr<4>, STRINGS_4));
-        group4.bench_function("tinystr_old::TinyStr4", $action!(tinystr_old::TinyStr4, STRINGS_4));
-        group4.bench_function("TinyAsciiStr<8>", $action!(TinyAsciiStr<8>, STRINGS_4));
-        group4.bench_function("tinystr_old::TinyStr8", $action!(tinystr_old::TinyStr8, STRINGS_4));
-        group4.bench_function("TinyAsciiStr<16>", $action!(TinyAsciiStr<16>, STRINGS_4));
-        group4.bench_function("tinystr_old::TinyStr16", $action!(tinystr_old::TinyStr16, STRINGS_4));
-        group4.finish();
-
-        let mut group8 = $c.benchmark_group(&format!("{}/8", $name));
-        group8.bench_function("String", $action!(String, STRINGS_8));
-        group8.bench_function("TinyAsciiStr<8>", $action!(TinyAsciiStr<8>, STRINGS_8));
-        group8.bench_function("TinyAsciiStr<16>", $action!(TinyAsciiStr<16>, STRINGS_8));
-        group8.bench_function("tinystr_old::TinyStr8", $action!(tinystr_old::TinyStr8, STRINGS_8));
-        group8.bench_function("tinystr_old::TinyStr16", $action!(tinystr_old::TinyStr16, STRINGS_8));
-        group8.finish();
-
-        let mut group16 = $c.benchmark_group(&format!("{}/16", $name));
-        group16.bench_function("String", $action!(String, STRINGS_16));
-        group16.bench_function("TinyAsciiStr<16>", $action!(TinyAsciiStr<16>, STRINGS_16));
-        group16.bench_function("tinystr_old::TinyStr16", $action!(tinystr_old::TinyStr16, STRINGS_16));
-        group16.finish();
-    };
-}
 
 fn construct_from_str(c: &mut Criterion) {
     macro_rules! cfs {
@@ -99,29 +47,43 @@ fn construct_from_bytes(c: &mut Criterion) {
 
     let mut group4 = c.benchmark_group("construct_from_bytes/4");
     group4.bench_function("TinyAsciiStr<4>", cfu!(TinyAsciiStr<4>, STRINGS_4));
-    group4.bench_function("tinystr_old::TinyStr4", cfu!(tinystr_old::TinyStr4, STRINGS_4));
+    group4.bench_function(
+        "tinystr_old::TinyStr4",
+        cfu!(tinystr_old::TinyStr4, STRINGS_4),
+    );
     group4.bench_function("TinyAsciiStr<8>", cfu!(TinyAsciiStr<8>, STRINGS_4));
-    group4.bench_function("tinystr_old::TinyStr8", cfu!(tinystr_old::TinyStr8, STRINGS_4));
+    group4.bench_function(
+        "tinystr_old::TinyStr8",
+        cfu!(tinystr_old::TinyStr8, STRINGS_4),
+    );
     group4.bench_function("TinyAsciiStr<16>", cfu!(TinyAsciiStr<16>, STRINGS_4));
-    group4.bench_function("tinystr_old::TinyStr16", cfu!(tinystr_old::TinyStr16, STRINGS_4));
+    group4.bench_function(
+        "tinystr_old::TinyStr16",
+        cfu!(tinystr_old::TinyStr16, STRINGS_4),
+    );
     group4.finish();
 
     let mut group8 = c.benchmark_group("construct_from_bytes/8");
     group8.bench_function("TinyAsciiStr<8>", cfu!(TinyAsciiStr<8>, STRINGS_8));
-    group8.bench_function("tinystr_old::TinyStr8", cfu!(tinystr_old::TinyStr8, STRINGS_8));
+    group8.bench_function(
+        "tinystr_old::TinyStr8",
+        cfu!(tinystr_old::TinyStr8, STRINGS_8),
+    );
     group8.bench_function("TinyAsciiStr<16>", cfu!(TinyAsciiStr<16>, STRINGS_8));
-    group8.bench_function("tinystr_old::TinyStr16", cfu!(tinystr_old::TinyStr16, STRINGS_8));
+    group8.bench_function(
+        "tinystr_old::TinyStr16",
+        cfu!(tinystr_old::TinyStr16, STRINGS_8),
+    );
     group8.finish();
 
     let mut group16 = c.benchmark_group("construct_from_bytes/16");
     group16.bench_function("TinyAsciiStr<16>", cfu!(TinyAsciiStr<16>, STRINGS_16));
-    group16.bench_function("tinystr_old::TinyStr16", cfu!(tinystr_old::TinyStr16, STRINGS_16));
+    group16.bench_function(
+        "tinystr_old::TinyStr16",
+        cfu!(tinystr_old::TinyStr16, STRINGS_16),
+    );
     group16.finish();
 }
 
-criterion_group!(
-    benches,
-    construct_from_str,
-    construct_from_bytes,
-);
+criterion_group!(benches, construct_from_str, construct_from_bytes,);
 criterion_main!(benches);
