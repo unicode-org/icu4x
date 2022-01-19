@@ -58,6 +58,7 @@ mod ops;
 
 use alloc::borrow::Cow;
 use alloc::string::String;
+use alloc::vec::Vec;
 use core::fmt;
 
 /// A hint to help consumers of Writeable pre-allocate bytes before they call write_to.
@@ -234,10 +235,10 @@ pub trait Writeable {
 }
 
 /// Testing macros for types implementing Writeable. The first argument should be a
-/// `&dyn Writeable`, and the second argument either a string (assert_writeable_eq),
-/// or a formatted debug string (assert_writeable_fmt_eq).
+/// `Writeable`, the second argument a string, and the third argument (*_parts_eq only)
+/// a list of parts (`[(usize, usize, Part)]`).
 ///
-/// The macros tests for equality of string content, annotations (*_fmt_eq only), and
+/// The macros tests for equality of string content, parts (*_parts_eq only), and
 /// verify the size hint.
 ///
 /// # Examples
@@ -247,7 +248,7 @@ pub trait Writeable {
 /// # use writeable::LengthHint;
 /// # use writeable::Part;
 /// # use writeable::assert_writeable_eq;
-/// # use writeable::assert_writeable_fmt_eq;
+/// # use writeable::assert_writeable_parts_eq;
 /// # use std::fmt::{self, Write};
 ///
 /// const WORD: Part = Part { category: "foo", value: "word" };
@@ -265,8 +266,8 @@ pub trait Writeable {
 /// assert_writeable_eq!(&Demo, "foo");
 /// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
 ///
-/// assert_writeable_fmt_eq!(&Demo, "foo", [(0, 3, WORD)]);
-/// assert_writeable_fmt_eq!(&Demo, "foo", [(0, 3, WORD)], "Message: {}", "Hello World");
+/// assert_writeable_parts_eq!(&Demo, "foo", [(0, 3, WORD)]);
+/// assert_writeable_parts_eq!(&Demo, "foo", [(0, 3, WORD)], "Message: {}", "Hello World");
 /// ```
 #[macro_export]
 macro_rules! assert_writeable_eq {
@@ -274,32 +275,79 @@ macro_rules! assert_writeable_eq {
         $crate::assert_writeable_eq!($actual_writeable, $expected_str, "");
     };
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
-        assert_eq!(&$crate::Writeable::writeable_to_string(&$actual_writeable), &$expected_str, $($arg)*);
-        let length_hint = $crate::Writeable::write_len(&$actual_writeable);
-        assert!(length_hint.0 <= $expected_str.len(), $($arg)*);
+        let actual_writeable = &$actual_writeable;
+        let (actual_str, _) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
+        assert_eq!(actual_str, $expected_str, $($arg)*);
+        assert_eq!(actual_str, $crate::Writeable::writeable_to_string(actual_writeable), $($arg)+);
+        let length_hint = $crate::Writeable::write_len(actual_writeable);
+        assert!(length_hint.0 <= actual_str.len(), $($arg)*);
         if let Some(upper) = length_hint.1 {
-            assert!($expected_str.len() <= upper, $($arg)*);
+            assert!(actual_str.len() <= upper, $($arg)*);
         }
     }};
 }
 
-#[doc(hidden)] // Macro use only
-pub mod formatted_string;
-
 #[macro_export]
-macro_rules! assert_writeable_fmt_eq {
+macro_rules! assert_writeable_parts_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
-        $crate::assert_writeable_fmt_eq!($actual_writeable, $expected_str, $expected_parts, "");
+        $crate::assert_writeable_parts_eq!($actual_writeable, $expected_str, $expected_parts, "");
     };
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
-        let actual = $crate::formatted_string::FormattedString::from_writeable(&$actual_writeable).unwrap();
-        assert_eq!(&actual.as_str(), &$expected_str, $($arg)+);
-        assert_eq!(&actual.as_str(), &$actual_writeable.writeable_to_string(), $($arg)+);
-        assert_eq!(actual.parts(), $expected_parts, $($arg)+);
-        let length_hint = $crate::Writeable::write_len(&$actual_writeable);
-        assert!(length_hint.0 <= actual.as_str().len(), $($arg)+);
+        let actual_writeable = &$actual_writeable;
+        let (actual_str, actual_parts) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
+        assert_eq!(actual_str, $expected_str, $($arg)+);
+        assert_eq!(actual_str, $crate::Writeable::writeable_to_string(actual_writeable), $($arg)+);
+        assert_eq!(actual_parts, $expected_parts, $($arg)+);
+        let length_hint = $crate::Writeable::write_len(actual_writeable);
+        assert!(length_hint.0 <= actual_str.len(), $($arg)+);
         if let Some(upper) = length_hint.1 {
-            assert!(actual.as_str().len() <= upper, $($arg)+);
+            assert!(actual_str.len() <= upper, $($arg)+);
         }
     }};
+}
+
+#[doc(hidden)]
+#[allow(clippy::type_complexity)]
+pub fn writeable_to_parts_for_test<W: Writeable>(
+    writeable: &W,
+) -> Result<(String, Vec<(usize, usize, Part)>), fmt::Error> {
+    struct State {
+        string: alloc::string::String,
+        parts: Vec<(usize, usize, Part)>,
+    }
+
+    impl fmt::Write for State {
+        fn write_str(&mut self, s: &str) -> fmt::Result {
+            self.string.write_str(s)
+        }
+        fn write_char(&mut self, c: char) -> fmt::Result {
+            self.string.write_char(c)
+        }
+    }
+
+    impl PartsWrite for State {
+        type SubPartsWrite = Self;
+        fn with_part(
+            &mut self,
+            part: Part,
+            mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+        ) -> fmt::Result {
+            let start = self.string.len();
+            f(self)?;
+            self.parts.push((start, self.string.len(), part));
+            Ok(())
+        }
+    }
+
+    let mut state = State {
+        string: alloc::string::String::new(),
+        parts: Vec::new(),
+    };
+    writeable.write_to_parts(&mut state)?;
+
+    // Sort by first open and last closed
+    state
+        .parts
+        .sort_unstable_by_key(|(begin, end, _)| (*begin, end.wrapping_neg()));
+    Ok((state.string, state.parts))
 }

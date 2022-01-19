@@ -6,28 +6,48 @@
 icu_benchmark_macros::static_setup!();
 
 use std::fmt;
-use writeable::LengthHint;
-use writeable::Writeable;
+use writeable::*;
 
-struct WriteableMessage<'s> {
-    message: &'s str,
-}
+struct WriteableMessage<W: Writeable>(W);
 
-impl Writeable for WriteableMessage<'_> {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        sink.write_str(self.message)
+const GREETING: Part = Part {
+    category: "meaning",
+    value: "greeting",
+};
+
+const EMOJI: Part = Part {
+    category: "meaning",
+    value: "emoji",
+};
+
+impl<V: Writeable> Writeable for WriteableMessage<V> {
+    fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        use fmt::Write;
+        sink.with_part(GREETING, |g| {
+            g.write_str("Hello")?;
+            g.write_str(" ")?;
+            self.0.write_to(g)
+        })?;
+        sink.write_char(' ')?;
+        sink.with_part(EMOJI, |e| e.write_char('😅'))
     }
 
     fn write_len(&self) -> LengthHint {
-        LengthHint::exact(self.message.len())
+        LengthHint::exact(11) + self.0.write_len()
     }
 }
 
 fn main() {
     icu_benchmark_macros::main_setup!();
 
-    let writeable = WriteableMessage {
-        message: "hello world",
-    };
-    assert_eq!("hello world", writeable.writeable_to_string());
+    let (string, parts) = writeable_to_parts_for_test(&WriteableMessage("world")).unwrap();
+
+    assert_eq!(string, "Hello world 😅");
+
+    // Print the greeting only
+    let (start, end, _) = parts
+        .into_iter()
+        .find(|(_, _, part)| part == &GREETING)
+        .unwrap();
+    println!("{}", &string[start..end]);
 }
