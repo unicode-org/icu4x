@@ -43,8 +43,8 @@ impl ListFormatter {
     /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
     /// formatting. The first layer of fields contains `ListFormatter::element()` for input
     /// elements, and `ListFormatter::literal()` for list literals.
-    pub fn format<'a, 'b: 'a, 'c: 'a, W: Writeable + 'b, I: IntoIterator<Item = W>>(
-        &'c self,
+    pub fn format<'a, W: Writeable + 'a, I: IntoIterator<Item = W>>(
+        &'a self,
         values: I,
     ) -> List<'a, W, I::IntoIter>
     where
