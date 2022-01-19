@@ -6,15 +6,15 @@
 
 icu_benchmark_macros::static_setup!();
 
+use icu_list::{
+    options::{Type, Width},
+    ListFormatter,
+};
+use icu_locid_macros::langid;
+
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
-
-    use icu_list::{
-        options::{Type, Width},
-        ListFormatter,
-    };
-    use icu_locid_macros::langid;
 
     let provider = icu_testdata::get_static_provider();
 
