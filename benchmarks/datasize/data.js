@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642612421088,
+  "lastUpdate": 1642614290213,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7523,6 +7523,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1278cefb0949bddd59f5e22d630f2d6e144234c3"
         },
         "date": 1642612412530,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3dc15352de8242f156f93daed922c84c90bdb580",
+          "message": "Adding parts functionality to `Writeable` and using it for `ListFormatter` (#1438)",
+          "timestamp": "2022-01-19T18:43:02+01:00",
+          "tree_id": "672fcb91101db257f59d01cd41cfa4b486d6e8b6",
+          "url": "https://github.com/unicode-org/icu4x/commit/3dc15352de8242f156f93daed922c84c90bdb580"
+        },
+        "date": 1642614279356,
         "tool": "ndjson",
         "benches": [
           {
