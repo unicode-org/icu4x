@@ -23,6 +23,7 @@ impl DataMarker for BufferMarker {
 /// # Examples
 ///
 /// ```
+/// # #[cfg(feature = "deserialize_json")] {
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_locid_macros::langid;
@@ -47,6 +48,7 @@ impl DataMarker for BufferMarker {
 ///     .expect("Data should be present");
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// # }
 /// ```
 ///
 /// [`as_deserializing()`]: crate::serde::de::AsDeserializingBufferProvider::as_deserializing
