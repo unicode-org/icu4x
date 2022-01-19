@@ -63,8 +63,8 @@ Segment a string:
 ```rust
 use icu_segmenter::GraphemeClusterBreakIterator;
 
-let breakpoints: Vec<usize> = GraphemeClusterBreakIterator::new("Hello World").collect();
-assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+let breakpoints: Vec<usize> = GraphemeClusterBreakIterator::new("Hello 🗺").collect();
+assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 10]); // World Map (U+1F5FA) is encoded in four bytes in UTF-8.
 ```
 
 Segment a Latin1 byte string:
