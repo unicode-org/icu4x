@@ -271,7 +271,7 @@ pub trait Writeable {
 #[macro_export]
 macro_rules! assert_writeable_eq {
     ($actual_writeable:expr, $expected_str:expr $(,)?) => {
-        assert_writeable_eq!($actual_writeable, $expected_str, "");
+        $crate::assert_writeable_eq!($actual_writeable, $expected_str, "");
     };
     ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
         assert_eq!(&$crate::Writeable::writeable_to_string(&$actual_writeable), &$expected_str, $($arg)*);
@@ -289,7 +289,7 @@ pub mod formatted_string;
 #[macro_export]
 macro_rules! assert_writeable_fmt_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
-        assert_writeable_fmt_eq!($actual_writeable, $expected_str, $expected_parts, "");
+        $crate::assert_writeable_fmt_eq!($actual_writeable, $expected_str, $expected_parts, "");
     };
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
         let actual = $crate::formatted_string::FormattedString::from_writeable(&$actual_writeable).unwrap();
