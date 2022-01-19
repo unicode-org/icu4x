@@ -41,9 +41,16 @@ impl From<&Weekday> for icu_calendar::types::IsoWeekday {
     }
 }
 
+/// The territory that data is keyed by.
+///
+/// For example the "AD" in "weekData": { "minDays": { "AD": 4, } }
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Territory {
+    // A territory string, e.g. "AD" for Andorra.
     Region(TinyStr4),
+    // An alternative variant for a given territory (e.g. the first day of the
+    // week can be sunday rather than monday GB). The string is set to the region
+    // with the "-alt-variant" suffix present in the json.
     AltVariantRegion(TinyStr4),
 }
 
@@ -92,6 +99,7 @@ impl<'de> Deserialize<'de> for Territory {
     }
 }
 
+/// Wrapper used to deserialize json string keys as u8s.
 #[derive(Debug, Deserialize)]
 #[serde(try_from = "String")]
 pub struct U8(pub u8);
