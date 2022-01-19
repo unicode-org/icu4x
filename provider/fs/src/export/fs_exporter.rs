@@ -73,7 +73,7 @@ impl DataExporter<SerializeMarker> for FilesystemExporter {
         obj: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone();
-        path_buf.push(req.resource_path.to_string());
+        path_buf.push(&*req.resource_path.writeable_to_string());
         log::trace!("Writing: {}", req);
         self.write_to_path(path_buf, obj.get().deref())?;
         Ok(())
