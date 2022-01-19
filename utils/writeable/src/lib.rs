@@ -285,7 +285,10 @@ macro_rules! assert_writeable_eq {
 }
 
 #[doc(hidden)]
-pub fn writeable_to_parts_for_test<W: Writeable>(writeable: &W) -> Result<(String, Vec<(usize, usize, Part)>), fmt::Error> {
+#[allow(clippy::type_complexity)]
+pub fn writeable_to_parts_for_test<W: Writeable>(
+    writeable: &W,
+) -> Result<(String, Vec<(usize, usize, Part)>), fmt::Error> {
     struct State {
         string: alloc::string::String,
         parts: Vec<(usize, usize, Part)>,
@@ -321,7 +324,9 @@ pub fn writeable_to_parts_for_test<W: Writeable>(writeable: &W) -> Result<(Strin
     writeable.write_to_parts(&mut state)?;
 
     // Sort by first open and last closed
-    state.parts.sort_unstable_by_key(|(begin, end, _)| (*begin, end.wrapping_neg()));
+    state
+        .parts
+        .sort_unstable_by_key(|(begin, end, _)| (*begin, end.wrapping_neg()));
     Ok((state.string, state.parts))
 }
 
@@ -342,7 +347,6 @@ macro_rules! assert_writeable_parts_eq {
         }
     }};
 }
-
 
 #[cfg(test)]
 mod test {
@@ -381,7 +385,9 @@ mod test {
             }
         }
 
-        assert_writeable_parts_eq!(TestWriteable, "hello 360 😅",
+        assert_writeable_parts_eq!(
+            TestWriteable,
+            "hello 360 😅",
             [
                 (0, 9, GREETING),
                 (0, 5, WORD),
