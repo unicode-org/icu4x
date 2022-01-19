@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642549862797,
+  "lastUpdate": 1642552772588,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21521,6 +21521,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3963,
             "range": "± 290",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "26089b27d7e08e29dc615f0246a4ececcc88961f",
+          "message": "Re-write ResourceKey (#1511)",
+          "timestamp": "2022-01-18T16:30:19-08:00",
+          "tree_id": "457ef5144b19096db4c0827c8561340362dabe2f",
+          "url": "https://github.com/unicode-org/icu4x/commit/26089b27d7e08e29dc615f0246a4ececcc88961f"
+        },
+        "date": 1642552761186,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2121,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4423,
+            "range": "± 238",
             "unit": "ns/iter"
           }
         ]
