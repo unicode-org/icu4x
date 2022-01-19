@@ -5,16 +5,10 @@
 use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
-use alloc::string::String;
-use formatted_string::*;
+use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum FieldType {
-    Element,
-    Literal,
-}
+use writeable::*;
 
 pub struct ListFormatter {
     data: DataPayload<ListFormatterPatternsV1Marker>,
@@ -46,86 +40,124 @@ impl ListFormatter {
         Ok(Self { data, width })
     }
 
-    fn format_internal<'c, B>(
-        &'c self,
-        values: &[&str],
-        mut builder: B,
-        append_value: fn(B, &str) -> B,
-        append_literal: fn(B, &str) -> B,
-    ) -> B {
-        match values.len() {
-            0 => builder,
-            1 => append_value(builder, values[0]),
+    /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
+    /// formatting. The first layer of fields contains `ListFormatter::element()` for input elements,
+    /// and `ListFormatter::literal()` for list literals.
+    pub fn format<'a, 'b, W: Writeable>(&'a self, values: &'b [W]) -> List<'a, 'b, W> {
+        List {
+            formatter: self,
+            values,
+        }
+    }
+
+    pub const fn element() -> Part {
+        Part {
+            category: "list",
+            value: "element",
+        }
+    }
+
+    pub const fn literal() -> Part {
+        Part {
+            category: "list",
+            value: "literal",
+        }
+    }
+}
+
+pub struct List<'a, 'b, W> {
+    formatter: &'a ListFormatter,
+    values: &'b [W],
+}
+
+impl<W: Writeable> Writeable for List<'_, '_, W> {
+    fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
+        macro_rules! literal {
+            ($lit:ident) => {
+                sink.with_part(ListFormatter::literal(), |l| l.write_str($lit))
+            };
+        }
+        macro_rules! value {
+            ($val:expr) => {
+                sink.with_part(ListFormatter::element(), |e| $val.write_to_parts(e))
+            };
+        }
+
+        match self.values.len() {
+            0 => Ok(()),
+            1 => value!(self.values[0]),
             2 => {
                 // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
-                let (before, between, after) = self.data.get().pair(self.width).parts(values[1]);
-                builder = append_literal(builder, before);
-                builder = append_value(builder, values[0]);
-                builder = append_literal(builder, between);
-                builder = append_value(builder, values[1]);
-                append_literal(builder, after)
+                let (before, between, after) = self
+                    .formatter
+                    .data
+                    .get()
+                    .pair(self.formatter.width)
+                    .parts(&self.values[1]);
+                literal!(before)?;
+                value!(self.values[0])?;
+                literal!(between)?;
+                value!(self.values[1])?;
+                literal!(after)
             }
             n => {
                 // Start(values[0], middle(..., middle(values[n-3], End(values[n-2], values[n-1]))...)) =
                 // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
                 // values[n-2] + end_between + values[n-1] + end_after
 
-                let (start_before, start_between, _) =
-                    self.data.get().start(self.width).parts(values[1]);
+                let (start_before, start_between, _) = self
+                    .formatter
+                    .data
+                    .get()
+                    .start(self.formatter.width)
+                    .parts(&self.values[1]);
 
-                builder = append_literal(builder, start_before);
-                builder = append_value(builder, values[0]);
-                builder = append_literal(builder, start_between);
-                builder = append_value(builder, values[1]);
+                literal!(start_before)?;
+                value!(self.values[0])?;
+                literal!(start_between)?;
+                value!(self.values[1])?;
 
-                for value in &values[2..n - 1] {
-                    let (_, between, _) = self.data.get().middle(self.width).parts(value);
-                    builder = append_literal(builder, between);
-                    builder = append_value(builder, value);
+                for value in &self.values[2..n - 1] {
+                    let (_, between, _) = self
+                        .formatter
+                        .data
+                        .get()
+                        .middle(self.formatter.width)
+                        .parts(value);
+                    literal!(between)?;
+                    value!(value)?;
                 }
 
-                let (_, end_between, end_after) =
-                    self.data.get().end(self.width).parts(values[n - 1]);
-                builder = append_literal(builder, end_between);
-                builder = append_value(builder, values[n - 1]);
-                append_literal(builder, end_after)
+                let (_, end_between, end_after) = self
+                    .formatter
+                    .data
+                    .get()
+                    .end(self.formatter.width)
+                    .parts(&self.values[n - 1]);
+                literal!(end_between)?;
+                value!(self.values[n - 1])?;
+                literal!(end_after)
             }
         }
     }
 
-    fn size_hint(&self, values: &[&str]) -> usize {
-        values.iter().map(|s| s.len()).sum::<usize>()
-            + self.data.get().size_hint(self.width, values.len())
-    }
-
-    pub fn format(&self, values: &[&str]) -> String {
-        self.format_internal(
-            values,
-            String::with_capacity(self.size_hint(values)),
-            |builder, value| builder + value,
-            |builder, literal| builder + literal,
-        )
-    }
-
-    pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType> {
-        self.format_internal(
-            values,
-            FormattedString::with_capacity(self.size_hint(values)),
-            |mut builder, value| {
-                builder.append(&value, FieldType::Element);
-                builder
-            },
-            |mut builder, literal| {
-                builder.append(&literal, FieldType::Literal);
-                builder
-            },
-        )
+    fn write_len(&self) -> LengthHint {
+        self.values
+            .iter()
+            .map(|w| w.write_len())
+            .sum::<LengthHint>()
+            + self
+                .formatter
+                .data
+                .get()
+                .size_hint(self.formatter.width, self.values.len())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use writeable::{assert_writeable_eq, assert_writeable_fmt_eq};
 
     const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
 
@@ -139,62 +171,41 @@ mod tests {
     }
 
     #[test]
-    fn test_format() {
+    fn test_writeable() {
         let formatter = formatter(Width::Wide);
-        assert_eq!(formatter.format(&VALUES[0..0]), "");
-        assert_eq!(formatter.format(&VALUES[0..1]), "one");
-        assert_eq!(formatter.format(&VALUES[0..2]), "$one;two+");
-        assert_eq!(formatter.format(&VALUES[0..3]), "@one:two.three!");
-        assert_eq!(formatter.format(&VALUES[0..4]), "@one:two,three.four!");
-        assert_eq!(formatter.format(VALUES), "@one:two,three,four.five!");
+        assert_writeable_eq!(formatter.format(&VALUES[0..0]), "");
+        assert_writeable_eq!(formatter.format(&VALUES[0..1]), "one");
+        assert_writeable_eq!(formatter.format(&VALUES[0..2]), "$one;two+");
+        assert_writeable_eq!(formatter.format(&VALUES[0..3]), "@one:two.three!");
+        assert_writeable_eq!(formatter.format(&VALUES[0..4]), "@one:two,three.four!");
+        assert_writeable_eq!(formatter.format(VALUES), "@one:two,three,four.five!");
     }
 
     #[test]
-    fn test_format_to_parts() {
-        let formatter = formatter(Width::Wide);
-
-        assert_eq!(formatter.format_to_parts(&VALUES[0..0]).as_ref(), "");
-        assert_eq!(formatter.format_to_parts(&VALUES[0..1]).as_ref(), "one");
-        assert_eq!(
-            formatter.format_to_parts(&VALUES[0..2]).as_ref(),
-            "$one;two+"
+    fn test_fmt_writeable() {
+        assert_writeable_fmt_eq!(
+            formatter(Width::Wide).format(VALUES),
+            "@one:two,three,four.five!",
+            [
+                (0, 1, ListFormatter::literal()),
+                (1, 4, ListFormatter::element()),
+                (4, 5, ListFormatter::literal()),
+                (5, 8, ListFormatter::element()),
+                (8, 9, ListFormatter::literal()),
+                (9, 14, ListFormatter::element()),
+                (14, 15, ListFormatter::literal()),
+                (15, 19, ListFormatter::element()),
+                (19, 20, ListFormatter::literal()),
+                (20, 24, ListFormatter::element()),
+                (24, 25, ListFormatter::literal())
+            ]
         );
-        assert_eq!(
-            formatter.format_to_parts(&VALUES[0..3]).as_ref(),
-            "@one:two.three!"
-        );
-        assert_eq!(
-            formatter.format_to_parts(&VALUES[0..4]).as_ref(),
-            "@one:two,three.four!"
-        );
-        let parts = formatter.format_to_parts(VALUES);
-        assert_eq!(parts.as_ref(), "@one:two,three,four.five!");
-
-        assert_eq!(parts.fields_at(0), [FieldType::Literal]);
-        assert!(parts.is_field_start(0, 0));
-        assert_eq!(parts.fields_at(2), [FieldType::Element]);
-        assert!(!parts.is_field_start(2, 0));
-        assert_eq!(parts.fields_at(4), [FieldType::Literal]);
-        assert!(parts.is_field_start(4, 0));
-        assert_eq!(parts.fields_at(5), [FieldType::Element]);
-        assert!(parts.is_field_start(5, 0));
-        assert_eq!(parts.fields_at(6), [FieldType::Element]);
-        assert!(!parts.is_field_start(6, 0));
     }
 
     #[test]
     fn test_conditional() {
         let formatter = formatter(Width::Narrow);
 
-        assert_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
-    }
-
-    #[test]
-    fn strings_dont_have_spare_capacity() {
-        let string = formatter(Width::Short).format(VALUES);
-        assert_eq!(string.capacity(), string.len());
-
-        let labelled_string = formatter(Width::Short).format_to_parts(VALUES);
-        assert_eq!(labelled_string.capacity(), labelled_string.len());
+        assert_writeable_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
     }
 }

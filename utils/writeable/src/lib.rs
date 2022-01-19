@@ -123,10 +123,61 @@ impl LengthHint {
     }
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Part {
+    pub category: &'static str,
+    pub value: &'static str,
+}
+
+/// A sink that supports annotating parts of the string with Parts.
+pub trait PartsWrite: fmt::Write {
+    type SubPartsWrite: PartsWrite + ?Sized;
+
+    fn with_part(
+        &mut self,
+        part: Part,
+        f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+    ) -> fmt::Result;
+}
+
 /// Writeable is an alternative to std::fmt::Display with the addition of a length function.
 pub trait Writeable {
     /// Writes bytes to the given sink. Errors from the sink are bubbled up.
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result;
+    /// The default implementation delegates to write_to_parts, and discards any
+    /// Part annotations.
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        struct CoreWriteAsPartsWrite<W: fmt::Write + ?Sized>(W);
+        impl<W: fmt::Write + ?Sized> fmt::Write for CoreWriteAsPartsWrite<W> {
+            fn write_str(&mut self, s: &str) -> fmt::Result {
+                self.0.write_str(s)
+            }
+
+            fn write_char(&mut self, c: char) -> fmt::Result {
+                self.0.write_char(c)
+            }
+        }
+
+        impl<W: fmt::Write + ?Sized> PartsWrite for CoreWriteAsPartsWrite<W> {
+            type SubPartsWrite = CoreWriteAsPartsWrite<W>;
+
+            fn with_part(
+                &mut self,
+                _part: Part,
+                mut f: impl FnMut(&mut Self::SubPartsWrite) -> fmt::Result,
+            ) -> fmt::Result {
+                f(self)
+            }
+        }
+
+        self.write_to_parts(&mut CoreWriteAsPartsWrite(sink))
+    }
+
+    /// Write bytes and Part annotations to the given sink. Errors from the
+    /// sink are bubbled up. The default implementation delegates to write_to,
+    /// and doesn't produce any Part annotations.
+    fn write_to_parts<S: PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+        self.write_to(sink)
+    }
 
     /// Returns a hint for the number of bytes that will be written to the sink.
     ///
@@ -182,23 +233,29 @@ pub trait Writeable {
     }
 }
 
-/// Testing macro for types implementing Writeable. The first argument should be a string, and
-/// the second argument should be a `&dyn Writeable`.
+/// Testing macros for types implementing Writeable. The first argument should be a
+/// `&dyn Writeable`, and the second argument either a string (assert_writeable_eq),
+/// or a formatted debug string (assert_writeable_fmt_eq).
 ///
-/// The macro tests for equality of both string content and verifies the size hint.
+/// The macros tests for equality of string content, annotations (*_fmt_eq only), and
+/// verify the size hint.
 ///
 /// # Examples
 ///
 /// ```
-/// use writeable::Writeable;
-/// use writeable::LengthHint;
-/// use writeable::assert_writeable_eq;
-/// use std::fmt;
+/// # use writeable::Writeable;
+/// # use writeable::LengthHint;
+/// # use writeable::Part;
+/// # use writeable::assert_writeable_eq;
+/// # use writeable::assert_writeable_fmt_eq;
+/// # use std::fmt::{self, Write};
+///
+/// const WORD: Part = Part { category: "foo", value: "word" };
 ///
 /// struct Demo;
 /// impl Writeable for Demo {
-///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-///         sink.write_str("foo")
+///     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+///         sink.with_part(WORD, |w| w.write_str("foo"))
 ///     }
 ///     fn write_len(&self) -> LengthHint {
 ///         LengthHint::exact(3)
@@ -207,32 +264,42 @@ pub trait Writeable {
 ///
 /// assert_writeable_eq!(&Demo, "foo");
 /// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
+///
+/// assert_writeable_fmt_eq!(&Demo, "foo", [(0, 3, WORD)]);
+/// assert_writeable_fmt_eq!(&Demo, "foo", [(0, 3, WORD)], "Message: {}", "Hello World");
 /// ```
 #[macro_export]
 macro_rules! assert_writeable_eq {
     ($actual_writeable:expr, $expected_str:expr $(,)?) => {
-        {
-            let writeable = $actual_writeable;
-            let actual = $crate::Writeable::writeable_to_string(&writeable);
-            assert_eq!($expected_str, actual);
-            let length_hint = $crate::Writeable::write_len(&writeable);
-            assert!(length_hint.0 <= $expected_str.len());
-            if let Some(upper) = length_hint.1 {
-                assert!($expected_str.len() <= upper);
-            }
-        }
+        $crate::assert_writeable_eq!($actual_writeable, $expected_str, "");
     };
+    ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {{
+        assert_eq!(&$crate::Writeable::writeable_to_string(&$actual_writeable), &$expected_str, $($arg)*);
+        let length_hint = $crate::Writeable::write_len(&$actual_writeable);
+        assert!(length_hint.0 <= $expected_str.len(), $($arg)*);
+        if let Some(upper) = length_hint.1 {
+            assert!($expected_str.len() <= upper, $($arg)*);
+        }
+    }};
+}
 
-    ($actual_writeable:expr, $expected_str:expr, $($arg:tt)+) => {
-        {
-            let writeable = $actual_writeable;
-            let actual = $crate::Writeable::writeable_to_string(&writeable);
-            assert_eq!($expected_str, actual, $($arg)+);
-            let length_hint = $crate::Writeable::write_len(&writeable);
-            assert!(length_hint.0 <= $expected_str.len(), $($arg)+);
-            if let Some(upper) = length_hint.1 {
-                assert!($expected_str.len() <= upper, $($arg)+);
-            }
-        }
+#[doc(hidden)] // Macro use only
+pub mod formatted_string;
+
+#[macro_export]
+macro_rules! assert_writeable_fmt_eq {
+    ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
+        $crate::assert_writeable_fmt_eq!($actual_writeable, $expected_str, $expected_parts, "");
     };
+    ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr, $($arg:tt)+) => {{
+        let actual = $crate::formatted_string::FormattedString::from_writeable(&$actual_writeable).unwrap();
+        assert_eq!(&actual.as_str(), &$expected_str, $($arg)+);
+        assert_eq!(&actual.as_str(), &$actual_writeable.writeable_to_string(), $($arg)+);
+        assert_eq!(actual.parts(), $expected_parts, $($arg)+);
+        let length_hint = $crate::Writeable::write_len(&$actual_writeable);
+        assert!(length_hint.0 <= actual.as_str().len(), $($arg)+);
+        if let Some(upper) = length_hint.1 {
+            assert!(actual.as_str().len() <= upper, $($arg)+);
+        }
+    }};
 }

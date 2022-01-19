@@ -10,6 +10,7 @@ use crate::options::Width;
 use crate::string_matcher::StringMatcher;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
+use writeable::{LengthHint, Writeable};
 
 pub mod key {
     //! Resource keys for [`list_formatter`](crate).
@@ -55,12 +56,11 @@ impl<'data> ListFormatterPatternsV1<'data> {
         &self.0[4 * (width as usize) + 3]
     }
 
-    /// The expected number of bytes required by the list literals to join a list of length
-    /// len. If none of the patterns are conditional, this is exact, otherwise it is an
-    /// upper bound.
-    pub fn size_hint(&self, width: Width, len: usize) -> usize {
+    /// The range of the number of bytes required by the list literals to join a
+    /// list of length len. If none of the patterns are conditional, this is exact.
+    pub fn size_hint(&self, width: Width, len: usize) -> LengthHint {
         match len {
-            0 | 1 => 0,
+            0 | 1 => LengthHint::exact(0),
             2 => self.pair(width).size_hint(),
             n => {
                 self.start(width).size_hint()
@@ -118,28 +118,25 @@ struct ListJoinerPattern<'data> {
 pub type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'a> ConditionalListJoinerPattern<'a> {
-    pub fn parts(&'a self, following_value: &str) -> PatternParts<'a> {
+    pub fn parts<'b, W: Writeable + ?Sized>(&'a self, following_value: &'b W) -> PatternParts<'a> {
         match &self.special_case {
-            Some(SpecialCasePattern { condition, pattern }) if condition.test(following_value) => {
+            Some(SpecialCasePattern { condition, pattern })
+                // TODO: Implement lookahead instead of materializing here.
+                if condition.test(&*following_value.writeable_to_string()) =>
+            {
                 pattern.borrow_tuple()
             }
             _ => self.default.borrow_tuple(),
         }
     }
 
-    /// The expected length of this pattern. If the pattern is not conditional, this is
-    /// exact, otherwise it's is an upper bound. Currently special cases only occur in
-    /// the `end` and `pair` positions, meaning they are only used once, so using an upper
-    /// bound won't waste much memory. It guarantees, however, that the buffer never has
-    /// to be reallocated for just a handful of extra bytes.
-    pub fn size_hint(&'a self) -> usize {
-        Ord::max(
-            self.default.string.len(),
-            self.special_case
-                .as_ref()
-                .map(|s| s.pattern.string.len())
-                .unwrap_or(0),
-        )
+    /// The expected length of this pattern
+    pub fn size_hint(&'a self) -> LengthHint {
+        let mut hint = self.default.size_hint();
+        if let Some(special_case) = &self.special_case {
+            hint |= special_case.pattern.size_hint()
+        }
+        hint
     }
 }
 
@@ -152,6 +149,10 @@ impl<'data> ListJoinerPattern<'data> {
             &self.string[index_0..index_1],
             &self.string[index_1..],
         )
+    }
+
+    fn size_hint(&self) -> LengthHint {
+        LengthHint::exact(self.string.len())
     }
 }
 
@@ -326,16 +327,22 @@ pub(crate) mod test {
     fn size_hint_works() {
         let pattern = test_patterns();
 
-        assert_eq!(pattern.size_hint(Width::Short, 0), 0);
-        assert_eq!(pattern.size_hint(Width::Short, 1), 0);
+        assert_eq!(pattern.size_hint(Width::Short, 0), LengthHint::exact(0));
+        assert_eq!(pattern.size_hint(Width::Short, 1), LengthHint::exact(0));
 
         // pair pattern "{0}123{1}456"
-        assert_eq!(pattern.size_hint(Width::Short, 2), 6);
+        assert_eq!(pattern.size_hint(Width::Short, 2), LengthHint::exact(6));
 
         // patterns "{0}1{1}", "{0}12{1}" (x197), and "{0}12{1}34"
-        assert_eq!(pattern.size_hint(Width::Short, 200), 1 + 2 * 197 + 4);
+        assert_eq!(
+            pattern.size_hint(Width::Short, 200),
+            LengthHint::exact(1 + 2 * 197 + 4)
+        );
 
         // patterns "{0}: {1}", "{0}, {1}" (x197), and "{0} :o {1}" or "{0}. {1}"
-        assert_eq!(pattern.size_hint(Width::Narrow, 200), 2 + 197 * 2 + 4);
+        assert_eq!(
+            pattern.size_hint(Width::Narrow, 200),
+            LengthHint::exact(2 + 197 * 2) + LengthHint::between(2, 4)
+        );
     }
 }
