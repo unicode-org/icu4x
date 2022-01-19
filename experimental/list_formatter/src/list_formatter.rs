@@ -154,7 +154,7 @@ impl<W: Writeable> Writeable for List<'_, '_, W> {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "provider_transform_internals"))]
 mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_fmt_eq};

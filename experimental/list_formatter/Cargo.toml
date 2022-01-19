@@ -47,3 +47,7 @@ bench = []
 provider_serde = ["serde", "zerovec/serde", "deduplicating_array"]
 provider_transform_internals = ["provider_serde", "regex-automata/alloc"]
 icu4x_human_readable_de = ["provider_serde", "regex-automata/alloc"]
+
+[[example]]
+name = "and_list"
+required_features = ["provider_serde"]
