@@ -2660,10 +2660,12 @@ name = "tinystr-neo"
 version = "0.3.1"
 dependencies = [
  "bincode",
+ "criterion",
  "displaydoc",
  "postcard",
  "serde",
  "serde_json",
+ "tinystr",
  "zerovec",
 ]
 
