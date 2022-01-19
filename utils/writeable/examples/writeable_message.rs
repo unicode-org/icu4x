@@ -37,8 +37,6 @@ impl<V: Writeable> Writeable for WriteableMessage<V> {
     }
 }
 
-
-
 fn main() {
     icu_benchmark_macros::main_setup!();
 
@@ -47,6 +45,9 @@ fn main() {
     assert_eq!(string, "Hello world 😅");
 
     // Print the greeting only
-    let (start, end, _) = parts.into_iter().find(|(_, _, part)| part == &GREETING).unwrap();
+    let (start, end, _) = parts
+        .into_iter()
+        .find(|(_, _, part)| part == &GREETING)
+        .unwrap();
     println!("{}", &string[start..end]);
 }
