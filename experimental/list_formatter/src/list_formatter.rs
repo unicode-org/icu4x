@@ -6,7 +6,6 @@ use crate::error::*;
 use crate::options::*;
 use crate::provider::*;
 use core::fmt::{self, Write};
-use alloc::borrow::Borrow;
 use core::marker::PhantomData;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -45,8 +44,8 @@ impl ListFormatter {
     /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
     /// formatting. The first layer of fields contains `ListFormatter::element()` for input elements,
     /// and `ListFormatter::literal()` for list literals.
-    pub fn format<'a, W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy>(
-        &'a self,
+    pub fn format<'a, 'b: 'a, 'c: 'a, W: Writeable + 'b, I: Iterator<Item = W> + Clone>(
+        &'c self,
         values: I,
     ) -> List<'a, W, I> {
         List {
@@ -77,8 +76,10 @@ pub struct List<'a, W, I> {
     phantom_data: PhantomData<W>,
 }
 
-impl<W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy> Writeable for List<'_, W, I> {
-    fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> core::fmt::Result {
+impl<'a, 'b: 'a, 'c: 'a, W: Writeable + 'b, I: Iterator<Item = W> + Clone> Writeable
+    for List<'a, W, I>
+{
+    fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
                 sink.with_part(ListFormatter::literal(), |l| l.write_str($lit))
@@ -90,7 +91,7 @@ impl<W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy> Writeable for
             };
         }
 
-        let mut values = self.values.into_iter();
+        let mut values = self.values.clone();
 
         if let Some(first) = values.next() {
             if let Some(second) = values.next() {
@@ -104,12 +105,12 @@ impl<W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy> Writeable for
                         .data
                         .get()
                         .start(self.formatter.width)
-                        .parts(second.borrow());
+                        .parts(&second);
 
                     literal!(start_before)?;
-                    value!(first.borrow())?;
+                    value!(first)?;
                     literal!(start_between)?;
-                    value!(second.borrow())?;
+                    value!(second)?;
 
                     let mut next = third;
 
@@ -119,9 +120,9 @@ impl<W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy> Writeable for
                             .data
                             .get()
                             .middle(self.formatter.width)
-                            .parts(next.borrow());
+                            .parts(&next);
                         literal!(between)?;
-                        value!(next.borrow())?;
+                        value!(next)?;
                         next = next_next;
                     }
 
@@ -130,9 +131,9 @@ impl<W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy> Writeable for
                         .data
                         .get()
                         .end(self.formatter.width)
-                        .parts(next.borrow());
+                        .parts(&next);
                     literal!(end_between)?;
-                    value!(next.borrow())?;
+                    value!(next)?;
                     literal!(end_after)
                 } else {
                     // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
@@ -141,15 +142,15 @@ impl<W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy> Writeable for
                         .data
                         .get()
                         .pair(self.formatter.width)
-                        .parts(second.borrow());
+                        .parts(&second);
                     literal!(before)?;
-                    value!(first.borrow())?;
+                    value!(first)?;
                     literal!(between)?;
-                    value!(second.borrow())?;
+                    value!(second)?;
                     literal!(after)
                 }
             } else {
-                value!(first.borrow())
+                value!(first)
             }
         } else {
             Ok(())
@@ -160,10 +161,10 @@ impl<W: Writeable, B: Borrow<W>, I: IntoIterator<Item = B> + Copy> Writeable for
         let mut count = 0;
         let item_length = self
             .values
-            .into_iter()
+            .clone()
             .map(|w| {
                 count += 1;
-                w.borrow().write_len()
+                w.write_len()
             })
             .sum::<LengthHint>();
         item_length
@@ -202,24 +203,18 @@ mod tests {
     fn test_writeable() {
         let formatter = formatter(Width::Wide);
 
-        assert_writeable_eq!(formatter.format::<&str, _, _>(&VALUES[0..0]), "");
-        assert_writeable_eq!(formatter.format::<&str, _, _>(&VALUES[0..1]), "one");
-        assert_writeable_eq!(formatter.format::<&str, _, _>(&VALUES[0..2]), "$one;two+");
+        assert_writeable_eq!(formatter.format(VALUES[0..0].iter()), "");
+        assert_writeable_eq!(formatter.format(VALUES[0..1].iter()), "one");
+        assert_writeable_eq!(formatter.format(VALUES[0..2].iter()), "$one;two+");
+        assert_writeable_eq!(formatter.format(VALUES[0..3].iter()), "@one:two.three!");
         assert_writeable_eq!(
-            formatter.format::<&str, _, _>(&VALUES[0..3]),
-            "@one:two.three!"
-        );
-        assert_writeable_eq!(
-            formatter.format::<&str, _, _>(&VALUES[0..4]),
+            formatter.format(VALUES[0..4].iter()),
             "@one:two,three.four!"
         );
-        assert_writeable_eq!(
-            formatter.format::<&str, _, _>(VALUES),
-            "@one:two,three,four.five!"
-        );
+        assert_writeable_eq!(formatter.format(VALUES.iter()), "@one:two,three,four.five!");
 
         let data = non_sliceable_collection();
-        assert_writeable_eq!(formatter.format::<u8, _, _>(&data), "$48;10+");
+        assert_writeable_eq!(formatter.format(data.iter()), "$48;10+");
     }
 
     #[test]
@@ -227,7 +222,7 @@ mod tests {
         let formatter = formatter(Width::Wide);
 
         assert_writeable_parts_eq!(
-            formatter.format::<&str, _, _>(VALUES),
+            formatter.format(VALUES.iter()),
             "@one:two,three,four.five!",
             [
                 (0, 1, ListFormatter::literal()),
@@ -245,7 +240,7 @@ mod tests {
         );
 
         assert_writeable_parts_eq!(
-            formatter.format::<u8, _, _>(&non_sliceable_collection()),
+            formatter.format(non_sliceable_collection().iter()),
             "$48;10+",
             [
                 (0, 1, ListFormatter::literal()),
@@ -261,9 +256,6 @@ mod tests {
     fn test_conditional() {
         let formatter = formatter(Width::Narrow);
 
-        assert_writeable_eq!(
-            formatter.format::<&str, _, _>(&["Beta", "Alpha"]),
-            "Beta :o Alpha"
-        );
+        assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
     }
 }

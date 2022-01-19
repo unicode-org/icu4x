@@ -25,7 +25,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     println!(
         "{}",
         list_formatter
-            .format::<&str, _, _>(&["España", "Francia", "Suiza", "Italia"])
+            .format(["España", "Francia", "Suiza", "Italia"].iter())
             .writeable_to_string()
     );
 
