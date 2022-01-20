@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642639910494,
+  "lastUpdate": 1642696236781,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18629,6 +18629,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 45965767,
             "range": "± 1640341",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "29121d1a70a6459c7dc1e5cf0acd2672c96baaec",
+          "message": "ListFormatter on `Iterator<W>` instead of `&[W]` (#1523)",
+          "timestamp": "2022-01-20T17:21:36+01:00",
+          "tree_id": "3c8bee68d282ad4ada485dedc38481993706ba2c",
+          "url": "https://github.com/unicode-org/icu4x/commit/29121d1a70a6459c7dc1e5cf0acd2672c96baaec"
+        },
+        "date": 1642696225821,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 53808715,
+            "range": "± 2430102",
             "unit": "ns/iter"
           }
         ]
