@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642696696124,
+  "lastUpdate": 1642700824139,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17609,6 +17609,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 131926,
             "range": "± 7328",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "78176585a0a5390348b5163573d5b60df5dfd280",
+          "message": "Add ULE impls to tinystr-neo (#1524)",
+          "timestamp": "2022-01-20T09:37:41-08:00",
+          "tree_id": "bb19220dc4a8bb3727421bd1721182436d23fc9b",
+          "url": "https://github.com/unicode-org/icu4x/commit/78176585a0a5390348b5163573d5b60df5dfd280"
+        },
+        "date": 1642700811333,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130487,
+            "range": "± 1151",
             "unit": "ns/iter"
           }
         ]
