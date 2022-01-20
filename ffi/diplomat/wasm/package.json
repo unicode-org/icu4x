@@ -38,6 +38,9 @@
   "homepage": "https://github.com/unicode-org/icu4x#readme",
   "devDependencies": {
     "ava": "^3.15.0",
-    "esm": "^3.2.25"
+    "benchmark": "2.1.4",
+    "esm": "^3.2.25",
+    "wabt": "^1.0.25",
+    "wasm-opt": "^1.2.1"
   }
 }
