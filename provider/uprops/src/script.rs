@@ -219,4 +219,47 @@ mod tests {
         assert!(scx.has_script(0x30A0, Script::Common));
         assert!(!scx.has_script(0x30A0, Script::Inherited));
     }
+
+    #[test]
+    fn test_script_ext_ranges() {
+        let root_dir = icu_testdata::paths::uprops_toml_root();
+        let provider = ScriptExtensionsPropertyProvider::try_new(&root_dir)
+            .expect("TOML should load successfully");
+
+        let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: key::SCRIPT_EXTENSIONS_V1,
+                    options: ResourceOptions::default(),
+                },
+            })
+            .expect("The data should be valid")
+            .take_payload()
+            .expect("Loading was successful");
+
+        let scx: &ScriptExtensions = &payload.get().data;
+
+        let grantha = scx.get_script_extensions_set(Script::Grantha);
+        assert!(grantha.contains('௫'));
+        assert!(grantha.contains_u32(0x11303));
+
+        let tamil = scx.get_script_extensions_set(Script::Tamil);
+        assert!(tamil.contains('௫'));
+        assert!(tamil.contains_u32(0x11303));
+
+        let hiragana = scx.get_script_extensions_set(Script::Hiragana);
+        assert!(hiragana.contains_u32(0x30A0));
+
+        let katakana = scx.get_script_extensions_set(Script::Katakana);
+        assert!(katakana.contains_u32(0x30A0));
+
+        let common = scx.get_script_extensions_set(Script::Common);
+        assert!(common.contains('🥳'));
+        assert!(!common.contains_u32(0x200D));
+        assert!(common.contains_u32(0x30A0));
+
+        let inherited = scx.get_script_extensions_set(Script::Inherited);
+        assert!(!inherited.contains('🥳'));
+        assert!(inherited.contains_u32(0x200D));
+    }
 }

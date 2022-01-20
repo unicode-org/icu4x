@@ -10,11 +10,13 @@ use crate::props::Script;
 
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
+use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 use zerovec::{VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
+const CODE_POINT_MAX: u32 = 0x10ffff;
 const SCRIPT_X_SCRIPT_VAL: u16 = 0x03FF;
 const SCRIPT_VAL_LENGTH: u16 = 10;
 
@@ -47,6 +49,12 @@ impl ScriptWithExt {
 
     pub fn is_other(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 3
+    }
+}
+
+impl From<ScriptWithExt> for u32 {
+    fn from(swe: ScriptWithExt) -> Self {
+        swe.0 as u32
     }
 }
 
@@ -140,7 +148,7 @@ impl<'data> ScriptExtensions<'data> {
             ZeroSlice::from_ule_slice(script_ule_slice)
         }
     }
-    
+
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
         if script == self.get_script_val(code_point) {
             true
@@ -149,6 +157,44 @@ impl<'data> ScriptExtensions<'data> {
             let script_find = scx_val.iter().find(|&sc| sc == script);
             script_find.is_some()
         }
+    }
+
+    pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
+        let mut builder = UnicodeSetBuilder::new();
+        let mut range_start: u32 = 0;
+
+        loop {
+            let next_cpm_range = self.trie.get_range(range_start);
+
+            match next_cpm_range {
+                Some(cpm_range) => {
+                    let end = cpm_range.get_end();
+                    if end <= CODE_POINT_MAX {
+                        let start = cpm_range.get_start();
+
+                        if self.has_script(start, script) {
+                            builder.add_range_u32(&(start..=end));
+                        }
+
+                        if end == CODE_POINT_MAX {
+                            break;
+                        } else {
+                            range_start = end + 1;
+                        }
+                    } else {
+                        break;
+                        // This should never happen -- the get_range() code doesn't create
+                        // a range with an end code point beyond CODE_POINT_MAX. Also, it will
+                        // return `None` in the event of errors.
+                    }
+                }
+                _ => {
+                    break;
+                }
+            }
+        }
+
+        builder.build()
     }
 }
 
