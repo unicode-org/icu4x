@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642696298603,
+  "lastUpdate": 1642696886307,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24695,6 +24695,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16017,
             "range": "± 22",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0cddf2b8fe09aa07640dd9ab36d72bab526647ed",
+          "message": "Simplifying path construction (#1521)",
+          "timestamp": "2022-01-20T17:29:50+01:00",
+          "tree_id": "8bfc62f7d06a491918ef849fa8a51ab292420d2a",
+          "url": "https://github.com/unicode-org/icu4x/commit/0cddf2b8fe09aa07640dd9ab36d72bab526647ed"
+        },
+        "date": 1642696874530,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1049,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7101,
+            "range": "± 458",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16266,
+            "range": "± 897",
             "unit": "ns/iter"
           }
         ]
