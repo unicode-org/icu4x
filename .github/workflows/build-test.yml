@@ -231,6 +231,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Install Node.js v14.17.0
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.17.0
       - name: Load nightly Rust toolchain for WASM.
         run: |
           rustup install nightly-2021-12-22
@@ -320,15 +324,16 @@ jobs:
         with:
           command: make
           args: wasm-release
-      - name: Install Node.js v14.17.0
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.17.0
-      - name: Build
+      - name: Test
         uses: actions-rs/cargo@v1.0.1
         with:
           command: make
           args: wasm-test-release
+      - name: Build Examples and test icu4x-key-extract
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: make
+          args: wasm-compare-worklog-keys
       # This has to be a separate test since the emscripten sdk
       # will otherwise interfere with other node-using tests
       - name: Run emscripten test
@@ -453,7 +458,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         # keep args in sync with `clippy-all` in .cargo/config.toml
-        args: --all-targets --all-features -- -D warnings
+        args: --all-targets --all-features -- -D warnings -Aclippy::unknown-clippy-lints -Aclippy::field-reassign-with-default
 
   # Benchmarking & dashboards job
 
@@ -759,10 +764,8 @@ jobs:
         rustup component add rust-src
         rustup toolchain list
         rustup toolchain install nightly-2021-12-22
-        cd ffi/diplomat/wasm
-        npm ci
-        echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-        echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+        sudo npm install -g wasm-opt --unsafe-perm
+        sudo npm install -g wabt
 
     - name: Setup output data directory
       run: |
