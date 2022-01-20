@@ -334,7 +334,7 @@ impl Writeable for ResourceKey {
     }
 
     fn writeable_to_string(&self) -> Cow<str> {
-        Cow::Borrowed(self.path)
+        Cow::Borrowed(self.get_path())
     }
 }
 
