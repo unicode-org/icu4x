@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642633626114,
+  "lastUpdate": 1642639946622,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21701,6 +21701,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4800,
             "range": "± 198",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "642f910b5b26138fc0ed4f6e927306ee9a544eec",
+          "message": "Consolidates wasm-opt and wabt package installation. devDependencies for both (#1525)\n\npackages are put into ffi/diplomat/wasm/package.json. Installation of the npm\r\npackages is now performed with 'npm -i', wasm-opt and wabt packages are\r\ninstalled under ffi/diplomat/wasm/node_modules, PATH is set accordingly.\r\nPR includes regenerated package-lock.json and updated binsize CI task.\r\n\r\nPR part of issue #1076.",
+          "timestamp": "2022-01-19T16:43:38-08:00",
+          "tree_id": "078e585cab56ce63b399c1eeec14bb5aa0f3d033",
+          "url": "https://github.com/unicode-org/icu4x/commit/642f910b5b26138fc0ed4f6e927306ee9a544eec"
+        },
+        "date": 1642639933064,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 1833,
+            "range": "± 146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3918,
+            "range": "± 207",
             "unit": "ns/iter"
           }
         ]
