@@ -476,13 +476,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                     debug_assert!(
                         c < self.header.high_start && self.header.high_start > SMALL_LIMIT
                     );
-                    i1 = i1 + SMALL_INDEX_LENGTH;
+                    i1 += SMALL_INDEX_LENGTH;
                 }
-                let i2: u16 = if let Some(i1_val) = self.index.get(i1 as usize) {
-                    i1_val
-                } else {
-                    return None;
-                };
+                let i2: u16 = self.index.get(i1 as usize)?;
                 let i3_block_idx: u32 = (i2 as u32) + ((c >> SHIFT_2) & INDEX_2_MASK);
                 i3_block = if let Some(i3b) = self.index.get(i3_block_idx as usize) {
                     i3b as u32
@@ -492,7 +488,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                 if i3_block == prev_i3_block && (c - start) >= CP_PER_INDEX_2_ENTRY {
                     // The index-3 block is the same as the previous one, and filled with value.
                     debug_assert!((c & (CP_PER_INDEX_2_ENTRY - 1)) == 0);
-                    c = c + CP_PER_INDEX_2_ENTRY;
+                    c += CP_PER_INDEX_2_ENTRY;
                     continue;
                 }
                 prev_i3_block = i3_block;
@@ -538,18 +534,18 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                         return None;
                     };
                     block = (gi_val << (2 + (2 * gi))) & 0x30000;
-                    group = group + 1;
+                    group += 1;
                     let ggi_val: u32 = if let Some(ggiv) = self.index.get((group + gi) as usize) {
                         ggiv as u32
                     } else {
                         return None;
                     };
-                    block = block | ggi_val;
+                    block |= ggi_val;
                 }
                 if block == prev_block && (c - start) >= data_block_length {
                     // The block is the same as the previous one, and filled with value.
                     debug_assert!((c & (data_block_length - 1)) == 0);
-                    c = c + data_block_length;
+                    c += data_block_length;
                 } else {
                     let data_mask: u32 = data_block_length - 1;
                     prev_block = block;
@@ -602,9 +598,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                             have_value = true;
                         }
 
-                        c = c + 1;
+                        c += 1;
                         while (c & data_mask) != 0 {
-                            di = di + 1;
+                            di += 1;
                             trie_value_2 = if let Some(trv2) = self.data.get(di as usize) {
                                 trv2.into()
                             } else {
@@ -626,18 +622,18 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                                 trie_value = trie_value_2; // may or may not help
                             }
 
-                            c = c + 1;
+                            c += 1;
                         }
                     }
                 }
 
-                i3 = i3 + 1;
-                if !(i3 < i3_block_length) {
+                i3 += 1;
+                if i3 >= i3_block_length {
                     break;
                 }
             }
 
-            if !(c < self.header.high_start) {
+            if c >= self.header.high_start {
                 break;
             }
         }
@@ -651,15 +647,15 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
             return None;
         };
         if maybe_filter_value(high_value, self.header.null_value, null_value) != value {
-            c = c - 1;
+            c -= 1;
         } else {
             c = CODE_POINT_MAX;
         }
-        return Some(CodePointMapRange {
+        Some(CodePointMapRange {
             start,
             end: c,
             value,
-        });
+        })
     }
 }
 
