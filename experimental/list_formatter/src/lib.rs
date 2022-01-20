@@ -4,8 +4,8 @@
 
 #![warn(missing_docs)]
 
-//! [`icu_list`](crate) provides the [`ListFormatter`] which renders sequences of [`Writeables`](writeable::Writeable)
-//! as lists in a locale-sensitive way.
+//! [`icu_list`](crate) provides the [`ListFormatter`] which renders sequences of [`Writeable`](
+//! writeable::Writeable)s as lists in a locale-sensitive way.
 //!
 //! # Examples
 //!
