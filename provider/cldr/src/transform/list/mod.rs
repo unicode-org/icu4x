@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
@@ -30,7 +29,7 @@ pub struct ListProvider {
 }
 
 impl TryFrom<&dyn CldrPaths> for ListProvider {
-    type Error = Error;
+    type Error = crate::error::Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let mut data = LiteMap::new();
         for dir in get_langid_subdirectories(&cldr_paths.cldr_misc()?.join("main"))? {
@@ -73,9 +72,7 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
             key::LIST_FORMAT_UNIT_V1 => parse_unit_patterns(data),
             _ => unreachable!(),
         }
-        .map_err(|e| {
-            DataError::custom("CLDR JSON list pattern parsing").with_display_context(&e)
-        })?;
+        .map_err(|e| e.with_req(req))?;
 
         if langid.language == langid!("es").language {
             match req.resource_path.key {
@@ -88,7 +85,7 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                         "i|hi([^ae]|$)",
                         "{0} e {1}",
                     )
-                    .unwrap(),
+                    .expect("Valid regex and pattern"),
                 // Replace " o " with " u " before /o/ sound.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
                 key::LIST_FORMAT_OR_V1 => patterns
@@ -99,7 +96,7 @@ impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
                         r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))",
                         "{0} u {1}",
                     )
-                    .unwrap(),
+                    .expect("Valid regex and pattern"),
                 _ => unreachable!(),
             }
         }
@@ -174,7 +171,7 @@ impl IterableProvider for ListProvider {
 
 fn parse_and_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
-) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
+) -> Result<ListFormatterPatternsV1<'a>, DataError> {
     ListFormatterPatternsV1::try_new([
         &raw.standard.start,
         &raw.standard.middle,
@@ -193,7 +190,7 @@ fn parse_and_patterns<'a>(
 
 fn parse_or_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
-) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
+) -> Result<ListFormatterPatternsV1<'a>, DataError> {
     ListFormatterPatternsV1::try_new([
         &raw.or.start,
         &raw.or.middle,
@@ -212,7 +209,7 @@ fn parse_or_patterns<'a>(
 
 fn parse_unit_patterns<'a>(
     raw: &cldr_serde::list_patterns::ListPatterns,
-) -> Result<ListFormatterPatternsV1<'a>, icu_list::error::Error> {
+) -> Result<ListFormatterPatternsV1<'a>, DataError> {
     ListFormatterPatternsV1::try_new([
         &raw.unit.start,
         &raw.unit.middle,
@@ -232,121 +229,57 @@ fn parse_unit_patterns<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_list::options::Width;
-    use icu_locid::LanguageIdentifier;
+    use icu_list::{ListFormatter, Type, Width};
     use icu_locid_macros::langid;
+    use writeable::assert_writeable_eq;
 
-    fn provide(
-        lang: LanguageIdentifier,
-        key: ResourceKey,
-    ) -> DataPayload<ListFormatterPatternsV1Marker> {
-        let cldr_paths = crate::cldr_paths::for_test();
-        let provider = ListProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-        provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(lang),
-                    },
-                },
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap()
+    macro_rules! formatter {
+        ($name:ident, $langid:expr, $type:expr, $width:expr) => {
+            let cldr_paths = crate::cldr_paths::for_test();
+            let provider = ListProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+            let $name = ListFormatter::try_new($langid, &provider, $type, $width).unwrap();
+        };
     }
 
     #[test]
     fn test_basic() {
-        assert_eq!(
-            provide(langid!("fr"), key::LIST_FORMAT_OR_V1)
-                .get()
-                .end(Width::Wide)
-                .parts(""),
-            ("", " ou ", "")
-        );
+        formatter!(f, langid!("fr"), Type::Or, Width::Wide);
+        assert_writeable_eq!(f.format(["A", "B"].iter()), "A ou B");
     }
 
     #[test]
     fn test_spanish() {
-        let y_parts = ("", " y ", "");
-        let e_parts = ("", " e ", "");
-        let o_parts = ("", " o ", "");
-        let u_parts = ("", " u ", "");
+        formatter!(and, langid!("es"), Type::And, Width::Wide);
+        assert_writeable_eq!(and.format(["", "Mallorca"].iter()), " y Mallorca");
+        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " e Ibiza");
+        assert_writeable_eq!(and.format(["", "Hidalgo"].iter()), " e Hidalgo");
+        assert_writeable_eq!(and.format(["", "Hierva"].iter()), " y Hierva");
 
-        let payload_and = provide(langid!("es"), key::LIST_FORMAT_AND_V1);
-        let and = &payload_and.get().end(Width::Wide);
-        let payload_or = provide(langid!("es"), key::LIST_FORMAT_OR_V1);
-        let or = &payload_or.get().end(Width::Wide);
+        formatter!(or, langid!("es"), Type::Or, Width::Wide);
+        assert_writeable_eq!(or.format(["", "Ibiza"].iter()), " o Ibiza");
+        assert_writeable_eq!(or.format(["", "Okinawa"].iter()), " u Okinawa");
+        assert_writeable_eq!(or.format(["", "8 más"].iter()), " u 8 más");
+        assert_writeable_eq!(or.format(["", "8"].iter()), " u 8");
+        assert_writeable_eq!(or.format(["", "87 más"].iter()), " u 87 más");
+        assert_writeable_eq!(or.format(["", "87"].iter()), " u 87");
+        assert_writeable_eq!(or.format(["", "11 más"].iter()), " u 11 más");
+        assert_writeable_eq!(or.format(["", "11"].iter()), " u 11");
+        assert_writeable_eq!(or.format(["", "110 más"].iter()), " o 110 más");
+        assert_writeable_eq!(or.format(["", "110"].iter()), " o 110");
+        assert_writeable_eq!(or.format(["", "11.000 más"].iter()), " u 11.000 más");
+        assert_writeable_eq!(or.format(["", "11.000"].iter()), " u 11.000");
+        assert_writeable_eq!(or.format(["", "11.000,92 más"].iter()), " u 11.000,92 más");
+        assert_writeable_eq!(or.format(["", "11.000,92"].iter()), " u 11.000,92");
 
-        // ... y Mallorca
-        assert_eq!(and.parts("Mallorca"), y_parts);
-        // ... e Ibiza
-        assert_eq!(and.parts("Ibiza"), e_parts);
-        // ... e Hidalgo
-        assert_eq!(and.parts("Hidalgo"), e_parts);
-        // ... y Hierva
-        assert_eq!(and.parts("Hierva"), y_parts);
-
-        // ... o Ibiza
-        assert_eq!(or.parts("Ibiza"), o_parts);
-        // ... u Okinawa
-        assert_eq!(or.parts("Okinawa"), u_parts);
-        // ... u 8 más
-        assert_eq!(or.parts("8 más"), u_parts);
-        // ... u 8
-        assert_eq!(or.parts("8"), u_parts);
-        // ... u 87 más
-        assert_eq!(or.parts("87 más"), u_parts);
-        // ... u 87
-        assert_eq!(or.parts("87"), u_parts);
-        // ... u 11 más
-        assert_eq!(or.parts("11 más"), u_parts);
-        // ... u 11
-        assert_eq!(or.parts("11"), u_parts);
-        // ... o 110 más
-        assert_eq!(or.parts("110 más"), o_parts);
-        // ... o 110
-        assert_eq!(or.parts("110"), o_parts);
-        // ... o 11.000 más
-        assert_eq!(or.parts("11.000 más"), u_parts);
-        // ... o 11.000
-        assert_eq!(or.parts("11.000"), u_parts);
-        // ... o 11.000,92 más
-        assert_eq!(or.parts("11.000,92 más"), u_parts);
-        // ... o 11.000,92
-        assert_eq!(or.parts("11.000,92"), u_parts);
-
-        // Works for all es-* locales
-        assert_eq!(
-            provide(langid!("es-AR"), key::LIST_FORMAT_AND_V1)
-                .get()
-                .end(Width::Wide)
-                .parts("Ibiza"),
-            e_parts
-        );
+        formatter!(and, langid!("es-AR"), Type::And, Width::Wide);
+        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " e Ibiza");
     }
 
     #[test]
     fn test_hebrew() {
-        let vav_parts = ("", " ו", "");
-        let vav_dash_parts = ("", " ו-", "");
+        formatter!(and, langid!("he"), Type::And, Width::Wide);
 
-        assert_eq!(
-            provide(langid!("he"), key::LIST_FORMAT_AND_V1)
-                .get()
-                .end(Width::Wide)
-                .parts("יפו"),
-            vav_parts
-        );
-
-        assert_eq!(
-            provide(langid!("he"), key::LIST_FORMAT_AND_V1)
-                .get()
-                .end(Width::Wide)
-                .parts("Ibiza"),
-            vav_dash_parts
-        );
+        assert_writeable_eq!(and.format(["", "יפו"].iter()), " ויפו");
+        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " ו-Ibiza");
     }
 }

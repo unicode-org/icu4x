@@ -2,26 +2,59 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::*;
-use crate::options::*;
 use crate::provider::*;
 use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::*;
 
+/// Represents the type of a list. See the
+/// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
+/// for an explanation of the different types.
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum Type {
+    /// A conjunction
+    And,
+    /// A disjunction
+    Or,
+    /// A list of units
+    Unit,
+}
+
+/// Represents the type of a list. See the
+/// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
+/// for an explanation of the different widths.
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum Width {
+    /// A typical list
+    Wide,
+    /// A shorter list
+    Short,
+    /// The shortest type of list
+    Narrow,
+}
+
+/// A formatter that renders sequences of items in an i18n-friendly way. See the
+/// [crate-level documentation](crate) for more details.
 pub struct ListFormatter {
     data: DataPayload<ListFormatterPatternsV1Marker>,
     width: Width,
 }
 
 impl ListFormatter {
+    /// Creates a new [`ListFormatter`] from the given provider. The provider has to support the
+    /// correct key for the given type:
+    /// [`LIST_FORMAT_AND_V1`](crate::provider::key::LIST_FORMAT_AND_V1),
+    /// [`LIST_FORMAT_OR_V1`](crate::provider::key::LIST_FORMAT_OR_V1), or
+    /// [`LIST_FORMAT_UNIT_V1`](crate::provider::key::LIST_FORMAT_UNIT_V1).
+    /// An error is returned if the key or language are not available, or if there were any
+    /// deserialization errors.
     pub fn try_new<T: Into<Locale>, D: DataProvider<ListFormatterPatternsV1Marker> + ?Sized>(
         locale: T,
         data_provider: &D,
         type_: Type,
         width: Width,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, DataError> {
         let data = data_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
@@ -40,9 +73,9 @@ impl ListFormatter {
         Ok(Self { data, width })
     }
 
-    /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
-    /// formatting. The first layer of fields contains `ListFormatter::element()` for input
-    /// elements, and `ListFormatter::literal()` for list literals.
+    /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
+    /// formatting. The first layer of parts contains [`ListFormatter::element()`] for input
+    /// elements, and [`ListFormatter::literal()`] for list literals.
     pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
@@ -53,6 +86,7 @@ impl ListFormatter {
         }
     }
 
+    /// The [`Part`] used by [`List`] to mark the part of the string that is an element.
     pub const fn element() -> Part {
         Part {
             category: "list",
@@ -60,6 +94,8 @@ impl ListFormatter {
         }
     }
 
+    /// The [`Part`] used by [`List`] to mark the part of the string that is a list literal,
+    /// such as ", " or " and ".
     pub const fn literal() -> Part {
         Part {
             category: "list",
@@ -68,6 +104,8 @@ impl ListFormatter {
     }
 }
 
+/// The [`Writeable`] implementation that is returned by [`ListFormatter::format`]. See
+/// the [`writeable`] crate for how to consume this.
 pub struct List<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
     formatter: &'a ListFormatter,
     values: I,

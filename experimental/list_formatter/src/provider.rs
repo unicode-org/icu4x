@@ -6,23 +6,28 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::options::Width;
 use crate::string_matcher::StringMatcher;
+use crate::Width;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 use writeable::{LengthHint, Writeable};
 
 pub mod key {
-    //! Resource keys for [`list_formatter`](crate).
+    //! Resource keys for [`icu_list`](crate).
     use icu_provider::{resource_key, ResourceKey};
 
-    // Resource key: symbols used for list formatting.
-    pub const LIST_FORMAT_AND_V1: ResourceKey = resource_key!(ListFormatter, "and", 1);
-    pub const LIST_FORMAT_OR_V1: ResourceKey = resource_key!(ListFormatter, "or", 1);
-    pub const LIST_FORMAT_UNIT_V1: ResourceKey = resource_key!(ListFormatter, "unit", 1);
+    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
+    /// for [`ListFormatter`](crate::ListFormatter)s of [`Type::And`](crate::Type::And)
+    pub const LIST_FORMAT_AND_V1: ResourceKey = resource_key!("list/and@1");
+    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
+    /// for [`ListFormatter`](crate::ListFormatter)s of [`Type::Or`](crate::Type::Or)
+    pub const LIST_FORMAT_OR_V1: ResourceKey = resource_key!("list/or@1");
+    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
+    /// for [`ListFormatter`](crate::ListFormatter)s of [`Type::Unit`](crate::Type::Unit)
+    pub const LIST_FORMAT_UNIT_V1: ResourceKey = resource_key!("list/unit@1");
 }
 
-/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
+/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter)
 #[icu_provider::data_struct]
 #[derive(Debug)]
 #[cfg_attr(
@@ -40,25 +45,25 @@ pub struct ListFormatterPatternsV1<'data>(
 );
 
 impl<'data> ListFormatterPatternsV1<'data> {
-    pub fn start(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub(crate) fn start(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize)]
     }
 
-    pub fn middle(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub(crate) fn middle(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 1]
     }
 
-    pub fn end(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub(crate) fn end(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 2]
     }
 
-    pub fn pair(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
+    pub(crate) fn pair(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
         &self.0[4 * (width as usize) + 3]
     }
 
     /// The range of the number of bytes required by the list literals to join a
-    /// list of length len. If none of the patterns are conditional, this is exact.
-    pub fn size_hint(&self, width: Width, len: usize) -> LengthHint {
+    /// list of length `len`. If none of the patterns are conditional, this is exact.
+    pub(crate) fn size_hint(&self, width: Width, len: usize) -> LengthHint {
         match len {
             0 | 1 => LengthHint::exact(0),
             2 => self.pair(width).size_hint(),
@@ -77,7 +82,7 @@ impl<'data> ListFormatterPatternsV1<'data> {
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)
 )]
-pub struct ConditionalListJoinerPattern<'data> {
+pub(crate) struct ConditionalListJoinerPattern<'data> {
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     default: ListJoinerPattern<'data>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
@@ -115,7 +120,7 @@ struct ListJoinerPattern<'data> {
     index_1: u8,
 }
 
-pub type PatternParts<'a> = (&'a str, &'a str, &'a str);
+pub(crate) type PatternParts<'a> = (&'a str, &'a str, &'a str);
 
 impl<'a> ConditionalListJoinerPattern<'a> {
     pub fn parts<'b, W: Writeable + ?Sized>(&'a self, following_value: &'b W) -> PatternParts<'a> {
@@ -159,10 +164,12 @@ impl<'data> ListJoinerPattern<'data> {
 #[cfg(feature = "provider_transform_internals")]
 mod datagen {
     use super::*;
-    use crate::error::Error;
+    use icu_provider::DataError;
 
     impl<'data> ListFormatterPatternsV1<'data> {
-        pub fn try_new(patterns: [&str; 12]) -> Result<Self, Error> {
+        /// The patterns in the order start, middle, end, pair, short_start, short_middle,
+        /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
+        pub fn try_new(patterns: [&str; 12]) -> Result<Self, DataError> {
             Ok(Self([
                 ListJoinerPattern::from_str(patterns[0], true, false)?.into(),
                 ListJoinerPattern::from_str(patterns[1], false, false)?.into(),
@@ -189,7 +196,7 @@ mod datagen {
             pattern: &str,
             regex: &str,
             alternative_pattern: &str,
-        ) -> Result<(), Error> {
+        ) -> Result<(), DataError> {
             let old = ListJoinerPattern::from_str(pattern, true, true)?;
             for i in 0..12 {
                 if self.0[i].default == old {
@@ -212,18 +219,19 @@ mod datagen {
             pattern: &str,
             allow_prefix: bool,
             allow_suffix: bool,
-        ) -> Result<Self, Error> {
+        ) -> Result<Self, DataError> {
             match (pattern.find("{0}"), pattern.find("{1}")) {
                 (Some(index_0), Some(index_1))
                     if index_0 < index_1
                         && (allow_prefix || index_0 == 0)
                         && (allow_suffix || index_1 == pattern.len() - 3) =>
                 {
-                    assert!(
-                        (index_0 == 0 || cfg!(test)) && index_1 - 3 < 256,
-                        "Found valid pattern {:?} that cannot be stored in ListFormatterPatternsV1.",
-                        pattern
-                    );
+                    if (index_0 > 0 && !cfg!(test)) || index_1 - 3 >= 256 {
+                        return Err(DataError::custom(
+                            "Found valid pattern that cannot be stored in ListFormatterPatternsV1",
+                        )
+                        .with_debug_context(pattern));
+                    }
                     Ok(ListJoinerPattern {
                         string: Cow::Owned(alloc::format!(
                             "{}{}{}",
@@ -235,7 +243,7 @@ mod datagen {
                         index_1: (index_1 - 3) as u8,
                     })
                 }
-                _ => Err(Error::IllegalPattern(pattern.into())),
+                _ => Err(DataError::custom("Invalid list pattern").with_debug_context(pattern)),
             }
         }
     }
