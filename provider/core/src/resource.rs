@@ -5,7 +5,6 @@
 //! Resource paths and related types.
 
 use alloc::borrow::Cow;
-use alloc::string::ToString;
 
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
@@ -233,32 +232,13 @@ impl Writeable for ResourceKey {
     fn write_len(&self) -> LengthHint {
         self.path.write_len()
     }
+
+    fn writeable_to_string(&self) -> Cow<str> {
+        Cow::Borrowed(self.path)
+    }
 }
 
 impl ResourceKey {
-    /// Gets the standard path components of this [`ResourceKey`]. These components should be used when
-    /// persisting the [`ResourceKey`] on the filesystem or in structured data.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
-    /// let components: Vec<&str> = resc_key
-    ///     .iter_components()
-    ///     .collect();
-    ///
-    /// assert_eq!(
-    ///     ["core", "helloworld@1"],
-    ///     components[..]
-    /// );
-    /// ```
-    pub fn iter_components(&self) -> impl Iterator<Item = &str> {
-        // TODO(#1516): Consider alternatives to this method.
-        self.get_path().split('/')
-    }
-
     /// Gets the last path component of a [`ResourceKey`] without the version suffix.
     ///
     /// # Examples
@@ -272,7 +252,8 @@ impl ResourceKey {
     pub fn get_last_component_no_version(&self) -> &str {
         // This cannot fail because of the preconditions on path (at least one '/' and '@')
         // TODO(#1515): Consider deleting this method.
-        self.iter_components()
+        self.get_path()
+            .split('/')
             .last()
             .unwrap()
             .split('@')
@@ -388,39 +369,6 @@ impl From<LanguageIdentifier> for ResourceOptions {
 }
 
 impl ResourceOptions {
-    /// Gets the standard path components of this [`ResourceOptions`]. These components should be used when
-    /// persisting the [`ResourceOptions`] on the filesystem or in structured data.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::borrow::Cow;
-    /// use icu_provider::prelude::*;
-    /// use icu_locid_macros::langid;
-    ///
-    /// let resc_options = ResourceOptions {
-    ///     variant: Some(Cow::Borrowed("GBP")),
-    ///     langid: Some(langid!("pt_BR")),
-    /// };
-    /// let components: Vec<String> = resc_options
-    ///     .iter_components()
-    ///     .map(|s| s.into_owned())
-    ///     .collect();
-    ///
-    /// assert_eq!(
-    ///     ["GBP", "pt-BR"],
-    ///     components[..]
-    /// );
-    /// ```
-    pub fn iter_components(&self) -> impl Iterator<Item = Cow<str>> {
-        // TODO(#1516): Consider alternatives to this method.
-        let components_array: [Option<Cow<str>>; 2] = [
-            self.variant.clone(),
-            self.langid.as_ref().map(|s| Cow::Owned(s.to_string())),
-        ];
-        IntoIterator::into_iter(components_array).flatten()
-    }
-
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
@@ -495,13 +443,6 @@ mod tests {
         for cas in get_key_test_cases().iter() {
             assert_eq!(cas.expected, cas.resc_key.to_string());
             writeable::assert_writeable_eq!(&cas.resc_key, cas.expected);
-            assert_eq!(
-                cas.expected,
-                cas.resc_key
-                    .iter_components()
-                    .collect::<Vec<&str>>()
-                    .join("/")
-            );
         }
     }
 
@@ -542,13 +483,6 @@ mod tests {
         for cas in get_options_test_cases().iter() {
             assert_eq!(cas.expected, cas.resc_options.to_string());
             writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
-            assert_eq!(
-                cas.expected,
-                cas.resc_options
-                    .iter_components()
-                    .collect::<Vec<Cow<str>>>()
-                    .join("/")
-            );
         }
     }
 

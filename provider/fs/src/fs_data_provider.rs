@@ -9,6 +9,7 @@ use icu_provider::prelude::*;
 use icu_provider::serde::*;
 use icu_provider::yoke::trait_hack::YokeTraitHack;
 use icu_provider::yoke::Yokeable;
+use writeable::Writeable;
 
 use std::fmt::Debug;
 use std::fs;
@@ -61,7 +62,7 @@ impl FsDataProvider {
 
     fn get_reader(&self, req: &DataRequest) -> Result<(impl Read, PathBuf), DataError> {
         let mut path_buf = self.res_root.clone();
-        path_buf.extend(req.resource_path.key.iter_components());
+        path_buf.push(&*req.resource_path.key.writeable_to_string());
         if req.resource_path.options.is_empty() {
             path_buf.set_extension(self.manifest.get_file_extension());
         }
@@ -70,12 +71,7 @@ impl FsDataProvider {
         }
         if !req.resource_path.options.is_empty() {
             // TODO: Implement proper locale fallback
-            path_buf.extend(
-                req.resource_path
-                    .options
-                    .iter_components()
-                    .map(|s| PathBuf::from(&*s)),
-            );
+            path_buf.push(&*req.resource_path.options.writeable_to_string());
             path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
