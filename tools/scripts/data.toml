@@ -60,6 +60,21 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-build-hello-world]
+description = "Build the Hello World postcard testdata file."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--format=blob",
+    "--hello-world-key",
+    "--all-locales",
+    "--out=provider/blob/tests/data/hello_world.postcard",
+    "--overwrite",
+]
+
 [tasks.testdata-build-blob-smaller]
 description = "Build a small subset of ICU4X data as a Postcard blob."
 category = "ICU4X Data"
