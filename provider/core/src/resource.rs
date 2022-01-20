@@ -74,18 +74,14 @@ impl ResourceKey {
     /// Useful for reading and writing data to a file system.
     #[inline]
     pub fn get_path(&self) -> &str {
-        // Unfortunately string slices are not const, and there doesn't seem to be any work to
-        // make them (as of 2021-01).
-        // However, once `const_ptr_offset` and `const_slice_from_raw_parts` are stable, we can
-        // use this const code:
-        // unsafe {
-        //     // Safe due to invariant that self.path is tagged correctly
-        //     core::str::from_utf8_unchecked(core::slice::from_raw_parts(
-        //         self.path.as_ptr().add(leading_tag!().len()),
-        //         self.path.len() - trailing_tag!().len() - leading_tag!().len(),
-        //     ))
-        // }
-        &self.path[leading_tag!().len()..self.path.len() - trailing_tag!().len()]
+        // This becomes const with `const_ptr_offset` and `const_slice_from_raw_parts`.
+        unsafe {
+            // Safe due to invariant that self.path is tagged correctly
+            core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+                self.path.as_ptr().add(leading_tag!().len()),
+                self.path.len() - trailing_tag!().len() - leading_tag!().len(),
+            ))
+        }
     }
 
     /// Gets a machine-readable representation of a [`ResourceKey`].
