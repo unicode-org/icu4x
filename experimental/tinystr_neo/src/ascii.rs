@@ -14,6 +14,14 @@ pub struct TinyAsciiStr<const N: usize> {
 
 impl<const N: usize> TinyAsciiStr<N> {
     pub const fn from_bytes(bytes: &[u8]) -> Result<Self, TinyStrError> {
+        Self::from_bytes_inner(bytes, false)
+    }
+
+    #[inline]
+    pub(crate) const fn from_bytes_inner(
+        bytes: &[u8],
+        allow_trailing_null: bool,
+    ) -> Result<Self, TinyStrError> {
         if bytes.len() > N {
             return Err(TinyStrError::TooLarge {
                 max: N,
@@ -23,15 +31,24 @@ impl<const N: usize> TinyAsciiStr<N> {
 
         let mut out = [0; N];
         let mut i = 0;
+        let mut found_null = false;
         while i < bytes.len() {
             if bytes[i] == 0 {
-                return Err(TinyStrError::ContainsNull);
+                found_null = true;
             } else if bytes[i] >= 0x80 {
                 return Err(TinyStrError::NonAscii);
+            } else if found_null {
+                // Error if there are contentful bytes after null
+                return Err(TinyStrError::ContainsNull);
             }
             out[i] = bytes[i];
 
             i += 1;
+        }
+
+        if !allow_trailing_null && found_null {
+            // We found some trailing nulls, error
+            return Err(TinyStrError::ContainsNull);
         }
 
         Ok(Self { bytes: out })
