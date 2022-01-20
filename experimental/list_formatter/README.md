@@ -1,7 +1,7 @@
 # icu_list [![crates.io](https://img.shields.io/crates/v/icu_list)](https://crates.io/crates/icu_list)
 
-[`icu_list`](crate) provides the [`ListFormatter`] which renders sequences of [`Writeables`](writeable::Writeable)
-as lists in a locale-sensitive way.
+[`icu_list`](crate) provides the [`ListFormatter`] which renders sequences of [`Writeable`](
+writeable::Writeable)s as lists in a locale-sensitive way.
 
 ## Examples
 
