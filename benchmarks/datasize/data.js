@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642700367466,
+  "lastUpdate": 1642703204144,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7733,6 +7733,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/78176585a0a5390348b5163573d5b60df5dfd280"
         },
         "date": 1642700356237,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a015efd970e2a008d24f67f7d13598ae5901223",
+          "message": "Add explicit aligned and unaligned read benches (#1391)",
+          "timestamp": "2022-01-20T10:25:05-08:00",
+          "tree_id": "e188b1c6f2d01e9d384bedade8aac27e80038dbd",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a015efd970e2a008d24f67f7d13598ae5901223"
+        },
+        "date": 1642703194361,
         "tool": "ndjson",
         "benches": [
           {
