@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642696279204,
+  "lastUpdate": 1642696760659,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18323,6 +18323,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 301316,
             "range": "± 1557",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0cddf2b8fe09aa07640dd9ab36d72bab526647ed",
+          "message": "Simplifying path construction (#1521)",
+          "timestamp": "2022-01-20T17:29:50+01:00",
+          "tree_id": "8bfc62f7d06a491918ef849fa8a51ab292420d2a",
+          "url": "https://github.com/unicode-org/icu4x/commit/0cddf2b8fe09aa07640dd9ab36d72bab526647ed"
+        },
+        "date": 1642696746259,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 83553,
+            "range": "± 381",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 950746,
+            "range": "± 2003",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 314855,
+            "range": "± 1434",
             "unit": "ns/iter"
           }
         ]
