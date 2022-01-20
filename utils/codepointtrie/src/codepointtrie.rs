@@ -79,6 +79,30 @@ impl TrieValue for char {
     }
 }
 
+#[derive(PartialEq, Eq, Debug)]
+pub struct CodePointRange {
+    start: u32,
+    end: u32,
+    value: u32,
+}
+
+/// Converts occurrences of trie's null value into the provided null_value.
+/// 
+/// Also, the ICU version of this helper function uses a ValueFilter function
+/// to apply a transform on a non-null value. But currently, this implementation
+/// stops short of that functionality, and instead leaves the non-null trie value
+/// untouched. This is equivalent to having a ValueFilter function that is the
+/// identity.
+/// 
+/// TODO: add ValueFilter as a parameter in the future
+fn maybe_filter_value(value: u32, trie_null_value: u32, null_value: u32) -> u32 {
+    if value == trie_null_value {
+        null_value
+    } else {
+        value
+    }
+}
+
 /// This struct represents a de-serialized CodePointTrie that was exported from
 /// ICU binary data.
 ///
@@ -383,6 +407,208 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     pub fn get_u32(&self, code_point: u32) -> u32 {
         self.get(code_point).into()
     }
+
+    pub fn get_range(&self, start: u32) -> Option<CodePointRange>
+    {
+        if CODE_POINT_MAX < start {
+            return None;
+        }
+        if start >= self.header.high_start {
+            let di: usize = self.data.len() - (HIGH_VALUE_NEG_DATA_OFFSET as usize);
+            let value: u32 = 
+                if let Some(v) = self.data.get(di) {
+                    v.into()
+                } else {
+                    return None;
+                };
+            return Some(CodePointRange { start, end: CODE_POINT_MAX, value });
+        }
+
+        let null_value: u32 = self.header.null_value;
+
+        let mut prev_i3_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
+        let mut prev_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
+        let mut c: u32 = start;
+        let mut trie_value: u32 = 0;
+        let mut value: u32 = 0;
+        let mut have_value: bool = false;
+        
+        loop {
+            let i3_block: u32;
+            let mut i3: u32;
+            let i3_block_length: u32;
+            let data_block_length: u32;
+
+            if c <= 0xffff && 
+                (self.header.trie_type == TrieType::Fast || c < SMALL_TYPE_FAST_INDEXING_MAX) {
+                
+                i3_block = 0;
+                i3 = c >> FAST_TYPE_SHIFT;
+                i3_block_length =
+                    if self.header.trie_type == TrieType::Fast { BMP_INDEX_LENGTH } else { SMALL_INDEX_LENGTH };
+                data_block_length = FAST_TYPE_DATA_BLOCK_LENGTH;
+            } else {
+                // Use the multi-stage index.
+                let mut i1: u32 = c >> SHIFT_1;
+                if self.header.trie_type == TrieType::Fast {
+                    debug_assert!(0xffff < c && c < self.header.high_start);
+                    i1 = i1 + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
+                } else {
+                    debug_assert!(c < self.header.high_start && self.header.high_start > SMALL_LIMIT);
+                    i1 = i1 + SMALL_INDEX_LENGTH;
+                }
+                let i2: u16 = if let Some(i1_val) = self.index.get(i1 as usize) { i1_val } else { return None; };
+                let i3_block_idx: u32 = (i2 as u32) + ((c >> SHIFT_2) & INDEX_2_MASK);
+                i3_block =
+                    if let Some(i3b) = self.index.get(i3_block_idx as usize) {
+                        i3b as u32
+                    } else {
+                        return None;
+                    };
+                if i3_block == prev_i3_block && (c - start) >= CP_PER_INDEX_2_ENTRY {
+                    // The index-3 block is the same as the previous one, and filled with value.
+                    debug_assert!((c & (CP_PER_INDEX_2_ENTRY - 1)) == 0);
+                    c = c + CP_PER_INDEX_2_ENTRY;
+                    continue;
+                }
+                prev_i3_block = i3_block;
+                if i3_block == self.header.index3_null_offset as u32 {
+                    // This is the index-3 null block.
+                    if have_value {
+                        if null_value != value {
+                            return Some(CodePointRange{ start, end: c - 1, value });
+                        }
+                    } else {
+                        trie_value = self.header.null_value;
+                        value = null_value;
+                        have_value = true;
+                    }
+                    prev_block = self.header.data_null_offset;
+                    c = (c + CP_PER_INDEX_2_ENTRY) & !(CP_PER_INDEX_2_ENTRY - 1);
+                    continue;
+                }
+                i3 = (c >> SHIFT_3) & INDEX_3_MASK;
+                i3_block_length = INDEX_3_BLOCK_LENGTH;
+                data_block_length = SMALL_DATA_BLOCK_LENGTH;
+            }
+            // Enumerate data blocks for one index-3 block.
+            loop {
+                let mut block: u32;
+                if (i3_block & 0x8000) == 0 {
+                    block = 
+                        if let Some(b) = self.index.get((i3_block + i3) as usize) {
+                            b as u32
+                        } else {
+                            return None;
+                        };
+                } else {
+                    // 18-bit indexes stored in groups of 9 entries per 8 indexes.
+                    let mut group: u32 = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
+                    let gi: u32 = i3 & 7;
+                    let gi_val: u32 =
+                        if let Some(giv) = self.index.get(group as usize) {
+                            giv.into()
+                        } else {
+                            return None;
+                        };
+                    block = (gi_val << (2 + (2 * gi))) & 0x30000;
+                    group = group + 1;
+                    let ggi_val: u32 =
+                        if let Some(ggiv) = self.index.get((group + gi) as usize) {
+                            ggiv as u32
+                        } else {
+                            return None;
+                        };
+                    block = block | ggi_val;
+                }
+                if block == prev_block && (c - start) >= data_block_length {
+                    // The block is the same as the previous one, and filled with value.
+                    debug_assert!((c & (data_block_length - 1)) == 0);
+                    c = c + data_block_length;
+                } else {
+                    let data_mask: u32 = data_block_length - 1;
+                    prev_block = block;
+                    if block == self.header.data_null_offset {
+                        // This is the data null block.
+                        if have_value {
+                            if null_value != value {
+                                return Some(CodePointRange{ start, end: c - 1, value });
+                            }
+                        } else {
+                            trie_value = self.header.null_value;
+                            value = null_value;
+                            have_value = true;
+                        }
+                        c = (c + data_block_length) & !data_mask;
+                    } else {
+                        let mut di: u32 = block + (c & data_mask);
+                        let mut trie_value_2: u32 =
+                            if let Some(trv2) = self.data.get(di as usize) {
+                                trv2.into()
+                            } else {
+                                return None;
+                            };
+                        if have_value {
+                            if trie_value_2 != trie_value {
+                                if maybe_filter_value(trie_value_2, self.header.null_value, null_value) != value {
+                                    return Some(CodePointRange{ start, end: c - 1, value });
+                                }
+                                trie_value = trie_value_2;  // may or may not help
+                            }
+                        } else {
+                            trie_value = trie_value_2;
+                            value = maybe_filter_value(trie_value_2, self.header.null_value, null_value);
+                            have_value = true;
+                        }
+
+                        c = c + 1;
+                        while (c & data_mask) != 0 {
+                            di = di + 1;
+                            trie_value_2 =
+                                if let Some(trv2) = self.data.get(di as usize) {
+                                    trv2.into()
+                                } else {
+                                    return None;
+                                };
+                            if trie_value_2 != trie_value {
+                                if maybe_filter_value(trie_value_2, self.header.null_value, null_value) != value {
+                                    return Some(CodePointRange{ start, end: c - 1, value });
+                                }
+                                trie_value = trie_value_2;  // may or may not help
+                            }
+
+                            c = c + 1;
+                        }
+                    }
+                }
+
+                i3 = i3 + 1;
+                if !(i3 < i3_block_length) {
+                    break;
+                }
+            }
+
+            if !(c < self.header.high_start) {
+                break;
+            }
+        }
+
+        debug_assert!(have_value);
+
+        let di: u32 = self.data.len() as u32 - HIGH_VALUE_NEG_DATA_OFFSET;
+        let high_value: u32 = 
+            if let Some(hv) = self.data.get(di as usize) {
+                hv.into()
+            } else {
+                return None;
+            };
+        if maybe_filter_value(high_value, self.header.null_value, null_value) != value {
+            c = c - 1;
+        } else {
+            c = CODE_POINT_MAX;
+        }
+        return Some(CodePointRange{ start, end: c, value });
+    }
 }
 
 impl<'trie, T: TrieValue> Clone for CodePointTrie<'trie, T>
@@ -402,6 +628,8 @@ where
 mod tests {
     #[cfg(feature = "serde")]
     use super::CodePointTrie;
+    use super::CodePointRange;
+    use crate::planes;
     use alloc::vec::Vec;
     #[cfg(feature = "serde")]
     use zerovec::ZeroVec;
@@ -539,5 +767,19 @@ mod tests {
         assert!(matches!(trie_deserialized.data, ZeroVec::Borrowed(_)));
 
         Ok(())
+    }
+
+    #[test]
+    fn test_get_range() {
+        let planes_trie = planes::get_planes_trie();
+        
+        let first_range: Option<CodePointRange> = planes_trie.get_range(0x0);
+        assert_eq!(first_range, Some(CodePointRange{ start: 0x0, end: 0xffff, value: 0 }));
+
+        let second_range: Option<CodePointRange> = planes_trie.get_range(0x1_0000);
+        assert_eq!(second_range, Some(CodePointRange{ start: 0x10000, end: 0x1ffff, value: 1 }));
+
+        let last_range: Option<CodePointRange> = planes_trie.get_range(0x10_0000);
+        assert_eq!(last_range, Some(CodePointRange{ start: 0x10_0000, end: 0x10_ffff, value: 16 }));
     }
 }
