@@ -104,6 +104,7 @@ impl ResourceKey {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use ucu_provider::tagged;
     ///
     /// // Const constructed (preferred):
     /// const k1: ResourceKey = icu_provider::resource_key!("foo/bar@1");
