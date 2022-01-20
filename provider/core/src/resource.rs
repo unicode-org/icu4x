@@ -128,13 +128,13 @@ impl ResourceKey {
         let path = path.as_bytes();
 
         // Start and end of the untagged part
+        if path.len() < leading_tag!().len() + trailing_tag!().len() {
+            return Err(());
+        }
         let start = leading_tag!().len();
         let end = path.len() - trailing_tag!().len();
 
         // Check tags
-        if start > end {
-            return Err(());
-        }
         let mut i = 0;
         while i < leading_tag!().len() {
             if path[i] != leading_tag!().as_bytes()[i] {
