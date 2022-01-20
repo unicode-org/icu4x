@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642700821775,
+  "lastUpdate": 1642703616577,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18719,6 +18719,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 53788915,
             "range": "± 271663",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a015efd970e2a008d24f67f7d13598ae5901223",
+          "message": "Add explicit aligned and unaligned read benches (#1391)",
+          "timestamp": "2022-01-20T10:25:05-08:00",
+          "tree_id": "e188b1c6f2d01e9d384bedade8aac27e80038dbd",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a015efd970e2a008d24f67f7d13598ae5901223"
+        },
+        "date": 1642703605535,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 53180968,
+            "range": "± 2245570",
             "unit": "ns/iter"
           }
         ]
