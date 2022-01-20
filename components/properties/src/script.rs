@@ -149,6 +149,8 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
+    /// Returns whether `script` satisfies either of: 1) matches the Script
+    /// property value; 2) is contained in the Script_Extensions property value
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
         if script == self.get_script_val(code_point) {
             true
@@ -159,6 +161,8 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
+    /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
+    /// code points for which `has_script` will return true.
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
         let mut builder = UnicodeSetBuilder::new();
         let mut range_start: u32 = 0;

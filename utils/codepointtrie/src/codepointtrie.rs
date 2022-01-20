@@ -100,15 +100,14 @@ impl CodePointMapRange {
     }
 }
 
-/// Converts occurrences of trie's null value into the provided null_value.
+/// Helper function used by [`get_range`]. Converts occurrences of trie's null
+/// value into the provided null_value.
 ///
-/// Also, the ICU version of this helper function uses a ValueFilter function
+/// Note: the ICU version of this helper function uses a ValueFilter function
 /// to apply a transform on a non-null value. But currently, this implementation
 /// stops short of that functionality, and instead leaves the non-null trie value
 /// untouched. This is equivalent to having a ValueFilter function that is the
-/// identity.
-///
-/// TODO: add ValueFilter as a parameter in the future
+/// identity function.
 fn maybe_filter_value(value: u32, trie_null_value: u32, null_value: u32) -> u32 {
     if value == trie_null_value {
         null_value
@@ -422,6 +421,8 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         self.get(code_point).into()
     }
 
+    /// Returns a [`CodePointMapRange`] struct representing a range of code
+    /// points associated with the same value.
     pub fn get_range(&self, start: u32) -> Option<CodePointMapRange> {
         if CODE_POINT_MAX < start {
             return None;
