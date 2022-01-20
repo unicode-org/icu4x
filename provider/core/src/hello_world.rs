@@ -48,6 +48,10 @@ impl DataMarker for HelloWorldV1Marker {
     type Yokeable = HelloWorldV1<'static>;
 }
 
+impl ResourceMarker for HelloWorldV1Marker {
+    const KEY: ResourceKey = key::HELLO_WORLD_V1;
+}
+
 /// A data provider returning Hello World strings in different languages.
 ///
 /// Mostly useful for testing.

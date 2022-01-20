@@ -142,9 +142,11 @@ pub mod prelude {
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseMetadata;
+    pub use crate::data_provider::ResourceProvider;
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
+    pub use crate::marker::ResourceMarker;
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;

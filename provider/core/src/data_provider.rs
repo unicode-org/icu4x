@@ -8,9 +8,10 @@ mod test;
 
 use crate::buf::BufferMarker;
 use crate::error::{DataError, DataErrorKind};
-use crate::marker::DataMarker;
+use crate::marker::{DataMarker, ResourceMarker};
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
+use crate::resource::ResourceOptions;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
@@ -955,4 +956,26 @@ where
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
+pub trait ResourceProvider<M>
+where
+    M: ResourceMarker,
+{
+    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError>;
+}
+
+impl<P, M> ResourceProvider<M> for P
+where
+    M: ResourceMarker,
+    P: DataProvider<M>
+{
+    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError> {
+        self.load_payload(&DataRequest {
+            resource_path: ResourcePath {
+                key: M::KEY,
+                options
+            }
+        })
+    }
 }
