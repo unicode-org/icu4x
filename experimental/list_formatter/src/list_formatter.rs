@@ -74,8 +74,8 @@ impl ListFormatter {
     }
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
-    /// formatting. The first layer of parts contains [`ListFormatter::element()`] for input
-    /// elements, and [`ListFormatter::literal()`] for list literals.
+    /// formatting. The first layer of parts contains [`ListFormatter::ELEMENT`] for input
+    /// elements, and [`ListFormatter::LITERAL`] for list literals.
     pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
@@ -87,21 +87,17 @@ impl ListFormatter {
     }
 
     /// The [`Part`] used by [`List`] to mark the part of the string that is an element.
-    pub const fn element() -> Part {
-        Part {
-            category: "list",
-            value: "element",
-        }
-    }
+    pub const ELEMENT: Part = Part {
+        category: "list",
+        value: "element",
+    };
 
     /// The [`Part`] used by [`List`] to mark the part of the string that is a list literal,
     /// such as ", " or " and ".
-    pub const fn literal() -> Part {
-        Part {
-            category: "list",
-            value: "literal",
-        }
-    }
+    pub const LITERAL: Part = Part {
+        category: "list",
+        value: "literal",
+    };
 }
 
 /// The [`Writeable`] implementation that is returned by [`ListFormatter::format`]. See
@@ -115,12 +111,12 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for Li
     fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
-                sink.with_part(ListFormatter::literal(), |l| l.write_str($lit))
+                sink.with_part(ListFormatter::LITERAL, |l| l.write_str($lit))
             };
         }
         macro_rules! value {
             ($val:expr) => {
-                sink.with_part(ListFormatter::element(), |e| $val.write_to_parts(e))
+                sink.with_part(ListFormatter::ELEMENT, |e| $val.write_to_parts(e))
             };
         }
 
@@ -241,17 +237,17 @@ mod tests {
             formatter.format(values.iter()),
             "@one:two,three,four.five!",
             [
-                (0, 1, ListFormatter::literal()),
-                (1, 4, ListFormatter::element()),
-                (4, 5, ListFormatter::literal()),
-                (5, 8, ListFormatter::element()),
-                (8, 9, ListFormatter::literal()),
-                (9, 14, ListFormatter::element()),
-                (14, 15, ListFormatter::literal()),
-                (15, 19, ListFormatter::element()),
-                (19, 20, ListFormatter::literal()),
-                (20, 24, ListFormatter::element()),
-                (24, 25, ListFormatter::literal())
+                (0, 1, ListFormatter::LITERAL),
+                (1, 4, ListFormatter::ELEMENT),
+                (4, 5, ListFormatter::LITERAL),
+                (5, 8, ListFormatter::ELEMENT),
+                (8, 9, ListFormatter::LITERAL),
+                (9, 14, ListFormatter::ELEMENT),
+                (14, 15, ListFormatter::LITERAL),
+                (15, 19, ListFormatter::ELEMENT),
+                (19, 20, ListFormatter::LITERAL),
+                (20, 24, ListFormatter::ELEMENT),
+                (24, 25, ListFormatter::LITERAL)
             ]
         );
     }
@@ -268,11 +264,11 @@ mod tests {
             formatter.format(vecdeque.iter()),
             "$48;10+",
             [
-                (0, 1, ListFormatter::literal()),
-                (1, 3, ListFormatter::element()),
-                (3, 4, ListFormatter::literal()),
-                (4, 6, ListFormatter::element()),
-                (6, 7, ListFormatter::literal()),
+                (0, 1, ListFormatter::LITERAL),
+                (1, 3, ListFormatter::ELEMENT),
+                (3, 4, ListFormatter::LITERAL),
+                (4, 6, ListFormatter::ELEMENT),
+                (6, 7, ListFormatter::LITERAL),
             ]
         );
     }
@@ -285,11 +281,11 @@ mod tests {
             formatter.format(core::iter::repeat(5).take(2)),
             "$5;5+",
             [
-                (0, 1, ListFormatter::literal()),
-                (1, 2, ListFormatter::element()),
-                (2, 3, ListFormatter::literal()),
-                (3, 4, ListFormatter::element()),
-                (4, 5, ListFormatter::literal()),
+                (0, 1, ListFormatter::LITERAL),
+                (1, 2, ListFormatter::ELEMENT),
+                (2, 3, ListFormatter::LITERAL),
+                (3, 4, ListFormatter::ELEMENT),
+                (4, 5, ListFormatter::LITERAL),
             ]
         );
     }
