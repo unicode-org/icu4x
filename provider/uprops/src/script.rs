@@ -174,4 +174,49 @@ mod tests {
             ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana])
         );
     }
+
+    #[test]
+    fn test_has_script() {
+        let root_dir = icu_testdata::paths::uprops_toml_root();
+        let provider = ScriptExtensionsPropertyProvider::try_new(&root_dir)
+            .expect("TOML should load successfully");
+
+        let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: key::SCRIPT_EXTENSIONS_V1,
+                    options: ResourceOptions::default(),
+                },
+            })
+            .expect("The data should be valid")
+            .take_payload()
+            .expect("Loading was successful");
+
+        let scx: &ScriptExtensions = &payload.get().data;
+
+        assert!(scx.has_script('𐓐' as u32, Script::Osage));
+        assert!(!scx.has_script('𐓐' as u32, Script::Common));
+        assert!(!scx.has_script('𐓐' as u32, Script::Inherited));
+
+        assert!(scx.has_script('🥳' as u32, Script::Common));
+        assert!(!scx.has_script('🥳' as u32, Script::Inherited));
+
+        assert!(!scx.has_script(0x200D, Script::Common));
+        assert!(scx.has_script(0x200D, Script::Inherited));
+
+        assert!(scx.has_script('௫' as u32, Script::Tamil));
+        assert!(scx.has_script('௫' as u32, Script::Grantha));
+        assert!(!scx.has_script('௫' as u32, Script::Common));
+        assert!(!scx.has_script('௫' as u32, Script::Inherited));
+
+        assert!(scx.has_script(0x11303, Script::Tamil));
+        assert!(scx.has_script(0x11303, Script::Grantha));
+        assert!(!scx.has_script(0x11303, Script::Common));
+        assert!(!scx.has_script(0x11303, Script::Inherited));
+
+        assert!(scx.has_script(0x30A0, Script::Hiragana));
+        assert!(scx.has_script(0x30A0, Script::Katakana));
+        assert!(scx.has_script(0x30A0, Script::Common));
+        assert!(!scx.has_script(0x30A0, Script::Inherited));
+    }
 }

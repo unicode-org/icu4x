@@ -140,6 +140,16 @@ impl<'data> ScriptExtensions<'data> {
             ZeroSlice::from_ule_slice(script_ule_slice)
         }
     }
+    
+    pub fn has_script(&self, code_point: u32, script: Script) -> bool {
+        if script == self.get_script_val(code_point) {
+            true
+        } else {
+            let scx_val = self.get_script_extensions_val(code_point);
+            let script_find = scx_val.iter().find(|&sc| sc == script);
+            script_find.is_some()
+        }
+    }
 }
 
 #[cfg(test)]
