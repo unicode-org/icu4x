@@ -10,8 +10,8 @@ use crate::buf::BufferMarker;
 use crate::error::{DataError, DataErrorKind};
 use crate::marker::{DataMarker, ResourceMarker};
 use crate::resource::ResourceKey;
-use crate::resource::ResourcePath;
 use crate::resource::ResourceOptions;
+use crate::resource::ResourcePath;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
@@ -965,6 +965,7 @@ where
     fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError>;
 }
 
+/*
 impl<P, M> ResourceProvider<M> for P
 where
     M: ResourceMarker,
@@ -979,3 +980,16 @@ where
         })
     }
 }
+*/
+
+/*
+impl<P, M> DataProvider<M> for P
+where
+    M: ResourceMarker,
+    P: ResourceProvider<M>
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        todo!()
+    }
+}
+*/

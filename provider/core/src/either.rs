@@ -41,6 +41,19 @@ impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
     }
 }
 
+impl<M: ResourceMarker, P0: ResourceProvider<M>, P1: ResourceProvider<M>> ResourceProvider<M>
+    for EitherProvider<P0, P1>
+{
+    #[inline]
+    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError> {
+        use EitherProvider::*;
+        match self {
+            A(p) => p.load_resource(options),
+            B(p) => p.load_resource(options),
+        }
+    }
+}
+
 impl<P0: IterableProvider, P1: IterableProvider> IterableProvider for EitherProvider<P0, P1> {
     #[inline]
     fn supported_options_for_key(

@@ -127,18 +127,18 @@ impl HelloWorldProvider {
     }
 }
 
-impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn load_payload(
+impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn load_resource(
         &self,
-        req: &DataRequest,
+        options: ResourceOptions,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        key::HELLO_WORLD_V1.match_key(req.resource_path.key)?;
-        let langid = req.try_langid()?;
+        // key::HELLO_WORLD_V1.match_key(req.resource_path.key)?;
+        let langid = options.try_langid()?;
         let data = self
             .map
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(req))?;
+            .ok_or_else(|| DataErrorKind::MissingLocale.with_key(HelloWorldV1Marker::KEY))?;
         let metadata = DataResponseMetadata {
             data_langid: Some(langid.clone()),
             ..Default::default()
@@ -163,7 +163,8 @@ pub struct HelloWorldJsonProvider(HelloWorldProvider);
 
 impl BufferProvider for HelloWorldJsonProvider {
     fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let result = self.0.load_payload(req)?;
+        req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
+        let result = self.0.load_resource(req.resource_path.options.clone())?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
         metadata.buffer_format = Some(BufferFormat::Json);

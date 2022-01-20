@@ -345,16 +345,17 @@ where
     }
 }
 
-impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
+impl<M, P> ResourceProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: DataMarker + 'static,
+    M: ResourceMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
 {
     #[inline]
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(req)?.downcast()
+    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError> {
+        // self.0.load_any(req)?.downcast()
+        todo!()
     }
 }
 

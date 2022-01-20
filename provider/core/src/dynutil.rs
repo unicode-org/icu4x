@@ -154,7 +154,8 @@ macro_rules! impl_dyn_provider {
                     $(
                         $pat => {
                             let result: $crate::prelude::DataResponse<$struct_m> =
-                                $crate::prelude::DataProvider::load_payload(self, req)?;
+                                $crate::prelude::ResourceProvider::load_resource(
+                                    self, req.resource_path.options.clone())?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {

@@ -82,6 +82,24 @@ where
     }
 }
 
+impl<D, F, M> ResourceProvider<M> for RequestFilterDataProvider<D, F>
+where
+    F: Fn(&DataRequest) -> bool,
+    M: ResourceMarker,
+    D: DataProvider<M>,
+{
+    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError> {
+        // if (self.predicate)(req) {
+        //     self.inner.load_payload(req)
+        // } else {
+        //     Err(DataErrorKind::FilteredResource
+        //         .with_str_context(self.filter_name)
+        //         .with_req(req))
+        // }
+        todo!()
+    }
+}
+
 impl<D, F> BufferProvider for RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,
