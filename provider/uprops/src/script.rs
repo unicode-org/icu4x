@@ -261,5 +261,19 @@ mod tests {
         let inherited = scx.get_script_extensions_set(Script::Inherited);
         assert!(!inherited.contains('🥳'));
         assert!(inherited.contains_u32(0x200D));
+
+        // inspired by https://github.com/unicode-org/unicodetools/issues/192
+
+        let bengali = scx.get_script_extensions_set(Script::Bengali);
+        assert!(bengali.contains('১')); // BENGALI DIGIT ONE
+        assert!(bengali.contains_u32(0x0964)); // DEVANAGARI DANDA
+        assert!(bengali.contains_u32(0x0965)); // DEVANAGARI DOUBLE DANDA
+        assert!(!bengali.contains_u32(0xA830)); // NORTH INDIC FRACTION ONE QUARTER
+
+        let devanagari = scx.get_script_extensions_set(Script::Devanagari);
+        assert!(!devanagari.contains('১')); // BENGALI DIGIT ONE
+        assert!(devanagari.contains_u32(0x0964)); // DEVANAGARI DANDA
+        assert!(devanagari.contains_u32(0x0965)); // DEVANAGARI DOUBLE DANDA
+        assert!(devanagari.contains_u32(0xA830)); // NORTH INDIC FRACTION ONE QUARTER
     }
 }
