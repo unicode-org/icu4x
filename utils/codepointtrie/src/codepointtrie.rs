@@ -80,7 +80,7 @@ impl TrieValue for char {
 }
 
 #[derive(PartialEq, Eq, Debug)]
-pub struct CodePointRange {
+pub struct CodePointMapRange {
     start: u32,
     end: u32,
     value: u32,
@@ -408,7 +408,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         self.get(code_point).into()
     }
 
-    pub fn get_range(&self, start: u32) -> Option<CodePointRange>
+    pub fn get_range(&self, start: u32) -> Option<CodePointMapRange>
     {
         if CODE_POINT_MAX < start {
             return None;
@@ -421,7 +421,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                 } else {
                     return None;
                 };
-            return Some(CodePointRange { start, end: CODE_POINT_MAX, value });
+            return Some(CodePointMapRange { start, end: CODE_POINT_MAX, value });
         }
 
         let null_value: u32 = self.header.null_value;
@@ -476,7 +476,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                     // This is the index-3 null block.
                     if have_value {
                         if null_value != value {
-                            return Some(CodePointRange{ start, end: c - 1, value });
+                            return Some(CodePointMapRange{ start, end: c - 1, value });
                         }
                     } else {
                         trie_value = self.header.null_value;
@@ -532,7 +532,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                         // This is the data null block.
                         if have_value {
                             if null_value != value {
-                                return Some(CodePointRange{ start, end: c - 1, value });
+                                return Some(CodePointMapRange{ start, end: c - 1, value });
                             }
                         } else {
                             trie_value = self.header.null_value;
@@ -551,7 +551,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                         if have_value {
                             if trie_value_2 != trie_value {
                                 if maybe_filter_value(trie_value_2, self.header.null_value, null_value) != value {
-                                    return Some(CodePointRange{ start, end: c - 1, value });
+                                    return Some(CodePointMapRange{ start, end: c - 1, value });
                                 }
                                 trie_value = trie_value_2;  // may or may not help
                             }
@@ -572,7 +572,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                                 };
                             if trie_value_2 != trie_value {
                                 if maybe_filter_value(trie_value_2, self.header.null_value, null_value) != value {
-                                    return Some(CodePointRange{ start, end: c - 1, value });
+                                    return Some(CodePointMapRange{ start, end: c - 1, value });
                                 }
                                 trie_value = trie_value_2;  // may or may not help
                             }
@@ -607,7 +607,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         } else {
             c = CODE_POINT_MAX;
         }
-        return Some(CodePointRange{ start, end: c, value });
+        return Some(CodePointMapRange{ start, end: c, value });
     }
 }
 
@@ -628,7 +628,7 @@ where
 mod tests {
     #[cfg(feature = "serde")]
     use super::CodePointTrie;
-    use super::CodePointRange;
+    use super::CodePointMapRange;
     use crate::planes;
     use alloc::vec::Vec;
     #[cfg(feature = "serde")]
@@ -773,13 +773,13 @@ mod tests {
     fn test_get_range() {
         let planes_trie = planes::get_planes_trie();
         
-        let first_range: Option<CodePointRange> = planes_trie.get_range(0x0);
-        assert_eq!(first_range, Some(CodePointRange{ start: 0x0, end: 0xffff, value: 0 }));
+        let first_range: Option<CodePointMapRange> = planes_trie.get_range(0x0);
+        assert_eq!(first_range, Some(CodePointMapRange{ start: 0x0, end: 0xffff, value: 0 }));
 
-        let second_range: Option<CodePointRange> = planes_trie.get_range(0x1_0000);
-        assert_eq!(second_range, Some(CodePointRange{ start: 0x10000, end: 0x1ffff, value: 1 }));
+        let second_range: Option<CodePointMapRange> = planes_trie.get_range(0x1_0000);
+        assert_eq!(second_range, Some(CodePointMapRange{ start: 0x10000, end: 0x1ffff, value: 1 }));
 
-        let last_range: Option<CodePointRange> = planes_trie.get_range(0x10_0000);
-        assert_eq!(last_range, Some(CodePointRange{ start: 0x10_0000, end: 0x10_ffff, value: 16 }));
+        let last_range: Option<CodePointMapRange> = planes_trie.get_range(0x10_0000);
+        assert_eq!(last_range, Some(CodePointMapRange{ start: 0x10_0000, end: 0x10_ffff, value: 16 }));
     }
 }
