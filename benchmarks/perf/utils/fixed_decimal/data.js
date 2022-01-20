@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642696211174,
+  "lastUpdate": 1642696696124,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17579,6 +17579,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 131499,
             "range": "± 632",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0cddf2b8fe09aa07640dd9ab36d72bab526647ed",
+          "message": "Simplifying path construction (#1521)",
+          "timestamp": "2022-01-20T17:29:50+01:00",
+          "tree_id": "8bfc62f7d06a491918ef849fa8a51ab292420d2a",
+          "url": "https://github.com/unicode-org/icu4x/commit/0cddf2b8fe09aa07640dd9ab36d72bab526647ed"
+        },
+        "date": 1642696685337,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 131926,
+            "range": "± 7328",
             "unit": "ns/iter"
           }
         ]
