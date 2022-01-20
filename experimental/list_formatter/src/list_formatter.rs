@@ -43,16 +43,13 @@ impl ListFormatter {
     /// Returns a `Writeable` composed of the input `Writeable`s and the language-dependent
     /// formatting. The first layer of fields contains `ListFormatter::element()` for input
     /// elements, and `ListFormatter::literal()` for list literals.
-    pub fn format<'a, W: Writeable + 'a, I: IntoIterator<Item = W>>(
+    pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
-    ) -> List<'a, W, I::IntoIter>
-    where
-        I::IntoIter: Clone, // The iterator has to be usable multiple times
-    {
+    ) -> List<'a, W, I> {
         List {
             formatter: self,
-            values: values.into_iter(),
+            values,
         }
     }
 
@@ -193,16 +190,17 @@ mod tests {
         let formatter = formatter(Width::Wide);
         let values = ["one", "two", "three", "four", "five"];
 
-        // Borrow
-        assert_writeable_eq!(formatter.format(&values[0..0]), "");
-        assert_writeable_eq!(formatter.format(&values[0..1]), "one");
-        assert_writeable_eq!(formatter.format(&values[0..2]), "$one;two+");
-        assert_writeable_eq!(formatter.format(&values[0..3]), "@one:two.three!");
-        assert_writeable_eq!(formatter.format(&values[0..4]), "@one:two,three.four!");
+        assert_writeable_eq!(formatter.format(values[0..0].iter()), "");
+        assert_writeable_eq!(formatter.format(values[0..1].iter()), "one");
+        assert_writeable_eq!(formatter.format(values[0..2].iter()), "$one;two+");
+        assert_writeable_eq!(formatter.format(values[0..3].iter()), "@one:two.three!");
+        assert_writeable_eq!(
+            formatter.format(values[0..4].iter()),
+            "@one:two,three.four!"
+        );
 
-        // Move
         assert_writeable_parts_eq!(
-            formatter.format(values),
+            formatter.format(values.iter()),
             "@one:two,three,four.five!",
             [
                 (0, 1, ListFormatter::literal()),
@@ -228,12 +226,8 @@ mod tests {
         vecdeque.push_back(10);
         vecdeque.push_front(48);
 
-        // Borrow
-        formatter.format(&vecdeque);
-
-        // Move
         assert_writeable_parts_eq!(
-            formatter.format(vecdeque),
+            formatter.format(vecdeque.iter()),
             "$48;10+",
             [
                 (0, 1, ListFormatter::literal()),
@@ -266,6 +260,6 @@ mod tests {
     fn test_conditional() {
         let formatter = formatter(Width::Narrow);
 
-        assert_writeable_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
+        assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
     }
 }
