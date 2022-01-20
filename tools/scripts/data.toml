@@ -15,6 +15,18 @@ args = [
     "-v",
 ]
 
+[tasks.icu4x-key-extract]
+description = "Extracts ICU4X resource keys used by a binary."
+category = "ICU4X Data"
+script_runner = "bash"
+script = """
+    # TODO(#1106): Implement this
+    echo "datetime/lengths@1" > ${2}
+    echo "datetime/skeletons@1" >> ${2}
+    echo "datetime/symbols@1" >> ${2}
+    echo "plurals/ordinal@1" >> ${2}
+"""
+
 [tasks.testdata-build-json]
 description = "Build ICU4X JSON from the downloaded CLDR JSON, overwriting the existing ICU4X JSON."
 category = "ICU4X Data"
@@ -45,21 +57,6 @@ args = [
     "--out-testdata",
     "--test-keys",
     "--test-locales",
-    "--overwrite",
-]
-
-[tasks.testdata-build-hello-world]
-description = "Build the Hello World postcard testdata file."
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=icu4x-datagen",
-    "--",
-    "--format=blob",
-    "--hello-world-key",
-    "--all-locales",
-    "--out=provider/blob/tests/data/hello_world.postcard",
     "--overwrite",
 ]
 
@@ -139,6 +136,23 @@ args = [
     "--out-testdata",
     "--test-keys",
     "--all-locales",
+    "--syntax=bincode",
+    "--overwrite",
+]
+
+[tasks.testdata-build-worklog-bincode]
+description = "Build Bincode files for the work_log example"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--input-from-testdata",
+    "--out=tools/datagen/tests/testdata/work_log_bincode",
+    "--key-file=tools/datagen/tests/testdata/work_log+keys.txt",
+    "--locales=de",
+    "--locales=es",
     "--syntax=bincode",
     "--overwrite",
 ]
