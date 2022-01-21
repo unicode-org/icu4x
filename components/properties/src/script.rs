@@ -63,6 +63,12 @@ impl From<ScriptWithExt> for u32 {
     }
 }
 
+impl From<ScriptWithExt> for Script {
+    fn from(swe: ScriptWithExt) -> Self {
+        Script(swe.0)
+    }
+}
+
 /// A data structure that represents the data for both Script and
 /// Script_Extensions properties in an efficient way. This structure matches
 /// the data and data structures that are stored in the corresponding ICU data
@@ -185,8 +191,18 @@ impl<'data> ScriptExtensions<'data> {
                     let end = cpm_range.get_end();
                     if end <= CODE_POINT_MAX {
                         let start = cpm_range.get_start();
+                        let sc_with_ext = ScriptWithExt(cpm_range.get_value() as u16);
 
-                        if self.has_script(start, script) {
+                        // Since we already have the ScriptWithExt value from the trie,
+                        // we can directly check if `script` matches to code point `start`
+                        // without calling `has_script()`
+                        if (!sc_with_ext.has_extensions() && script == sc_with_ext.into())
+                            || (sc_with_ext.has_extensions()
+                                && self
+                                    .get_script_extensions_val(start)
+                                    .iter()
+                                    .any(|sc| sc == script))
+                        {
                             builder.add_range_u32(&(start..=end));
                         }
 
