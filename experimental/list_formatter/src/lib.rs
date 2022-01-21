@@ -12,14 +12,14 @@
 //! ## Format a list of strings in Spanish
 //!
 //! ```
-//! use icu_list::{ListFormatter, Type, Width};
+//! use icu_list::{ListFormatter, ListType, ListStyle};
 //! use icu_locid::Locale;
 //! use icu_locid_macros::langid;
 //! use writeable::Writeable;
 //!
 //! let locale: Locale = langid!("es").into();
 //! let provider = icu_testdata::get_provider();
-//! let list_formatter = ListFormatter::try_new(locale, &provider, Type::And, Width::Wide)
+//! let list_formatter = ListFormatter::try_new(locale, &provider, ListType::And, ListStyle::Wide)
 //!     .expect("Data should load successfully");
 //!
 //! assert_eq!(

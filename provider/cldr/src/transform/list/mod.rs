@@ -229,7 +229,7 @@ fn parse_unit_patterns<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_list::{ListFormatter, Type, Width};
+    use icu_list::{ListFormatter, ListType, ListStyle};
     use icu_locid_macros::langid;
     use writeable::assert_writeable_eq;
 
@@ -243,19 +243,19 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        formatter!(f, langid!("fr"), Type::Or, Width::Wide);
+        formatter!(f, langid!("fr"), ListType::Or, ListStyle::Wide);
         assert_writeable_eq!(f.format(["A", "B"].iter()), "A ou B");
     }
 
     #[test]
     fn test_spanish() {
-        formatter!(and, langid!("es"), Type::And, Width::Wide);
+        formatter!(and, langid!("es"), ListType::And, ListStyle::Wide);
         assert_writeable_eq!(and.format(["", "Mallorca"].iter()), " y Mallorca");
         assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " e Ibiza");
         assert_writeable_eq!(and.format(["", "Hidalgo"].iter()), " e Hidalgo");
         assert_writeable_eq!(and.format(["", "Hierva"].iter()), " y Hierva");
 
-        formatter!(or, langid!("es"), Type::Or, Width::Wide);
+        formatter!(or, langid!("es"), ListType::Or, ListStyle::Wide);
         assert_writeable_eq!(or.format(["", "Ibiza"].iter()), " o Ibiza");
         assert_writeable_eq!(or.format(["", "Okinawa"].iter()), " u Okinawa");
         assert_writeable_eq!(or.format(["", "8 más"].iter()), " u 8 más");
@@ -271,13 +271,13 @@ mod tests {
         assert_writeable_eq!(or.format(["", "11.000,92 más"].iter()), " u 11.000,92 más");
         assert_writeable_eq!(or.format(["", "11.000,92"].iter()), " u 11.000,92");
 
-        formatter!(and, langid!("es-AR"), Type::And, Width::Wide);
+        formatter!(and, langid!("es-AR"), ListType::And, ListStyle::Wide);
         assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " e Ibiza");
     }
 
     #[test]
     fn test_hebrew() {
-        formatter!(and, langid!("he"), Type::And, Width::Wide);
+        formatter!(and, langid!("he"), ListType::And, ListStyle::Wide);
 
         assert_writeable_eq!(and.format(["", "יפו"].iter()), " ויפו");
         assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " ו-Ibiza");

@@ -7,7 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::string_matcher::StringMatcher;
-use crate::Width;
+use crate::ListStyle;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 use writeable::{LengthHint, Writeable};
@@ -17,13 +17,13 @@ pub mod key {
     use icu_provider::{resource_key, ResourceKey};
 
     /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`Type::And`](crate::Type::And)
+    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::And`](crate::ListType::And)
     pub const LIST_FORMAT_AND_V1: ResourceKey = resource_key!("list/and@1");
     /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`Type::Or`](crate::Type::Or)
+    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::Or`](crate::ListType::Or)
     pub const LIST_FORMAT_OR_V1: ResourceKey = resource_key!("list/or@1");
     /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`Type::Unit`](crate::Type::Unit)
+    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::Unit`](crate::ListType::Unit)
     pub const LIST_FORMAT_UNIT_V1: ResourceKey = resource_key!("list/unit@1");
 }
 
@@ -45,32 +45,32 @@ pub struct ListFormatterPatternsV1<'data>(
 );
 
 impl<'data> ListFormatterPatternsV1<'data> {
-    pub(crate) fn start(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
-        &self.0[4 * (width as usize)]
+    pub(crate) fn start(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        &self.0[4 * (style as usize)]
     }
 
-    pub(crate) fn middle(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
-        &self.0[4 * (width as usize) + 1]
+    pub(crate) fn middle(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        &self.0[4 * (style as usize) + 1]
     }
 
-    pub(crate) fn end(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
-        &self.0[4 * (width as usize) + 2]
+    pub(crate) fn end(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        &self.0[4 * (style as usize) + 2]
     }
 
-    pub(crate) fn pair(&self, width: Width) -> &ConditionalListJoinerPattern<'data> {
-        &self.0[4 * (width as usize) + 3]
+    pub(crate) fn pair(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        &self.0[4 * (style as usize) + 3]
     }
 
     /// The range of the number of bytes required by the list literals to join a
     /// list of length `len`. If none of the patterns are conditional, this is exact.
-    pub(crate) fn size_hint(&self, width: Width, len: usize) -> LengthHint {
+    pub(crate) fn size_hint(&self, style: ListStyle, len: usize) -> LengthHint {
         match len {
             0 | 1 => LengthHint::exact(0),
-            2 => self.pair(width).size_hint(),
+            2 => self.pair(style).size_hint(),
             n => {
-                self.start(width).size_hint()
-                    + self.middle(width).size_hint() * (n - 3)
-                    + self.end(width).size_hint()
+                self.start(style).size_hint()
+                    + self.middle(style).size_hint() * (n - 3)
+                    + self.end(style).size_hint()
             }
         }
     }
@@ -304,29 +304,29 @@ pub(crate) mod test {
 
     #[test]
     fn produces_correct_parts() {
-        assert_eq!(test_patterns().pair(Width::Wide).parts(""), ("$", ";", "+"));
+        assert_eq!(test_patterns().pair(Style::Wide).parts(""), ("$", ";", "+"));
     }
 
     #[test]
     fn produces_correct_parts_conditionally() {
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("A"),
+            test_patterns().end(ListStyle::Narrow).parts("A"),
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("a"),
+            test_patterns().end(ListStyle::Narrow).parts("a"),
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("ab"),
+            test_patterns().end(ListStyle::Narrow).parts("ab"),
             ("", " :o ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("B"),
+            test_patterns().end(ListStyle::Narrow).parts("B"),
             ("", ". ", "")
         );
         assert_eq!(
-            test_patterns().end(Width::Narrow).parts("BA"),
+            test_patterns().end(ListStyle::Narrow).parts("BA"),
             ("", ". ", "")
         );
     }
@@ -335,21 +335,21 @@ pub(crate) mod test {
     fn size_hint_works() {
         let pattern = test_patterns();
 
-        assert_eq!(pattern.size_hint(Width::Short, 0), LengthHint::exact(0));
-        assert_eq!(pattern.size_hint(Width::Short, 1), LengthHint::exact(0));
+        assert_eq!(pattern.size_hint(ListStyle::Short, 0), LengthHint::exact(0));
+        assert_eq!(pattern.size_hint(ListStyle::Short, 1), LengthHint::exact(0));
 
         // pair pattern "{0}123{1}456"
-        assert_eq!(pattern.size_hint(Width::Short, 2), LengthHint::exact(6));
+        assert_eq!(pattern.size_hint(ListStyle::Short, 2), LengthHint::exact(6));
 
         // patterns "{0}1{1}", "{0}12{1}" (x197), and "{0}12{1}34"
         assert_eq!(
-            pattern.size_hint(Width::Short, 200),
+            pattern.size_hint(ListStyle::Short, 200),
             LengthHint::exact(1 + 2 * 197 + 4)
         );
 
         // patterns "{0}: {1}", "{0}, {1}" (x197), and "{0} :o {1}" or "{0}. {1}"
         assert_eq!(
-            pattern.size_hint(Width::Narrow, 200),
+            pattern.size_hint(ListStyle::Narrow, 200),
             LengthHint::exact(2 + 197 * 2) + LengthHint::between(2, 4)
         );
     }

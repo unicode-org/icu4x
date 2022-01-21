@@ -12,7 +12,7 @@ use writeable::*;
 /// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
 /// for an explanation of the different types.
 #[derive(Copy, Clone, PartialEq, Debug)]
-pub enum Type {
+pub enum ListType {
     /// A conjunction
     And,
     /// A disjunction
@@ -21,11 +21,11 @@ pub enum Type {
     Unit,
 }
 
-/// Represents the type of a list. See the
+/// Represents the style of a list. See the
 /// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
-/// for an explanation of the different widths.
+/// for an explanation of the different styles.
 #[derive(Copy, Clone, PartialEq, Debug)]
-pub enum Width {
+pub enum ListStyle {
     /// A typical list
     Wide,
     /// A shorter list
@@ -38,7 +38,7 @@ pub enum Width {
 /// [crate-level documentation](crate) for more details.
 pub struct ListFormatter {
     data: DataPayload<ListFormatterPatternsV1Marker>,
-    width: Width,
+    style: ListStyle,
 }
 
 impl ListFormatter {
@@ -52,16 +52,16 @@ impl ListFormatter {
     pub fn try_new<T: Into<Locale>, D: DataProvider<ListFormatterPatternsV1Marker> + ?Sized>(
         locale: T,
         data_provider: &D,
-        type_: Type,
-        width: Width,
+        type_: ListType,
+        style: ListStyle,
     ) -> Result<Self, DataError> {
         let data = data_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: match type_ {
-                        Type::And => key::LIST_FORMAT_AND_V1,
-                        Type::Or => key::LIST_FORMAT_OR_V1,
-                        Type::Unit => key::LIST_FORMAT_UNIT_V1,
+                        ListType::And => key::LIST_FORMAT_AND_V1,
+                        ListType::Or => key::LIST_FORMAT_OR_V1,
+                        ListType::Unit => key::LIST_FORMAT_UNIT_V1,
                     },
                     options: ResourceOptions {
                         variant: None,
@@ -70,12 +70,12 @@ impl ListFormatter {
                 },
             })?
             .take_payload()?;
-        Ok(Self { data, width })
+        Ok(Self { data, style })
     }
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
-    /// formatting. The first layer of parts contains [`ListFormatter::ELEMENT`] for input
-    /// elements, and [`ListFormatter::LITERAL`] for list literals.
+    /// formatting. The first layer of parts contains [`parts::ELEMENT`] for input
+    /// elements, and [`parts::LITERAL`] for list literals.
     pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
@@ -85,14 +85,19 @@ impl ListFormatter {
             values,
         }
     }
+}
 
-    /// The [`Part`] used by [`List`] to mark the part of the string that is an element.
+/// The [`Part`]s used by [`ListFormatter`].
+pub mod parts {
+    use writeable::Part;
+
+    /// The [`Part`] used by [`List`](super::List) to mark the part of the string that is an element.
     pub const ELEMENT: Part = Part {
         category: "list",
         value: "element",
     };
 
-    /// The [`Part`] used by [`List`] to mark the part of the string that is a list literal,
+    /// The [`Part`] used by [`List`](super::List) to mark the part of the string that is a list literal,
     /// such as ", " or " and ".
     pub const LITERAL: Part = Part {
         category: "list",
@@ -111,12 +116,12 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for Li
     fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
-                sink.with_part(ListFormatter::LITERAL, |l| l.write_str($lit))
+                sink.with_part(parts::LITERAL, |l| l.write_str($lit))
             };
         }
         macro_rules! value {
             ($val:expr) => {
-                sink.with_part(ListFormatter::ELEMENT, |e| $val.write_to_parts(e))
+                sink.with_part(parts::ELEMENT, |e| $val.write_to_parts(e))
             };
         }
 
@@ -133,7 +138,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for Li
                         .formatter
                         .data
                         .get()
-                        .start(self.formatter.width)
+                        .start(self.formatter.style)
                         .parts(&second);
 
                     literal!(start_before)?;
@@ -148,7 +153,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for Li
                             .formatter
                             .data
                             .get()
-                            .middle(self.formatter.width)
+                            .middle(self.formatter.style)
                             .parts(&next);
                         literal!(between)?;
                         value!(next)?;
@@ -159,7 +164,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for Li
                         .formatter
                         .data
                         .get()
-                        .end(self.formatter.width)
+                        .end(self.formatter.style)
                         .parts(&next);
                     literal!(end_between)?;
                     value!(next)?;
@@ -170,7 +175,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for Li
                         .formatter
                         .data
                         .get()
-                        .pair(self.formatter.width)
+                        .pair(self.formatter.style)
                         .parts(&second);
                     literal!(before)?;
                     value!(first)?;
@@ -201,7 +206,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for Li
                 .formatter
                 .data
                 .get()
-                .size_hint(self.formatter.width, count)
+                .size_hint(self.formatter.style, count)
     }
 }
 
@@ -210,18 +215,18 @@ mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    fn formatter(width: Width) -> ListFormatter {
+    fn formatter(style: ListStyle) -> ListFormatter {
         ListFormatter {
             data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
                 crate::provider::test::test_patterns(),
             ),
-            width,
+            style,
         }
     }
 
     #[test]
     fn test_slices() {
-        let formatter = formatter(Width::Wide);
+        let formatter = formatter(ListStyle::Wide);
         let values = ["one", "two", "three", "four", "five"];
 
         assert_writeable_eq!(formatter.format(values[0..0].iter()), "");
@@ -237,24 +242,24 @@ mod tests {
             formatter.format(values.iter()),
             "@one:two,three,four.five!",
             [
-                (0, 1, ListFormatter::LITERAL),
-                (1, 4, ListFormatter::ELEMENT),
-                (4, 5, ListFormatter::LITERAL),
-                (5, 8, ListFormatter::ELEMENT),
-                (8, 9, ListFormatter::LITERAL),
-                (9, 14, ListFormatter::ELEMENT),
-                (14, 15, ListFormatter::LITERAL),
-                (15, 19, ListFormatter::ELEMENT),
-                (19, 20, ListFormatter::LITERAL),
-                (20, 24, ListFormatter::ELEMENT),
-                (24, 25, ListFormatter::LITERAL)
+                (0, 1, parts::LITERAL),
+                (1, 4, parts::ELEMENT),
+                (4, 5, parts::LITERAL),
+                (5, 8, parts::ELEMENT),
+                (8, 9, parts::LITERAL),
+                (9, 14, parts::ELEMENT),
+                (14, 15, parts::LITERAL),
+                (15, 19, parts::ELEMENT),
+                (19, 20, parts::LITERAL),
+                (20, 24, parts::ELEMENT),
+                (24, 25, parts::LITERAL)
             ]
         );
     }
 
     #[test]
     fn test_into_iterator() {
-        let formatter = formatter(Width::Wide);
+        let formatter = formatter(ListStyle::Wide);
 
         let mut vecdeque = std::collections::vec_deque::VecDeque::<u8>::new();
         vecdeque.push_back(10);
@@ -264,35 +269,35 @@ mod tests {
             formatter.format(vecdeque.iter()),
             "$48;10+",
             [
-                (0, 1, ListFormatter::LITERAL),
-                (1, 3, ListFormatter::ELEMENT),
-                (3, 4, ListFormatter::LITERAL),
-                (4, 6, ListFormatter::ELEMENT),
-                (6, 7, ListFormatter::LITERAL),
+                (0, 1, parts::LITERAL),
+                (1, 3, parts::ELEMENT),
+                (3, 4, parts::LITERAL),
+                (4, 6, parts::ELEMENT),
+                (6, 7, parts::LITERAL),
             ]
         );
     }
 
     #[test]
     fn test_iterator() {
-        let formatter = formatter(Width::Wide);
+        let formatter = formatter(ListStyle::Wide);
 
         assert_writeable_parts_eq!(
             formatter.format(core::iter::repeat(5).take(2)),
             "$5;5+",
             [
-                (0, 1, ListFormatter::LITERAL),
-                (1, 2, ListFormatter::ELEMENT),
-                (2, 3, ListFormatter::LITERAL),
-                (3, 4, ListFormatter::ELEMENT),
-                (4, 5, ListFormatter::LITERAL),
+                (0, 1, parts::LITERAL),
+                (1, 2, parts::ELEMENT),
+                (2, 3, parts::LITERAL),
+                (3, 4, parts::ELEMENT),
+                (4, 5, parts::LITERAL),
             ]
         );
     }
 
     #[test]
     fn test_conditional() {
-        let formatter = formatter(Width::Narrow);
+        let formatter = formatter(ListStyle::Narrow);
 
         assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
     }
