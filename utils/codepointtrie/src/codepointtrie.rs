@@ -457,7 +457,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
             let data_block_length: u32;
 
             if c <= 0xffff
-                && (self.header.trie_type == TrieType::Fast || c < SMALL_TYPE_FAST_INDEXING_MAX)
+                && (self.header.trie_type == TrieType::Fast || c <= SMALL_TYPE_FAST_INDEXING_MAX)
             {
                 i3_block = 0;
                 i3 = c >> FAST_TYPE_SHIFT;
