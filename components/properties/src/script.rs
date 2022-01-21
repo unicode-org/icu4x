@@ -50,6 +50,11 @@ impl ScriptWithExt {
     pub fn is_other(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 3
     }
+
+    pub fn has_extensions(&self) -> bool {
+        let high_order_bits = self.0 >> SCRIPT_VAL_LENGTH;
+        high_order_bits > 0 && high_order_bits < 4
+    }
 }
 
 impl From<ScriptWithExt> for u32 {
@@ -149,11 +154,16 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
-    /// Returns whether `script` satisfies either of: 1) matches the Script
-    /// property value; 2) is contained in the Script_Extensions property value
+    /// Returns whether `script` is contained in the Script_Extensions
+    /// property value if the code_point has Script_Extensions, otherwise
+    /// if the code point does not have Script_Extensions then returns
+    /// whether the Script property value matches.
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
-        if script == self.get_script_val(code_point) {
-            true
+        let sc_with_ext = self.trie.get(code_point);
+
+        if !sc_with_ext.has_extensions() {
+            let script_val = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            script == Script(script_val)
         } else {
             let scx_val = self.get_script_extensions_val(code_point);
             let script_find = scx_val.iter().find(|&sc| sc == script);

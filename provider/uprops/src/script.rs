@@ -216,8 +216,49 @@ mod tests {
 
         assert!(scx.has_script(0x30A0, Script::Hiragana));
         assert!(scx.has_script(0x30A0, Script::Katakana));
-        assert!(scx.has_script(0x30A0, Script::Common));
+        assert!(!scx.has_script(0x30A0, Script::Common));
         assert!(!scx.has_script(0x30A0, Script::Inherited));
+
+        // U+0964 DEVANAGARI DANDA
+        assert!(!scx.has_script(0x0964, Script::Common));
+        assert!(scx.has_script(0x0964, Script::Devanagari));
+        assert!(scx.has_script(0x0964, Script::Bengali));
+
+        // TestHasScript() test cases from ICU4J
+
+        // U+063F ARABIC LETTER FARSI YEH WITH THREE DOTS ABOVE
+        assert!(!scx.has_script(0x063F, Script::Common));
+        assert!(scx.has_script(0x063F, Script::Arabic)); // main Script value
+        assert!(!scx.has_script(0x063F, Script::Syriac));
+        assert!(!scx.has_script(0x063F, Script::Thaana));
+
+        // U+0640 ARABIC TATWEEL
+        assert!(!scx.has_script(0x0640, Script::Common)); // main Script value
+        assert!(scx.has_script(0x0640, Script::Arabic));
+        assert!(scx.has_script(0x0640, Script::Syriac));
+        assert!(!scx.has_script(0x0640, Script::Thaana));
+
+        // U+0650 ARABIC KASRA
+        assert!(!scx.has_script(0x0650, Script::Inherited)); // main Script value
+        assert!(scx.has_script(0x0650, Script::Arabic));
+        assert!(scx.has_script(0x0650, Script::Syriac));
+        assert!(!scx.has_script(0x0650, Script::Thaana));
+
+        // U+0660 ARABIC-INDIC DIGIT ZERO
+        assert!(!scx.has_script(0x0660, Script::Common)); // main Script value
+        assert!(scx.has_script(0x0660, Script::Arabic));
+        assert!(!scx.has_script(0x0660, Script::Syriac));
+        assert!(scx.has_script(0x0660, Script::Thaana));
+
+        // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+        assert!(!scx.has_script(0xFDF2, Script::Common));
+        assert!(scx.has_script(0xFDF2, Script::Arabic)); // main Script value
+        assert!(!scx.has_script(0xFDF2, Script::Syriac));
+        assert!(scx.has_script(0xFDF2, Script::Thaana));
+
+        // The ICU4J comment for this test says:
+        // An unguarded implementation might go into an infinite loop.
+        assert!(!scx.has_script(0x0640, Script(0xAFFE)));
     }
 
     #[test]
@@ -256,7 +297,7 @@ mod tests {
         let common = scx.get_script_extensions_set(Script::Common);
         assert!(common.contains('🥳'));
         assert!(!common.contains_u32(0x200D));
-        assert!(common.contains_u32(0x30A0));
+        assert!(!common.contains_u32(0x30A0));
 
         let inherited = scx.get_script_extensions_set(Script::Inherited);
         assert!(!inherited.contains('🥳'));
@@ -275,5 +316,8 @@ mod tests {
         assert!(devanagari.contains_u32(0x0964)); // DEVANAGARI DANDA
         assert!(devanagari.contains_u32(0x0965)); // DEVANAGARI DOUBLE DANDA
         assert!(devanagari.contains_u32(0xA830)); // NORTH INDIC FRACTION ONE QUARTER
+
+        assert!(!common.contains_u32(0x0964)); // DEVANAGARI DANDA
+        assert!(!common.contains_u32(0x0965)); // DEVANAGARI DOUBLE DANDA
     }
 }
