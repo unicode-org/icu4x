@@ -47,10 +47,13 @@ pub fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_range
     }
 }
 
-/// Test .get_range() / .iter_ranges() on CodePointTrie by calling 
+/// Test .get_range() / .iter_ranges() on CodePointTrie by calling
 /// .iter_ranges() on the trie (which returns an iterator that produces values
 /// by calls to .get_range) and see if it matches the values in check_ranges.
-pub fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
+pub fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
+    trie: &CodePointTrie<T>,
+    check_ranges: &[u32],
+) {
     assert_eq!(
         0,
         check_ranges.len() % 2,
@@ -82,10 +85,10 @@ pub fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(trie: &CodePointTr
         assert_eq!(range_start, cpm_start);
         assert_eq!(range_limit, cpm_end + 1);
         assert_eq!(range_value, cpm_value);
-        
+
         range_start = range_limit;
     }
-    
+
     assert!(trie_ranges.next() == None, "CodePointTrie iter_ranges() produces more ranges than the check_ranges field in testdata has");
 }
 
@@ -94,7 +97,6 @@ pub fn run_trie_tests<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_r
     check_trie(trie, check_ranges);
     test_check_ranges_get_ranges(trie, check_ranges);
 }
-
 
 // The following structs might be useful later for de-/serialization of the
 // main `CodePointTrie` struct in the corresponding data provider.

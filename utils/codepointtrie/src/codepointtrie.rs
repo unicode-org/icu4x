@@ -79,27 +79,6 @@ impl TrieValue for char {
     }
 }
 
-#[derive(PartialEq, Eq, Debug)]
-pub struct CodePointMapRange {
-    start: u32,
-    end: u32,
-    value: u32,
-}
-
-impl CodePointMapRange {
-    pub fn get_start(&self) -> u32 {
-        self.start
-    }
-
-    pub fn get_end(&self) -> u32 {
-        self.end
-    }
-
-    pub fn get_value(&self) -> u32 {
-        self.value
-    }
-}
-
 /// Helper function used by [`get_range`]. Converts occurrences of trie's null
 /// value into the provided null_value.
 ///
@@ -515,7 +494,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                     }
                     prev_block = self.header.data_null_offset;
                     c = (c + CP_PER_INDEX_2_ENTRY) & !(CP_PER_INDEX_2_ENTRY - 1);
-                    
+
                     if c >= self.header.high_start {
                         break;
                     } else {
@@ -668,6 +647,20 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
             value,
         })
     }
+
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// share the same value in the [`CodePointTrie`].
+    pub fn iter_ranges(&'trie self) -> CodePointMapRangeIterator<'trie, T> {
+        let init_range = Some(CodePointMapRange {
+            start: u32::MAX,
+            end: u32::MAX,
+            value: 0,
+        });
+        CodePointMapRangeIterator::<'trie, T> {
+            cpt: self,
+            range: init_range,
+        }
+    }
 }
 
 impl<'trie, T: TrieValue> Clone for CodePointTrie<'trie, T>
@@ -679,6 +672,57 @@ where
             header: self.header,
             index: self.index.clone(),
             data: self.data.clone(),
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
+pub struct CodePointMapRange {
+    start: u32,
+    end: u32,
+    value: u32,
+}
+
+impl CodePointMapRange {
+    pub fn get_start(&self) -> u32 {
+        self.start
+    }
+
+    pub fn get_end(&self) -> u32 {
+        self.end
+    }
+
+    pub fn get_value(&self) -> u32 {
+        self.value
+    }
+}
+
+pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
+    cpt: &'a CodePointTrie<'a, T>,
+    // Initialize `range` to Some(CodePointMapRange{ start: u32::MAX, end: u32::MAX, value: 0}).
+    // When `range` is Some(...) and has a start value different from u32::MAX, then we have
+    // returned at least one code point range due to a call to `next()`.
+    // When `range` == `None`, it means that we have hit the end of iteration. It would occur
+    // after a call to `next()` returns a None <=> we attempted to call `get_range()`
+    // with a start code point that is > CODE_POINT_MAX.
+    range: Option<CodePointMapRange>,
+}
+
+impl<'a, T: TrieValue + Into<u32>> Iterator for CodePointMapRangeIterator<'a, T> {
+    type Item = CodePointMapRange;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.range {
+            Some(CodePointMapRange { start, end, .. }) => {
+                let next_range = if start == u32::MAX {
+                    self.cpt.get_range(0)
+                } else {
+                    self.cpt.get_range(end + 1)
+                };
+                self.range = next_range;
+                self.range
+            }
+            None => None,
         }
     }
 }
@@ -852,6 +896,16 @@ mod tests {
             })
         );
 
+        let penultimate_range: Option<CodePointMapRange> = planes_trie.get_range(0xf_0000);
+        assert_eq!(
+            penultimate_range,
+            Some(CodePointMapRange {
+                start: 0xf_0000,
+                end: 0xf_ffff,
+                value: 15
+            })
+        );
+
         let last_range: Option<CodePointMapRange> = planes_trie.get_range(0x10_0000);
         assert_eq!(
             last_range,
@@ -861,5 +915,42 @@ mod tests {
                 value: 16
             })
         );
+    }
+
+    #[test]
+    fn test_iter_ranges() {
+        let planes_trie = planes::get_planes_trie();
+        let mut ranges = planes_trie.iter_ranges();
+
+        assert_eq!(
+            ranges.next(),
+            Some(CodePointMapRange {
+                start: 0x0,
+                end: 0xffff,
+                value: 0
+            })
+        );
+
+        assert_eq!(
+            ranges.next(),
+            Some(CodePointMapRange {
+                start: 0x10000,
+                end: 0x1ffff,
+                value: 1
+            })
+        );
+
+        let mut ranges_after_skip = ranges.skip(14);
+
+        assert_eq!(
+            ranges_after_skip.next(),
+            Some(CodePointMapRange {
+                start: 0x10_0000,
+                end: 0x10_ffff,
+                value: 16
+            })
+        );
+
+        assert_eq!(ranges_after_skip.next(), None);
     }
 }
