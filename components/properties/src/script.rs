@@ -134,20 +134,11 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
-    /// Return the `Script_Extensions` property value for this code point.
-    ///
-    /// If `code_point` has Script_Extensions, then return the Script codes in
-    /// the Script_Extensions. In this case, the Script property value
-    /// (normally Common or Inherited) is not included in the set.
-    ///
-    /// If c does not have Script_Extensions, then the one Script code is put
-    /// into the set and also returned.
-    ///
-    /// If c is not a valid code point, then the one UNKNOWN code is put into
-    /// the set and also returned.
-    pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
-        let sc_with_ext = self.trie.get(code_point);
-
+    // Returns the Script_Extensions value for a code_point when the trie value
+    // is already known.
+    // This private helper method exists to prevent code duplication in callers like
+    // `get_script_extensions_val` and `has_script`.
+    fn get_scx_val_using_trie_val(&self, code_point: u32, sc_with_ext: ScriptWithExt) -> &ZeroSlice<Script> {
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let ext_subarray = self.extensions.get(ext_idx as usize);
@@ -172,6 +163,23 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
+    /// Return the `Script_Extensions` property value for this code point.
+    ///
+    /// If `code_point` has Script_Extensions, then return the Script codes in
+    /// the Script_Extensions. In this case, the Script property value
+    /// (normally Common or Inherited) is not included in the set.
+    ///
+    /// If c does not have Script_Extensions, then the one Script code is put
+    /// into the set and also returned.
+    ///
+    /// If c is not a valid code point, then the one UNKNOWN code is put into
+    /// the set and also returned.
+    pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
+        let sc_with_ext = self.trie.get(code_point);
+
+        self.get_scx_val_using_trie_val(code_point, sc_with_ext)
+    }
+
     /// Returns whether `script` is contained in the Script_Extensions
     /// property value if the code_point has Script_Extensions, otherwise
     /// if the code point does not have Script_Extensions then returns
@@ -186,7 +194,7 @@ impl<'data> ScriptExtensions<'data> {
             let script_val = sc_with_ext.0;
             script == Script(script_val)
         } else {
-            let scx_val = self.get_script_extensions_val(code_point);
+            let scx_val = self.get_scx_val_using_trie_val(code_point, sc_with_ext);
             let script_find = scx_val.iter().find(|&sc| sc == script);
             script_find.is_some()
         }
