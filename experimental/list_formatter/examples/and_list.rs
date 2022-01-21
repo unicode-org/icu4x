@@ -6,7 +6,7 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_list::{ListFormatter, ListType, ListStyle};
+use icu_list::{ListFormatter, ListStyle, ListType};
 use icu_locid_macros::langid;
 use writeable::Writeable;
 

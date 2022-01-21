@@ -229,7 +229,7 @@ fn parse_unit_patterns<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_list::{ListFormatter, ListType, ListStyle};
+    use icu_list::{ListFormatter, ListStyle, ListType};
     use icu_locid_macros::langid;
     use writeable::assert_writeable_eq;
 
