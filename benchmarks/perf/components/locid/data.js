@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642785334739,
+  "lastUpdate": 1642790632995,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21953,6 +21953,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3192,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88970e95ff718ba0bd7988d6536f08f7ab0d1f22",
+          "message": "ListFormatter documentation and misc improvements (#1528)",
+          "timestamp": "2022-01-21T19:35:02+01:00",
+          "tree_id": "af17b4c11e152a7c6bf93a8630b4fddc7c59c516",
+          "url": "https://github.com/unicode-org/icu4x/commit/88970e95ff718ba0bd7988d6536f08f7ab0d1f22"
+        },
+        "date": 1642790622326,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2051,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4232,
+            "range": "± 119",
             "unit": "ns/iter"
           }
         ]
