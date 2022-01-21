@@ -206,11 +206,7 @@ impl<'data> ScriptExtensions<'data> {
                             builder.add_range_u32(&(start..=end));
                         }
 
-                        if end == CODE_POINT_MAX {
-                            break;
-                        } else {
-                            range_start = end + 1;
-                        }
+                        range_start = end + 1;
                     } else {
                         break;
                         // This should never happen -- the get_range() code doesn't create
