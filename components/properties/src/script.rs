@@ -112,6 +112,7 @@ impl<'data> ScriptExtensions<'data> {
         Ok(ScriptExtensions { trie, extensions })
     }
 
+    /// Return the `Script` property value for this code point.
     pub fn get_script_val(&self, code_point: u32) -> Script {
         let sc_with_ext = self.trie.get(code_point);
 
@@ -133,6 +134,17 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
+    /// Return the `Script_Extensions` property value for this code point.
+    ///
+    /// If `code_point` has Script_Extensions, then return the Script codes in
+    /// the Script_Extensions. In this case, the Script property value
+    /// (normally Common or Inherited) is not included in the set.
+    ///
+    /// If c does not have Script_Extensions, then the one Script code is put
+    /// into the set and also returned.
+    ///
+    /// If c is not a valid code point, then the one UNKNOWN code is put into
+    /// the set and also returned.
     pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
         let sc_with_ext = self.trie.get(code_point);
 
@@ -164,6 +176,9 @@ impl<'data> ScriptExtensions<'data> {
     /// property value if the code_point has Script_Extensions, otherwise
     /// if the code point does not have Script_Extensions then returns
     /// whether the Script property value matches.
+    ///
+    /// Some characters are commonly used in multiple scripts. For more information,
+    /// see UAX #24: http://www.unicode.org/reports/tr24/.
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
         let sc_with_ext = self.trie.get(code_point);
 

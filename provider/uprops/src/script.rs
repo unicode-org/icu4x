@@ -173,6 +173,12 @@ mod tests {
             scx.get_script_extensions_val(0x30A0).as_zerovec(), // KATAKANA-HIRAGANA DOUBLE HYPHEN
             ZeroVec::<Script>::alloc_from_slice(&[Script::Hiragana, Script::Katakana])
         );
+
+        // Invalid code point
+        assert_eq!(
+            scx.get_script_extensions_val(0x11_0000).as_zerovec(), // CODE_POINT_MAX + 1 is invalid
+            ZeroVec::<Script>::alloc_from_slice(&[Script::Unknown])
+        );
     }
 
     #[test]
