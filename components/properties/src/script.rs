@@ -222,7 +222,7 @@ impl<'data> ScriptExtensions<'data> {
                         if (!sc_with_ext.has_extensions() && script == sc_with_ext.into())
                             || (sc_with_ext.has_extensions()
                                 && self
-                                    .get_script_extensions_val(start)
+                                    .get_scx_val_using_trie_val(start, sc_with_ext)
                                     .iter()
                                     .any(|sc| sc == script))
                         {
