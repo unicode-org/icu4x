@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642781065081,
+  "lastUpdate": 1642785376883,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18491,6 +18491,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 362686,
             "range": "± 35507",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "21978768b9009be591481a614cc0f8c1a524acef",
+          "message": "Datagen key file support and test scaffolding (#1526)",
+          "timestamp": "2022-01-21T18:07:17+01:00",
+          "tree_id": "e1a6af31c80300f19735e1f953e80039e1f022ac",
+          "url": "https://github.com/unicode-org/icu4x/commit/21978768b9009be591481a614cc0f8c1a524acef"
+        },
+        "date": 1642785366942,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 82084,
+            "range": "± 491",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 904425,
+            "range": "± 12763",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 302374,
+            "range": "± 618",
             "unit": "ns/iter"
           }
         ]
