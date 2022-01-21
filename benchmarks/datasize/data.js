@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642780596725,
+  "lastUpdate": 1642784936344,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7793,6 +7793,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/021f89f819e6a1a5a90fc23b2ce34bf8458a96a5"
         },
         "date": 1642780585563,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "21978768b9009be591481a614cc0f8c1a524acef",
+          "message": "Datagen key file support and test scaffolding (#1526)",
+          "timestamp": "2022-01-21T18:07:17+01:00",
+          "tree_id": "e1a6af31c80300f19735e1f953e80039e1f022ac",
+          "url": "https://github.com/unicode-org/icu4x/commit/21978768b9009be591481a614cc0f8c1a524acef"
+        },
+        "date": 1642784926869,
         "tool": "ndjson",
         "benches": [
           {
