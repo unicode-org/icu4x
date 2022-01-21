@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642785466039,
+  "lastUpdate": 1642790721459,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24905,6 +24905,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15816,
             "range": "± 464",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88970e95ff718ba0bd7988d6536f08f7ab0d1f22",
+          "message": "ListFormatter documentation and misc improvements (#1528)",
+          "timestamp": "2022-01-21T19:35:02+01:00",
+          "tree_id": "af17b4c11e152a7c6bf93a8630b4fddc7c59c516",
+          "url": "https://github.com/unicode-org/icu4x/commit/88970e95ff718ba0bd7988d6536f08f7ab0d1f22"
+        },
+        "date": 1642790710525,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1160,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6732,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16133,
+            "range": "± 131",
             "unit": "ns/iter"
           }
         ]
