@@ -994,6 +994,7 @@ dependencies = [
  "icu_codepointtrie",
  "icu_datetime",
  "icu_decimal",
+ "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
@@ -1180,7 +1181,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "0.1.0"
+version = "0.4.0"
 dependencies = [
  "criterion",
  "deduplicating_array",

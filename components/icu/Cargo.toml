@@ -68,7 +68,7 @@ default-features = false
 
 [dependencies.icu_properties]
 version = "0.5"
-path = "../../components/properties"
+path = "../properties"
 default-features = false
 
 [dependencies.fixed_decimal]
@@ -76,12 +76,19 @@ version = "0.2"
 path = "../../utils/fixed_decimal"
 default-features = false
 
+[dependencies.icu_list]
+version = "0.4"
+path = "../list"
+default-features = false
+
+[dependencies]
+writeable = { version = "0.3", path = "../../utils/writeable", optional = true } # Required for doc link only
+
 [dev-dependencies]
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie" }
 icu_provider = { version = "0.5", path = "../../provider/core" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset" }
-writeable = { version = "0.3", path = "../../utils/writeable" }
 
 [features]
 std = [
@@ -89,9 +96,13 @@ std = [
     "icu_locid/std",
     "icu_plurals/std",
     "icu_properties/std",
+    "icu_list/std",
     "fixed_decimal/std"
 ]
-default = ["provider_serde"]
+default = [
+    "provider_serde", 
+    "icu4x_human_readable_de"
+]
 serde = [
     "icu_locid/serde"
 ]
@@ -101,4 +112,8 @@ provider_serde = [
     "icu_locale_canonicalizer/provider_serde",
     "icu_plurals/provider_serde",
     "icu_properties/provider_serde",
+    "icu_list/provider_serde",
+]
+icu4x_human_readable_de = [
+    "icu_list/icu4x_human_readable_de"
 ]

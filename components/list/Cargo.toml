@@ -5,7 +5,7 @@
 [package]
 name = "icu_list"
 description = "ECMA-402 ListFormatter"
-version = "0.1.0"
+version = "0.4.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -21,7 +21,7 @@ include = [
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_locid = { version = "0.5", path = "../../components/locid" }
+icu_locid = { version = "0.5", path = "../locid" }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
@@ -34,7 +34,7 @@ criterion = "0.3.3"
 serde_json = "1"
 postcard = { version = "0.7", features = ["use-std"] }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
-icu_locid_macros = { version = "0.5", path = "../../components/locid/macros"}
+icu_locid_macros = { version = "0.5", path = "../locid/macros"}
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 
 [lib]

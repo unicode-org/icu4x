@@ -19,7 +19,7 @@ members = [
     "experimental/char16trie",
     "experimental/crabbake",
     "experimental/crabbake/derive",
-    "experimental/list_formatter",
+    "components/list",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
     "experimental/tinystr_neo",

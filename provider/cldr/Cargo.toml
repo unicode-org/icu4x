@@ -43,7 +43,7 @@ icu_datetime = { version = "0.5", path = "../../components/datetime", features =
 icu_locale_canonicalizer = { version = "0.5", path = "../../components/locale_canonicalizer" }
 icu_decimal = { version = "0.5", path = "../../components/decimal" }
 icu_calendar = { version = "0.5", path = "../../components/calendar", features = ["provider_serde"] }
-icu_list = { version = "0.1", path = "../../experimental/list_formatter", features = ["provider_transform_internals"], optional = true}
+icu_list = { version = "0.5", path = "../../components/list", features = ["provider_transform_internals"]}
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.3.0", path = "../../utils/litemap/" }
