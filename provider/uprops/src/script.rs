@@ -268,7 +268,7 @@ mod tests {
     }
 
     #[test]
-    fn test_script_ext_ranges() {
+    fn test_get_script_extensions_set() {
         let root_dir = icu_testdata::paths::uprops_toml_root();
         let provider = ScriptExtensionsPropertyProvider::try_new(&root_dir)
             .expect("TOML should load successfully");

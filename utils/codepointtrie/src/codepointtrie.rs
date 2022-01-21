@@ -951,6 +951,9 @@ mod tests {
             })
         );
 
+        // Hitting the end of the iterator returns `None`, as will subsequent
+        // calls to .next().
+        assert_eq!(ranges_after_skip.next(), None);
         assert_eq!(ranges_after_skip.next(), None);
     }
 }
