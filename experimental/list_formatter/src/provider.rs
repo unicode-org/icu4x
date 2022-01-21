@@ -304,7 +304,7 @@ pub(crate) mod test {
 
     #[test]
     fn produces_correct_parts() {
-        assert_eq!(test_patterns().pair(Style::Wide).parts(""), ("$", ";", "+"));
+        assert_eq!(test_patterns().pair(ListStyle::Wide).parts(""), ("$", ";", "+"));
     }
 
     #[test]
