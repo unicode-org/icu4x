@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642703204144,
+  "lastUpdate": 1642780596725,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7763,6 +7763,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5a015efd970e2a008d24f67f7d13598ae5901223"
         },
         "date": 1642703194361,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1472057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "021f89f819e6a1a5a90fc23b2ce34bf8458a96a5",
+          "message": "Add benches to tinystr-neo (#1518)\n\n* Add tinystr_old devdep\n\n* Add construct bench\n\n* Move common stuff into common module\n\n* Read bench\n\n* add serde bench",
+          "timestamp": "2022-01-21T07:54:52-08:00",
+          "tree_id": "dd7d466742d82923cf8f3c917a2148801c593074",
+          "url": "https://github.com/unicode-org/icu4x/commit/021f89f819e6a1a5a90fc23b2ce34bf8458a96a5"
+        },
+        "date": 1642780585563,
         "tool": "ndjson",
         "benches": [
           {
