@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642703640037,
+  "lastUpdate": 1642781000340,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21881,6 +21881,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3599,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "021f89f819e6a1a5a90fc23b2ce34bf8458a96a5",
+          "message": "Add benches to tinystr-neo (#1518)\n\n* Add tinystr_old devdep\n\n* Add construct bench\n\n* Move common stuff into common module\n\n* Read bench\n\n* add serde bench",
+          "timestamp": "2022-01-21T07:54:52-08:00",
+          "tree_id": "dd7d466742d82923cf8f3c917a2148801c593074",
+          "url": "https://github.com/unicode-org/icu4x/commit/021f89f819e6a1a5a90fc23b2ce34bf8458a96a5"
+        },
+        "date": 1642780990644,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 1524,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3602,
+            "range": "± 61",
             "unit": "ns/iter"
           }
         ]
