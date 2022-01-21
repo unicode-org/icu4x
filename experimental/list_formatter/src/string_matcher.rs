@@ -9,6 +9,7 @@ use alloc::borrow::Cow;
 ))]
 use alloc::string::ToString;
 use icu_provider::yoke::{self, *};
+use icu_provider::DataError;
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
@@ -38,7 +39,7 @@ impl serde::Serialize for StringMatcher<'_> {
                 .unwrap_or_else(|| {
                     use serde::ser::Error;
                     Err(S::Error::custom(
-                        "Cannot serialize a deserialized bincode StringMatcher to JSON.",
+                        "cannot serialize a deserialized bincode StringMatcher to JSON",
                     ))
                 })
         } else {
@@ -90,8 +91,7 @@ impl<'data> StringMatcher<'data> {
         feature = "provider_transform_internals",
         feature = "icu4x_human_readable_de",
     ))]
-    pub fn new(pattern: &str) -> Result<Self, crate::error::Error> {
-        use crate::error::Error;
+    pub fn new(pattern: &str) -> Result<Self, DataError> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
             SyntaxConfig,
@@ -102,12 +102,12 @@ impl<'data> StringMatcher<'data> {
             .syntax(SyntaxConfig::new().case_insensitive(true))
             .configure(Config::new().anchored(true).minimize(true))
             .build(pattern)
-            .map_err(Error::IllegalCondition)?;
-
-        let sparse_dfa = dfa.to_sparse().map_err(Error::IllegalCondition)?;
+            .map_err(|_| DataError::custom("Cannot build DFA").with_display_context(&pattern))?
+            .to_sparse()
+            .map_err(|_| DataError::custom("Cannot sparsify DFA").with_display_context(&pattern))?;
 
         Ok(Self {
-            dfa_bytes: sparse_dfa.to_bytes_little_endian().into(),
+            dfa_bytes: dfa.to_bytes_little_endian().into(),
             pattern: Some(pattern.to_string().into()),
         })
     }
