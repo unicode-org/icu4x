@@ -53,7 +53,7 @@ impl ScriptWithExt {
 
     pub fn has_extensions(&self) -> bool {
         let high_order_bits = self.0 >> SCRIPT_VAL_LENGTH;
-        high_order_bits > 0 && high_order_bits < 4
+        high_order_bits > 0
     }
 }
 
@@ -286,5 +286,20 @@ mod tests {
 
         assert!(!ScriptWithExt(0xFF).is_other());
         assert!(!ScriptWithExt(0x0).is_other());
+    }
+
+    #[test]
+    fn test_has_extensions() {
+        assert!(ScriptWithExt(0x04FF).has_extensions());
+        assert!(ScriptWithExt(0x0400).has_extensions());
+
+        assert!(ScriptWithExt(0x08FF).has_extensions());
+        assert!(ScriptWithExt(0x0800).has_extensions());
+
+        assert!(ScriptWithExt(0x0CFF).has_extensions());
+        assert!(ScriptWithExt(0x0C00).has_extensions());
+
+        assert!(!ScriptWithExt(0xFF).has_extensions());
+        assert!(!ScriptWithExt(0x0).has_extensions());
     }
 }
