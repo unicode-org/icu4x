@@ -329,6 +329,11 @@ jobs:
         with:
           command: make
           args: wasm-test-release
+      - name: Build Examples and test icu4x-key-extract
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: make
+          args: wasm-compare-worklog-keys
       # This has to be a separate test since the emscripten sdk
       # will otherwise interfere with other node-using tests
       - name: Run emscripten test
