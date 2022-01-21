@@ -129,7 +129,7 @@ impl<'data> ScriptExtensions<'data> {
         } else if sc_with_ext.is_inherited() {
             Script::Inherited
         } else {
-            let script_val = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let script_val = sc_with_ext.0;
             Script(script_val)
         }
     }
@@ -183,7 +183,7 @@ impl<'data> ScriptExtensions<'data> {
         let sc_with_ext = self.trie.get(code_point);
 
         if !sc_with_ext.has_extensions() {
-            let script_val = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let script_val = sc_with_ext.0;
             script == Script(script_val)
         } else {
             let scx_val = self.get_script_extensions_val(code_point);
