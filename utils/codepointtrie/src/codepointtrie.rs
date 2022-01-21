@@ -490,7 +490,12 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                     // The index-3 block is the same as the previous one, and filled with value.
                     debug_assert!((c & (CP_PER_INDEX_2_ENTRY - 1)) == 0);
                     c += CP_PER_INDEX_2_ENTRY;
-                    continue;
+
+                    if c >= self.header.high_start {
+                        break;
+                    } else {
+                        continue;
+                    }
                 }
                 prev_i3_block = i3_block;
                 if i3_block == self.header.index3_null_offset as u32 {
@@ -510,7 +515,12 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                     }
                     prev_block = self.header.data_null_offset;
                     c = (c + CP_PER_INDEX_2_ENTRY) & !(CP_PER_INDEX_2_ENTRY - 1);
-                    continue;
+                    
+                    if c >= self.header.high_start {
+                        break;
+                    } else {
+                        continue;
+                    }
                 }
                 i3 = (c >> SHIFT_3) & INDEX_3_MASK;
                 i3_block_length = INDEX_3_BLOCK_LENGTH;
