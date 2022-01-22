@@ -78,13 +78,13 @@ pub fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
         let cpm_range = trie_ranges.next();
         assert!(cpm_range.is_some(), "CodePointTrie iter_ranges() produces fewer ranges than the check_ranges field in testdata has");
         let cpm_range = cpm_range.unwrap();
-        let cpm_start = cpm_range.get_start();
-        let cpm_end = cpm_range.get_end();
-        let cpm_value = cpm_range.get_value();
+        let cpmr_start = cpm_range.get_start();
+        let cpmr_end = cpm_range.get_end();
+        let cpmr_value = cpm_range.get_value();
 
-        assert_eq!(range_start, cpm_start);
-        assert_eq!(range_limit, cpm_end + 1);
-        assert_eq!(range_value, cpm_value);
+        assert_eq!(range_start, cpmr_start);
+        assert_eq!(range_limit, cpmr_end + 1);
+        assert_eq!(range_value, cpmr_value);
 
         range_start = range_limit;
     }
