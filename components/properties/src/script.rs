@@ -138,7 +138,11 @@ impl<'data> ScriptExtensions<'data> {
     // is already known.
     // This private helper method exists to prevent code duplication in callers like
     // `get_script_extensions_val` and `has_script`.
-    fn get_scx_val_using_trie_val(&self, code_point: u32, sc_with_ext: ScriptWithExt) -> &ZeroSlice<Script> {
+    fn get_scx_val_using_trie_val(
+        &self,
+        code_point: u32,
+        sc_with_ext: ScriptWithExt,
+    ) -> &ZeroSlice<Script> {
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let ext_subarray = self.extensions.get(ext_idx as usize);

@@ -287,35 +287,34 @@ mod tests {
         let scx: &ScriptExtensions = &payload.get().data;
 
         let grantha = scx.get_script_extensions_set(Script::Grantha);
-        assert!(!grantha.contains_u32(0x0BE5));  // unknown with unknown script in Tamil block
-        assert!(grantha.contains_u32(0x0BE6));  // TAMIL DIGIT ZERO
-        assert!(grantha.contains_u32(0x0BEB));  // TAMIL DIGIT FIVE
-        assert!(grantha.contains_u32(0x0BEF));  // TAMIL DIGIT NINE
-        assert!(grantha.contains_u32(0x0BF2));  // TAMIL NUMBER ONE THOUSAND
-        assert!(grantha.contains_u32(0x0BF3));  // TAMIL DAY SIGN
-        assert!(!grantha.contains_u32(0x0BF4));  // TAMIL MONTH SIGN
-        assert!(grantha.contains_u32(0x11300));  // GRANTHA SIGN COMBINING ANUSVARA ABOVE
-        assert!(grantha.contains_u32(0x11301));  // GRANTHA SIGN CANDRABINDU
-        assert!(grantha.contains_u32(0x11302));  // GRANTHA SIGN ANUSVARA
-        assert!(grantha.contains_u32(0x11303));  // GRANTHA SIGN VISARGA
-        assert!(!grantha.contains_u32(0x11304));  // unknown with unknown script in Grantha block
-        assert!(grantha.contains_u32(0x11305));  // GRANTHA LETTER A
-        
+        assert!(!grantha.contains_u32(0x0BE5)); // unknown with unknown script in Tamil block
+        assert!(grantha.contains_u32(0x0BE6)); // TAMIL DIGIT ZERO
+        assert!(grantha.contains_u32(0x0BEB)); // TAMIL DIGIT FIVE
+        assert!(grantha.contains_u32(0x0BEF)); // TAMIL DIGIT NINE
+        assert!(grantha.contains_u32(0x0BF2)); // TAMIL NUMBER ONE THOUSAND
+        assert!(grantha.contains_u32(0x0BF3)); // TAMIL DAY SIGN
+        assert!(!grantha.contains_u32(0x0BF4)); // TAMIL MONTH SIGN
+        assert!(grantha.contains_u32(0x11300)); // GRANTHA SIGN COMBINING ANUSVARA ABOVE
+        assert!(grantha.contains_u32(0x11301)); // GRANTHA SIGN CANDRABINDU
+        assert!(grantha.contains_u32(0x11302)); // GRANTHA SIGN ANUSVARA
+        assert!(grantha.contains_u32(0x11303)); // GRANTHA SIGN VISARGA
+        assert!(!grantha.contains_u32(0x11304)); // unknown with unknown script in Grantha block
+        assert!(grantha.contains_u32(0x11305)); // GRANTHA LETTER A
 
         let tamil = scx.get_script_extensions_set(Script::Tamil);
-        assert!(!tamil.contains_u32(0x0BE5));  // unknown with unknown script in Tamil block
-        assert!(tamil.contains_u32(0x0BE6));  // TAMIL DIGIT ZERO
-        assert!(tamil.contains_u32(0x0BEB));  // TAMIL DIGIT FIVE
-        assert!(tamil.contains_u32(0x0BEF));  // TAMIL DIGIT NINE
-        assert!(tamil.contains_u32(0x0BF2));  // TAMIL NUMBER ONE THOUSAND
-        assert!(tamil.contains_u32(0x0BF3));  // TAMIL DAY SIGN
-        assert!(tamil.contains_u32(0x0BF4));  // TAMIL MONTH SIGN
-        assert!(!tamil.contains_u32(0x11300));  // GRANTHA SIGN COMBINING ANUSVARA ABOVE
-        assert!(tamil.contains_u32(0x11301));  // GRANTHA SIGN CANDRABINDU
-        assert!(!tamil.contains_u32(0x11302));  // GRANTHA SIGN ANUSVARA
-        assert!(tamil.contains_u32(0x11303));  // GRANTHA SIGN VISARGA
-        assert!(!tamil.contains_u32(0x11304));  // unknown with unknown script in Grantha block
-        assert!(!tamil.contains_u32(0x11305));  // GRANTHA LETTER A
+        assert!(!tamil.contains_u32(0x0BE5)); // unknown with unknown script in Tamil block
+        assert!(tamil.contains_u32(0x0BE6)); // TAMIL DIGIT ZERO
+        assert!(tamil.contains_u32(0x0BEB)); // TAMIL DIGIT FIVE
+        assert!(tamil.contains_u32(0x0BEF)); // TAMIL DIGIT NINE
+        assert!(tamil.contains_u32(0x0BF2)); // TAMIL NUMBER ONE THOUSAND
+        assert!(tamil.contains_u32(0x0BF3)); // TAMIL DAY SIGN
+        assert!(tamil.contains_u32(0x0BF4)); // TAMIL MONTH SIGN
+        assert!(!tamil.contains_u32(0x11300)); // GRANTHA SIGN COMBINING ANUSVARA ABOVE
+        assert!(tamil.contains_u32(0x11301)); // GRANTHA SIGN CANDRABINDU
+        assert!(!tamil.contains_u32(0x11302)); // GRANTHA SIGN ANUSVARA
+        assert!(tamil.contains_u32(0x11303)); // GRANTHA SIGN VISARGA
+        assert!(!tamil.contains_u32(0x11304)); // unknown with unknown script in Grantha block
+        assert!(!tamil.contains_u32(0x11305)); // GRANTHA LETTER A
 
         let hiragana = scx.get_script_extensions_set(Script::Hiragana);
         assert!(hiragana.contains_u32(0x3046)); // HIRAGANA LETTER U
