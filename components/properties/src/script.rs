@@ -16,7 +16,6 @@ use zerovec::{VarZeroVec, ZeroSlice};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-const CODE_POINT_MAX: u32 = 0x10ffff;
 const SCRIPT_X_SCRIPT_VAL: u16 = 0x03FF;
 const SCRIPT_VAL_LENGTH: u16 = 10;
 
@@ -137,7 +136,7 @@ impl<'data> ScriptExtensions<'data> {
     // Returns the Script_Extensions value for a code_point when the trie value
     // is already known.
     // This private helper method exists to prevent code duplication in callers like
-    // `get_script_extensions_val` and `has_script`.
+    // `get_script_extensions_val`, `get_script_extensions_set`, and `has_script`.
     fn get_scx_val_using_trie_val(
         &self,
         code_point: u32,
@@ -207,46 +206,22 @@ impl<'data> ScriptExtensions<'data> {
     /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
+        let ranges_matching_script = self.trie.iter_ranges().filter(|cpm_range| {
+            let start = cpm_range.get_start();
+            let sc_with_ext = ScriptWithExt(cpm_range.get_value() as u16);
+
+            (!sc_with_ext.has_extensions() && script == sc_with_ext.into())
+                || (sc_with_ext.has_extensions()
+                    && self
+                        .get_scx_val_using_trie_val(start, sc_with_ext)
+                        .iter()
+                        .any(|sc| sc == script))
+        });
+
         let mut builder = UnicodeSetBuilder::new();
-        let mut range_start: u32 = 0;
-
-        loop {
-            let next_cpm_range = self.trie.get_range(range_start);
-
-            match next_cpm_range {
-                Some(cpm_range) => {
-                    let end = cpm_range.get_end();
-                    if end <= CODE_POINT_MAX {
-                        let start = cpm_range.get_start();
-                        let sc_with_ext = ScriptWithExt(cpm_range.get_value() as u16);
-
-                        // Since we already have the ScriptWithExt value from the trie,
-                        // we can directly check if `script` matches to code point `start`
-                        // without calling `has_script()`
-                        if (!sc_with_ext.has_extensions() && script == sc_with_ext.into())
-                            || (sc_with_ext.has_extensions()
-                                && self
-                                    .get_scx_val_using_trie_val(start, sc_with_ext)
-                                    .iter()
-                                    .any(|sc| sc == script))
-                        {
-                            builder.add_range_u32(&(start..=end));
-                        }
-
-                        range_start = end + 1;
-                    } else {
-                        break;
-                        // This should never happen -- the get_range() code doesn't create
-                        // a range with an end code point beyond CODE_POINT_MAX. Also, it will
-                        // return `None` in the event of errors.
-                    }
-                }
-                _ => {
-                    break;
-                }
-            }
+        for cpm_range in ranges_matching_script {
+            builder.add_range_u32(&(cpm_range.get_start()..=cpm_range.get_end()));
         }
-
         builder.build()
     }
 }
