@@ -83,6 +83,7 @@ pub mod date;
 pub mod datetime;
 mod error;
 mod fields;
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 mod format;
 pub mod mock;
 pub mod options;
@@ -101,6 +102,7 @@ pub use calendar::CldrCalendar;
 pub use datetime::DateTimeFormat;
 pub use error::DateTimeFormatError;
 pub use format::datetime::FormattedDateTime;
+pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatOptions;
 pub use time_zone::TimeZoneFormat;

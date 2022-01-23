@@ -51,7 +51,7 @@ impl DataMarker for BufferMarker {
 /// # }
 /// ```
 ///
-/// [`as_deserializing()`]: crate::serde::de::AsDeserializingBufferProvider::as_deserializing
+/// [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 pub trait BufferProvider {
     fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError>;
 }

@@ -19,7 +19,7 @@ use crate::{
     raw, CldrCalendar, DateTimeFormatError,
 };
 
-/// The composition of [`DateTimeFormat`] and [`TimeZoneFormat`].
+/// The composition of [`DateTimeFormat`](crate::DateTimeFormat) and [`TimeZoneFormat`](crate::TimeZoneFormat).
 ///
 /// [`ZonedDateTimeFormat`] uses data from the [`DataProvider`]s, the selected [`Locale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.

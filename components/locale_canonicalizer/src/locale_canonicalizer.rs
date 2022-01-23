@@ -253,7 +253,7 @@ impl LocaleCanonicalizer {
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
-    /// from http://unicode.org/reports/tr35/#LocaleId_Canonicalization
+    /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>.
     ///
     /// Some BCP47 canonicalization data is not part of the CLDR json package. Because
     /// of this, some canonicalizations are not performed, e.g. the canonicalization of
@@ -502,7 +502,7 @@ impl LocaleCanonicalizer {
 
     /// The maximize method potentially updates a passed in locale in place
     /// depending up the results of running the 'Add Likely Subtags' algorithm
-    /// from https://www.unicode.org/reports/tr35/#Likely_Subtags.
+    /// from <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
     ///
     /// If the result of running the algorithm would result in a new locale, the
     /// locale argument is updated in place to match the result, and the method
@@ -561,7 +561,7 @@ impl LocaleCanonicalizer {
 
     /// This returns a new Locale that is the result of running the
     /// 'Remove Likely Subtags' algorithm from
-    /// https://www.unicode.org/reports/tr35/#Likely_Subtags.
+    /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
     ///
     /// If the result of running the algorithm would result in a new locale, the
     /// locale argument is updated in place to match the result, and the method

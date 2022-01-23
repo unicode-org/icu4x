@@ -4,8 +4,8 @@
 
 //! Providers that filter resource requests.
 //!
-//! Requests that fail a filter test will return [`DataError::FilteredResource`] and will not
-//! appear in [`IterableDataProvider`] iterators.
+//! Requests that fail a filter test will return [`DataError`] of kind [`FilteredResource`](
+//! DataErrorKind::FilteredResource) and will not appear in [`IterableProvider`] iterators.
 //!
 //! The main struct is [`RequestFilterDataProvider`]. Although that struct can be created
 //! directly, the traits in this module provide helper functions for common filtering patterns.
@@ -32,7 +32,7 @@
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!
-//! [`IterableDataProvider`]: crate::iter::IterableDataProvider
+//! [`IterableProvider`]: crate::iter::IterableProvider
 
 mod impls;
 
@@ -44,8 +44,9 @@ use alloc::boxed::Box;
 
 /// A data provider that selectively filters out data requests.
 ///
-/// Data requests that are rejected by the filter will return [`DataError::FilteredResource`], and
-/// they will not be returned by [`IterableProvider::supported_options_for_key`].
+/// Data requests that are rejected by the filter will return a [`DataError`] with kind
+/// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
+/// by [`IterableProvider::supported_options_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -132,7 +133,7 @@ where
 pub trait Filterable: Sized {
     /// Creates a filterable data provider with the given name for debugging.
     ///
-    /// For more details, see [`icu_provider::filter`].
+    /// For more details, see [`icu_provider::filter`](crate::filter).
     fn filterable(
         self,
         filter_name: &'static str,

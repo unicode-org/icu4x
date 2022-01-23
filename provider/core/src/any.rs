@@ -284,7 +284,7 @@ impl AnyResponse {
 /// assert_eq!(payload.get().message, "Custom Hello World");
 /// ```
 ///
-/// [`StructProviderStatic`]: crate::struct_provider::StructProviderStatic
+/// [`AnyPayloadProvider`]: crate::struct_provider::AnyPayloadProvider
 pub trait AnyProvider {
     fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }

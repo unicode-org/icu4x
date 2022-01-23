@@ -28,11 +28,11 @@ where
     }
 }
 
-/// Convenience function to drive a [`DataExporter`] from an [`IterableDataProvider`].
+/// Convenience function to drive a [`DataExporter`] from an [`IterableProvider`].
 ///
 /// # Example
 ///
-/// [`HelloWorldProvider`] implements both [`DataExporter`] and [`IterableDataProvider`]. The
+/// [`HelloWorldProvider`] implements both [`DataExporter`] and [`IterableProvider`]. The
 /// following example copies the data from one instance to another instance.
 ///
 /// ```

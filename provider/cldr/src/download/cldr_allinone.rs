@@ -11,8 +11,8 @@ use crate::CldrPathsAllInOne;
 use std::path::PathBuf;
 
 /// Implementation of CldrPaths that downloads CLDR data directories on demand.
-/// The download artifacts are saved in the user's cache directory; see
-/// https://docs.rs/dirs/3.0.0/dirs/fn.cache_dir.html
+/// The download artifacts are saved in the user's [cache directory](
+/// https://docs.rs/dirs/3.0.0/dirs/fn.cache_dir.html).
 ///
 /// Downloads a single zip file for all components, as used in CLDR 38 and later.
 ///
@@ -79,8 +79,8 @@ impl CldrAllInOneDownloader {
     ///
     /// Arguments:
     ///
-    /// - `github_tag`: a tag in the CLDR JSON repositories, such as "38.1.0":
-    ///   https://github.com/unicode-cldr/cldr-json/tags
+    /// - `github_tag`: a [tag in the CLDR JSON repositories](https://github.com/unicode-cldr/cldr-json/tags),
+    ///    such as "38.1.0"
     /// - `locale_subset`: either "modern" (fewer locales, smaller download) or "full" (more
     ///   locales, larger download)
     pub fn try_new_from_github(github_tag: &str, locale_subset: &str) -> Result<Self, Error> {
