@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642790632995,
+  "lastUpdate": 1642960206186,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21989,6 +21989,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4232,
             "range": "± 119",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1b159c6f48b9661f82b4f1ac4f6ad6f0a21e345f",
+          "message": "Implement icu4x-key-extract by string tagging  (#1480)",
+          "timestamp": "2022-01-23T18:41:26+01:00",
+          "tree_id": "5082da1c66e4ce064b2d7513dbccc6fc6ead0d97",
+          "url": "https://github.com/unicode-org/icu4x/commit/1b159c6f48b9661f82b4f1ac4f6ad6f0a21e345f"
+        },
+        "date": 1642960197231,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 1727,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3620,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
