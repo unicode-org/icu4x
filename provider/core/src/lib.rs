@@ -12,7 +12,7 @@
 //! fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data>, DataError>
 //! ```
 //!
-//! A [`Request`] contains a [`ResourceKey`] (a fixed identifier such as "plurals/cardinal@1") and 
+//! A [`Request`] contains a [`ResourceKey`] (a fixed identifier such as "plurals/cardinal@1") and
 //! [`ResourceOptions`] (a language identifier and optional variant, e.g. "fr") being requested.
 //! The Response contains the data payload corresponding to the Request.
 //!

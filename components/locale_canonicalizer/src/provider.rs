@@ -12,7 +12,7 @@ use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
 
-/// A collection of [`ResourceKey`](icu_provider::ResourceKey) structs for 
+/// A collection of [`ResourceKey`](icu_provider::ResourceKey) structs for
 /// LocaleCanonicalizer providers.
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
