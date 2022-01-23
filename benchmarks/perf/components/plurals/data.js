@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642790721459,
+  "lastUpdate": 1642960319520,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24947,6 +24947,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16133,
             "range": "± 131",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1b159c6f48b9661f82b4f1ac4f6ad6f0a21e345f",
+          "message": "Implement icu4x-key-extract by string tagging  (#1480)",
+          "timestamp": "2022-01-23T18:41:26+01:00",
+          "tree_id": "5082da1c66e4ce064b2d7513dbccc6fc6ead0d97",
+          "url": "https://github.com/unicode-org/icu4x/commit/1b159c6f48b9661f82b4f1ac4f6ad6f0a21e345f"
+        },
+        "date": 1642960307677,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1048,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5975,
+            "range": "± 198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15116,
+            "range": "± 593",
             "unit": "ns/iter"
           }
         ]
