@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642790197447,
+  "lastUpdate": 1642959789822,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7853,6 +7853,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/88970e95ff718ba0bd7988d6536f08f7ab0d1f22"
         },
         "date": 1642790187506,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1471487,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1b159c6f48b9661f82b4f1ac4f6ad6f0a21e345f",
+          "message": "Implement icu4x-key-extract by string tagging  (#1480)",
+          "timestamp": "2022-01-23T18:41:26+01:00",
+          "tree_id": "5082da1c66e4ce064b2d7513dbccc6fc6ead0d97",
+          "url": "https://github.com/unicode-org/icu4x/commit/1b159c6f48b9661f82b4f1ac4f6ad6f0a21e345f"
+        },
+        "date": 1642959778445,
         "tool": "ndjson",
         "benches": [
           {
