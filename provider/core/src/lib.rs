@@ -149,14 +149,13 @@ pub mod prelude {
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
+    pub use crate::resource_key;
 
     pub use crate::any::AsDataProviderAnyMarkerWrap;
     pub use crate::any::AsDowncastingAnyProvider;
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 }
-
-pub use prelude::*;
 
 /// Re-export of the yoke crate for convenience of downstream implementors.
 pub use yoke;

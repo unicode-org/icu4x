@@ -33,8 +33,35 @@ impl ResourceKeyHash {
 /// the ones exported by a component.
 #[derive(PartialEq, Eq, Copy, Clone)]
 pub struct ResourceKey {
+    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
+    // in a compiled binary.
     path: &'static str,
     hash: ResourceKeyHash,
+}
+
+#[macro_export]
+macro_rules! leading_tag {
+    () => {
+        "\nicu4x_key_tag"
+    };
+}
+
+#[macro_export]
+macro_rules! trailing_tag {
+    () => {
+        "\n"
+    };
+}
+
+#[macro_export]
+macro_rules! tagged {
+    ($without_tags:literal) => {
+        concat!(
+            $crate::leading_tag!(),
+            $without_tags,
+            $crate::trailing_tag!()
+        )
+    };
 }
 
 impl ResourceKey {
@@ -46,8 +73,15 @@ impl ResourceKey {
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
-    pub const fn get_path(&self) -> &str {
-        self.path
+    pub fn get_path(&self) -> &str {
+        // This becomes const with `const_ptr_offset` and `const_slice_from_raw_parts`.
+        unsafe {
+            // Safe due to invariant that self.path is tagged correctly
+            core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+                self.path.as_ptr().add(leading_tag!().len()),
+                self.path.len() - trailing_tag!().len() - leading_tag!().len(),
+            ))
+        }
     }
 
     /// Gets a machine-readable representation of a [`ResourceKey`].
@@ -70,12 +104,13 @@ impl ResourceKey {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::tagged;
     ///
     /// // Const constructed (preferred):
     /// const k1: ResourceKey = icu_provider::resource_key!("foo/bar@1");
     ///
     /// // Runtime constructed:
-    /// let k2: ResourceKey = ResourceKey::try_new("foo/bar@1").unwrap();
+    /// let k2: ResourceKey = ResourceKey::try_new(tagged!("foo/bar@1")).unwrap();
     ///
     /// assert_eq!(k1, k2);
     /// ```
@@ -91,6 +126,31 @@ impl ResourceKey {
     }
 
     const fn check_path_syntax(path: &str) -> Result<(), ()> {
+        let path = path.as_bytes();
+
+        // Start and end of the untagged part
+        if path.len() < leading_tag!().len() + trailing_tag!().len() {
+            return Err(());
+        }
+        let start = leading_tag!().len();
+        let end = path.len() - trailing_tag!().len();
+
+        // Check tags
+        let mut i = 0;
+        while i < leading_tag!().len() {
+            if path[i] != leading_tag!().as_bytes()[i] {
+                return Err(());
+            }
+            i += 1;
+        }
+        i = 0;
+        while i < trailing_tag!().len() {
+            if path[end + i] != trailing_tag!().as_bytes()[i] {
+                return Err(());
+            }
+            i += 1;
+        }
+
         // Approximate regex: \w+(/\w+)*@\d+
         // State 0 = start of string
         // State 1 = after first character
@@ -98,12 +158,10 @@ impl ResourceKey {
         // State 3 = after a character after a slash
         // State 4 = after @
         // State 5 = after a digit after @
-        let mut i = 0;
+        i = start;
         let mut state = 0;
-        let path_bytes = path.as_bytes();
-        while i < path_bytes.len() {
-            let c = path_bytes[i];
-            state = match (state, c) {
+        while i < end {
+            state = match (state, path[i]) {
                 (0 | 1, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=') => 1,
                 (1, b'/') => 2,
                 (2 | 3, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=') => 3,
@@ -124,22 +182,63 @@ impl ResourceKey {
 #[test]
 fn test_path_syntax() {
     // Valid keys:
-    assert!(matches!(ResourceKey::try_new("hello/world@1"), Ok(_)));
-    assert!(matches!(ResourceKey::try_new("hello/world/foo@1"), Ok(_)));
-    assert!(matches!(ResourceKey::try_new("hello/world@999"), Ok(_)));
-    assert!(matches!(ResourceKey::try_new("hello_world/foo@1"), Ok(_)));
-    assert!(matches!(ResourceKey::try_new("hello_458/world@1"), Ok(_)));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello/world@1")),
+        Ok(_)
+    ));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello/world/foo@1")),
+        Ok(_)
+    ));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello/world@999")),
+        Ok(_)
+    ));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello_world/foo@1")),
+        Ok(_)
+    ));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello_458/world@1")),
+        Ok(_)
+    ));
 
     // No slash:
-    assert!(matches!(ResourceKey::try_new("hello_world@1"), Err(_)));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello_world@1")),
+        Err(_)
+    ));
 
     // No version:
-    assert!(matches!(ResourceKey::try_new("hello/world"), Err(_)));
-    assert!(matches!(ResourceKey::try_new("hello/world@"), Err(_)));
-    assert!(matches!(ResourceKey::try_new("hello/world@foo"), Err(_)));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello/world")),
+        Err(_)
+    ));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello/world@")),
+        Err(_)
+    ));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("hello/world@foo")),
+        Err(_)
+    ));
 
     // Invalid characters:
-    assert!(matches!(ResourceKey::try_new("你好/世界@1"), Err(_)));
+    assert!(matches!(
+        ResourceKey::try_new(tagged!("你好/世界@1")),
+        Err(_)
+    ));
+
+    // Invalid tag:
+    assert!(matches!(
+        ResourceKey::try_new(concat!("hello/world@1", trailing_tag!())),
+        Err(_)
+    ));
+    assert!(matches!(
+        ResourceKey::try_new(concat!(leading_tag!(), "hello/world@1")),
+        Err(_)
+    ));
+    assert!(matches!(ResourceKey::try_new("hello/world@1"), Err(_)));
 }
 
 /// Shortcut to construct a const resource identifier.
@@ -150,7 +249,7 @@ macro_rules! resource_key {
     ($path:literal) => {{
         // Force the ResourceKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
-            match $crate::ResourceKey::try_new($path) {
+            match $crate::ResourceKey::try_new($crate::tagged!($path)) {
                 Ok(v) => v,
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
             }
@@ -195,11 +294,13 @@ macro_rules! resource_key {
             // Note: concat!() does not seem to work as a literal argument to another macro call.
             // This branch will be deleted anyway in #570.
             match $crate::ResourceKey::try_new(concat!(
+                $crate::leading_tag!(),
                 $category,
                 "/",
                 $sub_category,
                 "@",
-                $version
+                $version,
+                $crate::trailing_tag!(),
             )) {
                 Ok(v) => v,
                 Err(_) => panic!(concat!("Invalid resource key")),
@@ -226,15 +327,15 @@ impl fmt::Display for ResourceKey {
 
 impl Writeable for ResourceKey {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.path.write_to(sink)
+        self.get_path().write_to(sink)
     }
 
     fn write_len(&self) -> LengthHint {
-        self.path.write_len()
+        self.get_path().write_len()
     }
 
     fn writeable_to_string(&self) -> Cow<str> {
-        Cow::Borrowed(self.path)
+        Cow::Borrowed(self.get_path())
     }
 }
 
