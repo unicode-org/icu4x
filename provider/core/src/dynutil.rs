@@ -11,8 +11,8 @@
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
 where
-    M: crate::prelude::DataMarker,
-    Self: Sized + crate::prelude::DataMarker,
+    M: crate::DataMarker,
+    Self: Sized + crate::DataMarker,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
     ///
@@ -35,7 +35,7 @@ where
     ///     .expect("Type conversion");
     /// assert_eq!(downcasted.get(), "foo");
     /// ```
-    fn upcast(other: crate::prelude::DataPayload<M>) -> crate::prelude::DataPayload<Self>;
+    fn upcast(other: crate::DataPayload<M>) -> crate::DataPayload<Self>;
 }
 
 /// Implements [`DataProvider`] for a marker type `S` on a type that already implements
