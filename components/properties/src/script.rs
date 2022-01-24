@@ -216,12 +216,14 @@ impl<'data> ScriptExtensions<'data> {
         let ranges_matching_script = self.trie.iter_ranges().filter(|cpm_range| {
             let sc_with_ext = ScriptWithExt(cpm_range.value.0);
 
-            (!sc_with_ext.has_extensions() && script == sc_with_ext.into())
-                || (sc_with_ext.has_extensions()
-                    && self
-                        .get_scx_val_using_trie_val(&sc_with_ext.as_unaligned())
-                        .iter()
-                        .any(|sc| sc == script))
+            if sc_with_ext.has_extensions() {
+                self
+                    .get_scx_val_using_trie_val(&sc_with_ext.as_unaligned())
+                    .iter()
+                    .any(|sc| sc == script)
+            } else {
+                script == sc_with_ext.into()
+            }
         });
 
         let mut builder = UnicodeSetBuilder::new();
