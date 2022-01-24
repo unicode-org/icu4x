@@ -207,8 +207,8 @@ impl<'data> ScriptExtensions<'data> {
     /// code points for which `has_script` will return true.
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
         let ranges_matching_script = self.trie.iter_ranges().filter(|cpm_range| {
-            let start = cpm_range.get_start();
-            let sc_with_ext = ScriptWithExt(cpm_range.get_value() as u16);
+            let start = cpm_range.start;
+            let sc_with_ext = ScriptWithExt(cpm_range.value.0);
 
             (!sc_with_ext.has_extensions() && script == sc_with_ext.into())
                 || (sc_with_ext.has_extensions()
@@ -220,7 +220,7 @@ impl<'data> ScriptExtensions<'data> {
 
         let mut builder = UnicodeSetBuilder::new();
         for cpm_range in ranges_matching_script {
-            builder.add_range_u32(&(cpm_range.get_start()..=cpm_range.get_end()));
+            builder.add_range_u32(&(cpm_range.start..=cpm_range.end));
         }
         builder.build()
     }
