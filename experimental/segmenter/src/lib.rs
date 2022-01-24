@@ -147,13 +147,8 @@ extern crate alloc;
 
 mod indices;
 mod language;
-mod lb_define;
 mod line_breaker;
-mod properties_defines;
-mod properties_other;
-mod property_table;
 mod rule_segmenter;
-mod rule_table;
 
 mod grapheme;
 mod sentence;

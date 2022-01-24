@@ -6,8 +6,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::property_table::UAX14_PROPERTY_TABLE;
-use crate::rule_table::UAX14_RULE_TABLE;
+use crate::line_breaker::BREAK_STATE_MACHINE_TABLE;
+use crate::line_breaker::PROPERTY_COUNT;
+use crate::line_breaker::PROPERTY_TABLE;
 use alloc::boxed::Box;
 use core::ops::Deref;
 use icu_provider::yoke::{self, *};
@@ -61,7 +62,7 @@ impl<'zcf> ZeroCopyFrom<'zcf, LineBreakPropertyTable<'_>> for LineBreakPropertyT
 
 impl Default for LineBreakPropertyTable<'static> {
     fn default() -> Self {
-        LineBreakPropertyTable::Borrowed(&UAX14_PROPERTY_TABLE)
+        LineBreakPropertyTable::Borrowed(&PROPERTY_TABLE)
     }
 }
 
@@ -82,8 +83,8 @@ pub struct LineBreakRuleTable<'data> {
 impl Default for LineBreakRuleTable<'static> {
     fn default() -> Self {
         Self {
-            table_data: ZeroSlice::from_ule_slice(&UAX14_RULE_TABLE).as_zerovec(),
-            property_count: crate::lb_define::PROP_COUNT as u8,
+            table_data: ZeroSlice::from_ule_slice(&BREAK_STATE_MACHINE_TABLE).as_zerovec(),
+            property_count: PROPERTY_COUNT as u8,
         }
     }
 }
