@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642960220949,
+  "lastUpdate": 1643045254672,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17789,6 +17789,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 128922,
             "range": "± 10794",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2310b3bd33f7866bc17a9e0c4450b4362642b105",
+          "message": "Fix all doc warnings and update CI to not allow any (#1534)\n\n* Doc fixes\r\n\r\n* more\r\n\r\n* yoke\r\n\r\n* Fail on doc warnings\r\n\r\n* fix",
+          "timestamp": "2022-01-24T09:18:14-08:00",
+          "tree_id": "7fd95d65849d40278ba612895d4b5e65a9319430",
+          "url": "https://github.com/unicode-org/icu4x/commit/2310b3bd33f7866bc17a9e0c4450b4362642b105"
+        },
+        "date": 1643045243735,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115614,
+            "range": "± 4375",
             "unit": "ns/iter"
           }
         ]
