@@ -50,6 +50,7 @@ jobs:
     env:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
+      RUSTDOCFLAGS: "-Dwarnings"
     steps:
     - uses: actions/checkout@v2
     - name: Load the default Rust toolchain via the rust-toolchain file.
@@ -63,8 +64,6 @@ jobs:
     - name: Build docs
       uses: actions-rs/cargo@v1
       with:
-        env:
-          RUSTDOCFLAGS: "-Dwarnings"
         command: doc
         args: --workspace --release --all-features --no-deps
     - name: Upload docs to Google Cloud Storage
