@@ -111,7 +111,7 @@ impl<'data> ScriptExtensions<'data> {
         Ok(ScriptExtensions { trie, extensions })
     }
 
-    /// Return the `Script` property value for this code point.
+    /// Returns the `Script` property value for this code point.
     pub fn get_script_val(&self, code_point: u32) -> Script {
         let sc_with_ext = self.trie.get(code_point);
 
