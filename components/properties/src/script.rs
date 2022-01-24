@@ -11,7 +11,7 @@ use crate::props::Script;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-use zerovec::{VarZeroVec, ZeroSlice};
+use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -138,10 +138,10 @@ impl<'data> ScriptExtensions<'data> {
     // This private helper method exists to prevent code duplication in callers like
     // `get_script_extensions_val`, `get_script_extensions_set`, and `has_script`.
     fn get_scx_val_using_trie_val(
-        &self,
-        code_point: u32,
-        sc_with_ext: ScriptWithExt,
-    ) -> &ZeroSlice<Script> {
+        &'data self,
+        sc_with_ext_ule: &'data <ScriptWithExt as AsULE>::ULE,
+    ) -> &'data ZeroSlice<Script> {
+        let sc_with_ext = ScriptWithExt::from_unaligned(*sc_with_ext_ule);
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let ext_subarray = self.extensions.get(ext_idx as usize);
@@ -158,10 +158,9 @@ impl<'data> ScriptExtensions<'data> {
             let scx_val = self.extensions.get(ext_idx as usize);
             scx_val.unwrap_or_default()
         } else {
-            let script_with_ext_ule = self.trie.get_ule(code_point);
-            let script_ule_slice = script_with_ext_ule
-                .map(|swe| core::slice::from_ref(swe))
-                .unwrap_or_default();
+            // Note: `Script` and `ScriptWithExt` are both represented as the same
+            // u16 value when the `ScriptWithExt` has no higher-order bits set.
+            let script_ule_slice = core::slice::from_ref(sc_with_ext_ule);
             ZeroSlice::from_ule_slice(script_ule_slice)
         }
     }
@@ -178,9 +177,12 @@ impl<'data> ScriptExtensions<'data> {
     /// If c is not a valid code point, then the one UNKNOWN code is put into
     /// the set and also returned.
     pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
-        let sc_with_ext = self.trie.get(code_point);
+        let sc_with_ext_ule = self.trie.get_ule(code_point);
 
-        self.get_scx_val_using_trie_val(code_point, sc_with_ext)
+        match sc_with_ext_ule {
+            Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
+            None => ZeroSlice::from_ule_slice(&[]),
+        }
     }
 
     /// Returns whether `script` is contained in the Script_Extensions
@@ -191,13 +193,18 @@ impl<'data> ScriptExtensions<'data> {
     /// Some characters are commonly used in multiple scripts. For more information,
     /// see UAX #24: http://www.unicode.org/reports/tr24/.
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
-        let sc_with_ext = self.trie.get(code_point);
+        let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get_ule(code_point) {
+            scwe_ule
+        } else {
+            return false;
+        };
+        let sc_with_ext = <ScriptWithExt as AsULE>::from_unaligned(*sc_with_ext_ule);
 
         if !sc_with_ext.has_extensions() {
             let script_val = sc_with_ext.0;
             script == Script(script_val)
         } else {
-            let scx_val = self.get_scx_val_using_trie_val(code_point, sc_with_ext);
+            let scx_val = self.get_scx_val_using_trie_val(sc_with_ext_ule);
             let script_find = scx_val.iter().find(|&sc| sc == script);
             script_find.is_some()
         }
@@ -207,13 +214,12 @@ impl<'data> ScriptExtensions<'data> {
     /// code points for which `has_script` will return true.
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
         let ranges_matching_script = self.trie.iter_ranges().filter(|cpm_range| {
-            let start = cpm_range.start;
             let sc_with_ext = ScriptWithExt(cpm_range.value.0);
 
             (!sc_with_ext.has_extensions() && script == sc_with_ext.into())
                 || (sc_with_ext.has_extensions()
                     && self
-                        .get_scx_val_using_trie_val(start, sc_with_ext)
+                        .get_scx_val_using_trie_val(&sc_with_ext.as_unaligned())
                         .iter()
                         .any(|sc| sc == script))
         });
