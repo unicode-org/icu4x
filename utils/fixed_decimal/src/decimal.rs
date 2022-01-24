@@ -903,7 +903,7 @@ pub enum RoundingMode {
 impl FixedDecimal {
     /// Construct a [`FixedDecimal`] from an f64. This uses `ryu` and
     /// goes through an intermediate string representation, so is not
-    /// fully efficient. See https://github.com/unicode-org/icu4x/issues/166 for
+    /// fully efficient. See [icu4x#166](https://github.com/unicode-org/icu4x/issues/166) for
     /// more details.
     ///
     /// This function can be made available with the `"ryu"` feature.

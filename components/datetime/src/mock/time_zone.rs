@@ -12,9 +12,10 @@ use core::str::FromStr;
 /// and is used in tests, benchmarks and examples of this component.
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent time zones. We are introducing
-/// [`MockTimeZone`] as an example of the data necessary for ICU [`TimeZoneFormat`] to work, and
-/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md)
-/// to develop core date and time APIs that will work as an input for this component.
+/// [`MockTimeZone`](crate::mock::time_zone::MockTimeZone) as an example of the data necessary for
+/// ICU [`TimeZoneFormat`](crate::TimeZoneFormat) to work, and [we hope to work with the community](
+/// https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md) to develop core date and time
+/// APIs that will work as an input for this component.
 ///
 /// # Examples
 ///

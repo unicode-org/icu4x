@@ -5,7 +5,7 @@
 //! Serde structs representing CLDR JSON numberingSystem.json files.
 //!
 //! Sample file:
-//! https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-core/supplemental/numberingSystems.json
+//! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-core/supplemental/numberingSystems.json>
 
 use litemap::LiteMap;
 use serde::Deserialize;

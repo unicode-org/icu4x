@@ -4,7 +4,7 @@
 
 //! Functions for dealing with UTS-35 number patterns.
 //!
-//! Spec reference: https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns
+//! Spec reference: <https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns>
 
 use displaydoc::Display;
 use icu_decimal::provider::AffixesV1;

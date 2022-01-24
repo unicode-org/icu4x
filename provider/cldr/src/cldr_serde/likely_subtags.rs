@@ -5,7 +5,7 @@
 //! Serde structs representing CLDR JSON likelySubtags.json files.
 //!
 //! Sample file:
-//! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/likelySubtags.json
+//! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/likelySubtags.json>
 
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;

@@ -194,7 +194,7 @@ impl IterableProvider for HelloWorldProvider {
     }
 }
 
-/// Adds entries to a [`HelloWorldProvider`] from [`AnyMarker`](crate::erased::AnyMarker)
+/// Adds entries to a [`HelloWorldProvider`] from [`AnyMarker`](crate::any::AnyMarker)
 impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
     fn put_payload(
         &mut self,

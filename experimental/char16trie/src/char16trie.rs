@@ -91,7 +91,7 @@ impl<'data> Char16Trie<'data> {
         Self { data }
     }
 
-    /// Returns a new [`Char16Iterator`] backed by borrowed data from the `trie` data
+    /// Returns a new [`Char16TrieIterator`] backed by borrowed data from the `trie` data
     pub fn iter(&self) -> Char16TrieIterator {
         Char16TrieIterator::new(self.data.as_ule_slice())
     }
@@ -144,7 +144,7 @@ fn u16_tail(supplementary: i32) -> u16 {
 }
 
 impl<'a> Char16TrieIterator<'a> {
-    /// Returns a new [`Char16Iterator`] backed by borrowed data for the `trie` array
+    /// Returns a new [`Char16TrieIterator`] backed by borrowed data for the `trie` array
     pub fn new(trie: &'a [<u16 as zerovec::ule::AsULE>::ULE]) -> Self {
         Self {
             trie,

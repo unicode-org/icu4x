@@ -944,7 +944,7 @@ fn test_debug() {
 /// See examples on some of the concrete implementations:
 ///
 /// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
-/// - [`StructProvider`](crate::struct_provider::StructProvider)
+/// - [`AnyPayloadProvider`](crate::struct_provider::AnyPayloadProvider)
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<M>
 where

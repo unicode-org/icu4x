@@ -13,7 +13,7 @@ use std::convert::TryFrom;
 use std::path::Path;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
-/// This data provider returns a [`crate::script::ScriptExtensions`] instance,
+/// This data provider returns a [`ScriptExtensions`] instance,
 /// which efficiently represents data for the Script and Script_Extensions
 /// properties. The source data is the same as that of
 /// [crate::provider::PropertiesDataProvider], which is a TOML file of data

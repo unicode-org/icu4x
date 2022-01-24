@@ -5,7 +5,7 @@
 //! Serde structs representing CLDR JSON numbers.json files.
 //!
 //! Sample file:
-//! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/en/listPatterns.json
+//! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/en/listPatterns.json>
 
 use icu_locid::LanguageIdentifier;
 use litemap::LiteMap;

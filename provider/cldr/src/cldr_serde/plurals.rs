@@ -5,7 +5,7 @@
 //! Serde structs representing CLDR JSON aliases.json files.
 //!
 //! Sample file:
-//! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/plurals.json
+//! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/plurals.json>
 
 use icu_locid::LanguageIdentifier;
 use litemap::LiteMap;

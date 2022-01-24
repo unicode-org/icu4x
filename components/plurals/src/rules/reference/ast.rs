@@ -134,7 +134,7 @@ pub struct Condition(pub Vec<AndCondition>);
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::parser::parse()) function.
+/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "i = 3 and v = 0"
@@ -175,7 +175,7 @@ pub struct AndCondition(pub Vec<Relation>);
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::parser::parse()) function.
+/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "i = 3"
@@ -225,7 +225,7 @@ pub enum Operator {
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::parser::parse()) function.
+/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "i % 100"
@@ -254,7 +254,7 @@ pub struct Expression {
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::parser::parse()) function.
+/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "i"
@@ -294,7 +294,7 @@ pub enum Operand {
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::parser::parse()) function.
+/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "5, 7, 9"
@@ -348,7 +348,7 @@ pub enum RangeListItem {
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::parser::parse()) function.
+/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "99"

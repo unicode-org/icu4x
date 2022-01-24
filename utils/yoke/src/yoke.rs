@@ -443,7 +443,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     /// this is good for e.g. constructing fully owned
     /// [`Yoke`]s with no internal borrowing.
     ///
-    /// This can be paired with [`Yoke::attach_to_option_cart()`] to mix owned
+    /// This can be paired with [`Yoke:: wrap_cart_in_option()`] to mix owned
     /// and borrowed data.
     ///
     /// If you do not wish to pair this with borrowed data, [`Yoke::new_always_owned()`] can

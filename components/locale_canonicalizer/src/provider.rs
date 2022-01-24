@@ -12,7 +12,8 @@ use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
 
-/// A collection of [`ResourceKey`] structs for LocaleCanonicalizer providers.
+/// A collection of [`ResourceKey`](icu_provider::ResourceKey) structs for
+/// LocaleCanonicalizer providers.
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
     /// Key for aliases data.
@@ -31,7 +32,7 @@ pub mod key {
 #[yoke(cloning_zcf)]
 /// This alias data is used for locale canonicalization. Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
-/// from http://unicode.org/reports/tr35/#LocaleId_Canonicalization. The data
+/// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
 /// is stored in sorted order, allowing for binary search to identify rules to
 /// apply. It is broken down into smaller vectors based upon some characteristic
 /// of the data, to help avoid unnecessary searches. For example, the `sgn_region`
@@ -76,7 +77,7 @@ pub struct AliasesV1 {
 /// This likely subtags data is used for the minimize and maximize operations.
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in
-/// https://www.unicode.org/reports/tr35/#Likely_Subtags.
+/// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
 ///
 /// The data is stored in sorted order, allowing for binary search to identify
 /// rules to apply. It is broken down into smaller vectors based upon the rules

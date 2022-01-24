@@ -340,7 +340,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// Obtain the index for a given key, or if the key is not found, the index
     /// at which it would be inserted.
     ///
-    /// (The return value works equivalently to [`Vec::binary_search_by()`])
+    /// (The return value works equivalently to [`slice::binary_search_by()`])
     ///
     /// The indices returned can be used with [`Self::get_indexed()`]. Prefer using
     /// [`Self::get()`] directly where possible.

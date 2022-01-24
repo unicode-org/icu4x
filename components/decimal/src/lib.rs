@@ -10,9 +10,7 @@
 //! in a locale-sensitive way.
 //!
 //! Support for currencies, measurement units, and compact notation is planned. To track progress,
-//! follow this issue:
-//!
-//! https://github.com/unicode-org/icu4x/issues/275
+//! follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 //!
 //! # Examples
 //!

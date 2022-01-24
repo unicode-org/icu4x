@@ -50,6 +50,7 @@ jobs:
     env:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
+      RUSTDOCFLAGS: "-Dwarnings"
     steps:
     - uses: actions/checkout@v2
     - name: Load the default Rust toolchain via the rust-toolchain file.
