@@ -63,6 +63,8 @@ jobs:
     - name: Build docs
       uses: actions-rs/cargo@v1
       with:
+        env:
+          RUSTDOCFLAGS: "-Dwarnings"
         command: doc
         args: --workspace --release --all-features --no-deps
     - name: Upload docs to Google Cloud Storage
