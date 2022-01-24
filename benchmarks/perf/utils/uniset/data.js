@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643045227826,
+  "lastUpdate": 1643054493621,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18899,6 +18899,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43981349,
             "range": "± 401621",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd33be490b2f63262491e2b97f427746c11c1fda",
+          "message": "Complementary to PR #1525. Replaces global wasm-opt/wabt package inst… (#1530)\n\n* Complementary to PR #1525. Replaces global wasm-opt/wabt package installation for\nwasm target with consolidated 'npm ci' in ffi/diplomat/wasm/.\n\n* Adds comment to guide users who want to install npm packages locally.",
+          "timestamp": "2022-01-24T11:52:53-08:00",
+          "tree_id": "27c78471ba0f7c3422bd7f1e6ebc0b9dea7a29a6",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd33be490b2f63262491e2b97f427746c11c1fda"
+        },
+        "date": 1643054483151,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 38784629,
+            "range": "± 298454",
             "unit": "ns/iter"
           }
         ]
