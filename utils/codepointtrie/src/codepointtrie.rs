@@ -677,10 +677,10 @@ where
 }
 
 #[derive(PartialEq, Eq, Debug, Clone, Copy)]
-pub struct CodePointMapRange {
+pub struct CodePointMapRange<T: TrieValue> {
     start: u32,
     end: u32,
-    value: u32,
+    value: T,
 }
 
 impl CodePointMapRange {
