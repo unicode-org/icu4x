@@ -626,9 +626,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
 
     /// Yields an [`Iterator`] returning ranges of consecutive code points that
     /// share the same value in the [`CodePointTrie`].
-    pub fn iter_ranges(&'trie self) -> CodePointMapRangeIterator<'trie, T> {
+    pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
         let init_range = CodePointMapRange::try_new(u32::MAX, u32::MAX, 0).ok();
-        CodePointMapRangeIterator::<'trie, T> {
+        CodePointMapRangeIterator::<T> {
             cpt: self,
             range: init_range,
         }

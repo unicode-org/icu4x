@@ -8,7 +8,7 @@
 use crate::error::PropertiesError;
 use crate::props::Script;
 
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
@@ -210,24 +210,34 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
+    /// Returns all of the matching [`CodePointMapRange`]s for the given [`Script`]
+    /// in which `has_script` will return true for all of the contained code points.
+    pub fn get_script_extensions_ranges(&self, script: Script) -> impl Iterator<Item = CodePointMapRange<Script>> + '_ {
+        self.trie.iter_ranges().filter(move |cpm_range| {
+            let sc_with_ext = ScriptWithExt(cpm_range.value.0);
+                if sc_with_ext.has_extensions() {
+                    self
+                        .get_scx_val_using_trie_val(&sc_with_ext.as_unaligned())
+                        .iter()
+                        .any(|sc| sc == script)
+                } else {
+                    script == sc_with_ext.into()
+                }
+        })
+        .flat_map(|cpm_range| {
+            CodePointMapRange::<Script>::try_new(
+                cpm_range.start,
+                cpm_range.end,
+                cpm_range.value.0 as u32,
+            ).ok()
+        })
+    }
+
     /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
-        let ranges_matching_script = self.trie.iter_ranges().filter(|cpm_range| {
-            let sc_with_ext = ScriptWithExt(cpm_range.value.0);
-
-            if sc_with_ext.has_extensions() {
-                self
-                    .get_scx_val_using_trie_val(&sc_with_ext.as_unaligned())
-                    .iter()
-                    .any(|sc| sc == script)
-            } else {
-                script == sc_with_ext.into()
-            }
-        });
-
         let mut builder = UnicodeSetBuilder::new();
-        for cpm_range in ranges_matching_script {
+        for cpm_range in self.get_script_extensions_ranges(script) {
             builder.add_range_u32(&(cpm_range.start..=cpm_range.end));
         }
         builder.build()

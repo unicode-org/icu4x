@@ -41,6 +41,7 @@ mod impl_const;
 pub mod planes;
 
 pub use codepointtrie::CodePointMapRange;
+pub use codepointtrie::CodePointMapRangeIterator;
 pub use codepointtrie::CodePointTrie;
 pub use codepointtrie::CodePointTrieHeader;
 pub use codepointtrie::TrieType;
