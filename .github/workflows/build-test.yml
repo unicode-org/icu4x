@@ -239,6 +239,10 @@ jobs:
           rustup component add rust-src --toolchain nightly-2021-12-22
       - name: Install WASM tools
         run: |
+          # This step requires wasm-opt and wabt. To install these two packages
+          # ready-to-use locally, you also can execute
+          # 'sudo npm install -g wasm-opt --unsafe-perm' and
+          # 'sudo npm install -g wabt'.
           cd ffi/diplomat/wasm
           npm ci
           echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
