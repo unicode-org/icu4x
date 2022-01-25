@@ -8,6 +8,7 @@ use crate::impl_const::*;
 use core::convert::TryFrom;
 use core::fmt::Display;
 use core::num::TryFromIntError;
+use core::ops::RangeInclusive;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use yoke::{Yokeable, ZeroCopyFrom};
@@ -630,7 +631,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         let init_range = CodePointMapRange::try_new(u32::MAX, u32::MAX, 0).ok();
         CodePointMapRangeIterator::<T> {
             cpt: self,
-            range: init_range,
+            cpm_range: init_range,
         }
     }
 }
@@ -648,10 +649,9 @@ where
     }
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct CodePointMapRange<T: TrieValue> {
-    pub start: u32,
-    pub end: u32,
+    pub range: RangeInclusive<u32>,
     pub value: T,
 }
 
@@ -663,10 +663,16 @@ impl<T: TrieValue> CodePointMapRange<T> {
     ) -> Result<CodePointMapRange<T>, T::TryFromU32Error> {
         let trie_value = T::try_from_u32(value)?;
         Ok(CodePointMapRange {
-            start,
-            end,
+            range: RangeInclusive::new(start, end),
             value: trie_value,
         })
+    }
+
+    /// Return the range for this [`CodePointMapRange`] as a (start, end) tuple.
+    /// This allows a substitute to make up for the disallowance of Copy impls
+    /// for Range in Rust (see: https://github.com/rust-lang/rfcs/issues/2848).
+    pub fn get_range(&self) -> RangeInclusive<u32> {
+        RangeInclusive::new(*self.range.start(), *self.range.end())
     }
 }
 
@@ -678,33 +684,53 @@ pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
     // When `range` == `None`, it means that we have hit the end of iteration. It would occur
     // after a call to `next()` returns a None <=> we attempted to call `get_range()`
     // with a start code point that is > CODE_POINT_MAX.
-    range: Option<CodePointMapRange<T>>,
+    cpm_range: Option<CodePointMapRange<T>>,
 }
 
 impl<'a, T: TrieValue + Into<u32>> Iterator for CodePointMapRangeIterator<'a, T> {
     type Item = CodePointMapRange<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.range {
-            Some(CodePointMapRange { start, end, .. }) => {
-                let next_range = if start == u32::MAX {
+        // In order to work around Rust disallowance of Copy impls for Range in Rust,
+        // we need to pull out the Range start and end individually. We cannot directly
+        // match against fields of `&mut self` directly since with a shared reference
+        // because self is &mut. Also, because Copy is not allowed on the Range field,
+        // we need to use this workaround for the match to prevent Rust from automatically
+        // trying to copy in something like `match self.range`.
+        let range_value_tuple = (
+            self.cpm_range.as_ref().map(|cpmr| cpmr.get_range()),
+            self.cpm_range.as_ref().map(|cpmr| cpmr.value),
+        );
+
+        match range_value_tuple {
+            (Some(range), Some(_)) => {
+                let next_cpm_range = if *range.start() == u32::MAX {
                     self.cpt.get_range(0)
                 } else {
-                    self.cpt.get_range(end + 1)
+                    self.cpt.get_range(*range.end() + 1)
                 };
-                self.range = next_range;
-                self.range
+                self.cpm_range = next_cpm_range;
+
+                let next_range_value_tuple = (
+                    self.cpm_range.as_ref().map(|ncpmr| ncpmr.get_range()),
+                    self.cpm_range.as_ref().map(|ncpmr| ncpmr.value),
+                );
+                match next_range_value_tuple {
+                    (Some(next_range), Some(next_value)) => Some(CodePointMapRange {
+                        range: RangeInclusive::new(*next_range.start(), *next_range.end()),
+                        value: next_value,
+                    }),
+                    _ => None,
+                }
             }
-            None => None,
+            _ => None,
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::CodePointMapRange;
-    #[cfg(feature = "serde")]
-    use super::CodePointTrie;
+    use super::*;
     use crate::planes;
     use alloc::vec::Vec;
     #[cfg(feature = "serde")]
@@ -853,8 +879,7 @@ mod tests {
         assert_eq!(
             first_range,
             Some(CodePointMapRange {
-                start: 0x0,
-                end: 0xffff,
+                range: RangeInclusive::new(0x0, 0xffff),
                 value: 0
             })
         );
@@ -863,8 +888,7 @@ mod tests {
         assert_eq!(
             second_range,
             Some(CodePointMapRange {
-                start: 0x10000,
-                end: 0x1ffff,
+                range: RangeInclusive::new(0x10000, 0x1ffff),
                 value: 1
             })
         );
@@ -873,8 +897,7 @@ mod tests {
         assert_eq!(
             penultimate_range,
             Some(CodePointMapRange {
-                start: 0xf_0000,
-                end: 0xf_ffff,
+                range: RangeInclusive::new(0xf_0000, 0xf_ffff),
                 value: 15
             })
         );
@@ -883,8 +906,7 @@ mod tests {
         assert_eq!(
             last_range,
             Some(CodePointMapRange {
-                start: 0x10_0000,
-                end: 0x10_ffff,
+                range: RangeInclusive::new(0x10_0000, 0x10_ffff),
                 value: 16
             })
         );
@@ -898,8 +920,7 @@ mod tests {
         assert_eq!(
             ranges.next(),
             Some(CodePointMapRange {
-                start: 0x0,
-                end: 0xffff,
+                range: RangeInclusive::new(0x0, 0xffff),
                 value: 0
             })
         );
@@ -907,8 +928,7 @@ mod tests {
         assert_eq!(
             ranges.next(),
             Some(CodePointMapRange {
-                start: 0x10000,
-                end: 0x1ffff,
+                range: RangeInclusive::new(0x10000, 0x1ffff),
                 value: 1
             })
         );
@@ -918,8 +938,7 @@ mod tests {
         assert_eq!(
             ranges_after_skip.next(),
             Some(CodePointMapRange {
-                start: 0x10_0000,
-                end: 0x10_ffff,
+                range: RangeInclusive::new(0x10_0000, 0x10_ffff),
                 value: 16
             })
         );
