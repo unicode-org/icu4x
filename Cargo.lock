@@ -1218,11 +1218,11 @@ version = "0.4.0"
 dependencies = [
  "criterion",
  "displaydoc",
- "icu",
  "icu_benchmark_macros",
  "serde",
  "serde_json",
  "tinystr",
+ "tinystr-neo",
  "writeable",
 ]
 

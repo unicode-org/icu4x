@@ -7,6 +7,7 @@ use core::fmt;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
 use tinystr::{tinystr4, TinyStr4};
+use tinystr_neo::{TinyAsciiStr, tinystr};
 
 /// A language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
 ///
@@ -39,10 +40,10 @@ use tinystr::{tinystr4, TinyStr4};
 ///
 /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Language(Option<TinyStr4>);
+pub struct Language(Option<TinyAsciiStr<3>>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
-const UND_VALUE: TinyStr4 = tinystr4!("und");
+const UND_VALUE: TinyAsciiStr<3> = tinystr!(3, "und");
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
@@ -65,7 +66,7 @@ impl Language {
             return Err(ParserError::InvalidLanguage);
         }
 
-        let s = TinyStr4::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
+        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
 
         if !s.is_ascii_alphabetic() {
             return Err(ParserError::InvalidLanguage);
@@ -80,6 +81,7 @@ impl Language {
         }
     }
 
+    /*
     /// Deconstructs the [`Language`] into raw format to be consumed
     /// by [`from_raw_unchecked()`](Language::from_raw_unchecked()).
     ///
@@ -125,6 +127,7 @@ impl Language {
             None => None,
         })
     }
+    */
 
     /// Returns the default undefined language "und". Same as [`default()`](Default::default()), but is `const`.
     ///
@@ -247,8 +250,10 @@ impl<'l> From<&'l Language> for &'l str {
     }
 }
 
+/*
 impl From<Language> for Option<TinyStr4> {
     fn from(input: Language) -> Self {
         input.0.map(Into::into)
     }
 }
+*/
