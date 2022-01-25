@@ -928,10 +928,12 @@ jobs:
     name: Copy GH pages to docs repo
 
     runs-on: ubuntu-latest
-
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-
+    
     needs: [check, tidy, benchmark, memory, binsize, doc]
+
+    ## Only create docs for merges/pushes to main (skip PRs).
+    ## Multiple unfinished PRs should not clobber docs from approved code.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
 
     steps:
     - uses: actions/checkout@v2

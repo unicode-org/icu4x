@@ -44,7 +44,7 @@ pub struct ListFormatter {
 impl ListFormatter {
     /// Creates a new [`ListFormatter`] from the given provider. The provider has to support the
     /// correct key for the given type:
-    /// [`LIST_FORMAT_AND_V1`](crate::provider::key::LIST_FORMAT_AND_V1),
+    /// [`LIST_FORMAT_AND_V1`](crate::provier::key::LIST_FORMAT_AND_V1),
     /// [`LIST_FORMAT_OR_V1`](crate::provider::key::LIST_FORMAT_OR_V1), or
     /// [`LIST_FORMAT_UNIT_V1`](crate::provider::key::LIST_FORMAT_UNIT_V1).
     /// An error is returned if the key or language are not available, or if there were any
