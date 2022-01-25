@@ -38,14 +38,17 @@ impl<'a> Minimizer<'a> {
         let in_transitions = Minimizer::incoming_transitions(dfa);
         let partitions = Minimizer::initial_partitions(dfa);
         let waiting = partitions.clone();
-        Minimizer { dfa, in_transitions, partitions, waiting }
+        Minimizer {
+            dfa,
+            in_transitions,
+            partitions,
+            waiting,
+        }
     }
 
     pub fn run(mut self) {
         let stride2 = self.dfa.stride2();
-        let as_state_id = |index: usize| -> StateID {
-            StateID::new(index << stride2).unwrap()
-        };
+        let as_state_id = |index: usize| -> StateID { StateID::new(index << stride2).unwrap() };
         let as_index = |id: StateID| -> usize { id.as_usize() >> stride2 };
 
         let mut incoming = StateSet::empty();
@@ -84,8 +87,7 @@ impl<'a> Minimizer<'a> {
                         continue;
                     }
 
-                    let (x, y) =
-                        (scratch1.deep_clone(), scratch2.deep_clone());
+                    let (x, y) = (scratch1.deep_clone(), scratch2.deep_clone());
                     newparts.push(x.clone());
                     newparts.push(y.clone());
                     match self.find_waiting(&self.partitions[p]) {
@@ -166,7 +168,8 @@ impl<'a> Minimizer<'a> {
         // turns out to be costly, then I guess add a `starts_mut` iterator.
         let starts: Vec<_> = self.dfa.starts().collect();
         for (old_start_id, start_type, pid) in starts {
-            self.dfa.set_start_state(start_type, pid, remap(old_start_id));
+            self.dfa
+                .set_start_state(start_type, pid, remap(old_start_id));
         }
 
         // Update the match state pattern ID list for multi-regexes. All we
@@ -235,17 +238,10 @@ impl<'a> Minimizer<'a> {
         self.waiting.iter().position(|s| s == set)
     }
 
-    fn find_incoming_to(
-        &self,
-        b: alphabet::Unit,
-        set: &StateSet,
-        incoming: &mut StateSet,
-    ) {
+    fn find_incoming_to(&self, b: alphabet::Unit, set: &StateSet, incoming: &mut StateSet) {
         incoming.clear();
         set.iter(|id| {
-            for &inid in
-                &self.in_transitions[self.dfa.to_index(id)][b.as_usize()]
-            {
+            for &inid in &self.in_transitions[self.dfa.to_index(id)][b.as_usize()] {
                 incoming.add(inid);
             }
         });
@@ -276,8 +272,7 @@ impl<'a> Minimizer<'a> {
             }
         }
 
-        let mut sets: Vec<StateSet> =
-            matching.into_iter().map(|(_, set)| set).collect();
+        let mut sets: Vec<StateSet> = matching.into_iter().map(|(_, set)| set).collect();
         sets.push(no_match);
         sets.push(is_quit);
         sets
@@ -299,7 +294,9 @@ impl<'a> Minimizer<'a> {
 
 impl StateSet {
     fn empty() -> StateSet {
-        StateSet { ids: Rc::new(RefCell::new(vec![])) }
+        StateSet {
+            ids: Rc::new(RefCell::new(vec![])),
+        }
     }
 
     fn add(&mut self, id: StateID) {
@@ -329,7 +326,9 @@ impl StateSet {
 
     fn deep_clone(&self) -> StateSet {
         let ids = self.ids.borrow().iter().cloned().collect();
-        StateSet { ids: Rc::new(RefCell::new(ids)) }
+        StateSet {
+            ids: Rc::new(RefCell::new(ids)),
+        }
     }
 
     fn iter<F: FnMut(StateID)>(&self, mut f: F) {

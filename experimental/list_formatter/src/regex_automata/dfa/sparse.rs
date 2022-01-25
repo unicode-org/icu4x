@@ -49,15 +49,13 @@ pub struct DFA<T> {
 
 #[cfg(feature = "std")]
 impl DFA<Vec<u8>> {
-                                                                                                pub fn new(pattern: &str) -> Result<DFA<Vec<u8>>, Error> {
+    pub fn new(pattern: &str) -> Result<DFA<Vec<u8>>, Error> {
         dense::Builder::new()
             .build(pattern)
             .and_then(|dense| dense.to_sparse())
     }
 
-                                                                                            pub fn new_many<P: AsRef<str>>(
-        patterns: &[P],
-    ) -> Result<DFA<Vec<u8>>, Error> {
+    pub fn new_many<P: AsRef<str>>(patterns: &[P]) -> Result<DFA<Vec<u8>>, Error> {
         dense::Builder::new()
             .build_many(patterns)
             .and_then(|dense| dense.to_sparse())
@@ -66,17 +64,15 @@ impl DFA<Vec<u8>> {
 
 #[cfg(feature = "std")]
 impl DFA<Vec<u8>> {
-                                                                        pub fn always_match() -> Result<DFA<Vec<u8>>, Error> {
+    pub fn always_match() -> Result<DFA<Vec<u8>>, Error> {
         dense::DFA::always_match()?.to_sparse()
     }
 
-                                                    pub fn never_match() -> Result<DFA<Vec<u8>>, Error> {
+    pub fn never_match() -> Result<DFA<Vec<u8>>, Error> {
         dense::DFA::never_match()?.to_sparse()
     }
 
-        pub(crate) fn from_dense<T: AsRef<[u32]>>(
-        dfa: &dense::DFA<T>,
-    ) -> Result<DFA<Vec<u8>>, Error> {
+    pub(crate) fn from_dense<T: AsRef<[u32]>>(dfa: &dense::DFA<T>) -> Result<DFA<Vec<u8>>, Error> {
         // In order to build the transition table, we need to be able to write
         // state identifiers for each of the "next" transitions in each state.
         // Our state identifiers correspond to the byte offset in the
@@ -144,10 +140,7 @@ impl DFA<Vec<u8>> {
             sparse.push(0);
 
             // Check some assumptions about transition count.
-            assert_ne!(
-                transition_count, 0,
-                "transition count should be non-zero",
-            );
+            assert_ne!(transition_count, 0, "transition count should be non-zero",);
             assert!(
                 transition_count <= 257,
                 "expected transition count {} to be <= 257",
@@ -203,10 +196,7 @@ impl DFA<Vec<u8>> {
 
                 // Now write the pattern IDs.
                 for &pid in dfa.pattern_id_slice(state.id()) {
-                    pos += bytes::write_pattern_id::<bytes::NE>(
-                        pid,
-                        &mut sparse[pos..],
-                    );
+                    pos += bytes::write_pattern_id::<bytes::NE>(pid, &mut sparse[pos..]);
                 }
             }
 
@@ -252,7 +242,7 @@ impl DFA<Vec<u8>> {
 }
 
 impl<T: AsRef<[u8]>> DFA<T> {
-            pub fn as_ref<'a>(&'a self) -> DFA<&'a [u8]> {
+    pub fn as_ref<'a>(&'a self) -> DFA<&'a [u8]> {
         DFA {
             trans: self.trans.as_ref(),
             starts: self.starts.as_ref(),
@@ -260,7 +250,7 @@ impl<T: AsRef<[u8]>> DFA<T> {
         }
     }
 
-                        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_owned(&self) -> DFA<Vec<u8>> {
         DFA {
             trans: self.trans.to_owned(),
@@ -269,32 +259,32 @@ impl<T: AsRef<[u8]>> DFA<T> {
         }
     }
 
-                                pub fn memory_usage(&self) -> usize {
+    pub fn memory_usage(&self) -> usize {
         self.trans.memory_usage() + self.starts.memory_usage()
     }
 
-                                        pub fn has_starts_for_each_pattern(&self) -> bool {
+    pub fn has_starts_for_each_pattern(&self) -> bool {
         self.starts.patterns > 0
     }
 }
 
 impl<T: AsRef<[u8]>> DFA<T> {
-                                                                                                                                                                    #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_bytes_little_endian(&self) -> Vec<u8> {
         self.to_bytes::<bytes::LE>()
     }
 
-                                                                                                                                                                    #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_bytes_big_endian(&self) -> Vec<u8> {
         self.to_bytes::<bytes::BE>()
     }
 
-                                                                                                                                                                                                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_bytes_native_endian(&self) -> Vec<u8> {
         self.to_bytes::<bytes::NE>()
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn to_bytes<E: Endian>(&self) -> Vec<u8> {
         let mut buf = vec![0; self.write_to_len()];
         // This should always succeed since the only possible serialization
@@ -304,31 +294,19 @@ impl<T: AsRef<[u8]>> DFA<T> {
         buf
     }
 
-                                                                                                                                                                                pub fn write_to_little_endian(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to_little_endian(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         self.write_to::<bytes::LE>(dst)
     }
 
-                                                                                                                                                                                pub fn write_to_big_endian(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to_big_endian(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         self.write_to::<bytes::BE>(dst)
     }
 
-                                                                                                                                                                                                            pub fn write_to_native_endian(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to_native_endian(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         self.write_to::<bytes::NE>(dst)
     }
 
-            fn write_to<E: Endian>(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    fn write_to<E: Endian>(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         let mut nw = 0;
         nw += bytes::write_label(LABEL, &mut dst[nw..])?;
         nw += bytes::write_endianness_check::<E>(&mut dst[nw..])?;
@@ -344,7 +322,7 @@ impl<T: AsRef<[u8]>> DFA<T> {
         Ok(nw)
     }
 
-                                                                                                                                            pub fn write_to_len(&self) -> usize {
+    pub fn write_to_len(&self) -> usize {
         bytes::write_label_len(LABEL)
         + bytes::write_endianness_check_len()
         + bytes::write_version_len()
@@ -356,9 +334,7 @@ impl<T: AsRef<[u8]>> DFA<T> {
 }
 
 impl<'a> DFA<&'a [u8]> {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        pub fn from_bytes(
-        slice: &'a [u8],
-    ) -> Result<(DFA<&'a [u8]>, usize), DeserializeError> {
+    pub fn from_bytes(slice: &'a [u8]) -> Result<(DFA<&'a [u8]>, usize), DeserializeError> {
         // SAFETY: This is safe because we validate both the sparse transitions
         // (by trying to decode every state) and start state ID list below. If
         // either validation fails, then we return an error.
@@ -370,7 +346,7 @@ impl<'a> DFA<&'a [u8]> {
         Ok((dfa, nread))
     }
 
-                                                                                                                                                                        pub unsafe fn from_bytes_unchecked(
+    pub unsafe fn from_bytes_unchecked(
         slice: &'a [u8],
     ) -> Result<(DFA<&'a [u8]>, usize), DeserializeError> {
         let mut nr = 0;
@@ -396,7 +372,14 @@ impl<'a> DFA<&'a [u8]> {
             ));
         }
 
-        Ok((DFA { trans, starts, special }, nr))
+        Ok((
+            DFA {
+                trans,
+                starts,
+                special,
+            },
+            nr,
+        ))
     }
 }
 
@@ -412,9 +395,7 @@ impl<T: AsRef<[u8]>> fmt::Debug for DFA<T> {
             if i % self.starts.stride == 0 {
                 match pid {
                     None => writeln!(f, "START-GROUP(ALL)")?,
-                    Some(pid) => {
-                        writeln!(f, "START_GROUP(pattern: {:?})", pid)?
-                    }
+                    Some(pid) => writeln!(f, "START_GROUP(pattern: {:?})", pid)?,
                 }
             }
             writeln!(f, "  {:?} => {:06?}", sty, start_id.as_usize())?;
@@ -465,11 +446,7 @@ unsafe impl<T: AsRef<[u8]>> Automaton for DFA<T> {
     }
 
     #[inline]
-    unsafe fn next_state_unchecked(
-        &self,
-        current: StateID,
-        input: u8,
-    ) -> StateID {
+    unsafe fn next_state_unchecked(&self, current: StateID, input: u8) -> StateID {
         self.next_state(current, input)
     }
 
@@ -533,10 +510,10 @@ unsafe impl<T: AsRef<[u8]>> Automaton for DFA<T> {
 
 #[derive(Clone)]
 struct Transitions<T> {
-                                                            sparse: T,
-                                                                                                                    classes: ByteClasses,
-                    count: usize,
-        patterns: usize,
+    sparse: T,
+    classes: ByteClasses,
+    count: usize,
+    patterns: usize,
 }
 
 impl<'a> Transitions<&'a [u8]> {
@@ -545,19 +522,16 @@ impl<'a> Transitions<&'a [u8]> {
     ) -> Result<(Transitions<&'a [u8]>, usize), DeserializeError> {
         let slice_start = slice.as_ptr() as usize;
 
-        let (state_count, nr) =
-            bytes::try_read_u32_as_usize(&slice, "state count")?;
+        let (state_count, nr) = bytes::try_read_u32_as_usize(&slice, "state count")?;
         slice = &slice[nr..];
 
-        let (pattern_count, nr) =
-            bytes::try_read_u32_as_usize(&slice, "pattern count")?;
+        let (pattern_count, nr) = bytes::try_read_u32_as_usize(&slice, "pattern count")?;
         slice = &slice[nr..];
 
         let (classes, nr) = ByteClasses::from_bytes(&slice)?;
         slice = &slice[nr..];
 
-        let (len, nr) =
-            bytes::try_read_u32_as_usize(&slice, "sparse transitions length")?;
+        let (len, nr) = bytes::try_read_u32_as_usize(&slice, "sparse transitions length")?;
         slice = &slice[nr..];
 
         bytes::check_slice_len(slice, len, "sparse states byte length")?;
@@ -575,15 +549,10 @@ impl<'a> Transitions<&'a [u8]> {
 }
 
 impl<T: AsRef<[u8]>> Transitions<T> {
-                fn write_to<E: Endian>(
-        &self,
-        mut dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    fn write_to<E: Endian>(&self, mut dst: &mut [u8]) -> Result<usize, SerializeError> {
         let nwrite = self.write_to_len();
         if dst.len() < nwrite {
-            return Err(SerializeError::buffer_too_small(
-                "sparse transition table",
-            ));
+            return Err(SerializeError::buffer_too_small("sparse transition table"));
         }
         dst = &mut dst[..nwrite];
 
@@ -608,7 +577,7 @@ impl<T: AsRef<[u8]>> Transitions<T> {
         Ok(nwrite)
     }
 
-            fn write_to_len(&self) -> usize {
+    fn write_to_len(&self) -> usize {
         size_of::<u32>()   // state count
         + size_of::<u32>() // pattern count
         + self.classes.write_to_len()
@@ -616,7 +585,7 @@ impl<T: AsRef<[u8]>> Transitions<T> {
         + self.sparse().len()
     }
 
-                    fn validate(&self) -> Result<(), DeserializeError> {
+    fn validate(&self) -> Result<(), DeserializeError> {
         // In order to validate everything, we not only need to make sure we
         // can decode every state, but that every transition in every state
         // points to a valid state. There are many duplicative transitions, so
@@ -639,7 +608,9 @@ impl<T: AsRef<[u8]>> Transitions<T> {
         #[cfg(feature = "std")]
         impl Seen {
             fn new() -> Seen {
-                Seen { set: BTreeSet::new() }
+                Seen {
+                    set: BTreeSet::new(),
+                }
             }
             fn insert(&mut self, id: StateID) {
                 self.set.insert(id);
@@ -652,7 +623,9 @@ impl<T: AsRef<[u8]>> Transitions<T> {
         #[cfg(not(feature = "std"))]
         impl Seen {
             fn new() -> Seen {
-                Seen { set: core::marker::PhantomData }
+                Seen {
+                    set: core::marker::PhantomData,
+                }
             }
             fn insert(&mut self, _id: StateID) {}
             fn contains(&self, _id: &StateID) -> bool {
@@ -677,9 +650,7 @@ impl<T: AsRef<[u8]>> Transitions<T> {
                 state.bytes_len(),
                 "next state ID offset",
             )?)
-            .map_err(|err| {
-                DeserializeError::state_id_error(err, "next state ID offset")
-            })?;
+            .map_err(|err| DeserializeError::state_id_error(err, "next state ID offset"))?;
             count += 1;
 
             // Now check that all transitions in this state are correct.
@@ -693,14 +664,12 @@ impl<T: AsRef<[u8]>> Transitions<T> {
             }
         }
         if count != self.count {
-            return Err(DeserializeError::generic(
-                "mismatching sparse state count",
-            ));
+            return Err(DeserializeError::generic("mismatching sparse state count"));
         }
         Ok(())
     }
 
-        fn as_ref(&self) -> Transitions<&'_ [u8]> {
+    fn as_ref(&self) -> Transitions<&'_ [u8]> {
         Transitions {
             sparse: self.sparse(),
             classes: self.classes.clone(),
@@ -709,7 +678,7 @@ impl<T: AsRef<[u8]>> Transitions<T> {
         }
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn to_owned(&self) -> Transitions<Vec<u8>> {
         Transitions {
             sparse: self.sparse().to_vec(),
@@ -719,7 +688,7 @@ impl<T: AsRef<[u8]>> Transitions<T> {
         }
     }
 
-                                        #[inline(always)]
+    #[inline(always)]
     fn state(&self, id: StateID) -> State<'_> {
         let mut state = &self.sparse()[id.as_usize()..];
         let mut ntrans = bytes::read_u16(&state) as usize;
@@ -738,18 +707,25 @@ impl<T: AsRef<[u8]>> Transitions<T> {
 
         let accel_len = state[0] as usize;
         let accel = &state[1..accel_len + 1];
-        State { id, is_match, ntrans, input_ranges, next, pattern_ids, accel }
+        State {
+            id,
+            is_match,
+            ntrans,
+            input_ranges,
+            next,
+            pattern_ids,
+            accel,
+        }
     }
 
-                                    fn try_state(&self, id: StateID) -> Result<State<'_>, DeserializeError> {
+    fn try_state(&self, id: StateID) -> Result<State<'_>, DeserializeError> {
         if id.as_usize() > self.sparse().len() {
             return Err(DeserializeError::generic("invalid sparse state ID"));
         }
         let mut state = &self.sparse()[id.as_usize()..];
         // Encoding format starts with a u16 that stores the total number of
         // transitions in this state.
-        let (mut ntrans, _) =
-            bytes::try_read_u16_as_usize(state, "state transition count")?;
+        let (mut ntrans, _) = bytes::try_read_u16_as_usize(state, "state transition count")?;
         let is_match = ((1 << 15) & ntrans) != 0;
         ntrans &= !(1 << 15);
         state = &state[2..];
@@ -781,36 +757,22 @@ impl<T: AsRef<[u8]>> Transitions<T> {
         let (next, state) = state.split_at(next_len);
         // We can at least verify that every state ID is in bounds.
         for idbytes in next.chunks(self.id_len()) {
-            let (id, _) =
-                bytes::read_state_id(idbytes, "sparse state ID in try_state")?;
-            bytes::check_slice_len(
-                self.sparse(),
-                id.as_usize(),
-                "invalid sparse state ID",
-            )?;
+            let (id, _) = bytes::read_state_id(idbytes, "sparse state ID in try_state")?;
+            bytes::check_slice_len(self.sparse(), id.as_usize(), "invalid sparse state ID")?;
         }
 
         // If this is a match state, then read the pattern IDs for this state.
         // Pattern IDs is a u32-length prefixed sequence of native endian
         // encoded 32-bit integers.
         let (pattern_ids, state) = if is_match {
-            let (npats, nr) =
-                bytes::try_read_u32_as_usize(state, "pattern ID count")?;
+            let (npats, nr) = bytes::try_read_u32_as_usize(state, "pattern ID count")?;
             let state = &state[nr..];
 
-            let pattern_ids_len =
-                bytes::mul(npats, 4, "sparse pattern ID byte length")?;
-            bytes::check_slice_len(
-                state,
-                pattern_ids_len,
-                "sparse pattern IDs",
-            )?;
+            let pattern_ids_len = bytes::mul(npats, 4, "sparse pattern ID byte length")?;
+            bytes::check_slice_len(state, pattern_ids_len, "sparse pattern IDs")?;
             let (pattern_ids, state) = state.split_at(pattern_ids_len);
             for patbytes in pattern_ids.chunks(PatternID::SIZE) {
-                bytes::read_pattern_id(
-                    patbytes,
-                    "sparse pattern ID in try_state",
-                )?;
+                bytes::read_pattern_id(patbytes, "sparse pattern ID in try_state")?;
             }
             (pattern_ids, state)
         } else {
@@ -832,11 +794,7 @@ impl<T: AsRef<[u8]>> Transitions<T> {
                 "sparse invalid accelerator length",
             ));
         }
-        bytes::check_slice_len(
-            state,
-            accel_len,
-            "sparse corrupt accelerator length",
-        )?;
+        bytes::check_slice_len(state, accel_len, "sparse corrupt accelerator length")?;
         let (accel, _) = (&state[..accel_len], &state[accel_len..]);
 
         Ok(State {
@@ -850,26 +808,29 @@ impl<T: AsRef<[u8]>> Transitions<T> {
         })
     }
 
-                    fn states(&self) -> StateIter<'_, T> {
-        StateIter { trans: self, id: DEAD.as_usize() }
+    fn states(&self) -> StateIter<'_, T> {
+        StateIter {
+            trans: self,
+            id: DEAD.as_usize(),
+        }
     }
 
-        fn sparse(&self) -> &[u8] {
+    fn sparse(&self) -> &[u8] {
         self.sparse.as_ref()
     }
 
-        fn id_len(&self) -> usize {
+    fn id_len(&self) -> usize {
         StateID::SIZE
     }
 
-                fn memory_usage(&self) -> usize {
+    fn memory_usage(&self) -> usize {
         self.sparse().len()
     }
 }
 
 #[cfg(feature = "std")]
 impl<T: AsMut<[u8]>> Transitions<T> {
-            fn state_mut(&mut self, id: StateID) -> StateMut<'_> {
+    fn state_mut(&mut self, id: StateID) -> StateMut<'_> {
         let mut state = &mut self.sparse_mut()[id.as_usize()..];
         let mut ntrans = bytes::read_u16(&state) as usize;
         let is_match = (1 << 15) & ntrans != 0;
@@ -898,16 +859,16 @@ impl<T: AsMut<[u8]>> Transitions<T> {
         }
     }
 
-        fn sparse_mut(&mut self) -> &mut [u8] {
+    fn sparse_mut(&mut self) -> &mut [u8] {
         self.sparse.as_mut()
     }
 }
 
 #[derive(Clone)]
 struct StartTable<T> {
-                                                table: T,
-        stride: usize,
-                patterns: usize,
+    table: T,
+    stride: usize,
+    patterns: usize,
 }
 
 #[cfg(feature = "std")]
@@ -923,7 +884,11 @@ impl StartTable<Vec<u8>> {
             .unwrap()
             .checked_mul(StateID::SIZE)
             .unwrap();
-        StartTable { table: vec![0; len], stride, patterns }
+        StartTable {
+            table: vec![0; len],
+            stride,
+            patterns,
+        }
     }
 
     fn from_dense_dfa<T: AsRef<[u32]>>(
@@ -954,14 +919,10 @@ impl<'a> StartTable<&'a [u8]> {
     ) -> Result<(StartTable<&'a [u8]>, usize), DeserializeError> {
         let slice_start = slice.as_ptr() as usize;
 
-        let (stride, nr) =
-            bytes::try_read_u32_as_usize(slice, "sparse start table stride")?;
+        let (stride, nr) = bytes::try_read_u32_as_usize(slice, "sparse start table stride")?;
         slice = &slice[nr..];
 
-        let (patterns, nr) = bytes::try_read_u32_as_usize(
-            slice,
-            "sparse start table patterns",
-        )?;
+        let (patterns, nr) = bytes::try_read_u32_as_usize(slice, "sparse start table patterns")?;
         slice = &slice[nr..];
 
         if stride != Start::count() {
@@ -974,8 +935,7 @@ impl<'a> StartTable<&'a [u8]> {
                 "sparse invalid number of patterns",
             ));
         }
-        let pattern_table_size =
-            bytes::mul(stride, patterns, "sparse invalid pattern count")?;
+        let pattern_table_size = bytes::mul(stride, patterns, "sparse invalid pattern count")?;
         // Our start states always start with a single stride of start states
         // for the entire automaton which permit it to match any pattern. What
         // follows it are an optional set of start states for each pattern.
@@ -989,24 +949,21 @@ impl<'a> StartTable<&'a [u8]> {
             StateID::SIZE,
             "sparse pattern table bytes length",
         )?;
-        bytes::check_slice_len(
-            slice,
-            table_bytes_len,
-            "sparse start ID table",
-        )?;
+        bytes::check_slice_len(slice, table_bytes_len, "sparse start ID table")?;
         let table_bytes = &slice[..table_bytes_len];
         slice = &slice[table_bytes_len..];
 
-        let sl = StartTable { table: table_bytes, stride, patterns };
+        let sl = StartTable {
+            table: table_bytes,
+            stride,
+            patterns,
+        };
         Ok((sl, slice.as_ptr() as usize - slice_start))
     }
 }
 
 impl<T: AsRef<[u8]>> StartTable<T> {
-    fn write_to<E: Endian>(
-        &self,
-        mut dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    fn write_to<E: Endian>(&self, mut dst: &mut [u8]) -> Result<usize, SerializeError> {
         let nwrite = self.write_to_len();
         if dst.len() < nwrite {
             return Err(SerializeError::buffer_too_small(
@@ -1026,23 +983,20 @@ impl<T: AsRef<[u8]>> StartTable<T> {
         Ok(nwrite)
     }
 
-            fn write_to_len(&self) -> usize {
+    fn write_to_len(&self) -> usize {
         size_of::<u32>() // stride
         + size_of::<u32>() // # patterns
         + self.table().len()
     }
 
-                    fn validate(
-        &self,
-        trans: &Transitions<T>,
-    ) -> Result<(), DeserializeError> {
+    fn validate(&self, trans: &Transitions<T>) -> Result<(), DeserializeError> {
         for (id, _, _) in self.iter() {
             let _ = trans.try_state(id)?;
         }
         Ok(())
     }
 
-        fn as_ref(&self) -> StartTable<&'_ [u8]> {
+    fn as_ref(&self) -> StartTable<&'_ [u8]> {
         StartTable {
             table: self.table(),
             stride: self.stride,
@@ -1050,7 +1004,7 @@ impl<T: AsRef<[u8]>> StartTable<T> {
         }
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn to_owned(&self) -> StartTable<Vec<u8>> {
         StartTable {
             table: self.table().to_vec(),
@@ -1059,7 +1013,7 @@ impl<T: AsRef<[u8]>> StartTable<T> {
         }
     }
 
-                            fn start(&self, index: Start, pattern_id: Option<PatternID>) -> StateID {
+    fn start(&self, index: Start, pattern_id: Option<PatternID>) -> StateID {
         let start_index = index.as_usize();
         let index = match pattern_id {
             None => start_index,
@@ -1081,31 +1035,26 @@ impl<T: AsRef<[u8]>> StartTable<T> {
         bytes::read_state_id_unchecked(&self.table()[start..]).0
     }
 
-        fn iter(&self) -> StartStateIter<'_, T> {
+    fn iter(&self) -> StartStateIter<'_, T> {
         StartStateIter { st: self, i: 0 }
     }
 
-        fn len(&self) -> usize {
+    fn len(&self) -> usize {
         self.table().len() / StateID::SIZE
     }
 
-        fn table(&self) -> &[u8] {
+    fn table(&self) -> &[u8] {
         self.table.as_ref()
     }
 
-                fn memory_usage(&self) -> usize {
+    fn memory_usage(&self) -> usize {
         self.table().len()
     }
 }
 
 #[cfg(feature = "std")]
 impl<T: AsMut<[u8]>> StartTable<T> {
-                fn set_start(
-        &mut self,
-        index: Start,
-        pattern_id: Option<PatternID>,
-        id: StateID,
-    ) {
+    fn set_start(&mut self, index: Start, pattern_id: Option<PatternID>, id: StateID) {
         let start_index = index.as_usize();
         let index = match pattern_id {
             None => start_index,
@@ -1123,10 +1072,7 @@ impl<T: AsMut<[u8]>> StartTable<T> {
         };
         let start = index * StateID::SIZE;
         let end = start + StateID::SIZE;
-        bytes::write_state_id::<bytes::NE>(
-            id,
-            &mut self.table.as_mut()[start..end],
-        );
+        bytes::write_state_id::<bytes::NE>(id, &mut self.table.as_mut()[start..end]);
     }
 }
 
@@ -1173,7 +1119,9 @@ impl<'a, T: AsRef<[u8]>> Iterator for StartStateIter<'a, T> {
 
 impl<'a, T> fmt::Debug for StartStateIter<'a, T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.debug_struct("StartStateIter").field("i", &self.i).finish()
+        f.debug_struct("StartStateIter")
+            .field("i", &self.i)
+            .finish()
     }
 }
 
@@ -1203,17 +1151,17 @@ impl<'a, T> fmt::Debug for StateIter<'a, T> {
 
 #[derive(Clone)]
 struct State<'a> {
-        id: StateID,
-        is_match: bool,
-        ntrans: usize,
-                input_ranges: &'a [u8],
-                next: &'a [u8],
-                    pattern_ids: &'a [u8],
-                    accel: &'a [u8],
+    id: StateID,
+    is_match: bool,
+    ntrans: usize,
+    input_ranges: &'a [u8],
+    next: &'a [u8],
+    pattern_ids: &'a [u8],
+    accel: &'a [u8],
 }
 
 impl<'a> State<'a> {
-                        #[inline(always)]
+    #[inline(always)]
     fn next(&self, input: u8) -> StateID {
         // This straight linear search was observed to be much better than
         // binary search on ASCII haystacks, likely because a binary search
@@ -1234,47 +1182,45 @@ impl<'a> State<'a> {
         DEAD
     }
 
-        fn next_eoi(&self) -> StateID {
+    fn next_eoi(&self) -> StateID {
         self.next_at(self.ntrans - 1)
     }
 
-        fn id(&self) -> StateID {
+    fn id(&self) -> StateID {
         self.id
     }
 
-            fn range(&self, i: usize) -> (u8, u8) {
+    fn range(&self, i: usize) -> (u8, u8) {
         (self.input_ranges[i * 2], self.input_ranges[i * 2 + 1])
     }
 
-        fn next_at(&self, i: usize) -> StateID {
+    fn next_at(&self, i: usize) -> StateID {
         let start = i * StateID::SIZE;
         let end = start + StateID::SIZE;
         let bytes = self.next[start..end].try_into().unwrap();
         StateID::from_ne_bytes_unchecked(bytes)
     }
 
-            fn pattern_id(&self, match_index: usize) -> PatternID {
+    fn pattern_id(&self, match_index: usize) -> PatternID {
         let start = match_index * PatternID::SIZE;
         bytes::read_pattern_id_unchecked(&self.pattern_ids[start..]).0
     }
 
-            fn pattern_count(&self) -> usize {
+    fn pattern_count(&self) -> usize {
         assert_eq!(0, self.pattern_ids.len() % 4);
         self.pattern_ids.len() / 4
     }
 
-            fn bytes_len(&self) -> usize {
-        let mut len = 2
-            + (self.ntrans * 2)
-            + (self.ntrans * StateID::SIZE)
-            + (1 + self.accel.len());
+    fn bytes_len(&self) -> usize {
+        let mut len =
+            2 + (self.ntrans * 2) + (self.ntrans * StateID::SIZE) + (1 + self.accel.len());
         if self.is_match {
             len += size_of::<u32>() + self.pattern_ids.len();
         }
         len
     }
 
-        fn accelerator(&self) -> &'a [u8] {
+    fn accelerator(&self) -> &'a [u8] {
         self.accel
     }
 }
@@ -1318,18 +1264,18 @@ impl<'a> fmt::Debug for State<'a> {
 
 #[cfg(feature = "std")]
 struct StateMut<'a> {
-        id: StateID,
-        is_match: bool,
-        ntrans: usize,
-                input_ranges: &'a mut [u8],
-                next: &'a mut [u8],
-                    pattern_ids: &'a [u8],
-                    accel: &'a mut [u8],
+    id: StateID,
+    is_match: bool,
+    ntrans: usize,
+    input_ranges: &'a mut [u8],
+    next: &'a mut [u8],
+    pattern_ids: &'a [u8],
+    accel: &'a mut [u8],
 }
 
 #[cfg(feature = "std")]
 impl<'a> StateMut<'a> {
-        fn set_next_at(&mut self, i: usize, next: StateID) {
+    fn set_next_at(&mut self, i: usize, next: StateID) {
         let start = i * StateID::SIZE;
         let end = start + StateID::SIZE;
         bytes::write_state_id::<bytes::NE>(next, &mut self.next[start..end]);

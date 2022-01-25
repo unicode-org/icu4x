@@ -11,9 +11,7 @@ use alloc::{
 
 #[cfg(feature = "std")]
 use crate::regex_automata::{
-    dfa::{
-        accel::Accel, determinize, error::Error, minimize::Minimizer, sparse,
-    },
+    dfa::{accel::Accel, determinize, error::Error, minimize::Minimizer, sparse},
     nfa::thompson,
     util::alphabet::ByteSet,
     MatchKind,
@@ -61,41 +59,41 @@ pub struct Config {
 
 #[cfg(feature = "std")]
 impl Config {
-        pub fn new() -> Config {
+    pub fn new() -> Config {
         Config::default()
     }
 
-                                                                                                                                                                                                                                                                                                                                                                                        pub fn anchored(mut self, yes: bool) -> Config {
+    pub fn anchored(mut self, yes: bool) -> Config {
         self.anchored = Some(yes);
         self
     }
 
-                                                                            pub fn accelerate(mut self, yes: bool) -> Config {
+    pub fn accelerate(mut self, yes: bool) -> Config {
         self.accelerate = Some(yes);
         self
     }
 
-                                                                                                                                                                    pub fn minimize(mut self, yes: bool) -> Config {
+    pub fn minimize(mut self, yes: bool) -> Config {
         self.minimize = Some(yes);
         self
     }
 
-                                                                                                                                                                                                                                                                                                                                                                                                pub fn match_kind(mut self, kind: MatchKind) -> Config {
+    pub fn match_kind(mut self, kind: MatchKind) -> Config {
         self.match_kind = Some(kind);
         self
     }
 
-                                                                                                                                                                                                                                                                                                        pub fn starts_for_each_pattern(mut self, yes: bool) -> Config {
+    pub fn starts_for_each_pattern(mut self, yes: bool) -> Config {
         self.starts_for_each_pattern = Some(yes);
         self
     }
 
-                                                                                                                    pub fn byte_classes(mut self, yes: bool) -> Config {
+    pub fn byte_classes(mut self, yes: bool) -> Config {
         self.byte_classes = Some(yes);
         self
     }
 
-                                                                                                                                                                                                                                                                                        pub fn unicode_word_boundary(mut self, yes: bool) -> Config {
+    pub fn unicode_word_boundary(mut self, yes: bool) -> Config {
         // We have a separate option for this instead of just setting the
         // appropriate quit bytes here because we don't want to set quit bytes
         // for every regex. We only want to set them when the regex contains a
@@ -104,7 +102,7 @@ impl Config {
         self
     }
 
-                                                                                                                                                                                                                                                                    pub fn quit(mut self, byte: u8, yes: bool) -> Config {
+    pub fn quit(mut self, byte: u8, yes: bool) -> Config {
         if self.get_unicode_word_boundary() && !byte.is_ascii() && !yes {
             panic!(
                 "cannot set non-ASCII byte to be non-quit when \
@@ -122,74 +120,68 @@ impl Config {
         self
     }
 
-                                                                                                                                                                                                        pub fn dfa_size_limit(mut self, bytes: Option<usize>) -> Config {
+    pub fn dfa_size_limit(mut self, bytes: Option<usize>) -> Config {
         self.dfa_size_limit = Some(bytes);
         self
     }
 
-                                                                                                                                                                                                        pub fn determinize_size_limit(mut self, bytes: Option<usize>) -> Config {
+    pub fn determinize_size_limit(mut self, bytes: Option<usize>) -> Config {
         self.determinize_size_limit = Some(bytes);
         self
     }
 
-        pub fn get_anchored(&self) -> bool {
+    pub fn get_anchored(&self) -> bool {
         self.anchored.unwrap_or(false)
     }
 
-            pub fn get_accelerate(&self) -> bool {
+    pub fn get_accelerate(&self) -> bool {
         self.accelerate.unwrap_or(true)
     }
 
-            pub fn get_minimize(&self) -> bool {
+    pub fn get_minimize(&self) -> bool {
         self.minimize.unwrap_or(false)
     }
 
-        pub fn get_match_kind(&self) -> MatchKind {
+    pub fn get_match_kind(&self) -> MatchKind {
         self.match_kind.unwrap_or(MatchKind::LeftmostFirst)
     }
 
-            pub fn get_starts_for_each_pattern(&self) -> bool {
+    pub fn get_starts_for_each_pattern(&self) -> bool {
         self.starts_for_each_pattern.unwrap_or(false)
     }
 
-                pub fn get_byte_classes(&self) -> bool {
+    pub fn get_byte_classes(&self) -> bool {
         self.byte_classes.unwrap_or(true)
     }
 
-                pub fn get_unicode_word_boundary(&self) -> bool {
+    pub fn get_unicode_word_boundary(&self) -> bool {
         self.unicode_word_boundary.unwrap_or(false)
     }
 
-                    pub fn get_quit(&self, byte: u8) -> bool {
+    pub fn get_quit(&self, byte: u8) -> bool {
         self.quit.map_or(false, |q| q.contains(byte))
     }
 
-                    pub fn get_dfa_size_limit(&self) -> Option<usize> {
+    pub fn get_dfa_size_limit(&self) -> Option<usize> {
         self.dfa_size_limit.unwrap_or(None)
     }
 
-                                                    pub fn get_determinize_size_limit(&self) -> Option<usize> {
+    pub fn get_determinize_size_limit(&self) -> Option<usize> {
         self.determinize_size_limit.unwrap_or(None)
     }
 
-                    pub(crate) fn overwrite(self, o: Config) -> Config {
+    pub(crate) fn overwrite(self, o: Config) -> Config {
         Config {
             anchored: o.anchored.or(self.anchored),
             accelerate: o.accelerate.or(self.accelerate),
             minimize: o.minimize.or(self.minimize),
             match_kind: o.match_kind.or(self.match_kind),
-            starts_for_each_pattern: o
-                .starts_for_each_pattern
-                .or(self.starts_for_each_pattern),
+            starts_for_each_pattern: o.starts_for_each_pattern.or(self.starts_for_each_pattern),
             byte_classes: o.byte_classes.or(self.byte_classes),
-            unicode_word_boundary: o
-                .unicode_word_boundary
-                .or(self.unicode_word_boundary),
+            unicode_word_boundary: o.unicode_word_boundary.or(self.unicode_word_boundary),
             quit: o.quit.or(self.quit),
             dfa_size_limit: o.dfa_size_limit.or(self.dfa_size_limit),
-            determinize_size_limit: o
-                .determinize_size_limit
-                .or(self.determinize_size_limit),
+            determinize_size_limit: o.determinize_size_limit.or(self.determinize_size_limit),
         }
     }
 }
@@ -203,33 +195,25 @@ pub struct Builder {
 
 #[cfg(feature = "std")]
 impl Builder {
-        pub fn new() -> Builder {
+    pub fn new() -> Builder {
         Builder {
             config: Config::default(),
             thompson: thompson::Builder::new(),
         }
     }
 
-                    pub fn build(&self, pattern: &str) -> Result<OwnedDFA, Error> {
+    pub fn build(&self, pattern: &str) -> Result<OwnedDFA, Error> {
         self.build_many(&[pattern])
     }
 
-                    pub fn build_many<P: AsRef<str>>(
-        &self,
-        patterns: &[P],
-    ) -> Result<OwnedDFA, Error> {
+    pub fn build_many<P: AsRef<str>>(&self, patterns: &[P]) -> Result<OwnedDFA, Error> {
         let nfa = self.thompson.build_many(patterns).map_err(Error::nfa)?;
         self.build_from_nfa(&nfa)
     }
 
-                                                                                                                pub fn build_from_nfa(
-        &self,
-        nfa: &thompson::NFA,
-    ) -> Result<OwnedDFA, Error> {
+    pub fn build_from_nfa(&self, nfa: &thompson::NFA) -> Result<OwnedDFA, Error> {
         let mut quit = self.config.quit.unwrap_or(ByteSet::empty());
-        if self.config.get_unicode_word_boundary()
-            && nfa.has_word_boundary_unicode()
-        {
+        if self.config.get_unicode_word_boundary() && nfa.has_word_boundary_unicode() {
             for b in 0x80..=0xFF {
                 quit.add(b);
             }
@@ -273,12 +257,12 @@ impl Builder {
         Ok(dfa)
     }
 
-        pub fn configure(&mut self, config: Config) -> &mut Builder {
+    pub fn configure(&mut self, config: Config) -> &mut Builder {
         self.config = self.config.overwrite(config);
         self
     }
 
-                                    pub fn syntax(
+    pub fn syntax(
         &mut self,
         config: crate::regex_automata::util::syntax::SyntaxConfig,
     ) -> &mut Builder {
@@ -286,7 +270,7 @@ impl Builder {
         self
     }
 
-                                        pub fn thompson(&mut self, config: thompson::Config) -> &mut Builder {
+    pub fn thompson(&mut self, config: thompson::Config) -> &mut Builder {
         self.thompson.configure(config);
         self
     }
@@ -304,43 +288,46 @@ pub(crate) type OwnedDFA = DFA<Vec<u32>>;
 
 #[derive(Clone)]
 pub struct DFA<T> {
-                tt: TransitionTable<T>,
-                    st: StartTable<T>,
-                                        ms: MatchStates<T>,
-                special: Special,
-                                            accels: Accels<T>,
+    tt: TransitionTable<T>,
+    st: StartTable<T>,
+    ms: MatchStates<T>,
+    special: Special,
+    accels: Accels<T>,
 }
 
 #[cfg(feature = "std")]
 impl OwnedDFA {
-                                                                    pub fn new(pattern: &str) -> Result<OwnedDFA, Error> {
+    pub fn new(pattern: &str) -> Result<OwnedDFA, Error> {
         Builder::new().build(pattern)
     }
 
-                                                                    pub fn new_many<P: AsRef<str>>(patterns: &[P]) -> Result<OwnedDFA, Error> {
+    pub fn new_many<P: AsRef<str>>(patterns: &[P]) -> Result<OwnedDFA, Error> {
         Builder::new().build_many(patterns)
     }
 }
 
 #[cfg(feature = "std")]
 impl OwnedDFA {
-                                                            pub fn always_match() -> Result<OwnedDFA, Error> {
+    pub fn always_match() -> Result<OwnedDFA, Error> {
         let nfa = thompson::NFA::always_match();
         Builder::new().build_from_nfa(&nfa)
     }
 
-                                                    pub fn never_match() -> Result<OwnedDFA, Error> {
+    pub fn never_match() -> Result<OwnedDFA, Error> {
         let nfa = thompson::NFA::never_match();
         Builder::new().build_from_nfa(&nfa)
     }
 
-                fn initial(
+    fn initial(
         classes: ByteClasses,
         pattern_count: usize,
         starts_for_each_pattern: bool,
     ) -> Result<OwnedDFA, Error> {
-        let start_pattern_count =
-            if starts_for_each_pattern { pattern_count } else { 0 };
+        let start_pattern_count = if starts_for_each_pattern {
+            pattern_count
+        } else {
+            0
+        };
         Ok(DFA {
             tt: TransitionTable::minimal(classes),
             st: StartTable::dead(start_pattern_count)?,
@@ -352,7 +339,7 @@ impl OwnedDFA {
 }
 
 impl<T: AsRef<[u32]>> DFA<T> {
-            pub fn as_ref(&self) -> DFA<&'_ [u32]> {
+    pub fn as_ref(&self) -> DFA<&'_ [u32]> {
         DFA {
             tt: self.tt.as_ref(),
             st: self.st.as_ref(),
@@ -362,7 +349,7 @@ impl<T: AsRef<[u32]>> DFA<T> {
         }
     }
 
-                        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_owned(&self) -> OwnedDFA {
         DFA {
             tt: self.tt.to_owned(),
@@ -373,23 +360,23 @@ impl<T: AsRef<[u32]>> DFA<T> {
         }
     }
 
-                                        pub fn has_starts_for_each_pattern(&self) -> bool {
+    pub fn has_starts_for_each_pattern(&self) -> bool {
         self.st.patterns > 0
     }
 
-                                                                                                    pub fn alphabet_len(&self) -> usize {
+    pub fn alphabet_len(&self) -> usize {
         self.tt.alphabet_len()
     }
 
-                                                                                    pub fn stride2(&self) -> usize {
+    pub fn stride2(&self) -> usize {
         self.tt.stride2
     }
 
-                                pub fn stride(&self) -> usize {
+    pub fn stride(&self) -> usize {
         self.tt.stride()
     }
 
-                                            pub(crate) fn universal_start_state(&self) -> StateID {
+    pub(crate) fn universal_start_state(&self) -> StateID {
         // We choose 'NonWordByte' for no particular reason, other than
         // the fact that this is the 'main' starting configuration used in
         // determinization. But in essence, it doesn't really matter.
@@ -400,7 +387,7 @@ impl<T: AsRef<[u32]>> DFA<T> {
         self.st.start(Start::NonWordByte, None)
     }
 
-                                pub fn memory_usage(&self) -> usize {
+    pub fn memory_usage(&self) -> usize {
         self.tt.memory_usage()
             + self.st.memory_usage()
             + self.ms.memory_usage()
@@ -409,27 +396,27 @@ impl<T: AsRef<[u32]>> DFA<T> {
 }
 
 impl<T: AsRef<[u32]>> DFA<T> {
-                                                                                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_sparse(&self) -> Result<sparse::DFA<Vec<u8>>, Error> {
         sparse::DFA::from_dense(self)
     }
 
-                                                                                                                                                            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_bytes_little_endian(&self) -> (Vec<u8>, usize) {
         self.to_bytes::<bytes::LE>()
     }
 
-                                                                                                                                                            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_bytes_big_endian(&self) -> (Vec<u8>, usize) {
         self.to_bytes::<bytes::BE>()
     }
 
-                                                                                                                                                                                        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_bytes_native_endian(&self) -> (Vec<u8>, usize) {
         self.to_bytes::<bytes::NE>()
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn to_bytes<E: Endian>(&self) -> (Vec<u8>, usize) {
         let len = self.write_to_len();
         let (mut buf, padding) = bytes::alloc_aligned_buffer::<u32>(len);
@@ -440,28 +427,19 @@ impl<T: AsRef<[u32]>> DFA<T> {
         (buf, padding)
     }
 
-                                                                                                                                                                                pub fn write_to_little_endian(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to_little_endian(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         self.as_ref().write_to::<bytes::LE>(dst)
     }
 
-                                                                                                                                                                                pub fn write_to_big_endian(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to_big_endian(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         self.as_ref().write_to::<bytes::BE>(dst)
     }
 
-                                                                                                                                                                                                            pub fn write_to_native_endian(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to_native_endian(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         self.as_ref().write_to::<bytes::NE>(dst)
     }
 
-                                                                                                                                                            pub fn write_to_len(&self) -> usize {
+    pub fn write_to_len(&self) -> usize {
         bytes::write_label_len(LABEL)
         + bytes::write_endianness_check_len()
         + bytes::write_version_len()
@@ -475,9 +453,7 @@ impl<T: AsRef<[u32]>> DFA<T> {
 }
 
 impl<'a> DFA<&'a [u32]> {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pub fn from_bytes(
-        slice: &'a [u8],
-    ) -> Result<(DFA<&'a [u32]>, usize), DeserializeError> {
+    pub fn from_bytes(slice: &'a [u8]) -> Result<(DFA<&'a [u32]>, usize), DeserializeError> {
         // SAFETY: This is safe because we validate both the transition table,
         // start state ID list and the match states below. If either validation
         // fails, then we return an error.
@@ -491,7 +467,7 @@ impl<'a> DFA<&'a [u32]> {
         Ok((dfa, nread))
     }
 
-                                                                                                                pub unsafe fn from_bytes_unchecked(
+    pub unsafe fn from_bytes_unchecked(
         slice: &'a [u8],
     ) -> Result<(DFA<&'a [u32]>, usize), DeserializeError> {
         let mut nr = 0;
@@ -521,13 +497,19 @@ impl<'a> DFA<&'a [u32]> {
         let (accels, nread) = Accels::from_bytes_unchecked(&slice[nr..])?;
         nr += nread;
 
-        Ok((DFA { tt, st, ms, special, accels }, nr))
+        Ok((
+            DFA {
+                tt,
+                st,
+                ms,
+                special,
+                accels,
+            },
+            nr,
+        ))
     }
 
-                    fn write_to<E: Endian>(
-        &self,
-        mut dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    fn write_to<E: Endian>(&self, mut dst: &mut [u8]) -> Result<usize, SerializeError> {
         let nwrite = self.write_to_len();
         if dst.len() < nwrite {
             return Err(SerializeError::buffer_too_small("dense DFA"));
@@ -554,7 +536,7 @@ impl<'a> DFA<&'a [u32]> {
 
 #[cfg(feature = "std")]
 impl OwnedDFA {
-        pub(crate) fn set_start_state(
+    pub(crate) fn set_start_state(
         &mut self,
         index: Start,
         pattern_id: Option<PatternID>,
@@ -564,36 +546,31 @@ impl OwnedDFA {
         self.st.set_start(index, pattern_id, id);
     }
 
-            pub(crate) fn set_transition(
-        &mut self,
-        from: StateID,
-        byte: alphabet::Unit,
-        to: StateID,
-    ) {
+    pub(crate) fn set_transition(&mut self, from: StateID, byte: alphabet::Unit, to: StateID) {
         self.tt.set(from, byte, to);
     }
 
-                            pub(crate) fn add_empty_state(&mut self) -> Result<StateID, Error> {
+    pub(crate) fn add_empty_state(&mut self) -> Result<StateID, Error> {
         self.tt.add_empty_state()
     }
 
-                        pub(crate) fn swap_states(&mut self, id1: StateID, id2: StateID) {
+    pub(crate) fn swap_states(&mut self, id1: StateID, id2: StateID) {
         self.tt.swap(id1, id2);
     }
 
-                        pub(crate) fn truncate_states(&mut self, count: usize) {
+    pub(crate) fn truncate_states(&mut self, count: usize) {
         self.tt.truncate(count);
     }
 
-                pub(crate) fn state_mut(&mut self, id: StateID) -> StateMut<'_> {
+    pub(crate) fn state_mut(&mut self, id: StateID) -> StateMut<'_> {
         self.tt.state_mut(id)
     }
 
-        pub(crate) fn minimize(&mut self) {
+    pub(crate) fn minimize(&mut self) {
         Minimizer::new(self).run();
     }
 
-                                pub(crate) fn set_pattern_map(
+    pub(crate) fn set_pattern_map(
         &mut self,
         map: &BTreeMap<StateID, Vec<PatternID>>,
     ) -> Result<(), Error> {
@@ -601,7 +578,7 @@ impl OwnedDFA {
         Ok(())
     }
 
-            pub(crate) fn accelerate(&mut self) {
+    pub(crate) fn accelerate(&mut self) {
         // dead and quit states can never be accelerated.
         if self.state_count() <= 2 {
             return;
@@ -647,11 +624,10 @@ impl OwnedDFA {
         // guaranteed to get set to sensible values below.
         self.special.min_accel = StateID::MAX;
         self.special.max_accel = StateID::ZERO;
-        let update_special_accel =
-            |special: &mut Special, accel_id: StateID| {
-                special.min_accel = cmp::min(special.min_accel, accel_id);
-                special.max_accel = cmp::max(special.max_accel, accel_id);
-            };
+        let update_special_accel = |special: &mut Special, accel_id: StateID| {
+            special.min_accel = cmp::min(special.min_accel, accel_id);
+            special.max_accel = cmp::max(special.max_accel, accel_id);
+        };
 
         // Start by shuffling match states. Any match states that are
         // accelerated get moved to the end of the match state range.
@@ -720,8 +696,7 @@ impl OwnedDFA {
             let mut next_start_id = self.special.min_start;
             let mut cur_id = self.from_index(self.state_count() - 1);
             // This is guaranteed to exist since cnormal > 0.
-            let mut next_norm_id =
-                self.tt.next_state_id(self.special.max_start);
+            let mut next_norm_id = self.tt.next_state_id(self.special.max_start);
             while cur_id >= next_norm_id {
                 if let Some(accel) = accels.remove(&cur_id) {
                     remapper.swap(self, next_start_id, cur_id);
@@ -737,10 +712,8 @@ impl OwnedDFA {
                     accels.insert(next_start_id, accel);
                     update_special_accel(&mut self.special, next_start_id);
                     // Our start range shifts one to the right now.
-                    self.special.min_start =
-                        self.tt.next_state_id(self.special.min_start);
-                    self.special.max_start =
-                        self.tt.next_state_id(self.special.max_start);
+                    self.special.min_start = self.tt.next_state_id(self.special.min_start);
+                    self.special.max_start = self.tt.next_state_id(self.special.max_start);
                     next_start_id = self.tt.next_state_id(next_start_id);
                     next_norm_id = self.tt.next_state_id(next_norm_id);
                 }
@@ -782,12 +755,12 @@ impl OwnedDFA {
         // our match states cannot error.
         self.set_pattern_map(&new_matches).unwrap();
         self.special.set_max();
-        self.special.validate().expect("special state ranges should validate");
+        self.special
+            .validate()
+            .expect("special state ranges should validate");
         self.special
             .validate_state_count(self.state_count(), self.stride2())
-            .expect(
-                "special state ranges should be consistent with state count",
-            );
+            .expect("special state ranges should be consistent with state count");
         assert_eq!(
             self.special.accel_len(self.stride()),
             // We record the number of accelerated states initially detected
@@ -811,7 +784,7 @@ impl OwnedDFA {
         }
     }
 
-                    pub(crate) fn shuffle(
+    pub(crate) fn shuffle(
         &mut self,
         mut matches: BTreeMap<StateID, Vec<PatternID>>,
     ) -> Result<(), Error> {
@@ -881,10 +854,8 @@ impl OwnedDFA {
                 next_id = self.tt.next_state_id(next_id);
             }
             matches = new_matches;
-            self.special.max_match = cmp::max(
-                self.special.min_match,
-                self.tt.prev_state_id(next_id),
-            );
+            self.special.max_match =
+                cmp::max(self.special.min_match, self.tt.prev_state_id(next_id));
         }
 
         // Shuffle starting states.
@@ -898,87 +869,85 @@ impl OwnedDFA {
                 remapper.swap(self, next_id, id);
                 next_id = self.tt.next_state_id(next_id);
             }
-            self.special.max_start = cmp::max(
-                self.special.min_start,
-                self.tt.prev_state_id(next_id),
-            );
+            self.special.max_start =
+                cmp::max(self.special.min_start, self.tt.prev_state_id(next_id));
         }
 
         // Finally remap all transitions in our DFA.
         remapper.remap(self);
         self.set_pattern_map(&matches)?;
         self.special.set_max();
-        self.special.validate().expect("special state ranges should validate");
+        self.special
+            .validate()
+            .expect("special state ranges should validate");
         self.special
             .validate_state_count(self.state_count(), self.stride2())
-            .expect(
-                "special state ranges should be consistent with state count",
-            );
+            .expect("special state ranges should be consistent with state count");
         Ok(())
     }
 }
 
 impl<T: AsRef<[u32]>> DFA<T> {
-        pub(crate) fn byte_classes(&self) -> &ByteClasses {
+    pub(crate) fn byte_classes(&self) -> &ByteClasses {
         &self.tt.classes
     }
 
-        pub(crate) fn special(&self) -> &Special {
+    pub(crate) fn special(&self) -> &Special {
         &self.special
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub(crate) fn special_mut(&mut self) -> &mut Special {
         &mut self.special
     }
 
-                        pub(crate) fn states(&self) -> StateIter<'_, T> {
+    pub(crate) fn states(&self) -> StateIter<'_, T> {
         self.tt.states()
     }
 
-            pub(crate) fn state_count(&self) -> usize {
+    pub(crate) fn state_count(&self) -> usize {
         self.tt.count()
     }
 
-                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub(crate) fn pattern_id_slice(&self, id: StateID) -> &[PatternID] {
         assert!(self.is_match_state(id));
         self.ms.pattern_id_slice(self.match_state_index(id))
     }
 
-                pub(crate) fn match_pattern_len(&self, id: StateID) -> usize {
+    pub(crate) fn match_pattern_len(&self, id: StateID) -> usize {
         assert!(self.is_match_state(id));
         self.ms.pattern_len(self.match_state_index(id))
     }
 
-        pub(crate) fn pattern_count(&self) -> usize {
+    pub(crate) fn pattern_count(&self) -> usize {
         self.ms.patterns
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub(crate) fn pattern_map(&self) -> BTreeMap<StateID, Vec<PatternID>> {
         self.ms.to_map(self)
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub(crate) fn quit_id(&self) -> StateID {
         self.from_index(1)
     }
 
-                        pub(crate) fn to_index(&self, id: StateID) -> usize {
+    pub(crate) fn to_index(&self, id: StateID) -> usize {
         self.tt.to_index(id)
     }
 
-                        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub(crate) fn from_index(&self, index: usize) -> StateID {
         self.tt.from_index(index)
     }
 
-        pub(crate) fn starts(&self) -> StartStateIter<'_> {
+    pub(crate) fn starts(&self) -> StartStateIter<'_> {
         self.st.iter()
     }
 
-                fn match_state_index(&self, id: StateID) -> usize {
+    fn match_state_index(&self, id: StateID) -> usize {
         debug_assert!(self.is_match_state(id));
         // This is one of the places where we rely on the fact that match
         // states are contiguous in the transition table. Namely, that the
@@ -992,7 +961,7 @@ impl<T: AsRef<[u32]>> DFA<T> {
         self.to_index(StateID::new_unchecked(id.as_usize() - min))
     }
 
-                fn accelerator_index(&self, id: StateID) -> usize {
+    fn accelerator_index(&self, id: StateID) -> usize {
         let min = self.special().min_accel.as_usize();
         // CORRECTNESS: We're allowed to produce an incorrect result or panic,
         // so both the subtraction and the unchecked StateID construction is
@@ -1000,11 +969,11 @@ impl<T: AsRef<[u32]>> DFA<T> {
         self.to_index(StateID::new_unchecked(id.as_usize() - min))
     }
 
-        fn accels(&self) -> Accels<&[u32]> {
+    fn accels(&self) -> Accels<&[u32]> {
         self.accels.as_ref()
     }
 
-        fn trans(&self) -> &[StateID] {
+    fn trans(&self) -> &[StateID] {
         self.tt.table()
     }
 }
@@ -1033,9 +1002,7 @@ impl<T: AsRef<[u32]>> fmt::Debug for DFA<T> {
             if i % self.st.stride == 0 {
                 match pid {
                     None => writeln!(f, "START-GROUP(ALL)")?,
-                    Some(pid) => {
-                        writeln!(f, "START_GROUP(pattern: {:?})", pid)?
-                    }
+                    Some(pid) => writeln!(f, "START_GROUP(pattern: {:?})", pid)?,
                 }
             }
             writeln!(f, "  {:?} => {:06?}", sty, id)?;
@@ -1050,8 +1017,7 @@ impl<T: AsRef<[u32]>> fmt::Debug for DFA<T> {
                     self.to_index(id)
                 };
                 write!(f, "MATCH({:06?}): ", id)?;
-                for (i, &pid) in self.ms.pattern_id_slice(i).iter().enumerate()
-                {
+                for (i, &pid) in self.ms.pattern_id_slice(i).iter().enumerate() {
                     if i > 0 {
                         write!(f, ", ")?;
                     }
@@ -1106,11 +1072,7 @@ unsafe impl<T: AsRef<[u32]>> Automaton for DFA<T> {
     }
 
     #[inline]
-    unsafe fn next_state_unchecked(
-        &self,
-        current: StateID,
-        input: u8,
-    ) -> StateID {
+    unsafe fn next_state_unchecked(&self, current: StateID, input: u8) -> StateID {
         let input = self.byte_classes().get_unchecked(input);
         let o = current.as_usize() + usize::from(input);
         *self.trans().get_unchecked(o)
@@ -1182,13 +1144,13 @@ unsafe impl<T: AsRef<[u32]>> Automaton for DFA<T> {
 
 #[derive(Clone)]
 pub(crate) struct TransitionTable<T> {
-                                        table: T,
-                                                                                classes: ByteClasses,
-                                                                                stride2: usize,
+    table: T,
+    classes: ByteClasses,
+    stride2: usize,
 }
 
 impl<'a> TransitionTable<&'a [u32]> {
-                                                                                                unsafe fn from_bytes_unchecked(
+    unsafe fn from_bytes_unchecked(
         mut slice: &'a [u8],
     ) -> Result<(TransitionTable<&'a [u32]>, usize), DeserializeError> {
         let slice_start = slice.as_ptr() as usize;
@@ -1219,21 +1181,16 @@ impl<'a> TransitionTable<&'a [u32]> {
             ));
         }
         // This is OK since 1 <= stride2 <= 9.
-        let stride =
-            1usize.checked_shl(u32::try_from(stride2).unwrap()).unwrap();
+        let stride = 1usize.checked_shl(u32::try_from(stride2).unwrap()).unwrap();
         if classes.alphabet_len() > stride {
             return Err(DeserializeError::generic(
                 "alphabet size cannot be bigger than transition table stride",
             ));
         }
 
-        let trans_count =
-            bytes::shl(count, stride2, "dense table transition count")?;
-        let table_bytes_len = bytes::mul(
-            trans_count,
-            StateID::SIZE,
-            "dense table state byte count",
-        )?;
+        let trans_count = bytes::shl(count, stride2, "dense table transition count")?;
+        let table_bytes_len =
+            bytes::mul(trans_count, StateID::SIZE, "dense table state byte count")?;
         bytes::check_slice_len(slice, table_bytes_len, "transition table")?;
         bytes::check_alignment::<StateID>(slice)?;
         let table_bytes = &slice[..table_bytes_len];
@@ -1246,20 +1203,20 @@ impl<'a> TransitionTable<&'a [u32]> {
         // it explicitly to call it out, even though it is technically
         // superfluous.
         #[allow(unused_unsafe)]
-        let table = unsafe {
-            core::slice::from_raw_parts(
-                table_bytes.as_ptr() as *const u32,
-                trans_count,
-            )
+        let table =
+            unsafe { core::slice::from_raw_parts(table_bytes.as_ptr() as *const u32, trans_count) };
+        let tt = TransitionTable {
+            table,
+            classes,
+            stride2,
         };
-        let tt = TransitionTable { table, classes, stride2 };
         Ok((tt, slice.as_ptr() as usize - slice_start))
     }
 }
 
 #[cfg(feature = "std")]
 impl TransitionTable<Vec<u32>> {
-                fn minimal(classes: ByteClasses) -> TransitionTable<Vec<u32>> {
+    fn minimal(classes: ByteClasses) -> TransitionTable<Vec<u32>> {
         let mut tt = TransitionTable {
             table: vec![],
             classes,
@@ -1271,14 +1228,13 @@ impl TransitionTable<Vec<u32>> {
         tt
     }
 
-                fn set(&mut self, from: StateID, unit: alphabet::Unit, to: StateID) {
+    fn set(&mut self, from: StateID, unit: alphabet::Unit, to: StateID) {
         assert!(self.is_valid(from), "invalid 'from' state");
         assert!(self.is_valid(to), "invalid 'to' state");
-        self.table[from.as_usize() + self.classes.get_by_unit(unit)] =
-            to.as_u32();
+        self.table[from.as_usize() + self.classes.get_by_unit(unit)] = to.as_u32();
     }
 
-                            fn add_empty_state(&mut self) -> Result<StateID, Error> {
+    fn add_empty_state(&mut self) -> Result<StateID, Error> {
         // Normally, to get a fresh state identifier, we would just
         // take the index of the next state added to the transition
         // table. However, we actually perform an optimization here
@@ -1324,7 +1280,7 @@ impl TransitionTable<Vec<u32>> {
         Ok(id)
     }
 
-                                fn swap(&mut self, id1: StateID, id2: StateID) {
+    fn swap(&mut self, id1: StateID, id2: StateID) {
         assert!(self.is_valid(id1), "invalid 'id1' state: {:?}", id1);
         assert!(self.is_valid(id2), "invalid 'id2' state: {:?}", id2);
         // We only need to swap the parts of the state that are used. So if the
@@ -1335,11 +1291,11 @@ impl TransitionTable<Vec<u32>> {
         }
     }
 
-                        fn truncate(&mut self, count: usize) {
+    fn truncate(&mut self, count: usize) {
         self.table.truncate(count << self.stride2);
     }
 
-                fn state_mut(&mut self, id: StateID) -> StateMut<'_> {
+    fn state_mut(&mut self, id: StateID) -> StateMut<'_> {
         let alphabet_len = self.alphabet_len();
         let i = id.as_usize();
         StateMut {
@@ -1351,10 +1307,7 @@ impl TransitionTable<Vec<u32>> {
 }
 
 impl<T: AsRef<[u32]>> TransitionTable<T> {
-                fn write_to<E: Endian>(
-        &self,
-        mut dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    fn write_to<E: Endian>(&self, mut dst: &mut [u8]) -> Result<usize, SerializeError> {
         let nwrite = self.write_to_len();
         if dst.len() < nwrite {
             return Err(SerializeError::buffer_too_small("transition table"));
@@ -1383,14 +1336,14 @@ impl<T: AsRef<[u32]>> TransitionTable<T> {
         Ok(nwrite)
     }
 
-            fn write_to_len(&self) -> usize {
+    fn write_to_len(&self) -> usize {
         size_of::<u32>()   // state count
         + size_of::<u32>() // stride2
         + self.classes.write_to_len()
         + (self.table().len() * StateID::SIZE)
     }
 
-                    fn validate(&self) -> Result<(), DeserializeError> {
+    fn validate(&self) -> Result<(), DeserializeError> {
         for state in self.states() {
             for (_, to) in state.transitions() {
                 if !self.is_valid(to) {
@@ -1403,7 +1356,7 @@ impl<T: AsRef<[u32]>> TransitionTable<T> {
         Ok(())
     }
 
-        fn as_ref(&self) -> TransitionTable<&'_ [u32]> {
+    fn as_ref(&self) -> TransitionTable<&'_ [u32]> {
         TransitionTable {
             table: self.table.as_ref(),
             classes: self.classes.clone(),
@@ -1411,7 +1364,7 @@ impl<T: AsRef<[u32]>> TransitionTable<T> {
         }
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn to_owned(&self) -> TransitionTable<Vec<u32>> {
         TransitionTable {
             table: self.table.as_ref().to_vec(),
@@ -1420,7 +1373,7 @@ impl<T: AsRef<[u32]>> TransitionTable<T> {
         }
     }
 
-            fn state(&self, id: StateID) -> State<'_> {
+    fn state(&self, id: StateID) -> State<'_> {
         assert!(self.is_valid(id));
 
         let i = id.as_usize();
@@ -1431,92 +1384,84 @@ impl<T: AsRef<[u32]>> TransitionTable<T> {
         }
     }
 
-                        fn states(&self) -> StateIter<'_, T> {
+    fn states(&self) -> StateIter<'_, T> {
         StateIter {
             tt: self,
             it: self.table().chunks(self.stride()).enumerate(),
         }
     }
 
-                                    fn to_index(&self, id: StateID) -> usize {
+    fn to_index(&self, id: StateID) -> usize {
         id.as_usize() >> self.stride2
     }
 
-                                    fn from_index(&self, index: usize) -> StateID {
+    fn from_index(&self, index: usize) -> StateID {
         // CORRECTNESS: If the given index is not valid, then it is not
         // required for this to panic or return a valid state ID.
         StateID::new_unchecked(index << self.stride2)
     }
 
-                        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn next_state_id(&self, id: StateID) -> StateID {
         self.from_index(self.to_index(id).checked_add(1).unwrap())
     }
 
-                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn prev_state_id(&self, id: StateID) -> StateID {
         self.from_index(self.to_index(id).checked_sub(1).unwrap())
     }
 
-        fn table(&self) -> &[StateID] {
+    fn table(&self) -> &[StateID] {
         let integers = self.table.as_ref();
         // SAFETY: This is safe because StateID is guaranteed to be
         // representable as a u32.
-        unsafe {
-            core::slice::from_raw_parts(
-                integers.as_ptr() as *const StateID,
-                integers.len(),
-            )
-        }
+        unsafe { core::slice::from_raw_parts(integers.as_ptr() as *const StateID, integers.len()) }
     }
 
-                            fn count(&self) -> usize {
+    fn count(&self) -> usize {
         self.table().len() >> self.stride2
     }
 
-                fn stride(&self) -> usize {
+    fn stride(&self) -> usize {
         1 << self.stride2
     }
 
-                    fn alphabet_len(&self) -> usize {
+    fn alphabet_len(&self) -> usize {
         self.classes.alphabet_len()
     }
 
-                    fn is_valid(&self, id: StateID) -> bool {
+    fn is_valid(&self, id: StateID) -> bool {
         let id = id.as_usize();
         id < self.table().len() && id % self.stride() == 0
     }
 
-                fn memory_usage(&self) -> usize {
+    fn memory_usage(&self) -> usize {
         self.table().len() * StateID::SIZE
     }
 }
 
 #[cfg(feature = "std")]
 impl<T: AsMut<[u32]>> TransitionTable<T> {
-        fn table_mut(&mut self) -> &mut [StateID] {
+    fn table_mut(&mut self) -> &mut [StateID] {
         let integers = self.table.as_mut();
         // SAFETY: This is safe because StateID is guaranteed to be
         // representable as a u32.
         unsafe {
-            core::slice::from_raw_parts_mut(
-                integers.as_mut_ptr() as *mut StateID,
-                integers.len(),
-            )
+            core::slice::from_raw_parts_mut(integers.as_mut_ptr() as *mut StateID, integers.len())
         }
     }
 }
 
 #[derive(Clone)]
 pub(crate) struct StartTable<T> {
-                                        table: T,
-        stride: usize,
-                        patterns: usize,
+    table: T,
+    stride: usize,
+    patterns: usize,
 }
 
 #[cfg(feature = "std")]
 impl StartTable<Vec<u32>> {
-                                            fn dead(patterns: usize) -> Result<StartTable<Vec<u32>>, Error> {
+    fn dead(patterns: usize) -> Result<StartTable<Vec<u32>>, Error> {
         assert!(patterns <= PatternID::LIMIT);
         let stride = Start::count();
         let pattern_starts_len = match stride.checked_mul(patterns) {
@@ -1531,36 +1476,33 @@ impl StartTable<Vec<u32>> {
             return Err(Error::too_many_start_states());
         }
         let table = vec![DEAD.as_u32(); table_len];
-        Ok(StartTable { table, stride, patterns })
+        Ok(StartTable {
+            table,
+            stride,
+            patterns,
+        })
     }
 }
 
 impl<'a> StartTable<&'a [u32]> {
-                                                                                                    unsafe fn from_bytes_unchecked(
+    unsafe fn from_bytes_unchecked(
         mut slice: &'a [u8],
     ) -> Result<(StartTable<&'a [u32]>, usize), DeserializeError> {
         let slice_start = slice.as_ptr() as usize;
 
-        let (stride, nr) =
-            bytes::try_read_u32_as_usize(slice, "start table stride")?;
+        let (stride, nr) = bytes::try_read_u32_as_usize(slice, "start table stride")?;
         slice = &slice[nr..];
 
-        let (patterns, nr) =
-            bytes::try_read_u32_as_usize(slice, "start table patterns")?;
+        let (patterns, nr) = bytes::try_read_u32_as_usize(slice, "start table patterns")?;
         slice = &slice[nr..];
 
         if stride != Start::count() {
-            return Err(DeserializeError::generic(
-                "invalid starting table stride",
-            ));
+            return Err(DeserializeError::generic("invalid starting table stride"));
         }
         if patterns > PatternID::LIMIT {
-            return Err(DeserializeError::generic(
-                "invalid number of patterns",
-            ));
+            return Err(DeserializeError::generic("invalid number of patterns"));
         }
-        let pattern_table_size =
-            bytes::mul(stride, patterns, "invalid pattern count")?;
+        let pattern_table_size = bytes::mul(stride, patterns, "invalid pattern count")?;
         // Our start states always start with a single stride of start states
         // for the entire automaton which permit it to match any pattern. What
         // follows it are an optional set of start states for each pattern.
@@ -1587,26 +1529,22 @@ impl<'a> StartTable<&'a [u32]> {
         // superfluous.
         #[allow(unused_unsafe)]
         let table = unsafe {
-            core::slice::from_raw_parts(
-                table_bytes.as_ptr() as *const u32,
-                start_state_count,
-            )
+            core::slice::from_raw_parts(table_bytes.as_ptr() as *const u32, start_state_count)
         };
-        let st = StartTable { table, stride, patterns };
+        let st = StartTable {
+            table,
+            stride,
+            patterns,
+        };
         Ok((st, slice.as_ptr() as usize - slice_start))
     }
 }
 
 impl<T: AsRef<[u32]>> StartTable<T> {
-                fn write_to<E: Endian>(
-        &self,
-        mut dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    fn write_to<E: Endian>(&self, mut dst: &mut [u8]) -> Result<usize, SerializeError> {
         let nwrite = self.write_to_len();
         if dst.len() < nwrite {
-            return Err(SerializeError::buffer_too_small(
-                "starting table ids",
-            ));
+            return Err(SerializeError::buffer_too_small("starting table ids"));
         }
         dst = &mut dst[..nwrite];
 
@@ -1626,27 +1564,22 @@ impl<T: AsRef<[u32]>> StartTable<T> {
         Ok(nwrite)
     }
 
-            fn write_to_len(&self) -> usize {
+    fn write_to_len(&self) -> usize {
         size_of::<u32>()   // stride
         + size_of::<u32>() // # patterns
         + (self.table().len() * StateID::SIZE)
     }
 
-                    fn validate(
-        &self,
-        tt: &TransitionTable<T>,
-    ) -> Result<(), DeserializeError> {
+    fn validate(&self, tt: &TransitionTable<T>) -> Result<(), DeserializeError> {
         for &id in self.table() {
             if !tt.is_valid(id) {
-                return Err(DeserializeError::generic(
-                    "found invalid starting state ID",
-                ));
+                return Err(DeserializeError::generic("found invalid starting state ID"));
             }
         }
         Ok(())
     }
 
-        fn as_ref(&self) -> StartTable<&'_ [u32]> {
+    fn as_ref(&self) -> StartTable<&'_ [u32]> {
         StartTable {
             table: self.table.as_ref(),
             stride: self.stride,
@@ -1654,7 +1587,7 @@ impl<T: AsRef<[u32]>> StartTable<T> {
         }
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn to_owned(&self) -> StartTable<Vec<u32>> {
         StartTable {
             table: self.table.as_ref().to_vec(),
@@ -1663,7 +1596,7 @@ impl<T: AsRef<[u32]>> StartTable<T> {
         }
     }
 
-                            fn start(&self, index: Start, pattern_id: Option<PatternID>) -> StateID {
+    fn start(&self, index: Start, pattern_id: Option<PatternID>) -> StateID {
         let start_index = index.as_usize();
         let index = match pattern_id {
             None => start_index,
@@ -1676,35 +1609,28 @@ impl<T: AsRef<[u32]>> StartTable<T> {
         self.table()[index]
     }
 
-                    fn iter(&self) -> StartStateIter<'_> {
-        StartStateIter { st: self.as_ref(), i: 0 }
-    }
-
-        fn table(&self) -> &[StateID] {
-        let integers = self.table.as_ref();
-        // SAFETY: This is safe because StateID is guaranteed to be
-        // representable as a u32.
-        unsafe {
-            core::slice::from_raw_parts(
-                integers.as_ptr() as *const StateID,
-                integers.len(),
-            )
+    fn iter(&self) -> StartStateIter<'_> {
+        StartStateIter {
+            st: self.as_ref(),
+            i: 0,
         }
     }
 
-                fn memory_usage(&self) -> usize {
+    fn table(&self) -> &[StateID] {
+        let integers = self.table.as_ref();
+        // SAFETY: This is safe because StateID is guaranteed to be
+        // representable as a u32.
+        unsafe { core::slice::from_raw_parts(integers.as_ptr() as *const StateID, integers.len()) }
+    }
+
+    fn memory_usage(&self) -> usize {
         self.table().len() * StateID::SIZE
     }
 }
 
 #[cfg(feature = "std")]
 impl<T: AsMut<[u32]>> StartTable<T> {
-                fn set_start(
-        &mut self,
-        index: Start,
-        pattern_id: Option<PatternID>,
-        id: StateID,
-    ) {
+    fn set_start(&mut self, index: Start, pattern_id: Option<PatternID>, id: StateID) {
         let start_index = index.as_usize();
         let index = match pattern_id {
             None => start_index,
@@ -1720,15 +1646,12 @@ impl<T: AsMut<[u32]>> StartTable<T> {
         self.table_mut()[index] = id;
     }
 
-        fn table_mut(&mut self) -> &mut [StateID] {
+    fn table_mut(&mut self) -> &mut [StateID] {
         let integers = self.table.as_mut();
         // SAFETY: This is safe because StateID is guaranteed to be
         // representable as a u32.
         unsafe {
-            core::slice::from_raw_parts_mut(
-                integers.as_mut_ptr() as *mut StateID,
-                integers.len(),
-            )
+            core::slice::from_raw_parts_mut(integers.as_mut_ptr() as *mut StateID, integers.len())
         }
     }
 }
@@ -1755,9 +1678,7 @@ impl<'a> Iterator for StartStateIter<'a> {
         let pid = if i < self.st.stride {
             None
         } else {
-            Some(
-                PatternID::new((i - self.st.stride) / self.st.stride).unwrap(),
-            )
+            Some(PatternID::new((i - self.st.stride) / self.st.stride).unwrap())
         };
         Some((table[i], start_type, pid))
     }
@@ -1765,9 +1686,9 @@ impl<'a> Iterator for StartStateIter<'a> {
 
 #[derive(Clone, Debug)]
 struct MatchStates<T> {
-                                        slices: T,
-                    pattern_ids: T,
-        patterns: usize,
+    slices: T,
+    pattern_ids: T,
+    patterns: usize,
 }
 
 impl<'a> MatchStates<&'a [u32]> {
@@ -1777,8 +1698,7 @@ impl<'a> MatchStates<&'a [u32]> {
         let slice_start = slice.as_ptr() as usize;
 
         // Read the total number of match states.
-        let (count, nr) =
-            bytes::try_read_u32_as_usize(slice, "match state count")?;
+        let (count, nr) = bytes::try_read_u32_as_usize(slice, "match state count")?;
         slice = &slice[nr..];
 
         // Read the slice start/length pairs.
@@ -1800,29 +1720,22 @@ impl<'a> MatchStates<&'a [u32]> {
         // we mark it explicitly to call it out, even though it is technically
         // superfluous.
         #[allow(unused_unsafe)]
-        let slices = unsafe {
-            core::slice::from_raw_parts(
-                slices_bytes.as_ptr() as *const u32,
-                pair_count,
-            )
-        };
+        let slices =
+            unsafe { core::slice::from_raw_parts(slices_bytes.as_ptr() as *const u32, pair_count) };
 
         // Read the total number of unique pattern IDs (which is always 1 more
         // than the maximum pattern ID in this automaton, since pattern IDs are
         // handed out contiguously starting at 0).
-        let (patterns, nr) =
-            bytes::try_read_u32_as_usize(slice, "pattern count")?;
+        let (patterns, nr) = bytes::try_read_u32_as_usize(slice, "pattern count")?;
         slice = &slice[nr..];
 
         // Now read the pattern ID count. We don't need to store this
         // explicitly, but we need it to know how many pattern IDs to read.
-        let (idcount, nr) =
-            bytes::try_read_u32_as_usize(slice, "pattern ID count")?;
+        let (idcount, nr) = bytes::try_read_u32_as_usize(slice, "pattern ID count")?;
         slice = &slice[nr..];
 
         // Read the actual pattern IDs.
-        let pattern_ids_len =
-            bytes::mul(idcount, PatternID::SIZE, "pattern ID byte length")?;
+        let pattern_ids_len = bytes::mul(idcount, PatternID::SIZE, "pattern ID byte length")?;
         bytes::check_slice_len(slice, pattern_ids_len, "match pattern IDs")?;
         bytes::check_alignment::<PatternID>(slice)?;
         let pattern_ids_bytes = &slice[..pattern_ids_len];
@@ -1836,13 +1749,14 @@ impl<'a> MatchStates<&'a [u32]> {
         // superfluous.
         #[allow(unused_unsafe)]
         let pattern_ids = unsafe {
-            core::slice::from_raw_parts(
-                pattern_ids_bytes.as_ptr() as *const u32,
-                idcount,
-            )
+            core::slice::from_raw_parts(pattern_ids_bytes.as_ptr() as *const u32, idcount)
         };
 
-        let ms = MatchStates { slices, pattern_ids, patterns };
+        let ms = MatchStates {
+            slices,
+            pattern_ids,
+            patterns,
+        };
         Ok((ms, slice.as_ptr() as usize - slice_start))
     }
 }
@@ -1891,10 +1805,7 @@ impl MatchStates<Vec<u32>> {
 }
 
 impl<T: AsRef<[u32]>> MatchStates<T> {
-                fn write_to<E: Endian>(
-        &self,
-        mut dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    fn write_to<E: Endian>(&self, mut dst: &mut [u8]) -> Result<usize, SerializeError> {
         let nwrite = self.write_to_len();
         if dst.len() < nwrite {
             return Err(SerializeError::buffer_too_small("match states"));
@@ -1932,7 +1843,7 @@ impl<T: AsRef<[u32]>> MatchStates<T> {
         Ok(nwrite)
     }
 
-            fn write_to_len(&self) -> usize {
+    fn write_to_len(&self) -> usize {
         size_of::<u32>()   // match state count
         + (self.slices().len() * PatternID::SIZE)
         + size_of::<u32>() // unique pattern ID count
@@ -1940,38 +1851,30 @@ impl<T: AsRef<[u32]>> MatchStates<T> {
         + (self.pattern_ids().len() * PatternID::SIZE)
     }
 
-            fn validate(&self, dfa: &DFA<T>) -> Result<(), DeserializeError> {
+    fn validate(&self, dfa: &DFA<T>) -> Result<(), DeserializeError> {
         if self.count() != dfa.special.match_len(dfa.stride()) {
-            return Err(DeserializeError::generic(
-                "match state count mismatch",
-            ));
+            return Err(DeserializeError::generic("match state count mismatch"));
         }
         for si in 0..self.count() {
             let start = self.slices()[si * 2].as_usize();
             let len = self.slices()[si * 2 + 1].as_usize();
             if start >= self.pattern_ids().len() {
-                return Err(DeserializeError::generic(
-                    "invalid pattern ID start offset",
-                ));
+                return Err(DeserializeError::generic("invalid pattern ID start offset"));
             }
             if start + len > self.pattern_ids().len() {
-                return Err(DeserializeError::generic(
-                    "invalid pattern ID length",
-                ));
+                return Err(DeserializeError::generic("invalid pattern ID length"));
             }
             for mi in 0..len {
                 let pid = self.pattern_id(si, mi);
                 if pid.as_usize() >= self.patterns {
-                    return Err(DeserializeError::generic(
-                        "invalid pattern ID",
-                    ));
+                    return Err(DeserializeError::generic("invalid pattern ID"));
                 }
             }
         }
         Ok(())
     }
 
-                                            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn to_map(&self, dfa: &DFA<T>) -> BTreeMap<StateID, Vec<PatternID>> {
         let mut map = BTreeMap::new();
         for i in 0..self.count() {
@@ -1984,7 +1887,7 @@ impl<T: AsRef<[u32]>> MatchStates<T> {
         map
     }
 
-        fn as_ref(&self) -> MatchStates<&'_ [u32]> {
+    fn as_ref(&self) -> MatchStates<&'_ [u32]> {
         MatchStates {
             slices: self.slices.as_ref(),
             pattern_ids: self.pattern_ids.as_ref(),
@@ -1992,7 +1895,7 @@ impl<T: AsRef<[u32]>> MatchStates<T> {
         }
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn to_owned(&self) -> MatchStates<Vec<u32>> {
         MatchStates {
             slices: self.slices.as_ref().to_vec(),
@@ -2001,7 +1904,7 @@ impl<T: AsRef<[u32]>> MatchStates<T> {
         }
     }
 
-                    fn match_state_id(&self, dfa: &DFA<T>, index: usize) -> StateID {
+    fn match_state_id(&self, dfa: &DFA<T>, index: usize) -> StateID {
         assert!(dfa.special.matches(), "no match states to index");
         // This is one of the places where we rely on the fact that match
         // states are contiguous in the transition table. Namely, that the
@@ -2010,56 +1913,55 @@ impl<T: AsRef<[u32]>> MatchStates<T> {
         // match state given its index.
         let stride2 = u32::try_from(dfa.stride2()).unwrap();
         let offset = index.checked_shl(stride2).unwrap();
-        let id = dfa.special.min_match.as_usize().checked_add(offset).unwrap();
+        let id = dfa
+            .special
+            .min_match
+            .as_usize()
+            .checked_add(offset)
+            .unwrap();
         let sid = StateID::new(id).unwrap();
         assert!(dfa.is_match_state(sid));
         sid
     }
 
-                                    fn pattern_id(&self, state_index: usize, match_index: usize) -> PatternID {
+    fn pattern_id(&self, state_index: usize, match_index: usize) -> PatternID {
         self.pattern_id_slice(state_index)[match_index]
     }
 
-                    fn pattern_len(&self, state_index: usize) -> usize {
+    fn pattern_len(&self, state_index: usize) -> usize {
         self.slices()[state_index * 2 + 1].as_usize()
     }
 
-                    fn pattern_id_slice(&self, state_index: usize) -> &[PatternID] {
+    fn pattern_id_slice(&self, state_index: usize) -> &[PatternID] {
         let start = self.slices()[state_index * 2].as_usize();
         let len = self.pattern_len(state_index);
         &self.pattern_ids()[start..start + len]
     }
 
-        fn slices(&self) -> &[PatternID] {
+    fn slices(&self) -> &[PatternID] {
         let integers = self.slices.as_ref();
         // SAFETY: This is safe because PatternID is guaranteed to be
         // representable as a u32.
         unsafe {
-            core::slice::from_raw_parts(
-                integers.as_ptr() as *const PatternID,
-                integers.len(),
-            )
+            core::slice::from_raw_parts(integers.as_ptr() as *const PatternID, integers.len())
         }
     }
 
-        fn count(&self) -> usize {
+    fn count(&self) -> usize {
         assert_eq!(0, self.slices().len() % 2);
         self.slices().len() / 2
     }
 
-        fn pattern_ids(&self) -> &[PatternID] {
+    fn pattern_ids(&self) -> &[PatternID] {
         let integers = self.pattern_ids.as_ref();
         // SAFETY: This is safe because PatternID is guaranteed to be
         // representable as a u32.
         unsafe {
-            core::slice::from_raw_parts(
-                integers.as_ptr() as *const PatternID,
-                integers.len(),
-            )
+            core::slice::from_raw_parts(integers.as_ptr() as *const PatternID, integers.len())
         }
     }
 
-        fn memory_usage(&self) -> usize {
+    fn memory_usage(&self) -> usize {
         (self.slices().len() + self.pattern_ids().len()) * PatternID::SIZE
     }
 }
@@ -2087,22 +1989,25 @@ pub(crate) struct State<'a> {
 }
 
 impl<'a> State<'a> {
-                                pub(crate) fn transitions(&self) -> StateTransitionIter<'_> {
+    pub(crate) fn transitions(&self) -> StateTransitionIter<'_> {
         StateTransitionIter {
             len: self.transitions.len(),
             it: self.transitions.iter().enumerate(),
         }
     }
 
-                                                    pub(crate) fn sparse_transitions(&self) -> StateSparseTransitionIter<'_> {
-        StateSparseTransitionIter { dense: self.transitions(), cur: None }
+    pub(crate) fn sparse_transitions(&self) -> StateSparseTransitionIter<'_> {
+        StateSparseTransitionIter {
+            dense: self.transitions(),
+            cur: None,
+        }
     }
 
-        pub(crate) fn id(&self) -> StateID {
+    pub(crate) fn id(&self) -> StateID {
         self.id
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn accelerate(&self, classes: &ByteClasses) -> Option<Accel> {
         // We just try to add bytes to our accelerator. Once adding fails
         // (because we've added too many bytes), then give up.
@@ -2157,7 +2062,7 @@ pub(crate) struct StateMut<'a> {
 
 #[cfg(feature = "std")]
 impl<'a> StateMut<'a> {
-                                pub(crate) fn iter_mut(&mut self) -> StateTransitionIterMut<'_> {
+    pub(crate) fn iter_mut(&mut self) -> StateTransitionIterMut<'_> {
         StateTransitionIterMut {
             len: self.transitions.len(),
             it: self.transitions.iter_mut().enumerate(),
@@ -2193,8 +2098,7 @@ impl<'a> Iterator for StateTransitionIter<'a> {
             let unit = if i + 1 == self.len {
                 alphabet::Unit::eoi(i)
             } else {
-                let b = u8::try_from(i)
-                    .expect("raw byte alphabet is never exceeded");
+                let b = u8::try_from(i).expect("raw byte alphabet is never exceeded");
                 alphabet::Unit::u8(b)
             };
             (unit, id)
@@ -2218,8 +2122,7 @@ impl<'a> Iterator for StateTransitionIterMut<'a> {
             let unit = if i + 1 == self.len {
                 alphabet::Unit::eoi(i)
             } else {
-                let b = u8::try_from(i)
-                    .expect("raw byte alphabet is never exceeded");
+                let b = u8::try_from(i).expect("raw byte alphabet is never exceeded");
                 alphabet::Unit::u8(b)
             };
             (unit, id)
@@ -2277,7 +2180,7 @@ impl<'a> Iterator for PatternIDIter<'a> {
 #[cfg(feature = "std")]
 #[derive(Debug)]
 struct Remapper {
-                                                        map: Vec<StateID>,
+    map: Vec<StateID>,
 }
 
 #[cfg(feature = "std")]

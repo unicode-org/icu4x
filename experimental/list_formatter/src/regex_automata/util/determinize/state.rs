@@ -27,7 +27,10 @@ impl core::fmt::Debug for State {
 
 impl State {
     pub(crate) fn dead() -> State {
-        StateBuilderEmpty::new().into_matches().into_nfa().to_state()
+        StateBuilderEmpty::new()
+            .into_matches()
+            .into_nfa()
+            .to_state()
     }
 
     pub(crate) fn is_match(&self) -> bool {
@@ -102,14 +105,19 @@ pub(crate) struct StateBuilderMatches(Vec<u8>);
 
 impl core::fmt::Debug for StateBuilderMatches {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        f.debug_tuple("StateBuilderMatches").field(&self.repr()).finish()
+        f.debug_tuple("StateBuilderMatches")
+            .field(&self.repr())
+            .finish()
     }
 }
 
 impl StateBuilderMatches {
     pub(crate) fn into_nfa(mut self) -> StateBuilderNFA {
         self.repr_vec().close_match_pattern_ids();
-        StateBuilderNFA { repr: self.0, prev_nfa_state_id: StateID::ZERO }
+        StateBuilderNFA {
+            repr: self.0,
+            prev_nfa_state_id: StateID::ZERO,
+        }
     }
 
     pub(crate) fn clear(self) -> StateBuilderEmpty {
@@ -159,7 +167,9 @@ pub(crate) struct StateBuilderNFA {
 
 impl core::fmt::Debug for StateBuilderNFA {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        f.debug_tuple("StateBuilderNFA").field(&self.repr()).finish()
+        f.debug_tuple("StateBuilderNFA")
+            .field(&self.repr())
+            .finish()
     }
 }
 
@@ -191,8 +201,7 @@ impl StateBuilderNFA {
     }
 
     pub(crate) fn add_nfa_state_id(&mut self, sid: StateID) {
-        ReprVec(&mut self.repr)
-            .add_nfa_state_id(&mut self.prev_nfa_state_id, sid)
+        ReprVec(&mut self.repr).add_nfa_state_id(&mut self.prev_nfa_state_id, sid)
     }
 
     pub(crate) fn memory_usage(&self) -> usize {
@@ -215,27 +224,27 @@ impl StateBuilderNFA {
 struct Repr<'a>(&'a [u8]);
 
 impl<'a> Repr<'a> {
-                                fn is_match(&self) -> bool {
+    fn is_match(&self) -> bool {
         self.0[0] & (1 << 0) > 0
     }
 
-                                fn has_pattern_ids(&self) -> bool {
+    fn has_pattern_ids(&self) -> bool {
         self.0[0] & (1 << 1) > 0
     }
 
-                                                fn is_from_word(&self) -> bool {
+    fn is_from_word(&self) -> bool {
         self.0[0] & (1 << 2) > 0
     }
 
-                                            fn look_have(&self) -> LookSet {
+    fn look_have(&self) -> LookSet {
         LookSet::from_repr(self.0[1])
     }
 
-                                fn look_need(&self) -> LookSet {
+    fn look_need(&self) -> LookSet {
         LookSet::from_repr(self.0[2])
     }
 
-                fn match_count(&self) -> usize {
+    fn match_count(&self) -> usize {
         if !self.is_match() {
             return 0;
         } else if !self.has_pattern_ids() {
@@ -245,7 +254,7 @@ impl<'a> Repr<'a> {
         }
     }
 
-                    fn match_pattern(&self, index: usize) -> PatternID {
+    fn match_pattern(&self, index: usize) -> PatternID {
         if !self.has_pattern_ids() {
             PatternID::ZERO
         } else {
@@ -256,7 +265,7 @@ impl<'a> Repr<'a> {
         }
     }
 
-            fn match_pattern_ids(&self) -> Option<Vec<PatternID>> {
+    fn match_pattern_ids(&self) -> Option<Vec<PatternID>> {
         if !self.is_match() {
             return None;
         }
@@ -265,7 +274,7 @@ impl<'a> Repr<'a> {
         Some(pids)
     }
 
-        fn iter_match_pattern_ids<F: FnMut(PatternID)>(&self, mut f: F) {
+    fn iter_match_pattern_ids<F: FnMut(PatternID)>(&self, mut f: F) {
         if !self.is_match() {
             return;
         }
@@ -288,7 +297,7 @@ impl<'a> Repr<'a> {
         }
     }
 
-        fn iter_nfa_state_ids<F: FnMut(StateID)>(&self, mut f: F) {
+    fn iter_nfa_state_ids<F: FnMut(StateID)>(&self, mut f: F) {
         let mut sids = &self.0[self.pattern_offset_end()..];
         let mut prev = 0i32;
         while !sids.is_empty() {
@@ -303,7 +312,7 @@ impl<'a> Repr<'a> {
         }
     }
 
-            fn pattern_offset_end(&self) -> usize {
+    fn pattern_offset_end(&self) -> usize {
         let encoded = self.encoded_pattern_count();
         if encoded == 0 {
             return 3;
@@ -313,7 +322,7 @@ impl<'a> Repr<'a> {
         encoded.checked_mul(4).unwrap().checked_add(7).unwrap()
     }
 
-                        fn encoded_pattern_count(&self) -> usize {
+    fn encoded_pattern_count(&self) -> usize {
         if !self.has_pattern_ids() {
             return 0;
         }
@@ -341,27 +350,27 @@ impl<'a> core::fmt::Debug for Repr<'a> {
 struct ReprVec<'a>(&'a mut Vec<u8>);
 
 impl<'a> ReprVec<'a> {
-                    fn set_is_match(&mut self) {
+    fn set_is_match(&mut self) {
         self.0[0] |= 1 << 0;
     }
 
-                            fn set_has_pattern_ids(&mut self) {
+    fn set_has_pattern_ids(&mut self) {
         self.0[0] |= 1 << 1;
     }
 
-                        fn set_is_from_word(&mut self) {
+    fn set_is_from_word(&mut self) {
         self.0[0] |= 1 << 2;
     }
 
-        fn look_have_mut(&mut self) -> &mut LookSet {
+    fn look_have_mut(&mut self) -> &mut LookSet {
         LookSet::from_repr_mut(&mut self.0[1])
     }
 
-        fn look_need_mut(&mut self) -> &mut LookSet {
+    fn look_need_mut(&mut self) -> &mut LookSet {
         LookSet::from_repr_mut(&mut self.0[2])
     }
 
-                                fn add_match_pattern_id(&mut self, pid: PatternID) {
+    fn add_match_pattern_id(&mut self, pid: PatternID) {
         // As a (somewhat small) space saving optimization, in the case where
         // a matching state has exactly one pattern ID, PatternID::ZERO, we do
         // not write either the pattern ID or the number of patterns encoded.
@@ -397,7 +406,7 @@ impl<'a> ReprVec<'a> {
         write_u32(self.0, pid.as_u32());
     }
 
-                                    fn close_match_pattern_ids(&mut self) {
+    fn close_match_pattern_ids(&mut self) {
         // If we never wrote any pattern IDs, then there's nothing to do here.
         if !self.repr().has_pattern_ids() {
             return;
@@ -413,13 +422,13 @@ impl<'a> ReprVec<'a> {
         bytes::NE::write_u32(count32, &mut self.0[3..7]);
     }
 
-                fn add_nfa_state_id(&mut self, prev: &mut StateID, sid: StateID) {
+    fn add_nfa_state_id(&mut self, prev: &mut StateID, sid: StateID) {
         let delta = sid.as_i32() - prev.as_i32();
         write_vari32(self.0, delta);
         *prev = sid;
     }
 
-        fn repr(&self) -> Repr<'_> {
+    fn repr(&self) -> Repr<'_> {
         Repr(self.0.as_slice())
     }
 }

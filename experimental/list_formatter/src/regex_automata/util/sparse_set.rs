@@ -9,49 +9,53 @@ pub(crate) struct SparseSets {
 }
 
 impl SparseSets {
-                pub(crate) fn new(capacity: usize) -> SparseSets {
+    pub(crate) fn new(capacity: usize) -> SparseSets {
         SparseSets {
             set1: SparseSet::new(capacity),
             set2: SparseSet::new(capacity),
         }
     }
 
-                        #[inline]
+    #[inline]
     pub(crate) fn resize(&mut self, new_capacity: usize) {
         self.set1.resize(new_capacity);
         self.set2.resize(new_capacity);
     }
 
-        pub(crate) fn clear(&mut self) {
+    pub(crate) fn clear(&mut self) {
         self.set1.clear();
         self.set2.clear();
     }
 
-        pub(crate) fn swap(&mut self) {
+    pub(crate) fn swap(&mut self) {
         core::mem::swap(&mut self.set1, &mut self.set2);
     }
 
-        pub(crate) fn memory_usage(&self) -> usize {
+    pub(crate) fn memory_usage(&self) -> usize {
         self.set1.memory_usage() + self.set2.memory_usage()
     }
 }
 
 #[derive(Clone)]
 pub(crate) struct SparseSet {
-        len: usize,
-        dense: Vec<StateID>,
-                    sparse: Vec<StateID>,
+    len: usize,
+    dense: Vec<StateID>,
+    sparse: Vec<StateID>,
 }
 
 impl SparseSet {
-                                #[inline]
+    #[inline]
     pub(crate) fn new(capacity: usize) -> SparseSet {
-        let mut set = SparseSet { len: 0, dense: vec![], sparse: vec![] };
+        let mut set = SparseSet {
+            len: 0,
+            dense: vec![],
+            sparse: vec![],
+        };
         set.resize(capacity);
         set
     }
 
-                        #[inline]
+    #[inline]
     pub(crate) fn resize(&mut self, new_capacity: usize) {
         assert!(
             new_capacity <= StateID::LIMIT,
@@ -63,22 +67,22 @@ impl SparseSet {
         self.sparse.resize(new_capacity, StateID::ZERO);
     }
 
-                    #[inline]
+    #[inline]
     pub(crate) fn capacity(&self) -> usize {
         self.dense.len()
     }
 
-        #[inline]
+    #[inline]
     pub(crate) fn len(&self) -> usize {
         self.len
     }
 
-        #[inline]
+    #[inline]
     pub(crate) fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-                                            #[inline(always)]
+    #[inline(always)]
     pub(crate) fn insert(&mut self, value: StateID) -> bool {
         if self.contains(value) {
             return false;
@@ -101,23 +105,23 @@ impl SparseSet {
         true
     }
 
-        #[inline]
+    #[inline]
     pub(crate) fn contains(&self, value: StateID) -> bool {
         let i = self.sparse[value];
         i.as_usize() < self.len() && self.dense[i] == value
     }
 
-                #[inline]
+    #[inline]
     pub(crate) fn get(&self, i: usize) -> StateID {
         self.dense[i]
     }
 
-        #[inline]
+    #[inline]
     pub(crate) fn clear(&mut self) {
         self.len = 0;
     }
 
-        #[inline]
+    #[inline]
     pub(crate) fn memory_usage(&self) -> usize {
         2 * self.dense.len() * StateID::SIZE
     }

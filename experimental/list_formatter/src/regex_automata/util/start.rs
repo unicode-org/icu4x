@@ -1,13 +1,13 @@
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum Start {
-        NonWordByte = 0,
-            WordByte = 1,
-            Text = 2,
-            Line = 3,
+    NonWordByte = 0,
+    WordByte = 1,
+    Text = 2,
+    Line = 3,
 }
 
 impl Start {
-            pub(crate) fn from_usize(n: usize) -> Option<Start> {
+    pub(crate) fn from_usize(n: usize) -> Option<Start> {
         match n {
             0 => Some(Start::NonWordByte),
             1 => Some(Start::WordByte),
@@ -17,16 +17,12 @@ impl Start {
         }
     }
 
-        pub(crate) fn count() -> usize {
+    pub(crate) fn count() -> usize {
         4
     }
 
-            #[inline(always)]
-    pub(crate) fn from_position_fwd(
-        bytes: &[u8],
-        start: usize,
-        end: usize,
-    ) -> Start {
+    #[inline(always)]
+    pub(crate) fn from_position_fwd(bytes: &[u8], start: usize, end: usize) -> Start {
         assert!(
             bytes.get(start..end).is_some(),
             "{}..{} is invalid",
@@ -44,12 +40,8 @@ impl Start {
         }
     }
 
-                #[inline(always)]
-    pub(crate) fn from_position_rev(
-        bytes: &[u8],
-        start: usize,
-        end: usize,
-    ) -> Start {
+    #[inline(always)]
+    pub(crate) fn from_position_rev(bytes: &[u8], start: usize, end: usize) -> Start {
         assert!(
             bytes.get(start..end).is_some(),
             "{}..{} is invalid",
@@ -67,7 +59,7 @@ impl Start {
         }
     }
 
-            #[inline(always)]
+    #[inline(always)]
     pub(crate) fn as_usize(&self) -> usize {
         *self as usize
     }

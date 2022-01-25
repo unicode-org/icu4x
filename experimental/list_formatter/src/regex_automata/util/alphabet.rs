@@ -12,7 +12,7 @@ pub enum Unit {
 }
 
 impl Unit {
-                                        pub fn u8(byte: u8) -> Unit {
+    pub fn u8(byte: u8) -> Unit {
         Unit::U8(byte)
     }
 
@@ -56,7 +56,8 @@ impl Unit {
 
     #[cfg(feature = "std")]
     pub fn is_word_byte(&self) -> bool {
-        self.as_u8().map_or(false, crate::regex_automata::util::is_word_byte)
+        self.as_u8()
+            .map_or(false, crate::regex_automata::util::is_word_byte)
     }
 }
 
@@ -73,11 +74,11 @@ impl core::fmt::Debug for Unit {
 pub struct ByteClasses([u8; 256]);
 
 impl ByteClasses {
-            pub fn empty() -> ByteClasses {
+    pub fn empty() -> ByteClasses {
         ByteClasses([0; 256])
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn singletons() -> ByteClasses {
         let mut classes = ByteClasses::empty();
         for i in 0..256 {
@@ -86,9 +87,7 @@ impl ByteClasses {
         classes
     }
 
-                        pub fn from_bytes(
-        slice: &[u8],
-    ) -> Result<(ByteClasses, usize), DeserializeError> {
+    pub fn from_bytes(slice: &[u8]) -> Result<(ByteClasses, usize), DeserializeError> {
         if slice.len() < 256 {
             return Err(DeserializeError::buffer_too_small("byte class map"));
         }
@@ -106,10 +105,7 @@ impl ByteClasses {
         Ok((classes, 256))
     }
 
-                    pub fn write_to(
-        &self,
-        mut dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to(&self, mut dst: &mut [u8]) -> Result<usize, SerializeError> {
         let nwrite = self.write_to_len();
         if dst.len() < nwrite {
             return Err(SerializeError::buffer_too_small("byte class map"));
@@ -121,26 +117,26 @@ impl ByteClasses {
         Ok(nwrite)
     }
 
-        pub fn write_to_len(&self) -> usize {
+    pub fn write_to_len(&self) -> usize {
         256
     }
 
-        #[inline]
+    #[inline]
     pub fn set(&mut self, byte: u8, class: u8) {
         self.0[byte as usize] = class;
     }
 
-        #[inline]
+    #[inline]
     pub fn get(&self, byte: u8) -> u8 {
         self.0[byte as usize]
     }
 
-            #[inline]
+    #[inline]
     pub unsafe fn get_unchecked(&self, byte: u8) -> u8 {
         *self.0.get_unchecked(byte as usize)
     }
 
-            #[inline]
+    #[inline]
     pub fn get_by_unit(&self, unit: Unit) -> usize {
         match unit {
             Unit::U8(b) => usize::try_from(self.get(b)).unwrap(),
@@ -153,7 +149,7 @@ impl ByteClasses {
         Unit::eoi(self.alphabet_len().checked_sub(1).unwrap())
     }
 
-                #[inline]
+    #[inline]
     pub fn alphabet_len(&self) -> usize {
         // Add one since the number of equivalence classes is one bigger than
         // the last one. But add another to account for the final EOI class
@@ -161,31 +157,45 @@ impl ByteClasses {
         self.0[255] as usize + 1 + 1
     }
 
-                                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn stride2(&self) -> usize {
         self.alphabet_len().next_power_of_two().trailing_zeros() as usize
     }
 
-                #[inline]
+    #[inline]
     pub fn is_singleton(&self) -> bool {
         self.alphabet_len() == 257
     }
 
-        pub fn iter(&self) -> ByteClassIter<'_> {
-        ByteClassIter { classes: self, i: 0 }
+    pub fn iter(&self) -> ByteClassIter<'_> {
+        ByteClassIter {
+            classes: self,
+            i: 0,
+        }
     }
 
-                                        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn representatives(&self) -> ByteClassRepresentatives<'_> {
-        ByteClassRepresentatives { classes: self, byte: 0, last_class: None }
+        ByteClassRepresentatives {
+            classes: self,
+            byte: 0,
+            last_class: None,
+        }
     }
 
-        pub fn elements(&self, class: Unit) -> ByteClassElements {
-        ByteClassElements { classes: self, class, byte: 0 }
+    pub fn elements(&self, class: Unit) -> ByteClassElements {
+        ByteClassElements {
+            classes: self,
+            class,
+            byte: 0,
+        }
     }
 
-                    fn element_ranges(&self, class: Unit) -> ByteClassElementRanges {
-        ByteClassElementRanges { elements: self.elements(class), range: None }
+    fn element_ranges(&self, class: Unit) -> ByteClassElementRanges {
+        ByteClassElementRanges {
+            elements: self.elements(class),
+            range: None,
+        }
     }
 }
 
@@ -316,9 +326,7 @@ impl<'a> Iterator for ByteClassElementRanges<'a> {
                     self.range = Some((element, element));
                 }
                 Some((start, end)) => {
-                    if end.as_usize() + 1 != element.as_usize()
-                        || element.is_eoi()
-                    {
+                    if end.as_usize() + 1 != element.as_usize() || element.is_eoi() {
                         self.range = Some((element, element));
                         return Some((start, end));
                     }
@@ -333,17 +341,17 @@ impl<'a> Iterator for ByteClassElementRanges<'a> {
 pub struct ByteClassSet(ByteSet);
 
 impl ByteClassSet {
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn new() -> Self {
         ByteClassSet(ByteSet::empty())
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn empty() -> Self {
         ByteClassSet(ByteSet::empty())
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn set_range(&mut self, start: u8, end: u8) {
         debug_assert!(start <= end);
         if start > 0 {
@@ -352,14 +360,14 @@ impl ByteClassSet {
         self.0.add(end);
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn add_set(&mut self, set: &ByteSet) {
         for (start, end) in set.iter_ranges() {
             self.set_range(start, end);
         }
     }
 
-                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn byte_classes(&self) -> ByteClasses {
         let mut classes = ByteClasses::empty();
         let mut class = 0u8;
@@ -387,66 +395,68 @@ pub struct ByteSet {
 struct BitSet([u128; 2]);
 
 impl ByteSet {
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn empty() -> ByteSet {
-        ByteSet { bits: BitSet([0; 2]) }
+        ByteSet {
+            bits: BitSet([0; 2]),
+        }
     }
 
-                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn add(&mut self, byte: u8) {
         let bucket = byte / 128;
         let bit = byte % 128;
         self.bits.0[bucket as usize] |= 1 << bit;
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn add_all(&mut self, start: u8, end: u8) {
         for b in start..=end {
             self.add(b);
         }
     }
 
-                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn remove(&mut self, byte: u8) {
         let bucket = byte / 128;
         let bit = byte % 128;
         self.bits.0[bucket as usize] &= !(1 << bit);
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn remove_all(&mut self, start: u8, end: u8) {
         for b in start..=end {
             self.remove(b);
         }
     }
 
-        pub fn contains(&self, byte: u8) -> bool {
+    pub fn contains(&self, byte: u8) -> bool {
         let bucket = byte / 128;
         let bit = byte % 128;
         self.bits.0[bucket as usize] & (1 << bit) > 0
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn contains_range(&self, start: u8, end: u8) -> bool {
         (start..=end).all(|b| self.contains(b))
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn iter(&self) -> ByteSetIter {
         ByteSetIter { set: self, b: 0 }
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn iter_ranges(&self) -> ByteSetRangeIter {
         ByteSetRangeIter { set: self, b: 0 }
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn len(&self) -> usize {
         (self.bits.0[0].count_ones() + self.bits.0[1].count_ones()) as usize
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn is_empty(&self) -> bool {
         self.bits.0 == [0, 0]
     }

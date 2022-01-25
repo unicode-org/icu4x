@@ -13,22 +13,24 @@ pub struct Error {
 
 #[derive(Clone, Debug)]
 enum ErrorKind {
-            NFA(nfa::thompson::Error),
-                                    Unsupported(&'static str),
-            TooManyStates,
-                            TooManyStartStates,
-            TooManyMatchPatternIDs,
-        DFAExceededSizeLimit { limit: usize },
-            DeterminizeExceededSizeLimit { limit: usize },
+    NFA(nfa::thompson::Error),
+    Unsupported(&'static str),
+    TooManyStates,
+    TooManyStartStates,
+    TooManyMatchPatternIDs,
+    DFAExceededSizeLimit { limit: usize },
+    DeterminizeExceededSizeLimit { limit: usize },
 }
 
 impl Error {
-        fn kind(&self) -> &ErrorKind {
+    fn kind(&self) -> &ErrorKind {
         &self.kind
     }
 
     pub(crate) fn nfa(err: nfa::thompson::Error) -> Error {
-        Error { kind: ErrorKind::NFA(err) }
+        Error {
+            kind: ErrorKind::NFA(err),
+        }
     }
 
     pub(crate) fn unsupported_dfa_word_boundary_unicode() -> Error {
@@ -36,27 +38,39 @@ impl Error {
                    boundaries; switch to ASCII word boundaries, or \
                    heuristically enable Unicode word boundaries or use a \
                    different regex engine";
-        Error { kind: ErrorKind::Unsupported(msg) }
+        Error {
+            kind: ErrorKind::Unsupported(msg),
+        }
     }
 
     pub(crate) fn too_many_states() -> Error {
-        Error { kind: ErrorKind::TooManyStates }
+        Error {
+            kind: ErrorKind::TooManyStates,
+        }
     }
 
     pub(crate) fn too_many_start_states() -> Error {
-        Error { kind: ErrorKind::TooManyStartStates }
+        Error {
+            kind: ErrorKind::TooManyStartStates,
+        }
     }
 
     pub(crate) fn too_many_match_pattern_ids() -> Error {
-        Error { kind: ErrorKind::TooManyMatchPatternIDs }
+        Error {
+            kind: ErrorKind::TooManyMatchPatternIDs,
+        }
     }
 
     pub(crate) fn dfa_exceeded_size_limit(limit: usize) -> Error {
-        Error { kind: ErrorKind::DFAExceededSizeLimit { limit } }
+        Error {
+            kind: ErrorKind::DFAExceededSizeLimit { limit },
+        }
     }
 
     pub(crate) fn determinize_exceeded_size_limit(limit: usize) -> Error {
-        Error { kind: ErrorKind::DeterminizeExceededSizeLimit { limit } }
+        Error {
+            kind: ErrorKind::DeterminizeExceededSizeLimit { limit },
+        }
     }
 }
 

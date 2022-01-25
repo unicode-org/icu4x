@@ -2,13 +2,13 @@ use crate::regex_automata::Match;
 
 #[derive(Clone, Debug)]
 pub enum Candidate {
-            None,
-                Match(Match),
-            PossibleStartOfMatch(usize),
+    None,
+    Match(Match),
+    PossibleStartOfMatch(usize),
 }
 
 impl Candidate {
-                                pub fn into_option(self) -> Option<usize> {
+    pub fn into_option(self) -> Option<usize> {
         match self {
             Candidate::None => None,
             Candidate::Match(ref m) => Some(m.start()),
@@ -18,28 +18,18 @@ impl Candidate {
 }
 
 pub trait Prefilter: core::fmt::Debug {
-                        fn next_candidate(
-        &self,
-        state: &mut State,
-        haystack: &[u8],
-        at: usize,
-    ) -> Candidate;
+    fn next_candidate(&self, state: &mut State, haystack: &[u8], at: usize) -> Candidate;
 
-            fn heap_bytes(&self) -> usize;
+    fn heap_bytes(&self) -> usize;
 
-                                        fn reports_false_positives(&self) -> bool {
+    fn reports_false_positives(&self) -> bool {
         true
     }
 }
 
 impl<'a, P: Prefilter + ?Sized> Prefilter for &'a P {
     #[inline]
-    fn next_candidate(
-        &self,
-        state: &mut State,
-        haystack: &[u8],
-        at: usize,
-    ) -> Candidate {
+    fn next_candidate(&self, state: &mut State, haystack: &[u8], at: usize) -> Candidate {
         (**self).next_candidate(state, haystack, at)
     }
 
@@ -60,7 +50,10 @@ pub struct Scanner<'p> {
 
 impl<'p> Scanner<'p> {
     pub fn new(prefilter: &'p dyn Prefilter) -> Scanner<'p> {
-        Scanner { prefilter, state: State::new() }
+        Scanner {
+            prefilter,
+            state: State::new(),
+        }
     }
 
     pub(crate) fn is_effective(&mut self, at: usize) -> bool {
@@ -71,11 +64,7 @@ impl<'p> Scanner<'p> {
         self.prefilter.reports_false_positives()
     }
 
-    pub(crate) fn next_candidate(
-        &mut self,
-        bytes: &[u8],
-        at: usize,
-    ) -> Candidate {
+    pub(crate) fn next_candidate(&mut self, bytes: &[u8], at: usize) -> Candidate {
         let cand = self.prefilter.next_candidate(&mut self.state, bytes, at);
         match cand {
             Candidate::None => {
@@ -94,34 +83,41 @@ impl<'p> Scanner<'p> {
 
 impl<'p> core::fmt::Debug for Scanner<'p> {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        f.debug_struct("Scanner").field("state", &self.state).finish()
+        f.debug_struct("Scanner")
+            .field("state", &self.state)
+            .finish()
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct State {
-        skips: usize,
-        skipped: usize,
-                inert: bool,
-                                                            last_scan_at: usize,
+    skips: usize,
+    skipped: usize,
+    inert: bool,
+    last_scan_at: usize,
 }
 
 impl State {
-            const MIN_SKIPS: usize = 40;
+    const MIN_SKIPS: usize = 40;
 
-                        const MIN_AVG_SKIP: usize = 16;
+    const MIN_AVG_SKIP: usize = 16;
 
-        pub fn new() -> State {
-        State { skips: 0, skipped: 0, inert: false, last_scan_at: 0 }
+    pub fn new() -> State {
+        State {
+            skips: 0,
+            skipped: 0,
+            inert: false,
+            last_scan_at: 0,
+        }
     }
 
-                                                                pub fn update_last_scan(&mut self, at: usize) {
+    pub fn update_last_scan(&mut self, at: usize) {
         if at > self.last_scan_at {
             self.last_scan_at = at;
         }
     }
 
-                                            fn is_effective(&mut self, at: usize) -> bool {
+    fn is_effective(&mut self, at: usize) -> bool {
         if self.inert {
             return false;
         }
@@ -141,7 +137,7 @@ impl State {
         false
     }
 
-            fn update_skipped_bytes(&mut self, skipped: usize) {
+    fn update_skipped_bytes(&mut self, skipped: usize) {
         self.skips += 1;
         self.skipped += skipped;
     }

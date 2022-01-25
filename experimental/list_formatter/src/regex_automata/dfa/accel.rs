@@ -65,11 +65,7 @@ const ACCEL_LEN: usize = 4;
 const ACCEL_CAP: usize = 8;
 
 #[inline(always)]
-pub(crate) fn find_fwd(
-    needles: &[u8],
-    haystack: &[u8],
-    at: usize,
-) -> Option<usize> {
+pub(crate) fn find_fwd(needles: &[u8], haystack: &[u8], at: usize) -> Option<usize> {
     let bs = needles;
     let i = match needles.len() {
         1 => memchr::memchr(bs[0], &haystack[at..])?,
@@ -82,11 +78,7 @@ pub(crate) fn find_fwd(
 }
 
 #[inline(always)]
-pub(crate) fn find_rev(
-    needles: &[u8],
-    haystack: &[u8],
-    at: usize,
-) -> Option<usize> {
+pub(crate) fn find_rev(needles: &[u8], haystack: &[u8], at: usize) -> Option<usize> {
     let bs = needles;
     match needles.len() {
         1 => memchr::memrchr(bs[0], &haystack[..at]),
@@ -99,22 +91,22 @@ pub(crate) fn find_rev(
 
 #[derive(Clone)]
 pub(crate) struct Accels<A> {
-                            accels: A,
+    accels: A,
 }
 
 #[cfg(feature = "std")]
 impl Accels<Vec<AccelTy>> {
-        pub fn empty() -> Accels<Vec<AccelTy>> {
+    pub fn empty() -> Accels<Vec<AccelTy>> {
         Accels { accels: vec![0] }
     }
 
-                            pub fn add(&mut self, accel: Accel) {
+    pub fn add(&mut self, accel: Accel) {
         self.accels.extend_from_slice(&accel.as_accel_tys());
         let len = self.len();
         self.set_len(len + 1);
     }
 
-            fn set_len(&mut self, new_len: usize) {
+    fn set_len(&mut self, new_len: usize) {
         // The only way an accelerator gets added is if a state exists for
         // it, and if a state exists, then its index is guaranteed to be
         // representable by a AccelTy by virtue of the guarantees provided by
@@ -125,13 +117,12 @@ impl Accels<Vec<AccelTy>> {
 }
 
 impl<'a> Accels<&'a [AccelTy]> {
-                                            pub unsafe fn from_bytes_unchecked(
+    pub unsafe fn from_bytes_unchecked(
         mut slice: &'a [u8],
     ) -> Result<(Accels<&'a [AccelTy]>, usize), DeserializeError> {
         let slice_start = slice.as_ptr() as usize;
 
-        let (count, _) =
-            bytes::try_read_u32_as_usize(slice, "accelerators count")?;
+        let (count, _) = bytes::try_read_u32_as_usize(slice, "accelerators count")?;
         // The accelerator count is part of the accel_tys slice that
         // we deserialize. This is perhaps a bit idiosyncratic. It would
         // probably be better to split out the count into a real field.
@@ -154,42 +145,40 @@ impl<'a> Accels<&'a [AccelTy]> {
         // slice is just bytes, we can safely cast to a slice of &[AccelTy].
         #[allow(unused_unsafe)]
         let accels = unsafe {
-            core::slice::from_raw_parts(
-                accel_tys.as_ptr() as *const AccelTy,
-                accel_tys_count,
-            )
+            core::slice::from_raw_parts(accel_tys.as_ptr() as *const AccelTy, accel_tys_count)
         };
         Ok((Accels { accels }, slice.as_ptr() as usize - slice_start))
     }
 }
 
 impl<A: AsRef<[AccelTy]>> Accels<A> {
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn to_owned(&self) -> Accels<Vec<AccelTy>> {
-        Accels { accels: self.accels.as_ref().to_vec() }
+        Accels {
+            accels: self.accels.as_ref().to_vec(),
+        }
     }
 
-        pub fn as_ref(&self) -> Accels<&[AccelTy]> {
-        Accels { accels: self.accels.as_ref() }
+    pub fn as_ref(&self) -> Accels<&[AccelTy]> {
+        Accels {
+            accels: self.accels.as_ref(),
+        }
     }
 
-        pub fn as_bytes(&self) -> &[u8] {
+    pub fn as_bytes(&self) -> &[u8] {
         let accels = self.accels.as_ref();
         // SAFETY: This is safe because accels is a just a slice of AccelTy,
         // and u8 always has a smaller alignment.
         unsafe {
-            core::slice::from_raw_parts(
-                accels.as_ptr() as *const u8,
-                accels.len() * ACCEL_TY_SIZE,
-            )
+            core::slice::from_raw_parts(accels.as_ptr() as *const u8, accels.len() * ACCEL_TY_SIZE)
         }
     }
 
-                            pub fn memory_usage(&self) -> usize {
+    pub fn memory_usage(&self) -> usize {
         self.as_bytes().len()
     }
 
-                                    #[inline(always)]
+    #[inline(always)]
     pub fn needles(&self, i: usize) -> &[u8] {
         if i >= self.len() {
             panic!("invalid accelerator index {}", i);
@@ -200,13 +189,13 @@ impl<A: AsRef<[AccelTy]>> Accels<A> {
         &bytes[offset + 1..offset + 1 + len]
     }
 
-        pub fn len(&self) -> usize {
+    pub fn len(&self) -> usize {
         // This should never panic since deserialization checks that the
         // length can fit into a usize.
         usize::try_from(self.accels.as_ref()[0]).unwrap()
     }
 
-                    fn get(&self, i: usize) -> Option<Accel> {
+    fn get(&self, i: usize) -> Option<Accel> {
         if i >= self.len() {
             return None;
         }
@@ -216,14 +205,11 @@ impl<A: AsRef<[AccelTy]>> Accels<A> {
         Some(accel)
     }
 
-        fn iter(&self) -> IterAccels<'_, A> {
+    fn iter(&self) -> IterAccels<'_, A> {
         IterAccels { accels: self, i: 0 }
     }
 
-                    pub fn write_to<E: Endian>(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to<E: Endian>(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         let nwrite = self.write_to_len();
         assert_eq!(
             nwrite % ACCEL_TY_SIZE,
@@ -239,19 +225,18 @@ impl<A: AsRef<[AccelTy]>> Accels<A> {
         E::write_u32(AccelTy::try_from(self.len()).unwrap(), dst);
         // The actual accelerators are just raw bytes and thus their endianness
         // is irrelevant. So we can copy them as bytes.
-        dst[ACCEL_TY_SIZE..nwrite]
-            .copy_from_slice(&self.as_bytes()[ACCEL_TY_SIZE..nwrite]);
+        dst[ACCEL_TY_SIZE..nwrite].copy_from_slice(&self.as_bytes()[ACCEL_TY_SIZE..nwrite]);
         Ok(nwrite)
     }
 
-            pub fn validate(&self) -> Result<(), DeserializeError> {
+    pub fn validate(&self) -> Result<(), DeserializeError> {
         for chunk in self.as_bytes()[ACCEL_TY_SIZE..].chunks(ACCEL_CAP) {
             let _ = Accel::from_slice(chunk)?;
         }
         Ok(())
     }
 
-        pub fn write_to_len(&self) -> usize {
+    pub fn write_to_len(&self) -> usize {
         self.as_bytes().len()
     }
 }
@@ -286,16 +271,18 @@ impl<'a, A: AsRef<[AccelTy]>> Iterator for IterAccels<'a, A> {
 
 #[derive(Clone)]
 pub(crate) struct Accel {
-                                bytes: [u8; ACCEL_CAP],
+    bytes: [u8; ACCEL_CAP],
 }
 
 impl Accel {
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn new() -> Accel {
-        Accel { bytes: [0; ACCEL_CAP] }
+        Accel {
+            bytes: [0; ACCEL_CAP],
+        }
     }
 
-                        pub fn from_slice(mut slice: &[u8]) -> Result<Accel, DeserializeError> {
+    pub fn from_slice(mut slice: &[u8]) -> Result<Accel, DeserializeError> {
         slice = &slice[..core::cmp::min(ACCEL_LEN, slice.len())];
         let bytes = slice
             .try_into()
@@ -303,7 +290,7 @@ impl Accel {
         Accel::from_bytes(bytes)
     }
 
-                fn from_bytes(bytes: [u8; 4]) -> Result<Accel, DeserializeError> {
+    fn from_bytes(bytes: [u8; 4]) -> Result<Accel, DeserializeError> {
         if bytes[0] as usize >= ACCEL_LEN {
             return Err(DeserializeError::generic(
                 "accelerator bytes cannot have length more than 3",
@@ -312,11 +299,13 @@ impl Accel {
         Ok(Accel::from_bytes_unchecked(bytes))
     }
 
-                        fn from_bytes_unchecked(bytes: [u8; 4]) -> Accel {
-        Accel { bytes: [bytes[0], bytes[1], bytes[2], bytes[3], 0, 0, 0, 0] }
+    fn from_bytes_unchecked(bytes: [u8; 4]) -> Accel {
+        Accel {
+            bytes: [bytes[0], bytes[1], bytes[2], bytes[3], 0, 0, 0, 0],
+        }
     }
 
-                    #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn add(&mut self, byte: u8) -> bool {
         if self.len() >= 3 {
             return false;
@@ -331,32 +320,30 @@ impl Accel {
         true
     }
 
-        pub fn len(&self) -> usize {
+    pub fn len(&self) -> usize {
         self.bytes[0] as usize
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-                fn needles(&self) -> &[u8] {
+    fn needles(&self) -> &[u8] {
         &self.bytes[1..1 + self.len()]
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn contains(&self, byte: u8) -> bool {
         self.needles().iter().position(|&b| b == byte).is_some()
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     fn as_accel_tys(&self) -> [AccelTy; 2] {
         assert_eq!(ACCEL_CAP, 8);
         // These unwraps are OK since ACCEL_CAP is set to 8.
-        let first =
-            AccelTy::from_ne_bytes(self.bytes[0..4].try_into().unwrap());
-        let second =
-            AccelTy::from_ne_bytes(self.bytes[4..8].try_into().unwrap());
+        let first = AccelTy::from_ne_bytes(self.bytes[0..4].try_into().unwrap());
+        let second = AccelTy::from_ne_bytes(self.bytes[4..8].try_into().unwrap());
         [first, second]
     }
 }

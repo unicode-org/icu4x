@@ -7,19 +7,11 @@ pub struct Error {
 
 #[derive(Clone, Debug)]
 enum ErrorKind {
-                Syntax(regex_syntax::Error),
-            TooManyPatterns {
-                given: usize,
-                limit: usize,
-    },
-        TooManyStates {
-                        given: usize,
-                limit: usize,
-    },
-            ExceededSizeLimit {
-                limit: usize,
-    },
-                UnicodeWordUnavailable,
+    Syntax(regex_syntax::Error),
+    TooManyPatterns { given: usize, limit: usize },
+    TooManyStates { given: usize, limit: usize },
+    ExceededSizeLimit { limit: usize },
+    UnicodeWordUnavailable,
 }
 
 impl Error {
@@ -28,25 +20,35 @@ impl Error {
     }
 
     pub(crate) fn syntax(err: regex_syntax::Error) -> Error {
-        Error { kind: ErrorKind::Syntax(err) }
+        Error {
+            kind: ErrorKind::Syntax(err),
+        }
     }
 
     pub(crate) fn too_many_patterns(given: usize) -> Error {
         let limit = PatternID::LIMIT;
-        Error { kind: ErrorKind::TooManyPatterns { given, limit } }
+        Error {
+            kind: ErrorKind::TooManyPatterns { given, limit },
+        }
     }
 
     pub(crate) fn too_many_states(given: usize) -> Error {
         let limit = StateID::LIMIT;
-        Error { kind: ErrorKind::TooManyStates { given, limit } }
+        Error {
+            kind: ErrorKind::TooManyStates { given, limit },
+        }
     }
 
     pub(crate) fn exceeded_size_limit(limit: usize) -> Error {
-        Error { kind: ErrorKind::ExceededSizeLimit { limit } }
+        Error {
+            kind: ErrorKind::ExceededSizeLimit { limit },
+        }
     }
 
     pub(crate) fn unicode_word_unavailable() -> Error {
-        Error { kind: ErrorKind::UnicodeWordUnavailable }
+        Error {
+            kind: ErrorKind::UnicodeWordUnavailable,
+        }
     }
 }
 

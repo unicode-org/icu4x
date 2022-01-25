@@ -2,7 +2,8 @@ pub use crate::regex_automata::dfa::automaton::{Automaton, OverlappingState};
 #[cfg(feature = "std")]
 pub use crate::regex_automata::dfa::error::Error;
 
-const DEAD: crate::regex_automata::util::id::StateID = crate::regex_automata::util::id::StateID::ZERO;
+const DEAD: crate::regex_automata::util::id::StateID =
+    crate::regex_automata::util::id::StateID::ZERO;
 
 mod accel;
 mod automaton;

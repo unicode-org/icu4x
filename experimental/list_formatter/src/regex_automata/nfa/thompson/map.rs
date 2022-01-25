@@ -44,25 +44,29 @@ const INIT: u64 = 14695981039346656037;
 
 #[derive(Clone, Debug)]
 pub struct Utf8BoundedMap {
-                            version: u16,
-        capacity: usize,
-            map: Vec<Utf8BoundedEntry>,
+    version: u16,
+    capacity: usize,
+    map: Vec<Utf8BoundedEntry>,
 }
 
 #[derive(Clone, Debug, Default)]
 struct Utf8BoundedEntry {
-                version: u16,
-        key: Vec<Transition>,
-            val: StateID,
+    version: u16,
+    key: Vec<Transition>,
+    val: StateID,
 }
 
 impl Utf8BoundedMap {
-                                    pub fn new(capacity: usize) -> Utf8BoundedMap {
+    pub fn new(capacity: usize) -> Utf8BoundedMap {
         assert!(capacity > 0);
-        Utf8BoundedMap { version: 0, capacity, map: vec![] }
+        Utf8BoundedMap {
+            version: 0,
+            capacity,
+            map: vec![],
+        }
     }
 
-                    pub fn clear(&mut self) {
+    pub fn clear(&mut self) {
         if self.map.is_empty() {
             self.map = vec![Utf8BoundedEntry::default(); self.capacity];
         } else {
@@ -76,7 +80,7 @@ impl Utf8BoundedMap {
         }
     }
 
-        pub fn hash(&self, key: &[Transition]) -> usize {
+    pub fn hash(&self, key: &[Transition]) -> usize {
         let mut h = INIT;
         for t in key {
             h = (h ^ (t.start as u64)).wrapping_mul(PRIME);
@@ -86,7 +90,7 @@ impl Utf8BoundedMap {
         (h as usize) % self.map.len()
     }
 
-                        pub fn get(&mut self, key: &[Transition], hash: usize) -> Option<StateID> {
+    pub fn get(&mut self, key: &[Transition], hash: usize) -> Option<StateID> {
         let entry = &self.map[hash];
         if entry.version != self.version {
             return None;
@@ -98,22 +102,20 @@ impl Utf8BoundedMap {
         Some(entry.val)
     }
 
-                            pub fn set(
-        &mut self,
-        key: Vec<Transition>,
-        hash: usize,
-        state_id: StateID,
-    ) {
-        self.map[hash] =
-            Utf8BoundedEntry { version: self.version, key, val: state_id };
+    pub fn set(&mut self, key: Vec<Transition>, hash: usize, state_id: StateID) {
+        self.map[hash] = Utf8BoundedEntry {
+            version: self.version,
+            key,
+            val: state_id,
+        };
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct Utf8SuffixMap {
-                version: u16,
-        capacity: usize,
-            map: Vec<Utf8SuffixEntry>,
+    version: u16,
+    capacity: usize,
+    map: Vec<Utf8SuffixEntry>,
 }
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
@@ -125,18 +127,22 @@ pub struct Utf8SuffixKey {
 
 #[derive(Clone, Debug, Default)]
 struct Utf8SuffixEntry {
-                version: u16,
-        key: Utf8SuffixKey,
-        val: StateID,
+    version: u16,
+    key: Utf8SuffixKey,
+    val: StateID,
 }
 
 impl Utf8SuffixMap {
-                                    pub fn new(capacity: usize) -> Utf8SuffixMap {
+    pub fn new(capacity: usize) -> Utf8SuffixMap {
         assert!(capacity > 0);
-        Utf8SuffixMap { version: 0, capacity, map: vec![] }
+        Utf8SuffixMap {
+            version: 0,
+            capacity,
+            map: vec![],
+        }
     }
 
-                    pub fn clear(&mut self) {
+    pub fn clear(&mut self) {
         if self.map.is_empty() {
             self.map = vec![Utf8SuffixEntry::default(); self.capacity];
         } else {
@@ -147,7 +153,7 @@ impl Utf8SuffixMap {
         }
     }
 
-        pub fn hash(&self, key: &Utf8SuffixKey) -> usize {
+    pub fn hash(&self, key: &Utf8SuffixKey) -> usize {
         // Basic FNV-1a hash as described:
         // https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
         const PRIME: u64 = 1099511628211;
@@ -160,11 +166,7 @@ impl Utf8SuffixMap {
         (h as usize) % self.map.len()
     }
 
-                    pub fn get(
-        &mut self,
-        key: &Utf8SuffixKey,
-        hash: usize,
-    ) -> Option<StateID> {
+    pub fn get(&mut self, key: &Utf8SuffixKey, hash: usize) -> Option<StateID> {
         let entry = &self.map[hash];
         if entry.version != self.version {
             return None;
@@ -175,8 +177,11 @@ impl Utf8SuffixMap {
         Some(entry.val)
     }
 
-                            pub fn set(&mut self, key: Utf8SuffixKey, hash: usize, state_id: StateID) {
-        self.map[hash] =
-            Utf8SuffixEntry { version: self.version, key, val: state_id };
+    pub fn set(&mut self, key: Utf8SuffixKey, hash: usize, state_id: StateID) {
+        self.map[hash] = Utf8SuffixEntry {
+            version: self.version,
+            key,
+            val: state_id,
+        };
     }
 }

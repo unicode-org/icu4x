@@ -14,7 +14,7 @@ pub struct SyntaxConfig {
 }
 
 impl SyntaxConfig {
-        pub fn new() -> SyntaxConfig {
+    pub fn new() -> SyntaxConfig {
         // These defaults match the ones used in regex-syntax.
         SyntaxConfig {
             case_insensitive: false,
@@ -29,88 +29,88 @@ impl SyntaxConfig {
         }
     }
 
-                                    pub fn case_insensitive(mut self, yes: bool) -> SyntaxConfig {
+    pub fn case_insensitive(mut self, yes: bool) -> SyntaxConfig {
         self.case_insensitive = yes;
         self
     }
 
-                                            pub fn multi_line(mut self, yes: bool) -> SyntaxConfig {
+    pub fn multi_line(mut self, yes: bool) -> SyntaxConfig {
         self.multi_line = yes;
         self
     }
 
-                                                                    pub fn dot_matches_new_line(mut self, yes: bool) -> SyntaxConfig {
+    pub fn dot_matches_new_line(mut self, yes: bool) -> SyntaxConfig {
         self.dot_matches_new_line = yes;
         self
     }
 
-                                pub fn swap_greed(mut self, yes: bool) -> SyntaxConfig {
+    pub fn swap_greed(mut self, yes: bool) -> SyntaxConfig {
         self.swap_greed = yes;
         self
     }
 
-                                    pub fn ignore_whitespace(mut self, yes: bool) -> SyntaxConfig {
+    pub fn ignore_whitespace(mut self, yes: bool) -> SyntaxConfig {
         self.ignore_whitespace = yes;
         self
     }
 
-                                                            pub fn unicode(mut self, yes: bool) -> SyntaxConfig {
+    pub fn unicode(mut self, yes: bool) -> SyntaxConfig {
         self.unicode = yes;
         self
     }
 
-                                                            pub fn utf8(mut self, yes: bool) -> SyntaxConfig {
+    pub fn utf8(mut self, yes: bool) -> SyntaxConfig {
         self.utf8 = yes;
         self
     }
 
-                                                                                                        pub fn nest_limit(mut self, limit: u32) -> SyntaxConfig {
+    pub fn nest_limit(mut self, limit: u32) -> SyntaxConfig {
         self.nest_limit = limit;
         self
     }
 
-                                                                pub fn octal(mut self, yes: bool) -> SyntaxConfig {
+    pub fn octal(mut self, yes: bool) -> SyntaxConfig {
         self.octal = yes;
         self
     }
 
-        pub fn get_unicode(&self) -> bool {
+    pub fn get_unicode(&self) -> bool {
         self.unicode
     }
 
-        pub fn get_case_insensitive(&self) -> bool {
+    pub fn get_case_insensitive(&self) -> bool {
         self.case_insensitive
     }
 
-        pub fn get_multi_line(&self) -> bool {
+    pub fn get_multi_line(&self) -> bool {
         self.multi_line
     }
 
-        pub fn get_dot_matches_new_line(&self) -> bool {
+    pub fn get_dot_matches_new_line(&self) -> bool {
         self.dot_matches_new_line
     }
 
-        pub fn get_swap_greed(&self) -> bool {
+    pub fn get_swap_greed(&self) -> bool {
         self.swap_greed
     }
 
-        pub fn get_ignore_whitespace(&self) -> bool {
+    pub fn get_ignore_whitespace(&self) -> bool {
         self.ignore_whitespace
     }
 
-        pub fn get_utf8(&self) -> bool {
+    pub fn get_utf8(&self) -> bool {
         self.utf8
     }
 
-        pub fn get_nest_limit(&self) -> u32 {
+    pub fn get_nest_limit(&self) -> u32 {
         self.nest_limit
     }
 
-        pub fn get_octal(&self) -> bool {
+    pub fn get_octal(&self) -> bool {
         self.octal
     }
 
-        pub(crate) fn apply(&self, builder: &mut ParserBuilder) {
+    pub(crate) fn apply(&self, builder: &mut ParserBuilder) {
         builder
             .unicode(self.unicode)
             .case_insensitive(self.case_insensitive)

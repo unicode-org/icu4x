@@ -158,18 +158,18 @@ macro_rules! err {
 //              special                   non-special*
 #[derive(Clone, Copy, Debug)]
 pub struct Special {
-            pub max: StateID,
-                pub quit_id: StateID,
-        pub min_match: StateID,
-        pub max_match: StateID,
-        pub min_accel: StateID,
-        pub max_accel: StateID,
-        pub min_start: StateID,
-        pub max_start: StateID,
+    pub max: StateID,
+    pub quit_id: StateID,
+    pub min_match: StateID,
+    pub max_match: StateID,
+    pub min_accel: StateID,
+    pub max_accel: StateID,
+    pub min_start: StateID,
+    pub max_start: StateID,
 }
 
 impl Special {
-                #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn new() -> Special {
         Special {
             max: DEAD,
@@ -183,7 +183,7 @@ impl Special {
         }
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn remap(&self, map: impl Fn(StateID) -> StateID) -> Special {
         Special {
             max: map(self.max),
@@ -197,9 +197,7 @@ impl Special {
         }
     }
 
-                                    pub fn from_bytes(
-        mut slice: &[u8],
-    ) -> Result<(Special, usize), DeserializeError> {
+    pub fn from_bytes(mut slice: &[u8]) -> Result<(Special, usize), DeserializeError> {
         bytes::check_slice_len(slice, 8 * StateID::SIZE, "special states")?;
 
         let mut nread = 0;
@@ -234,7 +232,7 @@ impl Special {
         Ok((special, nread))
     }
 
-            pub fn validate(&self) -> Result<(), DeserializeError> {
+    pub fn validate(&self) -> Result<(), DeserializeError> {
         // Check that both ends of the range are DEAD or neither are.
         if self.min_match == DEAD && self.max_match != DEAD {
             err!("min_match is DEAD, but max_match is not");
@@ -303,7 +301,7 @@ impl Special {
         Ok(())
     }
 
-            pub fn validate_state_count(
+    pub fn validate_state_count(
         &self,
         count: usize,
         stride2: usize,
@@ -318,10 +316,7 @@ impl Special {
         Ok(())
     }
 
-                        pub fn write_to<E: Endian>(
-        &self,
-        dst: &mut [u8],
-    ) -> Result<usize, SerializeError> {
+    pub fn write_to<E: Endian>(&self, dst: &mut [u8]) -> Result<usize, SerializeError> {
         use crate::regex_automata::util::bytes::write_state_id as write;
 
         if dst.len() < self.write_to_len() {
@@ -351,11 +346,11 @@ impl Special {
         Ok(nwrite)
     }
 
-        pub fn write_to_len(&self) -> usize {
+    pub fn write_to_len(&self) -> usize {
         8 * StateID::SIZE
     }
 
-            #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn set_max(&mut self) {
         use core::cmp::max;
         self.max = max(
@@ -364,67 +359,65 @@ impl Special {
         );
     }
 
-        #[inline]
+    #[inline]
     pub fn is_special_state(&self, id: StateID) -> bool {
         id <= self.max
     }
 
-        #[inline]
+    #[inline]
     pub fn is_dead_state(&self, id: StateID) -> bool {
         id == DEAD
     }
 
-        #[inline]
+    #[inline]
     pub fn is_quit_state(&self, id: StateID) -> bool {
         !self.is_dead_state(id) && self.quit_id == id
     }
 
-        #[inline]
+    #[inline]
     pub fn is_match_state(&self, id: StateID) -> bool {
         !self.is_dead_state(id) && self.min_match <= id && id <= self.max_match
     }
 
-        #[inline]
+    #[inline]
     pub fn is_accel_state(&self, id: StateID) -> bool {
         !self.is_dead_state(id) && self.min_accel <= id && id <= self.max_accel
     }
 
-        #[inline]
+    #[inline]
     pub fn is_start_state(&self, id: StateID) -> bool {
         !self.is_dead_state(id) && self.min_start <= id && id <= self.max_start
     }
 
-        #[inline]
+    #[inline]
     pub fn match_len(&self, stride: usize) -> usize {
         if self.matches() {
-            (self.max_match.as_usize() - self.min_match.as_usize() + stride)
-                / stride
+            (self.max_match.as_usize() - self.min_match.as_usize() + stride) / stride
         } else {
             0
         }
     }
 
-        #[inline]
+    #[inline]
     pub fn matches(&self) -> bool {
         self.min_match != DEAD
     }
 
-        #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub fn accel_len(&self, stride: usize) -> usize {
         if self.accels() {
-            (self.max_accel.as_usize() - self.min_accel.as_usize() + stride)
-                / stride
+            (self.max_accel.as_usize() - self.min_accel.as_usize() + stride) / stride
         } else {
             0
         }
     }
 
-        #[inline]
+    #[inline]
     pub fn accels(&self) -> bool {
         self.min_accel != DEAD
     }
 
-        #[inline]
+    #[inline]
     pub fn starts(&self) -> bool {
         self.min_start != DEAD
     }

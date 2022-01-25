@@ -36,68 +36,68 @@ pub struct DFA {
 }
 
 impl DFA {
-                                                                                        pub fn new(pattern: &str) -> Result<DFA, BuildError> {
+    pub fn new(pattern: &str) -> Result<DFA, BuildError> {
         DFA::builder().build(pattern)
     }
 
-                                                                                        pub fn new_many<P: AsRef<str>>(patterns: &[P]) -> Result<DFA, BuildError> {
+    pub fn new_many<P: AsRef<str>>(patterns: &[P]) -> Result<DFA, BuildError> {
         DFA::builder().build_many(patterns)
     }
 
-                                                                pub fn always_match() -> Result<DFA, BuildError> {
+    pub fn always_match() -> Result<DFA, BuildError> {
         let nfa = thompson::NFA::always_match();
         Builder::new().build_from_nfa(Arc::new(nfa))
     }
 
-                                                            pub fn never_match() -> Result<DFA, BuildError> {
+    pub fn never_match() -> Result<DFA, BuildError> {
         let nfa = thompson::NFA::never_match();
         Builder::new().build_from_nfa(Arc::new(nfa))
     }
 
-                                                                                                                pub fn config() -> Config {
+    pub fn config() -> Config {
         Config::new()
     }
 
-                                                                                                                                                pub fn builder() -> Builder {
+    pub fn builder() -> Builder {
         Builder::new()
     }
 
-                            pub fn create_cache(&self) -> Cache {
+    pub fn create_cache(&self) -> Cache {
         Cache::new(self)
     }
 
-                                                                                                                                                                                pub fn reset_cache(&self, cache: &mut Cache) {
+    pub fn reset_cache(&self, cache: &mut Cache) {
         Lazy::new(self, cache).reset_cache()
     }
 
-                                                                                                                                                pub fn pattern_count(&self) -> usize {
+    pub fn pattern_count(&self) -> usize {
         self.nfa.match_len()
     }
 
-        pub fn nfa(&self) -> &Arc<thompson::NFA> {
+    pub fn nfa(&self) -> &Arc<thompson::NFA> {
         &self.nfa
     }
 
-                                fn stride2(&self) -> usize {
+    fn stride2(&self) -> usize {
         self.stride2
     }
 
-                fn stride(&self) -> usize {
+    fn stride(&self) -> usize {
         1 << self.stride2()
     }
 
-                    fn alphabet_len(&self) -> usize {
+    fn alphabet_len(&self) -> usize {
         self.classes.alphabet_len()
     }
 
-                        pub fn memory_usage(&self) -> usize {
+    pub fn memory_usage(&self) -> usize {
         // Everything else is on the stack.
         self.nfa.memory_usage()
     }
 }
 
 impl DFA {
-                                                                                                                                                                                                                    #[inline]
+    #[inline]
     pub fn find_earliest_fwd(
         &self,
         cache: &mut Cache,
@@ -106,7 +106,7 @@ impl DFA {
         self.find_earliest_fwd_at(cache, None, None, bytes, 0, bytes.len())
     }
 
-                                                                                                                                                                                                                                                #[inline]
+    #[inline]
     pub fn find_earliest_rev(
         &self,
         cache: &mut Cache,
@@ -115,7 +115,7 @@ impl DFA {
         self.find_earliest_rev_at(cache, None, bytes, 0, bytes.len())
     }
 
-                                                                                                                                                                                                                                    #[inline]
+    #[inline]
     pub fn find_leftmost_fwd(
         &self,
         cache: &mut Cache,
@@ -124,7 +124,7 @@ impl DFA {
         self.find_leftmost_fwd_at(cache, None, None, bytes, 0, bytes.len())
     }
 
-                                                                                                                                                                                                                                    #[inline]
+    #[inline]
     pub fn find_leftmost_rev(
         &self,
         cache: &mut Cache,
@@ -133,25 +133,17 @@ impl DFA {
         self.find_leftmost_rev_at(cache, None, bytes, 0, bytes.len())
     }
 
-                                                                                                                                                                                                                                                                        #[inline]
+    #[inline]
     pub fn find_overlapping_fwd(
         &self,
         cache: &mut Cache,
         bytes: &[u8],
         state: &mut OverlappingState,
     ) -> Result<Option<HalfMatch>, MatchError> {
-        self.find_overlapping_fwd_at(
-            cache,
-            None,
-            None,
-            bytes,
-            0,
-            bytes.len(),
-            state,
-        )
+        self.find_overlapping_fwd_at(cache, None, None, bytes, 0, bytes.len(), state)
     }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                #[inline]
+    #[inline]
     pub fn find_earliest_fwd_at(
         &self,
         cache: &mut Cache,
@@ -161,12 +153,10 @@ impl DFA {
         start: usize,
         end: usize,
     ) -> Result<Option<HalfMatch>, MatchError> {
-        search::find_earliest_fwd(
-            pre, self, cache, pattern_id, bytes, start, end,
-        )
+        search::find_earliest_fwd(pre, self, cache, pattern_id, bytes, start, end)
     }
 
-                                                                                                                        #[inline]
+    #[inline]
     pub fn find_earliest_rev_at(
         &self,
         cache: &mut Cache,
@@ -178,7 +168,7 @@ impl DFA {
         search::find_earliest_rev(self, cache, pattern_id, bytes, start, end)
     }
 
-                                                                                                        #[inline]
+    #[inline]
     pub fn find_leftmost_fwd_at(
         &self,
         cache: &mut Cache,
@@ -188,12 +178,10 @@ impl DFA {
         start: usize,
         end: usize,
     ) -> Result<Option<HalfMatch>, MatchError> {
-        search::find_leftmost_fwd(
-            pre, self, cache, pattern_id, bytes, start, end,
-        )
+        search::find_leftmost_fwd(pre, self, cache, pattern_id, bytes, start, end)
     }
 
-                                                                                                            #[inline]
+    #[inline]
     pub fn find_leftmost_rev_at(
         &self,
         cache: &mut Cache,
@@ -205,7 +193,7 @@ impl DFA {
         search::find_leftmost_rev(self, cache, pattern_id, bytes, start, end)
     }
 
-                                                                                                                                                                            #[inline]
+    #[inline]
     pub fn find_overlapping_fwd_at(
         &self,
         cache: &mut Cache,
@@ -216,14 +204,12 @@ impl DFA {
         end: usize,
         state: &mut OverlappingState,
     ) -> Result<Option<HalfMatch>, MatchError> {
-        search::find_overlapping_fwd(
-            pre, self, cache, pattern_id, bytes, start, end, state,
-        )
+        search::find_overlapping_fwd(pre, self, cache, pattern_id, bytes, start, end, state)
     }
 }
 
 impl DFA {
-                                                                                                                                                                                                                                                                #[inline]
+    #[inline]
     pub fn next_state(
         &self,
         cache: &mut Cache,
@@ -240,7 +226,7 @@ impl DFA {
         Lazy::new(self, cache).cache_next_state(current, unit)
     }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                #[inline]
+    #[inline]
     pub fn next_state_untagged(
         &self,
         cache: &Cache,
@@ -253,7 +239,7 @@ impl DFA {
         cache.trans[offset]
     }
 
-                                                                                                                                                                                                                                                #[inline]
+    #[inline]
     pub unsafe fn next_state_untagged_unchecked(
         &self,
         cache: &Cache,
@@ -266,7 +252,7 @@ impl DFA {
         *cache.trans.get_unchecked(offset)
     }
 
-                                                                                                                                                                                                                                                                                                                            #[inline]
+    #[inline]
     pub fn next_eoi_state(
         &self,
         cache: &mut Cache,
@@ -282,7 +268,7 @@ impl DFA {
         Lazy::new(self, cache).cache_next_state(current, unit)
     }
 
-                                                                                                                    #[inline]
+    #[inline]
     pub fn start_state_forward(
         &self,
         cache: &mut Cache,
@@ -300,7 +286,7 @@ impl DFA {
         lazy.cache_start_group(pattern_id, start_type)
     }
 
-                                                                                                                    #[inline]
+    #[inline]
     pub fn start_state_reverse(
         &self,
         cache: &mut Cache,
@@ -318,19 +304,14 @@ impl DFA {
         lazy.cache_start_group(pattern_id, start_type)
     }
 
-                                                                                                                                                                                                                                                                            #[inline]
+    #[inline]
     pub fn match_count(&self, cache: &Cache, id: LazyStateID) -> usize {
         assert!(id.is_match());
         LazyRef::new(self, cache).get_cached_state(id).match_count()
     }
 
-                                                                                #[inline]
-    pub fn match_pattern(
-        &self,
-        cache: &Cache,
-        id: LazyStateID,
-        match_index: usize,
-    ) -> PatternID {
+    #[inline]
+    pub fn match_pattern(&self, cache: &Cache, id: LazyStateID, match_index: usize) -> PatternID {
         // This is an optimization for the very common case of a DFA with a
         // single pattern. This conditional avoids a somewhat more costly path
         // that finds the pattern ID from the corresponding `State`, which
@@ -350,20 +331,20 @@ pub struct Cache {
     // N.B. If you're looking to understand how determinization works, it
     // is probably simpler to first grok src/dfa/determinize.rs, since that
     // doesn't have the "laziness" component.
-                                            trans: Vec<LazyStateID>,
-                                                starts: Vec<LazyStateID>,
-                    states: Vec<State>,
-                                                states_to_id: StateMap,
-            sparses: SparseSets,
-            stack: Vec<NFAStateID>,
-                    scratch_state_builder: StateBuilderEmpty,
-                            state_saver: StateSaver,
-                    memory_usage_state: usize,
-                clear_count: usize,
+    trans: Vec<LazyStateID>,
+    starts: Vec<LazyStateID>,
+    states: Vec<State>,
+    states_to_id: StateMap,
+    sparses: SparseSets,
+    stack: Vec<NFAStateID>,
+    scratch_state_builder: StateBuilderEmpty,
+    state_saver: StateSaver,
+    memory_usage_state: usize,
+    clear_count: usize,
 }
 
 impl Cache {
-                        pub fn new(dfa: &DFA) -> Cache {
+    pub fn new(dfa: &DFA) -> Cache {
         let mut cache = Cache {
             trans: alloc::vec![],
             starts: alloc::vec![],
@@ -376,19 +357,23 @@ impl Cache {
             memory_usage_state: 0,
             clear_count: 0,
         };
-        Lazy { dfa, cache: &mut cache }.init_cache();
+        Lazy {
+            dfa,
+            cache: &mut cache,
+        }
+        .init_cache();
         cache
     }
 
-                                                                                                                                                                                pub fn reset(&mut self, dfa: &DFA) {
+    pub fn reset(&mut self, dfa: &DFA) {
         Lazy::new(dfa, self).reset_cache()
     }
 
-                            pub fn clear_count(&self) -> usize {
+    pub fn clear_count(&self) -> usize {
         self.clear_count
     }
 
-                    pub fn memory_usage(&self) -> usize {
+    pub fn memory_usage(&self) -> usize {
         const ID_SIZE: usize = size_of::<LazyStateID>();
         const STATE_SIZE: usize = size_of::<State>();
 
@@ -417,15 +402,15 @@ struct Lazy<'i, 'c> {
 }
 
 impl<'i, 'c> Lazy<'i, 'c> {
-        fn new(dfa: &'i DFA, cache: &'c mut Cache) -> Lazy<'i, 'c> {
+    fn new(dfa: &'i DFA, cache: &'c mut Cache) -> Lazy<'i, 'c> {
         Lazy { dfa, cache }
     }
 
-            fn as_ref<'a>(&'a self) -> LazyRef<'i, 'a> {
+    fn as_ref<'a>(&'a self) -> LazyRef<'i, 'a> {
         LazyRef::new(self.dfa, self.cache)
     }
 
-                                                                        #[inline(never)]
+    #[inline(never)]
     fn cache_next_state(
         &mut self,
         mut current: LazyStateID,
@@ -457,7 +442,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         Ok(next)
     }
 
-                                            fn cache_start_group(
+    fn cache_start_group(
         &mut self,
         pattern_id: Option<PatternID>,
         start: Start,
@@ -480,7 +465,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         Ok(id)
     }
 
-                                                fn cache_start_one(
+    fn cache_start_one(
         &mut self,
         nfa_start_id: NFAStateID,
         start: Start,
@@ -504,14 +489,12 @@ impl<'i, 'c> Lazy<'i, 'c> {
         self.add_builder_state(builder, |id| id.to_start())
     }
 
-                                                fn add_builder_state(
+    fn add_builder_state(
         &mut self,
         builder: StateBuilderNFA,
         idmap: impl Fn(LazyStateID) -> LazyStateID,
     ) -> Result<LazyStateID, CacheError> {
-        if let Some(&cached_id) =
-            self.cache.states_to_id.get(builder.as_bytes())
-        {
+        if let Some(&cached_id) = self.cache.states_to_id.get(builder.as_bytes()) {
             // Since we have a cached state, put the constructed state's
             // memory back into our scratch space, so that it can be reused.
             self.put_state_builder(builder);
@@ -522,7 +505,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         result
     }
 
-                                            fn add_state(
+    fn add_state(
         &mut self,
         state: State,
         idmap: impl Fn(LazyStateID) -> LazyStateID,
@@ -540,9 +523,9 @@ impl<'i, 'c> Lazy<'i, 'c> {
         }
         // Add room in the transition table. Since this is a fresh state, all
         // of its transitions are unknown.
-        self.cache.trans.extend(
-            iter::repeat(self.as_ref().unknown_id()).take(self.dfa.stride()),
-        );
+        self.cache
+            .trans
+            .extend(iter::repeat(self.as_ref().unknown_id()).take(self.dfa.stride()));
         // When we add a sentinel state, we never want to set any quit
         // transitions. Technically, this is harmless, since sentinel states
         // have all of their transitions set to loop back to themselves. But
@@ -562,7 +545,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         Ok(id)
     }
 
-                            fn next_state_id(&mut self) -> Result<LazyStateID, CacheError> {
+    fn next_state_id(&mut self) -> Result<LazyStateID, CacheError> {
         let sid = match LazyStateID::new(self.cache.trans.len()) {
             Ok(sid) => sid,
             Err(_) => {
@@ -575,7 +558,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         Ok(sid)
     }
 
-                                                                    fn try_clear_cache(&mut self) -> Result<(), CacheError> {
+    fn try_clear_cache(&mut self) -> Result<(), CacheError> {
         // Currently, the only heuristic we use is the minimum cache clear
         // count. If we pass that minimum, then we give up.
         //
@@ -597,7 +580,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         Ok(())
     }
 
-                                fn reset_cache(&mut self) {
+    fn reset_cache(&mut self) {
         self.cache.state_saver = StateSaver::none();
         self.clear_cache();
         // If a new DFA is used, it might have a different number of NFA
@@ -607,7 +590,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         self.cache.clear_count = 0;
     }
 
-                                                                    fn clear_cache(&mut self) {
+    fn clear_cache(&mut self) {
         self.cache.trans.clear();
         self.cache.starts.clear();
         self.cache.states.clear();
@@ -636,13 +619,16 @@ impl<'i, 'c> Lazy<'i, 'c> {
                 "cannot save sentinel state"
             );
             let new_id = self
-                .add_state(state, |id| {
-                    if old_id.is_start() {
-                        id.to_start()
-                    } else {
-                        id
-                    }
-                })
+                .add_state(
+                    state,
+                    |id| {
+                        if old_id.is_start() {
+                            id.to_start()
+                        } else {
+                            id
+                        }
+                    },
+                )
                 // The unwrap here is OK because lazy DFA creation ensures that
                 // we have room in the cache to add MIN_STATES states. Since
                 // 'init_cache' above adds 3, this adds a 4th.
@@ -651,7 +637,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         }
     }
 
-                                    fn init_cache(&mut self) {
+    fn init_cache(&mut self) {
         let mut starts_len = Start::count();
         if self.dfa.starts_for_each_pattern {
             starts_len += Start::count() * self.dfa.pattern_count();
@@ -675,8 +661,7 @@ impl<'i, 'c> Lazy<'i, 'c> {
         // search routine must explicitly check for these state types. (Sans
         // `unknown`, since that is only used internally to represent missing
         // states.)
-        let unk_id =
-            self.add_state(dead.clone(), |id| id.to_unknown()).unwrap();
+        let unk_id = self.add_state(dead.clone(), |id| id.to_unknown()).unwrap();
         let dead_id = self.add_state(dead.clone(), |id| id.to_dead()).unwrap();
         let quit_id = self.add_state(dead.clone(), |id| id.to_quit()).unwrap();
         assert_eq!(unk_id, self.as_ref().unknown_id());
@@ -703,43 +688,36 @@ impl<'i, 'c> Lazy<'i, 'c> {
         self.cache.states_to_id.insert(dead, dead_id);
     }
 
-                        fn save_state(&mut self, id: LazyStateID) {
+    fn save_state(&mut self, id: LazyStateID) {
         let state = self.as_ref().get_cached_state(id).clone();
         self.cache.state_saver = StateSaver::ToSave { id, state };
     }
 
-                        fn saved_state_id(&mut self) -> LazyStateID {
+    fn saved_state_id(&mut self) -> LazyStateID {
         self.cache
             .state_saver
             .take_saved()
             .expect("state saver does not have saved state ID")
     }
 
-        fn set_all_transitions(&mut self, from: LazyStateID, to: LazyStateID) {
+    fn set_all_transitions(&mut self, from: LazyStateID, to: LazyStateID) {
         for unit in self.dfa.classes.representatives() {
             self.set_transition(from, unit, to);
         }
     }
 
-                        fn set_transition(
-        &mut self,
-        from: LazyStateID,
-        unit: alphabet::Unit,
-        to: LazyStateID,
-    ) {
-        assert!(self.as_ref().is_valid(from), "invalid 'from' id: {:?}", from);
+    fn set_transition(&mut self, from: LazyStateID, unit: alphabet::Unit, to: LazyStateID) {
+        assert!(
+            self.as_ref().is_valid(from),
+            "invalid 'from' id: {:?}",
+            from
+        );
         assert!(self.as_ref().is_valid(to), "invalid 'to' id: {:?}", to);
-        let offset =
-            from.as_usize_untagged() + self.dfa.classes.get_by_unit(unit);
+        let offset = from.as_usize_untagged() + self.dfa.classes.get_by_unit(unit);
         self.cache.trans[offset] = to;
     }
 
-                        fn set_start_state(
-        &mut self,
-        pattern_id: Option<PatternID>,
-        start: Start,
-        id: LazyStateID,
-    ) {
+    fn set_start_state(&mut self, pattern_id: Option<PatternID>, start: Start, id: LazyStateID) {
         assert!(self.as_ref().is_valid(id));
         let start_index = start.as_usize();
         let index = match pattern_id {
@@ -757,18 +735,15 @@ impl<'i, 'c> Lazy<'i, 'c> {
         self.cache.starts[index] = id;
     }
 
-                            fn get_state_builder(&mut self) -> StateBuilderEmpty {
+    fn get_state_builder(&mut self) -> StateBuilderEmpty {
         core::mem::replace(
             &mut self.cache.scratch_state_builder,
             StateBuilderEmpty::new(),
         )
     }
 
-                    fn put_state_builder(&mut self, builder: StateBuilderNFA) {
-        let _ = core::mem::replace(
-            &mut self.cache.scratch_state_builder,
-            builder.clear(),
-        );
+    fn put_state_builder(&mut self, builder: StateBuilderNFA) {
+        let _ = core::mem::replace(&mut self.cache.scratch_state_builder, builder.clear());
     }
 }
 
@@ -779,15 +754,11 @@ struct LazyRef<'i, 'c> {
 }
 
 impl<'i, 'c> LazyRef<'i, 'c> {
-        fn new(dfa: &'i DFA, cache: &'c Cache) -> LazyRef<'i, 'c> {
+    fn new(dfa: &'i DFA, cache: &'c Cache) -> LazyRef<'i, 'c> {
         LazyRef { dfa, cache }
     }
 
-                    fn get_cached_start_id(
-        &self,
-        pattern_id: Option<PatternID>,
-        start: Start,
-    ) -> LazyStateID {
+    fn get_cached_start_id(&self, pattern_id: Option<PatternID>, start: Start) -> LazyStateID {
         let start_index = start.as_usize();
         let index = match pattern_id {
             None => start_index,
@@ -804,21 +775,21 @@ impl<'i, 'c> LazyRef<'i, 'c> {
         self.cache.starts[index]
     }
 
-                fn get_cached_state(&self, sid: LazyStateID) -> &State {
+    fn get_cached_state(&self, sid: LazyStateID) -> &State {
         let index = sid.as_usize_untagged() >> self.dfa.stride2();
         &self.cache.states[index]
     }
 
-                                        fn is_sentinel(&self, id: LazyStateID) -> bool {
+    fn is_sentinel(&self, id: LazyStateID) -> bool {
         id == self.unknown_id() || id == self.dead_id() || id == self.quit_id()
     }
 
-        fn unknown_id(&self) -> LazyStateID {
+    fn unknown_id(&self) -> LazyStateID {
         // This unwrap is OK since 0 is always a valid state ID.
         LazyStateID::new(0).unwrap().to_unknown()
     }
 
-        fn dead_id(&self) -> LazyStateID {
+    fn dead_id(&self) -> LazyStateID {
         // This unwrap is OK since the maximum value here is 1 * 512 = 512,
         // which is <= 2047 (the maximum state ID on 16-bit systems). Where
         // 512 is the worst case for our equivalence classes (every byte is a
@@ -826,7 +797,7 @@ impl<'i, 'c> LazyRef<'i, 'c> {
         LazyStateID::new(1 << self.dfa.stride2()).unwrap().to_dead()
     }
 
-        fn quit_id(&self) -> LazyStateID {
+    fn quit_id(&self) -> LazyStateID {
         // This unwrap is OK since the maximum value here is 2 * 512 = 1024,
         // which is <= 2047 (the maximum state ID on 16-bit systems). Where
         // 512 is the worst case for our equivalence classes (every byte is a
@@ -834,27 +805,24 @@ impl<'i, 'c> LazyRef<'i, 'c> {
         LazyStateID::new(2 << self.dfa.stride2()).unwrap().to_quit()
     }
 
-                    fn is_valid(&self, id: LazyStateID) -> bool {
+    fn is_valid(&self, id: LazyStateID) -> bool {
         let id = id.as_usize_untagged();
         id < self.cache.trans.len() && id % self.dfa.stride() == 0
     }
 
-        fn state_fits_in_cache(&self, state: &State) -> bool {
-        let needed = self.cache.memory_usage()
-            + self.memory_usage_for_one_more_state(state.memory_usage());
+    fn state_fits_in_cache(&self, state: &State) -> bool {
+        let needed =
+            self.cache.memory_usage() + self.memory_usage_for_one_more_state(state.memory_usage());
         needed <= self.dfa.cache_capacity
     }
 
-            fn state_builder_fits_in_cache(&self, state: &StateBuilderNFA) -> bool {
+    fn state_builder_fits_in_cache(&self, state: &StateBuilderNFA) -> bool {
         let needed = self.cache.memory_usage()
             + self.memory_usage_for_one_more_state(state.as_bytes().len());
         needed <= self.dfa.cache_capacity
     }
 
-                fn memory_usage_for_one_more_state(
-        &self,
-        state_heap_size: usize,
-    ) -> usize {
+    fn memory_usage_for_one_more_state(&self, state_heap_size: usize) -> usize {
         const ID_SIZE: usize = size_of::<LazyStateID>();
         const STATE_SIZE: usize = size_of::<State>();
 
@@ -867,24 +835,24 @@ impl<'i, 'c> LazyRef<'i, 'c> {
 
 #[derive(Clone, Debug)]
 enum StateSaver {
-            None,
-                ToSave { id: LazyStateID, state: State },
-                    Saved(LazyStateID),
+    None,
+    ToSave { id: LazyStateID, state: State },
+    Saved(LazyStateID),
 }
 
 impl StateSaver {
-        fn none() -> StateSaver {
+    fn none() -> StateSaver {
         StateSaver::None
     }
 
-            fn take_to_save(&mut self) -> Option<(LazyStateID, State)> {
+    fn take_to_save(&mut self) -> Option<(LazyStateID, State)> {
         match core::mem::replace(self, StateSaver::None) {
             StateSaver::None | StateSaver::Saved(_) => None,
             StateSaver::ToSave { id, state } => Some((id, state)),
         }
     }
 
-                                        fn take_saved(&mut self) -> Option<LazyStateID> {
+    fn take_saved(&mut self) -> Option<LazyStateID> {
         match core::mem::replace(self, StateSaver::None) {
             StateSaver::None => None,
             StateSaver::Saved(id) | StateSaver::ToSave { id, .. } => Some(id),
@@ -913,31 +881,31 @@ pub struct Config {
 }
 
 impl Config {
-        pub fn new() -> Config {
+    pub fn new() -> Config {
         Config::default()
     }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                        pub fn anchored(mut self, yes: bool) -> Config {
+    pub fn anchored(mut self, yes: bool) -> Config {
         self.anchored = Some(yes);
         self
     }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                        pub fn match_kind(mut self, kind: MatchKind) -> Config {
+    pub fn match_kind(mut self, kind: MatchKind) -> Config {
         self.match_kind = Some(kind);
         self
     }
 
-                                                                                                                                                                                                                                                                                                                pub fn starts_for_each_pattern(mut self, yes: bool) -> Config {
+    pub fn starts_for_each_pattern(mut self, yes: bool) -> Config {
         self.starts_for_each_pattern = Some(yes);
         self
     }
 
-                                                                                                                                pub fn byte_classes(mut self, yes: bool) -> Config {
+    pub fn byte_classes(mut self, yes: bool) -> Config {
         self.byte_classes = Some(yes);
         self
     }
 
-                                                                                                                                                                                                                                                                                            pub fn unicode_word_boundary(mut self, yes: bool) -> Config {
+    pub fn unicode_word_boundary(mut self, yes: bool) -> Config {
         // We have a separate option for this instead of just setting the
         // appropriate quit bytes here because we don't want to set quit bytes
         // for every regex. We only want to set them when the regex contains a
@@ -946,7 +914,7 @@ impl Config {
         self
     }
 
-                                                                                                                                                                                                                                                            pub fn quit(mut self, byte: u8, yes: bool) -> Config {
+    pub fn quit(mut self, byte: u8, yes: bool) -> Config {
         if self.get_unicode_word_boundary() && !byte.is_ascii() && !yes {
             panic!(
                 "cannot set non-ASCII byte to be non-quit when \
@@ -964,72 +932,65 @@ impl Config {
         self
     }
 
-                                                                                                                                                                                                                    pub fn cache_capacity(mut self, bytes: usize) -> Config {
+    pub fn cache_capacity(mut self, bytes: usize) -> Config {
         self.cache_capacity = Some(bytes);
         self
     }
 
-                                                                                                                                                                                        pub fn skip_cache_capacity_check(mut self, yes: bool) -> Config {
+    pub fn skip_cache_capacity_check(mut self, yes: bool) -> Config {
         self.skip_cache_capacity_check = Some(yes);
         self
     }
 
-                                                                                                                                                                                                                                                                                                                                                                                    pub fn minimum_cache_clear_count(mut self, min: Option<usize>) -> Config {
+    pub fn minimum_cache_clear_count(mut self, min: Option<usize>) -> Config {
         self.minimum_cache_clear_count = Some(min);
         self
     }
 
-        pub fn get_anchored(&self) -> bool {
+    pub fn get_anchored(&self) -> bool {
         self.anchored.unwrap_or(false)
     }
 
-        pub fn get_match_kind(&self) -> MatchKind {
+    pub fn get_match_kind(&self) -> MatchKind {
         self.match_kind.unwrap_or(MatchKind::LeftmostFirst)
     }
 
-            pub fn get_starts_for_each_pattern(&self) -> bool {
+    pub fn get_starts_for_each_pattern(&self) -> bool {
         self.starts_for_each_pattern.unwrap_or(false)
     }
 
-                pub fn get_byte_classes(&self) -> bool {
+    pub fn get_byte_classes(&self) -> bool {
         self.byte_classes.unwrap_or(true)
     }
 
-                pub fn get_unicode_word_boundary(&self) -> bool {
+    pub fn get_unicode_word_boundary(&self) -> bool {
         self.unicode_word_boundary.unwrap_or(false)
     }
 
-                    pub fn get_quit(&self, byte: u8) -> bool {
+    pub fn get_quit(&self, byte: u8) -> bool {
         self.quitset.map_or(false, |q| q.contains(byte))
     }
 
-        pub fn get_cache_capacity(&self) -> usize {
+    pub fn get_cache_capacity(&self) -> usize {
         self.cache_capacity.unwrap_or(2 * (1 << 20))
     }
 
-        pub fn get_skip_cache_capacity_check(&self) -> bool {
+    pub fn get_skip_cache_capacity_check(&self) -> bool {
         self.skip_cache_capacity_check.unwrap_or(false)
     }
 
-                    pub fn get_minimum_cache_clear_count(&self) -> Option<usize> {
+    pub fn get_minimum_cache_clear_count(&self) -> Option<usize> {
         self.minimum_cache_clear_count.unwrap_or(None)
     }
 
-                                                            pub fn get_minimum_cache_capacity(
-        &self,
-        nfa: &thompson::NFA,
-    ) -> Result<usize, BuildError> {
+    pub fn get_minimum_cache_capacity(&self, nfa: &thompson::NFA) -> Result<usize, BuildError> {
         let quitset = self.quit_set_from_nfa(nfa)?;
         let classes = self.byte_classes_from_nfa(nfa, &quitset);
         let starts = self.get_starts_for_each_pattern();
         Ok(minimum_cache_capacity(nfa, &classes, starts))
     }
 
-                    fn byte_classes_from_nfa(
-        &self,
-        nfa: &thompson::NFA,
-        quit: &ByteSet,
-    ) -> ByteClasses {
+    fn byte_classes_from_nfa(&self, nfa: &thompson::NFA, quit: &ByteSet) -> ByteClasses {
         if !self.get_byte_classes() {
             // The lazy DFA will always use the equivalence class map, but
             // enabling this option is useful for debugging. Namely, this will
@@ -1049,10 +1010,7 @@ impl Config {
         }
     }
 
-                        fn quit_set_from_nfa(
-        &self,
-        nfa: &thompson::NFA,
-    ) -> Result<ByteSet, BuildError> {
+    fn quit_set_from_nfa(&self, nfa: &thompson::NFA) -> Result<ByteSet, BuildError> {
         let mut quit = self.quitset.unwrap_or(ByteSet::empty());
         if nfa.has_word_boundary_unicode() {
             if self.get_unicode_word_boundary() {
@@ -1066,26 +1024,20 @@ impl Config {
                 // DFA to quit on at least all non-ASCII bytes, then that's all
                 // we need for heuristic support to work.
                 if !quit.contains_range(0x80, 0xFF) {
-                    return Err(
-                        BuildError::unsupported_dfa_word_boundary_unicode(),
-                    );
+                    return Err(BuildError::unsupported_dfa_word_boundary_unicode());
                 }
             }
         }
         Ok(quit)
     }
 
-                    fn overwrite(self, o: Config) -> Config {
+    fn overwrite(self, o: Config) -> Config {
         Config {
             anchored: o.anchored.or(self.anchored),
             match_kind: o.match_kind.or(self.match_kind),
-            starts_for_each_pattern: o
-                .starts_for_each_pattern
-                .or(self.starts_for_each_pattern),
+            starts_for_each_pattern: o.starts_for_each_pattern.or(self.starts_for_each_pattern),
             byte_classes: o.byte_classes.or(self.byte_classes),
-            unicode_word_boundary: o
-                .unicode_word_boundary
-                .or(self.unicode_word_boundary),
+            unicode_word_boundary: o.unicode_word_boundary.or(self.unicode_word_boundary),
             quitset: o.quitset.or(self.quitset),
             cache_capacity: o.cache_capacity.or(self.cache_capacity),
             skip_cache_capacity_check: o
@@ -1105,30 +1057,26 @@ pub struct Builder {
 }
 
 impl Builder {
-        pub fn new() -> Builder {
+    pub fn new() -> Builder {
         Builder {
             config: Config::default(),
             thompson: thompson::Builder::new(),
         }
     }
 
-                    pub fn build(&self, pattern: &str) -> Result<DFA, BuildError> {
+    pub fn build(&self, pattern: &str) -> Result<DFA, BuildError> {
         self.build_many(&[pattern])
     }
 
-                    pub fn build_many<P: AsRef<str>>(
-        &self,
-        patterns: &[P],
-    ) -> Result<DFA, BuildError> {
-        let nfa =
-            self.thompson.build_many(patterns).map_err(BuildError::nfa)?;
+    pub fn build_many<P: AsRef<str>>(&self, patterns: &[P]) -> Result<DFA, BuildError> {
+        let nfa = self
+            .thompson
+            .build_many(patterns)
+            .map_err(BuildError::nfa)?;
         self.build_from_nfa(Arc::new(nfa))
     }
 
-                                                                                                                                pub fn build_from_nfa(
-        &self,
-        nfa: Arc<thompson::NFA>,
-    ) -> Result<DFA, BuildError> {
+    pub fn build_from_nfa(&self, nfa: Arc<thompson::NFA>) -> Result<DFA, BuildError> {
         let quitset = self.config.quit_set_from_nfa(&nfa)?;
         let classes = self.config.byte_classes_from_nfa(&nfa, &quitset);
         // Check that we can fit at least a few states into our cache,
@@ -1141,11 +1089,8 @@ impl Builder {
         // to be careful not to panic in other areas of the code (the cache
         // clearing and init code) that tend to assume some minimum useful
         // cache capacity.
-        let min_cache = minimum_cache_capacity(
-            &nfa,
-            &classes,
-            self.config.get_starts_for_each_pattern(),
-        );
+        let min_cache =
+            minimum_cache_capacity(&nfa, &classes, self.config.get_starts_for_each_pattern());
         let mut cache_capacity = self.config.get_cache_capacity();
         if cache_capacity < min_cache {
             // When the caller has asked us to skip the cache capacity check,
@@ -1184,18 +1129,16 @@ impl Builder {
             match_kind: self.config.get_match_kind(),
             starts_for_each_pattern: self.config.get_starts_for_each_pattern(),
             cache_capacity,
-            minimum_cache_clear_count: self
-                .config
-                .get_minimum_cache_clear_count(),
+            minimum_cache_clear_count: self.config.get_minimum_cache_clear_count(),
         })
     }
 
-        pub fn configure(&mut self, config: Config) -> &mut Builder {
+    pub fn configure(&mut self, config: Config) -> &mut Builder {
         self.config = self.config.overwrite(config);
         self
     }
 
-                                    pub fn syntax(
+    pub fn syntax(
         &mut self,
         config: crate::regex_automata::util::syntax::SyntaxConfig,
     ) -> &mut Builder {
@@ -1203,7 +1146,7 @@ impl Builder {
         self
     }
 
-                                        pub fn thompson(&mut self, config: thompson::Config) -> &mut Builder {
+    pub fn thompson(&mut self, config: thompson::Config) -> &mut Builder {
         self.thompson.configure(config);
         self
     }
@@ -1242,7 +1185,10 @@ fn minimum_cache_capacity(
     // HOWEVER, three of the states needed by a lazy DFA are just the sentinel
     // unknown, dead and quit states. Those states have a known size and it is
     // small.
-    assert!(MIN_STATES >= 3, "minimum number of states has to be at least 3");
+    assert!(
+        MIN_STATES >= 3,
+        "minimum number of states has to be at least 3"
+    );
     let dead_state_size = State::dead().memory_usage();
     let max_state_size = 3 + 4 + (nfa.match_len() * 4) + (nfa.len() * 5);
     let states = (3 * (size_of::<State>() + dead_state_size))
@@ -1251,11 +1197,5 @@ fn minimum_cache_capacity(
     let stack = nfa.len() * NFAStateID::SIZE;
     let scratch_state_builder = max_state_size;
 
-    trans
-        + starts
-        + states
-        + states_to_sid
-        + sparses
-        + stack
-        + scratch_state_builder
+    trans + starts + states + states_to_sid + sparses + stack + scratch_state_builder
 }

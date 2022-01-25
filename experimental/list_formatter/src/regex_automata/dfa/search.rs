@@ -78,9 +78,13 @@ fn find_fwd<A: Automaton + ?Sized>(
         // limit this optimization to cases where there is exactly one pattern.
         // In that case, any match must be the 0th pattern.
         if dfa.pattern_count() == 1 && !pre.reports_false_positives() {
-            return Ok(pre.next_candidate(bytes, at).into_option().map(
-                |offset| HalfMatch { pattern: PatternID::ZERO, offset },
-            ));
+            return Ok(pre
+                .next_candidate(bytes, at)
+                .into_option()
+                .map(|offset| HalfMatch {
+                    pattern: PatternID::ZERO,
+                    offset,
+                }));
         } else if pre.is_effective(at) {
             match pre.next_candidate(bytes, at).into_option() {
                 None => return Ok(None),
@@ -107,8 +111,7 @@ fn find_fwd<A: Automaton + ?Sized>(
                     }
                 } else if dfa.is_accel_state(state) {
                     let needles = dfa.accelerator(state);
-                    at = accel::find_fwd(needles, bytes, at)
-                        .unwrap_or(bytes.len());
+                    at = accel::find_fwd(needles, bytes, at).unwrap_or(bytes.len());
                 }
             } else if dfa.is_match_state(state) {
                 last_match = Some(HalfMatch {
@@ -120,8 +123,7 @@ fn find_fwd<A: Automaton + ?Sized>(
                 }
                 if dfa.is_accel_state(state) {
                     let needles = dfa.accelerator(state);
-                    at = accel::find_fwd(needles, bytes, at)
-                        .unwrap_or(bytes.len());
+                    at = accel::find_fwd(needles, bytes, at).unwrap_or(bytes.len());
                 }
             } else if dfa.is_accel_state(state) {
                 let needs = dfa.accelerator(state);
@@ -133,7 +135,10 @@ fn find_fwd<A: Automaton + ?Sized>(
                 if last_match.is_some() {
                     return Ok(last_match);
                 }
-                return Err(MatchError::Quit { byte, offset: at - 1 });
+                return Err(MatchError::Quit {
+                    byte,
+                    offset: at - 1,
+                });
             }
         }
         while at < end && dfa.next_state(state, bytes[at]) == state {
@@ -243,25 +248,9 @@ pub fn find_overlapping_fwd<A: Automaton + ?Sized>(
     // Searching with a pattern ID is always anchored, so we should only ever
     // use a prefilter when no pattern ID is given.
     if pre.is_some() && pattern_id.is_none() {
-        find_overlapping_fwd_imp(
-            pre,
-            dfa,
-            pattern_id,
-            bytes,
-            start,
-            end,
-            caller_state,
-        )
+        find_overlapping_fwd_imp(pre, dfa, pattern_id, bytes, start, end, caller_state)
     } else {
-        find_overlapping_fwd_imp(
-            None,
-            dfa,
-            pattern_id,
-            bytes,
-            start,
-            end,
-            caller_state,
-        )
+        find_overlapping_fwd_imp(None, dfa, pattern_id, bytes, start, end, caller_state)
     }
 }
 
@@ -347,13 +336,14 @@ fn find_overlapping_fwd_imp<A: Automaton + ?Sized>(
                     }
                 } else if dfa.is_accel_state(state) {
                     let needles = dfa.accelerator(state);
-                    at = accel::find_fwd(needles, bytes, at)
-                        .unwrap_or(bytes.len());
+                    at = accel::find_fwd(needles, bytes, at).unwrap_or(bytes.len());
                 }
             } else if dfa.is_match_state(state) {
                 let offset = at - MATCH_OFFSET;
-                caller_state
-                    .set_last_match(StateMatch { match_index: 1, offset });
+                caller_state.set_last_match(StateMatch {
+                    match_index: 1,
+                    offset,
+                });
                 return Ok(Some(HalfMatch {
                     pattern: dfa.match_pattern(state, 0),
                     offset,
@@ -365,7 +355,10 @@ fn find_overlapping_fwd_imp<A: Automaton + ?Sized>(
                 return Ok(None);
             } else {
                 debug_assert!(dfa.is_quit_state(state));
-                return Err(MatchError::Quit { byte, offset: at - 1 });
+                return Err(MatchError::Quit {
+                    byte,
+                    offset: at - 1,
+                });
             }
         }
     }

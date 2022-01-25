@@ -49,24 +49,22 @@ define_regex_type!(
 
 #[cfg(feature = "std")]
 impl Regex {
-                                                                            pub fn new(pattern: &str) -> Result<Regex, Error> {
+    pub fn new(pattern: &str) -> Result<Regex, Error> {
         Builder::new().build(pattern)
     }
 
-                                                                                    pub fn new_many<P: AsRef<str>>(patterns: &[P]) -> Result<Regex, Error> {
+    pub fn new_many<P: AsRef<str>>(patterns: &[P]) -> Result<Regex, Error> {
         Builder::new().build_many(patterns)
     }
 }
 
 #[cfg(feature = "std")]
 impl Regex<sparse::DFA<Vec<u8>>> {
-                                                                            pub fn new_sparse(
-        pattern: &str,
-    ) -> Result<Regex<sparse::DFA<Vec<u8>>>, Error> {
+    pub fn new_sparse(pattern: &str) -> Result<Regex<sparse::DFA<Vec<u8>>>, Error> {
         Builder::new().build_sparse(pattern)
     }
 
-                                                                                        pub fn new_many_sparse<P: AsRef<str>>(
+    pub fn new_many_sparse<P: AsRef<str>>(
         patterns: &[P],
     ) -> Result<Regex<sparse::DFA<Vec<u8>>>, Error> {
         Builder::new().build_many_sparse(patterns)
@@ -75,29 +73,29 @@ impl Regex<sparse::DFA<Vec<u8>>> {
 
 #[cfg(feature = "std")]
 impl Regex {
-                                                                                                                            pub fn config() -> Config {
+    pub fn config() -> Config {
         Config::new()
     }
 
-                                                                                                                        pub fn builder() -> Builder {
+    pub fn builder() -> Builder {
         Builder::new()
     }
 }
 
 impl<A: Automaton, P: Prefilter> Regex<A, P> {
-                                                                                                            pub fn is_match(&self, haystack: &[u8]) -> bool {
+    pub fn is_match(&self, haystack: &[u8]) -> bool {
         self.is_match_at(haystack, 0, haystack.len())
     }
 
-                                                                                                                                                    pub fn find_earliest(&self, haystack: &[u8]) -> Option<MultiMatch> {
+    pub fn find_earliest(&self, haystack: &[u8]) -> Option<MultiMatch> {
         self.find_earliest_at(haystack, 0, haystack.len())
     }
 
-                                                                                                                                    pub fn find_leftmost(&self, haystack: &[u8]) -> Option<MultiMatch> {
+    pub fn find_leftmost(&self, haystack: &[u8]) -> Option<MultiMatch> {
         self.find_leftmost_at(haystack, 0, haystack.len())
     }
 
-                                                                                                                                                                                            pub fn find_overlapping(
+    pub fn find_overlapping(
         &self,
         haystack: &[u8],
         state: &mut OverlappingState,
@@ -105,21 +103,21 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         self.find_overlapping_at(haystack, 0, haystack.len(), state)
     }
 
-                                                                                                                                                pub fn find_earliest_iter<'r, 't>(
+    pub fn find_earliest_iter<'r, 't>(
         &'r self,
         haystack: &'t [u8],
     ) -> FindEarliestMatches<'r, 't, A, P> {
         FindEarliestMatches::new(self, haystack)
     }
 
-                                                                                                                        pub fn find_leftmost_iter<'r, 't>(
+    pub fn find_leftmost_iter<'r, 't>(
         &'r self,
         haystack: &'t [u8],
     ) -> FindLeftmostMatches<'r, 't, A, P> {
         FindLeftmostMatches::new(self, haystack)
     }
 
-                                                                                                                                                    pub fn find_overlapping_iter<'r, 't>(
+    pub fn find_overlapping_iter<'r, 't>(
         &'r self,
         haystack: &'t [u8],
     ) -> FindOverlappingMatches<'r, 't, A, P> {
@@ -128,16 +126,11 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
 }
 
 impl<A: Automaton, P: Prefilter> Regex<A, P> {
-                                                                                                    pub fn is_match_at(
-        &self,
-        haystack: &[u8],
-        start: usize,
-        end: usize,
-    ) -> bool {
+    pub fn is_match_at(&self, haystack: &[u8], start: usize, end: usize) -> bool {
         self.try_is_match_at(haystack, start, end).unwrap()
     }
 
-                                                                                                                    pub fn find_earliest_at(
+    pub fn find_earliest_at(
         &self,
         haystack: &[u8],
         start: usize,
@@ -146,7 +139,7 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         self.try_find_earliest_at(haystack, start, end).unwrap()
     }
 
-                                                                                                                    pub fn find_leftmost_at(
+    pub fn find_leftmost_at(
         &self,
         haystack: &[u8],
         start: usize,
@@ -155,37 +148,32 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         self.try_find_leftmost_at(haystack, start, end).unwrap()
     }
 
-                                                                                                                            pub fn find_overlapping_at(
+    pub fn find_overlapping_at(
         &self,
         haystack: &[u8],
         start: usize,
         end: usize,
         state: &mut OverlappingState,
     ) -> Option<MultiMatch> {
-        self.try_find_overlapping_at(haystack, start, end, state).unwrap()
+        self.try_find_overlapping_at(haystack, start, end, state)
+            .unwrap()
     }
 }
 
 impl<A: Automaton, P: Prefilter> Regex<A, P> {
-                                                                                pub fn try_is_match(&self, haystack: &[u8]) -> Result<bool, MatchError> {
+    pub fn try_is_match(&self, haystack: &[u8]) -> Result<bool, MatchError> {
         self.try_is_match_at(haystack, 0, haystack.len())
     }
 
-                                                                                pub fn try_find_earliest(
-        &self,
-        haystack: &[u8],
-    ) -> Result<Option<MultiMatch>, MatchError> {
+    pub fn try_find_earliest(&self, haystack: &[u8]) -> Result<Option<MultiMatch>, MatchError> {
         self.try_find_earliest_at(haystack, 0, haystack.len())
     }
 
-                                                                pub fn try_find_leftmost(
-        &self,
-        haystack: &[u8],
-    ) -> Result<Option<MultiMatch>, MatchError> {
+    pub fn try_find_leftmost(&self, haystack: &[u8]) -> Result<Option<MultiMatch>, MatchError> {
         self.try_find_leftmost_at(haystack, 0, haystack.len())
     }
 
-                                                                                    pub fn try_find_overlapping(
+    pub fn try_find_overlapping(
         &self,
         haystack: &[u8],
         state: &mut OverlappingState,
@@ -193,21 +181,21 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         self.try_find_overlapping_at(haystack, 0, haystack.len(), state)
     }
 
-                                                                        pub fn try_find_earliest_iter<'r, 't>(
+    pub fn try_find_earliest_iter<'r, 't>(
         &'r self,
         haystack: &'t [u8],
     ) -> TryFindEarliestMatches<'r, 't, A, P> {
         TryFindEarliestMatches::new(self, haystack)
     }
 
-                                                                        pub fn try_find_leftmost_iter<'r, 't>(
+    pub fn try_find_leftmost_iter<'r, 't>(
         &'r self,
         haystack: &'t [u8],
     ) -> TryFindLeftmostMatches<'r, 't, A, P> {
         TryFindLeftmostMatches::new(self, haystack)
     }
 
-                                                                                pub fn try_find_overlapping_iter<'r, 't>(
+    pub fn try_find_overlapping_iter<'r, 't>(
         &'r self,
         haystack: &'t [u8],
     ) -> TryFindOverlappingMatches<'r, 't, A, P> {
@@ -216,38 +204,27 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
 }
 
 impl<A: Automaton, P: Prefilter> Regex<A, P> {
-                                                                                                                        pub fn try_is_match_at(
+    pub fn try_is_match_at(
         &self,
         haystack: &[u8],
         start: usize,
         end: usize,
     ) -> Result<bool, MatchError> {
         self.forward()
-            .find_earliest_fwd_at(
-                self.scanner().as_mut(),
-                None,
-                haystack,
-                start,
-                end,
-            )
+            .find_earliest_fwd_at(self.scanner().as_mut(), None, haystack, start, end)
             .map(|x| x.is_some())
     }
 
-                                                                                                                                    pub fn try_find_earliest_at(
+    pub fn try_find_earliest_at(
         &self,
         haystack: &[u8],
         start: usize,
         end: usize,
     ) -> Result<Option<MultiMatch>, MatchError> {
-        self.try_find_earliest_at_imp(
-            self.scanner().as_mut(),
-            haystack,
-            start,
-            end,
-        )
+        self.try_find_earliest_at_imp(self.scanner().as_mut(), haystack, start, end)
     }
 
-            fn try_find_earliest_at_imp(
+    fn try_find_earliest_at_imp(
         &self,
         pre: Option<&mut prefilter::Scanner>,
         haystack: &[u8],
@@ -259,9 +236,7 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         // Since this is the usual way that automata are used, this helps
         // reduce the number of monomorphized copies of the search code.
         let (fwd, rev) = (self.forward(), self.reverse());
-        let end = match (&fwd)
-            .find_earliest_fwd_at(pre, None, haystack, start, end)?
-        {
+        let end = match (&fwd).find_earliest_fwd_at(pre, None, haystack, start, end)? {
             None => return Ok(None),
             Some(end) => end,
         };
@@ -279,24 +254,23 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
             "forward and reverse search must match same pattern"
         );
         assert!(start.offset() <= end.offset());
-        Ok(Some(MultiMatch::new(end.pattern(), start.offset(), end.offset())))
+        Ok(Some(MultiMatch::new(
+            end.pattern(),
+            start.offset(),
+            end.offset(),
+        )))
     }
 
-                                                                                                                    pub fn try_find_leftmost_at(
+    pub fn try_find_leftmost_at(
         &self,
         haystack: &[u8],
         start: usize,
         end: usize,
     ) -> Result<Option<MultiMatch>, MatchError> {
-        self.try_find_leftmost_at_imp(
-            self.scanner().as_mut(),
-            haystack,
-            start,
-            end,
-        )
+        self.try_find_leftmost_at_imp(self.scanner().as_mut(), haystack, start, end)
     }
 
-            fn try_find_leftmost_at_imp(
+    fn try_find_leftmost_at_imp(
         &self,
         scanner: Option<&mut prefilter::Scanner>,
         haystack: &[u8],
@@ -308,9 +282,7 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         // Since this is the usual way that automata are used, this helps
         // reduce the number of monomorphized copies of the search code.
         let (fwd, rev) = (self.forward(), self.reverse());
-        let end = match (&fwd)
-            .find_leftmost_fwd_at(scanner, None, haystack, start, end)?
-        {
+        let end = match (&fwd).find_leftmost_fwd_at(scanner, None, haystack, start, end)? {
             None => return Ok(None),
             Some(end) => end,
         };
@@ -330,26 +302,24 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
             "forward and reverse search must match same pattern",
         );
         assert!(start.offset() <= end.offset());
-        Ok(Some(MultiMatch::new(end.pattern(), start.offset(), end.offset())))
+        Ok(Some(MultiMatch::new(
+            end.pattern(),
+            start.offset(),
+            end.offset(),
+        )))
     }
 
-                                                                                                                                            pub fn try_find_overlapping_at(
+    pub fn try_find_overlapping_at(
         &self,
         haystack: &[u8],
         start: usize,
         end: usize,
         state: &mut OverlappingState,
     ) -> Result<Option<MultiMatch>, MatchError> {
-        self.try_find_overlapping_at_imp(
-            self.scanner().as_mut(),
-            haystack,
-            start,
-            end,
-            state,
-        )
+        self.try_find_overlapping_at_imp(self.scanner().as_mut(), haystack, start, end, state)
     }
 
-                fn try_find_overlapping_at_imp(
+    fn try_find_overlapping_at_imp(
         &self,
         scanner: Option<&mut prefilter::Scanner>,
         haystack: &[u8],
@@ -371,33 +341,31 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         // "overlapping searches require that the reverse DFA is \
         // compiled with the 'starts_for_each_pattern' option",
         // );
-        let end = match (&fwd).find_overlapping_fwd_at(
-            scanner, None, haystack, start, end, state,
-        )? {
-            None => return Ok(None),
-            Some(end) => end,
-        };
+        let end =
+            match (&fwd).find_overlapping_fwd_at(scanner, None, haystack, start, end, state)? {
+                None => return Ok(None),
+                Some(end) => end,
+            };
         // Unlike the leftmost cases, the reverse overlapping search may match
         // a different pattern than the forward search. See test failures when
         // using `None` instead of `Some(end.pattern())` below. Thus, we must
         // run our reverse search using the pattern that matched in the forward
         // direction.
         let start = (&rev)
-            .find_leftmost_rev_at(
-                Some(end.pattern()),
-                haystack,
-                0,
-                end.offset(),
-            )?
+            .find_leftmost_rev_at(Some(end.pattern()), haystack, 0, end.offset())?
             .expect("reverse search must match if forward search does");
         assert!(start.offset() <= end.offset());
         assert_eq!(start.pattern(), end.pattern());
-        Ok(Some(MultiMatch::new(end.pattern(), start.offset(), end.offset())))
+        Ok(Some(MultiMatch::new(
+            end.pattern(),
+            start.offset(),
+            end.offset(),
+        )))
     }
 }
 
 impl<A: Automaton, P: Prefilter> Regex<A, P> {
-        pub fn with_prefilter<Q: Prefilter>(self, prefilter: Q) -> Regex<A, Q> {
+    pub fn with_prefilter<Q: Prefilter>(self, prefilter: Q) -> Regex<A, Q> {
         Regex {
             prefilter: Some(prefilter),
             forward: self.forward,
@@ -406,7 +374,7 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         }
     }
 
-        pub fn without_prefilter(self) -> Regex<A> {
+    pub fn without_prefilter(self) -> Regex<A> {
         Regex {
             prefilter: None,
             forward: self.forward,
@@ -415,15 +383,15 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         }
     }
 
-                        pub fn forward(&self) -> &A {
+    pub fn forward(&self) -> &A {
         &self.forward
     }
 
-                        pub fn reverse(&self) -> &A {
+    pub fn reverse(&self) -> &A {
         &self.reverse
     }
 
-                                                pub fn pattern_count(&self) -> usize {
+    pub fn pattern_count(&self) -> usize {
         assert_eq!(
             self.forward().pattern_count(),
             self.reverse().pattern_count()
@@ -431,35 +399,28 @@ impl<A: Automaton, P: Prefilter> Regex<A, P> {
         self.forward().pattern_count()
     }
 
-                    pub fn prefilter(&self) -> Option<&dyn Prefilter> {
+    pub fn prefilter(&self) -> Option<&dyn Prefilter> {
         match self.prefilter {
             None => None,
             Some(ref x) => Some(&*x),
         }
     }
 
-        fn scanner(&self) -> Option<prefilter::Scanner> {
+    fn scanner(&self) -> Option<prefilter::Scanner> {
         self.prefilter().map(prefilter::Scanner::new)
     }
 }
 
 #[derive(Clone, Debug)]
-pub struct FindEarliestMatches<'r, 't, A, P>(
-    TryFindEarliestMatches<'r, 't, A, P>,
-);
+pub struct FindEarliestMatches<'r, 't, A, P>(TryFindEarliestMatches<'r, 't, A, P>);
 
 impl<'r, 't, A: Automaton, P: Prefilter> FindEarliestMatches<'r, 't, A, P> {
-    fn new(
-        re: &'r Regex<A, P>,
-        text: &'t [u8],
-    ) -> FindEarliestMatches<'r, 't, A, P> {
+    fn new(re: &'r Regex<A, P>, text: &'t [u8]) -> FindEarliestMatches<'r, 't, A, P> {
         FindEarliestMatches(TryFindEarliestMatches::new(re, text))
     }
 }
 
-impl<'r, 't, A: Automaton, P: Prefilter> Iterator
-    for FindEarliestMatches<'r, 't, A, P>
-{
+impl<'r, 't, A: Automaton, P: Prefilter> Iterator for FindEarliestMatches<'r, 't, A, P> {
     type Item = MultiMatch;
 
     fn next(&mut self) -> Option<MultiMatch> {
@@ -468,22 +429,15 @@ impl<'r, 't, A: Automaton, P: Prefilter> Iterator
 }
 
 #[derive(Clone, Debug)]
-pub struct FindLeftmostMatches<'r, 't, A, P>(
-    TryFindLeftmostMatches<'r, 't, A, P>,
-);
+pub struct FindLeftmostMatches<'r, 't, A, P>(TryFindLeftmostMatches<'r, 't, A, P>);
 
 impl<'r, 't, A: Automaton, P: Prefilter> FindLeftmostMatches<'r, 't, A, P> {
-    fn new(
-        re: &'r Regex<A, P>,
-        text: &'t [u8],
-    ) -> FindLeftmostMatches<'r, 't, A, P> {
+    fn new(re: &'r Regex<A, P>, text: &'t [u8]) -> FindLeftmostMatches<'r, 't, A, P> {
         FindLeftmostMatches(TryFindLeftmostMatches::new(re, text))
     }
 }
 
-impl<'r, 't, A: Automaton, P: Prefilter> Iterator
-    for FindLeftmostMatches<'r, 't, A, P>
-{
+impl<'r, 't, A: Automaton, P: Prefilter> Iterator for FindLeftmostMatches<'r, 't, A, P> {
     type Item = MultiMatch;
 
     fn next(&mut self) -> Option<MultiMatch> {
@@ -492,22 +446,15 @@ impl<'r, 't, A: Automaton, P: Prefilter> Iterator
 }
 
 #[derive(Clone, Debug)]
-pub struct FindOverlappingMatches<'r, 't, A: Automaton, P>(
-    TryFindOverlappingMatches<'r, 't, A, P>,
-);
+pub struct FindOverlappingMatches<'r, 't, A: Automaton, P>(TryFindOverlappingMatches<'r, 't, A, P>);
 
 impl<'r, 't, A: Automaton, P: Prefilter> FindOverlappingMatches<'r, 't, A, P> {
-    fn new(
-        re: &'r Regex<A, P>,
-        text: &'t [u8],
-    ) -> FindOverlappingMatches<'r, 't, A, P> {
+    fn new(re: &'r Regex<A, P>, text: &'t [u8]) -> FindOverlappingMatches<'r, 't, A, P> {
         FindOverlappingMatches(TryFindOverlappingMatches::new(re, text))
     }
 }
 
-impl<'r, 't, A: Automaton, P: Prefilter> Iterator
-    for FindOverlappingMatches<'r, 't, A, P>
-{
+impl<'r, 't, A: Automaton, P: Prefilter> Iterator for FindOverlappingMatches<'r, 't, A, P> {
     type Item = MultiMatch;
 
     fn next(&mut self) -> Option<MultiMatch> {
@@ -525,10 +472,7 @@ pub struct TryFindEarliestMatches<'r, 't, A, P> {
 }
 
 impl<'r, 't, A: Automaton, P: Prefilter> TryFindEarliestMatches<'r, 't, A, P> {
-    fn new(
-        re: &'r Regex<A, P>,
-        text: &'t [u8],
-    ) -> TryFindEarliestMatches<'r, 't, A, P> {
+    fn new(re: &'r Regex<A, P>, text: &'t [u8]) -> TryFindEarliestMatches<'r, 't, A, P> {
         let scanner = re.scanner();
         TryFindEarliestMatches {
             re,
@@ -540,9 +484,7 @@ impl<'r, 't, A: Automaton, P: Prefilter> TryFindEarliestMatches<'r, 't, A, P> {
     }
 }
 
-impl<'r, 't, A: Automaton, P: Prefilter> Iterator
-    for TryFindEarliestMatches<'r, 't, A, P>
-{
+impl<'r, 't, A: Automaton, P: Prefilter> Iterator for TryFindEarliestMatches<'r, 't, A, P> {
     type Item = Result<MultiMatch, MatchError>;
 
     fn next(&mut self) -> Option<Result<MultiMatch, MatchError>> {
@@ -592,10 +534,7 @@ pub struct TryFindLeftmostMatches<'r, 't, A, P> {
 }
 
 impl<'r, 't, A: Automaton, P: Prefilter> TryFindLeftmostMatches<'r, 't, A, P> {
-    fn new(
-        re: &'r Regex<A, P>,
-        text: &'t [u8],
-    ) -> TryFindLeftmostMatches<'r, 't, A, P> {
+    fn new(re: &'r Regex<A, P>, text: &'t [u8]) -> TryFindLeftmostMatches<'r, 't, A, P> {
         let scanner = re.scanner();
         TryFindLeftmostMatches {
             re,
@@ -607,9 +546,7 @@ impl<'r, 't, A: Automaton, P: Prefilter> TryFindLeftmostMatches<'r, 't, A, P> {
     }
 }
 
-impl<'r, 't, A: Automaton, P: Prefilter> Iterator
-    for TryFindLeftmostMatches<'r, 't, A, P>
-{
+impl<'r, 't, A: Automaton, P: Prefilter> Iterator for TryFindLeftmostMatches<'r, 't, A, P> {
     type Item = Result<MultiMatch, MatchError>;
 
     fn next(&mut self) -> Option<Result<MultiMatch, MatchError>> {
@@ -658,13 +595,8 @@ pub struct TryFindOverlappingMatches<'r, 't, A: Automaton, P> {
     state: OverlappingState,
 }
 
-impl<'r, 't, A: Automaton, P: Prefilter>
-    TryFindOverlappingMatches<'r, 't, A, P>
-{
-    fn new(
-        re: &'r Regex<A, P>,
-        text: &'t [u8],
-    ) -> TryFindOverlappingMatches<'r, 't, A, P> {
+impl<'r, 't, A: Automaton, P: Prefilter> TryFindOverlappingMatches<'r, 't, A, P> {
+    fn new(re: &'r Regex<A, P>, text: &'t [u8]) -> TryFindOverlappingMatches<'r, 't, A, P> {
         let scanner = re.scanner();
         TryFindOverlappingMatches {
             re,
@@ -676,9 +608,7 @@ impl<'r, 't, A: Automaton, P: Prefilter>
     }
 }
 
-impl<'r, 't, A: Automaton, P: Prefilter> Iterator
-    for TryFindOverlappingMatches<'r, 't, A, P>
-{
+impl<'r, 't, A: Automaton, P: Prefilter> Iterator for TryFindOverlappingMatches<'r, 't, A, P> {
     type Item = Result<MultiMatch, MatchError>;
 
     fn next(&mut self) -> Option<Result<MultiMatch, MatchError>> {
@@ -713,21 +643,23 @@ pub struct Config {
 
 #[cfg(feature = "std")]
 impl Config {
-        pub fn new() -> Config {
+    pub fn new() -> Config {
         Config::default()
     }
 
-                                                                                                                                                                                                                                                                pub fn utf8(mut self, yes: bool) -> Config {
+    pub fn utf8(mut self, yes: bool) -> Config {
         self.utf8 = Some(yes);
         self
     }
 
-                            pub fn get_utf8(&self) -> bool {
+    pub fn get_utf8(&self) -> bool {
         self.utf8.unwrap_or(true)
     }
 
-                    pub(crate) fn overwrite(self, o: Config) -> Config {
-        Config { utf8: o.utf8.or(self.utf8) }
+    pub(crate) fn overwrite(self, o: Config) -> Config {
+        Config {
+            utf8: o.utf8.or(self.utf8),
+        }
     }
 }
 
@@ -740,25 +672,22 @@ pub struct Builder {
 
 #[cfg(feature = "std")]
 impl Builder {
-        pub fn new() -> Builder {
-        Builder { config: Config::default(), dfa: dense::Builder::new() }
+    pub fn new() -> Builder {
+        Builder {
+            config: Config::default(),
+            dfa: dense::Builder::new(),
+        }
     }
 
-                    pub fn build(&self, pattern: &str) -> Result<Regex, Error> {
+    pub fn build(&self, pattern: &str) -> Result<Regex, Error> {
         self.build_many(&[pattern])
     }
 
-                    pub fn build_sparse(
-        &self,
-        pattern: &str,
-    ) -> Result<Regex<sparse::DFA<Vec<u8>>>, Error> {
+    pub fn build_sparse(&self, pattern: &str) -> Result<Regex<sparse::DFA<Vec<u8>>>, Error> {
         self.build_many_sparse(&[pattern])
     }
 
-        pub fn build_many<P: AsRef<str>>(
-        &self,
-        patterns: &[P],
-    ) -> Result<Regex, Error> {
+    pub fn build_many<P: AsRef<str>>(&self, patterns: &[P]) -> Result<Regex, Error> {
         let forward = self.dfa.build_many(patterns)?;
         let reverse = self
             .dfa
@@ -774,7 +703,7 @@ impl Builder {
         Ok(self.build_from_dfas(forward, reverse))
     }
 
-        pub fn build_many_sparse<P: AsRef<str>>(
+    pub fn build_many_sparse<P: AsRef<str>>(
         &self,
         patterns: &[P],
     ) -> Result<Regex<sparse::DFA<Vec<u8>>>, Error> {
@@ -784,21 +713,22 @@ impl Builder {
         Ok(self.build_from_dfas(forward, reverse))
     }
 
-                                                                                                                                                                                                                                                pub fn build_from_dfas<A: Automaton>(
-        &self,
-        forward: A,
-        reverse: A,
-    ) -> Regex<A> {
+    pub fn build_from_dfas<A: Automaton>(&self, forward: A, reverse: A) -> Regex<A> {
         let utf8 = self.config.get_utf8();
-        Regex { prefilter: None, forward, reverse, utf8 }
+        Regex {
+            prefilter: None,
+            forward,
+            reverse,
+            utf8,
+        }
     }
 
-        pub fn configure(&mut self, config: Config) -> &mut Builder {
+    pub fn configure(&mut self, config: Config) -> &mut Builder {
         self.config = self.config.overwrite(config);
         self
     }
 
-                        pub fn syntax(
+    pub fn syntax(
         &mut self,
         config: crate::regex_automata::util::syntax::SyntaxConfig,
     ) -> &mut Builder {
@@ -806,12 +736,12 @@ impl Builder {
         self
     }
 
-                        pub fn thompson(&mut self, config: thompson::Config) -> &mut Builder {
+    pub fn thompson(&mut self, config: thompson::Config) -> &mut Builder {
         self.dfa.thompson(config);
         self
     }
 
-                        pub fn dense(&mut self, config: dense::Config) -> &mut Builder {
+    pub fn dense(&mut self, config: dense::Config) -> &mut Builder {
         self.dfa.configure(config);
         self
     }
@@ -825,9 +755,7 @@ impl Default for Builder {
 }
 
 #[inline(always)]
-fn next_unwrap(
-    item: Option<Result<MultiMatch, MatchError>>,
-) -> Option<MultiMatch> {
+fn next_unwrap(item: Option<Result<MultiMatch, MatchError>>) -> Option<MultiMatch> {
     match item {
         None => None,
         Some(Ok(m)) => Some(m),

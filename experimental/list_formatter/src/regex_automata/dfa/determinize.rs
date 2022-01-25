@@ -27,7 +27,7 @@ pub(crate) struct Config {
 }
 
 impl Config {
-            pub fn new() -> Config {
+    pub fn new() -> Config {
         Config {
             anchored: false,
             match_kind: MatchKind::LeftmostFirst,
@@ -37,11 +37,7 @@ impl Config {
         }
     }
 
-                    pub fn run(
-        &self,
-        nfa: &thompson::NFA,
-        dfa: &mut dense::OwnedDFA,
-    ) -> Result<(), Error> {
+    pub fn run(&self, nfa: &thompson::NFA, dfa: &mut dense::OwnedDFA) -> Result<(), Error> {
         let dead = State::dead();
         let quit = State::dead();
         let mut cache = StateMap::default();
@@ -71,30 +67,27 @@ impl Config {
         runner.run()
     }
 
-                pub fn anchored(&mut self, yes: bool) -> &mut Config {
+    pub fn anchored(&mut self, yes: bool) -> &mut Config {
         self.anchored = yes;
         self
     }
 
-                                            pub fn match_kind(&mut self, kind: MatchKind) -> &mut Config {
+    pub fn match_kind(&mut self, kind: MatchKind) -> &mut Config {
         self.match_kind = kind;
         self
     }
 
-            pub fn quit(&mut self, set: ByteSet) -> &mut Config {
+    pub fn quit(&mut self, set: ByteSet) -> &mut Config {
         self.quit = set;
         self
     }
 
-            pub fn dfa_size_limit(&mut self, bytes: Option<usize>) -> &mut Config {
+    pub fn dfa_size_limit(&mut self, bytes: Option<usize>) -> &mut Config {
         self.dfa_size_limit = bytes;
         self
     }
 
-            pub fn determinize_size_limit(
-        &mut self,
-        bytes: Option<usize>,
-    ) -> &mut Config {
+    pub fn determinize_size_limit(&mut self, bytes: Option<usize>) -> &mut Config {
         self.determinize_size_limit = bytes;
         self
     }
@@ -102,15 +95,15 @@ impl Config {
 
 #[derive(Debug)]
 struct Runner<'a> {
-        config: Config,
-        nfa: &'a thompson::NFA,
-        dfa: &'a mut dense::OwnedDFA,
-                                                                                                                            builder_states: Vec<State>,
-                        cache: StateMap,
-                    memory_usage_state: usize,
-                sparses: SparseSets,
-            stack: Vec<StateID>,
-                            scratch_state_builder: StateBuilderEmpty,
+    config: Config,
+    nfa: &'a thompson::NFA,
+    dfa: &'a mut dense::OwnedDFA,
+    builder_states: Vec<State>,
+    cache: StateMap,
+    memory_usage_state: usize,
+    sparses: SparseSets,
+    stack: Vec<StateID>,
+    scratch_state_builder: StateBuilderEmpty,
 }
 
 #[cfg(feature = "std")]
@@ -119,10 +112,8 @@ type StateMap = std::collections::HashMap<State, StateID>;
 type StateMap = BTreeMap<State, StateID>;
 
 impl<'a> Runner<'a> {
-                fn run(mut self) -> Result<(), Error> {
-        if self.nfa.has_word_boundary_unicode()
-            && !self.config.quit.contains_range(0x80, 0xFF)
-        {
+    fn run(mut self) -> Result<(), Error> {
+        if self.nfa.has_word_boundary_unicode() && !self.config.quit.contains_range(0x80, 0xFF) {
             return Err(Error::unsupported_dfa_word_boundary_unicode());
         }
 
@@ -139,8 +130,7 @@ impl<'a> Runner<'a> {
         self.add_all_starts(&mut uncompiled)?;
         while let Some(dfa_id) = uncompiled.pop() {
             for &unit in &representatives {
-                if unit.as_u8().map_or(false, |b| self.config.quit.contains(b))
-                {
+                if unit.as_u8().map_or(false, |b| self.config.quit.contains(b)) {
                     continue;
                 }
                 // In many cases, the state we transition to has already been
@@ -191,7 +181,7 @@ impl<'a> Runner<'a> {
         Ok(())
     }
 
-                                    fn cached_state(
+    fn cached_state(
         &mut self,
         dfa_id: StateID,
         unit: alphabet::Unit,
@@ -210,10 +200,7 @@ impl<'a> Runner<'a> {
         self.maybe_add_state(builder)
     }
 
-            fn add_all_starts(
-        &mut self,
-        dfa_state_ids: &mut Vec<StateID>,
-    ) -> Result<(), Error> {
+    fn add_all_starts(&mut self, dfa_state_ids: &mut Vec<StateID>) -> Result<(), Error> {
         // Always add the (possibly unanchored) start states for matching any
         // of the patterns in this DFA.
         self.add_start_group(None, dfa_state_ids)?;
@@ -227,7 +214,7 @@ impl<'a> Runner<'a> {
         Ok(())
     }
 
-                                    fn add_start_group(
+    fn add_start_group(
         &mut self,
         pattern_id: Option<PatternID>,
         dfa_state_ids: &mut Vec<StateID>,
@@ -245,8 +232,7 @@ impl<'a> Runner<'a> {
         // Instead, the 'WordByte' starting configuration can just point
         // directly to the start state for the 'NonWordByte' config.
 
-        let (id, is_new) =
-            self.add_one_start(nfa_start, Start::NonWordByte)?;
+        let (id, is_new) = self.add_one_start(nfa_start, Start::NonWordByte)?;
         self.dfa.set_start_state(Start::NonWordByte, pattern_id, id);
         if is_new {
             dfa_state_ids.push(id);
@@ -255,8 +241,7 @@ impl<'a> Runner<'a> {
         if !self.nfa.has_word_boundary() {
             self.dfa.set_start_state(Start::WordByte, pattern_id, id);
         } else {
-            let (id, is_new) =
-                self.add_one_start(nfa_start, Start::WordByte)?;
+            let (id, is_new) = self.add_one_start(nfa_start, Start::WordByte)?;
             self.dfa.set_start_state(Start::WordByte, pattern_id, id);
             if is_new {
                 dfa_state_ids.push(id);
@@ -282,7 +267,7 @@ impl<'a> Runner<'a> {
         Ok(())
     }
 
-                                fn add_one_start(
+    fn add_one_start(
         &mut self,
         nfa_start: StateID,
         start: Start,
@@ -292,10 +277,7 @@ impl<'a> Runner<'a> {
         // computing the epsilon closure, we only follow condiional epsilon
         // transitions that satisfy the look-behind assertions in 'facts'.
         let mut builder_matches = self.get_state_builder().into_matches();
-        util::determinize::set_lookbehind_from_start(
-            &start,
-            &mut builder_matches,
-        );
+        util::determinize::set_lookbehind_from_start(&start, &mut builder_matches);
         self.sparses.set1.clear();
         util::determinize::epsilon_closure(
             self.nfa,
@@ -305,18 +287,11 @@ impl<'a> Runner<'a> {
             &mut self.sparses.set1,
         );
         let mut builder = builder_matches.into_nfa();
-        util::determinize::add_nfa_states(
-            &self.nfa,
-            &self.sparses.set1,
-            &mut builder,
-        );
+        util::determinize::add_nfa_states(&self.nfa, &self.sparses.set1, &mut builder);
         self.maybe_add_state(builder)
     }
 
-                                                fn maybe_add_state(
-        &mut self,
-        builder: StateBuilderNFA,
-    ) -> Result<(StateID, bool), Error> {
+    fn maybe_add_state(&mut self, builder: StateBuilderNFA) -> Result<(StateID, bool), Error> {
         if let Some(&cached_id) = self.cache.get(builder.as_bytes()) {
             // Since we have a cached state, put the constructed state's
             // memory back into our scratch space, so that it can be reused.
@@ -326,18 +301,12 @@ impl<'a> Runner<'a> {
         self.add_state(builder).map(|sid| (sid, true))
     }
 
-                                    fn add_state(
-        &mut self,
-        builder: StateBuilderNFA,
-    ) -> Result<StateID, Error> {
+    fn add_state(&mut self, builder: StateBuilderNFA) -> Result<StateID, Error> {
         let id = self.dfa.add_empty_state()?;
         if !self.config.quit.is_empty() {
             for b in self.config.quit.iter() {
-                self.dfa.set_transition(
-                    id,
-                    alphabet::Unit::u8(b),
-                    self.dfa.quit_id(),
-                );
+                self.dfa
+                    .set_transition(id, alphabet::Unit::u8(b), self.dfa.quit_id());
             }
         }
         let state = builder.to_state();
@@ -360,21 +329,15 @@ impl<'a> Runner<'a> {
         Ok(id)
     }
 
-                            fn get_state_builder(&mut self) -> StateBuilderEmpty {
-        core::mem::replace(
-            &mut self.scratch_state_builder,
-            StateBuilderEmpty::new(),
-        )
+    fn get_state_builder(&mut self) -> StateBuilderEmpty {
+        core::mem::replace(&mut self.scratch_state_builder, StateBuilderEmpty::new())
     }
 
-                    fn put_state_builder(&mut self, builder: StateBuilderNFA) {
-        let _ = core::mem::replace(
-            &mut self.scratch_state_builder,
-            builder.clear(),
-        );
+    fn put_state_builder(&mut self, builder: StateBuilderNFA) {
+        let _ = core::mem::replace(&mut self.scratch_state_builder, builder.clear());
     }
 
-                fn memory_usage(&self) -> usize {
+    fn memory_usage(&self) -> usize {
         use core::mem::size_of;
 
         self.builder_states.len() * size_of::<State>()

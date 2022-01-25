@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::regex_automata::dfa::sparse::DFA;
+use crate::regex_automata::dfa::Automaton;
 use alloc::borrow::Cow;
 #[cfg(any(
     feature = "icu4x_human_readable_de",
@@ -14,8 +16,6 @@ use icu_provider::yoke::{self, *};
     feature = "provider_transform_internals"
 ))]
 use icu_provider::DataError;
-use crate::regex_automata::dfa::sparse::DFA;
-use crate::regex_automata::dfa::Automaton;
 
 #[derive(Clone, Debug, Yokeable, ZeroCopyFrom)]
 pub struct StringMatcher<'data> {

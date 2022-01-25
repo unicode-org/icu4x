@@ -15,12 +15,8 @@ pub(crate) fn get_or_init<T: Send + Sync + 'static>(
     if ptr.is_null() {
         let new_dfa = Box::new(init());
         ptr = Box::into_raw(new_dfa);
-        let result = location.compare_exchange(
-            ptr::null_mut(),
-            ptr,
-            Ordering::AcqRel,
-            Ordering::Acquire,
-        );
+        let result =
+            location.compare_exchange(ptr::null_mut(), ptr, Ordering::AcqRel, Ordering::Acquire);
         if let Err(old) = result {
             let redundant = unsafe { Box::from_raw(ptr) };
             drop(redundant);

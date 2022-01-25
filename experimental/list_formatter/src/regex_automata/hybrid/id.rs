@@ -1,6 +1,4 @@
-#[derive(
-    Clone, Copy, Debug, Default, Eq, Hash, PartialEq, PartialOrd, Ord,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub struct LazyStateID(u32);
 
 impl LazyStateID {
@@ -17,20 +15,22 @@ impl LazyStateID {
     const MASK_MATCH: usize = 1 << (LazyStateID::MAX_BIT - 4);
     const MAX: usize = LazyStateID::MASK_MATCH - 1;
 
-                    #[inline]
+    #[inline]
     pub(crate) fn new(id: usize) -> Result<LazyStateID, LazyStateIDError> {
         if id > LazyStateID::MAX {
-            return Err(LazyStateIDError { attempted: id as u64 });
+            return Err(LazyStateIDError {
+                attempted: id as u64,
+            });
         }
         Ok(LazyStateID::new_unchecked(id))
     }
 
-                        #[inline]
+    #[inline]
     const fn new_unchecked(id: usize) -> LazyStateID {
         LazyStateID(id as u32)
     }
 
-            #[inline]
+    #[inline]
     pub(crate) fn as_usize(&self) -> Option<usize> {
         if self.is_tagged() {
             None
@@ -39,77 +39,67 @@ impl LazyStateID {
         }
     }
 
-                        #[inline]
+    #[inline]
     pub(crate) fn as_usize_untagged(&self) -> usize {
         self.as_usize_unchecked() & LazyStateID::MAX
     }
 
-            #[inline]
+    #[inline]
     pub(crate) const fn as_usize_unchecked(&self) -> usize {
         self.0 as usize
     }
 
     #[inline]
     pub(crate) const fn to_unknown(&self) -> LazyStateID {
-        LazyStateID::new_unchecked(
-            self.as_usize_unchecked() | LazyStateID::MASK_UNKNOWN,
-        )
+        LazyStateID::new_unchecked(self.as_usize_unchecked() | LazyStateID::MASK_UNKNOWN)
     }
 
     #[inline]
     pub(crate) const fn to_dead(&self) -> LazyStateID {
-        LazyStateID::new_unchecked(
-            self.as_usize_unchecked() | LazyStateID::MASK_DEAD,
-        )
+        LazyStateID::new_unchecked(self.as_usize_unchecked() | LazyStateID::MASK_DEAD)
     }
 
     #[inline]
     pub(crate) const fn to_quit(&self) -> LazyStateID {
-        LazyStateID::new_unchecked(
-            self.as_usize_unchecked() | LazyStateID::MASK_QUIT,
-        )
+        LazyStateID::new_unchecked(self.as_usize_unchecked() | LazyStateID::MASK_QUIT)
     }
 
-            #[inline]
+    #[inline]
     pub(crate) const fn to_start(&self) -> LazyStateID {
-        LazyStateID::new_unchecked(
-            self.as_usize_unchecked() | LazyStateID::MASK_START,
-        )
+        LazyStateID::new_unchecked(self.as_usize_unchecked() | LazyStateID::MASK_START)
     }
 
-            #[inline]
+    #[inline]
     pub(crate) const fn to_match(&self) -> LazyStateID {
-        LazyStateID::new_unchecked(
-            self.as_usize_unchecked() | LazyStateID::MASK_MATCH,
-        )
+        LazyStateID::new_unchecked(self.as_usize_unchecked() | LazyStateID::MASK_MATCH)
     }
 
-                    #[inline]
+    #[inline]
     pub const fn is_tagged(&self) -> bool {
         self.as_usize_unchecked() > LazyStateID::MAX
     }
 
-                    #[inline]
+    #[inline]
     pub const fn is_unknown(&self) -> bool {
         self.as_usize_unchecked() & LazyStateID::MASK_UNKNOWN > 0
     }
 
-                    #[inline]
+    #[inline]
     pub const fn is_dead(&self) -> bool {
         self.as_usize_unchecked() & LazyStateID::MASK_DEAD > 0
     }
 
-                            #[inline]
+    #[inline]
     pub const fn is_quit(&self) -> bool {
         self.as_usize_unchecked() & LazyStateID::MASK_QUIT > 0
     }
 
-            #[inline]
+    #[inline]
     pub const fn is_start(&self) -> bool {
         self.as_usize_unchecked() & LazyStateID::MASK_START > 0
     }
 
-            #[inline]
+    #[inline]
     pub const fn is_match(&self) -> bool {
         self.as_usize_unchecked() & LazyStateID::MASK_MATCH > 0
     }
@@ -121,7 +111,7 @@ pub(crate) struct LazyStateIDError {
 }
 
 impl LazyStateIDError {
-        pub(crate) fn attempted(&self) -> u64 {
+    pub(crate) fn attempted(&self) -> u64 {
         self.attempted
     }
 }
@@ -142,19 +132,22 @@ impl core::fmt::Display for LazyStateIDError {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct OverlappingState {
-                                    id: Option<LazyStateID>,
-            last_match: Option<StateMatch>,
+    id: Option<LazyStateID>,
+    last_match: Option<StateMatch>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct StateMatch {
-        pub(crate) match_index: usize,
-                                pub(crate) offset: usize,
+    pub(crate) match_index: usize,
+    pub(crate) offset: usize,
 }
 
 impl OverlappingState {
-            pub fn start() -> OverlappingState {
-        OverlappingState { id: None, last_match: None }
+    pub fn start() -> OverlappingState {
+        OverlappingState {
+            id: None,
+            last_match: None,
+        }
     }
 
     pub(crate) fn id(&self) -> Option<LazyStateID> {

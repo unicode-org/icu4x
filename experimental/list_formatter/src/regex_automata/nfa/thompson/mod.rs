@@ -23,22 +23,21 @@ mod range_trie;
 #[cfg(feature = "std")]
 type CaptureNameMap = std::collections::HashMap<(PatternID, Arc<str>), usize>;
 #[cfg(not(feature = "std"))]
-type CaptureNameMap =
-    alloc::collections::BTreeMap<(PatternID, Arc<str>), usize>;
+type CaptureNameMap = alloc::collections::BTreeMap<(PatternID, Arc<str>), usize>;
 
 #[derive(Clone)]
 pub struct NFA {
-                states: Vec<State>,
-        start_anchored: StateID,
-        start_unanchored: StateID,
-                        start_pattern: Vec<StateID>,
-        patterns_to_captures: Vec<Range<usize>>,
-                            slots: usize,
-                    capture_name_to_index: CaptureNameMap,
-                        capture_index_to_name: Vec<Option<Arc<str>>>,
-                                                byte_class_set: ByteClassSet,
-                    facts: Facts,
-            memory_states: usize,
+    states: Vec<State>,
+    start_anchored: StateID,
+    start_unanchored: StateID,
+    start_pattern: Vec<StateID>,
+    patterns_to_captures: Vec<Range<usize>>,
+    slots: usize,
+    capture_name_to_index: CaptureNameMap,
+    capture_index_to_name: Vec<Option<Arc<str>>>,
+    byte_class_set: ByteClassSet,
+    facts: Facts,
+    memory_states: usize,
 }
 
 impl NFA {
@@ -50,7 +49,7 @@ impl NFA {
         Builder::new()
     }
 
-                                        #[inline]
+    #[inline]
     pub fn empty() -> NFA {
         NFA {
             states: vec![],
@@ -67,53 +66,55 @@ impl NFA {
         }
     }
 
-            #[inline]
+    #[inline]
     pub fn always_match() -> NFA {
         let mut nfa = NFA::empty();
-        nfa.add(State::Match { id: PatternID::ZERO });
+        nfa.add(State::Match {
+            id: PatternID::ZERO,
+        });
         nfa
     }
 
-            #[inline]
+    #[inline]
     pub fn never_match() -> NFA {
         let mut nfa = NFA::empty();
         nfa.add(State::Fail);
         nfa
     }
 
-                #[inline]
+    #[inline]
     pub fn len(&self) -> usize {
         self.states.len()
     }
 
-                                        #[inline]
+    #[inline]
     pub fn match_len(&self) -> usize {
         self.start_pattern.len()
     }
 
-        #[inline]
+    #[inline]
     pub(crate) fn set_match_len(&mut self, patterns: usize) {
         self.start_pattern.resize(patterns, StateID::ZERO);
     }
 
-                                            #[inline]
+    #[inline]
     pub fn capture_len(&self) -> usize {
         let slots = self.capture_slot_len();
         assert_eq!(slots % 2, 0, "capture slots must be divisible by 2");
         slots / 2
     }
 
-                            #[inline]
+    #[inline]
     pub fn capture_slot_len(&self) -> usize {
         self.slots
     }
 
-        #[inline]
+    #[inline]
     pub(crate) fn set_capture_slot_len(&mut self, slots: usize) {
         self.slots = slots;
     }
 
-        #[inline]
+    #[inline]
     pub fn patterns(&self) -> PatternIter {
         PatternIter {
             it: PatternID::iter(self.match_len()),
@@ -121,69 +122,66 @@ impl NFA {
         }
     }
 
-        #[inline]
+    #[inline]
     pub fn start_anchored(&self) -> StateID {
         self.start_anchored
     }
 
-        #[inline]
+    #[inline]
     pub fn set_start_anchored(&mut self, id: StateID) {
         self.start_anchored = id;
     }
 
-        #[inline]
+    #[inline]
     pub fn start_unanchored(&self) -> StateID {
         self.start_unanchored
     }
 
-        #[inline]
+    #[inline]
     pub fn set_start_unanchored(&mut self, id: StateID) {
         self.start_unanchored = id;
     }
 
-                #[inline]
+    #[inline]
     pub fn start_pattern(&self, pid: PatternID) -> StateID {
         self.start_pattern[pid]
     }
 
-                #[inline]
+    #[inline]
     pub fn set_start_pattern(&mut self, pid: PatternID, id: StateID) {
         self.start_pattern[pid] = id;
     }
 
-        #[inline]
+    #[inline]
     pub fn byte_class_set(&self) -> &ByteClassSet {
         &self.byte_class_set
     }
 
-        #[inline]
+    #[inline]
     pub fn set_byte_class_set(&mut self, set: ByteClassSet) {
         self.byte_class_set = set;
     }
 
-        #[inline]
+    #[inline]
     pub fn state(&self, id: StateID) -> &State {
         &self.states[id]
     }
 
-                #[inline]
+    #[inline]
     pub fn states(&self) -> &[State] {
         &self.states
     }
 
-                                    pub fn remap(&mut self, old_to_new: &[StateID]) {
+    pub fn remap(&mut self, old_to_new: &[StateID]) {
         for state in &mut self.states {
             state.remap(old_to_new);
         }
     }
 
-        #[inline]
+    #[inline]
     pub fn add(&mut self, state: State) -> Result<StateID, Error> {
         match state {
-            State::Range { .. }
-            | State::Sparse { .. }
-            | State::Union { .. }
-            | State::Fail => {}
+            State::Range { .. } | State::Sparse { .. } | State::Union { .. } | State::Fail => {}
             State::Capture { slot, .. } => {
                 let len = slot.checked_add(1).unwrap();
                 if len > self.capture_slot_len() {
@@ -199,18 +197,13 @@ impl NFA {
             State::Look { look, .. } => {
                 self.facts.set_has_any_look(true);
                 match look {
-                    Look::StartLine
-                    | Look::EndLine
-                    | Look::StartText
-                    | Look::EndText => {
+                    Look::StartLine | Look::EndLine | Look::StartText | Look::EndText => {
                         self.facts.set_has_any_anchor(true);
                     }
-                    Look::WordBoundaryUnicode
-                    | Look::WordBoundaryUnicodeNegate => {
+                    Look::WordBoundaryUnicode | Look::WordBoundaryUnicodeNegate => {
                         self.facts.set_has_word_boundary_unicode(true);
                     }
-                    Look::WordBoundaryAscii
-                    | Look::WordBoundaryAsciiNegate => {
+                    Look::WordBoundaryAscii | Look::WordBoundaryAsciiNegate => {
                         self.facts.set_has_word_boundary_ascii(true);
                     }
                 }
@@ -223,7 +216,7 @@ impl NFA {
         Ok(id)
     }
 
-                            #[inline]
+    #[inline]
     pub fn clear(&mut self) {
         self.start_anchored = StateID::ZERO;
         self.start_unanchored = StateID::ZERO;
@@ -267,7 +260,7 @@ impl NFA {
         self.facts.has_word_boundary_ascii()
     }
 
-                    #[inline]
+    #[inline]
     pub fn memory_usage(&self) -> usize {
         self.states.len() * mem::size_of::<State>()
             + self.memory_states
@@ -292,12 +285,7 @@ impl fmt::Debug for NFA {
             writeln!(f, "")?;
             for pid in self.patterns() {
                 let sid = self.start_pattern(pid);
-                writeln!(
-                    f,
-                    "START({:06?}): {:?}",
-                    pid.as_usize(),
-                    sid.as_usize()
-                )?;
+                writeln!(f, "START({:06?}): {:?}", pid.as_usize(), sid.as_usize())?;
             }
         }
         writeln!(f, "")?;
@@ -313,30 +301,25 @@ impl fmt::Debug for NFA {
 
 #[derive(Clone, Eq, PartialEq)]
 pub enum State {
-                        Range { range: Transition },
-                    Sparse(SparseTransitions),
-            Look { look: Look, next: StateID },
-                Union { alternates: Box<[StateID]> },
-                                                                Capture { next: StateID, slot: usize },
-            Fail,
-            Match { id: PatternID },
+    Range { range: Transition },
+    Sparse(SparseTransitions),
+    Look { look: Look, next: StateID },
+    Union { alternates: Box<[StateID]> },
+    Capture { next: StateID, slot: usize },
+    Fail,
+    Match { id: PatternID },
 }
 
 impl State {
-            #[inline]
+    #[inline]
     pub fn is_epsilon(&self) -> bool {
         match *self {
-            State::Range { .. }
-            | State::Sparse { .. }
-            | State::Fail
-            | State::Match { .. } => false,
-            State::Look { .. }
-            | State::Union { .. }
-            | State::Capture { .. } => true,
+            State::Range { .. } | State::Sparse { .. } | State::Fail | State::Match { .. } => false,
+            State::Look { .. } | State::Union { .. } | State::Capture { .. } => true,
         }
     }
 
-        fn memory_usage(&self) -> usize {
+    fn memory_usage(&self) -> usize {
         match *self {
             State::Range { .. }
             | State::Look { .. }
@@ -346,13 +329,11 @@ impl State {
             State::Sparse(SparseTransitions { ref ranges }) => {
                 ranges.len() * mem::size_of::<Transition>()
             }
-            State::Union { ref alternates } => {
-                alternates.len() * mem::size_of::<StateID>()
-            }
+            State::Union { ref alternates } => alternates.len() * mem::size_of::<StateID>(),
         }
     }
 
-                            fn remap(&mut self, remap: &[StateID]) {
+    fn remap(&mut self, remap: &[StateID]) {
         match *self {
             State::Range { ref mut range } => range.next = remap[range.next],
             State::Sparse(SparseTransitions { ref mut ranges }) => {
@@ -407,7 +388,7 @@ impl fmt::Debug for State {
 
 #[derive(Clone, Copy, Debug, Default)]
 struct Facts {
-        bools: u16,
+    bools: u16,
 }
 
 impl Facts {
@@ -508,14 +489,14 @@ impl fmt::Debug for Transition {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Look {
-            StartLine = 1 << 0,
-            EndLine = 1 << 1,
-            StartText = 1 << 2,
-            EndText = 1 << 3,
-                    WordBoundaryUnicode = 1 << 4,
-            WordBoundaryUnicodeNegate = 1 << 5,
-                    WordBoundaryAscii = 1 << 6,
-                            WordBoundaryAsciiNegate = 1 << 7,
+    StartLine = 1 << 0,
+    EndLine = 1 << 1,
+    StartText = 1 << 2,
+    EndText = 1 << 3,
+    WordBoundaryUnicode = 1 << 4,
+    WordBoundaryUnicodeNegate = 1 << 5,
+    WordBoundaryAscii = 1 << 6,
+    WordBoundaryAsciiNegate = 1 << 7,
 }
 
 impl Look {
@@ -585,7 +566,7 @@ impl Look {
         }
     }
 
-                fn from_int(n: u8) -> Option<Look> {
+    fn from_int(n: u8) -> Option<Look> {
         match n {
             0b0000_0001 => Some(Look::StartLine),
             0b0000_0010 => Some(Look::EndLine),
@@ -599,7 +580,7 @@ impl Look {
         }
     }
 
-        fn reversed(&self) -> Look {
+    fn reversed(&self) -> Look {
         match *self {
             Look::StartLine => Look::EndLine,
             Look::EndLine => Look::StartLine,
@@ -612,7 +593,7 @@ impl Look {
         }
     }
 
-            fn add_to_byteset(&self, set: &mut ByteClassSet) {
+    fn add_to_byteset(&self, set: &mut ByteClassSet) {
         match *self {
             Look::StartText | Look::EndText => {}
             Look::StartLine | Look::EndLine => {
@@ -650,38 +631,42 @@ pub(crate) struct LookSet {
 }
 
 impl LookSet {
-        pub(crate) fn from_repr(repr: u8) -> LookSet {
+    pub(crate) fn from_repr(repr: u8) -> LookSet {
         LookSet { set: repr }
     }
 
-        pub(crate) fn from_repr_mut(repr: &mut u8) -> &mut LookSet {
+    pub(crate) fn from_repr_mut(repr: &mut u8) -> &mut LookSet {
         // SAFETY: This is safe since a LookSet is repr(transparent) where its
         // repr is a u8.
         unsafe { core::mem::transmute::<&mut u8, &mut LookSet>(repr) }
     }
 
-        pub(crate) fn is_empty(&self) -> bool {
+    pub(crate) fn is_empty(&self) -> bool {
         self.set == 0
     }
 
-        pub(crate) fn clear(&mut self) {
+    pub(crate) fn clear(&mut self) {
         self.set = 0;
     }
 
-            pub(crate) fn insert(&mut self, look: Look) {
+    pub(crate) fn insert(&mut self, look: Look) {
         self.set |= look as u8;
     }
 
-        pub(crate) fn contains(&self, look: Look) -> bool {
+    pub(crate) fn contains(&self, look: Look) -> bool {
         (look as u8) & self.set != 0
     }
 
-            pub(crate) fn subtract(&self, other: LookSet) -> LookSet {
-        LookSet { set: self.set & !other.set }
+    pub(crate) fn subtract(&self, other: LookSet) -> LookSet {
+        LookSet {
+            set: self.set & !other.set,
+        }
     }
 
-            pub(crate) fn intersect(&self, other: LookSet) -> LookSet {
-        LookSet { set: self.set & other.set }
+    pub(crate) fn intersect(&self, other: LookSet) -> LookSet {
+        LookSet {
+            set: self.set & other.set,
+        }
     }
 }
 
@@ -703,7 +688,7 @@ impl core::fmt::Debug for LookSet {
 
 pub struct PatternIter<'a> {
     it: PatternIDIter,
-                        _marker: core::marker::PhantomData<&'a ()>,
+    _marker: core::marker::PhantomData<&'a ()>,
 }
 
 impl<'a> Iterator for PatternIter<'a> {

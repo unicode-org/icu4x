@@ -1,8 +1,6 @@
 use alloc::vec::Vec;
 
-pub(crate) use self::state::{
-    State, StateBuilderEmpty, StateBuilderMatches, StateBuilderNFA,
-};
+pub(crate) use self::state::{State, StateBuilderEmpty, StateBuilderMatches, StateBuilderNFA};
 
 use crate::regex_automata::{
     nfa::thompson::{self, Look, LookSet},
@@ -78,13 +76,7 @@ pub(crate) fn next(
             .is_empty()
         {
             for nfa_id in &sparses.set1 {
-                epsilon_closure(
-                    nfa,
-                    nfa_id,
-                    look_have,
-                    stack,
-                    &mut sparses.set2,
-                );
+                epsilon_closure(nfa, nfa_id, look_have, stack, &mut sparses.set2);
             }
             sparses.swap();
             sparses.set2.clear();
@@ -139,24 +131,12 @@ pub(crate) fn next(
             }
             thompson::State::Range { range: ref r } => {
                 if r.matches_unit(unit) {
-                    epsilon_closure(
-                        nfa,
-                        r.next,
-                        *builder.look_have(),
-                        stack,
-                        &mut sparses.set2,
-                    );
+                    epsilon_closure(nfa, r.next, *builder.look_have(), stack, &mut sparses.set2);
                 }
             }
             thompson::State::Sparse(ref sparse) => {
                 if let Some(next) = sparse.matches_unit(unit) {
-                    epsilon_closure(
-                        nfa,
-                        next,
-                        *builder.look_have(),
-                        stack,
-                        &mut sparses.set2,
-                    );
+                    epsilon_closure(nfa, next, *builder.look_have(), stack, &mut sparses.set2);
                 }
             }
         }
@@ -178,10 +158,7 @@ pub(crate) fn next(
     // if one was detected once it enters a quit state (and indeed, the search
     // routines in this crate do just that), but it seems better to prevent
     // these things by construction if possible.)
-    if nfa.has_word_boundary()
-        && unit.is_word_byte()
-        && !sparses.set2.is_empty()
-    {
+    if nfa.has_word_boundary() && unit.is_word_byte() && !sparses.set2.is_empty() {
         builder.set_is_from_word();
     }
     let mut builder_nfa = builder.into_nfa();
@@ -245,11 +222,7 @@ pub(crate) fn epsilon_closure(
     }
 }
 
-pub(crate) fn add_nfa_states(
-    nfa: &thompson::NFA,
-    set: &SparseSet,
-    builder: &mut StateBuilderNFA,
-) {
+pub(crate) fn add_nfa_states(nfa: &thompson::NFA, set: &SparseSet, builder: &mut StateBuilderNFA) {
     for nfa_id in set {
         match *nfa.state(nfa_id) {
             thompson::State::Range { .. } => {
@@ -262,8 +235,7 @@ pub(crate) fn add_nfa_states(
                 builder.add_nfa_state_id(nfa_id);
                 builder.look_need().insert(look);
             }
-            thompson::State::Union { .. }
-            | thompson::State::Capture { .. } => {
+            thompson::State::Union { .. } | thompson::State::Capture { .. } => {
                 // Pure epsilon transitions don't need to be tracked
                 // as part of the DFA state. Tracking them is actually
                 // superfluous; they won't cause any harm other than making
@@ -320,10 +292,7 @@ pub(crate) fn add_nfa_states(
     }
 }
 
-pub(crate) fn set_lookbehind_from_start(
-    start: &Start,
-    builder: &mut StateBuilderMatches,
-) {
+pub(crate) fn set_lookbehind_from_start(start: &Start, builder: &mut StateBuilderMatches) {
     match *start {
         Start::NonWordByte => {}
         Start::WordByte => {

@@ -16,7 +16,7 @@ pub struct Config {
 }
 
 impl Config {
-        pub fn new() -> Config {
+    pub fn new() -> Config {
         Config::default()
     }
 
@@ -53,7 +53,7 @@ pub struct Builder {
 }
 
 impl Builder {
-        pub fn new() -> Builder {
+    pub fn new() -> Builder {
         Builder {
             config: Config::default(),
             thompson: thompson::Builder::new(),
@@ -64,10 +64,7 @@ impl Builder {
         self.build_many(&[pattern])
     }
 
-    pub fn build_many<P: AsRef<str>>(
-        &self,
-        patterns: &[P],
-    ) -> Result<PikeVM, Error> {
+    pub fn build_many<P: AsRef<str>>(&self, patterns: &[P]) -> Result<PikeVM, Error> {
         let nfa = self.thompson.build_many(patterns)?;
         self.build_from_nfa(Arc::new(nfa))
     }
@@ -83,7 +80,10 @@ impl Builder {
                 return Err(Error::unicode_word_unavailable());
             }
         }
-        Ok(PikeVM { config: self.config, nfa })
+        Ok(PikeVM {
+            config: self.config,
+            nfa,
+        })
     }
 
     pub fn configure(&mut self, config: Config) -> &mut Builder {
@@ -91,7 +91,7 @@ impl Builder {
         self
     }
 
-                                    pub fn syntax(
+    pub fn syntax(
         &mut self,
         config: crate::regex_automata::util::syntax::SyntaxConfig,
     ) -> &mut Builder {
@@ -99,7 +99,7 @@ impl Builder {
         self
     }
 
-                                    pub fn thompson(&mut self, config: thompson::Config) -> &mut Builder {
+    pub fn thompson(&mut self, config: thompson::Config) -> &mut Builder {
         self.thompson.configure(config);
         self
     }
@@ -156,8 +156,7 @@ impl PikeVM {
         end: usize,
         caps: &mut Captures,
     ) -> Option<MultiMatch> {
-        let anchored =
-            self.config.get_anchored() || self.nfa.is_always_start_anchored();
+        let anchored = self.config.get_anchored() || self.nfa.is_always_start_anchored();
         let mut at = start;
         let mut matched_pid = None;
         cache.clear();
@@ -168,9 +167,7 @@ impl PikeVM {
                 }
                 // TODO: prefilter
             }
-            if (!anchored && matched_pid.is_none())
-                || cache.clist.set.is_empty()
-            {
+            if (!anchored && matched_pid.is_none()) || cache.clist.set.is_empty() {
                 self.epsilon_closure(
                     &mut cache.clist,
                     &mut caps.slots,
@@ -204,13 +201,7 @@ impl PikeVM {
             cache.swap();
             cache.nlist.set.clear();
         }
-        matched_pid.map(|pid| {
-            MultiMatch::new(
-                pid,
-                caps.slots[0].unwrap(),
-                caps.slots[1].unwrap(),
-            )
-        })
+        matched_pid.map(|pid| MultiMatch::new(pid, caps.slots[0].unwrap(), caps.slots[1].unwrap()))
     }
 
     #[inline(always)]
@@ -225,33 +216,16 @@ impl PikeVM {
         at: usize,
     ) -> Option<PatternID> {
         match *self.nfa.state(sid) {
-            State::Fail
-            | State::Look { .. }
-            | State::Union { .. }
-            | State::Capture { .. } => None,
+            State::Fail | State::Look { .. } | State::Union { .. } | State::Capture { .. } => None,
             State::Range { ref range } => {
                 if range.matches(haystack, at) {
-                    self.epsilon_closure(
-                        nlist,
-                        thread_caps,
-                        stack,
-                        range.next,
-                        haystack,
-                        at + 1,
-                    );
+                    self.epsilon_closure(nlist, thread_caps, stack, range.next, haystack, at + 1);
                 }
                 None
             }
             State::Sparse(ref sparse) => {
                 if let Some(next) = sparse.matches(haystack, at) {
-                    self.epsilon_closure(
-                        nlist,
-                        thread_caps,
-                        stack,
-                        next,
-                        haystack,
-                        at + 1,
-                    );
+                    self.epsilon_closure(nlist, thread_caps, stack, next, haystack, at + 1);
                 }
                 None
             }
@@ -276,14 +250,7 @@ impl PikeVM {
         while let Some(frame) = stack.pop() {
             match frame {
                 FollowEpsilon::StateID(sid) => {
-                    self.epsilon_closure_step(
-                        nlist,
-                        thread_caps,
-                        stack,
-                        sid,
-                        haystack,
-                        at,
-                    );
+                    self.epsilon_closure_step(nlist, thread_caps, stack, sid, haystack, at);
                 }
                 FollowEpsilon::Capture { slot, pos } => {
                     thread_caps[slot] = pos;
@@ -307,10 +274,7 @@ impl PikeVM {
                 return;
             }
             match *self.nfa.state(sid) {
-                State::Fail
-                | State::Range { .. }
-                | State::Sparse { .. }
-                | State::Match { .. } => {
+                State::Fail | State::Range { .. } | State::Sparse { .. } | State::Match { .. } => {
                     let t = &mut nlist.caps(sid);
                     t.copy_from_slice(thread_caps);
                     return;
@@ -365,7 +329,13 @@ impl<'r, 'c, 't> FindLeftmostMatches<'r, 'c, 't> {
         cache: &'c mut Cache,
         text: &'t [u8],
     ) -> FindLeftmostMatches<'r, 'c, 't> {
-        FindLeftmostMatches { vm, cache, text, last_end: 0, last_match: None }
+        FindLeftmostMatches {
+            vm,
+            cache,
+            text,
+            last_end: 0,
+            last_match: None,
+        }
     }
 }
 
@@ -415,7 +385,9 @@ pub struct Captures {
 
 impl Captures {
     pub fn new(nfa: &NFA) -> Captures {
-        Captures { slots: vec![None; nfa.capture_slot_len()] }
+        Captures {
+            slots: vec![None; nfa.capture_slot_len()],
+        }
     }
 }
 
@@ -478,7 +450,8 @@ impl Threads {
         }
         self.slots_per_thread = nfa.capture_slot_len();
         self.set.resize(nfa.states().len());
-        self.caps.resize(self.slots_per_thread * nfa.states().len(), None);
+        self.caps
+            .resize(self.slots_per_thread * nfa.states().len(), None);
     }
 
     fn caps(&mut self, sid: StateID) -> &mut [Slot] {

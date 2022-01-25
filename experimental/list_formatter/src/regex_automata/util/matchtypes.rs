@@ -2,9 +2,9 @@ use crate::regex_automata::util::id::PatternID;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MatchKind {
-        All,
-                LeftmostFirst,
-                        #[doc(hidden)]
+    All,
+    LeftmostFirst,
+    #[doc(hidden)]
     __Nonexhaustive,
     // There is prior art in RE2 that shows that we should be able to add
     // LeftmostLongest too. The tricky part of it is supporting ungreedy
@@ -38,33 +38,33 @@ impl Default for MatchKind {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct Match {
-        start: usize,
-        end: usize,
+    start: usize,
+    end: usize,
 }
 
 impl Match {
-                        #[inline]
+    #[inline]
     pub fn new(start: usize, end: usize) -> Match {
         assert!(start <= end);
         Match { start, end }
     }
 
-        #[inline]
+    #[inline]
     pub fn start(&self) -> usize {
         self.start
     }
 
-        #[inline]
+    #[inline]
     pub fn end(&self) -> usize {
         self.end
     }
 
-        #[inline]
+    #[inline]
     pub fn range(&self) -> core::ops::Range<usize> {
         self.start..self.end
     }
 
-                        #[inline]
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.start == self.end
     }
@@ -72,27 +72,27 @@ impl Match {
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct HalfMatch {
-        pub(crate) pattern: PatternID,
-                    pub(crate) offset: usize,
+    pub(crate) pattern: PatternID,
+    pub(crate) offset: usize,
 }
 
 impl HalfMatch {
-        #[inline]
+    #[inline]
     pub fn new(pattern: PatternID, offset: usize) -> HalfMatch {
         HalfMatch { pattern, offset }
     }
 
-                        #[inline]
+    #[inline]
     pub fn must(pattern: usize, offset: usize) -> HalfMatch {
         HalfMatch::new(PatternID::new(pattern).unwrap(), offset)
     }
 
-                        #[inline]
+    #[inline]
     pub fn pattern(&self) -> PatternID {
         self.pattern
     }
 
-                        #[inline]
+    #[inline]
     pub fn offset(&self) -> usize {
         self.offset
     }
@@ -100,44 +100,48 @@ impl HalfMatch {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct MultiMatch {
-        pattern: PatternID,
-        start: usize,
-        end: usize,
+    pattern: PatternID,
+    start: usize,
+    end: usize,
 }
 
 impl MultiMatch {
-                        #[inline]
+    #[inline]
     pub fn new(pattern: PatternID, start: usize, end: usize) -> MultiMatch {
         assert!(start <= end);
-        MultiMatch { pattern, start, end }
+        MultiMatch {
+            pattern,
+            start,
+            end,
+        }
     }
 
-                                        #[inline]
+    #[inline]
     pub fn must(pattern: usize, start: usize, end: usize) -> MultiMatch {
         MultiMatch::new(PatternID::new(pattern).unwrap(), start, end)
     }
 
-                            #[inline]
+    #[inline]
     pub fn pattern(&self) -> PatternID {
         self.pattern
     }
 
-        #[inline]
+    #[inline]
     pub fn start(&self) -> usize {
         self.start
     }
 
-        #[inline]
+    #[inline]
     pub fn end(&self) -> usize {
         self.end
     }
 
-        #[inline]
+    #[inline]
     pub fn range(&self) -> core::ops::Range<usize> {
         self.start..self.end
     }
 
-                        #[inline]
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.start == self.end
     }
@@ -157,13 +161,8 @@ pub enum MatchError {
     // ergonomics by only putting the more complex API in the `try_` variants
     // ("fallible") of search methods. The infallible APIs will instead just
     // return `Option<Match>` and panic on error.
-            Quit {
-                byte: u8,
-                offset: usize,
-    },
-                                GaveUp {
-                        offset: usize,
-    },
+    Quit { byte: u8, offset: usize },
+    GaveUp { offset: usize },
 }
 
 #[cfg(feature = "std")]

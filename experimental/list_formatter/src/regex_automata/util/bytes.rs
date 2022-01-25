@@ -47,7 +47,7 @@ use crate::regex_automata::util::id::{PatternID, PatternIDError, StateID, StateI
 
 #[derive(Debug)]
 pub struct SerializeError {
-                                                                what: &'static str,
+    what: &'static str,
 }
 
 impl SerializeError {
@@ -70,17 +70,44 @@ pub struct DeserializeError(DeserializeErrorKind);
 
 #[derive(Debug)]
 enum DeserializeErrorKind {
-    Generic { msg: &'static str },
-    BufferTooSmall { what: &'static str },
-    InvalidUsize { what: &'static str },
-    InvalidVarint { what: &'static str },
-    VersionMismatch { expected: u32, found: u32 },
-    EndianMismatch { expected: u32, found: u32 },
-    AlignmentMismatch { alignment: usize, address: usize },
-    LabelMismatch { expected: &'static str },
-    ArithmeticOverflow { what: &'static str },
-    PatternID { err: PatternIDError, what: &'static str },
-    StateID { err: StateIDError, what: &'static str },
+    Generic {
+        msg: &'static str,
+    },
+    BufferTooSmall {
+        what: &'static str,
+    },
+    InvalidUsize {
+        what: &'static str,
+    },
+    InvalidVarint {
+        what: &'static str,
+    },
+    VersionMismatch {
+        expected: u32,
+        found: u32,
+    },
+    EndianMismatch {
+        expected: u32,
+        found: u32,
+    },
+    AlignmentMismatch {
+        alignment: usize,
+        address: usize,
+    },
+    LabelMismatch {
+        expected: &'static str,
+    },
+    ArithmeticOverflow {
+        what: &'static str,
+    },
+    PatternID {
+        err: PatternIDError,
+        what: &'static str,
+    },
+    StateID {
+        err: StateIDError,
+        what: &'static str,
+    },
 }
 
 impl DeserializeError {
@@ -101,27 +128,15 @@ impl DeserializeError {
     }
 
     fn version_mismatch(expected: u32, found: u32) -> DeserializeError {
-        DeserializeError(DeserializeErrorKind::VersionMismatch {
-            expected,
-            found,
-        })
+        DeserializeError(DeserializeErrorKind::VersionMismatch { expected, found })
     }
 
     fn endian_mismatch(expected: u32, found: u32) -> DeserializeError {
-        DeserializeError(DeserializeErrorKind::EndianMismatch {
-            expected,
-            found,
-        })
+        DeserializeError(DeserializeErrorKind::EndianMismatch { expected, found })
     }
 
-    fn alignment_mismatch(
-        alignment: usize,
-        address: usize,
-    ) -> DeserializeError {
-        DeserializeError(DeserializeErrorKind::AlignmentMismatch {
-            alignment,
-            address,
-        })
+    fn alignment_mismatch(alignment: usize, address: usize) -> DeserializeError {
+        DeserializeError(DeserializeErrorKind::AlignmentMismatch { alignment, address })
     }
 
     fn label_mismatch(expected: &'static str) -> DeserializeError {
@@ -132,17 +147,11 @@ impl DeserializeError {
         DeserializeError(DeserializeErrorKind::ArithmeticOverflow { what })
     }
 
-    pub(crate) fn pattern_id_error(
-        err: PatternIDError,
-        what: &'static str,
-    ) -> DeserializeError {
+    pub(crate) fn pattern_id_error(err: PatternIDError, what: &'static str) -> DeserializeError {
         DeserializeError(DeserializeErrorKind::PatternID { err, what })
     }
 
-    pub(crate) fn state_id_error(
-        err: StateIDError,
-        what: &'static str,
-    ) -> DeserializeError {
+    pub(crate) fn state_id_error(err: StateIDError, what: &'static str) -> DeserializeError {
         DeserializeError(DeserializeErrorKind::StateID { err, what })
     }
 }
@@ -255,15 +264,13 @@ pub fn alloc_aligned_buffer<T>(size: usize) -> (Vec<u8>, usize) {
     (buf, padding)
 }
 
-pub fn read_label(
-    slice: &[u8],
-    expected_label: &'static str,
-) -> Result<usize, DeserializeError> {
+pub fn read_label(slice: &[u8], expected_label: &'static str) -> Result<usize, DeserializeError> {
     // Set an upper bound on how many bytes we scan for a NUL. Since no label
     // in this crate is longer than 256 bytes, if we can't find one within that
     // range, then we have corrupted data.
-    let first_nul =
-        slice[..cmp::min(slice.len(), 256)].iter().position(|&b| b == 0);
+    let first_nul = slice[..cmp::min(slice.len(), 256)]
+        .iter()
+        .position(|&b| b == 0);
     let first_nul = match first_nul {
         Some(first_nul) => first_nul,
         None => {
@@ -276,7 +283,7 @@ pub fn read_label(
     let len = first_nul + padding_len(first_nul);
     if slice.len() < len {
         return Err(DeserializeError::generic(
-            "could not find properly sized label at start of serialized object"
+            "could not find properly sized label at start of serialized object",
         ));
     }
     if expected_label.as_bytes() != &slice[..first_nul] {
@@ -285,10 +292,7 @@ pub fn read_label(
     Ok(len)
 }
 
-pub fn write_label(
-    label: &str,
-    dst: &mut [u8],
-) -> Result<usize, SerializeError> {
+pub fn write_label(label: &str, dst: &mut [u8]) -> Result<usize, SerializeError> {
     let nwrite = write_label_len(label);
     if dst.len() < nwrite {
         return Err(SerializeError::buffer_too_small("label"));
@@ -321,9 +325,7 @@ pub fn read_endianness_check(slice: &[u8]) -> Result<usize, DeserializeError> {
     Ok(nr)
 }
 
-pub fn write_endianness_check<E: Endian>(
-    dst: &mut [u8],
-) -> Result<usize, SerializeError> {
+pub fn write_endianness_check<E: Endian>(dst: &mut [u8]) -> Result<usize, SerializeError> {
     let nwrite = write_endianness_check_len();
     if dst.len() < nwrite {
         return Err(SerializeError::buffer_too_small("endianness check"));
@@ -336,10 +338,7 @@ pub fn write_endianness_check_len() -> usize {
     size_of::<u32>()
 }
 
-pub fn read_version(
-    slice: &[u8],
-    expected_version: u32,
-) -> Result<usize, DeserializeError> {
+pub fn read_version(slice: &[u8], expected_version: u32) -> Result<usize, DeserializeError> {
     let (n, nr) = try_read_u32(slice, "version")?;
     assert_eq!(nr, write_version_len());
     if n != expected_version {
@@ -348,10 +347,7 @@ pub fn read_version(
     Ok(nr)
 }
 
-pub fn write_version<E: Endian>(
-    version: u32,
-    dst: &mut [u8],
-) -> Result<usize, SerializeError> {
+pub fn write_version<E: Endian>(version: u32, dst: &mut [u8]) -> Result<usize, SerializeError> {
     let nwrite = write_version_len();
     if dst.len() < nwrite {
         return Err(SerializeError::buffer_too_small("version number"));
@@ -368,17 +364,14 @@ pub fn read_pattern_id(
     slice: &[u8],
     what: &'static str,
 ) -> Result<(PatternID, usize), DeserializeError> {
-    let bytes: [u8; PatternID::SIZE] =
-        slice[..PatternID::SIZE].try_into().unwrap();
+    let bytes: [u8; PatternID::SIZE] = slice[..PatternID::SIZE].try_into().unwrap();
     let pid = PatternID::from_ne_bytes(bytes)
         .map_err(|err| DeserializeError::pattern_id_error(err, what))?;
     Ok((pid, PatternID::SIZE))
 }
 
 pub fn read_pattern_id_unchecked(slice: &[u8]) -> (PatternID, usize) {
-    let pid = PatternID::from_ne_bytes_unchecked(
-        slice[..PatternID::SIZE].try_into().unwrap(),
-    );
+    let pid = PatternID::from_ne_bytes_unchecked(slice[..PatternID::SIZE].try_into().unwrap());
     (pid, PatternID::SIZE)
 }
 
@@ -401,17 +394,14 @@ pub fn read_state_id(
     slice: &[u8],
     what: &'static str,
 ) -> Result<(StateID, usize), DeserializeError> {
-    let bytes: [u8; StateID::SIZE] =
-        slice[..StateID::SIZE].try_into().unwrap();
-    let sid = StateID::from_ne_bytes(bytes)
-        .map_err(|err| DeserializeError::state_id_error(err, what))?;
+    let bytes: [u8; StateID::SIZE] = slice[..StateID::SIZE].try_into().unwrap();
+    let sid =
+        StateID::from_ne_bytes(bytes).map_err(|err| DeserializeError::state_id_error(err, what))?;
     Ok((sid, StateID::SIZE))
 }
 
 pub fn read_state_id_unchecked(slice: &[u8]) -> (StateID, usize) {
-    let sid = StateID::from_ne_bytes_unchecked(
-        slice[..StateID::SIZE].try_into().unwrap(),
-    );
+    let sid = StateID::from_ne_bytes_unchecked(slice[..StateID::SIZE].try_into().unwrap());
     (sid, StateID::SIZE)
 }
 
@@ -442,20 +432,14 @@ pub fn try_read_u32_as_usize(
     })
 }
 
-pub fn try_read_u16(
-    slice: &[u8],
-    what: &'static str,
-) -> Result<(u16, usize), DeserializeError> {
+pub fn try_read_u16(slice: &[u8], what: &'static str) -> Result<(u16, usize), DeserializeError> {
     if slice.len() < size_of::<u16>() {
         return Err(DeserializeError::buffer_too_small(what));
     }
     Ok((read_u16(slice), size_of::<u16>()))
 }
 
-pub fn try_read_u32(
-    slice: &[u8],
-    what: &'static str,
-) -> Result<(u32, usize), DeserializeError> {
+pub fn try_read_u32(slice: &[u8], what: &'static str) -> Result<(u32, usize), DeserializeError> {
     if slice.len() < size_of::<u32>() {
         return Err(DeserializeError::buffer_too_small(what));
     }
@@ -518,16 +502,12 @@ pub fn read_varu64_as_usize(
     what: &'static str,
 ) -> Result<(usize, usize), DeserializeError> {
     let (n, nread) = read_varu64(slice, what)?;
-    let n = usize::try_from(n)
-        .map_err(|_| DeserializeError::invalid_usize(what))?;
+    let n = usize::try_from(n).map_err(|_| DeserializeError::invalid_usize(what))?;
     Ok((n, nread))
 }
 
 #[allow(dead_code)]
-pub fn read_varu64(
-    slice: &[u8],
-    what: &'static str,
-) -> Result<(u64, usize), DeserializeError> {
+pub fn read_varu64(slice: &[u8], what: &'static str) -> Result<(u64, usize), DeserializeError> {
     let mut n: u64 = 0;
     let mut shift: u32 = 0;
     // The biggest possible value is u64::MAX, which needs all 64 bits which
@@ -561,35 +541,22 @@ pub fn check_slice_len<T>(
     Ok(())
 }
 
-pub fn mul(
-    a: usize,
-    b: usize,
-    what: &'static str,
-) -> Result<usize, DeserializeError> {
+pub fn mul(a: usize, b: usize, what: &'static str) -> Result<usize, DeserializeError> {
     match a.checked_mul(b) {
         Some(c) => Ok(c),
         None => Err(DeserializeError::arithmetic_overflow(what)),
     }
 }
 
-pub fn add(
-    a: usize,
-    b: usize,
-    what: &'static str,
-) -> Result<usize, DeserializeError> {
+pub fn add(a: usize, b: usize, what: &'static str) -> Result<usize, DeserializeError> {
     match a.checked_add(b) {
         Some(c) => Ok(c),
         None => Err(DeserializeError::arithmetic_overflow(what)),
     }
 }
 
-pub fn shl(
-    a: usize,
-    b: usize,
-    what: &'static str,
-) -> Result<usize, DeserializeError> {
-    let amount = u32::try_from(b)
-        .map_err(|_| DeserializeError::arithmetic_overflow(what))?;
+pub fn shl(a: usize, b: usize, what: &'static str) -> Result<usize, DeserializeError> {
+    let amount = u32::try_from(b).map_err(|_| DeserializeError::arithmetic_overflow(what))?;
     match a.checked_shl(amount) {
         Some(c) => Ok(c),
         None => Err(DeserializeError::arithmetic_overflow(what)),
@@ -597,11 +564,11 @@ pub fn shl(
 }
 
 pub trait Endian {
-                fn write_u16(n: u16, dst: &mut [u8]);
+    fn write_u16(n: u16, dst: &mut [u8]);
 
-                fn write_u32(n: u32, dst: &mut [u8]);
+    fn write_u32(n: u32, dst: &mut [u8]);
 
-                fn write_u64(n: u64, dst: &mut [u8]);
+    fn write_u64(n: u64, dst: &mut [u8]);
 }
 
 pub enum LE {}

@@ -154,27 +154,27 @@ const ROOT: StateID = 1;
 
 #[derive(Clone)]
 pub struct RangeTrie {
-                states: Vec<State>,
-                free: Vec<State>,
-            iter_stack: RefCell<Vec<NextIter>>,
-        iter_ranges: RefCell<Vec<Utf8Range>>,
-            dupe_stack: Vec<NextDupe>,
-            insert_stack: Vec<NextInsert>,
+    states: Vec<State>,
+    free: Vec<State>,
+    iter_stack: RefCell<Vec<NextIter>>,
+    iter_ranges: RefCell<Vec<Utf8Range>>,
+    dupe_stack: Vec<NextDupe>,
+    insert_stack: Vec<NextInsert>,
 }
 
 #[derive(Clone)]
 struct State {
-            transitions: Vec<Transition>,
+    transitions: Vec<Transition>,
 }
 
 #[derive(Clone)]
 struct Transition {
-        range: Utf8Range,
-        next_id: StateID,
+    range: Utf8Range,
+    next_id: StateID,
 }
 
 impl RangeTrie {
-        pub fn new() -> RangeTrie {
+    pub fn new() -> RangeTrie {
         let mut trie = RangeTrie {
             states: vec![],
             free: vec![],
@@ -187,16 +187,13 @@ impl RangeTrie {
         trie
     }
 
-            pub fn clear(&mut self) {
+    pub fn clear(&mut self) {
         self.free.extend(self.states.drain(..));
         self.add_empty(); // final
         self.add_empty(); // root
     }
 
-                pub fn iter<E, F: FnMut(&[Utf8Range]) -> Result<(), E>>(
-        &self,
-        mut f: F,
-    ) -> Result<(), E> {
+    pub fn iter<E, F: FnMut(&[Utf8Range]) -> Result<(), E>>(&self, mut f: F) -> Result<(), E> {
         let mut stack = self.iter_stack.borrow_mut();
         stack.clear();
         let mut ranges = self.iter_ranges.borrow_mut();
@@ -205,8 +202,15 @@ impl RangeTrie {
         // We do iteration in a way that permits us to use a single buffer
         // for our keys. We iterate in a depth first fashion, while being
         // careful to expand our frontier as we move deeper in the trie.
-        stack.push(NextIter { state_id: ROOT, tidx: 0 });
-        while let Some(NextIter { mut state_id, mut tidx }) = stack.pop() {
+        stack.push(NextIter {
+            state_id: ROOT,
+            tidx: 0,
+        });
+        while let Some(NextIter {
+            mut state_id,
+            mut tidx,
+        }) = stack.pop()
+        {
             // This could be implemented more simply without an inner loop
             // here, but at the cost of more stack pushes.
             loop {
@@ -227,7 +231,10 @@ impl RangeTrie {
                 } else {
                     // Expand our frontier. Once we come back to this state
                     // via the stack, start in on the next transition.
-                    stack.push(NextIter { state_id, tidx: tidx + 1 });
+                    stack.push(NextIter {
+                        state_id,
+                        tidx: tidx + 1,
+                    });
                     // Otherwise, move to the first transition of the next
                     // state.
                     state_id = t.next_id;
@@ -238,7 +245,7 @@ impl RangeTrie {
         Ok(())
     }
 
-                    pub fn insert(&mut self, ranges: &[Utf8Range]) {
+    pub fn insert(&mut self, ranges: &[Utf8Range]) {
         assert!(!ranges.is_empty());
         assert!(ranges.len() <= 4);
 
@@ -303,15 +310,14 @@ impl RangeTrie {
                 // at position `i` for the first new transition we want to
                 // insert. After that, we're forced to do expensive inserts.
                 let mut first = true;
-                let mut add_trans =
-                    |trie: &mut RangeTrie, pos, from, range, to| {
-                        if first {
-                            trie.set_transition_at(pos, from, range, to);
-                            first = false;
-                        } else {
-                            trie.add_transition_at(pos, from, range, to);
-                        }
-                    };
+                let mut add_trans = |trie: &mut RangeTrie, pos, from, range, to| {
+                    if first {
+                        trie.set_transition_at(pos, from, range, to);
+                        first = false;
+                    } else {
+                        trie.add_transition_at(pos, from, range, to);
+                    }
+                };
                 for (j, &srange) in splits.iter().enumerate() {
                     match srange {
                         SplitRange::Old(r) => {
@@ -346,8 +352,7 @@ impl RangeTrie {
                             // ... otherwise, setup exploration for a new
                             // empty state and add a brand new transition for
                             // this new range.
-                            let next_id =
-                                NextInsert::push(self, &mut stack, rest);
+                            let next_id = NextInsert::push(self, &mut stack, rest);
                             add_trans(self, i, state_id, r, next_id);
                         }
                         SplitRange::Both(r) => {
@@ -386,12 +391,14 @@ impl RangeTrie {
             state.clear();
             self.states.push(state);
         } else {
-            self.states.push(State { transitions: vec![] });
+            self.states.push(State {
+                transitions: vec![],
+            });
         }
         id
     }
 
-                                                                    fn duplicate(&mut self, old_id: StateID) -> StateID {
+    fn duplicate(&mut self, old_id: StateID) -> StateID {
         if old_id == FINAL {
             return FINAL;
         }
@@ -425,18 +432,13 @@ impl RangeTrie {
         new_id
     }
 
-                    fn add_transition(
-        &mut self,
-        from_id: StateID,
-        range: Utf8Range,
-        next_id: StateID,
-    ) {
+    fn add_transition(&mut self, from_id: StateID, range: Utf8Range, next_id: StateID) {
         self.state_mut(from_id)
             .transitions
             .push(Transition { range, next_id });
     }
 
-            fn add_transition_at(
+    fn add_transition_at(
         &mut self,
         i: usize,
         from_id: StateID,
@@ -448,7 +450,7 @@ impl RangeTrie {
             .insert(i, Transition { range, next_id });
     }
 
-        fn set_transition_at(
+    fn set_transition_at(
         &mut self,
         i: usize,
         from_id: StateID,
@@ -458,18 +460,18 @@ impl RangeTrie {
         self.state_mut(from_id).transitions[i] = Transition { range, next_id };
     }
 
-        fn state(&self, id: StateID) -> &State {
+    fn state(&self, id: StateID) -> &State {
         &self.states[id as usize]
     }
 
-        fn state_mut(&mut self, id: StateID) -> &mut State {
+    fn state_mut(&mut self, id: StateID) -> &mut State {
         &mut self.states[id as usize]
     }
 }
 
 impl State {
-                                                                fn find(&self, range: Utf8Range) -> usize {
-                                                                                fn binary_search<T, F>(xs: &[T], mut pred: F) -> usize
+    fn find(&self, range: Utf8Range) -> usize {
+        fn binary_search<T, F>(xs: &[T], mut pred: F) -> usize
         where
             F: FnMut(&T) -> bool,
         {
@@ -493,15 +495,15 @@ impl State {
         binary_search(&self.transitions, |t| range.start <= t.range.end)
     }
 
-        fn clear(&mut self) {
+    fn clear(&mut self) {
         self.transitions.clear();
     }
 }
 
 #[derive(Clone, Debug)]
 struct NextDupe {
-        old_id: StateID,
-        new_id: StateID,
+    old_id: StateID,
+    new_id: StateID,
 }
 
 #[derive(Clone, Debug)]
@@ -512,27 +514,27 @@ struct NextIter {
 
 #[derive(Clone, Debug)]
 struct NextInsert {
-            state_id: StateID,
-            ranges: [Utf8Range; 4],
-        len: u8,
+    state_id: StateID,
+    ranges: [Utf8Range; 4],
+    len: u8,
 }
 
 impl NextInsert {
-                    fn new(state_id: StateID, ranges: &[Utf8Range]) -> NextInsert {
+    fn new(state_id: StateID, ranges: &[Utf8Range]) -> NextInsert {
         let len = ranges.len();
         assert!(len > 0);
         assert!(len <= 4);
 
         let mut tmp = [Utf8Range { start: 0, end: 0 }; 4];
         tmp[..len].copy_from_slice(ranges);
-        NextInsert { state_id, ranges: tmp, len: len as u8 }
+        NextInsert {
+            state_id,
+            ranges: tmp,
+            len: len as u8,
+        }
     }
 
-                    fn push(
-        trie: &mut RangeTrie,
-        stack: &mut Vec<NextInsert>,
-        ranges: &[Utf8Range],
-    ) -> StateID {
+    fn push(trie: &mut RangeTrie, stack: &mut Vec<NextInsert>, ranges: &[Utf8Range]) -> StateID {
         if ranges.is_empty() {
             FINAL
         } else {
@@ -542,11 +544,11 @@ impl NextInsert {
         }
     }
 
-        fn state_id(&self) -> StateID {
+    fn state_id(&self) -> StateID {
         self.state_id
     }
 
-        fn ranges(&self) -> &[Utf8Range] {
+    fn ranges(&self) -> &[Utf8Range] {
         &self.ranges[..self.len as usize]
     }
 }
@@ -565,7 +567,7 @@ enum SplitRange {
 }
 
 impl Split {
-                fn new(o: Utf8Range, n: Utf8Range) -> Option<Split> {
+    fn new(o: Utf8Range, n: Utf8Range) -> Option<Split> {
         let range = |r: RangeInclusive<u8>| Utf8Range {
             start: *r.start(),
             end: *r.end(),
@@ -618,23 +620,32 @@ impl Split {
         }
     }
 
-            fn parts1(r1: SplitRange) -> Split {
+    fn parts1(r1: SplitRange) -> Split {
         // This value doesn't matter since it is never accessed.
         let nada = SplitRange::Old(Utf8Range { start: 0, end: 0 });
-        Split { partitions: [r1, nada, nada], len: 1 }
+        Split {
+            partitions: [r1, nada, nada],
+            len: 1,
+        }
     }
 
-        fn parts2(r1: SplitRange, r2: SplitRange) -> Split {
+    fn parts2(r1: SplitRange, r2: SplitRange) -> Split {
         // This value doesn't matter since it is never accessed.
         let nada = SplitRange::Old(Utf8Range { start: 0, end: 0 });
-        Split { partitions: [r1, r2, nada], len: 2 }
+        Split {
+            partitions: [r1, r2, nada],
+            len: 2,
+        }
     }
 
-        fn parts3(r1: SplitRange, r2: SplitRange, r3: SplitRange) -> Split {
-        Split { partitions: [r1, r2, r3], len: 3 }
+    fn parts3(r1: SplitRange, r2: SplitRange, r3: SplitRange) -> Split {
+        Split {
+            partitions: [r1, r2, r3],
+            len: 3,
+        }
     }
 
-        fn as_slice(&self) -> &[SplitRange] {
+    fn as_slice(&self) -> &[SplitRange] {
         &self.partitions[..self.len]
     }
 }

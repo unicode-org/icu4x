@@ -81,9 +81,13 @@ fn find_fwd(
         // limit this optimization to cases where there is exactly one pattern.
         // In that case, any match must be the 0th pattern.
         if dfa.pattern_count() == 1 && !pre.reports_false_positives() {
-            return Ok(pre.next_candidate(bytes, at).into_option().map(
-                |offset| HalfMatch { pattern: PatternID::ZERO, offset },
-            ));
+            return Ok(pre
+                .next_candidate(bytes, at)
+                .into_option()
+                .map(|offset| HalfMatch {
+                    pattern: PatternID::ZERO,
+                    offset,
+                }));
         } else if pre.is_effective(at) {
             match pre.next_candidate(bytes, at).into_option() {
                 None => return Ok(None),
@@ -123,11 +127,7 @@ fn find_fwd(
             while at < end {
                 prev_sid = sid;
                 sid = unsafe {
-                    dfa.next_state_untagged_unchecked(
-                        cache,
-                        sid,
-                        *bytes.get_unchecked(at),
-                    )
+                    dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                 };
                 at += 1;
                 if sid.is_tagged() {
@@ -156,44 +156,28 @@ fn find_fwd(
                 // state somewhere in the DFA.
                 while at + 4 < end {
                     let next = unsafe {
-                        dfa.next_state_untagged_unchecked(
-                            cache,
-                            sid,
-                            *bytes.get_unchecked(at),
-                        )
+                        dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                     };
                     if sid != next {
                         break;
                     }
                     at += 1;
                     let next = unsafe {
-                        dfa.next_state_untagged_unchecked(
-                            cache,
-                            sid,
-                            *bytes.get_unchecked(at),
-                        )
+                        dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                     };
                     if sid != next {
                         break;
                     }
                     at += 1;
                     let next = unsafe {
-                        dfa.next_state_untagged_unchecked(
-                            cache,
-                            sid,
-                            *bytes.get_unchecked(at),
-                        )
+                        dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                     };
                     if sid != next {
                         break;
                     }
                     at += 1;
                     let next = unsafe {
-                        dfa.next_state_untagged_unchecked(
-                            cache,
-                            sid,
-                            *bytes.get_unchecked(at),
-                        )
+                        dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                     };
                     if sid != next {
                         break;
@@ -234,7 +218,10 @@ fn find_fwd(
                     return Ok(last_match);
                 }
                 let offset = at - 1;
-                return Err(MatchError::Quit { byte: bytes[offset], offset });
+                return Err(MatchError::Quit {
+                    byte: bytes[offset],
+                    offset,
+                });
             } else {
                 debug_assert!(sid.is_unknown());
                 unreachable!("sid being unknown is a bug");
@@ -311,44 +298,28 @@ fn find_rev(
                 at -= 1;
                 while at > 3 {
                     let next = unsafe {
-                        dfa.next_state_untagged_unchecked(
-                            cache,
-                            sid,
-                            *bytes.get_unchecked(at),
-                        )
+                        dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                     };
                     if sid != next {
                         break;
                     }
                     at -= 1;
                     let next = unsafe {
-                        dfa.next_state_untagged_unchecked(
-                            cache,
-                            sid,
-                            *bytes.get_unchecked(at),
-                        )
+                        dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                     };
                     if sid != next {
                         break;
                     }
                     at -= 1;
                     let next = unsafe {
-                        dfa.next_state_untagged_unchecked(
-                            cache,
-                            sid,
-                            *bytes.get_unchecked(at),
-                        )
+                        dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                     };
                     if sid != next {
                         break;
                     }
                     at -= 1;
                     let next = unsafe {
-                        dfa.next_state_untagged_unchecked(
-                            cache,
-                            sid,
-                            *bytes.get_unchecked(at),
-                        )
+                        dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                     };
                     if sid != next {
                         break;
@@ -356,11 +327,7 @@ fn find_rev(
                     at -= 1;
                 }
                 sid = unsafe {
-                    dfa.next_state_untagged_unchecked(
-                        cache,
-                        sid,
-                        *bytes.get_unchecked(at),
-                    )
+                    dfa.next_state_untagged_unchecked(cache, sid, *bytes.get_unchecked(at))
                 };
             }
             if sid.is_unknown() {
@@ -387,7 +354,10 @@ fn find_rev(
                 if last_match.is_some() {
                     return Ok(last_match);
                 }
-                return Err(MatchError::Quit { byte: bytes[at], offset: at });
+                return Err(MatchError::Quit {
+                    byte: bytes[at],
+                    offset: at,
+                });
             }
         }
     }
@@ -408,16 +378,7 @@ pub(crate) fn find_overlapping_fwd(
     // Searching with a pattern ID is always anchored, so we should only ever
     // use a prefilter when no pattern ID is given.
     if pre.is_some() && pattern_id.is_none() {
-        find_overlapping_fwd_imp(
-            pre,
-            dfa,
-            cache,
-            pattern_id,
-            bytes,
-            start,
-            end,
-            caller_state,
-        )
+        find_overlapping_fwd_imp(pre, dfa, cache, pattern_id, bytes, start, end, caller_state)
     } else {
         find_overlapping_fwd_imp(
             None,
@@ -454,11 +415,7 @@ fn find_overlapping_fwd_imp(
                 let match_count = dfa.match_count(cache, sid);
                 if last.match_index < match_count {
                     let m = HalfMatch {
-                        pattern: dfa.match_pattern(
-                            cache,
-                            sid,
-                            last.match_index,
-                        ),
+                        pattern: dfa.match_pattern(cache, sid, last.match_index),
                         offset: last.offset,
                     };
                     last.match_index += 1;
@@ -520,8 +477,10 @@ fn find_overlapping_fwd_imp(
                 }
             } else if sid.is_match() {
                 let offset = at - MATCH_OFFSET;
-                caller_state
-                    .set_last_match(StateMatch { match_index: 1, offset });
+                caller_state.set_last_match(StateMatch {
+                    match_index: 1,
+                    offset,
+                });
                 return Ok(Some(HalfMatch {
                     pattern: dfa.match_pattern(cache, sid, 0),
                     offset,
@@ -530,7 +489,10 @@ fn find_overlapping_fwd_imp(
                 return Ok(None);
             } else {
                 debug_assert!(sid.is_quit());
-                return Err(MatchError::Quit { byte, offset: at - 1 });
+                return Err(MatchError::Quit {
+                    byte,
+                    offset: at - 1,
+                });
             }
         }
     }
@@ -643,8 +605,9 @@ fn eoi_rev(
             Ok(None)
         }
     } else {
-        let sid =
-            dfa.next_eoi_state(cache, state).map_err(|_| gave_up(start))?;
+        let sid = dfa
+            .next_eoi_state(cache, state)
+            .map_err(|_| gave_up(start))?;
         if sid.is_match() {
             Ok(Some(HalfMatch {
                 pattern: dfa.match_pattern(cache, sid, 0),

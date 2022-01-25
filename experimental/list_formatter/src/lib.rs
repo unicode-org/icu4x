@@ -50,7 +50,7 @@ extern crate alloc;
 
 mod list_formatter;
 pub mod provider;
-mod string_matcher;
 mod regex_automata;
+mod string_matcher;
 
 pub use list_formatter::*;

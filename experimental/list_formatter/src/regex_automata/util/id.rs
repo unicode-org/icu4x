@@ -7,80 +7,79 @@ use core::{
 use alloc::vec::Vec;
 
 #[repr(transparent)]
-#[derive(
-    Clone, Copy, Debug, Default, Eq, Hash, PartialEq, PartialOrd, Ord,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub struct PatternID(u32);
 
 impl PatternID {
-        #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
-    pub const MAX: PatternID =
-        PatternID::new_unchecked(core::i32::MAX as usize - 1);
+    #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
+    pub const MAX: PatternID = PatternID::new_unchecked(core::i32::MAX as usize - 1);
 
-        #[cfg(target_pointer_width = "16")]
+    #[cfg(target_pointer_width = "16")]
     pub const MAX: PatternID = PatternID::new_unchecked(core::isize::MAX - 1);
 
-            pub const LIMIT: usize = PatternID::MAX.as_usize() + 1;
+    pub const LIMIT: usize = PatternID::MAX.as_usize() + 1;
 
-        pub const ZERO: PatternID = PatternID::new_unchecked(0);
+    pub const ZERO: PatternID = PatternID::new_unchecked(0);
 
-        pub const SIZE: usize = core::mem::size_of::<PatternID>();
+    pub const SIZE: usize = core::mem::size_of::<PatternID>();
 
-                    #[inline]
+    #[inline]
     pub fn new(id: usize) -> Result<PatternID, PatternIDError> {
         PatternID::try_from(id)
     }
 
-                        #[inline]
+    #[inline]
     pub const fn new_unchecked(id: usize) -> PatternID {
         PatternID(id as u32)
     }
 
-        #[inline]
+    #[inline]
     pub fn must(id: usize) -> PatternID {
         PatternID::new(id).unwrap()
     }
 
-        #[inline]
+    #[inline]
     pub const fn as_usize(&self) -> usize {
         self.0 as usize
     }
 
-        #[inline]
+    #[inline]
     pub const fn as_u32(&self) -> u32 {
         self.0
     }
 
-                #[inline]
+    #[inline]
     pub const fn as_i32(&self) -> i32 {
         self.0 as i32
     }
 
-                    #[inline]
+    #[inline]
     pub fn one_more(&self) -> usize {
         self.as_usize().checked_add(1).unwrap()
     }
 
-                        #[inline]
+    #[inline]
     pub fn from_ne_bytes(bytes: [u8; 4]) -> Result<PatternID, PatternIDError> {
         let id = u32::from_ne_bytes(bytes);
         if id > PatternID::MAX.as_u32() {
-            return Err(PatternIDError { attempted: id as u64 });
+            return Err(PatternIDError {
+                attempted: id as u64,
+            });
         }
         Ok(PatternID::new_unchecked(id as usize))
     }
 
-                        #[inline]
+    #[inline]
     pub fn from_ne_bytes_unchecked(bytes: [u8; 4]) -> PatternID {
         PatternID::new_unchecked(u32::from_ne_bytes(bytes) as usize)
     }
 
-            #[inline]
+    #[inline]
     pub fn to_ne_bytes(&self) -> [u8; 4] {
         self.0.to_ne_bytes()
     }
 
-                    #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub(crate) fn iter(len: usize) -> PatternIDIter {
         PatternIDIter::new(len)
     }
@@ -92,7 +91,7 @@ pub struct PatternIDError {
 }
 
 impl PatternIDError {
-        pub fn attempted(&self) -> u64 {
+    pub fn attempted(&self) -> u64 {
         self.attempted
     }
 }
@@ -112,80 +111,79 @@ impl core::fmt::Display for PatternIDError {
 }
 
 #[repr(transparent)]
-#[derive(
-    Clone, Copy, Debug, Default, Eq, Hash, PartialEq, PartialOrd, Ord,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub struct StateID(u32);
 
 impl StateID {
-        #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
-    pub const MAX: StateID =
-        StateID::new_unchecked(core::i32::MAX as usize - 1);
+    #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
+    pub const MAX: StateID = StateID::new_unchecked(core::i32::MAX as usize - 1);
 
-        #[cfg(target_pointer_width = "16")]
+    #[cfg(target_pointer_width = "16")]
     pub const MAX: StateID = StateID::new_unchecked(core::isize::MAX - 1);
 
-            pub const LIMIT: usize = StateID::MAX.as_usize() + 1;
+    pub const LIMIT: usize = StateID::MAX.as_usize() + 1;
 
-        pub const ZERO: StateID = StateID::new_unchecked(0);
+    pub const ZERO: StateID = StateID::new_unchecked(0);
 
-        pub const SIZE: usize = core::mem::size_of::<StateID>();
+    pub const SIZE: usize = core::mem::size_of::<StateID>();
 
-                    #[inline]
+    #[inline]
     pub fn new(id: usize) -> Result<StateID, StateIDError> {
         StateID::try_from(id)
     }
 
-                        #[inline]
+    #[inline]
     pub const fn new_unchecked(id: usize) -> StateID {
         StateID(id as u32)
     }
 
-        #[inline]
+    #[inline]
     pub fn must(id: usize) -> StateID {
         StateID::new(id).unwrap()
     }
 
-        #[inline]
+    #[inline]
     pub const fn as_usize(&self) -> usize {
         self.0 as usize
     }
 
-        #[inline]
+    #[inline]
     pub const fn as_u32(&self) -> u32 {
         self.0
     }
 
-                #[inline]
+    #[inline]
     pub const fn as_i32(&self) -> i32 {
         self.0 as i32
     }
 
-                    #[inline]
+    #[inline]
     pub fn one_more(&self) -> usize {
         self.as_usize().checked_add(1).unwrap()
     }
 
-                        #[inline]
+    #[inline]
     pub fn from_ne_bytes(bytes: [u8; 4]) -> Result<StateID, StateIDError> {
         let id = u32::from_ne_bytes(bytes);
         if id > StateID::MAX.as_u32() {
-            return Err(StateIDError { attempted: id as u64 });
+            return Err(StateIDError {
+                attempted: id as u64,
+            });
         }
         Ok(StateID::new_unchecked(id as usize))
     }
 
-                        #[inline]
+    #[inline]
     pub fn from_ne_bytes_unchecked(bytes: [u8; 4]) -> StateID {
         StateID::new_unchecked(u32::from_ne_bytes(bytes) as usize)
     }
 
-            #[inline]
+    #[inline]
     pub fn to_ne_bytes(&self) -> [u8; 4] {
         self.0.to_ne_bytes()
     }
 
-                    #[cfg(feature = "std")]
+    #[cfg(feature = "std")]
     pub(crate) fn iter(len: usize) -> StateIDIter {
         StateIDIter::new(len)
     }
@@ -197,7 +195,7 @@ pub struct StateIDError {
 }
 
 impl StateIDError {
-        pub fn attempted(&self) -> u64 {
+    pub fn attempted(&self) -> u64 {
         self.attempted
     }
 }
@@ -290,7 +288,9 @@ macro_rules! impls {
 
             fn try_from(id: usize) -> Result<$ty, $tyerr> {
                 if id > $ty::MAX.as_usize() {
-                    return Err($tyerr { attempted: id as u64 });
+                    return Err($tyerr {
+                        attempted: id as u64,
+                    });
                 }
                 Ok($ty::new_unchecked(id))
             }
@@ -309,7 +309,9 @@ macro_rules! impls {
 
             fn try_from(id: u16) -> Result<$ty, $tyerr> {
                 if id as u32 > $ty::MAX.as_u32() {
-                    return Err($tyerr { attempted: id as u64 });
+                    return Err($tyerr {
+                        attempted: id as u64,
+                    });
                 }
                 Ok($ty::new_unchecked(id as usize))
             }
@@ -320,7 +322,9 @@ macro_rules! impls {
 
             fn try_from(id: u32) -> Result<$ty, $tyerr> {
                 if id > $ty::MAX.as_u32() {
-                    return Err($tyerr { attempted: id as u64 });
+                    return Err($tyerr {
+                        attempted: id as u64,
+                    });
                 }
                 Ok($ty::new_unchecked(id as usize))
             }
@@ -365,7 +369,7 @@ impl<I: Iterator> IteratorIDExt for I {}
 #[cfg(feature = "std")]
 macro_rules! iditer {
     ($ty:ident, $iterty:ident, $withiterty:ident) => {
-                                        #[derive(Clone, Debug)]
+        #[derive(Clone, Debug)]
         pub(crate) struct $withiterty<I> {
             it: I,
             ids: $iterty,
