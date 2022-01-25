@@ -31,18 +31,18 @@ impl ResourceKeyHash {
 /// Executables can be searched for `ResourceKey` instances to produce optimized data files.
 /// Therefore, users should not generally create ResourceKey instances; they should instead use
 /// the ones exported by a component.
-/// 
+///
 /// `ResourceKey`s are created with the [`resource_key!`] macro:
 ///
 /// ```
 /// # use icu_provider::prelude::ResourceKey;
 /// const key: ResourceKey = icu_provider::resource_key!("foo/bar@1");
 /// ```
-/// 
+///
 /// The path string has to contain at least one `/`, and end with `@` followed by one or more ASCII
 /// digits. Paths do not contain characters other than ASCII letters and digits, `_`, `/`, `=`, and
 /// `@`. Invalid paths are compile-time errors (as [`resource_key!`] is `const`).
-/// 
+///
 /// ```compile_fail
 /// # use icu_provider::prelude::ResourceKey;
 /// const key: ResourceKey = icu_provider::resource_key!("foobar@1");
@@ -346,7 +346,6 @@ impl Writeable for ResourceKey {
         Cow::Borrowed(self.get_path())
     }
 }
-
 
 /// A variant and language identifier, used for requesting data from a
 /// [`DataProvider`](crate::DataProvider).
