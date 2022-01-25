@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643140503942,
+  "lastUpdate": 1643148865542,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22133,6 +22133,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4360,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "545af53f747f03cdb72c56803782202ea1ced482",
+          "message": "Improve the segmenter document (#1517)\n\n* Add \"Cluster\" to the name to match the spec term \"Grapheme Cluster Boundary\" and\r\nthe Grapheme_Cluster_Break Property.\r\n\r\n* Add example for grapheme cluster breaker, and revise existing doc.",
+          "timestamp": "2022-01-25T14:05:10-08:00",
+          "tree_id": "b0ba98a9993767428616f3a324170435ab65f8e9",
+          "url": "https://github.com/unicode-org/icu4x/commit/545af53f747f03cdb72c56803782202ea1ced482"
+        },
+        "date": 1643148855416,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 1729,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3605,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
