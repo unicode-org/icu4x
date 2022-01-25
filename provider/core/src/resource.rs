@@ -115,13 +115,13 @@ impl ResourceKey {
 
     #[doc(hidden)]
     #[inline]
-    pub const fn try_new(path: &'static str) -> Option<Self> {
+    pub const fn try_new(path: &'static str) -> Result<Self, ()> {
         match Self::check_path_syntax(path) {
-            Ok(_) => Some(Self {
+            Ok(_) => Ok(Self {
                 path,
                 hash: ResourceKeyHash::compute_from_str(path),
             }),
-            Err(_) => None,
+            Err(_) => Err(()),
         }
     }
 
@@ -310,8 +310,8 @@ macro_rules! resource_key {
         // Force the ResourceKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
             match $crate::ResourceKey::try_new($crate::tagged!($path)) {
-                Some(v) => v,
-                None => panic!(concat!("Invalid resource key: ", $path)),
+                Ok(v) => v,
+                Err(_) => panic!(concat!("Invalid resource key: ", $path)),
             }
         };
         RESOURCE_KEY_MACRO_CONST
