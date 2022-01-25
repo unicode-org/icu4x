@@ -928,7 +928,7 @@ jobs:
     name: Copy GH pages to docs repo
 
     runs-on: ubuntu-latest
-    
+
     needs: [check, tidy, benchmark, memory, binsize, doc]
 
     ## Only create docs for merges/pushes to main (skip PRs).
