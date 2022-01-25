@@ -8,10 +8,11 @@
 use crate::error::PropertiesError;
 use crate::props::Script;
 
+use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
-use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+use icu_uniset::UnicodeSet;
 use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "serde")]
@@ -235,11 +236,7 @@ impl<'data> ScriptExtensions<'data> {
     /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
-        let mut builder = UnicodeSetBuilder::new();
-        for range in self.get_script_extensions_ranges(script) {
-            builder.add_range_u32(&(range.start()..=range.end()));
-        }
-        builder.build()
+        UnicodeSet::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
