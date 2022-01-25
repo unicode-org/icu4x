@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643054081459,
+  "lastUpdate": 1643139989135,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -7943,6 +7943,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fd33be490b2f63262491e2b97f427746c11c1fda"
         },
         "date": 1643054070660,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1471487,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4992698c20080190c1c4384d3940ce7e2a01de90",
+          "message": "Failing main repo docs job on warnings (#1538)",
+          "timestamp": "2022-01-25T20:44:44+01:00",
+          "tree_id": "b5d1c650f2bf9a2f5985dc08f37535227bb961f5",
+          "url": "https://github.com/unicode-org/icu4x/commit/4992698c20080190c1c4384d3940ce7e2a01de90"
+        },
+        "date": 1643139977896,
         "tool": "ndjson",
         "benches": [
           {
