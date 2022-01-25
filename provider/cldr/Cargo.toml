@@ -70,6 +70,7 @@ log = { version = "0.4", optional = true }
 mktemp = "0.4"
 icu_locid_macros = { version = "0.4", path = "../../components/locid/macros" }
 icu_testdata = { version = "0.4", path = "../../provider/testdata" }
+writeable = { version = "0.2.1", path = "../../utils/writeable" }
 
 [features]
 # Automatically download CLDR data from a host

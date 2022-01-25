@@ -16,7 +16,7 @@ use crate::yoke;
 // JSON string. It also exercises most of the data provider code paths.
 
 /// Key for HelloAlt, used for testing mismatched types
-const HELLO_ALT_KEY: ResourceKey = crate::resource_key!(Core, "helloalt", 1);
+const HELLO_ALT_KEY: ResourceKey = crate::resource_key!("core/helloalt@1");
 
 /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, ZeroCopyFrom)]

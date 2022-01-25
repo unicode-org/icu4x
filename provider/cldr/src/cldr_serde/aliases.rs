@@ -5,7 +5,7 @@
 //! Serde structs representing CLDR JSON aliases.json files.
 //!
 //! Sample file:
-//! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/aliases.json
+//! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/aliases.json>
 
 use serde::Deserialize;
 use tinystr::{TinyStr4, TinyStr8};

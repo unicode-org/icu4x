@@ -357,6 +357,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "crabbake"
+version = "0.4.0"
+dependencies = [
+ "crabbake-derive",
+ "icu_provider",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "tinystr",
+]
+
+[[package]]
+name = "crabbake-derive"
+version = "0.4.0"
+dependencies = [
+ "crabbake",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+]
+
+[[package]]
 name = "crc32fast"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -690,14 +713,6 @@ checksum = "5fc25a87fa4fd2094bffb06925852034d90a17f0d1e05197d4956d3555752191"
 dependencies = [
  "matches",
  "percent-encoding",
-]
-
-[[package]]
-name = "formatted_string"
-version = "0.1.0"
-dependencies = [
- "criterion",
- "displaydoc",
 ]
 
 [[package]]
@@ -1169,7 +1184,6 @@ dependencies = [
  "criterion",
  "deduplicating_array",
  "displaydoc",
- "formatted_string",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
@@ -1179,6 +1193,7 @@ dependencies = [
  "regex-automata 0.1.10 (git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174)",
  "serde",
  "serde_json",
+ "writeable",
  "zerovec",
 ]
 
@@ -1337,6 +1352,7 @@ dependencies = [
  "tinystr",
  "unzip",
  "urlencoding",
+ "writeable",
 ]
 
 [[package]]
@@ -1357,6 +1373,7 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "static_assertions",
+ "writeable",
 ]
 
 [[package]]
@@ -2637,6 +2654,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f65be51117c325c2b58eec529be7a0857d11527a9029973b58810a4c63e77a6"
 dependencies = [
  "tinystr-raw",
+]
+
+[[package]]
+name = "tinystr-neo"
+version = "0.3.1"
+dependencies = [
+ "bincode",
+ "criterion",
+ "displaydoc",
+ "postcard",
+ "serde",
+ "serde_json",
+ "tinystr",
+ "zerovec",
 ]
 
 [[package]]

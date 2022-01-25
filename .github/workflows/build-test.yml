@@ -239,8 +239,14 @@ jobs:
           rustup component add rust-src --toolchain nightly-2021-12-22
       - name: Install WASM tools
         run: |
-          sudo npm install -g wasm-opt --unsafe-perm
-          sudo npm install -g wabt
+          # This step requires wasm-opt and wabt. To install these two packages
+          # ready-to-use locally, you also can execute
+          # 'sudo npm install -g wasm-opt --unsafe-perm' and
+          # 'sudo npm install -g wabt'.
+          cd ffi/diplomat/wasm
+          npm ci
+          echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+          echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
       - name: Get twiggy version
         id: twiggy-version
         run: |
@@ -329,6 +335,11 @@ jobs:
         with:
           command: make
           args: wasm-test-release
+      - name: Build Examples and test icu4x-key-extract
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: make
+          args: wasm-compare-worklog-keys
       # This has to be a separate test since the emscripten sdk
       # will otherwise interfere with other node-using tests
       - name: Run emscripten test
@@ -759,8 +770,10 @@ jobs:
         rustup component add rust-src
         rustup toolchain list
         rustup toolchain install nightly-2021-12-22
-        sudo npm install -g wasm-opt --unsafe-perm
-        sudo npm install -g wabt
+        cd ffi/diplomat/wasm
+        npm ci
+        echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+        echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
 
     - name: Setup output data directory
       run: |

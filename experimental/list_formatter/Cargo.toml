@@ -20,7 +20,6 @@ include = [
 ]
 
 [dependencies]
-formatted_string = { path = "../formatted_string" }
 displaydoc = { version = "0.2.3", default-features = false }
 icu_locid = { version = "0.4", path = "../../components/locid" }
 icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
@@ -28,6 +27,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["yoke"] }
 deduplicating_array = { version = "0.5", path = "../../utils/deduplicating_array", optional = true }
 regex-automata = { version = "0.1", git = "https://github.com/burntsushi/regex-automata", rev = "d8eee1279fac79514f6e366b6976f97ad7b37174", default-features = false }
+writeable = { version = "0.2.1", path = "../../utils/writeable" }
 
 [dev-dependencies]
 criterion = "0.3.3"
@@ -41,9 +41,8 @@ icu_benchmark_macros = { version = "0.4", path = "../../tools/benchmark/macros" 
 path = "src/lib.rs"
 
 [features]
-std = ["icu_provider/std", "icu_locid/std"]
 default = ["icu4x_human_readable_de"]
-bench = []
+std = ["icu_provider/std", "icu_locid/std", "regex-automata/std"]
 provider_serde = ["serde", "zerovec/serde", "deduplicating_array"]
-provider_transform_internals = ["provider_serde", "regex-automata/alloc"]
+provider_transform_internals = ["provider_serde", "std"]
 icu4x_human_readable_de = ["provider_serde", "regex-automata/alloc"]

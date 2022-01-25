@@ -12,9 +12,9 @@
 //! fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data>, DataError>
 //! ```
 //!
-//! A [`Request`] contains a [`ResourceKey`] (a composition of a [`Category`] and sub-category, e.g.,
-//! "plurals/cardinal@1") and [`ResourceOptions`] (a language identifier and optional variant, e.g.,
-//! "fr") being requested. The Response contains the data payload corresponding to the Request.
+//! A [`Request`] contains a [`ResourceKey`] (a fixed identifier such as "plurals/cardinal@1") and
+//! [`ResourceOptions`] (a language identifier and optional variant, e.g. "fr") being requested.
+//! The Response contains the data payload corresponding to the Request.
 //!
 //! A [`Response`] contains a [`DataPayload`] along with other metadata.
 //!
@@ -37,7 +37,7 @@
 //! This crate also contains some concrete implementations for testing purposes:
 //!
 //! - [`InvariantDataProvider`] returns fixed data that does not vary by locale.
-//! - [`StructProvider`] wraps a particular instance of a struct and returns it.
+//! - [`AnyPayloadProvider`] wraps a particular instance of a struct and returns it.
 //! - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 //!
 //! ## Types and Lifetimes
@@ -54,7 +54,7 @@
 //!
 //! ### `IterableDataProvider`
 //!
-//! Data providers can implement [`IterableDataProvider`], allowing iteration over all [`ResourceOptions`]
+//! Data providers can implement [`IterableProvider`], allowing iteration over all [`ResourceOptions`]
 //! instances supported for a certain key in the data provider.
 //!
 //! For more information, see the [`iter`] module.
@@ -90,11 +90,10 @@
 //! [`Request`]: data_provider::DataRequest
 //! [`Response`]: data_provider::DataResponse
 //! [`ResourceKey`]: resource::ResourceKey
-//! [`Category`]: resource::ResourceCategory
 //! [`ResourceOptions`]: resource::ResourceOptions
-//! [`IterableDataProvider`]: iter::IterableDataProvider
+//! [`IterableProvider`]: iter::IterableProvider
 //! [`InvariantDataProvider`]: inv::InvariantDataProvider
-//! [`StructProvider`]: struct_provider::StructProvider
+//! [`AnyPayloadProvider`]: struct_provider::AnyPayloadProvider
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
@@ -146,10 +145,10 @@ pub mod prelude {
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
-    pub use crate::resource::ResourceCategory;
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
+    pub use crate::resource_key;
 
     pub use crate::any::AsDataProviderAnyMarkerWrap;
     pub use crate::any::AsDowncastingAnyProvider;
@@ -157,18 +156,8 @@ pub mod prelude {
     pub use crate::serde::AsDeserializingBufferProvider;
 }
 
-pub use prelude::*;
-
 /// Re-export of the yoke crate for convenience of downstream implementors.
 pub use yoke;
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
-
-pub mod internal {
-    //! Macro dependencies; not intended to be used directly.
-    /// Re-export tinystr16 for macro resource_key!()
-    pub use tinystr::tinystr16;
-    /// Re-export tinystr4 for macro resource_key!()
-    pub use tinystr::tinystr4;
-}

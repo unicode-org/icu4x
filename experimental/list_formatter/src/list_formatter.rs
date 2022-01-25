@@ -2,39 +2,66 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::*;
-use crate::options::*;
 use crate::provider::*;
-use alloc::string::String;
-use formatted_string::*;
+use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
+use writeable::*;
 
+/// Represents the type of a list. See the
+/// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
+/// for an explanation of the different types.
 #[derive(Copy, Clone, PartialEq, Debug)]
-pub enum FieldType {
-    Element,
-    Literal,
+pub enum ListType {
+    /// A conjunction
+    And,
+    /// A disjunction
+    Or,
+    /// A list of units
+    Unit,
 }
 
+/// Represents the style of a list. See the
+/// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
+/// for an explanation of the different styles.
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum ListStyle {
+    /// A typical list
+    Wide,
+    /// A shorter list
+    Short,
+    /// The shortest type of list
+    Narrow,
+}
+
+/// A formatter that renders sequences of items in an i18n-friendly way. See the
+/// [crate-level documentation](crate) for more details.
 pub struct ListFormatter {
     data: DataPayload<ListFormatterPatternsV1Marker>,
-    width: Width,
+    style: ListStyle,
 }
 
 impl ListFormatter {
+    /// Creates a new [`ListFormatter`] from the given provider. The provider has to support the
+    /// correct key for the given type:
+    /// [`LIST_FORMAT_AND_V1`](crate::provider::key::LIST_FORMAT_AND_V1),
+    /// [`LIST_FORMAT_OR_V1`](crate::provider::key::LIST_FORMAT_OR_V1), or
+    /// [`LIST_FORMAT_UNIT_V1`](crate::provider::key::LIST_FORMAT_UNIT_V1).
+    /// An error is returned if the key or language are not available, or if there were any
+    /// deserialization errors.
     pub fn try_new<T: Into<Locale>, D: DataProvider<ListFormatterPatternsV1Marker> + ?Sized>(
         locale: T,
         data_provider: &D,
-        type_: Type,
-        width: Width,
-    ) -> Result<Self, Error> {
+        type_: ListType,
+        style: ListStyle,
+    ) -> Result<Self, DataError> {
         let data = data_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: match type_ {
-                        Type::And => key::LIST_FORMAT_AND_V1,
-                        Type::Or => key::LIST_FORMAT_OR_V1,
-                        Type::Unit => key::LIST_FORMAT_UNIT_V1,
+                        ListType::And => key::LIST_FORMAT_AND_V1,
+                        ListType::Or => key::LIST_FORMAT_OR_V1,
+                        ListType::Unit => key::LIST_FORMAT_UNIT_V1,
                     },
                     options: ResourceOptions {
                         variant: None,
@@ -43,158 +70,235 @@ impl ListFormatter {
                 },
             })?
             .take_payload()?;
-        Ok(Self { data, width })
+        Ok(Self { data, style })
     }
 
-    fn format_internal<'c, B>(
-        &'c self,
-        values: &[&str],
-        mut builder: B,
-        append_value: fn(B, &str) -> B,
-        append_literal: fn(B, &str) -> B,
-    ) -> B {
-        match values.len() {
-            0 => builder,
-            1 => append_value(builder, values[0]),
-            2 => {
-                // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
-                let (before, between, after) = self.data.get().pair(self.width).parts(values[1]);
-                builder = append_literal(builder, before);
-                builder = append_value(builder, values[0]);
-                builder = append_literal(builder, between);
-                builder = append_value(builder, values[1]);
-                append_literal(builder, after)
-            }
-            n => {
-                // Start(values[0], middle(..., middle(values[n-3], End(values[n-2], values[n-1]))...)) =
-                // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
-                // values[n-2] + end_between + values[n-1] + end_after
-
-                let (start_before, start_between, _) =
-                    self.data.get().start(self.width).parts(values[1]);
-
-                builder = append_literal(builder, start_before);
-                builder = append_value(builder, values[0]);
-                builder = append_literal(builder, start_between);
-                builder = append_value(builder, values[1]);
-
-                for value in &values[2..n - 1] {
-                    let (_, between, _) = self.data.get().middle(self.width).parts(value);
-                    builder = append_literal(builder, between);
-                    builder = append_value(builder, value);
-                }
-
-                let (_, end_between, end_after) =
-                    self.data.get().end(self.width).parts(values[n - 1]);
-                builder = append_literal(builder, end_between);
-                builder = append_value(builder, values[n - 1]);
-                append_literal(builder, end_after)
-            }
+    /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
+    /// formatting. The first layer of parts contains [`parts::ELEMENT`] for input
+    /// elements, and [`parts::LITERAL`] for list literals.
+    pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
+        &'a self,
+        values: I,
+    ) -> List<'a, W, I> {
+        List {
+            formatter: self,
+            values,
         }
-    }
-
-    fn size_hint(&self, values: &[&str]) -> usize {
-        values.iter().map(|s| s.len()).sum::<usize>()
-            + self.data.get().size_hint(self.width, values.len())
-    }
-
-    pub fn format(&self, values: &[&str]) -> String {
-        self.format_internal(
-            values,
-            String::with_capacity(self.size_hint(values)),
-            |builder, value| builder + value,
-            |builder, literal| builder + literal,
-        )
-    }
-
-    pub fn format_to_parts(&self, values: &[&str]) -> FormattedString<FieldType> {
-        self.format_internal(
-            values,
-            FormattedString::with_capacity(self.size_hint(values)),
-            |mut builder, value| {
-                builder.append(&value, FieldType::Element);
-                builder
-            },
-            |mut builder, literal| {
-                builder.append(&literal, FieldType::Literal);
-                builder
-            },
-        )
     }
 }
 
-#[cfg(test)]
+/// The [`Part`]s used by [`ListFormatter`].
+pub mod parts {
+    use writeable::Part;
+
+    /// The [`Part`] used by [`List`](super::List) to mark the part of the string that is an element.
+    pub const ELEMENT: Part = Part {
+        category: "list",
+        value: "element",
+    };
+
+    /// The [`Part`] used by [`List`](super::List) to mark the part of the string that is a list literal,
+    /// such as ", " or " and ".
+    pub const LITERAL: Part = Part {
+        category: "list",
+        value: "literal",
+    };
+}
+
+/// The [`Writeable`] implementation that is returned by [`ListFormatter::format`]. See
+/// the [`writeable`] crate for how to consume this.
+pub struct List<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
+    formatter: &'a ListFormatter,
+    values: I,
+}
+
+impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for List<'a, W, I> {
+    fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
+        macro_rules! literal {
+            ($lit:ident) => {
+                sink.with_part(parts::LITERAL, |l| l.write_str($lit))
+            };
+        }
+        macro_rules! value {
+            ($val:expr) => {
+                sink.with_part(parts::ELEMENT, |e| $val.write_to_parts(e))
+            };
+        }
+
+        let mut values = self.values.clone();
+
+        if let Some(first) = values.next() {
+            if let Some(second) = values.next() {
+                if let Some(third) = values.next() {
+                    // Start(values[0], middle(..., middle(values[n-3], End(values[n-2], values[n-1]))...)) =
+                    // start_before + values[0] + start_between + (values[1..n-3] + middle_between)* +
+                    // values[n-2] + end_between + values[n-1] + end_after
+
+                    let (start_before, start_between, _) = self
+                        .formatter
+                        .data
+                        .get()
+                        .start(self.formatter.style)
+                        .parts(&second);
+
+                    literal!(start_before)?;
+                    value!(first)?;
+                    literal!(start_between)?;
+                    value!(second)?;
+
+                    let mut next = third;
+
+                    for next_next in values {
+                        let (_, between, _) = self
+                            .formatter
+                            .data
+                            .get()
+                            .middle(self.formatter.style)
+                            .parts(&next);
+                        literal!(between)?;
+                        value!(next)?;
+                        next = next_next;
+                    }
+
+                    let (_, end_between, end_after) = self
+                        .formatter
+                        .data
+                        .get()
+                        .end(self.formatter.style)
+                        .parts(&next);
+                    literal!(end_between)?;
+                    value!(next)?;
+                    literal!(end_after)
+                } else {
+                    // Pair(values[0], values[1]) = pair_before + values[0] + pair_between + values[1] + pair_after
+                    let (before, between, after) = self
+                        .formatter
+                        .data
+                        .get()
+                        .pair(self.formatter.style)
+                        .parts(&second);
+                    literal!(before)?;
+                    value!(first)?;
+                    literal!(between)?;
+                    value!(second)?;
+                    literal!(after)
+                }
+            } else {
+                value!(first)
+            }
+        } else {
+            Ok(())
+        }
+    }
+
+    fn write_len(&self) -> LengthHint {
+        let mut count = 0;
+        let item_length = self
+            .values
+            .clone()
+            .map(|w| {
+                count += 1;
+                w.write_len()
+            })
+            .sum::<LengthHint>();
+        item_length
+            + self
+                .formatter
+                .data
+                .get()
+                .size_hint(self.formatter.style, count)
+    }
+}
+
+#[cfg(all(test, feature = "provider_transform_internals"))]
 mod tests {
     use super::*;
+    use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    const VALUES: &[&str] = &["one", "two", "three", "four", "five"];
-
-    fn formatter(width: Width) -> ListFormatter {
+    fn formatter(style: ListStyle) -> ListFormatter {
         ListFormatter {
             data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
                 crate::provider::test::test_patterns(),
             ),
-            width,
+            style,
         }
     }
 
     #[test]
-    fn test_format() {
-        let formatter = formatter(Width::Wide);
-        assert_eq!(formatter.format(&VALUES[0..0]), "");
-        assert_eq!(formatter.format(&VALUES[0..1]), "one");
-        assert_eq!(formatter.format(&VALUES[0..2]), "$one;two+");
-        assert_eq!(formatter.format(&VALUES[0..3]), "@one:two.three!");
-        assert_eq!(formatter.format(&VALUES[0..4]), "@one:two,three.four!");
-        assert_eq!(formatter.format(VALUES), "@one:two,three,four.five!");
+    fn test_slices() {
+        let formatter = formatter(ListStyle::Wide);
+        let values = ["one", "two", "three", "four", "five"];
+
+        assert_writeable_eq!(formatter.format(values[0..0].iter()), "");
+        assert_writeable_eq!(formatter.format(values[0..1].iter()), "one");
+        assert_writeable_eq!(formatter.format(values[0..2].iter()), "$one;two+");
+        assert_writeable_eq!(formatter.format(values[0..3].iter()), "@one:two.three!");
+        assert_writeable_eq!(
+            formatter.format(values[0..4].iter()),
+            "@one:two,three.four!"
+        );
+
+        assert_writeable_parts_eq!(
+            formatter.format(values.iter()),
+            "@one:two,three,four.five!",
+            [
+                (0, 1, parts::LITERAL),
+                (1, 4, parts::ELEMENT),
+                (4, 5, parts::LITERAL),
+                (5, 8, parts::ELEMENT),
+                (8, 9, parts::LITERAL),
+                (9, 14, parts::ELEMENT),
+                (14, 15, parts::LITERAL),
+                (15, 19, parts::ELEMENT),
+                (19, 20, parts::LITERAL),
+                (20, 24, parts::ELEMENT),
+                (24, 25, parts::LITERAL)
+            ]
+        );
     }
 
     #[test]
-    fn test_format_to_parts() {
-        let formatter = formatter(Width::Wide);
+    fn test_into_iterator() {
+        let formatter = formatter(ListStyle::Wide);
 
-        assert_eq!(formatter.format_to_parts(&VALUES[0..0]).as_ref(), "");
-        assert_eq!(formatter.format_to_parts(&VALUES[0..1]).as_ref(), "one");
-        assert_eq!(
-            formatter.format_to_parts(&VALUES[0..2]).as_ref(),
-            "$one;two+"
-        );
-        assert_eq!(
-            formatter.format_to_parts(&VALUES[0..3]).as_ref(),
-            "@one:two.three!"
-        );
-        assert_eq!(
-            formatter.format_to_parts(&VALUES[0..4]).as_ref(),
-            "@one:two,three.four!"
-        );
-        let parts = formatter.format_to_parts(VALUES);
-        assert_eq!(parts.as_ref(), "@one:two,three,four.five!");
+        let mut vecdeque = std::collections::vec_deque::VecDeque::<u8>::new();
+        vecdeque.push_back(10);
+        vecdeque.push_front(48);
 
-        assert_eq!(parts.fields_at(0), [FieldType::Literal]);
-        assert!(parts.is_field_start(0, 0));
-        assert_eq!(parts.fields_at(2), [FieldType::Element]);
-        assert!(!parts.is_field_start(2, 0));
-        assert_eq!(parts.fields_at(4), [FieldType::Literal]);
-        assert!(parts.is_field_start(4, 0));
-        assert_eq!(parts.fields_at(5), [FieldType::Element]);
-        assert!(parts.is_field_start(5, 0));
-        assert_eq!(parts.fields_at(6), [FieldType::Element]);
-        assert!(!parts.is_field_start(6, 0));
+        assert_writeable_parts_eq!(
+            formatter.format(vecdeque.iter()),
+            "$48;10+",
+            [
+                (0, 1, parts::LITERAL),
+                (1, 3, parts::ELEMENT),
+                (3, 4, parts::LITERAL),
+                (4, 6, parts::ELEMENT),
+                (6, 7, parts::LITERAL),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_iterator() {
+        let formatter = formatter(ListStyle::Wide);
+
+        assert_writeable_parts_eq!(
+            formatter.format(core::iter::repeat(5).take(2)),
+            "$5;5+",
+            [
+                (0, 1, parts::LITERAL),
+                (1, 2, parts::ELEMENT),
+                (2, 3, parts::LITERAL),
+                (3, 4, parts::ELEMENT),
+                (4, 5, parts::LITERAL),
+            ]
+        );
     }
 
     #[test]
     fn test_conditional() {
-        let formatter = formatter(Width::Narrow);
+        let formatter = formatter(ListStyle::Narrow);
 
-        assert_eq!(formatter.format(&["Beta", "Alpha"]), "Beta :o Alpha");
-    }
-
-    #[test]
-    fn strings_dont_have_spare_capacity() {
-        let string = formatter(Width::Short).format(VALUES);
-        assert_eq!(string.capacity(), string.len());
-
-        let labelled_string = formatter(Width::Short).format_to_parts(VALUES);
-        assert_eq!(labelled_string.capacity(), labelled_string.len());
+        assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
     }
 }

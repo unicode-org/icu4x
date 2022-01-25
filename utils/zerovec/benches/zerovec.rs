@@ -76,16 +76,35 @@ fn overview_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn sum_benches(c: &mut Criterion) {
+    let normal_slice = &TEST_SLICE[0..19];
+    let aligned_ule_slice = <u32 as AsULE>::ULE::parse_byte_slice(&TEST_BUFFER_LE[0..76]).unwrap();
+    let unalign_ule_slice = <u32 as AsULE>::ULE::parse_byte_slice(&TEST_BUFFER_LE[1..77]).unwrap();
+
+    assert_eq!(normal_slice.len(), aligned_ule_slice.len());
+    assert_eq!(normal_slice.len(), unalign_ule_slice.len());
+
     c.bench_function("zerovec/sum/sample/slice", |b| {
-        b.iter(|| black_box(&TEST_SLICE).iter().sum::<u32>());
+        b.iter(|| {
+            black_box(normal_slice)
+                .iter()
+                .copied()
+                .fold(0u32, |sum, val| sum.wrapping_add(val))
+        })
     });
 
-    c.bench_function("zerovec/sum/sample/zerovec", |b| {
+    c.bench_function("zerovec/sum/sample/zerovec_aligned", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::parse_byte_slice(black_box(TEST_BUFFER_LE))
-                .unwrap()
+            ZeroVec::<u32>::Borrowed(black_box(aligned_ule_slice))
                 .iter()
-                .sum::<u32>()
+                .fold(0u32, |sum, val| sum.wrapping_add(val))
+        });
+    });
+
+    c.bench_function("zerovec/sum/sample/zerovec_unaligned", |b| {
+        b.iter(|| {
+            ZeroVec::<u32>::Borrowed(black_box(unalign_ule_slice))
+                .iter()
+                .fold(0u32, |sum, val| sum.wrapping_add(val))
         });
     });
 }

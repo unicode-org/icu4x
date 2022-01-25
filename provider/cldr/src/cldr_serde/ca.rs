@@ -7,7 +7,7 @@
 //! CLDR JSON files having this structure include "ca-gregorian.json", "ca-buddhist.json", etc.
 //!
 //! Sample file:
-//! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
+//! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
 use icu_locid::LanguageIdentifier;
 use litemap::LiteMap;

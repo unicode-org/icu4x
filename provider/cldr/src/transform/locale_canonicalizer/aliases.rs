@@ -295,7 +295,7 @@ fn test_rules_cmp() {
     assert_eq!(union_size(&rules[2]), 2);
     assert_eq!(union_size(&rules[3]), 2);
 
-    rules.sort_unstable_by(|a, b| rules_cmp(a, b));
+    rules.sort_unstable_by(rules_cmp);
     assert_eq!(rules[0], "und-hepburn-heploc");
     assert_eq!(rules[1], "en-GB");
     assert_eq!(rules[2], "fr-CA");

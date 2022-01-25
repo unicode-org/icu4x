@@ -150,11 +150,11 @@
 //! [`PluralOperands::i`]: super::PluralOperands::i
 //! [`PluralOperands::v`]: super::PluralOperands::v
 //! [`PluralRuleType::Cardinal`]: super::PluralRuleType::Cardinal
-//! [`Rule`]: super::rules::ast::Rule
-//! [`Rules`]: super::rules::ast::Rule
-//! [`Condition`]: super::rules::ast::Condition
-//! [`Sample`]: super::rules::ast::Samples
-//! [`AST`]: super::rules::ast
+//! [`Rule`]: super::rules::reference::ast::Rule
+//! [`Rules`]: super::rules::reference::ast::Rule
+//! [`Condition`]: super::rules::reference::ast::Condition
+//! [`Sample`]: super::rules::reference::ast::Samples
+//! [`AST`]: super::rules::reference::ast
 pub mod reference;
 
 // Need to expose it for `icu::provider_cldr` use, but we don't

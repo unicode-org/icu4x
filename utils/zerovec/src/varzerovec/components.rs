@@ -338,11 +338,7 @@ where
 {
     let len = compute_serializable_len(elements)?;
     debug_assert!(len >= 4);
-    let mut output = Vec::with_capacity(len as usize);
-    // Safety: All bytes will be initialized after calling write_serializable_bytes
-    unsafe {
-        output.set_len(len as usize);
-    }
+    let mut output: Vec<u8> = alloc::vec![0; len as usize];
     write_serializable_bytes(elements, &mut output);
     Some(output)
 }

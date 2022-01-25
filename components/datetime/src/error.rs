@@ -36,10 +36,10 @@ pub enum DateTimeFormatError {
     /// An error due to there being no patterns for the given options.
     #[displaydoc("Unsupported options")]
     UnsupportedOptions,
-    /// An error originating from [`PluralRules`][icu_plural::PluralRules].
+    /// An error originating from [`PluralRules`][icu_plurals::PluralRules].
     #[displaydoc("{0}")]
     PluralRules(PluralRulesError),
-    /// An error originating from [`DateTimeInput`][icu_datetime::date::DateTimeInput].
+    /// An error originating from [`DateTimeInput`][crate::date::DateTimeInput].
     #[displaydoc("{0}")]
     DateTimeInput(DateTimeError),
     /// An error originating from a missing weekday symbol in the data.

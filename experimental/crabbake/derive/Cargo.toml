@@ -3,34 +3,37 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "formatted_string"
-description = "String that can be annotated with arbitrary fields"
-version = "0.1.0"
+name = "crabbake-derive"
+description = "Custom derive for the crabbake crate"
+version = "0.4.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
     "examples/**/*",
     "benches/**/*",
+    "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md"
 ]
 
-[dependencies]
-displaydoc = { version = "0.2.3", default-features = false }
-
-[dev-dependencies]
-criterion = "0.3.3"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-bench = false  # This option is required for Benchmark CI
+proc_macro = true
 path = "src/lib.rs"
 
-[features]
-default = []
-bench = []
+[dependencies]
+proc-macro2 = "1.0.27"
+quote = "1.0.9"
+syn = { version = "1.0.73", features = ["derive", "fold"] }
+synstructure = "0.12.4"
+
+[dev-dependencies]
+crabbake = { version = "0.4.0", path = "..", features = ["derive"]}

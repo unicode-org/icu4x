@@ -218,7 +218,7 @@ impl DataError {
     /// it will print out the context.
     #[cfg(feature = "std")]
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    pub fn with_path(self, path: &impl AsRef<std::path::Path>) -> Self {
+    pub fn with_path<P: AsRef<std::path::Path> + ?Sized>(self, path: &P) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{} (path: {:?})", self, path.as_ref());
         self
@@ -231,7 +231,7 @@ impl DataError {
     #[cfg(feature = "std")]
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
     #[inline]
-    pub fn with_error_context(self, err: &impl std::error::Error) -> Self {
+    pub fn with_error_context<E: std::error::Error + ?Sized>(self, err: &E) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {}", self, err);
         self
@@ -243,7 +243,7 @@ impl DataError {
     /// it will print out the context.
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
     #[inline]
-    pub fn with_display_context(self, context: &impl core::fmt::Display) -> Self {
+    pub fn with_display_context<D: core::fmt::Display + ?Sized>(self, context: &D) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {}", self, context);
         self
@@ -255,7 +255,7 @@ impl DataError {
     /// it will print out the context.
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
     #[inline]
-    pub fn with_debug_context(self, context: &impl core::fmt::Debug) -> Self {
+    pub fn with_debug_context<D: core::fmt::Debug + ?Sized>(self, context: &D) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {:?}", self, context);
         self

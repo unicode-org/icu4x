@@ -135,7 +135,7 @@ impl From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'_> {
                         metazone
                             .long
                             .as_ref()
-                            .and_then(|zf| type_fallback(zf))
+                            .and_then(type_fallback)
                             .map(|format| (key.clone().into(), format.clone().into()))
                     })
                     .collect(),
@@ -191,7 +191,7 @@ impl From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'_> {
                         metazone
                             .short
                             .as_ref()
-                            .and_then(|zf| type_fallback(zf))
+                            .and_then(type_fallback)
                             .map(|format| (key.clone().into(), format.clone().into()))
                     })
                     .collect(),

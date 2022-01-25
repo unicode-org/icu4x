@@ -334,6 +334,62 @@ end
 '''
 dependencies = ["wasm-wasm-examples"]
 
+[tasks.wasm-key-extract-examples]
+description = "Run icu4x-key-extract on WASM files"
+category = "ICU4X WASM"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+mkdir wasmpkg/keys
+
+handle = glob_array wasmpkg/*.wasm
+for src_path in ${handle}
+    path_no_extension = substring ${src_path} -5
+    basename = substring ${path_no_extension} 8
+    out_path = concat wasmpkg/keys/ ${basename} "+keys.txt"
+
+    out_exists = is_path_exists ${out_path}
+    up_to_date = set false
+    if ${out_exists}
+        src_time = get_last_modified_time ${src_path}
+        out_time = get_last_modified_time ${out_path}
+        up_to_date = less_than ${src_time} ${out_time}
+    end
+
+    if not ${up_to_date}
+        echo Writing ${out_path}
+        exec --fail-on-error cargo make icu4x-key-extract ${src_path} ${out_path}
+    end
+end
+'''
+dependencies = ["wasm-wasm-examples"]
+
+[tasks.wasm-compare-worklog-keys]
+description = "Compare the generated worklog key file with the golden version"
+category = "ICU4X WASM"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+expected = readfile tools/datagen/tests/testdata/work_log+keys.txt
+actual = readfile wasmpkg/keys/work_log+keys.txt
+are_equal = eq ${expected} ${actual}
+
+if ${are_equal}
+    exit 0
+else
+    echo "*****"
+    echo "work_log+keys.txt do not match! Actual generated output:"
+    echo ""
+    echo ${actual}
+    echo "If this is expected, copy the above output into tools/datagen/tests/testdata/work_log+keys.txt"
+    echo "*****"
+    exit 1
+end
+'''
+dependencies = ["wasm-key-extract-examples"]
+
 [tasks.wasm-dev]
 description = "All-in-one command to build dev-mode WASM FFI to wasmpkg"
 category = "ICU4X WASM"

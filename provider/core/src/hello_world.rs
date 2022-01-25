@@ -22,8 +22,7 @@ use litemap::LiteMap;
 
 pub mod key {
     use crate::resource::ResourceKey;
-    use crate::resource_key;
-    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(Core, "helloworld", 1);
+    pub const HELLO_WORLD_V1: ResourceKey = crate::resource_key!("core/helloworld@1");
 }
 
 /// A struct containing "Hello World" in the requested language.
@@ -195,7 +194,7 @@ impl IterableProvider for HelloWorldProvider {
     }
 }
 
-/// Adds entries to a [`HelloWorldProvider`] from [`AnyMarker`](crate::erased::AnyMarker)
+/// Adds entries to a [`HelloWorldProvider`] from [`AnyMarker`](crate::any::AnyMarker)
 impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
     fn put_payload(
         &mut self,

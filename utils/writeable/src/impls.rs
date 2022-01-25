@@ -175,6 +175,11 @@ impl<'a, T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
+    fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        (*self).write_to_parts(sink)
+    }
+
+    #[inline]
     fn write_len(&self) -> LengthHint {
         (*self).write_len()
     }

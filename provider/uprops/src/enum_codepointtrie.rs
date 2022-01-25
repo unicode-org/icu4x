@@ -102,7 +102,7 @@ impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
         // For data resource keys that represent the CodePointTrie data for an enumerated
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
-        let prop_name = &req.resource_path.key.sub_category;
+        let prop_name = req.resource_path.key.get_last_component_no_version();
         let source_cpt_data = &self
             .data
             .get(prop_name)

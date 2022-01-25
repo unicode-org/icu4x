@@ -5,7 +5,7 @@
 //! Serde structs representing CLDR JSON numbers.json files.
 //!
 //! Sample file:
-//! https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json
+//! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json>
 
 use icu_locid::LanguageIdentifier;
 use itertools::Itertools;

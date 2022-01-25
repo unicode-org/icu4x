@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu::properties::{maps, sets, GraphemeClusterBreak, LineBreak, WordBreak};
+use icu::properties::{maps, sets, GraphemeClusterBreak, LineBreak, SentenceBreak, WordBreak};
 use icu_provider_fs::FsDataProvider;
 use serde::Deserialize;
 use std::env;
@@ -32,6 +32,8 @@ struct SegmenterProperty {
     // If left and right are defined, this define is combined state.
     left: Option<String>,
     right: Option<String>,
+    // This combine state is an intermediate match rule.
+    interm_break_state: Option<bool>,
 }
 
 // state machine break result define
@@ -70,6 +72,9 @@ const BREAK_RULE: i8 = -128;
 const UNKNOWN_RULE: i8 = -127;
 const NOT_MATCH_RULE: i8 = -2;
 const KEEP_RULE: i8 = -1;
+// This is a mask bit chosen sufficiently large than all other concrete states.
+// If a break state contains this bit, we have to look ahead one more character.
+const INTERMEDIATE_MATCH_RULE: i8 = 64;
 
 // UAX29 defines break property until U+0xE01EF
 const CODEPOINT_TABLE_LEN: usize = 0xe0400;
@@ -137,6 +142,28 @@ fn get_grapheme_segmenter_value_from_name(name: &str) -> GraphemeClusterBreak {
     }
 }
 
+fn get_sentence_segmenter_value_from_name(name: &str) -> SentenceBreak {
+    match name {
+        "ATerm" => SentenceBreak::ATerm,
+        "Close" => SentenceBreak::Close,
+        "CR" => SentenceBreak::CR,
+        "Extend" => SentenceBreak::Extend,
+        "Format" => SentenceBreak::Format,
+        "LF" => SentenceBreak::LF,
+        "Lower" => SentenceBreak::Lower,
+        "Numeric" => SentenceBreak::Numeric,
+        "OLetter" => SentenceBreak::OLetter,
+        "SContinue" => SentenceBreak::SContinue,
+        "Sep" => SentenceBreak::Sep,
+        "Sp" => SentenceBreak::Sp,
+        "STerm" => SentenceBreak::STerm,
+        "Upper" => SentenceBreak::Upper,
+        _ => {
+            panic!("Invalid property name")
+        }
+    }
+}
+
 fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &FsDataProvider) {
     let mut properties_map: [u8; CODEPOINT_TABLE_LEN] = [0; CODEPOINT_TABLE_LEN];
     let mut properties_names = Vec::<String>::new();
@@ -147,6 +174,9 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
     let payload = maps::get_grapheme_cluster_break(provider).expect("The data should be valid!");
     let gb = &payload.get().code_point_trie;
+
+    let payload = maps::get_sentence_break(provider).expect("The data should be valid!");
+    let sb = &payload.get().code_point_trie;
 
     let payload = sets::get_extended_pictographic(provider).expect("The data should be valid");
     let extended_pictographic = &payload.get().inv_list;
@@ -230,9 +260,17 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                     continue;
                 }
 
+                "sentence" => {
+                    let prop = get_sentence_segmenter_value_from_name(&*p.name);
+                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
+                        if sb.get(c) == prop {
+                            properties_map[c as usize] = property_index;
+                        }
+                    }
+                    continue;
+                }
+
                 _ => {
-                    // TODO
-                    // sentence and grapheme
                     panic!("unknown built-in segmenter type");
                 }
             }
@@ -349,9 +387,15 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
             if let Some(right) = &p.right {
                 let right_index = get_index_from_name(&properties_names, right).unwrap();
                 let left_index = get_index_from_name(&properties_names, left).unwrap();
+                let interm_break_state = if p.interm_break_state.is_some() {
+                    INTERMEDIATE_MATCH_RULE
+                } else {
+                    0
+                };
 
-                let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
-                break_state_table[left_index * property_length + right_index] = index as i8;
+                let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap() as i8;
+                break_state_table[left_index * property_length + right_index] =
+                    index | interm_break_state;
             }
         }
     }
@@ -486,22 +530,35 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
     writeln!(out).ok();
     writeln!(out, "#[allow(dead_code)]").ok();
-    writeln!(out, "pub const BREAK_RULE: i8 = -128;").ok();
+    writeln!(out, "pub const BREAK_RULE: i8 = {};", BREAK_RULE).ok();
     writeln!(out, "#[allow(dead_code)]").ok();
-    writeln!(out, "pub const NOT_MATCH_RULE: i8 = -2;").ok();
+    writeln!(out, "pub const NOT_MATCH_RULE: i8 = {};", NOT_MATCH_RULE).ok();
     writeln!(out, "#[allow(dead_code)]").ok();
-    writeln!(out, "pub const KEEP_RULE: i8 = -1;").ok();
+    writeln!(out, "pub const KEEP_RULE: i8 = {};", KEEP_RULE).ok();
+    writeln!(out, "#[allow(dead_code)]").ok();
+    writeln!(
+        out,
+        "pub const INTERMEDIATE_MATCH_RULE: i8 = {};",
+        INTERMEDIATE_MATCH_RULE
+    )
+    .ok();
 }
 
 fn main() {
     const WORD_SEGMENTER_TOML: &[u8] = include_bytes!("data/word.toml");
     const GRAPHEME_SEGMENTER_TOML: &[u8] = include_bytes!("data/grapheme.toml");
+    const SENTENCE_SEGMENTER_TOML: &[u8] = include_bytes!("data/sentence.toml");
 
     let provider = icu_testdata::get_provider();
     generate_rule_segmenter_table("generated_word_table.rs", WORD_SEGMENTER_TOML, &provider);
     generate_rule_segmenter_table(
         "generated_grapheme_table.rs",
         GRAPHEME_SEGMENTER_TOML,
+        &provider,
+    );
+    generate_rule_segmenter_table(
+        "generated_sentence_table.rs",
+        SENTENCE_SEGMENTER_TOML,
         &provider,
     );
 }

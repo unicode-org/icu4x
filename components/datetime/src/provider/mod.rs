@@ -15,7 +15,7 @@ pub mod calendar;
 /// Data providers for time zones.
 pub mod time_zones;
 
-/// Traits for managing data needed by [`DateTimeFormat`].
+/// Traits for managing data needed by [`DateTimeFormat`](crate::DateTimeFormat).
 pub(crate) mod date_time;
 
 /// A collection of [`ResourceKey`] structs for DateTime providers.

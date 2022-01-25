@@ -24,7 +24,11 @@ use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
 use icu_provider_uprops::{EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider};
 use simple_logger::SimpleLogger;
+use std::borrow::Cow;
 use std::collections::HashSet;
+use std::fs::File;
+use std::io;
+use std::io::BufRead;
 use std::path::PathBuf;
 use std::str::FromStr;
 use writeable::Writeable;
@@ -240,10 +244,6 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    if matches.is_present("KEY_FILE") {
-        eyre::bail!("Key file is not yet supported (see #192)",);
-    }
-
     if matches.is_present("DRY_RUN") {
         eyre::bail!("Dry-run is not yet supported");
     }
@@ -282,9 +282,22 @@ fn main() -> eyre::Result<()> {
 
     if matches.is_present("ALL_KEYS")
         || matches.is_present("KEYS")
+        || matches.is_present("KEY_FILE")
         || matches.is_present("TEST_KEYS")
     {
-        let keys = matches.values_of("KEYS").map(|values| values.collect());
+        let mut keys = matches
+            .values_of("KEYS")
+            .map(|keys| keys.map(Cow::Borrowed).collect::<HashSet<_>>());
+        if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
+            let keys = keys.get_or_insert_with(Default::default);
+            let file = File::open(key_file_path)
+                .with_context(|| key_file_path.to_string_lossy().into_owned())?;
+            for line in io::BufReader::new(file).lines() {
+                let line_string =
+                    line.with_context(|| key_file_path.to_string_lossy().into_owned())?;
+                keys.insert(Cow::Owned(line_string));
+            }
+        }
         export_cldr(&matches, exporter, locales_vec.as_deref(), keys.as_ref())?;
         export_set_props(&matches, exporter, keys.as_ref())?;
         export_map_props(&matches, exporter, keys.as_ref())?;
@@ -379,7 +392,7 @@ fn export_cldr(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
-    allowed_keys: Option<&HashSet<&str>>,
+    allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
@@ -434,7 +447,7 @@ fn export_cldr(
 fn export_set_props(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
-    allowed_keys: Option<&HashSet<&str>>,
+    allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for binary properties...");
 
@@ -482,7 +495,7 @@ fn export_set_props(
 fn export_map_props(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
-    allowed_keys: Option<&HashSet<&str>>,
+    allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for enumerated properties...");
 

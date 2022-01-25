@@ -1,4 +1,4 @@
-# formatted_string [![crates.io](https://img.shields.io/crates/v/formatted_string)](https://crates.io/crates/formatted_string)
+# crabbake [![crates.io](https://img.shields.io/crates/v/crabbake)](https://crates.io/crates/crabbake)
 
 
 

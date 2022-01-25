@@ -13,14 +13,8 @@ pub struct Serializer;
 
 /// Options bag for initializing a [`bincode::Serializer`].
 #[non_exhaustive]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub struct Options;
-
-impl Default for Options {
-    fn default() -> Self {
-        Self {}
-    }
-}
 
 impl AbstractSerializer for Serializer {
     fn serialize(

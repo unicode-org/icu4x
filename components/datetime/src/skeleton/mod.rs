@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Skeletons are used for pattern matching. See the [`Skeleton`] struct for more information.
+//! Skeletons are used for pattern matching. See the [`Skeleton`](reference::Skeleton) struct for more information.
 
 mod error;
 mod helpers;
