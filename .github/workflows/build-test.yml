@@ -237,7 +237,16 @@ jobs:
           rustup target add wasm32-unknown-unknown --toolchain nightly-2021-12-22
           rustup target add wasm32-unknown-emscripten --toolchain nightly-2021-12-22
           rustup component add rust-src --toolchain nightly-2021-12-22
-      - name: Install WASM tools
+
+      - name: Install npm dependencies from cache
+        uses: actions/cache@v2
+        id: npm-cache
+        with:
+          path: ffi/diplomat/wasm/node_modules
+          key: npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
+      - name: Install npm packages.
+        # If npm dependencies are not found in cache.
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: |
           # This step requires wasm-opt and wabt. To install these two packages
           # ready-to-use locally, you also can execute
@@ -245,8 +254,11 @@ jobs:
           # 'sudo npm install -g wabt'.
           cd ffi/diplomat/wasm
           npm ci
-          echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-          echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+      - name: Set path to wasm-opt and wabt binaries
+        run: |
+          echo "$PWD/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+          echo "$PWD/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+
       - name: Get twiggy version
         id: twiggy-version
         run: |
@@ -765,15 +777,34 @@ jobs:
         command: install
         args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
 
+    - name: Install npm dependencies from cache
+      uses: actions/cache@v2
+      id: npm-cache
+      with:
+        path: ffi/diplomat/wasm/node_modules
+        key: npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
+
+    - name: Install npm packages.
+      # If npm dependencies are not found in cache.
+      if: steps.npm-cache.outputs.cache-hit != 'true'
+      # Note: if package.json and package-lock.json are out of sync then
+      # 'npm ci' will fail. Locally execute 'npm install' in directory
+      # 'ffi/diplomat/wasm' to generate a new package-lock.json file and
+      # merge it into the repository.
+      run: |
+        cd ffi/diplomat/wasm
+        npm ci
+
+    - name: Set path to wasm-opt and wabt binaries
+      run: |
+        echo "$PWD/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+        echo "$PWD/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+
     - name: Install prerequisites for wasm build
       run: |
         rustup component add rust-src
         rustup toolchain list
         rustup toolchain install nightly-2021-12-22
-        cd ffi/diplomat/wasm
-        npm ci
-        echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-        echo "$HOME/work/icu4x/icu4x/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
 
     - name: Setup output data directory
       run: |
