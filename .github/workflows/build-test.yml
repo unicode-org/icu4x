@@ -925,7 +925,7 @@ jobs:
   # Doc-GH-Pages job
 
   gh_pages:
-    name: Copy GH pages to docs repo
+    name: Copy GH pages to docs repo (merge to main only)
 
     runs-on: ubuntu-latest
 
