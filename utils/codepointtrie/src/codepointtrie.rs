@@ -670,18 +670,6 @@ pub struct CodePointMapRange<T: TrieValue> {
 }
 
 impl<T: TrieValue> CodePointMapRange<T> {
-    pub fn try_new(
-        start: u32,
-        end: u32,
-        value: u32,
-    ) -> Result<CodePointMapRange<T>, T::TryFromU32Error> {
-        let trie_value = T::try_from_u32(value)?;
-        Ok(CodePointMapRange {
-            range: RangeInclusive::new(start, end),
-            value: trie_value,
-        })
-    }
-
     /// Return the range for this [`CodePointMapRange`] as a (start, end) tuple.
     /// This allows a substitute to make up for the disallowance of Copy impls
     /// for Range in Rust (see: https://github.com/rust-lang/rfcs/issues/2848).
