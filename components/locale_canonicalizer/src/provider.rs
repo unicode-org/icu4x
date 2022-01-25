@@ -17,10 +17,10 @@ use tinystr::{TinyStr4, TinyStr8};
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
     /// Key for aliases data.
-    pub const ALIASES_V1: ResourceKey = resource_key!(LocaleCanonicalizer, "aliases", 1);
+    pub const ALIASES_V1: ResourceKey = resource_key!("locale_canonicalizer/aliases@1");
     /// Key for likely subtags data.
     pub const LIKELY_SUBTAGS_V1: ResourceKey =
-        resource_key!(LocaleCanonicalizer, "likelysubtags", 1);
+        resource_key!("locale_canonicalizer/likelysubtags@1");
 }
 
 #[icu_provider::data_struct]

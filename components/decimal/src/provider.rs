@@ -14,7 +14,7 @@ pub mod key {
     use icu_provider::{resource_key, ResourceKey};
 
     /// Resource key: symbols used for basic decimal formatting.
-    pub const SYMBOLS_V1: ResourceKey = resource_key!(Decimal, "symbols", 1);
+    pub const SYMBOLS_V1: ResourceKey = resource_key!("decimal/symbols@1");
 }
 
 /// A collection of strings to affix to a decimal number.

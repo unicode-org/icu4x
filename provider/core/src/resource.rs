@@ -25,12 +25,28 @@ impl ResourceKeyHash {
     }
 }
 
-/// The resource key used for loading data from an ICU4X data provider.
+/// Used for loading data from an ICU4X data provider.
 ///
 /// A resource key is tightly coupled with the code that uses it to load data at runtime.
-/// Executables can be searched for ResourceKey instances to produce optimized data files.
+/// Executables can be searched for `ResourceKey` instances to produce optimized data files.
 /// Therefore, users should not generally create ResourceKey instances; they should instead use
 /// the ones exported by a component.
+/// 
+/// `ResourceKey`s are created with the [`resource_key!`] macro:
+///
+/// ```
+/// # use icu_provider::prelude::ResourceKey;
+/// const key: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+/// ```
+/// 
+/// The path string has to contain at least one `/`, and end with `@` followed by one or more ASCII
+/// digits. Paths do not contain characters other than ASCII letters and digits, `_`, `/`, `=`, and
+/// `@`. Invalid paths are compile-time errors (as [`resource_key!`] is `const`).
+/// 
+/// ```compile_fail
+/// # use icu_provider::prelude::ResourceKey;
+/// const key: ResourceKey = icu_provider::resource_key!("foobar@1");
+/// ```
 #[derive(PartialEq, Eq, Copy, Clone)]
 pub struct ResourceKey {
     // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
@@ -39,6 +55,7 @@ pub struct ResourceKey {
     hash: ResourceKeyHash,
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! leading_tag {
     () => {
@@ -46,6 +63,7 @@ macro_rules! leading_tag {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! trailing_tag {
     () => {
@@ -53,9 +71,10 @@ macro_rules! trailing_tag {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! tagged {
-    ($without_tags:literal) => {
+    ($without_tags:expr) => {
         concat!(
             $crate::leading_tag!(),
             $without_tags,
@@ -67,9 +86,9 @@ macro_rules! tagged {
 impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
     ///
-    /// The human-readable path string always contains at least one '/', and it ends with '@'
-    /// followed by one or more digits. Paths do not contain characters other than ASCII,
-    /// '_', '/', '=', and '@'.
+    /// The human-readable path string always contains at least one `/`, and it ends with `@`
+    /// followed by one or more digits. Paths do not contain characters other than ASCII letters
+    /// and digits, `_`, `/`, `=`, and `@`.
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
@@ -94,34 +113,15 @@ impl ResourceKey {
         self.hash
     }
 
-    /// Creates a new ResourceKey from a path, returning an error if the path is invalid.
-    ///
-    /// It is intended that `ResourceKey` objects are const-constructed. To force construction
-    /// into a const context, use [`resource_key!()`]. Doing so ensures that compile-time key
-    /// extraction functions as expected.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::tagged;
-    ///
-    /// // Const constructed (preferred):
-    /// const k1: ResourceKey = icu_provider::resource_key!("foo/bar@1");
-    ///
-    /// // Runtime constructed:
-    /// let k2: ResourceKey = ResourceKey::try_new(tagged!("foo/bar@1")).unwrap();
-    ///
-    /// assert_eq!(k1, k2);
-    /// ```
+    #[doc(hidden)]
     #[inline]
-    pub const fn try_new(path: &'static str) -> Result<Self, DataError> {
+    pub const fn try_new(path: &'static str) -> Option<Self> {
         match Self::check_path_syntax(path) {
-            Ok(_) => Ok(Self {
+            Ok(_) => Some(Self {
                 path,
                 hash: ResourceKeyHash::compute_from_str(path),
             }),
-            Err(_) => Err(DataError::custom("resource key syntax error")),
+            Err(_) => None,
         }
     }
 
@@ -176,6 +176,68 @@ impl ResourceKey {
             return Err(());
         }
         Ok(())
+    }
+
+    /// Gets the last path component of a [`ResourceKey`] without the version suffix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
+    /// assert_eq!("helloworld", resc_key.get_last_component_no_version());
+    /// ```
+    pub fn get_last_component_no_version(&self) -> &str {
+        // This cannot fail because of the preconditions on path (at least one '/' and '@')
+        // TODO(#1515): Consider deleting this method.
+        self.get_path()
+            .split('/')
+            .last()
+            .unwrap()
+            .split('@')
+            .next()
+            .unwrap()
+    }
+
+    /// Returns [`Ok`] if this data key matches the argument, or the appropriate error.
+    ///
+    /// Convenience method for data providers that support a single [`ResourceKey`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+    /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!("foo/baz@1");
+    /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!("bar/baz@1");
+    ///
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(FOO_BAR),
+    ///     Ok(())
+    /// ));
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(FOO_BAZ),
+    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+    /// ));
+    /// assert!(matches!(
+    ///     FOO_BAR.match_key(BAR_BAZ),
+    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+    /// ));
+    ///
+    /// // The error context contains the argument:
+    /// assert_eq!(
+    ///     FOO_BAR.match_key(BAR_BAZ).unwrap_err().key,
+    ///     Some(BAR_BAZ)
+    /// );
+    /// ```
+    pub fn match_key(&self, key: Self) -> Result<(), DataError> {
+        if *self == key {
+            Ok(())
+        } else {
+            Err(DataErrorKind::MissingResourceKey.with_key(key))
+        }
     }
 }
 
@@ -241,69 +303,15 @@ fn test_path_syntax() {
     assert!(matches!(ResourceKey::try_new("hello/world@1"), Err(_)));
 }
 
-/// Shortcut to construct a const resource identifier.
-///
-/// For example, see [`ResourceKey::try_new()`].
+/// See [`ResourceKey`].
 #[macro_export]
 macro_rules! resource_key {
-    ($path:literal) => {{
+    ($path:expr) => {{
         // Force the ResourceKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
             match $crate::ResourceKey::try_new($crate::tagged!($path)) {
-                Ok(v) => v,
-                Err(_) => panic!(concat!("Invalid resource key: ", $path)),
-            }
-        };
-        RESOURCE_KEY_MACRO_CONST
-    }};
-    // TODO(#570): Migrate call sites to the all-in-one string version of the macro above,
-    // and then delete all of the macro branches that follow.
-    (Core, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("core", $sub_category, $version)
-    };
-    (Calendar, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("calendar", $sub_category, $version)
-    };
-    (DateTime, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("datetime", $sub_category, $version)
-    };
-    (Decimal, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("decimal", $sub_category, $version)
-    };
-    (LocaleCanonicalizer, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("locale_canonicalizer", $sub_category, $version)
-    };
-    (Plurals, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("plurals", $sub_category, $version)
-    };
-    (TimeZone, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("time_zone", $sub_category, $version)
-    };
-    (Properties, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("props", $sub_category, $version)
-    };
-    (ListFormatter, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("list_formatter", $sub_category, $version)
-    };
-    (Segmenter, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("segmenter", $sub_category, $version)
-    };
-    ($category:literal, $sub_category:literal, $version:tt) => {{
-        // Force the ResourceKey into a const context
-        const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
-            // Note: concat!() does not seem to work as a literal argument to another macro call.
-            // This branch will be deleted anyway in #570.
-            match $crate::ResourceKey::try_new(concat!(
-                $crate::leading_tag!(),
-                $category,
-                "/",
-                $sub_category,
-                "@",
-                $version,
-                $crate::trailing_tag!(),
-            )) {
-                Ok(v) => v,
-                Err(_) => panic!(concat!("Invalid resource key")),
+                Some(v) => v,
+                None => panic!(concat!("Invalid resource key: ", $path)),
             }
         };
         RESOURCE_KEY_MACRO_CONST
@@ -339,69 +347,6 @@ impl Writeable for ResourceKey {
     }
 }
 
-impl ResourceKey {
-    /// Gets the last path component of a [`ResourceKey`] without the version suffix.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
-    /// assert_eq!("helloworld", resc_key.get_last_component_no_version());
-    /// ```
-    pub fn get_last_component_no_version(&self) -> &str {
-        // This cannot fail because of the preconditions on path (at least one '/' and '@')
-        // TODO(#1515): Consider deleting this method.
-        self.get_path()
-            .split('/')
-            .last()
-            .unwrap()
-            .split('@')
-            .next()
-            .unwrap()
-    }
-
-    /// Returns [`Ok`] if this data key matches the argument, or the appropriate error.
-    ///
-    /// Convenience method for data providers that support a single [`ResourceKey`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
-    /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!("foo/baz@1");
-    /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!("bar/baz@1");
-    ///
-    /// assert!(matches!(
-    ///     FOO_BAR.match_key(FOO_BAR),
-    ///     Ok(())
-    /// ));
-    /// assert!(matches!(
-    ///     FOO_BAR.match_key(FOO_BAZ),
-    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
-    /// ));
-    /// assert!(matches!(
-    ///     FOO_BAR.match_key(BAR_BAZ),
-    ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
-    /// ));
-    ///
-    /// // The error context contains the argument:
-    /// assert_eq!(
-    ///     FOO_BAR.match_key(BAR_BAZ).unwrap_err().key,
-    ///     Some(BAR_BAZ)
-    /// );
-    /// ```
-    pub fn match_key(&self, key: Self) -> Result<(), DataError> {
-        if *self == key {
-            Ok(())
-        } else {
-            Err(DataErrorKind::MissingResourceKey.with_key(key))
-        }
-    }
-}
 
 /// A variant and language identifier, used for requesting data from a
 /// [`DataProvider`](crate::DataProvider).

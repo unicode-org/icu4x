@@ -12,8 +12,8 @@ use icu_provider::yoke::{self, *};
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
-    pub const CARDINAL_V1: ResourceKey = resource_key!(Plurals, "cardinal", 1);
-    pub const ORDINAL_V1: ResourceKey = resource_key!(Plurals, "ordinal", 1);
+    pub const CARDINAL_V1: ResourceKey = resource_key!("plurals/cardinal@1");
+    pub const ORDINAL_V1: ResourceKey = resource_key!("plurals/ordinal@1");
 }
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
