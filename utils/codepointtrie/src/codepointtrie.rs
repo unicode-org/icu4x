@@ -88,7 +88,7 @@ impl TrieValue for char {
 /// stops short of that functionality, and instead leaves the non-null trie value
 /// untouched. This is equivalent to having a ValueFilter function that is the
 /// identity function.
-fn maybe_filter_value(value: u32, trie_null_value: u32, null_value: u32) -> u32 {
+fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T) -> T {
     if value == trie_null_value {
         null_value
     } else {
@@ -409,21 +409,20 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         }
         if start >= self.header.high_start {
             let di: usize = self.data.len() - (HIGH_VALUE_NEG_DATA_OFFSET as usize);
-            let value: u32 = if let Some(v) = self.data.get(di) {
-                v.into()
-            } else {
-                return None;
-            };
-            return CodePointMapRange::try_new(start, CODE_POINT_MAX, value).ok();
+            let value: T = self.data.get(di)?;
+            return Some(CodePointMapRange {
+                range: RangeInclusive::new(start, CODE_POINT_MAX),
+                value,
+            });
         }
 
-        let null_value: u32 = self.header.null_value;
+        let null_value: T = T::try_from_u32(self.header.null_value).ok()?;
 
         let mut prev_i3_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
         let mut prev_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
         let mut c: u32 = start;
-        let mut trie_value: u32 = 0;
-        let mut value: u32 = 0;
+        let mut trie_value: T = T::DATA_GET_ERROR_VALUE;
+        let mut value: T = T::DATA_GET_ERROR_VALUE;
         let mut have_value: bool = false;
 
         loop {
@@ -478,10 +477,13 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                     // This is the index-3 null block.
                     if have_value {
                         if null_value != value {
-                            return CodePointMapRange::try_new(start, c - 1, value).ok();
+                            return Some(CodePointMapRange {
+                                range: RangeInclusive::new(start, c - 1),
+                                value,
+                            });
                         }
                     } else {
-                        trie_value = self.header.null_value;
+                        trie_value = T::try_from_u32(self.header.null_value).ok()?;
                         value = null_value;
                         have_value = true;
                     }
@@ -536,30 +538,32 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                         // This is the data null block.
                         if have_value {
                             if null_value != value {
-                                return CodePointMapRange::try_new(start, c - 1, value).ok();
+                                return Some(CodePointMapRange {
+                                    range: RangeInclusive::new(start, c - 1),
+                                    value,
+                                });
                             }
                         } else {
-                            trie_value = self.header.null_value;
+                            trie_value = T::try_from_u32(self.header.null_value).ok()?;
                             value = null_value;
                             have_value = true;
                         }
                         c = (c + data_block_length) & !data_mask;
                     } else {
                         let mut di: u32 = block + (c & data_mask);
-                        let mut trie_value_2: u32 = if let Some(trv2) = self.data.get(di as usize) {
-                            trv2.into()
-                        } else {
-                            return None;
-                        };
+                        let mut trie_value_2: T = self.data.get(di as usize)?;
                         if have_value {
                             if trie_value_2 != trie_value {
                                 if maybe_filter_value(
                                     trie_value_2,
-                                    self.header.null_value,
+                                    T::try_from_u32(self.header.null_value).ok()?,
                                     null_value,
                                 ) != value
                                 {
-                                    return CodePointMapRange::try_new(start, c - 1, value).ok();
+                                    return Some(CodePointMapRange {
+                                        range: RangeInclusive::new(start, c - 1),
+                                        value,
+                                    });
                                 }
                                 trie_value = trie_value_2; // may or may not help
                             }
@@ -567,7 +571,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                             trie_value = trie_value_2;
                             value = maybe_filter_value(
                                 trie_value_2,
-                                self.header.null_value,
+                                T::try_from_u32(self.header.null_value).ok()?,
                                 null_value,
                             );
                             have_value = true;
@@ -576,19 +580,18 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                         c += 1;
                         while (c & data_mask) != 0 {
                             di += 1;
-                            trie_value_2 = if let Some(trv2) = self.data.get(di as usize) {
-                                trv2.into()
-                            } else {
-                                return None;
-                            };
+                            trie_value_2 = self.data.get(di as usize)?;
                             if trie_value_2 != trie_value {
                                 if maybe_filter_value(
                                     trie_value_2,
-                                    self.header.null_value,
+                                    T::try_from_u32(self.header.null_value).ok()?,
                                     null_value,
                                 ) != value
                                 {
-                                    return CodePointMapRange::try_new(start, c - 1, value).ok();
+                                    return Some(CodePointMapRange {
+                                        range: RangeInclusive::new(start, c - 1),
+                                        value,
+                                    });
                                 }
                                 trie_value = trie_value_2; // may or may not help
                             }
@@ -617,18 +620,29 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         } else {
             return None;
         };
-        if maybe_filter_value(high_value, self.header.null_value, null_value) != value {
+        if maybe_filter_value(
+            T::try_from_u32(high_value).ok()?,
+            T::try_from_u32(self.header.null_value).ok()?,
+            null_value,
+        ) != value
+        {
             c -= 1;
         } else {
             c = CODE_POINT_MAX;
         }
-        CodePointMapRange::try_new(start, c, value).ok()
+        Some(CodePointMapRange {
+            range: RangeInclusive::new(start, c),
+            value,
+        })
     }
 
     /// Yields an [`Iterator`] returning ranges of consecutive code points that
     /// share the same value in the [`CodePointTrie`].
     pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
-        let init_range = CodePointMapRange::try_new(u32::MAX, u32::MAX, 0).ok();
+        let init_range = Some(CodePointMapRange {
+            range: RangeInclusive::new(u32::MAX, u32::MAX),
+            value: T::DATA_GET_ERROR_VALUE,
+        });
         CodePointMapRangeIterator::<T> {
             cpt: self,
             cpm_range: init_range,
