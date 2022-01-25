@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643054569807,
+  "lastUpdate": 1643140532389,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18701,6 +18701,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 315941,
             "range": "± 384",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4992698c20080190c1c4384d3940ce7e2a01de90",
+          "message": "Failing main repo docs job on warnings (#1538)",
+          "timestamp": "2022-01-25T20:44:44+01:00",
+          "tree_id": "b5d1c650f2bf9a2f5985dc08f37535227bb961f5",
+          "url": "https://github.com/unicode-org/icu4x/commit/4992698c20080190c1c4384d3940ce7e2a01de90"
+        },
+        "date": 1643140522022,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 108637,
+            "range": "± 3980",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1120512,
+            "range": "± 73702",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 373750,
+            "range": "± 12841",
             "unit": "ns/iter"
           }
         ]
