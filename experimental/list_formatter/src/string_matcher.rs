@@ -9,9 +9,13 @@ use alloc::borrow::Cow;
 ))]
 use alloc::string::ToString;
 use icu_provider::yoke::{self, *};
+#[cfg(any(
+    feature = "icu4x_human_readable_de",
+    feature = "provider_transform_internals"
+))]
 use icu_provider::DataError;
-use regex_automata::dfa::sparse::DFA;
-use regex_automata::dfa::Automaton;
+use crate::regex_automata::dfa::sparse::DFA;
+use crate::regex_automata::dfa::Automaton;
 
 #[derive(Clone, Debug, Yokeable, ZeroCopyFrom)]
 pub struct StringMatcher<'data> {
@@ -92,7 +96,7 @@ impl<'data> StringMatcher<'data> {
         feature = "icu4x_human_readable_de",
     ))]
     pub fn new(pattern: &str) -> Result<Self, DataError> {
-        use regex_automata::{
+        use crate::regex_automata::{
             dfa::dense::{Builder, Config},
             SyntaxConfig,
         };
