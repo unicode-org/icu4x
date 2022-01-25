@@ -8,7 +8,6 @@ use common::*;
 use criterion::black_box;
 use criterion::criterion_group;
 use criterion::criterion_main;
-use criterion::Bencher;
 use criterion::Criterion;
 
 use tinystr_neo::TinyAsciiStr;

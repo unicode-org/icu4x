@@ -15,7 +15,7 @@ mod serde;
 #[cfg(feature = "zerovec")]
 mod ule;
 
-#[cfg(feature = "serde")]
+#[cfg(any(feature = "serde", feature = "alloc"))]
 extern crate alloc;
 
 pub use ascii::TinyAsciiStr;

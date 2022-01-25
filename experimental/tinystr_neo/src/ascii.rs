@@ -74,6 +74,26 @@ impl<const N: usize> TinyAsciiStr<N> {
         &self.bytes
     }
 
+    pub fn is_ascii_alphabetic(&self) -> bool {
+        for word in self.bytes.iter() {
+            let mask = (word + 0x7f) & 0x80;
+            let lower = word | 0x20;
+            let alpha = !(lower + 0x1f) | (lower + 0x05);
+            if (alpha & mask) != 0 {
+                return false;
+            }
+        }
+        true
+    }
+
+    pub fn to_ascii_lowercase(self) -> Self {
+        let mut bytes = [0; N];
+        for (i, word) in self.bytes.iter().enumerate() {
+            bytes[i] = word | (((word + 0x3f) & !(word + 0x25) & 0x80) >> 2);
+        }
+        Self { bytes }
+    }
+
     /// # Safety
     /// Must be called with a bytes array made of valid ASCII bytes, with no null bytes
     /// between ASCII characters
@@ -93,5 +113,19 @@ impl<const N: usize> FromStr for TinyAsciiStr<N> {
     type Err = TinyStrError;
     fn from_str(s: &str) -> Result<Self, TinyStrError> {
         Self::from_str(s)
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<const N: usize> PartialEq<alloc::string::String> for TinyAsciiStr<N> {
+    fn eq(&self, other: &alloc::string::String) -> bool {
+        self.deref() == other.deref()
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
+    fn eq(&self, other: &TinyAsciiStr<N>) -> bool {
+        self.deref() == other.deref()
     }
 }
