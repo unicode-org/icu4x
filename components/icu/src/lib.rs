@@ -452,7 +452,7 @@ pub mod list {
     //! use writeable::Writeable;
     //!
     //! let locale: Locale = langid!("es").into();
-    //! let provider = icu_testdata::get_provider();
+    //! let provider = icu_testdata::get_static_provider();
     //! let list_formatter = ListFormatter::try_new(locale, &provider, ListType::And, ListStyle::Wide)
     //!     .expect("Data should load successfully");
     //!
