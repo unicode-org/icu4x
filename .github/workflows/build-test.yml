@@ -901,14 +901,41 @@ jobs:
         path: ./benchmarks/datasize/**
         name: benchmark-datasize
 
+  # Docs job
+
+  doc:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+
+    - name: Cargo doc
+      uses: actions-rs/cargo@v1
+      env:
+        RUSTDOCFLAGS: "-Dwarnings"
+      with:
+        command: doc
+        args: --workspace --release --all-features --no-deps
+
+    - name: Upload doc data (merge to main only)
+      # Only for PRs that merge into the ICU4X mainline.
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      uses: actions/upload-artifact@v2
+      with:
+        path: target/doc/**
+        name: doc
+
   # Doc-GH-Pages job
 
-  doc_gh_pages:
+  gh_pages:
     name: Copy GH pages to docs repo (merge to main only)
 
     runs-on: ubuntu-latest
 
-    needs: [check, tidy, benchmark, memory, binsize]
+    needs: [check, tidy, benchmark, memory, binsize, doc]
 
     ## Only create docs for merges/pushes to main (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
@@ -956,13 +983,12 @@ jobs:
         path: ./copy-to-ext-repo/benchmarks/binsize
         name: benchmark-binsize
 
-    # Doc-GH-Pages job > Generate `cargo doc` step
-
-    - name: Cargo doc
-      uses: actions-rs/cargo@v1
+    # Doc-GH-Pages job > Download docs files from previous jobs into folder of files to copy to remote repo
+    - name: Download previous content destined for GH pages
+      uses: actions/download-artifact@v2
       with:
-        command: doc
-        args: --workspace --release --all-features --no-deps
+        path: ./copy-to-ext-repo/doc
+        name: doc
 
     # Doc-GH-Pages job > Generate placeholder root index.html to redirect to `icu4x` crate
 
@@ -982,11 +1008,6 @@ jobs:
           </body>
         </html>
         EOL
-
-    # Doc-GH-Pages job > Collect API docs files in folder of files to copy to remote docs repo
-
-    - name: Update API docs folder in cache dir
-      run: rm -rf ./copy-to-ext-repo/doc; cp -v -r target/doc ./copy-to-ext-repo
 
     # Doc-GH-Pages job > Copy docs (+ bench dashboard HTML) to remote docs repo's GH pages branch step
 
