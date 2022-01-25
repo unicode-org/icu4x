@@ -41,7 +41,7 @@ icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" 
 path = "src/lib.rs"
 
 [features]
-default = ["icu4x_human_readable_de"]
+default = []
 std = ["icu_provider/std", "icu_locid/std", "regex-automata/std"]
 provider_serde = ["serde", "zerovec/serde", "deduplicating_array"]
 provider_transform_internals = ["provider_serde", "std"]

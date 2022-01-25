@@ -99,10 +99,7 @@ std = [
     "icu_list/std",
     "fixed_decimal/std"
 ]
-default = [
-    "provider_serde", 
-    "icu4x_human_readable_de"
-]
+default = ["provider_serde"]
 serde = [
     "icu_locid/serde"
 ]
