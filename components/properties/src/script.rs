@@ -144,10 +144,10 @@ impl<'data> ScriptExtensions<'data> {
     // is already known.
     // This private helper method exists to prevent code duplication in callers like
     // `get_script_extensions_val`, `get_script_extensions_set`, and `has_script`.
-    fn get_scx_val_using_trie_val(
-        &'data self,
-        sc_with_ext_ule: &'data <ScriptWithExt as AsULE>::ULE,
-    ) -> &'data ZeroSlice<Script> {
+    fn get_scx_val_using_trie_val<'a>(
+        &'a self,
+        sc_with_ext_ule: &'a <ScriptWithExt as AsULE>::ULE,
+    ) -> &'a ZeroSlice<Script> {
         let sc_with_ext = ScriptWithExt::from_unaligned(*sc_with_ext_ule);
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
