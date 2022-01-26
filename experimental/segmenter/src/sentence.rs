@@ -5,14 +5,15 @@
 use alloc::vec::Vec;
 use core::str::CharIndices;
 
-use crate::break_iterator_impl;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::rule_segmenter::*;
 
 include!(concat!(env!("OUT_DIR"), "/generated_sentence_table.rs"));
 
+pub struct SentenceBreakType;
+
 // UTF-8 version of sentence break iterator using rule based segmenter.
-break_iterator_impl!(SentenceBreakIterator, CharIndices<'a>, char);
+pub type SentenceBreakIterator<'a> = RuleBreakIterator<'a, SentenceBreakType>;
 
 impl<'a> SentenceBreakIterator<'a> {
     /// Create sentence break iterator
@@ -31,22 +32,29 @@ impl<'a> SentenceBreakIterator<'a> {
             complex_property: PROP_COMPLEX as u8,
         }
     }
+}
 
-    fn get_break_property(&mut self) -> u8 {
-        get_break_property_utf8(self.current_pos_data.unwrap().1, self.property_table)
+impl<'a> RuleBreakType<'a> for SentenceBreakType {
+    type IterAttr = CharIndices<'a>;
+    type CharType = char;
+
+    fn get_break_property(iter: &RuleBreakIterator<Self>) -> u8 {
+        get_break_property_utf8(iter.current_pos_data.unwrap().1, iter.property_table)
     }
 
-    fn get_current_position_character_len(&self) -> usize {
-        self.current_pos_data.unwrap().1.len_utf8()
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.current_pos_data.unwrap().1.len_utf8()
     }
 
-    fn handle_complex_language(&mut self, _: char) -> Option<usize> {
+    fn handle_complex_language(_ : &mut RuleBreakIterator<Self>, _: Self::CharType) -> Option<usize> {
         panic!("not reachable")
     }
 }
 
+pub struct SentenceBreakTypeLatin1;
+
 // Latin-1 version of sentence break iterator using rule based segmenter.
-break_iterator_impl!(SentenceBreakIteratorLatin1, Latin1Indices<'a>, u8);
+pub type SentenceBreakIteratorLatin1<'a> = RuleBreakIterator<'a, SentenceBreakTypeLatin1>;
 
 impl<'a> SentenceBreakIteratorLatin1<'a> {
     /// Create sentence break iterator using Latin-1/8-bit string.
@@ -65,23 +73,30 @@ impl<'a> SentenceBreakIteratorLatin1<'a> {
             complex_property: PROP_COMPLEX as u8,
         }
     }
+}
+
+impl<'a> RuleBreakType<'a> for SentenceBreakTypeLatin1 {
+    type IterAttr = Latin1Indices<'a>;
+    type CharType = u8; // TODO: Latin1Char
 
     #[inline]
-    fn get_break_property(&mut self) -> u8 {
-        get_break_property_latin1(self.current_pos_data.unwrap().1, self.property_table)
+    fn get_break_property(iter: &RuleBreakIterator<Self>) -> u8 {
+        get_break_property_latin1(iter.current_pos_data.unwrap().1, iter.property_table)
     }
 
-    fn get_current_position_character_len(&self) -> usize {
+    fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")
     }
 
-    fn handle_complex_language(&mut self, _: u8) -> Option<usize> {
+    fn handle_complex_language(_: &mut RuleBreakIterator<Self>, _: Self::CharType) -> Option<usize> {
         panic!("not reachable")
     }
 }
 
+pub struct SentenceBreakTypeUtf16;
+
 // UTF-16 version of sentence break iterator using rule based segmenter.
-break_iterator_impl!(SentenceBreakIteratorUtf16, Utf16Indices<'a>, u32);
+pub type SentenceBreakIteratorUtf16<'a> = RuleBreakIterator<'a, SentenceBreakTypeUtf16>;
 
 impl<'a> SentenceBreakIteratorUtf16<'a> {
     /// Create sentence break iterator using UTF-16 string.
@@ -100,14 +115,19 @@ impl<'a> SentenceBreakIteratorUtf16<'a> {
             complex_property: PROP_COMPLEX as u8,
         }
     }
+}
+
+impl<'a> RuleBreakType<'a> for SentenceBreakTypeUtf16 {
+    type IterAttr = Utf16Indices<'a>;
+    type CharType = u32;
 
     #[inline]
-    fn get_break_property(&mut self) -> u8 {
-        get_break_property_utf32(self.current_pos_data.unwrap().1, self.property_table)
+    fn get_break_property(iter: &RuleBreakIterator<Self>) -> u8 {
+        get_break_property_utf32(iter.current_pos_data.unwrap().1, iter.property_table)
     }
 
-    fn get_current_position_character_len(&self) -> usize {
-        let ch = self.current_pos_data.unwrap().1;
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        let ch = iter.current_pos_data.unwrap().1;
         if ch >= 0x10000 {
             2
         } else {
@@ -115,7 +135,7 @@ impl<'a> SentenceBreakIteratorUtf16<'a> {
         }
     }
 
-    fn handle_complex_language(&mut self, _: u32) -> Option<usize> {
+    fn handle_complex_language(_: &mut RuleBreakIterator<Self>, _: Self::CharType) -> Option<usize> {
         panic!("not reachable")
     }
 }
