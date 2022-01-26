@@ -60,8 +60,14 @@ impl<const N: usize> TinyAsciiStr<N> {
         Self::from_bytes(s.as_bytes())
     }
 
+    #[inline]
     pub fn len(&self) -> usize {
-        self.bytes.iter().position(|x| *x == 0).unwrap_or(N)
+        if N <= 4 {
+            let aligned = Aligned4::from_bytes(&self.bytes);
+            aligned.len()
+        } else {
+            self.bytes.iter().position(|x| *x == 0).unwrap_or(N)
+        }
     }
 
     #[inline]
@@ -151,6 +157,7 @@ impl<const N: usize> TinyAsciiStr<N> {
 
 impl<const N: usize> Deref for TinyAsciiStr<N> {
     type Target = str;
+    #[inline]
     fn deref(&self) -> &str {
         unsafe { str::from_utf8_unchecked(self.as_bytes()) }
     }
@@ -158,6 +165,7 @@ impl<const N: usize> Deref for TinyAsciiStr<N> {
 
 impl<const N: usize> FromStr for TinyAsciiStr<N> {
     type Err = TinyStrError;
+    #[inline]
     fn from_str(s: &str) -> Result<Self, TinyStrError> {
         Self::from_str(s)
     }

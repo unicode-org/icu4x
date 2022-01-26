@@ -49,6 +49,15 @@ impl Aligned4 {
         Self(result)
     }
 
+    pub const fn len(&self) -> usize {
+        let word = self.0;
+        #[cfg(target_endian = "little")]
+        let len = (4 - word.leading_zeros() / 8) as usize;
+        #[cfg(target_endian = "big")]
+        let len = (4 - word.trailing_zeros() / 8) as usize;
+        len
+    }
+
     /// # Panics
     /// Panics if N is greater than 4
     #[inline]
