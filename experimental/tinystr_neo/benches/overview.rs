@@ -127,15 +127,15 @@ fn overview(c: &mut Criterion) {
             let mut collector: usize = 0;
             for ts in black_box(&parsed_ascii_4).windows(2) {
                 let o = ts[0].cmp(&ts[1]);
-                collector += o as usize;
+                collector ^= o as usize;
             }
             for ts in black_box(&parsed_ascii_8).windows(2) {
                 let o = ts[0].cmp(&ts[1]);
-                collector += o as usize;
+                collector ^= o as usize;
             }
             for ts in black_box(&parsed_ascii_16).windows(2) {
                 let o = ts[0].cmp(&ts[1]);
-                collector += o as usize;
+                collector ^= o as usize;
             }
             collector
         });
@@ -146,15 +146,15 @@ fn overview(c: &mut Criterion) {
             let mut collector: usize = 0;
             for ts in black_box(&parsed_tiny_4).windows(2) {
                 let o = ts[0].cmp(&ts[1]);
-                collector += o as usize;
+                collector ^= o as usize;
             }
             for ts in black_box(&parsed_tiny_8).windows(2) {
                 let o = ts[0].cmp(&ts[1]);
-                collector += o as usize;
+                collector ^= o as usize;
             }
             for ts in black_box(&parsed_tiny_16).windows(2) {
                 let o = ts[0].cmp(&ts[1]);
-                collector += o as usize;
+                collector ^= o as usize;
             }
             collector
         });
