@@ -663,6 +663,16 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                                         value,
                                     });
                                 }
+                                // `trie_value` stores the previous value that was retrieved
+                                // from the trie.
+                                // `value` stores the value associated for the range (return 
+                                // value) that we are currently building, which is computed 
+                                // as a transformation by applying maybe_filter_value()
+                                // to the trie value.
+                                // The current trie value `trie_value_2` within this data block
+                                // differs here from `trie_value`, and updating `trie_value`
+                                // with the new value may or may not help in computing the 
+                                // range and/or yield a different result for maybe_filter_range().
                                 trie_value = trie_value_2; // may or may not help
                             }
                         } else {
@@ -691,6 +701,16 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                                         value,
                                     });
                                 }
+                                // `trie_value` stores the previous value that was retrieved
+                                // from the trie.
+                                // `value` stores the value associated for the range (return 
+                                // value) that we are currently building, which is computed 
+                                // as a transformation by applying maybe_filter_value()
+                                // to the trie value.
+                                // The current trie value `trie_value_2` within this data block
+                                // differs here from `trie_value`, and updating `trie_value`
+                                // with the new value may or may not help in computing the 
+                                // range and/or yield a different result for maybe_filter_range().
                                 trie_value = trie_value_2; // may or may not help
                             }
 
@@ -713,8 +733,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         debug_assert!(have_value);
 
         // Now that c >= high_start, compare `value` to `high_value` to see
-        // if we can extend our current range to CODE_POINT_MAX or stop at
-        // high_start - 1.
+        // if we can merge our current range with the high_value range
+        // high_start..=CODE_POINT_MAX (start- and end-inclusive), otherwise
+        // stop at high_start - 1.
         let di: u32 = self.data.len() as u32 - HIGH_VALUE_NEG_DATA_OFFSET;
         let high_value: T = self.data.get(di as usize)?;
         if maybe_filter_value(
