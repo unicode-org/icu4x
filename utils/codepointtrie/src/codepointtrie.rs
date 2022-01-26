@@ -420,7 +420,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     ///
     /// ```
     /// use icu_codepointtrie::planes;
-    /// 
+    ///
     /// let trie = planes::get_planes_trie();
     ///
     /// const CODE_POINT_MAX: u32 = 0x10ffff;
@@ -651,13 +651,13 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                                 }
                                 // `trie_value` stores the previous value that was retrieved
                                 // from the trie.
-                                // `value` stores the value associated for the range (return 
-                                // value) that we are currently building, which is computed 
+                                // `value` stores the value associated for the range (return
+                                // value) that we are currently building, which is computed
                                 // as a transformation by applying maybe_filter_value()
                                 // to the trie value.
                                 // The current trie value `trie_value_2` within this data block
                                 // differs here from `trie_value`, and updating `trie_value`
-                                // with the new value may or may not help in computing the 
+                                // with the new value may or may not help in computing the
                                 // range and/or yield a different result for maybe_filter_range().
                                 trie_value = trie_value_2; // may or may not help
                             }
@@ -689,13 +689,13 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                                 }
                                 // `trie_value` stores the previous value that was retrieved
                                 // from the trie.
-                                // `value` stores the value associated for the range (return 
-                                // value) that we are currently building, which is computed 
+                                // `value` stores the value associated for the range (return
+                                // value) that we are currently building, which is computed
                                 // as a transformation by applying maybe_filter_value()
                                 // to the trie value.
                                 // The current trie value `trie_value_2` within this data block
                                 // differs here from `trie_value`, and updating `trie_value`
-                                // with the new value may or may not help in computing the 
+                                // with the new value may or may not help in computing the
                                 // range and/or yield a different result for maybe_filter_range().
                                 trie_value = trie_value_2; // may or may not help
                             }
@@ -752,7 +752,6 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// use icu_codepointtrie::planes;
     ///
     /// let planes_trie = planes::get_planes_trie();
-    ///
     ///
     /// let mut ranges = planes_trie.iter_ranges();
     ///
@@ -827,7 +826,7 @@ impl<'a, T: TrieValue + Into<u32>> Iterator for CodePointMapRangeIterator<'a, T>
                     self.cpt.get_range(cpmr.range.end() + 1)
                 }
             }
-            None => None
+            None => None,
         };
         // Note: Clone is cheap. We can't Copy because RangeInclusive does not impl Copy.
         self.cpm_range.clone()
