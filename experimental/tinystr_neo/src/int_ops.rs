@@ -8,6 +8,29 @@
 pub struct Aligned4(u32);
 
 impl Aligned4 {
+    /// # Panics
+    /// Panics if N is greater than 4
+    #[inline]
+    pub fn from_bytes<const N: usize>(src: &[u8; N]) -> Self {
+        let mut bytes = [0; 4];
+        bytes[0..N].copy_from_slice(src);
+        Self(u32::from_ne_bytes(bytes))
+    }
+
+    #[inline]
+    pub const fn to_bytes(&self) -> [u8; 4] {
+        self.0.to_ne_bytes()
+    }
+
+    pub const fn len(&self) -> usize {
+        let word = self.0;
+        #[cfg(target_endian = "little")]
+        let len = (4 - word.leading_zeros() / 8) as usize;
+        #[cfg(target_endian = "big")]
+        let len = (4 - word.trailing_zeros() / 8) as usize;
+        len
+    }
+
     pub const fn is_ascii_alphabetic(self) -> bool {
         let word = self.0;
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
@@ -49,29 +72,6 @@ impl Aligned4 {
         let word = self.0;
         let result = word & !(((word + 0x1f1f_1f1f) & !(word + 0x0505_0505) & 0x8080_8080) >> 2);
         Self(result)
-    }
-
-    pub const fn len(&self) -> usize {
-        let word = self.0;
-        #[cfg(target_endian = "little")]
-        let len = (4 - word.leading_zeros() / 8) as usize;
-        #[cfg(target_endian = "big")]
-        let len = (4 - word.trailing_zeros() / 8) as usize;
-        len
-    }
-
-    /// # Panics
-    /// Panics if N is greater than 4
-    #[inline]
-    pub fn from_bytes<const N: usize>(src: &[u8; N]) -> Self {
-        let mut bytes = [0; 4];
-        bytes[0..N].copy_from_slice(src);
-        Self(u32::from_ne_bytes(bytes))
-    }
-
-    #[inline]
-    pub const fn to_bytes(&self) -> [u8; 4] {
-        self.0.to_ne_bytes()
     }
 }
 
