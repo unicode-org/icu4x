@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::int_ops::Aligned4;
+use crate::int_ops::{Aligned4, Aligned8};
 use crate::TinyStrError;
 use core::ops::Deref;
 use core::str::{self, FromStr};
@@ -63,8 +63,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     pub fn len(&self) -> usize {
         if N <= 4 {
-            let aligned = Aligned4::from_bytes(&self.bytes);
-            aligned.len()
+            Aligned4::from_bytes(&self.bytes).len()
+        } else if N <= 8 {
+            Aligned8::from_bytes(&self.bytes).len()
         } else {
             self.bytes.iter().position(|x| *x == 0).unwrap_or(N)
         }
@@ -107,6 +108,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub fn is_ascii_alphabetic(&self) -> bool {
         if N <= 4 {
             Aligned4::from_bytes(&self.bytes).is_ascii_alphabetic()
+        } else if N <= 8 {
+            Aligned8::from_bytes(&self.bytes).is_ascii_alphabetic()
         } else {
             self.as_bytes().iter().all(u8::is_ascii_alphabetic)
         }
@@ -135,6 +138,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub fn is_ascii_alphanumeric(&self) -> bool {
         if N <= 4 {
             Aligned4::from_bytes(&self.bytes).is_ascii_alphanumeric()
+        } else if N <= 8 {
+            Aligned8::from_bytes(&self.bytes).is_ascii_alphanumeric()
         } else {
             self.as_bytes().iter().all(u8::is_ascii_alphanumeric)
         }
@@ -157,9 +162,12 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert!(s1.is_ascii_numeric());
     /// assert!(!s2.is_ascii_numeric());
     /// ```
+    #[inline]
     pub fn is_ascii_numeric(&self) -> bool {
         if N <= 4 {
             Aligned4::from_bytes(&self.bytes).is_ascii_numeric()
+        } else if N <= 8 {
+            Aligned8::from_bytes(&self.bytes).is_ascii_numeric()
         } else {
             self.as_bytes().iter().all(u8::is_ascii_digit)
         }
@@ -184,6 +192,9 @@ impl<const N: usize> TinyAsciiStr<N> {
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_lowercase();
             Self::from_slice(&aligned.to_bytes()[0..N])
+        } else if N <= 8 {
+            let aligned = Aligned8::from_bytes(&self.bytes).to_ascii_lowercase();
+            Self::from_slice(&aligned.to_bytes()[0..N])
         } else {
             self.bytes.iter_mut().for_each(u8::make_ascii_lowercase);
             self
@@ -205,9 +216,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     ///
     /// assert_eq!(&*s1.to_ascii_titlecase(), "Test");
     /// ```
+    #[inline]
     pub fn to_ascii_titlecase(mut self) -> Self {
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_titlecase();
+            Self::from_slice(&aligned.to_bytes()[0..N])
+        } else if N <= 8 {
+            let aligned = Aligned8::from_bytes(&self.bytes).to_ascii_titlecase();
             Self::from_slice(&aligned.to_bytes()[0..N])
         } else {
             self.bytes.iter_mut().for_each(u8::make_ascii_lowercase);
@@ -230,9 +245,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     ///
     /// assert_eq!(&*s1.to_ascii_uppercase(), "TES3");
     /// ```
+    #[inline]
     pub fn to_ascii_uppercase(mut self) -> Self {
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_uppercase();
+            Self::from_slice(&aligned.to_bytes()[0..N])
+        } else if N <= 8 {
+            let aligned = Aligned8::from_bytes(&self.bytes).to_ascii_uppercase();
             Self::from_slice(&aligned.to_bytes()[0..N])
         } else {
             self.bytes.iter_mut().for_each(u8::make_ascii_uppercase);
