@@ -114,39 +114,26 @@ impl ResourceKey {
     }
 
     #[doc(hidden)]
-    #[inline]
-    pub const fn try_new(path: &'static str) -> Result<Self, ()> {
-        match Self::check_path_syntax(path) {
-            Ok(_) => Ok(Self {
-                path,
-                hash: ResourceKeyHash::compute_from_str(path),
-            }),
-            Err(_) => Err(()),
-        }
-    }
-
-    const fn check_path_syntax(path: &str) -> Result<(), ()> {
-        let path = path.as_bytes();
-
-        // Start and end of the untagged part
+    pub const fn try_new(path: &'static str) -> Option<Self> {
         if path.len() < leading_tag!().len() + trailing_tag!().len() {
-            return Err(());
+            return None;
         }
+        // Start and end of the untagged part
         let start = leading_tag!().len();
         let end = path.len() - trailing_tag!().len();
 
         // Check tags
         let mut i = 0;
         while i < leading_tag!().len() {
-            if path[i] != leading_tag!().as_bytes()[i] {
-                return Err(());
+            if path.as_bytes()[i] != leading_tag!().as_bytes()[i] {
+                return None;
             }
             i += 1;
         }
         i = 0;
         while i < trailing_tag!().len() {
-            if path[end + i] != trailing_tag!().as_bytes()[i] {
-                return Err(());
+            if path.as_bytes()[end + i] != trailing_tag!().as_bytes()[i] {
+                return None;
             }
             i += 1;
         }
@@ -161,21 +148,24 @@ impl ResourceKey {
         i = start;
         let mut state = 0;
         while i < end {
-            state = match (state, path[i]) {
+            state = match (state, path.as_bytes()[i]) {
                 (0 | 1, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=') => 1,
                 (1, b'/') => 2,
                 (2 | 3, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=') => 3,
                 (3, b'/') => 2,
                 (3, b'@') => 4,
                 (4 | 5, b'0'..=b'9') => 5,
-                _ => return Err(()),
+                _ => return None,
             };
             i += 1;
         }
         if state != 5 {
-            return Err(());
+            return None;
         }
-        Ok(())
+        Some(Self {
+            path,
+            hash: ResourceKeyHash::compute_from_str(path),
+        })
     }
 
     /// Gets the last path component of a [`ResourceKey`] without the version suffix.
@@ -244,63 +234,27 @@ impl ResourceKey {
 #[test]
 fn test_path_syntax() {
     // Valid keys:
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world@1")),
-        Ok(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world/foo@1")),
-        Ok(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world@999")),
-        Ok(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello_world/foo@1")),
-        Ok(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello_458/world@1")),
-        Ok(_)
-    ));
+    assert!(ResourceKey::try_new(tagged!("hello/world@1")).is_some());
+    assert!(ResourceKey::try_new(tagged!("hello/world/foo@1")).is_some());
+    assert!(ResourceKey::try_new(tagged!("hello/world@999")).is_some());
+    assert!(ResourceKey::try_new(tagged!("hello_world/foo@1")).is_some());
+    assert!(ResourceKey::try_new(tagged!("hello_458/world@1")).is_some());
 
     // No slash:
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello_world@1")),
-        Err(_)
-    ));
+    assert!(ResourceKey::try_new(tagged!("hello_world@1")).is_none());
 
     // No version:
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world")),
-        Err(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world@")),
-        Err(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world@foo")),
-        Err(_)
-    ));
+    assert!(ResourceKey::try_new(tagged!("hello/world")).is_none());
+    assert!(ResourceKey::try_new(tagged!("hello/world@")).is_none());
+    assert!(ResourceKey::try_new(tagged!("hello/world@foo")).is_none());
 
     // Invalid characters:
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("你好/世界@1")),
-        Err(_)
-    ));
+    assert!(ResourceKey::try_new(tagged!("你好/世界@1")).is_none());
 
     // Invalid tag:
-    assert!(matches!(
-        ResourceKey::try_new(concat!("hello/world@1", trailing_tag!())),
-        Err(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(concat!(leading_tag!(), "hello/world@1")),
-        Err(_)
-    ));
-    assert!(matches!(ResourceKey::try_new("hello/world@1"), Err(_)));
+    assert!(ResourceKey::try_new(concat!("hello/world@1", trailing_tag!())).is_none());
+    assert!(ResourceKey::try_new(concat!(leading_tag!(), "hello/world@1")).is_none());
+    assert!(ResourceKey::try_new("hello/world@1").is_none());
 }
 
 /// See [`ResourceKey`].
@@ -310,8 +264,8 @@ macro_rules! resource_key {
         // Force the ResourceKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
             match $crate::ResourceKey::try_new($crate::tagged!($path)) {
-                Ok(v) => v,
-                Err(_) => panic!(concat!("Invalid resource key: ", $path)),
+                Some(v) => v,
+                None => panic!(concat!("Invalid resource key: ", $path)),
             }
         };
         RESOURCE_KEY_MACRO_CONST
