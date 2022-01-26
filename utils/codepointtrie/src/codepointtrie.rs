@@ -410,6 +410,12 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// the structure of [`CodePointTrie`] to be optimally efficient. This will
     /// outperform a naive approach that just uses [`CodePointTrie::get()`].
     ///
+    /// This method provides lower-level functionality that can be used in the
+    /// implementation of other methods that are more convenient to the user.
+    /// To obtain an optimal partition of the code point space for
+    /// this trie resulting in the fewest number of ranges, see
+    /// [`CodePointTrie::iter_ranges()`].
+    ///
     /// # Examples
     ///
     /// ```
@@ -447,6 +453,21 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// assert_eq!(cpm_range.range.start(), &start);
     /// assert_eq!(cpm_range.range.end(), &exp_end);
     /// assert_eq!(cpm_range.value, start_val);
+    ///
+    /// // `start` can be any code point, whether or not it lies on the boundary
+    /// // of a maximally large range that still contains `start`
+    ///
+    /// let submaximal_1_start = start + 0x1234;
+    /// let submaximal_1 = trie.get_range(submaximal_1_start).unwrap();
+    /// assert_eq!(submaximal_1.range.start(), &0x1_1234);
+    /// assert_eq!(submaximal_1.range.end(), &0x1_ffff);
+    /// assert_eq!(submaximal_1.value, start_val);
+    ///
+    /// let submaximal_2_start = start + 0xffff;
+    /// let submaximal_2 = trie.get_range(submaximal_2_start).unwrap();
+    /// assert_eq!(submaximal_2.range.start(), &0x1_ffff);
+    /// assert_eq!(submaximal_2.range.end(), &0x1_ffff);
+    /// assert_eq!(submaximal_2.value, start_val);
     /// ```
     pub fn get_range(&self, start: u32) -> Option<CodePointMapRange<T>> {
         // Exit early if the start code point is out of range, or if it is
