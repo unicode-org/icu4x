@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643218470295,
+  "lastUpdate": 1643219976076,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19019,6 +19019,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43893294,
             "range": "± 142444",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "148e62856a511208d336e883903652a534f3b868",
+          "message": "Add more functions to TinyAsciiStr for feature parity (#1542)\n\n- Also adds overview benches",
+          "timestamp": "2022-01-26T09:50:47-08:00",
+          "tree_id": "fb4804aacba4e155418c9ed22e873ffe0d2728f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/148e62856a511208d336e883903652a534f3b868"
+        },
+        "date": 1643219964209,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 52369451,
+            "range": "± 501026",
             "unit": "ns/iter"
           }
         ]
