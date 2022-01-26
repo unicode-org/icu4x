@@ -904,7 +904,7 @@ pub struct CodePointMapRange<T: TrieValue> {
 impl<T: TrieValue> CodePointMapRange<T> {
     /// Return the range for this [`CodePointMapRange`] as a (start, end) tuple.
     /// This allows a substitute to make up for the disallowance of Copy impls
-    /// for Range in Rust (see: https://github.com/rust-lang/rfcs/issues/2848).
+    /// for Range in Rust (see: <https://github.com/rust-lang/rfcs/issues/2848>).
     pub fn get_range(&self) -> RangeInclusive<u32> {
         RangeInclusive::new(*self.range.start(), *self.range.end())
     }

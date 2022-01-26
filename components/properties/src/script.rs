@@ -198,7 +198,7 @@ impl<'data> ScriptExtensions<'data> {
     /// whether the Script property value matches.
     ///
     /// Some characters are commonly used in multiple scripts. For more information,
-    /// see UAX #24: http://www.unicode.org/reports/tr24/.
+    /// see UAX #24: <http://www.unicode.org/reports/tr24/>.
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
         let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get_ule(code_point) {
             scwe_ule
@@ -217,7 +217,7 @@ impl<'data> ScriptExtensions<'data> {
         }
     }
 
-    /// Returns all of the matching [`CodePointMapRange`]s for the given [`Script`]
+    /// Returns all of the matching `CodePointMapRange`s for the given [`Script`]
     /// in which `has_script` will return true for all of the contained code points.
     pub fn get_script_extensions_ranges(
         &self,
