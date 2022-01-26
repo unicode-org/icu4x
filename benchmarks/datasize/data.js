@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643148417231,
+  "lastUpdate": 1643218052930,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8003,6 +8003,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/545af53f747f03cdb72c56803782202ea1ced482"
         },
         "date": 1643148406321,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1471487,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "de3847901e2b08c8dedc98973cfa6ab695a65d50",
+          "message": "Run segmenter's build.rs only if data is changed (#1543)\n\nRunning `build.rs` takes at least 20 seconds on my machine. This patch reduces\r\nthe segmenter's build time when modifying files other than `data/*` or\r\n`build.rs`.\r\n\r\nNote that cargo automatically handles whether `build.rs` is changed.\r\nhttps://doc.rust-lang.org/cargo/reference/build-scripts.html#rerun-if-changed",
+          "timestamp": "2022-01-26T09:25:49-08:00",
+          "tree_id": "7b845b221dfdf5085dcea11c063aadd525542153",
+          "url": "https://github.com/unicode-org/icu4x/commit/de3847901e2b08c8dedc98973cfa6ab695a65d50"
+        },
+        "date": 1643218041700,
         "tool": "ndjson",
         "benches": [
           {
