@@ -177,7 +177,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// let s1: TinyAsciiStr<4> = "TeS3".parse()
     ///     .expect("Failed to parse.");
     ///
-    /// assert_eq!(s1.to_ascii_lowercase(), "tes3");
+    /// assert_eq!(&*s1.to_ascii_lowercase(), "tes3");
     /// ```
     #[inline]
     pub fn to_ascii_lowercase(mut self) -> Self {
@@ -203,7 +203,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// let s1: TinyAsciiStr<4> = "test".parse()
     ///     .expect("Failed to parse.");
     ///
-    /// assert_eq!(s1.to_ascii_titlecase(), "Test");
+    /// assert_eq!(&*s1.to_ascii_titlecase(), "Test");
     /// ```
     pub fn to_ascii_titlecase(mut self) -> Self {
         if N <= 4 {
@@ -228,7 +228,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// let s1: TinyAsciiStr<4> = "Tes3".parse()
     ///     .expect("Failed to parse.");
     ///
-    /// assert_eq!(s1.to_ascii_uppercase(), "TES3");
+    /// assert_eq!(&*s1.to_ascii_uppercase(), "TES3");
     /// ```
     pub fn to_ascii_uppercase(mut self) -> Self {
         if N <= 4 {
