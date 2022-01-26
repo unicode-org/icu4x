@@ -695,13 +695,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         // if we can extend our current range to CODE_POINT_MAX or stop at
         // high_start - 1.
         let di: u32 = self.data.len() as u32 - HIGH_VALUE_NEG_DATA_OFFSET;
-        let high_value: u32 = if let Some(hv) = self.data.get(di as usize) {
-            hv.into()
-        } else {
-            return None;
-        };
+        let high_value: T = self.data.get(di as usize)?;
         if maybe_filter_value(
-            T::try_from_u32(high_value).ok()?,
+            high_value,
             T::try_from_u32(self.header.null_value).ok()?,
             null_value,
         ) != value
