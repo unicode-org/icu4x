@@ -713,7 +713,163 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     }
 
     /// Yields an [`Iterator`] returning ranges of consecutive code points that
-    /// share the same value in the [`CodePointTrie`].
+    /// share the same value in the [`CodePointTrie`], as given by
+    /// [`CodePointTrie::get_range()`].
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use core::ops::RangeInclusive;
+    /// use icu_codepointtrie::CodePointMapRange;
+    /// use icu_codepointtrie::planes;
+    /// 
+    /// let planes_trie = planes::get_planes_trie();
+    /// 
+    /// 
+    /// let mut ranges = planes_trie.iter_ranges();
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x0, 0xffff),
+    ///         value: 0
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x1_0000, 0x1_ffff),
+    ///         value: 1
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x2_0000, 0x2_ffff),
+    ///         value: 2
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x3_0000, 0x3_ffff),
+    ///         value: 3
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x4_0000, 0x4_ffff),
+    ///         value: 4
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x5_0000, 0x5_ffff),
+    ///         value: 5
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x6_0000, 0x6_ffff),
+    ///         value: 6
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x7_0000, 0x7_ffff),
+    ///         value: 7
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x8_0000, 0x8_ffff),
+    ///         value: 8
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x9_0000, 0x9_ffff),
+    ///         value: 9
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0xa_0000, 0xa_ffff),
+    ///         value: 10
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0xb_0000, 0xb_ffff),
+    ///         value: 11
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0xc_0000, 0xc_ffff),
+    ///         value: 12
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0xd_0000, 0xd_ffff),
+    ///         value: 13
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0xe_0000, 0xe_ffff),
+    ///         value: 14
+    ///     })
+    /// );
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0xf_0000, 0xf_ffff),
+    ///         value: 15
+    ///     })
+    /// );
+    ///
+    ///
+    /// assert_eq!(
+    ///     ranges.next(),
+    ///     Some(CodePointMapRange {
+    ///         range: RangeInclusive::new(0x10_0000, 0x10_ffff),
+    ///         value: 16
+    ///     })
+    /// );
+    ///
+    /// // Hitting the end of the iterator returns `None`, as will subsequent
+    /// // calls to .next().
+    /// assert_eq!(ranges.next(), None);
+    /// assert_eq!(ranges.next(), None);
+    /// ```
     pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
         let init_range = Some(CodePointMapRange {
             range: RangeInclusive::new(u32::MAX, u32::MAX),
@@ -988,42 +1144,5 @@ mod tests {
                 value: 16
             })
         );
-    }
-
-    #[test]
-    fn test_iter_ranges() {
-        let planes_trie = planes::get_planes_trie();
-        let mut ranges = planes_trie.iter_ranges();
-
-        assert_eq!(
-            ranges.next(),
-            Some(CodePointMapRange {
-                range: RangeInclusive::new(0x0, 0xffff),
-                value: 0
-            })
-        );
-
-        assert_eq!(
-            ranges.next(),
-            Some(CodePointMapRange {
-                range: RangeInclusive::new(0x10000, 0x1ffff),
-                value: 1
-            })
-        );
-
-        let mut ranges_after_skip = ranges.skip(14);
-
-        assert_eq!(
-            ranges_after_skip.next(),
-            Some(CodePointMapRange {
-                range: RangeInclusive::new(0x10_0000, 0x10_ffff),
-                value: 16
-            })
-        );
-
-        // Hitting the end of the iterator returns `None`, as will subsequent
-        // calls to .next().
-        assert_eq!(ranges_after_skip.next(), None);
-        assert_eq!(ranges_after_skip.next(), None);
     }
 }

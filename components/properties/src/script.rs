@@ -18,8 +18,13 @@ use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-const SCRIPT_X_SCRIPT_VAL: u16 = 0x03FF;
+/// The number of bits at the low-end of a `ScriptWithExt` value used for
+/// storing the `Script` value (or `extensions` index).
 const SCRIPT_VAL_LENGTH: u16 = 10;
+
+/// The bit mask necessary to retrieve the `Script` value (or `extensions` index)
+/// from a `ScriptWithExt` value.
+const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 
 /// An internal-use only pseudo-property that represents the values stored in
 /// the trie of the special data structure [`ScriptExtensions`].
