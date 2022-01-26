@@ -5,7 +5,10 @@
 //! This module contains types and implementations for the Julian calendar
 
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{
+    types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
+    DateTime, DateTimeError,
+};
 use core::convert::TryInto;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
@@ -19,7 +22,25 @@ pub struct Julian;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 // The inner date type used for representing Date<Julian>
 // The inner date uses IsoDateInner, but represent Julian Dates
-pub struct JulianDateInner(IsoDateInner);
+pub struct JulianDateInner(ArithmeticDate<Julian>);
+
+impl CalendarArithmetic for Julian {
+    fn month_lengths(year: i32) -> [u8; 12] {
+        let months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        if Self::is_leap_year(year) {
+            months[1] += 1;
+        }
+        months
+    }
+
+    fn months_for_every_year() -> Option<u8> {
+        12
+    }
+
+    fn is_leap_year(year: i32) -> bool {
+        year % 4 == 0
+    }
+}
 
 impl Calendar for Julian {
     type DateInner = JulianDateInner;
@@ -38,15 +59,11 @@ impl Calendar for Julian {
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
-        if Self::is_leap_year(date.0.year) {
-            366
-        } else {
-            365
-        }
+        date.0.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_month(date.0.year, date.0.month)
+        date.0.days_in_month()
     }
 
     fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
@@ -54,7 +71,7 @@ impl Calendar for Julian {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Self::offset_date(date, offset);
+        date.0.offset_date(offset);
     }
 
     #[allow(clippy::field_reassign_with_default)]
@@ -111,18 +128,6 @@ impl Julian {
         Self
     }
 
-    fn is_leap_year(year: IsoYear) -> bool {
-        year.0 % 4 == 0
-    }
-
-    fn days_in_year(year: IsoYear) -> u32 {
-        if Self::is_leap_year(year) {
-            366
-        } else {
-            365
-        }
-    }
-
     fn day_of_year(date: IsoDateInner) -> u32 {
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
         let mut offset = month_offset[u8::from(date.month) as usize - 1];
@@ -131,15 +136,6 @@ impl Julian {
         }
         let prev_month_days = (30 * (u8::from(date.month) as i32 - 1) + offset) as u32;
         prev_month_days + u8::from(date.day) as u32
-    }
-
-    fn days_in_month(year: IsoYear, month: IsoMonth) -> u8 {
-        match u8::from(month) {
-            4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year) => 29,
-            2 => 28,
-            _ => 31,
-        }
     }
 
     // Fixed is day count representation of calendars starting from Jan 1st of year 1 of Georgian Calendar.
@@ -191,44 +187,6 @@ impl Julian {
         *Date::new_julian_date_from_integers(year, month as u8, day as u8)
             .unwrap()
             .inner()
-    }
-
-    fn offset_date(date: &mut JulianDateInner, mut offset: DateDuration<Self>) -> JulianDateInner {
-        date.0.year.0 += offset.years;
-        date.0.add_months(offset.months);
-        offset.months = 0;
-
-        offset.days += offset.weeks * 7;
-        offset.days += u8::from(date.0.day) as i32 - 1;
-        date.0.day = 1.try_into().unwrap();
-
-        while offset.days != 0 {
-            if offset.days < 0 {
-                date.0.add_months(-1);
-                let month_days = Julian::days_in_month(date.0.year, date.0.month);
-                if (-offset.days) > month_days as i32 {
-                    offset.days += month_days as i32;
-                } else {
-                    date.0.day = (1 + (month_days as i8 + offset.days as i8) as u8)
-                        .try_into()
-                        .unwrap();
-                    offset.days = 0;
-                }
-            } else {
-                let month_days = Julian::days_in_month(date.0.year, date.0.month);
-                if offset.days >= month_days as i32 {
-                    date.0.add_months(1);
-                    offset.days -= month_days as i32;
-                } else {
-                    date.0.day = (u8::from(date.0.day) + offset.days as u8)
-                        .try_into()
-                        .unwrap();
-                    offset.days = 0;
-                }
-            }
-        }
-
-        *date
     }
 }
 

@@ -19,6 +19,7 @@ extern crate alloc;
 pub mod arithmetic;
 pub mod buddhist;
 mod calendar;
+mod calendar_arithmetic;
 mod date;
 mod datetime;
 mod duration;
@@ -31,6 +32,7 @@ pub mod provider;
 pub mod types;
 
 pub use calendar::Calendar;
+pub use calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 pub use date::{AsCalendar, Date};
 pub use datetime::DateTime;
 pub use duration::{DateDuration, DateDurationUnit};
