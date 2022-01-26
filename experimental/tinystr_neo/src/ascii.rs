@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::int_ops::Aligned4;
 use crate::TinyStrError;
 use core::ops::Deref;
 use core::str::{self, FromStr};
-use crate::int_ops::Aligned4;
 
 #[repr(transparent)]
 #[derive(PartialEq, Eq, Ord, PartialOrd, Copy, Clone, Debug, Hash)]
@@ -79,45 +79,58 @@ impl<const N: usize> TinyAsciiStr<N> {
         &self.bytes
     }
 
+    /// Checks if the value is composed of ASCII alphabetic characters:
+    ///
+    ///  * U+0041 'A' ..= U+005A 'Z', or
+    ///  * U+0061 'a' ..= U+007A 'z'.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr_neo::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "Test".parse()
+    ///     .expect("Failed to parse.");
+    /// let s2: TinyAsciiStr<4> = "Te3t".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert!(s1.is_ascii_alphabetic());
+    /// assert!(!s2.is_ascii_alphabetic());
+    /// ```
     #[inline]
     pub fn is_ascii_alphabetic(&self) -> bool {
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&self.bytes);
             aligned.is_ascii_alphabetic()
         } else {
-            self.is_ascii_alphabetic_loop()
+            self.as_bytes().iter().all(u8::is_ascii_alphabetic)
         }
     }
 
-    fn is_ascii_alphabetic_loop(&self) -> bool {
-        for word in self.bytes.iter() {
-            let mask = (word + 0x7f) & 0x80;
-            let lower = word | 0x20;
-            let alpha = !(lower + 0x1f) | (lower + 0x05);
-            if (alpha & mask) != 0 {
-                return false;
-            }
-        }
-        true
-    }
-
+    /// Converts this type to its ASCII lower case equivalent in-place.
+    ///
+    /// ASCII letters 'A' to 'Z' are mapped to 'a' to 'z', other characters are unchanged.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr_neo::TinyAsciiStr;
+    ///
+    /// let s1: TinyAsciiStr<4> = "TeS3".parse()
+    ///     .expect("Failed to parse.");
+    ///
+    /// assert_eq!(s1.to_ascii_lowercase(), "tes3");
+    /// ```
     #[inline]
-    pub fn to_ascii_lowercase(self) -> Self {
+    pub fn to_ascii_lowercase(mut self) -> Self {
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&self.bytes);
             let aligned = aligned.to_ascii_lowercase();
             Self::from_slice(&aligned.to_bytes()[0..N])
         } else {
-            self.to_ascii_lowercase_loop()
+            self.bytes.iter_mut().for_each(u8::make_ascii_lowercase);
+            self
         }
-    }
-
-    fn to_ascii_lowercase_loop(self) -> Self {
-        let mut bytes = [0; N];
-        for (i, word) in self.bytes.iter().enumerate() {
-            bytes[i] = word | (((word + 0x3f) & !(word + 0x25) & 0x80) >> 2);
-        }
-        Self { bytes }
     }
 
     /// # Panics
@@ -161,5 +174,76 @@ impl<const N: usize> PartialEq<alloc::string::String> for TinyAsciiStr<N> {
 impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
     fn eq(&self, other: &TinyAsciiStr<N>) -> bool {
         self.deref() == other.deref()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const STRINGS: &[&str] = &[
+        "Latn",
+        "windows",
+        "AR",
+        "Hans",
+        "macos",
+        "AT",
+        "infiniband",
+        "FR",
+        "en",
+        "Cyrl",
+        "FromIntegral",
+        "NO",
+        "419",
+        "MacintoshOSX2019",
+        "UK",
+        "E12",
+    ];
+
+    #[test]
+    fn test_is_ascii_alphabetic() {
+        fn check<const N: usize>() {
+            for s in STRINGS {
+                let t = match TinyAsciiStr::<N>::from_str(s) {
+                    Ok(t) => t,
+                    Err(TinyStrError::TooLarge { .. }) => continue,
+                    Err(e) => panic!("{}", e),
+                };
+                let expected = s.chars().all(|c| c.is_ascii_alphabetic());
+                let actual = t.is_ascii_alphabetic();
+                assert_eq!(expected, actual);
+            }
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
+    }
+
+    #[test]
+    fn test_to_ascii_lowercase() {
+        fn check<const N: usize>() {
+            for s in STRINGS {
+                let t = match TinyAsciiStr::<N>::from_str(s) {
+                    Ok(t) => t,
+                    Err(TinyStrError::TooLarge { .. }) => continue,
+                    Err(e) => panic!("{}", e),
+                };
+                let expected = s
+                    .chars()
+                    .map(|c| c.to_ascii_lowercase())
+                    .collect::<String>();
+                let actual = t.to_ascii_lowercase();
+                assert_eq!(expected, actual);
+            }
+        }
+        check::<2>();
+        check::<3>();
+        check::<4>();
+        check::<5>();
+        check::<8>();
+        check::<16>();
     }
 }
