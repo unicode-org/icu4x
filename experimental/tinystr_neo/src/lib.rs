@@ -8,6 +8,7 @@ mod macros;
 
 mod ascii;
 mod error;
+mod int_ops;
 
 #[cfg(feature = "serde")]
 mod serde;

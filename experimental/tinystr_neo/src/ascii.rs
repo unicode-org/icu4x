@@ -5,6 +5,7 @@
 use crate::TinyStrError;
 use core::ops::Deref;
 use core::str::{self, FromStr};
+use crate::int_ops::Aligned4;
 
 #[repr(transparent)]
 #[derive(PartialEq, Eq, Ord, PartialOrd, Copy, Clone, Debug, Hash)]
@@ -54,6 +55,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         Ok(Self { bytes: out })
     }
 
+    #[inline]
     pub const fn from_str(s: &str) -> Result<Self, TinyStrError> {
         Self::from_bytes(s.as_bytes())
     }
@@ -62,19 +64,32 @@ impl<const N: usize> TinyAsciiStr<N> {
         self.bytes.iter().position(|x| *x == 0).unwrap_or(N)
     }
 
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.bytes[0] == 0
     }
 
+    #[inline]
     pub fn as_bytes(&self) -> &[u8] {
         &self.bytes[0..self.len()]
     }
 
+    #[inline]
     pub fn all_bytes(&self) -> &[u8; N] {
         &self.bytes
     }
 
+    #[inline]
     pub fn is_ascii_alphabetic(&self) -> bool {
+        if N <= 4 {
+            let aligned = Aligned4::from_bytes(&self.bytes);
+            aligned.is_ascii_alphabetic()
+        } else {
+            self.is_ascii_alphabetic_loop()
+        }
+    }
+
+    fn is_ascii_alphabetic_loop(&self) -> bool {
         for word in self.bytes.iter() {
             let mask = (word + 0x7f) & 0x80;
             let lower = word | 0x20;
@@ -86,11 +101,30 @@ impl<const N: usize> TinyAsciiStr<N> {
         true
     }
 
+    #[inline]
     pub fn to_ascii_lowercase(self) -> Self {
+        if N <= 4 {
+            let aligned = Aligned4::from_bytes(&self.bytes);
+            let aligned = aligned.to_ascii_lowercase();
+            Self::from_slice(&aligned.to_bytes()[0..N])
+        } else {
+            self.to_ascii_lowercase_loop()
+        }
+    }
+
+    fn to_ascii_lowercase_loop(self) -> Self {
         let mut bytes = [0; N];
         for (i, word) in self.bytes.iter().enumerate() {
             bytes[i] = word | (((word + 0x3f) & !(word + 0x25) & 0x80) >> 2);
         }
+        Self { bytes }
+    }
+
+    /// # Panics
+    /// Panics if src is not exactly N bytes long
+    fn from_slice(src: &[u8]) -> Self {
+        let mut bytes = [0; N];
+        bytes[0..N].copy_from_slice(src);
         Self { bytes }
     }
 
