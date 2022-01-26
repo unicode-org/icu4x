@@ -88,15 +88,15 @@ fn overview(c: &mut Criterion) {
         b.iter(|| {
             let mut collector: usize = 0;
             for t in black_box(&parsed_ascii_4) {
-                let s: &str = &t;
+                let s: &str = t;
                 collector += s.bytes().map(usize::from).sum::<usize>();
             }
             for t in black_box(&parsed_ascii_8) {
-                let s: &str = &t;
+                let s: &str = t;
                 collector += s.bytes().map(usize::from).sum::<usize>();
             }
             for t in black_box(&parsed_ascii_16) {
-                let s: &str = &t;
+                let s: &str = t;
                 collector += s.bytes().map(usize::from).sum::<usize>();
             }
             collector
@@ -107,15 +107,15 @@ fn overview(c: &mut Criterion) {
         b.iter(|| {
             let mut collector: usize = 0;
             for t in black_box(&parsed_tiny_4) {
-                let s: &str = &t;
+                let s: &str = t;
                 collector += s.bytes().map(usize::from).sum::<usize>();
             }
             for t in black_box(&parsed_tiny_8) {
-                let s: &str = &t;
+                let s: &str = t;
                 collector += s.bytes().map(usize::from).sum::<usize>();
             }
             for t in black_box(&parsed_tiny_16) {
-                let s: &str = &t;
+                let s: &str = t;
                 collector += s.bytes().map(usize::from).sum::<usize>();
             }
             collector
