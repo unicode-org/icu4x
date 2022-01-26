@@ -16,6 +16,7 @@ Once the release is complete, the assigned release driver will:
   * Coverage
   * Performance / Memory / Size benchmarks
 * Build a changelog for the release
+  * You can use commands like `git log icu@0.4.1..@ -- components/plurals/src/` to figure out what has changed in each component since the last release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * `cargo publish` each `util/` as necessary (See [Publishing utils](#Publishing utils))
 * `cargo publish` each component and meta component
