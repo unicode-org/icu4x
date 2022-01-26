@@ -390,7 +390,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     ///
     /// let cp = '𑖎' as u32;
     /// assert_eq!(cp, 0x1158E);
-    /// let trie = planes::get_planes_trie();
+    ///
     /// let plane_num: u8 = trie.get(cp);
     /// assert_eq!(trie.get_u32(cp), plane_num as u32);
     /// ```
@@ -401,8 +401,53 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
         self.get(code_point).into()
     }
 
-    /// Returns a [`CodePointMapRange`] struct representing a range of code
-    /// points associated with the same value.
+    /// Returns a [`CodePointMapRange`] struct which represents a range of code
+    /// points associated with the same trie value. The returned range will be
+    /// the longest stretch of consecutive code points starting at `start` that
+    /// share this value.
+    /// 
+    /// This method is designed to use the internal details of
+    /// the structure of [`CodePointTrie`] to be optimally efficient. This will
+    /// outperform a naive approach that just uses [`CodePointTrie::get()`].
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    /// 
+    /// pub const CODE_POINT_MAX: u32 = 0x10ffff;
+    /// 
+    /// let start = 0x1_0000;
+    /// let exp_end = 0x1_ffff;
+    /// 
+    /// let start_val = trie.get(start);
+    /// assert_eq!(trie.get(exp_end), start_val);
+    /// assert_ne!(trie.get(exp_end + 1), start_val);
+    /// 
+    /// 
+    /// // Slower naive approach using `CodePointTrie::get()`
+    /// 
+    /// let start_to_max = (start..=CODE_POINT_MAX).into_iter();
+    /// let from_start_with_same_vals =
+    ///     start_to_max
+    ///         .take_while(|c| trie.get(*c) == start_val);
+    /// let same_val_range_end = from_start_with_same_vals.last().unwrap();
+    /// 
+    /// assert_eq!(same_val_range_end, exp_end);
+    /// 
+    /// 
+    /// // Using `CodePointTrie::get_range()`
+    /// 
+    /// use core::ops::RangeInclusive;
+    /// use icu_codepointtrie::CodePointMapRange;
+    /// 
+    /// let cpm_range: CodePointMapRange<u8> = trie.get_range(start).unwrap();
+    /// 
+    /// assert_eq!(cpm_range.range.start(), &start);
+    /// assert_eq!(cpm_range.range.end(), &exp_end);
+    /// assert_eq!(cpm_range.value, start_val);
+    /// ```
     pub fn get_range(&self, start: u32) -> Option<CodePointMapRange<T>> {
         if CODE_POINT_MAX < start {
             return None;
