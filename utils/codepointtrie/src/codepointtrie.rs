@@ -922,15 +922,6 @@ pub struct CodePointMapRange<T: TrieValue> {
     pub value: T,
 }
 
-impl<T: TrieValue> CodePointMapRange<T> {
-    /// Return the range for this [`CodePointMapRange`] as a (start, end) tuple.
-    /// This allows a substitute to make up for the disallowance of Copy impls
-    /// for Range in Rust (see: <https://github.com/rust-lang/rfcs/issues/2848>).
-    pub fn get_range(&self) -> RangeInclusive<u32> {
-        RangeInclusive::new(*self.range.start(), *self.range.end())
-    }
-}
-
 pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
     cpt: &'a CodePointTrie<'a, T>,
     // Initialize `range` to Some(CodePointMapRange{ start: u32::MAX, end: u32::MAX, value: 0}).
@@ -946,40 +937,18 @@ impl<'a, T: TrieValue + Into<u32>> Iterator for CodePointMapRangeIterator<'a, T>
     type Item = CodePointMapRange<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        // In order to work around Rust disallowance of Copy impls for Range in Rust,
-        // we need to pull out the Range start and end individually. We cannot directly
-        // match against fields of `&mut self` directly since with a shared reference
-        // because self is &mut. Also, because Copy is not allowed on the Range field,
-        // we need to use this workaround for the match to prevent Rust from automatically
-        // trying to copy in something like `match self.range`.
-        let range_value_tuple = (
-            self.cpm_range.as_ref().map(|cpmr| cpmr.get_range()),
-            self.cpm_range.as_ref().map(|cpmr| cpmr.value),
-        );
-
-        match range_value_tuple {
-            (Some(range), Some(_)) => {
-                let next_cpm_range = if *range.start() == u32::MAX {
+        self.cpm_range = match &self.cpm_range {
+            Some(cpmr) => {
+                if *cpmr.range.start() == u32::MAX {
                     self.cpt.get_range(0)
                 } else {
-                    self.cpt.get_range(*range.end() + 1)
-                };
-                self.cpm_range = next_cpm_range;
-
-                let next_range_value_tuple = (
-                    self.cpm_range.as_ref().map(|ncpmr| ncpmr.get_range()),
-                    self.cpm_range.as_ref().map(|ncpmr| ncpmr.value),
-                );
-                match next_range_value_tuple {
-                    (Some(next_range), Some(next_value)) => Some(CodePointMapRange {
-                        range: RangeInclusive::new(*next_range.start(), *next_range.end()),
-                        value: next_value,
-                    }),
-                    _ => None,
+                    self.cpt.get_range(cpmr.range.end() + 1)
                 }
             }
-            _ => None,
-        }
+            None => None
+        };
+        // Note: Clone is cheap. We can't Copy because RangeInclusive does not impl Copy.
+        self.cpm_range.clone()
     }
 }
 
