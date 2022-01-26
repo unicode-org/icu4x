@@ -405,45 +405,45 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// points associated with the same trie value. The returned range will be
     /// the longest stretch of consecutive code points starting at `start` that
     /// share this value.
-    /// 
+    ///
     /// This method is designed to use the internal details of
     /// the structure of [`CodePointTrie`] to be optimally efficient. This will
     /// outperform a naive approach that just uses [`CodePointTrie::get()`].
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
-    /// 
+    ///
     /// pub const CODE_POINT_MAX: u32 = 0x10ffff;
-    /// 
+    ///
     /// let start = 0x1_0000;
     /// let exp_end = 0x1_ffff;
-    /// 
+    ///
     /// let start_val = trie.get(start);
     /// assert_eq!(trie.get(exp_end), start_val);
     /// assert_ne!(trie.get(exp_end + 1), start_val);
-    /// 
-    /// 
+    ///
+    ///
     /// // Slower naive approach using `CodePointTrie::get()`
-    /// 
+    ///
     /// let start_to_max = (start..=CODE_POINT_MAX).into_iter();
     /// let from_start_with_same_vals =
     ///     start_to_max
     ///         .take_while(|c| trie.get(*c) == start_val);
     /// let same_val_range_end = from_start_with_same_vals.last().unwrap();
-    /// 
+    ///
     /// assert_eq!(same_val_range_end, exp_end);
-    /// 
-    /// 
+    ///
+    ///
     /// // Using `CodePointTrie::get_range()`
-    /// 
+    ///
     /// use core::ops::RangeInclusive;
     /// use icu_codepointtrie::CodePointMapRange;
-    /// 
+    ///
     /// let cpm_range: CodePointMapRange<u8> = trie.get_range(start).unwrap();
-    /// 
+    ///
     /// assert_eq!(cpm_range.range.start(), &start);
     /// assert_eq!(cpm_range.range.end(), &exp_end);
     /// assert_eq!(cpm_range.value, start_val);
@@ -488,7 +488,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
             // When a lookup code point is <= the trie's *_FAST_INDEXING_MAX that
             // corresponds to its `trie_type`, the lookup only takes 2 steps
             // (once into the `index`, once into the `data` array); otherwise,
-            // takes 4 steps (3 iterative lookups into the `index`, once more 
+            // takes 4 steps (3 iterative lookups into the `index`, once more
             // into the `data` array). So for convenience's sake, when we have the
             // 2-stage lookup, reuse the "i3*" variable names for the first lookup.
             if c <= 0xffff
@@ -715,17 +715,17 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// Yields an [`Iterator`] returning ranges of consecutive code points that
     /// share the same value in the [`CodePointTrie`], as given by
     /// [`CodePointTrie::get_range()`].
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use core::ops::RangeInclusive;
     /// use icu_codepointtrie::CodePointMapRange;
     /// use icu_codepointtrie::planes;
-    /// 
+    ///
     /// let planes_trie = planes::get_planes_trie();
-    /// 
-    /// 
+    ///
+    ///
     /// let mut ranges = planes_trie.iter_ranges();
     ///
     /// assert_eq!(
