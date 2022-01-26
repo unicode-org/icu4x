@@ -420,30 +420,16 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     ///
     /// ```
     /// use icu_codepointtrie::planes;
+    /// 
     /// let trie = planes::get_planes_trie();
     ///
-    /// pub const CODE_POINT_MAX: u32 = 0x10ffff;
-    ///
+    /// const CODE_POINT_MAX: u32 = 0x10ffff;
     /// let start = 0x1_0000;
     /// let exp_end = 0x1_ffff;
     ///
     /// let start_val = trie.get(start);
     /// assert_eq!(trie.get(exp_end), start_val);
     /// assert_ne!(trie.get(exp_end + 1), start_val);
-    ///
-    ///
-    /// // Slower naive approach using `CodePointTrie::get()`
-    ///
-    /// let start_to_max = (start..=CODE_POINT_MAX).into_iter();
-    /// let from_start_with_same_vals =
-    ///     start_to_max
-    ///         .take_while(|c| trie.get(*c) == start_val);
-    /// let same_val_range_end = from_start_with_same_vals.last().unwrap();
-    ///
-    /// assert_eq!(same_val_range_end, exp_end);
-    ///
-    ///
-    /// // Using `CodePointTrie::get_range()`
     ///
     /// use core::ops::RangeInclusive;
     /// use icu_codepointtrie::CodePointMapRange;
