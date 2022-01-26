@@ -81,7 +81,6 @@ impl Language {
         }
     }
 
-    /*
     /// Deconstructs the [`Language`] into raw format to be consumed
     /// by [`from_raw_unchecked()`](Language::from_raw_unchecked()).
     ///
@@ -97,8 +96,8 @@ impl Language {
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn into_raw(self) -> Option<u32> {
-        self.0.map(Into::<u32>::into)
+    pub fn into_raw(self) -> Option<[u8; 3]> {
+        self.0.map(|t| *t.all_bytes())
     }
 
     /// Constructor which takes a raw value returned by
@@ -119,15 +118,13 @@ impl Language {
     ///
     /// # Safety
     ///
-    /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
-    /// representing a [`Language`] subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: Option<u32>) -> Self {
+    /// This function accepts a [`u32`] as returned by [`Self::into_raw()`].
+    pub const unsafe fn from_raw_unchecked(v: Option<[u8; 3]>) -> Self {
         Self(match v {
-            Some(v) => Some(TinyStr4::new_unchecked(v)),
+            Some(v) => Some(TinyAsciiStr::from_bytes_unchecked(v)),
             None => None,
         })
     }
-    */
 
     /// Returns the default undefined language "und". Same as [`default()`](Default::default()), but is `const`.
     ///
@@ -249,11 +246,3 @@ impl<'l> From<&'l Language> for &'l str {
         input.as_str()
     }
 }
-
-/*
-impl From<Language> for Option<TinyStr4> {
-    fn from(input: Language) -> Self {
-        input.0.map(Into::into)
-    }
-}
-*/

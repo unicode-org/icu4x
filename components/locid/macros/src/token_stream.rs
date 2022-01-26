@@ -31,6 +31,12 @@ impl IntoTokenStream for u64 {
     }
 }
 
+impl IntoTokenStream for [u8; 3] {
+    fn into_token_stream_string(self) -> String {
+        format!("{:?}", self)
+    }
+}
+
 impl IntoTokenStream for subtags::Language {
     fn into_token_stream_string(self) -> String {
         format!(
