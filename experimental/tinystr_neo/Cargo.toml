@@ -36,19 +36,30 @@ postcard = { version = "0.7", features = ["use-std"] }
 tinystr_old = { version = "0.4", package = "tinystr", features = ["serde"] }
 criterion = "0.3"
 
+[features]
+default = ["alloc"]
+alloc = []
+bench = []
+
 [[test]]
 name = "serde"
 required-features = ["serde"]
 
 [[bench]]
+name = "overview"
+harness = false
+
+[[bench]]
 name = "construct"
 harness = false
+required-features = ["bench"]
 
 [[bench]]
 name = "read"
 harness = false
+required-features = ["bench"]
 
 [[bench]]
 name = "serde"
 harness = false
-required-features = ["serde"]
+required-features = ["bench", "serde"]

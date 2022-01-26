@@ -8,6 +8,7 @@ mod macros;
 
 mod ascii;
 mod error;
+mod int_ops;
 
 #[cfg(feature = "serde")]
 mod serde;
@@ -15,7 +16,7 @@ mod serde;
 #[cfg(feature = "zerovec")]
 mod ule;
 
-#[cfg(feature = "serde")]
+#[cfg(any(feature = "serde", feature = "alloc"))]
 extern crate alloc;
 
 pub use ascii::TinyAsciiStr;
