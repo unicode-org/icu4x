@@ -545,6 +545,8 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 }
 
 fn main() {
+    println!("cargo:rerun-if-changed=data");
+
     const WORD_SEGMENTER_TOML: &[u8] = include_bytes!("data/word.toml");
     const GRAPHEME_SEGMENTER_TOML: &[u8] = include_bytes!("data/grapheme.toml");
     const SENTENCE_SEGMENTER_TOML: &[u8] = include_bytes!("data/sentence.toml");
