@@ -449,6 +449,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// assert_eq!(cpm_range.value, start_val);
     /// ```
     pub fn get_range(&self, start: u32) -> Option<CodePointMapRange<T>> {
+        // Exit early if the start code point is out of range, or if it is
+        // in the last range of code points in high_start..=CODE_POINT_MAX
+        // (start- and end-inclusive) that all share the same trie value.
         if CODE_POINT_MAX < start {
             return None;
         }
@@ -476,6 +479,18 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
             let i3_block_length: u32;
             let data_block_length: u32;
 
+            // Initialize values before beginning the iteration in the subsequent
+            // `loop` block. In particular, use the "i3*" local variables
+            // (representing the `index` array position's offset + increment
+            // for a 3rd-level trie lookup) to help initialize the data block
+            // variable `block` in the loop for the `data` array.
+            //
+            // When a lookup code point is <= the trie's *_FAST_INDEXING_MAX that
+            // corresponds to its `trie_type`, the lookup only takes 2 steps
+            // (once into the `index`, once into the `data` array); otherwise,
+            // takes 4 steps (3 iterative lookups into the `index`, once more 
+            // into the `data` array). So for convenience's sake, when we have the
+            // 2-stage lookup, reuse the "i3*" variable names for the first lookup.
             if c <= 0xffff
                 && (self.header.trie_type == TrieType::Fast || c <= SMALL_TYPE_FAST_INDEXING_MAX)
             {
@@ -520,6 +535,11 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                 prev_i3_block = i3_block;
                 if i3_block == self.header.index3_null_offset as u32 {
                     // This is the index-3 null block.
+                    // All of the `data` array blocks pointed to by the values
+                    // in this block of the `index` 3rd-stage subarray will
+                    // contain this trie's null_value. So if we are in the middle
+                    // of a range, end it and return early, otherwise start a new
+                    // range of null values.
                     if have_value {
                         if null_value != value {
                             return Some(CodePointMapRange {
@@ -545,6 +565,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                 i3_block_length = INDEX_3_BLOCK_LENGTH;
                 data_block_length = SMALL_DATA_BLOCK_LENGTH;
             }
+
             // Enumerate data blocks for one index-3 block.
             loop {
                 let mut block: u32;
@@ -572,6 +593,14 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                     };
                     block |= ggi_val;
                 }
+
+                // If our previous and current return values of the 3rd-stage `index`
+                // lookup yield the same `data` block offset, and if we already know that
+                // the entire `data` block / subarray starting at that offset stores
+                // `value` and nothing else, then we can extend our range by the length
+                // of a data block and continue.
+                // Otherwise, we have to iterate over the values stored in the
+                // new data block to see if they differ from `value`.
                 if block == prev_block && (c - start) >= data_block_length {
                     // The block is the same as the previous one, and filled with value.
                     debug_assert!((c & (data_block_length - 1)) == 0);
@@ -581,6 +610,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                     prev_block = block;
                     if block == self.header.data_null_offset {
                         // This is the data null block.
+                        // If we are in the middle of a range, end it and
+                        // return early, otherwise start a new range of null
+                        // values.
                         if have_value {
                             if null_value != value {
                                 return Some(CodePointMapRange {
@@ -659,6 +691,9 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
 
         debug_assert!(have_value);
 
+        // Now that c >= high_start, compare `value` to `high_value` to see
+        // if we can extend our current range to CODE_POINT_MAX or stop at
+        // high_start - 1.
         let di: u32 = self.data.len() as u32 - HIGH_VALUE_NEG_DATA_OFFSET;
         let high_value: u32 = if let Some(hv) = self.data.get(di as usize) {
             hv.into()
