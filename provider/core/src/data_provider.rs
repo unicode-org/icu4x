@@ -33,6 +33,7 @@ pub struct DataRequestOld {
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
+#[derive(Default)]
 pub struct DataRequest {
     pub options: ResourceOptions,
     pub metadata: DataRequestMetadata,

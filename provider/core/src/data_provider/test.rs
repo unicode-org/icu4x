@@ -32,6 +32,10 @@ impl DataMarker for HelloAltMarker {
     type Yokeable = HelloAlt;
 }
 
+impl ResourceMarker for HelloAltMarker {
+    const KEY: ResourceKey = HELLO_ALT_KEY;
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 struct HelloCombined<'data> {
     #[serde(borrow)]
@@ -47,12 +51,11 @@ struct DataWarehouse {
     hello_alt: HelloAlt,
 }
 
-impl DataProvider<HelloWorldV1Marker> for DataWarehouse {
-    fn load_payload(
+impl ResourceProvider<HelloWorldV1Marker> for DataWarehouse {
+    fn load_resource(
         &self,
-        req: &DataRequest,
+        _: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(self.hello_v1.clone())),
@@ -76,12 +79,11 @@ impl From<DataWarehouse> for DataProvider2 {
     }
 }
 
-impl DataProvider<HelloWorldV1Marker> for DataProvider2 {
-    fn load_payload(
+impl ResourceProvider<HelloWorldV1Marker> for DataProvider2 {
+    fn load_resource(
         &self,
-        req: &DataRequest,
+        _: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
@@ -89,9 +91,8 @@ impl DataProvider<HelloWorldV1Marker> for DataProvider2 {
     }
 }
 
-impl DataProvider<HelloAltMarker> for DataProvider2 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
-        req.resource_path.key.match_key(HELLO_ALT_KEY)?;
+impl ResourceProvider<HelloAltMarker> for DataProvider2 {
+    fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(self.data.hello_alt.clone())),
@@ -123,34 +124,16 @@ fn get_warehouse(data: &'static str) -> DataWarehouse {
     }
 }
 
-fn get_payload_v1<P: DataProvider<HelloWorldV1Marker> + ?Sized>(
+fn get_payload_v1<P: ResourceProvider<HelloWorldV1Marker> + ?Sized>(
     provider: &P,
 ) -> Result<DataPayload<HelloWorldV1Marker>, DataError> {
-    provider.load_payload(&get_request_v1())?.take_payload()
+    provider.load_resource(&Default::default())?.take_payload()
 }
 
-fn get_payload_alt<P: DataProvider<HelloAltMarker> + ?Sized>(
-    d: &P,
+fn get_payload_alt<P: ResourceProvider<HelloAltMarker> + ?Sized>(
+    provider: &P,
 ) -> Result<DataPayload<HelloAltMarker>, DataError> {
-    d.load_payload(&get_request_alt())?.take_payload()
-}
-
-fn get_request_v1() -> DataRequest {
-    DataRequest {
-        resource_path: ResourcePath {
-            key: key::HELLO_WORLD_V1,
-            options: Default::default(),
-        },
-    }
-}
-
-fn get_request_alt() -> DataRequest {
-    DataRequest {
-        resource_path: ResourcePath {
-            key: HELLO_ALT_KEY,
-            options: Default::default(),
-        },
-    }
+    provider.load_resource(&Default::default())?.take_payload()
 }
 
 #[test]
@@ -180,7 +163,7 @@ fn test_warehouse_owned_dyn_erased() {
 #[test]
 fn test_warehouse_owned_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
+    let hello_data = get_payload_v1(&warehouse as &dyn ResourceProvider<HelloWorldV1Marker>).unwrap();
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -240,7 +223,7 @@ fn test_provider2_dyn_erased_alt() {
 fn test_provider2_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
+    let hello_data = get_payload_v1(&provider as &dyn ResourceProvider<HelloWorldV1Marker>).unwrap();
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -253,7 +236,7 @@ fn test_provider2_dyn_generic() {
 fn test_provider2_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
-    let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltMarker>).unwrap();
+    let hello_data = get_payload_alt(&provider as &dyn ResourceProvider<HelloAltMarker>).unwrap();
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
 
@@ -263,7 +246,7 @@ fn test_mismatched_types() {
     let provider = DataProvider2::from(warehouse);
     // Request is for v2, but type argument is for v1
     let response: Result<DataResponse<HelloWorldV1Marker>, DataError> =
-        AnyProvider::load_any(&provider.as_any_provider(), &get_request_alt())
+        AnyProvider::load_any(&provider.as_any_provider(), HELLO_ALT_KEY, &Default::default())
             .unwrap()
             .downcast();
     assert!(matches!(
@@ -277,15 +260,15 @@ fn test_mismatched_types() {
 
 fn check_v1_v2<P>(d: &P)
 where
-    P: DataProvider<HelloWorldV1Marker> + DataProvider<HelloAltMarker> + ?Sized,
+    P: ResourceProvider<HelloWorldV1Marker> + ResourceProvider<HelloAltMarker> + ?Sized,
 {
     let v1: DataPayload<HelloWorldV1Marker> = d
-        .load_payload(&get_request_v1())
+        .load_resource(&Default::default())
         .unwrap()
         .take_payload()
         .unwrap();
     let v2: DataPayload<HelloAltMarker> = d
-        .load_payload(&get_request_alt())
+        .load_resource(&Default::default())
         .unwrap()
         .take_payload()
         .unwrap();
