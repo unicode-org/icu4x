@@ -25,22 +25,27 @@ use icu_locid::LanguageIdentifier;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
-pub struct DataRequest {
+pub struct DataRequestOld {
     pub resource_path: ResourcePath,
+}
+
+#[derive(Default)]
+#[non_exhaustive]
+pub struct DataRequestMetadata;
+
+pub struct DataRequest {
+    pub options: ResourceOptions,
+    pub metadata: DataRequestMetadata,
 }
 
 impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}/{}",
-            self.resource_path.key, self.resource_path.options
-        )
+        fmt::Display::fmt(&self.options, f)
     }
 }
 
 /// Create a [`DataRequest`] to a particular [`ResourceKey`] with default options.
-impl From<ResourceKey> for DataRequest {
+impl From<ResourceKey> for DataRequestOld {
     fn from(key: ResourceKey) -> Self {
         Self {
             resource_path: ResourcePath {
@@ -87,12 +92,11 @@ impl DataRequest {
     ///     Ok(_)
     /// ));
     /// ```
-    pub fn try_langid(&self) -> Result<&LanguageIdentifier, DataError> {
-        self.resource_path
-            .options
+    pub fn try_langid(&self, context: ResourceKey) -> Result<&LanguageIdentifier, DataError> {
+        self.options
             .langid
             .as_ref()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(self))
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(context, self))
     }
 }
 
@@ -947,7 +951,7 @@ fn test_debug() {
 /// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
 /// - [`AnyPayloadProvider`](crate::struct_provider::AnyPayloadProvider)
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
-pub trait DataProvider<M>
+pub trait DynProvider<M>
 where
     M: DataMarker,
 {
@@ -955,14 +959,18 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError>;
 }
 
 pub trait ResourceProvider<M>
 where
     M: ResourceMarker,
 {
-    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError>;
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
 /*

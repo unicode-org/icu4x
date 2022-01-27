@@ -141,21 +141,21 @@ macro_rules! impl_dyn_provider {
         );
     };
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, $dyn_m:path) => {
-        impl $crate::prelude::DataProvider<$dyn_m> for $provider
+        impl $crate::DynProvider<$dyn_m> for $provider
         {
             fn load_payload(
                 &self,
-                req: &$crate::prelude::DataRequest,
+                key: $crate::ResourceKey,
+                req: &$crate::DataRequest,
             ) -> Result<
-                $crate::prelude::DataResponse<$dyn_m>,
-                $crate::prelude::DataError,
+                $crate::DataResponse<$dyn_m>,
+                $crate::DataError,
             > {
-                match req.resource_path.key {
+                match key {
                     $(
                         $pat => {
-                            let result: $crate::prelude::DataResponse<$struct_m> =
-                                $crate::prelude::ResourceProvider::load_resource(
-                                    self, req.resource_path.options.clone())?;
+                            let result: $crate::DataResponse<$struct_m> =
+                                $crate::ResourceProvider::load_resource(self, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -166,7 +166,7 @@ macro_rules! impl_dyn_provider {
                     )+,
                     // Don't complain if the call site has its own wildcard match
                     #[allow(unreachable_patterns)]
-                    _ => Err($crate::prelude::DataErrorKind::MissingResourceKey.with_req(req))
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
                 }
             }
         }

@@ -116,22 +116,26 @@ use alloc::vec::Vec;
 pub struct ForkByKeyProvider<P0, P1>(pub P0, pub P1);
 
 impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvider<P0, P1> {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let result = self.0.load_buffer(req);
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let result = self.0.load_buffer(key, req);
         if !DataError::result_is_err_missing_resource_key(&result) {
             return result;
         }
-        self.1.load_buffer(req)
+        self.1.load_buffer(key, req)
     }
 }
 
 impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1> {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
-        let result = self.0.load_any(req);
+    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        let result = self.0.load_any(key, req);
         if !DataError::result_is_err_missing_resource_key(&result) {
             return result;
         }
-        self.1.load_any(req)
+        self.1.load_any(key, req)
     }
 }
 
@@ -205,25 +209,29 @@ pub struct MultiForkByKeyProvider<P> {
 }
 
 impl<P: BufferProvider> BufferProvider for MultiForkByKeyProvider<P> {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.load_buffer(req);
+            let result = provider.load_buffer(key, req);
             if !DataError::result_is_err_missing_resource_key(&result) {
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_req(req))
+        Err(DataErrorKind::MissingResourceKey.with_key(key))
     }
 }
 
 impl<P: AnyProvider> AnyProvider for MultiForkByKeyProvider<P> {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.load_any(req);
+            let result = provider.load_any(key, req);
             if !DataError::result_is_err_missing_resource_key(&result) {
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_req(req))
+        Err(DataErrorKind::MissingResourceKey.with_key(key))
     }
 }

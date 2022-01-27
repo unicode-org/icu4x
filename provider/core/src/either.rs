@@ -17,26 +17,45 @@ pub enum EitherProvider<P0, P1> {
     B(P1),
 }
 
-impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for EitherProvider<P0, P1> {
+impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for EitherProvider<P0, P1> {
     #[inline]
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_buffer(req),
-            B(p) => p.load_buffer(req),
+            A(p) => p.load_any(key, req),
+            B(p) => p.load_any(key, req),
         }
     }
 }
 
-impl<M: DataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
+impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for EitherProvider<P0, P1> {
+    #[inline]
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        use EitherProvider::*;
+        match self {
+            A(p) => p.load_buffer(key, req),
+            B(p) => p.load_buffer(key, req),
+        }
+    }
+}
+
+impl<M: DataMarker, P0: DynProvider<M>, P1: DynProvider<M>> DynProvider<M>
     for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_payload(req),
-            B(p) => p.load_payload(req),
+            A(p) => p.load_payload(key, req),
+            B(p) => p.load_payload(key, req),
         }
     }
 }
@@ -45,11 +64,11 @@ impl<M: ResourceMarker, P0: ResourceProvider<M>, P1: ResourceProvider<M>> Resour
     for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError> {
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_resource(options),
-            B(p) => p.load_resource(options),
+            A(p) => p.load_resource(req),
+            B(p) => p.load_resource(req),
         }
     }
 }

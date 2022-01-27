@@ -53,7 +53,11 @@ impl DataMarker for BufferMarker {
 ///
 /// [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 pub trait BufferProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError>;
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError>;
 }
 
 /// An enum expressing all Serde formats known to ICU4X.

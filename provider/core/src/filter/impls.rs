@@ -79,7 +79,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                match &request.resource_path.options.langid {
+                match &request.options.langid {
                     Some(langid) => predicate(langid),
                     None => true,
                 }
@@ -153,7 +153,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                match &request.resource_path.options.langid {
+                match &request.options.langid {
                     Some(langid) => allowlist.contains(langid),
                     None => true,
                 }
@@ -214,7 +214,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.resource_path.options.langid.is_some()
+                request.options.langid.is_some()
             }),
             filter_name: self.filter_name,
         }

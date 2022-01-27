@@ -157,8 +157,8 @@ impl DataErrorKind {
 
     /// Creates a DataError with a request context.
     #[inline]
-    pub fn with_req(self, req: &DataRequest) -> DataError {
-        self.into_error().with_req(req)
+    pub fn with_req(self, key: ResourceKey, req: &DataRequest) -> DataError {
+        self.into_error().with_req(key, req)
     }
 }
 
@@ -203,13 +203,14 @@ impl DataError {
     ///
     /// If the "log_error_context" feature is enabled, this logs the whole request. Either way,
     /// it returns an error with the resource key portion of the request as context.
-    pub fn with_req(self, req: &DataRequest) -> Self {
+    #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
+    pub fn with_req(self, key: ResourceKey, req: &DataRequest) -> Self {
         // Don't write out a log for MissingResourceKey since there is no context to add
         #[cfg(feature = "log_error_context")]
         if self.kind != DataErrorKind::MissingResourceKey {
-            log::warn!("{} (request: {})", self, req);
+            log::warn!("{} (key: {}, request: {})", self, key, req);
         }
-        self.with_key(req.resource_path.key)
+        self.with_key(key)
     }
 
     /// Logs the data error with the given context, then return self.

@@ -138,10 +138,10 @@ pub mod prelude {
     pub use crate::buf::BufferMarker;
     pub use crate::buf::BufferProvider;
     pub use crate::data_provider::DataPayload;
-    pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseMetadata;
+    pub use crate::data_provider::DynProvider;
     pub use crate::data_provider::ResourceProvider;
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
@@ -152,8 +152,8 @@ pub mod prelude {
     pub use crate::resource::ResourcePath;
     pub use crate::resource_key;
 
-    pub use crate::any::AsDataProviderAnyMarkerWrap;
     pub use crate::any::AsDowncastingAnyProvider;
+    pub use crate::any::AsDynProviderAnyMarkerWrap;
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 }

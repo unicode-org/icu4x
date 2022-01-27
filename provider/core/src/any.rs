@@ -286,52 +286,54 @@ impl AnyResponse {
 ///
 /// [`AnyPayloadProvider`]: crate::struct_provider::AnyPayloadProvider
 pub trait AnyProvider {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError>;
+    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }
 
-impl<P> DataProvider<AnyMarker> for P
+/*
+impl<P> DynProvider<AnyMarker> for P
 where
     P: AnyProvider + ?Sized,
 {
     #[inline]
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
-        self.load_any(req).map(|r| r.into())
+    fn load_payload(&self, key: ResourceKey, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
+        self.load_any(key, req).map(|r| r.into())
     }
 }
+*/
 
-/// A wrapper over `DataProvider<AnyMarker>` that implements `AnyProvider`
-pub struct DataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
+/// A wrapper over `DynProvider<AnyMarker>` that implements `AnyProvider`
+pub struct DynProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
-pub trait AsDataProviderAnyMarkerWrap {
-    /// Returns an object implementing `AnyProvider` when called on `DataProvider<AnyMarker>`
-    fn as_any_provider(&self) -> DataProviderAnyMarkerWrap<Self>;
+pub trait AsDynProviderAnyMarkerWrap {
+    /// Returns an object implementing `AnyProvider` when called on `DynProvider<AnyMarker>`
+    fn as_any_provider(&self) -> DynProviderAnyMarkerWrap<Self>;
 }
 
-impl<P> AsDataProviderAnyMarkerWrap for P
+impl<P> AsDynProviderAnyMarkerWrap for P
 where
-    P: DataProvider<AnyMarker>,
+    P: DynProvider<AnyMarker>,
 {
     #[inline]
-    fn as_any_provider(&self) -> DataProviderAnyMarkerWrap<P> {
-        DataProviderAnyMarkerWrap(self)
+    fn as_any_provider(&self) -> DynProviderAnyMarkerWrap<P> {
+        DynProviderAnyMarkerWrap(self)
     }
 }
 
-impl<P> AnyProvider for DataProviderAnyMarkerWrap<'_, P>
+impl<P> AnyProvider for DynProviderAnyMarkerWrap<'_, P>
 where
-    P: DataProvider<AnyMarker> + ?Sized,
+    P: DynProvider<AnyMarker> + ?Sized,
 {
     #[inline]
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
-        self.0.load_payload(req)?.try_into()
+    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        self.0.load_payload(key, req)?.try_into()
     }
 }
 
-/// A wrapper over `AnyProvider` that implements `DataProvider<M>` via downcasting
+/// A wrapper over `AnyProvider` that implements `DynProvider<M>` via downcasting
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
 pub trait AsDowncastingAnyProvider {
-    /// Returns an object implementing `DataProvider<M>` when called on `AnyProvider`
+    /// Returns an object implementing `DynProvider<M>` when called on `AnyProvider`
     fn as_downcasting(&self) -> DowncastingAnyProvider<Self>;
 }
 
@@ -353,9 +355,8 @@ where
     M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
 {
     #[inline]
-    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError> {
-        // self.0.load_any(req)?.downcast()
-        todo!()
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.0.load_any(M::KEY, req)?.downcast()
     }
 }
 

@@ -130,10 +130,10 @@ impl HelloWorldProvider {
 impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn load_resource(
         &self,
-        options: ResourceOptions,
+        req: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         // key::HELLO_WORLD_V1.match_key(req.resource_path.key)?;
-        let langid = options.try_langid()?;
+        let langid = req.try_langid(HelloWorldV1Marker::KEY)?;
         let data = self
             .map
             .get(langid)
@@ -162,9 +162,13 @@ impl_dyn_provider!(HelloWorldProvider, {
 pub struct HelloWorldJsonProvider(HelloWorldProvider);
 
 impl BufferProvider for HelloWorldJsonProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
-        let result = self.0.load_resource(req.resource_path.options.clone())?;
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        key.match_key(key::HELLO_WORLD_V1)?;
+        let result = self.0.load_resource(req)?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
         metadata.buffer_format = Some(BufferFormat::Json);
@@ -203,11 +207,12 @@ impl IterableProvider for HelloWorldProvider {
 impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
     fn put_payload(
         &mut self,
+        key: ResourceKey,
         req: DataRequest,
         payload: DataPayload<crate::any::AnyMarker>,
     ) -> Result<(), DataError> {
-        req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
-        let langid = req.try_langid()?;
+        key.match_key(key::HELLO_WORLD_V1)?;
+        let langid = req.try_langid(key)?;
         let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
         self.map.insert(
             langid.clone(),

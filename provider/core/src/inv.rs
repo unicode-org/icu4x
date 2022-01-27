@@ -40,7 +40,7 @@ where
     M: ResourceMarker,
     M::Yokeable: Default,
 {
-    fn load_resource(&self, _: ResourceOptions) -> Result<DataResponse<M>, DataError> {
+    fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(M::Yokeable::default())),
