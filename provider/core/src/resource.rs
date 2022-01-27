@@ -152,12 +152,12 @@ impl ResourceKey {
         i = start;
         let mut state = Start;
         loop {
-            let content = if i < end {
+            let byte = if i < end {
                 Some(path.as_bytes()[i])
             } else {
                 None
             };
-            state = match (state, content) {
+            state = match (state, byte) {
                 (Start | Body0, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
                     Body0
                 }
