@@ -75,7 +75,10 @@ impl IterableProvider for DateSymbolsProvider {
     }
 }
 
-fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> calendar::DateSymbolsV1<'static> {
+fn convert_dates(
+    other: &cldr_serde::ca::Dates,
+    calendar: &str,
+) -> calendar::DateSymbolsV1<'static> {
     calendar::DateSymbolsV1 {
         months: (&other.months).into(),
         weekdays: (&other.days).into(),
