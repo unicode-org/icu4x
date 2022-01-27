@@ -176,13 +176,12 @@ impl<'data> ScriptExtensions<'data> {
     ///
     /// If `code_point` has Script_Extensions, then return the Script codes in
     /// the Script_Extensions. In this case, the Script property value
-    /// (normally Common or Inherited) is not included in the set.
+    /// (normally Common or Inherited) is not included in the [`ZeroSlice`].
     ///
     /// If c does not have Script_Extensions, then the one Script code is put
-    /// into the set and also returned.
+    /// into the [`ZeroSlice`] and also returned.
     ///
-    /// If c is not a valid code point, then the one UNKNOWN code is put into
-    /// the set and also returned.
+    /// If c is not a valid code point, then return an empty [`ZeroSlice`].
     pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
         let sc_with_ext_ule = self.trie.get_ule(code_point);
 
