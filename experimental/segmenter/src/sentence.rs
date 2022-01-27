@@ -42,7 +42,10 @@ impl<'a> RuleBreakType<'a> for SentenceBreakType {
         iter.current_pos_data.unwrap().1.len_utf8()
     }
 
-    fn handle_complex_language(_ : &mut RuleBreakIterator<Self>, _: Self::CharType) -> Option<usize> {
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
         panic!("not reachable")
     }
 }
@@ -79,7 +82,10 @@ impl<'a> RuleBreakType<'a> for SentenceBreakTypeLatin1 {
         panic!("not reachable")
     }
 
-    fn handle_complex_language(_: &mut RuleBreakIterator<Self>, _: Self::CharType) -> Option<usize> {
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
         panic!("not reachable")
     }
 }
@@ -121,7 +127,10 @@ impl<'a> RuleBreakType<'a> for SentenceBreakTypeUtf16 {
         }
     }
 
-    fn handle_complex_language(_: &mut RuleBreakIterator<Self>, _: Self::CharType) -> Option<usize> {
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
         panic!("not reachable")
     }
 }

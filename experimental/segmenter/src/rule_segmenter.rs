@@ -20,7 +20,10 @@ pub trait RuleBreakType<'a> {
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<'a, Self>) -> usize;
 
-    fn handle_complex_language(iter: &mut RuleBreakIterator<'a, Self>, left_codepoint: Self::CharType) -> Option<usize>;
+    fn handle_complex_language(
+        iter: &mut RuleBreakIterator<'a, Self>,
+        left_codepoint: Self::CharType,
+    ) -> Option<usize>;
 }
 
 /// The struct implementing the [`Iterator`] trait over the segmenter break
@@ -52,8 +55,7 @@ impl<'a, Y: RuleBreakType<'a>> Iterator for RuleBreakIterator<'a, Y> {
             let mut i = 0;
             loop {
                 if i == *self.result_cache.first().unwrap() {
-                    self.result_cache =
-                        self.result_cache.iter().skip(1).map(|r| r - i).collect();
+                    self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
                     return Some(self.current_pos_data.unwrap().0);
                 }
                 i += Y::get_current_position_character_len(self);
@@ -111,10 +113,9 @@ impl<'a, Y: RuleBreakType<'a>> Iterator for RuleBreakIterator<'a, Y> {
                     self.current_pos_data = self.iter.next();
                     if self.current_pos_data.is_none() {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
-                        if self.get_break_state_from_table(
-                            break_state as u8,
-                            self.eot_property as u8,
-                        ) == NOT_MATCH_RULE
+                        if self
+                            .get_break_state_from_table(break_state as u8, self.eot_property as u8)
+                            == NOT_MATCH_RULE
                         {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
@@ -180,8 +181,7 @@ impl<'a, Y: RuleBreakType<'a>> RuleBreakIterator<'a, Y> {
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
-        self.break_state_table
-            [(left as usize) * self.rule_property_count + (right as usize)]
+        self.break_state_table[(left as usize) * self.rule_property_count + (right as usize)]
     }
 
     fn is_break_from_table(&self, left: u8, right: u8) -> bool {

@@ -62,7 +62,10 @@ impl<'a> RuleBreakType<'a> for WordBreakType {
         iter.current_pos_data.unwrap().1.len_utf8()
     }
 
-    fn handle_complex_language(iter: &mut RuleBreakIterator<'a, Self>, left_codepoint: Self::CharType) -> Option<usize> {
+    fn handle_complex_language(
+        iter: &mut RuleBreakIterator<'a, Self>,
+        left_codepoint: Self::CharType,
+    ) -> Option<usize> {
         // word segmenter doesn't define break rules for some languages such as Thai.
         let start_iter = iter.iter.clone();
         let start_point = iter.current_pos_data;
@@ -133,7 +136,10 @@ impl<'a> RuleBreakType<'a> for WordBreakTypeLatin1 {
         panic!("not reachable")
     }
 
-    fn handle_complex_language(_: &mut RuleBreakIterator<'a, Self>, _: Self::CharType) -> Option<usize> {
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<'a, Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
         panic!("not reachable")
     }
 }
@@ -175,7 +181,10 @@ impl<'a> RuleBreakType<'a> for WordBreakTypeUtf16 {
         }
     }
 
-    fn handle_complex_language(iter: &mut RuleBreakIterator<Self>, left_codepoint: Self::CharType) -> Option<usize> {
+    fn handle_complex_language(
+        iter: &mut RuleBreakIterator<Self>,
+        left_codepoint: Self::CharType,
+    ) -> Option<usize> {
         // word segmenter doesn't define break rules for some languages such as Thai.
         let start_iter = iter.iter.clone();
         let start_point = iter.current_pos_data;
