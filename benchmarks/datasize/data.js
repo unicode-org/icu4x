@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643308645854,
+  "lastUpdate": 1643311142754,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8093,6 +8093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d9b5c987d58a3ad7ccf0cf633ede52a8bb21bbc4"
         },
         "date": 1643308635074,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1471487,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b5f13921eec4e43d7aaafa75ac8bdd9be233fc2",
+          "message": "Cleaning up resource_keys! and improving doc (#1540)",
+          "timestamp": "2022-01-27T20:17:20+01:00",
+          "tree_id": "9f5d6c7d96d6b41a46bd0ff6d47bf5c47da3dc14",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b5f13921eec4e43d7aaafa75ac8bdd9be233fc2"
+        },
+        "date": 1643311132585,
         "tool": "ndjson",
         "benches": [
           {
