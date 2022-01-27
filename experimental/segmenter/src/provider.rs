@@ -19,7 +19,7 @@ pub mod key {
     use icu_provider::{resource_key, ResourceKey};
 
     /// Resource key: data for line breaking.
-    pub const LINE_BREAK_DATA_V1: ResourceKey = resource_key!(Segmenter, "line", 1);
+    pub const LINE_BREAK_DATA_V1: ResourceKey = resource_key!("segmenter/line@1");
 }
 
 /// Pre-processed Unicode data in the form of tables to be used for line breaking.

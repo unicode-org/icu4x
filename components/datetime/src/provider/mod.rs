@@ -26,34 +26,34 @@ pub mod key {
     use icu_provider::{resource_key, ResourceKey};
 
     /// A [`ResourceKey`] to [`calendar::DatePatternsV1`].
-    pub const DATE_PATTERNS_V1: ResourceKey = resource_key!(DateTime, "lengths", 1);
+    pub const DATE_PATTERNS_V1: ResourceKey = resource_key!("datetime/lengths@1");
 
     /// A [`ResourceKey`] to [`calendar::DateSkeletonPatternsV1`].
-    pub const DATE_SKELETON_PATTERNS_V1: ResourceKey = resource_key!(DateTime, "skeletons", 1);
+    pub const DATE_SKELETON_PATTERNS_V1: ResourceKey = resource_key!("datetime/skeletons@1");
 
     /// A [`ResourceKey`] to [`calendar::DateSymbolsV1`]
-    pub const DATE_SYMBOLS_V1: ResourceKey = resource_key!(DateTime, "symbols", 1);
+    pub const DATE_SYMBOLS_V1: ResourceKey = resource_key!("datetime/symbols@1");
 
     /// A [`ResourceKey`] to [`time_zones::TimeZoneFormatsV1`].
-    pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(TimeZone, "formats", 1);
+    pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!("time_zone/formats@1");
 
     /// A [`ResourceKey`] to [`time_zones::ExemplarCitiesV1`].
     pub const TIMEZONE_EXEMPLAR_CITIES_V1: ResourceKey =
-        resource_key!(TimeZone, "exemplar_cities", 1);
+        resource_key!("time_zone/exemplar_cities@1");
 
     /// A [`ResourceKey`] to [`time_zones::MetaZoneGenericNamesLongV1`].
     pub const TIMEZONE_GENERIC_NAMES_LONG_V1: ResourceKey =
-        resource_key!(TimeZone, "generic_long", 1);
+        resource_key!("time_zone/generic_long@1");
 
     /// A [`ResourceKey`] to [`time_zones::MetaZoneGenericNamesShortV1`].
     pub const TIMEZONE_GENERIC_NAMES_SHORT_V1: ResourceKey =
-        resource_key!(TimeZone, "generic_short", 1);
+        resource_key!("time_zone/generic_short@1");
 
     /// A [`ResourceKey`] to [`time_zones::MetaZoneSpecificNamesLongV1`].
     pub const TIMEZONE_SPECIFIC_NAMES_LONG_V1: ResourceKey =
-        resource_key!(TimeZone, "specific_long", 1);
+        resource_key!("time_zone/specific_long@1");
 
     /// A [`ResourceKey`] to [`time_zones::MetaZoneSpecificNamesShortV1`].
     pub const TIMEZONE_SPECIFIC_NAMES_SHORT_V1: ResourceKey =
-        resource_key!(TimeZone, "specific_short", 1);
+        resource_key!("time_zone/specific_short@1");
 }

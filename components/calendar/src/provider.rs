@@ -16,7 +16,7 @@ pub mod key {
     use icu_provider::{resource_key, ResourceKey};
 
     /// Resource key: Japanese era data ([`JapaneseErasV1`](super::JapaneseErasV1))
-    pub const JAPANESE_ERAS_V1: ResourceKey = resource_key!(Calendar, "japanese", 1);
+    pub const JAPANESE_ERAS_V1: ResourceKey = resource_key!("calendar/japanese@1");
 }
 
 /// The date at which an era started

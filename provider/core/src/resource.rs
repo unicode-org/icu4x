@@ -25,12 +25,28 @@ impl ResourceKeyHash {
     }
 }
 
-/// The resource key used for loading data from an ICU4X data provider.
+/// Used for loading data from an ICU4X data provider.
 ///
 /// A resource key is tightly coupled with the code that uses it to load data at runtime.
-/// Executables can be searched for ResourceKey instances to produce optimized data files.
+/// Executables can be searched for `ResourceKey` instances to produce optimized data files.
 /// Therefore, users should not generally create ResourceKey instances; they should instead use
 /// the ones exported by a component.
+///
+/// `ResourceKey`s are created with the [`resource_key!`] macro:
+///
+/// ```
+/// # use icu_provider::prelude::ResourceKey;
+/// const K: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+/// ```
+///
+/// The path string has to contain at least one `/`, and end with `@` followed by one or more ASCII
+/// digits. Paths do not contain characters other than ASCII letters and digits, `_`, `/`, `=`, and
+/// `@`. Invalid paths are compile-time errors (as [`resource_key!`] uses `const`).
+///
+/// ```compile_fail,E0080
+/// # use icu_provider::prelude::ResourceKey;
+/// const K: ResourceKey = icu_provider::resource_key!("foobar@1");
+/// ```
 #[derive(PartialEq, Eq, Copy, Clone)]
 pub struct ResourceKey {
     // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
@@ -39,6 +55,7 @@ pub struct ResourceKey {
     hash: ResourceKeyHash,
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! leading_tag {
     () => {
@@ -46,6 +63,7 @@ macro_rules! leading_tag {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! trailing_tag {
     () => {
@@ -53,9 +71,10 @@ macro_rules! trailing_tag {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! tagged {
-    ($without_tags:literal) => {
+    ($without_tags:expr) => {
         concat!(
             $crate::leading_tag!(),
             $without_tags,
@@ -67,9 +86,9 @@ macro_rules! tagged {
 impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
     ///
-    /// The human-readable path string always contains at least one '/', and it ends with '@'
-    /// followed by one or more digits. Paths do not contain characters other than ASCII,
-    /// '_', '/', '=', and '@'.
+    /// The human-readable path string always contains at least one `/`, and it ends with `@`
+    /// followed by one or more digits. Paths do not contain characters other than ASCII letters
+    /// and digits, `_`, `/`, `=`, and `@`.
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
@@ -94,252 +113,91 @@ impl ResourceKey {
         self.hash
     }
 
-    /// Creates a new ResourceKey from a path, returning an error if the path is invalid.
-    ///
-    /// It is intended that `ResourceKey` objects are const-constructed. To force construction
-    /// into a const context, use [`resource_key!()`]. Doing so ensures that compile-time key
-    /// extraction functions as expected.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::tagged;
-    ///
-    /// // Const constructed (preferred):
-    /// const k1: ResourceKey = icu_provider::resource_key!("foo/bar@1");
-    ///
-    /// // Runtime constructed:
-    /// let k2: ResourceKey = ResourceKey::try_new(tagged!("foo/bar@1")).unwrap();
-    ///
-    /// assert_eq!(k1, k2);
-    /// ```
-    #[inline]
-    pub const fn try_new(path: &'static str) -> Result<Self, DataError> {
-        match Self::check_path_syntax(path) {
-            Ok(_) => Ok(Self {
-                path,
-                hash: ResourceKeyHash::compute_from_str(path),
-            }),
-            Err(_) => Err(DataError::custom("resource key syntax error")),
-        }
-    }
-
-    const fn check_path_syntax(path: &str) -> Result<(), ()> {
-        let path = path.as_bytes();
-
-        // Start and end of the untagged part
+    #[doc(hidden)]
+    // Error is a str of the expected character class and the index where it wasn't encountered
+    pub const fn construct_internal(path: &'static str) -> Result<Self, (&'static str, usize)> {
         if path.len() < leading_tag!().len() + trailing_tag!().len() {
-            return Err(());
+            return Err(("tag", 0));
         }
+        // Start and end of the untagged part
         let start = leading_tag!().len();
         let end = path.len() - trailing_tag!().len();
 
         // Check tags
         let mut i = 0;
         while i < leading_tag!().len() {
-            if path[i] != leading_tag!().as_bytes()[i] {
-                return Err(());
+            if path.as_bytes()[i] != leading_tag!().as_bytes()[i] {
+                return Err(("tag", 0));
             }
             i += 1;
         }
         i = 0;
         while i < trailing_tag!().len() {
-            if path[end + i] != trailing_tag!().as_bytes()[i] {
-                return Err(());
+            if path.as_bytes()[end + i] != trailing_tag!().as_bytes()[i] {
+                return Err(("tag", end + 1));
             }
             i += 1;
         }
 
-        // Approximate regex: \w+(/\w+)*@\d+
-        // State 0 = start of string
-        // State 1 = after first character
-        // State 2 = after a slash
-        // State 3 = after a character after a slash
-        // State 4 = after @
-        // State 5 = after a digit after @
+        // Regex: [a-zA-Z0-9=_]+(/[a-zA-Z0-9=_]+)*@[0-9]+
+        enum State {
+            Start,
+            AfterChar,
+            AfterSlash,
+            AfterCharAfterSlash,
+            AfterAt,
+            AfterDigit,
+        }
+        use State::*;
         i = start;
-        let mut state = 0;
-        while i < end {
-            state = match (state, path[i]) {
-                (0 | 1, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=') => 1,
-                (1, b'/') => 2,
-                (2 | 3, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=') => 3,
-                (3, b'/') => 2,
-                (3, b'@') => 4,
-                (4 | 5, b'0'..=b'9') => 5,
-                _ => return Err(()),
+        let mut state = Start;
+        loop {
+            state = match (
+                state,
+                if i < end {
+                    Some(path.as_bytes()[i])
+                } else {
+                    None
+                },
+            ) {
+                (Start, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => AfterChar,
+                (Start, _) => return Err(("[a-zA-Z0-9=_]", i)),
+
+                (AfterChar, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
+                    AfterChar
+                }
+                (AfterChar, Some(b'/')) => AfterSlash,
+                (AfterChar, _) => return Err(("[a-zA-z0-9=_/]", i)),
+
+                (AfterSlash, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
+                    AfterCharAfterSlash
+                }
+                (AfterSlash, _) => return Err(("[a-zA-Z0-9=_]", i)),
+
+                (
+                    AfterCharAfterSlash,
+                    Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'='),
+                ) => AfterCharAfterSlash,
+                (AfterCharAfterSlash, Some(b'/')) => AfterSlash,
+                (AfterCharAfterSlash, Some(b'@')) => AfterAt,
+                (AfterCharAfterSlash, _) => return Err(("[a-zA-z0-9=_/@]", i)),
+
+                (AfterAt, Some(b'0'..=b'9')) => AfterDigit,
+                (AfterAt, _) => return Err(("[0-9]", i)),
+
+                (AfterDigit, Some(b'0'..=b'9')) => AfterDigit,
+                (AfterDigit, Some(_)) => return Err(("[0-9]", i)),
+                (AfterDigit, None) => {
+                    return Ok(Self {
+                        path,
+                        hash: ResourceKeyHash::compute_from_str(path),
+                    })
+                }
             };
             i += 1;
         }
-        if state != 5 {
-            return Err(());
-        }
-        Ok(())
-    }
-}
-
-#[test]
-fn test_path_syntax() {
-    // Valid keys:
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world@1")),
-        Ok(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world/foo@1")),
-        Ok(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world@999")),
-        Ok(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello_world/foo@1")),
-        Ok(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello_458/world@1")),
-        Ok(_)
-    ));
-
-    // No slash:
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello_world@1")),
-        Err(_)
-    ));
-
-    // No version:
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world")),
-        Err(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world@")),
-        Err(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("hello/world@foo")),
-        Err(_)
-    ));
-
-    // Invalid characters:
-    assert!(matches!(
-        ResourceKey::try_new(tagged!("你好/世界@1")),
-        Err(_)
-    ));
-
-    // Invalid tag:
-    assert!(matches!(
-        ResourceKey::try_new(concat!("hello/world@1", trailing_tag!())),
-        Err(_)
-    ));
-    assert!(matches!(
-        ResourceKey::try_new(concat!(leading_tag!(), "hello/world@1")),
-        Err(_)
-    ));
-    assert!(matches!(ResourceKey::try_new("hello/world@1"), Err(_)));
-}
-
-/// Shortcut to construct a const resource identifier.
-///
-/// For example, see [`ResourceKey::try_new()`].
-#[macro_export]
-macro_rules! resource_key {
-    ($path:literal) => {{
-        // Force the ResourceKey into a const context
-        const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
-            match $crate::ResourceKey::try_new($crate::tagged!($path)) {
-                Ok(v) => v,
-                Err(_) => panic!(concat!("Invalid resource key: ", $path)),
-            }
-        };
-        RESOURCE_KEY_MACRO_CONST
-    }};
-    // TODO(#570): Migrate call sites to the all-in-one string version of the macro above,
-    // and then delete all of the macro branches that follow.
-    (Core, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("core", $sub_category, $version)
-    };
-    (Calendar, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("calendar", $sub_category, $version)
-    };
-    (DateTime, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("datetime", $sub_category, $version)
-    };
-    (Decimal, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("decimal", $sub_category, $version)
-    };
-    (LocaleCanonicalizer, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("locale_canonicalizer", $sub_category, $version)
-    };
-    (Plurals, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("plurals", $sub_category, $version)
-    };
-    (TimeZone, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("time_zone", $sub_category, $version)
-    };
-    (Properties, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("props", $sub_category, $version)
-    };
-    (ListFormatter, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("list_formatter", $sub_category, $version)
-    };
-    (Segmenter, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!("segmenter", $sub_category, $version)
-    };
-    ($category:literal, $sub_category:literal, $version:tt) => {{
-        // Force the ResourceKey into a const context
-        const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
-            // Note: concat!() does not seem to work as a literal argument to another macro call.
-            // This branch will be deleted anyway in #570.
-            match $crate::ResourceKey::try_new(concat!(
-                $crate::leading_tag!(),
-                $category,
-                "/",
-                $sub_category,
-                "@",
-                $version,
-                $crate::trailing_tag!(),
-            )) {
-                Ok(v) => v,
-                Err(_) => panic!(concat!("Invalid resource key")),
-            }
-        };
-        RESOURCE_KEY_MACRO_CONST
-    }};
-}
-
-impl fmt::Debug for ResourceKey {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("ResourceKey{")?;
-        fmt::Display::fmt(self, f)?;
-        f.write_char('}')?;
-        Ok(())
-    }
-}
-
-impl fmt::Display for ResourceKey {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Writeable::write_to(self, f)
-    }
-}
-
-impl Writeable for ResourceKey {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.get_path().write_to(sink)
     }
 
-    fn write_len(&self) -> LengthHint {
-        self.get_path().write_len()
-    }
-
-    fn writeable_to_string(&self) -> Cow<str> {
-        Cow::Borrowed(self.get_path())
-    }
-}
-
-impl ResourceKey {
     /// Gets the last path component of a [`ResourceKey`] without the version suffix.
     ///
     /// # Examples
@@ -400,6 +258,112 @@ impl ResourceKey {
         } else {
             Err(DataErrorKind::MissingResourceKey.with_key(key))
         }
+    }
+}
+
+#[test]
+fn test_path_syntax() {
+    // Valid keys:
+    assert!(ResourceKey::construct_internal(tagged!("hello/world@1")).is_ok());
+    assert!(ResourceKey::construct_internal(tagged!("hello/world/foo@1")).is_ok());
+    assert!(ResourceKey::construct_internal(tagged!("hello/world@999")).is_ok());
+    assert!(ResourceKey::construct_internal(tagged!("hello_world/foo@1")).is_ok());
+    assert!(ResourceKey::construct_internal(tagged!("hello_458/world@1")).is_ok());
+
+    // No slash:
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello_world@1")),
+        Err(("[a-zA-z0-9=_/]", 25))
+    );
+
+    // No version:
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world")),
+        Err(("[a-zA-z0-9=_/@]", 25))
+    );
+
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@")),
+        Err(("[0-9]", 26))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@foo")),
+        Err(("[0-9]", 26))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1foo")),
+        Err(("[0-9]", 27))
+    );
+
+    // Invalid characters:
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("你好/世界@1")),
+        Err(("[a-zA-Z0-9=_]", 14))
+    );
+
+    // Invalid tag:
+    assert_eq!(
+        ResourceKey::construct_internal(concat!("hello/world@1", trailing_tag!())),
+        Err(("tag", 0))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1")),
+        Err(("tag", 27))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal("hello/world@1"),
+        Err(("tag", 0))
+    );
+}
+
+/// See [`ResourceKey`].
+#[macro_export]
+macro_rules! resource_key {
+    ($path:expr) => {{
+        // Force the ResourceKey into a const context
+        const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
+            match $crate::ResourceKey::construct_internal($crate::tagged!($path)) {
+                Ok(v) => v,
+                Err(_) => panic!(concat!("Invalid resource key: ", $path)),
+                // TODO Once formatting is const:
+                // Err((expected, index)) => panic!(
+                //     "Invalid resource key {:?}: expected {:?}, found {:?} ",
+                //     $path,
+                //     expected,
+                //     $crate::tagged!($path).get(index..))
+                // );
+            }
+        };
+        RESOURCE_KEY_MACRO_CONST
+    }};
+}
+
+impl fmt::Debug for ResourceKey {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str("ResourceKey{")?;
+        fmt::Display::fmt(self, f)?;
+        f.write_char('}')?;
+        Ok(())
+    }
+}
+
+impl fmt::Display for ResourceKey {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Writeable::write_to(self, f)
+    }
+}
+
+impl Writeable for ResourceKey {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        self.get_path().write_to(sink)
+    }
+
+    fn write_len(&self) -> LengthHint {
+        self.get_path().write_len()
+    }
+
+    fn writeable_to_string(&self) -> Cow<str> {
+        Cow::Borrowed(self.get_path())
     }
 }
 

@@ -88,7 +88,7 @@ use std::borrow::Cow;
 
 pub mod key {
     use icu_provider::{resource::ResourceKey, resource_key};
-    pub const EXAMPLE_V1: ResourceKey = resource_key!(x, "foo", "example", 1);
+    pub const EXAMPLE_V1: ResourceKey = resource_key!("foo/example@1");
 }
 
 /// This is a sample data struct.

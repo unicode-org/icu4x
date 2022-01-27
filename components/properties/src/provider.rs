@@ -26,7 +26,7 @@ pub mod key {
         ($allkeys:ident; $count:expr; $(($k:ident, $s:literal)),+,) => {
             $(
                 #[allow(missing_docs)] // These constants don't need individual documentation.
-                pub const $k: ResourceKey = resource_key!(Properties, $s, 1);
+                pub const $k: ResourceKey = resource_key!(concat!("props/", $s, "@1"));
             )+
 
             /// The set of all resource keys supported by [`icu_uniset`](crate).
