@@ -9,26 +9,6 @@ const KEEP_RULE: i8 = -1;
 // If a break state contains this bit, we have to look ahead one more character.
 const INTERMEDIATE_MATCH_RULE: i8 = 64;
 
-pub fn get_break_property_utf32(codepoint: u32, property_table: &[&[u8; 1024]; 897]) -> u8 {
-    let codepoint = codepoint as usize;
-    if codepoint >= 897 * 1024 {
-        // Unknown
-        return 0;
-    }
-    property_table[codepoint / 1024][(codepoint & 0x3ff)]
-}
-
-#[inline]
-pub fn get_break_property_latin1(codepoint: u8, property_table: &[&[u8; 1024]; 897]) -> u8 {
-    let codepoint = codepoint as usize;
-    property_table[codepoint / 1024][(codepoint & 0x3ff)]
-}
-
-#[inline]
-pub fn get_break_property_utf8(codepoint: char, property_table: &[&[u8; 1024]; 897]) -> u8 {
-    get_break_property_utf32(codepoint as u32, property_table)
-}
-
 /// A trait allowing for RuleBreakIterator to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
 pub trait RuleBreakType<'a> {
@@ -37,8 +17,6 @@ pub trait RuleBreakType<'a> {
 
     /// The character type.
     type CharType: Copy + Into<u32>;
-
-    fn get_break_property(iter: &RuleBreakIterator<'a, Self>) -> u8;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<'a, Self>) -> usize;
 
@@ -92,21 +70,21 @@ impl<'a, Y: RuleBreakType<'a>> Iterator for RuleBreakIterator<'a, Y> {
             let current_pos_data = self.iter.next()?;
             self.current_pos_data = Some(current_pos_data);
             // SOT x anything
-            let right_prop = Y::get_break_property(self);
+            let right_prop = self.get_current_break_property();
             if self.is_break_from_table(self.sot_property, right_prop) {
                 return Some(current_pos_data.0);
             }
         }
 
         loop {
-            let left_prop = Y::get_break_property(self);
-            let left_codepoint = self.current_pos_data.unwrap().1;
+            let left_codepoint = self.get_current_codepoint();
+            let left_prop = self.get_break_property(left_codepoint);
             self.current_pos_data = self.iter.next();
 
             if self.current_pos_data.is_none() {
                 return Some(self.len);
             }
-            let right_prop = Y::get_break_property(self);
+            let right_prop = self.get_current_break_property();
 
             // Some segmenter rules doesn't have language-specific rules, we have to use LSTM (or dictionary) segmenter.
             // If property is marked as SA, use it
@@ -147,7 +125,7 @@ impl<'a, Y: RuleBreakType<'a>> Iterator for RuleBreakIterator<'a, Y> {
                     }
 
                     let previous_break_state = break_state;
-                    let prop = Y::get_break_property(self);
+                    let prop = self.get_current_break_property();
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
                     if break_state < 0 {
                         break;
@@ -184,6 +162,23 @@ impl<'a, Y: RuleBreakType<'a>> Iterator for RuleBreakIterator<'a, Y> {
 }
 
 impl<'a, Y: RuleBreakType<'a>> RuleBreakIterator<'a, Y> {
+    pub(crate) fn get_current_break_property(&self) -> u8 {
+        self.get_break_property(self.get_current_codepoint())
+    }
+
+    fn get_current_codepoint(&self) -> Y::CharType {
+        self.current_pos_data.expect("Not at the of the string").1
+    }
+
+    fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
+        let codepoint = codepoint.into() as usize;
+        if codepoint >= 897 * 1024 {
+            // Unknown
+            return 0;
+        }
+        self.property_table[codepoint / 1024][(codepoint & 0x3ff)]
+    }
+
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
         self.break_state_table
             [(left as usize) * self.rule_property_count + (right as usize)]

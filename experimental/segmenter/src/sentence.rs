@@ -38,10 +38,6 @@ impl<'a> RuleBreakType<'a> for SentenceBreakType {
     type IterAttr = CharIndices<'a>;
     type CharType = char;
 
-    fn get_break_property(iter: &RuleBreakIterator<Self>) -> u8 {
-        get_break_property_utf8(iter.current_pos_data.unwrap().1, iter.property_table)
-    }
-
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
         iter.current_pos_data.unwrap().1.len_utf8()
     }
@@ -79,11 +75,6 @@ impl<'a> RuleBreakType<'a> for SentenceBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'a>;
     type CharType = u8; // TODO: Latin1Char
 
-    #[inline]
-    fn get_break_property(iter: &RuleBreakIterator<Self>) -> u8 {
-        get_break_property_latin1(iter.current_pos_data.unwrap().1, iter.property_table)
-    }
-
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")
     }
@@ -120,11 +111,6 @@ impl<'a> SentenceBreakIteratorUtf16<'a> {
 impl<'a> RuleBreakType<'a> for SentenceBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'a>;
     type CharType = u32;
-
-    #[inline]
-    fn get_break_property(iter: &RuleBreakIterator<Self>) -> u8 {
-        get_break_property_utf32(iter.current_pos_data.unwrap().1, iter.property_table)
-    }
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
         let ch = iter.current_pos_data.unwrap().1;
