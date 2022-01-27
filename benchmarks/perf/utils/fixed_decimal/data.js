@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643311534906,
+  "lastUpdate": 1643320555839,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18029,6 +18029,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 118781,
             "range": "± 4518",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "405b9fd316b87d2eaafa86d62d8ea02639472dec",
+          "message": "Making DateTime data zero-copy (#1550)",
+          "timestamp": "2022-01-27T22:47:57+01:00",
+          "tree_id": "690a566ef318b3bdbdad0b4863fdb530491df8ea",
+          "url": "https://github.com/unicode-org/icu4x/commit/405b9fd316b87d2eaafa86d62d8ea02639472dec"
+        },
+        "date": 1643320545381,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 99090,
+            "range": "± 5863",
             "unit": "ns/iter"
           }
         ]
