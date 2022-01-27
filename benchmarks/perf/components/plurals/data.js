@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643309258015,
+  "lastUpdate": 1643311642034,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25283,6 +25283,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15939,
             "range": "± 2082",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b5f13921eec4e43d7aaafa75ac8bdd9be233fc2",
+          "message": "Cleaning up resource_keys! and improving doc (#1540)",
+          "timestamp": "2022-01-27T20:17:20+01:00",
+          "tree_id": "9f5d6c7d96d6b41a46bd0ff6d47bf5c47da3dc14",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b5f13921eec4e43d7aaafa75ac8bdd9be233fc2"
+        },
+        "date": 1643311632039,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 946,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5414,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 13449,
+            "range": "± 118",
             "unit": "ns/iter"
           }
         ]
