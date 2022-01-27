@@ -93,13 +93,13 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> calendar::Eras<'
 
     for (cldr, code) in map.into_tuple_vec().into_iter() {
         if let Some(name) = eras.names.get(&cldr) {
-            out_eras.names.insert(&code, &name);
+            out_eras.names.insert(&code, name);
         }
         if let Some(abbr) = eras.abbr.get(&cldr) {
-            out_eras.abbr.insert(&code, &abbr);
+            out_eras.abbr.insert(&code, abbr);
         }
         if let Some(narrow) = eras.narrow.get(&cldr) {
-            out_eras.narrow.insert(&code, &narrow);
+            out_eras.narrow.insert(&code, narrow);
         }
     }
     out_eras
