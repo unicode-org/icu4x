@@ -105,9 +105,9 @@ impl DataPayload<BufferMarker> {
     }
 }
 
-impl<P, M> DynProvider<M> for DeserializingBufferProvider<'_, P>
+impl<P, M> ResourceProvider<M> for DeserializingBufferProvider<'_, P>
 where
-    M: DataMarker,
+    M: ResourceMarker,
     P: BufferProvider + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
@@ -115,8 +115,8 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
-    fn load_payload(&self, key: ResourceKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let old_response = BufferProvider::load_buffer(self.0, key, req)?;
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        let old_response = BufferProvider::load_buffer(self.0, M::KEY, req)?;
         if let Some(old_payload) = old_response.payload {
             let buffer_format = old_response
                 .metadata

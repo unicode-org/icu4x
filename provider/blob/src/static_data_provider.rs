@@ -100,32 +100,36 @@ impl StaticDataProvider {
         }
     }
 
-    fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
-        let path = path_util::resource_path_to_string(&req.resource_path);
+    fn get_file(&self, key: ResourceKey, req: &DataRequest) -> Result<&'static [u8], DataError> {
+        let path = path_util::resource_path_to_string(key, &req.options);
         // TODO: Distinguish between missing resource key and missing resource options
         self.data
             .get(&path)
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))
     }
 }
 
-impl<M> DataProvider<M> for StaticDataProvider
+impl<M> ResourceProvider<M> for StaticDataProvider
 where
-    M: DataMarker,
+    M: ResourceMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
         serde::de::Deserialize<'de>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_payload(req)
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.as_deserializing().load_resource(req)
     }
 }
 
 impl BufferProvider for StaticDataProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let static_buffer = self.get_file(req)?;
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let static_buffer = self.get_file(key, req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard07);

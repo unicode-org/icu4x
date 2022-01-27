@@ -38,10 +38,11 @@ impl Drop for BlobExporter<'_> {
 impl DataExporter<SerializeMarker> for BlobExporter<'_> {
     fn put_payload(
         &mut self,
+        key: ResourceKey,
         req: DataRequest,
         payload: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
-        let path = path_util::resource_path_to_string(&req.resource_path);
+        let path = path_util::resource_path_to_string(key, &req.options);
         log::trace!("Adding: {}", path);
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::AllocVec(Vec::new()),

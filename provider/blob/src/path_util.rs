@@ -6,10 +6,14 @@ use alloc::string::String;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
-pub fn resource_path_to_string(resource_path: &ResourcePath) -> String {
-    let mut output = String::with_capacity(resource_path.write_len().capacity() + 1);
+pub fn resource_path_to_string(key: ResourceKey, options: &ResourceOptions) -> String {
+    let mut output =
+        String::with_capacity(key.write_len().capacity() + options.write_len().capacity() + 2);
     output.push('/');
-    resource_path
+    key.write_to(&mut output)
+        .expect("impl Write for String is infallible");
+    output.push('/');
+    options
         .write_to(&mut output)
         .expect("impl Write for String is infallible");
     output

@@ -83,34 +83,42 @@ impl BlobDataProvider {
 
     /// Gets the buffer for the given DataRequest out of the BlobSchema and returns it yoked
     /// to the buffer backing the BlobSchema.
-    fn get_file(&self, req: &DataRequest) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
-        let path = path_util::resource_path_to_string(&req.resource_path);
+    fn get_file(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
+        let path = path_util::resource_path_to_string(key, &req.options);
         // TODO: Distinguish between missing resource key and missing resource options
         self.data
             .try_project_cloned_with_capture::<&'static [u8], String, ()>(path, |zm, path, _| {
                 zm.get(&path).ok_or(())
             })
-            .map_err(|_| DataErrorKind::MissingResourceKey.with_req(req))
+            .map_err(|_| DataErrorKind::MissingResourceKey.with_req(key, req))
     }
 }
 
-impl<M> DataProvider<M> for BlobDataProvider
+impl<M> ResourceProvider<M> for BlobDataProvider
 where
-    M: DataMarker,
+    M: ResourceMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
         serde::de::Deserialize<'de>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_payload(req)
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.as_deserializing().load_resource(req)
     }
 }
 
 impl BufferProvider for BlobDataProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let yoked_buffer = self.get_file(req)?;
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let yoked_buffer = self.get_file(key, req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard07);
