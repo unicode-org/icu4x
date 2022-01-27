@@ -973,32 +973,3 @@ where
 {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
 }
-
-/*
-impl<P, M> ResourceProvider<M> for P
-where
-    M: ResourceMarker,
-    P: DataProvider<M>
-{
-    fn load_resource(&self, options: ResourceOptions) -> Result<DataResponse<M>, DataError> {
-        self.load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: M::KEY,
-                options
-            }
-        })
-    }
-}
-*/
-
-/*
-impl<P, M> DataProvider<M> for P
-where
-    M: ResourceMarker,
-    P: ResourceProvider<M>
-{
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        todo!()
-    }
-}
-*/

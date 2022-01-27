@@ -289,18 +289,6 @@ pub trait AnyProvider {
     fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }
 
-/*
-impl<P> DynProvider<AnyMarker> for P
-where
-    P: AnyProvider + ?Sized,
-{
-    #[inline]
-    fn load_payload(&self, key: ResourceKey, req: &DataRequest) -> Result<DataResponse<AnyMarker>, DataError> {
-        self.load_any(key, req).map(|r| r.into())
-    }
-}
-*/
-
 /// A wrapper over `DynProvider<AnyMarker>` that implements `AnyProvider`
 pub struct DynProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
