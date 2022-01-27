@@ -36,7 +36,7 @@ litemap = { version = "0.2", path = "../../utils/litemap" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.3.1", path = "../yoke", features = ["derive"] }
+yoke = { version = "0.4.0", path = "../yoke", features = ["derive"] }
 zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["serde"] }
 
 [dev-dependencies]

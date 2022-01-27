@@ -34,7 +34,7 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-yoke = { version = "0.3.1", path = "../yoke", features = ["derive"] }
+yoke = { version = "0.4.0", path = "../yoke", features = ["derive"] }
 zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 [dev-dependencies]
