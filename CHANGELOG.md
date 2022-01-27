@@ -10,24 +10,25 @@
     - Change DataRequest to be borrowed in BufferProvider (#1416)
     - Replace SerdeDeDataProvider with BufferProvider (#1369, #1384)
   - Components
-    - `icu_calendar`:
+    - `calendar`:
       - Julian, Japanese, and Buddhist calendars (#1351, #1394, #1305)
       - `DateTimeFormat` integration (#1339)
       - Bugfix around arithmetic (#1352)
-    - `icu_datetime`:
+    - `datetime`:
       - Week-of-year support (#1206)
       - `DateTimeFormat::resolve_components()` (#1362)
       - Era formatting (#1346)
       - `TimeZoneFormatConfig` (#1256)
       - New data model for organizing calendar data (#1300)
-    - `icu_decimal`: No updates
+      - Bugfix around missing localized strings in time zone data (#1405)
+    - `decimal`: No updates
     - `locale_canonicalizer`:
       - Bugfix in maximization (#1171)
       - Update data model to use `LiteMap` (#1275)
-    - `icu_locid`: No updates
-    - `icu_plurals`:
+    - `locid`: No updates
+    - `plurals`:
       - Update data model to use `ZeroVec` (#1240)
-    - `icu_properties`:
+    - `properties`:
       - Rename resource key category for properties (#1406)
       - Rename enums for `General_Category` (#1355)
       - Implement the `Canonical_Combining_Class` property (#1347)
