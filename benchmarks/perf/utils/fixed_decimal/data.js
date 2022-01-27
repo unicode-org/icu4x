@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643219947466,
+  "lastUpdate": 1643309125184,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -17969,6 +17969,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 103813,
             "range": "± 500",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9b5c987d58a3ad7ccf0cf633ede52a8bb21bbc4",
+          "message": "Replace break_iterator_impl macro with a helper trait (#1548)\n\nThe goal of this patch is to remove the macro and preserve the APIs as much\r\nas possible. We'll start simplify things in the later patches.\r\n\r\nThe removed get_break_property_{utf32,latin1,utf8} helper functions all convert\r\nthe character into 32-bit unsigned integer to query the property table. Since\r\nRuleBreakType::CharType is bounded by Into<u32>, we can implement a generic\r\nget_break_property() directly in RuleBreakIterator.\r\n\r\nThis patch shouldn't change the behavior.",
+          "timestamp": "2022-01-27T10:35:44-08:00",
+          "tree_id": "0c0d4cc1c5cbf1a39f949cb60bff83d31260bda2",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9b5c987d58a3ad7ccf0cf633ede52a8bb21bbc4"
+        },
+        "date": 1643309113757,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100999,
+            "range": "± 3856",
             "unit": "ns/iter"
           }
         ]
