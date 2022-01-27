@@ -5,14 +5,15 @@
 use alloc::vec::Vec;
 use core::str::CharIndices;
 
-use crate::break_iterator_impl;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::rule_segmenter::*;
 
 include!(concat!(env!("OUT_DIR"), "/generated_grapheme_table.rs"));
 
+pub struct GraphemeClusterBreakType;
+
 // UTF-8 version of grapheme break iterator using rule based segmenter.
-break_iterator_impl!(GraphemeClusterBreakIterator, CharIndices<'a>, char);
+pub type GraphemeClusterBreakIterator<'a> = RuleBreakIterator<'a, GraphemeClusterBreakType>;
 
 impl<'a> GraphemeClusterBreakIterator<'a> {
     /// Create grapheme break iterator
@@ -31,22 +32,29 @@ impl<'a> GraphemeClusterBreakIterator<'a> {
             complex_property: PROP_COMPLEX as u8,
         }
     }
+}
 
-    fn get_break_property(&mut self) -> u8 {
-        get_break_property_utf8(self.current_pos_data.unwrap().1, self.property_table)
+impl<'a> RuleBreakType<'a> for GraphemeClusterBreakType {
+    type IterAttr = CharIndices<'a>;
+    type CharType = char;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.current_pos_data.unwrap().1.len_utf8()
     }
 
-    fn get_current_position_character_len(&self) -> usize {
-        self.current_pos_data.unwrap().1.len_utf8()
-    }
-
-    fn handle_complex_language(&mut self, _: char) -> Option<usize> {
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
         panic!("not reachable")
     }
 }
 
+pub struct GraphemeClusterBreakTypeLatin1;
+
 // Latin-1 version of grapheme break iterator using rule based segmenter.
-break_iterator_impl!(GraphemeClusterBreakIteratorLatin1, Latin1Indices<'a>, u8);
+pub type GraphemeClusterBreakIteratorLatin1<'a> =
+    RuleBreakIterator<'a, GraphemeClusterBreakTypeLatin1>;
 
 impl<'a> GraphemeClusterBreakIteratorLatin1<'a> {
     /// Create grapheme break iterator using Latin-1/8-bit string.
@@ -65,23 +73,29 @@ impl<'a> GraphemeClusterBreakIteratorLatin1<'a> {
             complex_property: PROP_COMPLEX as u8,
         }
     }
+}
 
-    #[inline]
-    fn get_break_property(&mut self) -> u8 {
-        get_break_property_latin1(self.current_pos_data.unwrap().1, self.property_table)
-    }
+impl<'a> RuleBreakType<'a> for GraphemeClusterBreakTypeLatin1 {
+    type IterAttr = Latin1Indices<'a>;
+    type CharType = u8; // TODO: Latin1Char
 
-    fn get_current_position_character_len(&self) -> usize {
+    fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")
     }
 
-    fn handle_complex_language(&mut self, _: u8) -> Option<usize> {
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
         panic!("not reachable")
     }
 }
 
+pub struct GraphemeClusterBreakTypeUtf16;
+
 // UTF-16 version of grapheme break iterator using rule based segmenter.
-break_iterator_impl!(GraphemeClusterBreakIteratorUtf16, Utf16Indices<'a>, u32);
+pub type GraphemeClusterBreakIteratorUtf16<'a> =
+    RuleBreakIterator<'a, GraphemeClusterBreakTypeUtf16>;
 
 impl<'a> GraphemeClusterBreakIteratorUtf16<'a> {
     /// Create grapheme break iterator using UTF-16 string.
@@ -100,14 +114,14 @@ impl<'a> GraphemeClusterBreakIteratorUtf16<'a> {
             complex_property: PROP_COMPLEX as u8,
         }
     }
+}
 
-    #[inline]
-    fn get_break_property(&mut self) -> u8 {
-        get_break_property_utf32(self.current_pos_data.unwrap().1, self.property_table)
-    }
+impl<'a> RuleBreakType<'a> for GraphemeClusterBreakTypeUtf16 {
+    type IterAttr = Utf16Indices<'a>;
+    type CharType = u32;
 
-    fn get_current_position_character_len(&self) -> usize {
-        let ch = self.current_pos_data.unwrap().1;
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        let ch = iter.current_pos_data.unwrap().1;
         if ch >= 0x10000 {
             2
         } else {
@@ -115,7 +129,10 @@ impl<'a> GraphemeClusterBreakIteratorUtf16<'a> {
         }
     }
 
-    fn handle_complex_language(&mut self, _: u32) -> Option<usize> {
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
         panic!("not reachable")
     }
 }
