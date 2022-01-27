@@ -142,57 +142,46 @@ impl ResourceKey {
         // Regex: [a-zA-Z0-9=_]+(/[a-zA-Z0-9=_]+)*@[0-9]+
         enum State {
             Start,
-            AfterChar,
-            AfterSlash,
-            AfterCharAfterSlash,
-            AfterAt,
-            AfterDigit,
+            Body0,
+            Slash,
+            Body1,
+            AtSign,
+            Body2,
         }
         use State::*;
         i = start;
         let mut state = Start;
         loop {
-            state = match (
-                state,
-                if i < end {
-                    Some(path.as_bytes()[i])
-                } else {
-                    None
-                },
-            ) {
-                (Start, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => AfterChar,
-                (Start, _) => return Err(("[a-zA-Z0-9=_]", i)),
-
-                (AfterChar, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
-                    AfterChar
+            let content = if i < end {
+                Some(path.as_bytes()[i])
+            } else {
+                None
+            };
+            state = match (state, content) {
+                (Start | Body0, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
+                    Body0
                 }
-                (AfterChar, Some(b'/')) => AfterSlash,
-                (AfterChar, _) => return Err(("[a-zA-z0-9=_/]", i)),
-
-                (AfterSlash, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
-                    AfterCharAfterSlash
+                (Body0, Some(b'/')) => Slash,
+                (Slash | Body1, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
+                    Body1
                 }
-                (AfterSlash, _) => return Err(("[a-zA-Z0-9=_]", i)),
+                (Body1, Some(b'/')) => Slash,
+                (Body1, Some(b'@')) => AtSign,
+                (AtSign | Body2, Some(b'0'..=b'9')) => Body2,
 
-                (
-                    AfterCharAfterSlash,
-                    Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'='),
-                ) => AfterCharAfterSlash,
-                (AfterCharAfterSlash, Some(b'/')) => AfterSlash,
-                (AfterCharAfterSlash, Some(b'@')) => AfterAt,
-                (AfterCharAfterSlash, _) => return Err(("[a-zA-z0-9=_/@]", i)),
-
-                (AfterAt, Some(b'0'..=b'9')) => AfterDigit,
-                (AfterAt, _) => return Err(("[0-9]", i)),
-
-                (AfterDigit, Some(b'0'..=b'9')) => AfterDigit,
-                (AfterDigit, Some(_)) => return Err(("[0-9]", i)),
-                (AfterDigit, None) => {
+                // Success:
+                (Body2, None) => {
                     return Ok(Self {
                         path,
                         hash: ResourceKeyHash::compute_from_str(path),
                     })
                 }
+
+                // Errors:
+                (Start | Slash, _) => return Err(("[a-zA-Z0-9=_]", i)),
+                (Body0, _) => return Err(("[a-zA-z0-9=_/]", i)),
+                (Body1, _) => return Err(("[a-zA-z0-9=_/@]", i)),
+                (AtSign | Body2, _) => return Err(("[0-9]", i)),
             };
             i += 1;
         }
