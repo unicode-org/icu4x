@@ -167,10 +167,12 @@ fn week_of_year<T: DateInput>(
 
 /// Returns the week of month according to a calendar with min_week_days = 1.
 ///
-/// This is different from what the UTS35 spec describes but the latter is
+/// This is different from what the UTS35 spec describes [1] but the latter is
 /// missing a month of week-of-month field so following the spec would result
 /// in inconsistencies (e.g. in the ISO calendar 2021-01-01 is the last week
 /// of December but 'MMMMW' would have it formatted as 'week 5 of January').
+///
+/// 1: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
 fn week_of_month<T: DateInput>(
     datetime: &T,
     first_weekday: IsoWeekday,
