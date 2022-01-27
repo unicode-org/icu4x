@@ -37,7 +37,7 @@ icu_plurals = { version = "0.4", path = "../plurals" }
 icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
 icu_calendar = { version = "0.4", path = "../calendar" }
 writeable = { version = "0.3", path = "../../utils/writeable" }
-litemap = { version = "0.2", path = "../../utils/litemap" }
+litemap = { version = "0.3.0", path = "../../utils/litemap" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }

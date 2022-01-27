@@ -46,7 +46,7 @@ icu_calendar = { version = "0.4", path = "../../components/calendar", features =
 icu_list = { version = "0.1", path = "../../experimental/list_formatter", features = ["provider_transform_internals"]}
 itertools = "0.10"
 json = "0.12"
-litemap = { version = "0.2.2", path = "../../utils/litemap/" }
+litemap = { version = "0.3.0", path = "../../utils/litemap/" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde-aux = "2.1.1"
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
