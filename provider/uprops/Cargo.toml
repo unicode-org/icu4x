@@ -34,7 +34,7 @@ icu_provider = { version = "0.4", path = "../../provider/core", features = ["ser
 icu_uniset = { version = "0.4", path = "../../utils/uniset", features = ["provider_serde"] }
 serde = { version = "1.0", features = ["derive"] }
 toml = { version = "0.5" }
-zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 log = { version = "0.4", optional = true }
 eyre = "0.6.5"
 tinystr = "0.4"

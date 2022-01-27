@@ -37,7 +37,7 @@ icu_provider = { version = "0.4", path = "../../provider/core", features = ["mac
 icu_locid = { version = "0.4", path = "../locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
-zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["yoke"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
 num_enum = { version = "0.5", default_features = false }
 
 [dev-dependencies]

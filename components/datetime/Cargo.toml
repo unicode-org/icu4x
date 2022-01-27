@@ -39,7 +39,7 @@ icu_calendar = { version = "0.4", path = "../calendar" }
 writeable = { version = "0.2.1", path = "../../utils/writeable" }
 litemap = { version = "0.2", path = "../../utils/litemap" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
-zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["yoke"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde-tuple-vec-map = { version = "1.0", optional = true }
 smallvec = "1.6"
