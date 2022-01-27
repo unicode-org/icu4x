@@ -53,7 +53,7 @@ where
     T: DateTimeInput,
 {
     pub(crate) patterns: &'l DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub(crate) symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
+    pub(crate) symbols: Option<&'l provider::calendar::DateSymbolsV1>,
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,

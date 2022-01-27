@@ -75,10 +75,7 @@ impl IterableProvider for DateSymbolsProvider {
     }
 }
 
-fn convert_dates(
-    other: &cldr_serde::ca::Dates,
-    calendar: &str,
-) -> calendar::DateSymbolsV1<'static> {
+fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> calendar::DateSymbolsV1 {
     calendar::DateSymbolsV1 {
         months: (&other.months).into(),
         weekdays: (&other.days).into(),
@@ -87,19 +84,19 @@ fn convert_dates(
     }
 }
 
-fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> calendar::Eras<'static> {
+fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> calendar::Eras {
     let map = get_era_code_map(calendar);
     let mut out_eras = calendar::Eras::default();
 
     for (cldr, code) in map.into_tuple_vec().into_iter() {
         if let Some(name) = eras.names.get(&cldr) {
-            out_eras.names.insert(&code, name);
+            out_eras.names.insert(code.to_string(), name.clone());
         }
         if let Some(abbr) = eras.abbr.get(&cldr) {
-            out_eras.abbr.insert(&code, abbr);
+            out_eras.abbr.insert(code.to_string(), abbr.clone());
         }
         if let Some(narrow) = eras.narrow.get(&cldr) {
-            out_eras.narrow.insert(&code, narrow);
+            out_eras.narrow.insert(code.to_string(), narrow.clone());
         }
     }
     out_eras
@@ -123,7 +120,7 @@ fn get_era_code_map(calendar: &str) -> LiteMap<String, TinyStr16> {
 
 macro_rules! symbols_from {
     ([$name: ident, $name2: ident $(,)?], [ $($element: ident),+ $(,)? ] $(,)?) => {
-        impl From<&cldr_serde::ca::$name::Symbols> for calendar::$name2::SymbolsV1<'static> {
+        impl From<&cldr_serde::ca::$name::Symbols> for calendar::$name2::SymbolsV1 {
             fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
                 Self([
                     $(
@@ -135,7 +132,7 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name2]);
     };
     ([$name: ident, $name2: ident $(,)?], { $($element: ident),+ $(,)? } $(,)?) => {
-        impl From<&cldr_serde::ca::$name::Symbols> for calendar::$name2::SymbolsV1<'static> {
+        impl From<&cldr_serde::ca::$name::Symbols> for calendar::$name2::SymbolsV1 {
             fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
                 Self {
                     $(
@@ -158,7 +155,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_serde::ca::$name::Contexts> for calendar::$name2::ContextsV1<'static> {
+        impl From<&cldr_serde::ca::$name::Contexts> for calendar::$name2::ContextsV1 {
             fn from(other: &cldr_serde::ca::$name::Contexts) -> Self {
                 Self {
                     format: (&other.format).into(),
@@ -194,7 +191,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_serde::ca::$name::FormatWidths> for calendar::$name2::FormatWidthsV1<'static> {
+        impl From<&cldr_serde::ca::$name::FormatWidths> for calendar::$name2::FormatWidthsV1 {
             fn from(other: &cldr_serde::ca::$name::FormatWidths) -> Self {
                 Self {
                     abbreviated: (&other.abbreviated).into(),
@@ -205,7 +202,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_serde::ca::$name::StandAloneWidths> for calendar::$name2::StandAloneWidthsV1<'static> {
+        impl From<&cldr_serde::ca::$name::StandAloneWidths> for calendar::$name2::StandAloneWidthsV1 {
             fn from(other: &cldr_serde::ca::$name::StandAloneWidths) -> Self {
                 Self {
                     abbreviated: other.abbreviated.as_ref().map(|width| width.into()),

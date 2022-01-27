@@ -5,8 +5,9 @@
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
 use alloc::borrow::Cow;
+use alloc::string::String;
 use icu_provider::yoke::{self, *};
-use zerovec::map::ZeroMap;
+use litemap::LiteMap;
 
 #[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -14,31 +15,27 @@ use zerovec::map::ZeroMap;
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(prove_covariance_manually)]
-pub struct DateSymbolsV1<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub months: months::ContextsV1<'data>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub weekdays: weekdays::ContextsV1<'data>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub day_periods: day_periods::ContextsV1<'data>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub eras: Eras<'data>,
+#[yoke(cloning_zcf)]
+pub struct DateSymbolsV1 {
+    pub months: months::ContextsV1,
+
+    pub weekdays: weekdays::ContextsV1,
+
+    pub day_periods: day_periods::ContextsV1,
+
+    pub eras: Eras,
 }
 
-#[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(prove_covariance_manually)]
-pub struct Eras<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub names: ZeroMap<'data, str, str>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub abbr: ZeroMap<'data, str, str>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub narrow: ZeroMap<'data, str, str>,
+pub struct Eras {
+    // TODO use ZeroMap instead: https://github.com/unicode-org/icu4x/issues/876
+    pub names: LiteMap<String, String>,
+    pub abbr: LiteMap<String, String>,
+    pub narrow: LiteMap<String, String>,
 }
 
 macro_rules! symbols {
@@ -46,9 +43,9 @@ macro_rules! symbols {
             pub mod $name {
                 use super::*;
 
-                #[derive(Debug, PartialEq, Clone, Default, ZeroCopyFrom, Yokeable)]
+                #[derive(Debug, PartialEq, Clone, Default)]
                 #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-                pub struct SymbolsV1<'data>(#[cfg_attr(feature="provider_serde", serde(borrow))] pub $expr);
+                pub struct SymbolsV1(pub $expr);
 
                 symbols!();
             }
@@ -59,28 +56,24 @@ macro_rules! symbols {
         ($name: ident { $element: ident: Option<$ty: ty>, $($tokens: tt)+ } -> ($($members:tt)*)) => {
             symbols!($name { $($tokens)* } -> (
                 $($members)*
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
                 pub $element: Option<$ty>,
             ));
         };
         ($name: ident { $element: ident: $ty: ty, $($tokens: tt)+ } -> ($($members:tt)*)) => {
             symbols!($name { $($tokens)* } -> (
                 $($members)*
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
                 pub $element: $ty,
             ));
         };
         ($name: ident { $element: ident: Option<$ty: ty> $(,)? } -> ($($members:tt)*)) => {
             symbols!($name { } -> (
                 $($members)*
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
                 pub $element: Option<$ty>,
             ));
         };
         ($name: ident { $element: ident: $ty: ty $(,)? } -> ($($members:tt)*)) => {
             symbols!($name { } -> (
                 $($members)*
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
                 pub $element: $ty,
             ));
         };
@@ -89,8 +82,9 @@ macro_rules! symbols {
                 use super::*;
 
                 #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+                #[yoke(cloning_zcf)]
                 #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-                pub struct SymbolsV1<'data> {
+                pub struct SymbolsV1 {
                     $($members)*
                 }
                 symbols!();
@@ -100,52 +94,45 @@ macro_rules! symbols {
             // UTS 35 specifies that `format` widths are mandatory
             // except of `short`.
             #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-            pub struct FormatWidthsV1<'data> {
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub abbreviated: SymbolsV1<'data>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub narrow: SymbolsV1<'data>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub short: Option<SymbolsV1<'data>>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub wide: SymbolsV1<'data>,
+            pub struct FormatWidthsV1 {
+                pub abbreviated: SymbolsV1,
+                pub narrow: SymbolsV1,
+                pub short: Option<SymbolsV1>,
+                pub wide: SymbolsV1,
             }
 
             // UTS 35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-            pub struct StandAloneWidthsV1<'data> {
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub abbreviated: Option<SymbolsV1<'data>>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub narrow: Option<SymbolsV1<'data>>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub short: Option<SymbolsV1<'data>>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub wide: Option<SymbolsV1<'data>>,
+            pub struct StandAloneWidthsV1 {
+                pub abbreviated: Option<SymbolsV1>,
+                pub narrow: Option<SymbolsV1>,
+                pub short: Option<SymbolsV1>,
+                pub wide: Option<SymbolsV1>,
             }
 
             #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
-            pub struct ContextsV1<'data> {
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub format: FormatWidthsV1<'data>,
-                #[cfg_attr(feature = "provider_serde", serde(borrow))]
-                pub stand_alone: Option<StandAloneWidthsV1<'data>>,
+            pub struct ContextsV1 {
+                pub format: FormatWidthsV1,
+                pub stand_alone: Option<StandAloneWidthsV1>,
             }
         };
     }
 
-symbols!(months, [Cow<'data, str>; 12]);
+symbols!(months, [Cow<'static, str>; 12]);
 
-symbols!(weekdays, [Cow<'data, str>; 7]);
+symbols!(weekdays, [Cow<'static, str>; 7]);
 
 symbols!(
     day_periods {
-        am: Cow<'data, str>,
-        pm: Cow<'data, str>,
-        noon: Option<Cow<'data, str>>,
-        midnight: Option<Cow<'data, str>>,
+        am: Cow<'static, str>,
+        pm: Cow<'static, str>,
+        noon: Option<Cow<'static, str>>,
+        midnight: Option<Cow<'static, str>>,
     }
 );
