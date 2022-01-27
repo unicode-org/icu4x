@@ -4,7 +4,7 @@
 
 [package]
 name = "litemap"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 edition = "2018"
