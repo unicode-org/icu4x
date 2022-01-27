@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643309165235,
+  "lastUpdate": 1643311515390,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19079,6 +19079,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 49154509,
             "range": "± 758854",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b5f13921eec4e43d7aaafa75ac8bdd9be233fc2",
+          "message": "Cleaning up resource_keys! and improving doc (#1540)",
+          "timestamp": "2022-01-27T20:17:20+01:00",
+          "tree_id": "9f5d6c7d96d6b41a46bd0ff6d47bf5c47da3dc14",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b5f13921eec4e43d7aaafa75ac8bdd9be233fc2"
+        },
+        "date": 1643311504907,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 54894747,
+            "range": "± 718887",
             "unit": "ns/iter"
           }
         ]
