@@ -243,7 +243,7 @@ jobs:
         id: npm-cache
         with:
           path: ffi/diplomat/wasm/node_modules
-          key: npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
       - name: Install npm packages.
         # If npm dependencies are not found in cache.
         if: steps.npm-cache.outputs.cache-hit != 'true'
@@ -782,7 +782,7 @@ jobs:
       id: npm-cache
       with:
         path: ffi/diplomat/wasm/node_modules
-        key: npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
+        key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
 
     - name: Install npm packages.
       # If npm dependencies are not found in cache.
@@ -794,6 +794,14 @@ jobs:
       run: |
         cd ffi/diplomat/wasm
         npm ci
+        if [ $? -ne 0 ]
+        then
+          echo Execution of npm ci failed. This may be due to package.json
+          echo and package-lock,json being out of sync. Locally execute
+          echo npm install in directory  ffi/diplomat/wasm to generate a
+          echo new package-lock.json file and and merge it into the repository.
+          exit 1
+        fi
 
     - name: Set path to wasm-opt and wabt binaries
       run: |
