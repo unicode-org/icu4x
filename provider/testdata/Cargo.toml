@@ -148,7 +148,7 @@ cargo_metadata = { version = "0.13", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde_json = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
 displaydoc = { version = "0.2.3", default-features = false, optional = true }
-writeable = { version = "0.2.1", path = "../../utils/writeable", optional = true }
+writeable = { version = "0.3", path = "../../utils/writeable", optional = true }
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.4", path = "../../components/locid/macros" }

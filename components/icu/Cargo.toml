@@ -81,7 +81,7 @@ icu_codepointtrie = { version = "0.3", path = "../../utils/codepointtrie" }
 icu_provider = { version = "0.4", path = "../../provider/core" }
 icu_testdata = { version = "0.4", path = "../../provider/testdata", features = ["static"] }
 icu_uniset = { version = "0.4", path = "../../utils/uniset" }
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
 
 [features]
 std = [
