@@ -104,7 +104,7 @@ impl<'a, Y: RuleBreakType<'a>> Iterator for RuleBreakIterator<'a, Y> {
             // If break_state is equals or grater than 0, it is alias of property.
             let mut break_state = self.get_break_state_from_table(left_prop, right_prop);
 
-            if break_state >= 0 as i8 {
+            if break_state >= 0 {
                 // This isn't simple rule set. We need marker to restore iterator to previous position.
                 let mut previous_iter = self.iter.clone();
                 let mut previous_pos_data = self.current_pos_data;
