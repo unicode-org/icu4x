@@ -261,7 +261,7 @@ pub trait DateTimeSymbols {
     fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &'_ str) -> Result<&str>;
 }
 
-impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
+impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
@@ -384,7 +384,6 @@ impl DateTimeSymbols for provider::calendar::DateSymbolsV1 {
         };
         symbols
             .get(era_code)
-            .map(|x| &**x)
             .ok_or_else(|| DateTimeFormatError::MissingEraSymbol(era_code.to_owned()))
     }
 }
