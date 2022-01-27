@@ -45,18 +45,98 @@ impl ScriptWithExt {
 }
 
 impl ScriptWithExt {
+    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// also indicates a Script value of [`Script::Common`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_properties::script::ScriptWithExt;
+    ///
+    /// assert!(ScriptWithExt(0x04FF).is_common());
+    /// assert!(ScriptWithExt(0x0400).is_common());
+    ///
+    /// assert!(!ScriptWithExt(0x08FF).is_common());
+    /// assert!(!ScriptWithExt(0x0800).is_common());
+    ///
+    /// assert!(!ScriptWithExt(0x0CFF).is_common());
+    /// assert!(!ScriptWithExt(0x0C00).is_common());
+    ///
+    /// assert!(!ScriptWithExt(0xFF).is_common());
+    /// assert!(!ScriptWithExt(0x0).is_common());
+    /// ```
     pub fn is_common(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 1
     }
 
+    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// also indicates a Script value of [`Script::Inherited`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_properties::script::ScriptWithExt;
+    ///
+    /// assert!(!ScriptWithExt(0x04FF).is_inherited());
+    /// assert!(!ScriptWithExt(0x0400).is_inherited());
+    ///
+    /// assert!(ScriptWithExt(0x08FF).is_inherited());
+    /// assert!(ScriptWithExt(0x0800).is_inherited());
+    ///
+    /// assert!(!ScriptWithExt(0x0CFF).is_inherited());
+    /// assert!(!ScriptWithExt(0x0C00).is_inherited());
+    ///
+    /// assert!(!ScriptWithExt(0xFF).is_inherited());
+    /// assert!(!ScriptWithExt(0x0).is_inherited());
+    /// ```
     pub fn is_inherited(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 2
     }
 
+    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// also indicates that the Script value is neither [`Script::Common`] nor
+    /// [`Script::Inherited`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_properties::script::ScriptWithExt;
+    ///
+    /// assert!(!ScriptWithExt(0x04FF).is_other());
+    /// assert!(!ScriptWithExt(0x0400).is_other());
+    ///
+    /// assert!(!ScriptWithExt(0x08FF).is_other());
+    /// assert!(!ScriptWithExt(0x0800).is_other());
+    ///
+    /// assert!(ScriptWithExt(0x0CFF).is_other());
+    /// assert!(ScriptWithExt(0x0C00).is_other());
+    ///
+    /// assert!(!ScriptWithExt(0xFF).is_other());
+    /// assert!(!ScriptWithExt(0x0).is_other());
+    /// ```
     pub fn is_other(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 3
     }
 
+    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_properties::script::ScriptWithExt;
+    ///
+    /// assert!(ScriptWithExt(0x04FF).has_extensions());
+    /// assert!(ScriptWithExt(0x0400).has_extensions());
+    ///
+    /// assert!(ScriptWithExt(0x08FF).has_extensions());
+    /// assert!(ScriptWithExt(0x0800).has_extensions());
+    ///
+    /// assert!(ScriptWithExt(0x0CFF).has_extensions());
+    /// assert!(ScriptWithExt(0x0C00).has_extensions());
+    ///
+    /// assert!(!ScriptWithExt(0xFF).has_extensions());
+    /// assert!(!ScriptWithExt(0x0).has_extensions());
+    /// ```
     pub fn has_extensions(&self) -> bool {
         let high_order_bits = self.0 >> SCRIPT_VAL_LENGTH;
         high_order_bits > 0
@@ -241,70 +321,5 @@ impl<'data> ScriptExtensions<'data> {
     /// code points for which `has_script` will return true.
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
         UnicodeSet::from_iter(self.get_script_extensions_ranges(script))
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_is_common() {
-        assert!(ScriptWithExt(0x04FF).is_common());
-        assert!(ScriptWithExt(0x0400).is_common());
-
-        assert!(!ScriptWithExt(0x08FF).is_common());
-        assert!(!ScriptWithExt(0x0800).is_common());
-
-        assert!(!ScriptWithExt(0x0CFF).is_common());
-        assert!(!ScriptWithExt(0x0C00).is_common());
-
-        assert!(!ScriptWithExt(0xFF).is_common());
-        assert!(!ScriptWithExt(0x0).is_common());
-    }
-
-    #[test]
-    fn test_is_inherited() {
-        assert!(!ScriptWithExt(0x04FF).is_inherited());
-        assert!(!ScriptWithExt(0x0400).is_inherited());
-
-        assert!(ScriptWithExt(0x08FF).is_inherited());
-        assert!(ScriptWithExt(0x0800).is_inherited());
-
-        assert!(!ScriptWithExt(0x0CFF).is_inherited());
-        assert!(!ScriptWithExt(0x0C00).is_inherited());
-
-        assert!(!ScriptWithExt(0xFF).is_inherited());
-        assert!(!ScriptWithExt(0x0).is_inherited());
-    }
-
-    #[test]
-    fn test_is_other() {
-        assert!(!ScriptWithExt(0x04FF).is_other());
-        assert!(!ScriptWithExt(0x0400).is_other());
-
-        assert!(!ScriptWithExt(0x08FF).is_other());
-        assert!(!ScriptWithExt(0x0800).is_other());
-
-        assert!(ScriptWithExt(0x0CFF).is_other());
-        assert!(ScriptWithExt(0x0C00).is_other());
-
-        assert!(!ScriptWithExt(0xFF).is_other());
-        assert!(!ScriptWithExt(0x0).is_other());
-    }
-
-    #[test]
-    fn test_has_extensions() {
-        assert!(ScriptWithExt(0x04FF).has_extensions());
-        assert!(ScriptWithExt(0x0400).has_extensions());
-
-        assert!(ScriptWithExt(0x08FF).has_extensions());
-        assert!(ScriptWithExt(0x0800).has_extensions());
-
-        assert!(ScriptWithExt(0x0CFF).has_extensions());
-        assert!(ScriptWithExt(0x0C00).has_extensions());
-
-        assert!(!ScriptWithExt(0xFF).has_extensions());
-        assert!(!ScriptWithExt(0x0).has_extensions());
     }
 }
