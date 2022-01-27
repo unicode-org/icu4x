@@ -5,7 +5,7 @@
 [package]
 name = "icu_uniset"
 description = "API for highly efficient querying of sets of Unicode characters"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
