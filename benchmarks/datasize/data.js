@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643311142754,
+  "lastUpdate": 1643320171695,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8128,6 +8128,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 1471487,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "405b9fd316b87d2eaafa86d62d8ea02639472dec",
+          "message": "Making DateTime data zero-copy (#1550)",
+          "timestamp": "2022-01-27T22:47:57+01:00",
+          "tree_id": "690a566ef318b3bdbdad0b4863fdb530491df8ea",
+          "url": "https://github.com/unicode-org/icu4x/commit/405b9fd316b87d2eaafa86d62d8ea02639472dec"
+        },
+        "date": 1643320158255,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
             "unit": "bytes",
             "biggerIsBetter": false
           }
