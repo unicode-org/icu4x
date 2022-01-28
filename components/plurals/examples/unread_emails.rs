@@ -31,7 +31,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         print("\n====== Unread Emails (en) example ============", None);
-        let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal)
+        let pr = PluralRules::try_new_cardinal(lid, &provider)
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {

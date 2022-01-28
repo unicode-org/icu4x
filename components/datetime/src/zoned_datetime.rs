@@ -5,7 +5,7 @@
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_locid::Locale;
-use icu_plurals::provider::{CardinalV1Marker, OrdinalV1Marker};
+use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
@@ -112,7 +112,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker>,
+        PP: ResourceProvider<OrdinalV1Marker>,
     {
         Ok(Self(
             raw::ZonedDateTimeFormat::try_new(

@@ -14,7 +14,7 @@ use crate::{
 };
 use alloc::string::String;
 use icu_locid::Locale;
-use icu_plurals::{provider::OrdinalV1Marker, provider::CardinalV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
@@ -47,7 +47,7 @@ impl DateTimeFormat {
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker>,
+            + ResourceProvider<OrdinalV1Marker>,
     {
         let locale = locale.into();
 
@@ -64,10 +64,9 @@ impl DateTimeFormat {
         let langid: icu_locid::LanguageIdentifier = locale.clone().into();
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new(
+            Some(PluralRules::try_new_ordinal(
                 locale.clone(),
                 data_provider,
-                PluralRuleType::Ordinal,
             )?)
         } else {
             None

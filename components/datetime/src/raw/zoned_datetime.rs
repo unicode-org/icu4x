@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_plurals::{provider::CardinalV1Marker, provider::OrdinalV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
@@ -58,7 +58,7 @@ impl ZonedDateTimeFormat {
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker>,
+        PP: ResourceProvider<OrdinalV1Marker>,
     {
         let locale = locale.into();
         let langid: LanguageIdentifier = locale.clone().into();
@@ -74,10 +74,9 @@ impl ZonedDateTimeFormat {
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new(
+            Some(PluralRules::try_new_ordinal(
                 locale.clone(),
                 plural_provider,
-                PluralRuleType::Ordinal,
             )?)
         } else {
             None
