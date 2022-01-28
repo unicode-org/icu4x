@@ -62,9 +62,7 @@ Vectors of fixed-size types work via [`ZeroVec<'a, T>`][`ZeroVec`], where `'a` i
  - `ZeroVec<'a, T>` dereferences to `ZeroSlice<T>`, the analog of `[T]` in this world.
  - Only types which implement [`AsULE`] are allowed inside `ZeroVec<T>`. More on this trait later.
 
- 
-Constructing a [`ZeroVec`] by borrowing byte slice data can be done directly via [`ZeroVec:: parse_byte_slice()`]
-
+Constructing a [`ZeroVec`] by borrowing byte slice data can be done directly via [`ZeroVec::parse_byte_slice()`].
 
 Similar to `Cow`, [`ZeroVec`] has `Owned` and `Borrowed` variants that can be directly accessed.
 
