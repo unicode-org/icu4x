@@ -4,6 +4,7 @@
 
 use crate::bin_uniset::BinaryPropertyUnicodeSetDataProvider;
 use crate::enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
+use crate::uprops_helpers::get_last_component_no_version;
 use icu_properties::provider::UnicodePropertyV1Marker;
 use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
@@ -34,12 +35,7 @@ impl DataProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        if req
-            .resource_path
-            .key
-            .get_last_component_no_version()
-            .contains('=')
-        {
+        if get_last_component_no_version(&req.resource_path.key).contains('=') {
             self.enumerated.load_payload(req)
         } else {
             self.binary.load_payload(req)

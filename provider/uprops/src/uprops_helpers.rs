@@ -68,3 +68,13 @@ pub fn load_script_extensions_from_dir(
             )
         })
 }
+
+pub fn get_last_component_no_version(key: &icu_provider::ResourceKey) -> &str {
+    key.get_path()
+        .split('/')
+        .last()
+        .expect("str::split doesn't return empty iterators")
+        .split('@')
+        .next()
+        .expect("str::split doesn't return empty iterators")
+}

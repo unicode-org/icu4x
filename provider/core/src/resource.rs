@@ -39,13 +39,14 @@ impl ResourceKeyHash {
 /// const K: ResourceKey = icu_provider::resource_key!("foo/bar@1");
 /// ```
 ///
-/// The path string has to contain at least one `/`, and end with `@` followed by one or more ASCII
-/// digits. Paths do not contain characters other than ASCII letters and digits, `_`, `/`, `=`, and
-/// `@`. Invalid paths are compile-time errors (as [`resource_key!`] uses `const`).
+/// The human-readable path string ends with `@` followed by one or more digits (the version
+/// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`, `=`.
+///
+/// Invalid paths are compile-time errors (as [`resource_key!`] uses `const`).
 ///
 /// ```compile_fail,E0080
 /// # use icu_provider::prelude::ResourceKey;
-/// const K: ResourceKey = icu_provider::resource_key!("foobar@1");
+/// const K: ResourceKey = icu_provider::resource_key!("foo/../bar@1");
 /// ```
 #[derive(PartialEq, Eq, Copy, Clone)]
 pub struct ResourceKey {
@@ -86,9 +87,8 @@ macro_rules! tagged {
 impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
     ///
-    /// The human-readable path string always contains at least one `/`, and it ends with `@`
-    /// followed by one or more digits. Paths do not contain characters other than ASCII letters
-    /// and digits, `_`, `/`, `=`, and `@`.
+    /// The human-readable path string ends with `@` followed by one or more digits (the version
+    /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`, `=`.
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
@@ -139,85 +139,41 @@ impl ResourceKey {
             i += 1;
         }
 
-        // Regex: [a-zA-Z0-9=_]+(/[a-zA-Z0-9=_]+)*@[0-9]+
+        // Regex: [a-zA-Z0-9=_][a-zA-Z0-9=_/]*@[0-9]+
         enum State {
-            Start,
-            AfterChar,
-            AfterSlash,
-            AfterCharAfterSlash,
-            AfterAt,
-            AfterDigit,
+            Empty,
+            Body,
+            At,
+            Version,
         }
         use State::*;
         i = start;
-        let mut state = Start;
+        let mut state = Empty;
         loop {
-            state = match (
-                state,
-                if i < end {
-                    Some(path.as_bytes()[i])
-                } else {
-                    None
-                },
-            ) {
-                (Start, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => AfterChar,
-                (Start, _) => return Err(("[a-zA-Z0-9=_]", i)),
-
-                (AfterChar, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
-                    AfterChar
-                }
-                (AfterChar, Some(b'/')) => AfterSlash,
-                (AfterChar, _) => return Err(("[a-zA-z0-9=_/]", i)),
-
-                (AfterSlash, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => {
-                    AfterCharAfterSlash
-                }
-                (AfterSlash, _) => return Err(("[a-zA-Z0-9=_]", i)),
-
-                (
-                    AfterCharAfterSlash,
-                    Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'='),
-                ) => AfterCharAfterSlash,
-                (AfterCharAfterSlash, Some(b'/')) => AfterSlash,
-                (AfterCharAfterSlash, Some(b'@')) => AfterAt,
-                (AfterCharAfterSlash, _) => return Err(("[a-zA-z0-9=_/@]", i)),
-
-                (AfterAt, Some(b'0'..=b'9')) => AfterDigit,
-                (AfterAt, _) => return Err(("[0-9]", i)),
-
-                (AfterDigit, Some(b'0'..=b'9')) => AfterDigit,
-                (AfterDigit, Some(_)) => return Err(("[0-9]", i)),
-                (AfterDigit, None) => {
+            let byte = if i < end {
+                Some(path.as_bytes()[i])
+            } else {
+                None
+            };
+            state = match (state, byte) {
+                (Empty | Body, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'=')) => Body,
+                (Body, Some(b'/')) => Body,
+                (Body, Some(b'@')) => At,
+                (At | Version, Some(b'0'..=b'9')) => Version,
+                // One of these cases will be hit at the latest when i == end, so the loop converges.
+                (Version, None) => {
                     return Ok(Self {
                         path,
                         hash: ResourceKeyHash::compute_from_str(path),
                     })
                 }
+
+                (Empty, _) => return Err(("[a-zA-Z0-9=_]", i)),
+                (Body, _) => return Err(("[a-zA-z0-9=_/@]", i)),
+                (At | Version, _) => return Err(("[0-9]", i)),
             };
             i += 1;
         }
-    }
-
-    /// Gets the last path component of a [`ResourceKey`] without the version suffix.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
-    /// assert_eq!("helloworld", resc_key.get_last_component_no_version());
-    /// ```
-    pub fn get_last_component_no_version(&self) -> &str {
-        // This cannot fail because of the preconditions on path (at least one '/' and '@')
-        // TODO(#1515): Consider deleting this method.
-        self.get_path()
-            .split('/')
-            .last()
-            .unwrap()
-            .split('@')
-            .next()
-            .unwrap()
     }
 
     /// Returns [`Ok`] if this data key matches the argument, or the appropriate error.
@@ -269,12 +225,7 @@ fn test_path_syntax() {
     assert!(ResourceKey::construct_internal(tagged!("hello/world@999")).is_ok());
     assert!(ResourceKey::construct_internal(tagged!("hello_world/foo@1")).is_ok());
     assert!(ResourceKey::construct_internal(tagged!("hello_458/world@1")).is_ok());
-
-    // No slash:
-    assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello_world@1")),
-        Err(("[a-zA-z0-9=_/]", 25))
-    );
+    assert!(ResourceKey::construct_internal(tagged!("hello_world@1")).is_ok());
 
     // No version:
     assert_eq!(
