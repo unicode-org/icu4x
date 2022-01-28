@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643320657031,
+  "lastUpdate": 1643405035055,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25367,6 +25367,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 12760,
             "range": "± 64",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7a7cb736383e9eda1aecc0d94c67e693d39752b4",
+          "message": "Removing uprops-specific code from ResourceKey (#1555)",
+          "timestamp": "2022-01-28T22:13:18+01:00",
+          "tree_id": "d6139584e4d1316f5a55ec5406489e04da76226d",
+          "url": "https://github.com/unicode-org/icu4x/commit/7a7cb736383e9eda1aecc0d94c67e693d39752b4"
+        },
+        "date": 1643405022020,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1121,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6701,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16037,
+            "range": "± 1588",
             "unit": "ns/iter"
           }
         ]
