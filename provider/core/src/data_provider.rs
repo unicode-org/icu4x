@@ -810,6 +810,16 @@ where
             yoke: self.yoke.try_project_cloned_with_capture(capture, f)?,
         })
     }
+
+    #[inline]
+    pub fn cast<M2>(self) -> DataPayload<M2>
+    where
+        M2: DataMarker<Yokeable = M::Yokeable>
+    {
+        DataPayload {
+            yoke: self.yoke
+        }
+    }
 }
 
 impl DataPayload<BufferMarker> {
