@@ -25,19 +25,10 @@ pub type UnisetResult = Result<DataPayload<UnicodePropertyV1Marker>, PropertiesE
 // helper fn
 fn get_uniset<D>(provider: &D, resc_key: ResourceKey) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
-    let data_req = DataRequest {
-        resource_path: ResourcePath {
-            key: resc_key,
-            options: ResourceOptions {
-                variant: None,
-                langid: None,
-            },
-        },
-    };
-
-    let resp: DataResponse<UnicodePropertyV1Marker> = provider.load_payload(&data_req)?;
+    let resp: DataResponse<UnicodePropertyV1Marker> =
+        provider.load_payload(resc_key, &Default::default())?;
 
     let property_payload: DataPayload<UnicodePropertyV1Marker> = resp.take_payload()?;
     Ok(property_payload)
@@ -68,7 +59,7 @@ where
 /// ```
 pub fn get_ascii_hex_digit<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::ASCII_HEX_DIGIT_V1)
 }
@@ -77,7 +68,7 @@ where
 /// This is defined for POSIX compatibility.
 pub fn get_alnum<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::ALNUM_V1)
 }
@@ -103,7 +94,7 @@ where
 /// ```
 pub fn get_alphabetic<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::ALPHABETIC_V1)
 }
@@ -128,7 +119,7 @@ where
 /// ```
 pub fn get_bidi_control<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::BIDI_CONTROL_V1)
 }
@@ -154,7 +145,7 @@ where
 /// ```
 pub fn get_bidi_mirrored<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::BIDI_MIRRORED_V1)
 }
@@ -162,7 +153,7 @@ where
 /// Horizontal whitespace characters
 pub fn get_blank<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::BLANK_V1)
 }
@@ -186,7 +177,7 @@ where
 /// ```
 pub fn get_cased<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CASED_V1)
 }
@@ -210,7 +201,7 @@ where
 /// ```
 pub fn get_case_ignorable<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CASE_IGNORABLE_V1)
 }
@@ -219,7 +210,7 @@ where
 /// See <https://unicode.org/Public/UNIDATA/CompositionExclusions.txt>
 pub fn get_full_composition_exclusion<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::FULL_COMPOSITION_EXCLUSION_V1)
 }
@@ -243,7 +234,7 @@ where
 /// ```
 pub fn get_changes_when_casefolded<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CHANGES_WHEN_CASEFOLDED_V1)
 }
@@ -251,7 +242,7 @@ where
 /// Characters which may change when they undergo case mapping
 pub fn get_changes_when_casemapped<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CHANGES_WHEN_CASEMAPPED_V1)
 }
@@ -275,7 +266,7 @@ where
 /// ```
 pub fn get_changes_when_nfkc_casefolded<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CHANGES_WHEN_NFKC_CASEFOLDED_V1)
 }
@@ -299,7 +290,7 @@ where
 /// ```
 pub fn get_changes_when_lowercased<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CHANGES_WHEN_LOWERCASED_V1)
 }
@@ -323,7 +314,7 @@ where
 /// ```
 pub fn get_changes_when_titlecased<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CHANGES_WHEN_TITLECASED_V1)
 }
@@ -347,7 +338,7 @@ where
 /// ```
 pub fn get_changes_when_uppercased<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CHANGES_WHEN_UPPERCASED_V1)
 }
@@ -373,7 +364,7 @@ where
 /// ```
 pub fn get_dash<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::DASH_V1)
 }
@@ -398,7 +389,7 @@ where
 /// ```
 pub fn get_deprecated<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::DEPRECATED_V1)
 }
@@ -425,7 +416,7 @@ where
 /// ```
 pub fn get_default_ignorable_code_point<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::DEFAULT_IGNORABLE_CODE_POINT_V1)
 }
@@ -449,7 +440,7 @@ where
 /// ```
 pub fn get_diacritic<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::DIACRITIC_V1)
 }
@@ -473,7 +464,7 @@ where
 /// ```
 pub fn get_emoji_modifier_base<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::EMOJI_MODIFIER_BASE_V1)
 }
@@ -500,7 +491,7 @@ where
 /// ```
 pub fn get_emoji_component<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::EMOJI_COMPONENT_V1)
 }
@@ -524,7 +515,7 @@ where
 /// ```
 pub fn get_emoji_modifier<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::EMOJI_MODIFIER_V1)
 }
@@ -548,7 +539,7 @@ where
 /// ```
 pub fn get_emoji<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::EMOJI_V1)
 }
@@ -572,7 +563,7 @@ where
 /// ```
 pub fn get_emoji_presentation<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::EMOJI_PRESENTATION_V1)
 }
@@ -598,7 +589,7 @@ where
 /// ```
 pub fn get_extender<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::EXTENDER_V1)
 }
@@ -623,7 +614,7 @@ where
 /// ```
 pub fn get_extended_pictographic<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::EXTENDED_PICTOGRAPHIC_V1)
 }
@@ -632,7 +623,7 @@ where
 /// This is defined for POSIX compatibility.
 pub fn get_graph<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::GRAPH_V1)
 }
@@ -658,7 +649,7 @@ where
 /// ```
 pub fn get_grapheme_base<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::GRAPHEME_BASE_V1)
 }
@@ -684,7 +675,7 @@ where
 /// ```
 pub fn get_grapheme_extend<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::GRAPHEME_EXTEND_V1)
 }
@@ -693,7 +684,7 @@ where
 /// cluster boundaries.
 pub fn get_grapheme_link<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::GRAPHEME_LINK_V1)
 }
@@ -722,7 +713,7 @@ where
 /// ```
 pub fn get_hex_digit<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::HEX_DIGIT_V1)
 }
@@ -731,7 +722,7 @@ where
 /// words, plus the Katakana middle dot.
 pub fn get_hyphen<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::HYPHEN_V1)
 }
@@ -762,7 +753,7 @@ where
 /// ```
 pub fn get_id_continue<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::ID_CONTINUE_V1)
 }
@@ -787,7 +778,7 @@ where
 /// ```
 pub fn get_ideographic<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::IDEOGRAPHIC_V1)
 }
@@ -817,7 +808,7 @@ where
 /// ```
 pub fn get_id_start<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::ID_START_V1)
 }
@@ -841,7 +832,7 @@ where
 /// ```
 pub fn get_ids_binary_operator<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::IDS_BINARY_OPERATOR_V1)
 }
@@ -868,7 +859,7 @@ where
 /// ```
 pub fn get_ids_trinary_operator<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::IDS_TRINARY_OPERATOR_V1)
 }
@@ -894,7 +885,7 @@ where
 /// ```
 pub fn get_join_control<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::JOIN_CONTROL_V1)
 }
@@ -918,7 +909,7 @@ where
 /// ```
 pub fn get_logical_order_exception<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::LOGICAL_ORDER_EXCEPTION_V1)
 }
@@ -942,7 +933,7 @@ where
 /// ```
 pub fn get_lowercase<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::LOWERCASE_V1)
 }
@@ -970,7 +961,7 @@ where
 /// ```
 pub fn get_math<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::MATH_V1)
 }
@@ -995,7 +986,7 @@ where
 /// ```
 pub fn get_noncharacter_code_point<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::NONCHARACTER_CODE_POINT_V1)
 }
@@ -1003,7 +994,7 @@ where
 /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters
 pub fn get_nfc_inert<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::NFC_INERT_V1)
 }
@@ -1011,7 +1002,7 @@ where
 /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters
 pub fn get_nfd_inert<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::NFD_INERT_V1)
 }
@@ -1019,7 +1010,7 @@ where
 /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters
 pub fn get_nfkc_inert<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::NFKC_INERT_V1)
 }
@@ -1027,7 +1018,7 @@ where
 /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters
 pub fn get_nfkd_inert<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::NFKD_INERT_V1)
 }
@@ -1054,7 +1045,7 @@ where
 /// ```
 pub fn get_pattern_syntax<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::PATTERN_SYNTAX_V1)
 }
@@ -1082,7 +1073,7 @@ where
 /// ```
 pub fn get_pattern_white_space<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::PATTERN_WHITE_SPACE_V1)
 }
@@ -1091,7 +1082,7 @@ where
 /// other characters, usually digits.
 pub fn get_prepended_concatenation_mark<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::PREPENDED_CONCATENATION_MARK_V1)
 }
@@ -1100,7 +1091,7 @@ where
 /// This is defined for POSIX compatibility.
 pub fn get_print<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::PRINT_V1)
 }
@@ -1125,7 +1116,7 @@ where
 /// ```
 pub fn get_quotation_mark<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::QUOTATION_MARK_V1)
 }
@@ -1149,7 +1140,7 @@ where
 /// ```
 pub fn get_radical<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::RADICAL_V1)
 }
@@ -1174,7 +1165,7 @@ where
 /// ```
 pub fn get_regional_indicator<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::REGIONAL_INDICATOR_V1)
 }
@@ -1199,7 +1190,7 @@ where
 /// ```
 pub fn get_soft_dotted<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::SOFT_DOTTED_V1)
 }
@@ -1208,7 +1199,7 @@ where
 /// sequences
 pub fn get_segment_starter<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::SEGMENT_STARTER_V1)
 }
@@ -1217,7 +1208,7 @@ where
 /// mapping
 pub fn get_case_sensitive<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::CASE_SENSITIVE_V1)
 }
@@ -1244,7 +1235,7 @@ where
 /// ```
 pub fn get_sentence_terminal<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::SENTENCE_TERMINAL_V1)
 }
@@ -1271,7 +1262,7 @@ where
 /// ```
 pub fn get_terminal_punctuation<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::TERMINAL_PUNCTUATION_V1)
 }
@@ -1296,7 +1287,7 @@ where
 /// ```
 pub fn get_unified_ideograph<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::UNIFIED_IDEOGRAPH_V1)
 }
@@ -1320,7 +1311,7 @@ where
 /// ```
 pub fn get_uppercase<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::UPPERCASE_V1)
 }
@@ -1347,7 +1338,7 @@ where
 /// ```
 pub fn get_variation_selector<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::VARIATION_SELECTOR_V1)
 }
@@ -1374,7 +1365,7 @@ where
 /// ```
 pub fn get_white_space<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::WHITE_SPACE_V1)
 }
@@ -1383,7 +1374,7 @@ where
 /// This is defined for POSIX compatibility.
 pub fn get_xdigit<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::XDIGIT_V1)
 }
@@ -1412,7 +1403,7 @@ where
 /// ```
 pub fn get_xid_continue<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::XID_CONTINUE_V1)
 }
@@ -1442,7 +1433,7 @@ where
 /// ```
 pub fn get_xid_start<D>(provider: &D) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     get_uniset(provider, key::XID_START_V1)
 }
@@ -1456,7 +1447,7 @@ where
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
 pub fn get_for_general_category<D>(provider: &D, enum_val: GeneralCategory) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     let key = match enum_val {
         GeneralCategory::Control => key::GENERAL_CATEGORY_CONTROL_V1,
@@ -1501,7 +1492,7 @@ pub fn get_for_general_category_group<D>(
     enum_val: GeneralCategoryGroup,
 ) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     let key = match enum_val {
         GeneralCategoryGroup::Other => key::GENERAL_CATEGORY_OTHER_V1,
@@ -1554,7 +1545,7 @@ where
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
 pub fn get_for_script<D>(provider: &D, enum_val: Script) -> UnisetResult
 where
-    D: DataProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     let key = match enum_val {
         Script::Adlam => key::SCRIPT_ADLAM_V1,
