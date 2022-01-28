@@ -19,7 +19,7 @@ We would like to be able to use collections of arbitrary types in zero-copy cont
  - Zero-copy types should have `Cow`-like semantics by default; where it is possible to construct owned variants of them that work with human-readable deserialization (rarely zero-copy) and can be mutated (<span style="color:red">**required**</span>)
  - It should be possible to define new types that interoperate with this system (<span style="color:#729468">**required**</span>)
  - It is preferable if our zero-copy types can be nested, supporting zero-copy variants of types like `Vec<Vec<Vec<String>>>`, etc (<span style="color:orange">**preferred**</span>)
- - There should not be a significant negative performance impact of reading from such types (<span style="color:#729468">**optional**</span>)
+ - There should not be a significant negative performance impact of reading from such types (<span style="color:orange">**preferred**</span>)
  - It should be _easy_ to define new types that interoperate with this system (<span style="color:#729468">**optional**</span>)
 
 It is worth noting that [`rkyv`](https://docs.rs/rkyv) satisfies most of these requirements, and is a robust library with a lot of thought put into it. The main sticking point is that it's not `serde`-compatible and doesn't do human-readable deserialization, which we would like to have. With `zerovec` we hope to be able to incrementally add zero-copy behavior to our data as necessary without switching systems wholesale. Furthermore, `rkyv` does not work on big-endian platforms, which we do not want to rule out. However, if `rkyv` suits your needs, it may be a more mature option over `zerovec`. As such a lot of the lower level design here is close to what `rkyv` does via convergent evolution.
