@@ -175,7 +175,7 @@ where
 
 The trait is `unsafe` to implement since `ZeroVec` will rely on invariants promised by the trait. The main feature here is that this trait lets `ZeroVec` take a bytestream it is decoding and certify that it contains valid `Self` types. It allows `ZeroVec<T>` to turn `&[u8]` into `&[T::ULE]` during parsing or deserialization.
 
-As `ULE` requires types to not have any alignment restrictions, most `ULE` types will be `#[repr(transparent)]` or `#[repr(packed)]` wrappers around other ULE types (or in general, types known to have no alignment requirements). Note that `#[repr(Rust)` isn't defined or stable, so ULE types _must_ have _some_ `#[repr(..)]` tag for them to be able to stably uphold the invariants.
+As `ULE` requires types to not have any alignment restrictions, most `ULE` types will be `#[repr(transparent)]` or `#[repr(packed)]` wrappers around other ULE types (or in general, types known to have no alignment requirements). Note that `#[repr(Rust)]` isn't defined or stable, so ULE types _must_ have _some_ `#[repr(..)]` tag for them to be able to stably uphold the invariants.
 
 If you wish to make a custom ULE type, it will likely wrap [`RawBytesULE`] with added invariants (and `#[repr(transparent)]`, or do something like the following:
 
