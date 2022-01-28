@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643404503767,
+  "lastUpdate": 1643407817177,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8183,6 +8183,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7a7cb736383e9eda1aecc0d94c67e693d39752b4"
         },
         "date": 1643404492131,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e554288a21875f4daf5a70b43d667f1c0c88088",
+          "message": "Add initial changelog for 0.5 (#1545)\n\n* Update changelog for 0.5\r\n\r\n* fixes",
+          "timestamp": "2022-01-28T14:08:34-08:00",
+          "tree_id": "c91b0eddc7e8040a1f5bd36604a08e1917e0f24e",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e554288a21875f4daf5a70b43d667f1c0c88088"
+        },
+        "date": 1643407806481,
         "tool": "ndjson",
         "benches": [
           {
