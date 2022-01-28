@@ -131,7 +131,7 @@ This allows for packing variable-size data together into a single flat buffer th
 
 Maps are handled by [`ZeroMap<'a, K, V>`][`ZeroMap`], where `K` and `V` can both be either an `AsULE` or `VarULE` type. Internally, it works by selecting the appropriate vector type for the keys and for the values (`ZeroVec` or `VarZeroVec`), and setting up a sorted array that uses binary search for lookup. In its essence, it is a zero-copy version of [`LiteMap`].
 
-Operations have the same quirks that the underlying array types have, so for example `.get()` with a `V = str` will return an `&str`, but with `V = u32` it will return `u32`. Basically, `Sized` keys and values are copied in and out, and dynamically sized ones are returned as references.
+Operations have the same quirks that the underlying array types have, so for example `.get()` with a `V = str` will return an `&str`, but with `V = u32` it will return `&u32::ULE`, and you can use `.get_copied()` to get `u32`. Basically, `Sized` keys and values are copied in and out or returned as ULE references, and dynamically sized ones are returned as references.
 
 There is a [`ZeroMapBorrowed<'a, K, V>`][`ZeroMapBorrowed`] type which can be used when you do not want to include the owned variants.
 
