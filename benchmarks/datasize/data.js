@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643320171695,
+  "lastUpdate": 1643404503767,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8153,6 +8153,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/405b9fd316b87d2eaafa86d62d8ea02639472dec"
         },
         "date": 1643320158255,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7a7cb736383e9eda1aecc0d94c67e693d39752b4",
+          "message": "Removing uprops-specific code from ResourceKey (#1555)",
+          "timestamp": "2022-01-28T22:13:18+01:00",
+          "tree_id": "d6139584e4d1316f5a55ec5406489e04da76226d",
+          "url": "https://github.com/unicode-org/icu4x/commit/7a7cb736383e9eda1aecc0d94c67e693d39752b4"
+        },
+        "date": 1643404492131,
         "tool": "ndjson",
         "benches": [
           {
