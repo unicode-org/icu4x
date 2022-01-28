@@ -251,7 +251,7 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
 }
 ```
 
-Users must either implement `encode_var_ule_as_slices` or the other two methods, everything else will be handled automatically. These methods allow users to take arbitrary types and specify how they can be encoded into a byte stream to produce a valid `T: VarULE` type.
+Users must either implement `encode_var_ule_as_slices` or the other two methods, and everything else will be handled automatically. These methods allow users to take arbitrary types and specify how they can be encoded into a byte stream to produce a valid `T: VarULE` type.
 
 
 We plan to have a proc macro for implementing this trait.
