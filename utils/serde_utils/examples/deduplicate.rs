@@ -8,7 +8,7 @@
 
 #[derive(serde::Serialize, serde::Deserialize)]
 struct DataStruct {
-    #[serde(with = "deduplicating_array")]
+    #[serde(with = "serde_utils::deduplicating_array")]
     coordinates: [(f64, f64); 5],
 }
 

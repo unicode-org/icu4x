@@ -12,7 +12,7 @@
 //!
 //! #[derive(serde::Deserialize, serde::Serialize)]
 //! pub struct Foo {
-//!     #[serde(with = "deduplicating_array")]
+//!     #[serde(with = "serde_utils::deduplicating_array")]
 //!     data: [Bar; 12],
 //!     // ...
 //! }
@@ -27,9 +27,6 @@
 //!
 //! This implies that singleton integer arrays cannot be used as array elements (they do work in Bincode,
 //! but there's really not much point in using them).
-
-#![no_std]
-extern crate alloc;
 
 use alloc::fmt::{Error, Formatter};
 use alloc::format;

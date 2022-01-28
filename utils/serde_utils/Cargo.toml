@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "deduplicating_array"
-description = "A serde serialization strategy that uses PartialEq to reduce serialized size."
+name = "serde_utils"
+description = "Various Serde serialization and deserialization strategies."
 version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
@@ -34,4 +34,4 @@ bench = []
 std = []
 
 [[example]]
-name = "postcard"
+name = "deduplicate"
