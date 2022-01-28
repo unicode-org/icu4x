@@ -391,7 +391,7 @@ Implementors of `ULE` can choose to reduce `BITS` if they promise that their con
 
 We introduce `struct BitPacker([u8; N])` which has a convenience `unsafe fn get_ule<U: ULE>(bit: usize)` that allows fetching a ULE type at an arbitrary bit index.
 
-By default, the proc macros work the same. However it is possible to specify `#[zerovec::bits(N)]` on fields (where `N` is a number), and the following will happen:
+By default, the proc macros work the same. However, it is possible to specify `#[zerovec::bits(N)]` on fields (where `N` is a number), and the following will happen:
 
  - The proc macro will generate a const assertion that `N` is equal to `F::ULE::BITS` for the given field
  - The proc macro will collect all adjacent `#[zerovec::bits]` fields and generate a single private `BitPacker` field for them
