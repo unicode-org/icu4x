@@ -125,7 +125,7 @@ Internally, a `VarZeroVec<'a, T>`'s buffer is laid out as follows:
  - 4N bytes of "indices" specifying the ending index of each item in the "data" slice
  - However many bytes are needed to represent the actual "data"
  
-This allows for packing variable-size data together into a single flat buffer that can hand out references. Users largely need not care about this representation, however it should give an idea of how expensive mutation operations may be.
+This allows for packing variable-size data together into a single flat buffer that can hand out references. Users largely need not care about this representation; however, it should give an idea of how expensive mutation operations may be.
 
 ### Maps
 
