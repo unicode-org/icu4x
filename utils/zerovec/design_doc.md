@@ -22,7 +22,18 @@ We would like to be able to use collections of arbitrary types in zero-copy cont
  - There should not be a significant negative performance impact of reading from such types (<span style="color:orange">**preferred**</span>)
  - It should be _easy_ to define new types that interoperate with this system (<span style="color:#729468">**optional**</span>)
 
-It is worth noting that [`rkyv`](https://docs.rs/rkyv) satisfies most of these requirements, and is a robust library with a lot of thought put into it. The main sticking point is that it's not `serde`-compatible and doesn't do human-readable deserialization, which we would like to have. With `zerovec` we hope to be able to incrementally add zero-copy behavior to our data as necessary without switching systems wholesale. Furthermore, `rkyv` does not work on big-endian platforms, which we do not want to rule out. However, if `rkyv` suits your needs, it may be a more mature option over `zerovec`. As such a lot of the lower level design here is close to what `rkyv` does via convergent evolution.
+## Comparison to rkyv
+
+It is worth noting that [`rkyv`](https://docs.rs/rkyv) satisfies many of these requirements, and it is a robust library with a lot of thought put into it. The ICU4X team seriously considered leveraging `rkyv`. The limitations in `rkyv` that drove us to develop `zerovec` include:
+
+1. Only one data file format
+    - Cannot switch formats based on the needs of the client (e.g., small data vs fast lookup, or machine readable vs human readable)
+    - The archived structures are not Serde-compatible, so Serde cannot be easily used to add additional formats
+2. Opinionated type system; requires designing the whole data system around it, with no easy path for incremental migration toward zero-copy behavior
+3. Limited support for data overrides (mixing owned runtime data with borrowed static data)
+4. Little-endian and big-endian require different data files, meaning that the flag to toggle between them also needs to percolate through the data system
+
+In other words, `zerovec` and `rkyv` solve similar problems with similar solutions; a lot of the lower level design of `zerovec` is close to what `rkyv` does via convergent evolution. However, the two are designed with different use cases in mind, which drove key differences in design decisions, which are explained throughout the rest of this doc.
 
 # Overview of technical challenges
 
