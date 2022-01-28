@@ -305,27 +305,45 @@ impl PluralRules {
     where
         D: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker> + ?Sized,
     {
+        match rule_type {
+            PluralRuleType::Cardinal => Self::try_new_cardinal(locale, data_provider),
+            PluralRuleType::Ordinal => Self::try_new_ordinal(locale, data_provider),
+        }
+    }
+
+    pub fn try_new_cardinal<T: Into<Locale>, D>(
+        locale: T,
+        data_provider: &D,
+    ) -> Result<Self, PluralRulesError>
+    where
+        D: ResourceProvider<CardinalV1Marker> + ?Sized,
+    {
         let locale = locale.into();
-        let rules = match rule_type {
-            PluralRuleType::Cardinal => ResourceProvider::<CardinalV1Marker>::load_resource(
-                data_provider,
-                &DataRequest {
-                    options: locale.clone().into(),
-                    metadata: Default::default(),
-                },
-            )?
+        let rules = data_provider
+            .load_resource(&DataRequest {
+                options: locale.clone().into(),
+                metadata: Default::default(),
+            })?
             .take_payload()?
-            .cast(),
-            PluralRuleType::Ordinal => ResourceProvider::<OrdinalV1Marker>::load_resource(
-                data_provider,
-                &DataRequest {
-                    options: locale.clone().into(),
-                    metadata: Default::default(),
-                },
-            )?
+            .cast();
+        Self::new(locale, rules)
+    }
+
+    pub fn try_new_ordinal<T: Into<Locale>, D>(
+        locale: T,
+        data_provider: &D,
+    ) -> Result<Self, PluralRulesError>
+    where
+        D: ResourceProvider<OrdinalV1Marker> + ?Sized,
+    {
+        let locale = locale.into();
+        let rules = data_provider
+            .load_resource(&DataRequest {
+                options: locale.clone().into(),
+                metadata: Default::default(),
+            })?
             .take_payload()?
-            .cast(),
-        };
+            .cast();
         Self::new(locale, rules)
     }
 
