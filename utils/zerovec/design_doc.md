@@ -56,7 +56,7 @@ Note that with Serde one typically needs [`#[serde(borrow)]`](https://serde.rs/l
 
 ### Vectors of fixed-size types
 
-Vectors of fixed-size types work via [`ZeroVec<'a, T>`][`ZeroVec`], where `'a` is the lifetime of the borrowed data. This can replace `Vec<T>`, however there are a couple crucial differences:
+Vectors of fixed-size types work via [`ZeroVec<'a, T>`][`ZeroVec`], where `'a` is the lifetime of the borrowed data. This can replace `Vec<T>`; however, there are a couple crucial differences:
 
  - [`get()`][`ZeroVec::get()`] returns `T`, not `&T`. Other options like iteration can also only return copied data, no references
  - `ZeroVec<'a, T>` dereferences to `ZeroSlice<T>`, the analog of `[T]` in this world.
