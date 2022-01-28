@@ -64,10 +64,7 @@ impl DateTimeFormat {
         let langid: icu_locid::LanguageIdentifier = locale.clone().into();
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(
-                locale.clone(),
-                data_provider,
-            )?)
+            Some(PluralRules::try_new_ordinal(locale.clone(), data_provider)?)
         } else {
             None
         };

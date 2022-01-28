@@ -163,7 +163,8 @@ fn test_warehouse_owned_dyn_erased() {
 #[test]
 fn test_warehouse_owned_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn ResourceProvider<HelloWorldV1Marker>).unwrap();
+    let hello_data =
+        get_payload_v1(&warehouse as &dyn ResourceProvider<HelloWorldV1Marker>).unwrap();
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -223,7 +224,8 @@ fn test_provider2_dyn_erased_alt() {
 fn test_provider2_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn ResourceProvider<HelloWorldV1Marker>).unwrap();
+    let hello_data =
+        get_payload_v1(&provider as &dyn ResourceProvider<HelloWorldV1Marker>).unwrap();
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -245,10 +247,13 @@ fn test_mismatched_types() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProvider2::from(warehouse);
     // Request is for v2, but type argument is for v1
-    let response: Result<DataResponse<HelloWorldV1Marker>, DataError> =
-        AnyProvider::load_any(&provider.as_any_provider(), HELLO_ALT_KEY, &Default::default())
-            .unwrap()
-            .downcast();
+    let response: Result<DataResponse<HelloWorldV1Marker>, DataError> = AnyProvider::load_any(
+        &provider.as_any_provider(),
+        HELLO_ALT_KEY,
+        &Default::default(),
+    )
+    .unwrap()
+    .downcast();
     assert!(matches!(
         response,
         Err(DataError {

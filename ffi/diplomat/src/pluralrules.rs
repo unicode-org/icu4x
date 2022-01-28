@@ -8,9 +8,7 @@ pub mod ffi {
 
     use alloc::boxed::Box;
 
-    use icu_plurals::{
-        PluralCategory, PluralOperands, PluralRules,
-    };
+    use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
@@ -44,19 +42,16 @@ pub mod ffi {
         ) -> ICU4XCreatePluralRulesResult {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            PluralRules::try_new_cardinal(
-                locale.0.as_ref().clone(),
-                &provider,
-            )
-            .ok()
-            .map(|r| ICU4XCreatePluralRulesResult {
-                rules: Some(Box::new(ICU4XPluralRules(r))),
-                success: true,
-            })
-            .unwrap_or(ICU4XCreatePluralRulesResult {
-                rules: None,
-                success: false,
-            })
+            PluralRules::try_new_cardinal(locale.0.as_ref().clone(), &provider)
+                .ok()
+                .map(|r| ICU4XCreatePluralRulesResult {
+                    rules: Some(Box::new(ICU4XPluralRules(r))),
+                    success: true,
+                })
+                .unwrap_or(ICU4XCreatePluralRulesResult {
+                    rules: None,
+                    success: false,
+                })
         }
 
         /// FFI version of `PluralRules::try_new_ordinal()`.
@@ -67,19 +62,16 @@ pub mod ffi {
         ) -> ICU4XCreatePluralRulesResult {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            PluralRules::try_new_ordinal(
-                locale.0.as_ref().clone(),
-                &provider,
-            )
-            .ok()
-            .map(|r| ICU4XCreatePluralRulesResult {
-                rules: Some(Box::new(ICU4XPluralRules(r))),
-                success: true,
-            })
-            .unwrap_or(ICU4XCreatePluralRulesResult {
-                rules: None,
-                success: false,
-            })
+            PluralRules::try_new_ordinal(locale.0.as_ref().clone(), &provider)
+                .ok()
+                .map(|r| ICU4XCreatePluralRulesResult {
+                    rules: Some(Box::new(ICU4XPluralRules(r))),
+                    success: true,
+                })
+                .unwrap_or(ICU4XCreatePluralRulesResult {
+                    rules: None,
+                    success: false,
+                })
         }
 
         /// FFI version of `PluralRules::select()`.

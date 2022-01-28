@@ -56,14 +56,17 @@ impl ListFormatter {
         style: ListStyle,
     ) -> Result<Self, DataError> {
         let data = data_provider
-            .load_payload(match type_ {
-                ListType::And => key::LIST_FORMAT_AND_V1,
-                ListType::Or => key::LIST_FORMAT_OR_V1,
-                ListType::Unit => key::LIST_FORMAT_UNIT_V1,
-            }, &DataRequest {
-                options: locale.into().into(),
-                metadata: Default::default(),
-            })?
+            .load_payload(
+                match type_ {
+                    ListType::And => key::LIST_FORMAT_AND_V1,
+                    ListType::Or => key::LIST_FORMAT_OR_V1,
+                    ListType::Unit => key::LIST_FORMAT_UNIT_V1,
+                },
+                &DataRequest {
+                    options: locale.into().into(),
+                    metadata: Default::default(),
+                },
+            )?
             .take_payload()?;
         Ok(Self { data, style })
     }

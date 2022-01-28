@@ -78,8 +78,8 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         let en = langid!("en");
-        let pr = PluralRules::try_new_cardinal(en, &provider)
-            .expect("Failed to create PluralRules.");
+        let pr =
+            PluralRules::try_new_cardinal(en, &provider).expect("Failed to create PluralRules.");
 
         match pr.select(email_count) {
             PluralCategory::One => print("Note: You have one unread email."),

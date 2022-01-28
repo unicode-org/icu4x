@@ -7,10 +7,10 @@
 //! Read more about data providers: [`icu_provider`]
 
 use core::str::FromStr;
+use icu_provider::prelude::*;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::TinyStr16;
-use icu_provider::prelude::*;
 
 pub mod key {
     //! Resource keys for [`icu_decimal`](crate).

@@ -8,10 +8,10 @@
 
 use alloc::vec::Vec;
 use icu_locid::LanguageIdentifier;
+use icu_provider::prelude::*;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
-use icu_provider::prelude::*;
 
 /// A collection of [`ResourceKey`](icu_provider::ResourceKey) structs for
 /// LocaleCanonicalizer providers.

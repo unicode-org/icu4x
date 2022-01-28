@@ -7,8 +7,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_provider::yoke::{self, *};
 use icu_provider::prelude::*;
+use icu_provider::yoke::{self, *};
 
 pub mod key {
     //! Resource keys for [`icu_decimal`](crate).

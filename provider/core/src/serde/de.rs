@@ -129,7 +129,11 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
-    fn load_payload(&self, key: ResourceKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
         let old_response = BufferProvider::load_buffer(self.0, key, req)?;
         if let Some(old_payload) = old_response.payload {
             let buffer_format = old_response
