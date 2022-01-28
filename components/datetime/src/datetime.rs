@@ -90,10 +90,10 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
-            + DataProvider<PluralRulesV1Marker>,
+        D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + DynProvider<PluralRulesV1Marker>,
     {
         Ok(Self(
             raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,

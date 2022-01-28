@@ -44,10 +44,10 @@ impl DateTimeFormat {
         calendar: &'static str,
     ) -> Result<Self, DateTimeFormatError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
-            + DataProvider<PluralRulesV1Marker>,
+        D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + DynProvider<PluralRulesV1Marker>,
     {
         let locale = locale.into();
 
@@ -76,14 +76,12 @@ impl DateTimeFormat {
         let symbols_data = if requires_data {
             Some(
                 data_provider
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: provider::key::DATE_SYMBOLS_V1,
-                            options: ResourceOptions {
-                                variant: Some(calendar.into()),
-                                langid: Some(langid),
-                            },
+                    .load_resource(&DataRequest {
+                        options: ResourceOptions {
+                            variant: Some(calendar.into()),
+                            langid: Some(langid),
                         },
+                        metadata: Default::default(),
                     })?
                     .take_payload()?,
             )

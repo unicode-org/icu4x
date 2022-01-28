@@ -49,25 +49,20 @@ impl ListFormatter {
     /// [`LIST_FORMAT_UNIT_V1`](crate::provider::key::LIST_FORMAT_UNIT_V1).
     /// An error is returned if the key or language are not available, or if there were any
     /// deserialization errors.
-    pub fn try_new<T: Into<Locale>, D: DataProvider<ListFormatterPatternsV1Marker> + ?Sized>(
+    pub fn try_new<T: Into<Locale>, D: DynProvider<ListFormatterPatternsV1Marker> + ?Sized>(
         locale: T,
         data_provider: &D,
         type_: ListType,
         style: ListStyle,
     ) -> Result<Self, DataError> {
         let data = data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: match type_ {
-                        ListType::And => key::LIST_FORMAT_AND_V1,
-                        ListType::Or => key::LIST_FORMAT_OR_V1,
-                        ListType::Unit => key::LIST_FORMAT_UNIT_V1,
-                    },
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.into().into()),
-                    },
-                },
+            .load_payload(match type_ {
+                ListType::And => key::LIST_FORMAT_AND_V1,
+                ListType::Or => key::LIST_FORMAT_OR_V1,
+                ListType::Unit => key::LIST_FORMAT_UNIT_V1,
+            }, &DataRequest {
+                options: locale.into().into(),
+                metadata: Default::default(),
             })?
             .take_payload()?;
         Ok(Self { data, style })

@@ -4,11 +4,13 @@
 
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
+use super::super::key;
 use crate::{
     pattern::runtime::PatternPlurals,
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
+use icu_provider::prelude::*;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 
@@ -23,6 +25,9 @@ pub struct DateSkeletonPatternsV1<'data>(
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub  LiteMap<SkeletonV1, PatternPlurals<'data>>,
 );
+impl ResourceMarker for DateSkeletonPatternsV1Marker {
+    const KEY: ResourceKey = key::DATE_SKELETON_PATTERNS_V1;
+}
 
 /// This struct is a public wrapper around the internal `Skeleton` struct. This allows
 /// access to the serialization and deserialization capabilities, without exposing the

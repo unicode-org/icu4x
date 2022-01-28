@@ -6,7 +6,7 @@ use alloc::string::String;
 use core::marker::PhantomData;
 use icu_locid::Locale;
 use icu_plurals::provider::PluralRulesV1Marker;
-use icu_provider::DataProvider;
+use icu_provider::prelude::*;
 
 use crate::{
     date::ZonedDateTimeInput,
@@ -102,17 +102,17 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        DP: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>,
-        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        DP: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>,
+        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: DataProvider<PluralRulesV1Marker>,
+        PP: DynProvider<PluralRulesV1Marker>,
     {
         Ok(Self(
             raw::ZonedDateTimeFormat::try_new(

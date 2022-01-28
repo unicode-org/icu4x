@@ -24,26 +24,23 @@ use icu_provider::prelude::*;
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load_resource<D, L, P>(
     locale: &L,
-    resource_key: ResourceKey,
     destination: &mut Option<DataPayload<D>>,
     provider: &P,
 ) -> Result<(), DateTimeFormatError>
 where
-    D: DataMarker,
+    D: ResourceMarker,
     L: Clone + Into<LanguageIdentifier>,
-    P: DataProvider<D> + ?Sized,
+    P: ResourceProvider<D> + ?Sized,
 {
     if destination.is_none() {
         *destination = Some(
             provider
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key: resource_key,
-                        options: ResourceOptions {
-                            variant: None,
-                            langid: Some(locale.clone().into()),
-                        },
+                .load_resource(&DataRequest {
+                    options: ResourceOptions {
+                        langid: Some(locale.clone().into()),
+                        variant: None,
                     },
+                    metadata: Default::default(),
                 })?
                 .take_payload()?,
         );
@@ -118,25 +115,20 @@ impl TimeZoneFormat {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
 
         let zone_formats: DataPayload<TimeZoneFormatsV1Marker> = zone_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::TIMEZONE_FORMATS_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.clone().into()),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: locale.clone().into(),
+                metadata: Default::default(),
             })?
             .take_payload()?;
 
@@ -173,18 +165,8 @@ impl TimeZoneFormat {
         for (length, symbol) in zone_symbols {
             match symbol {
                 TimeZone::LowerZ => match length {
-                    1..=3 => load_resource(
-                        &locale,
-                        provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
-                        &mut mz_specific_short,
-                        zone_provider,
-                    )?,
-                    4 => load_resource(
-                        &locale,
-                        provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
-                        &mut mz_specific_long,
-                        zone_provider,
-                    )?,
+                    1..=3 => load_resource(&locale, &mut mz_specific_short, zone_provider)?,
+                    4 => load_resource(&locale, &mut mz_specific_long, zone_provider)?,
                     _ => {
                         return Err(DateTimeFormatError::Pattern(
                             PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
@@ -193,32 +175,12 @@ impl TimeZoneFormat {
                 },
                 TimeZone::LowerV => match length {
                     1 => {
-                        load_resource(
-                            &locale,
-                            provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
-                            &mut mz_generic_short,
-                            zone_provider,
-                        )?;
-                        load_resource(
-                            &locale,
-                            provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                            &mut exemplar_cities,
-                            zone_provider,
-                        )?;
+                        load_resource(&locale, &mut mz_generic_short, zone_provider)?;
+                        load_resource(&locale, &mut exemplar_cities, zone_provider)?;
                     }
                     4 => {
-                        load_resource(
-                            &locale,
-                            provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1,
-                            &mut mz_generic_long,
-                            zone_provider,
-                        )?;
-                        load_resource(
-                            &locale,
-                            provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                            &mut exemplar_cities,
-                            zone_provider,
-                        )?;
+                        load_resource(&locale, &mut mz_generic_long, zone_provider)?;
+                        load_resource(&locale, &mut exemplar_cities, zone_provider)?;
                     }
                     _ => {
                         return Err(DateTimeFormatError::Pattern(
@@ -229,12 +191,7 @@ impl TimeZoneFormat {
                 TimeZone::UpperV => match length {
                     1 => (), // BCP-47 identifier, no CLDR-data necessary.
                     2 => (), // IANA time-zone ID, no CLDR data necessary.
-                    3 | 4 => load_resource(
-                        &locale,
-                        provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                        &mut exemplar_cities,
-                        zone_provider,
-                    )?,
+                    3 | 4 => load_resource(&locale, &mut exemplar_cities, zone_provider)?,
                     _ => {
                         return Err(DateTimeFormatError::Pattern(
                             PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
@@ -283,25 +240,20 @@ impl TimeZoneFormat {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
 
         let zone_formats: DataPayload<TimeZoneFormatsV1Marker> = zone_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::TIMEZONE_FORMATS_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.clone().into()),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: locale.clone().into(),
+                metadata: Default::default(),
             })?
             .take_payload()?;
 
@@ -322,56 +274,21 @@ impl TimeZoneFormat {
 
         match config {
             TimeZoneFormatConfig::GenericNonLocationLong => {
-                load_resource(
-                    &locale,
-                    provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1,
-                    &mut mz_generic_long,
-                    zone_provider,
-                )?;
-                load_resource(
-                    &locale,
-                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                    &mut exemplar_cities,
-                    zone_provider,
-                )?;
+                load_resource(&locale, &mut mz_generic_long, zone_provider)?;
+                load_resource(&locale, &mut exemplar_cities, zone_provider)?;
             }
             TimeZoneFormatConfig::GenericNonLocationShort => {
-                load_resource(
-                    &locale,
-                    provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
-                    &mut mz_generic_short,
-                    zone_provider,
-                )?;
-                load_resource(
-                    &locale,
-                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                    &mut exemplar_cities,
-                    zone_provider,
-                )?;
+                load_resource(&locale, &mut mz_generic_short, zone_provider)?;
+                load_resource(&locale, &mut exemplar_cities, zone_provider)?;
             }
             TimeZoneFormatConfig::GenericLocation => {
-                load_resource(
-                    &locale,
-                    provider::key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                    &mut exemplar_cities,
-                    zone_provider,
-                )?;
+                load_resource(&locale, &mut exemplar_cities, zone_provider)?;
             }
             TimeZoneFormatConfig::SpecificNonLocationLong => {
-                load_resource(
-                    &locale,
-                    provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
-                    &mut mz_specific_long,
-                    zone_provider,
-                )?;
+                load_resource(&locale, &mut mz_specific_long, zone_provider)?;
             }
             TimeZoneFormatConfig::SpecificNonLocationShort => {
-                load_resource(
-                    &locale,
-                    provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
-                    &mut mz_specific_short,
-                    zone_provider,
-                )?;
+                load_resource(&locale, &mut mz_specific_short, zone_provider)?;
             }
             TimeZoneFormatConfig::LocalizedGMT | TimeZoneFormatConfig::Iso8601(..) => (),
         }

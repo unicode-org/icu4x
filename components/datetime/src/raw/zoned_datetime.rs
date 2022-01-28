@@ -5,7 +5,7 @@
 use alloc::string::String;
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
-use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
+use icu_provider::prelude::*;
 
 use crate::{
     date::ZonedDateTimeInput,
@@ -48,17 +48,17 @@ impl ZonedDateTimeFormat {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        DP: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>,
-        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        DP: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>,
+        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: DataProvider<PluralRulesV1Marker>,
+        PP: DynProvider<PluralRulesV1Marker>,
     {
         let locale = locale.into();
         let langid: LanguageIdentifier = locale.clone().into();
@@ -86,14 +86,12 @@ impl ZonedDateTimeFormat {
         let symbols_data = if requires_data {
             Some(
                 date_provider
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: provider::key::DATE_SYMBOLS_V1,
-                            options: ResourceOptions {
-                                variant: Some(calendar.into()),
-                                langid: Some(langid),
-                            },
+                    .load_resource(&DataRequest {
+                        options: ResourceOptions {
+                            variant: Some(calendar.into()),
+                            langid: Some(langid),
                         },
+                        metadata: Default::default(),
                     })?
                     .take_payload()?,
             )

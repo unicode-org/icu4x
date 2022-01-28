@@ -7,7 +7,9 @@
 mod skeletons;
 mod symbols;
 
+use super::key;
 use crate::pattern;
+use icu_provider::prelude::*;
 use icu_provider::{
     yoke::{self, *},
     DataMarker,
@@ -43,6 +45,9 @@ pub struct DatePatternsV1<'data> {
     /// Patterns used to combine date and time length patterns into full date_time patterns.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
+}
+impl ResourceMarker for DatePatternsV1Marker {
+    const KEY: ResourceKey = key::DATE_PATTERNS_V1;
 }
 
 pub mod patterns {

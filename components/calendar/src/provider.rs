@@ -10,6 +10,7 @@ use core::str::FromStr;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::TinyStr16;
+use icu_provider::prelude::*;
 
 pub mod key {
     //! Resource keys for [`icu_decimal`](crate).
@@ -44,6 +45,10 @@ pub struct EraStartDate {
 pub struct JapaneseErasV1 {
     pub dates_to_historical_eras: LiteMap<EraStartDate, TinyStr16>,
     pub dates_to_eras: LiteMap<EraStartDate, TinyStr16>,
+}
+
+impl ResourceMarker for JapaneseErasV1Marker {
+    const KEY: ResourceKey = key::JAPANESE_ERAS_V1;
 }
 
 impl FromStr for EraStartDate {

@@ -4,7 +4,9 @@
 
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
+use crate::provider::key;
 use alloc::borrow::Cow;
+use icu_provider::prelude::*;
 use icu_provider::yoke::{self, *};
 use zerovec::map::ZeroMap;
 
@@ -24,6 +26,9 @@ pub struct DateSymbolsV1<'data> {
     pub day_periods: day_periods::ContextsV1<'data>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub eras: Eras<'data>,
+}
+impl ResourceMarker for DateSymbolsV1Marker {
+    const KEY: ResourceKey = key::DATE_SYMBOLS_V1;
 }
 
 #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
