@@ -385,7 +385,7 @@ The proc macro as designed so far will take up multiples of eight bits for each 
 
 The way this can be achieved is the following.
 
-Firstly, `ULE` gets `BITS` and `BYTES` associated constants. `BYTES` is always `sizeof::<Self>()` (but as an associated constant so it may be used in generic const contexts). `BITS` by default is just `BYTES * 8`, however in some cases it may be smaller.
+Firstly, `ULE` gets `BITS` and `BYTES` associated constants. `BYTES` is always `sizeof::<Self>()` (but as an associated constant so it may be used in generic const contexts). `BITS` by default is just `BYTES * 8`; however, in some cases it may be smaller.
 
 Implementors of `ULE` can choose to reduce `BITS` if they promise that their conversion impls rely on those bytes always being zero.
 
