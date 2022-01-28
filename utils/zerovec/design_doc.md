@@ -308,7 +308,7 @@ These are basic derives that can be applied to types to _just_ generate ULE and 
 
 These can only be applied to structs where all fields are ULE types (for `#[derive(VarULE)]`, the last field must be an unsized `VarULE` type). These derives will do the following things:
 
- - Apply `#[repr(packed)]` to the type
+ - Apply `#[repr(packed)]` to the type (or perhaps `#[repr(C)]` if we can determine that that will always work)
  - Generate the appropriate `ZeroMapKV` impl (an opt-out can be provided)
  - Generate a `ULE` or `VarULE` implementation that applies offsetted `validate_byte_slice()` for each field to implement the final `validate_byte_slice()`
  - Generate `Copy`/`Clone` impls as necessary (`#[derive()]` does not work with packed types)
