@@ -11,6 +11,7 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
+use icu_provider::prelude::*;
 
 /// A collection of [`ResourceKey`](icu_provider::ResourceKey) structs for
 /// LocaleCanonicalizer providers.
@@ -67,6 +68,10 @@ pub struct AliasesV1 {
     pub subdivision: Vec<(TinyStr8, TinyStr8)>,
 }
 
+impl ResourceMarker for AliasesV1Marker {
+    const KEY: ResourceKey = key::ALIASES_V1;
+}
+
 #[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
@@ -103,4 +108,8 @@ pub struct LikelySubtagsV1 {
     pub region: LiteMap<TinyStr4, LanguageIdentifier>,
     /// Undefined.
     pub und: LanguageIdentifier,
+}
+
+impl ResourceMarker for LikelySubtagsV1Marker {
+    const KEY: ResourceKey = key::LIKELY_SUBTAGS_V1;
 }

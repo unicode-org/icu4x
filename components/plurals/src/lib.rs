@@ -301,7 +301,7 @@ impl PluralRules {
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
     where
-        D: DataProvider<PluralRulesV1Marker> + ?Sized,
+        D: DynProvider<PluralRulesV1Marker> + ?Sized,
     {
         let locale = locale.into();
         let key = match rule_type {
@@ -309,15 +309,13 @@ impl PluralRules {
             PluralRuleType::Ordinal => provider::key::ORDINAL_V1,
         };
         let rules = data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.clone().into()),
-                    },
+            .load_payload(
+                key,
+                &DataRequest {
+                    options: locale.clone().into(),
+                    metadata: Default::default(),
                 },
-            })?
+            )?
             .take_payload()?;
         Self::new(locale, rules)
     }

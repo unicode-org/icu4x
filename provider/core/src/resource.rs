@@ -11,7 +11,7 @@ use crate::helpers;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
-use icu_locid::LanguageIdentifier;
+use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 
 /// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
@@ -428,6 +428,16 @@ impl From<LanguageIdentifier> for ResourceOptions {
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
             langid: Some(langid),
+            variant: None,
+        }
+    }
+}
+
+impl From<Locale> for ResourceOptions {
+    /// Create a ResourceOptions with the given language identifier and an empty variant field.
+    fn from(locale: Locale) -> Self {
+        Self {
+            langid: Some(locale.id),
             variant: None,
         }
     }
