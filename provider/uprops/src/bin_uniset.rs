@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::uprops_helpers::{self, TomlBinary};
+use crate::uprops_helpers::{self, get_last_component_no_version, TomlBinary};
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
@@ -30,7 +30,7 @@ impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvi
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         let data = &self
             .data
-            .get(req.resource_path.key.get_last_component_no_version())
+            .get(get_last_component_no_version(&req.resource_path.key))
             .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
 
         let mut builder = UnicodeSetBuilder::new();

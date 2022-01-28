@@ -80,7 +80,7 @@ impl DataProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsProperty
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<ScriptExtensionsPropertyV1Marker>, DataError> {
-        if req.resource_path.key.get_last_component_no_version() != "scx" {
+        if uprops_helpers::get_last_component_no_version(&req.resource_path.key) != "scx" {
             return Err(DataErrorKind::MissingResourceKey.with_req(req));
         }
 
