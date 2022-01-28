@@ -123,6 +123,20 @@ where
     }
 }
 
+impl<M> DynProvider<M> for StaticDataProvider
+where
+    M: DataMarker,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
+        serde::de::Deserialize<'de>,
+{
+    fn load_payload(&self, key: ResourceKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.as_deserializing().load_payload(key, req)
+    }
+}
+
 impl BufferProvider for StaticDataProvider {
     fn load_buffer(
         &self,

@@ -11,7 +11,7 @@ pub mod ffi {
     use icu_plurals::{
         provider::PluralRulesV1Marker, PluralCategory, PluralOperands, PluralRuleType, PluralRules,
     };
-    use icu_provider::prelude::DataProvider;
+    use icu_provider::DynProvider;
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
@@ -62,7 +62,7 @@ pub mod ffi {
             ty: ICU4XPluralRuleType,
         ) -> ICU4XCreatePluralRulesResult
         where
-            D: DataProvider<PluralRulesV1Marker> + ?Sized,
+            D: DynProvider<PluralRulesV1Marker> + ?Sized,
         {
             PluralRules::try_new(
                 locale.0.as_ref().clone(),
