@@ -79,6 +79,8 @@ pub use error::PluralRulesError;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
+use provider::CardinalV1Marker;
+use provider::OrdinalV1Marker;
 use provider::PluralRulesV1Marker;
 use rules::runtime::test_rule;
 
@@ -301,22 +303,29 @@ impl PluralRules {
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
     where
-        D: DynProvider<PluralRulesV1Marker> + ?Sized,
+        D: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker> + ?Sized,
     {
         let locale = locale.into();
-        let key = match rule_type {
-            PluralRuleType::Cardinal => provider::key::CARDINAL_V1,
-            PluralRuleType::Ordinal => provider::key::ORDINAL_V1,
-        };
-        let rules = data_provider
-            .load_payload(
-                key,
+        let rules = match rule_type {
+            PluralRuleType::Cardinal => ResourceProvider::<CardinalV1Marker>::load_resource(
+                data_provider,
                 &DataRequest {
                     options: locale.clone().into(),
                     metadata: Default::default(),
                 },
             )?
-            .take_payload()?;
+            .take_payload()?
+            .cast(),
+            PluralRuleType::Ordinal => ResourceProvider::<OrdinalV1Marker>::load_resource(
+                data_provider,
+                &DataRequest {
+                    options: locale.clone().into(),
+                    metadata: Default::default(),
+                },
+            )?
+            .take_payload()?
+            .cast(),
+        };
         Self::new(locale, rules)
     }
 

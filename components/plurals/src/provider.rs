@@ -7,6 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
+use icu_provider::prelude::*;
 use icu_provider::yoke::{self, *};
 
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
@@ -38,4 +39,20 @@ pub struct PluralRulesV1<'data> {
     pub few: Option<Rule<'data>>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
+}
+
+pub struct CardinalV1Marker;
+impl DataMarker for CardinalV1Marker {
+    type Yokeable = PluralRulesV1<'static>;
+}
+impl ResourceMarker for CardinalV1Marker {
+    const KEY: ResourceKey = key::CARDINAL_V1;
+}
+
+pub struct OrdinalV1Marker;
+impl DataMarker for OrdinalV1Marker {
+    type Yokeable = PluralRulesV1<'static>;
+}
+impl ResourceMarker for OrdinalV1Marker {
+    const KEY: ResourceKey = key::ORDINAL_V1;
 }

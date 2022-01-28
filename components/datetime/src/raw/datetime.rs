@@ -14,7 +14,7 @@ use crate::{
 };
 use alloc::string::String;
 use icu_locid::Locale;
-use icu_plurals::{provider::PluralRulesV1Marker, PluralRuleType, PluralRules};
+use icu_plurals::{provider::OrdinalV1Marker, provider::CardinalV1Marker, PluralRuleType, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
@@ -47,7 +47,7 @@ impl DateTimeFormat {
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + DynProvider<PluralRulesV1Marker>,
+            + ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker>,
     {
         let locale = locale.into();
 

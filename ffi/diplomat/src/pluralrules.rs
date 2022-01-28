@@ -9,9 +9,9 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use icu_plurals::{
-        provider::PluralRulesV1Marker, PluralCategory, PluralOperands, PluralRuleType, PluralRules,
+        provider::CardinalV1Marker, provider::OrdinalV1Marker, PluralCategory, PluralOperands, PluralRuleType, PluralRules,
     };
-    use icu_provider::DynProvider;
+    use icu_provider::ResourceProvider;
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
@@ -62,7 +62,7 @@ pub mod ffi {
             ty: ICU4XPluralRuleType,
         ) -> ICU4XCreatePluralRulesResult
         where
-            D: DynProvider<PluralRulesV1Marker> + ?Sized,
+            D: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker> + ?Sized,
         {
             PluralRules::try_new(
                 locale.0.as_ref().clone(),

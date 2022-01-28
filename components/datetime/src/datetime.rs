@@ -13,7 +13,7 @@ use crate::{
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_locid::Locale;
-use icu_plurals::provider::PluralRulesV1Marker;
+use icu_plurals::provider::{CardinalV1Marker, OrdinalV1Marker};
 use icu_provider::prelude::*;
 
 use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDateTime};
@@ -93,7 +93,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + DynProvider<PluralRulesV1Marker>,
+            + ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker>,
     {
         Ok(Self(
             raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,
