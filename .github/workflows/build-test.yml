@@ -797,7 +797,7 @@ jobs:
         if [ $? -ne 0 ]
         then
           echo Execution of npm ci failed. This may be due to package.json
-          echo and package-lock,json being out of sync. Locally execute
+          echo and package-lock.json being out of sync. Locally execute
           echo npm install in directory  ffi/diplomat/wasm to generate a
           echo new package-lock.json file and and merge it into the repository.
           exit 1
