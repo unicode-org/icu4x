@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643320555839,
+  "lastUpdate": 1643404871854,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18059,6 +18059,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 99090,
             "range": "± 5863",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7a7cb736383e9eda1aecc0d94c67e693d39752b4",
+          "message": "Removing uprops-specific code from ResourceKey (#1555)",
+          "timestamp": "2022-01-28T22:13:18+01:00",
+          "tree_id": "d6139584e4d1316f5a55ec5406489e04da76226d",
+          "url": "https://github.com/unicode-org/icu4x/commit/7a7cb736383e9eda1aecc0d94c67e693d39752b4"
+        },
+        "date": 1643404860842,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 104177,
+            "range": "± 322",
             "unit": "ns/iter"
           }
         ]
