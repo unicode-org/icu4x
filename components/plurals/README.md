@@ -29,7 +29,7 @@ let lid = langid!("en");
 
 let provider = icu_testdata::get_provider();
 
-let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal)
+let pr = PluralRules::try_new_cardinal(lid, &provider, PluralRuleType::Cardinal)
     .expect("Failed to construct a PluralRules struct.");
 
 assert_eq!(pr.select(5_usize), PluralCategory::Other);
