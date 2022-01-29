@@ -132,11 +132,26 @@ macro_rules! impl_dyn_provider {
             $crate::any::AnyMarker
         );
     };
+    ($provider:ty, [ $($struct_m:ty),+, ], ANY) => {
+        $crate::impl_dyn_provider!(
+            $provider,
+            [ $($struct_m),+, ],
+            $crate::any::AnyMarker
+        );
+    };
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, SERDE_SE) => {
         // If this fails to compile, enable the "serialize" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
+            $crate::serde::SerializeMarker
+        );
+    };
+    ($provider:ty, [ $($struct_m:ty),+, ], SERDE_SE) => {
+        // If this fails to compile, enable the "serialize" feature on this crate.
+        $crate::impl_dyn_provider!(
+            $provider,
+            [ $($struct_m),+, ],
             $crate::serde::SerializeMarker
         );
     };
@@ -155,6 +170,37 @@ macro_rules! impl_dyn_provider {
                     $(
                         $pat => {
                             let result: $crate::DataResponse<$struct_m> =
+                                $crate::DynProvider::load_payload(self, key, req)?;
+                            Ok(DataResponse {
+                                metadata: result.metadata,
+                                payload: result.payload.map(|p| {
+                                    $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
+                                }),
+                            })
+                        }
+                    )+,
+                    // Don't complain if the call site has its own wildcard match
+                    #[allow(unreachable_patterns)]
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
+                }
+            }
+        }
+    };
+    ($provider:ty, [ $($struct_m:ty),+, ], $dyn_m:path) => {
+        impl $crate::DynProvider<$dyn_m> for $provider
+        {
+            fn load_payload(
+                &self,
+                key: $crate::ResourceKey,
+                req: &$crate::DataRequest,
+            ) -> Result<
+                $crate::DataResponse<$dyn_m>,
+                $crate::DataError,
+            > {
+                match key {
+                    $(
+                        <$struct_m as $crate::ResourceMarker>::KEY => {
+                            let result: $crate::DataResponse<$struct_m> =
                                 $crate::ResourceProvider::load_resource(self, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
@@ -170,5 +216,5 @@ macro_rules! impl_dyn_provider {
                 }
             }
         }
-    }
+    };
 }

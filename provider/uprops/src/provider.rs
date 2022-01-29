@@ -29,20 +29,19 @@ impl PropertiesDataProvider {
     }
 }
 
-impl DataProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
+impl DynProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        if req
-            .resource_path
-            .key
+        if key
             .get_last_component_no_version()
             .contains('=')
         {
-            self.enumerated.load_payload(req)
+            self.enumerated.load_payload(key, req)
         } else {
-            self.binary.load_payload(req)
+            self.binary.load_payload(key, req)
         }
     }
 }

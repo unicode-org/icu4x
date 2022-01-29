@@ -23,15 +23,16 @@ impl BinaryPropertyUnicodeSetDataProvider {
     }
 }
 
-impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
+impl DynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         let data = &self
             .data
-            .get(req.resource_path.key.get_last_component_no_version())
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
+            .get(key.get_last_component_no_version())
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?;
 
         let mut builder = UnicodeSetBuilder::new();
         for (start, end) in &data.ranges {

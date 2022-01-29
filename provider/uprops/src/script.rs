@@ -75,13 +75,14 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensionsPropertyV1<'static> 
 }
 
 // implement data provider
-impl DataProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsPropertyProvider {
+impl DynProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsPropertyProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<ScriptExtensionsPropertyV1Marker>, DataError> {
-        if req.resource_path.key.get_last_component_no_version() != "scx" {
-            return Err(DataErrorKind::MissingResourceKey.with_req(req));
+        if key.get_last_component_no_version() != "scx" {
+            return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
         }
 
         let source_scx_data = &self.data;
@@ -107,12 +108,13 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::SCRIPT_EXTENSIONS_V1,
+            .load_payload(
+                key::SCRIPT_EXTENSIONS_V1,
+                &DataRequest {
                     options: ResourceOptions::default(),
-                },
-            })
+                    metadata: Default::default(),
+                }
+            )
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");

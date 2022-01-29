@@ -56,19 +56,20 @@ fn expand_groupings<'a>(prop_name: &str, prop_val: &'a str) -> Vec<&'a str> {
     }
 }
 
-impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataProvider {
+impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        let key = &req.resource_path.key.get_last_component_no_version();
+        let key_str = &key.get_last_component_no_version();
 
         // ResourceKey subcategory strings for enumerated properties are
         // of the form "name=value", using the short name for both.
         let (prop_name, prop_value) = {
-            let parts = key.split('=').collect::<Vec<_>>();
+            let parts = key_str.split('=').collect::<Vec<_>>();
             if parts.len() != 2 {
-                return Err(DataErrorKind::MissingResourceKey.with_req(req));
+                return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
             }
             (parts[0], parts[1])
         };
@@ -76,7 +77,7 @@ impl DataProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataP
         let toml_data = &self
             .data
             .get(prop_name)
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?;
 
         let valid_names = expand_groupings(prop_name, prop_value);
 

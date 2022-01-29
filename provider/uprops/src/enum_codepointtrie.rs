@@ -92,21 +92,22 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodeProperty
 }
 
 // implement data provider
-impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
+impl<T: TrieValue> DynProvider<UnicodePropertyMapV1Marker<T>>
     for EnumeratedPropertyCodePointTrieProvider
 {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyMapV1Marker<T>>, DataError> {
         // For data resource keys that represent the CodePointTrie data for an enumerated
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
-        let prop_name = req.resource_path.key.get_last_component_no_version();
+        let prop_name = key.get_last_component_no_version();
         let source_cpt_data = &self
             .data
             .get(prop_name)
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?
             .code_point_trie;
 
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
