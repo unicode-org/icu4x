@@ -13,9 +13,11 @@ use syn::parse::Parse;
 
 #[test]
 fn test_basic() {
-    let input = quote!(
+    // #[data_struct]
+    let attr = vec![];
+    let item = syn::parse2(quote!(
         pub struct FooV1;
-    );
+    )).unwrap();
     let expected = quote!(
         #[doc="Marker type for [`FooV1`]"]
         pub struct FooV1Marker;
@@ -25,7 +27,37 @@ fn test_basic() {
         #[derive(Yokeable, ZeroCopyFrom)]
         pub struct FooV1;
     );
-    let item = syn::parse2(input).unwrap();
-    let actual = data_struct_impl(item);
+    let actual = data_struct_impl(
+        attr,
+        item
+    );
+    assert_eq!(expected.to_string(), actual.to_string());
+}
+
+#[test]
+fn test_resource_marker() {
+    // #[data_struct("demo/foo@1")]
+    let attr = vec![
+        syn::parse2(quote!("demo/foo@1")).unwrap()
+    ];
+    let item = syn::parse2(quote!(
+        pub struct FooV1;
+    )).unwrap();
+    let expected = quote!(
+        #[doc="Marker type for [`FooV1`]"]
+        pub struct FooV1Marker;
+        impl icu_provider::DataMarker for FooV1Marker {
+            type Yokeable = FooV1;
+        }
+        #[derive(Yokeable, ZeroCopyFrom)]
+        pub struct FooV1;
+        impl icu_provider::ResourceMarker for FooV1Marker {
+            const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/foo@1");
+        }
+    );
+    let actual = data_struct_impl(
+        attr,
+        item
+    );
     assert_eq!(expected.to_string(), actual.to_string());
 }

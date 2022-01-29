@@ -9,6 +9,8 @@ use quote::quote;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
 use syn::ItemStruct;
+use syn::AttributeArgs;
+use syn::NestedMeta;
 
 #[cfg(test)]
 mod tests;
@@ -21,13 +23,14 @@ mod tests;
 ///    be customized with `#[yoke(cloning_zcf)]` as needed
 /// - Create a `FooMarker` struct for the type
 /// - Implement `icu_provider::DataMarker` for `FooMarker`
-pub fn data_struct(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let attr = parse_macro_input!(attr as AttributeArgs);
     let item = parse_macro_input!(item as ItemStruct);
 
-    TokenStream::from(data_struct_impl(item))
+    TokenStream::from(data_struct_impl(attr, item))
 }
 
-fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
+fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
     if item.generics.type_params().count() > 0 {
         return syn::Error::new(
             item.generics.span(),
@@ -50,7 +53,7 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
 
     let docs = format!("Marker type for [`{}`]", name);
 
-    if lifetimes.get(0).is_some() {
+    let mut result = if lifetimes.get(0).is_some() {
         quote!(
             #[doc = #docs]
             pub struct #marker;
@@ -74,5 +77,17 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
             #[derive(Yokeable, ZeroCopyFrom)]
             #item
         )
+    };
+
+    if let Some(attr0) = attr.get(0) {
+        if let NestedMeta::Lit(key_str) = attr0 {
+            result.extend(quote!(
+                impl icu_provider::ResourceMarker for #marker {
+                    const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_str);
+                }
+            ));
+        }
     }
+
+    result
 }
