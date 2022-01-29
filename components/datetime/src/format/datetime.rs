@@ -359,14 +359,12 @@ mod tests {
 
         let provider = icu_testdata::get_provider();
         let data: DataPayload<DateSymbolsV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::DATE_SYMBOLS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some("en".parse().unwrap()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some("en".parse().unwrap()),
                 },
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()

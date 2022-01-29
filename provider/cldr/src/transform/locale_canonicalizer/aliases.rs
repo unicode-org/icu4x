@@ -306,7 +306,7 @@ fn test_basic() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = AliasesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let data: DataPayload<AliasesV1Marker> = provider
-        .load_payload(&DataRequest::from(key::ALIASES_V1))
+        .load_resource(&DataRequest::default())
         .unwrap()
         .take_payload()
         .unwrap();

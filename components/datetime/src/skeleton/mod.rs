@@ -25,7 +25,6 @@ mod test {
         options::components,
         provider::{
             calendar::DatePatternsV1Marker, calendar::DateSkeletonPatternsV1Marker,
-            key::DATE_PATTERNS_V1, key::DATE_SKELETON_PATTERNS_V1,
         },
     };
     use core::convert::TryFrom;
@@ -42,27 +41,23 @@ mod test {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         let patterns = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: DATE_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some(langid.clone()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some(langid.clone()),
                 },
+                metadata: Default::default(),
             })
             .expect("Failed to load payload")
             .take_payload()
             .expect("Failed to retrieve payload");
         let skeletons = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: DATE_SKELETON_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some(langid),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some(langid),
                 },
+                metadata: Default::default(),
             })
             .expect("Failed to load payload")
             .take_payload()

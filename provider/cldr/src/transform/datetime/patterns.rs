@@ -281,7 +281,7 @@ fn test_basic() {
                 variant: Some("gregory".into()),
                 langid: Some(langid!("cs")),
             },
-            metadata: Default::Default(),
+            metadata: Default::default(),
         })
         .expect("Failed to load payload")
         .take_payload()
@@ -304,7 +304,7 @@ fn test_with_numbering_system() {
                 variant: Some("gregory".into()),
                 langid: Some(langid!("haw")),
             },
-            metadata: Default::Default(),
+            metadata: Default::default(),
         })
         .expect("Failed to load payload")
         .take_payload()

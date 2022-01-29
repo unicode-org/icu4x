@@ -244,7 +244,7 @@ fn test_basic() {
     let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let cs_dates: DataPayload<calendar::DateSymbolsV1Marker> = provider
-        .load_payload(&DataRequest {
+        .load_resource(&DataRequest {
             options: ResourceOptions {
                 variant: Some("gregory".into()),
                 langid: Some(langid!("cs")),
@@ -271,7 +271,7 @@ fn unalias_contexts() {
     let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let cs_dates: DataPayload<calendar::DateSymbolsV1Marker> = provider
-        .load_payload(&DataRequest {
+        .load_resource(&DataRequest {
             options: ResourceOptions {
                 variant: Some("gregory".into()),
                 langid: Some(langid!("cs")),
