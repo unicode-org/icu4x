@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643417155128,
+  "lastUpdate": 1643418062312,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22457,6 +22457,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4292,
             "range": "± 382",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ededcd21953402b28815ee8ba0a62e29e820826e",
+          "message": "Add design doc for zerovec (#1537)\n\n* Add design doc for zerovec\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* fix get_copied\n\n* mention repr rust\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* repr c\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-01-28T16:52:50-08:00",
+          "tree_id": "ff65a8b9f977e29fc81621a12e08596c95173521",
+          "url": "https://github.com/unicode-org/icu4x/commit/ededcd21953402b28815ee8ba0a62e29e820826e"
+        },
+        "date": 1643418051090,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 1729,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3596,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
