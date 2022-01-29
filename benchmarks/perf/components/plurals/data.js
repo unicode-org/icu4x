@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643408290133,
+  "lastUpdate": 1643417183323,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25451,6 +25451,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 13273,
             "range": "± 13",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc6c319fb288310c5f6a70bd0fc067f697e794d0",
+          "message": "Add fn to return UnicodeSet for Script_Extensions (#1529)",
+          "timestamp": "2022-01-28T16:35:59-08:00",
+          "tree_id": "9b60c61c22dab1728f127aa2f922818158293a30",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc6c319fb288310c5f6a70bd0fc067f697e794d0"
+        },
+        "date": 1643417173632,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 927,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5411,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 13291,
+            "range": "± 745",
             "unit": "ns/iter"
           }
         ]
