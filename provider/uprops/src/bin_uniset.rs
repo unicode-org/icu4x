@@ -74,12 +74,7 @@ fn test_basic() {
         .expect("TOML should load successfully");
 
     let payload: DataPayload<UnicodePropertyV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::WHITE_SPACE_V1,
-                options: ResourceOptions::default(),
-            },
-        })
+        .load_payload(key::WHITE_SPACE_V1, &DataRequest::default())
         .expect("The data should be valid")
         .take_payload()
         .expect("Loading was successful");

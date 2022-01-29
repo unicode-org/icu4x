@@ -127,12 +127,13 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::GENERAL_CATEGORY_NUMBER_V1,
+            .load_payload(
+                key::GENERAL_CATEGORY_NUMBER_V1,
+                &DataRequest {
                     options: ResourceOptions::default(),
+                    metadata: Default::default(),
                 },
-            })
+            )
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -156,12 +157,7 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::SCRIPT_THAI_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
+            .load_payload(key::SCRIPT_THAI_V1, &Default::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -185,12 +181,7 @@ mod tests {
             let provider = EnumeratedPropertyUnicodeSetDataProvider::try_new(&root_dir)
                 .expect("TOML should load successfully");
             let payload: DataPayload<UnicodePropertyV1Marker> = provider
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key,
-                        options: ResourceOptions::default(),
-                    },
-                })
+                .load_payload(key, &DataRequest::default())
                 .expect("The data should be valid")
                 .take_payload()
                 .expect("Loading was successful");
@@ -299,12 +290,7 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::GENERAL_CATEGORY_SURROGATE_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
+            .load_payload(key::GENERAL_CATEGORY_SURROGATE_V1, &DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");

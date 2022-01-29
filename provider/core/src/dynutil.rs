@@ -170,7 +170,7 @@ macro_rules! impl_dyn_provider {
                     $(
                         $pat => {
                             let result: $crate::DataResponse<$struct_m> =
-                                $crate::DynProvider::load_payload(self, key, req)?;
+                                $crate::DynProvider::<$struct_m>::load_payload(self, key, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {

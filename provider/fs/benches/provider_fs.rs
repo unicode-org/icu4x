@@ -15,15 +15,10 @@ fn overview_bench(c: &mut Criterion) {
         b.iter(|| {
             let provider = FsDataProvider::try_new("./tests/testdata/json")
                 .expect("Loading file from testdata directory");
-            let _: DataPayload<PluralRulesV1Marker> = black_box(&provider)
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key: key::CARDINAL_V1,
-                        options: ResourceOptions {
-                            variant: None,
-                            langid: Some(langid!("ru")),
-                        },
-                    },
+            let _: DataPayload<CardinalV1Marker> = black_box(&provider)
+                .load_resource(&DataRequest {
+                    options: langid!("ru").into(),
+                    metadata: Default::default(),
                 })
                 .expect("The data should be valid")
                 .take_payload()
@@ -48,15 +43,10 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRulesV1Marker> = black_box(&provider)
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key: key::CARDINAL_V1,
-                        options: ResourceOptions {
-                            variant: None,
-                            langid: Some(langid!("ru")),
-                        },
-                    },
+            let _: DataPayload<CardinalV1Marker> = black_box(&provider)
+                .load_resource(&DataRequest {
+                    options: langid!("ru").into(),
+                    metadata: Default::default(),
                 })
                 .expect("The data should be valid")
                 .take_payload()
@@ -66,16 +56,11 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRulesV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataPayload<CardinalV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key: key::CARDINAL_V1,
-                        options: ResourceOptions {
-                            variant: None,
-                            langid: Some(langid!("ru")),
-                        },
-                    },
+                .load_resource(&DataRequest {
+                    options: langid!("ru").into(),
+                    metadata: Default::default(),
                 })
                 .expect("The data should be valid")
                 .take_payload()
@@ -91,15 +76,10 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRulesV1Marker> = black_box(&provider)
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key: key::CARDINAL_V1,
-                        options: ResourceOptions {
-                            variant: None,
-                            langid: Some(langid!("sr")),
-                        },
-                    },
+            let _: DataPayload<CardinalV1Marker> = black_box(&provider)
+                .load_resource(&DataRequest {
+                    options: langid!("sr").into(),
+                    metadata: Default::default(),
                 })
                 .expect("The data should be valid")
                 .take_payload()
@@ -109,16 +89,11 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRulesV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataPayload<CardinalV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
-                .load_payload(&DataRequest {
-                    resource_path: ResourcePath {
-                        key: key::CARDINAL_V1,
-                        options: ResourceOptions {
-                            variant: None,
-                            langid: Some(langid!("sr")),
-                        },
-                    },
+                .load_resource(&DataRequest {
+                    options: langid!("sr").into(),
+                    metadata: Default::default(),
                 })
                 .expect("The data should be valid")
                 .take_payload()

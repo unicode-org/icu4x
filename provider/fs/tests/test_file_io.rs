@@ -56,19 +56,6 @@ const EXPECTED_SR_DATA: PluralRulesTestData = PluralRulesTestData {
     many: None,
 };
 
-#[allow(dead_code)]
-fn get_request(langid: LanguageIdentifier) -> DataRequest {
-    DataRequest {
-        resource_path: ResourcePath {
-            key: key::CARDINAL_V1,
-            options: ResourceOptions {
-                variant: None,
-                langid: Some(langid),
-            },
-        },
-    }
-}
-
 #[cfg(not(feature = "deserialize_json"))]
 #[test]
 fn test_json_feature() {
@@ -81,8 +68,11 @@ fn test_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRulesV1Marker> = provider
-        .load_payload(&get_request(langid!("ru")))
+    let plurals_data: DataPayload<CardinalV1Marker> = provider
+        .load_resource(&DataRequest {
+            options: langid!("ru").into(),
+            metadata: Default::default(),
+        })
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
@@ -95,9 +85,12 @@ fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRulesV1Marker> = (&provider as &dyn BufferProvider)
+    let plurals_data: DataPayload<CardinalV1Marker> = (&provider as &dyn BufferProvider)
         .as_deserializing()
-        .load_payload(&get_request(langid!("ru")))
+        .load_resource(&DataRequest {
+            options: langid!("ru").into(),
+            metadata: Default::default(),
+        })
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
@@ -110,35 +103,25 @@ fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    type Provider = dyn DataProvider<PluralRulesV1Marker>;
+    type Provider = dyn ResourceProvider<CardinalV1Marker>;
 
     assert!(matches!(
-        Provider::load_payload(
+        Provider::load_resource(
             &provider,
             &DataRequest {
-                resource_path: ResourcePath {
-                    key: key::CARDINAL_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("ru"))
-                    }
-                }
+                options: langid!("ru").into(),
+                metadata: Default::default(),
             },
         ),
         Ok(_)
     ));
 
     assert!(matches!(
-        Provider::load_payload(
+        Provider::load_resource(
             &provider,
             &DataRequest {
-                resource_path: ResourcePath {
-                    key: key::CARDINAL_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("zh"))
-                    }
-                }
+                options: langid!("zh").into(),
+                metadata: Default::default(),
             },
         ),
         Err(DataError {
@@ -148,16 +131,11 @@ fn test_json_errors() {
     ));
 
     assert!(matches!(
-        Provider::load_payload(
+        Provider::load_resource(
             &provider,
             &DataRequest {
-                resource_path: ResourcePath {
-                    key: key::ORDINAL_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("ru"))
-                    }
-                }
+                options: langid!("ru").into(),
+                metadata: Default::default(),
             },
         ),
         Err(DataError {
@@ -167,16 +145,11 @@ fn test_json_errors() {
     ));
 
     assert!(matches!(
-        Provider::load_payload(
+        Provider::load_resource(
             &provider,
             &DataRequest {
-                resource_path: ResourcePath {
-                    key: icu_provider::hello_world::key::HELLO_WORLD_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("ru"))
-                    }
-                }
+                options: langid!("ru").into(),
+                metadata: Default::default(),
             },
         ),
         Err(DataError {
@@ -192,8 +165,11 @@ fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRulesV1Marker> = provider
-        .load_payload(&get_request(langid!("sr")))
+    let plurals_data: DataPayload<CardinalV1Marker> = provider
+        .load_resource(&DataRequest {
+            options: langid!("sr").into(),
+            metadata: Default::default(),
+        })
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
@@ -206,9 +182,12 @@ fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRulesV1Marker> = (&provider as &dyn BufferProvider)
+    let plurals_data: DataPayload<CardinalV1Marker> = (&provider as &dyn BufferProvider)
         .as_deserializing()
-        .load_payload(&get_request(langid!("sr")))
+        .load_resource(&DataRequest {
+            options: langid!("sr").into(),
+            metadata: Default::default(),
+        })
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");

@@ -158,12 +158,7 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::GENERAL_CATEGORY_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
+            .load_payload(key::GENERAL_CATEGORY_V1, &DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -181,12 +176,7 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyMapV1Marker<Script>> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::SCRIPT_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
+            .load_payload(key::SCRIPT_V1, &DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
