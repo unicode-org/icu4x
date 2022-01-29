@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::uprops_helpers::{self, TomlEnumerated};
+use crate::uprops_helpers::{self, get_last_component_no_version, TomlEnumerated};
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
@@ -62,7 +62,7 @@ impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataPr
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        let key_str = &key.get_last_component_no_version();
+        let key_str = get_last_component_no_version(&key);
 
         // ResourceKey subcategory strings for enumerated properties are
         // of the form "name=value", using the short name for both.

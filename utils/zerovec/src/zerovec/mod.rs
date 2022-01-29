@@ -56,8 +56,7 @@ use core::ops::Deref;
 /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
 /// let nums: &[u16] = &[211, 281, 421, 461];
 ///
-/// // Conversion from &[u8] to &[u16::ULE] is infallible.
-/// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+/// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).unwrap();
 ///
 /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
 /// assert_eq!(zerovec.get(2), Some(421));

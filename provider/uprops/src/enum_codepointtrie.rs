@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::uprops_helpers::{self, TomlEnumerated};
+use crate::uprops_helpers::{self, get_last_component_no_version, TomlEnumerated};
 use crate::uprops_serde::enumerated::EnumeratedPropertyCodePointTrie;
 
 use icu_codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieType, TrieValue};
@@ -103,7 +103,7 @@ impl<T: TrieValue> DynProvider<UnicodePropertyMapV1Marker<T>>
         // For data resource keys that represent the CodePointTrie data for an enumerated
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
-        let prop_name = key.get_last_component_no_version();
+        let prop_name = get_last_component_no_version(&key);
         let source_cpt_data = &self
             .data
             .get(prop_name)

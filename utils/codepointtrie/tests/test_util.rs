@@ -23,6 +23,9 @@ pub enum ValueWidthEnum {
     Bits8 = 2,
 }
 
+/// Test .get() on CodePointTrie by iterating through each range in
+/// check_ranges and assert that the associated
+/// value matches the trie value for each code point in the range.
 pub fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
     assert_eq!(
         0,
@@ -34,14 +37,65 @@ pub fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_range
     let check_range_tuples = check_ranges.chunks(2);
     // Iterate over each check range
     for range_tuple in check_range_tuples {
-        let range_end = range_tuple[0];
+        let range_limit = range_tuple[0];
         let range_value = range_tuple[1];
         // Check all values in this range, one-by-one
-        while i < range_end {
+        while i < range_limit {
             assert_eq!(range_value, trie.get_u32(i), "trie_get({})", i,);
             i += 1;
         }
     }
+}
+
+/// Test .get_range() / .iter_ranges() on CodePointTrie by calling
+/// .iter_ranges() on the trie (which returns an iterator that produces values
+/// by calls to .get_range) and see if it matches the values in check_ranges.
+pub fn test_check_ranges_get_ranges<T: TrieValue + Into<u32>>(
+    trie: &CodePointTrie<T>,
+    check_ranges: &[u32],
+) {
+    assert_eq!(
+        0,
+        check_ranges.len() % 2,
+        "check_ranges must have an even number of 32-bit values in (limit,value) pairs"
+    );
+
+    let mut trie_ranges = trie.iter_ranges();
+
+    let mut range_start: u32 = 0;
+    let check_range_tuples = check_ranges.chunks(2);
+    // Iterate over each check range
+    for range_tuple in check_range_tuples {
+        let range_limit = range_tuple[0];
+        let range_value = range_tuple[1];
+
+        // The check ranges array seems to start with a trivial range whose
+        // limit is zero. range_start is initialized to 0, so we can skip.
+        if range_limit == 0 {
+            continue;
+        }
+
+        let cpm_range = trie_ranges.next();
+        assert!(cpm_range.is_some(), "CodePointTrie iter_ranges() produces fewer ranges than the check_ranges field in testdata has");
+        let cpm_range = cpm_range.unwrap();
+        let cpmr_start = cpm_range.range.start();
+        let cpmr_end = cpm_range.range.end();
+        let cpmr_value: u32 = cpm_range.value.into();
+
+        assert_eq!(range_start, *cpmr_start);
+        assert_eq!(range_limit, *cpmr_end + 1);
+        assert_eq!(range_value, cpmr_value);
+
+        range_start = range_limit;
+    }
+
+    assert!(trie_ranges.next() == None, "CodePointTrie iter_ranges() produces more ranges than the check_ranges field in testdata has");
+}
+
+/// Run above tests that verify the validity of CodePointTrie methods
+pub fn run_trie_tests<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_ranges: &[u32]) {
+    check_trie(trie, check_ranges);
+    test_check_ranges_get_ranges(trie, check_ranges);
 }
 
 // The following structs might be useful later for de-/serialization of the
@@ -195,7 +249,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
                 test_struct.value_width_enum_val,
                 ValueWidthEnum::Bits8 as u8
             );
-            check_trie(
+            run_trie_tests(
                 &trie_result.unwrap(),
                 &test_file.code_point_trie.test_data.check_ranges,
             );
@@ -210,7 +264,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
                 test_struct.value_width_enum_val,
                 ValueWidthEnum::Bits16 as u8
             );
-            check_trie(
+            run_trie_tests(
                 &trie_result.unwrap(),
                 &test_file.code_point_trie.test_data.check_ranges,
             );
@@ -225,7 +279,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
                 test_struct.value_width_enum_val,
                 ValueWidthEnum::Bits32 as u8
             );
-            check_trie(
+            run_trie_tests(
                 &trie_result.unwrap(),
                 &test_file.code_point_trie.test_data.check_ranges,
             );
