@@ -10,6 +10,9 @@ use syn::parse_macro_input;
 use syn::spanned::Spanned;
 use syn::ItemStruct;
 
+#[cfg(test)]
+mod tests;
+
 #[proc_macro_attribute]
 /// The `#[data_struct]` attribute should be applied to all types intended
 /// for use in a `DataStruct`. It does the following things:
