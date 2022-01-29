@@ -253,7 +253,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .map(|ty| parse_quote!(#ty: #clone_trait + 'static))
             .collect();
         quote! {
-            impl<'zcf, #(#tybounds),*> ZeroCopyFrom<'zcf, #name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
+            impl<'zcf, #(#tybounds),*> yoke::ZeroCopyFrom<'zcf, #name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
                 fn zero_copy_from(this: &'zcf Self) -> Self {
                     #clone
                 }
@@ -269,7 +269,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         }
         if has_clone {
             return quote! {
-                impl<'zcf> ZeroCopyFrom<'zcf, #name<'_>> for #name<'zcf> {
+                impl<'zcf> yoke::ZeroCopyFrom<'zcf, #name<'_>> for #name<'zcf> {
                     fn zero_copy_from(this: &'zcf #name<'_>) -> Self {
                         this.clone()
                     }
