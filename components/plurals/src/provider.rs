@@ -21,7 +21,10 @@ pub mod key {
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(
+    CardinalV1Marker = "plurals/cardinal@1",
+    OrdinalV1Marker = "plurals/ordinal@1",
+)]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -39,20 +42,4 @@ pub struct PluralRulesV1<'data> {
     pub few: Option<Rule<'data>>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
-}
-
-pub struct CardinalV1Marker;
-impl DataMarker for CardinalV1Marker {
-    type Yokeable = PluralRulesV1<'static>;
-}
-impl ResourceMarker for CardinalV1Marker {
-    const KEY: ResourceKey = key::CARDINAL_V1;
-}
-
-pub struct OrdinalV1Marker;
-impl DataMarker for OrdinalV1Marker {
-    type Yokeable = PluralRulesV1<'static>;
-}
-impl ResourceMarker for OrdinalV1Marker {
-    const KEY: ResourceKey = key::ORDINAL_V1;
 }

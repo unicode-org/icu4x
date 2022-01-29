@@ -34,7 +34,7 @@ pub struct EraStartDate {
     pub day: u8,
 }
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("calendar/japanese@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -45,10 +45,6 @@ pub struct EraStartDate {
 pub struct JapaneseErasV1 {
     pub dates_to_historical_eras: LiteMap<EraStartDate, TinyStr16>,
     pub dates_to_eras: LiteMap<EraStartDate, TinyStr16>,
-}
-
-impl ResourceMarker for JapaneseErasV1Marker {
-    const KEY: ResourceKey = key::JAPANESE_ERAS_V1;
 }
 
 impl FromStr for EraStartDate {

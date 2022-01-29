@@ -86,7 +86,7 @@ macro_rules! map_access_with_overrides {
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("time_zone/formats@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -108,13 +108,10 @@ pub struct TimeZoneFormatsV1<'data> {
     /// The format string to fall back to if data is unavailable.
     pub fallback_format: Cow<'data, str>,
 }
-impl ResourceMarker for TimeZoneFormatsV1Marker {
-    const KEY: ResourceKey = key::TIMEZONE_FORMATS_V1;
-}
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("time_zone/exemplar_cities@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -123,13 +120,10 @@ impl ResourceMarker for TimeZoneFormatsV1Marker {
 #[yoke(cloning_zcf)]
 pub struct ExemplarCitiesV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
 map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
-impl ResourceMarker for ExemplarCitiesV1Marker {
-    const KEY: ResourceKey = key::TIMEZONE_EXEMPLAR_CITIES_V1;
-}
 
 /// An ICU4X mapping to the long-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("time_zone/generic_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -143,13 +137,10 @@ pub struct MetaZoneGenericNamesLongV1<'data> {
     pub overrides: LiteMap<Cow<'data, str>, Cow<'data, str>>,
 }
 map_access_with_overrides!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
-impl ResourceMarker for MetaZoneGenericNamesLongV1Marker {
-    const KEY: ResourceKey = key::TIMEZONE_GENERIC_NAMES_LONG_V1;
-}
 
 /// An ICU4X mapping to the short-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("time_zone/generic_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -163,14 +154,11 @@ pub struct MetaZoneGenericNamesShortV1<'data> {
     pub overrides: LiteMap<Cow<'data, str>, Cow<'data, str>>,
 }
 map_access_with_overrides!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
-impl ResourceMarker for MetaZoneGenericNamesShortV1Marker {
-    const KEY: ResourceKey = key::TIMEZONE_GENERIC_NAMES_SHORT_V1;
-}
 
 /// An ICU4X mapping to the long-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("time_zone/specific_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -184,14 +172,11 @@ pub struct MetaZoneSpecificNamesLongV1<'data> {
     pub overrides: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
 }
 map_access_with_overrides!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
-impl ResourceMarker for MetaZoneSpecificNamesLongV1Marker {
-    const KEY: ResourceKey = key::TIMEZONE_SPECIFIC_NAMES_LONG_V1;
-}
 
 /// An ICU4X mapping to the short-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("time_zone/specific_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -205,9 +190,6 @@ pub struct MetaZoneSpecificNamesShortV1<'data> {
     pub overrides: LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
 }
 map_access_with_overrides!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
-impl ResourceMarker for MetaZoneSpecificNamesShortV1Marker {
-    const KEY: ResourceKey = key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1;
-}
 
 /// A general struct to hold metazone specific name variants.
 /// Specific names include time variants such as "daylight."

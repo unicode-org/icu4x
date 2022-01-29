@@ -10,7 +10,7 @@ use icu_provider::prelude::*;
 use icu_provider::yoke::{self, *};
 use zerovec::map::ZeroMap;
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("datetime/symbols@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -26,9 +26,6 @@ pub struct DateSymbolsV1<'data> {
     pub day_periods: day_periods::ContextsV1<'data>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub eras: Eras<'data>,
-}
-impl ResourceMarker for DateSymbolsV1Marker {
-    const KEY: ResourceKey = key::DATE_SYMBOLS_V1;
 }
 
 #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]

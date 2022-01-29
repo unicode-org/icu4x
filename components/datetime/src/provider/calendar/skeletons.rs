@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("datetime/skeletons@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -25,9 +25,6 @@ pub struct DateSkeletonPatternsV1<'data>(
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub  LiteMap<SkeletonV1, PatternPlurals<'data>>,
 );
-impl ResourceMarker for DateSkeletonPatternsV1Marker {
-    const KEY: ResourceKey = key::DATE_SKELETON_PATTERNS_V1;
-}
 
 /// This struct is a public wrapper around the internal `Skeleton` struct. This allows
 /// access to the serialization and deserialization capabilities, without exposing the

@@ -17,7 +17,7 @@ use icu_provider::{
 pub use skeletons::*;
 pub use symbols::*;
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("datetime/lengths@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -45,9 +45,6 @@ pub struct DatePatternsV1<'data> {
     /// Patterns used to combine date and time length patterns into full date_time patterns.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
-}
-impl ResourceMarker for DatePatternsV1Marker {
-    const KEY: ResourceKey = key::DATE_PATTERNS_V1;
 }
 
 pub mod patterns {

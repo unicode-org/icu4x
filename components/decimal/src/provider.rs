@@ -54,7 +54,7 @@ pub struct GroupingSizesV1 {
 }
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -106,8 +106,4 @@ impl Default for DecimalSymbolsV1<'static> {
             digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
         }
     }
-}
-
-impl ResourceMarker for DecimalSymbolsV1Marker {
-    const KEY: ResourceKey = key::SYMBOLS_V1;
 }

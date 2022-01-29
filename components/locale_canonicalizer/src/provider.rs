@@ -24,7 +24,7 @@ pub mod key {
         resource_key!("locale_canonicalizer/likelysubtags@1");
 }
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -68,11 +68,7 @@ pub struct AliasesV1 {
     pub subdivision: Vec<(TinyStr8, TinyStr8)>,
 }
 
-impl ResourceMarker for AliasesV1Marker {
-    const KEY: ResourceKey = key::ALIASES_V1;
-}
-
-#[icu_provider::data_struct]
+#[icu_provider::data_struct("locale_canonicalizer/likelysubtags@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -108,8 +104,4 @@ pub struct LikelySubtagsV1 {
     pub region: LiteMap<TinyStr4, LanguageIdentifier>,
     /// Undefined.
     pub und: LanguageIdentifier,
-}
-
-impl ResourceMarker for LikelySubtagsV1Marker {
-    const KEY: ResourceKey = key::LIKELY_SUBTAGS_V1;
 }
