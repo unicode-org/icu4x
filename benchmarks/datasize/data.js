@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643407817177,
+  "lastUpdate": 1643416662846,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8213,6 +8213,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5e554288a21875f4daf5a70b43d667f1c0c88088"
         },
         "date": 1643407806481,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc6c319fb288310c5f6a70bd0fc067f697e794d0",
+          "message": "Add fn to return UnicodeSet for Script_Extensions (#1529)",
+          "timestamp": "2022-01-28T16:35:59-08:00",
+          "tree_id": "9b60c61c22dab1728f127aa2f922818158293a30",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc6c319fb288310c5f6a70bd0fc067f697e794d0"
+        },
+        "date": 1643416649516,
         "tool": "ndjson",
         "benches": [
           {
