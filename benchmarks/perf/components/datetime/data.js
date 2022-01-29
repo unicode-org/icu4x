@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643408240048,
+  "lastUpdate": 1643417140259,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19079,6 +19079,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 273633,
             "range": "± 528",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc6c319fb288310c5f6a70bd0fc067f697e794d0",
+          "message": "Add fn to return UnicodeSet for Script_Extensions (#1529)",
+          "timestamp": "2022-01-28T16:35:59-08:00",
+          "tree_id": "9b60c61c22dab1728f127aa2f922818158293a30",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc6c319fb288310c5f6a70bd0fc067f697e794d0"
+        },
+        "date": 1643417129856,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 79124,
+            "range": "± 65",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 869391,
+            "range": "± 1556",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 300033,
+            "range": "± 949",
             "unit": "ns/iter"
           }
         ]
