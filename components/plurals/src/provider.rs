@@ -7,8 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
-use icu_provider::prelude::*;
-use icu_provider::yoke::{self, *};
+use icu_provider::yoke;
 
 #[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub mod key {
@@ -23,7 +22,7 @@ pub mod key {
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
 #[icu_provider::data_struct(
     CardinalV1Marker = "plurals/cardinal@1",
-    OrdinalV1Marker = "plurals/ordinal@1",
+    OrdinalV1Marker = "plurals/ordinal@1"
 )]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(

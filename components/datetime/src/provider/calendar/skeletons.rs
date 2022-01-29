@@ -4,14 +4,12 @@
 
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
-use super::super::key;
 use crate::{
     pattern::runtime::PatternPlurals,
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::prelude::*;
-use icu_provider::yoke::{self, *};
+use icu_provider::yoke;
 use litemap::LiteMap;
 
 #[icu_provider::data_struct("datetime/skeletons@1")]

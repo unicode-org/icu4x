@@ -2,10 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::key;
 use alloc::borrow::Cow;
-use icu_provider::prelude::*;
-use icu_provider::yoke::{self, *};
+use icu_provider::yoke;
 use litemap::LiteMap;
 use tinystr::TinyStr8;
 

@@ -7,13 +7,9 @@
 mod skeletons;
 mod symbols;
 
-use super::key;
 use crate::pattern;
 use icu_provider::prelude::*;
-use icu_provider::{
-    yoke::{self, *},
-    DataMarker,
-};
+use icu_provider::yoke;
 pub use skeletons::*;
 pub use symbols::*;
 

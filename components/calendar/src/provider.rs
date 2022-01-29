@@ -7,7 +7,6 @@
 //! Read more about data providers: [`icu_provider`]
 
 use core::str::FromStr;
-use icu_provider::prelude::*;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::TinyStr16;

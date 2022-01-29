@@ -10,7 +10,7 @@
 icu_benchmark_macros::static_setup!();
 
 use icu_locid_macros::langid;
-use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
+use icu_plurals::{PluralCategory, PluralRules};
 
 const VALUES: &[usize] = &[0, 2, 25, 1, 3, 2, 4, 10, 7, 0];
 

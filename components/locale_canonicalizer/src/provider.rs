@@ -8,8 +8,7 @@
 
 use alloc::vec::Vec;
 use icu_locid::LanguageIdentifier;
-use icu_provider::prelude::*;
-use icu_provider::yoke::{self, *};
+use icu_provider::yoke;
 use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
 
