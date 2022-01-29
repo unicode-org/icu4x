@@ -75,7 +75,7 @@ fn test_named_resource_marker() {
             impl icu_provider::DataMarker for FooV1Marker {
                 type Yokeable = FooV1;
             }
-            #[doc = "Marker type for key \"demo/bar@1\": [`FooV1`]"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\""]
             pub struct BarV1Marker;
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1;
@@ -110,7 +110,7 @@ fn test_multi_named_resource_marker() {
             impl icu_provider::ResourceMarker for FooV1Marker {
                 const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/foo@1");
             }
-            #[doc = "Marker type for key \"demo/bar@1\": [`FooV1`]"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\""]
             pub struct BarV1Marker;
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1<'static>;
@@ -118,7 +118,7 @@ fn test_multi_named_resource_marker() {
             impl icu_provider::ResourceMarker for BarV1Marker {
                 const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/bar@1");
             }
-            #[doc = "Marker type for key \"demo/baz@1\": [`FooV1`]"]
+            #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\""]
             pub struct BazV1Marker;
             impl icu_provider::DataMarker for BazV1Marker {
                 type Yokeable = FooV1<'static>;

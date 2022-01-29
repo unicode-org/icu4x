@@ -98,7 +98,7 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
                     syn::Lit::Str(lit_str) => lit_str.value(),
                     _ => panic!("Key must be a string"),
                 };
-                let docs = format!("Marker type for key \"{}\": [`{}`]", key_str, name);
+                let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
                 result.extend(quote!(
                     #[doc = #docs]
                     pub struct #extra_marker;
