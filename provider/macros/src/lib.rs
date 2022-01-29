@@ -24,6 +24,32 @@ mod tests;
 ///    be customized with `#[yoke(cloning_zcf)]` as needed
 /// - Create a `FooMarker` struct for the type
 /// - Implement `icu_provider::DataMarker` for `FooMarker`
+///
+/// In addition, the attribute can be used to implement [`ResourceMarker`] by
+/// adding key strings, optionally with marker symbols:
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use std::borrow::Cow;
+///
+/// // We also need `yoke` in scope: <https://github.com/unicode-org/icu4x/issues/1557>
+/// use icu_provider::yoke;
+///
+/// #[icu_provider::data_struct(
+///     "demo/foo@1",
+///     BarV1Marker = "demo/bar@1",
+///     BazV1Marker = "demo/baz@1"
+/// )]
+/// pub struct FooV1<'data> {
+///     message: Cow<'data, str>,
+/// };
+///
+/// assert_eq!(FooV1Marker::KEY.get_path(), "demo/foo@1");
+/// assert_eq!(BarV1Marker::KEY.get_path(), "demo/bar@1");
+/// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1");
+/// ```
+///
+/// [`ResourceMarker`]: icu_provider::ResourceMarker
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     let attr = parse_macro_input!(attr as AttributeArgs);
     let item = parse_macro_input!(item as ItemStruct);
@@ -120,7 +146,7 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
     }
 
     result.extend(quote!(
-        #[derive(Yokeable, ZeroCopyFrom)]
+        #[derive(yoke::Yokeable, yoke::ZeroCopyFrom)]
         #item
     ));
 

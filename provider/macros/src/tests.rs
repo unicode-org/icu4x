@@ -32,7 +32,7 @@ fn test_basic() {
             impl icu_provider::DataMarker for FooV1Marker {
                 type Yokeable = FooV1;
             }
-            #[derive(Yokeable, ZeroCopyFrom)]
+            #[derive(yoke::Yokeable, yoke::ZeroCopyFrom)]
             pub struct FooV1;
         ),
     );
@@ -55,7 +55,7 @@ fn test_resource_marker() {
             impl icu_provider::ResourceMarker for FooV1Marker {
                 const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/foo@1");
             }
-            #[derive(Yokeable, ZeroCopyFrom)]
+            #[derive(yoke::Yokeable, yoke::ZeroCopyFrom)]
             pub struct FooV1;
         ),
     );
@@ -83,7 +83,7 @@ fn test_named_resource_marker() {
             impl icu_provider::ResourceMarker for BarV1Marker {
                 const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/bar@1");
             }
-            #[derive(Yokeable, ZeroCopyFrom)]
+            #[derive(yoke::Yokeable, yoke::ZeroCopyFrom)]
             pub struct FooV1;
         ),
     );
@@ -126,7 +126,7 @@ fn test_multi_named_resource_marker() {
             impl icu_provider::ResourceMarker for BazV1Marker {
                 const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/baz@1");
             }
-            #[derive(Yokeable, ZeroCopyFrom)]
+            #[derive(yoke::Yokeable, yoke::ZeroCopyFrom)]
             pub struct FooV1<'data>;
         ),
     );

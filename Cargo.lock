@@ -1380,6 +1380,7 @@ dependencies = [
 name = "icu_provider_macros"
 version = "0.4.0"
 dependencies = [
+ "icu_provider",
  "proc-macro2",
  "quote",
  "syn",
