@@ -8,15 +8,23 @@
 use crate::error::PropertiesError;
 use crate::props::Script;
 
+use core::iter::FromIterator;
+use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
-use zerovec::{VarZeroVec, ZeroSlice};
+use icu_uniset::UnicodeSet;
+use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-const SCRIPT_X_SCRIPT_VAL: u16 = 0x03FF;
+/// The number of bits at the low-end of a `ScriptWithExt` value used for
+/// storing the `Script` value (or `extensions` index).
 const SCRIPT_VAL_LENGTH: u16 = 10;
+
+/// The bit mask necessary to retrieve the `Script` value (or `extensions` index)
+/// from a `ScriptWithExt` value.
+const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 
 /// An internal-use only pseudo-property that represents the values stored in
 /// the trie of the special data structure [`ScriptExtensions`].
@@ -47,6 +55,23 @@ impl ScriptWithExt {
 
     pub fn is_other(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 3
+    }
+
+    pub fn has_extensions(&self) -> bool {
+        let high_order_bits = self.0 >> SCRIPT_VAL_LENGTH;
+        high_order_bits > 0
+    }
+}
+
+impl From<ScriptWithExt> for u32 {
+    fn from(swe: ScriptWithExt) -> Self {
+        swe.0 as u32
+    }
+}
+
+impl From<ScriptWithExt> for Script {
+    fn from(swe: ScriptWithExt) -> Self {
+        Script(swe.0)
     }
 }
 
@@ -93,6 +118,7 @@ impl<'data> ScriptExtensions<'data> {
         Ok(ScriptExtensions { trie, extensions })
     }
 
+    /// Returns the `Script` property value for this code point.
     pub fn get_script_val(&self, code_point: u32) -> Script {
         let sc_with_ext = self.trie.get(code_point);
 
@@ -109,14 +135,20 @@ impl<'data> ScriptExtensions<'data> {
         } else if sc_with_ext.is_inherited() {
             Script::Inherited
         } else {
-            let script_val = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let script_val = sc_with_ext.0;
             Script(script_val)
         }
     }
 
-    pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
-        let sc_with_ext = self.trie.get(code_point);
-
+    // Returns the Script_Extensions value for a code_point when the trie value
+    // is already known.
+    // This private helper method exists to prevent code duplication in callers like
+    // `get_script_extensions_val`, `get_script_extensions_set`, and `has_script`.
+    fn get_scx_val_using_trie_val<'a>(
+        &'a self,
+        sc_with_ext_ule: &'a <ScriptWithExt as AsULE>::ULE,
+    ) -> &'a ZeroSlice<Script> {
+        let sc_with_ext = ScriptWithExt::from_unaligned(*sc_with_ext_ule);
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
             let ext_subarray = self.extensions.get(ext_idx as usize);
@@ -133,12 +165,83 @@ impl<'data> ScriptExtensions<'data> {
             let scx_val = self.extensions.get(ext_idx as usize);
             scx_val.unwrap_or_default()
         } else {
-            let script_with_ext_ule = self.trie.get_ule(code_point);
-            let script_ule_slice = script_with_ext_ule
-                .map(core::slice::from_ref)
-                .unwrap_or_default();
+            // Note: `Script` and `ScriptWithExt` are both represented as the same
+            // u16 value when the `ScriptWithExt` has no higher-order bits set.
+            let script_ule_slice = core::slice::from_ref(sc_with_ext_ule);
             ZeroSlice::from_ule_slice(script_ule_slice)
         }
+    }
+
+    /// Return the `Script_Extensions` property value for this code point.
+    ///
+    /// If `code_point` has Script_Extensions, then return the Script codes in
+    /// the Script_Extensions. In this case, the Script property value
+    /// (normally Common or Inherited) is not included in the set.
+    ///
+    /// If c does not have Script_Extensions, then the one Script code is put
+    /// into the set and also returned.
+    ///
+    /// If c is not a valid code point, then the one UNKNOWN code is put into
+    /// the set and also returned.
+    pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
+        let sc_with_ext_ule = self.trie.get_ule(code_point);
+
+        match sc_with_ext_ule {
+            Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
+            None => ZeroSlice::from_ule_slice(&[]),
+        }
+    }
+
+    /// Returns whether `script` is contained in the Script_Extensions
+    /// property value if the code_point has Script_Extensions, otherwise
+    /// if the code point does not have Script_Extensions then returns
+    /// whether the Script property value matches.
+    ///
+    /// Some characters are commonly used in multiple scripts. For more information,
+    /// see UAX #24: <http://www.unicode.org/reports/tr24/>.
+    pub fn has_script(&self, code_point: u32, script: Script) -> bool {
+        let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get_ule(code_point) {
+            scwe_ule
+        } else {
+            return false;
+        };
+        let sc_with_ext = <ScriptWithExt as AsULE>::from_unaligned(*sc_with_ext_ule);
+
+        if !sc_with_ext.has_extensions() {
+            let script_val = sc_with_ext.0;
+            script == Script(script_val)
+        } else {
+            let scx_val = self.get_scx_val_using_trie_val(sc_with_ext_ule);
+            let script_find = scx_val.iter().find(|&sc| sc == script);
+            script_find.is_some()
+        }
+    }
+
+    /// Returns all of the matching `CodePointMapRange`s for the given [`Script`]
+    /// in which `has_script` will return true for all of the contained code points.
+    pub fn get_script_extensions_ranges(
+        &self,
+        script: Script,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.trie
+            .iter_ranges()
+            .filter(move |cpm_range| {
+                let sc_with_ext = ScriptWithExt(cpm_range.value.0);
+                if sc_with_ext.has_extensions() {
+                    self.get_scx_val_using_trie_val(&sc_with_ext.as_unaligned())
+                        .iter()
+                        .any(|sc| sc == script)
+                } else {
+                    script == sc_with_ext.into()
+                }
+            })
+            .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()))
+    }
+
+    /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
+    /// code points for which `has_script` will return true.
+    pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
+        UnicodeSet::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
@@ -189,5 +292,20 @@ mod tests {
 
         assert!(!ScriptWithExt(0xFF).is_other());
         assert!(!ScriptWithExt(0x0).is_other());
+    }
+
+    #[test]
+    fn test_has_extensions() {
+        assert!(ScriptWithExt(0x04FF).has_extensions());
+        assert!(ScriptWithExt(0x0400).has_extensions());
+
+        assert!(ScriptWithExt(0x08FF).has_extensions());
+        assert!(ScriptWithExt(0x0800).has_extensions());
+
+        assert!(ScriptWithExt(0x0CFF).has_extensions());
+        assert!(ScriptWithExt(0x0C00).has_extensions());
+
+        assert!(!ScriptWithExt(0xFF).has_extensions());
+        assert!(!ScriptWithExt(0x0).has_extensions());
     }
 }

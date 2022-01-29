@@ -59,7 +59,7 @@ pub const INDEX_2_BLOCK_LENGTH: u32 = 1 << SHIFT_1_2;
 pub const INDEX_2_MASK: u32 = INDEX_2_BLOCK_LENGTH - 1;
 
 /// Number of code points per index-2 table entry. 512=0x200
-pub const _CP_PER_INDEX_2_ENTRY: u32 = 1 << SHIFT_2;
+pub const CP_PER_INDEX_2_ENTRY: u32 = 1 << SHIFT_2;
 
 /// Number of entries in an index-3 block. 32=0x20
 pub const INDEX_3_BLOCK_LENGTH: u32 = 1 << SHIFT_2_3;

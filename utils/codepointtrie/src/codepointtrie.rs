@@ -8,6 +8,7 @@ use crate::impl_const::*;
 use core::convert::TryFrom;
 use core::fmt::Display;
 use core::num::TryFromIntError;
+use core::ops::RangeInclusive;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use yoke::{Yokeable, ZeroCopyFrom};
@@ -76,6 +77,22 @@ impl TrieValue for char {
     type TryFromU32Error = core::char::CharTryFromError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         char::try_from(i)
+    }
+}
+
+/// Helper function used by [`get_range`]. Converts occurrences of trie's null
+/// value into the provided null_value.
+///
+/// Note: the ICU version of this helper function uses a ValueFilter function
+/// to apply a transform on a non-null value. But currently, this implementation
+/// stops short of that functionality, and instead leaves the non-null trie value
+/// untouched. This is equivalent to having a ValueFilter function that is the
+/// identity function.
+fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T) -> T {
+    if value == trie_null_value {
+        null_value
+    } else {
+        value
     }
 }
 
@@ -373,7 +390,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     ///
     /// let cp = '𑖎' as u32;
     /// assert_eq!(cp, 0x1158E);
-    /// let trie = planes::get_planes_trie();
+    ///
     /// let plane_num: u8 = trie.get(cp);
     /// assert_eq!(trie.get_u32(cp), plane_num as u32);
     /// ```
@@ -382,6 +399,388 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     // original ICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
         self.get(code_point).into()
+    }
+
+    /// Returns a [`CodePointMapRange`] struct which represents a range of code
+    /// points associated with the same trie value. The returned range will be
+    /// the longest stretch of consecutive code points starting at `start` that
+    /// share this value.
+    ///
+    /// This method is designed to use the internal details of
+    /// the structure of [`CodePointTrie`] to be optimally efficient. This will
+    /// outperform a naive approach that just uses [`CodePointTrie::get()`].
+    ///
+    /// This method provides lower-level functionality that can be used in the
+    /// implementation of other methods that are more convenient to the user.
+    /// To obtain an optimal partition of the code point space for
+    /// this trie resulting in the fewest number of ranges, see
+    /// [`CodePointTrie::iter_ranges()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// const CODE_POINT_MAX: u32 = 0x10ffff;
+    /// let start = 0x1_0000;
+    /// let exp_end = 0x1_ffff;
+    ///
+    /// let start_val = trie.get(start);
+    /// assert_eq!(trie.get(exp_end), start_val);
+    /// assert_ne!(trie.get(exp_end + 1), start_val);
+    ///
+    /// use core::ops::RangeInclusive;
+    /// use icu_codepointtrie::CodePointMapRange;
+    ///
+    /// let cpm_range: CodePointMapRange<u8> = trie.get_range(start).unwrap();
+    ///
+    /// assert_eq!(cpm_range.range.start(), &start);
+    /// assert_eq!(cpm_range.range.end(), &exp_end);
+    /// assert_eq!(cpm_range.value, start_val);
+    ///
+    /// // `start` can be any code point, whether or not it lies on the boundary
+    /// // of a maximally large range that still contains `start`
+    ///
+    /// let submaximal_1_start = start + 0x1234;
+    /// let submaximal_1 = trie.get_range(submaximal_1_start).unwrap();
+    /// assert_eq!(submaximal_1.range.start(), &0x1_1234);
+    /// assert_eq!(submaximal_1.range.end(), &0x1_ffff);
+    /// assert_eq!(submaximal_1.value, start_val);
+    ///
+    /// let submaximal_2_start = start + 0xffff;
+    /// let submaximal_2 = trie.get_range(submaximal_2_start).unwrap();
+    /// assert_eq!(submaximal_2.range.start(), &0x1_ffff);
+    /// assert_eq!(submaximal_2.range.end(), &0x1_ffff);
+    /// assert_eq!(submaximal_2.value, start_val);
+    /// ```
+    pub fn get_range(&self, start: u32) -> Option<CodePointMapRange<T>> {
+        // Exit early if the start code point is out of range, or if it is
+        // in the last range of code points in high_start..=CODE_POINT_MAX
+        // (start- and end-inclusive) that all share the same trie value.
+        if CODE_POINT_MAX < start {
+            return None;
+        }
+        if start >= self.header.high_start {
+            let di: usize = self.data.len() - (HIGH_VALUE_NEG_DATA_OFFSET as usize);
+            let value: T = self.data.get(di)?;
+            return Some(CodePointMapRange {
+                range: RangeInclusive::new(start, CODE_POINT_MAX),
+                value,
+            });
+        }
+
+        let null_value: T = T::try_from_u32(self.header.null_value).ok()?;
+
+        let mut prev_i3_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
+        let mut prev_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
+        let mut c: u32 = start;
+        let mut trie_value: T = T::DATA_GET_ERROR_VALUE;
+        let mut value: T = T::DATA_GET_ERROR_VALUE;
+        let mut have_value: bool = false;
+
+        loop {
+            let i3_block: u32;
+            let mut i3: u32;
+            let i3_block_length: u32;
+            let data_block_length: u32;
+
+            // Initialize values before beginning the iteration in the subsequent
+            // `loop` block. In particular, use the "i3*" local variables
+            // (representing the `index` array position's offset + increment
+            // for a 3rd-level trie lookup) to help initialize the data block
+            // variable `block` in the loop for the `data` array.
+            //
+            // When a lookup code point is <= the trie's *_FAST_INDEXING_MAX that
+            // corresponds to its `trie_type`, the lookup only takes 2 steps
+            // (once into the `index`, once into the `data` array); otherwise,
+            // takes 4 steps (3 iterative lookups into the `index`, once more
+            // into the `data` array). So for convenience's sake, when we have the
+            // 2-stage lookup, reuse the "i3*" variable names for the first lookup.
+            if c <= 0xffff
+                && (self.header.trie_type == TrieType::Fast || c <= SMALL_TYPE_FAST_INDEXING_MAX)
+            {
+                i3_block = 0;
+                i3 = c >> FAST_TYPE_SHIFT;
+                i3_block_length = if self.header.trie_type == TrieType::Fast {
+                    BMP_INDEX_LENGTH
+                } else {
+                    SMALL_INDEX_LENGTH
+                };
+                data_block_length = FAST_TYPE_DATA_BLOCK_LENGTH;
+            } else {
+                // Use the multi-stage index.
+                let mut i1: u32 = c >> SHIFT_1;
+                if self.header.trie_type == TrieType::Fast {
+                    debug_assert!(0xffff < c && c < self.header.high_start);
+                    i1 = i1 + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
+                } else {
+                    debug_assert!(
+                        c < self.header.high_start && self.header.high_start > SMALL_LIMIT
+                    );
+                    i1 += SMALL_INDEX_LENGTH;
+                }
+                let i2: u16 = self.index.get(i1 as usize)?;
+                let i3_block_idx: u32 = (i2 as u32) + ((c >> SHIFT_2) & INDEX_2_MASK);
+                i3_block = if let Some(i3b) = self.index.get(i3_block_idx as usize) {
+                    i3b as u32
+                } else {
+                    return None;
+                };
+                if i3_block == prev_i3_block && (c - start) >= CP_PER_INDEX_2_ENTRY {
+                    // The index-3 block is the same as the previous one, and filled with value.
+                    debug_assert!((c & (CP_PER_INDEX_2_ENTRY - 1)) == 0);
+                    c += CP_PER_INDEX_2_ENTRY;
+
+                    if c >= self.header.high_start {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                prev_i3_block = i3_block;
+                if i3_block == self.header.index3_null_offset as u32 {
+                    // This is the index-3 null block.
+                    // All of the `data` array blocks pointed to by the values
+                    // in this block of the `index` 3rd-stage subarray will
+                    // contain this trie's null_value. So if we are in the middle
+                    // of a range, end it and return early, otherwise start a new
+                    // range of null values.
+                    if have_value {
+                        if null_value != value {
+                            return Some(CodePointMapRange {
+                                range: RangeInclusive::new(start, c - 1),
+                                value,
+                            });
+                        }
+                    } else {
+                        trie_value = T::try_from_u32(self.header.null_value).ok()?;
+                        value = null_value;
+                        have_value = true;
+                    }
+                    prev_block = self.header.data_null_offset;
+                    c = (c + CP_PER_INDEX_2_ENTRY) & !(CP_PER_INDEX_2_ENTRY - 1);
+
+                    if c >= self.header.high_start {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+                i3 = (c >> SHIFT_3) & INDEX_3_MASK;
+                i3_block_length = INDEX_3_BLOCK_LENGTH;
+                data_block_length = SMALL_DATA_BLOCK_LENGTH;
+            }
+
+            // Enumerate data blocks for one index-3 block.
+            loop {
+                let mut block: u32;
+                if (i3_block & 0x8000) == 0 {
+                    block = if let Some(b) = self.index.get((i3_block + i3) as usize) {
+                        b as u32
+                    } else {
+                        return None;
+                    };
+                } else {
+                    // 18-bit indexes stored in groups of 9 entries per 8 indexes.
+                    let mut group: u32 = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
+                    let gi: u32 = i3 & 7;
+                    let gi_val: u32 = if let Some(giv) = self.index.get(group as usize) {
+                        giv.into()
+                    } else {
+                        return None;
+                    };
+                    block = (gi_val << (2 + (2 * gi))) & 0x30000;
+                    group += 1;
+                    let ggi_val: u32 = if let Some(ggiv) = self.index.get((group + gi) as usize) {
+                        ggiv as u32
+                    } else {
+                        return None;
+                    };
+                    block |= ggi_val;
+                }
+
+                // If our previous and current return values of the 3rd-stage `index`
+                // lookup yield the same `data` block offset, and if we already know that
+                // the entire `data` block / subarray starting at that offset stores
+                // `value` and nothing else, then we can extend our range by the length
+                // of a data block and continue.
+                // Otherwise, we have to iterate over the values stored in the
+                // new data block to see if they differ from `value`.
+                if block == prev_block && (c - start) >= data_block_length {
+                    // The block is the same as the previous one, and filled with value.
+                    debug_assert!((c & (data_block_length - 1)) == 0);
+                    c += data_block_length;
+                } else {
+                    let data_mask: u32 = data_block_length - 1;
+                    prev_block = block;
+                    if block == self.header.data_null_offset {
+                        // This is the data null block.
+                        // If we are in the middle of a range, end it and
+                        // return early, otherwise start a new range of null
+                        // values.
+                        if have_value {
+                            if null_value != value {
+                                return Some(CodePointMapRange {
+                                    range: RangeInclusive::new(start, c - 1),
+                                    value,
+                                });
+                            }
+                        } else {
+                            trie_value = T::try_from_u32(self.header.null_value).ok()?;
+                            value = null_value;
+                            have_value = true;
+                        }
+                        c = (c + data_block_length) & !data_mask;
+                    } else {
+                        let mut di: u32 = block + (c & data_mask);
+                        let mut trie_value_2: T = self.data.get(di as usize)?;
+                        if have_value {
+                            if trie_value_2 != trie_value {
+                                if maybe_filter_value(
+                                    trie_value_2,
+                                    T::try_from_u32(self.header.null_value).ok()?,
+                                    null_value,
+                                ) != value
+                                {
+                                    return Some(CodePointMapRange {
+                                        range: RangeInclusive::new(start, c - 1),
+                                        value,
+                                    });
+                                }
+                                // `trie_value` stores the previous value that was retrieved
+                                // from the trie.
+                                // `value` stores the value associated for the range (return
+                                // value) that we are currently building, which is computed
+                                // as a transformation by applying maybe_filter_value()
+                                // to the trie value.
+                                // The current trie value `trie_value_2` within this data block
+                                // differs here from `trie_value`, and updating `trie_value`
+                                // with the new value may or may not help in computing the
+                                // range and/or yield a different result for maybe_filter_range().
+                                trie_value = trie_value_2; // may or may not help
+                            }
+                        } else {
+                            trie_value = trie_value_2;
+                            value = maybe_filter_value(
+                                trie_value_2,
+                                T::try_from_u32(self.header.null_value).ok()?,
+                                null_value,
+                            );
+                            have_value = true;
+                        }
+
+                        c += 1;
+                        while (c & data_mask) != 0 {
+                            di += 1;
+                            trie_value_2 = self.data.get(di as usize)?;
+                            if trie_value_2 != trie_value {
+                                if maybe_filter_value(
+                                    trie_value_2,
+                                    T::try_from_u32(self.header.null_value).ok()?,
+                                    null_value,
+                                ) != value
+                                {
+                                    return Some(CodePointMapRange {
+                                        range: RangeInclusive::new(start, c - 1),
+                                        value,
+                                    });
+                                }
+                                // `trie_value` stores the previous value that was retrieved
+                                // from the trie.
+                                // `value` stores the value associated for the range (return
+                                // value) that we are currently building, which is computed
+                                // as a transformation by applying maybe_filter_value()
+                                // to the trie value.
+                                // The current trie value `trie_value_2` within this data block
+                                // differs here from `trie_value`, and updating `trie_value`
+                                // with the new value may or may not help in computing the
+                                // range and/or yield a different result for maybe_filter_range().
+                                trie_value = trie_value_2; // may or may not help
+                            }
+
+                            c += 1;
+                        }
+                    }
+                }
+
+                i3 += 1;
+                if i3 >= i3_block_length {
+                    break;
+                }
+            }
+
+            if c >= self.header.high_start {
+                break;
+            }
+        }
+
+        debug_assert!(have_value);
+
+        // Now that c >= high_start, compare `value` to `high_value` to see
+        // if we can merge our current range with the high_value range
+        // high_start..=CODE_POINT_MAX (start- and end-inclusive), otherwise
+        // stop at high_start - 1.
+        let di: u32 = self.data.len() as u32 - HIGH_VALUE_NEG_DATA_OFFSET;
+        let high_value: T = self.data.get(di as usize)?;
+        if maybe_filter_value(
+            high_value,
+            T::try_from_u32(self.header.null_value).ok()?,
+            null_value,
+        ) != value
+        {
+            c -= 1;
+        } else {
+            c = CODE_POINT_MAX;
+        }
+        Some(CodePointMapRange {
+            range: RangeInclusive::new(start, c),
+            value,
+        })
+    }
+
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// share the same value in the [`CodePointTrie`], as given by
+    /// [`CodePointTrie::get_range()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::ops::RangeInclusive;
+    /// use icu_codepointtrie::CodePointMapRange;
+    /// use icu_codepointtrie::planes;
+    ///
+    /// let planes_trie = planes::get_planes_trie();
+    ///
+    /// let mut ranges = planes_trie.iter_ranges();
+    ///
+    /// for plane in 0..=16 {
+    ///     let exp_start = plane * 0x1_0000;
+    ///     let exp_end = exp_start + 0xffff;
+    ///     assert_eq!(
+    ///         ranges.next(),
+    ///         Some(CodePointMapRange {
+    ///             range: RangeInclusive::new(exp_start, exp_end),
+    ///             value: plane as u8
+    ///         })
+    ///     );
+    /// }
+    ///
+    /// // Hitting the end of the iterator returns `None`, as will subsequent
+    /// // calls to .next().
+    /// assert_eq!(ranges.next(), None);
+    /// assert_eq!(ranges.next(), None);
+    /// ```
+    pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
+        let init_range = Some(CodePointMapRange {
+            range: RangeInclusive::new(u32::MAX, u32::MAX),
+            value: T::DATA_GET_ERROR_VALUE,
+        });
+        CodePointMapRangeIterator::<T> {
+            cpt: self,
+            cpm_range: init_range,
+        }
     }
 }
 
@@ -398,10 +797,46 @@ where
     }
 }
 
+#[derive(PartialEq, Eq, Debug, Clone)]
+pub struct CodePointMapRange<T: TrieValue> {
+    pub range: RangeInclusive<u32>,
+    pub value: T,
+}
+
+pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
+    cpt: &'a CodePointTrie<'a, T>,
+    // Initialize `range` to Some(CodePointMapRange{ start: u32::MAX, end: u32::MAX, value: 0}).
+    // When `range` is Some(...) and has a start value different from u32::MAX, then we have
+    // returned at least one code point range due to a call to `next()`.
+    // When `range` == `None`, it means that we have hit the end of iteration. It would occur
+    // after a call to `next()` returns a None <=> we attempted to call `get_range()`
+    // with a start code point that is > CODE_POINT_MAX.
+    cpm_range: Option<CodePointMapRange<T>>,
+}
+
+impl<'a, T: TrieValue + Into<u32>> Iterator for CodePointMapRangeIterator<'a, T> {
+    type Item = CodePointMapRange<T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.cpm_range = match &self.cpm_range {
+            Some(cpmr) => {
+                if *cpmr.range.start() == u32::MAX {
+                    self.cpt.get_range(0)
+                } else {
+                    self.cpt.get_range(cpmr.range.end() + 1)
+                }
+            }
+            None => None,
+        };
+        // Note: Clone is cheap. We can't Copy because RangeInclusive does not impl Copy.
+        self.cpm_range.clone()
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    #[cfg(feature = "serde")]
-    use super::CodePointTrie;
+    use super::*;
+    use crate::planes;
     use alloc::vec::Vec;
     #[cfg(feature = "serde")]
     use zerovec::ZeroVec;
@@ -539,5 +974,46 @@ mod tests {
         assert!(matches!(trie_deserialized.data, ZeroVec::Borrowed(_)));
 
         Ok(())
+    }
+
+    #[test]
+    fn test_get_range() {
+        let planes_trie = planes::get_planes_trie();
+
+        let first_range: Option<CodePointMapRange<u8>> = planes_trie.get_range(0x0);
+        assert_eq!(
+            first_range,
+            Some(CodePointMapRange {
+                range: RangeInclusive::new(0x0, 0xffff),
+                value: 0
+            })
+        );
+
+        let second_range: Option<CodePointMapRange<u8>> = planes_trie.get_range(0x1_0000);
+        assert_eq!(
+            second_range,
+            Some(CodePointMapRange {
+                range: RangeInclusive::new(0x10000, 0x1ffff),
+                value: 1
+            })
+        );
+
+        let penultimate_range: Option<CodePointMapRange<u8>> = planes_trie.get_range(0xf_0000);
+        assert_eq!(
+            penultimate_range,
+            Some(CodePointMapRange {
+                range: RangeInclusive::new(0xf_0000, 0xf_ffff),
+                value: 15
+            })
+        );
+
+        let last_range: Option<CodePointMapRange<u8>> = planes_trie.get_range(0x10_0000);
+        assert_eq!(
+            last_range,
+            Some(CodePointMapRange {
+                range: RangeInclusive::new(0x10_0000, 0x10_ffff),
+                value: 16
+            })
+        );
     }
 }
