@@ -36,9 +36,7 @@ impl DynProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        if get_last_component_no_version(&key)
-            .contains('=')
-        {
+        if get_last_component_no_version(&key).contains('=') {
             self.enumerated.load_payload(key, req)
         } else {
             self.binary.load_payload(key, req)

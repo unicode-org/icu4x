@@ -113,7 +113,7 @@ mod tests {
                 &DataRequest {
                     options: ResourceOptions::default(),
                     metadata: Default::default(),
-                }
+                },
             )
             .expect("The data should be valid")
             .take_payload()

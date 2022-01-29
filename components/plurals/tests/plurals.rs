@@ -4,9 +4,8 @@
 
 use icu_locid_macros::langid;
 use icu_plurals::{
-    provider::CardinalV1Marker,
-    rules::runtime::ast::Rule,
-    PluralCategory, PluralRuleType, PluralRules,
+    provider::CardinalV1Marker, rules::runtime::ast::Rule, PluralCategory, PluralRuleType,
+    PluralRules,
 };
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;

@@ -23,9 +23,7 @@ mod test {
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
-        provider::{
-            calendar::DatePatternsV1Marker, calendar::DateSkeletonPatternsV1Marker,
-        },
+        provider::{calendar::DatePatternsV1Marker, calendar::DateSkeletonPatternsV1Marker},
     };
     use core::convert::TryFrom;
 

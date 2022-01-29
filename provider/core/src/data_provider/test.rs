@@ -63,9 +63,7 @@ impl ResourceProvider<HelloWorldV1Marker> for DataWarehouse {
     }
 }
 
-crate::impl_dyn_provider!(DataWarehouse, [
-    HelloWorldV1Marker,
-], ANY);
+crate::impl_dyn_provider!(DataWarehouse, [HelloWorldV1Marker,], ANY);
 
 /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
 #[derive(Debug)]
@@ -100,10 +98,7 @@ impl ResourceProvider<HelloAltMarker> for DataProvider2 {
     }
 }
 
-crate::impl_dyn_provider!(DataProvider2, [
-    HelloWorldV1Marker,
-    HelloAltMarker,
-], ANY);
+crate::impl_dyn_provider!(DataProvider2, [HelloWorldV1Marker, HelloAltMarker,], ANY);
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{
