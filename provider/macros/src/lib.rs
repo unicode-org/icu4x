@@ -10,6 +10,7 @@ use syn::parse_macro_input;
 use syn::spanned::Spanned;
 use syn::AttributeArgs;
 use syn::ItemStruct;
+use syn::Meta;
 use syn::NestedMeta;
 
 #[cfg(test)]
@@ -43,6 +44,12 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
     let name = &item.ident;
     let marker = Ident::new(&format!("{}Marker", name), Span::call_site());
 
+    let name_with_lt = if lifetimes.get(0).is_some() {
+        quote!(#name<'static>)
+    } else {
+        quote!(#name)
+    };
+
     if lifetimes.len() > 1 {
         return syn::Error::new(
             item.generics.span(),
@@ -51,43 +58,71 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
         .to_compile_error();
     }
 
-    let docs = format!("Marker type for [`{}`]", name);
+    let mut attr_it = attr.into_iter().peekable();
 
-    let mut result = if lifetimes.get(0).is_some() {
+    let mut result = if let Some(NestedMeta::Lit(key_lit)) =
+        attr_it.next_if(|v| matches!(v, NestedMeta::Lit(_)))
+    {
+        let key_str = match &key_lit {
+            syn::Lit::Str(lit_str) => lit_str.value(),
+            _ => panic!("Key must be a string"),
+        };
+        let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
         quote!(
             #[doc = #docs]
             pub struct #marker;
-
             impl icu_provider::DataMarker for #marker {
-                type Yokeable = #name<'static>;
+                type Yokeable = #name_with_lt;
             }
-
-            #[derive(Yokeable, ZeroCopyFrom)]
-            #item
+            impl icu_provider::ResourceMarker for #marker {
+                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_lit);
+            }
         )
     } else {
+        let docs = format!("Marker type for [`{}`]", name);
         quote!(
             #[doc = #docs]
             pub struct #marker;
-
             impl icu_provider::DataMarker for #marker {
-                type Yokeable = #name;
+                type Yokeable = #name_with_lt;
             }
-
-            #[derive(Yokeable, ZeroCopyFrom)]
-            #item
         )
     };
 
-    if let Some(attr0) = attr.get(0) {
-        if let NestedMeta::Lit(key_str) = attr0 {
-            result.extend(quote!(
-                impl icu_provider::ResourceMarker for #marker {
-                    const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_str);
-                }
-            ));
+    for single_attr in attr_it {
+        match single_attr {
+            NestedMeta::Meta(Meta::NameValue(name_value)) => {
+                let extra_marker = &name_value.path;
+                let key_lit = &name_value.lit;
+                let key_str = match key_lit {
+                    syn::Lit::Str(lit_str) => lit_str.value(),
+                    _ => panic!("Key must be a string"),
+                };
+                let docs = format!("Marker type for key \"{}\": [`{}`]", key_str, name);
+                result.extend(quote!(
+                    #[doc = #docs]
+                    pub struct #extra_marker;
+                    impl icu_provider::DataMarker for #extra_marker {
+                        type Yokeable = #name_with_lt;
+                    }
+                    impl icu_provider::ResourceMarker for #extra_marker {
+                        const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_lit);
+                    }
+                ));
+            }
+            NestedMeta::Lit(_) => {
+                panic!("Single-string key must appear first in attribute list")
+            }
+            NestedMeta::Meta(_) => {
+                panic!("Invalid attribute to #[data_struct]")
+            }
         }
     }
+
+    result.extend(quote!(
+        #[derive(Yokeable, ZeroCopyFrom)]
+        #item
+    ));
 
     result
 }
