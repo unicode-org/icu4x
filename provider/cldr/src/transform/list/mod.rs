@@ -54,28 +54,29 @@ impl KeyedDataProvider for ListProvider {
     }
 }
 
-impl DataProvider<ListFormatterPatternsV1Marker> for ListProvider {
+impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<ListFormatterPatternsV1Marker>, DataError> {
-        Self::supports_key(&req.resource_path.key)?;
-        let langid = req.try_langid()?;
+        Self::supports_key(&key)?;
+        let langid = req.try_langid(key)?;
         let data = match self.data.get(langid) {
             Some(v) => &v.list_patterns,
-            None => return Err(DataErrorKind::MissingLocale.with_req(req)),
+            None => return Err(DataErrorKind::MissingLocale.with_req(key, req)),
         };
 
-        let mut patterns = match req.resource_path.key {
+        let mut patterns = match key {
             key::LIST_FORMAT_AND_V1 => parse_and_patterns(data),
             key::LIST_FORMAT_OR_V1 => parse_or_patterns(data),
             key::LIST_FORMAT_UNIT_V1 => parse_unit_patterns(data),
             _ => unreachable!(),
         }
-        .map_err(|e| e.with_req(req))?;
+        .map_err(|e| e.with_req(key, req))?;
 
         if langid.language == langid!("es").language {
-            match req.resource_path.key {
+            match key {
                 // Replace " y " with " e " before /i/ sounds.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
                 key::LIST_FORMAT_AND_V1 | key::LIST_FORMAT_UNIT_V1 => patterns

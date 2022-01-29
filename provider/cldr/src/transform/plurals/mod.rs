@@ -80,17 +80,18 @@ impl PluralsProvider {
     }
 }
 
-impl DataProvider<PluralRulesV1Marker> for PluralsProvider {
+impl DynProvider<PluralRulesV1Marker> for PluralsProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<PluralRulesV1Marker>, DataError> {
-        let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
+        let cldr_rules = self.get_rules_for(&key)?;
         // TODO: Implement language fallback?
-        let langid = req.try_langid()?;
+        let langid = req.try_langid(key)?;
         let r = match cldr_rules.0.get(langid) {
             Some(v) => v,
-            None => return Err(DataErrorKind::MissingLocale.with_req(req)),
+            None => return Err(DataErrorKind::MissingLocale.with_req(key, req)),
         };
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
@@ -152,15 +153,13 @@ fn test_basic() {
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<PluralRulesV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::CARDINAL_V1,
-                options: ResourceOptions {
-                    variant: None,
-                    langid: Some(langid!("cs")),
-                },
+        .load_payload(
+            CardinalV1Marker::KEY,
+            &DataRequest {
+                options: langid!("cs").into(),
+                metadata: Default::default(),
             },
-        })
+        )
         .unwrap()
         .take_payload()
         .unwrap();

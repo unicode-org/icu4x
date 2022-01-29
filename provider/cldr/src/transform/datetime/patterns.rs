@@ -38,13 +38,12 @@ impl KeyedDataProvider for DatePatternsProvider {
     }
 }
 
-impl DataProvider<calendar::DatePatternsV1Marker> for DatePatternsProvider {
-    fn load_payload(
+impl ResourceProvider<calendar::DatePatternsV1Marker> for DatePatternsProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<calendar::DatePatternsV1Marker>, DataError> {
-        DatePatternsProvider::supports_key(&req.resource_path.key)?;
-        let dates = self.0.dates_for(req)?;
+        let dates = self.0.dates_for::<calendar::DatePatternsV1Marker>(req)?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
@@ -56,9 +55,11 @@ impl DataProvider<calendar::DatePatternsV1Marker> for DatePatternsProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(DatePatternsProvider, {
-    _ => calendar::DatePatternsV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    DatePatternsProvider,
+    [calendar::DatePatternsV1Marker,],
+    SERDE_SE
+);
 
 impl IterableProvider for DatePatternsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
@@ -275,14 +276,12 @@ fn test_basic() {
         .expect("Failed to retrieve provider");
 
     let cs_dates: DataPayload<calendar::DatePatternsV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::DATE_PATTERNS_V1,
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("cs")),
-                },
+        .load_resource(&DataRequest {
+            options: ResourceOptions {
+                variant: Some("gregory".into()),
+                langid: Some(langid!("cs")),
             },
+            metadata: Default::Default(),
         })
         .expect("Failed to load payload")
         .take_payload()
@@ -300,14 +299,12 @@ fn test_with_numbering_system() {
         .expect("Failed to retrieve provider");
 
     let cs_dates: DataPayload<calendar::DatePatternsV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::DATE_PATTERNS_V1,
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("haw")),
-                },
+        .load_resource(&DataRequest {
+            options: ResourceOptions {
+                variant: Some("gregory".into()),
+                langid: Some(langid!("haw")),
             },
+            metadata: Default::Default(),
         })
         .expect("Failed to load payload")
         .take_payload()

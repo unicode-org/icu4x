@@ -100,13 +100,12 @@ impl IterableProvider for TimeZonesProvider {
 
 macro_rules! impl_data_provider {
     ($id:ident, $marker:ident) => {
-        impl DataProvider<$marker> for TimeZonesProvider {
-            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                TimeZonesProvider::supports_key(&req.resource_path.key)?;
-                let langid = req.try_langid()?;
+        impl ResourceProvider<$marker> for TimeZonesProvider {
+            fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                let langid = req.try_langid(<$marker>::KEY)?;
                 let time_zones = match self.data.get(&langid) {
                     Some(v) => &v.dates.time_zone_names,
-                    None => return Err(DataErrorKind::MissingLocale.with_req(req)),
+                    None => return Err(DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req)),
                 };
                 let metadata = DataResponseMetadata::default();
                 // TODO(#1109): Set metadata.data_langid correctly.
@@ -119,14 +118,18 @@ macro_rules! impl_data_provider {
     };
 }
 
-icu_provider::impl_dyn_provider!(TimeZonesProvider, {
-    key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1Marker,
-    key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1Marker,
-    key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1Marker,
-    key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1Marker,
-    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1Marker,
-    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    TimeZonesProvider,
+    [
+        TimeZoneFormatsV1Marker,
+        ExemplarCitiesV1Marker,
+        MetaZoneGenericNamesLongV1Marker,
+        MetaZoneGenericNamesShortV1Marker,
+        MetaZoneSpecificNamesLongV1Marker,
+        MetaZoneSpecificNamesShortV1Marker,
+    ],
+    SERDE_SE
+);
 
 impl_data_provider!(TimeZoneFormatsV1, TimeZoneFormatsV1Marker);
 impl_data_provider!(ExemplarCitiesV1, ExemplarCitiesV1Marker);
@@ -158,14 +161,9 @@ mod tests {
         let provider = TimeZonesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::TIMEZONE_FORMATS_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("en")),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: langid!("en").into(),
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
@@ -173,14 +171,9 @@ mod tests {
         assert_eq!("GMT", time_zone_formats.get().gmt_zero_format);
 
         let exemplar_cities: DataPayload<ExemplarCitiesV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::TIMEZONE_EXEMPLAR_CITIES_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("en")),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: langid!("en").into(),
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
@@ -188,14 +181,9 @@ mod tests {
         assert_eq!("Pohnpei", exemplar_cities.get()["Pacific/Ponape"]);
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::TIMEZONE_GENERIC_NAMES_LONG_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("en")),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: langid!("en").into(),
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
@@ -206,14 +194,9 @@ mod tests {
         );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("en")),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: langid!("en").into(),
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
@@ -224,14 +207,9 @@ mod tests {
         );
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("en")),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: langid!("en").into(),
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
@@ -239,14 +217,9 @@ mod tests {
         assert_eq!("PT", generic_names_short.get()["America_Pacific"]);
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid!("en")),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: langid!("en").into(),
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()

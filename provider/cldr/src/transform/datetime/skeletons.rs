@@ -37,13 +37,14 @@ impl KeyedDataProvider for DateSkeletonPatternsProvider {
     }
 }
 
-impl DataProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
-    fn load_payload(
+impl ResourceProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<calendar::DateSkeletonPatternsV1Marker>, DataError> {
-        DateSkeletonPatternsProvider::supports_key(&req.resource_path.key)?;
-        let dates = self.0.dates_for(req)?;
+        let dates = self
+            .0
+            .dates_for::<calendar::DateSkeletonPatternsV1Marker>(req)?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
@@ -55,9 +56,11 @@ impl DataProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatter
     }
 }
 
-icu_provider::impl_dyn_provider!(DateSkeletonPatternsProvider, {
-    _ => calendar::DateSkeletonPatternsV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    DateSkeletonPatternsProvider,
+    [calendar::DateSkeletonPatternsV1Marker,],
+    SERDE_SE
+);
 
 impl IterableProvider for DateSkeletonPatternsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
@@ -159,14 +162,12 @@ fn test_datetime_skeletons() {
         .expect("Failed to retrieve provider");
 
     let skeletons: DataPayload<calendar::DateSkeletonPatternsV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::DATE_SKELETON_PATTERNS_V1,
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("fil")),
-                },
+        .load_resource(&DataRequest {
+            options: ResourceOptions {
+                variant: Some("gregory".into()),
+                langid: Some(langid!("fil")),
             },
+            metadata: Default::default(),
         })
         .expect("Failed to load payload")
         .take_payload()

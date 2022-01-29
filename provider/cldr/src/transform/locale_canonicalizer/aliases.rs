@@ -52,10 +52,9 @@ impl KeyedDataProvider for AliasesProvider {
     }
 }
 
-impl DataProvider<AliasesV1Marker> for AliasesProvider {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
-        AliasesProvider::supports_key(&req.resource_path.key)?;
-        let langid = &req.resource_path.options.langid;
+impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
+        let langid = &req.options.langid;
 
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
@@ -67,14 +66,12 @@ impl DataProvider<AliasesV1Marker> for AliasesProvider {
                 payload: Some(DataPayload::from_owned(AliasesV1::from(&self.data))),
             })
         } else {
-            Err(DataErrorKind::ExtraneousResourceOptions.with_req(req))
+            Err(DataErrorKind::ExtraneousResourceOptions.with_req(AliasesV1Marker::KEY, req))
         }
     }
 }
 
-icu_provider::impl_dyn_provider!(AliasesProvider, {
-    _ => AliasesV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(AliasesProvider, [AliasesV1Marker,], SERDE_SE);
 
 impl IterableProvider for AliasesProvider {
     fn supported_options_for_key(

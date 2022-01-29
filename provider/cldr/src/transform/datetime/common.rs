@@ -57,24 +57,23 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 }
 
 impl CommonDateProvider {
-    pub fn dates_for<'a>(
+    pub fn dates_for<'a, M: ResourceMarker>(
         &'a self,
         req: &DataRequest,
     ) -> Result<&'a cldr_serde::ca::Dates, DataError> {
-        let langid = req.try_langid()?;
+        let langid = req.try_langid(M::KEY)?;
         let variant = req
-            .resource_path
             .options
             .variant
             .as_ref()
-            .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(req))?;
+            .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(M::KEY, req))?;
         let map = self
             .data
             .get(&**variant)
-            .ok_or_else(|| DataErrorKind::MissingVariant.with_req(req))?;
+            .ok_or_else(|| DataErrorKind::MissingVariant.with_req(M::KEY, req))?;
         match map.get(langid) {
             Some(date) => Ok(date),
-            None => Err(DataErrorKind::MissingLocale.with_req(req)),
+            None => Err(DataErrorKind::MissingLocale.with_req(M::KEY, req)),
         }
     }
 }

@@ -44,13 +44,12 @@ impl KeyedDataProvider for LikelySubtagsProvider {
     }
 }
 
-impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn load_payload(
+impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
-        LikelySubtagsProvider::supports_key(&req.resource_path.key)?;
-        let langid = &req.resource_path.options.langid;
+        let langid = &req.options.langid;
 
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
@@ -62,14 +61,12 @@ impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
                 payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&self.data))),
             })
         } else {
-            Err(DataErrorKind::ExtraneousResourceOptions.with_req(req))
+            Err(DataErrorKind::ExtraneousResourceOptions.with_req(LikelySubtagsV1Marker::KEY, req))
         }
     }
 }
 
-icu_provider::impl_dyn_provider!(LikelySubtagsProvider, {
-    _ => LikelySubtagsV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,], SERDE_SE);
 
 impl IterableProvider for LikelySubtagsProvider {
     fn supported_options_for_key(
@@ -158,7 +155,7 @@ fn test_basic() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let result: DataPayload<LikelySubtagsV1Marker> = provider
-        .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
+        .load_resource(&Default::default())
         .unwrap()
         .take_payload()
         .unwrap();

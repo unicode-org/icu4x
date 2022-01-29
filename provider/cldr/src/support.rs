@@ -72,7 +72,7 @@ impl<T> Default for LazyCldrProvider<T> {
 /// A lazy-initialized CLDR JSON data provider.
 impl<'b, T> LazyCldrProvider<T>
 where
-    T: DataProvider<SerializeMarker>
+    T: DynProvider<SerializeMarker>
         + IterableProvider
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths, Error = crate::error::Error>,
@@ -80,14 +80,15 @@ where
     /// Call [`DataProvider::load_payload()`], initializing `T` if necessary.
     pub fn try_load_serde(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
         cldr_paths: &'b dyn CldrPaths,
     ) -> Result<Option<DataResponse<SerializeMarker>>, DataError> {
-        if T::supports_key(&req.resource_path.key).is_err() {
+        if T::supports_key(&key).is_err() {
             return Ok(None);
         }
         if let Some(data_provider) = self.src.read()?.as_ref() {
-            return DataProvider::load_payload(data_provider, req).map(Some);
+            return DynProvider::load_payload(data_provider, key, req).map(Some);
         }
         let mut src = self.src.write()?;
         if src.is_none() {
@@ -96,7 +97,7 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        DataProvider::load_payload(data_provider, req).map(Some)
+        DynProvider::load_payload(data_provider, key, req).map(Some)
     }
 
     /// Call [`IterableProvider::supported_options_for_key()`], initializing `T` if necessary.

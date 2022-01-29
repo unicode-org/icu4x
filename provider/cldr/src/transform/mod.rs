@@ -83,39 +83,55 @@ impl<'a> CldrJsonDataProvider<'a> {
     }
 }
 
-impl<'a> DataProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<SerializeMarker>, DataError> {
-        if let Some(result) = self.aliases.try_load_serde(req, self.cldr_paths)? {
+impl<'a> DynProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<SerializeMarker>, DataError> {
+        if let Some(result) = self.aliases.try_load_serde(key, req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.date_symbols.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self
+            .date_symbols
+            .try_load_serde(key, req, self.cldr_paths)?
+        {
             return Ok(result);
         }
-        if let Some(result) = self.date_skeletons.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self
+            .date_skeletons
+            .try_load_serde(key, req, self.cldr_paths)?
+        {
             return Ok(result);
         }
-        if let Some(result) = self.date_patterns.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self
+            .date_patterns
+            .try_load_serde(key, req, self.cldr_paths)?
+        {
             return Ok(result);
         }
-        if let Some(result) = self.japanese.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self.japanese.try_load_serde(key, req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.likelysubtags.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self
+            .likelysubtags
+            .try_load_serde(key, req, self.cldr_paths)?
+        {
             return Ok(result);
         }
-        if let Some(result) = self.numbers.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self.numbers.try_load_serde(key, req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.plurals.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self.plurals.try_load_serde(key, req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.time_zones.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self.time_zones.try_load_serde(key, req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.list.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self.list.try_load_serde(key, req, self.cldr_paths)? {
             return Ok(result);
         }
-        Err(DataErrorKind::MissingResourceKey.with_req(req))
+        Err(DataErrorKind::MissingResourceKey.with_req(key, req))
     }
 }
 
