@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643416662846,
+  "lastUpdate": 1643417665084,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8243,6 +8243,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bc6c319fb288310c5f6a70bd0fc067f697e794d0"
         },
         "date": 1643416649516,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ededcd21953402b28815ee8ba0a62e29e820826e",
+          "message": "Add design doc for zerovec (#1537)\n\n* Add design doc for zerovec\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* fix get_copied\n\n* mention repr rust\n\n* Update utils/zerovec/design_doc.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* repr c\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-01-28T16:52:50-08:00",
+          "tree_id": "ff65a8b9f977e29fc81621a12e08596c95173521",
+          "url": "https://github.com/unicode-org/icu4x/commit/ededcd21953402b28815ee8ba0a62e29e820826e"
+        },
+        "date": 1643417655091,
         "tool": "ndjson",
         "benches": [
           {
