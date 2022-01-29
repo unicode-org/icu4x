@@ -8,8 +8,8 @@ use proc_macro2::{Ident, Span, TokenStream as TokenStream2};
 use quote::quote;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
-use syn::ItemStruct;
 use syn::AttributeArgs;
+use syn::ItemStruct;
 use syn::NestedMeta;
 
 #[cfg(test)]
