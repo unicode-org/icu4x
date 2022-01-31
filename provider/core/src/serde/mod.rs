@@ -22,6 +22,7 @@
 //! [`DataProvider`]: crate::data_provider::DataProvider
 //! [`BufferProvider`]: crate::buf::BufferProvider
 
+pub mod borrow_de_utils;
 mod de;
 #[cfg(feature = "serialize")]
 mod ser;
