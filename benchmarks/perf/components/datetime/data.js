@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643418141612,
+  "lastUpdate": 1643649374777,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19163,6 +19163,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 366131,
             "range": "± 20688",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "584bf83bae63387b6fd88be27cec2fb5d8a48b73",
+          "message": "Adds npm package dependency caching to CI targets wasm and binsize. (#1541)\n\n* Adds npm package dependency caching to CI targets wasm and binsize.\r\n\r\n* Added ${{ runner.os }} to npm package dependency cache key.\r\nAdded message explcitely advising how to fix out-of-sync package.json and package-lock.json.\r\n\r\n* Fixes a typo.",
+          "timestamp": "2022-01-31T09:06:25-08:00",
+          "tree_id": "e54124019b6ec03d4910bdfb5bfe663d062d4705",
+          "url": "https://github.com/unicode-org/icu4x/commit/584bf83bae63387b6fd88be27cec2fb5d8a48b73"
+        },
+        "date": 1643649364081,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 80030,
+            "range": "± 899",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 873017,
+            "range": "± 11935",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 309820,
+            "range": "± 563",
             "unit": "ns/iter"
           }
         ]
