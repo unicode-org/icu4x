@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider"
 description = "Trait and struct definitions for the ICU data provider"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"

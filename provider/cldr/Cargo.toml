@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_cldr"
 description = "Data provider that reads from a CLDR JSON data source"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
