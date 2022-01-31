@@ -32,7 +32,7 @@ proc_macro = true
 
 [dependencies]
 proc-macro-crate = "1.0"
-icu_locid = { version = "0.4", path = "../" }
+icu_locid = { version = "0.5", path = "../" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 
 [dev-dependencies]

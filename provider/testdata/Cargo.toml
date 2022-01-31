@@ -138,10 +138,10 @@ skip_optional_dependencies = true
 denylist = ["bench"]
 
 [dependencies]
-icu_provider = { version = "0.4", path = "../../provider/core" }
-icu_provider_blob = { version = "0.4", path = "../../provider/blob", optional = true }
-icu_provider_fs = { version = "0.4", path = "../../provider/fs", optional = true }
-icu_locid = { version = "0.4", path = "../../components/locid" }
+icu_provider = { version = "0.5", path = "../../provider/core" }
+icu_provider_blob = { version = "0.5", path = "../../provider/blob", optional = true }
+icu_provider_fs = { version = "0.5", path = "../../provider/fs", optional = true }
+icu_locid = { version = "0.5", path = "../../components/locid" }
 
 # Dependencies for the "metadata" feature
 cargo_metadata = { version = "0.13", optional = true }
@@ -151,8 +151,8 @@ displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.3", path = "../../utils/writeable", optional = true }
 
 [dev-dependencies]
-icu_locid_macros = { version = "0.4", path = "../../components/locid/macros" }
-icu_plurals = { version = "0.4", path = "../../components/plurals" }
+icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
+icu_plurals = { version = "0.5", path = "../../components/plurals" }
 
 [features]
 default = ["fs", "std"]

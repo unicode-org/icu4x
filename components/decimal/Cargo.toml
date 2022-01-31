@@ -31,8 +31,8 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_locid = { version = "0.4", path = "../locid" }
-icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
+icu_locid = { version = "0.5", path = "../locid" }
+icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
 fixed_decimal = { version = "0.2.2", path = "../../utils/fixed_decimal" }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
@@ -41,9 +41,9 @@ displaydoc = { version = "0.2.3", default-features = false }
 [dev-dependencies]
 criterion = "0.3"
 icu = { path = "../icu", default-features = false }
-icu_benchmark_macros = { version = "0.4", path = "../../tools/benchmark/macros" }
-icu_locid_macros = { version = "0.4", path = "../locid/macros" }
-icu_testdata = { version = "0.4", path = "../../provider/testdata", features = ["static"] }
+icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
+icu_locid_macros = { version = "0.5", path = "../locid/macros" }
+icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
 rand = "0.8"
 rand_pcg = "0.3"
 rand_distr = "0.4"

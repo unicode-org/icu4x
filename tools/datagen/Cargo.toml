@@ -30,14 +30,14 @@ all-features = true
 eyre = "0.6"
 clap = "2.33"
 futures = "0.3"
-icu_locid = { version = "0.4", path = "../../components/locid", features = ["std"]}
-icu_properties = { version = "0.4", path = "../../components/properties", features = ["std"]}
-icu_provider = { version = "0.4", path = "../../provider/core", features = ["std", "log_error_context"]}
-icu_provider_blob = { version = "0.4", path = "../../provider/blob", features = ["export"] }
-icu_provider_cldr = { version = "0.4", path = "../../provider/cldr", features = ["download"] }
-icu_provider_fs = { version = "0.4", path = "../../provider/fs", features = ["export"] }
-icu_provider_uprops = { version = "0.4", path = "../../provider/uprops", features = ["log"] }
-icu_testdata = { version = "0.4", path = "../../provider/testdata", features = ["metadata"] }
+icu_locid = { version = "0.5", path = "../../components/locid", features = ["std"]}
+icu_properties = { version = "0.5", path = "../../components/properties", features = ["std"]}
+icu_provider = { version = "0.5", path = "../../provider/core", features = ["std", "log_error_context"]}
+icu_provider_blob = { version = "0.5", path = "../../provider/blob", features = ["export"] }
+icu_provider_cldr = { version = "0.5", path = "../../provider/cldr", features = ["download"] }
+icu_provider_fs = { version = "0.5", path = "../../provider/fs", features = ["export"] }
+icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
+icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["metadata"] }
 log = "0.4"
 reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }

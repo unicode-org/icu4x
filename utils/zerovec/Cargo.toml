@@ -30,7 +30,7 @@ serde = { version = "1.0", optional = true, default-features = false, features =
 yoke = { version = "0.4.0", path = "../yoke", optional = true }
 
 [dev-dependencies]
-icu_benchmark_macros = { version = "0.4", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 criterion = "0.3.4"
 iai = "0.1"
 serde = { version = "1.0", features = ["derive"] }
