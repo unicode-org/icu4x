@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643653212885,
+  "lastUpdate": 1643655662464,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19319,6 +19319,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 38503311,
             "range": "± 472817",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0ab8711ecca740976fcf2c8ad21aca3ce76c7dec",
+          "message": "Fixing Option borrows (follow-up #1550) (#1556)\n\n* Fixing Option borrows\r\n\r\n* Custom Option<Cow<str>> deserializer\r\n\r\n* Revert \"Custom Option<Cow<str>> deserializer\"\r\n\r\nThis reverts commit a69941cd2c0e8fa56ac148dafe7266da6c7fbe98.\r\n\r\n* Serde utils in icu_provider\r\n\r\n* Removing serde_with dep\r\n\r\n* fmt and fix\r\n\r\n* Update provider/core/src/serde/borrow_de_utils.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-01-31T10:51:11-08:00",
+          "tree_id": "83335fa6d35c3e9f3a730e0d3703b40a7eef589e",
+          "url": "https://github.com/unicode-org/icu4x/commit/0ab8711ecca740976fcf2c8ad21aca3ce76c7dec"
+        },
+        "date": 1643655650425,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 47798570,
+            "range": "± 1653635",
             "unit": "ns/iter"
           }
         ]
