@@ -1,6 +1,10 @@
 # Changelog
 
+
 ## Unreleased
+
+
+## icu4x 0.5.0 (Jan 31, 2022)
 
   - General data model
     - `DataPayload` no longer needs a lifetime (#1297, #1279)
@@ -35,6 +39,7 @@
       - Implement data transformer for `Script_Extensions` map data (#1353)
       - Add `General_Category` predicate functions (#1310)
       - Implement `Grapheme_Cluster_Break`, `Word_Break`, and `Sentence_Break` Unicode properties (#1233)
+      - Add fn to return UnicodeSet for Script_Extensions (#1529)
   - Utilities
     - `codepointtrie`: No changes
     - `deduplicating_array`: New utility for efficient serialized representation of data with duplicates
