@@ -96,7 +96,10 @@ symbols!(
     pub struct SymbolsV1<'data>(
         #[cfg_attr(
             feature = "provider_serde",
-            serde(borrow, with = "serde_with::As::<[serde_with::BorrowCow; 12]>")
+            serde(
+                borrow,
+                deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+            )
         )]
         pub [Cow<'data, str>; 12],
     );
@@ -107,7 +110,10 @@ symbols!(
     pub struct SymbolsV1<'data>(
         #[cfg_attr(
             feature = "provider_serde",
-            serde(borrow, with = "serde_with::As::<[serde_with::BorrowCow; 7]>")
+            serde(
+                borrow,
+                deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+            )
         )]
         pub [Cow<'data, str>; 7],
     );
@@ -122,12 +128,18 @@ symbols!(
         pub pm: Cow<'data, str>,
         #[cfg_attr(
             feature = "provider_serde",
-            serde(borrow, with = "serde_with::As::<Option<serde_with::BorrowCow>>")
+            serde(
+                borrow,
+                deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
+            )
         )]
         pub noon: Option<Cow<'data, str>>,
         #[cfg_attr(
             feature = "provider_serde",
-            serde(borrow, with = "serde_with::As::<Option<serde_with::BorrowCow>>")
+            serde(
+                borrow,
+                deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
+            )
         )]
         pub midnight: Option<Cow<'data, str>>,
     }
