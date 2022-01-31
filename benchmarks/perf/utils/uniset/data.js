@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643418028224,
+  "lastUpdate": 1643649319535,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19259,6 +19259,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 55042439,
             "range": "± 655523",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "584bf83bae63387b6fd88be27cec2fb5d8a48b73",
+          "message": "Adds npm package dependency caching to CI targets wasm and binsize. (#1541)\n\n* Adds npm package dependency caching to CI targets wasm and binsize.\r\n\r\n* Added ${{ runner.os }} to npm package dependency cache key.\r\nAdded message explcitely advising how to fix out-of-sync package.json and package-lock.json.\r\n\r\n* Fixes a typo.",
+          "timestamp": "2022-01-31T09:06:25-08:00",
+          "tree_id": "e54124019b6ec03d4910bdfb5bfe663d062d4705",
+          "url": "https://github.com/unicode-org/icu4x/commit/584bf83bae63387b6fd88be27cec2fb5d8a48b73"
+        },
+        "date": 1643649307168,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 49057429,
+            "range": "± 2986717",
             "unit": "ns/iter"
           }
         ]
