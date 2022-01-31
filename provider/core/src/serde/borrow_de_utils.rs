@@ -23,7 +23,7 @@ pub fn option_of_cow<'de, D>(deserializer: D) -> Result<Option<Cow<'de, str>>, D
 where
     D: Deserializer<'de>,
 {
-    <Option<CowWrap<'de>>>::deserialize(deserializer).map(|array| array.map(|wrap| wrap.0))
+    <Option<CowWrap<'de>>>::deserialize(deserializer).map(|opt| opt.map(|wrap| wrap.0))
 }
 
 #[test]
