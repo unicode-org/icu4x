@@ -24,8 +24,8 @@ use crate::internals::{DotType, MappingKind, SetAdder};
 //               3: Titlecase mapping (code point)
 //               4: Delta to simple case mapping (code point) (sign stored separately)
 //               5: [RESERVED]
-//               6: Closure mappings (see below)
-//               7: Full mappings (see below)
+//               6: Closure mappings (string; see below)
+//               7: Full mappings (strings; see below)
 //            8  Double-width slots. If set, then each optional slot is stored as two
 //               elements of the array (high and low halves of 32-bit values) instead of
 //               a single element.
