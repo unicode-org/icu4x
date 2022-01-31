@@ -55,7 +55,7 @@ jobs:
         command: make
         args: ci-job-check
 
-  # Test job - runs all "cargo make" testing commands
+  # Test job - runs all "cargo make" testing commands except docs
   test:
     strategy:
       fail-fast: false
@@ -67,7 +67,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
-    - uses: actions/checkout@v2
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -97,6 +96,43 @@ jobs:
       with:
         command: make
         args: ci-job-test
+
+  # Docs test job - runs all "cargo make" testing commands for docs
+  test-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+    - name: Build
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --all-targets --all-features
+    - name: Run `cargo make ci-job-test`
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-test-docs
 
   # FFI job - runs all "cargo make" FFI tests
   ffi:
