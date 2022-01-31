@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643666545709,
+  "lastUpdate": 1643668590338,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19373,6 +19373,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 362697,
             "range": "± 11269",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47cfea25de2403049967c09c0daf0b53aa77ac93",
+          "message": "Changelog fixes (#1564)",
+          "timestamp": "2022-01-31T14:26:48-08:00",
+          "tree_id": "567e1d4bb0120757104f60e4381e1cd7cff704dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/47cfea25de2403049967c09c0daf0b53aa77ac93"
+        },
+        "date": 1643668581101,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 62549,
+            "range": "± 938",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 657119,
+            "range": "± 8147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 251310,
+            "range": "± 3660",
             "unit": "ns/iter"
           }
         ]
