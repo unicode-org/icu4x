@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643655168436,
+  "lastUpdate": 1643657343126,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8363,6 +8363,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0ab8711ecca740976fcf2c8ad21aca3ce76c7dec"
         },
         "date": 1643655158607,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "658229ca3a1aebb53b9e1da3e717af0b36f79297",
+          "message": "Add namespace to ZeroCopyFrom in yoke derive (#1558)\n\n* Add namespace to ZeroCopyFrom in yoke derive\r\n\r\n* Bump yoke-derive to 0.4.1\r\n\r\n* Bump yoke-derive in yoke deps",
+          "timestamp": "2022-01-31T11:27:15-08:00",
+          "tree_id": "045e602361517f8a4f1c153e7cdc7070e9182c3b",
+          "url": "https://github.com/unicode-org/icu4x/commit/658229ca3a1aebb53b9e1da3e717af0b36f79297"
+        },
+        "date": 1643657331737,
         "tool": "ndjson",
         "benches": [
           {
