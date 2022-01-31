@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643649450868,
+  "lastUpdate": 1643653343906,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25577,6 +25577,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15367,
             "range": "± 419",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c83c90c05314e7334a96f34abaca4bf7f0ab1bf3",
+          "message": "Publish utils (#1547)\n\n* Bump yoke crates to 0.4.0\r\n\r\n* Update yoke deps\r\n\r\n* Bump zerovec to 0.6.0\r\n\r\n* Update zerovec deps\r\n\r\n* Bump writeable to 0.3.0\r\n\r\n* Update writeable deps\r\n\r\n* Bump uniset to 0.4.1\r\n\r\n* Update uniset deps\r\n\r\n* Bump litemap to 0.3.0\r\n\r\n* Update litemap deps\r\n\r\n* Bump fixed_decimal to 0.2.2\r\n\r\n* Update fixed_decimal deps\r\n\r\n* Set deduplicating_array version to 0.1.0\r\n\r\n* Update deduplicating_array deps\r\n\r\n* Bump codepointtrie to 0.3.3\r\n\r\n* Update codepointtrie deps",
+          "timestamp": "2022-01-31T10:11:51-08:00",
+          "tree_id": "e552b1c78a6397d870362e338e290ec0ab3c1f47",
+          "url": "https://github.com/unicode-org/icu4x/commit/c83c90c05314e7334a96f34abaca4bf7f0ab1bf3"
+        },
+        "date": 1643653333962,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 986,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5393,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 13057,
+            "range": "± 51",
             "unit": "ns/iter"
           }
         ]
