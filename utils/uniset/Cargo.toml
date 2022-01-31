@@ -41,7 +41,7 @@ zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde"] 
 
 [dev-dependencies]
 criterion = "0.3.3"
-icu_benchmark_macros = { version = "0.4", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 postcard = { version = "0.7", features = ["use-std", "alloc"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

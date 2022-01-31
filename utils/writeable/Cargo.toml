@@ -27,7 +27,7 @@ all-features = true
 
 [dev-dependencies]
 criterion = "0.3"
-icu_benchmark_macros = { version = "0.4", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 rand = { version = "0.8", features = ["small_rng"] }
 
 [lib]

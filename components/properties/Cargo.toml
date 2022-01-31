@@ -5,7 +5,7 @@
 [package]
 name = "icu_properties"
 description = "Definitions for Unicode properties"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -34,7 +34,7 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["serde"] }
-icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
+icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
 icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["serde"] }
 num_enum = { version = "0.5.4", default-features = false }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
@@ -42,7 +42,7 @@ zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde"] 
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_testdata = { version = "0.4", path = "../../provider/testdata" }
+icu_testdata = { version = "0.5", path = "../../provider/testdata" }
 
 [lib]
 bench = false  # This option is required for Benchmark CI

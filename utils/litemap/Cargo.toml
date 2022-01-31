@@ -38,9 +38,9 @@ rkyv = { version = "0.7", features = ["validation"] }
 bytecheck = "0.6"
 bincode = "1"
 postcard = { version = "0.7", features = ["use-std"] }
-icu_locid = { version = "0.4", path = "../../components/locid" }
-icu_locid_macros = { version = "0.4", path = "../../components/locid/macros" }
-icu_benchmark_macros = { version = "0.4", path = "../../tools/benchmark/macros" }
+icu_locid = { version = "0.5", path = "../../components/locid" }
+icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
+icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 criterion = "0.3.4"
 
 [[test]]
