@@ -22,10 +22,10 @@
 //! [`DataProvider`]: crate::data_provider::DataProvider
 //! [`BufferProvider`]: crate::buf::BufferProvider
 
+pub mod borrow_de_utils;
 mod de;
 #[cfg(feature = "serialize")]
 mod ser;
-pub mod borrow_de_utils;
 
 pub use de::check_format_supported;
 pub use de::AsDeserializingBufferProvider;
