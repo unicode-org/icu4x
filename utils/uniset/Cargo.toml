@@ -5,7 +5,7 @@
 [package]
 name = "icu_uniset"
 description = "API for highly efficient querying of sets of Unicode characters"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -32,12 +32,12 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-litemap = { version = "0.2", path = "../../utils/litemap" }
+litemap = { version = "0.3.0", path = "../../utils/litemap" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.3.1", path = "../yoke", features = ["derive"] }
-zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["serde"] }
+yoke = { version = "0.4.0", path = "../yoke", features = ["derive"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde"] }
 
 [dev-dependencies]
 criterion = "0.3.3"

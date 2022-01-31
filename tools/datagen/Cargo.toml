@@ -43,7 +43,7 @@ reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 simple_logger = "1.12"
 tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"] }
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
 
 [[bin]]
 name = "icu4x-datagen"

@@ -36,7 +36,7 @@ all-features = true
 [dependencies]
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 serde = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]

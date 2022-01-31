@@ -5,7 +5,7 @@
 [package]
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -29,7 +29,7 @@ all-features = true
 [dependencies]
 smallvec = "1.6"
 static_assertions = "1.1"
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 ryu = { version = "1.0.5", optional = true, features = ["small"] }
 

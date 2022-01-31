@@ -50,10 +50,10 @@ deserialize_postcard_07 = ["serde", "postcard"]
 [dependencies]
 icu_locid = { version = "0.4", path = "../../components/locid" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.3.1", path = "../../utils/yoke", features = ["serde", "derive"] }
-litemap = { path = "../../utils/litemap", version = "0.2.1" }
+yoke = { version = "0.4.0", path = "../../utils/yoke", features = ["serde", "derive"] }
+litemap = { version = "0.3.0", path = "../../utils/litemap" }
 log = { version = "0.4", optional = true }
 
 icu_provider_macros = { version = "0.4", path = "../macros", optional = true }

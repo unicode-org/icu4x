@@ -504,7 +504,7 @@ dependencies = [
 
 [[package]]
 name = "deduplicating_array"
-version = "0.5.0"
+version = "0.1.0"
 dependencies = [
  "postcard",
  "serde",
@@ -657,7 +657,7 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1096,7 +1096,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie"
-version = "0.3.0"
+version = "0.3.3"
 dependencies = [
  "displaydoc",
  "postcard",
@@ -1454,7 +1454,7 @@ dependencies = [
 
 [[package]]
 name = "icu_uniset"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1557,7 +1557,7 @@ checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 
 [[package]]
 name = "litemap"
-version = "0.2.2"
+version = "0.3.0"
 dependencies = [
  "bincode",
  "bytecheck",
@@ -3061,7 +3061,7 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "icu_benchmark_macros",
@@ -3070,7 +3070,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "bincode",
  "serde",
@@ -3080,7 +3080,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.1.2"
+version = "0.4.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3092,7 +3092,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "bincode",
  "criterion",

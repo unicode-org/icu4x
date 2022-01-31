@@ -42,7 +42,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
 displaydoc = { version = "0.2.3", default-features = false }
 serde-json-core = { version = "0.4", features = ["std"] }
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
 
 # Serializers
 serde_json = { version = "1.0", optional = true }

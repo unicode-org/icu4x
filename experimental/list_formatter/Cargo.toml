@@ -24,10 +24,10 @@ displaydoc = { version = "0.2.3", default-features = false }
 icu_locid = { version = "0.4", path = "../../components/locid" }
 icu_provider = { version = "0.4", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["yoke"] }
-deduplicating_array = { version = "0.5", path = "../../utils/deduplicating_array", optional = true }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
+deduplicating_array = { version = "0.1", path = "../../utils/deduplicating_array", optional = true }
 regex-automata = { version = "0.1", git = "https://github.com/burntsushi/regex-automata", rev = "d8eee1279fac79514f6e366b6976f97ad7b37174", default-features = false }
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
 
 [dev-dependencies]
 criterion = "0.3.3"
