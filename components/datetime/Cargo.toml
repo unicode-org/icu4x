@@ -46,7 +46,7 @@ smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
 num_enum = { version = "0.5", default_features = false }
-serde_utils = { version = "0.5", path = "../../utils/serde_utils", optional = true }
+serde_with = { version = "1.11.0", default_features = false, optional = true}
 
 [dev-dependencies]
 criterion = "0.3"
@@ -68,7 +68,7 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = ["provider_serde"]
 bench = []
-provider_serde = ["serde", "litemap/serde_serialize", "smallvec/serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "serde_utils"]
+provider_serde = ["serde", "litemap/serde_serialize", "smallvec/serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "serde_with"]
 provider_transform_internals = ["std"]
 
 [[bench]]

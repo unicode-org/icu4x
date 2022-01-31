@@ -37,7 +37,7 @@ pub mod key {
 pub struct ListFormatterPatternsV1<'data>(
     #[cfg_attr(
         feature = "provider_serde",
-        serde(borrow, with = "serde_utils::deduplicating_array")
+        serde(borrow, with = "deduplicating_array")
     )]
     /// The patterns in the order start, middle, end, pair, short_start, short_middle,
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,

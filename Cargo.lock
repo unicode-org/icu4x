@@ -503,6 +503,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "deduplicating_array"
+version = "0.5.0"
+dependencies = [
+ "postcard",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "derivative"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1141,7 +1150,7 @@ dependencies = [
  "serde",
  "serde-tuple-vec-map",
  "serde_json",
- "serde_utils",
+ "serde_with",
  "smallvec",
  "tinystr",
  "writeable",
@@ -1174,6 +1183,7 @@ name = "icu_list"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "deduplicating_array",
  "displaydoc",
  "icu_benchmark_macros",
  "icu_locid",
@@ -1184,7 +1194,6 @@ dependencies = [
  "regex-automata 0.1.10 (git+https://github.com/burntsushi/regex-automata?rev=d8eee1279fac79514f6e366b6976f97ad7b37174)",
  "serde",
  "serde_json",
- "serde_utils",
  "writeable",
  "zerovec",
 ]
@@ -2267,6 +2276,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustversion"
+version = "1.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2cc38e8fa666e2de3c4aba7edeb5ffc5246c1c2ed0e3d17e560aeeba736b23f"
+
+[[package]]
 name = "ryu"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2451,12 +2466,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_utils"
-version = "0.5.0"
+name = "serde_with"
+version = "1.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad6056b4cb69b6e43e3a0f055def223380baecc99da683884f205bf347f7c4b3"
 dependencies = [
- "postcard",
+ "rustversion",
  "serde",
- "serde_json",
 ]
 
 [[package]]
