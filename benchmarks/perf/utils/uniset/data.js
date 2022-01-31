@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643666425560,
+  "lastUpdate": 1643668569079,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19409,6 +19409,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44223920,
             "range": "± 136518",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47cfea25de2403049967c09c0daf0b53aa77ac93",
+          "message": "Changelog fixes (#1564)",
+          "timestamp": "2022-01-31T14:26:48-08:00",
+          "tree_id": "567e1d4bb0120757104f60e4381e1cd7cff704dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/47cfea25de2403049967c09c0daf0b53aa77ac93"
+        },
+        "date": 1643668557614,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44561775,
+            "range": "± 5267149",
             "unit": "ns/iter"
           }
         ]
