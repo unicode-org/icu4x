@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643417665084,
+  "lastUpdate": 1643648901292,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8273,6 +8273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ededcd21953402b28815ee8ba0a62e29e820826e"
         },
         "date": 1643417655091,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "584bf83bae63387b6fd88be27cec2fb5d8a48b73",
+          "message": "Adds npm package dependency caching to CI targets wasm and binsize. (#1541)\n\n* Adds npm package dependency caching to CI targets wasm and binsize.\r\n\r\n* Added ${{ runner.os }} to npm package dependency cache key.\r\nAdded message explcitely advising how to fix out-of-sync package.json and package-lock.json.\r\n\r\n* Fixes a typo.",
+          "timestamp": "2022-01-31T09:06:25-08:00",
+          "tree_id": "e54124019b6ec03d4910bdfb5bfe663d062d4705",
+          "url": "https://github.com/unicode-org/icu4x/commit/584bf83bae63387b6fd88be27cec2fb5d8a48b73"
+        },
+        "date": 1643648890005,
         "tool": "ndjson",
         "benches": [
           {
