@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643655734824,
+  "lastUpdate": 1643657804805,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19289,6 +19289,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 344762,
             "range": "± 23049",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "658229ca3a1aebb53b9e1da3e717af0b36f79297",
+          "message": "Add namespace to ZeroCopyFrom in yoke derive (#1558)\n\n* Add namespace to ZeroCopyFrom in yoke derive\r\n\r\n* Bump yoke-derive to 0.4.1\r\n\r\n* Bump yoke-derive in yoke deps",
+          "timestamp": "2022-01-31T11:27:15-08:00",
+          "tree_id": "045e602361517f8a4f1c153e7cdc7070e9182c3b",
+          "url": "https://github.com/unicode-org/icu4x/commit/658229ca3a1aebb53b9e1da3e717af0b36f79297"
+        },
+        "date": 1643657794684,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 71663,
+            "range": "± 312",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 758583,
+            "range": "± 2335",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 290118,
+            "range": "± 723",
             "unit": "ns/iter"
           }
         ]
