@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643668603612,
+  "lastUpdate": 1643674965670,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22709,6 +22709,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4402,
             "range": "± 184",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "645df359242f7238552fac8b0499b6d4fe2a44e3",
+          "message": "make list an optional feature (#1565)",
+          "timestamp": "2022-01-31T16:13:36-08:00",
+          "tree_id": "9c46a2ad6bd419c514ebe76dee4c47e9d2cb901f",
+          "url": "https://github.com/unicode-org/icu4x/commit/645df359242f7238552fac8b0499b6d4fe2a44e3"
+        },
+        "date": 1643674954853,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 1558,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3721,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
