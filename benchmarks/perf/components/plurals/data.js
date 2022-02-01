@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643668701616,
+  "lastUpdate": 1643675052173,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25787,6 +25787,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17977,
             "range": "± 1333",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "645df359242f7238552fac8b0499b6d4fe2a44e3",
+          "message": "make list an optional feature (#1565)",
+          "timestamp": "2022-01-31T16:13:36-08:00",
+          "tree_id": "9c46a2ad6bd419c514ebe76dee4c47e9d2cb901f",
+          "url": "https://github.com/unicode-org/icu4x/commit/645df359242f7238552fac8b0499b6d4fe2a44e3"
+        },
+        "date": 1643675041088,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 915,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5456,
+            "range": "± 171",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15799,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
