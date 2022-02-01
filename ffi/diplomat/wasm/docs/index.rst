@@ -14,6 +14,7 @@ Documentation
    properties_maps_ffi
    properties_sets_ffi
    provider_ffi
+   segmenter_line_ffi
 
 Indices and tables
 ==================

@@ -67,6 +67,7 @@ icu_plurals = { path = "../../components/plurals/" }
 icu_properties = { path = "../../components/properties/" }
 icu_provider = { path = "../../provider/core", features = ["serde"] }
 icu_provider_blob = { path = "../../provider/blob" }
+icu_segmenter = { path = "../../experimental/segmenter" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
