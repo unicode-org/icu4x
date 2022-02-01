@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643677503023,
+  "lastUpdate": 1643743093764,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8513,6 +8513,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e97f85e48250fbbb4cefbe88f9ddea8e6cb73b9e"
         },
         "date": 1643677491090,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d25db208154e8b267e0e686140f4299038b2ceb",
+          "message": "Add LineBreakSegmenter FFI (#1467)",
+          "timestamp": "2022-02-01T13:16:29-06:00",
+          "tree_id": "fa7dddfb2d84cdba8c1ee2fdd032663e5a74d495",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d25db208154e8b267e0e686140f4299038b2ceb"
+        },
+        "date": 1643743082703,
         "tool": "ndjson",
         "benches": [
           {
