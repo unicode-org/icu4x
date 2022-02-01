@@ -28,6 +28,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
+    "--features=experimental",
     "--",
     "--input-from-testdata",
     "--out-testdata",
@@ -45,6 +46,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
+    "--features=experimental",
     "--",
     "--format=blob",
     "--input-from-testdata",
@@ -61,6 +63,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
+    "--features=experimental",
     "--",
     "--format=blob",
     "--hello-world-key",
@@ -76,6 +79,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
+    "--features=experimental",
     "--",
     "--format=blob",
     "--input-from-testdata",
@@ -124,6 +128,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
+    "--features=experimental",
     "--",
     "--input-from-testdata",
     "--out-testdata",
@@ -140,6 +145,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
+    "--features=experimental",
     "--",
     "--input-from-testdata",
     "--out-testdata",
@@ -156,6 +162,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
+    "--features=experimental",
     "--",
     "--input-from-testdata",
     "--out=tools/datagen/tests/testdata/work_log_bincode",
