@@ -34,24 +34,20 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: key::HELLO_WORLD_V1,
-    ///         options: langid!("de").into(),
-    ///     }
+    ///     options: langid!("de").into(),
+    ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_payload(&req_de);
+    ///     provider.load_resource(&req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: key::HELLO_WORLD_V1,
-    ///         options: langid!("en-US").into(),
-    ///     }
+    ///     options: langid!("en-US").into(),
+    ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_payload(&req_en);
+    ///     provider.load_resource(&req_en);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
@@ -112,24 +108,20 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: key::HELLO_WORLD_V1,
-    ///         options: langid!("de").into(),
-    ///     }
+    ///     options: langid!("de").into(),
+    ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_payload(&req_de);
+    ///     provider.load_resource(&req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: key::HELLO_WORLD_V1,
-    ///         options: langid!("en-US").into(),
-    ///     }
+    ///     options: langid!("en-US").into(),
+    ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_payload(&req_en);
+    ///     provider.load_resource(&req_en);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })
@@ -178,24 +170,20 @@ where
     ///
     /// // Requests with a langid should succeed:
     /// let req_with_langid = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: key::HELLO_WORLD_V1,
-    ///         options: langid!("de").into(),
-    ///     }
+    ///     options: langid!("de").into(),
+    ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_payload(&req_with_langid);
+    ///     provider.load_resource(&req_with_langid);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // Requests without a langid should fail:
     /// let req_no_langid = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: key::HELLO_WORLD_V1,
-    ///         options: Default::default(),
-    ///     }
+    ///     options: Default::default(),
+    ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_payload(&req_no_langid);
+    ///     provider.load_resource(&req_no_langid);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError { kind: DataErrorKind::FilteredResource, .. })

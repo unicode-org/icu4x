@@ -66,14 +66,9 @@ impl ResourceMarker for HelloWorldV1Marker {
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()

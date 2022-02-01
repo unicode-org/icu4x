@@ -271,7 +271,8 @@ impl AnyResponse {
 ///     data: AnyPayload::from_static_ref(&CONST_DATA),
 /// };
 ///
-/// let any_response = provider.load_any(&DataRequest::from(key::HELLO_WORLD_V1))
+/// let any_response = provider
+///     .load_any(key::HELLO_WORLD_V1, &DataRequest::default())
 ///     .expect("Load should succeed");
 ///
 /// // Downcast to something useful

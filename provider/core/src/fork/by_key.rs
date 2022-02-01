@@ -29,8 +29,9 @@ use alloc::vec::Vec;
 ///
 /// struct DummyBufferProvider;
 /// impl BufferProvider for DummyBufferProvider {
-///     fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-///         Err(DataErrorKind::MissingResourceKey.with_req(req))
+///     fn load_buffer(&self, key: ResourceKey, req: &DataRequest)
+///             -> Result<DataResponse<BufferMarker>, DataError> {
+///         Err(DataErrorKind::MissingResourceKey.with_req(key, req))
 ///     }
 /// }
 ///
@@ -42,14 +43,9 @@ use alloc::vec::Vec;
 /// let data_provider = forking_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -80,18 +76,14 @@ use alloc::vec::Vec;
 ///         .filter_by_langid(|langid| langid.language == language!("de")),
 /// );
 ///
-/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> = &forking_provider.as_deserializing();
+/// let data_provider: &dyn ResourceProvider<HelloWorldV1Marker> = &forking_provider
+///     .as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
-/// let chinese_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("zh")),
-///             }
-///         }
+/// let chinese_hello_world = data_provider
+///     .load_resource(&DataRequest {
+///         options: langid!("zh").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -101,14 +93,9 @@ use alloc::vec::Vec;
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// # }
@@ -171,18 +158,14 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1>
 ///     ]
 /// };
 ///
-/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> = &forking_provider.as_deserializing();
+/// let data_provider: &dyn ResourceProvider<HelloWorldV1Marker> = &forking_provider
+///     .as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
-/// let chinese_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("zh")),
-///             }
-///         }
+/// let chinese_hello_world = data_provider
+///     .load_resource(&DataRequest {
+///         options: langid!("zh").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -192,14 +175,9 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1>
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// # }

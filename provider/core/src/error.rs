@@ -85,8 +85,9 @@ pub enum DataErrorKind {
 ///
 /// ```no_run
 /// # use icu_provider::prelude::*;
+/// let key: ResourceKey = unimplemented!();
 /// let req: &DataRequest = unimplemented!();
-/// DataErrorKind::NeedsVariant.with_req(req);
+/// DataErrorKind::NeedsVariant.with_req(key, req);
 /// ```
 ///
 /// Create a named custom error:

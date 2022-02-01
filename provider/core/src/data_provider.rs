@@ -64,32 +64,26 @@ impl DataRequest {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_locid_macros::langid;
     ///
     /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
     ///
     /// let req_no_langid = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: FOO_BAR,
-    ///         options: ResourceOptions::default(),
-    ///     }
+    ///     options: ResourceOptions::default(),
+    ///     metadata: Default::default(),
     /// };
     ///
     /// let req_with_langid = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: FOO_BAR,
-    ///         options: ResourceOptions {
-    ///             variant: None,
-    ///             langid: Some(icu_locid_macros::langid!("ar-EG")),
-    ///         },
-    ///     }
+    ///     options: langid!("ar-EG").into(),
+    ///     metadata: Default::default(),
     /// };
     ///
     /// assert!(matches!(
-    ///     req_no_langid.try_langid(),
+    ///     req_no_langid.try_langid(FOO_BAR),
     ///     Err(DataError { kind: DataErrorKind::NeedsLocale, .. })
     /// ));
     /// assert!(matches!(
-    ///     req_with_langid.try_langid(),
+    ///     req_with_langid.try_langid(FOO_BAR),
     ///     Ok(_)
     /// ));
     /// ```
