@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643668109738,
+  "lastUpdate": 1643674524582,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8453,6 +8453,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/47cfea25de2403049967c09c0daf0b53aa77ac93"
         },
         "date": 1643668099491,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "645df359242f7238552fac8b0499b6d4fe2a44e3",
+          "message": "make list an optional feature (#1565)",
+          "timestamp": "2022-01-31T16:13:36-08:00",
+          "tree_id": "9c46a2ad6bd419c514ebe76dee4c47e9d2cb901f",
+          "url": "https://github.com/unicode-org/icu4x/commit/645df359242f7238552fac8b0499b6d4fe2a44e3"
+        },
+        "date": 1643674514369,
         "tool": "ndjson",
         "benches": [
           {
