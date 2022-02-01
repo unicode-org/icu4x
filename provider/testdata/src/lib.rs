@@ -46,15 +46,10 @@
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let data: DataPayload<icu_plurals::provider::PluralRulesV1Marker> = data_provider
-//!     .load_payload(&DataRequest {
-//!         resource_path: ResourcePath {
-//!             key: icu_plurals::provider::key::CARDINAL_V1,
-//!             options: ResourceOptions {
-//!                 langid: Some(langid!("ru")),
-//!                 variant: None,
-//!             },
-//!         },
+//! let data: DataPayload<icu_plurals::provider::CardinalV1Marker> = data_provider
+//!     .load_resource(&DataRequest {
+//!         options: langid!("ru").into(),
+//!         metadata: Default::default(),
 //!     })
 //!     .unwrap()
 //!     .take_payload()
