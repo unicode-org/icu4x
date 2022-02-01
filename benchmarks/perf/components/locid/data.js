@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643674965670,
+  "lastUpdate": 1643677960078,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22745,6 +22745,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3721,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e97f85e48250fbbb4cefbe88f9ddea8e6cb73b9e",
+          "message": "Bump datagen to 0.5 (#1566)",
+          "timestamp": "2022-01-31T17:03:16-08:00",
+          "tree_id": "2379b42d62024992fec860334b7a3a5f07444487",
+          "url": "https://github.com/unicode-org/icu4x/commit/e97f85e48250fbbb4cefbe88f9ddea8e6cb73b9e"
+        },
+        "date": 1643677947915,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2114,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4348,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
