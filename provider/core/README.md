@@ -2,91 +2,103 @@
 
 `icu_provider` is one of the [`ICU4X`] components.
 
-It defines traits and structs for transmitting data through the ICU4X locale data pipeline.
-The primary trait is [`DataProvider`]. It has one method, which transforms a [`Request`] into
-a [`Response`]:
+`icu_provider` defines traits and structs for transmitting data through the ICU4X locale
+data pipeline. The primary trait is [`ResourceProvider`]. It is parameterized by a
+[`ResourceMarker`], which contains the data type and a [`ResourceKey`]. It has one method,
+[`ResourceProvider::load_resource`], which transforms a [`DataRequest`]
+into a [`DataResponse`].
 
-```rust
-fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data>, DataError>
-```
+- [`ResourceKey`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.
+- [`DataRequest`] contains additional annotations to choose a specific variant of the key,
+  such as a locale.
+- [`DataResponse`] contains the data if the request was successful.
 
-A [`Request`] contains a [`ResourceKey`] (a fixed identifier such as "plurals/cardinal@1") and
-[`ResourceOptions`] (a language identifier and optional variant, e.g. "fr") being requested.
-The Response contains the data payload corresponding to the Request.
+In addition, there are three other traits which are widely implemented:
 
-A [`Response`] contains a [`DataPayload`] along with other metadata.
+- [`AnyProvider`] returns data as `dyn Any` trait objects.
+- [`BufferProvider`] returns data as `[u8]` buffers.
+- [`DynProvider`] returns structured data but is not specific to a key.
 
-The most common types required for ICU4X [`DataProvider`] are included via the prelude:
+The most common types required for this crate are included via the prelude:
 
 ```rust
 use icu_provider::prelude::*;
 ```
 
-### Concrete Implementations of Data Providers
+### Types of Data Providers
 
-Any object implementing [`DataProvider`] can be used to supply ICU4X with locale data. ICU4X ships
-with some pre-built data providers:
+All data providers can fit into one of two classes.
 
-- [`CldrJsonDataProvider`](../icu_provider_cldr/transform/struct.CldrJsonDataProvider.html) reads structured
-  data directly from CLDR source files.
-- [`FsDataProvider`](../icu_provider_fs/struct.FsDataProvider.html) reads structured data from the
-  filesystem. It can also write out that filesystem structure. More efficient than CldrJsonDataProvider.
+1. Type 1: Those whose data originates as structured Rust objects
+2. Type 2: Those whose data originates as unstructured `[u8]` buffers
+
+#### Type 1 Providers
+
+Type 1 providers generally implement [`AnyProvider`], which returns structured data cast into
+`dyn Any` trait objects. Users can call [`as_downcasting()`] to get an object implementing
+[`ResourceProvider`] by downcasting the trait objects.
+
+Examples of Type 1 providers:
+
+- [`CldrJsonDataProvider`] reads structured data from CLDR JSON source files and returns
+  structured Rust objects.
+- [`AnyPayloadProvider`] wraps a specific data struct and returns it.
+- The upcoming `crabbake` provider which reads structured data from Rust source files
+
+#### Type 2 Providers
+
+Type 2 providers generally implement [`BufferProvider`], which returns unstructured data
+typically represented as [`serde`]-serialized buffers. Users can call [`as_deserializing()`]
+to get an object implementing [`ResourceProvider`] by invoking Serde Deserialize.
+
+Examples of Type 2 providers:
+
+- [`FsDataProvider`] reads individual buffers from the filesystem.
+- [`BlobDataProvider`] reads buffers from a large in-memory blob.
+
+#### Special-Purpose Providers
 
 This crate also contains some concrete implementations for testing purposes:
 
 - [`InvariantDataProvider`] returns fixed data that does not vary by locale.
-- [`AnyPayloadProvider`] wraps a particular instance of a struct and returns it.
 - [`HelloWorldProvider`] returns "hello world" strings in several languages.
+
+### Combinatorial Providers
+
+ICU4X offers several built-in modules to combine providers in interesting ways:
+
+- Use the [`fork`] module to marshall data requests between multiple possible providers.
+- Use the [`either`] module to choose between multiple provider types at runtime.
+- Use the [`filter`] module to programmatically reject certain data requests.
 
 ### Types and Lifetimes
 
 Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
 associated with a marker type implementing [`DataMarker`].
 
-Most [`DataProvider`] traits take one lifetime argument: `'data`. This lifetime allows data
-structs to borrow zero-copy data. In practice, it also represents the lifetime of data that
-the Cart of the Yoke of the DataPayload borrows; for more information on carts and yokes,
-see [`yoke`].
+Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
+structs to borrow zero-copy data.
 
 ### Additional Traits
 
 #### `IterableDataProvider`
 
-Data providers can implement [`IterableProvider`], allowing iteration over all [`ResourceOptions`]
-instances supported for a certain key in the data provider.
+Data providers can implement [`IterableProvider`], allowing iteration over all
+[`ResourceOptions`] instances supported for a certain key in the data provider.
 
 For more information, see the [`iter`] module.
-
-#### `BufferProvider`
-
-The trait [`BufferProvider`] represents a data provider that produces buffers (`[u8]`), which
-are typically deserialized later via Serde. This allows for a Serde-enabled provider
-to be saved as a trait object without being specific to a data struct type.
-
-#### `AnyProvider`
-
-The trait [`AnyProvider`] removes the type argument from [`DataProvider`] and requires
-that all data structs be convertible to the [`Any`](core::any::Any) type. This enables the
-processing of data without the caller knowing the underlying data struct.
-
-Since [`AnyProvider`] is not specific to a single type, it can be useful for caches or
-other bulk data operations.
 
 #### `DataProvider<SerializeMarker>`
 
 *Enabled with the "serialize" feature*
 
-Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be used as
-input to a data exporter, such as when writing data to the filesystem.
-
-This trait is normally implemented using the [`impl_dyn_provider!`] macro.
+Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be use
+as input to a data exporter, such as when writing data to the filesystem.
 
 This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 
 [`ICU4X`]: ../icu/index.html
 [`DataProvider`]: data_provider::DataProvider
-[`Request`]: data_provider::DataRequest
-[`Response`]: data_provider::DataResponse
 [`ResourceKey`]: resource::ResourceKey
 [`ResourceOptions`]: resource::ResourceOptions
 [`IterableProvider`]: iter::IterableProvider
@@ -96,6 +108,11 @@ This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 [`AnyProvider`]: any::AnyProvider
 [`Yokeable`]: yoke::Yokeable
 [`impl_dyn_provider!`]: impl_dyn_provider
+[`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
+[`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
+[`CldrJsonDataProvider`]: ../icu_provider_cldr/struct.CldrJsonDataProvider.html
+[`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
+[`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 
 ## More Information
 
