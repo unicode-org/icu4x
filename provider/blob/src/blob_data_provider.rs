@@ -47,12 +47,10 @@ use zerovec::map::ZeroMapBorrowed;
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
-/// let response: DataPayload<HelloWorldV1Marker> = provider.load_payload(
-///     &DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: langid!("la").into(),
-///         }
+/// let response: DataPayload<HelloWorldV1Marker> = provider
+///     .load_resource(&DataRequest {
+///         options: langid!("la").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
 ///     .take_payload()

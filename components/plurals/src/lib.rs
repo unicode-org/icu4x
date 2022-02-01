@@ -31,7 +31,7 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let pr = PluralRules::try_new_cardinal(lid, &provider, PluralRuleType::Cardinal)
+//! let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -311,6 +311,34 @@ impl PluralRules {
         }
     }
 
+    /// Constructs a new `PluralRules` for a given locale for cardinal numbers.
+    ///
+    /// Cardinal plural forms express quantities of units such as time, currency or distance,
+    /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
+    ///
+    /// For example, English has two forms for cardinals:
+    ///
+    /// * [`One`]: `1 day`
+    /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::macros::langid;
+    /// use icu::plurals::{PluralRules, PluralCategory};
+    ///
+    /// let lid = langid!("ru");
+    ///
+    /// let dp = icu_testdata::get_provider();
+    ///
+    /// let rules = PluralRules::try_new_cardinal(lid, &dp)
+    ///     .expect("Data should be present");
+    ///
+    /// assert_eq!(rules.select(2_usize), PluralCategory::Few);
+    /// ```
+    ///
+    /// [`One`]: PluralCategory::One
+    /// [`Other`]: PluralCategory::Other
     pub fn try_new_cardinal<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
@@ -329,6 +357,37 @@ impl PluralRules {
         Self::new(locale, rules)
     }
 
+    /// Constructs a new `PluralRules` for a given locale for ordinal numbers.
+    ///
+    /// Ordinal plural forms denote the order of items in a set and are always integers.
+    ///
+    /// For example, English has four forms for ordinals:
+    ///
+    /// * [`One`]: `1st floor`, `21st floor`, `101st floor`
+    /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
+    /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
+    /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::macros::langid;
+    /// use icu::plurals::{PluralRules, PluralCategory};
+    ///
+    /// let lid = langid!("ru");
+    ///
+    /// let dp = icu_testdata::get_provider();
+    ///
+    /// let rules = PluralRules::try_new_ordinal(lid, &dp)
+    ///     .expect("Data should be present");
+    ///
+    /// assert_eq!(rules.select(2_usize), PluralCategory::Other);
+    /// ```
+    ///
+    /// [`One`]: PluralCategory::One
+    /// [`Two`]: PluralCategory::Two
+    /// [`Few`]: PluralCategory::Few
+    /// [`Other`]: PluralCategory::Other
     pub fn try_new_ordinal<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,

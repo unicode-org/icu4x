@@ -36,17 +36,14 @@ use zerovec::map::ZeroMapBorrowed;
 /// let provider = StaticDataProvider::new_from_static_blob(&HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
-/// let response: DataPayload<HelloWorldV1Marker> = provider.load_payload(
-///     &DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: langid!("la").into(),
-///         }
-///     }
-/// )
-/// .expect("Data should be valid")
-/// .take_payload()
-/// .expect("Data should be present");
+/// let response: DataPayload<HelloWorldV1Marker> = provider
+///     .load_resource(&DataRequest {
+///         options: langid!("la").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect("Data should be valid")
+///     .take_payload()
+///     .expect("Data should be present");
 ///
 /// assert_eq!(response.get().message, "Ave, munde");
 /// ```
@@ -83,13 +80,11 @@ impl StaticDataProvider {
     ///
     /// let stub_provider = StaticDataProvider::new_empty();
     ///
-    /// DataProvider::<HelloWorldV1Marker>::load_payload(
+    /// ResourceProvider::<HelloWorldV1Marker>::load_resource(
     ///     &stub_provider,
     ///     &DataRequest {
-    ///         resource_path: ResourcePath {
-    ///             key: key::HELLO_WORLD_V1,
-    ///             options: langid!("la").into(),
-    ///         }
+    ///         options: langid!("la").into(),
+    ///         metadata: Default::default(),
     ///     }
     /// )
     /// .expect_err("Stub provider returns no data");
