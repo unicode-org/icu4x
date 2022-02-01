@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643677927730,
+  "lastUpdate": 1643743607552,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19499,6 +19499,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 255571,
             "range": "± 2298",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d25db208154e8b267e0e686140f4299038b2ceb",
+          "message": "Add LineBreakSegmenter FFI (#1467)",
+          "timestamp": "2022-02-01T13:16:29-06:00",
+          "tree_id": "fa7dddfb2d84cdba8c1ee2fdd032663e5a74d495",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d25db208154e8b267e0e686140f4299038b2ceb"
+        },
+        "date": 1643743597302,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 72054,
+            "range": "± 210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 756550,
+            "range": "± 8227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 290430,
+            "range": "± 1634",
             "unit": "ns/iter"
           }
         ]
