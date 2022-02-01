@@ -8,7 +8,7 @@ use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::trait_hack::YokeTraitHack;
-use zerovec::map2d::ZeroMap2dBorrowed;
+use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -101,13 +101,18 @@ impl StaticDataProvider {
     }
 
     fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
-        // TODO: Distinguish between missing resource key and missing resource options
         self.data
             .get(
                 &req.resource_path.key.writeable_to_string(),
                 &req.resource_path.options.writeable_to_string(),
             )
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))
+            .map_err(|e| {
+                match e {
+                    KeyError::K0 => DataErrorKind::MissingResourceKey,
+                    KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                }
+                .with_req(req)
+            })
     }
 }
 

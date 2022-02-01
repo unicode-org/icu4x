@@ -10,7 +10,7 @@ use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
-use zerovec::map2d::ZeroMap2dBorrowed;
+use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -91,8 +91,13 @@ impl BlobDataProvider {
                         &req.resource_path.key.writeable_to_string(),
                         &req.resource_path.options.writeable_to_string(),
                     )
-                    // TODO: Distinguish between missing resource key and missing resource options
-                    .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))
+                    .map_err(|e| {
+                        match e {
+                            KeyError::K0 => DataErrorKind::MissingResourceKey,
+                            KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                        }
+                        .with_req(req)
+                    })
                 },
             )
     }
