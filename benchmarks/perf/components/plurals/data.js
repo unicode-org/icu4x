@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643678024300,
+  "lastUpdate": 1643743709633,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25871,6 +25871,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18695,
             "range": "± 517",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d25db208154e8b267e0e686140f4299038b2ceb",
+          "message": "Add LineBreakSegmenter FFI (#1467)",
+          "timestamp": "2022-02-01T13:16:29-06:00",
+          "tree_id": "fa7dddfb2d84cdba8c1ee2fdd032663e5a74d495",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d25db208154e8b267e0e686140f4299038b2ceb"
+        },
+        "date": 1643743697465,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 988,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6640,
+            "range": "± 486",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18717,
+            "range": "± 1744",
             "unit": "ns/iter"
           }
         ]
