@@ -8,7 +8,7 @@ use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::{VarZeroVec, ZeroVec};
 
 use crate::error::Error;
-use crate::internals::{DotType, MappingKind, SetAdder};
+use crate::internals::{DotType, MappingKind, ClosureSet};
 
 // Case mapping exceptions that can't be represented as a delta applied to the original
 // code point. Similar to ICU4C, data is stored as a u16 array. The codepoint trie in
@@ -311,7 +311,7 @@ impl<'data> CaseMappingExceptions<'data> {
         &self.strings[closure_idx]
     }
 
-    pub fn add_full_and_closure_mappings<S: SetAdder>(&self, base_idx: u16, set: &mut S) {
+    pub fn add_full_and_closure_mappings<S: ClosureSet>(&self, base_idx: u16, set: &mut S) {
         if self.has_slot(base_idx, ExceptionSlot::FullMappings) {
             let mapping_string = self.full_mapping_string(base_idx, MappingKind::Fold);
             if !mapping_string.is_empty() {

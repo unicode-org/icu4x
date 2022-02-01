@@ -4,7 +4,7 @@
 
 use crate::uprops_serde;
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
-use icu_casemapping::CaseMapping;
+use icu_casemapping::CaseMappingInternals;
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
 
@@ -13,7 +13,7 @@ use std::fs;
 use std::path::PathBuf;
 
 pub struct CaseMappingDataProvider {
-    case_mapping: CaseMapping<'static>,
+    case_mapping: CaseMappingInternals<'static>,
 }
 
 /// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
@@ -34,7 +34,7 @@ impl CaseMappingDataProvider {
         let unfold = &toml.ucase.unfold.unfold;
 
         let case_mapping =
-            CaseMapping::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)
+            CaseMappingInternals::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)
                 .map_err(DataError::new_resc_error)?;
 
         Ok(Self { case_mapping })
@@ -58,9 +58,9 @@ impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
 #[cfg(test)]
 mod tests {
     use crate::casemapping::CaseMappingDataProvider;
-    use icu_casemapping::{internals::*, provider::*};
+    use icu_casemapping::CaseMapping;
+    use icu_casemapping::provider::*;
     use icu_provider::prelude::*;
-    use std::collections::HashSet;
 
     #[test]
     fn test_upper() {
@@ -68,125 +68,31 @@ mod tests {
             .join("uprops")
             .join("ucase.toml");
         let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
-        let payload: DataPayload<CaseMappingV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::CASE_MAPPING_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
-            .expect("The data should be valid")
-            .take_payload()
-            .expect("Loading was succesful");
-        let case_mapping = &payload.get().casemap;
-        assert_eq!(case_mapping.to_upper('a'), 'A');
-        assert_eq!(case_mapping.to_upper('\u{1c4}'), '\u{1c4}');
-        assert_eq!(case_mapping.to_title('\u{1c4}'), '\u{1c5}');
-        assert_eq!(case_mapping.to_lower('\u{1c4}'), '\u{1c6}');
-        assert_eq!(case_mapping.to_upper('\u{1c5}'), '\u{1c4}');
-        assert_eq!(case_mapping.to_title('\u{1c5}'), '\u{1c5}');
-        assert_eq!(case_mapping.to_lower('\u{1c5}'), '\u{1c6}');
-        assert_eq!(case_mapping.to_upper('\u{1c6}'), '\u{1c4}');
-        assert_eq!(case_mapping.to_title('\u{1c6}'), '\u{1c5}');
-        assert_eq!(case_mapping.to_lower('\u{1c6}'), '\u{1c6}');
+        let case_mapping = CaseMapping::new(&provider)
+            .expect("Loading was successful");
+        assert_eq!(case_mapping.to_uppercase('a'), 'A');
+        assert_eq!(case_mapping.to_uppercase('\u{1c4}'), '\u{1c4}');
+        assert_eq!(case_mapping.to_titlecase('\u{1c4}'), '\u{1c5}');
+        assert_eq!(case_mapping.to_lowercase('\u{1c4}'), '\u{1c6}');
+        assert_eq!(case_mapping.to_uppercase('\u{1c5}'), '\u{1c4}');
+        assert_eq!(case_mapping.to_titlecase('\u{1c5}'), '\u{1c5}');
+        assert_eq!(case_mapping.to_lowercase('\u{1c5}'), '\u{1c6}');
+        assert_eq!(case_mapping.to_uppercase('\u{1c6}'), '\u{1c4}');
+        assert_eq!(case_mapping.to_titlecase('\u{1c6}'), '\u{1c5}');
+        assert_eq!(case_mapping.to_lowercase('\u{1c6}'), '\u{1c6}');
     }
 
+
     #[test]
-    fn test_softdotted() {
+    fn test_full_upper() {
         let root_dir = icu_testdata::paths::data_root()
             .join("uprops")
             .join("ucase.toml");
         let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
-        let payload: DataPayload<CaseMappingV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::CASE_MAPPING_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
-            .expect("The data should be valid")
-            .take_payload()
-            .expect("Loading was succesful");
-        let case_mapping = &payload.get().casemap;
-        assert!(!case_mapping.is_soft_dotted('a'));
-        assert!(case_mapping.is_soft_dotted('i'));
-        assert!(case_mapping.is_soft_dotted('j'));
-    }
-
-    #[derive(Eq, PartialEq, Default)]
-    struct SimpleSet {
-        chars: HashSet<char>,
-        strings: HashSet<String>,
-    }
-
-    impl SimpleSet {
-        pub fn chars(&self) -> Vec<char> {
-            let mut result: Vec<char> = self.chars.iter().copied().collect();
-            result.sort_unstable();
-            result
-        }
-        pub fn strings(&self) -> Vec<String> {
-            let mut result: Vec<String> = self.strings.iter().cloned().collect();
-            result.sort();
-            result
-        }
-        pub fn clear(&mut self) {
-            self.chars.clear();
-            self.strings.clear();
-        }
-    }
-
-    impl SetAdder for SimpleSet {
-        fn add_char(&mut self, c: char) {
-            self.chars.insert(c);
-        }
-        fn add_string(&mut self, s: &str) {
-            self.strings.insert(String::from(s));
-        }
-    }
-
-    #[test]
-    fn test_closure() {
-        let root_dir = icu_testdata::paths::data_root()
-            .join("uprops")
-            .join("ucase.toml");
-        let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
-        let payload: DataPayload<CaseMappingV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::CASE_MAPPING_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
-            .expect("The data should be valid")
-            .take_payload()
-            .expect("Loading was succesful");
-        let case_mapping = &payload.get().casemap;
-        let mut closure = SimpleSet::default();
-
-        case_mapping.add_case_closure('i', &mut closure);
-        assert_eq!(closure.chars(), vec!['I']);
-        assert!(closure.strings().is_empty());
-        closure.clear();
-
-        case_mapping.add_case_closure('k', &mut closure);
-        assert_eq!(closure.chars(), vec!['K', '\u{212a}']); // Kelvin sign
-        assert!(closure.strings().is_empty());
-        closure.clear();
-
-        case_mapping.add_case_closure('s', &mut closure);
-        assert_eq!(closure.chars(), vec!['S', '\u{17f}']); // long S
-        assert!(closure.strings().is_empty());
-        closure.clear();
-
-        case_mapping.add_case_closure('\u{df}', &mut closure); // lowercase sharp s
-        assert_eq!(closure.chars(), vec!['\u{1e9e}']); // uppercase sharp s
-        assert_eq!(closure.strings(), vec![String::from("ss")]);
-        closure.clear();
-
-        case_mapping.add_string_case_closure("ss", &mut closure);
-        assert_eq!(closure.chars(), vec!['\u{df}', '\u{1e9e}']); // lowercase and uppercase sharp s
-        assert_eq!(closure.strings(), vec![String::from("ss")]);
-        closure.clear();
+        let case_mapping = CaseMapping::new(&provider)
+            .expect("Loading was successful");
+        assert_eq!(&case_mapping.to_full_uppercase(""), "");
+        assert_eq!(&case_mapping.to_full_uppercase("ABCDEFG"), "ABCDEFG");
+        assert_eq!(&case_mapping.to_full_uppercase("abcdefg"), "ABCDEFG");
     }
 }

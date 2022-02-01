@@ -6,7 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::CaseMapping;
+use crate::internals::CaseMappingInternals;
 use icu_provider::yoke::{self, *};
 
 pub mod key {
@@ -29,5 +29,5 @@ pub mod key {
 pub struct CaseMappingV1<'data> {
     /// Case mapping data
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub casemap: CaseMapping<'data>,
+    pub casemap: CaseMappingInternals<'data>,
 }

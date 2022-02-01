@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(dead_code)]
-
 #[cfg(feature = "provider_transform_internals")]
 use std::collections::HashMap;
 use core::convert::TryFrom;
@@ -26,7 +24,7 @@ use crate::exceptions::{ExceptionSlot, CaseMappingExceptions};
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub(crate) enum MappingKind {
+pub enum MappingKind {
     Lower = 0,
     Fold = 1,
     Upper = 2,
@@ -35,7 +33,7 @@ pub(crate) enum MappingKind {
 
 // The case of a Unicode character
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub(crate) enum CaseType {
+pub enum CaseType {
     // Not a cased letter
     None = 0,
     // Lowercase letter
@@ -68,7 +66,7 @@ impl CaseType {
 // letters (like `i` and `j`) combine with accents placed above the
 // letter.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub(crate) enum DotType {
+pub enum DotType {
     // Normal characters with combining class 0
     NoDot = 0,
     // Soft-dotted characters with combining class 0
@@ -87,7 +85,7 @@ impl DotType {
     // to get a value between 0 and 3, this function converts to
     // DotType.
     #[inline]
-    pub(crate) fn from_masked_bits(b: u16) -> Self {
+    pub fn from_masked_bits(b: u16) -> Self {
         debug_assert!(b & Self::DOT_MASK == b);
         match b {
             0 => DotType::NoDot,
@@ -129,6 +127,7 @@ impl CaseMappingData {
     const EXCEPTION_FLAG: u16 = 0x8;
 
     // This bit is set if the corresponding character is case-sensitive.
+    // This is not currently exposed.
     const SENSITIVE_FLAG: u16 = 0x10;
 
     // Depending on whether the exception bit is set, the most significant bits contain either
@@ -140,6 +139,7 @@ impl CaseMappingData {
     const DOT_SHIFT: u16 = 5;
 
     // The bits that are set for every CaseMappingData (not part of the exception index).
+    #[cfg(feature = "provider_transform_internals")]
     const COMMON_MASK: u16 =
         CaseType::CASE_MASK | Self::IGNORABLE_FLAG | CaseMappingData::EXCEPTION_FLAG;
 
@@ -175,6 +175,8 @@ impl CaseMappingData {
         self.0 & Self::EXCEPTION_FLAG != 0
     }
 
+    // Returns true if this code point is case-sensitive.
+    // This is not currently exposed.
     #[inline]
     fn is_sensitive(&self) -> bool {
         self.0 & Self::SENSITIVE_FLAG != 0
@@ -319,12 +321,12 @@ impl<'data> CaseMappingUnfoldData<'data> {
 
 // Used to control the behavior of CaseMapping::fold.
 // Currently only used to decide whether to use Turkic (T) mappings for dotted/dotless i.
-struct FoldOptions {
+pub struct FoldOptions {
     exclude_special_i: bool,
 }
 
 impl FoldOptions {
-    fn with_turkic_mappings() -> Self {
+    pub fn with_turkic_mappings() -> Self {
         Self {
             exclude_special_i: true,
         }
@@ -339,14 +341,12 @@ impl Default for FoldOptions {
     }
 }
 
-/// CaseMapping provides low-level access to the data necessary to
+/// CaseMappingInternals provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
-///
-/// TODO: convert to CaseMappingInternal
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[yoke(prove_covariance_manually)]
-pub struct CaseMapping<'data> {
+pub struct CaseMappingInternals<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     trie: CodePointTrie<'data, CaseMappingData>,
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -355,9 +355,10 @@ pub struct CaseMapping<'data> {
     unfold: CaseMappingUnfoldData<'data>,
 }
 
-impl<'data> CaseMapping<'data> {
-    /// Creates a new CaseMapping using data exported by the `icuexportdata` tool
-    /// in ICU4C. Validates that the data is consistent.
+impl<'data> CaseMappingInternals<'data> {
+    /// Creates a new CaseMappingInternals using data exported by the
+    // `icuexportdata` tool in ICU4C. Validates that the data is
+    // consistent.
     #[cfg(feature = "provider_transform_internals")]
     pub fn try_from_icu(
         trie_header: CodePointTrieHeader,
@@ -394,7 +395,7 @@ impl<'data> CaseMapping<'data> {
     /// already been validated. Calling this function is only
     /// necessary if you are concerned about data corruption after
     /// deserializing.
-    pub fn validate(&self) -> Result<(), Error> {
+    pub(crate) fn validate(&self) -> Result<(), Error> {
         // First, validate that exception data is well-formed.
         let valid_exception_indices = self.exceptions.validate()?;
 
@@ -451,29 +452,27 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
-    /// Returns the lowercase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    pub fn to_lower(&self, c: char) -> char {
+    // Returns the lowercase mapping of the given `char`.
+    #[inline]
+    pub(crate) fn simple_lower(&self, c: char) -> char {
         self.simple_helper(c, MappingKind::Lower)
     }
 
-    /// Returns the uppercase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    pub fn to_upper(&self, c: char) -> char {
+    // Returns the uppercase mapping of the given `char`.
+    #[inline]
+    pub(crate) fn simple_upper(&self, c: char) -> char {
         self.simple_helper(c, MappingKind::Upper)
     }
 
-    /// Returns the titlecase mapping of the given `char`.
-    /// This function only implements simple and common mappings. Full mappings,
-    /// which can map one `char` to a string, are not included.
-    pub fn to_title(&self, c: char) -> char {
+    // Returns the titlecase mapping of the given `char`.
+    #[inline]
+    pub(crate) fn simple_title(&self, c: char) -> char {
         self.simple_helper(c, MappingKind::Title)
     }
 
-    /// Return the simple case folding mapping of the given char.
-    fn fold(&self, c: char, options: FoldOptions) -> char {
+    // Return the simple case folding mapping of the given char.
+    #[inline]
+    pub(crate) fn simple_fold(&self, c: char, options: FoldOptions) -> char {
         let data = self.lookup_data(c);
         if !data.has_exception() {
             if data.is_upper_or_title() {
@@ -515,12 +514,9 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
-    /// Returns true if the character has a dot above it that should be replaced with an accent if one is added.
-    /// TODO: implement functions using this, and make this function private.
-    pub fn is_soft_dotted(&self, c: char) -> bool {
-        self.dot_type(c) == DotType::SoftDotted
-    }
-
+    // Returns true if this code point is is case-sensitive.
+    // This is not currently exposed.
+    #[allow(dead_code)]
     fn is_case_sensitive(&self, c: char) -> bool {
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -608,6 +604,8 @@ impl<'data> CaseMapping<'data> {
         self.full_helper(c, context, locale, MappingKind::Upper)
     }
 
+    // Titlecase mapping is not yet exposed
+    #[allow(dead_code)]
     pub(crate) fn to_full_title(
         &self,
         c: char,
@@ -782,7 +780,7 @@ impl<'data> CaseMapping<'data> {
     // - for s include long s
     // - for sharp s include ss
     // - for k include the Kelvin sign
-    fn add_case_closure<S: SetAdder>(&self, c: char, set: &mut S) {
+    fn add_case_closure<S: ClosureSet>(&self, c: char, set: &mut S) {
         // Hardcode the case closure of i and its relatives and ignore the
         // data file data for these characters.
         // The Turkic dotless i and dotted I with their case mapping conditions
@@ -859,7 +857,8 @@ impl<'data> CaseMapping<'data> {
     // the string itself is added as well as part of its code points' closure.
     //
     // Returns true if the string was found
-    fn add_string_case_closure<S: SetAdder>(&self, s: &str, set: &mut S) -> bool {
+    #[allow(dead_code)]
+    fn add_string_case_closure<S: ClosureSet>(&self, s: &str, set: &mut S) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
             return false;
@@ -876,14 +875,11 @@ impl<'data> CaseMapping<'data> {
         }
     }
 
-    /// TODO: Document
-    pub fn case_closure<'a>(&self, set: &UnicodeSet<'a>, attribute: ClosureAttribute) -> UnicodeSet<'a> {
+    // Case closure is not yet supported
+    #[allow(dead_code)]
+    pub(crate) fn case_closure<'a>(&self, set: &UnicodeSet<'a>, attribute: ClosureAttribute) -> UnicodeSet<'a> {
         let mut builder = UnicodeSetBuilder::new();
         builder.add_set(set);
-
-        if attribute == ClosureAttribute::CaseInsensitive {
-            // TODO: remove all strings from builder.
-        }
 
         for c in set.iter_chars() {
             match attribute {
@@ -898,17 +894,11 @@ impl<'data> CaseMapping<'data> {
                 }
             }
         }
-
-        // TODO: add strings to builder.
-
         builder.build()
     }
 
-    /// TODO: Document
-    pub fn full_lowercase(&self, src: &str) -> String {
+    pub(crate) fn full_lowercase(&self, src: &str, locale: CaseMapLocale) -> String {
         let mut result = String::with_capacity(src.len());
-
-        let locale = CaseMapLocale::Root; // TODO: figure out story for locales
 
         // To speed up the copying of long runs where nothing changes, we keep track
         // of the start of the uncopied chunk, and don't copy it until we have to.
@@ -942,11 +932,8 @@ impl<'data> CaseMapping<'data> {
         result
     }
 
-    /// TODO: Document
-    pub fn full_uppercase(&self, src: &str) -> String {
+    pub(crate) fn full_uppercase(&self, src: &str, locale: CaseMapLocale) -> String {
         let mut result = String::with_capacity(src.len());
-
-        let locale = CaseMapLocale::Root; // TODO: figure out story for locales
 
         // To speed up the copying of long runs where nothing changes, we keep track
         // of the start of the uncopied chunk, and don't copy it until we have to.
@@ -980,11 +967,11 @@ impl<'data> CaseMapping<'data> {
         result
     }
 
-    /// TODO: Document
-    pub fn full_folding(&self, src: &str) -> String {
+    pub(crate) fn full_folding(&self, src: &str) -> String {
         let mut result = String::with_capacity(src.len());
 
-        let locale = CaseMapLocale::Root; // TODO: figure out story for locales
+        // Folding is not locale-sensitive.
+        let locale = CaseMapLocale::Root;
 
         // To speed up the copying of long runs where nothing changes, we keep track
         // of the start of the uncopied chunk, and don't copy it until we have to.
@@ -1019,8 +1006,8 @@ impl<'data> CaseMapping<'data> {
     }
 }
 
-/// TODO: Document
 #[derive(Copy,Clone,Debug,Eq,PartialEq)]
+#[allow(dead_code)]
 pub enum ClosureAttribute {
     /// TODO: Document
     CaseInsensitive,
@@ -1028,9 +1015,9 @@ pub enum ClosureAttribute {
     AddCaseMappings
 }
 
-/// TODO: hook this up to locid?
 #[derive(Copy, Clone, Eq, PartialEq)]
-pub(crate) enum CaseMapLocale {
+#[allow(dead_code)]
+pub enum CaseMapLocale {
     Root,
     Turkish,
     Lithuanian,
@@ -1039,14 +1026,14 @@ pub(crate) enum CaseMapLocale {
     Armenian,
 }
 
-pub(crate) enum FullMappingResult<'a> {
+pub enum FullMappingResult<'a> {
     Remove,
     CodePoint(char),
     String(&'a str),
 }
 
 impl<'a> FullMappingResult<'a> {
-    fn add_to_set<S: SetAdder>(&self, set: &mut S) {
+    fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
         match self {
             FullMappingResult::CodePoint(c) => set.add_char(*c),
             FullMappingResult::String(s) => set.add_string(s),
@@ -1055,23 +1042,23 @@ impl<'a> FullMappingResult<'a> {
     }
 }
 
-/// Interface for adding items to a set of chars + strings.
-/// Eventually this may become UnicodeSet, but that can't currently hold strings.
-pub trait SetAdder {
+// Interface for adding items to a closure set.
+pub trait ClosureSet {
     /// Add a character to the set
     fn add_char(&mut self, c: char);
     /// Add a string to the set
     fn add_string(&mut self, string: &str);
 }
 
-impl SetAdder for UnicodeSetBuilder {
+impl ClosureSet for UnicodeSetBuilder {
     fn add_char(&mut self, c: char) {
         self.add_char(c)
     }
 
-    fn add_string(&mut self, _string: &str) {
-        // UnicodeSet currently doesn't include strings.
-    }
+    // The current version of UnicodeSet doesn't include strings.
+    // Trying to add a string is a no-op that will be optimized away.
+    #[inline]
+    fn add_string(&mut self, _string: &str) {}
 }
 
 pub(crate) struct ContextIterator<'a> {
@@ -1092,7 +1079,7 @@ impl<'a> ContextIterator<'a> {
         Self { before: "", after: "" }
     }
 
-    fn preceded_by_soft_dotted(&self, mapping: &CaseMapping) -> bool {
+    fn preceded_by_soft_dotted(&self, mapping: &CaseMappingInternals) -> bool {
         for c in self.before.chars().rev() {
             match mapping.dot_type(c) {
                 DotType::SoftDotted => return true,
@@ -1102,7 +1089,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn preceded_by_capital_i(&self, mapping: &CaseMapping) -> bool {
+    fn preceded_by_capital_i(&self, mapping: &CaseMappingInternals) -> bool {
         for c in self.before.chars().rev() {
             if c == 'I' {
                 return true;
@@ -1113,7 +1100,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn preceded_by_cased_letter(&self, mapping: &CaseMapping) -> bool {
+    fn preceded_by_cased_letter(&self, mapping: &CaseMappingInternals) -> bool {
         for c in self.before.chars().rev() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
@@ -1122,7 +1109,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_cased_letter(&self, mapping: &CaseMapping) -> bool {
+    fn followed_by_cased_letter(&self, mapping: &CaseMappingInternals) -> bool {
         for c in self.after.chars() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
@@ -1131,7 +1118,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_more_above(&self, mapping: &CaseMapping) -> bool {
+    fn followed_by_more_above(&self, mapping: &CaseMappingInternals) -> bool {
         for c in self.after.chars() {
             match mapping.dot_type(c) {
                 DotType::Above => return true,
@@ -1141,7 +1128,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_dot_above(&self, mapping: &CaseMapping) -> bool {
+    fn followed_by_dot_above(&self, mapping: &CaseMappingInternals) -> bool {
         for c in self.after.chars() {
             if c == '\u{307}' {
                 return true;
