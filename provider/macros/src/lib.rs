@@ -25,7 +25,7 @@ mod tests;
 /// - Create a `FooMarker` struct for the type
 /// - Implement `icu_provider::DataMarker` for `FooMarker`
 ///
-/// In addition, the attribute can be used to implement [`ResourceMarker`] by
+/// In addition, the attribute can be used to implement `ResourceMarker` by
 /// adding key strings, optionally with marker symbols:
 ///
 /// ```
@@ -48,8 +48,6 @@ mod tests;
 /// assert_eq!(BarV1Marker::KEY.get_path(), "demo/bar@1");
 /// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1");
 /// ```
-///
-/// [`ResourceMarker`]: icu_provider::ResourceMarker
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     let attr = parse_macro_input!(attr as AttributeArgs);
     let item = parse_macro_input!(item as ItemStruct);
