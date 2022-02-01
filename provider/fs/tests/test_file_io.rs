@@ -103,10 +103,11 @@ fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    type Provider = dyn ResourceProvider<CardinalV1Marker>;
+    type CardinalProvider = dyn ResourceProvider<CardinalV1Marker>;
+    type OrdinalProvider = dyn ResourceProvider<OrdinalV1Marker>;
 
     assert!(matches!(
-        Provider::load_resource(
+        CardinalProvider::load_resource(
             &provider,
             &DataRequest {
                 options: langid!("ru").into(),
@@ -117,7 +118,7 @@ fn test_json_errors() {
     ));
 
     assert!(matches!(
-        Provider::load_resource(
+        CardinalProvider::load_resource(
             &provider,
             &DataRequest {
                 options: langid!("zh").into(),
@@ -131,7 +132,7 @@ fn test_json_errors() {
     ));
 
     assert!(matches!(
-        Provider::load_resource(
+        OrdinalProvider::load_resource(
             &provider,
             &DataRequest {
                 options: langid!("ru").into(),
@@ -145,7 +146,7 @@ fn test_json_errors() {
     ));
 
     assert!(matches!(
-        Provider::load_resource(
+        OrdinalProvider::load_resource(
             &provider,
             &DataRequest {
                 options: langid!("ru").into(),
