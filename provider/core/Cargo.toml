@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider"
 description = "Trait and struct definitions for the ICU data provider"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -48,15 +48,15 @@ deserialize_bincode_1 = ["serde", "bincode", "std"]
 deserialize_postcard_07 = ["serde", "postcard"]
 
 [dependencies]
-icu_locid = { version = "0.4", path = "../../components/locid" }
+icu_locid = { version = "0.5", path = "../../components/locid" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.3.1", path = "../../utils/yoke", features = ["serde", "derive"] }
-litemap = { path = "../../utils/litemap", version = "0.2.1" }
+yoke = { version = "0.4.0", path = "../../utils/yoke", features = ["serde", "derive"] }
+litemap = { version = "0.3.0", path = "../../utils/litemap" }
 log = { version = "0.4", optional = true }
 
-icu_provider_macros = { version = "0.4", path = "../macros", optional = true }
+icu_provider_macros = { version = "0.5", path = "../macros", optional = true }
 
 # For "serialize" feature
 erased-serde = { version = "0.3", optional = true, default-features = false, features = ["alloc"] }
@@ -70,4 +70,4 @@ postcard = { version = "0.7.0", default-features = false, optional = true }
 [dev-dependencies]
 serde_json = "1.0"
 static_assertions = "1.1"
-icu_locid_macros = { version = "0.4", path = "../../components/locid/macros" }
+icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }

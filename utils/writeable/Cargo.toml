@@ -5,7 +5,7 @@
 [package]
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -27,7 +27,7 @@ all-features = true
 
 [dev-dependencies]
 criterion = "0.3"
-icu_benchmark_macros = { version = "0.4", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
 rand = { version = "0.8", features = ["small_rng"] }
 
 [lib]

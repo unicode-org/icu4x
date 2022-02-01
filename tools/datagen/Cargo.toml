@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -30,20 +30,23 @@ all-features = true
 eyre = "0.6"
 clap = "2.33"
 futures = "0.3"
-icu_locid = { version = "0.4", path = "../../components/locid", features = ["std"]}
-icu_properties = { version = "0.4", path = "../../components/properties", features = ["std"]}
-icu_provider = { version = "0.4", path = "../../provider/core", features = ["std", "log_error_context"]}
-icu_provider_blob = { version = "0.4", path = "../../provider/blob", features = ["export"] }
-icu_provider_cldr = { version = "0.4", path = "../../provider/cldr", features = ["download"] }
-icu_provider_fs = { version = "0.4", path = "../../provider/fs", features = ["export"] }
-icu_provider_uprops = { version = "0.4", path = "../../provider/uprops", features = ["log"] }
-icu_testdata = { version = "0.4", path = "../../provider/testdata", features = ["metadata"] }
+icu_locid = { version = "0.5", path = "../../components/locid", features = ["std"]}
+icu_properties = { version = "0.5", path = "../../components/properties", features = ["std"]}
+icu_provider = { version = "0.5", path = "../../provider/core", features = ["std", "log_error_context"]}
+icu_provider_blob = { version = "0.5", path = "../../provider/blob", features = ["export"] }
+icu_provider_cldr = { version = "0.5", path = "../../provider/cldr", features = ["download"] }
+icu_provider_fs = { version = "0.5", path = "../../provider/fs", features = ["export"] }
+icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
+icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["metadata"] }
 log = "0.4"
 reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 simple_logger = "1.12"
 tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"] }
-writeable = { version = "0.2.1", path = "../../utils/writeable" }
+writeable = { version = "0.3", path = "../../utils/writeable" }
+
+[features]
+experimental = ["icu_provider_cldr/experimental"]
 
 [[bin]]
 name = "icu4x-datagen"

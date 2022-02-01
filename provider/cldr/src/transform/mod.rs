@@ -9,6 +9,7 @@
 mod calendar;
 mod datetime;
 mod decimal;
+#[cfg(feature = "icu_list")]
 mod list;
 mod locale_canonicalizer;
 mod plurals;
@@ -20,6 +21,7 @@ pub use datetime::{
     symbols::DateSymbolsProvider,
 };
 pub use decimal::NumbersProvider;
+#[cfg(feature = "icu_list")]
 pub use list::ListProvider;
 pub use locale_canonicalizer::aliases::AliasesProvider;
 pub use locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
@@ -46,6 +48,7 @@ pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     result.extend(&decimal::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
     result.extend(&time_zones::ALL_KEYS);
+    #[cfg(feature = "icu_list")]
     result.extend(&list::ALL_KEYS);
     result
 }
@@ -62,6 +65,7 @@ pub struct CldrJsonDataProvider<'a> {
     numbers: LazyCldrProvider<NumbersProvider>,
     plurals: LazyCldrProvider<PluralsProvider>,
     time_zones: LazyCldrProvider<TimeZonesProvider>,
+    #[cfg(feature = "icu_list")]
     list: LazyCldrProvider<ListProvider>,
 }
 
@@ -78,6 +82,7 @@ impl<'a> CldrJsonDataProvider<'a> {
             numbers: Default::default(),
             plurals: Default::default(),
             time_zones: Default::default(),
+            #[cfg(feature = "icu_list")]
             list: Default::default(),
         }
     }
@@ -128,6 +133,7 @@ impl<'a> DynProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
         if let Some(result) = self.time_zones.try_load_serde(key, req, self.cldr_paths)? {
             return Ok(result);
         }
+        #[cfg(feature = "icu_list")]
         if let Some(result) = self.list.try_load_serde(key, req, self.cldr_paths)? {
             return Ok(result);
         }
@@ -194,6 +200,7 @@ impl<'a> IterableProvider for CldrJsonDataProvider<'a> {
         {
             return Ok(Box::new(resp.into_iter()));
         }
+        #[cfg(feature = "icu_list")]
         if let Some(resp) = self.list.try_supported_options(resc_key, self.cldr_paths)? {
             return Ok(Box::new(resp.into_iter()));
         }

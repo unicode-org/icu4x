@@ -73,7 +73,7 @@ writeable = { path = "../../utils/writeable/" }
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "a46d01025159e842982b2e4bc8ca9361d4b897dc" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "a46d01025159e842982b2e4bc8ca9361d4b897dc" }
-icu_testdata = { version = "0.4", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
+icu_testdata = { version = "0.5", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
 
 # This cfg originates in dlmalloc/lib.rs
 [target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]

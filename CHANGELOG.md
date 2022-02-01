@@ -1,6 +1,10 @@
 # Changelog
 
+
 ## Unreleased
+
+
+## icu4x 0.5.0 (Jan 31, 2022)
 
   - General data model
     - `DataPayload` no longer needs a lifetime (#1297, #1279)
@@ -32,7 +36,7 @@
       - Rename resource key category for properties (#1406)
       - Rename enums for `General_Category` (#1355)
       - Implement the `Canonical_Combining_Class` property (#1347)
-      - Implement data transformer for `Script_Extensions` map data (#1353)
+      - Implement `Script_Extensions` property (#1353)
       - Add `General_Category` predicate functions (#1310)
       - Implement `Grapheme_Cluster_Break`, `Word_Break`, and `Sentence_Break` Unicode properties (#1233)
   - Utilities

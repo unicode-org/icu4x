@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_uprops"
 description = "Data provider that reads from `icuwriteuprops` output from ICU4C"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -28,16 +28,16 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_codepointtrie = { version = "0.3", path = "../../utils/codepointtrie", features = ["provider_serde"] }
-icu_properties = { version = "0.4", path = "../../components/properties", features = ["provider_serde", "std"] }
-icu_provider = { version = "0.4", path = "../../provider/core", features = ["serialize", "std"] }
-icu_uniset = { version = "0.4", path = "../../utils/uniset", features = ["provider_serde"] }
+icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie", features = ["provider_serde"] }
+icu_properties = { version = "0.5", path = "../../components/properties", features = ["provider_serde", "std"] }
+icu_provider = { version = "0.5", path = "../../provider/core", features = ["serialize", "std"] }
+icu_uniset = { version = "0.4.1", path = "../../utils/uniset", features = ["provider_serde"] }
 serde = { version = "1.0", features = ["derive"] }
 toml = { version = "0.5" }
-zerovec = { version = "0.5", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 log = { version = "0.4", optional = true }
 eyre = "0.6.5"
 tinystr = "0.4"
 
 [dev-dependencies]
-icu_testdata = { version = "0.4", path = "../../provider/testdata" }
+icu_testdata = { version = "0.5", path = "../../provider/testdata" }
