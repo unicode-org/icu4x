@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643674524582,
+  "lastUpdate": 1643677503023,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8483,6 +8483,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/645df359242f7238552fac8b0499b6d4fe2a44e3"
         },
         "date": 1643674514369,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1555163,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e97f85e48250fbbb4cefbe88f9ddea8e6cb73b9e",
+          "message": "Bump datagen to 0.5 (#1566)",
+          "timestamp": "2022-01-31T17:03:16-08:00",
+          "tree_id": "2379b42d62024992fec860334b7a3a5f07444487",
+          "url": "https://github.com/unicode-org/icu4x/commit/e97f85e48250fbbb4cefbe88f9ddea8e6cb73b9e"
+        },
+        "date": 1643677491090,
         "tool": "ndjson",
         "benches": [
           {
