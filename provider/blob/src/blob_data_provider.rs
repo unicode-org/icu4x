@@ -80,21 +80,25 @@ impl BlobDataProvider {
 
     /// Gets the buffer for the given DataRequest out of the BlobSchema and returns it yoked
     /// to the buffer backing the BlobSchema.
-    fn get_file(&self, req: &DataRequest) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
+    fn get_file(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
         self.data
-            .try_project_cloned_with_capture::<&'static [u8], &DataRequest, DataError>(
-                req,
-                |zm, req, _| {
+            .try_project_cloned_with_capture::<&'static [u8], (ResourceKey, &DataRequest), DataError>(
+                (key, req),
+                |zm, (key, req), _| {
                     zm.get(
-                        &req.resource_path.key.writeable_to_string(),
-                        &req.resource_path.options.writeable_to_string(),
+                        &key.writeable_to_string(),
+                        &req.options.writeable_to_string(),
                     )
                     .map_err(|e| {
                         match e {
                             KeyError::K0 => DataErrorKind::MissingResourceKey,
                             KeyError::K1 => DataErrorKind::MissingResourceOptions,
                         }
-                        .with_req(req)
+                        .with_req(key, req)
                     })
                 },
             )

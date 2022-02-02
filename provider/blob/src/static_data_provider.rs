@@ -95,18 +95,18 @@ impl StaticDataProvider {
         }
     }
 
-    fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
+    fn get_file(&self, key: ResourceKey, req: &DataRequest) -> Result<&'static [u8], DataError> {
         self.data
             .get(
-                &req.resource_path.key.writeable_to_string(),
-                &req.resource_path.options.writeable_to_string(),
+                &key.writeable_to_string(),
+                &req.options.writeable_to_string(),
             )
             .map_err(|e| {
                 match e {
                     KeyError::K0 => DataErrorKind::MissingResourceKey,
                     KeyError::K1 => DataErrorKind::MissingResourceOptions,
                 }
-                .with_req(req)
+                .with_req(key, req)
             })
     }
 }
