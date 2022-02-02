@@ -4,7 +4,7 @@
 
 extern crate proc_macro;
 use proc_macro::TokenStream;
-use proc_macro2::{Ident, Span, TokenStream as TokenStream2};
+use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
@@ -22,11 +22,9 @@ mod tests;
 ///
 /// - `Apply #[derive(Yokeable, ZeroCopyFrom)]`. The `ZeroCopyFrom` derive can
 ///    be customized with `#[yoke(cloning_zcf)]` as needed
-/// - Create a `FooMarker` struct for the type
-/// - Implement `icu_provider::DataMarker` for `FooMarker`
 ///
-/// In addition, the attribute can be used to implement `ResourceMarker` by
-/// adding key strings, optionally with marker symbols:
+/// In addition, the attribute can be used to implement `DataMarker` and/or `ResourceMarker`
+/// by adding symbols with optional key strings:
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -36,7 +34,7 @@ mod tests;
 /// use icu_provider::yoke;
 ///
 /// #[icu_provider::data_struct(
-///     "demo/foo@1",
+///     FooV1Marker,
 ///     BarV1Marker = "demo/bar@1",
 ///     BazV1Marker = "demo/baz@1"
 /// )]
@@ -44,7 +42,9 @@ mod tests;
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// assert_eq!(FooV1Marker::KEY.get_path(), "demo/foo@1");
+/// // Note: FooV1Marker implements `DataMarker` but not `ResourceMarker`.
+/// // The other two implement `ResourceMarker`.
+///
 /// assert_eq!(BarV1Marker::KEY.get_path(), "demo/bar@1");
 /// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1");
 /// ```
@@ -66,7 +66,6 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
     let lifetimes = item.generics.lifetimes().collect::<Vec<_>>();
 
     let name = &item.ident;
-    let marker = Ident::new(&format!("{}Marker", name), Span::call_site());
 
     let name_with_lt = if lifetimes.get(0).is_some() {
         quote!(#name<'static>)
@@ -82,41 +81,12 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
         .to_compile_error();
     }
 
-    let mut attr_it = attr.into_iter().peekable();
+    let mut result = TokenStream2::new();
 
-    let mut result = if let Some(NestedMeta::Lit(key_lit)) =
-        attr_it.next_if(|v| matches!(v, NestedMeta::Lit(_)))
-    {
-        let key_str = match &key_lit {
-            syn::Lit::Str(lit_str) => lit_str.value(),
-            _ => panic!("Key must be a string"),
-        };
-        let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
-        quote!(
-            #[doc = #docs]
-            pub struct #marker;
-            impl icu_provider::DataMarker for #marker {
-                type Yokeable = #name_with_lt;
-            }
-            impl icu_provider::ResourceMarker for #marker {
-                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_lit);
-            }
-        )
-    } else {
-        let docs = format!("Marker type for [`{}`]", name);
-        quote!(
-            #[doc = #docs]
-            pub struct #marker;
-            impl icu_provider::DataMarker for #marker {
-                type Yokeable = #name_with_lt;
-            }
-        )
-    };
-
-    for single_attr in attr_it {
+    for single_attr in attr.into_iter() {
         match single_attr {
             NestedMeta::Meta(Meta::NameValue(name_value)) => {
-                let extra_marker = &name_value.path;
+                let marker_name = &name_value.path;
                 let key_lit = &name_value.lit;
                 let key_str = match key_lit {
                     syn::Lit::Str(lit_str) => lit_str.value(),
@@ -125,19 +95,26 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
                 let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
                 result.extend(quote!(
                     #[doc = #docs]
-                    pub struct #extra_marker;
-                    impl icu_provider::DataMarker for #extra_marker {
+                    pub struct #marker_name;
+                    impl icu_provider::DataMarker for #marker_name {
                         type Yokeable = #name_with_lt;
                     }
-                    impl icu_provider::ResourceMarker for #extra_marker {
+                    impl icu_provider::ResourceMarker for #marker_name {
                         const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_lit);
                     }
                 ));
             }
-            NestedMeta::Lit(_) => {
-                panic!("Single-string key must appear first in attribute list")
+            NestedMeta::Meta(Meta::Path(marker_name)) => {
+                let docs = format!("Marker type for [`{}`]", name);
+                result.extend(quote!(
+                    #[doc = #docs]
+                    pub struct #marker_name;
+                    impl icu_provider::DataMarker for #marker_name {
+                        type Yokeable = #name_with_lt;
+                    }
+                ));
             }
-            NestedMeta::Meta(_) => {
+            _ => {
                 panic!("Invalid attribute to #[data_struct]")
             }
         }
