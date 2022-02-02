@@ -34,33 +34,10 @@ fn test_basic() {
 }
 
 #[test]
-fn test_resource_marker() {
-    // #[data_struct(FooV1Marker = "demo/foo@1")]
+fn test_data_marker() {
+    // #[data_struct(FooV1Marker)]
     check(
-        vec![quote!(FooV1Marker = "demo/foo@1")],
-        quote!(
-            pub struct FooV1;
-        ),
-        quote!(
-            #[doc = "Marker type for [`FooV1`]: \"demo/foo@1\""]
-            pub struct FooV1Marker;
-            impl icu_provider::DataMarker for FooV1Marker {
-                type Yokeable = FooV1;
-            }
-            impl icu_provider::ResourceMarker for FooV1Marker {
-                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/foo@1");
-            }
-            #[derive(yoke::Yokeable, yoke::ZeroCopyFrom)]
-            pub struct FooV1;
-        ),
-    );
-}
-
-#[test]
-fn test_named_resource_marker() {
-    // #[data_struct(FooV1Marker, BarV1Marker = "demo/bar@1")]
-    check(
-        vec![quote!(FooV1Marker), quote!(BarV1Marker = "demo/bar@1")],
+        vec![quote!(FooV1Marker)],
         quote!(
             pub struct FooV1;
         ),
@@ -70,6 +47,21 @@ fn test_named_resource_marker() {
             impl icu_provider::DataMarker for FooV1Marker {
                 type Yokeable = FooV1;
             }
+            #[derive(yoke::Yokeable, yoke::ZeroCopyFrom)]
+            pub struct FooV1;
+        ),
+    );
+}
+
+#[test]
+fn test_resource_marker() {
+    // #[data_struct(BarV1Marker = "demo/bar@1")]
+    check(
+        vec![quote!(BarV1Marker = "demo/bar@1")],
+        quote!(
+            pub struct FooV1;
+        ),
+        quote!(
             #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\""]
             pub struct BarV1Marker;
             impl icu_provider::DataMarker for BarV1Marker {

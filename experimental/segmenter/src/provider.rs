@@ -23,7 +23,7 @@ pub mod key {
 }
 
 /// Pre-processed Unicode data in the form of tables to be used for line breaking.
-#[icu_provider::data_struct("segmenter/line@1")]
+#[icu_provider::data_struct(LineBreakDataV1Marker = "segmenter/line@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

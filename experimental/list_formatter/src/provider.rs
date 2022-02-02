@@ -28,7 +28,7 @@ pub mod key {
 }
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter)
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(ListFormatterPatternsV1Marker)]
 #[derive(Debug)]
 #[cfg_attr(
     feature = "provider_serde",

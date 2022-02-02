@@ -12,7 +12,7 @@ use core::convert::TryFrom;
 use icu_provider::yoke;
 use litemap::LiteMap;
 
-#[icu_provider::data_struct("datetime/skeletons@1")]
+#[icu_provider::data_struct(DateSkeletonPatternsV1Marker = "datetime/skeletons@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

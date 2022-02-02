@@ -8,7 +8,7 @@ use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 use zerovec::map::ZeroMap;
 
-#[icu_provider::data_struct("datetime/symbols@1")]
+#[icu_provider::data_struct(DateSymbolsV1Marker = "datetime/symbols@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

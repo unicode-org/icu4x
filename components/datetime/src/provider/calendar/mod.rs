@@ -13,7 +13,7 @@ use icu_provider::yoke;
 pub use skeletons::*;
 pub use symbols::*;
 
-#[icu_provider::data_struct("datetime/lengths@1")]
+#[icu_provider::data_struct(DatePatternsV1Marker = "datetime/lengths@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

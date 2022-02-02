@@ -537,7 +537,7 @@ impl PluralRules {
 
     /// Lower-level constructor that allows constructing a [`PluralRules`] directly from
     /// data obtained from a provider.
-    pub fn new<T: Into<Locale>>(
+    fn new<T: Into<Locale>>(
         locale: T,
         rules: DataPayload<PluralRulesV1Marker>,
     ) -> Result<Self, PluralRulesError> {

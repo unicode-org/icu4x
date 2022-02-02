@@ -80,6 +80,12 @@ impl PluralsProvider {
     }
 }
 
+// Private type specific to this transformer
+struct PluralRulesV1Marker;
+impl DataMarker for PluralRulesV1Marker {
+    type Yokeable = PluralRulesV1<'static>;
+}
+
 impl DynProvider<PluralRulesV1Marker> for PluralsProvider {
     fn load_payload(
         &self,
