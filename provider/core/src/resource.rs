@@ -529,7 +529,7 @@ mod tests {
     }
 
     #[test]
-    fn test_resource_path_to_string() {
+    fn test_resource_options_to_string() {
         for cas in get_options_test_cases().iter() {
             assert_eq!(cas.resc_options.to_string(), cas.expected);
             writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
@@ -537,7 +537,7 @@ mod tests {
     }
 
     #[test]
-    fn test_string_to_resource_path() {
+    fn test_string_to_resource_options() {
         for cas in get_options_test_cases().iter() {
             assert_eq!(ResourceOptions::from_str(cas.expected), cas.resc_options);
         }
