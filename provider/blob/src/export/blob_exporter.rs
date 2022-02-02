@@ -42,15 +42,15 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         req: DataRequest,
         payload: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
-        log::trace!("Adding: {}", req.resource_path);
+        log::trace!("Adding: {} {}", key, req);
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
         payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
         self.resources.insert(
             (
-                req.resource_path.key.writeable_to_string().into_owned(),
-                req.resource_path.options.writeable_to_string().into_owned(),
+                key.writeable_to_string().into_owned(),
+                req.options.writeable_to_string().into_owned(),
             ),
             serializer.output.0,
         );
