@@ -343,7 +343,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // An empty vec must have an empty slice: there is only a single valid byte representation.
             return false;
         }
-        if slice_len <= 4 + len as usize * 4 {
+        if slice_len < 4 + len as usize * 4 {
             // Not enough room for the indices.
             return false;
         }
