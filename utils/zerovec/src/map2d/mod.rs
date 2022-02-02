@@ -46,7 +46,7 @@ pub use borrowed::ZeroMap2dBorrowed;
 /// // Deserializing to ZeroMap requires no heap allocations.
 /// let zero_map: ZeroMap2d<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1, &2), Some("three"));
+/// assert_eq!(zero_map.get(&1, &2), Ok("three"));
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec
@@ -89,6 +89,13 @@ where
     pub(crate) joiner: ZeroVec<'a, u32>,
     pub(crate) keys1: K1::Container,
     pub(crate) values: V::Container,
+}
+
+#[derive(PartialEq, Debug)]
+/// Used in error types to communicate for which key the error occured.
+pub enum KeyError {
+    K0,
+    K1,
 }
 
 impl<'a, K0, K1, V> Default for ZeroMap2d<'a, K0, K1, V>
@@ -186,19 +193,20 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap2d;
+    /// use zerovec::map2d::KeyError;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "one", "bar");
     /// map.insert(&2, "two", "baz");
-    /// assert_eq!(map.get(&1, "one"), Some("foo"));
-    /// assert_eq!(map.get(&1, "two"), None);
-    /// assert_eq!(map.get(&2, "one"), Some("bar"));
-    /// assert_eq!(map.get(&2, "two"), Some("baz"));
-    /// assert_eq!(map.get(&3, "three"), None);
+    /// assert_eq!(map.get(&1, "one"), Ok("foo"));
+    /// assert_eq!(map.get(&1, "two"), Err(KeyError::K1));
+    /// assert_eq!(map.get(&2, "one"), Ok("bar"));
+    /// assert_eq!(map.get(&2, "two"), Ok("baz"));
+    /// assert_eq!(map.get(&3, "three"), Err(KeyError::K0));
     /// ```
-    pub fn get(&self, key0: &K0, key1: &K1) -> Option<&V::GetType> {
-        let (_, range) = self.get_range_for_key0(key0)?;
+    pub fn get(&self, key0: &K0, key1: &K1) -> Result<&V::GetType, KeyError> {
+        let (_, range) = self.get_range_for_key0(key0).ok_or(KeyError::K0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
         // The above debug_assert! protects the unwrap() below
@@ -207,8 +215,10 @@ where
                 .keys1
                 .zvl_binary_search_in_range(key1, range)
                 .unwrap()
-                .ok()?;
-        self.values.zvl_get(index)
+                .map_err(|_| KeyError::K1)?;
+        // This unwrap is protected by the invariant keys1.len() == values.len(),
+        // the above debug_assert!, and the contract of zvl_binary_search_in_range.
+        Ok(self.values.zvl_get(index).unwrap())
     }
 
     /// Returns whether `key0` is contained in this map
@@ -251,24 +261,27 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap2d;
+    /// use zerovec::map2d::KeyError;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "two", "bar");
-    /// assert_eq!(map.remove(&1, "one"), Some("foo".to_owned().into_boxed_str()));
-    /// assert_eq!(map.get(&1, "one"), None);
+    /// assert_eq!(map.remove(&1, "one"), Ok("foo".to_owned().into_boxed_str()));
+    /// assert_eq!(map.get(&1, "one"), Err(KeyError::K0));
+    /// assert_eq!(map.remove(&1, "one"), Err(KeyError::K0));
     /// ```
-    pub fn remove(&mut self, key0: &K0, key1: &K1) -> Option<V::OwnedType> {
-        let (key0_index, range) = self.get_range_for_key0(key0)?;
+    pub fn remove(&mut self, key0: &K0, key1: &K1) -> Result<V::OwnedType, KeyError> {
+        let (key0_index, range) = self.get_range_for_key0(key0).ok_or(KeyError::K0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
         // The above debug_assert! protects the unwrap() below
         let is_singleton_range = range.start + 1 == range.end;
         let index = range.start
-            + match self.keys1.zvl_binary_search_in_range(key1, range).unwrap() {
-                Ok(index) => index,
-                Err(_) => return None,
-            };
+            + self
+                .keys1
+                .zvl_binary_search_in_range(key1, range)
+                .unwrap()
+                .map_err(|_| KeyError::K1)?;
         self.keys1.zvl_remove(index);
         let removed = self.values.zvl_remove(index);
         self.joiner_shrink(key0_index);
@@ -277,7 +290,7 @@ where
         }
         #[cfg(debug_assertions)]
         self.check_invariants();
-        Some(removed)
+        Ok(removed)
     }
 
     /// Appends `value` with `key` to the end of the underlying vector, returning
@@ -285,6 +298,7 @@ where
     /// sorted list.
     /// ```rust
     /// use zerovec::ZeroMap2d;
+    /// use zerovec::map2d::KeyError;
     ///
     /// let mut map = ZeroMap2d::new();
     /// assert!(map.try_append(&1, "one", "uno").is_none());
@@ -296,13 +310,13 @@ where
     /// let unsuccessful = map.try_append(&2, "two", "dos");
     /// assert!(unsuccessful.is_some(), "append out of order");
     ///
-    /// assert_eq!(map.get(&1, "one"), Some("uno"));
+    /// assert_eq!(map.get(&1, "one"), Ok("uno"));
     ///
     /// // contains the original value for the key: 3
-    /// assert_eq!(map.get(&3, "three"), Some("tres"));
+    /// assert_eq!(map.get(&3, "three"), Ok("tres"));
     ///
     /// // not appended since it wasn't in order
-    /// assert_eq!(map.get(&2, "two"), None);
+    /// assert_eq!(map.get(&2, "two"), Err(KeyError::K0));
     /// ```
     #[must_use]
     pub fn try_append<'b>(
@@ -657,27 +671,27 @@ mod test {
         let mut zm2d = ZeroMap2d::<u16, str, str>::new();
 
         assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Borrowed([]), joiner: ZeroVec::Borrowed([]), keys1: [], values: [] }");
-        assert_eq!(zm2d.get(&0, ""), None);
+        assert_eq!(zm2d.get(&0, ""), Err(KeyError::K0));
 
         let result = zm2d.try_append(&3, "ccc", "CCC");
         assert!(matches!(result, None));
 
         assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
-        assert_eq!(zm2d.get(&0, ""), None);
-        assert_eq!(zm2d.get(&3, ""), None);
-        assert_eq!(zm2d.get(&3, "ccc"), Some("CCC"));
-        assert_eq!(zm2d.get(&99, ""), None);
+        assert_eq!(zm2d.get(&0, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&3, ""), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&3, "ccc"), Ok("CCC"));
+        assert_eq!(zm2d.get(&99, ""), Err(KeyError::K0));
 
         let result = zm2d.try_append(&3, "eee", "EEE");
         assert!(matches!(result, None));
 
         assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
-        assert_eq!(zm2d.get(&0, ""), None);
-        assert_eq!(zm2d.get(&3, ""), None);
-        assert_eq!(zm2d.get(&3, "ccc"), Some("CCC"));
-        assert_eq!(zm2d.get(&3, "eee"), Some("EEE"));
-        assert_eq!(zm2d.get(&3, "five"), None);
-        assert_eq!(zm2d.get(&99, ""), None);
+        assert_eq!(zm2d.get(&0, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&3, ""), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&3, "ccc"), Ok("CCC"));
+        assert_eq!(zm2d.get(&3, "eee"), Ok("EEE"));
+        assert_eq!(zm2d.get(&3, "five"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&99, ""), Err(KeyError::K0));
 
         // Out of order
         let result = zm2d.try_append(&3, "ddd", "DD0");
@@ -696,29 +710,29 @@ mod test {
         assert!(matches!(result, None));
 
         assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 7, 9]), joiner: ZeroVec::Owned([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
-        assert_eq!(zm2d.get(&0, ""), None);
-        assert_eq!(zm2d.get(&3, ""), None);
-        assert_eq!(zm2d.get(&3, "ccc"), Some("CCC"));
-        assert_eq!(zm2d.get(&3, "eee"), Some("EEE"));
-        assert_eq!(zm2d.get(&3, "zzz"), None);
-        assert_eq!(zm2d.get(&4, ""), None);
-        assert_eq!(zm2d.get(&5, "aaa"), None);
-        assert_eq!(zm2d.get(&5, "ddd"), Some("DD1"));
-        assert_eq!(zm2d.get(&5, "zzz"), None);
-        assert_eq!(zm2d.get(&6, ""), None);
-        assert_eq!(zm2d.get(&7, "aaa"), None);
-        assert_eq!(zm2d.get(&7, "ddd"), Some("DD2"));
-        assert_eq!(zm2d.get(&7, "eee"), Some("EEE"));
-        assert_eq!(zm2d.get(&7, "www"), Some("WWW"));
-        assert_eq!(zm2d.get(&7, "yyy"), None);
-        assert_eq!(zm2d.get(&7, "zzz"), None);
-        assert_eq!(zm2d.get(&8, ""), None);
-        assert_eq!(zm2d.get(&9, "aaa"), None);
-        assert_eq!(zm2d.get(&9, "www"), None);
-        assert_eq!(zm2d.get(&9, "yyy"), Some("YYY"));
-        assert_eq!(zm2d.get(&9, "zzz"), None);
-        assert_eq!(zm2d.get(&10, ""), None);
-        assert_eq!(zm2d.get(&99, ""), None);
+        assert_eq!(zm2d.get(&0, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&3, ""), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&3, "ccc"), Ok("CCC"));
+        assert_eq!(zm2d.get(&3, "eee"), Ok("EEE"));
+        assert_eq!(zm2d.get(&3, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&4, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&5, "aaa"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&5, "ddd"), Ok("DD1"));
+        assert_eq!(zm2d.get(&5, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&6, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&7, "aaa"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&7, "ddd"), Ok("DD2"));
+        assert_eq!(zm2d.get(&7, "eee"), Ok("EEE"));
+        assert_eq!(zm2d.get(&7, "www"), Ok("WWW"));
+        assert_eq!(zm2d.get(&7, "yyy"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&7, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&8, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&9, "aaa"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&9, "www"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&9, "yyy"), Ok("YYY"));
+        assert_eq!(zm2d.get(&9, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&10, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&99, ""), Err(KeyError::K0));
 
         // Insert some elements
         zm2d.insert(&3, "mmm", "MM0");
@@ -727,44 +741,44 @@ mod test {
         zm2d.insert(&6, "nnn", "NNN");
 
         assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 6, 7, 9]), joiner: ZeroVec::Owned([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
-        assert_eq!(zm2d.get(&0, ""), None);
-        assert_eq!(zm2d.get(&3, ""), None);
-        assert_eq!(zm2d.get(&3, "ccc"), Some("CCC"));
-        assert_eq!(zm2d.get(&3, "eee"), Some("EEE"));
-        assert_eq!(zm2d.get(&3, "mmm"), Some("MM0"));
-        assert_eq!(zm2d.get(&3, "zzz"), None);
-        assert_eq!(zm2d.get(&4, ""), None);
-        assert_eq!(zm2d.get(&5, "aaa"), None);
-        assert_eq!(zm2d.get(&5, "ddd"), Some("DD1"));
-        assert_eq!(zm2d.get(&5, "zzz"), None);
-        assert_eq!(zm2d.get(&6, "aaa"), None);
-        assert_eq!(zm2d.get(&6, "ddd"), Some("DD3"));
-        assert_eq!(zm2d.get(&6, "mmm"), Some("MM1"));
-        assert_eq!(zm2d.get(&6, "nnn"), Some("NNN"));
-        assert_eq!(zm2d.get(&6, "zzz"), None);
-        assert_eq!(zm2d.get(&7, "aaa"), None);
-        assert_eq!(zm2d.get(&7, "ddd"), Some("DD2"));
-        assert_eq!(zm2d.get(&7, "eee"), Some("EEE"));
-        assert_eq!(zm2d.get(&7, "www"), Some("WWW"));
-        assert_eq!(zm2d.get(&7, "yyy"), None);
-        assert_eq!(zm2d.get(&7, "zzz"), None);
-        assert_eq!(zm2d.get(&8, ""), None);
-        assert_eq!(zm2d.get(&9, "aaa"), None);
-        assert_eq!(zm2d.get(&9, "www"), None);
-        assert_eq!(zm2d.get(&9, "yyy"), Some("YYY"));
-        assert_eq!(zm2d.get(&9, "zzz"), None);
-        assert_eq!(zm2d.get(&10, ""), None);
-        assert_eq!(zm2d.get(&99, ""), None);
+        assert_eq!(zm2d.get(&0, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&3, ""), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&3, "ccc"), Ok("CCC"));
+        assert_eq!(zm2d.get(&3, "eee"), Ok("EEE"));
+        assert_eq!(zm2d.get(&3, "mmm"), Ok("MM0"));
+        assert_eq!(zm2d.get(&3, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&4, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&5, "aaa"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&5, "ddd"), Ok("DD1"));
+        assert_eq!(zm2d.get(&5, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&6, "aaa"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&6, "ddd"), Ok("DD3"));
+        assert_eq!(zm2d.get(&6, "mmm"), Ok("MM1"));
+        assert_eq!(zm2d.get(&6, "nnn"), Ok("NNN"));
+        assert_eq!(zm2d.get(&6, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&7, "aaa"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&7, "ddd"), Ok("DD2"));
+        assert_eq!(zm2d.get(&7, "eee"), Ok("EEE"));
+        assert_eq!(zm2d.get(&7, "www"), Ok("WWW"));
+        assert_eq!(zm2d.get(&7, "yyy"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&7, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&8, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&9, "aaa"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&9, "www"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&9, "yyy"), Ok("YYY"));
+        assert_eq!(zm2d.get(&9, "zzz"), Err(KeyError::K1));
+        assert_eq!(zm2d.get(&10, ""), Err(KeyError::K0));
+        assert_eq!(zm2d.get(&99, ""), Err(KeyError::K0));
 
         // Remove some elements
         let result = zm2d.remove(&3, "ccc"); // first element
-        assert_eq!(result, Some(String::from("CCC").into_boxed_str()));
+        assert_eq!(result, Ok(String::from("CCC").into_boxed_str()));
         let result = zm2d.remove(&3, "mmm"); // middle element
-        assert_eq!(result, Some(String::from("MM0").into_boxed_str()));
+        assert_eq!(result, Ok(String::from("MM0").into_boxed_str()));
         let result = zm2d.remove(&5, "ddd"); // singleton K0
-        assert_eq!(result, Some(String::from("DD1").into_boxed_str()));
+        assert_eq!(result, Ok(String::from("DD1").into_boxed_str()));
         let result = zm2d.remove(&9, "yyy"); // last element
-        assert_eq!(result, Some(String::from("YYY").into_boxed_str()));
+        assert_eq!(result, Ok(String::from("YYY").into_boxed_str()));
 
         assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 6, 7]), joiner: ZeroVec::Owned([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }");
     }

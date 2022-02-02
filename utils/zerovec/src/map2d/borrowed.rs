@@ -10,6 +10,7 @@ use core::ops::Range;
 
 use crate::map::ZeroMapKV;
 use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
+use crate::map2d::KeyError;
 
 /// A borrowed-only version of [`ZeroMap2d`](super::ZeroMap2d)
 ///
@@ -31,7 +32,7 @@ use crate::map::{BorrowedZeroVecLike, ZeroVecLike};
 /// // Deserializing to ZeroMap2d requires no heap allocations.
 /// let zero_map: ZeroMap2dBorrowed<u16, u16, str> = bincode::deserialize(BINCODE_BYTES)
 ///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1, &2), Some("three"));
+/// assert_eq!(zero_map.get(&1, &2), Ok("three"));
 /// ```
 ///
 /// This can be obtained from a [`ZeroMap2d`](super::ZeroMap2d) via [`ZeroMap2d::as_borrowed`](super::ZeroMap2d::as_borrowed)
@@ -148,7 +149,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap2d;
-    /// use zerovec::map2d::ZeroMap2dBorrowed;
+    /// use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -156,19 +157,19 @@ where
     /// map.insert(&2, "two", "baz");
     ///
     /// let borrowed = map.as_borrowed();
-    /// assert_eq!(borrowed.get(&1, "one"), Some("foo"));
-    /// assert_eq!(borrowed.get(&1, "two"), None);
-    /// assert_eq!(borrowed.get(&2, "one"), Some("bar"));
-    /// assert_eq!(borrowed.get(&2, "two"), Some("baz"));
-    /// assert_eq!(borrowed.get(&3, "three"), None);
+    /// assert_eq!(borrowed.get(&1, "one"), Ok("foo"));
+    /// assert_eq!(borrowed.get(&1, "two"), Err(KeyError::K1));
+    /// assert_eq!(borrowed.get(&2, "one"), Ok("bar"));
+    /// assert_eq!(borrowed.get(&2, "two"), Ok("baz"));
+    /// assert_eq!(borrowed.get(&3, "three"), Err(KeyError::K0));
     ///
     /// let borrow = borrowed.get(&1, "one");
     /// drop(borrowed);
     /// // still exists after the ZeroMap2dBorrowed has been dropped
-    /// assert_eq!(borrow, Some("foo"));
+    /// assert_eq!(borrow, Ok("foo"));
     /// ```
-    pub fn get(&self, key0: &K0, key1: &K1) -> Option<&'a V::GetType> {
-        let (_, range) = self.get_range_for_key0(key0)?;
+    pub fn get(&self, key0: &K0, key1: &K1) -> Result<&'a V::GetType, KeyError> {
+        let (_, range) = self.get_range_for_key0(key0).ok_or(KeyError::K0)?;
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
         let index = range.start
@@ -176,8 +177,10 @@ where
                 .keys1
                 .zvl_binary_search_in_range(key1, range)
                 .unwrap()
-                .ok()?;
-        self.values.zvl_get_borrowed(index)
+                .map_err(|_| KeyError::K1)?;
+        // This unwrap is protected by the invariant keys1.len() == values.len(),
+        // the above debug_assert!, and the contract of zvl_binary_search_in_range.
+        Ok(self.values.zvl_get_borrowed(index).unwrap())
     }
 
     /// Returns whether `key0` is contained in this map
