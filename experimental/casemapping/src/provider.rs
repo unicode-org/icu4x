@@ -14,7 +14,7 @@ pub mod key {
     use icu_provider::{resource_key, ResourceKey};
 
     /// Key for case mapping data
-    pub const CASE_MAPPING_V1: ResourceKey = resource_key!(Properties, "case_map", 1);
+    pub const CASE_MAPPING_V1: ResourceKey = resource_key!("props/casemap@1");
 }
 
 #[icu_provider::data_struct]

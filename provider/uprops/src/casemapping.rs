@@ -26,16 +26,16 @@ impl CaseMappingDataProvider {
         let trie_header = CodePointTrieHeader::try_from(trie_data)?;
         let trie_index = &trie_data.index;
         let trie_data = &trie_data.data_16.as_ref().ok_or_else(|| {
-            DataError::new_resc_error(icu_codepointtrie::error::Error::FromDeserialized {
-                reason: "Did not find 16-bit data array for case mapping in TOML",
-            })
+            DataError::custom("Did not find 16-bit data array for case mapping in TOML")
         })?;
         let exceptions = &toml.ucase.exceptions.exceptions;
         let unfold = &toml.ucase.unfold.unfold;
 
         let case_mapping =
             CaseMappingInternals::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)
-                .map_err(DataError::new_resc_error)?;
+            .map_err(|e| DataError::custom("Could not create CaseMappingInternals")
+                     .with_display_context(&e)
+            )?;
 
         Ok(Self { case_mapping })
     }
@@ -59,8 +59,6 @@ impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
 mod tests {
     use crate::casemapping::CaseMappingDataProvider;
     use icu_casemapping::CaseMapping;
-    use icu_casemapping::provider::*;
-    use icu_provider::prelude::*;
 
     #[test]
     fn test_upper() {

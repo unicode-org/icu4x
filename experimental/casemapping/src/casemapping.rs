@@ -8,7 +8,9 @@ use icu_codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
 #[cfg(feature = "provider_transform_internals")]
 use crate::error::Error;
-use crate::provider::{CaseMappingV1, CaseMappingV1Marker};
+use crate::provider::CaseMappingV1Marker;
+#[cfg(feature = "provider_transform_internals")]
+use crate::provider::CaseMappingV1;
 
 /// TODO: doc comment
 #[derive(Clone)]
@@ -24,6 +26,7 @@ impl CaseMapping {
         let internals: DataPayload<CaseMappingV1Marker> = provider
             .load_payload(&DataRequest::from(crate::provider::key::CASE_MAPPING_V1))?
             .take_payload()?;
+        debug_assert!(internals.get().casemap.validate().is_ok());
         let locale = CaseMapLocale::Root; // TODO: Accept a locale parameter
         Ok(Self { internals, locale })
     }
