@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643789764106,
+  "lastUpdate": 1643836541648,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8608,6 +8608,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 1549345,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88f3e2ff55861a5e957d0aa04a68e76ac61b99f1",
+          "message": "Connect Script_Extensions data provider to datagen, update testdata (#1572)",
+          "timestamp": "2022-02-02T13:13:43-08:00",
+          "tree_id": "3e7cd8d4bddd9c06c615535c82fe4f64db77d136",
+          "url": "https://github.com/unicode-org/icu4x/commit/88f3e2ff55861a5e957d0aa04a68e76ac61b99f1"
+        },
+        "date": 1643836528997,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1575756,
             "unit": "bytes",
             "biggerIsBetter": false
           }
