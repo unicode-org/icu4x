@@ -5,7 +5,7 @@
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
 use icu_locid::LanguageIdentifier;
-use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SET_KEYS, ALL_SCRIPT_EXTENSIONS_KEYS};
+use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SCRIPT_EXTENSIONS_KEYS, ALL_SET_KEYS};
 use icu_provider::either::EitherProvider;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
@@ -22,7 +22,10 @@ use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
-use icu_provider_uprops::{EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider, ScriptExtensionsPropertyProvider};
+use icu_provider_uprops::{
+    EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider,
+    ScriptExtensionsPropertyProvider,
+};
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
