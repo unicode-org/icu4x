@@ -947,13 +947,12 @@ fn test_debug() {
     assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }
 
-/// A generic data provider that loads a payload of a specific type.
+/// A data provider that loads data for a specific data type.
 ///
-/// See examples on some of the concrete implementations:
+/// Unlike [`ResourceProvider`], there may be multiple keys corresponding to the same data type.
+/// This is often the case when returning `dyn` trait objects such as [`SerializeMarker`].
 ///
-/// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
-/// - [`AnyPayloadProvider`](crate::struct_provider::AnyPayloadProvider)
-/// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
+/// [`SerializeMarker`]: crate::serde::SerializeMarker
 pub trait DynProvider<M>
 where
     M: DataMarker,
@@ -969,9 +968,14 @@ where
     ) -> Result<DataResponse<M>, DataError>;
 }
 
+/// A data provider that loads data for a specific [`ResourceKey`].
 pub trait ResourceProvider<M>
 where
     M: ResourceMarker,
 {
+    /// Query the provider for data, returning the result.
+    ///
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
 }
