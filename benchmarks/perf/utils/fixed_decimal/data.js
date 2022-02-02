@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643836889151,
+  "lastUpdate": 1643846261656,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18539,6 +18539,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 111790,
             "range": "± 6184",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10f3d2de502f82807d45ed5b5c2c3f2f853c7543",
+          "message": "Use ResourceHash in blob data provider (#1574)\n\n* Add ULE impls for ResourceHash\r\n\r\n* Update blob data providers to use ResourceKeyHash\r\n\r\n* Fix VZV integrity check",
+          "timestamp": "2022-02-02T15:50:15-08:00",
+          "tree_id": "e10e69aaeff72168c67899a70dc8565c7fa60b1d",
+          "url": "https://github.com/unicode-org/icu4x/commit/10f3d2de502f82807d45ed5b5c2c3f2f853c7543"
+        },
+        "date": 1643846252372,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 103042,
+            "range": "± 309",
             "unit": "ns/iter"
           }
         ]
