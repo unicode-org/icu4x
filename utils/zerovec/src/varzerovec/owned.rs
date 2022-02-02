@@ -516,6 +516,31 @@ mod test {
     }
 
     #[test]
+    // ensure that inserting empty items works
+    fn test_empty_inserts() {
+        let mut items: Vec<String> = Vec::new();
+        let mut zerovec = VarZeroVecOwned::<str>::new();
+
+        // Insert into an empty vec.
+        items.insert(0, "".into());
+        zerovec.insert(0, "");
+        assert_eq!(zerovec, &*items);
+
+        items.insert(0, "".into());
+        zerovec.insert(0, "");
+        assert_eq!(zerovec, &*items);
+
+
+        items.insert(0, "1234567890".into());
+        zerovec.insert(0, "1234567890");
+        assert_eq!(zerovec, &*items);
+
+        items.insert(0, "".into());
+        zerovec.insert(0, "");
+        assert_eq!(zerovec, &*items);
+    }
+
+    #[test]
     fn test_small_insert_integrity() {
         // Tests that insert() works even when there
         // is not enough space for the new index in entire_slice.len()
