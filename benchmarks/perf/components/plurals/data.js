@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643784586970,
+  "lastUpdate": 1643790321271,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25955,6 +25955,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15433,
             "range": "± 1961",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0acd7a6f1df6ad893749efb110a564f32db73136",
+          "message": "Using `ZeroMap2d` and resource key hash for blobs (#1569)",
+          "timestamp": "2022-02-02T09:14:17+01:00",
+          "tree_id": "d28adc1c2c00cc5927e9b6e4a9280d8e5b727a13",
+          "url": "https://github.com/unicode-org/icu4x/commit/0acd7a6f1df6ad893749efb110a564f32db73136"
+        },
+        "date": 1643790310076,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 876,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5878,
+            "range": "± 383",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16382,
+            "range": "± 930",
             "unit": "ns/iter"
           }
         ]
