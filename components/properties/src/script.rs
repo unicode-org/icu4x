@@ -341,6 +341,58 @@ impl<'data> ScriptExtensions<'data> {
 
     /// Returns all of the matching `CodePointMapRange`s for the given [`Script`]
     /// in which `has_script` will return true for all of the contained code points.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use core::ops::RangeInclusive;
+    /// use icu_provider::prelude::*;
+    /// use icu_properties::provider::key;
+    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu_properties::Script;
+    /// use icu::properties::script::ScriptExtensions;
+    /// 
+    /// let provider = icu_testdata::get_provider();
+    /// 
+    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    ///     .load_payload(&DataRequest {
+    ///         resource_path: ResourcePath {
+    ///             key: key::SCRIPT_EXTENSIONS_V1,
+    ///             options: ResourceOptions::default(),
+    ///         },
+    ///     })
+    ///     .expect("The data should be valid")
+    ///     .take_payload()
+    ///     .expect("Loading was successful");
+    /// 
+    /// let scx: &ScriptExtensions = &payload.get().data;
+    /// let syriac_script_extensions_ranges = scx.get_script_extensions_ranges(Script::Syriac);
+    /// 
+    /// let exp_ranges = vec![
+    ///     0x060C..=0x060C,   // ARABIC COMMA
+    ///     0x061B..=0x061B,   // ARABIC SEMICOLON
+    ///     0x061C..=0x061C,   // ARABIC LETTER MARK
+    ///     0x061F..=0x061F,   // ARABIC QUESTION MARK
+    ///     0x0640..=0x0640,   // ARABIC TATWEEL
+    ///     0x064B..=0x0655,   // ARABIC FATHATAN..ARABIC HAMZA BELOW
+    ///     0x0670..=0x0670,   // ARABIC LETTER SUPERSCRIPT ALEF
+    ///     0x0700..=0x070D,   // Syriac block begins at U+0700
+    ///     0x070F..=0x074A,   // Syriac block
+    ///     0x074D..=0x074F,   // Syriac block ends at U+074F
+    ///     0x0860..=0x086A,   // Syriac Supplement block is U+0860..=U+086F
+    ///     0x1DF8..=0x1DF8,   // U+1DF8 COMBINING DOT ABOVE LEFT
+    ///     0x1DFA..=0x1DFA,   // U+1DFA COMBINING DOT BELOW LEFT
+    /// ];
+    /// let mut exp_ranges_iter = exp_ranges.iter();
+    /// 
+    /// for act_range in syriac_script_extensions_ranges {
+    ///     let exp_range = exp_ranges_iter.next()
+    ///         .expect("There are too many ranges returned by get_script_extensions_ranges()");
+    ///     assert_eq!(act_range.start(), exp_range.start());
+    ///     assert_eq!(act_range.end(), exp_range.end());
+    /// }
+    /// assert!(exp_ranges_iter.next().is_none(), "There are too few ranges returned by get_script_extensions_ranges()");
+    /// ```
     pub fn get_script_extensions_ranges(
         &self,
         script: Script,
