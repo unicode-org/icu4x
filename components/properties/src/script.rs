@@ -278,6 +278,49 @@ impl<'data> ScriptExtensions<'data> {
     ///
     /// Some characters are commonly used in multiple scripts. For more information,
     /// see UAX #24: <http://www.unicode.org/reports/tr24/>.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_properties::provider::key;
+    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu_properties::Script;
+    /// use icu::properties::script::ScriptExtensions;
+    /// 
+    /// let provider = icu_testdata::get_provider();
+    /// 
+    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    ///     .load_payload(&DataRequest {
+    ///         resource_path: ResourcePath {
+    ///             key: key::SCRIPT_EXTENSIONS_V1,
+    ///             options: ResourceOptions::default(),
+    ///         },
+    ///     })
+    ///     .expect("The data should be valid")
+    ///     .take_payload()
+    ///     .expect("Loading was successful");
+    /// 
+    /// let scx: &ScriptExtensions = &payload.get().data;
+    ///
+    /// // U+0650 ARABIC KASRA
+    /// assert!(!scx.has_script(0x0650, Script::Inherited)); // main Script value
+    /// assert!(scx.has_script(0x0650, Script::Arabic));
+    /// assert!(scx.has_script(0x0650, Script::Syriac));
+    /// assert!(!scx.has_script(0x0650, Script::Thaana));
+    /// 
+    /// // U+0660 ARABIC-INDIC DIGIT ZERO
+    /// assert!(!scx.has_script(0x0660, Script::Common)); // main Script value
+    /// assert!(scx.has_script(0x0660, Script::Arabic));
+    /// assert!(!scx.has_script(0x0660, Script::Syriac));
+    /// assert!(scx.has_script(0x0660, Script::Thaana));
+    /// 
+    /// // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+    /// assert!(!scx.has_script(0xFDF2, Script::Common));
+    /// assert!(scx.has_script(0xFDF2, Script::Arabic)); // main Script value
+    /// assert!(!scx.has_script(0xFDF2, Script::Syriac));
+    /// assert!(scx.has_script(0xFDF2, Script::Thaana));
+    /// ```
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
         let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get_ule(code_point) {
             scwe_ule
