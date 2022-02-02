@@ -139,7 +139,7 @@ where
 /// [`DynProvider`]: crate::DynProvider
 /// [`ResourceProvider`]: crate::ResourceProvider
 /// [`AnyPayload`]: (crate::any::AnyPayload)
-/// [`DataErrorKind`]: (crate::DataErrorKind)
+/// [`DataErrorKind::MissingResourceKey`]: (crate::DataErrorKind::MissingResourceKey)
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {

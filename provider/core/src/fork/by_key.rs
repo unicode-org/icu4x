@@ -160,8 +160,9 @@ where
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// Note: It does not make sense to construct a forking [`DataProvider`], since that is
-/// type-specific. Instead, make a forking [`BufferProvider`].
+/// Note: A forking [`ResourceProvider`] does not make sense, since there is only one key that
+/// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
+/// or [`DynProvider`].
 ///
 /// # Examples
 ///

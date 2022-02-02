@@ -147,7 +147,7 @@ pub mod struct_provider;
 pub use icu_provider_macros::data_struct;
 
 pub mod prelude {
-    //! Core selection of APIs and structures for [`DataProvider`].
+    //! Core selection of APIs and structures for the ICU4X data provider.
     pub use crate::any::AnyMarker;
     pub use crate::any::AnyPayload;
     pub use crate::any::AnyProvider;

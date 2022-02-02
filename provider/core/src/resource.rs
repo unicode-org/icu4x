@@ -318,8 +318,7 @@ impl Writeable for ResourceKey {
     }
 }
 
-/// A variant and language identifier, used for requesting data from a
-/// [`DataProvider`](crate::DataProvider).
+/// A variant and language identifier, used for requesting data from a data provider.
 ///
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
 #[derive(PartialEq, Clone, Default)]
