@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643784480544,
+  "lastUpdate": 1643790170496,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19559,6 +19559,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40956682,
             "range": "± 1596660",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0acd7a6f1df6ad893749efb110a564f32db73136",
+          "message": "Using `ZeroMap2d` and resource key hash for blobs (#1569)",
+          "timestamp": "2022-02-02T09:14:17+01:00",
+          "tree_id": "d28adc1c2c00cc5927e9b6e4a9280d8e5b727a13",
+          "url": "https://github.com/unicode-org/icu4x/commit/0acd7a6f1df6ad893749efb110a564f32db73136"
+        },
+        "date": 1643790160748,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44371851,
+            "range": "± 61835",
             "unit": "ns/iter"
           }
         ]
