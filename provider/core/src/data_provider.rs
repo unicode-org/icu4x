@@ -11,7 +11,6 @@ use crate::error::{DataError, DataErrorKind};
 use crate::marker::{DataMarker, ResourceMarker};
 use crate::resource::ResourceKey;
 use crate::resource::ResourceOptions;
-use crate::resource::ResourcePath;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
@@ -22,12 +21,6 @@ use core::fmt;
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
-
-/// A struct to request a certain piece of data from a data provider.
-#[derive(Clone, Debug, PartialEq)]
-pub struct DataRequestOld {
-    pub resource_path: ResourcePath,
-}
 
 #[derive(Default)]
 #[non_exhaustive]
@@ -42,18 +35,6 @@ pub struct DataRequest {
 impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.options, f)
-    }
-}
-
-/// Create a [`DataRequest`] to a particular [`ResourceKey`] with default options.
-impl From<ResourceKey> for DataRequestOld {
-    fn from(key: ResourceKey) -> Self {
-        Self {
-            resource_path: ResourcePath {
-                key,
-                options: Default::default(),
-            },
-        }
     }
 }
 

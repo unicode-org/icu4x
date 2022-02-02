@@ -400,43 +400,6 @@ impl ResourceOptions {
     }
 }
 
-#[derive(Clone, PartialEq)]
-pub struct ResourcePath {
-    pub key: ResourceKey,
-    pub options: ResourceOptions,
-}
-
-impl fmt::Debug for ResourcePath {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ResourcePath{{{}}}", self)
-    }
-}
-
-impl fmt::Display for ResourcePath {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for ResourcePath {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self.key, sink)?;
-        if !self.options.is_empty() {
-            sink.write_char('/')?;
-            writeable::Writeable::write_to(&self.options, sink)?;
-        }
-        Ok(())
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.key);
-        if !self.options.is_empty() {
-            result += writeable::Writeable::write_len(&self.options) + 1;
-        }
-        result
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -508,27 +471,6 @@ mod tests {
         for cas in get_options_test_cases().iter() {
             assert_eq!(cas.expected, cas.resc_options.to_string());
             writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
-        }
-    }
-
-    #[test]
-    fn test_resource_path_to_string() {
-        for key_cas in get_key_test_cases().iter() {
-            for options_cas in get_options_test_cases().iter() {
-                let expected = if options_cas.resc_options.is_empty() {
-                    key_cas.expected.to_string()
-                } else {
-                    format!("{}/{}", key_cas.expected, options_cas.expected)
-                };
-                let resource_path = ResourcePath {
-                    key: key_cas.resc_key,
-                    // Note: once https://github.com/rust-lang/rust/pull/80470 is accepted,
-                    // we won't have to clone here.
-                    options: options_cas.resc_options.clone(),
-                };
-                assert_eq!(expected, resource_path.to_string());
-                writeable::assert_writeable_eq!(&resource_path, expected);
-            }
         }
     }
 }

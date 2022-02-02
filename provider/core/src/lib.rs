@@ -166,7 +166,6 @@ pub mod prelude {
     pub use crate::marker::ResourceMarker;
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
-    pub use crate::resource::ResourcePath;
     pub use crate::resource_key;
 
     pub use crate::any::AsDowncastingAnyProvider;
