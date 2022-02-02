@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643743534831,
+  "lastUpdate": 1643784480544,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19529,6 +19529,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 54808219,
             "range": "± 727671",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fb073c2109bdf792bcf30770e53af6b8000678b1",
+          "message": "Fix cargo quick in list component (#1573)",
+          "timestamp": "2022-02-02T00:39:31-06:00",
+          "tree_id": "02ef14dad08cb1cb240f4ca0bbb7475a6d24149d",
+          "url": "https://github.com/unicode-org/icu4x/commit/fb073c2109bdf792bcf30770e53af6b8000678b1"
+        },
+        "date": 1643784468912,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40956682,
+            "range": "± 1596660",
             "unit": "ns/iter"
           }
         ]
