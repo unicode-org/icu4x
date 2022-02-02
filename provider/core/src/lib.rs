@@ -146,6 +146,7 @@ pub mod prelude {
     pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
     pub use crate::resource::ResourceKey;
+    pub use crate::resource::ResourceKeyHash;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
     pub use crate::resource_key;
