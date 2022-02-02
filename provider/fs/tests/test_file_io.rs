@@ -7,6 +7,7 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_plurals::{provider::*, rules::runtime::ast::Rule};
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
 use icu_provider_fs::FsDataProvider;
@@ -187,6 +188,34 @@ fn test_json_errors() {
 }
 
 #[test]
+#[cfg(feature = "deserialize_json")]
+fn test_json_iterator() {
+    let provider = FsDataProvider::try_new("./tests/testdata/json")
+        .expect("Loading file from testdata directory");
+
+    let mut options: Vec<ResourceOptions> = provider
+        .supported_options_for_key(&key::CARDINAL_V1)
+        .unwrap()
+        .collect();
+
+    options.sort_by_cached_key(|options| (options.variant.to_owned(), options.langid.to_owned()));
+
+    assert_eq!(
+        options,
+        vec![
+            ResourceOptions {
+                variant: None,
+                langid: Some(langid!("ru"))
+            },
+            ResourceOptions {
+                variant: Some(Cow::Borrowed("variant")),
+                langid: Some(langid!("de"))
+            }
+        ]
+    );
+}
+
+#[test]
 #[cfg(feature = "deserialize_bincode_1")]
 fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
@@ -213,4 +242,32 @@ fn test_bincode_dyn_erased_serde() {
         .take_payload()
         .expect("The data should be present");
     assert_eq!(plurals_data.get(), &PluralRulesV1::from(&EXPECTED_SR_DATA));
+}
+
+#[test]
+#[cfg(feature = "deserialize_bincode_1")]
+fn test_bincode_iterator() {
+    let provider = FsDataProvider::try_new("./tests/testdata/bincode")
+        .expect("Loading file from testdata directory");
+
+    let mut options: Vec<ResourceOptions> = provider
+        .supported_options_for_key(&key::CARDINAL_V1)
+        .unwrap()
+        .collect();
+
+    options.sort_by_cached_key(|options| (options.variant.to_owned(), options.langid.to_owned()));
+
+    assert_eq!(
+        options,
+        vec![
+            ResourceOptions {
+                variant: None,
+                langid: Some(langid!("sr"))
+            },
+            ResourceOptions {
+                variant: Some(Cow::Borrowed("variant")),
+                langid: Some(langid!("de"))
+            }
+        ]
+    );
 }

@@ -3,8 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobSchema;
+use alloc::boxed::Box;
 use alloc::rc::Rc;
 use icu_provider::buf::BufferFormat;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use writeable::Writeable;
@@ -126,6 +128,20 @@ impl BufferProvider for BlobDataProvider {
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(yoked_buffer)),
+        })
+    }
+}
+
+impl IterableProvider for BlobDataProvider {
+    fn supported_options_for_key(
+        &self,
+        resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(match self.data.get().iter_keys1(resc_key.get_path()) {
+            Some(iter) => Box::new(iter.map(|options_string| {
+                ResourceOptions::from_parts(options_string.split('/'))
+            })),
+            None => Box::new(core::iter::empty()),
         })
     }
 }

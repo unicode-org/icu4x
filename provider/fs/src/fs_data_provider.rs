@@ -5,6 +5,7 @@
 use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
 use icu_provider::yoke::trait_hack::YokeTraitHack;
@@ -115,5 +116,71 @@ where
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         self.as_deserializing().load_payload(req)
+    }
+}
+
+impl IterableProvider for FsDataProvider {
+    fn supported_options_for_key(
+        &self,
+        resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        let mut key_root = self.res_root.clone();
+        key_root.push(resc_key.get_path());
+
+        let mut options = Vec::new();
+
+        if key_root
+            .with_extension(self.manifest.get_file_extension())
+            .exists()
+        {
+            options.push(ResourceOptions::from_parts(core::iter::empty()));
+        }
+
+        let is_data_file = |entry: &std::fs::DirEntry| {
+            let t = entry.file_type().expect("IO");
+            (t.is_file()
+                || (t.is_symlink()
+                    && self.manifest.aliasing == crate::manifest::AliasOption::Symlink))
+                && entry
+                    .file_name()
+                    .to_string_lossy()
+                    .ends_with(self.manifest.get_file_extension())
+        };
+
+        if key_root.exists() && key_root.is_dir() {
+            for level1 in fs::read_dir(key_root).expect("IO") {
+                let level1 = level1.expect("IO");
+
+                if is_data_file(&level1) {
+                    options.push(ResourceOptions::from_parts(core::iter::once(
+                        level1
+                            .file_name()
+                            .to_string_lossy()
+                            .strip_suffix(self.manifest.get_file_extension())
+                            .unwrap()
+                            .strip_suffix('.')
+                            .unwrap(),
+                    )))
+                } else if level1.file_type().unwrap().is_dir() {
+                    for level2 in fs::read_dir(level1.path()).expect("IO") {
+                        let level2 = level2.expect("IO");
+                        if is_data_file(&level2) {
+                            options.push(ResourceOptions::from_parts(std::array::IntoIter::new([
+                                &*level1.file_name().to_string_lossy(),
+                                level2
+                                    .file_name()
+                                    .to_string_lossy()
+                                    .strip_suffix(self.manifest.get_file_extension())
+                                    .unwrap()
+                                    .strip_suffix('.')
+                                    .unwrap(),
+                            ])));
+                        }
+                    }
+                }
+            }
+        }
+
+        Ok(Box::new(options.into_iter()))
     }
 }
