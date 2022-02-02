@@ -27,7 +27,7 @@ include = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.5", path = "../../provider/core", features = ["deserialize_postcard_07"] }
+icu_provider = { version = "0.5", path = "../../provider/core", features = ["deserialize_postcard_07", "serde"] }
 icu_locid = { version = "0.5", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
 postcard = { version = "0.7.0", default-features = false }
