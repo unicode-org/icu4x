@@ -9,7 +9,6 @@ use alloc::borrow::Cow;
 ))]
 use alloc::string::ToString;
 use icu_provider::yoke::{self, *};
-use icu_provider::DataError;
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
@@ -91,7 +90,7 @@ impl<'data> StringMatcher<'data> {
         feature = "provider_transform_internals",
         feature = "icu4x_human_readable_de",
     ))]
-    pub fn new(pattern: &str) -> Result<Self, DataError> {
+    pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
             SyntaxConfig,
@@ -102,9 +101,14 @@ impl<'data> StringMatcher<'data> {
             .syntax(SyntaxConfig::new().case_insensitive(true))
             .configure(Config::new().anchored(true).minimize(true))
             .build(pattern)
-            .map_err(|_| DataError::custom("Cannot build DFA").with_display_context(&pattern))?
+            .map_err(|_| {
+                icu_provider::DataError::custom("Cannot build DFA").with_display_context(&pattern)
+            })?
             .to_sparse()
-            .map_err(|_| DataError::custom("Cannot sparsify DFA").with_display_context(&pattern))?;
+            .map_err(|_| {
+                icu_provider::DataError::custom("Cannot sparsify DFA")
+                    .with_display_context(&pattern)
+            })?;
 
         Ok(Self {
             dfa_bytes: dfa.to_bytes_little_endian().into(),
