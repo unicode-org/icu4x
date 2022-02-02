@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643790321271,
+  "lastUpdate": 1643836996259,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25997,6 +25997,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 16382,
             "range": "± 930",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88f3e2ff55861a5e957d0aa04a68e76ac61b99f1",
+          "message": "Connect Script_Extensions data provider to datagen, update testdata (#1572)",
+          "timestamp": "2022-02-02T13:13:43-08:00",
+          "tree_id": "3e7cd8d4bddd9c06c615535c82fe4f64db77d136",
+          "url": "https://github.com/unicode-org/icu4x/commit/88f3e2ff55861a5e957d0aa04a68e76ac61b99f1"
+        },
+        "date": 1643836985057,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 862,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5218,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 14553,
+            "range": "± 1961",
             "unit": "ns/iter"
           }
         ]
