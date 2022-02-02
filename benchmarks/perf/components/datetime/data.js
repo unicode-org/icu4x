@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643743607552,
+  "lastUpdate": 1643784517970,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19541,6 +19541,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 290430,
             "range": "± 1634",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fb073c2109bdf792bcf30770e53af6b8000678b1",
+          "message": "Fix cargo quick in list component (#1573)",
+          "timestamp": "2022-02-02T00:39:31-06:00",
+          "tree_id": "02ef14dad08cb1cb240f4ca0bbb7475a6d24149d",
+          "url": "https://github.com/unicode-org/icu4x/commit/fb073c2109bdf792bcf30770e53af6b8000678b1"
+        },
+        "date": 1643784507691,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 72127,
+            "range": "± 97",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 762155,
+            "range": "± 3935",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 291533,
+            "range": "± 2148",
             "unit": "ns/iter"
           }
         ]
