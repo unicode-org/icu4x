@@ -3,9 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::*;
+use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
-use icu_provider::prelude::*;
 use icu_provider::iter::IterableProvider;
+use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::trait_hack::YokeTraitHack;
