@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_provider_blob` contains implementations of the [`ICU4X`] [`DataProvider`] interface
+//! `icu_provider_blob` contains implementations of the [`ICU4X`] [`BufferProvider`] interface
 //! that load data from a single blob.
 //!
 //! There are two exports:
@@ -32,7 +32,7 @@
 //! For more examples, see the specific data providers.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`DataProvider`]: icu_provider::prelude::DataProvider
+//! [`BufferProvider`]: icu_provider::BufferProvider
 //! [`icu4x-datagen`]: https://github.com/unicode-org/icu4x/tree/main/tools/datagen#readme
 
 #![cfg_attr(not(any(test, feature = "std")), no_std)]

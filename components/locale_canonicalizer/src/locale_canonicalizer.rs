@@ -225,7 +225,7 @@ macro_rules! maximize_locale {
 }
 
 impl LocaleCanonicalizer {
-    /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
+    /// A constructor which takes a [`ResourceProvider`] and creates a [`LocaleCanonicalizer`].
     pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer, DataError>
     where
         P: ResourceProvider<AliasesV1Marker> + ResourceProvider<LikelySubtagsV1Marker> + ?Sized,

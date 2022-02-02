@@ -48,7 +48,7 @@ where
     Ok(())
 }
 
-/// [`TimeZoneFormat`] uses data from the [`DataProvider`], the selected [`Locale`], and the provided
+/// [`TimeZoneFormat`] uses data from the [data provider], the selected [`Locale`], and the provided
 /// [`TimeZoneFormatConfig`] to collect all data necessary to format time zones into that locale.
 ///
 /// The various time-zone configs specified in UTS-35 require different sets of data for
@@ -84,6 +84,8 @@ where
 ///
 /// let value = tzf.format_to_string(&time_zone);
 /// ```
+///
+/// [data provider]: icu_provider
 pub struct TimeZoneFormat {
     // The kind of time zone format.
     pub(super) kind: TimeZoneFormatKind,

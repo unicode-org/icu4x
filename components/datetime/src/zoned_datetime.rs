@@ -21,7 +21,7 @@ use crate::{
 
 /// The composition of [`DateTimeFormat`](crate::DateTimeFormat) and [`TimeZoneFormat`](crate::TimeZoneFormat).
 ///
-/// [`ZonedDateTimeFormat`] uses data from the [`DataProvider`]s, the selected [`Locale`], and the
+/// [`ZonedDateTimeFormat`] uses data from the [data provider]s, the selected [`Locale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
@@ -66,8 +66,8 @@ use crate::{
 pub struct ZonedDateTimeFormat<C>(raw::ZonedDateTimeFormat, PhantomData<C>);
 
 impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
-    /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
-    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
+    /// Constructor that takes a selected [`Locale`], a reference to a [data provider] for
+    /// dates, a [data provider] for time zones, and a list of [`DateTimeFormatOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// # Examples
@@ -92,6 +92,8 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     ///
     /// assert_eq!(zdtf.is_ok(), true);
     /// ```
+    ///
+    /// [data provider]: icu_provider
     #[inline]
     pub fn try_new<L, DP, ZP, PP>(
         locale: L,

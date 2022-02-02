@@ -296,7 +296,7 @@ impl PluralRules {
     /// ```
     ///
     /// [`type`]: PluralRuleType
-    /// [`data provider`]: icu_provider::DataProvider
+    /// [`data provider`]: icu_provider
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
