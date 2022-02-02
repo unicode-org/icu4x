@@ -165,6 +165,7 @@ pub mod prelude {
     pub use crate::marker::DataMarker;
     pub use crate::marker::ResourceMarker;
     pub use crate::resource::ResourceKey;
+    pub use crate::resource::ResourceKeyHash;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource_key;
 

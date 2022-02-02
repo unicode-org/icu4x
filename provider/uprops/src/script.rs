@@ -5,9 +5,10 @@
 use crate::uprops_helpers;
 use crate::uprops_serde::script_extensions::ScriptExtensionsProperty;
 use icu_codepointtrie::CodePointTrie;
-use icu_properties::provider::{ScriptExtensionsPropertyV1, ScriptExtensionsPropertyV1Marker};
+use icu_properties::provider::{key, ScriptExtensionsPropertyV1, ScriptExtensionsPropertyV1Marker};
 use icu_properties::script::{ScriptExtensions, ScriptWithExt};
 use icu_properties::Script;
+use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;
@@ -93,6 +94,20 @@ impl DynProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsPropertyP
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data_struct)),
         })
+    }
+}
+
+icu_provider::impl_dyn_provider!(ScriptExtensionsPropertyProvider, {
+    key::SCRIPT_EXTENSIONS_V1 => ScriptExtensionsPropertyV1Marker,
+}, SERDE_SE);
+
+impl IterableProvider for ScriptExtensionsPropertyProvider {
+    fn supported_options_for_key(
+        &self,
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
+        Ok(Box::new(list.into_iter()))
     }
 }
 

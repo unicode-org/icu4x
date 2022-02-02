@@ -13,7 +13,7 @@ use zerovec::map2d::ZeroMap2d;
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
-    resources: LiteMap<(String, String), Vec<u8>>,
+    resources: LiteMap<(ResourceKeyHash, String), Vec<u8>>,
     sink: Box<dyn std::io::Write + 'w>,
 }
 
@@ -49,7 +49,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
         self.resources.insert(
             (
-                key.writeable_to_string().into_owned(),
+                key.get_hash(),
                 req.options.writeable_to_string().into_owned(),
             ),
             serializer.output.0,
@@ -59,7 +59,8 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
 
     fn close(&mut self) -> Result<(), DataError> {
         // Convert from LiteMap<(String, String), Vec<u8>> to ZeroMap2d<str, str, [u8]>
-        let mut zm: ZeroMap2d<str, str, [u8]> = ZeroMap2d::with_capacity(self.resources.len());
+        let mut zm: ZeroMap2d<ResourceKeyHash, str, [u8]> =
+            ZeroMap2d::with_capacity(self.resources.len());
         for ((key, option), bytes) in self.resources.iter() {
             zm.insert(key, option, bytes);
         }

@@ -60,7 +60,7 @@ use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
-    data: Yoke<ZeroMap2dBorrowed<'static, str, str, [u8]>, Rc<[u8]>>,
+    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, str, [u8]>, Rc<[u8]>>,
 }
 
 impl BlobDataProvider {
@@ -88,7 +88,7 @@ impl BlobDataProvider {
         self.data
             .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
                 zm.get(
-                    &key.writeable_to_string(),
+                    &key.get_hash(),
                     &req.options.writeable_to_string(),
                 )
                 .map_err(|e| {
