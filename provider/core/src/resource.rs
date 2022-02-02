@@ -398,13 +398,6 @@ impl ResourceOptions {
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
     }
-
-    pub fn try_langid(&self) -> Result<&LanguageIdentifier, DataError> {
-        self.langid
-            .as_ref()
-            // TODO: Better error message
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_str_context(""))
-    }
 }
 
 #[derive(Clone, PartialEq)]

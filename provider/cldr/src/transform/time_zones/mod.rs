@@ -105,7 +105,9 @@ macro_rules! impl_data_provider {
     ($id:ident, $marker:ident) => {
         impl ResourceProvider<$marker> for TimeZonesProvider {
             fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                let langid = req.try_langid(<$marker>::KEY)?;
+                let langid = req
+                    .get_langid()
+                    .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
                 let time_zones = match self.data.get(&langid) {
                     Some(v) => &v.dates.time_zone_names,
                     None => return Err(DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req)),

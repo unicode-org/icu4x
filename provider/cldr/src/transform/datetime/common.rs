@@ -61,7 +61,9 @@ impl CommonDateProvider {
         &'a self,
         req: &DataRequest,
     ) -> Result<&'a cldr_serde::ca::Dates, DataError> {
-        let langid = req.try_langid(M::KEY)?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
         let variant = req
             .options
             .variant

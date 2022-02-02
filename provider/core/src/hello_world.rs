@@ -127,8 +127,9 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        // key::HELLO_WORLD_V1.match_key(req.resource_path.key)?;
-        let langid = req.try_langid(HelloWorldV1Marker::KEY)?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(HelloWorldV1Marker::KEY, req))?;
         let data = self
             .map
             .get(langid)
@@ -203,7 +204,9 @@ impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
         payload: DataPayload<crate::any::AnyMarker>,
     ) -> Result<(), DataError> {
         key.match_key(key::HELLO_WORLD_V1)?;
-        let langid = req.try_langid(key)?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, &req))?;
         let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
         self.map.insert(
             langid.clone(),

@@ -88,7 +88,9 @@ impl DynProvider<PluralRulesV1Marker> for PluralsProvider {
     ) -> Result<DataResponse<PluralRulesV1Marker>, DataError> {
         let cldr_rules = self.get_rules_for(&key)?;
         // TODO: Implement language fallback?
-        let langid = req.try_langid(key)?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, req))?;
         let r = match cldr_rules.0.get(langid) {
             Some(v) => v,
             None => return Err(DataErrorKind::MissingLocale.with_req(key, req)),

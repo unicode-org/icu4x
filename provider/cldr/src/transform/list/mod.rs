@@ -61,7 +61,9 @@ impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
         req: &DataRequest,
     ) -> Result<DataResponse<ListFormatterPatternsV1Marker>, DataError> {
         Self::supports_key(&key)?;
-        let langid = req.try_langid(key)?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, req))?;
         let data = match self.data.get(langid) {
             Some(v) => &v.list_patterns,
             None => return Err(DataErrorKind::MissingLocale.with_req(key, req)),

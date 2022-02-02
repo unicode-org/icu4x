@@ -58,7 +58,7 @@ impl From<ResourceKey> for DataRequestOld {
 }
 
 impl DataRequest {
-    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`], or an error if it is not present.
+    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`], or `None` if it is not present.
     ///
     /// # Examples
     ///
@@ -79,19 +79,16 @@ impl DataRequest {
     /// };
     ///
     /// assert!(matches!(
-    ///     req_no_langid.try_langid(FOO_BAR),
-    ///     Err(DataError { kind: DataErrorKind::NeedsLocale, .. })
+    ///     req_no_langid.get_langid(),
+    ///     None
     /// ));
     /// assert!(matches!(
-    ///     req_with_langid.try_langid(FOO_BAR),
-    ///     Ok(_)
+    ///     req_with_langid.get_langid(),
+    ///     Some(_)
     /// ));
     /// ```
-    pub fn try_langid(&self, context: ResourceKey) -> Result<&LanguageIdentifier, DataError> {
-        self.options
-            .langid
-            .as_ref()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(context, self))
+    pub fn get_langid(&self) -> Option<&LanguageIdentifier> {
+        self.options.langid.as_ref()
     }
 }
 

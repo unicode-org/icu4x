@@ -103,13 +103,16 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
-        let langid = req.try_langid(DecimalSymbolsV1Marker::KEY)?;
-        let numbers = match self.cldr_numbers_data.get(langid) {
-            Some(v) => &v.numbers,
-            None => {
-                return Err(DataErrorKind::MissingLocale.with_req(DecimalSymbolsV1Marker::KEY, req))
-            }
-        };
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(DecimalSymbolsV1Marker::KEY, req))?;
+        let numbers = self
+            .cldr_numbers_data
+            .get(langid)
+            .map(|v| &v.numbers)
+            .ok_or_else(|| {
+                DataErrorKind::MissingLocale.with_req(DecimalSymbolsV1Marker::KEY, req)
+            })?;
         let nsname = numbers.default_numbering_system;
 
         let mut result = DecimalSymbolsV1::try_from(numbers)
