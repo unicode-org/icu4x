@@ -5,7 +5,7 @@
 This API provides necessary functionality for formatting date and time to user readable textual representation.
 
 [`DateTimeFormat`] is the main structure of the component. It accepts a set of arguments which
-allow it to collect necessary data from the [`DataProvider`], and once instantiated, can be
+allow it to collect necessary data from the [data provider], and once instantiated, can be
 used to quickly format any date and time provided.
 
 ## Examples
@@ -64,7 +64,7 @@ we expect to add more ways to customize the output, like skeletons, and componen
 to develop core date and time APIs that will work as an input for this component. [`DateTime`] additionally
 has support for non-Gregorian calendars, which this module will eventually be able to format.
 
-[`DataProvider`]: icu_provider::DataProvider
+[data provider]: icu_provider
 [`ICU4X`]: ../icu/index.html
 [`Length`]: options::length
 [`DateTime`]: icu_calendar::DateTime

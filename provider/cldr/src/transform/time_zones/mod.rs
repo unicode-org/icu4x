@@ -69,13 +69,12 @@ impl KeyedDataProvider for TimeZonesProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         // TODO(#442): Clean up KeyedDataProvider
         // Note: This is a big if{} instead of match{} due to Rust bug #93470
-        if *resc_key == key::TIMEZONE_FORMATS_V1
-            || *resc_key == key::TIMEZONE_FORMATS_V1
-            || *resc_key == key::TIMEZONE_EXEMPLAR_CITIES_V1
-            || *resc_key == key::TIMEZONE_GENERIC_NAMES_LONG_V1
-            || *resc_key == key::TIMEZONE_GENERIC_NAMES_SHORT_V1
-            || *resc_key == key::TIMEZONE_SPECIFIC_NAMES_LONG_V1
-            || *resc_key == key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1
+        if !(!(*resc_key == key::TIMEZONE_FORMATS_V1)
+            && !(*resc_key == key::TIMEZONE_EXEMPLAR_CITIES_V1)
+            && !(*resc_key == key::TIMEZONE_GENERIC_NAMES_LONG_V1)
+            && !(*resc_key == key::TIMEZONE_GENERIC_NAMES_SHORT_V1)
+            && !(*resc_key == key::TIMEZONE_SPECIFIC_NAMES_LONG_V1)
+            && !(*resc_key == key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1))
         {
             Ok(())
         } else {

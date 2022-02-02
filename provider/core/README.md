@@ -27,7 +27,7 @@ use icu_provider::prelude::*;
 
 ### Types of Data Providers
 
-All data providers can fit into one of two classes.
+All nontrivial data providers can fit into one of two classes.
 
 1. Type 1: Those whose data originates as structured Rust objects
 2. Type 2: Those whose data originates as unstructured `[u8]` buffers
