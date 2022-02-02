@@ -105,7 +105,7 @@ pub struct DataResponseMetadata {
     pub buffer_format: Option<crate::buf::BufferFormat>,
 }
 
-/// A container for data payloads returned from a [`DataProvider`].
+/// A container for data payloads returned from a data provider.
 ///
 /// [`DataPayload`] is built on top of the [`yoke`] framework, which allows for cheap, zero-copy
 /// operations on data via the use of self-references. A [`DataPayload`] may be backed by one of

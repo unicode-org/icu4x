@@ -15,10 +15,10 @@ impl DataMarker for BufferMarker {
 /// A data provider that returns opaque bytes.
 ///
 /// Generally, these bytes are expected to be deserializable with Serde. To get an object
-/// implementing [`DataProvider`] via Serde, use [`as_deserializing()`], which requires
+/// implementing [`ResourceProvider`] via Serde, use [`as_deserializing()`], which requires
 /// enabling at least one of the Serde features.
 ///
-/// Along with [`DataProvider`], this is one of the two foundational traits in this crate.
+/// Along with [`ResourceProvider`], this is one of the two foundational traits in this crate.
 ///
 /// # Examples
 ///

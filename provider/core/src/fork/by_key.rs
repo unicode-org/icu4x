@@ -13,8 +13,9 @@ use alloc::vec::Vec;
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// Note: It does not make sense to construct a forking [`DataProvider`], since that is
-/// type-specific. Instead, make a forking [`BufferProvider`].
+/// Note: A forking [`ResourceProvider`] does not make sense, since there is only one key that
+/// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
+/// or [`DynProvider`].
 ///
 /// # Examples
 ///
@@ -102,7 +103,11 @@ use alloc::vec::Vec;
 /// ```
 pub struct ForkByKeyProvider<P0, P1>(pub P0, pub P1);
 
-impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvider<P0, P1> {
+impl<P0, P1> BufferProvider for ForkByKeyProvider<P0, P1>
+where
+    P0: BufferProvider,
+    P1: BufferProvider,
+{
     fn load_buffer(
         &self,
         key: ResourceKey,
@@ -116,13 +121,36 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvide
     }
 }
 
-impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1> {
+impl<P0, P1> AnyProvider for ForkByKeyProvider<P0, P1>
+where
+    P0: AnyProvider,
+    P1: AnyProvider,
+{
     fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         let result = self.0.load_any(key, req);
         if !DataError::result_is_err_missing_resource_key(&result) {
             return result;
         }
         self.1.load_any(key, req)
+    }
+}
+
+impl<M, P0, P1> DynProvider<M> for ForkByKeyProvider<P0, P1>
+where
+    M: DataMarker,
+    P0: DynProvider<M>,
+    P1: DynProvider<M>,
+{
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        let result = self.0.load_payload(key, req);
+        if !DataError::result_is_err_missing_resource_key(&result) {
+            return result;
+        }
+        self.1.load_payload(key, req)
     }
 }
 
@@ -186,7 +214,10 @@ pub struct MultiForkByKeyProvider<P> {
     pub providers: Vec<P>,
 }
 
-impl<P: BufferProvider> BufferProvider for MultiForkByKeyProvider<P> {
+impl<P> BufferProvider for MultiForkByKeyProvider<P>
+where
+    P: BufferProvider,
+{
     fn load_buffer(
         &self,
         key: ResourceKey,
@@ -202,10 +233,33 @@ impl<P: BufferProvider> BufferProvider for MultiForkByKeyProvider<P> {
     }
 }
 
-impl<P: AnyProvider> AnyProvider for MultiForkByKeyProvider<P> {
+impl<P> AnyProvider for MultiForkByKeyProvider<P>
+where
+    P: AnyProvider,
+{
     fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_any(key, req);
+            if !DataError::result_is_err_missing_resource_key(&result) {
+                return result;
+            }
+        }
+        Err(DataErrorKind::MissingResourceKey.with_key(key))
+    }
+}
+
+impl<M, P> DynProvider<M> for MultiForkByKeyProvider<P>
+where
+    M: DataMarker,
+    P: DynProvider<M>,
+{
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        for provider in self.providers.iter() {
+            let result = provider.load_payload(key, req);
             if !DataError::result_is_err_missing_resource_key(&result) {
                 return result;
             }

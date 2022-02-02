@@ -50,16 +50,16 @@ where
 ///   Use the shorthand `SERDE_SE` as the third argument to the macro.
 ///
 /// ## Wrapping ResourceProvider
-/// 
+///
 /// If your type implements [`ResourceProvider`], pass a list of markers as the second argument.
 /// This results in a `DynProvider<AnyMarker>` that delegates to a specific marker if the key
 /// matches or else returns [`DataErrorKind::MissingResourceKey`].
-/// 
+///
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
-/// 
+///
 /// // Example struct that implements ResourceProvider<HelloWorldV1Marker>
 /// struct MyProvider;
 /// impl ResourceProvider<HelloWorldV1Marker> for MyProvider {
@@ -69,20 +69,20 @@ where
 ///         provider.load_resource(req)
 ///     }
 /// }
-/// 
+///
 /// // Implement DataProvider<AnyMarker> on this struct
 /// icu_provider::impl_dyn_provider!(MyProvider, [
 ///     HelloWorldV1Marker,
 /// ], ANY);
-/// 
+///
 /// let provider = MyProvider;
-/// 
+///
 /// // Successful result if the key matches:
 /// assert!(matches!(
 ///     provider.load_payload(HelloWorldV1Marker::KEY, &Default::default()),
 ///     Ok(_)
 /// ));
-/// 
+///
 /// // Failure if the key does not match:
 /// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
 /// assert!(matches!(
@@ -90,17 +90,17 @@ where
 ///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
 /// ));
 /// ```
-/// 
+///
 /// ## Wrapping DynProvider
-/// 
+///
 /// It is also possible to wrap a [`DynProvider`] to create another [`DynProvider`]. To do this,
 /// pass a match-like statement for keys as the second argument:
-/// 
+///
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
-/// 
+///
 /// // Example struct that implements DynProvider<HelloWorldV1Marker>
 /// struct MyProvider;
 /// impl DynProvider<HelloWorldV1Marker> for MyProvider {
@@ -110,7 +110,7 @@ where
 ///         provider.load_resource(req)
 ///     }
 /// }
-/// 
+///
 /// // Implement DataProvider<AnyMarker> on this struct.
 /// // Match HelloWorldV1Marker::KEY and delegate to DynProvider<HelloWorldV1Marker>.
 /// // Send the wildcard match also to DynProvider<HelloWorldV1Marker>.
@@ -118,16 +118,16 @@ where
 ///     HelloWorldV1Marker::KEY => HelloWorldV1Marker,
 ///     _ => HelloWorldV1Marker,
 /// }, ANY);
-/// 
+///
 /// let provider = MyProvider;
 /// let provider = provider.as_any_provider();
-/// 
+///
 /// // Successful result if the key matches:
 /// assert!(matches!(
 ///     provider.load_any(HelloWorldV1Marker::KEY, &Default::default()),
 ///     Ok(_)
 /// ));
-/// 
+///
 /// // Because of the wildcard, non-matching requests are captured:
 /// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
 /// assert!(matches!(

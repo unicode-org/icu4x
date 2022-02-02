@@ -7,9 +7,9 @@
 use crate::iter::IterableProvider;
 use crate::prelude::*;
 
-/// An object capable of serializing data payloads to be read by a [`DataProvider`].
+/// An object capable of serializing data payloads to be read by a data provider.
 ///
-/// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
+/// A data provider by itself is "read-only"; this trait enables it to be "read-write".
 pub trait DataExporter<M>
 where
     M: DataMarker,
