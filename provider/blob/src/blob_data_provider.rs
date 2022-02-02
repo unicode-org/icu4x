@@ -138,9 +138,9 @@ impl IterableProvider for BlobDataProvider {
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(match self.data.get().iter_keys1(resc_key.get_path()) {
-            Some(iter) => Box::new(iter.map(|options_string| {
-                ResourceOptions::from_parts(options_string.split('/'))
-            })),
+            Some(iter) => Box::new(
+                iter.map(|options_string| ResourceOptions::from_parts(options_string.split('/'))),
+            ),
             None => Box::new(core::iter::empty()),
         })
     }

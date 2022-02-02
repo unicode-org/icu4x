@@ -4,10 +4,10 @@
 
 //! Resource paths and related types.
 
-use alloc::borrow::Cow;
-use alloc::borrow::ToOwned;
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
+use alloc::borrow::Cow;
+use alloc::borrow::ToOwned;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
