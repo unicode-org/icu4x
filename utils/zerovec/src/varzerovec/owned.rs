@@ -530,7 +530,6 @@ mod test {
         zerovec.insert(0, "");
         assert_eq!(zerovec, &*items);
 
-
         items.insert(0, "1234567890".into());
         zerovec.insert(0, "1234567890");
         assert_eq!(zerovec, &*items);
