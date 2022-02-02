@@ -14,7 +14,7 @@ mod exceptions;
 mod exceptions_builder;
 mod internals;
 
-pub use error::Error as CaseMappingError;
 pub use casemapping::CaseMapping;
+pub use error::Error as CaseMappingError;
 #[cfg(feature = "provider_transform_internals")]
 pub use internals::CaseMappingInternals;

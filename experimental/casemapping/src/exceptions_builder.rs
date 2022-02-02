@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashMap;
 use crate::error::Error;
 use crate::exceptions::{CaseMappingExceptions, ExceptionHeader, ExceptionSlot};
+use std::collections::HashMap;
 use zerovec::{VarZeroVec, ZeroVec};
 
 // CaseMappingExceptionsBuilder consumes the exceptions data produced by
@@ -75,7 +75,9 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
         }
     }
 
-    pub(crate) fn build(mut self) -> Result<(CaseMappingExceptions<'static>, HashMap<u16, u16>), Error> {
+    pub(crate) fn build(
+        mut self,
+    ) -> Result<(CaseMappingExceptions<'static>, HashMap<u16, u16>), Error> {
         let mut index_map = HashMap::new();
         // The format of the raw data from ICU4C is the same as the format described in
         // exceptions.rs, with the exception of full mapping and closure strings. The
@@ -147,8 +149,12 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
 
                     let start = self.raw_data_idx;
                     let end = start + len as usize;
-                    let slice = &self.raw_data.get(start..end).ok_or(Error::Validation("Incomplete string data"))?;
-                    let string = char::decode_utf16(slice.iter().copied()).collect::<Result<String, _>>()?;
+                    let slice = &self
+                        .raw_data
+                        .get(start..end)
+                        .ok_or(Error::Validation("Incomplete string data"))?;
+                    let string =
+                        char::decode_utf16(slice.iter().copied()).collect::<Result<String, _>>()?;
                     self.strings.push(string);
 
                     self.raw_data_idx += len as usize;
@@ -163,8 +169,13 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                 let idx = self.strings.len() as u32;
 
                 let start = self.raw_data_idx;
-                let slice = &self.raw_data.get(start..).ok_or(Error::Validation("Incomplete string data"))?;
-                let string = char::decode_utf16(slice.iter().copied()).take(len).collect::<Result<String, _>>()?;
+                let slice = &self
+                    .raw_data
+                    .get(start..)
+                    .ok_or(Error::Validation("Incomplete string data"))?;
+                let string = char::decode_utf16(slice.iter().copied())
+                    .take(len)
+                    .collect::<Result<String, _>>()?;
                 for c in string.chars() {
                     self.raw_data_idx += c.len_utf16();
                 }

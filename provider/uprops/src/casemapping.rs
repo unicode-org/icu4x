@@ -31,11 +31,16 @@ impl CaseMappingDataProvider {
         let exceptions = &toml.ucase.exceptions.exceptions;
         let unfold = &toml.ucase.unfold.unfold;
 
-        let case_mapping =
-            CaseMappingInternals::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)
-            .map_err(|e| DataError::custom("Could not create CaseMappingInternals")
-                     .with_display_context(&e)
-            )?;
+        let case_mapping = CaseMappingInternals::try_from_icu(
+            trie_header,
+            trie_index,
+            trie_data,
+            exceptions,
+            unfold,
+        )
+        .map_err(|e| {
+            DataError::custom("Could not create CaseMappingInternals").with_display_context(&e)
+        })?;
 
         Ok(Self { case_mapping })
     }
@@ -66,8 +71,7 @@ mod tests {
             .join("uprops")
             .join("ucase.toml");
         let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
-        let case_mapping = CaseMapping::new(&provider)
-            .expect("Loading was successful");
+        let case_mapping = CaseMapping::new(&provider).expect("Loading was successful");
         assert_eq!(case_mapping.to_uppercase('a'), 'A');
         assert_eq!(case_mapping.to_uppercase('\u{1c4}'), '\u{1c4}');
         assert_eq!(case_mapping.to_titlecase('\u{1c4}'), '\u{1c5}');
@@ -80,15 +84,13 @@ mod tests {
         assert_eq!(case_mapping.to_lowercase('\u{1c6}'), '\u{1c6}');
     }
 
-
     #[test]
     fn test_full_upper() {
         let root_dir = icu_testdata::paths::data_root()
             .join("uprops")
             .join("ucase.toml");
         let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
-        let case_mapping = CaseMapping::new(&provider)
-            .expect("Loading was successful");
+        let case_mapping = CaseMapping::new(&provider).expect("Loading was successful");
         assert_eq!(&case_mapping.to_full_uppercase(""), "");
         assert_eq!(&case_mapping.to_full_uppercase("ABCDEFG"), "ABCDEFG");
         assert_eq!(&case_mapping.to_full_uppercase("abcdefg"), "ABCDEFG");

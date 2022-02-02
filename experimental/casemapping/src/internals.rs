@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "provider_transform_internals")]
-use std::collections::HashMap;
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
 #[cfg(feature = "provider_transform_internals")]
@@ -12,6 +10,8 @@ use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "provider_transform_internals")]
+use std::collections::HashMap;
 use yoke::{Yokeable, ZeroCopyFrom};
 use zerovec::ule::{AsULE, RawBytesULE};
 use zerovec::ZeroMap;
@@ -19,7 +19,7 @@ use zerovec::ZeroMap;
 use zerovec::ZeroVec;
 
 use crate::error::Error;
-use crate::exceptions::{ExceptionSlot, CaseMappingExceptions};
+use crate::exceptions::{CaseMappingExceptions, ExceptionSlot};
 #[cfg(feature = "provider_transform_internals")]
 use crate::exceptions_builder::CaseMappingExceptionsBuilder;
 
@@ -321,6 +321,7 @@ impl<'data> CaseMappingUnfoldData<'data> {
 
 // Used to control the behavior of CaseMapping::fold.
 // Currently only used to decide whether to use Turkic (T) mappings for dotted/dotless i.
+#[derive(Default)]
 pub struct FoldOptions {
     exclude_special_i: bool,
 }
@@ -329,14 +330,6 @@ impl FoldOptions {
     pub fn with_turkic_mappings() -> Self {
         Self {
             exclude_special_i: true,
-        }
-    }
-}
-
-impl Default for FoldOptions {
-    fn default() -> Self {
-        Self {
-            exclude_special_i: false,
         }
     }
 }
@@ -375,9 +368,7 @@ impl<'data> CaseMappingInternals<'data> {
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
         let trie_data = trie_data
             .iter()
-            .map(|&i| {
-                CaseMappingData(i).with_updated_exception(&idx_map)
-            })
+            .map(|&i| CaseMappingData(i).with_updated_exception(&idx_map))
             .collect::<ZeroVec<_>>();
         let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
@@ -483,7 +474,7 @@ impl<'data> CaseMappingInternals<'data> {
             }
         } else {
             // TODO: if we move conditional fold and no_simple_case_folding into
-	        // simple_helper, this function can just call simple_helper.
+            // simple_helper, this function can just call simple_helper.
             let idx = data.exception_index();
             if self.exceptions.has_conditional_fold(idx) {
                 self.simple_fold_special_case(c, options)
@@ -562,9 +553,7 @@ impl<'data> CaseMappingInternals<'data> {
                 }
             }
             if self.exceptions.has_slot(idx, ExceptionSlot::FullMappings) {
-                let mapped_string = self
-                    .exceptions
-                    .full_mapping_string(idx, kind);
+                let mapped_string = self.exceptions.full_mapping_string(idx, kind);
                 if !mapped_string.is_empty() {
                     return FullMappingResult::String(mapped_string);
                 }
@@ -666,11 +655,11 @@ impl<'data> CaseMappingInternals<'data> {
             // Lithuanian: grave, acute, and tilde above).
 
             // Check for accents above I, J, and I-with-ogonek.
-            if c == 'I' && context.followed_by_more_above(&self) {
+            if c == 'I' && context.followed_by_more_above(self) {
                 return Some(FullMappingResult::String(Self::I_DOT));
-            } else if c == 'J' && context.followed_by_more_above(&self) {
+            } else if c == 'J' && context.followed_by_more_above(self) {
                 return Some(FullMappingResult::String(Self::J_DOT));
-            } else if c == '\u{12e}' && context.followed_by_more_above(&self) {
+            } else if c == '\u{12e}' && context.followed_by_more_above(self) {
                 return Some(FullMappingResult::String(Self::I_OGONEK_DOT));
             }
 
@@ -689,12 +678,12 @@ impl<'data> CaseMappingInternals<'data> {
             if c == '\u{130}' {
                 // I and i-dotless; I-dot and i are case pairs in Turkish and Azeri
                 return Some(FullMappingResult::CodePoint('i'));
-            } else if c == '\u{307}' && context.preceded_by_capital_i(&self) {
+            } else if c == '\u{307}' && context.preceded_by_capital_i(self) {
                 // When lowercasing, remove dot_above in the sequence I + dot_above,
                 // which will turn into i. This matches the behaviour of the
                 // canonically equivalent I-dot_above.
                 return Some(FullMappingResult::Remove);
-            } else if c == 'I' && !context.followed_by_dot_above(&self) {
+            } else if c == 'I' && !context.followed_by_dot_above(self) {
                 // When lowercasing, unless an I is before a dot_above, it turns
                 // into a dotless i.
                 return Some(FullMappingResult::CodePoint('\u{131}'));
@@ -707,8 +696,8 @@ impl<'data> CaseMappingInternals<'data> {
         }
 
         if c == '\u{3a3}'
-            && context.preceded_by_cased_letter(&self)
-            && !context.followed_by_cased_letter(&self)
+            && context.preceded_by_cased_letter(self)
+            && !context.followed_by_cased_letter(self)
         {
             // Greek capital sigman maps depending on surrounding cased letters.
             return Some(FullMappingResult::CodePoint('\u{3c2}'));
@@ -731,7 +720,7 @@ impl<'data> CaseMappingInternals<'data> {
         }
         if locale == CaseMapLocale::Lithuanian
             && c == '\u{307}'
-            && context.preceded_by_soft_dotted(&self)
+            && context.preceded_by_soft_dotted(self)
         {
             // Lithuanian retains the dot in a lowercase i when followed by accents.
             // Remove dot_above after i with upper or titlecase.
@@ -877,7 +866,11 @@ impl<'data> CaseMappingInternals<'data> {
 
     // Case closure is not yet supported
     #[allow(dead_code)]
-    pub(crate) fn case_closure<'a>(&self, set: &UnicodeSet<'a>, attribute: ClosureAttribute) -> UnicodeSet<'a> {
+    pub(crate) fn case_closure<'a>(
+        &self,
+        set: &UnicodeSet<'a>,
+        attribute: ClosureAttribute,
+    ) -> UnicodeSet<'a> {
         let mut builder = UnicodeSetBuilder::new();
         builder.add_set(set);
 
@@ -885,12 +878,16 @@ impl<'data> CaseMappingInternals<'data> {
             match attribute {
                 ClosureAttribute::CaseInsensitive => {
                     self.add_case_closure(c, &mut builder);
-                },
+                }
                 ClosureAttribute::AddCaseMappings => {
-                    self.to_full_lower(c, ContextIterator::empty(), CaseMapLocale::Root).add_to_set(&mut builder);
-                    self.to_full_title(c, ContextIterator::empty(), CaseMapLocale::Root).add_to_set(&mut builder);
-                    self.to_full_upper(c, ContextIterator::empty(), CaseMapLocale::Root).add_to_set(&mut builder);
-                    self.to_full_folding(c, ContextIterator::empty(), CaseMapLocale::Root).add_to_set(&mut builder);
+                    self.to_full_lower(c, ContextIterator::empty(), CaseMapLocale::Root)
+                        .add_to_set(&mut builder);
+                    self.to_full_title(c, ContextIterator::empty(), CaseMapLocale::Root)
+                        .add_to_set(&mut builder);
+                    self.to_full_upper(c, ContextIterator::empty(), CaseMapLocale::Root)
+                        .add_to_set(&mut builder);
+                    self.to_full_folding(c, ContextIterator::empty(), CaseMapLocale::Root)
+                        .add_to_set(&mut builder);
                 }
             }
         }
@@ -1006,13 +1003,13 @@ impl<'data> CaseMappingInternals<'data> {
     }
 }
 
-#[derive(Copy,Clone,Debug,Eq,PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[allow(dead_code)]
 pub enum ClosureAttribute {
     /// TODO: Document
     CaseInsensitive,
     /// TODO: Document
-    AddCaseMappings
+    AddCaseMappings,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq)]
@@ -1037,7 +1034,7 @@ impl<'a> FullMappingResult<'a> {
         match self {
             FullMappingResult::CodePoint(c) => set.add_char(*c),
             FullMappingResult::String(s) => set.add_string(s),
-            FullMappingResult::Remove => {},
+            FullMappingResult::Remove => {}
         }
     }
 }
@@ -1076,7 +1073,10 @@ impl<'a> ContextIterator<'a> {
     }
 
     pub fn empty() -> Self {
-        Self { before: "", after: "" }
+        Self {
+            before: "",
+            after: "",
+        }
     }
 
     fn preceded_by_soft_dotted(&self, mapping: &CaseMappingInternals) -> bool {

@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "provider_transform_internals")]
+use crate::error::Error;
 use crate::internals::*;
+#[cfg(feature = "provider_transform_internals")]
+use crate::provider::CaseMappingV1;
+use crate::provider::CaseMappingV1Marker;
 #[cfg(feature = "provider_transform_internals")]
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
-#[cfg(feature = "provider_transform_internals")]
-use crate::error::Error;
-use crate::provider::CaseMappingV1Marker;
-#[cfg(feature = "provider_transform_internals")]
-use crate::provider::CaseMappingV1;
 
 /// TODO: doc comment
 #[derive(Clone)]
@@ -22,7 +22,9 @@ pub struct CaseMapping {
 impl CaseMapping {
     /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`].
     pub fn new<P>(provider: &P) -> Result<CaseMapping, DataError>
-    where P: DataProvider<CaseMappingV1Marker> {
+    where
+        P: DataProvider<CaseMappingV1Marker>,
+    {
         let internals: DataPayload<CaseMappingV1Marker> = provider
             .load_payload(&DataRequest::from(crate::provider::key::CASE_MAPPING_V1))?
             .take_payload()?;
@@ -42,10 +44,19 @@ impl CaseMapping {
         unfold: &[u16],
     ) -> Result<Self, Error> {
         let internals = CaseMappingV1 {
-            casemap: CaseMappingInternals::try_from_icu(trie_header, trie_index, trie_data, exceptions, unfold)?
+            casemap: CaseMappingInternals::try_from_icu(
+                trie_header,
+                trie_index,
+                trie_data,
+                exceptions,
+                unfold,
+            )?,
         };
         let locale = CaseMapLocale::Root;
-        Ok(Self { internals: DataPayload::from_owned(internals), locale })
+        Ok(Self {
+            internals: DataPayload::from_owned(internals),
+            locale,
+        })
     }
 
     /// Returns the lowercase mapping of the given `char`.
@@ -71,7 +82,10 @@ impl CaseMapping {
 
     /// Returns the simple case folding mapping of the given char.
     pub fn fold(&self, c: char) -> char {
-        self.internals.get().casemap.simple_fold(c, FoldOptions::default())
+        self.internals
+            .get()
+            .casemap
+            .simple_fold(c, FoldOptions::default())
     }
 
     /// Returns the simple case folding mapping of the given char, using Turkic (T) mappings for
@@ -79,19 +93,28 @@ impl CaseMapping {
     /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
     /// [`CaseMapping::fold()`].
     pub fn fold_turkic(&self, c: char) -> char {
-        self.internals.get().casemap.simple_fold(c, FoldOptions::with_turkic_mappings())
+        self.internals
+            .get()
+            .casemap
+            .simple_fold(c, FoldOptions::with_turkic_mappings())
     }
 
     /// Returns the full lowercase mapping of the given string.
     /// This function is context and locale sensitive.
     pub fn to_full_lowercase(&self, src: &str) -> String {
-        self.internals.get().casemap.full_lowercase(src, self.locale)
+        self.internals
+            .get()
+            .casemap
+            .full_lowercase(src, self.locale)
     }
 
     /// Returns the full uppercase mapping of the given string.
     /// This function is context and locale sensitive.
     pub fn to_full_uppercase(&self, src: &str) -> String {
-        self.internals.get().casemap.full_uppercase(src, self.locale)
+        self.internals
+            .get()
+            .casemap
+            .full_uppercase(src, self.locale)
     }
 
     /// Case-folds the characters in the given string.
