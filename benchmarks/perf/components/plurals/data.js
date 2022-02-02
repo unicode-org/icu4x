@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643743709633,
+  "lastUpdate": 1643784586970,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25913,6 +25913,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18717,
             "range": "± 1744",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fb073c2109bdf792bcf30770e53af6b8000678b1",
+          "message": "Fix cargo quick in list component (#1573)",
+          "timestamp": "2022-02-02T00:39:31-06:00",
+          "tree_id": "02ef14dad08cb1cb240f4ca0bbb7475a6d24149d",
+          "url": "https://github.com/unicode-org/icu4x/commit/fb073c2109bdf792bcf30770e53af6b8000678b1"
+        },
+        "date": 1643784576175,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 864,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5662,
+            "range": "± 495",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15433,
+            "range": "± 1961",
             "unit": "ns/iter"
           }
         ]
