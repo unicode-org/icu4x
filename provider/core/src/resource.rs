@@ -390,6 +390,7 @@ impl ResourceOptions {
         self == &Self::default()
     }
 
+    /// Construct a `ResourceOptions` from a path.
     pub fn from_parts<'a, I: DoubleEndedIterator<Item = &'a str>>(mut parts: I) -> Self {
         if let Some(last) = parts.next_back() {
             if let Ok(langid) = last.parse() {
@@ -408,6 +409,11 @@ impl ResourceOptions {
         } else {
             ResourceOptions::default()
         }
+    }
+
+    /// Inverts `to_string`/`writeable_to_string`.
+    pub fn from_str(s: &str) -> Self {
+        ResourceOptions::from_parts(s.split('/'))
     }
 }
 
@@ -516,30 +522,24 @@ mod tests {
 
     #[test]
     fn test_key_to_string() {
-        for cas in get_options_test_cases().iter() {
-            assert_eq!(cas.expected, cas.resc_options.to_string());
-            writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
+        for cas in get_key_test_cases().iter() {
+            assert_eq!(cas.resc_key.to_string(), cas.expected);
+            writeable::assert_writeable_eq!(&cas.resc_key, cas.expected);
         }
     }
 
     #[test]
     fn test_resource_path_to_string() {
-        for key_cas in get_key_test_cases().iter() {
-            for options_cas in get_options_test_cases().iter() {
-                let expected = if options_cas.resc_options.is_empty() {
-                    key_cas.expected.to_string()
-                } else {
-                    format!("{}/{}", key_cas.expected, options_cas.expected)
-                };
-                let resource_path = ResourcePath {
-                    key: key_cas.resc_key,
-                    // Note: once https://github.com/rust-lang/rust/pull/80470 is accepted,
-                    // we won't have to clone here.
-                    options: options_cas.resc_options.clone(),
-                };
-                assert_eq!(expected, resource_path.to_string());
-                writeable::assert_writeable_eq!(&resource_path, expected);
-            }
+        for cas in get_options_test_cases().iter() {
+            assert_eq!(cas.resc_options.to_string(), cas.expected);
+            writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
+        }
+    }
+
+    #[test]
+    fn test_string_to_resource_path() {
+        for cas in get_options_test_cases().iter() {
+            assert_eq!(ResourceOptions::from_str(cas.expected), cas.resc_options);
         }
     }
 }

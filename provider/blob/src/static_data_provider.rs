@@ -5,6 +5,7 @@
 use crate::blob_schema::*;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
+use icu_provider::iter::IterableProvider;
 use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::trait_hack::YokeTraitHack;
@@ -139,6 +140,18 @@ impl BufferProvider for StaticDataProvider {
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_static_buffer(static_buffer)),
+        })
+    }
+}
+
+impl IterableProvider for StaticDataProvider {
+    fn supported_options_for_key(
+        &self,
+        resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(match self.data.iter_keys1(resc_key.get_path()) {
+            Some(iter) => Box::new(iter.map(ResourceOptions::from_str)),
+            None => Box::new(core::iter::empty()),
         })
     }
 }
