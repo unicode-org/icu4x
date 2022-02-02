@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643790177573,
+  "lastUpdate": 1643836889151,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18509,6 +18509,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 102957,
             "range": "± 308",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88f3e2ff55861a5e957d0aa04a68e76ac61b99f1",
+          "message": "Connect Script_Extensions data provider to datagen, update testdata (#1572)",
+          "timestamp": "2022-02-02T13:13:43-08:00",
+          "tree_id": "3e7cd8d4bddd9c06c615535c82fe4f64db77d136",
+          "url": "https://github.com/unicode-org/icu4x/commit/88f3e2ff55861a5e957d0aa04a68e76ac61b99f1"
+        },
+        "date": 1643836878319,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 111790,
+            "range": "± 6184",
             "unit": "ns/iter"
           }
         ]
