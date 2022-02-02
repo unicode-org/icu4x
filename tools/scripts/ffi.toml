@@ -86,6 +86,8 @@ cd ffi/diplomat/cpp/examples/pluralrules
 exec --fail-on-error make
 cd ../properties
 exec --fail-on-error make
+cd ../segmenter
+exec --fail-on-error make
 cd ../fixeddecimal
 exec --fail-on-error make
 cd ../fixeddecimal_wasm

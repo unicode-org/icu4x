@@ -3,15 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobSchema;
-use crate::path_util;
 use alloc::rc::Rc;
-use alloc::string::String;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
+use writeable::Writeable;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
-use zerovec::map::ZeroMapBorrowed;
+use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -61,7 +60,7 @@ use zerovec::map::ZeroMapBorrowed;
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
 pub struct BlobDataProvider {
-    data: Yoke<ZeroMapBorrowed<'static, str, [u8]>, Rc<[u8]>>,
+    data: Yoke<ZeroMap2dBorrowed<'static, str, str, [u8]>, Rc<[u8]>>,
 }
 
 impl BlobDataProvider {
@@ -81,18 +80,24 @@ impl BlobDataProvider {
 
     /// Gets the buffer for the given DataRequest out of the BlobSchema and returns it yoked
     /// to the buffer backing the BlobSchema.
-    fn get_file(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
-        let path = path_util::resource_path_to_string(key, &req.options);
-        // TODO: Distinguish between missing resource key and missing resource options
+    fn get_file(&self, req: &DataRequest) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
         self.data
-            .try_project_cloned_with_capture::<&'static [u8], String, ()>(path, |zm, path, _| {
-                zm.get(&path).ok_or(())
-            })
-            .map_err(|_| DataErrorKind::MissingResourceKey.with_req(key, req))
+            .try_project_cloned_with_capture::<&'static [u8], &DataRequest, DataError>(
+                req,
+                |zm, req, _| {
+                    zm.get(
+                        &req.resource_path.key.writeable_to_string(),
+                        &req.resource_path.options.writeable_to_string(),
+                    )
+                    .map_err(|e| {
+                        match e {
+                            KeyError::K0 => DataErrorKind::MissingResourceKey,
+                            KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                        }
+                        .with_req(req)
+                    })
+                },
+            )
     }
 }
 

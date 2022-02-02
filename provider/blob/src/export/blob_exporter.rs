@@ -3,17 +3,17 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::*;
-use crate::path_util;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use litemap::LiteMap;
-use zerovec::ZeroMap;
+use writeable::Writeable;
+use zerovec::map2d::ZeroMap2d;
 
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
-    resources: LiteMap<String, Vec<u8>>,
+    resources: LiteMap<(String, String), Vec<u8>>,
     sink: Box<dyn std::io::Write + 'w>,
 }
 
@@ -42,21 +42,26 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
         req: DataRequest,
         payload: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
-        let path = path_util::resource_path_to_string(key, &req.options);
-        log::trace!("Adding: {}", path);
+        log::trace!("Adding: {}", req.resource_path);
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
         payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
-        self.resources.insert(path, serializer.output.0);
+        self.resources.insert(
+            (
+                req.resource_path.key.writeable_to_string().into_owned(),
+                req.resource_path.options.writeable_to_string().into_owned(),
+            ),
+            serializer.output.0,
+        );
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        // Convert from LiteMap<String, Vec<u8>> to ZeroVecBorrowed<&str, &[u8]>
-        let mut zm: ZeroMap<str, [u8]> = ZeroMap::with_capacity(self.resources.len());
-        for (k, v) in self.resources.iter() {
-            zm.try_append(k, v).ok_or(()).expect_err("Same order");
+        // Convert from LiteMap<(String, String), Vec<u8>> to ZeroMap2d<str, str, [u8]>
+        let mut zm: ZeroMap2d<str, str, [u8]> = ZeroMap2d::with_capacity(self.resources.len());
+        for ((key, option), bytes) in self.resources.iter() {
+            zm.insert(key, option, bytes);
         }
         let blob = BlobSchema::V001(BlobSchemaV1 {
             resources: zm.as_borrowed(),

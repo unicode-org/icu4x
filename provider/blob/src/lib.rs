@@ -41,7 +41,6 @@ extern crate alloc;
 
 mod blob_data_provider;
 mod blob_schema;
-mod path_util;
 mod static_data_provider;
 
 #[cfg(feature = "export")]
