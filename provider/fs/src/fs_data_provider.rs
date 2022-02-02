@@ -165,7 +165,7 @@ impl IterableProvider for FsDataProvider {
                     for level2 in fs::read_dir(level1.path()).expect("IO") {
                         let level2 = level2.expect("IO");
                         if is_data_file(&level2) {
-                            options.push(ResourceOptions::from_parts(std::array::IntoIter::new([
+                            options.push(ResourceOptions::from_parts(IntoIterator::into_iter([
                                 &*level1.file_name().to_string_lossy(),
                                 level2
                                     .file_name()
