@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::map::ZeroMapBorrowed;
+use zerovec::map2d::ZeroMap2dBorrowed;
 
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -15,5 +15,5 @@ pub enum BlobSchema<'data> {
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct BlobSchemaV1<'data> {
     #[serde(borrow)]
-    pub resources: ZeroMapBorrowed<'data, str, [u8]>,
+    pub resources: ZeroMap2dBorrowed<'data, str, str, [u8]>,
 }

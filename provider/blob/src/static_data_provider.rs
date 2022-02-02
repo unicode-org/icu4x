@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::*;
-use crate::path_util;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
+use writeable::Writeable;
 use yoke::trait_hack::YokeTraitHack;
-use zerovec::map::ZeroMapBorrowed;
+use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -53,7 +53,7 @@ use zerovec::map::ZeroMapBorrowed;
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
-    data: ZeroMapBorrowed<'static, str, [u8]>,
+    data: ZeroMap2dBorrowed<'static, str, str, [u8]>,
 }
 
 impl StaticDataProvider {
@@ -96,16 +96,23 @@ impl StaticDataProvider {
     /// ```
     pub fn new_empty() -> Self {
         StaticDataProvider {
-            data: ZeroMapBorrowed::new(),
+            data: ZeroMap2dBorrowed::new(),
         }
     }
 
     fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
-        let path = path_util::resource_path_to_string(&req.resource_path);
-        // TODO: Distinguish between missing resource key and missing resource options
         self.data
-            .get(&path)
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))
+            .get(
+                &req.resource_path.key.writeable_to_string(),
+                &req.resource_path.options.writeable_to_string(),
+            )
+            .map_err(|e| {
+                match e {
+                    KeyError::K0 => DataErrorKind::MissingResourceKey,
+                    KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                }
+                .with_req(req)
+            })
     }
 }
 
