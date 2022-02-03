@@ -311,6 +311,49 @@ impl<'data> ScriptExtensions<'data> {
     /// into the [`ZeroSlice`] and also returned.
     ///
     /// If c is not a valid code point, then return an empty [`ZeroSlice`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_properties::provider::key;
+    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu_properties::Script;
+    /// use icu::properties::script::ScriptExtensions;
+    /// use zerovec::ZeroVec;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    ///     .load_payload(&DataRequest {
+    ///         resource_path: ResourcePath {
+    ///             key: key::SCRIPT_EXTENSIONS_V1,
+    ///             options: ResourceOptions::default(),
+    ///         },
+    ///     })
+    ///     .expect("The data should be valid")
+    ///     .take_payload()
+    ///     .expect("Loading was successful");
+    ///
+    /// let scx: &ScriptExtensions = &payload.get().data;
+    ///
+    /// assert_eq!(
+    ///     scx.get_script_extensions_val('𐓐' as u32).as_zerovec(), // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///     ZeroVec::<Script>::alloc_from_slice(&[Script::Osage])
+    /// );
+    /// assert_eq!(
+    ///     scx.get_script_extensions_val('🥳' as u32).as_zerovec(), // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+    ///     ZeroVec::<Script>::alloc_from_slice(&[Script::Common])
+    /// );
+    /// assert_eq!(
+    ///     scx.get_script_extensions_val(0x200D).as_zerovec(), // ZERO WIDTH JOINER
+    ///     ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited])
+    /// );
+    /// assert_eq!(
+    ///     scx.get_script_extensions_val('௫' as u32).as_zerovec(), // U+0BEB TAMIL DIGIT FIVE
+    ///     ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
+    /// );
+    /// ```
     pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
         let sc_with_ext_ule = self.trie.get_ule(code_point);
 
