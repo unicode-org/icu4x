@@ -1,7 +1,10 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-
 
 use syn::spanned::Spanned;
 use syn::{Data, DeriveInput, Error, Ident};
@@ -61,6 +64,15 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     let name = &input.ident;
 
+    // Safety (based on the safety checklist on the ULE trait):
+    //  1. #name does not include any uninitialized or padding bytes.
+    //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
+    //  2. CharULE is aligned to 1 byte.
+    //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
+    //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+    //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+    //  5. The other ULE methods use the default impl.
+    //  6. [This impl does not enforce the equality constraint, it is up to the user to do so, ideally via a custom derive]
     quote! {
         unsafe impl zerovec::ule::ULE for #name {
             #[inline]

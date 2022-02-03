@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Custom derives for `Yokeable` and `ZeroCopyFrom` from the `yoke` crate.
+//! Proc macros for generating `ULE`, `VarULE` impls and types for the `zerovec` crate
 
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, DeriveInput};
