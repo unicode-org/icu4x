@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643846355233,
+  "lastUpdate": 1643925618033,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19709,6 +19709,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 271174,
             "range": "± 3172",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20787e7ed493b6c2335de53ceb975888f8964483",
+          "message": "Split DataProvider into ResourceProvider and DynProvider (#1554)",
+          "timestamp": "2022-02-03T13:49:53-08:00",
+          "tree_id": "8d7123c68b2cdf9240c2531723db339b9971e283",
+          "url": "https://github.com/unicode-org/icu4x/commit/20787e7ed493b6c2335de53ceb975888f8964483"
+        },
+        "date": 1643925605735,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 91351,
+            "range": "± 14231",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 911205,
+            "range": "± 72284",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 348874,
+            "range": "± 17862",
             "unit": "ns/iter"
           }
         ]
