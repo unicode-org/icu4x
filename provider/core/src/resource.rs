@@ -11,12 +11,15 @@ use alloc::borrow::ToOwned;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
+use core::mem;
 use core::str::FromStr;
 use icu_locid::LanguageIdentifier;
 use writeable::{LengthHint, Writeable};
+use zerovec::ule::*;
 
 /// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
 pub struct ResourceKeyHash([u8; 4]);
 
@@ -25,6 +28,48 @@ impl ResourceKeyHash {
         Self(helpers::fxhash_32(path.as_bytes()).to_le_bytes())
     }
 }
+
+impl<'a> zerovec::map::ZeroMapKV<'a> for ResourceKeyHash {
+    type Container = zerovec::ZeroVec<'a, ResourceKeyHash>;
+    type GetType = <ResourceKeyHash as AsULE>::ULE;
+    type OwnedType = ResourceKeyHash;
+}
+
+// Safety (based on the safety checklist on the ULE trait):
+//  1. ResourceKeyHash does not include any uninitialized or padding bytes.
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  2. ResourceKeyHash is aligned to 1 byte.
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
+//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
+//  5. The other ULE methods use the default impl.
+//  6. ResourceKeyHash byte equality is semantic equality
+unsafe impl ULE for ResourceKeyHash {
+    #[inline]
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        if bytes.len() % mem::size_of::<Self>() == 0 {
+            // Safe because Self is transparent over [u8; 4]
+            Ok(())
+        } else {
+            Err(ZeroVecError::length::<Self>(bytes.len()))
+        }
+    }
+}
+
+impl AsULE for ResourceKeyHash {
+    type ULE = Self;
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        self
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+// Safe since the ULE type is `self`.
+unsafe impl EqULE for ResourceKeyHash {}
 
 /// Used for loading data from an ICU4X data provider.
 ///

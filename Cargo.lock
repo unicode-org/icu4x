@@ -1305,6 +1305,7 @@ dependencies = [
  "tinystr",
  "writeable",
  "yoke",
+ "zerovec",
 ]
 
 [[package]]

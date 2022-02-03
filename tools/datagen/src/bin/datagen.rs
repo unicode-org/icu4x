@@ -5,7 +5,7 @@
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
 use icu_locid::LanguageIdentifier;
-use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SET_KEYS};
+use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SCRIPT_EXTENSIONS_KEYS, ALL_SET_KEYS};
 use icu_provider::either::EitherProvider;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
@@ -22,7 +22,10 @@ use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
-use icu_provider_uprops::{EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider};
+use icu_provider_uprops::{
+    EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider,
+    ScriptExtensionsPropertyProvider,
+};
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -301,6 +304,7 @@ fn main() -> eyre::Result<()> {
         export_cldr(&matches, exporter, locales_vec.as_deref(), keys.as_ref())?;
         export_set_props(&matches, exporter, keys.as_ref())?;
         export_map_props(&matches, exporter, keys.as_ref())?;
+        export_script_extensions_props(&matches, exporter, keys.as_ref())?;
     }
 
     if matches.is_present("HELLO_WORLD") {
@@ -509,6 +513,54 @@ fn export_map_props(
     let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&toml_root)?;
 
     let keys = ALL_MAP_KEYS;
+    let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
+        keys.iter()
+            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
+            .copied()
+            .collect()
+    } else {
+        keys.to_vec()
+    };
+
+    for key in keys.iter() {
+        let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
+        if matches.is_present("TEST_KEYS")
+            && matches!(
+                result,
+                Err(DataError {
+                    kind: DataErrorKind::MissingResourceKey,
+                    ..
+                })
+            )
+        {
+            // Within testdata, if the data for a particular property is unavailable, skip it for now.
+            log::trace!("Skipping key: {}", key);
+        } else {
+            log::info!("Writing key: {}", key);
+            result?
+        }
+    }
+
+    Ok(())
+}
+
+fn export_script_extensions_props(
+    matches: &ArgMatches,
+    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
+    allowed_keys: Option<&HashSet<Cow<str>>>,
+) -> eyre::Result<()> {
+    log::trace!("Loading data for the Script_Extensions property...");
+
+    let toml_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
+        PathBuf::from(path)
+    } else if matches.is_present("INPUT_FROM_TESTDATA") {
+        icu_testdata::paths::uprops_toml_root()
+    } else {
+        eyre::bail!("Value for --uprops-root must be specified",)
+    };
+    let provider = ScriptExtensionsPropertyProvider::try_new(&toml_root)?;
+
+    let keys = ALL_SCRIPT_EXTENSIONS_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
         keys.iter()
             .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))

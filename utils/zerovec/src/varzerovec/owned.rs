@@ -343,7 +343,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // An empty vec must have an empty slice: there is only a single valid byte representation.
             return false;
         }
-        if slice_len <= 4 + len as usize * 4 {
+        if slice_len < 4 + len as usize * 4 {
             // Not enough room for the indices.
             return false;
         }
@@ -512,6 +512,30 @@ mod test {
 
         items.insert(2, "".into());
         zerovec.insert(2, "");
+        assert_eq!(zerovec, &*items);
+    }
+
+    #[test]
+    // ensure that inserting empty items works
+    fn test_empty_inserts() {
+        let mut items: Vec<String> = Vec::new();
+        let mut zerovec = VarZeroVecOwned::<str>::new();
+
+        // Insert into an empty vec.
+        items.insert(0, "".into());
+        zerovec.insert(0, "");
+        assert_eq!(zerovec, &*items);
+
+        items.insert(0, "".into());
+        zerovec.insert(0, "");
+        assert_eq!(zerovec, &*items);
+
+        items.insert(0, "1234567890".into());
+        zerovec.insert(0, "1234567890");
+        assert_eq!(zerovec, &*items);
+
+        items.insert(0, "".into());
+        zerovec.insert(0, "");
         assert_eq!(zerovec, &*items);
     }
 
