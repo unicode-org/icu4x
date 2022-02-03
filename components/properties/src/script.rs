@@ -228,10 +228,10 @@ impl<'data> ScriptExtensions<'data> {
     /// let scx: &ScriptExtensions = &payload.get().data;
     ///
     /// // U+0640 ARABIC TATWEEL
-    /// assert!(!scx.has_script(0x0640, Script::Common)); // main Script value
-    /// assert!(scx.has_script(0x0640, Script::Arabic));
-    /// assert!(scx.has_script(0x0640, Script::Syriac));
-    /// assert!(!scx.has_script(0x0640, Script::Thaana));
+    /// assert_eq!(scx.get_script_val(0x0640), Script::Common); // main Script value
+    /// assert_ne!(scx.get_script_val(0x0640), Script::Arabic);
+    /// assert_ne!(scx.get_script_val(0x0640), Script::Syriac);
+    /// assert_ne!(scx.get_script_val(0x0640), Script::Thaana);
     ///
     /// // U+0650 ARABIC KASRA
     /// assert_eq!(scx.get_script_val(0x0650), Script::Inherited); // main Script value
