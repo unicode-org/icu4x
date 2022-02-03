@@ -26,6 +26,7 @@ use icu_provider_uprops::{
     EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider,
     ScriptExtensionsPropertyProvider,
 };
+use rayon::prelude::*;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -34,6 +35,7 @@ use std::io;
 use std::io::BufRead;
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::sync::{Arc, Mutex};
 use writeable::Writeable;
 
 fn main() -> eyre::Result<()> {
@@ -271,24 +273,26 @@ fn main() -> eyre::Result<()> {
 
     let mut anchor1;
     let mut anchor2;
-    let exporter: &mut dyn DataExporter<SerializeMarker> = match format {
+    let exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>> = match format {
         "dir" => {
             anchor1 = get_fs_exporter(&matches)?;
-            &mut anchor1
+            Arc::new(Mutex::new(&mut anchor1))
         }
         "blob" => {
             anchor2 = get_blob_exporter(&matches)?;
-            &mut anchor2
+            Arc::new(Mutex::new(&mut anchor2))
         }
         _ => unreachable!(),
     };
 
+    let mut keys;
+    let mut tasks: Vec<Box<dyn Fn() -> eyre::Result<()> + Send + Sync>> = vec![];
     if matches.is_present("ALL_KEYS")
         || matches.is_present("KEYS")
         || matches.is_present("KEY_FILE")
         || matches.is_present("TEST_KEYS")
     {
-        let mut keys = matches
+        keys = matches
             .values_of("KEYS")
             .map(|keys| keys.map(Cow::Borrowed).collect::<HashSet<_>>());
         if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
@@ -301,17 +305,34 @@ fn main() -> eyre::Result<()> {
                 keys.insert(Cow::Owned(line_string));
             }
         }
-        export_cldr(&matches, exporter, locales_vec.as_deref(), keys.as_ref())?;
-        export_set_props(&matches, exporter, keys.as_ref())?;
-        export_map_props(&matches, exporter, keys.as_ref())?;
-        export_script_extensions_props(&matches, exporter, keys.as_ref())?;
+
+        tasks.push(Box::new(|| {
+            export_cldr(
+                &matches,
+                exporter.clone(),
+                locales_vec.as_deref(),
+                keys.as_ref(),
+            )
+        }));
+        tasks.push(Box::new(|| {
+            export_set_props(&matches, exporter.clone(), keys.as_ref())
+        }));
+        tasks.push(Box::new(|| {
+            export_map_props(&matches, exporter.clone(), keys.as_ref())
+        }));
+        tasks.push(Box::new(|| {
+            export_script_extensions_props(&matches, exporter.clone(), keys.as_ref())
+        }));
     }
 
     if matches.is_present("HELLO_WORLD") {
-        export_hello_world(&matches, exporter, locales_vec.as_deref())?;
+        tasks.push(Box::new(|| {
+            export_hello_world(&matches, exporter.clone(), locales_vec.as_deref())
+        }));
     }
+    tasks.par_iter().try_for_each(|c| c())?;
 
-    exporter.close()?;
+    exporter.lock().unwrap().close()?;
 
     Ok(())
 }
@@ -329,20 +350,21 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
 
     log::info!("Writing to filesystem tree at: {}", output_path.display());
 
-    let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
-        Some("json") | None => {
-            let mut options = serializers::json::Options::default();
-            if matches.is_present("PRETTY") {
-                options.style = serializers::json::StyleOption::Pretty;
+    let serializer: Box<dyn serializers::AbstractSerializer + Send> =
+        match matches.value_of("SYNTAX") {
+            Some("json") | None => {
+                let mut options = serializers::json::Options::default();
+                if matches.is_present("PRETTY") {
+                    options.style = serializers::json::StyleOption::Pretty;
+                }
+                Box::new(serializers::json::Serializer::new(options))
             }
-            Box::new(serializers::json::Serializer::new(options))
-        }
-        Some("bincode") => {
-            let options = serializers::bincode::Options::default();
-            Box::new(serializers::bincode::Serializer::new(options))
-        }
-        _ => unreachable!(),
-    };
+            Some("bincode") => {
+                let options = serializers::bincode::Options::default();
+                Box::new(serializers::bincode::Serializer::new(options))
+            }
+            _ => unreachable!(),
+        };
 
     let mut options = fs_exporter::ExporterOptions::default();
     options.root = output_path;
@@ -377,7 +399,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
         None => log::info!("Writing blob to standard out"),
     };
 
-    let sink: Box<dyn std::io::Write> = if let Some(path_buf) = output_path {
+    let sink: Box<dyn std::io::Write + Send> = if let Some(path_buf) = output_path {
         if !matches.is_present("OVERWRITE") && path_buf.exists() {
             eyre::bail!("Output path is present: {:?}", path_buf);
         }
@@ -394,7 +416,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
 
 fn export_cldr(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
+    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
     allowed_locales: Option<&[LanguageIdentifier]>,
     allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
@@ -437,7 +459,7 @@ fn export_cldr(
             }
         }
         log::info!("Writing key: {}", key);
-        icu_provider::export::export_from_iterable(&key, &provider, exporter)?;
+        icu_provider::export::export_from_iterable(&key, &provider, *exporter.lock().unwrap())?;
     }
 
     Ok(())
@@ -445,7 +467,7 @@ fn export_cldr(
 
 fn export_set_props(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
+    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
     allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for binary properties...");
@@ -470,7 +492,8 @@ fn export_set_props(
     };
 
     for key in keys.iter() {
-        let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
+        let result =
+            icu_provider::export::export_from_iterable(key, &provider, *exporter.lock().unwrap());
         if matches.is_present("TEST_KEYS")
             && matches!(
                 result,
@@ -493,7 +516,7 @@ fn export_set_props(
 
 fn export_map_props(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
+    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
     allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for enumerated properties...");
@@ -518,7 +541,8 @@ fn export_map_props(
     };
 
     for key in keys.iter() {
-        let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
+        let result =
+            icu_provider::export::export_from_iterable(key, &provider, *exporter.lock().unwrap());
         if matches.is_present("TEST_KEYS")
             && matches!(
                 result,
@@ -541,7 +565,7 @@ fn export_map_props(
 
 fn export_script_extensions_props(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
+    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
     allowed_keys: Option<&HashSet<Cow<str>>>,
 ) -> eyre::Result<()> {
     log::trace!("Loading data for the Script_Extensions property...");
@@ -566,7 +590,7 @@ fn export_script_extensions_props(
     };
 
     for key in keys.iter() {
-        let result = icu_provider::export::export_from_iterable(key, &provider, exporter);
+        let result = icu_provider::export::export_from_iterable(key, &provider, *exporter.lock().unwrap());
         if matches.is_present("TEST_KEYS")
             && matches!(
                 result,
@@ -589,7 +613,7 @@ fn export_script_extensions_props(
 
 fn export_hello_world(
     _: &ArgMatches,
-    exporter: &mut (impl DataExporter<SerializeMarker> + ?Sized),
+    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
     allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> eyre::Result<()> {
     let raw_provider = HelloWorldProvider::new_with_placeholder_data();
@@ -604,7 +628,7 @@ fn export_hello_world(
 
     let key = HelloWorldV1Marker::KEY;
     log::info!("Writing key: {}", key);
-    icu_provider::export::export_from_iterable(&key, &provider, exporter)?;
+    icu_provider::export::export_from_iterable(&key, &provider, *exporter.lock().unwrap())?;
 
     Ok(())
 }

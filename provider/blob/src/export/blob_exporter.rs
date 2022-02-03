@@ -14,12 +14,12 @@ use zerovec::map2d::ZeroMap2d;
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
     resources: LiteMap<(ResourceKeyHash, String), Vec<u8>>,
-    sink: Box<dyn std::io::Write + 'w>,
+    sink: Box<dyn std::io::Write + Send + 'w>,
 }
 
 impl<'w> BlobExporter<'w> {
     /// Create a [`BlobExporter`] that writes to the given I/O stream.
-    pub fn new_with_sink(sink: Box<dyn std::io::Write + 'w>) -> Self {
+    pub fn new_with_sink(sink: Box<dyn std::io::Write + Send + 'w>) -> Self {
         Self {
             resources: LiteMap::new(),
             sink,

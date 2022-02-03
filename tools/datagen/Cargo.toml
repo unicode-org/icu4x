@@ -39,6 +39,7 @@ icu_provider_fs = { version = "0.5", path = "../../provider/fs", features = ["ex
 icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["metadata"] }
 log = "0.4"
+rayon = "1.5"
 reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 simple_logger = "1.12"

@@ -56,7 +56,7 @@ pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
     alias_collection: Option<AliasCollection<Vec<u8>>>,
-    serializer: Box<dyn AbstractSerializer>,
+    serializer: Box<dyn AbstractSerializer + Send>,
 }
 
 impl Drop for FilesystemExporter {
@@ -94,7 +94,7 @@ impl DataExporter<SerializeMarker> for FilesystemExporter {
 
 impl FilesystemExporter {
     pub fn try_new(
-        serializer: Box<dyn AbstractSerializer>,
+        serializer: Box<dyn AbstractSerializer + Send>,
         options: ExporterOptions,
     ) -> Result<Self, Error> {
         let result = FilesystemExporter {
