@@ -7,7 +7,7 @@ name = "icu_provider_fs"
 description = "ICU4X data provider that reads from structured data files"
 version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "LICENSE"
@@ -43,6 +43,7 @@ erased-serde = { version = "0.3", default-features = false, features = ["alloc"]
 displaydoc = { version = "0.2.3", default-features = false }
 serde-json-core = { version = "0.4", features = ["std"] }
 writeable = { version = "0.3", path = "../../utils/writeable" }
+glob = { version = "0.3" }
 
 # Serializers
 serde_json = { version = "1.0", optional = true }

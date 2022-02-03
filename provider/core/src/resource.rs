@@ -11,6 +11,7 @@ use alloc::borrow::ToOwned;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
+use core::str::FromStr;
 use icu_locid::LanguageIdentifier;
 use writeable::{LengthHint, Writeable};
 
@@ -384,36 +385,36 @@ impl From<LanguageIdentifier> for ResourceOptions {
     }
 }
 
-impl ResourceOptions {
-    /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
-    pub fn is_empty(&self) -> bool {
-        self == &Self::default()
-    }
+// Inverts 'to_string`/`writeable_to_string`.
+impl FromStr for ResourceOptions {
+    type Err = core::convert::Infallible;
 
-    /// Construct a `ResourceOptions` from a path.
-    pub fn from_parts<'a, I: DoubleEndedIterator<Item = &'a str>>(mut parts: I) -> Self {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.split('/');
         if let Some(last) = parts.next_back() {
             if let Ok(langid) = last.parse() {
-                ResourceOptions {
+                Ok(ResourceOptions {
                     variant: parts
                         .next_back()
                         .map(|variant| Cow::Owned(variant.to_owned())),
                     langid: Some(langid),
-                }
+                })
             } else {
-                ResourceOptions {
+                Ok(ResourceOptions {
                     variant: Some(Cow::Owned(last.to_owned())),
                     langid: None,
-                }
+                })
             }
         } else {
-            ResourceOptions::default()
+            Ok(ResourceOptions::default())
         }
     }
+}
 
-    /// Inverts `to_string`/`writeable_to_string`.
-    pub fn from_str(s: &str) -> Self {
-        ResourceOptions::from_parts(s.split('/'))
+impl ResourceOptions {
+    /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
+    pub fn is_empty(&self) -> bool {
+        self == &Self::default()
     }
 }
 

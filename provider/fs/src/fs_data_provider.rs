@@ -133,53 +133,29 @@ impl IterableProvider for FsDataProvider {
             .with_extension(self.manifest.get_file_extension())
             .exists()
         {
-            options.push(ResourceOptions::from_parts(core::iter::empty()));
+            options.push(ResourceOptions::default());
         }
 
-        let is_data_file = |entry: &std::fs::DirEntry| {
-            let t = entry.file_type().expect("IO");
-            (t.is_file()
-                || (t.is_symlink()
-                    && self.manifest.aliasing == crate::manifest::AliasOption::Symlink))
-                && entry
-                    .file_name()
-                    .to_string_lossy()
-                    .ends_with(self.manifest.get_file_extension())
-        };
+        let key_root = key_root
+            .canonicalize()
+            .map_err(|e| DataErrorKind::Io(e.kind()).with_key(*resc_key))?;
+        let key_root = key_root
+            .to_str()
+            .ok_or(DataErrorKind::Io(std::io::ErrorKind::InvalidData).with_key(*resc_key))?;
 
-        if key_root.exists() && key_root.is_dir() {
-            for level1 in fs::read_dir(key_root).expect("IO") {
-                let level1 = level1.expect("IO");
+        let pattern = format!("{}/**/*.{}", key_root, self.manifest.get_file_extension());
+        let prefix_len = key_root.len() + 1;
+        let suffix_len = 1 + self.manifest.get_file_extension().len();
 
-                if is_data_file(&level1) {
-                    options.push(ResourceOptions::from_parts(core::iter::once(
-                        level1
-                            .file_name()
-                            .to_string_lossy()
-                            .strip_suffix(self.manifest.get_file_extension())
-                            .unwrap()
-                            .strip_suffix('.')
-                            .unwrap(),
-                    )))
-                } else if level1.file_type().unwrap().is_dir() {
-                    for level2 in fs::read_dir(level1.path()).expect("IO") {
-                        let level2 = level2.expect("IO");
-                        if is_data_file(&level2) {
-                            options.push(ResourceOptions::from_parts(IntoIterator::into_iter([
-                                &*level1.file_name().to_string_lossy(),
-                                level2
-                                    .file_name()
-                                    .to_string_lossy()
-                                    .strip_suffix(self.manifest.get_file_extension())
-                                    .unwrap()
-                                    .strip_suffix('.')
-                                    .unwrap(),
-                            ])));
-                        }
-                    }
-                }
-            }
-        }
+        options.extend(
+            glob::glob(&pattern)
+                .expect("Failed to read glob pattern")
+                .filter_map(|r| r.ok())
+                .filter_map(|path| {
+                    path.to_str()
+                        .and_then(|s| s[prefix_len..s.len() - suffix_len].parse().ok())
+                }),
+        );
 
         Ok(Box::new(options.into_iter()))
     }
