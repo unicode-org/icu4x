@@ -39,10 +39,12 @@ pub struct ScriptWithExt(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptExtensions` constructor
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
 }
 
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptExtensions` constructor
 impl ScriptWithExt {
     /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
     /// also indicates a Script value of [`Script::Common`].
