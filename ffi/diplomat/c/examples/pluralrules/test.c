@@ -15,7 +15,7 @@ int main() {
         return 1;
     }
     ICU4XDataProvider* provider = result.provider;
-    ICU4XCreatePluralRulesResult plural_result = ICU4XPluralRules_try_new(locale, provider, ICU4XPluralRuleType_Cardinal);
+    ICU4XCreatePluralRulesResult plural_result = ICU4XPluralRules_try_new_cardinal(locale, provider);
     if (!plural_result.success) {
         printf("Failed to create PluralRules\n");
         return 1;

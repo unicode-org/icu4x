@@ -23,15 +23,16 @@ impl BinaryPropertyUnicodeSetDataProvider {
     }
 }
 
-impl DataProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
+impl DynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         let data = &self
             .data
-            .get(get_last_component_no_version(&req.resource_path.key))
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?;
+            .get(get_last_component_no_version(&key))
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?;
 
         let mut builder = UnicodeSetBuilder::new();
         for (start, end) in &data.ranges {
@@ -73,12 +74,7 @@ fn test_basic() {
         .expect("TOML should load successfully");
 
     let payload: DataPayload<UnicodePropertyV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::WHITE_SPACE_V1,
-                options: ResourceOptions::default(),
-            },
-        })
+        .load_payload(key::WHITE_SPACE_V1, &DataRequest::default())
         .expect("The data should be valid")
         .take_payload()
         .expect("Loading was successful");

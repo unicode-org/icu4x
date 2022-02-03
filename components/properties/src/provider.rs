@@ -349,7 +349,7 @@ pub mod key {
 //
 
 /// A set of characters with a particular property.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(UnicodePropertyV1Marker)]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -425,7 +425,7 @@ impl<T: TrieValue> icu_provider::DataMarker for UnicodePropertyMapV1Marker<T> {
 //
 
 /// A data structure efficiently storing `Script` and `Script_Extensions` property data.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(ScriptExtensionsPropertyV1Marker)]
 #[derive(Debug, Eq, PartialEq)]
 #[cfg_attr(
     feature = "provider_serde",

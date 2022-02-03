@@ -20,7 +20,7 @@ pub enum DateTimeFormatError {
     /// An error originating from the [`Write`](std::fmt::Write) trait.
     #[displaydoc("{0}")]
     Format(core::fmt::Error),
-    /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider).
+    /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
     DataProvider(DataError),
     /// An error originating from a missing field in datetime input.

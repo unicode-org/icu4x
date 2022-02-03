@@ -26,7 +26,7 @@ use alloc::vec::Vec;
 ///
 /// let provider = InvariantDataProvider;
 /// let result: DataPayload<HelloWorldV1Marker> = provider
-///     .load_payload(&DataRequest::from(key::HELLO_WORLD_V1))
+///     .load_resource(&DataRequest::default())
 ///     .unwrap()
 ///     .take_payload()
 ///     .unwrap();
@@ -35,12 +35,25 @@ use alloc::vec::Vec;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<M> DataProvider<M> for InvariantDataProvider
+impl<M> ResourceProvider<M> for InvariantDataProvider
+where
+    M: ResourceMarker,
+    M::Yokeable: Default,
+{
+    fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(M::Yokeable::default())),
+        })
+    }
+}
+
+impl<M> DynProvider<M> for InvariantDataProvider
 where
     M: DataMarker,
     M::Yokeable: Default,
 {
-    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_payload(&self, _: ResourceKey, _: &DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(M::Yokeable::default())),

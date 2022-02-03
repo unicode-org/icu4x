@@ -8,9 +8,9 @@ mod test;
 
 use crate::buf::BufferMarker;
 use crate::error::{DataError, DataErrorKind};
-use crate::marker::DataMarker;
+use crate::marker::{DataMarker, ResourceMarker};
 use crate::resource::ResourceKey;
-use crate::resource::ResourcePath;
+use crate::resource::ResourceOptions;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
@@ -22,76 +22,54 @@ use core::fmt::Debug;
 use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 
-/// A struct to request a certain piece of data from a data provider.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Default)]
+#[non_exhaustive]
+pub struct DataRequestMetadata;
+
+#[derive(Default)]
 pub struct DataRequest {
-    pub resource_path: ResourcePath,
+    pub options: ResourceOptions,
+    pub metadata: DataRequestMetadata,
 }
 
 impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}/{}",
-            self.resource_path.key, self.resource_path.options
-        )
-    }
-}
-
-/// Create a [`DataRequest`] to a particular [`ResourceKey`] with default options.
-impl From<ResourceKey> for DataRequest {
-    fn from(key: ResourceKey) -> Self {
-        Self {
-            resource_path: ResourcePath {
-                key,
-                options: Default::default(),
-            },
-        }
+        fmt::Display::fmt(&self.options, f)
     }
 }
 
 impl DataRequest {
-    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`], or an error if it is not present.
+    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`], or `None` if it is not present.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_locid_macros::langid;
     ///
     /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
     ///
     /// let req_no_langid = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: FOO_BAR,
-    ///         options: ResourceOptions::default(),
-    ///     }
+    ///     options: ResourceOptions::default(),
+    ///     metadata: Default::default(),
     /// };
     ///
     /// let req_with_langid = DataRequest {
-    ///     resource_path: ResourcePath {
-    ///         key: FOO_BAR,
-    ///         options: ResourceOptions {
-    ///             variant: None,
-    ///             langid: Some(icu_locid_macros::langid!("ar-EG")),
-    ///         },
-    ///     }
+    ///     options: langid!("ar-EG").into(),
+    ///     metadata: Default::default(),
     /// };
     ///
     /// assert!(matches!(
-    ///     req_no_langid.try_langid(),
-    ///     Err(DataError { kind: DataErrorKind::NeedsLocale, .. })
+    ///     req_no_langid.get_langid(),
+    ///     None
     /// ));
     /// assert!(matches!(
-    ///     req_with_langid.try_langid(),
-    ///     Ok(_)
+    ///     req_with_langid.get_langid(),
+    ///     Some(_)
     /// ));
     /// ```
-    pub fn try_langid(&self) -> Result<&LanguageIdentifier, DataError> {
-        self.resource_path
-            .options
-            .langid
-            .as_ref()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(self))
+    pub fn get_langid(&self) -> Option<&LanguageIdentifier> {
+        self.options.langid.as_ref()
     }
 }
 
@@ -105,7 +83,7 @@ pub struct DataResponseMetadata {
     pub buffer_format: Option<crate::buf::BufferFormat>,
 }
 
-/// A container for data payloads returned from a [`DataProvider`].
+/// A container for data payloads returned from a data provider.
 ///
 /// [`DataPayload`] is built on top of the [`yoke`] framework, which allows for cheap, zero-copy
 /// operations on data via the use of self-references. A [`DataPayload`] may be backed by one of
@@ -804,6 +782,14 @@ where
             yoke: self.yoke.try_project_cloned_with_capture(capture, f)?,
         })
     }
+
+    #[inline]
+    pub fn cast<M2>(self) -> DataPayload<M2>
+    where
+        M2: DataMarker<Yokeable = M::Yokeable>,
+    {
+        DataPayload { yoke: self.yoke }
+    }
 }
 
 impl DataPayload<BufferMarker> {
@@ -939,14 +925,13 @@ fn test_debug() {
     assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }
 
-/// A generic data provider that loads a payload of a specific type.
+/// A data provider that loads data for a specific data type.
 ///
-/// See examples on some of the concrete implementations:
+/// Unlike [`ResourceProvider`], there may be multiple keys corresponding to the same data type.
+/// This is often the case when returning `dyn` trait objects such as [`SerializeMarker`].
 ///
-/// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
-/// - [`AnyPayloadProvider`](crate::struct_provider::AnyPayloadProvider)
-/// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
-pub trait DataProvider<M>
+/// [`SerializeMarker`]: crate::serde::SerializeMarker
+pub trait DynProvider<M>
 where
     M: DataMarker,
 {
@@ -954,5 +939,21 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError>;
+}
+
+/// A data provider that loads data for a specific [`ResourceKey`].
+pub trait ResourceProvider<M>
+where
+    M: ResourceMarker,
+{
+    /// Query the provider for data, returning the result.
+    ///
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
 }

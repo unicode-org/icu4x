@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use icu_provider::yoke::{self, *};
+use icu_provider::yoke;
 use litemap::LiteMap;
 use tinystr::TinyStr8;
 
@@ -84,7 +84,7 @@ macro_rules! map_access_with_overrides {
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(TimeZoneFormatsV1Marker = "time_zone/formats@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -109,7 +109,7 @@ pub struct TimeZoneFormatsV1<'data> {
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(ExemplarCitiesV1Marker = "time_zone/exemplar_cities@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -121,7 +121,7 @@ map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the long-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(MetaZoneGenericNamesLongV1Marker = "time_zone/generic_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -138,7 +138,7 @@ map_access_with_overrides!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, 
 
 /// An ICU4X mapping to the short-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(MetaZoneGenericNamesShortV1Marker = "time_zone/generic_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -156,7 +156,7 @@ map_access_with_overrides!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data,
 /// An ICU4X mapping to the long-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(MetaZoneSpecificNamesLongV1Marker = "time_zone/specific_long@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -174,7 +174,7 @@ map_access_with_overrides!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSp
 /// An ICU4X mapping to the short-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(MetaZoneSpecificNamesShortV1Marker = "time_zone/specific_short@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

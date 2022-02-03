@@ -13,7 +13,7 @@ pub enum PluralRulesError {
     /// A parsing error for the plural rules.
     #[displaydoc("Parser error: {0}")]
     Parser(ParserError),
-    /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider)
+    /// An error originating from [`icu_provider`].
     #[displaydoc("Data provider error: {0}")]
     DataProvider(DataError),
 }

@@ -98,17 +98,21 @@ impl NumbersProvider {
     }
 }
 
-impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn load_payload(
+impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
-        Self::supports_key(&req.resource_path.key)?;
-        let langid = req.try_langid()?;
-        let numbers = match self.cldr_numbers_data.get(langid) {
-            Some(v) => &v.numbers,
-            None => return Err(DataErrorKind::MissingLocale.with_req(req)),
-        };
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(DecimalSymbolsV1Marker::KEY, req))?;
+        let numbers = self
+            .cldr_numbers_data
+            .get(langid)
+            .map(|v| &v.numbers)
+            .ok_or_else(|| {
+                DataErrorKind::MissingLocale.with_req(DecimalSymbolsV1Marker::KEY, req)
+            })?;
         let nsname = numbers.default_numbering_system;
 
         let mut result = DecimalSymbolsV1::try_from(numbers)
@@ -131,9 +135,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(NumbersProvider, {
-    _ => DecimalSymbolsV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(NumbersProvider, [DecimalSymbolsV1Marker,], SERDE_SE);
 
 impl IterableProvider for NumbersProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
@@ -197,14 +199,9 @@ fn test_basic() {
     let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::SYMBOLS_V1,
-                options: ResourceOptions {
-                    variant: None,
-                    langid: Some(langid!("ar-EG")),
-                },
-            },
+        .load_resource(&DataRequest {
+            options: langid!("ar-EG").into(),
+            metadata: Default::default(),
         })
         .unwrap()
         .take_payload()
