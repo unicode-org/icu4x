@@ -56,10 +56,7 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensions<'static> {
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
             VarZeroVec::from(ule_scx_array_data.as_slice());
 
-        ScriptExtensions::try_new(trie, scx_vzv).map_err(|e| {
-            DataError::custom("Could not create ScriptExtensions from a trie and scx_vzv")
-                .with_error_context(&e)
-        })
+        Ok(ScriptExtensions::new(trie, scx_vzv))
     }
 }
 

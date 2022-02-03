@@ -5,7 +5,6 @@
 //! Data and APIs for supporting both Script and Script_Extensions property
 //! values in an efficient structure.
 
-use crate::error::PropertiesError;
 use crate::props::Script;
 
 use core::iter::FromIterator;
@@ -189,13 +188,14 @@ pub struct ScriptExtensions<'data> {
 }
 
 impl<'data> ScriptExtensions<'data> {
-    pub fn try_new(
+    // This method is intended to be used by constructors of deserialized data
+    // in a data provider.
+    #[doc(hidden)]
+    pub fn new(
         trie: CodePointTrie<'data, ScriptWithExt>,
         extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> Result<ScriptExtensions<'data>, PropertiesError> {
-        // TODO: do validation here
-
-        Ok(ScriptExtensions { trie, extensions })
+    ) -> ScriptExtensions<'data> {
+        ScriptExtensions { trie, extensions }
     }
 
     /// Returns the `Script` property value for this code point.
