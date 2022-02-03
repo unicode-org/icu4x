@@ -35,6 +35,7 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptExtensions` constructor
 pub struct ScriptWithExt(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
