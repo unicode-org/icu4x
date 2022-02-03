@@ -3127,6 +3127,7 @@ dependencies = [
  "quote",
  "syn",
  "synstructure",
+ "zerovec",
 ]
 
 [[package]]
