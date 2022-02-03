@@ -265,8 +265,8 @@ mod tests {
         assert!(!scx.has_script(0x0650, Script::Thaana));
 
         // U+0660 ARABIC-INDIC DIGIT ZERO
-        assert!(!scx.has_script(0x0660, Script::Common)); // main Script value
-        assert!(scx.has_script(0x0660, Script::Arabic));
+        assert!(!scx.has_script(0x0660, Script::Common));
+        assert!(scx.has_script(0x0660, Script::Arabic)); // main Script value
         assert!(!scx.has_script(0x0660, Script::Syriac));
         assert!(scx.has_script(0x0660, Script::Thaana));
 

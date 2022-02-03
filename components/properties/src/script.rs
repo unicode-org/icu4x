@@ -199,6 +199,55 @@ impl<'data> ScriptExtensions<'data> {
     }
 
     /// Returns the `Script` property value for this code point.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_properties::provider::key;
+    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu_properties::Script;
+    /// use icu::properties::script::ScriptExtensions;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    ///     .load_payload(&DataRequest {
+    ///         resource_path: ResourcePath {
+    ///             key: key::SCRIPT_EXTENSIONS_V1,
+    ///             options: ResourceOptions::default(),
+    ///         },
+    ///     })
+    ///     .expect("The data should be valid")
+    ///     .take_payload()
+    ///     .expect("Loading was successful");
+    ///
+    /// let scx: &ScriptExtensions = &payload.get().data;
+    ///
+    /// // U+0640 ARABIC TATWEEL
+    /// assert!(!scx.has_script(0x0640, Script::Common)); // main Script value
+    /// assert!(scx.has_script(0x0640, Script::Arabic));
+    /// assert!(scx.has_script(0x0640, Script::Syriac));
+    /// assert!(!scx.has_script(0x0640, Script::Thaana));
+    ///
+    /// // U+0650 ARABIC KASRA
+    /// assert_eq!(scx.get_script_val(0x0650), Script::Inherited); // main Script value
+    /// assert_ne!(scx.get_script_val(0x0650), Script::Arabic);
+    /// assert_ne!(scx.get_script_val(0x0650), Script::Syriac);
+    /// assert_ne!(scx.get_script_val(0x0650), Script::Thaana);
+    ///
+    /// // U+0660 ARABIC-INDIC DIGIT ZERO
+    /// assert_ne!(scx.get_script_val(0x0660), Script::Common);
+    /// assert_eq!(scx.get_script_val(0x0660), Script::Arabic); // main Script value
+    /// assert_ne!(scx.get_script_val(0x0660), Script::Syriac);
+    /// assert_ne!(scx.get_script_val(0x0660), Script::Thaana);
+    ///
+    /// // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+    /// assert_ne!(scx.get_script_val(0xFDF2), Script::Common);
+    /// assert_eq!(scx.get_script_val(0xFDF2), Script::Arabic); // main Script value
+    /// assert_ne!(scx.get_script_val(0xFDF2), Script::Syriac);
+    /// assert_ne!(scx.get_script_val(0xFDF2), Script::Thaana);
+    /// ```
     pub fn get_script_val(&self, code_point: u32) -> Script {
         let sc_with_ext = self.trie.get(code_point);
 
