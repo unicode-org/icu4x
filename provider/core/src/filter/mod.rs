@@ -65,19 +65,40 @@ where
     pub filter_name: &'static str,
 }
 
-impl<D, F, M> DataProvider<M> for RequestFilterDataProvider<D, F>
+impl<D, F, M> DynProvider<M> for RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,
     M: DataMarker,
-    D: DataProvider<M>,
+    D: DynProvider<M>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
         if (self.predicate)(req) {
-            self.inner.load_payload(req)
+            self.inner.load_payload(key, req)
         } else {
             Err(DataErrorKind::FilteredResource
                 .with_str_context(self.filter_name)
-                .with_req(req))
+                .with_req(key, req))
+        }
+    }
+}
+
+impl<D, F, M> ResourceProvider<M> for RequestFilterDataProvider<D, F>
+where
+    F: Fn(&DataRequest) -> bool,
+    M: ResourceMarker,
+    D: ResourceProvider<M>,
+{
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        if (self.predicate)(req) {
+            self.inner.load_resource(req)
+        } else {
+            Err(DataErrorKind::FilteredResource
+                .with_str_context(self.filter_name)
+                .with_req(M::KEY, req))
         }
     }
 }
@@ -87,13 +108,33 @@ where
     F: Fn(&DataRequest) -> bool,
     D: BufferProvider,
 {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         if (self.predicate)(req) {
-            self.inner.load_buffer(req)
+            self.inner.load_buffer(key, req)
         } else {
             Err(DataErrorKind::FilteredResource
                 .with_str_context(self.filter_name)
-                .with_req(req))
+                .with_req(key, req))
+        }
+    }
+}
+
+impl<D, F> AnyProvider for RequestFilterDataProvider<D, F>
+where
+    F: Fn(&DataRequest) -> bool,
+    D: AnyProvider,
+{
+    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        if (self.predicate)(req) {
+            self.inner.load_any(key, req)
+        } else {
+            Err(DataErrorKind::FilteredResource
+                .with_str_context(self.filter_name)
+                .with_req(key, req))
         }
     }
 }
@@ -108,17 +149,14 @@ where
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         self.inner.supported_options_for_key(resc_key).map(|iter| {
-            let resc_key = *resc_key;
             // Use filter_map instead of filter to avoid cloning the options
             let filtered_iter = iter.filter_map(move |options| {
                 let request = DataRequest {
-                    resource_path: ResourcePath {
-                        key: resc_key,
-                        options,
-                    },
+                    options,
+                    metadata: Default::default(),
                 };
                 if (self.predicate)(&request) {
-                    Some(request.resource_path.options)
+                    Some(request.options)
                 } else {
                     None
                 }

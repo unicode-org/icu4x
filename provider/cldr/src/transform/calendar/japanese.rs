@@ -204,14 +204,15 @@ impl KeyedDataProvider for JapaneseErasProvider {
     }
 }
 
-impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn load_payload(
+impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        if req.resource_path.options.langid.is_some() || req.resource_path.options.variant.is_some()
-        {
-            return Err(DataErrorKind::ExtraneousResourceOptions.with_req(req));
+        if req.options.langid.is_some() || req.options.variant.is_some() {
+            return Err(
+                DataErrorKind::ExtraneousResourceOptions.with_req(JapaneseErasV1Marker::KEY, req)
+            );
         }
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -223,9 +224,7 @@ impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(JapaneseErasProvider, {
-    _ => JapaneseErasV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,], SERDE_SE);
 
 impl IterableProvider for JapaneseErasProvider {
     fn supported_options_for_key(

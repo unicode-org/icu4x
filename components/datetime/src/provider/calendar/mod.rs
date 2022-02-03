@@ -8,14 +8,12 @@ mod skeletons;
 mod symbols;
 
 use crate::pattern;
-use icu_provider::{
-    yoke::{self, *},
-    DataMarker,
-};
+use icu_provider::prelude::*;
+use icu_provider::yoke;
 pub use skeletons::*;
 pub use symbols::*;
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(DatePatternsV1Marker = "datetime/lengths@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

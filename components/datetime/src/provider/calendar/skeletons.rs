@@ -9,10 +9,10 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::yoke::{self, *};
+use icu_provider::yoke;
 use litemap::LiteMap;
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(DateSkeletonPatternsV1Marker = "datetime/skeletons@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

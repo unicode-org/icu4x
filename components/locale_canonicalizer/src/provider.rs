@@ -8,7 +8,7 @@
 
 use alloc::vec::Vec;
 use icu_locid::LanguageIdentifier;
-use icu_provider::yoke::{self, *};
+use icu_provider::yoke;
 use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
 
@@ -23,7 +23,7 @@ pub mod key {
         resource_key!("locale_canonicalizer/likelysubtags@1");
 }
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -67,7 +67,7 @@ pub struct AliasesV1 {
     pub subdivision: Vec<(TinyStr8, TinyStr8)>,
 }
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

@@ -13,8 +13,9 @@ use alloc::vec::Vec;
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// Note: It does not make sense to construct a forking [`DataProvider`], since that is
-/// type-specific. Instead, make a forking [`BufferProvider`].
+/// Note: A forking [`ResourceProvider`] does not make sense, since there is only one key that
+/// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
+/// or [`DynProvider`].
 ///
 /// # Examples
 ///
@@ -29,8 +30,9 @@ use alloc::vec::Vec;
 ///
 /// struct DummyBufferProvider;
 /// impl BufferProvider for DummyBufferProvider {
-///     fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-///         Err(DataErrorKind::MissingResourceKey.with_req(req))
+///     fn load_buffer(&self, key: ResourceKey, req: &DataRequest)
+///             -> Result<DataResponse<BufferMarker>, DataError> {
+///         Err(DataErrorKind::MissingResourceKey.with_req(key, req))
 ///     }
 /// }
 ///
@@ -42,14 +44,9 @@ use alloc::vec::Vec;
 /// let data_provider = forking_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -80,18 +77,14 @@ use alloc::vec::Vec;
 ///         .filter_by_langid(|langid| langid.language == language!("de")),
 /// );
 ///
-/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> = &forking_provider.as_deserializing();
+/// let data_provider: &dyn ResourceProvider<HelloWorldV1Marker> = &forking_provider
+///     .as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
-/// let chinese_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("zh")),
-///             }
-///         }
+/// let chinese_hello_world = data_provider
+///     .load_resource(&DataRequest {
+///         options: langid!("zh").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -101,37 +94,63 @@ use alloc::vec::Vec;
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// # }
 /// ```
 pub struct ForkByKeyProvider<P0, P1>(pub P0, pub P1);
 
-impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for ForkByKeyProvider<P0, P1> {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let result = self.0.load_buffer(req);
+impl<P0, P1> BufferProvider for ForkByKeyProvider<P0, P1>
+where
+    P0: BufferProvider,
+    P1: BufferProvider,
+{
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let result = self.0.load_buffer(key, req);
         if !DataError::result_is_err_missing_resource_key(&result) {
             return result;
         }
-        self.1.load_buffer(req)
+        self.1.load_buffer(key, req)
     }
 }
 
-impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1> {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
-        let result = self.0.load_any(req);
+impl<P0, P1> AnyProvider for ForkByKeyProvider<P0, P1>
+where
+    P0: AnyProvider,
+    P1: AnyProvider,
+{
+    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        let result = self.0.load_any(key, req);
         if !DataError::result_is_err_missing_resource_key(&result) {
             return result;
         }
-        self.1.load_any(req)
+        self.1.load_any(key, req)
+    }
+}
+
+impl<M, P0, P1> DynProvider<M> for ForkByKeyProvider<P0, P1>
+where
+    M: DataMarker,
+    P0: DynProvider<M>,
+    P1: DynProvider<M>,
+{
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        let result = self.0.load_payload(key, req);
+        if !DataError::result_is_err_missing_resource_key(&result) {
+            return result;
+        }
+        self.1.load_payload(key, req)
     }
 }
 
@@ -141,8 +160,9 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1>
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// Note: It does not make sense to construct a forking [`DataProvider`], since that is
-/// type-specific. Instead, make a forking [`BufferProvider`].
+/// Note: A forking [`ResourceProvider`] does not make sense, since there is only one key that
+/// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
+/// or [`DynProvider`].
 ///
 /// # Examples
 ///
@@ -167,18 +187,14 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1>
 ///     ]
 /// };
 ///
-/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> = &forking_provider.as_deserializing();
+/// let data_provider: &dyn ResourceProvider<HelloWorldV1Marker> = &forking_provider
+///     .as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
-/// let chinese_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("zh")),
-///             }
-///         }
+/// let chinese_hello_world = data_provider
+///     .load_resource(&DataRequest {
+///         options: langid!("zh").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -188,14 +204,9 @@ impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for ForkByKeyProvider<P0, P1>
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
 /// # }
@@ -204,26 +215,56 @@ pub struct MultiForkByKeyProvider<P> {
     pub providers: Vec<P>,
 }
 
-impl<P: BufferProvider> BufferProvider for MultiForkByKeyProvider<P> {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
+impl<P> BufferProvider for MultiForkByKeyProvider<P>
+where
+    P: BufferProvider,
+{
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.load_buffer(req);
+            let result = provider.load_buffer(key, req);
             if !DataError::result_is_err_missing_resource_key(&result) {
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_req(req))
+        Err(DataErrorKind::MissingResourceKey.with_key(key))
     }
 }
 
-impl<P: AnyProvider> AnyProvider for MultiForkByKeyProvider<P> {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
+impl<P> AnyProvider for MultiForkByKeyProvider<P>
+where
+    P: AnyProvider,
+{
+    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.load_any(req);
+            let result = provider.load_any(key, req);
             if !DataError::result_is_err_missing_resource_key(&result) {
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_req(req))
+        Err(DataErrorKind::MissingResourceKey.with_key(key))
+    }
+}
+
+impl<M, P> DynProvider<M> for MultiForkByKeyProvider<P>
+where
+    M: DataMarker,
+    P: DynProvider<M>,
+{
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        for provider in self.providers.iter() {
+            let result = provider.load_payload(key, req);
+            if !DataError::result_is_err_missing_resource_key(&result) {
+                return result;
+            }
+        }
+        Err(DataErrorKind::MissingResourceKey.with_key(key))
     }
 }

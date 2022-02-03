@@ -70,11 +70,13 @@ impl Drop for FilesystemExporter {
 impl DataExporter<SerializeMarker> for FilesystemExporter {
     fn put_payload(
         &mut self,
+        key: ResourceKey,
         req: DataRequest,
         obj: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone();
-        path_buf.push(&*req.resource_path.writeable_to_string());
+        path_buf.push(&*key.writeable_to_string());
+        path_buf.push(&*req.options.writeable_to_string());
         log::trace!("Writing: {}", req);
         self.write_to_path(path_buf, obj.get().deref())?;
         Ok(())

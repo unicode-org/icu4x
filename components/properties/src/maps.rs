@@ -24,20 +24,11 @@ pub type CodePointMapResult<T> =
 
 fn get_cp_map<D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<T>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<T>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<T>> + ?Sized,
     T: TrieValue,
 {
-    let data_req = DataRequest {
-        resource_path: ResourcePath {
-            key: resc_key,
-            options: ResourceOptions {
-                variant: None,
-                langid: None,
-            },
-        },
-    };
-
-    let resp: DataResponse<UnicodePropertyMapV1Marker<T>> = provider.load_payload(&data_req)?;
+    let resp: DataResponse<UnicodePropertyMapV1Marker<T>> =
+        provider.load_payload(resc_key, &Default::default())?;
 
     let property_payload: DataPayload<UnicodePropertyMapV1Marker<T>> = resp.take_payload()?;
     Ok(property_payload)
@@ -65,7 +56,7 @@ where
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_general_category<D>(provider: &D) -> CodePointMapResult<GeneralCategory>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
     get_cp_map(provider, key::GENERAL_CATEGORY_V1)
 }
@@ -92,7 +83,7 @@ where
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_script<D>(provider: &D) -> CodePointMapResult<Script>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<Script>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<Script>> + ?Sized,
 {
     get_cp_map(provider, key::SCRIPT_V1)
 }
@@ -116,7 +107,7 @@ where
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_east_asian_width<D>(provider: &D) -> CodePointMapResult<EastAsianWidth>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<EastAsianWidth>> + ?Sized,
 {
     get_cp_map(provider, key::EAST_ASIAN_WIDTH_V1)
 }
@@ -140,7 +131,7 @@ where
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_line_break<D>(provider: &D) -> CodePointMapResult<LineBreak>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<LineBreak>> + ?Sized,
 {
     get_cp_map(provider, key::LINE_BREAK_V1)
 }
@@ -164,7 +155,7 @@ where
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_grapheme_cluster_break<D>(provider: &D) -> CodePointMapResult<GraphemeClusterBreak>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<GraphemeClusterBreak>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<GraphemeClusterBreak>> + ?Sized,
 {
     get_cp_map(provider, key::GRAPHEME_CLUSTER_BREAK_V1)
 }
@@ -188,7 +179,7 @@ where
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_word_break<D>(provider: &D) -> CodePointMapResult<WordBreak>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<WordBreak>> + ?Sized,
 {
     get_cp_map(provider, key::WORD_BREAK_V1)
 }
@@ -212,7 +203,7 @@ where
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_sentence_break<D>(provider: &D) -> CodePointMapResult<SentenceBreak>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<SentenceBreak>> + ?Sized,
 {
     get_cp_map(provider, key::SENTENCE_BREAK_V1)
 }
@@ -236,7 +227,7 @@ where
 /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 pub fn get_canonical_combining_class<D>(provider: &D) -> CodePointMapResult<CanonicalCombiningClass>
 where
-    D: DataProvider<UnicodePropertyMapV1Marker<CanonicalCombiningClass>> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<CanonicalCombiningClass>> + ?Sized,
 {
     get_cp_map(provider, key::CANONICAL_COMBINING_CLASS_V1)
 }

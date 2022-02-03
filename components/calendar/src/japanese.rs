@@ -27,19 +27,11 @@ pub struct JapaneseDateInner {
 
 impl Japanese {
     /// Creates a new [`Japanese`] from locale data and an options bag.
-    pub fn try_new<D: DataProvider<provider::JapaneseErasV1Marker> + ?Sized>(
+    pub fn try_new<D: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, DataError> {
         let eras = data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::JAPANESE_ERAS_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: None,
-                    },
-                },
-            })?
+            .load_resource(&DataRequest::default())?
             .take_payload()?;
         Ok(Self { eras })
     }

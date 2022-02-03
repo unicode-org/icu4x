@@ -33,7 +33,7 @@ pub struct EraStartDate {
     pub day: u8,
 }
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(JapaneseErasV1Marker = "calendar/japanese@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

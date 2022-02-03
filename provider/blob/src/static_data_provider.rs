@@ -36,24 +36,21 @@ use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
 /// let provider = StaticDataProvider::new_from_static_blob(&HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
-/// let response: DataPayload<HelloWorldV1Marker> = provider.load_payload(
-///     &DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: langid!("la").into(),
-///         }
-///     }
-/// )
-/// .expect("Data should be valid")
-/// .take_payload()
-/// .expect("Data should be present");
+/// let response: DataPayload<HelloWorldV1Marker> = provider
+///     .load_resource(&DataRequest {
+///         options: langid!("la").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect("Data should be valid")
+///     .take_payload()
+///     .expect("Data should be present");
 ///
 /// assert_eq!(response.get().message, "Ave, munde");
 /// ```
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
 pub struct StaticDataProvider {
-    data: ZeroMap2dBorrowed<'static, str, str, [u8]>,
+    data: ZeroMap2dBorrowed<'static, ResourceKeyHash, str, [u8]>,
 }
 
 impl StaticDataProvider {
@@ -83,13 +80,11 @@ impl StaticDataProvider {
     ///
     /// let stub_provider = StaticDataProvider::new_empty();
     ///
-    /// DataProvider::<HelloWorldV1Marker>::load_payload(
+    /// ResourceProvider::<HelloWorldV1Marker>::load_resource(
     ///     &stub_provider,
     ///     &DataRequest {
-    ///         resource_path: ResourcePath {
-    ///             key: key::HELLO_WORLD_V1,
-    ///             options: langid!("la").into(),
-    ///         }
+    ///         options: langid!("la").into(),
+    ///         metadata: Default::default(),
     ///     }
     /// )
     /// .expect_err("Stub provider returns no data");
@@ -100,23 +95,34 @@ impl StaticDataProvider {
         }
     }
 
-    fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
+    fn get_file(&self, key: ResourceKey, req: &DataRequest) -> Result<&'static [u8], DataError> {
         self.data
-            .get(
-                &req.resource_path.key.writeable_to_string(),
-                &req.resource_path.options.writeable_to_string(),
-            )
+            .get(&key.get_hash(), &req.options.writeable_to_string())
             .map_err(|e| {
                 match e {
                     KeyError::K0 => DataErrorKind::MissingResourceKey,
                     KeyError::K1 => DataErrorKind::MissingResourceOptions,
                 }
-                .with_req(req)
+                .with_req(key, req)
             })
     }
 }
 
-impl<M> DataProvider<M> for StaticDataProvider
+impl<M> ResourceProvider<M> for StaticDataProvider
+where
+    M: ResourceMarker,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
+        serde::de::Deserialize<'de>,
+{
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.as_deserializing().load_resource(req)
+    }
+}
+
+impl<M> DynProvider<M> for StaticDataProvider
 where
     M: DataMarker,
     // Actual bound:
@@ -125,14 +131,22 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
         serde::de::Deserialize<'de>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_payload(req)
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        self.as_deserializing().load_payload(key, req)
     }
 }
 
 impl BufferProvider for StaticDataProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let static_buffer = self.get_file(req)?;
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let static_buffer = self.get_file(key, req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard07);

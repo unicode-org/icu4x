@@ -5,8 +5,8 @@
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_locid::Locale;
-use icu_plurals::provider::PluralRulesV1Marker;
-use icu_provider::DataProvider;
+use icu_plurals::provider::OrdinalV1Marker;
+use icu_provider::prelude::*;
 
 use crate::{
     date::ZonedDateTimeInput,
@@ -21,7 +21,7 @@ use crate::{
 
 /// The composition of [`DateTimeFormat`](crate::DateTimeFormat) and [`TimeZoneFormat`](crate::TimeZoneFormat).
 ///
-/// [`ZonedDateTimeFormat`] uses data from the [`DataProvider`]s, the selected [`Locale`], and the
+/// [`ZonedDateTimeFormat`] uses data from the [data provider]s, the selected [`Locale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
@@ -66,8 +66,8 @@ use crate::{
 pub struct ZonedDateTimeFormat<C>(raw::ZonedDateTimeFormat, PhantomData<C>);
 
 impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
-    /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
-    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
+    /// Constructor that takes a selected [`Locale`], a reference to a [data provider] for
+    /// dates, a [data provider] for time zones, and a list of [`DateTimeFormatOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// # Examples
@@ -92,6 +92,8 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     ///
     /// assert_eq!(zdtf.is_ok(), true);
     /// ```
+    ///
+    /// [data provider]: icu_provider
     #[inline]
     pub fn try_new<L, DP, ZP, PP>(
         locale: L,
@@ -102,17 +104,17 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        DP: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>,
-        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        DP: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>,
+        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: DataProvider<PluralRulesV1Marker>,
+        PP: ResourceProvider<OrdinalV1Marker>,
     {
         Ok(Self(
             raw::ZonedDateTimeFormat::try_new(

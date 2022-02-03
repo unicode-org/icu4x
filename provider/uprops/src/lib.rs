@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! `icu_provider_uprops` contains implementations of the [`ICU4X`]
-//! [`DataProvider`] interface backed by TOML files exported by the
+//! [data provider] interface backed by TOML files exported by the
 //! ICU4C icuwriteuprops tool. Create a directory containing TOML files for
 //! the necessary Unicode properties and then pass the path into the
 //! [`PropertiesDataProvider`].
@@ -13,7 +13,7 @@
 //! [`FsDataProvider`] or [`StaticDataProvider`] instead.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`DataProvider`]: icu_provider::prelude::DataProvider
+//! [data provider]: icu_provider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 

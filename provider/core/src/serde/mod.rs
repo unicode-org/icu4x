@@ -13,13 +13,13 @@
 //!
 //! ## Serializing
 //!
-//! Providers that have full type information should implement [`DataProvider`]`<`[`SerializeMarker`]`>`.
+//! Providers that have full type information should implement [`DynProvider`]`<`[`SerializeMarker`]`>`.
 //! Note that a provider like `FsDataProvider` cannot implement that trait, because type information
 //! on the data structs is required in order to deserialize and then serialize them.
 //!
-//! [`DataProvider`]`<`[`SerializeMarker`]`>` is used by data exporters such as `FilesystemExporter`.
+//! [`DynProvider`]`<`[`SerializeMarker`]`>` is used by data exporters such as `FilesystemExporter`.
 //!
-//! [`DataProvider`]: crate::data_provider::DataProvider
+//! [`DynProvider`]: crate::data_provider::DynProvider
 //! [`BufferProvider`]: crate::buf::BufferProvider
 
 pub mod borrow_de_utils;

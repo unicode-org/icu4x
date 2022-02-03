@@ -11,11 +11,14 @@ use crate::helpers;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Write;
-use icu_locid::LanguageIdentifier;
+use core::mem;
+use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
+use zerovec::ule::*;
 
 /// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
 pub struct ResourceKeyHash([u8; 4]);
 
@@ -24,6 +27,48 @@ impl ResourceKeyHash {
         Self(helpers::fxhash_32(path.as_bytes()).to_le_bytes())
     }
 }
+
+impl<'a> zerovec::map::ZeroMapKV<'a> for ResourceKeyHash {
+    type Container = zerovec::ZeroVec<'a, ResourceKeyHash>;
+    type GetType = <ResourceKeyHash as AsULE>::ULE;
+    type OwnedType = ResourceKeyHash;
+}
+
+// Safety (based on the safety checklist on the ULE trait):
+//  1. ResourceKeyHash does not include any uninitialized or padding bytes.
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  2. ResourceKeyHash is aligned to 1 byte.
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
+//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
+//  5. The other ULE methods use the default impl.
+//  6. ResourceKeyHash byte equality is semantic equality
+unsafe impl ULE for ResourceKeyHash {
+    #[inline]
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        if bytes.len() % mem::size_of::<Self>() == 0 {
+            // Safe because Self is transparent over [u8; 4]
+            Ok(())
+        } else {
+            Err(ZeroVecError::length::<Self>(bytes.len()))
+        }
+    }
+}
+
+impl AsULE for ResourceKeyHash {
+    type ULE = Self;
+    #[inline]
+    fn as_unaligned(self) -> Self::ULE {
+        self
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+// Safe since the ULE type is `self`.
+unsafe impl EqULE for ResourceKeyHash {}
 
 /// Used for loading data from an ICU4X data provider.
 ///
@@ -318,8 +363,7 @@ impl Writeable for ResourceKey {
     }
 }
 
-/// A variant and language identifier, used for requesting data from a
-/// [`DataProvider`](crate::DataProvider).
+/// A variant and language identifier, used for requesting data from a data provider.
 ///
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
 #[derive(PartialEq, Clone, Default)]
@@ -384,47 +428,20 @@ impl From<LanguageIdentifier> for ResourceOptions {
     }
 }
 
+impl From<Locale> for ResourceOptions {
+    /// Create a ResourceOptions with the given language identifier and an empty variant field.
+    fn from(locale: Locale) -> Self {
+        Self {
+            langid: Some(locale.id),
+            variant: None,
+        }
+    }
+}
+
 impl ResourceOptions {
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
-    }
-}
-
-#[derive(Clone, PartialEq)]
-pub struct ResourcePath {
-    pub key: ResourceKey,
-    pub options: ResourceOptions,
-}
-
-impl fmt::Debug for ResourcePath {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ResourcePath{{{}}}", self)
-    }
-}
-
-impl fmt::Display for ResourcePath {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for ResourcePath {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self.key, sink)?;
-        if !self.options.is_empty() {
-            sink.write_char('/')?;
-            writeable::Writeable::write_to(&self.options, sink)?;
-        }
-        Ok(())
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.key);
-        if !self.options.is_empty() {
-            result += writeable::Writeable::write_len(&self.options) + 1;
-        }
-        result
     }
 }
 
@@ -499,27 +516,6 @@ mod tests {
         for cas in get_options_test_cases().iter() {
             assert_eq!(cas.expected, cas.resc_options.to_string());
             writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
-        }
-    }
-
-    #[test]
-    fn test_resource_path_to_string() {
-        for key_cas in get_key_test_cases().iter() {
-            for options_cas in get_options_test_cases().iter() {
-                let expected = if options_cas.resc_options.is_empty() {
-                    key_cas.expected.to_string()
-                } else {
-                    format!("{}/{}", key_cas.expected, options_cas.expected)
-                };
-                let resource_path = ResourcePath {
-                    key: key_cas.resc_key,
-                    // Note: once https://github.com/rust-lang/rust/pull/80470 is accepted,
-                    // we won't have to clone here.
-                    options: options_cas.resc_options.clone(),
-                };
-                assert_eq!(expected, resource_path.to_string());
-                writeable::assert_writeable_eq!(&resource_path, expected);
-            }
         }
     }
 }

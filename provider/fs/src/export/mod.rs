@@ -45,18 +45,13 @@
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
-//!     resource_path: ResourcePath {
-//!         key: key::HELLO_WORLD_V1,
-//!         options: ResourceOptions {
-//!             variant: None,
-//!             langid: Some(langid!("bn")),
-//!         },
-//!     }
+//!     options: langid!("bn").into(),
+//!     metadata: Default::default(),
 //! };
 //! let source_response: DataResponse<HelloWorldV1Marker> =
-//!     source_provider.load_payload(&req).unwrap();
+//!     source_provider.load_resource(&req).unwrap();
 //! let fs_response: DataResponse<HelloWorldV1Marker> =
-//!     fs_provider.load_payload(&req).unwrap();
+//!     fs_provider.load_resource(&req).unwrap();
 //!
 //! assert_eq!(
 //!     source_response.payload.unwrap().get(),

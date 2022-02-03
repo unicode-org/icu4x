@@ -19,7 +19,7 @@ use icu_datetime::{
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_plurals::provider::PluralRulesV1Marker;
+use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::prelude::*;
 use icu_provider::struct_provider::AnyPayloadProvider;
@@ -98,10 +98,10 @@ fn assert_fixture_element<A, D>(
 ) where
     A: AsCalendar,
     A::Calendar: CldrCalendar,
-    D: DataProvider<DateSymbolsV1Marker>
-        + DataProvider<DatePatternsV1Marker>
-        + DataProvider<DateSkeletonPatternsV1Marker>
-        + DataProvider<PluralRulesV1Marker>,
+    D: ResourceProvider<DateSymbolsV1Marker>
+        + ResourceProvider<DatePatternsV1Marker>
+        + ResourceProvider<DateSkeletonPatternsV1Marker>
+        + ResourceProvider<OrdinalV1Marker>,
 {
     let locale: Locale = locale.parse().unwrap();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, options).unwrap();
@@ -177,14 +177,12 @@ fn test_dayperiod_patterns() {
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: DATE_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some(langid.clone()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some(langid.clone()),
                 },
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
@@ -193,27 +191,23 @@ fn test_dayperiod_patterns() {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
         let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: DATE_SYMBOLS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some(langid.clone()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some(langid.clone()),
                 },
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
             .unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: DATE_SKELETON_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some(langid.clone()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some(langid.clone()),
                 },
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
@@ -328,40 +322,34 @@ fn test_time_zone_patterns() {
         datetime.time_zone.time_variant = config.time_variant.take();
 
         let mut patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: DATE_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some(langid.clone()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some(langid.clone()),
                 },
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
             .unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = date_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: DATE_SKELETON_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some(langid.clone()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some(langid.clone()),
                 },
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()
             .unwrap();
         let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: DATE_SYMBOLS_V1,
-                    options: ResourceOptions {
-                        variant: Some("gregory".into()),
-                        langid: Some(langid.clone()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some("gregory".into()),
+                    langid: Some(langid.clone()),
                 },
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()

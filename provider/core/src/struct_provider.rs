@@ -28,7 +28,8 @@ use crate::prelude::*;
 ///     data: AnyPayload::from_static_ref(&CONST_DATA),
 /// };
 ///
-/// let payload: DataPayload<HelloWorldV1Marker> = provider.load_any(&DataRequest::from(SAMPLE_KEY))
+/// let payload: DataPayload<HelloWorldV1Marker> = provider
+///     .load_any(SAMPLE_KEY, &DataRequest::default())
 ///     .expect("Load should succeed")
 ///     .downcast()
 ///     .expect("Types should match")
@@ -43,8 +44,8 @@ pub struct AnyPayloadProvider {
 }
 
 impl AnyProvider for AnyPayloadProvider {
-    fn load_any(&self, req: &DataRequest) -> Result<AnyResponse, DataError> {
-        req.resource_path.key.match_key(self.key)?;
+    fn load_any(&self, key: ResourceKey, _: &DataRequest) -> Result<AnyResponse, DataError> {
+        key.match_key(self.key)?;
         Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(self.data.clone()),

@@ -41,15 +41,13 @@ use std::path::PathBuf;
 ///         .expect("The data should be well-formed after downloading");
 ///
 ///     let data: DataPayload<icu_plurals::provider::PluralRulesV1Marker> = data_provider
-///         .load_payload(&DataRequest {
-///             resource_path: ResourcePath {
-///                 key: icu_plurals::provider::key::ORDINAL_V1,
-///                 options: ResourceOptions {
-///                     langid: Some(langid!("uk")),
-///                     variant: None,
-///                 },
-///             },
-///         })
+///         .load_payload(
+///             icu_plurals::provider::OrdinalV1Marker::KEY,
+///             &DataRequest {
+///                 options: langid!("uk").into(),
+///                 metadata: Default::default(),
+///             }
+///         )
 ///         .unwrap()
 ///         .take_payload()
 ///         .unwrap();

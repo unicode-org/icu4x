@@ -12,8 +12,8 @@ pub mod ffi {
         FixedDecimalFormat,
     };
     use icu_locid::Locale;
-    use icu_provider::prelude::DataProvider;
     use icu_provider::struct_provider::AnyPayloadProvider;
+    use icu_provider::ResourceProvider;
     use writeable::Writeable;
 
     use crate::{
@@ -95,7 +95,7 @@ pub mod ffi {
             options: ICU4XFixedDecimalFormatOptions,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()>
         where
-            D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
+            D: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
         {
             let langid = locale.0.as_ref().clone();
 
