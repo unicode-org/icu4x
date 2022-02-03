@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643846306210,
+  "lastUpdate": 1643925558886,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19649,6 +19649,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 54752642,
             "range": "± 3325168",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20787e7ed493b6c2335de53ceb975888f8964483",
+          "message": "Split DataProvider into ResourceProvider and DynProvider (#1554)",
+          "timestamp": "2022-02-03T13:49:53-08:00",
+          "tree_id": "8d7123c68b2cdf9240c2531723db339b9971e283",
+          "url": "https://github.com/unicode-org/icu4x/commit/20787e7ed493b6c2335de53ceb975888f8964483"
+        },
+        "date": 1643925546168,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 50631339,
+            "range": "± 1728420",
             "unit": "ns/iter"
           }
         ]
