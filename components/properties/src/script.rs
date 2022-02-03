@@ -414,6 +414,48 @@ impl<'data> ScriptExtensions<'data> {
 
     /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::ops::RangeInclusive;
+    /// use icu_provider::prelude::*;
+    /// use icu_properties::provider::key;
+    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu_properties::Script;
+    /// use icu::properties::script::ScriptExtensions;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    ///     .load_payload(&DataRequest {
+    ///         resource_path: ResourcePath {
+    ///             key: key::SCRIPT_EXTENSIONS_V1,
+    ///             options: ResourceOptions::default(),
+    ///         },
+    ///     })
+    ///     .expect("The data should be valid")
+    ///     .take_payload()
+    ///     .expect("Loading was successful");
+    ///
+    /// let scx: &ScriptExtensions = &payload.get().data;
+    /// let syriac = scx.get_script_extensions_set(Script::Syriac);
+    ///
+    /// assert!(!syriac.contains_u32(0x061E)); // ARABIC TRIPLE DOT PUNCTUATION MARK
+    /// assert!(syriac.contains_u32(0x061F)); // ARABIC QUESTION MARK
+    /// assert!(!syriac.contains_u32(0x0620)); // ARABIC LETTER KASHMIRI YEH
+    ///
+    /// assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
+    /// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
+    /// assert!(!syriac.contains_u32(0x074B)); // unassigned
+    /// assert!(syriac.contains_u32(0x074F)); // SYRIAC LETTER SOGDIAN FE
+    /// assert!(!syriac.contains_u32(0x0750)); // ARABIC LETTER BEH WITH THREE DOTS HORIZONTALLY BELOW
+    ///
+    /// assert!(syriac.contains_u32(0x1DF8)); // COMBINING DOT ABOVE LEFT
+    /// assert!(!syriac.contains_u32(0x1DF9)); // COMBINING WIDE INVERTED BRIDGE BELOW
+    /// assert!(syriac.contains_u32(0x1DFA)); // COMBINING DOT BELOW LEFT
+    /// assert!(!syriac.contains_u32(0x1DFB)); // COMBINING DELETION MARK
+    /// ```
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
         UnicodeSet::from_iter(self.get_script_extensions_ranges(script))
     }
