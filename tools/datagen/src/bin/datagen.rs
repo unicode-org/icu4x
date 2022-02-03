@@ -452,15 +452,17 @@ fn export_cldr(
         EitherProvider::B(raw_provider)
     };
 
-    for key in CldrJsonDataProvider::supported_keys() {
-        if let Some(allowed_keys) = allowed_keys {
-            if !allowed_keys.contains(&*key.writeable_to_string()) {
-                continue;
-            }
-        }
-        log::info!("Writing key: {}", key);
-        icu_provider::export::export_from_iterable(&key, &provider, *exporter.lock().unwrap())?;
-    }
+    CldrJsonDataProvider::supported_keys()
+        .par_iter()
+        .filter(|key| {
+            allowed_keys.map_or(true, |allowed_keys| {
+                allowed_keys.contains(&key.writeable_to_string())
+            })
+        })
+        .try_for_each_with(exporter, |exporter, key| {
+            log::info!("Writing key: {}", key);
+            icu_provider::export::export_from_iterable_with_locking(key, &provider, exporter)
+        })?;
 
     Ok(())
 }
@@ -491,25 +493,27 @@ fn export_set_props(
         keys.to_vec()
     };
 
-    for key in keys.iter() {
-        let result =
-            icu_provider::export::export_from_iterable(key, &provider, *exporter.lock().unwrap());
-        if matches.is_present("TEST_KEYS")
-            && matches!(
-                result,
-                Err(DataError {
-                    kind: DataErrorKind::MissingResourceKey,
-                    ..
-                })
-            )
-        {
-            // Within testdata, if the data for a particular property is unavailable, skip it for now.
-            log::trace!("Skipping key: {}", key);
-        } else {
-            log::info!("Writing key: {}", key);
-            result?
-        }
-    }
+    keys.par_iter()
+        .try_for_each_with(exporter, |exporter, key| {
+            let result =
+                icu_provider::export::export_from_iterable_with_locking(key, &provider, exporter);
+            if matches.is_present("TEST_KEYS")
+                && matches!(
+                    result,
+                    Err(DataError {
+                        kind: DataErrorKind::MissingResourceKey,
+                        ..
+                    })
+                )
+            {
+                // Within testdata, if the data for a particular property is unavailable, skip it for now.
+                log::trace!("Skipping key: {}", key);
+                Ok(())
+            } else {
+                log::info!("Writing key: {}", key);
+                result
+            }
+        })?;
 
     Ok(())
 }
@@ -540,25 +544,27 @@ fn export_map_props(
         keys.to_vec()
     };
 
-    for key in keys.iter() {
-        let result =
-            icu_provider::export::export_from_iterable(key, &provider, *exporter.lock().unwrap());
-        if matches.is_present("TEST_KEYS")
-            && matches!(
-                result,
-                Err(DataError {
-                    kind: DataErrorKind::MissingResourceKey,
-                    ..
-                })
-            )
-        {
-            // Within testdata, if the data for a particular property is unavailable, skip it for now.
-            log::trace!("Skipping key: {}", key);
-        } else {
-            log::info!("Writing key: {}", key);
-            result?
-        }
-    }
+    keys.par_iter()
+        .try_for_each_with(exporter, |exporter, key| {
+            let result =
+                icu_provider::export::export_from_iterable_with_locking(key, &provider, exporter);
+            if matches.is_present("TEST_KEYS")
+                && matches!(
+                    result,
+                    Err(DataError {
+                        kind: DataErrorKind::MissingResourceKey,
+                        ..
+                    })
+                )
+            {
+                // Within testdata, if the data for a particular property is unavailable, skip it for now.
+                log::trace!("Skipping key: {}", key);
+                Ok(())
+            } else {
+                log::info!("Writing key: {}", key);
+                result
+            }
+        })?;
 
     Ok(())
 }
@@ -589,24 +595,27 @@ fn export_script_extensions_props(
         keys.to_vec()
     };
 
-    for key in keys.iter() {
-        let result = icu_provider::export::export_from_iterable(key, &provider, *exporter.lock().unwrap());
-        if matches.is_present("TEST_KEYS")
-            && matches!(
-                result,
-                Err(DataError {
-                    kind: DataErrorKind::MissingResourceKey,
-                    ..
-                })
-            )
-        {
-            // Within testdata, if the data for a particular property is unavailable, skip it for now.
-            log::trace!("Skipping key: {}", key);
-        } else {
-            log::info!("Writing key: {}", key);
-            result?
-        }
-    }
+    keys.par_iter()
+        .try_for_each_with(exporter, |exporter, key| {
+            let result =
+                icu_provider::export::export_from_iterable_with_locking(key, &provider, exporter);
+            if matches.is_present("TEST_KEYS")
+                && matches!(
+                    result,
+                    Err(DataError {
+                        kind: DataErrorKind::MissingResourceKey,
+                        ..
+                    })
+                )
+            {
+                // Within testdata, if the data for a particular property is unavailable, skip it for now.
+                log::trace!("Skipping key: {}", key);
+                Ok(())
+            } else {
+                log::info!("Writing key: {}", key);
+                result
+            }
+        })?;
 
     Ok(())
 }
@@ -628,7 +637,7 @@ fn export_hello_world(
 
     let key = HelloWorldV1Marker::KEY;
     log::info!("Writing key: {}", key);
-    icu_provider::export::export_from_iterable(&key, &provider, *exporter.lock().unwrap())?;
+    icu_provider::export::export_from_iterable_with_locking(&key, &provider, &exporter)?;
 
     Ok(())
 }

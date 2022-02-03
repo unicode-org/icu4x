@@ -86,3 +86,64 @@ where
     exporter.flush()?;
     result
 }
+
+/// Convenience function to drive a [`DataExporter`] from an [`IterableDynProvider`] with mulithreading support.
+///
+/// Behavior is identical to [`export_from_iterable`] except locking is used for [`DataExporter`] access so
+/// mutiple exports can run in parallel.
+///
+/// # Example
+///
+/// [`HelloWorldProvider`] implements both [`DataExporter`] and [`IterableDynProvider`]. The
+/// following example copies the data from one instance to another instance.
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// use std::sync::Mutex;
+///
+/// let source_provider = HelloWorldProvider::new_with_placeholder_data();
+/// let mut dest_provider = HelloWorldProvider::default();
+///
+/// icu_provider::export::export_from_iterable_with_locking(
+///     &HelloWorldV1Marker::KEY,
+///     &source_provider,
+///     &Mutex::new(&mut dest_provider),
+/// )
+/// .expect("Export should be successful");
+///
+/// assert_eq!(source_provider, dest_provider);
+/// ```
+///
+/// [`HelloWorldProvider`]: crate::hello_world::HelloWorldProvider
+#[cfg(feature = "std")]
+pub fn export_from_iterable_with_locking<P, E, M>(
+    resc_key: &ResourceKey,
+    provider: &P,
+    exporter: &std::sync::Mutex<&mut E>,
+) -> Result<(), DataError>
+where
+    M: DataMarker,
+    P: IterableDynProvider<M> + ?Sized,
+    E: DataExporter<M> + ?Sized,
+{
+    let payloads = provider
+        .supported_options_for_key(resc_key)?
+        .map(|options| {
+            let req = DataRequest {
+                options,
+                metadata: Default::default(),
+            };
+            let payload = provider.load_payload(*resc_key, &req)?.take_payload()?;
+            Ok((req, payload))
+        })
+        .collect::<Result<std::vec::Vec<(DataRequest, DataPayload<M>)>, DataError>>()?;
+
+    let mut exporter = exporter.lock().unwrap();
+    // Ensure exporter.flush() is called, even if an error occurred
+    let result = payloads
+        .into_iter()
+        .try_for_each(|(req, payload)| exporter.put_payload(*resc_key, req, payload));
+    exporter.flush()?;
+    result
+}
