@@ -656,9 +656,16 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                                 // as a transformation by applying maybe_filter_value()
                                 // to the trie value.
                                 // The current trie value `trie_value_2` within this data block
-                                // differs here from `trie_value`, and updating `trie_value`
-                                // with the new value may or may not help in computing the
-                                // range and/or yield a different result for maybe_filter_range().
+                                // differs here from the previous value in `trie_value`.
+                                // But both map to `value` after applying `maybe_filter_value`.
+                                // It is not clear whether the previous or the current trie value
+                                // (or neither) is more likely to match potential subsequent trie
+                                // values that would extend the range by mapping to `value`.
+                                // On the assumption of locality -- often times consecutive
+                                // characters map to the same trie values -- remembering the new
+                                // one might make it faster to extend this range further
+                                // (by increasing the chance that the next `trie_value_2 !=
+                                // trie_value` test will be false).
                                 trie_value = trie_value_2; // may or may not help
                             }
                         } else {
@@ -694,9 +701,16 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
                                 // as a transformation by applying maybe_filter_value()
                                 // to the trie value.
                                 // The current trie value `trie_value_2` within this data block
-                                // differs here from `trie_value`, and updating `trie_value`
-                                // with the new value may or may not help in computing the
-                                // range and/or yield a different result for maybe_filter_range().
+                                // differs here from the previous value in `trie_value`.
+                                // But both map to `value` after applying `maybe_filter_value`.
+                                // It is not clear whether the previous or the current trie value
+                                // (or neither) is more likely to match potential subsequent trie
+                                // values that would extend the range by mapping to `value`.
+                                // On the assumption of locality -- often times consecutive
+                                // characters map to the same trie values -- remembering the new
+                                // one might make it faster to extend this range further
+                                // (by increasing the chance that the next `trie_value_2 !=
+                                // trie_value` test will be false).
                                 trie_value = trie_value_2; // may or may not help
                             }
 
