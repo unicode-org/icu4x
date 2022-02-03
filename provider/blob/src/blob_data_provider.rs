@@ -87,17 +87,14 @@ impl BlobDataProvider {
     ) -> Result<Yoke<&'static [u8], Rc<[u8]>>, DataError> {
         self.data
             .try_project_cloned_with_capture((key, req), |zm, (key, req), _| {
-                zm.get(
-                    &key.get_hash(),
-                    &req.options.writeable_to_string(),
-                )
-                .map_err(|e| {
-                    match e {
-                        KeyError::K0 => DataErrorKind::MissingResourceKey,
-                        KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                    }
-                    .with_req(key, req)
-                })
+                zm.get(&key.get_hash(), &req.options.writeable_to_string())
+                    .map_err(|e| {
+                        match e {
+                            KeyError::K0 => DataErrorKind::MissingResourceKey,
+                            KeyError::K1 => DataErrorKind::MissingResourceOptions,
+                        }
+                        .with_req(key, req)
+                    })
             })
     }
 }
