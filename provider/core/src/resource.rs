@@ -540,7 +540,7 @@ mod tests {
     #[test]
     fn test_string_to_resource_options() {
         for cas in get_options_test_cases().iter() {
-            assert_eq!(ResourceOptions::from_str(cas.expected), cas.resc_options);
+            assert_eq!(ResourceOptions::from_str(cas.expected).unwrap(), cas.resc_options);
         }
     }
 }
