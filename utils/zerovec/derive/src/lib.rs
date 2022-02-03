@@ -8,6 +8,7 @@ use proc_macro::TokenStream;
 use syn::{parse_macro_input, DeriveInput};
 
 mod ule;
+mod utils;
 
 /// Custom derive for `zerovec::ULE`,
 ///

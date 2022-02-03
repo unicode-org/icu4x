@@ -1,17 +1,17 @@
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-use syn::parse::{Parse, ParseStream};
-use syn::punctuated::Punctuated;
+
+
 use syn::spanned::Spanned;
-use syn::{parenthesized, parse2, Attribute, Data, DeriveInput, Error, Ident, Result, Token};
+use syn::{Data, DeriveInput, Error, Ident};
 
 fn suffixed_ident(name: &str, suffix: usize, s: Span) -> Ident {
     Ident::new(&format!("{name}_{suffix}"), s)
 }
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
-    if !has_valid_repr(&input.attrs) {
+    if !crate::utils::has_valid_repr(&input.attrs) {
         return Error::new(
             input.span(),
             "derive(ULE) must be applied to a #[repr(C)] or #[repr(transparent)] type",
@@ -76,38 +76,5 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
                 Ok(())
             }
         }
-    }
-}
-
-// Check attributes contain repr(transparent) or repr(packed)
-pub fn has_valid_repr(attrs: &[Attribute]) -> bool {
-    attrs
-        .iter()
-        .filter(|a| a.path.get_ident().map(|a| a == "repr").unwrap_or(false))
-        .find(|a| {
-            parse2::<ReprAttribute>(a.tokens.clone())
-                .ok()
-                .and_then(|s| {
-                    s.reprs
-                        .iter()
-                        .find(|r| *r == "packed" || *r == "transparent")
-                        .map(|_| ())
-                })
-                .is_some()
-        })
-        .is_some()
-}
-
-struct ReprAttribute {
-    reprs: Punctuated<Ident, Token![,]>,
-}
-
-impl Parse for ReprAttribute {
-    fn parse(input: ParseStream) -> Result<Self> {
-        let content;
-        let _paren = parenthesized!(content in input);
-        Ok(ReprAttribute {
-            reprs: content.parse_terminated(Ident::parse)?,
-        })
     }
 }
