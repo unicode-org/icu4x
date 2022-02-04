@@ -9,9 +9,9 @@ use icu_provider::serde::SerializeMarker;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 
-/// A [`DataProvider`] whose supported keys are known statically at compile time.
+/// A data provider whose supported keys are known statically at compile time.
 ///
-/// Implementing this trait means that a [`DataProvider`] is built to support a specific set of
+/// Implementing this trait means that a provider is built to support a specific set of
 /// keys; for example, by transforming those keys from an external data source.
 ///
 /// TODO(#442): Think about a better way to do this. This is not fully supported.

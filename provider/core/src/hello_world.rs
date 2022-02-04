@@ -176,11 +176,12 @@ impl IterableProvider for HelloWorldProvider {
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         resc_key.match_key(HelloWorldV1Marker::KEY)?;
-        Ok(Box::new(self
-            .map
-            .iter_keys()
-            .cloned()
-            .map(Into::<ResourceOptions>::into)))
+        Ok(Box::new(
+            self.map
+                .iter_keys()
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 
