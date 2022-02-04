@@ -9,6 +9,7 @@ use syn::{parse_macro_input, DeriveInput};
 
 pub(crate) mod ule;
 mod utils;
+mod varule;
 
 /// Custom derive for `zerovec::ULE`,
 ///
@@ -17,4 +18,13 @@ mod utils;
 pub fn ule_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(ule::derive_impl(&input))
+}
+
+/// Custom derive for `zerovec::VarULE`,
+///
+/// This can be attached to structs containing only ULE types with one VarULE type at the end
+#[proc_macro_derive(VarULE)]
+pub fn varule_derive(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    TokenStream::from(varule::derive_impl(&input))
 }
