@@ -48,7 +48,3 @@
 //!     --locales de \
 //!     --out /tmp/icu4x_data/work_log_json
 //! ```
-
-fn main() {
-    panic!("Please run a more specific binary")
-}
