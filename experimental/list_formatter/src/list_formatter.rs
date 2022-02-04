@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{*, provider::*};
+use crate::{ListStyle, provider::ListFormatterPatternsV1};
 use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -10,12 +10,12 @@ use writeable::*;
 
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
-pub struct ListFormatter<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>> {
+pub struct ListFormatter<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> {
     data: DataPayload<M>,
     style: ListStyle,
 }
 
-impl<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>> + ResourceMarker> ListFormatter<M> {
+impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ListFormatter<M> {
     /// Creates a new [`ListFormatter`] that produces a list for the given [`ResourceMarker`]. See
     /// [`crate::markers`].
     pub fn try_new<T: Into<Locale>, D: ResourceProvider<M> + ?Sized>(
@@ -72,7 +72,7 @@ pub mod parts {
 /// the [`writeable`] crate for how to consume this.
 pub struct List<
     'a,
-    M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>,
+    M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>,
     W: Writeable + 'a,
     I: Iterator<Item = W> + Clone + 'a,
 > {
@@ -82,7 +82,7 @@ pub struct List<
 
 impl<
         'a,
-        M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>,
+        M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>,
         W: Writeable + 'a,
         I: Iterator<Item = W> + Clone + 'a,
     > Writeable for List<'a, M, W, I>
@@ -189,9 +189,9 @@ mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    fn formatter(style: ListStyle) -> ListFormatter {
+    fn formatter(style: ListStyle) -> ListFormatter<crate::markers::And> {
         ListFormatter {
-            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
+            data: DataPayload::from_owned(
                 crate::provider::test::test_patterns(),
             ),
             style,
