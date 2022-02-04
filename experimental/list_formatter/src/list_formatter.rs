@@ -2,74 +2,39 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::*;
+use crate::{*, provider::*};
 use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::*;
 
-/// Represents the type of a list. See the
-/// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
-/// for an explanation of the different types.
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum ListType {
-    /// A conjunction
-    And,
-    /// A disjunction
-    Or,
-    /// A list of units
-    Unit,
-}
-
-/// Represents the style of a list. See the
-/// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
-/// for an explanation of the different styles.
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum ListStyle {
-    /// A typical list
-    Wide,
-    /// A shorter list
-    Short,
-    /// The shortest type of list
-    Narrow,
-}
-
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
-pub struct ListFormatter {
-    data: DataPayload<ListFormatterPatternsV1Marker>,
+pub struct ListFormatter<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>> {
+    data: DataPayload<M>,
     style: ListStyle,
 }
 
-impl ListFormatter {
-    /// Creates a new [`ListFormatter`] from the given provider. The provider has to support the
-    /// correct key for the given type:
-    /// [`LIST_FORMAT_AND_V1`](crate::provider::key::LIST_FORMAT_AND_V1),
-    /// [`LIST_FORMAT_OR_V1`](crate::provider::key::LIST_FORMAT_OR_V1), or
-    /// [`LIST_FORMAT_UNIT_V1`](crate::provider::key::LIST_FORMAT_UNIT_V1).
-    /// An error is returned if the key or language are not available, or if there were any
-    /// deserialization errors.
-    pub fn try_new<T: Into<Locale>, D: DynProvider<ListFormatterPatternsV1Marker> + ?Sized>(
+impl<M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>> + ResourceMarker> ListFormatter<M> {
+    /// Creates a new [`ListFormatter`] that produces a list for the given [`ResourceMarker`]. See
+    /// [`crate::markers`].
+    pub fn try_new<T: Into<Locale>, D: ResourceProvider<M> + ?Sized>(
         locale: T,
         data_provider: &D,
-        type_: ListType,
         style: ListStyle,
     ) -> Result<Self, DataError> {
         let data = data_provider
-            .load_payload(
-                match type_ {
-                    ListType::And => key::LIST_FORMAT_AND_V1,
-                    ListType::Or => key::LIST_FORMAT_OR_V1,
-                    ListType::Unit => key::LIST_FORMAT_UNIT_V1,
-                },
-                &DataRequest {
-                    options: locale.into().into(),
-                    metadata: Default::default(),
-                },
-            )?
+            .load_resource(&DataRequest {
+                options: locale.into().into(),
+                metadata: Default::default(),
+            })?
             .take_payload()?;
-        Ok(Self { data, style })
+        Ok(ListFormatter { data, style })
     }
+
+    // constructor!("and lists", try_new_and, AndListV1Marker);
+    // constructor!("or lists", try_new_or, OrListV1Marker);
+    // constructor!("unit lists", try_new_unit, UnitListV1Marker);
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
     /// formatting. The first layer of parts contains [`parts::ELEMENT`] for input
@@ -77,7 +42,7 @@ impl ListFormatter {
     pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
-    ) -> List<'a, W, I> {
+    ) -> List<'a, M, W, I> {
         List {
             formatter: self,
             values,
@@ -105,12 +70,23 @@ pub mod parts {
 
 /// The [`Writeable`] implementation that is returned by [`ListFormatter::format`]. See
 /// the [`writeable`] crate for how to consume this.
-pub struct List<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
-    formatter: &'a ListFormatter,
+pub struct List<
+    'a,
+    M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>,
+    W: Writeable + 'a,
+    I: Iterator<Item = W> + Clone + 'a,
+> {
+    formatter: &'a ListFormatter<M>,
     values: I,
 }
 
-impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for List<'a, W, I> {
+impl<
+        'a,
+        M: DataMarker<Yokeable = ListFormatterPatternsV1<'static>>,
+        W: Writeable + 'a,
+        I: Iterator<Item = W> + Clone + 'a,
+    > Writeable for List<'a, M, W, I>
+{
     fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
