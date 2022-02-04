@@ -17,11 +17,6 @@ use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [
-    DatePatternsV1Marker::KEY, //
-];
-
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
 pub struct DatePatternsProvider(CommonDateProvider);
@@ -34,8 +29,8 @@ impl TryFrom<&dyn CldrPaths> for DatePatternsProvider {
 }
 
 impl KeyedDataProvider for DatePatternsProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        DatePatternsV1Marker::KEY.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![DatePatternsV1Marker::KEY]
     }
 }
 
@@ -57,11 +52,10 @@ impl ResourceProvider<DatePatternsV1Marker> for DatePatternsProvider {
 icu_provider::impl_dyn_provider!(DatePatternsProvider, [DatePatternsV1Marker,], SERDE_SE);
 
 impl IterableProvider for DatePatternsProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         self.0.supported_options_for_key(resc_key)
     }
 }

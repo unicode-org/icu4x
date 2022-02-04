@@ -17,16 +17,6 @@ use std::convert::TryFrom;
 
 mod convert;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 6] = [
-    TimeZoneFormatsV1Marker::KEY,
-    ExemplarCitiesV1Marker::KEY,
-    MetaZoneGenericNamesLongV1Marker::KEY,
-    MetaZoneGenericNamesShortV1Marker::KEY,
-    MetaZoneSpecificNamesLongV1Marker::KEY,
-    MetaZoneSpecificNamesShortV1Marker::KEY,
-];
-
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
 pub struct TimeZonesProvider {
@@ -66,31 +56,30 @@ impl TryFrom<&str> for TimeZonesProvider {
 }
 
 impl KeyedDataProvider for TimeZonesProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        // TODO(#442): Clean up KeyedDataProvider
-        if ALL_KEYS.iter().any(|key| key == resc_key) {
-            Ok(())
-        } else {
-            Err(DataErrorKind::MissingResourceKey.with_key(*resc_key))
-        }
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![
+            TimeZoneFormatsV1Marker::KEY,
+            ExemplarCitiesV1Marker::KEY,
+            MetaZoneGenericNamesLongV1Marker::KEY,
+            MetaZoneGenericNamesShortV1Marker::KEY,
+            MetaZoneSpecificNamesLongV1Marker::KEY,
+            MetaZoneSpecificNamesShortV1Marker::KEY,
+        ]
     }
 }
 
 impl IterableProvider for TimeZonesProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.data
+                .iter_keys()
+                // TODO(#568): Avoid the clone
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 

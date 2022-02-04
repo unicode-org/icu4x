@@ -14,13 +14,6 @@ use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 3] = [
-    key::LIST_FORMAT_AND_V1,
-    key::LIST_FORMAT_OR_V1,
-    key::LIST_FORMAT_UNIT_V1,
-];
-
 /// A data provider reading from CLDR JSON list rule files.
 #[derive(PartialEq, Debug)]
 pub struct ListProvider {
@@ -46,11 +39,12 @@ impl TryFrom<&dyn CldrPaths> for ListProvider {
 }
 
 impl KeyedDataProvider for ListProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::LIST_FORMAT_AND_V1
-            .match_key(*resc_key)
-            .or_else(|_| key::LIST_FORMAT_OR_V1.match_key(*resc_key))
-            .or_else(|_| key::LIST_FORMAT_UNIT_V1.match_key(*resc_key))
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![
+            key::LIST_FORMAT_AND_V1,
+            key::LIST_FORMAT_OR_V1,
+            key::LIST_FORMAT_UNIT_V1,
+        ]
     }
 }
 
@@ -60,7 +54,6 @@ impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<ListFormatterPatternsV1Marker>, DataError> {
-        Self::supports_key(&key)?;
         let langid = req
             .get_langid()
             .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, req))?;
@@ -73,7 +66,7 @@ impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
             key::LIST_FORMAT_AND_V1 => parse_and_patterns(data),
             key::LIST_FORMAT_OR_V1 => parse_or_patterns(data),
             key::LIST_FORMAT_UNIT_V1 => parse_unit_patterns(data),
-            _ => unreachable!(),
+            _ => return Err(DataErrorKind::MissingResourceKey.with_key(key)),
         }
         .map_err(|e| e.with_req(key, req))?;
 
@@ -148,27 +141,22 @@ icu_provider::impl_dyn_provider!(ListProvider, {
 }, SERDE_SE);
 
 impl IterableProvider for ListProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            // ur-IN has a buggy pattern ("{1}, {0}") which violates
-            // our invariant that {0} is at index 0 (and rotates the output).
-            // ml has middle and start patterns with suffixes.
-            // See https://github.com/unicode-org/icu4x/issues/1282
-            .filter(|(l, _)| {
-                *l != &icu_locid_macros::langid!("ur-IN") && *l != &icu_locid_macros::langid!("ml")
-            })
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.data
+                .iter_keys()
+                // TODO(#568): Avoid the clone
+                .cloned()
+                // ur-IN has a buggy pattern ("{1}, {0}") which violates
+                // our invariant that {0} is at index 0 (and rotates the output).
+                // ml has middle and start patterns with suffixes.
+                // See https://github.com/unicode-org/icu4x/issues/1282
+                .filter(|l| l != &langid!("ur-IN") && l != &langid!("ml"))
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 

@@ -17,11 +17,6 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use tinystr::{tinystr16, TinyStr16};
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [
-    DateSymbolsV1Marker::KEY, //
-];
-
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
 pub struct DateSymbolsProvider(CommonDateProvider);
@@ -34,8 +29,8 @@ impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
 }
 
 impl KeyedDataProvider for DateSymbolsProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        DateSymbolsV1Marker::KEY.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![DateSymbolsV1Marker::KEY]
     }
 }
 
@@ -61,11 +56,10 @@ impl ResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
 icu_provider::impl_dyn_provider!(DateSymbolsProvider, [DateSymbolsV1Marker,], SERDE_SE);
 
 impl IterableProvider for DateSymbolsProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         self.0.supported_options_for_key(resc_key)
     }
 }
@@ -108,7 +102,7 @@ fn get_era_code_map(calendar: &str) -> LiteMap<String, TinyStr16> {
         "buddhist" => vec![("0".to_string(), tinystr16!("be"))]
             .into_iter()
             .collect(),
-        "japanese" => crate::transform::get_japanese_era_code_map(),
+        "japanese" => crate::transform::calendar::japanese::get_era_code_map(),
         _ => panic!("Era map unknown for {}", calendar),
     }
 }

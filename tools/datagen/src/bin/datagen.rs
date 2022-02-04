@@ -14,10 +14,10 @@ use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
-use icu_provider_cldr::get_all_cldr_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPaths;
 use icu_provider_cldr::CldrPathsAllInOne;
+use icu_provider_cldr::KeyedDataProvider;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
@@ -420,16 +420,6 @@ fn export_cldr(
         eyre::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };
 
-    let keys = get_all_cldr_keys();
-
-    let keys = if let Some(allowed_keys) = allowed_keys {
-        keys.into_iter()
-            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
-            .collect()
-    } else {
-        keys
-    };
-
     let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
     let provider: EitherProvider<_, _> = if let Some(allowlist) = allowed_locales {
         let filtered_provider = raw_provider
@@ -440,9 +430,14 @@ fn export_cldr(
         EitherProvider::B(raw_provider)
     };
 
-    for key in keys.iter() {
+    for key in CldrJsonDataProvider::supported_keys() {
+        if let Some(allowed_keys) = allowed_keys {
+            if !allowed_keys.contains(&*key.writeable_to_string()) {
+                continue;
+            }
+        }
         log::info!("Writing key: {}", key);
-        icu_provider::export::export_from_iterable(key, &provider, exporter)?;
+        icu_provider::export::export_from_iterable(&key, &provider, exporter)?;
     }
 
     Ok(())
