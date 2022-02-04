@@ -7,7 +7,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
 use syn::spanned::Spanned;
-use syn::{Data, DeriveInput, Error, Ident};
+use syn::{Data, DeriveInput, Error, Field, Ident};
 
 fn suffixed_ident(name: &str, suffix: usize, s: Span) -> Ident {
     Ident::new(&format!("{name}_{suffix}"), s)
@@ -45,22 +45,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
             .to_compile_error();
     };
 
-    let mut prev_offset_ident = Ident::new("ZERO", Span::call_site());
-    let mut validators = quote!(const ZERO: usize = 0);
-
-    for (i, field) in struc.fields.iter().enumerate() {
-        let ty = &field.ty;
-        let new_offset_ident = suffixed_ident("OFFSET", i, field.span());
-        let size_ident = suffixed_ident("SIZE", i, field.span());
-        validators = quote! {
-            #validators;
-            const #size_ident: usize = ::core::mem::size_of::<#ty>();
-            const #new_offset_ident: usize = #prev_offset_ident + #size_ident;
-            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#new_offset_ident .. #new_offset_ident + #size_ident])?;
-        };
-
-        prev_offset_ident = new_offset_ident;
-    }
+    let (validators, remaining_offset) = generate_ule_validators(struc.fields.iter());
 
     let name = &input.ident;
 
@@ -84,9 +69,37 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
                 // Validate the bytes
                 for chunk in bytes.chunks_exact(SIZE) {
                     #validators
+                    debug_assert_eq!(#remaining_offset, SIZE);
                 }
                 Ok(())
             }
         }
     }
+}
+
+/// Given an iterator over ULE struct fields, returns code validating that a slice variable `bytes` contains valid instances of those ULE types
+/// in order, plus the byte offset of any remaining unvalidated bytes. ULE types should not have any remaining bytes, but VarULE types will since
+/// the last field is the unsized one.
+pub(crate) fn generate_ule_validators<'a>(
+    iter: impl Iterator<Item = &'a Field>,
+    // (validators, remaining_offset)
+) -> (TokenStream2, syn::Ident) {
+    let mut prev_offset_ident = Ident::new("ZERO", Span::call_site());
+    let mut validators = quote!(const ZERO: usize = 0);
+
+    for (i, field) in iter.enumerate() {
+        let ty = &field.ty;
+        let new_offset_ident = suffixed_ident("OFFSET", i, field.span());
+        let size_ident = suffixed_ident("SIZE", i, field.span());
+        validators = quote! {
+            #validators;
+            const #size_ident: usize = ::core::mem::size_of::<#ty>();
+            const #new_offset_ident: usize = #prev_offset_ident + #size_ident;
+            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#new_offset_ident .. #new_offset_ident + #size_ident])?;
+        };
+
+        prev_offset_ident = new_offset_ident;
+    }
+
+    (validators, prev_offset_ident)
 }
