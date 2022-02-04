@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643949358991,
+  "lastUpdate": 1643996790512,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26165,6 +26165,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15323,
             "range": "± 917",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb0a0958a0d793ac0fa61730ef9895a74de2ef14",
+          "message": "Reducing CLDR transformers boilerplate (#1586)",
+          "timestamp": "2022-02-04T18:34:45+01:00",
+          "tree_id": "5259caee4db67492db560060a82056ff9b0b6162",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb0a0958a0d793ac0fa61730ef9895a74de2ef14"
+        },
+        "date": 1643996778235,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 957,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6235,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16110,
+            "range": "± 1056",
             "unit": "ns/iter"
           }
         ]
