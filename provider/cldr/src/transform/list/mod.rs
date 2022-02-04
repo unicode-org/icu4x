@@ -14,13 +14,6 @@ use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 3] = [
-    key::LIST_FORMAT_AND_V1,
-    key::LIST_FORMAT_OR_V1,
-    key::LIST_FORMAT_UNIT_V1,
-];
-
 /// A data provider reading from CLDR JSON list rule files.
 #[derive(PartialEq, Debug)]
 pub struct ListProvider {
@@ -46,11 +39,12 @@ impl TryFrom<&dyn CldrPaths> for ListProvider {
 }
 
 impl KeyedDataProvider for ListProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::LIST_FORMAT_AND_V1
-            .match_key(*resc_key)
-            .or_else(|_| key::LIST_FORMAT_OR_V1.match_key(*resc_key))
-            .or_else(|_| key::LIST_FORMAT_UNIT_V1.match_key(*resc_key))
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![
+            key::LIST_FORMAT_AND_V1,
+            key::LIST_FORMAT_OR_V1,
+            key::LIST_FORMAT_UNIT_V1,
+        ]
     }
 }
 
@@ -60,7 +54,6 @@ impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<ListFormatterPatternsV1Marker>, DataError> {
-        Self::supports_key(&key)?;
         let langid = req
             .get_langid()
             .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, req))?;
@@ -73,7 +66,7 @@ impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
             key::LIST_FORMAT_AND_V1 => parse_and_patterns(data),
             key::LIST_FORMAT_OR_V1 => parse_or_patterns(data),
             key::LIST_FORMAT_UNIT_V1 => parse_unit_patterns(data),
-            _ => unreachable!(),
+            _ => return Err(DataErrorKind::MissingResourceKey.with_key(key)),
         }
         .map_err(|e| e.with_req(key, req))?;
 

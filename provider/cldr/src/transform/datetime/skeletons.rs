@@ -16,11 +16,6 @@ use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [
-    DateSkeletonPatternsV1Marker::KEY, //
-];
-
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
 pub struct DateSkeletonPatternsProvider(CommonDateProvider);
@@ -33,8 +28,8 @@ impl TryFrom<&dyn CldrPaths> for DateSkeletonPatternsProvider {
 }
 
 impl KeyedDataProvider for DateSkeletonPatternsProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        DateSkeletonPatternsV1Marker::KEY.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![DateSkeletonPatternsV1Marker::KEY]
     }
 }
 

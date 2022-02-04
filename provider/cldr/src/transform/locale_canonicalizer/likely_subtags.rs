@@ -15,9 +15,6 @@ use litemap::LiteMap;
 use std::convert::TryFrom;
 use tinystr::TinyStr4;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [LikelySubtagsV1Marker::KEY];
-
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
 pub struct LikelySubtagsProvider {
@@ -39,8 +36,8 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider {
 }
 
 impl KeyedDataProvider for LikelySubtagsProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        LikelySubtagsV1Marker::KEY.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![LikelySubtagsV1Marker::KEY]
     }
 }
 

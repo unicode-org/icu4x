@@ -193,20 +193,28 @@ The above example is an abridged definition of the Serde structure corresponding
 [*provider/cldr/src/transform/numbers/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/numbers/mod.rs)
 
 ```rust
-impl<'data> DataProvider<'data, DecimalSymbolsV1Marker> for NumbersProvider {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'data, DecimalSymbolsV1Marker>, DataError> {
-        // Load the data from CLDR JSON and emit it as an ICU4X data struct.
-        // The most important line in this impl is:
-        let mut result = DecimalSymbolsV1::try_from(numbers);
+struct FooProvider {
+    // ...
+}
+
+impl TryFrom<&dyn CldrPaths> for FooProvider {
+    type Error = Error;
+    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+        // CLDR providers are constructed from CldrPaths, which gives you
+        // access to raw CLDR JSON data.
     }
 }
 
-icu_provider::impl_dyn_provider!(NumbersProvider, {
-    _ => DecimalSymbolsV1Marker,
-}, SERDE_SE, 'data);
+impl ResourceProvider<FooV1Marker> for NumbersProFooProvidervider {
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<FooV1Marker>, DataError> {
+        // Load the data from CLDR JSON and emit it as an ICU4X data struct.
+        // This is the core transform operation. This step could take a lot of
+        // work, such as pre-parsing patterns, re-organizing the data, etc.
+    }
+}
 
 impl<'data> IterableProvider for NumbersProvider {
     fn supported_options_for_key(
@@ -217,100 +225,28 @@ impl<'data> IterableProvider for NumbersProvider {
     }
 }
 
-impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1<'static> {
-    type Error = Cow<'static, str>;
-
-    fn try_from(other: &cldr_serde::numbers_json::Numbers) -> Result<Self, Self::Error> {
-        // This is the core transform operation. This step could take a lot of
-        // work, such as pre-parsing patterns, re-organizing the data, etc.
+impl KeyedDataProvider for NumbersProvider {
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![FooV1Marker::KEY]
     }
 }
+
+// Once we have ResourceProvider, IterableProvider, and KeyedDataProvider, we can
+// implement DynProvider<SerializeMarker>.
+icu_provider::impl_dyn_provider!(NumbersProvider, [
+    FooV1Marker,
+], SERDE_SE, 'data);
 ```
 
 The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.
 
 ### `CldrJsonDataProvider`
 
-New CLDR JSON transformers need to be discoverable from `CldrJsonDataProvider`. To do this, edit [*provider/cldr/src/transform/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/mod.rs) and fill in your data provider in every function, struct, and match. For example:
+New CLDR JSON transformers need to be discoverable from `CldrJsonDataProvider`. To do this, edit [*provider/cldr/src/transform/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/mod.rs) and add you data provider to the macro at the bottom of the file:
 
 ```rust
-pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
+cldr_json_data_provider!(
     // ...
-    result.extend(&numbers::ALL_KEYS);
-    // ...
-}
-
-#[derive(Debug)]
-pub struct CldrJsonDataProvider<'a, 'data> {
-    // ...
-    numbers: LazyCldrProvider<NumbersProvider>,
-    // ...
-}
-
-impl<'a> CldrJsonDataProvider<'a, '_> {
-    pub fn new(cldr_paths: &'a dyn CldrPaths) -> Self {
-        CldrJsonDataProvider {
-            // ...
-            numbers: Default::default(),
-            // ...
-        }
-    }
-}
-
-impl<'a, 'data> DataProvider<'data, SerdeSeDataStructMarker> for CldrJsonDataProvider<'a, 'data> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'data, SerdeSeDataStructMarker>, DataError> {
-        // ...
-        if let Some(result) = self.numbers.try_load_serde(req, self.cldr_paths)? {
-            return Ok(result);
-        }
-        // ...
-    }
-}
-
-impl<'a> IterableProvider for CldrJsonDataProvider<'a, '_> {
-    fn supported_options_for_key(
-        &self,
-        resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        // ...
-        if let Some(resp) = self
-            .numbers
-            .try_supported_options(resc_key, self.cldr_paths)?
-        {
-            return Ok(Box::new(resp.into_iter()));
-        }
-        // ...
-    }
-}
+    foo: FooProvider,
+);
 ```
-
-### Data Generation Tool
-
-[*tools/datagen/src/bin/datagen.rs*](https://github.com/unicode-org/icu4x/blob/main/tools/datagen/src/bin/datagen.rs)
-
-```rust
-fn export_cldr<'data>(
-    matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
-    allowed_locales: Option<&[LanguageIdentifier]>,
-) -> anyhow::Result<()> {
-    // Create the provider after parsing options (not shown):
-    let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
-
-    // Apply locale filters (not shown):
-    let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
-
-    // Dump data from the source provider to the data exporter:
-    for key in keys.iter() {
-        log::info!("Writing key: {}", key);
-        icu_provider::export::export_from_iterable(key, provider, exporter)?;
-    }
-
-    Ok(())
-}
-```
-
-The above example is a snippet from `icu4x-datagen` illustrating how `CldrJsonDataProvider` ties in with the data generation tool. Most contributors will not need to touch this part of the code.

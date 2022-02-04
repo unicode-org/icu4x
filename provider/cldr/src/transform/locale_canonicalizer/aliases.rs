@@ -14,9 +14,6 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use tinystr::{TinyStr4, TinyStr8};
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [AliasesV1Marker::KEY];
-
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
 pub struct AliasesProvider {
@@ -47,8 +44,8 @@ impl TryFrom<&'_ str> for AliasesProvider {
 }
 
 impl KeyedDataProvider for AliasesProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        AliasesV1Marker::KEY.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![AliasesV1Marker::KEY]
     }
 }
 

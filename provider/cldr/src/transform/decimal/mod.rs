@@ -18,11 +18,6 @@ use tinystr::TinyStr8;
 
 mod decimal_pattern;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [
-    DecimalSymbolsV1Marker::KEY, //
-];
-
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
 pub struct NumbersProvider {
@@ -61,8 +56,8 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
 }
 
 impl KeyedDataProvider for NumbersProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        resc_key.match_key(DecimalSymbolsV1Marker::KEY)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![DecimalSymbolsV1Marker::KEY]
     }
 }
 
