@@ -118,7 +118,7 @@
         "description": "Date time example that includes a week-of for a locale with plural variants as well as one with non default WeekData",
         "input": {
             "locale": "en",
-            "value": "2016-04-13T08:25:07.000+05:00",
+            "value": "2016-04-17T08:25:07.000+05:00",
             "options": {
                 "components": {
                     "year": "numeric",
@@ -133,7 +133,7 @@
         "output": {
             "values": {
                 "fil": "linggo 16 ng 2016, 08:25:07 GMT+05:00",
-                "fr-BE": "semaine 15 de 2016 08:25:07 UTC+05:00"
+                "en-ZA": "week 17 of 2016, 08:25:07 GMT+05:00"
             }
         }
     }
