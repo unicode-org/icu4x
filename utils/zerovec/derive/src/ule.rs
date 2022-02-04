@@ -95,7 +95,7 @@ pub(crate) fn generate_ule_validators<'a>(
             #validators;
             const #size_ident: usize = ::core::mem::size_of::<#ty>();
             const #new_offset_ident: usize = #prev_offset_ident + #size_ident;
-            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#new_offset_ident .. #new_offset_ident + #size_ident])?;
+            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;
         };
 
         prev_offset_ident = new_offset_ident;
