@@ -29,7 +29,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ListFormatt
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        Ok(ListFormatter { data, style })
+        Ok(Self { data, style })
     }
 
     // constructor!("and lists", try_new_and, AndListV1Marker);

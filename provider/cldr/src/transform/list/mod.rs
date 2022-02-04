@@ -48,7 +48,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
         let data = &self
             .data
             .get(langid)
-            .ok_or(DataErrorKind::MissingLocale.with_req(M::KEY, req))?
+            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?
             .list_patterns;
 
         let (wide, short, narrow) = match M::KEY {
