@@ -7,8 +7,6 @@
 use crate::iter::IterableProvider;
 use crate::prelude::*;
 use alloc::boxed::Box;
-use alloc::vec;
-use alloc::vec::Vec;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -66,7 +64,6 @@ impl IterableProvider for InvariantDataProvider {
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }

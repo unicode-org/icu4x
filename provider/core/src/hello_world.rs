@@ -14,7 +14,6 @@ use alloc::boxed::Box;
 use alloc::rc::Rc;
 use alloc::string::String;
 use alloc::string::ToString;
-use alloc::vec::Vec;
 use core::fmt::Debug;
 use core::str::FromStr;
 use icu_locid::LanguageIdentifier;
@@ -172,21 +171,16 @@ impl BufferProvider for HelloWorldJsonProvider {
 }
 
 impl IterableProvider for HelloWorldProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         resc_key.match_key(HelloWorldV1Marker::KEY)?;
-        let list: Vec<ResourceOptions> = self
+        Ok(Box::new(self
             .map
             .iter_keys()
-            .map(|langid| ResourceOptions {
-                variant: None,
-                langid: Some(langid.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+            .cloned()
+            .map(Into::<ResourceOptions>::into)))
     }
 }
 

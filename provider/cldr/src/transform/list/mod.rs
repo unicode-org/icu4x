@@ -141,27 +141,22 @@ icu_provider::impl_dyn_provider!(ListProvider, {
 }, SERDE_SE);
 
 impl IterableProvider for ListProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            // ur-IN has a buggy pattern ("{1}, {0}") which violates
-            // our invariant that {0} is at index 0 (and rotates the output).
-            // ml has middle and start patterns with suffixes.
-            // See https://github.com/unicode-org/icu4x/issues/1282
-            .filter(|(l, _)| {
-                *l != &icu_locid_macros::langid!("ur-IN") && *l != &icu_locid_macros::langid!("ml")
-            })
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.data
+                .iter_keys()
+                // TODO(#568): Avoid the clone
+                .cloned()
+                // ur-IN has a buggy pattern ("{1}, {0}") which violates
+                // our invariant that {0} is at index 0 (and rotates the output).
+                // ml has middle and start patterns with suffixes.
+                // See https://github.com/unicode-org/icu4x/issues/1282
+                .filter(|l| l != &langid!("ur-IN") && l != &langid!("ml"))
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 

@@ -133,21 +133,17 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 icu_provider::impl_dyn_provider!(NumbersProvider, [DecimalSymbolsV1Marker,], SERDE_SE);
 
 impl IterableProvider for NumbersProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .cldr_numbers_data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.cldr_numbers_data
+                .iter_keys()
                 // TODO(#568): Avoid the clone
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 

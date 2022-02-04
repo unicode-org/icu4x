@@ -69,20 +69,17 @@ impl KeyedDataProvider for TimeZonesProvider {
 }
 
 impl IterableProvider for TimeZonesProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.data
+                .iter_keys()
+                // TODO(#568): Avoid the clone
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 

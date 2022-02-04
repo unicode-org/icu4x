@@ -97,22 +97,18 @@ icu_provider::impl_dyn_provider!(PluralsProvider, {
 }, SERDE_SE);
 
 impl IterableProvider for PluralsProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let cldr_rules = self.get_rules_for(resc_key)?;
-        let list: Vec<ResourceOptions> = cldr_rules
-            .0
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                // TODO: Avoid the clone
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.get_rules_for(resc_key)?
+                .0
+                .iter_keys()
+                // TODO(#568): Avoid the clone
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 

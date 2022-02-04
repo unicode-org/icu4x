@@ -242,7 +242,7 @@ The above example is an abridged snippet of code illustrating the most important
 
 ### `CldrJsonDataProvider`
 
-New CLDR JSON transformers need to be discoverable from `CldrJsonDataProvider`. To do this, edit [*provider/cldr/src/transform/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/mod.rs) and add you data provider to the macro at the bottom of the file:
+New CLDR JSON transformers need to be discoverable from `CldrJsonDataProvider`. To do this, edit [*provider/cldr/src/transform/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/mod.rs) and add your data provider to the macro at the bottom of the file:
 
 ```rust
 cldr_json_data_provider!(

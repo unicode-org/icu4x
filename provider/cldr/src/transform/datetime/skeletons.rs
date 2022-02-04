@@ -57,11 +57,10 @@ icu_provider::impl_dyn_provider!(
 );
 
 impl IterableProvider for DateSkeletonPatternsProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         self.0.supported_options_for_key(resc_key)
     }
 }

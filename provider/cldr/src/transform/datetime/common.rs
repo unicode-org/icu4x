@@ -81,22 +81,20 @@ impl CommonDateProvider {
 }
 
 impl CommonDateProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     pub fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            .flat_map(|(cal, map)| {
-                map.iter().map(move |(l, _)| ResourceOptions {
-                    variant: Some((*cal).into()),
-                    // TODO: Avoid the clone
-                    langid: Some(l.clone()),
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(self.data.iter().flat_map(|(cal, map)| {
+            let cal = Some((*cal).into());
+            map.iter_keys()
+                // TODO(#568): Avoid the clone
+                .cloned()
+                .map(Into::<ResourceOptions>::into)
+                .map(move |mut r| {
+                    r.variant = cal.clone();
+                    r
                 })
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+        })))
     }
 }

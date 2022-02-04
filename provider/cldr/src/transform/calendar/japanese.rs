@@ -229,13 +229,7 @@ impl IterableProvider for JapaneseErasProvider {
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(
-            Some(ResourceOptions {
-                variant: None,
-                langid: None,
-            })
-            .into_iter(),
-        ))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 
