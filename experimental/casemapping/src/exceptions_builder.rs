@@ -75,6 +75,13 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
         }
     }
 
+    // After reading a string out of the raw data, advance raw_data_idx.
+    fn skip_string(&mut self, s: &str) {
+        for c in s.chars() {
+            self.raw_data_idx += c.len_utf16();
+        }
+    }
+
     pub(crate) fn build(
         mut self,
     ) -> Result<(CaseMappingExceptions<'static>, HashMap<u16, u16>), Error> {
@@ -155,9 +162,8 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                         .ok_or(Error::Validation("Incomplete string data"))?;
                     let string =
                         char::decode_utf16(slice.iter().copied()).collect::<Result<String, _>>()?;
+                    self.skip_string(&string);
                     self.strings.push(string);
-
-                    self.raw_data_idx += len as usize;
                 }
                 Some(idx)
             } else {
@@ -176,11 +182,8 @@ impl<'a> CaseMappingExceptionsBuilder<'a> {
                 let string = char::decode_utf16(slice.iter().copied())
                     .take(len)
                     .collect::<Result<String, _>>()?;
-                for c in string.chars() {
-                    self.raw_data_idx += c.len_utf16();
-                }
+                self.skip_string(&string);
                 self.strings.push(string);
-
                 Some(idx)
             } else {
                 None

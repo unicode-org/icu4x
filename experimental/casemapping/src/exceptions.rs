@@ -10,10 +10,10 @@ use zerovec::{VarZeroVec, ZeroVec};
 use crate::error::Error;
 use crate::internals::{ClosureSet, DotType, MappingKind};
 
-// Case mapping exceptions that can't be represented as a delta applied to the original
-// code point. Similar to ICU4C, data is stored as a u16 array. The codepoint trie in
-// CaseMapping stores offsets into this array. The u16 at that index contains a set of
-// flags describing the subsequent data.
+// This represents case mapping exceptions that can't be represented as a delta applied to
+// the original code point. Similar to ICU4C, data is stored as a u16 array. The codepoint
+// trie in CaseMapping stores offsets into this array. The u16 at that index contains a
+// set of flags describing the subsequent data.
 //
 //   [idx + 0]  Header word:
 //       Bits:
@@ -31,7 +31,7 @@ use crate::internals::{ClosureSet, DotType, MappingKind};
 //               a single element.
 //            9  Has no simple case folding, even if there is a simple lowercase mapping
 //           10  The value in the delta slot is negative
-//           11  Is case-sensitive
+//           11  Is case-sensitive (not exposed)
 //       12..13  Dot type
 //           14  Has conditional special casing
 //           15  Has conditional case folding
@@ -52,9 +52,9 @@ use crate::internals::{ClosureSet, DotType, MappingKind};
 //
 // In ICU4C, the full mapping and closure strings are stored inline in the data, encoded
 // as UTF-16, and the full mapping and closure slots contain information about the length
-// of those strings. To avoid allocations converting from UTF-16 to UTF-8, we instead
-// store strings encoded as UTF-8 in a side table. The full mapping and closure slots
-// contain indices into that side table.
+// of those strings. To avoid the need for allocations when converting from UTF-16 to
+// UTF-8, we instead store strings encoded as UTF-8 in a side table. The full mapping and
+// closure slots contain indices into that side table.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 pub(crate) struct CaseMappingExceptions<'data> {
@@ -188,33 +188,35 @@ impl<'data> CaseMappingExceptions<'data> {
         self.slots.get(idx).expect("Checked in validate()")
     }
 
+    // Returns the header for an entry.
     #[inline]
-    fn header(&self, base_idx: u16) -> ExceptionHeader {
-        ExceptionHeader(self.get(base_idx as usize))
+    fn header(&self, hdr_idx: u16) -> ExceptionHeader {
+        ExceptionHeader(self.get(hdr_idx as usize))
     }
 
-    // Given a base index, returns the number of optional slots for the entry at that index
-    fn num_slots(&self, base_idx: u16) -> u16 {
-        self.header(base_idx).num_slots()
+    // Returns the number of optional slots for an entry.
+    fn num_slots(&self, hdr_idx: u16) -> u16 {
+        self.header(hdr_idx).num_slots()
     }
 
-    // Given a base index, returns true if the given slot exists
+    // Returns whether the given slot exists for an entry.
     #[inline]
-    pub fn has_slot(&self, base_idx: u16, slot: ExceptionSlot) -> bool {
-        self.header(base_idx).has_slot(slot)
+    pub fn has_slot(&self, hdr_idx: u16, slot: ExceptionSlot) -> bool {
+        self.header(hdr_idx).has_slot(slot)
     }
 
-    // Given a base index, returns the index of a given slot
+    // Returns the index of a given slot for an entry.
     #[inline]
-    fn slot_index(&self, base_idx: u16, slot: ExceptionSlot) -> usize {
-        base_idx as usize + 1 + self.header(base_idx).slot_offset(slot)
+    fn slot_index(&self, hdr_idx: u16, slot: ExceptionSlot) -> usize {
+        hdr_idx as usize + 1 + self.header(hdr_idx).slot_offset(slot)
     }
 
-    // Given a base index, returns the value stored in a given slot
-    fn slot_value(&self, base_idx: u16, slot: ExceptionSlot) -> u32 {
-        debug_assert!(self.has_slot(base_idx, slot));
-        let slot_idx = self.slot_index(base_idx, slot);
-        if self.has_double_slots(base_idx) {
+    // Returns the value stored in a given slot for an entry.
+    #[inline]
+    fn slot_value(&self, hdr_idx: u16, slot: ExceptionSlot) -> u32 {
+        debug_assert!(self.has_slot(hdr_idx, slot));
+        let slot_idx = self.slot_index(hdr_idx, slot);
+        if self.has_double_slots(hdr_idx) {
             let hi = self.get(slot_idx) as u32;
             let lo = self.get(slot_idx + 1) as u32;
             hi << 16 | lo
@@ -223,104 +225,114 @@ impl<'data> CaseMappingExceptions<'data> {
         }
     }
 
-    // Given a base index, returns the character stored in a given slot
-    pub fn slot_char(&self, base_idx: u16, slot: ExceptionSlot) -> Option<char> {
+    // Returns the character stored in a given slot for an entry.
+    #[inline]
+    pub fn slot_char(&self, hdr_idx: u16, slot: ExceptionSlot) -> Option<char> {
         debug_assert!(slot.contains_char());
-        if self.has_slot(base_idx, slot) {
-            let raw = self.slot_value(base_idx, slot);
+        if self.has_slot(hdr_idx, slot) {
+            let raw = self.slot_value(hdr_idx, slot);
             Some(char::from_u32(raw).expect("Checked in validate() (step #1)"))
         } else {
             None
         }
     }
 
-    pub fn slot_char_for_kind(&self, base_idx: u16, kind: MappingKind) -> Option<char> {
+    // Given a mapping kind, returns the character for that kind, if it exists. Fold falls
+    // back to Lower; Title falls back to Upper.
+    #[inline]
+    pub fn slot_char_for_kind(&self, hdr_idx: u16, kind: MappingKind) -> Option<char> {
         match kind {
-            MappingKind::Lower | MappingKind::Upper => self.slot_char(base_idx, kind.into()),
+            MappingKind::Lower | MappingKind::Upper => self.slot_char(hdr_idx, kind.into()),
             MappingKind::Fold => self
-                .slot_char(base_idx, ExceptionSlot::Fold)
-                .or_else(|| self.slot_char(base_idx, ExceptionSlot::Lower)),
+                .slot_char(hdr_idx, ExceptionSlot::Fold)
+                .or_else(|| self.slot_char(hdr_idx, ExceptionSlot::Lower)),
             MappingKind::Title => self
-                .slot_char(base_idx, ExceptionSlot::Title)
-                .or_else(|| self.slot_char(base_idx, ExceptionSlot::Upper)),
+                .slot_char(hdr_idx, ExceptionSlot::Title)
+                .or_else(|| self.slot_char(hdr_idx, ExceptionSlot::Upper)),
         }
     }
 
+    // Returns whether an entry has a delta slot.
     #[inline]
-    pub fn has_delta(&self, base_idx: u16) -> bool {
-        self.header(base_idx).has_slot(ExceptionSlot::Delta)
+    pub fn has_delta(&self, hdr_idx: u16) -> bool {
+        self.header(hdr_idx).has_slot(ExceptionSlot::Delta)
     }
 
-    // Given a base index, returns the delta (with the correct sign)
-    pub fn delta(&self, base_idx: u16) -> i32 {
-        debug_assert!(self.has_delta(base_idx));
-        let raw: i32 = self.slot_value(base_idx, ExceptionSlot::Delta) as _;
-        if self.header(base_idx).delta_is_negative() {
+    // Returns the delta value for an entry (with the correct sign).
+    #[inline]
+    pub fn delta(&self, hdr_idx: u16) -> i32 {
+        debug_assert!(self.has_delta(hdr_idx));
+        let raw: i32 = self.slot_value(hdr_idx, ExceptionSlot::Delta) as _;
+        if self.header(hdr_idx).delta_is_negative() {
             -raw
         } else {
             raw
         }
     }
 
-    // Given a base index, returns whether the entry beginning at that index has double-width slots.
+    // Returns whether an entry has double-width slots.
     #[inline]
-    fn has_double_slots(&self, base_idx: u16) -> bool {
-        self.header(base_idx).has_double_slots()
+    fn has_double_slots(&self, hdr_idx: u16) -> bool {
+        self.header(hdr_idx).has_double_slots()
     }
 
-    // Given a base index, returns whether there is a simple case folding
-    pub fn no_simple_case_folding(&self, base_idx: u16) -> bool {
-        self.header(base_idx).no_simple_case_folding()
+    // Returns whether there is no simple case folding for an entry.
+    #[inline]
+    pub fn no_simple_case_folding(&self, hdr_idx: u16) -> bool {
+        self.header(hdr_idx).no_simple_case_folding()
     }
 
-    // Given a base index, returns whether this code point is case-sensitive.
+    // Returns whether this code point is case-sensitive.
     // (Note that this information is stored in the trie for code points without
     // exception data, but the exception index requires more bits than the delta.)
-    pub fn is_sensitive(&self, base_idx: u16) -> bool {
-        self.header(base_idx).is_sensitive()
+    pub fn is_sensitive(&self, hdr_idx: u16) -> bool {
+        self.header(hdr_idx).is_sensitive()
     }
 
-    // Given a base index, returns whether there is a conditional case fold.
-    // (This is used for Turkic mappings for dotted/dotless i.)
-    pub fn has_conditional_fold(&self, base_idx: u16) -> bool {
-        self.header(base_idx).has_conditional_fold()
+    // Returns whether there is a conditional case fold for this entry.
+    // (This is used to implement Turkic mappings for dotted/dotless i.)
+    pub fn has_conditional_fold(&self, hdr_idx: u16) -> bool {
+        self.header(hdr_idx).has_conditional_fold()
     }
 
-    // Given a base index, returns whether there is a language-specific case mapping.
-    pub fn has_conditional_special(&self, base_idx: u16) -> bool {
-        self.header(base_idx).has_conditional_special()
+    // Given a header index, returns whether there is a language-specific case mapping.
+    pub fn has_conditional_special(&self, hdr_idx: u16) -> bool {
+        self.header(hdr_idx).has_conditional_special()
     }
 
-    // Given a base index, returns the dot type.
+    // Given a header index, returns the dot type.
     // (Note that this information is stored in the trie for code points without
     // exception data, but the exception index requires more bits than the delta.)
-    pub fn dot_type(&self, base_idx: u16) -> DotType {
-        self.header(base_idx).dot_type()
+    pub fn dot_type(&self, hdr_idx: u16) -> DotType {
+        self.header(hdr_idx).dot_type()
     }
 
-    pub fn full_mapping_string(&self, base_idx: u16, slot: MappingKind) -> &str {
-        debug_assert!(self.has_slot(base_idx, ExceptionSlot::FullMappings));
-        let mappings_idx = self.slot_value(base_idx, ExceptionSlot::FullMappings);
+    // Given a header index and a mapping kind, returns the full mapping string.
+    // Note that the string may be empty.
+    pub fn full_mapping_string(&self, hdr_idx: u16, slot: MappingKind) -> &str {
+        debug_assert!(self.has_slot(hdr_idx, ExceptionSlot::FullMappings));
+        let mappings_idx = self.slot_value(hdr_idx, ExceptionSlot::FullMappings);
         let idx = mappings_idx as usize + slot as usize;
         &self.strings[idx]
     }
 
-    fn closure_string(&self, base_idx: u16) -> &str {
-        debug_assert!(self.has_slot(base_idx, ExceptionSlot::Closure));
-        let closure_idx = self.slot_value(base_idx, ExceptionSlot::Closure) as usize;
+    // Given a header index, returns the closure string.
+    fn closure_string(&self, hdr_idx: u16) -> &str {
+        debug_assert!(self.has_slot(hdr_idx, ExceptionSlot::Closure));
+        let closure_idx = self.slot_value(hdr_idx, ExceptionSlot::Closure) as usize;
         &self.strings[closure_idx]
     }
 
-    pub fn add_full_and_closure_mappings<S: ClosureSet>(&self, base_idx: u16, set: &mut S) {
-        if self.has_slot(base_idx, ExceptionSlot::FullMappings) {
-            let mapping_string = self.full_mapping_string(base_idx, MappingKind::Fold);
+    pub fn add_full_and_closure_mappings<S: ClosureSet>(&self, hdr_idx: u16, set: &mut S) {
+        if self.has_slot(hdr_idx, ExceptionSlot::FullMappings) {
+            let mapping_string = self.full_mapping_string(hdr_idx, MappingKind::Fold);
             if !mapping_string.is_empty() {
                 set.add_string(mapping_string);
             }
         };
 
-        if self.has_slot(base_idx, ExceptionSlot::Closure) {
-            for c in self.closure_string(base_idx).chars() {
+        if self.has_slot(hdr_idx, ExceptionSlot::Closure) {
+            for c in self.closure_string(hdr_idx).chars() {
                 set.add_char(c);
             }
         };

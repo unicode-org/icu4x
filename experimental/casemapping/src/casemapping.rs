@@ -10,6 +10,7 @@ use crate::provider::CaseMappingV1;
 use crate::provider::CaseMappingV1Marker;
 #[cfg(feature = "provider_transform_internals")]
 use icu_codepointtrie::CodePointTrieHeader;
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 /// TODO: doc comment
@@ -25,11 +26,19 @@ impl CaseMapping {
     where
         P: DataProvider<CaseMappingV1Marker>,
     {
+        Self::new_with_locale(provider, &Locale::und())
+    }
+
+    /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`] for the given locale.
+    pub fn new_with_locale<P>(provider: &P, locale: &Locale) -> Result<CaseMapping, DataError>
+    where
+        P: DataProvider<CaseMappingV1Marker>,
+    {
         let internals: DataPayload<CaseMappingV1Marker> = provider
             .load_payload(&DataRequest::from(crate::provider::key::CASE_MAPPING_V1))?
             .take_payload()?;
         debug_assert!(internals.get().casemap.validate().is_ok());
-        let locale = CaseMapLocale::Root; // TODO: Accept a locale parameter
+        let locale = CaseMapLocale::from(locale);
         Ok(Self { internals, locale })
     }
 
@@ -120,6 +129,18 @@ impl CaseMapping {
     /// Case-folds the characters in the given string.
     /// This function is locale-independent and context-insensitive.
     pub fn full_fold(&self, src: &str) -> String {
-        self.internals.get().casemap.full_folding(src)
+        self.internals
+            .get()
+            .casemap
+            .full_folding(src, CaseMapLocale::Root)
+    }
+
+    /// Case-folds the characters in the given string, using Turkic (T) mappings for dotted/dotless I.
+    /// This function is locale-independent and context-insensitive.
+    pub fn full_fold_turkic(&self, src: &str) -> String {
+        self.internals
+            .get()
+            .casemap
+            .full_folding(src, CaseMapLocale::Turkish)
     }
 }
