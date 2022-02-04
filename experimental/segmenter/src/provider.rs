@@ -6,9 +6,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::line_breaker::BREAK_STATE_MACHINE_TABLE;
-use crate::line_breaker::PROPERTY_COUNT;
-use crate::line_breaker::PROPERTY_TABLE;
+use crate::line::BREAK_STATE_MACHINE_TABLE;
+use crate::line::PROPERTY_COUNT;
+use crate::line::PROPERTY_TABLE;
 use alloc::boxed::Box;
 use core::ops::Deref;
 use icu_provider::yoke::{self, *};

@@ -140,9 +140,9 @@ extern crate alloc;
 
 mod indices;
 mod language;
-mod line_breaker;
 mod rule_segmenter;
 
+mod line;
 mod grapheme;
 mod sentence;
 mod word;
@@ -173,7 +173,7 @@ pub use crate::grapheme::{
     GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
 };
-pub use crate::line_breaker::*;
+pub use crate::line::*;
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
     SentenceBreakSegmenter,
