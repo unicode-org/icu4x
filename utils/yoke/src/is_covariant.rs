@@ -18,7 +18,7 @@ use alloc::{
 /// perform lifetime casting on trait objects (`dyn Trait`). This enables a type-erased [`Yoke`]
 /// consisting of only trait objects. See the examples.
 ///
-/// `IsCovariant` is auto-implemented in [`#[derive(Yokeable)]`](yoke_derive::Yokeable).
+/// `IsCovariant` is auto-implemented in [`#[derive(Yokeable)]`](macro@crate::Yokeable).
 ///
 /// # Safety
 ///

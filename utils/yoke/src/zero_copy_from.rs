@@ -23,6 +23,9 @@ use stable_deref_trait::StableDeref;
 /// For example, `impl ZeroCopyFrom<C> for Cow<str>` should return a `Cow::Borrowed` pointing at
 /// data in the cart `C`, even if the cart is itself fully owned.
 ///
+/// One can use the [`#[derive(ZeroCopyFrom)]`](yoke_derive::ZeroCopyFrom) custom derive to automatically
+/// implement this trait.
+///
 /// # Examples
 ///
 /// Implementing `ZeroCopyFrom` on a custom data struct:

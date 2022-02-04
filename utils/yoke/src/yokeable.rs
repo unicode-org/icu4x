@@ -6,15 +6,23 @@
 use alloc::borrow::{Cow, ToOwned};
 use core::mem;
 
+/// The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type; for
+/// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`). One can use
+/// `Yokeable::Output` on this trait to obtain the "lifetime'd" value of the `Cow<'static, T>`,
+/// e.g. `<Cow<'static, T> as Yokeable<'a>'>::Output` is `Cow<'a, T>`.
+///
 /// A [`Yokeable`] type is essentially one with a covariant lifetime parameter,
 /// matched to the parameter in the trait definition. The trait allows one to cast
 /// the covariant lifetime to and from `'static`.
+///
+/// **Most of the time, if you need to implement [`Yokeable`], you should be able to use the safe
+/// [`#[derive(Yokeable)]`](yoke_derive::Yokeable) custom derive.**
 ///
 /// While Rust does not yet have GAT syntax, for the purpose of this documentation
 /// we shall refer to "`Self` with a lifetime `'a`" with the syntax `Self<'a>`.
 /// Self<'static> is a stand-in for the HKT Self<'_>: lifetime -> type.
 ///
-/// [`Yokeable`]  exposes ways to cast between `Self<'static>` and `Self<'a>` generically.
+/// With this terminology, [`Yokeable`]  exposes ways to cast between `Self<'static>` and `Self<'a>` generically.
 /// This is useful for turning covariant lifetimes to _dynamic_ lifetimes, where `'static` is
 /// used as a way to "erase" the lifetime.
 ///
@@ -38,10 +46,9 @@ use core::mem;
 ///
 /// # Implementation example
 ///
-/// This crate will eventually expose a custom derive that makes it possible to implement this
-/// trait safely without much ceremony. Such a custom derive will include static checks
-/// for the covariance of each field. In the meantime, this trait can typically be implemented as
-/// follows:
+/// Implementing this trait manually is unsafe. Where possible, you should use the safe
+/// [`#[derive(Yokeable)]`](yoke_derive::Yokeable) custom derive instead. We include an example
+/// in case you have your own zero-copy abstractions you wish to make yokeable.
 ///
 /// ```rust
 /// # use yoke::Yokeable;
