@@ -313,7 +313,7 @@ pub struct RequiredData {
 
 impl RequiredData {
     // Checks if formatting `pattern` would require us to load data & if so adds
-    // them to this struct. Returns true iff requirements are saturated and would
+    // them to this struct. Returns true if requirements are saturated and would
     // not change by any further calls.
     // Keep it in sync with the `write_field` use of symbols.
     fn add_requirements_from_pattern(
