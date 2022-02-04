@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643925369196,
+  "lastUpdate": 1643948993400,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -44255,6 +44255,156 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/20787e7ed493b6c2335de53ceb975888f8964483"
         },
         "date": 1643925357677,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 15749,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 1585668,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 1868042,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 1580956,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 6832,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12604,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13178,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 6957,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 20788,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 1804782,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm",
+            "value": 11724,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm",
+            "value": 1588866,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 8545,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30621,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17658,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm",
+            "value": 1615430,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 9081,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13919,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10538,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 1585659,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a41d5d53dedfe5ca51c4a405b501a0a8f0b2a813",
+          "message": "Remove separate ResourceKey definitions in favor of ResourceMarker (#1582)\n\nFixes #1559",
+          "timestamp": "2022-02-03T22:24:07-06:00",
+          "tree_id": "c54df82de74027790a15072d2aab93298019ea2d",
+          "url": "https://github.com/unicode-org/icu4x/commit/a41d5d53dedfe5ca51c4a405b501a0a8f0b2a813"
+        },
+        "date": 1643948983198,
         "tool": "ndjson",
         "benches": [
           {
