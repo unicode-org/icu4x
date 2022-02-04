@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643948747967,
+  "lastUpdate": 1643996209895,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8723,6 +8723,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a41d5d53dedfe5ca51c4a405b501a0a8f0b2a813"
         },
         "date": 1643948738126,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1571719,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb0a0958a0d793ac0fa61730ef9895a74de2ef14",
+          "message": "Reducing CLDR transformers boilerplate (#1586)",
+          "timestamp": "2022-02-04T18:34:45+01:00",
+          "tree_id": "5259caee4db67492db560060a82056ff9b0b6162",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb0a0958a0d793ac0fa61730ef9895a74de2ef14"
+        },
+        "date": 1643996196677,
         "tool": "ndjson",
         "benches": [
           {
