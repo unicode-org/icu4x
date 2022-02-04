@@ -11,7 +11,7 @@ pub fn has_valid_repr(attrs: &[Attribute]) -> bool {
     attrs
         .iter()
         .filter(|a| a.path.get_ident().map(|a| a == "repr").unwrap_or(false))
-        .find(|a| {
+        .any(|a| {
             parse2::<ReprAttribute>(a.tokens.clone())
                 .ok()
                 .and_then(|s| {
@@ -22,7 +22,6 @@ pub fn has_valid_repr(attrs: &[Attribute]) -> bool {
                 })
                 .is_some()
         })
-        .is_some()
 }
 
 struct ReprAttribute {
