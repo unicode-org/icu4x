@@ -11,10 +11,7 @@ use icu_calendar::{buddhist::Buddhist, japanese::Japanese, AsCalendar, DateTime,
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
-    provider::{
-        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
-        key::{DATE_PATTERNS_V1, DATE_SKELETON_PATTERNS_V1, DATE_SYMBOLS_V1},
-    },
+    provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
     time_zone::TimeZoneFormat,
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
@@ -226,15 +223,15 @@ fn test_dayperiod_patterns() {
                         let local_provider = MultiForkByKeyProvider {
                             providers: vec![
                                 AnyPayloadProvider {
-                                    key: DATE_SYMBOLS_V1,
+                                    key: DateSymbolsV1Marker::KEY,
                                     data: symbols_data.clone().wrap_into_any_payload(),
                                 },
                                 AnyPayloadProvider {
-                                    key: DATE_SKELETON_PATTERNS_V1,
+                                    key: DateSkeletonPatternsV1Marker::KEY,
                                     data: skeleton_data.clone().wrap_into_any_payload(),
                                 },
                                 AnyPayloadProvider {
-                                    key: DATE_PATTERNS_V1,
+                                    key: DatePatternsV1Marker::KEY,
                                     data: patterns_data.clone().wrap_into_any_payload(),
                                 },
                             ],
@@ -375,15 +372,15 @@ fn test_time_zone_patterns() {
                 let local_provider = MultiForkByKeyProvider {
                     providers: vec![
                         AnyPayloadProvider {
-                            key: DATE_SYMBOLS_V1,
+                            key: DateSymbolsV1Marker::KEY,
                             data: symbols_data.clone().wrap_into_any_payload(),
                         },
                         AnyPayloadProvider {
-                            key: DATE_SKELETON_PATTERNS_V1,
+                            key: DateSkeletonPatternsV1Marker::KEY,
                             data: skeleton_data.clone().wrap_into_any_payload(),
                         },
                         AnyPayloadProvider {
-                            key: DATE_PATTERNS_V1,
+                            key: DatePatternsV1Marker::KEY,
                             data: patterns_data.clone().wrap_into_any_payload(),
                         },
                     ],

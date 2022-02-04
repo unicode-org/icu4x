@@ -14,14 +14,6 @@ use icu_provider::yoke::{self, *};
 use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
-pub mod key {
-    //! Resource keys for [`icu_segmenter`](crate).
-    use icu_provider::{resource_key, ResourceKey};
-
-    /// Resource key: data for line breaking.
-    pub const LINE_BREAK_DATA_V1: ResourceKey = resource_key!("segmenter/line@1");
-}
-
 /// Pre-processed Unicode data in the form of tables to be used for line breaking.
 #[icu_provider::data_struct(LineBreakDataV1Marker = "segmenter/line@1")]
 #[derive(Debug, PartialEq, Clone, Default)]

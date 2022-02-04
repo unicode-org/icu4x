@@ -54,7 +54,7 @@ where
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = provider.supported_options_for_key(&key::HELLO_WORLD_V1)
+    /// let supported_langids = provider.supported_options_for_key(&HelloWorldV1Marker::KEY)
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .filter_map(|options| options.langid)
     ///     .collect::<Vec<LanguageIdentifier>>();

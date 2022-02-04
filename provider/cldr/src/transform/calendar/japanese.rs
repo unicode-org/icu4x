@@ -19,7 +19,7 @@ use tinystr::TinyStr16;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 /// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [key::JAPANESE_ERAS_V1];
+pub const ALL_KEYS: [ResourceKey; 1] = [JapaneseErasV1Marker::KEY];
 
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug, Default)]
@@ -200,7 +200,7 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 
 impl KeyedDataProvider for JapaneseErasProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::JAPANESE_ERAS_V1.match_key(*resc_key)
+        JapaneseErasV1Marker::KEY.match_key(*resc_key)
     }
 }
 

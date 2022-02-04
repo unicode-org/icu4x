@@ -267,12 +267,12 @@ impl AnyResponse {
 /// };
 ///
 /// let provider = AnyPayloadProvider {
-///     key: key::HELLO_WORLD_V1,
+///     key: HelloWorldV1Marker::KEY,
 ///     data: AnyPayload::from_static_ref(&CONST_DATA),
 /// };
 ///
 /// let any_response = provider
-///     .load_any(key::HELLO_WORLD_V1, &DataRequest::default())
+///     .load_any(HelloWorldV1Marker::KEY, &DataRequest::default())
 ///     .expect("Load should succeed");
 ///
 /// // Downcast to something useful

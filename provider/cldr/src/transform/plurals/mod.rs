@@ -15,8 +15,8 @@ use std::convert::TryFrom;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 2] = [
-    key::CARDINAL_V1, //
-    key::ORDINAL_V1,  //
+    CardinalV1Marker::KEY, //
+    OrdinalV1Marker::KEY,  //
 ];
 
 /// A data provider reading from CLDR JSON plural rule files.
@@ -57,10 +57,10 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
 impl KeyedDataProvider for PluralsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         // TODO(#442): Clean up KeyedDataProvider
-        match *resc_key {
-            key::CARDINAL_V1 => Ok(()),
-            key::ORDINAL_V1 => Ok(()),
-            _ => Err(DataErrorKind::MissingResourceKey.with_key(*resc_key)),
+        if ALL_KEYS.iter().any(|key| key == resc_key) {
+            Ok(())
+        } else {
+            Err(DataErrorKind::MissingResourceKey.with_key(*resc_key))
         }
     }
 }
@@ -72,8 +72,8 @@ impl PluralsProvider {
     ) -> Result<&cldr_serde::plurals::Rules, DataError> {
         PluralsProvider::supports_key(resc_key)?;
         match *resc_key {
-            key::CARDINAL_V1 => self.cardinal_rules.as_ref(),
-            key::ORDINAL_V1 => self.ordinal_rules.as_ref(),
+            CardinalV1Marker::KEY => self.cardinal_rules.as_ref(),
+            OrdinalV1Marker::KEY => self.ordinal_rules.as_ref(),
             _ => return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key)),
         }
         .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(*resc_key))

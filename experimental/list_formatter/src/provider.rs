@@ -12,6 +12,7 @@ use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 use writeable::{LengthHint, Writeable};
 
+// TODO(#1561): Remove the explicit keys and move them to ResourceMarker.
 pub mod key {
     //! Resource keys for [`icu_list`](crate).
     use icu_provider::{resource_key, ResourceKey};

@@ -41,13 +41,14 @@ where
 /// following example copies the data from one instance to another instance.
 ///
 /// ```
+/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 ///
 /// let source_provider = HelloWorldProvider::new_with_placeholder_data();
 /// let mut dest_provider = HelloWorldProvider::default();
 ///
 /// icu_provider::export::export_from_iterable(
-///     &key::HELLO_WORLD_V1,
+///     &HelloWorldV1Marker::KEY,
 ///     &source_provider,
 ///     &mut dest_provider,
 /// )

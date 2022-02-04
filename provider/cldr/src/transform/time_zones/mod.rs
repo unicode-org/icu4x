@@ -7,7 +7,7 @@ use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
-use icu_datetime::provider::{key, time_zones::*};
+use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
@@ -19,12 +19,12 @@ mod convert;
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 6] = [
-    key::TIMEZONE_FORMATS_V1,
-    key::TIMEZONE_EXEMPLAR_CITIES_V1,
-    key::TIMEZONE_GENERIC_NAMES_LONG_V1,
-    key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
-    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
-    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
+    TimeZoneFormatsV1Marker::KEY,
+    ExemplarCitiesV1Marker::KEY,
+    MetaZoneGenericNamesLongV1Marker::KEY,
+    MetaZoneGenericNamesShortV1Marker::KEY,
+    MetaZoneSpecificNamesLongV1Marker::KEY,
+    MetaZoneSpecificNamesShortV1Marker::KEY,
 ];
 
 /// A data provider reading from CLDR JSON zones files.
@@ -68,14 +68,7 @@ impl TryFrom<&str> for TimeZonesProvider {
 impl KeyedDataProvider for TimeZonesProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         // TODO(#442): Clean up KeyedDataProvider
-        // Note: This is a big if{} instead of match{} due to Rust bug #93470
-        if !(!(*resc_key == key::TIMEZONE_FORMATS_V1)
-            && !(*resc_key == key::TIMEZONE_EXEMPLAR_CITIES_V1)
-            && !(*resc_key == key::TIMEZONE_GENERIC_NAMES_LONG_V1)
-            && !(*resc_key == key::TIMEZONE_GENERIC_NAMES_SHORT_V1)
-            && !(*resc_key == key::TIMEZONE_SPECIFIC_NAMES_LONG_V1)
-            && !(*resc_key == key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1))
-        {
+        if ALL_KEYS.iter().any(|key| key == resc_key) {
             Ok(())
         } else {
             Err(DataErrorKind::MissingResourceKey.with_key(*resc_key))
