@@ -205,7 +205,7 @@ impl TryFrom<&dyn CldrPaths> for FooProvider {
     }
 }
 
-impl ResourceProvider<FooV1Marker> for NumbersProFooProvidervider {
+impl ResourceProvider<FooV1Marker> for FooProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -216,7 +216,7 @@ impl ResourceProvider<FooV1Marker> for NumbersProFooProvidervider {
     }
 }
 
-impl<'data> IterableProvider for NumbersProvider {
+impl IterableProvider for FooProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -225,7 +225,7 @@ impl<'data> IterableProvider for NumbersProvider {
     }
 }
 
-impl KeyedDataProvider for NumbersProvider {
+impl KeyedDataProvider for FooProvider {
     fn supported_keys() -> Vec<ResourceKey> {
         vec![FooV1Marker::KEY]
     }
@@ -233,9 +233,9 @@ impl KeyedDataProvider for NumbersProvider {
 
 // Once we have ResourceProvider, IterableProvider, and KeyedDataProvider, we can
 // implement DynProvider<SerializeMarker>.
-icu_provider::impl_dyn_provider!(NumbersProvider, [
+icu_provider::impl_dyn_provider!(FooProvider, [
     FooV1Marker,
-], SERDE_SE, 'data);
+], SERDE_SE);
 ```
 
 The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.
