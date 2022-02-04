@@ -9,7 +9,7 @@ use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SCRIPT_EXTENSIONS_KEYS, AL
 use icu_provider::either::EitherProvider;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
-use icu_provider::hello_world::{self, HelloWorldProvider};
+use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::export::BlobExporter;
@@ -607,7 +607,7 @@ fn export_hello_world(
         EitherProvider::B(raw_provider)
     };
 
-    let key = hello_world::key::HELLO_WORLD_V1;
+    let key = HelloWorldV1Marker::KEY;
     log::info!("Writing key: {}", key);
     icu_provider::export::export_from_iterable(&key, &provider, exporter)?;
 

@@ -14,7 +14,7 @@
 //! ```
 //! use icu_locid_macros::langid;
 //! use icu_provider::prelude::*;
-//! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1Marker};
+//! use icu_provider::hello_world::*;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
@@ -34,7 +34,7 @@
 //! // Export a key
 //! let source_provider = HelloWorldProvider::new_with_placeholder_data();
 //! let result = icu_provider::export::export_from_iterable(
-//!     &key::HELLO_WORLD_V1,
+//!     &HelloWorldV1Marker::KEY,
 //!     &source_provider,
 //!     &mut exporter)
 //! .expect("Should successfully export");

@@ -12,17 +12,6 @@ use icu_provider::yoke;
 use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
 
-/// A collection of [`ResourceKey`](icu_provider::ResourceKey) structs for
-/// LocaleCanonicalizer providers.
-pub mod key {
-    use icu_provider::{resource_key, ResourceKey};
-    /// Key for aliases data.
-    pub const ALIASES_V1: ResourceKey = resource_key!("locale_canonicalizer/aliases@1");
-    /// Key for likely subtags data.
-    pub const LIKELY_SUBTAGS_V1: ResourceKey =
-        resource_key!("locale_canonicalizer/likelysubtags@1");
-}
-
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(

@@ -21,7 +21,7 @@ use alloc::vec::Vec;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::inv::InvariantDataProvider;
-/// use icu_provider::hello_world::{key, HelloWorldV1Marker};
+/// use icu_provider::hello_world::HelloWorldV1Marker;
 /// use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;

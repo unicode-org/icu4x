@@ -8,7 +8,7 @@ use litemap::LiteMap;
 
 use crate::cldr_serde;
 use crate::CldrPaths;
-use icu_datetime::provider::*;
+use icu_datetime::provider::calendar::*;
 
 use crate::support::KeyedDataProvider;
 use icu_provider::iter::IterableProvider;
@@ -19,7 +19,7 @@ use tinystr::{tinystr16, TinyStr16};
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::DATE_SYMBOLS_V1, //
+    DateSymbolsV1Marker::KEY, //
 ];
 
 /// A data provider reading from CLDR JSON dates files.
@@ -35,21 +35,22 @@ impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
 
 impl KeyedDataProvider for DateSymbolsProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::DATE_SYMBOLS_V1.match_key(*resc_key)
+        DateSymbolsV1Marker::KEY.match_key(*resc_key)
     }
 }
 
-impl ResourceProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
+impl ResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<calendar::DateSymbolsV1Marker>, DataError> {
-        let dates = self.0.dates_for::<calendar::DateSymbolsV1Marker>(req)?;
+    ) -> Result<DataResponse<DateSymbolsV1Marker>, DataError> {
+        let dates = self.0.dates_for::<DateSymbolsV1Marker>(req)?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
-        let calendar = req.options.variant.as_ref().ok_or_else(|| {
-            DataErrorKind::NeedsVariant.with_req(calendar::DateSymbolsV1Marker::KEY, req)
-        })?;
+        let calendar =
+            req.options.variant.as_ref().ok_or_else(|| {
+                DataErrorKind::NeedsVariant.with_req(DateSymbolsV1Marker::KEY, req)
+            })?;
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned(convert_dates(dates, calendar))),
@@ -57,11 +58,7 @@ impl ResourceProvider<calendar::DateSymbolsV1Marker> for DateSymbolsProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(
-    DateSymbolsProvider,
-    [calendar::DateSymbolsV1Marker,],
-    SERDE_SE
-);
+icu_provider::impl_dyn_provider!(DateSymbolsProvider, [DateSymbolsV1Marker,], SERDE_SE);
 
 impl IterableProvider for DateSymbolsProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
@@ -73,11 +70,8 @@ impl IterableProvider for DateSymbolsProvider {
     }
 }
 
-fn convert_dates(
-    other: &cldr_serde::ca::Dates,
-    calendar: &str,
-) -> calendar::DateSymbolsV1<'static> {
-    calendar::DateSymbolsV1 {
+fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
+    DateSymbolsV1 {
         months: (&other.months).into(),
         weekdays: (&other.days).into(),
         day_periods: (&other.day_periods).into(),
@@ -85,9 +79,9 @@ fn convert_dates(
     }
 }
 
-fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> calendar::Eras<'static> {
+fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     let map = get_era_code_map(calendar);
-    let mut out_eras = calendar::Eras::default();
+    let mut out_eras = Eras::default();
 
     for (cldr, code) in map.into_tuple_vec().into_iter() {
         if let Some(name) = eras.names.get(&cldr) {
@@ -121,7 +115,7 @@ fn get_era_code_map(calendar: &str) -> LiteMap<String, TinyStr16> {
 
 macro_rules! symbols_from {
     ([$name: ident, $name2: ident $(,)?], [ $($element: ident),+ $(,)? ] $(,)?) => {
-        impl From<&cldr_serde::ca::$name::Symbols> for calendar::$name2::SymbolsV1<'static> {
+        impl From<&cldr_serde::ca::$name::Symbols> for $name2::SymbolsV1<'static> {
             fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
                 Self([
                     $(
@@ -133,7 +127,7 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name2]);
     };
     ([$name: ident, $name2: ident $(,)?], { $($element: ident),+ $(,)? } $(,)?) => {
-        impl From<&cldr_serde::ca::$name::Symbols> for calendar::$name2::SymbolsV1<'static> {
+        impl From<&cldr_serde::ca::$name::Symbols> for $name2::SymbolsV1<'static> {
             fn from(other: &cldr_serde::ca::$name::Symbols) -> Self {
                 Self {
                     $(
@@ -156,7 +150,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_serde::ca::$name::Contexts> for calendar::$name2::ContextsV1<'static> {
+        impl From<&cldr_serde::ca::$name::Contexts> for $name2::ContextsV1<'static> {
             fn from(other: &cldr_serde::ca::$name::Contexts) -> Self {
                 Self {
                     format: (&other.format).into(),
@@ -192,7 +186,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_serde::ca::$name::FormatWidths> for calendar::$name2::FormatWidthsV1<'static> {
+        impl From<&cldr_serde::ca::$name::FormatWidths> for $name2::FormatWidthsV1<'static> {
             fn from(other: &cldr_serde::ca::$name::FormatWidths) -> Self {
                 Self {
                     abbreviated: (&other.abbreviated).into(),
@@ -203,7 +197,7 @@ macro_rules! symbols_from {
             }
         }
 
-        impl From<&cldr_serde::ca::$name::StandAloneWidths> for calendar::$name2::StandAloneWidthsV1<'static> {
+        impl From<&cldr_serde::ca::$name::StandAloneWidths> for $name2::StandAloneWidthsV1<'static> {
             fn from(other: &cldr_serde::ca::$name::StandAloneWidths) -> Self {
                 Self {
                     abbreviated: other.abbreviated.as_ref().map(|width| width.into()),
@@ -243,7 +237,7 @@ fn test_basic() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: DataPayload<calendar::DateSymbolsV1Marker> = provider
+    let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
         .load_resource(&DataRequest {
             options: ResourceOptions {
                 variant: Some("gregory".into()),
@@ -270,7 +264,7 @@ fn unalias_contexts() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DateSymbolsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: DataPayload<calendar::DateSymbolsV1Marker> = provider
+    let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
         .load_resource(&DataRequest {
             options: ResourceOptions {
                 variant: Some("gregory".into()),

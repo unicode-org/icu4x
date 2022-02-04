@@ -14,7 +14,7 @@
 //! ```
 //! use icu_provider::prelude::*;
 //! use icu_provider::export::DataExporter;
-//! use icu_provider::hello_world::{key, HelloWorldProvider};
+//! use icu_provider::hello_world::*;
 //! use icu_provider_blob::StaticDataProvider;
 //! use icu_provider_blob::export::BlobExporter;
 //! use icu_locid_macros::langid;
@@ -27,7 +27,7 @@
 //!     let mut exporter = BlobExporter::new_with_sink(Box::new(&mut buffer));
 //!     let source_provider = HelloWorldProvider::new_with_placeholder_data();
 //!     let result = icu_provider::export::export_from_iterable(
-//!         &key::HELLO_WORLD_V1,
+//!         &HelloWorldV1Marker::KEY,
 //!         &source_provider,
 //!         &mut exporter)
 //!     .expect("Should successfully export");
