@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643925535784,
+  "lastUpdate": 1643949233139,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22997,6 +22997,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 3766,
             "range": "± 24",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a41d5d53dedfe5ca51c4a405b501a0a8f0b2a813",
+          "message": "Remove separate ResourceKey definitions in favor of ResourceMarker (#1582)\n\nFixes #1559",
+          "timestamp": "2022-02-03T22:24:07-06:00",
+          "tree_id": "c54df82de74027790a15072d2aab93298019ea2d",
+          "url": "https://github.com/unicode-org/icu4x/commit/a41d5d53dedfe5ca51c4a405b501a0a8f0b2a813"
+        },
+        "date": 1643949223237,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 1763,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3645,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
