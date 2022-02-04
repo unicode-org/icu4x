@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{ListStyle, provider::ListFormatterPatternsV1};
+use crate::{provider::ListFormatterPatternsV1, ListStyle};
 use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -191,9 +191,7 @@ mod tests {
 
     fn formatter(style: ListStyle) -> ListFormatter<crate::markers::And> {
         ListFormatter {
-            data: DataPayload::from_owned(
-                crate::provider::test::test_patterns(),
-            ),
+            data: DataPayload::from_owned(crate::provider::test::test_patterns()),
             style,
         }
     }
