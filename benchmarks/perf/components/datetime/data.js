@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643949271415,
+  "lastUpdate": 1643996697699,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19793,6 +19793,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 288146,
             "range": "± 797",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb0a0958a0d793ac0fa61730ef9895a74de2ef14",
+          "message": "Reducing CLDR transformers boilerplate (#1586)",
+          "timestamp": "2022-02-04T18:34:45+01:00",
+          "tree_id": "5259caee4db67492db560060a82056ff9b0b6162",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb0a0958a0d793ac0fa61730ef9895a74de2ef14"
+        },
+        "date": 1643996687680,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 71842,
+            "range": "± 774",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 769126,
+            "range": "± 2573",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 288552,
+            "range": "± 856",
             "unit": "ns/iter"
           }
         ]
