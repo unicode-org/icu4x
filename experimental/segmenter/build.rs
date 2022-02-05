@@ -358,16 +358,14 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                         for i in 0..0x20000 {
                             match lb.get(i) {
                                 LineBreak::OpenPunctuation => {
-                                    if p.name == "OP_OP30"
+                                    if (p.name == "OP_OP30"
                                         && (eaw.get(i) != EastAsianWidth::Fullwidth
                                             && eaw.get(i) != EastAsianWidth::Halfwidth
-                                            && eaw.get(i) != EastAsianWidth::Wide)
-                                    {
-                                        properties_map[i as usize] = property_index;
-                                    } else if p.name == "OP_EA"
-                                        && (eaw.get(i) == EastAsianWidth::Fullwidth
-                                            || eaw.get(i) == EastAsianWidth::Halfwidth
-                                            || eaw.get(i) == EastAsianWidth::Wide)
+                                            && eaw.get(i) != EastAsianWidth::Wide))
+                                        || (p.name == "OP_EA"
+                                            && (eaw.get(i) == EastAsianWidth::Fullwidth
+                                                || eaw.get(i) == EastAsianWidth::Halfwidth
+                                                || eaw.get(i) == EastAsianWidth::Wide))
                                     {
                                         properties_map[i as usize] = property_index;
                                     }
