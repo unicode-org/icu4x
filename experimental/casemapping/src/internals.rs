@@ -8,7 +8,7 @@ use core::num::TryFromIntError;
 use icu_codepointtrie::CodePointTrieHeader;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
-use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+use icu_uniset::UnicodeSetBuilder;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "provider_transform_internals")]
@@ -969,45 +969,6 @@ impl<'data> CaseMappingInternals<'data> {
             None => false,
         }
     }
-
-    // Case closure is not yet exposed
-    #[allow(dead_code)]
-    pub(crate) fn case_closure<'a>(
-        &self,
-        set: &UnicodeSet<'a>,
-        attribute: ClosureAttribute,
-    ) -> UnicodeSet<'a> {
-        let mut builder = UnicodeSetBuilder::new();
-        builder.add_set(set);
-
-        for c in set.iter_chars() {
-            match attribute {
-                ClosureAttribute::CaseInsensitive => {
-                    self.add_case_closure(c, &mut builder);
-                }
-                ClosureAttribute::AddCaseMappings => {
-                    self.to_full_lower(c, ContextIterator::empty(), CaseMapLocale::Root)
-                        .add_to_set(&mut builder);
-                    self.to_full_title(c, ContextIterator::empty(), CaseMapLocale::Root)
-                        .add_to_set(&mut builder);
-                    self.to_full_upper(c, ContextIterator::empty(), CaseMapLocale::Root)
-                        .add_to_set(&mut builder);
-                    self.to_full_folding(c, ContextIterator::empty(), CaseMapLocale::Root)
-                        .add_to_set(&mut builder);
-                }
-            }
-        }
-        builder.build()
-    }
-}
-
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-#[allow(dead_code)]
-pub enum ClosureAttribute {
-    /// TODO: Document
-    CaseInsensitive,
-    /// TODO: Document
-    AddCaseMappings,
 }
 
 // An internal representation of locale. Non-Root values of this
@@ -1044,6 +1005,7 @@ pub enum FullMappingResult<'a> {
 }
 
 impl<'a> FullMappingResult<'a> {
+    #[allow(dead_code)]
     fn add_to_set<S: ClosureSet>(&self, set: &mut S) {
         match self {
             FullMappingResult::CodePoint(c) => set.add_char(*c),
@@ -1086,13 +1048,6 @@ impl<'a> ContextIterator<'a> {
         char_and_after.next(); // skip the character itself
         let after = char_and_after.as_str();
         Self { before, after }
-    }
-
-    pub fn empty() -> Self {
-        Self {
-            before: "",
-            after: "",
-        }
     }
 
     fn preceded_by_soft_dotted(&self, mapping: &CaseMappingInternals) -> bool {
