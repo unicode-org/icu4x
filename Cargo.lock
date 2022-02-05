@@ -3121,6 +3121,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerovec-derive"
+version = "0.6.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+ "zerovec",
+]
+
+[[package]]
 name = "zip"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
