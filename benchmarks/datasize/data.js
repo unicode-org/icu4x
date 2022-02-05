@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644010847405,
+  "lastUpdate": 1644075082968,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8783,6 +8783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e80082c0487a61f63fed60390e1becacea3bed53"
         },
         "date": 1644010834586,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1571719,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "871b8900928491485b8ae251832667e26b30768e",
+          "message": "Add custom derives for ULE and VarULE (#1584)\n\n* Initial derive crate\n\n* Initial ULE derive\n\n* Move repr stuff to utils module\n\n* Fix docs\n\n* Extract generate_ule_validators()\n\n* fix bug\n\n* Add VarULE derive\n\n* fixup ci\n\n* fixes",
+          "timestamp": "2022-02-05T07:29:49-08:00",
+          "tree_id": "6d3343f0566f16e4407be46871706596bd467121",
+          "url": "https://github.com/unicode-org/icu4x/commit/871b8900928491485b8ae251832667e26b30768e"
+        },
+        "date": 1644075073525,
         "tool": "ndjson",
         "benches": [
           {
