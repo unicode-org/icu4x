@@ -12,7 +12,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     if !crate::utils::has_valid_repr(&input.attrs) {
         return Error::new(
             input.span(),
-            "derive(VarULE) must be applied to a #[repr(C)] or #[repr(transparent)] type",
+            "derive(VarULE) must be applied to a #[repr(packed)] or #[repr(transparent)] type",
         )
         .to_compile_error();
     }
@@ -22,7 +22,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     {
         return Error::new(
             input.generics.span(),
-            "derive(ULE) must be applied to a struct without any generics",
+            "derive(VarULE) must be applied to a struct without any generics",
         )
         .to_compile_error();
     }
@@ -30,13 +30,13 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
         if s.fields.iter().next().is_none() {
             return Error::new(
                 input.span(),
-                "derive(ULE) must be applied to a non-empty struct",
+                "derive(VarULE) must be applied to a non-empty struct",
             )
             .to_compile_error();
         }
         s
     } else {
-        return Error::new(input.span(), "derive(ULE) must be applied to a struct")
+        return Error::new(input.span(), "derive(VarULE) must be applied to a struct")
             .to_compile_error();
     };
 
@@ -72,14 +72,15 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     );
 
     // Safety (based on the safety checklist on the ULE trait):
-    //  1. #name does not include any uninitialized or padding bytes.
+    //  1. #name does not include any uninitialized or padding bytes
     //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
-    //  2. CharULE is aligned to 1 byte.
+    //  2. #name is aligned to 1 byte.
     //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
-    //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-    //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
-    //  5. The other ULE methods use the default impl.
-    //  6. [This impl does not enforce the equality constraint, it is up to the user to do so, ideally via a custom derive]
+    //  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid.
+    //  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety
+    //  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
+    //  6. The other VarULE methods use the default impl
+    //  7. [This impl does not enforce the non-safety equality constraint, it is up to the user to do so, ideally via a custom derive]
     quote! {
         // The size of the ULE section of this type
         const #ule_size: usize = 0 #(+ #sizes)*;
