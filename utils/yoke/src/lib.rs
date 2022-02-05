@@ -11,7 +11,7 @@
 //! to how `dyn` allows one to "erase" static types and turn them into dynamic ones.
 //!
 //! Most of the time the yokeable `Y` type will be some kind of zero-copy deserializable
-//! abstraction, potentially with an owned variant (like [`Cow`](alloc::borrow::Cow), 
+//! abstraction, potentially with an owned variant (like [`Cow`](alloc::borrow::Cow),
 //! [`ZeroVec`](https://docs.rs/zerovec), or an aggregate containing such types), and the cart `C` will be some smart pointer like
 //!   [`Box<T>`](alloc::boxed::Box), [`Rc<T>`](alloc::rc::Rc), or [`Arc<T>`](std::sync::Arc), potentially wrapped in an [`Option<T>`](Option).
 //!
@@ -21,7 +21,7 @@
 //! the cart type, which cannot be interfered with as long as the `Yoke` is borrowed by [`.get()`](Yoke::get).
 //! [`.get()`](Yoke::get) protects access by essentially reifying the erased lifetime to a safe local one
 //! when necessary.
-//! 
+//!
 //! See the documentation of [`Yoke`] for more details.
 
 #![cfg_attr(all(not(test), not(doc)), no_std)]
