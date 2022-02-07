@@ -343,20 +343,24 @@ impl<'data> ScriptWithExtensions<'data> {
     /// let scx: &ScriptWithExtensions = &payload.get().data;
     ///
     /// assert_eq!(
-    ///     scx.get_script_extensions_val('𐓐' as u32).iter().collect::<Vec<Script>>(), // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///     scx.get_script_extensions_val('𐓐' as u32)  // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///         .iter().collect::<Vec<Script>>(),
     ///     vec![Script::Osage]
     /// );
     /// assert_eq!(
-    ///     scx.get_script_extensions_val('🥳' as u32).as_zerovec(), // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
-    ///     ZeroVec::<Script>::alloc_from_slice(&[Script::Common])
+    ///     scx.get_script_extensions_val('🥳' as u32)  // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+    ///         .iter().collect::<Vec<Script>>(),
+    ///     vec![Script::Common]
     /// );
     /// assert_eq!(
-    ///     scx.get_script_extensions_val(0x200D).as_zerovec(), // ZERO WIDTH JOINER
-    ///     ZeroVec::<Script>::alloc_from_slice(&[Script::Inherited])
+    ///     scx.get_script_extensions_val(0x200D)  // ZERO WIDTH JOINER
+    ///         .iter().collect::<Vec<Script>>(),
+    ///     vec![Script::Inherited]
     /// );
     /// assert_eq!(
-    ///     scx.get_script_extensions_val('௫' as u32).as_zerovec(), // U+0BEB TAMIL DIGIT FIVE
-    ///     ZeroVec::<Script>::alloc_from_slice(&[Script::Tamil, Script::Grantha])
+    ///     scx.get_script_extensions_val('௫' as u32)  // U+0BEB TAMIL DIGIT FIVE
+    ///         .iter().collect::<Vec<Script>>(),
+    ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
     pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
