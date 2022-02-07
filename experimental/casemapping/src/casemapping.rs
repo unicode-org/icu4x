@@ -21,21 +21,21 @@ pub struct CaseMapping {
 }
 
 impl CaseMapping {
-    /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`].
+    /// A constructor which takes a [`ResourceProvider`] and creates a [`CaseMapping`].
     pub fn new<P>(provider: &P) -> Result<CaseMapping, DataError>
     where
-        P: DataProvider<CaseMappingV1Marker>,
+        P: ResourceProvider<CaseMappingV1Marker> + ?Sized,
     {
         Self::new_with_locale(provider, &Locale::und())
     }
 
-    /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`] for the given locale.
+    /// A constructor which takes a [`ResourceProvider`] and creates a [`CaseMapping`] for the given locale.
     pub fn new_with_locale<P>(provider: &P, locale: &Locale) -> Result<CaseMapping, DataError>
     where
-        P: DataProvider<CaseMappingV1Marker>,
+        P: ResourceProvider<CaseMappingV1Marker> + ?Sized,
     {
-        let internals: DataPayload<CaseMappingV1Marker> = provider
-            .load_payload(&DataRequest::from(crate::provider::key::CASE_MAPPING_V1))?
+        let internals = provider
+            .load_resource(&DataRequest::default())?
             .take_payload()?;
         debug_assert!(internals.get().casemap.validate().is_ok());
         let locale = CaseMapLocale::from(locale);

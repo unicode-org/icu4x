@@ -7,7 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::internals::CaseMappingInternals;
-use icu_provider::yoke::{self, *};
+use icu_provider::yoke;
 
 pub mod key {
     //! Resource keys for [`icu_casemapping`](crate)
@@ -17,7 +17,7 @@ pub mod key {
     pub const CASE_MAPPING_V1: ResourceKey = resource_key!("props/casemap@1");
 }
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(CaseMappingV1Marker = "props/casemap@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",

@@ -46,8 +46,8 @@ impl CaseMappingDataProvider {
     }
 }
 
-impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
-    fn load_payload(
+impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
+    fn load_resource(
         &self,
         _req: &DataRequest,
     ) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
