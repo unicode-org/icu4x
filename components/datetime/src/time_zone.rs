@@ -410,12 +410,12 @@ impl TimeZoneFormat {
     ) -> Result<Self, DateTimeFormatError>
         where
             L: Into<Locale>,
-            ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
@@ -448,12 +448,12 @@ impl TimeZoneFormat {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError>
         where
-            ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         load_resource(
@@ -477,12 +477,12 @@ impl TimeZoneFormat {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError>
         where
-            ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         load_resource(
@@ -507,12 +507,12 @@ impl TimeZoneFormat {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError>
         where
-            ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         load_resource(
@@ -529,12 +529,12 @@ impl TimeZoneFormat {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError>
         where
-            ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         load_resource(
@@ -551,12 +551,12 @@ impl TimeZoneFormat {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError>
         where
-            ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         if self.data_payloads.exemplar_cities == None {
