@@ -343,8 +343,8 @@ impl<'data> ScriptExtensions<'data> {
     /// let scx: &ScriptExtensions = &payload.get().data;
     ///
     /// assert_eq!(
-    ///     scx.get_script_extensions_val('𐓐' as u32).as_zerovec(), // U+104D0 OSAGE CAPITAL LETTER KHA
-    ///     ZeroVec::<Script>::alloc_from_slice(&[Script::Osage])
+    ///     scx.get_script_extensions_val('𐓐' as u32).iter().collect::<Vec<Script>>(), // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///     vec![Script::Osage]
     /// );
     /// assert_eq!(
     ///     scx.get_script_extensions_val('🥳' as u32).as_zerovec(), // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
