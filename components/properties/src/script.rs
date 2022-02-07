@@ -26,7 +26,7 @@ const SCRIPT_VAL_LENGTH: u16 = 10;
 const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 
 /// An internal-use only pseudo-property that represents the values stored in
-/// the trie of the special data structure [`ScriptExtensions`].
+/// the trie of the special data structure [`ScriptWithExtensions`].
 ///
 /// Note: The will assume a 12-bit layout. The 2 higher order bits in positions
 /// 11..10 will indicate how to deduce the Script value and Script_Extensions,
@@ -35,17 +35,17 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptExtensions` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 pub struct ScriptWithExt(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptExtensions` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
 }
 
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptExtensions` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 impl ScriptWithExt {
     /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
     /// also indicates a Script value of [`Script::Common`].
@@ -163,7 +163,7 @@ impl From<ScriptWithExt> for Script {
 /// file for these properties.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
-pub struct ScriptExtensions<'data> {
+pub struct ScriptWithExtensions<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
     /// Script_Extensions value, nearly matching the representation
@@ -190,15 +190,15 @@ pub struct ScriptExtensions<'data> {
     extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
-impl<'data> ScriptExtensions<'data> {
+impl<'data> ScriptWithExtensions<'data> {
     // This method is intended to be used by constructors of deserialized data
     // in a data provider.
     #[doc(hidden)]
     pub fn new(
         trie: CodePointTrie<'data, ScriptWithExt>,
         extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> ScriptExtensions<'data> {
-        ScriptExtensions { trie, extensions }
+    ) -> ScriptWithExtensions<'data> {
+        ScriptWithExtensions { trie, extensions }
     }
 
     /// Returns the `Script` property value for this code point.
@@ -208,13 +208,13 @@ impl<'data> ScriptExtensions<'data> {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptExtensions;
+    /// use icu::properties::script::ScriptWithExtensions;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
     ///     .load_payload(
     ///         key::SCRIPT_EXTENSIONS_V1,
     ///         &DataRequest {
@@ -226,7 +226,7 @@ impl<'data> ScriptExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptExtensions = &payload.get().data;
+    /// let scx: &ScriptWithExtensions = &payload.get().data;
     ///
     /// // U+0640 ARABIC TATWEEL
     /// assert_eq!(scx.get_script_val(0x0640), Script::Common); // main Script value
@@ -321,14 +321,14 @@ impl<'data> ScriptExtensions<'data> {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptExtensions;
+    /// use icu::properties::script::ScriptWithExtensions;
     /// use zerovec::ZeroVec;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
     ///     .load_payload(
     ///         key::SCRIPT_EXTENSIONS_V1,
     ///         &DataRequest {
@@ -340,7 +340,7 @@ impl<'data> ScriptExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptExtensions = &payload.get().data;
+    /// let scx: &ScriptWithExtensions = &payload.get().data;
     ///
     /// assert_eq!(
     ///     scx.get_script_extensions_val('𐓐' as u32).iter().collect::<Vec<Script>>(), // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -381,13 +381,13 @@ impl<'data> ScriptExtensions<'data> {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptExtensions;
+    /// use icu::properties::script::ScriptWithExtensions;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
     ///     .load_payload(
     ///         key::SCRIPT_EXTENSIONS_V1,
     ///         &DataRequest {
@@ -399,7 +399,7 @@ impl<'data> ScriptExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptExtensions = &payload.get().data;
+    /// let scx: &ScriptWithExtensions = &payload.get().data;
     ///
     /// // U+0650 ARABIC KASRA
     /// assert!(!scx.has_script(0x0650, Script::Inherited)); // main Script value
@@ -446,13 +446,13 @@ impl<'data> ScriptExtensions<'data> {
     /// use core::ops::RangeInclusive;
     /// use icu_provider::prelude::*;
     /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptExtensions;
+    /// use icu::properties::script::ScriptWithExtensions;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
     ///     .load_payload(
     ///         key::SCRIPT_EXTENSIONS_V1,
     ///         &DataRequest {
@@ -464,7 +464,7 @@ impl<'data> ScriptExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptExtensions = &payload.get().data;
+    /// let scx: &ScriptWithExtensions = &payload.get().data;
     /// let syriac_script_extensions_ranges = scx.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = vec![
@@ -520,13 +520,13 @@ impl<'data> ScriptExtensions<'data> {
     /// use core::ops::RangeInclusive;
     /// use icu_provider::prelude::*;
     /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptExtensionsPropertyV1Marker;
+    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptExtensions;
+    /// use icu::properties::script::ScriptWithExtensions;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
+    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
     ///     .load_payload(
     ///         key::SCRIPT_EXTENSIONS_V1,
     ///         &DataRequest {
@@ -538,7 +538,7 @@ impl<'data> ScriptExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptExtensions = &payload.get().data;
+    /// let scx: &ScriptWithExtensions = &payload.get().data;
     /// let syriac = scx.get_script_extensions_set(Script::Syriac);
     ///
     /// assert!(!syriac.contains_u32(0x061E)); // ARABIC TRIPLE DOT PUNCTUATION MARK

@@ -24,7 +24,7 @@ use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
 use icu_provider_uprops::{
     EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider,
-    ScriptExtensionsPropertyProvider,
+    ScriptWithExtensionsPropertyProvider,
 };
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
@@ -558,7 +558,7 @@ fn export_script_extensions_props(
     } else {
         eyre::bail!("Value for --uprops-root must be specified",)
     };
-    let provider = ScriptExtensionsPropertyProvider::try_new(&toml_root)?;
+    let provider = ScriptWithExtensionsPropertyProvider::try_new(&toml_root)?;
 
     let keys = ALL_SCRIPT_EXTENSIONS_KEYS;
     let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {

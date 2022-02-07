@@ -6,7 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::script::ScriptExtensions;
+use crate::script::ScriptWithExtensions;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::yoke::{self, *};
 use icu_uniset::UnicodeSet;
@@ -425,14 +425,14 @@ impl<T: TrieValue> icu_provider::DataMarker for UnicodePropertyMapV1Marker<T> {
 //
 
 /// A data structure efficiently storing `Script` and `Script_Extensions` property data.
-#[icu_provider::data_struct(ScriptExtensionsPropertyV1Marker)]
+#[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker)]
 #[derive(Debug, Eq, PartialEq)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct ScriptExtensionsPropertyV1<'data> {
+pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// A special data structure for `Script` and `Script_Extensions`.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub data: ScriptExtensions<'data>,
+    pub data: ScriptWithExtensions<'data>,
 }

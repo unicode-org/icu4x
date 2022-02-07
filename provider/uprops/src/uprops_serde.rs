@@ -87,7 +87,7 @@ pub mod script_extensions {
     use super::enumerated::EnumeratedPropertyCodePointTrie;
 
     #[derive(serde::Deserialize)]
-    pub struct ScriptExtensionsProperty {
+    pub struct ScriptWithExtensionsProperty {
         pub long_name: String,
         pub short_name: String,
         pub script_code_array: Vec<Vec<u16>>,
@@ -101,6 +101,6 @@ pub mod script_extensions {
         #[serde(skip)]
         pub enum_property: (),
         #[serde(default)]
-        pub script_extensions: Vec<ScriptExtensionsProperty>,
+        pub script_extensions: Vec<ScriptWithExtensionsProperty>,
     }
 }
