@@ -226,31 +226,31 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptWithExtensions = &payload.get().data;
+    /// let swe: &ScriptWithExtensions = &payload.get().data;
     ///
     /// // U+0640 ARABIC TATWEEL
-    /// assert_eq!(scx.get_script_val(0x0640), Script::Common); // main Script value
-    /// assert_ne!(scx.get_script_val(0x0640), Script::Arabic);
-    /// assert_ne!(scx.get_script_val(0x0640), Script::Syriac);
-    /// assert_ne!(scx.get_script_val(0x0640), Script::Thaana);
+    /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Arabic);
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Thaana);
     ///
     /// // U+0650 ARABIC KASRA
-    /// assert_eq!(scx.get_script_val(0x0650), Script::Inherited); // main Script value
-    /// assert_ne!(scx.get_script_val(0x0650), Script::Arabic);
-    /// assert_ne!(scx.get_script_val(0x0650), Script::Syriac);
-    /// assert_ne!(scx.get_script_val(0x0650), Script::Thaana);
+    /// assert_eq!(swe.get_script_val(0x0650), Script::Inherited); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Arabic);
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Thaana);
     ///
     /// // U+0660 ARABIC-INDIC DIGIT ZERO
-    /// assert_ne!(scx.get_script_val(0x0660), Script::Common);
-    /// assert_eq!(scx.get_script_val(0x0660), Script::Arabic); // main Script value
-    /// assert_ne!(scx.get_script_val(0x0660), Script::Syriac);
-    /// assert_ne!(scx.get_script_val(0x0660), Script::Thaana);
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Common);
+    /// assert_eq!(swe.get_script_val(0x0660), Script::Arabic); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Thaana);
     ///
     /// // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
-    /// assert_ne!(scx.get_script_val(0xFDF2), Script::Common);
-    /// assert_eq!(scx.get_script_val(0xFDF2), Script::Arabic); // main Script value
-    /// assert_ne!(scx.get_script_val(0xFDF2), Script::Syriac);
-    /// assert_ne!(scx.get_script_val(0xFDF2), Script::Thaana);
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Common);
+    /// assert_eq!(swe.get_script_val(0xFDF2), Script::Arabic); // main Script value
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Thaana);
     /// ```
     pub fn get_script_val(&self, code_point: u32) -> Script {
         let sc_with_ext = self.trie.get(code_point);
@@ -340,25 +340,25 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptWithExtensions = &payload.get().data;
+    /// let swe: &ScriptWithExtensions = &payload.get().data;
     ///
     /// assert_eq!(
-    ///     scx.get_script_extensions_val('𐓐' as u32)  // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///     swe.get_script_extensions_val('𐓐' as u32)  // U+104D0 OSAGE CAPITAL LETTER KHA
     ///         .iter().collect::<Vec<Script>>(),
     ///     vec![Script::Osage]
     /// );
     /// assert_eq!(
-    ///     scx.get_script_extensions_val('🥳' as u32)  // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+    ///     swe.get_script_extensions_val('🥳' as u32)  // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
     ///         .iter().collect::<Vec<Script>>(),
     ///     vec![Script::Common]
     /// );
     /// assert_eq!(
-    ///     scx.get_script_extensions_val(0x200D)  // ZERO WIDTH JOINER
+    ///     swe.get_script_extensions_val(0x200D)  // ZERO WIDTH JOINER
     ///         .iter().collect::<Vec<Script>>(),
     ///     vec![Script::Inherited]
     /// );
     /// assert_eq!(
-    ///     scx.get_script_extensions_val('௫' as u32)  // U+0BEB TAMIL DIGIT FIVE
+    ///     swe.get_script_extensions_val('௫' as u32)  // U+0BEB TAMIL DIGIT FIVE
     ///         .iter().collect::<Vec<Script>>(),
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
@@ -403,25 +403,25 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptWithExtensions = &payload.get().data;
+    /// let swe: &ScriptWithExtensions = &payload.get().data;
     ///
     /// // U+0650 ARABIC KASRA
-    /// assert!(!scx.has_script(0x0650, Script::Inherited)); // main Script value
-    /// assert!(scx.has_script(0x0650, Script::Arabic));
-    /// assert!(scx.has_script(0x0650, Script::Syriac));
-    /// assert!(!scx.has_script(0x0650, Script::Thaana));
+    /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
+    /// assert!(swe.has_script(0x0650, Script::Arabic));
+    /// assert!(swe.has_script(0x0650, Script::Syriac));
+    /// assert!(!swe.has_script(0x0650, Script::Thaana));
     ///
     /// // U+0660 ARABIC-INDIC DIGIT ZERO
-    /// assert!(!scx.has_script(0x0660, Script::Common)); // main Script value
-    /// assert!(scx.has_script(0x0660, Script::Arabic));
-    /// assert!(!scx.has_script(0x0660, Script::Syriac));
-    /// assert!(scx.has_script(0x0660, Script::Thaana));
+    /// assert!(!swe.has_script(0x0660, Script::Common)); // main Script value
+    /// assert!(swe.has_script(0x0660, Script::Arabic));
+    /// assert!(!swe.has_script(0x0660, Script::Syriac));
+    /// assert!(swe.has_script(0x0660, Script::Thaana));
     ///
     /// // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
-    /// assert!(!scx.has_script(0xFDF2, Script::Common));
-    /// assert!(scx.has_script(0xFDF2, Script::Arabic)); // main Script value
-    /// assert!(!scx.has_script(0xFDF2, Script::Syriac));
-    /// assert!(scx.has_script(0xFDF2, Script::Thaana));
+    /// assert!(!swe.has_script(0xFDF2, Script::Common));
+    /// assert!(swe.has_script(0xFDF2, Script::Arabic)); // main Script value
+    /// assert!(!swe.has_script(0xFDF2, Script::Syriac));
+    /// assert!(swe.has_script(0xFDF2, Script::Thaana));
     /// ```
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
         let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get_ule(code_point) {
@@ -468,8 +468,8 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptWithExtensions = &payload.get().data;
-    /// let syriac_script_extensions_ranges = scx.get_script_extensions_ranges(Script::Syriac);
+    /// let swe: &ScriptWithExtensions = &payload.get().data;
+    /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = vec![
     ///     0x060C..=0x060C,   // ARABIC COMMA
@@ -542,8 +542,8 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     .take_payload()
     ///     .expect("Loading was successful");
     ///
-    /// let scx: &ScriptWithExtensions = &payload.get().data;
-    /// let syriac = scx.get_script_extensions_set(Script::Syriac);
+    /// let swe: &ScriptWithExtensions = &payload.get().data;
+    /// let syriac = swe.get_script_extensions_set(Script::Syriac);
     ///
     /// assert!(!syriac.contains_u32(0x061E)); // ARABIC TRIPLE DOT PUNCTUATION MARK
     /// assert!(syriac.contains_u32(0x061F)); // ARABIC QUESTION MARK
