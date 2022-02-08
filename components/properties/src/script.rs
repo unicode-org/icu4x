@@ -209,8 +209,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::Script;
-    /// use icu::properties::{script, script::ScriptWithExtensions};
+    /// use icu_properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -218,7 +217,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     script::get_script_extensions(&provider)
     ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
-    /// let swe: &ScriptWithExtensions = &data_struct.data;
+    /// let swe = &data_struct.data;
     ///
     /// // U+0640 ARABIC TATWEEL
     /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
@@ -311,8 +310,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::Script;
-    /// use icu::properties::{script, script::ScriptWithExtensions};
+    /// use icu_properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -320,7 +318,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     script::get_script_extensions(&provider)
     ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
-    /// let swe: &ScriptWithExtensions = &data_struct.data;
+    /// let swe = &data_struct.data;
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('𐓐' as u32)  // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -363,8 +361,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::Script;
-    /// use icu::properties::{script, script::ScriptWithExtensions};
+    /// use icu_properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -372,7 +369,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     script::get_script_extensions(&provider)
     ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
-    /// let swe: &ScriptWithExtensions = &data_struct.data;
+    /// let swe = &data_struct.data;
     ///
     /// // U+0650 ARABIC KASRA
     /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
@@ -416,8 +413,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::Script;
-    /// use icu::properties::{script, script::ScriptWithExtensions};
+    /// use icu_properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -425,7 +421,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     script::get_script_extensions(&provider)
     ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
-    /// let swe: &ScriptWithExtensions = &data_struct.data;
+    /// let swe = &data_struct.data;
     /// 
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
@@ -479,8 +475,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::Script;
-    /// use icu::properties::{script, script::ScriptWithExtensions};
+    /// use icu_properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -488,7 +483,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     script::get_script_extensions(&provider)
     ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
-    /// let swe: &ScriptWithExtensions = &data_struct.data;
+    /// let swe = &data_struct.data;
     ///
     /// let syriac = swe.get_script_extensions_set(Script::Syriac);
     ///
@@ -521,16 +516,15 @@ pub type ScriptWithExtensionsResult =
 /// # Examples
 ///
 /// ```
-/// use icu_properties::Script;
-/// use icu::properties::{script, script::ScriptWithExtensions};
+/// use icu_properties::{script, Script};
 ///
 /// let provider = icu_testdata::get_provider();
-/// 
+///
 /// let payload =
 ///     script::get_script_extensions(&provider)
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
-/// let swe: &ScriptWithExtensions = &data_struct.data;
+/// let swe = &data_struct.data;
 /// 
 /// // get the `Script` property value
 /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // U+0640 ARABIC TATWEEL
