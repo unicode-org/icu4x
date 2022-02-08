@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644075082968,
+  "lastUpdate": 1644337946373,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8813,6 +8813,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/871b8900928491485b8ae251832667e26b30768e"
         },
         "date": 1644075073525,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1571719,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c10dfb21d71f98fb0bd0719465bcb77c6ce65364",
+          "message": "Minor fixes to from_bytes and must_use hygine (#1592)\n\nCo-authored-by: Zibi Braniecki <zibi@5c52309a8f35.ant.amazon.com>",
+          "timestamp": "2022-02-08T08:30:28-08:00",
+          "tree_id": "051a0c7c68bf50c6aad6296aa9172c0f90c96c83",
+          "url": "https://github.com/unicode-org/icu4x/commit/c10dfb21d71f98fb0bd0719465bcb77c6ce65364"
+        },
+        "date": 1644337934267,
         "tool": "ndjson",
         "benches": [
           {
