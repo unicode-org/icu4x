@@ -89,10 +89,9 @@ fn set_break_state(
     right_index: usize,
     break_state: i8,
 ) {
-    if break_state_table[left_index * property_length + right_index] == UNKNOWN_RULE
-        || break_state_table[left_index * property_length + right_index] == NOT_MATCH_RULE
-    {
-        break_state_table[left_index * property_length + right_index] = break_state;
+    let index = left_index * property_length + right_index;
+    if break_state_table[index] == UNKNOWN_RULE || break_state_table[index] == NOT_MATCH_RULE {
+        break_state_table[index] = break_state;
     }
 }
 
@@ -251,7 +250,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     let payload = maps::get_sentence_break(provider).expect("The data should be valid!");
     let sb = &payload.get().code_point_trie;
 
-    let payload = sets::get_extended_pictographic(provider).expect("The data should be valid");
+    let payload = sets::get_extended_pictographic(provider).expect("The data should be valid!");
     let extended_pictographic = &payload.get().inv_list;
 
     let payload = maps::get_line_break(provider).expect("The data should be valid!");
@@ -260,7 +259,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     let payload = maps::get_east_asian_width(provider).expect("The data should be valid!");
     let eaw = &payload.get().code_point_trie;
 
-    let payload = maps::get_general_category(provider).expect("The data should be valid");
+    let payload = maps::get_general_category(provider).expect("The data should be valid!");
     let gc = &payload.get().code_point_trie;
 
     let segmenter: SegmenterRuleTable = toml::de::from_slice(toml_data).expect("TOML syntax error");
@@ -616,7 +615,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
         );
     }
 
-    if &*segmenter.segmenter_type == "line" {
+    if segmenter.segmenter_type == "line" {
         writeln!(out, "pub const PROPERTY_TABLE: [[u8; 1024]; 128] = [").ok();
         for i in codepoint_table.iter() {
             writeln!(out, "    {},", i).ok();
@@ -688,7 +687,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     }
 
     for (i, p) in properties_names.iter().enumerate() {
-        if &*segmenter.segmenter_type == "line" {
+        if segmenter.segmenter_type == "line" {
             writeln!(out, "#[allow(dead_code)]").ok();
             writeln!(out, "pub const {}: u8 = {};", p.to_uppercase(), i).ok();
         } else {
