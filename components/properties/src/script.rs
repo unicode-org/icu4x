@@ -56,7 +56,7 @@ impl ScriptWithExt {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::script::ScriptWithExt;
+    /// use icu::properties::script::ScriptWithExt;
     ///
     /// assert!(ScriptWithExt(0x04FF).is_common());
     /// assert!(ScriptWithExt(0x0400).is_common());
@@ -80,7 +80,7 @@ impl ScriptWithExt {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::script::ScriptWithExt;
+    /// use icu::properties::script::ScriptWithExt;
     ///
     /// assert!(!ScriptWithExt(0x04FF).is_inherited());
     /// assert!(!ScriptWithExt(0x0400).is_inherited());
@@ -105,7 +105,7 @@ impl ScriptWithExt {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::script::ScriptWithExt;
+    /// use icu::properties::script::ScriptWithExt;
     ///
     /// assert!(!ScriptWithExt(0x04FF).is_other());
     /// assert!(!ScriptWithExt(0x0400).is_other());
@@ -128,7 +128,7 @@ impl ScriptWithExt {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::script::ScriptWithExt;
+    /// use icu::properties::script::ScriptWithExt;
     ///
     /// assert!(ScriptWithExt(0x04FF).has_extensions());
     /// assert!(ScriptWithExt(0x0400).has_extensions());
@@ -209,7 +209,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::{script, Script};
+    /// use icu::properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -310,7 +310,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::{script, Script};
+    /// use icu::properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -361,7 +361,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::{script, Script};
+    /// use icu::properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -413,7 +413,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::{script, Script};
+    /// use icu::properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -475,7 +475,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_properties::{script, Script};
+    /// use icu::properties::{script, Script};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -516,7 +516,7 @@ pub type ScriptWithExtensionsResult =
 /// # Examples
 ///
 /// ```
-/// use icu_properties::{script, Script};
+/// use icu::properties::{script, Script};
 ///
 /// let provider = icu_testdata::get_provider();
 ///
