@@ -16,6 +16,7 @@ use writeable::{LengthHint, Writeable};
 /// feature "provider_transform_internals".
 // (the feature makes it pub)
 #[icu_provider::data_struct(
+    ErasedListV1Marker,
     AndListV1Marker = "list/and@1",
     OrListV1Marker = "list/or@1",
     UnitListV1Marker = "list/unit@1"
