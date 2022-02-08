@@ -7,18 +7,14 @@ use crate::error::Error;
 
 use crate::cldr_serde;
 use crate::CldrPaths;
-use icu_datetime::{provider::*, skeleton::SkeletonError};
+use icu_datetime::provider::calendar::*;
+use icu_datetime::skeleton::SkeletonError;
 
 use crate::support::KeyedDataProvider;
 use icu_plurals::PluralCategory;
 use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
-
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::DATE_SKELETON_PATTERNS_V1, //
-];
 
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
@@ -32,46 +28,45 @@ impl TryFrom<&dyn CldrPaths> for DateSkeletonPatternsProvider {
 }
 
 impl KeyedDataProvider for DateSkeletonPatternsProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::DATE_SKELETON_PATTERNS_V1.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![DateSkeletonPatternsV1Marker::KEY]
     }
 }
 
-impl DataProvider<calendar::DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
-    fn load_payload(
+impl ResourceProvider<DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<calendar::DateSkeletonPatternsV1Marker>, DataError> {
-        DateSkeletonPatternsProvider::supports_key(&req.resource_path.key)?;
-        let dates = self.0.dates_for(req)?;
+    ) -> Result<DataResponse<DateSkeletonPatternsV1Marker>, DataError> {
+        let dates = self.0.dates_for::<DateSkeletonPatternsV1Marker>(req)?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(
-                calendar::DateSkeletonPatternsV1::from(&dates.datetime_formats),
-            )),
+            payload: Some(DataPayload::from_owned(DateSkeletonPatternsV1::from(
+                &dates.datetime_formats,
+            ))),
         })
     }
 }
 
-icu_provider::impl_dyn_provider!(DateSkeletonPatternsProvider, {
-    _ => calendar::DateSkeletonPatternsV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    DateSkeletonPatternsProvider,
+    [DateSkeletonPatternsV1Marker,],
+    SERDE_SE
+);
 
 impl IterableProvider for DateSkeletonPatternsProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         self.0.supported_options_for_key(resc_key)
     }
 }
 
-impl From<&cldr_serde::ca::DateTimeFormats> for calendar::DateSkeletonPatternsV1<'_> {
+impl From<&cldr_serde::ca::DateTimeFormats> for DateSkeletonPatternsV1<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
-        use calendar::SkeletonV1;
         use icu_datetime::{
             pattern::runtime::{PatternPlurals, PluralPattern},
             skeleton::reference::Skeleton,
@@ -149,7 +144,6 @@ impl From<&cldr_serde::ca::DateTimeFormats> for calendar::DateSkeletonPatternsV1
 
 #[test]
 fn test_datetime_skeletons() {
-    use calendar::SkeletonV1;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
     use icu_locid_macros::langid;
     use icu_plurals::PluralCategory;
@@ -158,15 +152,13 @@ fn test_datetime_skeletons() {
     let provider = DateSkeletonPatternsProvider::try_from(&cldr_paths as &dyn CldrPaths)
         .expect("Failed to retrieve provider");
 
-    let skeletons: DataPayload<calendar::DateSkeletonPatternsV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::DATE_SKELETON_PATTERNS_V1,
-                options: ResourceOptions {
-                    variant: Some("gregory".into()),
-                    langid: Some(langid!("fil")),
-                },
+    let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
+        .load_resource(&DataRequest {
+            options: ResourceOptions {
+                variant: Some("gregory".into()),
+                langid: Some(langid!("fil")),
             },
+            metadata: Default::default(),
         })
         .expect("Failed to load payload")
         .take_payload()

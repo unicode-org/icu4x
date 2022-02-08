@@ -7,7 +7,6 @@ use ndarray::Array1;
 use ndarray::Array2;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use yoke::{Yokeable, ZeroCopyFrom};
 
 /// 'LstmData' is a struct that store a LSTM model. Its attributes are:
 /// `model`: name of the model
@@ -16,7 +15,7 @@ use yoke::{Yokeable, ZeroCopyFrom};
 /// `mat2` - `mat4`: the matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
 /// `mat5` - `mat7`: the matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
 /// `mat8` - `mat9`: the matrices associated with output layer (weight and bias term respectiely)
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(LstmDataMarker)]
 #[derive(PartialEq, Debug, Serialize, Deserialize, Clone)]
 #[yoke(cloning_zcf)]
 pub struct LstmData<'data> {

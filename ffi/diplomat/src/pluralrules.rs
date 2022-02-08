@@ -8,23 +8,13 @@ pub mod ffi {
 
     use alloc::boxed::Box;
 
-    use icu_plurals::{
-        provider::PluralRulesV1Marker, PluralCategory, PluralOperands, PluralRuleType, PluralRules,
-    };
-    use icu_provider::prelude::DataProvider;
+    use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
     pub struct ICU4XCreatePluralRulesResult {
         pub rules: Option<Box<ICU4XPluralRules>>,
         pub success: bool,
-    }
-
-    /// FFI version of `PluralRuleType`.
-    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralRuleType.html) for more details.
-    pub enum ICU4XPluralRuleType {
-        Cardinal,
-        Ordinal,
     }
 
     /// FFI version of `PluralCategory`.
@@ -44,43 +34,44 @@ pub mod ffi {
     pub struct ICU4XPluralRules(PluralRules);
 
     impl ICU4XPluralRules {
-        /// FFI version of `PluralRules::try_new()`.
+        /// FFI version of `PluralRules::try_new_cardinal()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
-        pub fn try_new(
+        pub fn try_new_cardinal(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
-            ty: ICU4XPluralRuleType,
         ) -> ICU4XCreatePluralRulesResult {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            Self::try_new_impl(locale, &provider, ty)
+            PluralRules::try_new_cardinal(locale.0.as_ref().clone(), &provider)
+                .ok()
+                .map(|r| ICU4XCreatePluralRulesResult {
+                    rules: Some(Box::new(ICU4XPluralRules(r))),
+                    success: true,
+                })
+                .unwrap_or(ICU4XCreatePluralRulesResult {
+                    rules: None,
+                    success: false,
+                })
         }
 
-        fn try_new_impl<D>(
+        /// FFI version of `PluralRules::try_new_ordinal()`.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
+        pub fn try_new_ordinal(
             locale: &ICU4XLocale,
-            provider: &D,
-            ty: ICU4XPluralRuleType,
-        ) -> ICU4XCreatePluralRulesResult
-        where
-            D: DataProvider<PluralRulesV1Marker> + ?Sized,
-        {
-            PluralRules::try_new(
-                locale.0.as_ref().clone(),
-                provider,
-                match ty {
-                    ICU4XPluralRuleType::Cardinal => PluralRuleType::Cardinal,
-                    ICU4XPluralRuleType::Ordinal => PluralRuleType::Ordinal,
-                },
-            )
-            .ok()
-            .map(|r| ICU4XCreatePluralRulesResult {
-                rules: Some(Box::new(ICU4XPluralRules(r))),
-                success: true,
-            })
-            .unwrap_or(ICU4XCreatePluralRulesResult {
-                rules: None,
-                success: false,
-            })
+            provider: &ICU4XDataProvider,
+        ) -> ICU4XCreatePluralRulesResult {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            PluralRules::try_new_ordinal(locale.0.as_ref().clone(), &provider)
+                .ok()
+                .map(|r| ICU4XCreatePluralRulesResult {
+                    rules: Some(Box::new(ICU4XPluralRules(r))),
+                    success: true,
+                })
+                .unwrap_or(ICU4XCreatePluralRulesResult {
+                    rules: None,
+                    success: false,
+                })
         }
 
         /// FFI version of `PluralRules::select()`.

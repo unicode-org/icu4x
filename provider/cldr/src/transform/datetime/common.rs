@@ -57,45 +57,44 @@ impl TryFrom<&dyn CldrPaths> for CommonDateProvider {
 }
 
 impl CommonDateProvider {
-    pub fn dates_for<'a>(
+    pub fn dates_for<'a, M: ResourceMarker>(
         &'a self,
         req: &DataRequest,
     ) -> Result<&'a cldr_serde::ca::Dates, DataError> {
-        let langid = req.try_langid()?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
         let variant = req
-            .resource_path
             .options
             .variant
             .as_ref()
-            .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(req))?;
+            .ok_or_else(|| DataErrorKind::NeedsVariant.with_req(M::KEY, req))?;
         let map = self
             .data
             .get(&**variant)
-            .ok_or_else(|| DataErrorKind::MissingVariant.with_req(req))?;
+            .ok_or_else(|| DataErrorKind::MissingVariant.with_req(M::KEY, req))?;
         match map.get(langid) {
             Some(date) => Ok(date),
-            None => Err(DataErrorKind::MissingLocale.with_req(req)),
+            None => Err(DataErrorKind::MissingLocale.with_req(M::KEY, req)),
         }
     }
 }
 
 impl CommonDateProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     pub fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            .flat_map(|(cal, map)| {
-                map.iter().map(move |(l, _)| ResourceOptions {
-                    variant: Some((*cal).into()),
-                    // TODO: Avoid the clone
-                    langid: Some(l.clone()),
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(self.data.iter().flat_map(|(cal, map)| {
+            let cal = Some((*cal).into());
+            map.iter_keys()
+                // TODO(#568): Avoid the clone
+                .cloned()
+                .map(Into::<ResourceOptions>::into)
+                .map(move |mut r| {
+                    r.variant = cal.clone();
+                    r
                 })
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+        })))
     }
 }

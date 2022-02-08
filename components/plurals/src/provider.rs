@@ -7,20 +7,17 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
-use icu_provider::yoke::{self, *};
-
-#[allow(missing_docs)] // TODO(#1029) - Add missing docs.
-pub mod key {
-    use icu_provider::{resource_key, ResourceKey};
-    pub const CARDINAL_V1: ResourceKey = resource_key!("plurals/cardinal@1");
-    pub const ORDINAL_V1: ResourceKey = resource_key!("plurals/ordinal@1");
-}
+use icu_provider::yoke;
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(
+    PluralRulesV1Marker,
+    CardinalV1Marker = "plurals/cardinal@1",
+    OrdinalV1Marker = "plurals/ordinal@1"
+)]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "provider_serde",

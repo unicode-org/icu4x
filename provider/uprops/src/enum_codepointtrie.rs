@@ -92,21 +92,22 @@ impl<T: TrieValue> TryFrom<&EnumeratedPropertyCodePointTrie> for UnicodeProperty
 }
 
 // implement data provider
-impl<T: TrieValue> DataProvider<UnicodePropertyMapV1Marker<T>>
+impl<T: TrieValue> DynProvider<UnicodePropertyMapV1Marker<T>>
     for EnumeratedPropertyCodePointTrieProvider
 {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyMapV1Marker<T>>, DataError> {
         // For data resource keys that represent the CodePointTrie data for an enumerated
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
-        let prop_name = get_last_component_no_version(&req.resource_path.key);
+        let prop_name = get_last_component_no_version(&key);
         let source_cpt_data = &self
             .data
             .get(prop_name)
-            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(req))?
+            .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?
             .code_point_trie;
 
         let data_struct = UnicodePropertyMapV1::<T>::try_from(source_cpt_data)?;
@@ -134,8 +135,7 @@ impl IterableProvider for EnumeratedPropertyCodePointTrieProvider {
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 
@@ -157,12 +157,7 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::GENERAL_CATEGORY_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
+            .load_payload(key::GENERAL_CATEGORY_V1, &DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -180,12 +175,7 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<UnicodePropertyMapV1Marker<Script>> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::SCRIPT_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
+            .load_payload(key::SCRIPT_V1, &DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");

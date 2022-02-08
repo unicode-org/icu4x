@@ -76,13 +76,14 @@ impl TryFrom<&ScriptExtensionsProperty> for ScriptExtensionsPropertyV1<'static> 
 }
 
 // implement data provider
-impl DataProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsPropertyProvider {
+impl DynProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsPropertyProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<ScriptExtensionsPropertyV1Marker>, DataError> {
-        if uprops_helpers::get_last_component_no_version(&req.resource_path.key) != "scx" {
-            return Err(DataErrorKind::MissingResourceKey.with_req(req));
+        if uprops_helpers::get_last_component_no_version(&key) != "scx" {
+            return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
         }
 
         let source_scx_data = &self.data;
@@ -105,8 +106,7 @@ impl IterableProvider for ScriptExtensionsPropertyProvider {
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 
@@ -122,12 +122,13 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::SCRIPT_EXTENSIONS_V1,
+            .load_payload(
+                key::SCRIPT_EXTENSIONS_V1,
+                &DataRequest {
                     options: ResourceOptions::default(),
+                    metadata: Default::default(),
                 },
-            })
+            )
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -151,12 +152,13 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::SCRIPT_EXTENSIONS_V1,
+            .load_payload(
+                key::SCRIPT_EXTENSIONS_V1,
+                &DataRequest {
                     options: ResourceOptions::default(),
+                    metadata: Default::default(),
                 },
-            })
+            )
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -202,12 +204,7 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::SCRIPT_EXTENSIONS_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
+            .load_payload(key::SCRIPT_EXTENSIONS_V1, &DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -288,12 +285,7 @@ mod tests {
             .expect("TOML should load successfully");
 
         let payload: DataPayload<ScriptExtensionsPropertyV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::SCRIPT_EXTENSIONS_V1,
-                    options: ResourceOptions::default(),
-                },
-            })
+            .load_payload(key::SCRIPT_EXTENSIONS_V1, &DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");

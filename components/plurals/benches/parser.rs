@@ -18,16 +18,11 @@ fn parser(c: &mut Criterion) {
 
     let mut rules = vec![];
 
-    for langid in &fixture_data.langs {
-        let data_payload: DataPayload<icu_plurals::provider::PluralRulesV1Marker> = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: icu_plurals::provider::key::CARDINAL_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid.clone()),
-                    },
-                },
+    for langid in fixture_data.langs {
+        let data_payload: DataPayload<icu_plurals::provider::CardinalV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: langid.into(),
+                metadata: Default::default(),
             })
             .unwrap()
             .take_payload()

@@ -11,8 +11,8 @@
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
 where
-    M: crate::prelude::DataMarker,
-    Self: Sized + crate::prelude::DataMarker,
+    M: crate::DataMarker,
+    Self: Sized + crate::DataMarker,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
     ///
@@ -35,93 +35,111 @@ where
     ///     .expect("Type conversion");
     /// assert_eq!(downcasted.get(), "foo");
     /// ```
-    fn upcast(other: crate::prelude::DataPayload<M>) -> crate::prelude::DataPayload<Self>;
+    fn upcast(other: crate::DataPayload<M>) -> crate::DataPayload<Self>;
 }
 
-/// Implements [`DataProvider`] for a marker type `S` on a type that already implements
-/// [`DataProvider`] for one or more `M`, where `M` is a concrete type that is convertible to `S`
-/// via [`UpcastDataPayload`].
+/// Implements [`DynProvider`] for a marker type `S` on a type that already implements
+/// [`DynProvider`] or [`ResourceProvider`] for one or more `M`, where `M` is a concrete type
+/// that is convertible to `S` via [`UpcastDataPayload`].
 ///
 /// Use this macro to add support to your data provider for:
 ///
-/// - [`AnyPayload`] if your provider can return typed objects as [`Any`](core::any::Any)
+/// - [`AnyPayload`] if your provider can return typed objects as [`Any`](core::any::Any).
+///   Use the shorthand `ANY` as the third argument to the macro.
 /// - [`SerializeMarker`] if your provider returns objects implementing [`serde::Serialize`]
+///   Use the shorthand `SERDE_SE` as the third argument to the macro.
 ///
-/// The second argument is a match-like construction mapping from resource keys to structs. To map
-/// multiple keys to a single data struct, use `_` as the data key.
+/// ## Wrapping ResourceProvider
 ///
-/// The third argument can be either the trait object marker, like [`SerializeMarker`], or the
-/// shorthands `ANY` or `SERDE_SE`.
-///
-/// Lifetimes:
-///
-/// - `$data` is the lifetime parameter for [`DataProvider`](crate::DataProvider); usually `'data`.
-///
-/// # Examples
-///
-/// Basic usage:
+/// If your type implements [`ResourceProvider`], pass a list of markers as the second argument.
+/// This results in a `DynProvider<AnyMarker>` that delegates to a specific marker if the key
+/// matches or else returns [`DataErrorKind::MissingResourceKey`].
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::marker::CowStrMarker;
-/// use std::borrow::Cow;
-/// const DEMO_KEY: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+/// use icu_provider::hello_world::*;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// // A small DataProvider that returns owned strings
-/// struct MyProvider(pub String);
-/// impl DataProvider<CowStrMarker> for MyProvider {
-///     fn load_payload(&self, req: &DataRequest)
-///             -> Result<DataResponse<CowStrMarker>, DataError> {
-///         req.resource_path.key.match_key(DEMO_KEY)?;
-///         Ok(DataResponse {
-///             metadata: Default::default(),
-///             payload: Some(DataPayload::from_owned(Cow::Owned(self.0.to_string())))
-///         })
+/// // Example struct that implements ResourceProvider<HelloWorldV1Marker>
+/// struct MyProvider;
+/// impl ResourceProvider<HelloWorldV1Marker> for MyProvider {
+///     fn load_resource(&self, req: &DataRequest)
+///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+///         let provider = InvariantDataProvider;
+///         provider.load_resource(req)
 ///     }
 /// }
 ///
-/// // Implement DataProvider<AnyMarker>
+/// // Implement DataProvider<AnyMarker> on this struct
+/// icu_provider::impl_dyn_provider!(MyProvider, [
+///     HelloWorldV1Marker,
+/// ], ANY);
+///
+/// let provider = MyProvider;
+///
+/// // Successful result if the key matches:
+/// assert!(matches!(
+///     provider.load_payload(HelloWorldV1Marker::KEY, &Default::default()),
+///     Ok(_)
+/// ));
+///
+/// // Failure if the key does not match:
+/// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
+/// assert!(matches!(
+///     provider.load_payload(DUMMY_KEY, &Default::default()),
+///     Err(DataError { kind: DataErrorKind::MissingResourceKey, .. })
+/// ));
+/// ```
+///
+/// ## Wrapping DynProvider
+///
+/// It is also possible to wrap a [`DynProvider`] to create another [`DynProvider`]. To do this,
+/// pass a match-like statement for keys as the second argument:
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::inv::InvariantDataProvider;
+///
+/// // Example struct that implements DynProvider<HelloWorldV1Marker>
+/// struct MyProvider;
+/// impl DynProvider<HelloWorldV1Marker> for MyProvider {
+///     fn load_payload(&self, key: ResourceKey, req: &DataRequest)
+///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+///         let provider = InvariantDataProvider;
+///         provider.load_resource(req)
+///     }
+/// }
+///
+/// // Implement DataProvider<AnyMarker> on this struct.
+/// // Match HelloWorldV1Marker::KEY and delegate to DynProvider<HelloWorldV1Marker>.
+/// // Send the wildcard match also to DynProvider<HelloWorldV1Marker>.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
-///     DEMO_KEY => CowStrMarker,
+///     HelloWorldV1Marker::KEY => HelloWorldV1Marker,
+///     _ => HelloWorldV1Marker,
 /// }, ANY);
 ///
-/// // Usage example
-/// let provider = MyProvider("demo".to_string());
-/// let resp: DataResponse<AnyMarker> = provider
-///     .load_payload(&DEMO_KEY.into())
-///     .expect("Loading should succeed");
-/// let payload: DataPayload<CowStrMarker> = resp
-///     .take_payload()
-///     .expect("Payload should be present")
-///     .downcast()
-///     .expect("Type should downcast successfully");
-/// assert_eq!("demo", payload.get());
+/// let provider = MyProvider;
+/// let provider = provider.as_any_provider();
+///
+/// // Successful result if the key matches:
+/// assert!(matches!(
+///     provider.load_any(HelloWorldV1Marker::KEY, &Default::default()),
+///     Ok(_)
+/// ));
+///
+/// // Because of the wildcard, non-matching requests are captured:
+/// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
+/// assert!(matches!(
+///     provider.load_any(DUMMY_KEY, &Default::default()),
+///     Ok(_)
+/// ));
 /// ```
 ///
-/// Using the wildcard `_` match:
-///
-/// ```
-/// # use icu_provider::prelude::*;
-/// # use icu_provider::marker::CowStrMarker;
-/// # use std::borrow::Cow;
-/// # struct MyProvider(pub String);
-/// # impl DataProvider<CowStrMarker> for MyProvider {
-/// #   fn load_payload(&self, req: &DataRequest)
-/// #           -> Result<DataResponse<CowStrMarker>, DataError> {
-/// #       Ok(DataResponse {
-/// #           metadata: Default::default(),
-/// #           payload: Some(DataPayload::from_owned(self.0.to_string().into()))
-/// #       })
-/// #   }
-/// # }
-/// // Send all keys to the `CowStrMarker` provider.
-/// icu_provider::impl_dyn_provider!(MyProvider, {
-///     _ => CowStrMarker,
-/// }, ANY);
-/// ```
-///
-/// [`DataProvider`]: crate::DataProvider
+/// [`DynProvider`]: crate::DynProvider
+/// [`ResourceProvider`]: crate::ResourceProvider
 /// [`AnyPayload`]: (crate::any::AnyPayload)
+/// [`DataErrorKind::MissingResourceKey`]: (crate::DataErrorKind::MissingResourceKey)
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {
@@ -129,6 +147,13 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
+            $crate::any::AnyMarker
+        );
+    };
+    ($provider:ty, [ $($struct_m:ty),+, ], ANY) => {
+        $crate::impl_dyn_provider!(
+            $provider,
+            [ $($struct_m),+, ],
             $crate::any::AnyMarker
         );
     };
@@ -140,21 +165,30 @@ macro_rules! impl_dyn_provider {
             $crate::serde::SerializeMarker
         );
     };
+    ($provider:ty, [ $($struct_m:ty),+, ], SERDE_SE) => {
+        // If this fails to compile, enable the "serialize" feature on this crate.
+        $crate::impl_dyn_provider!(
+            $provider,
+            [ $($struct_m),+, ],
+            $crate::serde::SerializeMarker
+        );
+    };
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, $dyn_m:path) => {
-        impl $crate::prelude::DataProvider<$dyn_m> for $provider
+        impl $crate::DynProvider<$dyn_m> for $provider
         {
             fn load_payload(
                 &self,
-                req: &$crate::prelude::DataRequest,
+                key: $crate::ResourceKey,
+                req: &$crate::DataRequest,
             ) -> Result<
-                $crate::prelude::DataResponse<$dyn_m>,
-                $crate::prelude::DataError,
+                $crate::DataResponse<$dyn_m>,
+                $crate::DataError,
             > {
-                match req.resource_path.key {
+                match key {
                     $(
                         $pat => {
-                            let result: $crate::prelude::DataResponse<$struct_m> =
-                                $crate::prelude::DataProvider::load_payload(self, req)?;
+                            let result: $crate::DataResponse<$struct_m> =
+                                $crate::DynProvider::<$struct_m>::load_payload(self, key, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -165,9 +199,40 @@ macro_rules! impl_dyn_provider {
                     )+,
                     // Don't complain if the call site has its own wildcard match
                     #[allow(unreachable_patterns)]
-                    _ => Err($crate::prelude::DataErrorKind::MissingResourceKey.with_req(req))
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
                 }
             }
         }
-    }
+    };
+    ($provider:ty, [ $($struct_m:ty),+, ], $dyn_m:path) => {
+        impl $crate::DynProvider<$dyn_m> for $provider
+        {
+            fn load_payload(
+                &self,
+                key: $crate::ResourceKey,
+                req: &$crate::DataRequest,
+            ) -> Result<
+                $crate::DataResponse<$dyn_m>,
+                $crate::DataError,
+            > {
+                match key {
+                    $(
+                        <$struct_m as $crate::ResourceMarker>::KEY => {
+                            let result: $crate::DataResponse<$struct_m> =
+                                $crate::ResourceProvider::load_resource(self, req)?;
+                            Ok(DataResponse {
+                                metadata: result.metadata,
+                                payload: result.payload.map(|p| {
+                                    $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
+                                }),
+                            })
+                        }
+                    )+,
+                    // Don't complain if the call site has its own wildcard match
+                    #[allow(unreachable_patterns)]
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
+                }
+            }
+        }
+    };
 }

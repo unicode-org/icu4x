@@ -7,8 +7,6 @@
 use crate::iter::IterableProvider;
 use crate::prelude::*;
 use alloc::boxed::Box;
-use alloc::vec;
-use alloc::vec::Vec;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -21,12 +19,12 @@ use alloc::vec::Vec;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::inv::InvariantDataProvider;
-/// use icu_provider::hello_world::{key, HelloWorldV1Marker};
+/// use icu_provider::hello_world::HelloWorldV1Marker;
 /// use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;
 /// let result: DataPayload<HelloWorldV1Marker> = provider
-///     .load_payload(&DataRequest::from(key::HELLO_WORLD_V1))
+///     .load_resource(&DataRequest::default())
 ///     .unwrap()
 ///     .take_payload()
 ///     .unwrap();
@@ -35,12 +33,25 @@ use alloc::vec::Vec;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<M> DataProvider<M> for InvariantDataProvider
+impl<M> ResourceProvider<M> for InvariantDataProvider
+where
+    M: ResourceMarker,
+    M::Yokeable: Default,
+{
+    fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(M::Yokeable::default())),
+        })
+    }
+}
+
+impl<M> DynProvider<M> for InvariantDataProvider
 where
     M: DataMarker,
     M::Yokeable: Default,
 {
-    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_payload(&self, _: ResourceKey, _: &DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(M::Yokeable::default())),
@@ -53,7 +64,6 @@ impl IterableProvider for InvariantDataProvider {
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }

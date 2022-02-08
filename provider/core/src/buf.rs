@@ -15,10 +15,10 @@ impl DataMarker for BufferMarker {
 /// A data provider that returns opaque bytes.
 ///
 /// Generally, these bytes are expected to be deserializable with Serde. To get an object
-/// implementing [`DataProvider`] via Serde, use [`as_deserializing()`], which requires
+/// implementing [`ResourceProvider`] via Serde, use [`as_deserializing()`], which requires
 /// enabling at least one of the Serde features.
 ///
-/// Along with [`DataProvider`], this is one of the two foundational traits in this crate.
+/// Along with [`ResourceProvider`], this is one of the two foundational traits in this crate.
 ///
 /// # Examples
 ///
@@ -34,14 +34,9 @@ impl DataMarker for BufferMarker {
 /// let data_provider = buffer_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -53,7 +48,11 @@ impl DataMarker for BufferMarker {
 ///
 /// [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 pub trait BufferProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError>;
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError>;
 }
 
 /// An enum expressing all Serde formats known to ICU4X.

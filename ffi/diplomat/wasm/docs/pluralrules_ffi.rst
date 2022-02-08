@@ -55,17 +55,17 @@
 
         FFI version of ``PluralOperands::from_str()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str>`__ for more details.
 
-.. js:class:: ICU4XPluralRuleType
-
-    FFI version of ``PluralRuleType``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralRuleType.html>`__ for more details.
-
 .. js:class:: ICU4XPluralRules
 
     FFI version of ``PluralRules``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html>`__ for more details.
 
-    .. js:staticfunction:: try_new(locale, provider, ty)
+    .. js:staticfunction:: try_new_cardinal(locale, provider)
 
-        FFI version of ``PluralRules::try_new()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
+        FFI version of ``PluralRules::try_new_cardinal()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
+
+    .. js:staticfunction:: try_new_ordinal(locale, provider)
+
+        FFI version of ``PluralRules::try_new_ordinal()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
 
     .. js:function:: select(op)
 

@@ -74,3 +74,4 @@ path = "src/lib.rs"
 [[bench]]
 name = "provider_fs"
 harness = false
+required-features = ["deserialize_json"]

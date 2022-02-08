@@ -18,8 +18,6 @@ use std::str::FromStr;
 use tinystr::TinyStr16;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [key::JAPANESE_ERAS_V1];
 
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug, Default)]
@@ -199,19 +197,20 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 }
 
 impl KeyedDataProvider for JapaneseErasProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::JAPANESE_ERAS_V1.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![JapaneseErasV1Marker::KEY]
     }
 }
 
-impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn load_payload(
+impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        if req.resource_path.options.langid.is_some() || req.resource_path.options.variant.is_some()
-        {
-            return Err(DataErrorKind::ExtraneousResourceOptions.with_req(req));
+        if req.options.langid.is_some() || req.options.variant.is_some() {
+            return Err(
+                DataErrorKind::ExtraneousResourceOptions.with_req(JapaneseErasV1Marker::KEY, req)
+            );
         }
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -223,22 +222,14 @@ impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(JapaneseErasProvider, {
-    _ => JapaneseErasV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,], SERDE_SE);
 
 impl IterableProvider for JapaneseErasProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(
-            Some(ResourceOptions {
-                variant: None,
-                langid: None,
-            })
-            .into_iter(),
-        ))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 

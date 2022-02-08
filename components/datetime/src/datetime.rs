@@ -13,13 +13,13 @@ use crate::{
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_locid::Locale;
-use icu_plurals::provider::PluralRulesV1Marker;
+use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDateTime};
 
 /// [`DateTimeFormat`] is the main structure of the [`icu_datetime`] component.
-/// When constructed, it uses data from the [`DataProvider`], selected [`Locale`] and provided options to
+/// When constructed, it uses data from the [data provider], selected [`Locale`] and provided options to
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
@@ -56,12 +56,13 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 /// let value = dtf.format_to_string(&datetime);
 /// ```
 ///
-/// This model replicates that of `ICU` and `ECMA402`. In the future this will become even more pronounced
-/// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
+/// This model replicates that of `ICU` and `ECMA402`.
+///
+/// [data provider]: icu_provider
 pub struct DateTimeFormat<C>(pub(super) raw::DateTimeFormat, PhantomData<C>);
 
 impl<C: CldrCalendar> DateTimeFormat<C> {
-    /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
+    /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
     /// # Examples
@@ -83,6 +84,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
+    ///
+    /// [data provider]: icu_provider
     #[inline]
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
@@ -90,10 +93,10 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
-            + DataProvider<PluralRulesV1Marker>,
+        D: ResourceProvider<DateSymbolsV1Marker>
+            + ResourceProvider<DatePatternsV1Marker>
+            + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + ResourceProvider<OrdinalV1Marker>,
     {
         Ok(Self(
             raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,

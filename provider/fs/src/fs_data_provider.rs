@@ -61,29 +61,37 @@ impl FsDataProvider {
         })
     }
 
-    fn get_reader(&self, req: &DataRequest) -> Result<(impl Read, PathBuf), DataError> {
+    fn get_reader(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<(impl Read, PathBuf), DataError> {
         let mut path_buf = self.res_root.clone();
-        path_buf.push(&*req.resource_path.key.writeable_to_string());
-        if req.resource_path.options.is_empty() {
+        path_buf.push(&*key.writeable_to_string());
+        if req.options.is_empty() {
             path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
-            return Err(DataErrorKind::MissingResourceKey.with_req(req));
+            return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
         }
-        if !req.resource_path.options.is_empty() {
+        if !req.options.is_empty() {
             // TODO: Implement proper locale fallback
-            path_buf.push(&*req.resource_path.options.writeable_to_string());
+            path_buf.push(&*req.options.writeable_to_string());
             path_buf.set_extension(self.manifest.get_file_extension());
         }
         if !path_buf.exists() {
-            return Err(DataErrorKind::MissingResourceOptions.with_req(req));
+            return Err(DataErrorKind::MissingResourceOptions.with_req(key, req));
         }
         let file = File::open(&path_buf).map_err(|e| DataError::from(e).with_path(&path_buf))?;
         Ok((BufReader::new(file), path_buf))
     }
 
-    fn get_rc_buffer(&self, req: &DataRequest) -> Result<(Rc<[u8]>, PathBuf), DataError> {
-        let (mut reader, path_buf) = self.get_reader(req)?;
+    fn get_rc_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<(Rc<[u8]>, PathBuf), DataError> {
+        let (mut reader, path_buf) = self.get_reader(key, req)?;
         let mut buffer = Vec::<u8>::new();
         reader
             .read_to_end(&mut buffer)
@@ -94,8 +102,12 @@ impl FsDataProvider {
 }
 
 impl BufferProvider for FsDataProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let (rc_buffer, _) = self.get_rc_buffer(req)?;
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let (rc_buffer, _) = self.get_rc_buffer(key, req)?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(self.manifest.buffer_format);
@@ -106,7 +118,20 @@ impl BufferProvider for FsDataProvider {
     }
 }
 
-impl<M> DataProvider<M> for FsDataProvider
+impl<M> ResourceProvider<M> for FsDataProvider
+where
+    M: ResourceMarker,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
+{
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.as_deserializing().load_resource(req)
+    }
+}
+
+impl<M> DynProvider<M> for FsDataProvider
 where
     M: DataMarker,
     // Actual bound:
@@ -114,8 +139,12 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_deserializing().load_payload(req)
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        self.as_deserializing().load_payload(key, req)
     }
 }
 

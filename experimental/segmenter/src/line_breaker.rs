@@ -112,7 +112,7 @@ pub struct LineBreakSegmenter {
 impl LineBreakSegmenter {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+        D: ResourceProvider<LineBreakDataV1Marker> + ?Sized,
     {
         Self::try_new_with_options(provider, Default::default())
     }
@@ -122,15 +122,10 @@ impl LineBreakSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+        D: ResourceProvider<LineBreakDataV1Marker> + ?Sized,
     {
         let payload = provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: key::LINE_BREAK_DATA_V1,
-                    options: Default::default(),
-                },
-            })?
+            .load_resource(&DataRequest::default())?
             .take_payload()?;
         Ok(Self { options, payload })
     }

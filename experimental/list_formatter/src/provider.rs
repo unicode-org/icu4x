@@ -12,23 +12,14 @@ use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 use writeable::{LengthHint, Writeable};
 
-pub mod key {
-    //! Resource keys for [`icu_list`](crate).
-    use icu_provider::{resource_key, ResourceKey};
-
-    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::And`](crate::ListType::And)
-    pub const LIST_FORMAT_AND_V1: ResourceKey = resource_key!("list/and@1");
-    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::Or`](crate::ListType::Or)
-    pub const LIST_FORMAT_OR_V1: ResourceKey = resource_key!("list/or@1");
-    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::Unit`](crate::ListType::Unit)
-    pub const LIST_FORMAT_UNIT_V1: ResourceKey = resource_key!("list/unit@1");
-}
-
-/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter)
-#[icu_provider::data_struct]
+/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter). Requires
+/// feature "provider_transform_internals".
+// (the feature makes it pub)
+#[icu_provider::data_struct(
+    AndListV1Marker = "list/and@1",
+    OrListV1Marker = "list/or@1",
+    UnitListV1Marker = "list/unit@1"
+)]
 #[derive(Debug)]
 #[cfg_attr(
     feature = "provider_serde",

@@ -9,6 +9,7 @@ mod impls;
 pub use impls::*;
 
 use crate::yoke::Yokeable;
+use crate::ResourceKey;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.
@@ -55,4 +56,8 @@ pub trait DataMarker {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
+}
+
+pub trait ResourceMarker: DataMarker {
+    const KEY: ResourceKey;
 }

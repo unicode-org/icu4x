@@ -10,7 +10,7 @@
 use icu::calendar::Gregorian;
 use icu::datetime::DateTimeFormatOptions;
 use icu::locid::{macros::langid, Locale};
-use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
+use icu::plurals::{PluralCategory, PluralRules};
 use icu_datetime::{mock::zoned_datetime::MockZonedDateTime, ZonedDateTimeFormat};
 use icu_uniset::UnicodeSetBuilder;
 use std::env;
@@ -78,8 +78,8 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         let en = langid!("en");
-        let pr = PluralRules::try_new(en, &provider, PluralRuleType::Cardinal)
-            .expect("Failed to create PluralRules.");
+        let pr =
+            PluralRules::try_new_cardinal(en, &provider).expect("Failed to create PluralRules.");
 
         match pr.select(email_count) {
             PluralCategory::One => print("Note: You have one unread email."),

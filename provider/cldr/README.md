@@ -1,6 +1,6 @@
 # icu_provider_cldr [![crates.io](https://img.shields.io/crates/v/icu_provider_cldr)](https://crates.io/crates/icu_provider_cldr)
 
-`icu_provider_cldr` contains implementations of the [`ICU4X`] [`DataProvider`] interface
+`icu_provider_cldr` contains implementations of the [`ICU4X`] [data provider] interface
 based on the JSON files shipped by CLDR. Create a [`CldrPaths`] and then pass it into
 [`CldrJsonDataProvider`].
 
@@ -14,7 +14,7 @@ This crate contains two implementations of [`CldrPaths`]:
 It is much more efficient if you use [`FsDataProvider`] instead.
 
 [`ICU4X`]: ../icu/index.html
-[`DataProvider`]: icu_provider::prelude::DataProvider
+[data provider]: icu_provider
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 

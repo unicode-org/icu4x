@@ -14,7 +14,7 @@
 //! ```
 //! use icu_locid_macros::langid;
 //! use icu_provider::prelude::*;
-//! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1Marker};
+//! use icu_provider::hello_world::*;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
@@ -34,7 +34,7 @@
 //! // Export a key
 //! let source_provider = HelloWorldProvider::new_with_placeholder_data();
 //! let result = icu_provider::export::export_from_iterable(
-//!     &key::HELLO_WORLD_V1,
+//!     &HelloWorldV1Marker::KEY,
 //!     &source_provider,
 //!     &mut exporter)
 //! .expect("Should successfully export");
@@ -45,18 +45,13 @@
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
-//!     resource_path: ResourcePath {
-//!         key: key::HELLO_WORLD_V1,
-//!         options: ResourceOptions {
-//!             variant: None,
-//!             langid: Some(langid!("bn")),
-//!         },
-//!     }
+//!     options: langid!("bn").into(),
+//!     metadata: Default::default(),
 //! };
 //! let source_response: DataResponse<HelloWorldV1Marker> =
-//!     source_provider.load_payload(&req).unwrap();
+//!     source_provider.load_resource(&req).unwrap();
 //! let fs_response: DataResponse<HelloWorldV1Marker> =
-//!     fs_provider.load_payload(&req).unwrap();
+//!     fs_provider.load_resource(&req).unwrap();
 //!
 //! assert_eq!(
 //!     source_response.payload.unwrap().get(),

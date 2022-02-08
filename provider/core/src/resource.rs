@@ -13,7 +13,7 @@ use core::fmt;
 use core::fmt::Write;
 use core::mem;
 use core::str::FromStr;
-use icu_locid::LanguageIdentifier;
+use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
@@ -364,8 +364,7 @@ impl Writeable for ResourceKey {
     }
 }
 
-/// A variant and language identifier, used for requesting data from a
-/// [`DataProvider`](crate::DataProvider).
+/// A variant and language identifier, used for requesting data from a data provider.
 ///
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
 #[derive(PartialEq, Clone, Default)]
@@ -430,6 +429,16 @@ impl From<LanguageIdentifier> for ResourceOptions {
     }
 }
 
+impl From<Locale> for ResourceOptions {
+    /// Create a ResourceOptions with the given language identifier and an empty variant field.
+    fn from(locale: Locale) -> Self {
+        Self {
+            langid: Some(locale.id),
+            variant: None,
+        }
+    }
+}
+
 // Inverts 'to_string`/`writeable_to_string`.
 impl FromStr for ResourceOptions {
     type Err = core::convert::Infallible;
@@ -463,43 +472,6 @@ impl ResourceOptions {
     }
 }
 
-#[derive(Clone, PartialEq)]
-pub struct ResourcePath {
-    pub key: ResourceKey,
-    pub options: ResourceOptions,
-}
-
-impl fmt::Debug for ResourcePath {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ResourcePath{{{}}}", self)
-    }
-}
-
-impl fmt::Display for ResourcePath {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl writeable::Writeable for ResourcePath {
-    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        writeable::Writeable::write_to(&self.key, sink)?;
-        if !self.options.is_empty() {
-            sink.write_char('/')?;
-            writeable::Writeable::write_to(&self.options, sink)?;
-        }
-        Ok(())
-    }
-
-    fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.key);
-        if !self.options.is_empty() {
-            result += writeable::Writeable::write_len(&self.options) + 1;
-        }
-        result
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -527,9 +499,9 @@ mod tests {
     }
 
     #[test]
-    fn test_options_to_string() {
+    fn test_key_to_string() {
         for cas in get_key_test_cases().iter() {
-            assert_eq!(cas.expected, cas.resc_key.to_string());
+            assert_eq!(cas.resc_key.to_string(), cas.expected);
             writeable::assert_writeable_eq!(&cas.resc_key, cas.expected);
         }
     }
@@ -567,15 +539,7 @@ mod tests {
     }
 
     #[test]
-    fn test_key_to_string() {
-        for cas in get_key_test_cases().iter() {
-            assert_eq!(cas.resc_key.to_string(), cas.expected);
-            writeable::assert_writeable_eq!(&cas.resc_key, cas.expected);
-        }
-    }
-
-    #[test]
-    fn test_resource_options_to_string() {
+    fn test_options_to_string() {
         for cas in get_options_test_cases().iter() {
             assert_eq!(cas.resc_options.to_string(), cas.expected);
             writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
@@ -583,7 +547,7 @@ mod tests {
     }
 
     #[test]
-    fn test_string_to_resource_options() {
+    fn test_string_to_options() {
         for cas in get_options_test_cases().iter() {
             assert_eq!(ResourceOptions::from_str(cas.expected).unwrap(), cas.resc_options);
         }

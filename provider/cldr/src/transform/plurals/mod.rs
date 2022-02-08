@@ -13,12 +13,6 @@ use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 2] = [
-    key::CARDINAL_V1, //
-    key::ORDINAL_V1,  //
-];
-
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
 pub struct PluralsProvider {
@@ -55,13 +49,8 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
 }
 
 impl KeyedDataProvider for PluralsProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        // TODO(#442): Clean up KeyedDataProvider
-        match *resc_key {
-            key::CARDINAL_V1 => Ok(()),
-            key::ORDINAL_V1 => Ok(()),
-            _ => Err(DataErrorKind::MissingResourceKey.with_key(*resc_key)),
-        }
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![CardinalV1Marker::KEY, OrdinalV1Marker::KEY]
     }
 }
 
@@ -70,27 +59,29 @@ impl PluralsProvider {
         &self,
         resc_key: &ResourceKey,
     ) -> Result<&cldr_serde::plurals::Rules, DataError> {
-        PluralsProvider::supports_key(resc_key)?;
         match *resc_key {
-            key::CARDINAL_V1 => self.cardinal_rules.as_ref(),
-            key::ORDINAL_V1 => self.ordinal_rules.as_ref(),
+            CardinalV1Marker::KEY => self.cardinal_rules.as_ref(),
+            OrdinalV1Marker::KEY => self.ordinal_rules.as_ref(),
             _ => return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key)),
         }
         .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(*resc_key))
     }
 }
 
-impl DataProvider<PluralRulesV1Marker> for PluralsProvider {
+impl DynProvider<PluralRulesV1Marker> for PluralsProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<PluralRulesV1Marker>, DataError> {
-        let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
+        let cldr_rules = self.get_rules_for(&key)?;
         // TODO: Implement language fallback?
-        let langid = req.try_langid()?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, req))?;
         let r = match cldr_rules.0.get(langid) {
             Some(v) => v,
-            None => return Err(DataErrorKind::MissingLocale.with_req(req)),
+            None => return Err(DataErrorKind::MissingLocale.with_req(key, req)),
         };
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
@@ -106,22 +97,18 @@ icu_provider::impl_dyn_provider!(PluralsProvider, {
 }, SERDE_SE);
 
 impl IterableProvider for PluralsProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let cldr_rules = self.get_rules_for(resc_key)?;
-        let list: Vec<ResourceOptions> = cldr_rules
-            .0
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                // TODO: Avoid the clone
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.get_rules_for(resc_key)?
+                .0
+                .iter_keys()
+                // TODO(#568): Avoid the clone
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 
@@ -152,15 +139,13 @@ fn test_basic() {
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<PluralRulesV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::CARDINAL_V1,
-                options: ResourceOptions {
-                    variant: None,
-                    langid: Some(langid!("cs")),
-                },
+        .load_payload(
+            CardinalV1Marker::KEY,
+            &DataRequest {
+                options: langid!("cs").into(),
+                metadata: Default::default(),
             },
-        })
+        )
         .unwrap()
         .take_payload()
         .unwrap();

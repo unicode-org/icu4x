@@ -18,48 +18,16 @@ use std::path::PathBuf;
 ///
 /// # Examples
 ///
-/// ```
-/// use icu_provider::prelude::*;
+/// ```no_run because we don't want to download
+/// use std::boxed::Box;
 /// use icu_provider_cldr::CldrPaths;
 /// use icu_provider_cldr::download::CldrAllInOneDownloader;
-/// use icu_provider_cldr::transform::PluralsProvider;
-/// use icu_locid_macros::langid;
-/// use std::path::PathBuf;
-///
+
 /// let downloader = CldrAllInOneDownloader::try_new_from_github("38.1.0", "modern")
 ///     .expect("Cache directory not found");
 ///
-/// fn demo(downloader: CldrAllInOneDownloader) {
-///     use std::borrow::Cow;
-///     use std::convert::TryFrom;
-///     use icu_provider::prelude::*;
-///
-///     let paths = downloader.download(None)
-///         .expect("The data should download successfully");
-///
-///     let data_provider = PluralsProvider::try_from(&paths as &dyn CldrPaths)
-///         .expect("The data should be well-formed after downloading");
-///
-///     let data: DataPayload<icu_plurals::provider::PluralRulesV1Marker> = data_provider
-///         .load_payload(&DataRequest {
-///             resource_path: ResourcePath {
-///                 key: icu_plurals::provider::key::ORDINAL_V1,
-///                 options: ResourceOptions {
-///                     langid: Some(langid!("uk")),
-///                     variant: None,
-///                 },
-///             },
-///         })
-///         .unwrap()
-///         .take_payload()
-///         .unwrap();
-///     let rule = "n % 10 = 3 and n % 100 != 13".parse()
-///         .expect("Failed to parse plural rule");
-///     assert_eq!(data.get().few, Some(rule));
-/// }
-///
-/// // Calling demo(downloader) will cause the data to actually get downloaded.
-/// //demo(downloader);
+/// let paths: Box<dyn CldrPaths> = Box::new(downloader.download(None)
+///     .expect("The data should download successfully"));
 /// ```
 #[derive(Debug)]
 pub struct CldrAllInOneDownloader {

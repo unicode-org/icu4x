@@ -79,6 +79,8 @@ pub use error::PluralRulesError;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
+use provider::CardinalV1Marker;
+use provider::OrdinalV1Marker;
 use provider::PluralRulesV1Marker;
 use rules::runtime::test_rule;
 
@@ -294,31 +296,113 @@ impl PluralRules {
     /// ```
     ///
     /// [`type`]: PluralRuleType
-    /// [`data provider`]: icu_provider::DataProvider
+    /// [`data provider`]: icu_provider
     pub fn try_new<T: Into<Locale>, D>(
         locale: T,
         data_provider: &D,
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
     where
-        D: DataProvider<PluralRulesV1Marker> + ?Sized,
+        D: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker> + ?Sized,
+    {
+        match rule_type {
+            PluralRuleType::Cardinal => Self::try_new_cardinal(locale, data_provider),
+            PluralRuleType::Ordinal => Self::try_new_ordinal(locale, data_provider),
+        }
+    }
+
+    /// Constructs a new `PluralRules` for a given locale for cardinal numbers.
+    ///
+    /// Cardinal plural forms express quantities of units such as time, currency or distance,
+    /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
+    ///
+    /// For example, English has two forms for cardinals:
+    ///
+    /// * [`One`]: `1 day`
+    /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::macros::langid;
+    /// use icu::plurals::{PluralRules, PluralCategory};
+    ///
+    /// let lid = langid!("ru");
+    ///
+    /// let dp = icu_testdata::get_provider();
+    ///
+    /// let rules = PluralRules::try_new_cardinal(lid, &dp)
+    ///     .expect("Data should be present");
+    ///
+    /// assert_eq!(rules.select(2_usize), PluralCategory::Few);
+    /// ```
+    ///
+    /// [`One`]: PluralCategory::One
+    /// [`Other`]: PluralCategory::Other
+    pub fn try_new_cardinal<T: Into<Locale>, D>(
+        locale: T,
+        data_provider: &D,
+    ) -> Result<Self, PluralRulesError>
+    where
+        D: ResourceProvider<CardinalV1Marker> + ?Sized,
     {
         let locale = locale.into();
-        let key = match rule_type {
-            PluralRuleType::Cardinal => provider::key::CARDINAL_V1,
-            PluralRuleType::Ordinal => provider::key::ORDINAL_V1,
-        };
         let rules = data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.clone().into()),
-                    },
-                },
+            .load_resource(&DataRequest {
+                options: locale.clone().into(),
+                metadata: Default::default(),
             })?
-            .take_payload()?;
+            .take_payload()?
+            .cast();
+        Self::new(locale, rules)
+    }
+
+    /// Constructs a new `PluralRules` for a given locale for ordinal numbers.
+    ///
+    /// Ordinal plural forms denote the order of items in a set and are always integers.
+    ///
+    /// For example, English has four forms for ordinals:
+    ///
+    /// * [`One`]: `1st floor`, `21st floor`, `101st floor`
+    /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
+    /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
+    /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::macros::langid;
+    /// use icu::plurals::{PluralRules, PluralCategory};
+    ///
+    /// let lid = langid!("ru");
+    ///
+    /// let dp = icu_testdata::get_provider();
+    ///
+    /// let rules = PluralRules::try_new_ordinal(lid, &dp)
+    ///     .expect("Data should be present");
+    ///
+    /// assert_eq!(rules.select(2_usize), PluralCategory::Other);
+    /// ```
+    ///
+    /// [`One`]: PluralCategory::One
+    /// [`Two`]: PluralCategory::Two
+    /// [`Few`]: PluralCategory::Few
+    /// [`Other`]: PluralCategory::Other
+    pub fn try_new_ordinal<T: Into<Locale>, D>(
+        locale: T,
+        data_provider: &D,
+    ) -> Result<Self, PluralRulesError>
+    where
+        D: ResourceProvider<OrdinalV1Marker> + ?Sized,
+    {
+        let locale = locale.into();
+        let rules = data_provider
+            .load_resource(&DataRequest {
+                options: locale.clone().into(),
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
         Self::new(locale, rules)
     }
 
@@ -453,7 +537,7 @@ impl PluralRules {
 
     /// Lower-level constructor that allows constructing a [`PluralRules`] directly from
     /// data obtained from a provider.
-    pub fn new<T: Into<Locale>>(
+    fn new<T: Into<Locale>>(
         locale: T,
         rules: DataPayload<PluralRulesV1Marker>,
     ) -> Result<Self, PluralRulesError> {

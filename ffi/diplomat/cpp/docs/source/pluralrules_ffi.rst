@@ -67,21 +67,17 @@
 
         FFI version of ``PluralOperands::from_str()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str>`__ for more details.
 
-.. cpp:enum-struct:: ICU4XPluralRuleType
-
-    FFI version of ``PluralRuleType``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralRuleType.html>`__ for more details.
-
-    .. cpp:enumerator:: Cardinal
-
-    .. cpp:enumerator:: Ordinal
-
 .. cpp:class:: ICU4XPluralRules
 
     FFI version of ``PluralRules``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html>`__ for more details.
 
-    .. cpp:function:: static ICU4XCreatePluralRulesResult try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XPluralRuleType ty)
+    .. cpp:function:: static ICU4XCreatePluralRulesResult try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
 
-        FFI version of ``PluralRules::try_new()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
+        FFI version of ``PluralRules::try_new_cardinal()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
+
+    .. cpp:function:: static ICU4XCreatePluralRulesResult try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
+
+        FFI version of ``PluralRules::try_new_ordinal()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more details.
 
     .. cpp:function:: ICU4XPluralCategory select(ICU4XPluralOperands op) const
 

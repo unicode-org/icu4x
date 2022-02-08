@@ -18,11 +18,6 @@ use tinystr::TinyStr8;
 
 mod decimal_pattern;
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::SYMBOLS_V1, //
-];
-
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
 pub struct NumbersProvider {
@@ -61,8 +56,8 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
 }
 
 impl KeyedDataProvider for NumbersProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        resc_key.match_key(key::SYMBOLS_V1)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![DecimalSymbolsV1Marker::KEY]
     }
 }
 
@@ -98,17 +93,21 @@ impl NumbersProvider {
     }
 }
 
-impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn load_payload(
+impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
-        Self::supports_key(&req.resource_path.key)?;
-        let langid = req.try_langid()?;
-        let numbers = match self.cldr_numbers_data.get(langid) {
-            Some(v) => &v.numbers,
-            None => return Err(DataErrorKind::MissingLocale.with_req(req)),
-        };
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(DecimalSymbolsV1Marker::KEY, req))?;
+        let numbers = self
+            .cldr_numbers_data
+            .get(langid)
+            .map(|v| &v.numbers)
+            .ok_or_else(|| {
+                DataErrorKind::MissingLocale.with_req(DecimalSymbolsV1Marker::KEY, req)
+            })?;
         let nsname = numbers.default_numbering_system;
 
         let mut result = DecimalSymbolsV1::try_from(numbers)
@@ -131,26 +130,20 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(NumbersProvider, {
-    _ => DecimalSymbolsV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(NumbersProvider, [DecimalSymbolsV1Marker,], SERDE_SE);
 
 impl IterableProvider for NumbersProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .cldr_numbers_data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.cldr_numbers_data
+                .iter_keys()
                 // TODO(#568): Avoid the clone
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 
@@ -197,14 +190,9 @@ fn test_basic() {
     let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
-        .load_payload(&DataRequest {
-            resource_path: ResourcePath {
-                key: key::SYMBOLS_V1,
-                options: ResourceOptions {
-                    variant: None,
-                    langid: Some(langid!("ar-EG")),
-                },
-            },
+        .load_resource(&DataRequest {
+            options: langid!("ar-EG").into(),
+            metadata: Default::default(),
         })
         .unwrap()
         .take_payload()

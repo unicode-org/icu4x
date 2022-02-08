@@ -8,12 +8,13 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_decimal::{
         options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
-        provider::{key::SYMBOLS_V1, DecimalSymbolsV1Marker},
+        provider::DecimalSymbolsV1Marker,
         FixedDecimalFormat,
     };
     use icu_locid::Locale;
-    use icu_provider::prelude::DataProvider;
     use icu_provider::struct_provider::AnyPayloadProvider;
+    use icu_provider::ResourceMarker;
+    use icu_provider::ResourceProvider;
     use writeable::Writeable;
 
     use crate::{
@@ -78,7 +79,7 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()> {
             use icu_provider::prelude::AsDowncastingAnyProvider;
             let provider = AnyPayloadProvider {
-                key: SYMBOLS_V1,
+                key: DecimalSymbolsV1Marker::KEY,
                 // None: This clone is free, since cloning AnyPayload is free.
                 data: data_struct.0.clone(),
             };
@@ -95,7 +96,7 @@ pub mod ffi {
             options: ICU4XFixedDecimalFormatOptions,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormat>, ()>
         where
-            D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
+            D: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
         {
             let langid = locale.0.as_ref().clone();
 

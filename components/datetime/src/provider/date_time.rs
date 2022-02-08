@@ -81,7 +81,7 @@ impl<D> Clone for PatternSelector<'_, D> {
 
 impl<D> PatternSelector<'_, D>
 where
-    D: DataProvider<DatePatternsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker>,
+    D: ResourceProvider<DatePatternsV1Marker> + ResourceProvider<DateSkeletonPatternsV1Marker>,
 {
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
@@ -208,14 +208,12 @@ where
     fn patterns_data_payload(self) -> Result<DataPayload<DatePatternsV1Marker>> {
         let data = self
             .data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::DATE_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: Some(self.calendar.into()),
-                        langid: Some(self.locale.clone().into()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some(self.calendar.into()),
+                    langid: Some(self.locale.clone().into()),
                 },
+                metadata: Default::default(),
             })?
             .take_payload()?;
         Ok(data)
@@ -224,14 +222,12 @@ where
     fn skeleton_data_payload(self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
         let data = self
             .data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::DATE_SKELETON_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: Some(self.calendar.into()),
-                        langid: Some(self.locale.clone().into()),
-                    },
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: Some(self.calendar.into()),
+                    langid: Some(self.locale.clone().into()),
                 },
+                metadata: Default::default(),
             })?
             .take_payload()?;
         Ok(data)

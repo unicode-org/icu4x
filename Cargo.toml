@@ -46,6 +46,7 @@ members = [
     "utils/yoke",
     "utils/yoke/derive",
     "utils/zerovec",
+    "utils/zerovec/derive",
 ]
 
 # Enable lto for WASM.

@@ -14,16 +14,10 @@ use alloc::boxed::Box;
 use alloc::rc::Rc;
 use alloc::string::String;
 use alloc::string::ToString;
-use alloc::vec::Vec;
 use core::fmt::Debug;
 use core::str::FromStr;
 use icu_locid::LanguageIdentifier;
 use litemap::LiteMap;
-
-pub mod key {
-    use crate::resource::ResourceKey;
-    pub const HELLO_WORLD_V1: ResourceKey = crate::resource_key!("core/helloworld@1");
-}
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
@@ -48,6 +42,10 @@ impl DataMarker for HelloWorldV1Marker {
     type Yokeable = HelloWorldV1<'static>;
 }
 
+impl ResourceMarker for HelloWorldV1Marker {
+    const KEY: ResourceKey = crate::resource_key!("core/helloworld@1");
+}
+
 /// A data provider returning Hello World strings in different languages.
 ///
 /// Mostly useful for testing.
@@ -55,21 +53,16 @@ impl DataMarker for HelloWorldV1Marker {
 /// # Examples
 ///
 /// ```
-/// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1Marker};
+/// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_locid_macros::langid;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
-///     .load_payload(&DataRequest {
-///         resource_path: ResourcePath {
-///             key: key::HELLO_WORLD_V1,
-///             options: ResourceOptions {
-///                 variant: None,
-///                 langid: Some(langid!("de")),
-///             }
-///         }
+///     .load_resource(&DataRequest {
+///         options: langid!("de").into(),
+///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
 ///     .take_payload()
@@ -123,18 +116,19 @@ impl HelloWorldProvider {
     }
 }
 
-impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn load_payload(
+impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-        key::HELLO_WORLD_V1.match_key(req.resource_path.key)?;
-        let langid = req.try_langid()?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(HelloWorldV1Marker::KEY, req))?;
         let data = self
             .map
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(req))?;
+            .ok_or_else(|| DataErrorKind::MissingLocale.with_key(HelloWorldV1Marker::KEY))?;
         let metadata = DataResponseMetadata {
             data_langid: Some(langid.clone()),
             ..Default::default()
@@ -146,20 +140,21 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     }
 }
 
-impl_dyn_provider!(HelloWorldProvider, {
-    _ => HelloWorldV1Marker,
-}, ANY);
+impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], ANY);
 
 #[cfg(feature = "serialize")]
-impl_dyn_provider!(HelloWorldProvider, {
-    _ => HelloWorldV1Marker,
-}, SERDE_SE);
+impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], SERDE_SE);
 
 pub struct HelloWorldJsonProvider(HelloWorldProvider);
 
 impl BufferProvider for HelloWorldJsonProvider {
-    fn load_buffer(&self, req: &DataRequest) -> Result<DataResponse<BufferMarker>, DataError> {
-        let result = self.0.load_payload(req)?;
+    fn load_buffer(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        key.match_key(HelloWorldV1Marker::KEY)?;
+        let result = self.0.load_resource(req)?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
         metadata.buffer_format = Some(BufferFormat::Json);
@@ -176,21 +171,17 @@ impl BufferProvider for HelloWorldJsonProvider {
 }
 
 impl IterableProvider for HelloWorldProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        resc_key.match_key(key::HELLO_WORLD_V1)?;
-        let list: Vec<ResourceOptions> = self
-            .map
-            .iter_keys()
-            .map(|langid| ResourceOptions {
-                variant: None,
-                langid: Some(langid.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        resc_key.match_key(HelloWorldV1Marker::KEY)?;
+        Ok(Box::new(
+            self.map
+                .iter_keys()
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 
@@ -198,11 +189,14 @@ impl IterableProvider for HelloWorldProvider {
 impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
     fn put_payload(
         &mut self,
+        key: ResourceKey,
         req: DataRequest,
         payload: DataPayload<crate::any::AnyMarker>,
     ) -> Result<(), DataError> {
-        req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
-        let langid = req.try_langid()?;
+        key.match_key(HelloWorldV1Marker::KEY)?;
+        let langid = req
+            .get_langid()
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, &req))?;
         let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
         self.map.insert(
             langid.clone(),

@@ -30,15 +30,16 @@ impl PropertiesDataProvider {
     }
 }
 
-impl DataProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
+impl DynProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
     fn load_payload(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        if get_last_component_no_version(&req.resource_path.key).contains('=') {
-            self.enumerated.load_payload(req)
+        if get_last_component_no_version(&key).contains('=') {
+            self.enumerated.load_payload(key, req)
         } else {
-            self.binary.load_payload(req)
+            self.binary.load_payload(key, req)
         }
     }
 }
@@ -52,7 +53,6 @@ impl IterableProvider for PropertiesDataProvider {
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }

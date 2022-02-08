@@ -9,15 +9,15 @@ use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SCRIPT_EXTENSIONS_KEYS, AL
 use icu_provider::either::EitherProvider;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
-use icu_provider::hello_world::{self, HelloWorldProvider};
+use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
-use icu_provider_cldr::get_all_cldr_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPaths;
 use icu_provider_cldr::CldrPathsAllInOne;
+use icu_provider_cldr::KeyedDataProvider;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
@@ -420,16 +420,6 @@ fn export_cldr(
         eyre::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };
 
-    let keys = get_all_cldr_keys();
-
-    let keys = if let Some(allowed_keys) = allowed_keys {
-        keys.into_iter()
-            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
-            .collect()
-    } else {
-        keys
-    };
-
     let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
     let provider: EitherProvider<_, _> = if let Some(allowlist) = allowed_locales {
         let filtered_provider = raw_provider
@@ -440,9 +430,14 @@ fn export_cldr(
         EitherProvider::B(raw_provider)
     };
 
-    for key in keys.iter() {
+    for key in CldrJsonDataProvider::supported_keys() {
+        if let Some(allowed_keys) = allowed_keys {
+            if !allowed_keys.contains(&*key.writeable_to_string()) {
+                continue;
+            }
+        }
         log::info!("Writing key: {}", key);
-        icu_provider::export::export_from_iterable(key, &provider, exporter)?;
+        icu_provider::export::export_from_iterable(&key, &provider, exporter)?;
     }
 
     Ok(())
@@ -607,7 +602,7 @@ fn export_hello_world(
         EitherProvider::B(raw_provider)
     };
 
-    let key = hello_world::key::HELLO_WORLD_V1;
+    let key = HelloWorldV1Marker::KEY;
     log::info!("Writing key: {}", key);
     icu_provider::export::export_from_iterable(&key, &provider, exporter)?;
 

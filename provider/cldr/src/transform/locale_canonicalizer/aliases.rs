@@ -14,9 +14,6 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use tinystr::{TinyStr4, TinyStr8};
 
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [key::ALIASES_V1];
-
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
 pub struct AliasesProvider {
@@ -47,15 +44,14 @@ impl TryFrom<&'_ str> for AliasesProvider {
 }
 
 impl KeyedDataProvider for AliasesProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::ALIASES_V1.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![AliasesV1Marker::KEY]
     }
 }
 
-impl DataProvider<AliasesV1Marker> for AliasesProvider {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
-        AliasesProvider::supports_key(&req.resource_path.key)?;
-        let langid = &req.resource_path.options.langid;
+impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
+        let langid = &req.options.langid;
 
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
@@ -67,22 +63,19 @@ impl DataProvider<AliasesV1Marker> for AliasesProvider {
                 payload: Some(DataPayload::from_owned(AliasesV1::from(&self.data))),
             })
         } else {
-            Err(DataErrorKind::ExtraneousResourceOptions.with_req(req))
+            Err(DataErrorKind::ExtraneousResourceOptions.with_req(AliasesV1Marker::KEY, req))
         }
     }
 }
 
-icu_provider::impl_dyn_provider!(AliasesProvider, {
-    _ => AliasesV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(AliasesProvider, [AliasesV1Marker,], SERDE_SE);
 
 impl IterableProvider for AliasesProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 
@@ -309,7 +302,7 @@ fn test_basic() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = AliasesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let data: DataPayload<AliasesV1Marker> = provider
-        .load_payload(&DataRequest::from(key::ALIASES_V1))
+        .load_resource(&DataRequest::default())
         .unwrap()
         .take_payload()
         .unwrap();

@@ -9,14 +9,6 @@
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 
-pub mod key {
-    //! Resource keys for [`icu_decimal`](crate).
-    use icu_provider::{resource_key, ResourceKey};
-
-    /// Resource key: symbols used for basic decimal formatting.
-    pub const SYMBOLS_V1: ResourceKey = resource_key!("decimal/symbols@1");
-}
-
 /// A collection of strings to affix to a decimal number.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
@@ -53,7 +45,7 @@ pub struct GroupingSizesV1 {
 }
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",

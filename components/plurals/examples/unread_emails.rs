@@ -10,7 +10,7 @@
 icu_benchmark_macros::static_setup!();
 
 use icu_locid_macros::langid;
-use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
+use icu_plurals::{PluralCategory, PluralRules};
 
 const VALUES: &[usize] = &[0, 2, 25, 1, 3, 2, 4, 10, 7, 0];
 
@@ -31,7 +31,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         print("\n====== Unread Emails (en) example ============", None);
-        let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal)
+        let pr = PluralRules::try_new_cardinal(lid, &provider)
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {

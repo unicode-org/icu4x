@@ -11,14 +11,6 @@ use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use tinystr::TinyStr16;
 
-pub mod key {
-    //! Resource keys for [`icu_decimal`](crate).
-    use icu_provider::{resource_key, ResourceKey};
-
-    /// Resource key: Japanese era data ([`JapaneseErasV1`](super::JapaneseErasV1))
-    pub const JAPANESE_ERAS_V1: ResourceKey = resource_key!("calendar/japanese@1");
-}
-
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
@@ -33,7 +25,7 @@ pub struct EraStartDate {
     pub day: u8,
 }
 
-#[icu_provider::data_struct]
+#[icu_provider::data_struct(JapaneseErasV1Marker = "calendar/japanese@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_provider_cldr` contains implementations of the [`ICU4X`] [`DataProvider`] interface
+//! `icu_provider_cldr` contains implementations of the [`ICU4X`] [data provider] interface
 //! based on the JSON files shipped by CLDR. Create a [`CldrPaths`] and then pass it into
 //! [`CldrJsonDataProvider`].
 //!
@@ -16,7 +16,7 @@
 //! It is much more efficient if you use [`FsDataProvider`] instead.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`DataProvider`]: icu_provider::prelude::DataProvider
+//! [data provider]: icu_provider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 
@@ -35,5 +35,5 @@ pub use cldr_paths::CldrPaths;
 pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
-pub use transform::get_all_cldr_keys;
+pub use support::KeyedDataProvider;
 pub use transform::CldrJsonDataProvider;

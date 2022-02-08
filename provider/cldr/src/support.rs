@@ -9,51 +9,15 @@ use icu_provider::serde::SerializeMarker;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 
-/// A [`DataProvider`] whose supported keys are known statically at compile time.
+/// A data provider whose supported keys are known statically at compile time.
 ///
-/// Implementing this trait means that a [`DataProvider`] is built to support a specific set of
+/// Implementing this trait means that a provider is built to support a specific set of
 /// keys; for example, by transforming those keys from an external data source.
 ///
 /// TODO(#442): Think about a better way to do this. This is not fully supported.
 /// TODO: When const_trait_impl is stable, most implementations of this trait should be const.
 pub trait KeyedDataProvider {
-    /// Given a [`ResourceKey`], checks whether this type of [`DataProvider`] supports it.
-    ///
-    /// Returns Ok if the key is supported, or an Error with more information if not.
-    /// The Error should be [`MissingResourceKey`].
-    ///
-    /// [`MissingResourceKey`]: crate::error::DataErrorKind::MissingResourceKey
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError>;
-
-    /// Auto-implemented function that enables chaining of [`KeyedDataProviders`] while preserving
-    /// [`MissingResourceKey`].
-    ///
-    /// [`KeyedDataProviders`]: KeyedDataProvider
-    /// [`MissingResourceKey`]: crate::error::DataErrorKind::MissingResourceKey
-    ///
-    /// # Examples
-    ///
-    /// ```ignore
-    /// DataProviderA::supports_key(resc_key)
-    ///     .or_else(|err| DataProviderB::or_else_supports_key(err, resc_key))
-    ///     .or_else(|err| DataProviderC::or_else_supports_key(err, resc_key))
-    /// ```
-    fn or_else_supports_key(err: DataError, resc_key: &ResourceKey) -> Result<(), DataError> {
-        match Self::supports_key(resc_key) {
-            Ok(()) => Ok(()),
-            Err(new_err) => {
-                if let DataErrorKind::MissingResourceKey = err.kind {
-                    Err(err)
-                } else {
-                    Err(new_err)
-                }
-            }
-        }
-    }
-}
-
-pub trait ResourceKeySupport {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError>;
+    fn supported_keys() -> Vec<ResourceKey>;
 }
 
 #[derive(Debug)]
@@ -72,7 +36,7 @@ impl<T> Default for LazyCldrProvider<T> {
 /// A lazy-initialized CLDR JSON data provider.
 impl<'b, T> LazyCldrProvider<T>
 where
-    T: DataProvider<SerializeMarker>
+    T: DynProvider<SerializeMarker>
         + IterableProvider
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths, Error = crate::error::Error>,
@@ -80,49 +44,50 @@ where
     /// Call [`DataProvider::load_payload()`], initializing `T` if necessary.
     pub fn try_load_serde(
         &self,
+        key: ResourceKey,
         req: &DataRequest,
         cldr_paths: &'b dyn CldrPaths,
     ) -> Result<Option<DataResponse<SerializeMarker>>, DataError> {
-        if T::supports_key(&req.resource_path.key).is_err() {
+        if !T::supported_keys().contains(&key) {
             return Ok(None);
         }
-        if let Some(data_provider) = self.src.read()?.as_ref() {
-            return DataProvider::load_payload(data_provider, req).map(Some);
+        if self.src.read()?.is_none() {
+            let mut src = self.src.write()?;
+            if src.is_none() {
+                src.replace(T::try_from(cldr_paths)?);
+            }
         }
-        let mut src = self.src.write()?;
-        if src.is_none() {
-            src.replace(T::try_from(cldr_paths)?);
-        }
-        let data_provider = src
-            .as_ref()
-            .expect("The RwLock must be populated at this point.");
-        DataProvider::load_payload(data_provider, req).map(Some)
+        DynProvider::load_payload(
+            self.src
+                .read()?
+                .as_ref()
+                .expect("The RwLock must be populated at this point."),
+            key,
+            req,
+        )
+        .map(Some)
     }
 
     /// Call [`IterableProvider::supported_options_for_key()`], initializing `T` if necessary.
     pub fn try_supported_options(
         &self,
-        resc_key: &ResourceKey,
+        key: &ResourceKey,
         cldr_paths: &'b dyn CldrPaths,
     ) -> Result<Option<Vec<ResourceOptions>>, DataError> {
-        if T::supports_key(resc_key).is_err() {
+        if !T::supported_keys().contains(key) {
             return Ok(None);
         }
-        if let Some(data_provider) = self.src.read()?.as_ref() {
-            return data_provider
-                .supported_options_for_key(resc_key)
-                .map(|i| i.collect())
-                .map(Some);
+        if self.src.read()?.is_none() {
+            let mut src = self.src.write()?;
+            if src.is_none() {
+                src.replace(T::try_from(cldr_paths)?);
+            }
         }
-        let mut src = self.src.write()?;
-        if src.is_none() {
-            src.replace(T::try_from(cldr_paths)?);
-        }
-        let data_provider = src
+        self.src
+            .read()?
             .as_ref()
-            .expect("The RwLock must be populated at this point.");
-        data_provider
-            .supported_options_for_key(resc_key)
+            .expect("The RwLock must be populated at this point.")
+            .supported_options_for_key(key)
             .map(|i| i.collect())
             .map(Some)
     }
