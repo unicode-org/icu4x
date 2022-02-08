@@ -168,7 +168,7 @@ fn test_json_iterator() {
         .expect("Loading file from testdata directory");
 
     let mut options: Vec<ResourceOptions> = provider
-        .supported_options_for_key(&key::CARDINAL_V1)
+        .supported_options_for_key(&CardinalV1Marker::KEY)
         .unwrap()
         .collect();
 
@@ -231,7 +231,7 @@ fn test_bincode_iterator() {
         .expect("Loading file from testdata directory");
 
     let mut options: Vec<ResourceOptions> = provider
-        .supported_options_for_key(&key::CARDINAL_V1)
+        .supported_options_for_key(&CardinalV1Marker::KEY)
         .unwrap()
         .collect();
 

@@ -168,9 +168,9 @@ impl IterableProvider for FsDataProvider {
         let key_root = key_root
             .canonicalize()
             .map_err(|e| DataErrorKind::Io(e.kind()).with_key(*resc_key))?;
-        let key_root = key_root
-            .to_str()
-            .ok_or_else(|| DataErrorKind::Io(std::io::ErrorKind::InvalidData).with_key(*resc_key))?;
+        let key_root = key_root.to_str().ok_or_else(|| {
+            DataErrorKind::Io(std::io::ErrorKind::InvalidData).with_key(*resc_key)
+        })?;
 
         let pattern = format!("{}/**/*.{}", key_root, self.manifest.get_file_extension());
         let prefix_len = key_root.len() + 1;
