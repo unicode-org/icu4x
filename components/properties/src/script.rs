@@ -422,7 +422,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
-    /// 
+    ///
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = vec![
@@ -525,18 +525,20 @@ pub type ScriptWithExtensionsResult =
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let swe = &data_struct.data;
-/// 
+///
 /// // get the `Script` property value
 /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // U+0640 ARABIC TATWEEL
 /// assert_eq!(swe.get_script_val(0x0650), Script::Inherited); // U+0650 ARABIC KASRA
 /// assert_eq!(swe.get_script_val(0x0660), Script::Arabic); // // U+0660 ARABIC-INDIC DIGIT ZERO
 /// assert_eq!(swe.get_script_val(0xFDF2), Script::Arabic); // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
-/// 
+///
 /// // get the `Script_Extensions` property value
 /// assert_eq!(
 ///     swe.get_script_extensions_val(0x0640) // U+0640 ARABIC TATWEEL
 ///         .iter().collect::<Vec<Script>>(),
-///     vec![Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean, Script::PsalterPahlavi, Script::Adlam, Script::HanifiRohingya, Script::Sogdian, Script::OldUyghur]
+///     vec![Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean,
+///          Script::PsalterPahlavi, Script::Adlam, Script::HanifiRohingya, Script::Sogdian,
+///          Script::OldUyghur]
 /// );
 /// assert_eq!(
 ///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
@@ -553,14 +555,14 @@ pub type ScriptWithExtensionsResult =
 ///         .iter().collect::<Vec<Script>>(),
 ///     vec![Script::Tamil, Script::Grantha]
 /// );
-/// 
+///
 /// // check containment of a `Script` value in the `Script_Extensions` value
 /// // U+0650 ARABIC KASRA
 /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
 /// assert!(swe.has_script(0x0650, Script::Arabic));
 /// assert!(swe.has_script(0x0650, Script::Syriac));
 /// assert!(!swe.has_script(0x0650, Script::Thaana));
-/// 
+///
 /// // get a `UnicodeSet` for when `Script` value is contained in `Script_Extensions` value
 /// let syriac = swe.get_script_extensions_set(Script::Syriac);
 /// assert!(syriac.contains_u32(0x0650)); // ARABIC KASRA
@@ -576,6 +578,7 @@ where
     let resp: DataResponse<ScriptWithExtensionsPropertyV1Marker> =
         provider.load_payload(key::SCRIPT_EXTENSIONS_V1, &Default::default())?;
 
-    let property_payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = resp.take_payload()?;
+    let property_payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> =
+        resp.take_payload()?;
     Ok(property_payload)
 }
