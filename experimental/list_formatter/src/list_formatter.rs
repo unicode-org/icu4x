@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::{AndListV1Marker, ErasedListV1Marker, OrListV1Marker, UnitListV1Marker};
 use crate::ListStyle;
-use crate::provider::{ErasedListV1Marker, AndListV1Marker, OrListV1Marker, UnitListV1Marker};
 use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
