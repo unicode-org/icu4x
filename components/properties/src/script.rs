@@ -209,27 +209,16 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptWithExtensions;
+    /// use icu::properties::{script, script::ScriptWithExtensions};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-    ///     .load_payload(
-    ///         key::SCRIPT_EXTENSIONS_V1,
-    ///         &DataRequest {
-    ///             options: ResourceOptions::default(),
-    ///             metadata: Default::default(),
-    ///         },
-    ///     )
-    ///     .expect("The data should be valid")
-    ///     .take_payload()
-    ///     .expect("Loading was successful");
-    ///
-    /// let swe: &ScriptWithExtensions = &payload.get().data;
+    /// let payload =
+    ///     script::get_script_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe: &ScriptWithExtensions = &data_struct.data;
     ///
     /// // U+0640 ARABIC TATWEEL
     /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
@@ -322,28 +311,16 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptWithExtensions;
-    /// use zerovec::ZeroVec;
+    /// use icu::properties::{script, script::ScriptWithExtensions};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-    ///     .load_payload(
-    ///         key::SCRIPT_EXTENSIONS_V1,
-    ///         &DataRequest {
-    ///             options: ResourceOptions::default(),
-    ///             metadata: Default::default(),
-    ///         },
-    ///     )
-    ///     .expect("The data should be valid")
-    ///     .take_payload()
-    ///     .expect("Loading was successful");
-    ///
-    /// let swe: &ScriptWithExtensions = &payload.get().data;
+    /// let payload =
+    ///     script::get_script_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe: &ScriptWithExtensions = &data_struct.data;
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('𐓐' as u32)  // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -386,27 +363,16 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptWithExtensions;
+    /// use icu::properties::{script, script::ScriptWithExtensions};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-    ///     .load_payload(
-    ///         key::SCRIPT_EXTENSIONS_V1,
-    ///         &DataRequest {
-    ///             options: ResourceOptions::default(),
-    ///             metadata: Default::default(),
-    ///         },
-    ///     )
-    ///     .expect("The data should be valid")
-    ///     .take_payload()
-    ///     .expect("Loading was successful");
-    ///
-    /// let swe: &ScriptWithExtensions = &payload.get().data;
+    /// let payload =
+    ///     script::get_script_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe: &ScriptWithExtensions = &data_struct.data;
     ///
     /// // U+0650 ARABIC KASRA
     /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
@@ -450,28 +416,17 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use core::ops::RangeInclusive;
-    /// use icu_provider::prelude::*;
-    /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptWithExtensions;
+    /// use icu::properties::{script, script::ScriptWithExtensions};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-    ///     .load_payload(
-    ///         key::SCRIPT_EXTENSIONS_V1,
-    ///         &DataRequest {
-    ///             options: ResourceOptions::default(),
-    ///             metadata: Default::default(),
-    ///         },
-    ///     )
-    ///     .expect("The data should be valid")
-    ///     .take_payload()
-    ///     .expect("Loading was successful");
-    ///
-    /// let swe: &ScriptWithExtensions = &payload.get().data;
+    /// let payload =
+    ///     script::get_script_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe: &ScriptWithExtensions = &data_struct.data;
+    /// 
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = vec![
@@ -524,28 +479,17 @@ impl<'data> ScriptWithExtensions<'data> {
     /// # Examples
     ///
     /// ```
-    /// use core::ops::RangeInclusive;
-    /// use icu_provider::prelude::*;
-    /// use icu_properties::provider::key;
-    /// use icu::properties::provider::ScriptWithExtensionsPropertyV1Marker;
     /// use icu_properties::Script;
-    /// use icu::properties::script::ScriptWithExtensions;
+    /// use icu::properties::{script, script::ScriptWithExtensions};
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-    ///     .load_payload(
-    ///         key::SCRIPT_EXTENSIONS_V1,
-    ///         &DataRequest {
-    ///             options: ResourceOptions::default(),
-    ///             metadata: Default::default(),
-    ///         },
-    ///     )
-    ///     .expect("The data should be valid")
-    ///     .take_payload()
-    ///     .expect("Loading was successful");
+    /// let payload =
+    ///     script::get_script_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe: &ScriptWithExtensions = &data_struct.data;
     ///
-    /// let swe: &ScriptWithExtensions = &payload.get().data;
     /// let syriac = swe.get_script_extensions_set(Script::Syriac);
     ///
     /// assert!(!syriac.contains_u32(0x061E)); // ARABIC TRIPLE DOT PUNCTUATION MARK
@@ -579,7 +523,6 @@ pub type ScriptWithExtensionsResult =
 /// ```
 /// use icu_properties::Script;
 /// use icu::properties::{script, script::ScriptWithExtensions};
-/// use zerovec::ZeroVec;
 ///
 /// let provider = icu_testdata::get_provider();
 /// 
