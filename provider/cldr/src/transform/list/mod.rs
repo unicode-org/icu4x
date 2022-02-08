@@ -152,7 +152,11 @@ icu_provider::impl_dyn_provider!(
 
 impl KeyedDataProvider for ListProvider {
     fn supported_keys() -> Vec<ResourceKey> {
-        vec![AndListV1Marker::KEY, OrListV1Marker::KEY, UnitListV1Marker::KEY]
+        vec![
+            AndListV1Marker::KEY,
+            OrListV1Marker::KEY,
+            UnitListV1Marker::KEY,
+        ]
     }
 }
 
@@ -183,53 +187,62 @@ mod tests {
     use icu_locid_macros::langid;
     use writeable::assert_writeable_eq;
 
-    macro_rules! formatter {
-        ($name:ident, $langid:expr, $type:path, $width:expr) => {
+    macro_rules! test {
+        ($langid:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let cldr_paths = crate::cldr_paths::for_test();
             let provider = ListProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-            let $name = $type($langid, &provider, $width).unwrap();
+            let f = ListFormatter::$type(langid!($langid), &provider, ListStyle::Wide).unwrap();
+            $(
+                assert_writeable_eq!(f.format($input.iter()), $output);
+            )+
         };
     }
 
     #[test]
     fn test_basic() {
-        formatter!(f, langid!("fr"), ListFormatter::try_new_or, ListStyle::Wide);
-        assert_writeable_eq!(f.format(["A", "B"].iter()), "A ou B");
+        test!("fr", try_new_or, (["A", "B"], "A ou B"),);
     }
 
     #[test]
     fn test_spanish() {
-        formatter!(and, langid!("es"), ListFormatter::try_new_and, ListStyle::Wide);
-        assert_writeable_eq!(and.format(["", "Mallorca"].iter()), " y Mallorca");
-        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " e Ibiza");
-        assert_writeable_eq!(and.format(["", "Hidalgo"].iter()), " e Hidalgo");
-        assert_writeable_eq!(and.format(["", "Hierva"].iter()), " y Hierva");
+        test!(
+            "es",
+            try_new_and,
+            (["x", "Mallorca"], "x y Mallorca"),
+            (["x", "Ibiza"], "x e Ibiza"),
+            (["x", "Hidalgo"], "x e Hidalgo"),
+            (["x", "Hierva"], "x y Hierva"),
+        );
 
-        formatter!(or, langid!("es"), ListFormatter::try_new_or, ListStyle::Wide);
-        assert_writeable_eq!(or.format(["", "Ibiza"].iter()), " o Ibiza");
-        assert_writeable_eq!(or.format(["", "Okinawa"].iter()), " u Okinawa");
-        assert_writeable_eq!(or.format(["", "8 más"].iter()), " u 8 más");
-        assert_writeable_eq!(or.format(["", "8"].iter()), " u 8");
-        assert_writeable_eq!(or.format(["", "87 más"].iter()), " u 87 más");
-        assert_writeable_eq!(or.format(["", "87"].iter()), " u 87");
-        assert_writeable_eq!(or.format(["", "11 más"].iter()), " u 11 más");
-        assert_writeable_eq!(or.format(["", "11"].iter()), " u 11");
-        assert_writeable_eq!(or.format(["", "110 más"].iter()), " o 110 más");
-        assert_writeable_eq!(or.format(["", "110"].iter()), " o 110");
-        assert_writeable_eq!(or.format(["", "11.000 más"].iter()), " u 11.000 más");
-        assert_writeable_eq!(or.format(["", "11.000"].iter()), " u 11.000");
-        assert_writeable_eq!(or.format(["", "11.000,92 más"].iter()), " u 11.000,92 más");
-        assert_writeable_eq!(or.format(["", "11.000,92"].iter()), " u 11.000,92");
+        test!(
+            "es",
+            try_new_or,
+            (["x", "Ibiza"], "x o Ibiza"),
+            (["x", "Okinawa"], "x u Okinawa"),
+            (["x", "8 más"], "x u 8 más"),
+            (["x", "8"], "x u 8"),
+            (["x", "87 más"], "x u 87 más"),
+            (["x", "87"], "x u 87"),
+            (["x", "11 más"], "x u 11 más"),
+            (["x", "11"], "x u 11"),
+            (["x", "110 más"], "x o 110 más"),
+            (["x", "110"], "x o 110"),
+            (["x", "11.000 más"], "x u 11.000 más"),
+            (["x", "11.000"], "x u 11.000"),
+            (["x", "11.000,92 más"], "x u 11.000,92 más"),
+            (["x", "11.000,92"], "x u 11.000,92"),
+        );
 
-        formatter!(and, langid!("es-AR"), ListFormatter::try_new_and, ListStyle::Wide);
-        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " e Ibiza");
+        test!("es-AR", try_new_and, (["x", "Ibiza"], "x e Ibiza"),);
     }
 
     #[test]
     fn test_hebrew() {
-        formatter!(and, langid!("he"), ListFormatter::try_new_and, ListStyle::Wide);
-
-        assert_writeable_eq!(and.format(["", "יפו"].iter()), " ויפו");
-        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " ו-Ibiza");
+        test!(
+            "he",
+            try_new_and,
+            (["x", "יפו"], "x ויפו"),
+            (["x", "Ibiza"], "x ו-Ibiza"),
+        );
     }
 }
