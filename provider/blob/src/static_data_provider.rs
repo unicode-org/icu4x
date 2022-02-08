@@ -164,7 +164,8 @@ impl IterableProvider for StaticDataProvider {
         &self,
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(match self.data.iter_keys1(resc_key.get_path()) {
+        use alloc::str::FromStr;
+        Ok(match self.data.iter_keys1(&resc_key.get_hash()) {
             Some(iter) => Box::new(iter.map(|s| ResourceOptions::from_str(s).unwrap())),
             None => Box::new(core::iter::empty()),
         })
