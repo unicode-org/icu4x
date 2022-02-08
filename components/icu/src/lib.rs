@@ -425,6 +425,63 @@ pub mod properties {
     //! assert_eq!(script.get('🎃' as u32), Script::Common);  // U+1F383 JACK-O-LANTERN
     //! assert_eq!(script.get('木' as u32), Script::Han);  // U+6728
     //! ```
+    //! 
+    //! ## Property data for `Script` and `Script_Extensions`
+    //! 
+    //! ```
+    //! use icu::properties::{script, Script};
+    //!
+    //! let provider = icu_testdata::get_provider();
+    //!
+    //! let payload =
+    //!     script::get_script_extensions(&provider)
+    //!         .expect("The data should be valid");
+    //! let data_struct = payload.get();
+    //! let swe = &data_struct.data;
+    //! 
+    //! // get the `Script` property value
+    //! assert_eq!(swe.get_script_val(0x0640), Script::Common); // U+0640 ARABIC TATWEEL
+    //! assert_eq!(swe.get_script_val(0x0650), Script::Inherited); // U+0650 ARABIC KASRA
+    //! assert_eq!(swe.get_script_val(0x0660), Script::Arabic); // // U+0660 ARABIC-INDIC DIGIT ZERO
+    //! assert_eq!(swe.get_script_val(0xFDF2), Script::Arabic); // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+    //! 
+    //! // get the `Script_Extensions` property value
+    //! assert_eq!(
+    //!     swe.get_script_extensions_val(0x0640) // U+0640 ARABIC TATWEEL
+    //!         .iter().collect::<Vec<Script>>(),
+    //!     vec![Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean, Script::PsalterPahlavi, Script::Adlam, Script::HanifiRohingya, Script::Sogdian, Script::OldUyghur]
+    //! );
+    //! assert_eq!(
+    //!     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+    //!         .iter().collect::<Vec<Script>>(),
+    //!     vec![Script::Common]
+    //! );
+    //! assert_eq!(
+    //!     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+    //!         .iter().collect::<Vec<Script>>(),
+    //!     vec![Script::Inherited]
+    //! );
+    //! assert_eq!(
+    //!     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+    //!         .iter().collect::<Vec<Script>>(),
+    //!     vec![Script::Tamil, Script::Grantha]
+    //! );
+    //! 
+    //! // check containment of a `Script` value in the `Script_Extensions` value
+    //! // U+0650 ARABIC KASRA
+    //! assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
+    //! assert!(swe.has_script(0x0650, Script::Arabic));
+    //! assert!(swe.has_script(0x0650, Script::Syriac));
+    //! assert!(!swe.has_script(0x0650, Script::Thaana));
+    //! 
+    //! // get a `UnicodeSet` for when `Script` value is contained in `Script_Extensions` value
+    //! let syriac = swe.get_script_extensions_set(Script::Syriac);
+    //! assert!(syriac.contains_u32(0x0650)); // ARABIC KASRA
+    //! assert!(!syriac.contains_u32(0x0660)); // ARABIC-INDIC DIGIT ZERO
+    //! assert!(!syriac.contains_u32(0xFDF2)); // ARABIC LIGATURE ALLAH ISOLATED FORM
+    //! assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
+    //! assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
+    //! ```
     //!
     //! [`ICU4X`]: ../icu/index.html
     //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
