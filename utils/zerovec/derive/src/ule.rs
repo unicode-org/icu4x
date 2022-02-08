@@ -7,7 +7,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
 use syn::spanned::Spanned;
-use syn::{Data, DeriveInput, Error, Field, Ident};
+use syn::{parse_quote, AttributeArgs, Data, DataStruct, DeriveInput, Error, Field, Fields, Ident};
 
 fn suffixed_ident(name: &str, suffix: usize, s: Span) -> Ident {
     Ident::new(&format!("{name}_{suffix}"), s)
@@ -75,6 +75,149 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
         }
     }
+}
+
+fn wrap_field_inits(streams: &[TokenStream2], fields: &Fields) -> TokenStream2 {
+    match *fields {
+        Fields::Named(_) => quote!( { #(#streams),* } ),
+        Fields::Unnamed(_) => quote!( ( #(#streams),* ) ),
+        Fields::Unit => {
+            unreachable!("#[make_ule] should have already checked that there are fields")
+        }
+    }
+}
+
+pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+    if input.generics.type_params().next().is_some()
+        || input.generics.lifetimes().next().is_some()
+        || input.generics.const_params().next().is_some()
+    {
+        return Error::new(
+            input.generics.span(),
+            "derive(ULE) must be applied to a struct without any generics",
+        )
+        .to_compile_error();
+    }
+
+    if !attr.is_empty() {
+        return Error::new(
+            input.span(),
+            "#[make_ule] does not currently support any arguments",
+        )
+        .to_compile_error();
+    }
+    let name = &input.ident;
+    let ule_name = Ident::new(&format!("{}ULE", name), Span::call_site());
+
+    let ule_stuff = match input.data {
+        Data::Struct(ref s) => make_ule_struct_impl(&name, &ule_name, &input, s),
+        _ => {
+            return Error::new(input.span(), "#[make_ule] must be applied to a struct")
+                .to_compile_error();
+        }
+    };
+
+    // Todo: opt-out for ZMKV impl
+
+    quote!(
+        #input
+
+        #ule_stuff
+
+        impl<'a> zerovec::map::ZeroMapKV<'a> for #name {
+            type Container = zerovec::ZeroVec<'a, #name>;
+            type GetType = #ule_name;
+            type OwnedType = #name;
+        }
+    )
+}
+
+pub fn make_ule_struct_impl(
+    name: &Ident,
+    ule_name: &Ident,
+    input: &DeriveInput,
+    struc: &DataStruct,
+) -> TokenStream2 {
+    if struc.fields.iter().next().is_none() {
+        return Error::new(
+            input.span(),
+            "#[make_ule] must be applied to a non-empty struct",
+        )
+        .to_compile_error();
+    }
+    let ule_fields = struc
+        .fields
+        .iter()
+        .map(|f| {
+            let ty = &f.ty;
+            let ty = quote!(<#ty as zerovec::ule::AsULE>::ULE);
+            if let Some(ref ident) = f.ident {
+                quote!(#ident: #ty)
+            } else {
+                quote!(#ty)
+            }
+        })
+        .collect::<Vec<_>>();
+
+    let repr_attr = if struc.fields.len() == 1 {
+        quote!(transparent)
+    } else {
+        quote!(packed)
+    };
+
+    let field_inits = wrap_field_inits(&ule_fields, &struc.fields);
+    let semi = if let Fields::Unnamed(..) = struc.fields {
+        quote!(;)
+    } else {
+        quote!()
+    };
+    let ule_struct: DeriveInput = parse_quote!(
+        #[repr(#repr_attr)]
+        #[derive(Copy, Clone, PartialEq)]
+        struct #ule_name #field_inits #semi
+
+    );
+    let derived = derive_impl(&ule_struct);
+
+    let mut as_ule_conversions = vec![];
+    let mut from_ule_conversions = vec![];
+
+    for (i, field) in struc.fields.iter().enumerate() {
+        let ty = &field.ty;
+        let i = syn::Index::from(i);
+        if let Some(ref ident) = field.ident {
+            as_ule_conversions
+                .push(quote!(#ident: <#ty as zerovec::ule::AsULE>::as_unaligned(self.#ident)));
+            from_ule_conversions.push(
+                quote!(#ident: <#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#ident)),
+            );
+        } else {
+            as_ule_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::as_unaligned(self.#i)));
+            from_ule_conversions
+                .push(quote!(<#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#i)));
+        };
+    }
+
+    let as_ule_conversions = wrap_field_inits(&as_ule_conversions, &struc.fields);
+    let from_ule_conversions = wrap_field_inits(&from_ule_conversions, &struc.fields);
+    let asule_impl = quote!(
+        impl zerovec::ule::AsULE for #name {
+            type ULE = #ule_name;
+            fn as_unaligned(self) -> Self::ULE {
+                #ule_name #as_ule_conversions
+            }
+            fn from_unaligned(unaligned: Self::ULE) -> Self {
+                Self #from_ule_conversions
+            }
+        }
+    );
+    quote!(
+        #asule_impl
+
+        #ule_struct
+
+        #derived
+    )
 }
 
 /// Given an iterator over ULE struct fields, returns code validating that a slice variable `bytes` contains valid instances of those ULE types
