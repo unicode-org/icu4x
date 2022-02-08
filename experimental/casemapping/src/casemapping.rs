@@ -13,7 +13,10 @@ use icu_codepointtrie::CodePointTrieHeader;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
-/// TODO: doc comment
+/// A struct with the ability to convert characters and strings to uppercase or lowercase,
+/// or fold them to a normalized form for case-insensitive comparison.
+///
+/// TODO: Expand documentation
 #[derive(Clone)]
 pub struct CaseMapping {
     internals: DataPayload<CaseMappingV1Marker>,
