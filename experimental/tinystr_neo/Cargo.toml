@@ -6,7 +6,7 @@
 name = "tinystr-neo"
 version = "0.3.1"
 description = "A small ASCII-only bounded length string representation."
-authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
+authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "LICENSE"
