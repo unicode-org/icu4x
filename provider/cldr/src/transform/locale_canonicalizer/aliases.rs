@@ -297,8 +297,6 @@ fn test_rules_cmp() {
 
 #[test]
 fn test_basic() {
-    use std::str::FromStr;
-
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = AliasesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let data: DataPayload<AliasesV1Marker> = provider
