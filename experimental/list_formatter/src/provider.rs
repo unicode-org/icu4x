@@ -10,11 +10,10 @@ use crate::string_matcher::StringMatcher;
 use crate::ListStyle;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
+use icu_provider::DataMarker;
 use writeable::{LengthHint, Writeable};
 
-/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter). Requires
-/// feature "provider_transform_internals".
-// (the feature makes it pub)
+/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 #[icu_provider::data_struct(
     AndListV1Marker = "list/and@1",
     OrListV1Marker = "list/or@1",
@@ -34,6 +33,12 @@ pub struct ListFormatterPatternsV1<'data>(
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
     [ConditionalListJoinerPattern<'data>; 12],
 );
+
+pub(crate) struct ErasedListV1Marker;
+
+impl DataMarker for ErasedListV1Marker {
+    type Yokeable = ListFormatterPatternsV1<'static>;
+}
 
 impl<'data> ListFormatterPatternsV1<'data> {
     pub(crate) fn start(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {

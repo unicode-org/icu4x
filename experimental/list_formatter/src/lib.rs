@@ -12,14 +12,14 @@
 //! ## Format a list of strings in Spanish
 //!
 //! ```
-//! use icu_list::{ListFormatter, markers::And, ListStyle};
+//! use icu_list::{ListFormatter, ListStyle};
 //! use icu_locid::Locale;
 //! use icu_locid_macros::langid;
 //! use writeable::Writeable;
 //!
 //! let locale: Locale = langid!("es").into();
 //! let provider = icu_testdata::get_provider();
-//! let list_formatter = ListFormatter::<And>::try_new(locale, &provider, ListStyle::Wide)
+//! let list_formatter = ListFormatter::try_new_and(locale, &provider, ListStyle::Wide)
 //!     .expect("Data should load successfully");
 //!
 //! assert_eq!(
@@ -49,8 +49,9 @@
 extern crate alloc;
 
 mod list_formatter;
-mod provider;
 mod string_matcher;
+
+pub mod provider;
 
 pub use list_formatter::*;
 
@@ -66,15 +67,3 @@ pub enum ListStyle {
     /// The shortest type of list
     Narrow,
 }
-
-/// Each type of list uses a different [`ResourceMarker`](icu_provider::ResourceMarker).
-/// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
-/// for an explanation of the different types.
-pub mod markers {
-    pub use crate::provider::AndListV1Marker as And;
-    pub use crate::provider::OrListV1Marker as Or;
-    pub use crate::provider::UnitListV1Marker as Unit;
-}
-
-#[cfg(feature = "provider_transform_internals")]
-pub use provider::ListFormatterPatternsV1;

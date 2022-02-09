@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{provider::ListFormatterPatternsV1, ListStyle};
+use crate::provider::{AndListV1Marker, ErasedListV1Marker, OrListV1Marker, UnitListV1Marker};
+use crate::ListStyle;
 use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -10,31 +11,35 @@ use writeable::*;
 
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
-pub struct ListFormatter<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> {
-    data: DataPayload<M>,
+pub struct ListFormatter {
+    data: DataPayload<ErasedListV1Marker>,
     style: ListStyle,
 }
 
-impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ListFormatter<M> {
-    /// Creates a new [`ListFormatter`] that produces a list for the given [`ResourceMarker`]. See
-    /// [`crate::markers`].
-    pub fn try_new<T: Into<Locale>, D: ResourceProvider<M> + ?Sized>(
-        locale: T,
-        data_provider: &D,
-        style: ListStyle,
-    ) -> Result<Self, DataError> {
-        let data = data_provider
-            .load_resource(&DataRequest {
-                options: locale.into().into(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        Ok(Self { data, style })
-    }
+macro_rules! constructor {
+    ($name: ident, $marker: ty, $doc: literal) => {
+        #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list. See the [CLDR spec]",
+            "(https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for an explanation of the different types.")]
+        pub fn $name<T: Into<Locale>, D: ResourceProvider<$marker> + ?Sized>(
+            locale: T,
+            data_provider: &D,
+            style: ListStyle,
+        ) -> Result<Self, DataError> {
+            let data = data_provider
+                .load_resource(&DataRequest {
+                    options: locale.into().into(),
+                    metadata: Default::default(),
+                })?
+                .take_payload()?.cast();
+            Ok(Self { data, style })
+        }
+    };
+}
 
-    // constructor!("and lists", try_new_and, AndListV1Marker);
-    // constructor!("or lists", try_new_or, OrListV1Marker);
-    // constructor!("unit lists", try_new_unit, UnitListV1Marker);
+impl ListFormatter {
+    constructor!(try_new_and, AndListV1Marker, "and");
+    constructor!(try_new_or, OrListV1Marker, "or");
+    constructor!(try_new_unit, UnitListV1Marker, "unit");
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
     /// formatting. The first layer of parts contains [`parts::ELEMENT`] for input
@@ -42,7 +47,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ListFormatt
     pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
-    ) -> List<'a, M, W, I> {
+    ) -> List<'a, W, I> {
         List {
             formatter: self,
             values,
@@ -70,23 +75,12 @@ pub mod parts {
 
 /// The [`Writeable`] implementation that is returned by [`ListFormatter::format`]. See
 /// the [`writeable`] crate for how to consume this.
-pub struct List<
-    'a,
-    M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>,
-    W: Writeable + 'a,
-    I: Iterator<Item = W> + Clone + 'a,
-> {
-    formatter: &'a ListFormatter<M>,
+pub struct List<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
+    formatter: &'a ListFormatter,
     values: I,
 }
 
-impl<
-        'a,
-        M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>,
-        W: Writeable + 'a,
-        I: Iterator<Item = W> + Clone + 'a,
-    > Writeable for List<'a, M, W, I>
-{
+impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for List<'a, W, I> {
     fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
@@ -189,7 +183,7 @@ mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    fn formatter(style: ListStyle) -> ListFormatter<crate::markers::And> {
+    fn formatter(style: ListStyle) -> ListFormatter {
         ListFormatter {
             data: DataPayload::from_owned(crate::provider::test::test_patterns()),
             style,
