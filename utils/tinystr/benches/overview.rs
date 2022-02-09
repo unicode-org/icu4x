@@ -10,7 +10,7 @@ use criterion::criterion_group;
 use criterion::criterion_main;
 use criterion::Criterion;
 
-use tinystr_neo::TinyAsciiStr;
+use tinystr::TinyAsciiStr;
 use tinystr_old::TinyStr16;
 use tinystr_old::TinyStr4;
 use tinystr_old::TinyStr8;

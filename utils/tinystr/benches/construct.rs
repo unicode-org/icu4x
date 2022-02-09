@@ -13,7 +13,7 @@ use criterion::criterion_main;
 use criterion::Bencher;
 use criterion::Criterion;
 
-use tinystr_neo::TinyAsciiStr;
+use tinystr::TinyAsciiStr;
 
 fn construct_from_str(c: &mut Criterion) {
     macro_rules! cfs {
