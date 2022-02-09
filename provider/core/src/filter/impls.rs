@@ -24,7 +24,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::filter::Filterable;
-    /// use icu_provider::iter::IterableDynProvider;
+    /// use icu_provider::iter::*;
     /// use icu_locid::LanguageIdentifier;
     /// use icu_locid_macros::{language, langid};
     ///
@@ -54,7 +54,7 @@ where
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = provider.supported_options_for_key(&HelloWorldV1Marker::KEY)
+    /// let supported_langids = provider.supported_options()
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .filter_map(|options| options.langid)
     ///     .collect::<Vec<LanguageIdentifier>>();

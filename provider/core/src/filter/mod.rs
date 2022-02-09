@@ -38,7 +38,7 @@ mod impls;
 
 pub use impls::*;
 
-use crate::iter::IterableDynProvider;
+use crate::iter::*;
 use crate::prelude::*;
 use alloc::boxed::Box;
 
@@ -150,6 +150,35 @@ where
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         self.inner.supported_options_for_key(resc_key).map(|iter| {
+            // Use filter_map instead of filter to avoid cloning the options
+            let filtered_iter = iter.filter_map(move |options| {
+                let request = DataRequest {
+                    options,
+                    metadata: Default::default(),
+                };
+                if (self.predicate)(&request) {
+                    Some(request.options)
+                } else {
+                    None
+                }
+            });
+            let boxed_filtered_iter: Box<dyn Iterator<Item = ResourceOptions>> =
+                Box::new(filtered_iter);
+            boxed_filtered_iter
+        })
+    }
+}
+
+impl<M, D, F> IterableResourceProvider<M> for RequestFilterDataProvider<D, F>
+where
+    M: ResourceMarker,
+    F: Fn(&DataRequest) -> bool,
+    D: IterableResourceProvider<M>,
+{
+    fn supported_options(
+        &self,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        self.inner.supported_options().map(|iter| {
             // Use filter_map instead of filter to avoid cloning the options
             let filtered_iter = iter.filter_map(move |options| {
                 let request = DataRequest {
