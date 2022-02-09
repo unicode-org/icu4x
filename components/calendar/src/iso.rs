@@ -6,7 +6,7 @@
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
-use tinystr::{tinystr, tinystr};
+use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
 const EPOCH: i32 = 1;
