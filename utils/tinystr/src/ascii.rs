@@ -61,6 +61,11 @@ impl<const N: usize> TinyAsciiStr<N> {
     }
 
     #[inline]
+    pub fn as_str(&self) -> &str {
+        &*self
+    }
+
+    #[inline]
     #[must_use]
     pub fn len(&self) -> usize {
         if N <= 4 {
