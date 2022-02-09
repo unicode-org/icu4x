@@ -67,8 +67,8 @@ impl Script {
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
     /// assert_eq!(script, "Latn");
     /// ```
-    pub fn into_raw(self) -> u32 {
-        self.0.into()
+    pub fn into_raw(self) -> [u8; 4] {
+        *self.0.all_bytes()
     }
 
     /// Constructor which takes a raw value returned by
@@ -91,8 +91,8 @@ impl Script {
     ///
     /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
     /// representing a [`Script`] subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: u32) -> Self {
-        Self(TinyStr4::new_unchecked(v))
+    pub const unsafe fn from_raw_unchecked(v: [u8; 4]) -> Self {
+        Self(TinyStr4::from_bytes_unchecked(v))
     }
 
     /// A helper function for displaying

@@ -95,8 +95,8 @@ impl Language {
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn into_raw(self) -> Option<u32> {
-        self.0.map(Into::<u32>::into)
+    pub fn into_raw(self) -> Option<[u8; 4]> {
+        self.0.as_ref().map(TinyStr4::all_bytes).copied()
     }
 
     /// Constructor which takes a raw value returned by
@@ -119,9 +119,9 @@ impl Language {
     ///
     /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
     /// representing a [`Language`] subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: Option<u32>) -> Self {
+    pub const unsafe fn from_raw_unchecked(v: Option<[u8; 4]>) -> Self {
         Self(match v {
-            Some(v) => Some(TinyStr4::new_unchecked(v)),
+            Some(v) => Some(TinyStr4::from_bytes_unchecked(v)),
             None => None,
         })
     }
