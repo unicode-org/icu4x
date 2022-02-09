@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
@@ -31,12 +30,6 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider {
             cardinal_rules: RwLock::new(None),
             ordinal_rules: RwLock::new(None),
         })
-    }
-}
-
-impl KeyedDataProvider for PluralsProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![CardinalV1Marker::KEY, OrdinalV1Marker::KEY]
     }
 }
 

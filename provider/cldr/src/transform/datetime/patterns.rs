@@ -12,7 +12,6 @@ use icu_datetime::pattern;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::provider::calendar::*;
 
-use crate::support::KeyedDataProvider;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -25,12 +24,6 @@ impl TryFrom<&dyn CldrPaths> for DatePatternsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         CommonDateProvider::try_from(cldr_paths).map(DatePatternsProvider)
-    }
-}
-
-impl KeyedDataProvider for DatePatternsProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![DatePatternsV1Marker::KEY]
     }
 }
 

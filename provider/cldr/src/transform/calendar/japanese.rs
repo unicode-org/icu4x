@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_calendar::provider::*;
 use icu_locid_macros::langid;
@@ -38,13 +37,11 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
                 .cldr_dates_japanese()?
                 .join("main")
                 .join("en")
-                .join("ca-japanese.json")
-                .to_path_buf(),
+                .join("ca-japanese.json"),
             era_dates_path: cldr_paths
                 .cldr_core()?
                 .join("supplemental")
-                .join("calendarData.json")
-                .to_path_buf(),
+                .join("calendarData.json"),
         })
     }
 }
@@ -210,12 +207,6 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
         )
     })?;
     Ok(code)
-}
-
-impl KeyedDataProvider for JapaneseErasProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![JapaneseErasV1Marker::KEY]
-    }
 }
 
 icu_provider::impl_dyn_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,], SERDE_SE);

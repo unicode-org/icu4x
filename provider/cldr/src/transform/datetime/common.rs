@@ -43,8 +43,7 @@ impl CommonDateProvider {
         let (cldr_cal, _, path) = self
             .paths
             .iter()
-            .filter(|(_, bcp_cal, _)| bcp_cal == &&**variant)
-            .next()
+            .find(|(_, bcp_cal, _)| bcp_cal == &&**variant)
             .ok_or_else(|| DataErrorKind::MissingVariant.with_req(M::KEY, req))?;
 
         let locale_dir = get_langid_subdirectory(&path.join("main"), langid)?
@@ -80,13 +79,10 @@ impl CommonDateProvider {
         // Raise an error if Gregorian paths are not available
         self.paths
             .iter()
-            .filter(|(_, cal, _)| cal == &"gregory")
-            .next()
-            .ok_or_else(|| {
-                Error::MissingSource(crate::error::MissingSourceError {
-                    src: "cldr-dates/gregory",
-                })
-            })?;
+            .find(|(_, cal, _)| cal == &"gregory")
+            .ok_or(Error::MissingSource(crate::error::MissingSourceError {
+                src: "cldr-dates/gregory",
+            }))?;
 
         let mut r = Vec::new();
         for (_, cal, path) in &self.paths {

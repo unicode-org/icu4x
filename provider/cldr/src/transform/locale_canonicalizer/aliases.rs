@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{subtags, LanguageIdentifier};
@@ -30,12 +29,6 @@ impl TryFrom<&dyn CldrPaths> for AliasesProvider {
                 .join("supplemental")
                 .join("aliases.json"),
         })
-    }
-}
-
-impl KeyedDataProvider for AliasesProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![AliasesV1Marker::KEY]
     }
 }
 

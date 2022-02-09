@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_decimal::provider::*;
 use icu_provider::iter::IterableResourceProvider;
@@ -39,12 +38,6 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
                 .join("numberingSystems.json"),
             cldr_numbering_systems_data: RwLock::new(None),
         })
-    }
-}
-
-impl KeyedDataProvider for NumbersProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![DecimalSymbolsV1Marker::KEY]
     }
 }
 

@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
@@ -86,12 +85,6 @@ macro_rules! impl_data_provider {
                 }
             }
         )+
-
-        impl KeyedDataProvider for TimeZonesProvider {
-            fn supported_keys() -> Vec<ResourceKey> {
-                vec![$(<$marker>::KEY),+]
-            }
-        }
 
         icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE);
     };

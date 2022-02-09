@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_list::provider::*;
 use icu_locid_macros::langid;
@@ -151,16 +150,6 @@ icu_provider::impl_dyn_provider!(
     [AndListV1Marker, OrListV1Marker, UnitListV1Marker,],
     SERDE_SE
 );
-
-impl KeyedDataProvider for ListProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![
-            AndListV1Marker::KEY,
-            OrListV1Marker::KEY,
-            UnitListV1Marker::KEY,
-        ]
-    }
-}
 
 impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>
     for ListProvider

@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::iter::IterableResourceProvider;
@@ -31,12 +30,6 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider {
                 .join("supplemental")
                 .join("likelySubtags.json"),
         })
-    }
-}
-
-impl KeyedDataProvider for LikelySubtagsProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![LikelySubtagsV1Marker::KEY]
     }
 }
 

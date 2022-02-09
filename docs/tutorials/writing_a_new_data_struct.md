@@ -226,14 +226,7 @@ impl IterableResourceProvider<FooV1Marker> for FooProvider {
     }
 }
 
-impl KeyedDataProvider for FooProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![FooV1Marker::KEY]
-    }
-}
-
-// Once we have ResourceProvider, IterableResourceProvider, and KeyedDataProvider, we can
-// implement DynProvider<SerializeMarker>.
+// Once we have ResourceProvider and IterableResourceProvider, we can implement IterableDynProvider<SerializeMarker>.
 icu_provider::impl_dyn_provider!(FooProvider, [
     FooV1Marker,
 ], SERDE_SE);

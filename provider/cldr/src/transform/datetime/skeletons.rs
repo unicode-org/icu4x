@@ -10,7 +10,6 @@ use crate::CldrPaths;
 use icu_datetime::provider::calendar::*;
 use icu_datetime::skeleton::SkeletonError;
 
-use crate::support::KeyedDataProvider;
 use icu_plurals::PluralCategory;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
@@ -24,12 +23,6 @@ impl TryFrom<&dyn CldrPaths> for DateSkeletonPatternsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         CommonDateProvider::try_from(cldr_paths).map(DateSkeletonPatternsProvider)
-    }
-}
-
-impl KeyedDataProvider for DateSkeletonPatternsProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![DateSkeletonPatternsV1Marker::KEY]
     }
 }
 

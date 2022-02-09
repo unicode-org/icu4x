@@ -10,7 +10,6 @@ use crate::cldr_serde;
 use crate::CldrPaths;
 use icu_datetime::provider::calendar::*;
 
-use crate::support::KeyedDataProvider;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -25,12 +24,6 @@ impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         CommonDateProvider::try_from(cldr_paths).map(DateSymbolsProvider)
-    }
-}
-
-impl KeyedDataProvider for DateSymbolsProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![DateSymbolsV1Marker::KEY]
     }
 }
 
