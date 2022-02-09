@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644432301593,
+  "lastUpdate": 1644448730214,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8873,6 +8873,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5ef9302855c9a1d8a02e99f2fe465ecf3fee1783"
         },
         "date": 1644432289921,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1571719,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "821b1c97bb073aa5c8eb2329c1d6efa1372205a8",
+          "message": "Upgrade ICU4X to use tinystr-neo, rename tinystr-neo to tinystr 0.5 (#1596)",
+          "timestamp": "2022-02-09T15:16:56-08:00",
+          "tree_id": "4ca8c102a36e84d9f3a7b5ce3294a5b53a353dcd",
+          "url": "https://github.com/unicode-org/icu4x/commit/821b1c97bb073aa5c8eb2329c1d6efa1372205a8"
+        },
+        "date": 1644448717344,
         "tool": "ndjson",
         "benches": [
           {
