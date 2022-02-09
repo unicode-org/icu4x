@@ -102,7 +102,11 @@ where
         .map(|s| s.get());
 
     match field.symbol {
-        FieldSymbol::TimeZone(_time_zone) => zoned_datetime_format.time_zone_format.format(w, loc_datetime.datetime())?,
+        FieldSymbol::TimeZone(_time_zone) => time_zone::write_field(
+            &zoned_datetime_format.time_zone_format,
+            loc_datetime.datetime(),
+            w,
+        )?,
         _ => datetime::write_field(pattern, field, symbols, loc_datetime, w)?,
     }
     Ok(())

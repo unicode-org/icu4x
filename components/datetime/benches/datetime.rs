@@ -67,7 +67,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let locale: Locale = setup.locale.parse().unwrap();
                     let options = fixtures::get_options(&setup.options);
                     let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                        locale, &provider, &provider, &provider, &options,
+                        locale, &provider, &provider, &provider, &options, None,
                     )
                     .unwrap();
 
@@ -204,7 +204,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                            locale, &provider, &provider, &provider, &options,
+                            locale, &provider, &provider, &provider, &options, None,
                         )
                         .unwrap();
 
@@ -232,7 +232,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                            locale, &provider, &provider, &provider, &options,
+                            locale, &provider, &provider, &provider, &options, None,
                         )
                         .unwrap();
 
@@ -257,7 +257,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                            locale, &provider, &provider, &provider, &options,
+                            locale, &provider, &provider, &provider, &options, None,
                         )
                         .unwrap();
 
@@ -286,7 +286,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                            locale, &provider, &provider, &provider, &options,
+                            locale, &provider, &provider, &provider, &options, None,
                         )
                         .unwrap();
 

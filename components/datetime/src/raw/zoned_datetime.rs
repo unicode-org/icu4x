@@ -21,7 +21,7 @@ use crate::{
         week_data::WeekDataV1Marker,
     },
     raw,
-    time_zone::TimeZoneFormat,
+    time_zone::{FallbackFormat, TimeZoneFormat},
     DateTimeFormatError,
 };
 
@@ -46,6 +46,7 @@ impl ZonedDateTimeFormat {
         plural_provider: &PP,
         options: &DateTimeFormatOptions,
         calendar: &'static str,
+        timezone_fallback_format: Option<FallbackFormat>,
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
@@ -124,6 +125,7 @@ impl ZonedDateTimeFormat {
                 .patterns
                 .clone(),
             zone_provider,
+            timezone_fallback_format,
         )?;
 
         Ok(Self {

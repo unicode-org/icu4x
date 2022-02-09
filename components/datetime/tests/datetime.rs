@@ -17,7 +17,7 @@ use icu_datetime::{
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
         week_data::WeekDataV1Marker,
     },
-    time_zone::TimeZoneFormat,
+    time_zone::{FallbackFormat, TimeZoneFormat},
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
@@ -161,7 +161,12 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
             let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                locale, &provider, &provider, &provider, &options,
+                locale,
+                &provider,
+                &provider,
+                &provider,
+                &options,
+                Some(FallbackFormat::LocalizedGmtFallback),
             )
             .unwrap();
             let result = dtf.format_to_string(&input_value);
@@ -305,30 +310,36 @@ fn test_time_zone_format_configs() {
         for TimeZoneExpectation {
             patterns: _,
             configs,
+            fallback_formats,
             expected,
         } in &test.expectations
         {
             for &config_input in configs {
-                let tzf = TimeZoneFormat::try_from_config(
-                    langid.clone(),
-                    config_input.into(),
-                    &zone_provider,
-                )
-                .unwrap();
-                let mut buffer = String::new();
-                tzf.format_to_write(&mut buffer, &datetime).unwrap();
-                assert_eq!(
-                    buffer.to_string(),
-                    *expected,
-                    "\n\
+                for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
+                    let tzf = TimeZoneFormat::try_from_config(
+                        langid.clone(),
+                        config_input.into(),
+                        &zone_provider,
+                        fallback_format.into(),
+                    )
+                    .unwrap();
+                    let mut buffer = String::new();
+                    tzf.format_to_write(&mut buffer, &datetime).unwrap();
+                    assert_eq!(
+                        buffer.to_string(),
+                        *expect,
+                        "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
                     config: `{:?}`,\n\
+                    fallback: `{:?}`\n
                     ",
-                    langid,
-                    test.datetime,
-                    config_input
-                );
+                        langid,
+                        test.datetime,
+                        config_input,
+                        fallback_format
+                    );
+                }
             }
         }
     }
@@ -401,6 +412,7 @@ fn test_time_zone_patterns() {
         for TimeZoneExpectation {
             patterns,
             configs: _,
+            fallback_formats,
             expected,
         } in &test.expectations
         {
@@ -432,26 +444,31 @@ fn test_time_zone_patterns() {
                     ],
                 };
 
-                let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-                    langid.clone(),
-                    &local_provider.as_downcasting(),
-                    &zone_provider,
-                    &plural_provider,
-                    &format_options,
-                )
-                .unwrap();
+                for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
+                    let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
+                        langid.clone(),
+                        &local_provider.as_downcasting(),
+                        &zone_provider,
+                        &plural_provider,
+                        &format_options,
+                        fallback_format.into(),
+                    )
+                    .unwrap();
 
-                assert_eq!(
-                    dtf.format(&datetime).to_string(),
-                    *expected,
-                    "\n\
+                    assert_eq!(
+                        dtf.format(&datetime).to_string(),
+                        *expect,
+                        "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
-                    pattern:  `{}`",
-                    langid,
-                    test.datetime,
-                    pattern_input,
-                );
+                    pattern:  `{}`\n
+                    fallback: `{:?}`\n",
+                        langid,
+                        test.datetime,
+                        pattern_input,
+                        fallback_format,
+                    );
+                }
             }
         }
     }

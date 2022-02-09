@@ -5,14 +5,11 @@
 use core::fmt;
 
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, FieldSymbol};
-use crate::pattern::{PatternError, PatternItem};
+use crate::pattern::PatternItem;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::{
     date::TimeZoneInput,
-    time_zone::{
-        IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatKind,
-    },
+    time_zone::{TimeZoneFormat, TimeZoneFormatKind},
 };
 use icu_provider::DataPayload;
 use writeable::Writeable;
@@ -54,6 +51,62 @@ where
     T: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    time_zone_format.format(w, time_zone);
+    match &time_zone_format.kind {
+        TimeZoneFormatKind::Pattern(patterns) => {
+            write_pattern(time_zone_format, time_zone, patterns, w)
+        }
+        TimeZoneFormatKind::Config(_) => write_config(time_zone_format, time_zone, w),
+    }
+}
+
+fn write_config<T, W>(
+    time_zone_format: &TimeZoneFormat,
+    time_zone: &T,
+    w: &mut W,
+) -> Result<(), Error>
+where
+    T: TimeZoneInput,
+    W: fmt::Write + ?Sized,
+{
+    time_zone_format.format(w, time_zone)?;
+    Ok(())
+}
+
+fn write_pattern<T, W>(
+    time_zone_format: &TimeZoneFormat,
+    time_zone: &T,
+    patterns: &DataPayload<PatternPluralsFromPatternsV1Marker>,
+    w: &mut W,
+) -> Result<(), Error>
+where
+    T: TimeZoneInput,
+    W: fmt::Write + ?Sized,
+{
+    let pattern = patterns
+        .get()
+        .0
+        .clone()
+        .expect_pattern("Expected a single pattern");
+    for item in pattern.items.iter() {
+        match item {
+            PatternItem::Field(_) => write_field(time_zone_format, time_zone, w)?,
+            PatternItem::Literal(ch) => w.write_char(ch)?,
+        }
+    }
+    Ok(())
+}
+
+/// Write fields according to the UTS-35 specification.
+/// https://unicode.org/reports/tr35/tr35-dates.html#dfst-zone
+pub(super) fn write_field<T, W>(
+    time_zone_format: &TimeZoneFormat,
+    time_zone: &T,
+    w: &mut W,
+) -> Result<(), Error>
+where
+    T: TimeZoneInput,
+    W: fmt::Write + ?Sized,
+{
+    time_zone_format.format(w, time_zone)?;
     Ok(())
 }

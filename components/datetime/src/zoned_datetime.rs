@@ -17,7 +17,9 @@ use crate::{
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
         week_data::WeekDataV1Marker,
     },
-    raw, CldrCalendar, DateTimeFormatError,
+    raw,
+    time_zone::FallbackFormat,
+    CldrCalendar, DateTimeFormatError,
 };
 
 /// The composition of [`DateTimeFormat`](crate::DateTimeFormat) and [`TimeZoneFormat`](crate::TimeZoneFormat).
@@ -51,7 +53,7 @@ use crate::{
 ///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
-/// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale!("en"), &date_provider, &zone_provider, &plural_provider, &options.into())
+/// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale!("en"), &date_provider, &zone_provider, &plural_provider, &options.into(), None)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -83,7 +85,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale!("en"), &date_provider, &zone_provider, &plural_provider, &options);
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale!("en"), &date_provider, &zone_provider, &plural_provider, &options, None);
     ///
     /// assert_eq!(zdtf.is_ok(), true);
     /// ```
@@ -96,6 +98,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
         zone_provider: &ZP,
         plural_provider: &PP,
         options: &DateTimeFormatOptions,
+        timezone_fallback_format: Option<FallbackFormat>,
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
@@ -120,6 +123,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
                 plural_provider,
                 options,
                 C::IDENTIFIER,
+                timezone_fallback_format,
             )?,
             PhantomData,
         ))
@@ -140,7 +144,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = icu::datetime::DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options)
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options, None)
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -178,7 +182,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = icu::datetime::DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into(), None)
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
@@ -214,7 +218,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
     /// # let zone_provider = InvariantDataProvider;
     /// # let plural_provider = InvariantDataProvider;
     /// # let options = icu::datetime::DateTimeFormatOptions::default();
-    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into())
+    /// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(locale, &date_provider, &zone_provider, &plural_provider, &options.into(), None)
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
     /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
