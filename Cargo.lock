@@ -365,7 +365,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1057,7 +1057,7 @@ dependencies = [
  "icu_provider",
  "litemap",
  "serde",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1082,7 +1082,7 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "log",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
  "writeable",
 ]
 
@@ -1152,7 +1152,7 @@ dependencies = [
  "serde-tuple-vec-map",
  "serde_json",
  "smallvec",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
  "writeable",
  "zerovec",
 ]
@@ -1210,7 +1210,7 @@ dependencies = [
  "litemap",
  "serde",
  "serde_json",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1223,7 +1223,7 @@ dependencies = [
  "icu_benchmark_macros",
  "serde",
  "serde_json",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
  "writeable",
 ]
 
@@ -1234,7 +1234,7 @@ dependencies = [
  "icu",
  "icu_locid",
  "proc-macro-crate",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1296,7 +1296,7 @@ dependencies = [
  "serde",
  "serde_json",
  "static_assertions",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
  "writeable",
  "yoke",
  "zerovec",
@@ -1351,7 +1351,7 @@ dependencies = [
  "serde_json",
  "smallstr",
  "smallvec",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
  "unzip",
  "urlencoding",
  "writeable",
@@ -1466,7 +1466,7 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
- "tinystr 0.4.11",
+ "tinystr 0.5.0",
  "yoke",
  "zerovec",
 ]

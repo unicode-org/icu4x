@@ -49,7 +49,7 @@ deserialize_postcard_07 = ["serde", "postcard"]
 
 [dependencies]
 icu_locid = { version = "0.5", path = "../../components/locid" }
-tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
+tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.4.0", path = "../../utils/yoke", features = ["serde", "derive"] }

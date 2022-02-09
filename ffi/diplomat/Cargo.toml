@@ -68,7 +68,7 @@ icu_properties = { path = "../../components/properties/" }
 icu_provider = { path = "../../provider/core", features = ["serde"] }
 icu_provider_blob = { path = "../../provider/blob" }
 icu_segmenter = { path = "../../experimental/segmenter" }
-tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
+tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
