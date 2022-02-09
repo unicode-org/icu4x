@@ -61,6 +61,11 @@ impl<const N: usize> TinyAsciiStr<N> {
     }
 
     #[inline]
+    pub fn as_str(&self) -> &str {
+        &*self
+    }
+
+    #[inline]
     #[must_use]
     pub fn len(&self) -> usize {
         if N <= 4 {
@@ -98,7 +103,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "Test".parse()
     ///     .expect("Failed to parse.");
@@ -129,7 +134,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "A15b".parse()
     ///     .expect("Failed to parse.");
@@ -158,7 +163,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "312".parse()
     ///     .expect("Failed to parse.");
@@ -187,7 +192,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "TeS3".parse()
     ///     .expect("Failed to parse.");
@@ -217,7 +222,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "test".parse()
     ///     .expect("Failed to parse.");
@@ -247,7 +252,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "Tes3".parse()
     ///     .expect("Failed to parse.");
@@ -299,6 +304,18 @@ impl<const N: usize> FromStr for TinyAsciiStr<N> {
     #[inline]
     fn from_str(s: &str) -> Result<Self, TinyStrError> {
         Self::from_str(s)
+    }
+}
+
+impl<const N: usize> PartialEq<str> for TinyAsciiStr<N> {
+    fn eq(&self, other: &str) -> bool {
+        self.deref() == other
+    }
+}
+
+impl<const N: usize> PartialEq<&str> for TinyAsciiStr<N> {
+    fn eq(&self, other: &&str) -> bool {
+        self.deref() == *other
     }
 }
 

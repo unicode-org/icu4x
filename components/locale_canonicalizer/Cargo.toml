@@ -35,7 +35,7 @@ icu_locid = { version = "0.5", path = "../locid" }
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
-tinystr = { version = "0.4.10", default-features = false, features = ["alloc", "serde"] }
+tinystr = { path = "../../utils/tinystr", version = "0.5.0", default-features = false, features = ["alloc", "serde"] }
 
 [dev-dependencies]
 criterion = "0.3.3"

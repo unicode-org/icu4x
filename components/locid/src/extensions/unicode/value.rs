@@ -35,7 +35,7 @@ use tinystr::TinyStr8;
 pub struct Value(Box<[TinyStr8]>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_VALUE: TinyStr8 = tinystr::tinystr8!("true");
+const TRUE_VALUE: TinyStr8 = tinystr::tinystr!(8, "true");
 
 impl Value {
     /// A constructor which takes a utf8 slice, parses it and

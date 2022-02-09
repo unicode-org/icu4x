@@ -38,7 +38,7 @@ icu_provider = { version = "0.5", path = "../../provider/core", features = ["mac
 icu_calendar = { version = "0.5", path = "../calendar" }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 litemap = { version = "0.3.0", path = "../../utils/litemap" }
-tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
+tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde-tuple-vec-map = { version = "1.0", optional = true }

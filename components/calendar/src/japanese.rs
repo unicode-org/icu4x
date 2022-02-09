@@ -8,7 +8,7 @@ use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{self, EraStartDate};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use icu_provider::prelude::*;
-use tinystr::{tinystr16, TinyStr16};
+use tinystr::{tinystr, TinyStr16};
 
 #[derive(Clone, Debug, Default)]
 /// The Japanese Calendar
@@ -158,7 +158,7 @@ const REIWA_START: EraStartDate = EraStartDate {
     day: 1,
 };
 
-const FALLBACK_ERA: (EraStartDate, TinyStr16) = (REIWA_START, tinystr16!("reiwa"));
+const FALLBACK_ERA: (EraStartDate, TinyStr16) = (REIWA_START, tinystr!(16, "reiwa"));
 
 impl Japanese {
     /// Given an ISO date, obtain the era data
@@ -173,15 +173,15 @@ impl Japanese {
             if era_data.dates_to_eras.len() == 5 {
                 // Fast path in case eras have not changed since this code was written
                 if date >= REIWA_START {
-                    (REIWA_START, tinystr16!("reiwa"))
+                    (REIWA_START, tinystr!(16, "reiwa"))
                 } else if date >= HEISEI_START {
-                    (HEISEI_START, tinystr16!("heisei"))
+                    (HEISEI_START, tinystr!(16, "heisei"))
                 } else if date >= SHOWA_START {
-                    (SHOWA_START, tinystr16!("showa"))
+                    (SHOWA_START, tinystr!(16, "showa"))
                 } else if date >= TAISHO_START {
-                    (TAISHO_START, tinystr16!("taisho"))
+                    (TAISHO_START, tinystr!(16, "taisho"))
                 } else {
-                    (MEIJI_START, tinystr16!("meiji"))
+                    (MEIJI_START, tinystr!(16, "meiji"))
                 }
             } else {
                 era_data

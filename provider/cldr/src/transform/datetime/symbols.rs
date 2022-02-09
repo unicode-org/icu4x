@@ -15,7 +15,7 @@ use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use tinystr::{tinystr16, TinyStr16};
+use tinystr::{tinystr, TinyStr16};
 
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
@@ -94,12 +94,12 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
 fn get_era_code_map(calendar: &str) -> LiteMap<String, TinyStr16> {
     match calendar {
         "gregory" => vec![
-            ("0".to_string(), tinystr16!("bc")),
-            ("1".to_string(), tinystr16!("ad")),
+            ("0".to_string(), tinystr!(16, "bc")),
+            ("1".to_string(), tinystr!(16, "ad")),
         ]
         .into_iter()
         .collect(),
-        "buddhist" => vec![("0".to_string(), tinystr16!("be"))]
+        "buddhist" => vec![("0".to_string(), tinystr!(16, "be"))]
             .into_iter()
             .collect(),
         "japanese" => crate::transform::calendar::japanese::get_era_code_map(),

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use tinystr_neo::*;
+use tinystr::*;
 
 // Tests largely adapted from `tinystr` crate
 // https://github.com/zbraniecki/tinystr/blob/4e4eab55dd6bded7f29a18b41452c506c461716c/tests/serde.rs
