@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644432868544,
+  "lastUpdate": 1644449278832,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26375,6 +26375,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18318,
             "range": "± 1030",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "821b1c97bb073aa5c8eb2329c1d6efa1372205a8",
+          "message": "Upgrade ICU4X to use tinystr-neo, rename tinystr-neo to tinystr 0.5 (#1596)",
+          "timestamp": "2022-02-09T15:16:56-08:00",
+          "tree_id": "4ca8c102a36e84d9f3a7b5ce3294a5b53a353dcd",
+          "url": "https://github.com/unicode-org/icu4x/commit/821b1c97bb073aa5c8eb2329c1d6efa1372205a8"
+        },
+        "date": 1644449266843,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1138,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6583,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18024,
+            "range": "± 19",
             "unit": "ns/iter"
           }
         ]
