@@ -18,7 +18,7 @@ mod time_zones;
 use crate::support::KeyedDataProvider;
 use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 
@@ -58,7 +58,7 @@ macro_rules! cldr_json_data_provider {
             }
         }
 
-        impl<'a> IterableProvider for CldrJsonDataProvider<'a> {
+        impl<'a> IterableDynProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
             fn supported_options_for_key(
                 &self,
                 resc_key: &ResourceKey,

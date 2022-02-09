@@ -8,7 +8,7 @@ use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{key, ScriptExtensionsPropertyV1, ScriptExtensionsPropertyV1Marker};
 use icu_properties::script::{ScriptExtensions, ScriptWithExt};
 use icu_properties::Script;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;
@@ -101,7 +101,7 @@ icu_provider::impl_dyn_provider!(ScriptExtensionsPropertyProvider, {
     key::SCRIPT_EXTENSIONS_V1 => ScriptExtensionsPropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableProvider for ScriptExtensionsPropertyProvider {
+impl IterableDynProvider<ScriptExtensionsPropertyV1Marker> for ScriptExtensionsPropertyProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

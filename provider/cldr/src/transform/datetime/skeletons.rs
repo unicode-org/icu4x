@@ -12,7 +12,7 @@ use icu_datetime::skeleton::SkeletonError;
 
 use crate::support::KeyedDataProvider;
 use icu_plurals::PluralCategory;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -56,12 +56,11 @@ icu_provider::impl_dyn_provider!(
     SERDE_SE
 );
 
-impl IterableProvider for DateSkeletonPatternsProvider {
-    fn supported_options_for_key(
+impl IterableResourceProvider<DateSkeletonPatternsV1Marker> for DateSkeletonPatternsProvider {
+    fn supported_options(
         &self,
-        resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        self.0.supported_options_for_key(resc_key)
+        self.0.supported_options()
     }
 }
 

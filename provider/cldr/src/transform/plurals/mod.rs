@@ -9,7 +9,7 @@ use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -68,20 +68,16 @@ impl PluralsProvider {
     }
 }
 
-impl DynProvider<PluralRulesV1Marker> for PluralsProvider {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<PluralRulesV1Marker>, DataError> {
-        let cldr_rules = self.get_rules_for(&key)?;
+impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> for PluralsProvider {
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        let cldr_rules = self.get_rules_for(&M::KEY)?;
         // TODO: Implement language fallback?
         let langid = req
             .get_langid()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, req))?;
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
         let r = match cldr_rules.0.get(langid) {
             Some(v) => v,
-            None => return Err(DataErrorKind::MissingLocale.with_req(key, req)),
+            None => return Err(DataErrorKind::MissingLocale.with_req(M::KEY, req)),
         };
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
@@ -92,17 +88,20 @@ impl DynProvider<PluralRulesV1Marker> for PluralsProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(PluralsProvider, {
-    _ => PluralRulesV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    PluralsProvider,
+    [OrdinalV1Marker, CardinalV1Marker,],
+    SERDE_SE
+);
 
-impl IterableProvider for PluralsProvider {
-    fn supported_options_for_key(
+impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>
+    for PluralsProvider
+{
+    fn supported_options(
         &self,
-        resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
-            self.get_rules_for(resc_key)?
+            self.get_rules_for(&M::KEY)?
                 .0
                 .iter_keys()
                 // TODO(#568): Avoid the clone

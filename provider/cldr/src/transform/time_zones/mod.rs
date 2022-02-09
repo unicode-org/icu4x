@@ -9,7 +9,7 @@ use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 
@@ -55,82 +55,58 @@ impl TryFrom<&str> for TimeZonesProvider {
     }
 }
 
-impl KeyedDataProvider for TimeZonesProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![
-            TimeZoneFormatsV1Marker::KEY,
-            ExemplarCitiesV1Marker::KEY,
-            MetaZoneGenericNamesLongV1Marker::KEY,
-            MetaZoneGenericNamesShortV1Marker::KEY,
-            MetaZoneSpecificNamesLongV1Marker::KEY,
-            MetaZoneSpecificNamesShortV1Marker::KEY,
-        ]
-    }
-}
-
-impl IterableProvider for TimeZonesProvider {
-    fn supported_options_for_key(
-        &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        Ok(Box::new(
-            self.data
-                .iter_keys()
-                // TODO(#568): Avoid the clone
-                .cloned()
-                .map(Into::<ResourceOptions>::into),
-        ))
-    }
-}
-
 macro_rules! impl_data_provider {
-    ($id:ident, $marker:ident) => {
-        impl ResourceProvider<$marker> for TimeZonesProvider {
-            fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                let langid = req
-                    .get_langid()
-                    .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
-                let time_zones = match self.data.get(&langid) {
-                    Some(v) => &v.dates.time_zone_names,
-                    None => return Err(DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req)),
-                };
-                let metadata = DataResponseMetadata::default();
-                // TODO(#1109): Set metadata.data_langid correctly.
-                Ok(DataResponse {
-                    metadata,
-                    payload: Some(DataPayload::from_owned($id::from(time_zones.clone()))),
-                })
+    ($($marker:ident),+) => {
+        $(
+            impl ResourceProvider<$marker> for TimeZonesProvider {
+                fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    let langid = req
+                        .get_langid()
+                        .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
+                    let time_zones = match self.data.get(&langid) {
+                        Some(v) => &v.dates.time_zone_names,
+                        None => return Err(DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req)),
+                    };
+                    let metadata = DataResponseMetadata::default();
+                    // TODO(#1109): Set metadata.data_langid correctly.
+                    Ok(DataResponse {
+                        metadata,
+                        payload: Some(DataPayload::from_owned(<$marker as DataMarker>::Yokeable::from(time_zones.clone()))),
+                    })
+                }
+            }
+
+            impl IterableResourceProvider<$marker> for TimeZonesProvider {
+                fn supported_options(
+                    &self,
+                ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+                    Ok(Box::new(
+                        self.data
+                            .iter_keys()
+                            // TODO(#568): Avoid the clone
+                            .cloned()
+                            .map(Into::<ResourceOptions>::into),
+                    ))
+                }
+            }
+        )+
+
+        impl KeyedDataProvider for TimeZonesProvider {
+            fn supported_keys() -> Vec<ResourceKey> {
+                vec![$(<$marker>::KEY),+]
             }
         }
+
+        icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE);
     };
 }
 
-icu_provider::impl_dyn_provider!(
-    TimeZonesProvider,
-    [
-        TimeZoneFormatsV1Marker,
-        ExemplarCitiesV1Marker,
-        MetaZoneGenericNamesLongV1Marker,
-        MetaZoneGenericNamesShortV1Marker,
-        MetaZoneSpecificNamesLongV1Marker,
-        MetaZoneSpecificNamesShortV1Marker,
-    ],
-    SERDE_SE
-);
-
-impl_data_provider!(TimeZoneFormatsV1, TimeZoneFormatsV1Marker);
-impl_data_provider!(ExemplarCitiesV1, ExemplarCitiesV1Marker);
-impl_data_provider!(MetaZoneGenericNamesLongV1, MetaZoneGenericNamesLongV1Marker);
 impl_data_provider!(
-    MetaZoneGenericNamesShortV1,
-    MetaZoneGenericNamesShortV1Marker
-);
-impl_data_provider!(
-    MetaZoneSpecificNamesLongV1,
-    MetaZoneSpecificNamesLongV1Marker
-);
-impl_data_provider!(
-    MetaZoneSpecificNamesShortV1,
+    TimeZoneFormatsV1Marker,
+    ExemplarCitiesV1Marker,
+    MetaZoneGenericNamesLongV1Marker,
+    MetaZoneGenericNamesShortV1Marker,
+    MetaZoneSpecificNamesLongV1Marker,
     MetaZoneSpecificNamesShortV1Marker
 );
 

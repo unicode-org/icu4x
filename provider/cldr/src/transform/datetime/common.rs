@@ -81,9 +81,8 @@ impl CommonDateProvider {
 }
 
 impl CommonDateProvider {
-    pub fn supported_options_for_key(
+    pub fn supported_options(
         &self,
-        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(self.data.iter().flat_map(|(cal, map)| {
             let cal = Some((*cal).into());

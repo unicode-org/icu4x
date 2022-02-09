@@ -65,9 +65,9 @@ Examples of source data providers include:
 
 Source data providers must implement the following traits:
 
-- `DataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
-- `DataProvider<SerdeSeDataStructMarker>`, usually implemented with the macro [`impl_dyn_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dyn_provider.html)
-- [`IterableProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/iter/trait.IterableProvider.html), required for the data exporter (see below)
+- `ResourceProvider<M>` or `DynProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
+- `IterableDynProvider<M>`. or `IterableResourceProvider<M>`, required for the data exporter (see below)
+- `DynProvider<SerializeMarker>` and `IterableDynProvider<SerializeMarker>`, usually implemented with the macro [`impl_dyn_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dyn_provider.html) after the above traits have been implemented
 
 Source data providers are often complex to write. Rules of thumb:
 
@@ -216,10 +216,9 @@ impl ResourceProvider<FooV1Marker> for FooProvider {
     }
 }
 
-impl IterableProvider for FooProvider {
-    fn supported_options_for_key(
+impl IterableResourceProvider<FooV1Marker> for FooProvider {
+    fn supported_options(
         &self,
-        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         // This should list all supported locales, for example.
     }
@@ -231,7 +230,7 @@ impl KeyedDataProvider for FooProvider {
     }
 }
 
-// Once we have ResourceProvider, IterableProvider, and KeyedDataProvider, we can
+// Once we have ResourceProvider, IterableResourceProvider, and KeyedDataProvider, we can
 // implement DynProvider<SerializeMarker>.
 icu_provider::impl_dyn_provider!(FooProvider, [
     FooV1Marker,

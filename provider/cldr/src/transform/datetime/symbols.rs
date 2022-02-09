@@ -11,7 +11,7 @@ use crate::CldrPaths;
 use icu_datetime::provider::calendar::*;
 
 use crate::support::KeyedDataProvider;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -55,12 +55,11 @@ impl ResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
 
 icu_provider::impl_dyn_provider!(DateSymbolsProvider, [DateSymbolsV1Marker,], SERDE_SE);
 
-impl IterableProvider for DateSymbolsProvider {
-    fn supported_options_for_key(
+impl IterableResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
+    fn supported_options(
         &self,
-        resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        self.0.supported_options_for_key(resc_key)
+        self.0.supported_options()
     }
 }
 

@@ -8,7 +8,7 @@ use crate::reader::open_reader;
 use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 
@@ -65,11 +65,8 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
 
 icu_provider::impl_dyn_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,], SERDE_SE);
 
-impl IterableProvider for LikelySubtagsProvider {
-    fn supported_options_for_key(
-        &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }

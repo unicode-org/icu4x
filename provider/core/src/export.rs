@@ -4,7 +4,7 @@
 
 //! Types having to do with the exporting of data.
 
-use crate::iter::IterableProvider;
+use crate::iter::IterableDynProvider;
 use crate::prelude::*;
 
 /// An object capable of serializing data payloads to be read by a data provider.
@@ -33,11 +33,11 @@ where
     }
 }
 
-/// Convenience function to drive a [`DataExporter`] from an [`IterableProvider`].
+/// Convenience function to drive a [`DataExporter`] from an [`IterableDynProvider`].
 ///
 /// # Example
 ///
-/// [`HelloWorldProvider`] implements both [`DataExporter`] and [`IterableProvider`]. The
+/// [`HelloWorldProvider`] implements both [`DataExporter`] and [`IterableDynProvider`]. The
 /// following example copies the data from one instance to another instance.
 ///
 /// ```
@@ -65,7 +65,7 @@ pub fn export_from_iterable<P, E, M>(
 ) -> Result<(), DataError>
 where
     M: DataMarker,
-    P: DynProvider<M> + IterableProvider + ?Sized,
+    P: IterableDynProvider<M> + ?Sized,
     E: DataExporter<M> + ?Sized,
 {
     let it = provider.supported_options_for_key(resc_key)?;

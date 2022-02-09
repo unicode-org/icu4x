@@ -203,6 +203,21 @@ macro_rules! impl_dyn_provider {
                 }
             }
         }
+
+        impl $crate::iter::IterableDynProvider<$dyn_m> for $provider {
+            fn supported_options_for_key(&self, key: &$crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+                match *key {
+                    $(
+                        $pat => {
+                            $crate::iter::IterableDynProvider::<$struct_m>::supported_options_for_key(self, key)
+                        }
+                    )+,
+                    // Don't complain if the call site has its own wildcard match
+                    #[allow(unreachable_patterns)]
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(*key))
+                }
+            }
+        }
     };
     ($provider:ty, [ $($struct_m:ty),+, ], $dyn_m:path) => {
         impl $crate::DynProvider<$dyn_m> for $provider
@@ -228,9 +243,21 @@ macro_rules! impl_dyn_provider {
                             })
                         }
                     )+,
-                    // Don't complain if the call site has its own wildcard match
-                    #[allow(unreachable_patterns)]
                     _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
+                }
+            }
+        }
+
+        impl $crate::iter::IterableDynProvider<$dyn_m> for $provider
+        {
+            fn supported_options_for_key(&self, key: &$crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+                match *key {
+                    $(
+                        <$struct_m as $crate::ResourceMarker>::KEY => {
+                            $crate::iter::IterableResourceProvider::<$struct_m>::supported_options(self)
+                        }
+                    )+,
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(*key))
                 }
             }
         }

@@ -83,8 +83,8 @@ structs to borrow zero-copy data.
 
 #### `IterableDataProvider`
 
-Data providers can implement [`IterableProvider`], allowing iteration over all
-[`ResourceOptions`] instances supported for a certain key in the data provider.
+Data providers can implement [`IterableDynProvider`]/[`IterableResourceProvider`], allowing
+iteration over all [`ResourceOptions`] instances supported for a certain key in the data provider.
 
 For more information, see the [`iter`] module.
 
@@ -101,7 +101,8 @@ This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 [`DataProvider`]: data_provider::DataProvider
 [`ResourceKey`]: resource::ResourceKey
 [`ResourceOptions`]: resource::ResourceOptions
-[`IterableProvider`]: iter::IterableProvider
+[`IterableDynProvider`]: iter::IterableDynProvider
+[`IterableResourceProvider`]: iter::IterableResourceProvider
 [`InvariantDataProvider`]: inv::InvariantDataProvider
 [`AnyPayloadProvider`]: struct_provider::AnyPayloadProvider
 [`HelloWorldProvider`]: hello_world::HelloWorldProvider
