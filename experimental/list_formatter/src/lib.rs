@@ -49,11 +49,9 @@
 extern crate alloc;
 
 mod list_formatter;
-#[cfg(feature = "provider_transform_internals")]
-pub mod provider;
-#[cfg(not(feature = "provider_transform_internals"))]
-mod provider;
 mod string_matcher;
+
+pub mod provider;
 
 pub use list_formatter::*;
 

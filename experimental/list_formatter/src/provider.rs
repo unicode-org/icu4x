@@ -12,9 +12,7 @@ use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 use writeable::{LengthHint, Writeable};
 
-/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter). Requires
-/// feature "provider_transform_internals".
-// (the feature makes it pub)
+/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 #[icu_provider::data_struct(
     ErasedListV1Marker,
     AndListV1Marker = "list/and@1",
