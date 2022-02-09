@@ -420,7 +420,7 @@ fn test_length_fixtures() {
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
             metazone_id: Some(String::from("America_Pacific")),
-            time_variant: Some(tinystr8!("daylight")),
+            time_variant: Some(tinystr!(8, "daylight")),
             ..TimeZoneConfig::default()
         },
     );

@@ -190,7 +190,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
-            specific_names_long.get()["Australia_CentralWestern"][&tinystr8!("standard")]
+            specific_names_long.get()["Australia_CentralWestern"][&tinystr!(8, "standard")]
         );
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
@@ -213,7 +213,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PDT",
-            specific_names_short.get()["America_Pacific"][&tinystr8!("daylight")]
+            specific_names_short.get()["America_Pacific"][&tinystr!(8, "daylight")]
         );
     }
 }

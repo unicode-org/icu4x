@@ -233,8 +233,8 @@ impl LocaleCanonicalizer {
         // The `rg` region override and `sd` regional subdivision keys may contain
         // language codes that require canonicalization.
         let extension_keys = vec![
-            Key::from_tinystr4_unchecked(tinystr4!("rg")),
-            Key::from_tinystr4_unchecked(tinystr4!("sd")),
+            Key::from_tinystr4_unchecked(tinystr!(4, "rg")),
+            Key::from_tinystr4_unchecked(tinystr!(4, "sd")),
         ];
         let aliases: DataPayload<AliasesV1Marker> = provider
             .load_resource(&DataRequest::default())?

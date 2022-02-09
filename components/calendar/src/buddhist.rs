@@ -128,7 +128,7 @@ impl DateTime<Buddhist> {
 fn iso_year_as_buddhist(year: IsoYear) -> types::Year {
     let buddhist_year = year.0 + BUDDHIST_ERA_OFFSET;
     types::Year {
-        era: types::Era(tinystr16!("be")),
+        era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
         related_iso: year.0,
     }
