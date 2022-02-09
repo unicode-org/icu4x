@@ -166,7 +166,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
                 &provider,
                 &provider,
                 &options,
-                Some(FallbackFormat::LocalizedGmtFallback),
+                Some(FallbackFormat::LocalizedGmt),
             )
             .unwrap();
             let result = dtf.format_to_string(&input_value);
