@@ -11,6 +11,7 @@ use crate::ListStyle;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 use writeable::{LengthHint, Writeable};
+use icu_provider::DataMarker;
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 #[icu_provider::data_struct(
