@@ -14,7 +14,6 @@ use writeable::{LengthHint, Writeable};
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 #[icu_provider::data_struct(
-    ErasedListV1Marker,
     AndListV1Marker = "list/and@1",
     OrListV1Marker = "list/or@1",
     UnitListV1Marker = "list/unit@1"
@@ -33,6 +32,12 @@ pub struct ListFormatterPatternsV1<'data>(
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
     [ConditionalListJoinerPattern<'data>; 12],
 );
+
+pub(crate) struct ErasedListV1Marker;
+
+impl DataMarker for ErasedListV1Marker {
+    type Yokeable = ListFormatterPatternsV1<'static>;
+}
 
 impl<'data> ListFormatterPatternsV1<'data> {
     pub(crate) fn start(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
