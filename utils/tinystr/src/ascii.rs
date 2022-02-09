@@ -307,6 +307,18 @@ impl<const N: usize> FromStr for TinyAsciiStr<N> {
     }
 }
 
+impl<const N: usize> PartialEq<str> for TinyAsciiStr<N> {
+    fn eq(&self, other: &str) -> bool {
+        self.deref() == other
+    }
+}
+
+impl<const N: usize> PartialEq<&str> for TinyAsciiStr<N> {
+    fn eq(&self, other: &&str) -> bool {
+        self.deref() == *other
+    }
+}
+
 #[cfg(feature = "alloc")]
 impl<const N: usize> PartialEq<alloc::string::String> for TinyAsciiStr<N> {
     fn eq(&self, other: &alloc::string::String) -> bool {
