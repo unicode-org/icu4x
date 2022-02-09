@@ -57,6 +57,7 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::iter::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -67,6 +68,13 @@ where
 ///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 ///         let provider = InvariantDataProvider;
 ///         provider.load_resource(req)
+///     }
+/// }
+///
+/// impl IterableResourceProvider<HelloWorldV1Marker> for MyProvider {
+///     fn supported_options(&self)
+///         -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+///         Ok(Box::new(core::iter::once(Default::default())))
 ///     }
 /// }
 ///
@@ -98,6 +106,7 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::iter::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -108,6 +117,13 @@ where
 ///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 ///         let provider = InvariantDataProvider;
 ///         provider.load_resource(req)
+///     }
+/// }
+///
+/// impl IterableDynProvider<HelloWorldV1Marker> for MyProvider {
+///     fn supported_options_for_key(&self, _key: &ResourceKey)
+///         -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+///         Ok(Box::new(core::iter::once(Default::default())))
 ///     }
 /// }
 ///

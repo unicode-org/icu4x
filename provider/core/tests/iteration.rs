@@ -5,14 +5,14 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_provider::hello_world::*;
-use icu_provider::iter::IterableDynProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 
 #[test]
 fn test_supported_langids() {
     let provider = HelloWorldProvider::new_with_placeholder_data();
     let mut supported_langids: Vec<LanguageIdentifier> = provider
-        .supported_options_for_key(&HelloWorldV1Marker::KEY)
+        .supported_options()
         .unwrap()
         .map(|resc_options| resc_options.langid.unwrap())
         .collect();
