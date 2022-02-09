@@ -5,7 +5,7 @@
 //! Serde structs representing CLDR JSON weekData.json files.
 //!
 //! Sample file:
-//! https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json
+//! `<https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json>`
 
 use core::convert::TryFrom;
 use serde::{Deserialize, Deserializer};
