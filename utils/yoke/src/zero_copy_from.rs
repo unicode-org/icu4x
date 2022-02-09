@@ -12,7 +12,7 @@ use alloc::string::String;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
 
-/// Trait for types that can be crated from a reference to a cart type `C` with no allocations.
+/// Trait for types that can be created from a reference to a cart type `C` with no allocations.
 ///
 /// A type can be the `ZeroCopyFrom` target of multiple cart types.
 ///
