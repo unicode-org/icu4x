@@ -1,4 +1,4 @@
-# tinystr-neo [![crates.io](https://img.shields.io/crates/v/tinystr-neo)](https://crates.io/crates/tinystr-neo)
+# tinystr [![crates.io](https://img.shields.io/crates/v/tinystr)](https://crates.io/crates/tinystr)
 
 
 

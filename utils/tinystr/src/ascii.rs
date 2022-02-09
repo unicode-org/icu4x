@@ -103,7 +103,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "Test".parse()
     ///     .expect("Failed to parse.");
@@ -134,7 +134,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "A15b".parse()
     ///     .expect("Failed to parse.");
@@ -163,7 +163,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "312".parse()
     ///     .expect("Failed to parse.");
@@ -192,7 +192,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "TeS3".parse()
     ///     .expect("Failed to parse.");
@@ -222,7 +222,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "test".parse()
     ///     .expect("Failed to parse.");
@@ -252,7 +252,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "Tes3".parse()
     ///     .expect("Failed to parse.");
