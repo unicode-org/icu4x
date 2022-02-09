@@ -43,7 +43,7 @@ use alloc::sync::Arc;
 /// ()`. `.get()` protects access by essentially reifying the erased lifetime to a safe local one
 /// when necessary.
 ///
-/// Furthermore, There are various [`.project()`][Yoke::project] methods that allow turning a `Yoke`
+/// Furthermore, there are various [`.project()`][Yoke::project] methods that allow turning a `Yoke`
 /// into another `Yoke` containing a different type that may contain elements of the original yoked
 /// value. See the [`Yoke::project()`] docs for more details.
 ///
