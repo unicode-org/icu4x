@@ -136,7 +136,7 @@ impl_data_provider!(
 
 #[cfg(test)]
 mod tests {
-    use tinystr::tinystr8;
+    use tinystr::tinystr;
 
     use super::*;
 

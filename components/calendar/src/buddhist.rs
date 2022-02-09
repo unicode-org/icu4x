@@ -7,7 +7,7 @@
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::TryInto;
-use tinystr::tinystr16;
+use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
 ///

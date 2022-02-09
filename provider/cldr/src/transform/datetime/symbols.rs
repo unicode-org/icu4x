@@ -15,7 +15,7 @@ use icu_provider::iter::IterableProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use tinystr::{tinystr16, TinyStr16};
+use tinystr::{tinystr, TinyStr16};
 
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]

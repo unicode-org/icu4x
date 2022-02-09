@@ -8,7 +8,7 @@ use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{self, EraStartDate};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use icu_provider::prelude::*;
-use tinystr::{tinystr16, TinyStr16};
+use tinystr::{tinystr, TinyStr16};
 
 #[derive(Clone, Debug, Default)]
 /// The Japanese Calendar

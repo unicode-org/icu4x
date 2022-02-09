@@ -7,7 +7,7 @@
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::TryInto;
-use tinystr::tinystr16;
+use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The Gregorian Calendar

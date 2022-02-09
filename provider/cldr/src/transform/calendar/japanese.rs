@@ -157,7 +157,7 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     // contains ascii lowercase letters, followed
     // by a hyphen and then a year name (except for post-Meiji era codes)
     //
-    // We also want it to fit in a tinystr16. What we will do is:
+    // We also want it to fit in a tinystr. What we will do is:
     //
     // - only look at the actual name
     // - normalize by removing hyphens and apostrophes, as well as converting ō/ū

@@ -14,7 +14,7 @@ use icu_locid::{
     subtags, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
-use tinystr::{tinystr4, TinyStr4, TinyStr8};
+use tinystr::{tinystr, TinyStr4, TinyStr8};
 
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
@@ -233,8 +233,8 @@ impl LocaleCanonicalizer {
         // The `rg` region override and `sd` regional subdivision keys may contain
         // language codes that require canonicalization.
         let extension_keys = vec![
-            Key::from_tinystr4_unchecked(tinystr!(4, "rg")),
-            Key::from_tinystr4_unchecked(tinystr!(4, "sd")),
+            Key::from_tinystr_unchecked(tinystr!(4, "rg")),
+            Key::from_tinystr_unchecked(tinystr!(4, "sd")),
         ];
         let aliases: DataPayload<AliasesV1Marker> = provider
             .load_resource(&DataRequest::default())?
@@ -396,9 +396,9 @@ impl LocaleCanonicalizer {
                     let replacement =
                         if self.maximize(&mut for_likely) == CanonicalizationResult::Modified {
                             if let Some(likely_region) = for_likely.region {
-                                let as_tinystr4: TinyStr4 = likely_region.into();
+                                let as_tinystr: TinyStr4 = likely_region.into();
                                 if let Some(region) =
-                                    rule.1.iter().find(|region| as_tinystr4 == **region)
+                                    rule.1.iter().find(|region| as_tinystr == **region)
                                 {
                                     region
                                 } else {

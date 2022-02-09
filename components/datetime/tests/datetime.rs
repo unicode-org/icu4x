@@ -28,7 +28,7 @@ use patterns::{
     },
 };
 use std::fmt::Write;
-use tinystr::tinystr8;
+use tinystr::tinystr;
 
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
