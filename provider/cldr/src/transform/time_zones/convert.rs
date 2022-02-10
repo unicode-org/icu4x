@@ -102,7 +102,7 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
                             match place_or_region {
                                 LocationOrSubRegion::Location(place) => place
                                     .exemplar_city()
-                                    .map(|city| vec![(key.into(), city.into())])
+                                    .map(|city| vec![(key, city)])
                                     .unwrap_or_default(),
                                 LocationOrSubRegion::SubRegion(region) => region
                                     .into_tuple_vec()
