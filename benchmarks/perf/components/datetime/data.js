@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644484664863,
+  "lastUpdate": 1644509986037,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20129,6 +20129,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 362824,
             "range": "± 21189",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bede0608eb784f6b93dbf3d280d7553e41b73e7e",
+          "message": "Make tinystr publishable (#1597)",
+          "timestamp": "2022-02-10T08:09:30-08:00",
+          "tree_id": "f313183d63d10525d92338549c26c8e0d2a16e1b",
+          "url": "https://github.com/unicode-org/icu4x/commit/bede0608eb784f6b93dbf3d280d7553e41b73e7e"
+        },
+        "date": 1644509973747,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 96234,
+            "range": "± 4545",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 899443,
+            "range": "± 28450",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 365407,
+            "range": "± 16557",
             "unit": "ns/iter"
           }
         ]
