@@ -10,22 +10,20 @@ use icu_list::provider::*;
 use icu_locid_macros::langid;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::convert::TryFrom;
 use std::path::PathBuf;
 
 /// A data provider reading from CLDR JSON list rule files.
 #[derive(Debug)]
 pub struct ListProvider {
     cldr_misc: PathBuf,
-    uprops_path: PathBuf,
+    uprops_root: PathBuf,
 }
 
-impl TryFrom<&dyn CldrPaths> for ListProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl ListProvider {
+    pub fn try_from(cldr_paths: &dyn CldrPaths, uprops_root: PathBuf) -> Result<Self, Error> {
         Ok(Self {
             cldr_misc: cldr_paths.cldr_misc()?,
-            uprops_path: cldr_paths.uprops()?,
+            uprops_root,
         })
     }
 }
@@ -116,8 +114,8 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                     &format!(
                         "[^{}]",
                         icu_properties::sets::get_for_script(
-                            &icu_provider_uprops::PropertiesDataProvider::try_new(
-                                &self.uprops_path
+                            &icu_provider_uprops::EnumeratedPropertyUnicodeSetDataProvider::try_new(
+                                &self.uprops_root
                             )
                             .map_err(|e| DataError::custom("Properties data provider error")
                                 .with_display_context(&e))?,

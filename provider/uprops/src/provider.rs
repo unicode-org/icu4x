@@ -2,57 +2,38 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::bin_uniset::BinaryPropertyUnicodeSetDataProvider;
-use crate::enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
-use crate::uprops_helpers::get_last_component_no_version;
-use icu_properties::provider::UnicodePropertyV1Marker;
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::iter::IterableDynProvider;
-use icu_provider::prelude::*;
-
+use icu_provider::serde::SerializeMarker;
 use std::path::Path;
 
 /// This data provider returns `UnicodeSet` data inside a `UnicodeProperty`
 /// data struct. The source data is in the form of a directory of TOML file(s)
 /// of data for the property(-ies) desired, as given by the ICU4C property data
 /// exporter tool.
-pub struct PropertiesDataProvider {
-    binary: BinaryPropertyUnicodeSetDataProvider,
-    enumerated: EnumeratedPropertyUnicodeSetDataProvider,
-}
-
+pub struct PropertiesDataProvider;
 impl PropertiesDataProvider {
-    /// Construct a new data provider instance. `root_dir` is the path to the
-    /// root directory containing the property data TOML files.
-    pub fn try_new(root_dir: &Path) -> eyre::Result<Self> {
-        let binary = BinaryPropertyUnicodeSetDataProvider::try_new(root_dir)?;
-        let enumerated = EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)?;
-        Ok(Self { binary, enumerated })
-    }
-}
-
-impl DynProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        if get_last_component_no_version(&key).contains('=') {
-            self.enumerated.load_payload(key, req)
-        } else {
-            self.binary.load_payload(key, req)
-        }
-    }
-}
-
-icu_provider::impl_dyn_provider!(PropertiesDataProvider, {
-    _ => UnicodePropertyV1Marker,
-}, SERDE_SE);
-
-impl IterableDynProvider<UnicodePropertyV1Marker> for PropertiesDataProvider {
-    fn supported_options_for_key(
-        &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    pub fn try_new(
+        root_dir: &Path,
+    ) -> eyre::Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<SerializeMarker>>>> {
+        Ok(MultiForkByKeyProvider {
+            providers: vec![
+                Box::new(
+                    crate::enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider::try_new(
+                        root_dir,
+                    )?,
+                ),
+                Box::new(crate::script::ScriptWithExtensionsPropertyProvider::try_new(root_dir)?),
+                Box::new(
+                    crate::enum_uniset::EnumeratedPropertyUnicodeSetDataProvider::try_new(
+                        root_dir,
+                    )?,
+                ),
+                // Has to go last as it matches all props/ keys.
+                Box::new(
+                    crate::bin_uniset::BinaryPropertyUnicodeSetDataProvider::try_new(root_dir)?,
+                ),
+            ],
+        })
     }
 }

@@ -26,6 +26,7 @@ mod script;
 mod uprops_helpers;
 mod uprops_serde;
 
-pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use provider::PropertiesDataProvider;
-pub use script::ScriptWithExtensionsPropertyProvider;
+
+// Required by icu_provider_cldr::transform::list
+pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;

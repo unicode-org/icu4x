@@ -65,13 +65,12 @@ impl CldrAllInOneDownloader {
         })
     }
 
-    pub fn download(self, uprops_root: Option<PathBuf>) -> Result<CldrPathsAllInOne, Error> {
+    pub fn download(self) -> Result<CldrPathsAllInOne, Error> {
         // TODO(#297): Implement this async.
         let downloaded = io_util::download_and_unzip(&self.url, &self.cache_dir)?;
         Ok(CldrPathsAllInOne {
             cldr_json_root: downloaded,
             locale_subset: self.locale_subset,
-            uprops_root,
         })
     }
 }

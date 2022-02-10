@@ -22,12 +22,14 @@ use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use std::convert::TryFrom;
+use std::path::PathBuf;
 
 pub struct CldrJsonDataProvider;
 
 impl CldrJsonDataProvider {
     pub fn try_new(
         cldr_paths: &dyn CldrPaths,
+        uprops_root: PathBuf,
     ) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<SerializeMarker>>>, Error> {
         Ok(MultiForkByKeyProvider {
             providers: vec![
@@ -55,7 +57,7 @@ impl CldrJsonDataProvider {
                 Box::new(plurals::PluralsProvider::try_from(cldr_paths)?),
                 Box::new(time_zones::TimeZonesProvider::try_from(cldr_paths)?),
                 #[cfg(feature = "icu_list")]
-                Box::new(list::ListProvider::try_from(cldr_paths)?),
+                Box::new(list::ListProvider::try_from(cldr_paths, uprops_root)?),
             ],
         })
     }
