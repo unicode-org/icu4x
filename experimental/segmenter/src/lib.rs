@@ -66,18 +66,23 @@
 //! Segment a string:
 //!
 //!```rust
-//! use icu_segmenter::GraphemeClusterBreakIterator;
+//! use icu_segmenter::GraphemeClusterBreakSegmenter;
+//! let segmenter = GraphemeClusterBreakSegmenter::try_new()
+//!     .expect("Data exists");
 //!
-//! let breakpoints: Vec<usize> = GraphemeClusterBreakIterator::new("Hello 🗺").collect();
-//! assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 10]); // World Map (U+1F5FA) is encoded in four bytes in UTF-8.
+//! let breakpoints: Vec<usize> = segmenter.segment_str("Hello 🗺").collect();
+//! // World Map (U+1F5FA) is encoded in four bytes in UTF-8.
+//! assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 10]);
 //! ```
 //!
 //! Segment a Latin1 byte string:
 //!
 //! ```rust
-//! use icu_segmenter::GraphemeClusterBreakIteratorLatin1;
+//! use icu_segmenter::GraphemeClusterBreakSegmenter;
+//! let segmenter = GraphemeClusterBreakSegmenter::try_new()
+//!     .expect("Data exists");
 //!
-//! let breakpoints: Vec<usize> = GraphemeClusterBreakIteratorLatin1::new(b"Hello World").collect();
+//! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 //! assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 //! ```
 //!
@@ -86,18 +91,22 @@
 //! Segment a string:
 //!
 //!```rust
-//! use icu_segmenter::WordBreakIterator;
+//! use icu_segmenter::WordBreakSegmenter;
+//! let segmenter = WordBreakSegmenter::try_new()
+//!     .expect("Data exists");
 //!
-//! let breakpoints: Vec<usize> = WordBreakIterator::new("Hello World").collect();
+//! let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
 //! assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 //! ```
 //!
 //! Segment a Latin1 byte string:
 //!
 //! ```rust
-//! use icu_segmenter::WordBreakIteratorLatin1;
+//! use icu_segmenter::WordBreakSegmenter;
+//! let segmenter = WordBreakSegmenter::try_new()
+//!     .expect("Data exists");
 //!
-//! let breakpoints: Vec<usize> = WordBreakIteratorLatin1::new(b"Hello World").collect();
+//! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 //! assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 //! ```
 //!
@@ -106,18 +115,22 @@
 //! Segment a string:
 //!
 //!```rust
-//! use icu_segmenter::SentenceBreakIterator;
+//! use icu_segmenter::SentenceBreakSegmenter;
+//! let segmenter = SentenceBreakSegmenter::try_new()
+//!     .expect("Data exists");
 //!
-//! let breakpoints: Vec<usize> = SentenceBreakIterator::new("Hello World").collect();
+//! let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
 //! assert_eq!(&breakpoints, &[0, 11]);
 //! ```
 //!
 //! Segment a Latin1 byte string:
 //!
 //! ```rust
-//! use icu_segmenter::SentenceBreakIteratorLatin1;
+//! use icu_segmenter::SentenceBreakSegmenter;
+//! let segmenter = SentenceBreakSegmenter::try_new()
+//!     .expect("Data exists");
 //!
-//! let breakpoints: Vec<usize> = SentenceBreakIteratorLatin1::new(b"Hello World").collect();
+//! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 //! assert_eq!(&breakpoints, &[0, 11]);
 //! ```
 //!
@@ -170,10 +183,13 @@ mod lstm {
 
 pub use crate::grapheme::{
     GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
-    GraphemeClusterBreakIteratorUtf16,
+    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
 };
 pub use crate::line_breaker::*;
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
+    SentenceBreakSegmenter,
 };
-pub use crate::word::{WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16};
+pub use crate::word::{
+    WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakSegmenter,
+};
