@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644481809811,
+  "lastUpdate": 1644484167816,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -8933,6 +8933,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0997b219fedbceb108adcc24dfcbb76cd907b4de"
         },
         "date": 1644481797237,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1571719,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb0e04733217efeaf12247ad0282bd794315ca0d",
+          "message": "Replacing `IterableProvider` by `IterableDynProvider` and `IterableResourceProvider` (#1595)",
+          "timestamp": "2022-02-10T10:07:41+01:00",
+          "tree_id": "173e4d872d51ca563dcc949c4fda20427b783c97",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb0e04733217efeaf12247ad0282bd794315ca0d"
+        },
+        "date": 1644484158239,
         "tool": "ndjson",
         "benches": [
           {
