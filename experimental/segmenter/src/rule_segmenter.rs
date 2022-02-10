@@ -168,7 +168,9 @@ impl<'a, Y: RuleBreakType<'a>> RuleBreakIterator<'a, Y> {
     }
 
     fn get_current_codepoint(&self) -> Y::CharType {
-        self.current_pos_data.expect("Not at the of the string").1
+        self.current_pos_data
+            .expect("Not at the end of the string!")
+            .1
     }
 
     fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
