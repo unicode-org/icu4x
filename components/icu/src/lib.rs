@@ -434,7 +434,7 @@ pub mod properties {
     //! let provider = icu_testdata::get_provider();
     //!
     //! let payload =
-    //!     script::get_script_extensions(&provider)
+    //!     script::get_script_with_extensions(&provider)
     //!         .expect("The data should be valid");
     //! let data_struct = payload.get();
     //! let swe = &data_struct.data;
