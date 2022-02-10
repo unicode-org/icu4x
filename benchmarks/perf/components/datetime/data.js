@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644482293976,
+  "lastUpdate": 1644484664863,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20087,6 +20087,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 341783,
             "range": "± 23042",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb0e04733217efeaf12247ad0282bd794315ca0d",
+          "message": "Replacing `IterableProvider` by `IterableDynProvider` and `IterableResourceProvider` (#1595)",
+          "timestamp": "2022-02-10T10:07:41+01:00",
+          "tree_id": "173e4d872d51ca563dcc949c4fda20427b783c97",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb0e04733217efeaf12247ad0282bd794315ca0d"
+        },
+        "date": 1644484652088,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 95049,
+            "range": "± 7403",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 942076,
+            "range": "± 42568",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 362824,
+            "range": "± 21189",
             "unit": "ns/iter"
           }
         ]
