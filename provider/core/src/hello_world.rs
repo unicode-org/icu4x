@@ -6,7 +6,7 @@
 
 use crate::buf::BufferFormat;
 use crate::helpers;
-use crate::iter::IterableProvider;
+use crate::iter::IterableResourceProvider;
 use crate::prelude::*;
 use crate::yoke::{self, *};
 use alloc::borrow::Cow;
@@ -170,12 +170,10 @@ impl BufferProvider for HelloWorldJsonProvider {
     }
 }
 
-impl IterableProvider for HelloWorldProvider {
-    fn supported_options_for_key(
+impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn supported_options(
         &self,
-        resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        resc_key.match_key(HelloWorldV1Marker::KEY)?;
         Ok(Box::new(
             self.map
                 .iter_keys()

@@ -9,7 +9,7 @@ use crate::CldrPaths;
 use icu_list::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
@@ -160,10 +160,11 @@ impl KeyedDataProvider for ListProvider {
     }
 }
 
-impl IterableProvider for ListProvider {
-    fn supported_options_for_key(
+impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>
+    for ListProvider
+{
+    fn supported_options(
         &self,
-        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
             self.data

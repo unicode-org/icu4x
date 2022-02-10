@@ -5,7 +5,7 @@
 //! Providers that filter resource requests.
 //!
 //! Requests that fail a filter test will return [`DataError`] of kind [`FilteredResource`](
-//! DataErrorKind::FilteredResource) and will not appear in [`IterableProvider`] iterators.
+//! DataErrorKind::FilteredResource) and will not appear in [`IterableDynProvider`] iterators.
 //!
 //! The main struct is [`RequestFilterDataProvider`]. Although that struct can be created
 //! directly, the traits in this module provide helper functions for common filtering patterns.
@@ -32,13 +32,13 @@
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!
-//! [`IterableProvider`]: crate::iter::IterableProvider
+//! [`IterableDynProvider`]: crate::iter::IterableDynProvider
 
 mod impls;
 
 pub use impls::*;
 
-use crate::iter::IterableProvider;
+use crate::iter::*;
 use crate::prelude::*;
 use alloc::boxed::Box;
 
@@ -46,7 +46,7 @@ use alloc::boxed::Box;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`IterableProvider::supported_options_for_key`].
+/// by [`IterableDynProvider::supported_options_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -139,16 +139,46 @@ where
     }
 }
 
-impl<D, F> IterableProvider for RequestFilterDataProvider<D, F>
+impl<M, D, F> IterableDynProvider<M> for RequestFilterDataProvider<D, F>
 where
+    M: DataMarker,
     F: Fn(&DataRequest) -> bool,
-    D: IterableProvider,
+    D: IterableDynProvider<M>,
 {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         self.inner.supported_options_for_key(resc_key).map(|iter| {
+            // Use filter_map instead of filter to avoid cloning the options
+            let filtered_iter = iter.filter_map(move |options| {
+                let request = DataRequest {
+                    options,
+                    metadata: Default::default(),
+                };
+                if (self.predicate)(&request) {
+                    Some(request.options)
+                } else {
+                    None
+                }
+            });
+            let boxed_filtered_iter: Box<dyn Iterator<Item = ResourceOptions>> =
+                Box::new(filtered_iter);
+            boxed_filtered_iter
+        })
+    }
+}
+
+impl<M, D, F> IterableResourceProvider<M> for RequestFilterDataProvider<D, F>
+where
+    M: ResourceMarker,
+    F: Fn(&DataRequest) -> bool,
+    D: IterableResourceProvider<M>,
+{
+    fn supported_options(
+        &self,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        self.inner.supported_options().map(|iter| {
             // Use filter_map instead of filter to avoid cloning the options
             let filtered_iter = iter.filter_map(move |options| {
                 let request = DataRequest {

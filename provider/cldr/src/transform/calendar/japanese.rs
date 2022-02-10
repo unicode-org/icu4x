@@ -9,7 +9,7 @@ use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_calendar::provider::*;
 use icu_locid_macros::langid;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
@@ -224,11 +224,8 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 
 icu_provider::impl_dyn_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,], SERDE_SE);
 
-impl IterableProvider for JapaneseErasProvider {
-    fn supported_options_for_key(
-        &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }

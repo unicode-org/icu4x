@@ -9,7 +9,7 @@ use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_decimal::provider::*;
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::borrow::Cow;
@@ -132,10 +132,9 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 
 icu_provider::impl_dyn_provider!(NumbersProvider, [DecimalSymbolsV1Marker,], SERDE_SE);
 
-impl IterableProvider for NumbersProvider {
-    fn supported_options_for_key(
+impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+    fn supported_options(
         &self,
-        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
             self.cldr_numbers_data

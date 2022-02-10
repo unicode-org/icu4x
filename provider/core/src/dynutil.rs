@@ -57,6 +57,7 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::iter::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -67,6 +68,13 @@ where
 ///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 ///         let provider = InvariantDataProvider;
 ///         provider.load_resource(req)
+///     }
+/// }
+///
+/// impl IterableResourceProvider<HelloWorldV1Marker> for MyProvider {
+///     fn supported_options(&self)
+///         -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+///         Ok(Box::new(core::iter::once(Default::default())))
 ///     }
 /// }
 ///
@@ -98,6 +106,7 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::iter::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -108,6 +117,13 @@ where
 ///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 ///         let provider = InvariantDataProvider;
 ///         provider.load_resource(req)
+///     }
+/// }
+///
+/// impl IterableDynProvider<HelloWorldV1Marker> for MyProvider {
+///     fn supported_options_for_key(&self, _key: &ResourceKey)
+///         -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+///         Ok(Box::new(core::iter::once(Default::default())))
 ///     }
 /// }
 ///
@@ -203,6 +219,21 @@ macro_rules! impl_dyn_provider {
                 }
             }
         }
+
+        impl $crate::iter::IterableDynProvider<$dyn_m> for $provider {
+            fn supported_options_for_key(&self, key: &$crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+                match *key {
+                    $(
+                        $pat => {
+                            $crate::iter::IterableDynProvider::<$struct_m>::supported_options_for_key(self, key)
+                        }
+                    )+,
+                    // Don't complain if the call site has its own wildcard match
+                    #[allow(unreachable_patterns)]
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(*key))
+                }
+            }
+        }
     };
     ($provider:ty, [ $($struct_m:ty),+, ], $dyn_m:path) => {
         impl $crate::DynProvider<$dyn_m> for $provider
@@ -228,9 +259,21 @@ macro_rules! impl_dyn_provider {
                             })
                         }
                     )+,
-                    // Don't complain if the call site has its own wildcard match
-                    #[allow(unreachable_patterns)]
                     _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
+                }
+            }
+        }
+
+        impl $crate::iter::IterableDynProvider<$dyn_m> for $provider
+        {
+            fn supported_options_for_key(&self, key: &$crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+                match *key {
+                    $(
+                        <$struct_m as $crate::ResourceMarker>::KEY => {
+                            $crate::iter::IterableResourceProvider::<$struct_m>::supported_options(self)
+                        }
+                    )+,
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(*key))
                 }
             }
         }
