@@ -12,7 +12,7 @@ use alloc::string::String;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
 
-/// Trait for types that can be crated from a reference to a cart type `C` with no allocations.
+/// Trait for types that can be created from a reference to a cart type `C` with no allocations.
 ///
 /// A type can be the `ZeroCopyFrom` target of multiple cart types.
 ///
@@ -22,6 +22,9 @@ use stable_deref_trait::StableDeref;
 ///
 /// For example, `impl ZeroCopyFrom<C> for Cow<str>` should return a `Cow::Borrowed` pointing at
 /// data in the cart `C`, even if the cart is itself fully owned.
+///
+/// One can use the [`#[derive(ZeroCopyFrom)]`](yoke_derive::ZeroCopyFrom) custom derive to automatically
+/// implement this trait.
 ///
 /// # Examples
 ///

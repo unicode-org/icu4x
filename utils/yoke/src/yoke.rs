@@ -21,12 +21,13 @@ use alloc::sync::Arc;
 /// A Cow-like borrowed object "yoked" to its backing data.
 ///
 /// This allows things like zero copy deserialized data to carry around
-/// shared references to their backing buffer.
+/// shared references to their backing buffer, by "erasing" their static lifetime
+/// and turning it into a dynamically managed one.
 ///
 /// `Y` (the [`Yokeable`]) is the object containing the references,
 /// and will typically be of the form `Foo<'static>`. The `'static` is
-/// not the actual lifetime of the data, rather it is a convenient way to erase
-/// the lifetime and make it dynamic.
+/// not the actual lifetime of the data, rather it is a convenient way to mark the
+/// erased lifetime and make it dynamic.
 ///
 /// `C` is the "cart", which `Y` may contain references to. After the yoke is constructed,
 /// the cart serves little purpose except to guarantee that `Y`'s references remain valid
@@ -34,6 +35,17 @@ use alloc::sync::Arc;
 ///
 /// The primary constructor for [`Yoke`] is [`Yoke::attach_to_cart()`]. Several variants of that
 /// constructor are provided to serve numerous types of call sites and `Yoke` signatures.
+///
+/// The key behind this type is [`Yoke::get()`], where calling [`.get()`][Yoke::get] on a type like
+/// `Yoke<Cow<'static, str>, _>` will get you a short-lived `&'a Cow<'a, str>`, restricted to the
+/// lifetime of the borrow used during `.get()`. This is entirely safe since the `Cow` borrows from
+/// the cart type, which cannot be interfered with as long as the `Yoke` is borrowed by `.get
+/// ()`. `.get()` protects access by essentially reifying the erased lifetime to a safe local one
+/// when necessary.
+///
+/// Furthermore, there are various [`.project()`][Yoke::project] methods that allow turning a `Yoke`
+/// into another `Yoke` containing a different type that may contain elements of the original yoked
+/// value. See the [`Yoke::project()`] docs for more details.
 ///
 /// In general, `C` is a concrete type, but it is also possible for it to be a trait object;
 /// for more information, see [`IsCovariant`].
