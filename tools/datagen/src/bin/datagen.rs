@@ -420,7 +420,7 @@ fn export_cldr(
         eyre::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };
 
-    let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
+    let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref())?;
     let provider: EitherProvider<_, _> = if let Some(allowlist) = allowed_locales {
         let filtered_provider = raw_provider
             .filterable("icu4x-datagen langid allowlist")

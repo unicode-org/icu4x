@@ -4,53 +4,40 @@
 
 use crate::cldr_serde;
 use crate::error::Error;
-use crate::reader::{get_langid_subdirectories, open_reader};
+use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_decimal::provider::*;
-use icu_locid::LanguageIdentifier;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::borrow::Cow;
 use std::convert::TryFrom;
+use std::path::PathBuf;
+use std::sync::RwLock;
 use tinystr::TinyStr8;
 
 mod decimal_pattern;
 
 /// A data provider reading from CLDR JSON plural rule files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct NumbersProvider {
-    cldr_numbering_systems_data: cldr_serde::numbering_systems::Resource,
-    cldr_numbers_data: LiteMap<LanguageIdentifier, cldr_serde::numbers::LangNumbers>,
+    numbers_path: PathBuf,
+    numbering_systems_path: PathBuf,
+    cldr_numbering_systems_data:
+        RwLock<Option<LiteMap<TinyStr8, cldr_serde::numbering_systems::NumberingSystem>>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for NumbersProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        // Load common numbering system data:
-        let cldr_numbering_systems_data: cldr_serde::numbering_systems::Resource = {
-            let path = cldr_paths
+        Ok(Self {
+            numbers_path: cldr_paths.cldr_numbers()?.join("main"),
+            numbering_systems_path: cldr_paths
                 .cldr_core()?
                 .join("supplemental")
-                .join("numberingSystems.json");
-            serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?
-        };
-
-        // Load data for each locale:
-        let mut cldr_numbers_data = LiteMap::new();
-        let path = cldr_paths.cldr_numbers()?.join("main");
-        let locale_dirs = get_langid_subdirectories(&path)?;
-        for dir in locale_dirs {
-            let path = dir.join("numbers.json");
-            let resource: cldr_serde::numbers::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            cldr_numbers_data.extend_from_litemap(resource.main.0);
-        }
-
-        Ok(Self {
-            cldr_numbering_systems_data,
-            cldr_numbers_data,
+                .join("numberingSystems.json"),
+            cldr_numbering_systems_data: RwLock::new(None),
         })
     }
 }
@@ -66,8 +53,10 @@ impl NumbersProvider {
     fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Option<[char; 10]> {
         match self
             .cldr_numbering_systems_data
-            .supplemental
-            .numbering_systems
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
             .get(&nsname)
         {
             Some(ns) => match ns.digits.as_ref() {
@@ -101,17 +90,38 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         let langid = req
             .get_langid()
             .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(DecimalSymbolsV1Marker::KEY, req))?;
-        let numbers = self
-            .cldr_numbers_data
+
+        let resource: cldr_serde::numbers::Resource = {
+            let path = get_langid_subdirectory(&self.numbers_path, langid)?
+                .ok_or_else(|| {
+                    DataErrorKind::MissingLocale.with_req(DecimalSymbolsV1Marker::KEY, req)
+                })?
+                .join("numbers.json");
+            serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?
+        };
+
+        let numbers = &resource
+            .main
+            .0
             .get(langid)
-            .map(|v| &v.numbers)
-            .ok_or_else(|| {
-                DataErrorKind::MissingLocale.with_req(DecimalSymbolsV1Marker::KEY, req)
-            })?;
+            .expect("CLDR file contains the expected language")
+            .numbers;
         let nsname = numbers.default_numbering_system;
 
         let mut result = DecimalSymbolsV1::try_from(numbers)
             .map_err(|s| Error::Custom(s.to_string(), Some(langid.clone())))?;
+
+        if self.cldr_numbering_systems_data.read().unwrap().is_none() {
+            let resource: cldr_serde::numbering_systems::Resource =
+                serde_json::from_reader(open_reader(&self.numbering_systems_path)?)
+                    .map_err(|e| Error::Json(e, None))?;
+            let _ = self
+                .cldr_numbering_systems_data
+                .write()
+                .unwrap()
+                .insert(resource.supplemental.numbering_systems);
+        }
+
         result.digits = self
             .get_digits_for_numbering_system(nsname)
             .ok_or_else(|| {
@@ -137,11 +147,7 @@ impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
         &self,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
-            self.cldr_numbers_data
-                .iter_keys()
-                // TODO(#568): Avoid the clone
-                .cloned()
-                .map(Into::<ResourceOptions>::into),
+            get_langid_subdirectories(&self.numbers_path)?.map(Into::<ResourceOptions>::into),
         ))
     }
 }

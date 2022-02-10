@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
 /// A data provider reading from CLDR JSON dates files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct DateSkeletonPatternsProvider(CommonDateProvider);
 
 impl TryFrom<&dyn CldrPaths> for DateSkeletonPatternsProvider {

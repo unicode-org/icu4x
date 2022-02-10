@@ -16,8 +16,8 @@ mod plurals;
 mod time_zones;
 
 use crate::support::KeyedDataProvider;
-use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
+use crate::error::Error;
 use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
@@ -25,57 +25,53 @@ use icu_provider::serde::SerializeMarker;
 macro_rules! cldr_json_data_provider {
     ($($ident: ident: $type: ty,)+) => {
         #[derive(Debug)]
-        pub struct CldrJsonDataProvider<'a> {
-            pub cldr_paths: &'a dyn CldrPaths,
+        pub struct CldrJsonDataProvider {
             $(
-                $ident: LazyCldrProvider<$type>,
+                $ident: $type,
             )+
         }
 
-        impl<'a> CldrJsonDataProvider<'a> {
-            pub fn new(cldr_paths: &'a dyn CldrPaths) -> Self {
-                CldrJsonDataProvider {
-                    cldr_paths,
+        impl CldrJsonDataProvider {
+            pub fn new(cldr_paths: &dyn CldrPaths) -> Result<Self, Error> {
+                use std::convert::TryFrom;
+                Ok(CldrJsonDataProvider {
                     $(
-                        $ident: Default::default(),
+                        $ident: TryFrom::try_from(cldr_paths)?,
                     )+
-                }
+                })
             }
         }
 
-        impl<'a> DynProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
+        impl DynProvider<SerializeMarker> for CldrJsonDataProvider {
             fn load_payload(
                 &self,
                 key: ResourceKey,
                 req: &DataRequest,
             ) -> Result<DataResponse<SerializeMarker>, DataError> {
                 $(
-                    if let Some(result) = self.$ident.try_load_serde(key, req, self.cldr_paths)? {
-                        return Ok(result);
+                    if <$type>::supported_keys().contains(&key) {
+                        return DynProvider::load_payload(&self.$ident, key, req);
                     }
                 )+
                 Err(DataErrorKind::MissingResourceKey.with_req(key, req))
             }
         }
 
-        impl<'a> IterableDynProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
+        impl IterableDynProvider<SerializeMarker> for CldrJsonDataProvider {
             fn supported_options_for_key(
                 &self,
-                resc_key: &ResourceKey,
+                key: &ResourceKey,
             ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
                 $(
-                    if let Some(resp) = self
-                        .$ident
-                        .try_supported_options(resc_key, self.cldr_paths)?
-                    {
-                        return Ok(Box::new(resp.into_iter()));
+                    if <$type>::supported_keys().contains(key) {
+                        return IterableDynProvider::supported_options_for_key(&self.$ident, key);
                     }
                 )+
-                Err(DataErrorKind::MissingResourceKey.with_key(*resc_key))
+                Err(DataErrorKind::MissingResourceKey.with_key(*key))
             }
         }
 
-        impl<'a> KeyedDataProvider for CldrJsonDataProvider<'a> {
+        impl KeyedDataProvider for CldrJsonDataProvider {
             fn supported_keys() -> Vec<ResourceKey> {
                 let mut result: Vec<ResourceKey> = vec![];
                 $(

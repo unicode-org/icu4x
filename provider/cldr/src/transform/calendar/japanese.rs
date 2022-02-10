@@ -14,45 +14,58 @@ use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
 use std::env;
+use std::path::PathBuf;
 use std::str::FromStr;
 use tinystr::TinyStr16;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 
 /// Common code for a data provider reading from CLDR JSON dates files.
-#[derive(PartialEq, Debug, Default)]
+#[derive(Debug)]
 pub struct JapaneseErasProvider {
-    // Maps of era start dates to their names
-    // We store historical_data separately for performance
-    historical_data: LiteMap<EraStartDate, TinyStr16>,
-    data: LiteMap<EraStartDate, TinyStr16>,
+    era_names_path: PathBuf,
+    era_dates_path: PathBuf,
 }
 
 impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut historical_data = LiteMap::new();
-        let mut data = LiteMap::new();
-
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
-        let era_names_path = cldr_paths
-            .cldr_dates("japanese")?
-            .join("main")
-            .join("en")
-            .join("ca-japanese.json");
-        let era_dates_path = cldr_paths
-            .cldr_core()?
-            .join("supplemental")
-            .join("calendarData.json");
+        Ok(Self {
+            era_names_path: cldr_paths
+                .cldr_dates_japanese()?
+                .join("main")
+                .join("en")
+                .join("ca-japanese.json")
+                .to_path_buf(),
+            era_dates_path: cldr_paths
+                .cldr_core()?
+                .join("supplemental")
+                .join("calendarData.json")
+                .to_path_buf(),
+        })
+    }
+}
+
+impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+        if req.options.langid.is_some() || req.options.variant.is_some() {
+            return Err(
+                DataErrorKind::ExtraneousResourceOptions.with_req(JapaneseErasV1Marker::KEY, req)
+            );
+        }
 
         let era_names: cldr_serde::ca::Resource =
-            serde_json::from_reader(open_reader(&era_names_path)?)
-                .map_err(|e| (e, era_names_path))?;
+            serde_json::from_reader(open_reader(&self.era_names_path)?)
+                .map_err(|e| Error::from((e, self.era_names_path.clone())))?;
         let era_dates: cldr_serde::japanese::Resource =
-            serde_json::from_reader(open_reader(&era_dates_path)?)
-                .map_err(|e| (e, era_dates_path))?;
+            serde_json::from_reader(open_reader(&self.era_dates_path)?)
+                .map_err(|e| Error::from((e, self.era_dates_path.clone())))?;
 
         let era_name_map = &era_names
             .main
@@ -76,6 +89,11 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
             .eras
             .abbr;
         let era_dates_map = &era_dates.supplemental.calendar_data.japanese.eras;
+
+        let mut ret = JapaneseErasV1 {
+            dates_to_eras: LiteMap::new(),
+            dates_to_historical_eras: LiteMap::new(),
+        };
 
         for (era_id, era_name) in era_name_map.iter() {
             // These don't exist but may in the future
@@ -108,16 +126,11 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
             let code =
                 era_to_code(era_name, start_date.year).map_err(|e| Error::Custom(e, None))?;
             if start_date.year >= 1868 {
-                data.insert(start_date, code);
+                ret.dates_to_eras.insert(start_date, code);
             } else {
-                historical_data.insert(start_date, code);
+                ret.dates_to_historical_eras.insert(start_date, code);
             }
         }
-
-        let ret = Self {
-            data,
-            historical_data,
-        };
 
         // Integrity check
         //
@@ -128,22 +141,25 @@ impl TryFrom<&dyn CldrPaths> for JapaneseErasProvider {
             let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
                 .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
 
-            if snapshot.dates_to_historical_eras != ret.historical_data
-                || snapshot.dates_to_eras != ret.data
-            {
-                return Err(Error::Custom("Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
-                                          changed in an incompatible way, or there is a new Japanese era. Please comment out the integrity \
-                                          check in icu_provider_cldr's japanese.rs and inspect the update to japanese@1.json (resource key `calendar/japanese`) \
-                                          in the generated JSON by rerunning the datagen tool (`cargo make testdata` in the ICU4X repo). \
-                                          Rerun with ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 to regenerate testdata properly, and check which situation \
-                                          it is. If a new era has been introduced, copy over the new testdata to snapshot-japanese@1.json \
-                                          in icu_provider_cldr. If not, it's likely that japanese.rs in icu_provider_cldr will need \
-                                          to be updated to handle the data changes. Once done, be sure to regenerate datetime/symbols@1 as well if not \
-                                          doing so already".to_owned(), None));
+            if snapshot != ret {
+                return Err(DataError::custom(
+                    "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
+                    changed in an incompatible way, or there is a new Japanese era. Please comment out the integrity \
+                    check in icu_provider_cldr's japanese.rs and inspect the update to japanese@1.json (resource key `calendar/japanese`) \
+                    in the generated JSON by rerunning the datagen tool (`cargo make testdata` in the ICU4X repo). \
+                    Rerun with ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 to regenerate testdata properly, and check which situation \
+                    it is. If a new era has been introduced, copy over the new testdata to snapshot-japanese@1.json \
+                    in icu_provider_cldr. If not, it's likely that japanese.rs in icu_provider_cldr will need \
+                    to be updated to handle the data changes. Once done, be sure to regenerate datetime/symbols@1 as well if not \
+                    doing so already"
+                ));
             }
         }
 
-        Ok(ret)
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(ret)),
+        })
     }
 }
 
@@ -169,10 +185,10 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
         .next()
         .ok_or_else(|| format!("Era name {} doesn't contain any text", original))?;
     let name = name
-        .replace(&['ō', 'Ō'][..], "o")
-        .replace(&['ū', 'Ū'][..], "u")
-        .to_lowercase()
-        .replace(&['-', '\'', '’'][..], "");
+        .replace(&['ō', 'Ō'], "o")
+        .replace(&['ū', 'Ū'], "u")
+        .replace(&['-', '\'', '’'], "")
+        .to_lowercase();
     if !name.is_ascii() {
         return Err(format!(
             "Era name {} (parsed from {}) contains non-ascii characters",
@@ -199,26 +215,6 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 impl KeyedDataProvider for JapaneseErasProvider {
     fn supported_keys() -> Vec<ResourceKey> {
         vec![JapaneseErasV1Marker::KEY]
-    }
-}
-
-impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        if req.options.langid.is_some() || req.options.variant.is_some() {
-            return Err(
-                DataErrorKind::ExtraneousResourceOptions.with_req(JapaneseErasV1Marker::KEY, req)
-            );
-        }
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(JapaneseErasV1 {
-                dates_to_eras: self.data.clone(),
-                dates_to_historical_eras: self.historical_data.clone(),
-            })),
-        })
     }
 }
 

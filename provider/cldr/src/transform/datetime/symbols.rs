@@ -18,7 +18,7 @@ use std::convert::TryFrom;
 use tinystr::{tinystr, TinyStr16};
 
 /// A data provider reading from CLDR JSON dates files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct DateSymbolsProvider(CommonDateProvider);
 
 impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
@@ -39,7 +39,7 @@ impl ResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<DateSymbolsV1Marker>, DataError> {
-        let dates = self.0.dates_for::<DateSymbolsV1Marker>(req)?;
+        let dates = &self.0.dates_for::<DateSymbolsV1Marker>(req)?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         let calendar =

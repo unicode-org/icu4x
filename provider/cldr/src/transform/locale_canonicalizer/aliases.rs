@@ -12,34 +12,24 @@ use icu_locid::{subtags, LanguageIdentifier};
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
+use std::path::PathBuf;
 use tinystr::{TinyStr4, TinyStr8};
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct AliasesProvider {
-    data: cldr_serde::aliases::Resource,
+    path: PathBuf,
 }
 
 impl TryFrom<&dyn CldrPaths> for AliasesProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let data: cldr_serde::aliases::Resource = {
-            let path = cldr_paths
+        Ok(Self {
+            path: cldr_paths
                 .cldr_core()?
                 .join("supplemental")
-                .join("aliases.json");
-            serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?
-        };
-        Ok(Self { data })
-    }
-}
-
-impl TryFrom<&'_ str> for AliasesProvider {
-    type Error = serde_json::error::Error;
-    /// Attempt to parse a JSON string.
-    fn try_from(s: &'_ str) -> Result<Self, Self::Error> {
-        let data: cldr_serde::aliases::Resource = serde_json::from_str(s)?;
-        Ok(Self { data })
+                .join("aliases.json"),
+        })
     }
 }
 
@@ -53,14 +43,17 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         let langid = &req.options.langid;
 
-        // We treat searching for und as a request for all data. Other requests
+        let data: cldr_serde::aliases::Resource = serde_json::from_reader(open_reader(&self.path)?)
+            .map_err(|e| Error::Json(e, Some(self.path.clone())))?;
+
+        // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if langid.is_none() {
             let metadata = DataResponseMetadata::default();
             // TODO(#1109): Set metadata.data_langid correctly.
             Ok(DataResponse {
                 metadata,
-                payload: Some(DataPayload::from_owned(AliasesV1::from(&self.data))),
+                payload: Some(DataPayload::from_owned(AliasesV1::from(&data))),
             })
         } else {
             Err(DataErrorKind::ExtraneousResourceOptions.with_req(AliasesV1Marker::KEY, req))

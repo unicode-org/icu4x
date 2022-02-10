@@ -12,38 +12,24 @@ use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
+use std::path::PathBuf;
+use std::sync::RwLock;
 
 /// A data provider reading from CLDR JSON plural rule files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct PluralsProvider {
-    cardinal_rules: Option<cldr_serde::plurals::Rules>,
-    ordinal_rules: Option<cldr_serde::plurals::Rules>,
+    cldr_core: PathBuf,
+    cardinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
+    ordinal_rules: RwLock<Option<Option<cldr_serde::plurals::Rules>>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for PluralsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let cardinal_rules = {
-            let path = cldr_paths
-                .cldr_core()?
-                .join("supplemental")
-                .join("plurals.json");
-            let data: cldr_serde::plurals::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.supplemental.plurals_type_cardinal
-        };
-        let ordinal_rules = {
-            let path = cldr_paths
-                .cldr_core()?
-                .join("supplemental")
-                .join("ordinals.json");
-            let data: cldr_serde::plurals::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.supplemental.plurals_type_ordinal
-        };
         Ok(PluralsProvider {
-            cardinal_rules,
-            ordinal_rules,
+            cldr_core: cldr_paths.cldr_core()?,
+            cardinal_rules: RwLock::new(None),
+            ordinal_rules: RwLock::new(None),
         })
     }
 }
@@ -57,33 +43,64 @@ impl KeyedDataProvider for PluralsProvider {
 impl PluralsProvider {
     fn get_rules_for(
         &self,
-        resc_key: &ResourceKey,
-    ) -> Result<&cldr_serde::plurals::Rules, DataError> {
-        match *resc_key {
-            CardinalV1Marker::KEY => self.cardinal_rules.as_ref(),
-            OrdinalV1Marker::KEY => self.ordinal_rules.as_ref(),
-            _ => return Err(DataErrorKind::MissingResourceKey.with_key(*resc_key)),
-        }
-        .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(*resc_key))
+        key: ResourceKey,
+    ) -> Result<std::sync::RwLockReadGuard<Option<Option<cldr_serde::plurals::Rules>>>, DataError>
+    {
+        Ok(match key {
+            CardinalV1Marker::KEY => {
+                if self.cardinal_rules.read().unwrap().is_none() {
+                    let path = self.cldr_core.join("supplemental").join("plurals.json");
+                    let data: cldr_serde::plurals::Resource =
+                        serde_json::from_reader(open_reader(&path)?)
+                            .map_err(|e| Error::from((e, path)))?;
+                    let _ = self
+                        .cardinal_rules
+                        .write()
+                        .unwrap()
+                        .insert(data.supplemental.plurals_type_cardinal);
+                }
+                self.cardinal_rules.read().unwrap()
+            }
+            OrdinalV1Marker::KEY => {
+                if self.ordinal_rules.read().unwrap().is_none() {
+                    let path = self.cldr_core.join("supplemental").join("ordinals.json");
+                    let data: cldr_serde::plurals::Resource =
+                        serde_json::from_reader(open_reader(&path)?)
+                            .map_err(|e| Error::from((e, path)))?;
+                    let _ = self
+                        .ordinal_rules
+                        .write()
+                        .unwrap()
+                        .insert(data.supplemental.plurals_type_ordinal);
+                }
+                self.ordinal_rules.read().unwrap()
+            }
+            _ => return Err(DataError::custom("Unknown key for PluralRulesV1").with_key(key)),
+        })
     }
 }
 
 impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> for PluralsProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let cldr_rules = self.get_rules_for(&M::KEY)?;
         // TODO: Implement language fallback?
         let langid = req
             .get_langid()
             .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
-        let r = match cldr_rules.0.get(langid) {
-            Some(v) => v,
-            None => return Err(DataErrorKind::MissingLocale.with_req(M::KEY, req)),
-        };
+
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(PluralRulesV1::from(r))),
+            payload: Some(DataPayload::from_owned(PluralRulesV1::from(
+                self.get_rules_for(M::KEY)?
+                    .as_ref()
+                    .unwrap()
+                    .as_ref()
+                    .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(M::KEY))?
+                    .0
+                    .get(langid)
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?,
+            ))),
         })
     }
 }
@@ -101,11 +118,17 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvi
         &self,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
-            self.get_rules_for(&M::KEY)?
+            self.get_rules_for(M::KEY)?
+                .as_ref()
+                .unwrap()
+                .as_ref()
+                .ok_or_else(|| DataErrorKind::MissingResourceKey.with_key(M::KEY))?
                 .0
                 .iter_keys()
                 // TODO(#568): Avoid the clone
                 .cloned()
+                .collect::<Vec<_>>()
+                .into_iter()
                 .map(Into::<ResourceOptions>::into),
         ))
     }
