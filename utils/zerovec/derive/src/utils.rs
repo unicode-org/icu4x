@@ -6,20 +6,15 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::{parenthesized, parse2, Attribute, Ident, Result, Token};
 
-// Check attributes contain repr(transparent) or repr(packed)
-pub fn has_valid_repr(attrs: &[Attribute]) -> bool {
+// Check that there are repr attributes satisfying the given predicate
+pub fn has_valid_repr(attrs: &[Attribute], predicate: impl Fn(&Ident) -> bool + Copy) -> bool {
     attrs
         .iter()
         .filter(|a| a.path.get_ident().map(|a| a == "repr").unwrap_or(false))
         .any(|a| {
             parse2::<ReprAttribute>(a.tokens.clone())
                 .ok()
-                .and_then(|s| {
-                    s.reprs
-                        .iter()
-                        .find(|r| *r == "packed" || *r == "transparent")
-                        .map(|_| ())
-                })
+                .and_then(|s| s.reprs.iter().find(|s| predicate(s)).map(|_| ()))
                 .is_some()
         })
 }

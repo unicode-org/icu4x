@@ -9,7 +9,7 @@ use syn::spanned::Spanned;
 use syn::{Data, DeriveInput, Error, Ident};
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
-    if !crate::utils::has_valid_repr(&input.attrs) {
+    if !crate::utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
         return Error::new(
             input.span(),
             "derive(VarULE) must be applied to a #[repr(packed)] or #[repr(transparent)] type",
