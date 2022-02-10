@@ -9,7 +9,7 @@ use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_calendar::provider::*;
 use icu_locid_macros::langid;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::convert::TryFrom;
@@ -18,8 +18,6 @@ use std::str::FromStr;
 use tinystr::TinyStr16;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [key::JAPANESE_ERAS_V1];
 
 /// Common code for a data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug, Default)]
@@ -159,7 +157,7 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     // contains ascii lowercase letters, followed
     // by a hyphen and then a year name (except for post-Meiji era codes)
     //
-    // We also want it to fit in a tinystr16. What we will do is:
+    // We also want it to fit in a TinyAsciiStr<16>. What we will do is:
     //
     // - only look at the actual name
     // - normalize by removing hyphens and apostrophes, as well as converting ō/ū
@@ -199,8 +197,8 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 }
 
 impl KeyedDataProvider for JapaneseErasProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::JAPANESE_ERAS_V1.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![JapaneseErasV1Marker::KEY]
     }
 }
 
@@ -226,18 +224,9 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 
 icu_provider::impl_dyn_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,], SERDE_SE);
 
-impl IterableProvider for JapaneseErasProvider {
-    fn supported_options_for_key(
-        &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        Ok(Box::new(
-            Some(ResourceOptions {
-                variant: None,
-                langid: None,
-            })
-            .into_iter(),
-        ))
+impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 

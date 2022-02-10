@@ -10,7 +10,7 @@ use icu_properties::provider::{
 };
 use icu_properties::script::{ScriptWithExt, ScriptWithExtensions};
 use icu_properties::Script;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;
@@ -100,13 +100,14 @@ icu_provider::impl_dyn_provider!(ScriptWithExtensionsPropertyProvider, {
     key::SCRIPT_EXTENSIONS_V1 => ScriptWithExtensionsPropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableProvider for ScriptWithExtensionsPropertyProvider {
+impl IterableDynProvider<ScriptWithExtensionsPropertyV1Marker>
+    for ScriptWithExtensionsPropertyProvider
+{
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 

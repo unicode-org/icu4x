@@ -9,13 +9,10 @@ use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{subtags, LanguageIdentifier};
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use tinystr::{TinyStr4, TinyStr8};
-
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [key::ALIASES_V1];
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
@@ -47,8 +44,8 @@ impl TryFrom<&'_ str> for AliasesProvider {
 }
 
 impl KeyedDataProvider for AliasesProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::ALIASES_V1.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![AliasesV1Marker::KEY]
     }
 }
 
@@ -73,13 +70,9 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
 
 icu_provider::impl_dyn_provider!(AliasesProvider, [AliasesV1Marker,], SERDE_SE);
 
-impl IterableProvider for AliasesProvider {
-    fn supported_options_for_key(
-        &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 
@@ -301,8 +294,6 @@ fn test_rules_cmp() {
 
 #[test]
 fn test_basic() {
-    use std::str::FromStr;
-
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = AliasesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let data: DataPayload<AliasesV1Marker> = provider

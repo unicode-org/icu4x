@@ -2,74 +2,44 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::*;
+use crate::provider::{AndListV1Marker, ErasedListV1Marker, OrListV1Marker, UnitListV1Marker};
+use crate::ListStyle;
 use core::fmt::{self, Write};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::*;
 
-/// Represents the type of a list. See the
-/// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
-/// for an explanation of the different types.
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum ListType {
-    /// A conjunction
-    And,
-    /// A disjunction
-    Or,
-    /// A list of units
-    Unit,
-}
-
-/// Represents the style of a list. See the
-/// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
-/// for an explanation of the different styles.
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum ListStyle {
-    /// A typical list
-    Wide,
-    /// A shorter list
-    Short,
-    /// The shortest type of list
-    Narrow,
-}
-
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
 pub struct ListFormatter {
-    data: DataPayload<ListFormatterPatternsV1Marker>,
+    data: DataPayload<ErasedListV1Marker>,
     style: ListStyle,
 }
 
-impl ListFormatter {
-    /// Creates a new [`ListFormatter`] from the given provider. The provider has to support the
-    /// correct key for the given type:
-    /// [`LIST_FORMAT_AND_V1`](crate::provider::key::LIST_FORMAT_AND_V1),
-    /// [`LIST_FORMAT_OR_V1`](crate::provider::key::LIST_FORMAT_OR_V1), or
-    /// [`LIST_FORMAT_UNIT_V1`](crate::provider::key::LIST_FORMAT_UNIT_V1).
-    /// An error is returned if the key or language are not available, or if there were any
-    /// deserialization errors.
-    pub fn try_new<T: Into<Locale>, D: DynProvider<ListFormatterPatternsV1Marker> + ?Sized>(
-        locale: T,
-        data_provider: &D,
-        type_: ListType,
-        style: ListStyle,
-    ) -> Result<Self, DataError> {
-        let data = data_provider
-            .load_payload(
-                match type_ {
-                    ListType::And => key::LIST_FORMAT_AND_V1,
-                    ListType::Or => key::LIST_FORMAT_OR_V1,
-                    ListType::Unit => key::LIST_FORMAT_UNIT_V1,
-                },
-                &DataRequest {
+macro_rules! constructor {
+    ($name: ident, $marker: ty, $doc: literal) => {
+        #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list. See the [CLDR spec]",
+            "(https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for an explanation of the different types.")]
+        pub fn $name<T: Into<Locale>, D: ResourceProvider<$marker> + ?Sized>(
+            locale: T,
+            data_provider: &D,
+            style: ListStyle,
+        ) -> Result<Self, DataError> {
+            let data = data_provider
+                .load_resource(&DataRequest {
                     options: locale.into().into(),
                     metadata: Default::default(),
-                },
-            )?
-            .take_payload()?;
-        Ok(Self { data, style })
-    }
+                })?
+                .take_payload()?.cast();
+            Ok(Self { data, style })
+        }
+    };
+}
+
+impl ListFormatter {
+    constructor!(try_new_and, AndListV1Marker, "and");
+    constructor!(try_new_or, OrListV1Marker, "or");
+    constructor!(try_new_unit, UnitListV1Marker, "unit");
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
     /// formatting. The first layer of parts contains [`parts::ELEMENT`] for input
@@ -215,9 +185,7 @@ mod tests {
 
     fn formatter(style: ListStyle) -> ListFormatter {
         ListFormatter {
-            data: DataPayload::<ListFormatterPatternsV1Marker>::from_owned(
-                crate::provider::test::test_patterns(),
-            ),
+            data: DataPayload::from_owned(crate::provider::test::test_patterns()),
             style,
         }
     }

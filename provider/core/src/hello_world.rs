@@ -6,7 +6,7 @@
 
 use crate::buf::BufferFormat;
 use crate::helpers;
-use crate::iter::IterableProvider;
+use crate::iter::IterableResourceProvider;
 use crate::prelude::*;
 use crate::yoke::{self, *};
 use alloc::borrow::Cow;
@@ -14,16 +14,10 @@ use alloc::boxed::Box;
 use alloc::rc::Rc;
 use alloc::string::String;
 use alloc::string::ToString;
-use alloc::vec::Vec;
 use core::fmt::Debug;
 use core::str::FromStr;
 use icu_locid::LanguageIdentifier;
 use litemap::LiteMap;
-
-pub mod key {
-    use crate::resource::ResourceKey;
-    pub const HELLO_WORLD_V1: ResourceKey = crate::resource_key!("core/helloworld@1");
-}
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
@@ -49,7 +43,7 @@ impl DataMarker for HelloWorldV1Marker {
 }
 
 impl ResourceMarker for HelloWorldV1Marker {
-    const KEY: ResourceKey = key::HELLO_WORLD_V1;
+    const KEY: ResourceKey = crate::resource_key!("core/helloworld@1");
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -59,7 +53,7 @@ impl ResourceMarker for HelloWorldV1Marker {
 /// # Examples
 ///
 /// ```
-/// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1Marker};
+/// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use icu_locid_macros::langid;
 ///
@@ -159,7 +153,7 @@ impl BufferProvider for HelloWorldJsonProvider {
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        key.match_key(key::HELLO_WORLD_V1)?;
+        key.match_key(HelloWorldV1Marker::KEY)?;
         let result = self.0.load_resource(req)?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
@@ -176,22 +170,16 @@ impl BufferProvider for HelloWorldJsonProvider {
     }
 }
 
-impl IterableProvider for HelloWorldProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options_for_key(
+impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn supported_options(
         &self,
-        resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        resc_key.match_key(key::HELLO_WORLD_V1)?;
-        let list: Vec<ResourceOptions> = self
-            .map
-            .iter_keys()
-            .map(|langid| ResourceOptions {
-                variant: None,
-                langid: Some(langid.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.map
+                .iter_keys()
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 
@@ -203,7 +191,7 @@ impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
         req: DataRequest,
         payload: DataPayload<crate::any::AnyMarker>,
     ) -> Result<(), DataError> {
-        key.match_key(key::HELLO_WORLD_V1)?;
+        key.match_key(HelloWorldV1Marker::KEY)?;
         let langid = req
             .get_langid()
             .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, &req))?;

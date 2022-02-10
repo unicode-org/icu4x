@@ -5,13 +5,14 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_provider::hello_world::*;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
+use icu_provider::prelude::*;
 
 #[test]
 fn test_supported_langids() {
     let provider = HelloWorldProvider::new_with_placeholder_data();
     let mut supported_langids: Vec<LanguageIdentifier> = provider
-        .supported_options_for_key(&key::HELLO_WORLD_V1)
+        .supported_options()
         .unwrap()
         .map(|resc_options| resc_options.langid.unwrap())
         .collect();
@@ -46,7 +47,7 @@ fn test_export() {
     let mut dest_provider = HelloWorldProvider::default();
 
     icu_provider::export::export_from_iterable(
-        &key::HELLO_WORLD_V1,
+        &HelloWorldV1Marker::KEY,
         &source_provider,
         &mut dest_provider,
     )

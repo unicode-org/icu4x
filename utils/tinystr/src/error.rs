@@ -6,8 +6,8 @@ use displaydoc::Display;
 
 #[derive(Display, Debug)]
 pub enum TinyStrError {
-    #[displaydoc("found string of larger length {found} when constructing string of length {max}")]
-    TooLarge { max: usize, found: usize },
+    #[displaydoc("found string of larger length {len} when constructing string of length {max}")]
+    TooLarge { max: usize, len: usize },
     #[displaydoc("tinystr types do not support strings with null bytes")]
     ContainsNull,
     #[displaydoc("attempted to construct TinyStrAuto from a non-ascii string")]

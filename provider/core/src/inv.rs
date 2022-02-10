@@ -4,11 +4,9 @@
 
 //! Locale-invariant data provider that requires no I/O.
 
-use crate::iter::IterableProvider;
+use crate::iter::IterableDynProvider;
 use crate::prelude::*;
 use alloc::boxed::Box;
-use alloc::vec;
-use alloc::vec::Vec;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -21,7 +19,7 @@ use alloc::vec::Vec;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::inv::InvariantDataProvider;
-/// use icu_provider::hello_world::{key, HelloWorldV1Marker};
+/// use icu_provider::hello_world::HelloWorldV1Marker;
 /// use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;
@@ -61,12 +59,15 @@ where
     }
 }
 
-impl IterableProvider for InvariantDataProvider {
+impl<M> IterableDynProvider<M> for InvariantDataProvider
+where
+    M: DataMarker,
+    M::Yokeable: Default,
+{
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }

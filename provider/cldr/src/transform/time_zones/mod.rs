@@ -7,25 +7,15 @@ use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, open_reader};
 use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
-use icu_datetime::provider::{key, time_zones::*};
+use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 
 use std::convert::TryFrom;
 
 mod convert;
-
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 6] = [
-    key::TIMEZONE_FORMATS_V1,
-    key::TIMEZONE_EXEMPLAR_CITIES_V1,
-    key::TIMEZONE_GENERIC_NAMES_LONG_V1,
-    key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
-    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
-    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
-];
 
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
@@ -65,96 +55,64 @@ impl TryFrom<&str> for TimeZonesProvider {
     }
 }
 
-impl KeyedDataProvider for TimeZonesProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        // TODO(#442): Clean up KeyedDataProvider
-        // Note: This is a big if{} instead of match{} due to Rust bug #93470
-        if !(!(*resc_key == key::TIMEZONE_FORMATS_V1)
-            && !(*resc_key == key::TIMEZONE_EXEMPLAR_CITIES_V1)
-            && !(*resc_key == key::TIMEZONE_GENERIC_NAMES_LONG_V1)
-            && !(*resc_key == key::TIMEZONE_GENERIC_NAMES_SHORT_V1)
-            && !(*resc_key == key::TIMEZONE_SPECIFIC_NAMES_LONG_V1)
-            && !(*resc_key == key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1))
-        {
-            Ok(())
-        } else {
-            Err(DataErrorKind::MissingResourceKey.with_key(*resc_key))
-        }
-    }
-}
-
-impl IterableProvider for TimeZonesProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options_for_key(
-        &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
-    }
-}
-
 macro_rules! impl_data_provider {
-    ($id:ident, $marker:ident) => {
-        impl ResourceProvider<$marker> for TimeZonesProvider {
-            fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                let langid = req
-                    .get_langid()
-                    .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
-                let time_zones = match self.data.get(&langid) {
-                    Some(v) => &v.dates.time_zone_names,
-                    None => return Err(DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req)),
-                };
-                let metadata = DataResponseMetadata::default();
-                // TODO(#1109): Set metadata.data_langid correctly.
-                Ok(DataResponse {
-                    metadata,
-                    payload: Some(DataPayload::from_owned($id::from(time_zones.clone()))),
-                })
+    ($($marker:ident),+) => {
+        $(
+            impl ResourceProvider<$marker> for TimeZonesProvider {
+                fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    let langid = req
+                        .get_langid()
+                        .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
+                    let time_zones = match self.data.get(&langid) {
+                        Some(v) => &v.dates.time_zone_names,
+                        None => return Err(DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req)),
+                    };
+                    let metadata = DataResponseMetadata::default();
+                    // TODO(#1109): Set metadata.data_langid correctly.
+                    Ok(DataResponse {
+                        metadata,
+                        payload: Some(DataPayload::from_owned(<$marker as DataMarker>::Yokeable::from(time_zones.clone()))),
+                    })
+                }
+            }
+
+            impl IterableResourceProvider<$marker> for TimeZonesProvider {
+                fn supported_options(
+                    &self,
+                ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+                    Ok(Box::new(
+                        self.data
+                            .iter_keys()
+                            // TODO(#568): Avoid the clone
+                            .cloned()
+                            .map(Into::<ResourceOptions>::into),
+                    ))
+                }
+            }
+        )+
+
+        impl KeyedDataProvider for TimeZonesProvider {
+            fn supported_keys() -> Vec<ResourceKey> {
+                vec![$(<$marker>::KEY),+]
             }
         }
+
+        icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE);
     };
 }
 
-icu_provider::impl_dyn_provider!(
-    TimeZonesProvider,
-    [
-        TimeZoneFormatsV1Marker,
-        ExemplarCitiesV1Marker,
-        MetaZoneGenericNamesLongV1Marker,
-        MetaZoneGenericNamesShortV1Marker,
-        MetaZoneSpecificNamesLongV1Marker,
-        MetaZoneSpecificNamesShortV1Marker,
-    ],
-    SERDE_SE
-);
-
-impl_data_provider!(TimeZoneFormatsV1, TimeZoneFormatsV1Marker);
-impl_data_provider!(ExemplarCitiesV1, ExemplarCitiesV1Marker);
-impl_data_provider!(MetaZoneGenericNamesLongV1, MetaZoneGenericNamesLongV1Marker);
 impl_data_provider!(
-    MetaZoneGenericNamesShortV1,
-    MetaZoneGenericNamesShortV1Marker
-);
-impl_data_provider!(
-    MetaZoneSpecificNamesLongV1,
-    MetaZoneSpecificNamesLongV1Marker
-);
-impl_data_provider!(
-    MetaZoneSpecificNamesShortV1,
+    TimeZoneFormatsV1Marker,
+    ExemplarCitiesV1Marker,
+    MetaZoneGenericNamesLongV1Marker,
+    MetaZoneGenericNamesShortV1Marker,
+    MetaZoneSpecificNamesLongV1Marker,
     MetaZoneSpecificNamesShortV1Marker
 );
 
 #[cfg(test)]
 mod tests {
-    use tinystr::tinystr8;
+    use tinystr::tinystr;
 
     use super::*;
 
@@ -208,7 +166,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
-            specific_names_long.get()["Australia_CentralWestern"][&tinystr8!("standard")]
+            specific_names_long.get()["Australia_CentralWestern"][&tinystr!(8, "standard")]
         );
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
@@ -231,7 +189,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PDT",
-            specific_names_short.get()["America_Pacific"][&tinystr8!("daylight")]
+            specific_names_short.get()["America_Pacific"][&tinystr!(8, "daylight")]
         );
     }
 }

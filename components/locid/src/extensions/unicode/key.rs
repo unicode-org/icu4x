@@ -61,13 +61,13 @@ impl Key {
     ///
     /// ```
     /// use icu::locid::extensions::unicode::Key;
-    /// use tinystr::tinystr4;
+    /// use tinystr::tinystr;
     ///
-    /// let key = Key::from_tinystr4_unchecked(tinystr4!("ca"));
+    /// let key = Key::from_tinystr_unchecked(tinystr!(4, "ca"));
     ///
     /// assert_eq!(key, "ca");
     /// ```
-    pub fn from_tinystr4_unchecked(key: TinyStr4) -> Self {
+    pub fn from_tinystr_unchecked(key: TinyStr4) -> Self {
         Self(key)
     }
 

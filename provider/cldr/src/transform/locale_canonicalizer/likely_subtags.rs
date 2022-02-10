@@ -8,15 +8,12 @@ use crate::reader::open_reader;
 use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 
 use std::convert::TryFrom;
 use tinystr::TinyStr4;
-
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [key::LIKELY_SUBTAGS_V1];
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
@@ -39,8 +36,8 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider {
 }
 
 impl KeyedDataProvider for LikelySubtagsProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        key::LIKELY_SUBTAGS_V1.match_key(*resc_key)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![LikelySubtagsV1Marker::KEY]
     }
 }
 
@@ -68,13 +65,9 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
 
 icu_provider::impl_dyn_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,], SERDE_SE);
 
-impl IterableProvider for LikelySubtagsProvider {
-    fn supported_options_for_key(
-        &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-        Ok(Box::new(list.into_iter()))
+impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 

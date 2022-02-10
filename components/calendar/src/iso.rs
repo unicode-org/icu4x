@@ -6,7 +6,7 @@
 
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::{TryFrom, TryInto};
-use tinystr::{tinystr16, tinystr8};
+use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
 const EPOCH: i32 = 1;
@@ -72,7 +72,7 @@ impl From<IsoYear> for i32 {
 impl From<IsoYear> for types::Year {
     fn from(year: IsoYear) -> types::Year {
         types::Year {
-            era: types::Era(tinystr16!("default")),
+            era: types::Era(tinystr!(16, "default")),
             number: year.0,
             related_iso: year.0,
         }
@@ -84,7 +84,7 @@ impl From<IsoMonth> for types::Month {
         types::Month {
             number: month.0 as u32,
             // TODO(#486): Implement month codes
-            code: types::MonthCode(tinystr8!("TODO")),
+            code: types::MonthCode(tinystr!(8, "TODO")),
         }
     }
 }

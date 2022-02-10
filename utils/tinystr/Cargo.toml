@@ -3,10 +3,10 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "tinystr-neo"
-version = "0.3.1"
+name = "tinystr"
+version = "0.5.0"
 description = "A small ASCII-only bounded length string representation."
-authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
+authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "LICENSE"
@@ -16,6 +16,7 @@ include = [
     "src/**/*",
     "examples/**/*",
     "benches/**/*",
+    "tests/**/*",
     "Cargo.toml",
     "LICENSE",
     "README.md"

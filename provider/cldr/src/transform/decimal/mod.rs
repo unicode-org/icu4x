@@ -9,7 +9,7 @@ use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_decimal::provider::*;
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use std::borrow::Cow;
@@ -17,11 +17,6 @@ use std::convert::TryFrom;
 use tinystr::TinyStr8;
 
 mod decimal_pattern;
-
-/// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::SYMBOLS_V1, //
-];
 
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
@@ -61,8 +56,8 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
 }
 
 impl KeyedDataProvider for NumbersProvider {
-    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        resc_key.match_key(key::SYMBOLS_V1)
+    fn supported_keys() -> Vec<ResourceKey> {
+        vec![DecimalSymbolsV1Marker::KEY]
     }
 }
 
@@ -137,22 +132,17 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 
 icu_provider::impl_dyn_provider!(NumbersProvider, [DecimalSymbolsV1Marker,], SERDE_SE);
 
-impl IterableProvider for NumbersProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options_for_key(
+impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+    fn supported_options(
         &self,
-        _resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = self
-            .cldr_numbers_data
-            .iter()
-            .map(|(l, _)| ResourceOptions {
-                variant: None,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        Ok(Box::new(
+            self.cldr_numbers_data
+                .iter_keys()
                 // TODO(#568): Avoid the clone
-                langid: Some(l.clone()),
-            })
-            .collect();
-        Ok(Box::new(list.into_iter()))
+                .cloned()
+                .map(Into::<ResourceOptions>::into),
+        ))
     }
 }
 

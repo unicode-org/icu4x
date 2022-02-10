@@ -43,6 +43,7 @@ pub fn check(
 #[test]
 fn test_grouper() {
     use crate::options;
+    use crate::provider::*;
     use crate::FixedDecimalFormat;
     use fixed_decimal::FixedDecimal;
     use icu_locid::LanguageIdentifier;
@@ -116,11 +117,9 @@ fn test_grouper() {
                 ..Default::default()
             };
             let provider = AnyPayloadProvider {
-                key: crate::provider::key::SYMBOLS_V1,
-                data: DataPayload::<crate::provider::DecimalSymbolsV1Marker>::from_owned(
-                    data_struct,
-                )
-                .wrap_into_any_payload(),
+                key: DecimalSymbolsV1Marker::KEY,
+                data: DataPayload::<DecimalSymbolsV1Marker>::from_owned(data_struct)
+                    .wrap_into_any_payload(),
             };
             let options = options::FixedDecimalFormatOptions {
                 grouping_strategy: cas.strategy,

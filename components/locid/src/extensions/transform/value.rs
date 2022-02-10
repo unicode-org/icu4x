@@ -15,7 +15,7 @@ use tinystr::TinyStr8;
 pub struct Value(Box<[TinyStr8]>);
 
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_TVALUE: TinyStr8 = tinystr::tinystr8!("true");
+const TRUE_TVALUE: TinyStr8 = tinystr::tinystr!(8, "true");
 
 /// A value used in a list of [`Fields`](super::Fields).
 ///

@@ -9,7 +9,7 @@
 
 use litemap::LiteMap;
 use serde::Deserialize;
-use tinystr::{TinyStr8, TinyStrAuto};
+use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -25,7 +25,7 @@ pub struct NumberingSystem {
     #[serde(rename = "_digits")]
     pub digits: Option<String>,
     #[serde(rename = "_rules")]
-    pub rules: Option<TinyStrAuto>,
+    pub rules: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

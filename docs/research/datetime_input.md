@@ -243,12 +243,12 @@ impl DateTimeTraitObject for GregorianDateTime {
 
     pub month(&self) {
         match self.month {
-            1 => tinystr8!("jan"),
-            2 => tinystr8!("feb"),
-            3 => tinystr8!("mar"),
-            4 => tinystr8!("apr"),
+            1 => tinystr!(8, "jan"),
+            2 => tinystr!(8, "feb"),
+            3 => tinystr!(8, "mar"),
+            4 => tinystr!(8, "apr"),
             // ...
-            _ => tinystr8!("unknown"),
+            _ => tinystr!(8, "unknown"),
         }
     }
 

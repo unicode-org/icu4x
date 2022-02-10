@@ -23,26 +23,26 @@ impl<const N: usize> TinyAsciiStr<N> {
         bytes: &[u8],
         allow_trailing_null: bool,
     ) -> Result<Self, TinyStrError> {
-        if bytes.len() > N {
-            return Err(TinyStrError::TooLarge {
-                max: N,
-                found: bytes.len(),
-            });
+        let len = bytes.len();
+        if len > N {
+            return Err(TinyStrError::TooLarge { max: N, len });
         }
 
         let mut out = [0; N];
         let mut i = 0;
         let mut found_null = false;
-        while i < bytes.len() {
-            if bytes[i] == 0 {
+        while i < len {
+            let b = bytes[i];
+
+            if b == 0 {
                 found_null = true;
-            } else if bytes[i] >= 0x80 {
+            } else if b >= 0x80 {
                 return Err(TinyStrError::NonAscii);
             } else if found_null {
                 // Error if there are contentful bytes after null
                 return Err(TinyStrError::ContainsNull);
             }
-            out[i] = bytes[i];
+            out[i] = b;
 
             i += 1;
         }
@@ -57,10 +57,16 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     #[inline]
     pub const fn from_str(s: &str) -> Result<Self, TinyStrError> {
-        Self::from_bytes(s.as_bytes())
+        Self::from_bytes_inner(s.as_bytes(), false)
     }
 
     #[inline]
+    pub fn as_str(&self) -> &str {
+        &*self
+    }
+
+    #[inline]
+    #[must_use]
     pub fn len(&self) -> usize {
         if N <= 4 {
             Aligned4::from_bytes(&self.bytes).len()
@@ -72,17 +78,20 @@ impl<const N: usize> TinyAsciiStr<N> {
     }
 
     #[inline]
-    pub fn is_empty(&self) -> bool {
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
         self.bytes[0] == 0
     }
 
     #[inline]
+    #[must_use]
     pub fn as_bytes(&self) -> &[u8] {
         &self.bytes[0..self.len()]
     }
 
     #[inline]
-    pub fn all_bytes(&self) -> &[u8; N] {
+    #[must_use]
+    pub const fn all_bytes(&self) -> &[u8; N] {
         &self.bytes
     }
 
@@ -94,7 +103,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "Test".parse()
     ///     .expect("Failed to parse.");
@@ -105,6 +114,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert!(!s2.is_ascii_alphabetic());
     /// ```
     #[inline]
+    #[must_use]
     pub fn is_ascii_alphabetic(&self) -> bool {
         if N <= 4 {
             Aligned4::from_bytes(&self.bytes).is_ascii_alphabetic()
@@ -124,7 +134,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "A15b".parse()
     ///     .expect("Failed to parse.");
@@ -135,6 +145,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert!(!s2.is_ascii_alphanumeric());
     /// ```
     #[inline]
+    #[must_use]
     pub fn is_ascii_alphanumeric(&self) -> bool {
         if N <= 4 {
             Aligned4::from_bytes(&self.bytes).is_ascii_alphanumeric()
@@ -152,7 +163,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "312".parse()
     ///     .expect("Failed to parse.");
@@ -163,6 +174,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert!(!s2.is_ascii_numeric());
     /// ```
     #[inline]
+    #[must_use]
     pub fn is_ascii_numeric(&self) -> bool {
         if N <= 4 {
             Aligned4::from_bytes(&self.bytes).is_ascii_numeric()
@@ -180,7 +192,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "TeS3".parse()
     ///     .expect("Failed to parse.");
@@ -188,6 +200,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert_eq!(&*s1.to_ascii_lowercase(), "tes3");
     /// ```
     #[inline]
+    #[must_use]
     pub fn to_ascii_lowercase(mut self) -> Self {
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_lowercase();
@@ -209,7 +222,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "test".parse()
     ///     .expect("Failed to parse.");
@@ -217,6 +230,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert_eq!(&*s1.to_ascii_titlecase(), "Test");
     /// ```
     #[inline]
+    #[must_use]
     pub fn to_ascii_titlecase(mut self) -> Self {
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_titlecase();
@@ -238,7 +252,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr_neo::TinyAsciiStr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s1: TinyAsciiStr<4> = "Tes3".parse()
     ///     .expect("Failed to parse.");
@@ -246,6 +260,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert_eq!(&*s1.to_ascii_uppercase(), "TES3");
     /// ```
     #[inline]
+    #[must_use]
     pub fn to_ascii_uppercase(mut self) -> Self {
         if N <= 4 {
             let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_uppercase();
@@ -270,6 +285,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Safety
     /// Must be called with a bytes array made of valid ASCII bytes, with no null bytes
     /// between ASCII characters
+    #[must_use]
     pub const unsafe fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
         Self { bytes }
     }
@@ -288,6 +304,18 @@ impl<const N: usize> FromStr for TinyAsciiStr<N> {
     #[inline]
     fn from_str(s: &str) -> Result<Self, TinyStrError> {
         Self::from_str(s)
+    }
+}
+
+impl<const N: usize> PartialEq<str> for TinyAsciiStr<N> {
+    fn eq(&self, other: &str) -> bool {
+        self.deref() == other
+    }
+}
+
+impl<const N: usize> PartialEq<&str> for TinyAsciiStr<N> {
+    fn eq(&self, other: &&str) -> bool {
+        self.deref() == *other
     }
 }
 
