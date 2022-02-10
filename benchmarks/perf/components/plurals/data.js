@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644484650018,
+  "lastUpdate": 1644510021851,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26501,6 +26501,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 13143,
             "range": "± 126",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bede0608eb784f6b93dbf3d280d7553e41b73e7e",
+          "message": "Make tinystr publishable (#1597)",
+          "timestamp": "2022-02-10T08:09:30-08:00",
+          "tree_id": "f313183d63d10525d92338549c26c8e0d2a16e1b",
+          "url": "https://github.com/unicode-org/icu4x/commit/bede0608eb784f6b93dbf3d280d7553e41b73e7e"
+        },
+        "date": 1644510007366,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 945,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6287,
+            "range": "± 404",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16589,
+            "range": "± 1322",
             "unit": "ns/iter"
           }
         ]
