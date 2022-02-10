@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644482326446,
+  "lastUpdate": 1644484650018,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26459,6 +26459,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17885,
             "range": "± 1104",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb0e04733217efeaf12247ad0282bd794315ca0d",
+          "message": "Replacing `IterableProvider` by `IterableDynProvider` and `IterableResourceProvider` (#1595)",
+          "timestamp": "2022-02-10T10:07:41+01:00",
+          "tree_id": "173e4d872d51ca563dcc949c4fda20427b783c97",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb0e04733217efeaf12247ad0282bd794315ca0d"
+        },
+        "date": 1644484638391,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 872,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5243,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 13143,
+            "range": "± 126",
             "unit": "ns/iter"
           }
         ]
