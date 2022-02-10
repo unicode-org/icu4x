@@ -9,14 +9,6 @@
 use crate::internals::CaseMappingInternals;
 use icu_provider::yoke;
 
-pub mod key {
-    //! Resource keys for [`icu_casemapping`](crate)
-    use icu_provider::{resource_key, ResourceKey};
-
-    /// Key for case mapping data
-    pub const CASE_MAPPING_V1: ResourceKey = resource_key!("props/casemap@1");
-}
-
 #[icu_provider::data_struct(CaseMappingV1Marker = "props/casemap@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

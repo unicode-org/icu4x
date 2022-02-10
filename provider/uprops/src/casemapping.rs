@@ -73,7 +73,7 @@ mod tests {
             .join("uprops")
             .join("ucase.toml");
         let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
-        let case_mapping = CaseMapping::new(&provider).expect("Loading was successful");
+        let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
 
         // Basic case mapping
         assert_eq!(case_mapping.to_uppercase('a'), 'A');
@@ -121,14 +121,14 @@ mod tests {
             .join("ucase.toml");
         let provider = CaseMappingDataProvider::try_new(root_dir).expect("Loading was successful");
 
-        let case_mapping = CaseMapping::new(&provider).expect("Loading was successful");
+        let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
 
         let turkish_locale = Locale::from_str("tr").expect("Parsing was successful");
-        let turkish_case_mapping = CaseMapping::new_with_locale(&provider, &turkish_locale)
+        let turkish_case_mapping = CaseMapping::try_new_with_locale(&provider, &turkish_locale)
             .expect("Loading was successful");
 
         let lithuanian_locale = Locale::from_str("lt").expect("Parsing was successful");
-        let lithuanian_case_mapping = CaseMapping::new_with_locale(&provider, &lithuanian_locale)
+        let lithuanian_case_mapping = CaseMapping::try_new_with_locale(&provider, &lithuanian_locale)
             .expect("Loading was successful");
 
         let uppercase_greek = "ΙΕΣΥΣ ΧΡΙΣΤΟΣ"; // "IESUS CHRISTOS"

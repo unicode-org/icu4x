@@ -25,15 +25,15 @@ pub struct CaseMapping {
 
 impl CaseMapping {
     /// A constructor which takes a [`ResourceProvider`] and creates a [`CaseMapping`].
-    pub fn new<P>(provider: &P) -> Result<CaseMapping, DataError>
+    pub fn try_new<P>(provider: &P) -> Result<CaseMapping, DataError>
     where
         P: ResourceProvider<CaseMappingV1Marker> + ?Sized,
     {
-        Self::new_with_locale(provider, &Locale::und())
+        Self::try_new_with_locale(provider, &Locale::und())
     }
 
     /// A constructor which takes a [`ResourceProvider`] and creates a [`CaseMapping`] for the given locale.
-    pub fn new_with_locale<P>(provider: &P, locale: &Locale) -> Result<CaseMapping, DataError>
+    pub fn try_new_with_locale<P>(provider: &P, locale: &Locale) -> Result<CaseMapping, DataError>
     where
         P: ResourceProvider<CaseMappingV1Marker> + ?Sized,
     {
@@ -74,6 +74,7 @@ impl CaseMapping {
     /// Returns the lowercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
+    /// For full mappings, use [`CaseMapping::to_full_lowercase`].
     pub fn to_lowercase(&self, c: char) -> char {
         self.internals.get().casemap.simple_lower(c)
     }
@@ -81,6 +82,7 @@ impl CaseMapping {
     /// Returns the uppercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
+    /// For full mappings, use [`CaseMapping::to_full_uppercase`].
     pub fn to_uppercase(&self, c: char) -> char {
         self.internals.get().casemap.simple_upper(c)
     }
@@ -93,6 +95,7 @@ impl CaseMapping {
     }
 
     /// Returns the simple case folding mapping of the given char.
+    /// For full mappings, use [`CaseMapping::full_fold`].
     pub fn fold(&self, c: char) -> char {
         self.internals
             .get()

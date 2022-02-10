@@ -7,7 +7,7 @@ use displaydoc::Display;
 use icu_codepointtrie::error::Error as CodePointTrieError;
 
 /// A list of possible errors for the [`CaseMapping`](crate::CaseMapping) struct
-#[derive(Display, Debug, PartialEq)]
+#[derive(Clone, Display, Debug, PartialEq)]
 pub enum Error {
     /// An error occurred while building and validating the data
     #[displaydoc("Failed to validate: {0}")]
@@ -22,7 +22,7 @@ pub enum Error {
 
 impl Error {
     /// Creates a new validation error with the given reason
-    pub fn invalid<T>(reason: &'static str) -> Result<T, Self> {
+    pub(crate) fn invalid<T>(reason: &'static str) -> Result<T, Self> {
         Err(Self::Validation(reason))
     }
 }
