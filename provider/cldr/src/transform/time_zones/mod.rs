@@ -141,7 +141,10 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("Pohnpei", exemplar_cities.get()["Pacific/Ponape"]);
+        assert_eq!(
+            "Pohnpei",
+            exemplar_cities.get().0.get("Pacific/Ponape").unwrap()
+        );
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
@@ -153,7 +156,11 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
-            generic_names_long.get()["Australia_CentralWestern"]
+            generic_names_long
+                .get()
+                .defaults
+                .get("Australia_CentralWestern")
+                .unwrap()
         );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
@@ -166,7 +173,11 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
-            specific_names_long.get()["Australia_CentralWestern"][&tinystr!(8, "standard")]
+            specific_names_long
+                .get()
+                .defaults
+                .get("Australia_CentralWestern", &tinystr!(8, "standard"))
+                .unwrap()
         );
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
@@ -177,7 +188,14 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("PT", generic_names_short.get()["America_Pacific"]);
+        assert_eq!(
+            "PT",
+            generic_names_short
+                .get()
+                .defaults
+                .get("America_Pacific")
+                .unwrap()
+        );
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
             .load_resource(&DataRequest {
@@ -189,7 +207,11 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PDT",
-            specific_names_short.get()["America_Pacific"][&tinystr!(8, "daylight")]
+            specific_names_short
+                .get()
+                .defaults
+                .get("America_Pacific", &tinystr!(8, "daylight"))
+                .unwrap()
         );
     }
 }
