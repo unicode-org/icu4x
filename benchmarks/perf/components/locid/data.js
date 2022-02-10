@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644449207784,
+  "lastUpdate": 1644482203613,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23249,6 +23249,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5190,
             "range": "± 171",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0997b219fedbceb108adcc24dfcbb76cd907b4de",
+          "message": "Polish up Yoke docs (#1588)\n\n* Polish up Yoke docs\r\n\r\n* ci\r\n\r\n* Update utils/yoke/src/yoke.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* spelling\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-02-10T00:28:09-08:00",
+          "tree_id": "1dece9cc4ec3be0801cb742dfabafa9f174addb3",
+          "url": "https://github.com/unicode-org/icu4x/commit/0997b219fedbceb108adcc24dfcbb76cd907b4de"
+        },
+        "date": 1644482192364,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2264,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4285,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
