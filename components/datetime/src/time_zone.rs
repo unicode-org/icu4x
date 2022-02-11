@@ -432,7 +432,7 @@ impl TimeZoneFormat {
                 .exemplar_cities
                 .as_ref()
                 .map(|p| p.get())
-                .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
+                .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(id)))
                 .map(|location| {
                     self.zone_formats
                         .get()
@@ -459,14 +459,16 @@ impl TimeZoneFormat {
                 .and_then(|metazones| {
                     time_zone
                         .time_zone_id()
-                        .and_then(|tz| metazones.get_override(tz))
+                        .and_then(|tz| metazones.overrides.get(tz))
                 })
                 .or_else(|| {
                     self.mz_generic_short
                         .as_ref()
                         .map(|p| p.get())
                         .and_then(|metazones| {
-                            time_zone.metazone_id().and_then(|mz| metazones.get(mz))
+                            time_zone
+                                .metazone_id()
+                                .and_then(|mz| metazones.defaults.get(mz))
                         })
                 })
                 .ok_or(fmt::Error)?,
@@ -489,14 +491,16 @@ impl TimeZoneFormat {
                 .and_then(|metazones| {
                     time_zone
                         .time_zone_id()
-                        .and_then(|tz| metazones.get_override(tz))
+                        .and_then(|tz| metazones.overrides.get(tz))
                 })
                 .or_else(|| {
                     self.mz_generic_long
                         .as_ref()
                         .map(|p| p.get())
                         .and_then(|metazones| {
-                            time_zone.metazone_id().and_then(|mz| metazones.get(mz))
+                            time_zone
+                                .metazone_id()
+                                .and_then(|mz| metazones.defaults.get(mz))
                         })
                 })
                 .ok_or(fmt::Error)?,
@@ -517,26 +521,22 @@ impl TimeZoneFormat {
                 .as_ref()
                 .map(|p| p.get())
                 .and_then(|metazones| {
-                    time_zone
-                        .time_zone_id()
-                        .and_then(|tz| metazones.get_override(tz))
-                        .and_then(|specific_names| {
-                            time_zone
-                                .time_variant()
-                                .and_then(|variant| specific_names.get(variant))
-                        })
+                    time_zone.time_zone_id().and_then(|tz| {
+                        time_zone
+                            .time_variant()
+                            .and_then(|variant| metazones.overrides.get(tz, variant).ok())
+                    })
                 })
                 .or_else(|| {
                     self.mz_specific_short
                         .as_ref()
                         .map(|p| p.get())
                         .and_then(|metazones| {
-                            time_zone.metazone_id().and_then(|mz| metazones.get(mz))
-                        })
-                        .and_then(|specific_names| {
-                            time_zone
-                                .time_variant()
-                                .and_then(|variant| specific_names.get(variant))
+                            time_zone.metazone_id().and_then(|mz| {
+                                time_zone
+                                    .time_variant()
+                                    .and_then(|variant| metazones.defaults.get(mz, variant).ok())
+                            })
                         })
                 })
                 .ok_or_else(|| DateTimeFormatError::from(fmt::Error))?,
@@ -557,26 +557,22 @@ impl TimeZoneFormat {
                 .as_ref()
                 .map(|p| p.get())
                 .and_then(|metazones| {
-                    time_zone
-                        .time_zone_id()
-                        .and_then(|tz| metazones.get_override(tz))
-                        .and_then(|specific_names| {
-                            time_zone
-                                .time_variant()
-                                .and_then(|variant| specific_names.get(variant))
-                        })
+                    time_zone.time_zone_id().and_then(|tz| {
+                        time_zone
+                            .time_variant()
+                            .and_then(|variant| metazones.overrides.get(tz, variant).ok())
+                    })
                 })
                 .or_else(|| {
                     self.mz_specific_long
                         .as_ref()
                         .map(|p| p.get())
                         .and_then(|metazones| {
-                            time_zone.metazone_id().and_then(|mz| metazones.get(mz))
-                        })
-                        .and_then(|specific_names| {
-                            time_zone
-                                .time_variant()
-                                .and_then(|variant| specific_names.get(variant))
+                            time_zone.metazone_id().and_then(|mz| {
+                                time_zone
+                                    .time_variant()
+                                    .and_then(|variant| metazones.defaults.get(mz, variant).ok())
+                            })
                         })
                 })
                 .ok_or(fmt::Error)?,
@@ -633,7 +629,7 @@ impl TimeZoneFormat {
             self.exemplar_cities
                 .as_ref()
                 .map(|p| p.get())
-                .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
+                .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.0.get(id)))
                 .ok_or(fmt::Error)?,
         )
         .map_err(DateTimeFormatError::from)
@@ -654,7 +650,7 @@ impl TimeZoneFormat {
             self.exemplar_cities
                 .as_ref()
                 .map(|p| p.get())
-                .and_then(|cities| cities.get("Etc/Unknown"))
+                .and_then(|cities| cities.0.get("Etc/Unknown"))
                 .unwrap_or(&Cow::Borrowed("Unknown")),
         )
         .map_err(DateTimeFormatError::from)

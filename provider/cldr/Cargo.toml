@@ -53,11 +53,12 @@ serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-tuple-vec-map = "1.0"
 smallstr = { version = "0.2", features = ["serde"] }
 smallvec = "1.6"
-tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde"], default-features = false }
+tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
 icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
 icu_properties = { version = "0.5", path = "../../components/properties", features = ["provider_serde", "std"] }
+zerovec = { version = "0.6", path = "../../utils/zerovec"}
 
 # Dependencies for the download feature
 urlencoding = { version = "1.1", optional = true }
