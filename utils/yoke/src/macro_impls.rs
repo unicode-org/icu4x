@@ -54,11 +54,13 @@ impl_copy_type!(u16);
 impl_copy_type!(u32);
 impl_copy_type!(u64);
 impl_copy_type!(u128);
+impl_copy_type!(usize);
 impl_copy_type!(i8);
 impl_copy_type!(i16);
 impl_copy_type!(i32);
 impl_copy_type!(i64);
 impl_copy_type!(i128);
+impl_copy_type!(isize);
 impl_copy_type!(char);
 impl_copy_type!(bool);
 
