@@ -50,10 +50,7 @@ impl From<TimeZoneNames> for TimeZoneFormatsV1<'_> {
                         value,
                     )
                 })
-                .fold(ZeroMap::new(), |mut map, (key, value)| {
-                    map.insert(&key, &value);
-                    map
-                }),
+                .collect(),
             fallback_format: other.fallback_format.into(),
         }
     }
@@ -118,10 +115,7 @@ impl From<TimeZoneNames> for ExemplarCitiesV1<'_> {
                         },
                     )
                 })
-                .fold(ZeroMap::new(), |mut map, (key, value)| {
-                    map.insert(&key, &value);
-                    map
-                }),
+                .collect(),
         )
     }
 }
@@ -141,12 +135,9 @@ macro_rules! long_short_impls {
                                     .$field
                                     .as_ref()
                                     .and_then(type_fallback)
-                                    .map(|format| (key, format))
+                                    .map(|format| (key.clone(), format.clone()))
                             })
-                            .fold(ZeroMap::new(), |mut map, (key, value)| {
-                                map.insert(&key, &value);
-                                map
-                            }),
+                            .collect(),
                     },
                     overrides: other
                         .zone
@@ -182,10 +173,7 @@ macro_rules! long_short_impls {
                                 },
                             )
                         })
-                        .fold(ZeroMap::new(), |mut map, (key, value)| {
-                            map.insert(&key, &value);
-                            map
-                        }),
+                        .collect(),
                 }
             }
         }
@@ -200,7 +188,8 @@ macro_rules! long_short_impls {
                             .into_tuple_vec()
                             .into_iter()
                             .filter_map(|(key, metazone)| metazone.$field.map(|value| (key, value)))
-                            .fold(ZeroMap2d::new(), fold_format_into_zero_map_2d),
+                            .flat_map(iterate_zone_format)
+                            .collect(),
                     },
                     overrides: other
                         .zone
@@ -236,7 +225,8 @@ macro_rules! long_short_impls {
                                 },
                             )
                         })
-                        .fold(ZeroMap2d::new(), fold_format_into_zero_map_2d),
+                        .flat_map(iterate_zone_format)
+                        .collect(),
                 }
             }
         }
@@ -257,21 +247,19 @@ long_short_impls!(
     short_metazone_names
 );
 
-fn fold_format_into_zero_map_2d(
-    mut map: ZeroMap2d<str, TinyStr8, str>,
+fn iterate_zone_format(
     pair: (String, ZoneFormat),
-) -> ZeroMap2d<str, TinyStr8, str> {
+) -> impl Iterator<Item = (String, TinyStr8, String)> {
     let (key1, zf) = pair;
     zf.0.into_tuple_vec()
         .into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .for_each(|(key, value)| {
-            map.insert(
-                &key1,
-                &key.parse::<TinyStr8>()
+        .map(move |(key, value)| {
+            (
+                key1.clone(),
+                key.parse::<TinyStr8>()
                     .expect("Time-zone variant was not compatible with TinyStr8"),
-                &value,
-            );
-        });
-    map
+                value,
+            )
+        })
 }

@@ -6,8 +6,10 @@
 
 use crate::ule::AsULE;
 use crate::{ZeroSlice, ZeroVec};
+use alloc::borrow::Borrow;
 use core::cmp::Ordering;
 use core::fmt;
+use core::iter::FromIterator;
 
 mod borrowed;
 mod kv;
@@ -50,10 +52,8 @@ pub use vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 /// [`VarZeroVec`]: crate::VarZeroVec
 pub struct ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
-    K: ?Sized,
-    V: ?Sized,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
 {
     pub(crate) keys: K::Container,
     pub(crate) values: V::Container,
@@ -61,10 +61,8 @@ where
 
 impl<'a, K, V> Default for ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
-    K: ?Sized,
-    V: ?Sized,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
 {
     fn default() -> Self {
         Self::new()
@@ -73,10 +71,8 @@ where
 
 impl<'a, K, V> ZeroMap<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
-    K: ?Sized,
-    V: ?Sized,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
 {
     /// Creates a new, empty `ZeroMap<K, V>`.
     ///
@@ -378,5 +374,31 @@ where
             keys: self.keys.clone(),
             values: self.values.clone(),
         }
+    }
+}
+
+impl<'a, A, B, K, V> FromIterator<(A, B)> for ZeroMap<'a, K, V>
+where
+    A: Borrow<K>,
+    B: Borrow<V>,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+{
+    fn from_iter<T>(iter: T) -> Self
+    where
+        T: IntoIterator<Item = (A, B)>,
+    {
+        let iter = iter.into_iter();
+        let mut map = match iter.size_hint() {
+            (_, Some(upper)) => Self::with_capacity(upper),
+            (lower, None) => Self::with_capacity(lower),
+        };
+
+        for (key, value) in iter {
+            if let Some((key, value)) = map.try_append(key.borrow(), value.borrow()) {
+                map.insert(key, value);
+            }
+        }
+        map
     }
 }
