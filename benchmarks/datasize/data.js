@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644537832683,
+  "lastUpdate": 1644565745600,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9023,6 +9023,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0f2f0f791415d645f456c901666633ec49c660ff"
         },
         "date": 1644537822325,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1571719,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf9efe6973437bda8c7506e15dce277f79d6bbd8",
+          "message": "Hiding PluralRulesV1Marker (#1598)",
+          "timestamp": "2022-02-11T08:47:21+01:00",
+          "tree_id": "9095b99c11f8d40944ccc44b267ad68d1587a16c",
+          "url": "https://github.com/unicode-org/icu4x/commit/bf9efe6973437bda8c7506e15dce277f79d6bbd8"
+        },
+        "date": 1644565735219,
         "tool": "ndjson",
         "benches": [
           {
