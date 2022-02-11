@@ -34,30 +34,6 @@ where
 }
 
 /// Convenience function to drive a [`DataExporter`] from an [`IterableDynProvider`].
-///
-/// # Example
-///
-/// [`HelloWorldProvider`] implements both [`DataExporter`] and [`IterableDynProvider`]. The
-/// following example copies the data from one instance to another instance.
-///
-/// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::hello_world::*;
-///
-/// let source_provider = HelloWorldProvider::new_with_placeholder_data();
-/// let mut dest_provider = HelloWorldProvider::default();
-///
-/// icu_provider::export::export_from_iterable(
-///     &HelloWorldV1Marker::KEY,
-///     &source_provider,
-///     &mut dest_provider,
-/// )
-/// .expect("Export should be successful");
-///
-/// assert_eq!(source_provider, dest_provider);
-/// ```
-///
-/// [`HelloWorldProvider`]: crate::hello_world::HelloWorldProvider
 pub fn export_from_iterable<P, E, M>(
     resc_key: &ResourceKey,
     provider: &P,

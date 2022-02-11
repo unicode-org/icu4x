@@ -14,7 +14,6 @@ use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::rc::Rc;
 use alloc::string::String;
-use alloc::string::ToString;
 use core::fmt::Debug;
 use core::str::FromStr;
 use icu_locid::LanguageIdentifier;
@@ -184,23 +183,35 @@ impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     }
 }
 
-/// Adds entries to a [`HelloWorldProvider`] from [`AnyMarker`](crate::any::AnyMarker)
-impl crate::export::DataExporter<crate::any::AnyMarker> for HelloWorldProvider {
-    fn put_payload(
-        &mut self,
-        key: ResourceKey,
-        req: DataRequest,
-        payload: DataPayload<crate::any::AnyMarker>,
-    ) -> Result<(), DataError> {
-        key.match_key(HelloWorldV1Marker::KEY)?;
-        let langid = req
-            .get_langid()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, &req))?;
-        let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
-        self.map.insert(
-            langid.clone(),
-            Cow::Owned(downcast_payload.get().message.to_string()),
-        );
-        Ok(())
-    }
+#[test]
+fn test_iter() {
+    let provider = HelloWorldProvider::new_with_placeholder_data();
+    let mut supported_langids: Vec<LanguageIdentifier> = provider
+        .supported_options()
+        .unwrap()
+        .map(|resc_options| resc_options.langid.unwrap())
+        .collect();
+    supported_langids.sort();
+
+    assert_eq!(
+        supported_langids,
+        vec![
+            icu_locid_macros::langid!("bn"),
+            icu_locid_macros::langid!("cs"),
+            icu_locid_macros::langid!("de"),
+            icu_locid_macros::langid!("el"),
+            icu_locid_macros::langid!("en"),
+            icu_locid_macros::langid!("eo"),
+            icu_locid_macros::langid!("fa"),
+            icu_locid_macros::langid!("fi"),
+            icu_locid_macros::langid!("is"),
+            icu_locid_macros::langid!("ja"),
+            icu_locid_macros::langid!("la"),
+            icu_locid_macros::langid!("pt"),
+            icu_locid_macros::langid!("ro"),
+            icu_locid_macros::langid!("ru"),
+            icu_locid_macros::langid!("vi"),
+            icu_locid_macros::langid!("zh")
+        ]
+    );
 }
