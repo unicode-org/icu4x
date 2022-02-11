@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644538279378,
+  "lastUpdate": 1644566219220,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20009,6 +20009,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43825847,
             "range": "± 1373130",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf9efe6973437bda8c7506e15dce277f79d6bbd8",
+          "message": "Hiding PluralRulesV1Marker (#1598)",
+          "timestamp": "2022-02-11T08:47:21+01:00",
+          "tree_id": "9095b99c11f8d40944ccc44b267ad68d1587a16c",
+          "url": "https://github.com/unicode-org/icu4x/commit/bf9efe6973437bda8c7506e15dce277f79d6bbd8"
+        },
+        "date": 1644566206386,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 45344989,
+            "range": "± 717833",
             "unit": "ns/iter"
           }
         ]
