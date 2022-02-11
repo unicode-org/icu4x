@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644509897819,
+  "lastUpdate": 1644538255916,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23357,6 +23357,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4145,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0f2f0f791415d645f456c901666633ec49c660ff",
+          "message": "Update API docs for ScriptExtensions struct (#1570)",
+          "timestamp": "2022-02-10T16:02:11-08:00",
+          "tree_id": "032cefc0e5f990e907ac7868e58446606336f620",
+          "url": "https://github.com/unicode-org/icu4x/commit/0f2f0f791415d645f456c901666633ec49c660ff"
+        },
+        "date": 1644538245337,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2025,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4157,
+            "range": "± 237",
             "unit": "ns/iter"
           }
         ]
