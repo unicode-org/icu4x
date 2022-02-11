@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644604957307,
+  "lastUpdate": 1644606680911,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18989,6 +18989,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 93926,
             "range": "± 539",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b62eee1c222523f4d56f02798d7e2420fd74962",
+          "message": "UnicodeSet ZCF (#1604)",
+          "timestamp": "2022-02-11T20:01:48+01:00",
+          "tree_id": "2cefdbf994ba60e442e691cc3f9f43f51b0b9a4c",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b62eee1c222523f4d56f02798d7e2420fd74962"
+        },
+        "date": 1644606668202,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108002,
+            "range": "± 5468",
             "unit": "ns/iter"
           }
         ]
