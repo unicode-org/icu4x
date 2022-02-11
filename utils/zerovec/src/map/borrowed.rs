@@ -5,8 +5,8 @@
 use crate::ule::AsULE;
 use crate::{ZeroSlice, ZeroVec};
 
-use core::fmt;
 use core::cmp::Ordering;
+use core::fmt;
 
 pub use super::kv::ZeroMapKV;
 pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};

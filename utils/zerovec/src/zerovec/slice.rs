@@ -275,7 +275,7 @@ where
     /// assert_eq!(zerovec.binary_search_by(|x| x.cmp(&282)), Err(2));
     /// ```
     ///
-    /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search_by
+    /// [`binary_search_by`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search_by
     #[inline]
     pub fn binary_search_by(
         &self,
