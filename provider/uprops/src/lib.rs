@@ -28,4 +28,4 @@ mod uprops_serde;
 
 pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use provider::PropertiesDataProvider;
-pub use script::ScriptExtensionsPropertyProvider;
+pub use script::ScriptWithExtensionsPropertyProvider;
