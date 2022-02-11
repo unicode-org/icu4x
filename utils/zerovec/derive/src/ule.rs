@@ -113,8 +113,8 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     let ule_name = Ident::new(&format!("{}ULE", name), Span::call_site());
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(&name, &ule_name, &input, s),
-        Data::Enum(ref e) => make_ule_enum_impl(&name, &ule_name, &input, e),
+        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s),
+        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
@@ -162,7 +162,7 @@ fn make_ule_enum_impl(
         }
 
         if let Some((_, ref discr)) = variant.discriminant {
-            if let Some(n) = get_expr_int(&discr) {
+            if let Some(n) = get_expr_int(discr) {
                 // We require explicit discriminants so that it is clear that reordering
                 // fields would be a breaking change. Furthermore, using explicit discriminants helps ensure that
                 // platform-specific C ABI choices do not matter.
