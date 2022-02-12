@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644606213782,
+  "lastUpdate": 1644649354825,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9113,6 +9113,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7b62eee1c222523f4d56f02798d7e2420fd74962"
         },
         "date": 1644606203191,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "73613eae6e0b75e5ba0116f276015e4d65c95216",
+          "message": "zerovec binary_search_by functions (#1605)\n\n* Add binary_search_by to vector types\n\n* Add zvl_binary_search_by\n\n* Add get_by to ZeroMaps\n\n* fix",
+          "timestamp": "2022-02-11T23:00:39-08:00",
+          "tree_id": "0d6e34774e159bc37b05bc6d231a98aec9d36162",
+          "url": "https://github.com/unicode-org/icu4x/commit/73613eae6e0b75e5ba0116f276015e4d65c95216"
+        },
+        "date": 1644649342269,
         "tool": "ndjson",
         "benches": [
           {
