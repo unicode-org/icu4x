@@ -148,6 +148,22 @@ where
         self.values.zvl_get(index)
     }
 
+    /// Binary search the map with `predicate` to find a key, returning the value.
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap;
+    ///
+    /// let mut map = ZeroMap::new();
+    /// map.insert(&1, "one");
+    /// map.insert(&2, "two");
+    /// assert_eq!(map.get_by(|probe| probe.cmp(&1)), Some("one"));
+    /// assert_eq!(map.get_by(|probe| probe.cmp(&3)), None);
+    /// ```
+    pub fn get_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<&V::GetType> {
+        let index = self.keys.zvl_binary_search_by(predicate).ok()?;
+        self.values.zvl_get(index)
+    }
+
     /// Returns whether `key` is contained in this map
     ///
     /// ```rust

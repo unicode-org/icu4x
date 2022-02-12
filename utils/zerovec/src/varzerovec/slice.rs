@@ -4,6 +4,7 @@
 
 use super::components::VarZeroVecComponents;
 use super::*;
+use core::cmp::Ordering;
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::Index;
@@ -283,6 +284,35 @@ where
     }
 }
 
+impl<T> VarZeroSlice<T>
+where
+    T: VarULE,
+    T: ?Sized,
+{
+    /// Binary searches a sorted `VarZeroVec<T>` for the given predicate. For more information, see
+    /// the standard library function [`binary_search_by`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::ule::ZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["a", "b", "f", "g"];
+    /// let vec = VarZeroVec::<str>::from(&strings);
+    ///
+    /// assert_eq!(vec.binary_search_by(|probe| probe.cmp("f")), Ok(2));
+    /// assert_eq!(vec.binary_search_by(|probe| probe.cmp("e")), Err(2));
+    /// # Ok::<(), ZeroVecError>(())
+    /// ```
+    ///
+    /// [`binary_search_by`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search_by
+    #[inline]
+    pub fn binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
+        self.as_components().binary_search_by(predicate)
+    }
+}
 // Safety (based on the safety checklist on the VarULE trait):
 //  1. VarZeroSlice does not include any uninitialized or padding bytes (achieved by `#[repr(transparent)]` on a
 //     `[u8]` slice which satisfies this invariant)
