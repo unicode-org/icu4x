@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644649770569,
+  "lastUpdate": 1644874433423,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20129,6 +20129,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 51375238,
             "range": "± 1747203",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5ab686cbe2c86ff359519c496198f992a560eb8a",
+          "message": "Add postcard support to FsDataProvider (#1606)",
+          "timestamp": "2022-02-14T13:25:08-08:00",
+          "tree_id": "7382ae47be0af324b879daca05aad3b25ccf3615",
+          "url": "https://github.com/unicode-org/icu4x/commit/5ab686cbe2c86ff359519c496198f992a560eb8a"
+        },
+        "date": 1644874420706,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44309757,
+            "range": "± 1303914",
             "unit": "ns/iter"
           }
         ]
