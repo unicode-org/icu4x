@@ -7,8 +7,10 @@ use crate::impl_const::*;
 
 use core::convert::TryFrom;
 use core::fmt::Display;
+use core::iter::FromIterator;
 use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
+use icu_uniset::UnicodeSet;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use yoke::Yokeable;
@@ -796,6 +798,35 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
             cpt: self,
             cpm_range: init_range,
         }
+    }
+
+    /// Returns a [`UnicodeSet`] for the code points that have the given
+    /// [`TrieValue`] in the trie.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let plane_val = 2;
+    /// let sip = trie.get_set_for_value(plane_val as u8);
+    ///
+    /// let start = plane_val * 0x1_0000;
+    /// let end = start + 0xffff;
+    ///
+    /// assert!(!sip.contains_u32(start - 1));
+    /// assert!(sip.contains_u32(start));
+    /// assert!(sip.contains_u32(end));
+    /// assert!(!sip.contains_u32(end + 1));
+    /// ```
+    pub fn get_set_for_value(&self, value: T) -> UnicodeSet {
+        let value_ranges = self
+            .iter_ranges()
+            .filter(move |cpm_range| cpm_range.value == value)
+            .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()));
+        UnicodeSet::from_iter(value_ranges)
     }
 }
 
