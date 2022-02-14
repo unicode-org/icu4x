@@ -41,3 +41,16 @@ pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
     let attr = parse_macro_input!(attr as AttributeArgs);
     TokenStream::from(ule::make_ule_impl(attr, input))
 }
+
+/// Generate a corresponding VarULE type and the relevant EncodeAsVarULE implementations for this type
+///
+/// This can be attached to structs containing only AsULE types with the last field being `Cow<'a, str>`,
+/// `Cow<'a, [u8]>`, ZeroSlice, or VarZeroSlice
+///
+/// The type must be `PartialEq` `Ord`.
+#[proc_macro_attribute]
+pub fn make_varule(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as DeriveInput);
+    let attr = parse_macro_input!(attr as AttributeArgs);
+    TokenStream::from(varule::make_varule_impl(attr, input))
+}

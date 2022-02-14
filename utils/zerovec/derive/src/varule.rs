@@ -6,7 +6,7 @@ use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{Data, DeriveInput, Error, Ident};
+use syn::{AttributeArgs, Data, DeriveInput, Error, GenericArgument, Ident, PathArguments, Type};
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     if !crate::utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
@@ -107,6 +107,189 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
                 let entire_struct_as_slice: *const [u8] = ::core::slice::from_raw_parts(bytes.as_ptr(), metadata);
                 &*(entire_struct_as_slice as *const Self)
             }
+        }
+    }
+}
+
+pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+    if input.generics.type_params().next().is_some()
+        || input.generics.const_params().next().is_some()
+        || input.generics.lifetimes().count() > 1
+    {
+        return Error::new(
+            input.generics.span(),
+            "#[make_varule] must be applied to a struct without any type or const parameters and at most one lifetime",
+        )
+        .to_compile_error();
+    }
+
+    let lt = input.generics.lifetimes().next();
+
+    if !attr.is_empty() {
+        return Error::new(
+            input.span(),
+            "#[make_varule] does not currently support any arguments",
+        )
+        .to_compile_error();
+    }
+    let name = &input.ident;
+    let ule_name = Ident::new(&format!("{}ULE", name), Span::call_site());
+
+    let fields = match input.data {
+        Data::Struct(ref s) => &s.fields,
+        _ => {
+            return Error::new(input.span(), "#[make_varule] must be applied to a struct")
+                .to_compile_error();
+        }
+    };
+
+    let last_field = fields.iter().next_back();
+    let last_field = if let Some(ref last) = last_field {
+        last
+    } else {
+        return Error::new(
+            input.span(),
+            "#[make_varule] must be applied to a struct with at least one field",
+        )
+        .to_compile_error();
+    };
+
+    let last_field_info = LastField::new(&last_field.ty);
+
+    quote!()
+}
+
+/// Represents a VarULE-compatible type that would typically
+/// be found behind a `Cow<'a, _>` in the last field, and is represented
+/// roughly the same in owned and borrowed versions
+#[derive(Clone, Eq, PartialEq)]
+enum OwnULETy<'a> {
+    /// [T] where T: AsULE<ULE = Self>
+    Slice(&'a Type),
+    /// str
+    Str,
+}
+
+/// Represents the type of the last field of the struct
+#[derive(Clone, Eq, PartialEq)]
+enum LastField<'a> {
+    Cow(OwnULETy<'a>),
+    ZeroVec(&'a Type),
+    VarZeroVec(&'a Type),
+
+    // Generally you should be using the above ones for maximum zero-copy, but these will still work
+    Growable(OwnULETy<'a>),
+    Boxed(OwnULETy<'a>),
+    Ref(OwnULETy<'a>),
+}
+
+impl<'a> LastField<'a> {
+    /// Construct a LastField for the type of a LastField if possible
+    fn new(ty: &'a Type) -> Result<LastField<'a>, String> {
+        match *ty {
+            Type::Reference(ref tyref) => OwnULETy::new(&tyref.elem, "reference").map(LastField::Ref),
+            Type::Path(ref typath) => {
+                if typath.path.segments.len() != 1 {
+                    return Err("Can only automatically detect corresponding VarULE types for \
+                                path types with a single path segment".into());
+                }
+                let segment = typath.path.segments.first().unwrap();
+                match segment.arguments {
+                    PathArguments::None => {
+                        if segment.ident == "String" {
+                            Ok(LastField::Growable(OwnULETy::Str))
+                        } else {
+                            return Err("Can only automatically detect corresponding VarULE types for path types \
+                                        that are not Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into());
+                        }
+                    }
+                    PathArguments::AngleBracketed(ref params) => {
+                        // At most one lifetime and exactly one generic parameter
+                        let mut lifetime = None;
+                        let mut generic = None;
+                        for param in &params.args {
+                            match param {
+                                GenericArgument::Lifetime(ref lt) if lifetime.is_none() => {
+                                    lifetime = Some(lt)
+                                }
+                                GenericArgument::Type(ref ty) if generic.is_none() => {
+                                    generic = Some(ty)
+                                }
+                                _ => return Err("Can only automatically detect corresponding VarULE types for path \
+                                                 types with at most one lifetime and at most one generic parameter".into()),
+                            }
+                        }
+
+                        // Must be exactly one generic parameter
+                        let generic = if let Some(g) = generic {
+                            g
+                        } else {
+                            return Err("Can only automatically detect corresponding VarULE types for path \
+                                        types with at most one lifetime and at most one generic parameter".into());
+                        };
+
+                        let ident = segment.ident.to_string();
+
+                        if lifetime.is_some() {
+                            match &*ident {
+                                "ZeroVec" => Ok(LastField::ZeroVec(generic)),
+                                "VarZeroVec" => Ok(LastField::VarZeroVec(generic)),
+                                "Cow" => OwnULETy::new(generic, "Cow").map(LastField::Cow),
+                                _ => Err("Can only automatically detect corresponding VarULE types for path \
+                                          types that are not Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into()),
+                            }
+                        } else {
+                            match &*ident {
+                                "Vec" => Ok(LastField::Growable(OwnULETy::Slice(generic))),
+                                "Box" => OwnULETy::new(generic, "Box").map(LastField::Boxed),
+                                _ => Err("Can only automatically detect corresponding VarULE types for path types \
+                                          that are not Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into()),
+                            }
+                        }
+                    }
+                    _ => Err("Can only automatically detect corresponding VarULE types for path types \
+                              with none or angle bracketed generics".into()),
+                }
+            }
+            _ => Err("Can only automatically detect corresponding VarULE types for path and reference types".into()),
+        }
+    }
+    /// Get the tokens for the corresponding VarULE type
+    fn varule_ty(&self) -> TokenStream2 {
+        match *self {
+            Self::Ref(ref inner)
+            | Self::Cow(ref inner)
+            | Self::Boxed(ref inner)
+            | Self::Growable(ref inner) => {
+                let inner_ule = inner.varule_ty();
+                quote!(#inner_ule)
+            }
+            Self::ZeroVec(ref inner) => quote!(zerovec::ZeroVec<#inner>),
+            Self::VarZeroVec(ref inner) => quote!(zerovec::VarZeroVec<#inner>),
+        }
+    }
+}
+
+impl<'a> OwnULETy<'a> {
+    fn new(ty: &'a Type, context: &str) -> Result<Self, String> {
+        match *ty {
+            Type::Slice(ref slice) => Ok(OwnULETy::Slice(&slice.elem)),
+            Type::Path(ref typath) => {
+                if typath.path.is_ident("str") {
+                    Ok(OwnULETy::Str)
+                } else {
+                    Err(format!("Cannot automatically detect corresponding VarULE type for non-str path type inside a {context}"))
+                }
+            }
+            _ => Err(format!("Cannot automatically detect corresponding VarULE type for non-slice/path type inside a {context}")),
+        }
+    }
+
+    /// Get the tokens for the corresponding VarULE type
+    fn varule_ty(&self) -> TokenStream2 {
+        match *self {
+            OwnULETy::Slice(s) => quote!([#s]),
+            OwnULETy::Str => quote!(str),
         }
     }
 }
