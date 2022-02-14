@@ -142,8 +142,8 @@ mod indices;
 mod language;
 mod rule_segmenter;
 
-mod line;
 mod grapheme;
+mod line;
 mod sentence;
 mod word;
 
