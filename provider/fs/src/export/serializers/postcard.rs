@@ -22,12 +22,10 @@ impl AbstractSerializer for Serializer {
         sink: &mut dyn io::Write,
     ) -> Result<(), Error> {
         let mut serializer = postcard::Serializer {
-            output: postcard::flavors::StdVec(Vec::new())
+            output: postcard::flavors::StdVec(Vec::new()),
         };
-        obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
-            &mut serializer
-        ))?;
-        sink.write(&serializer.output.0)?;
+        obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
+        sink.write_all(&serializer.output.0)?;
         Ok(())
     }
 
