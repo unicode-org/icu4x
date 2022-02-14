@@ -83,6 +83,7 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .possible_value("json")
                 .possible_value("bincode")
+                .possible_value("postcard")
                 .help("File format syntax for data files."),
         )
         .arg(
@@ -340,6 +341,10 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
         Some("bincode") => {
             let options = serializers::bincode::Options::default();
             Box::new(serializers::bincode::Serializer::new(options))
+        }
+        Some("postcard") => {
+            let options = serializers::postcard::Options::default();
+            Box::new(serializers::postcard::Serializer::new(options))
         }
         _ => unreachable!(),
     };

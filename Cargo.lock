@@ -1372,6 +1372,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "log",
+ "postcard",
  "serde",
  "serde-json-core",
  "serde_json",
