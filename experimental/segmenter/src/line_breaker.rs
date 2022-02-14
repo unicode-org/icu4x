@@ -104,6 +104,10 @@ impl Default for LineBreakOptions {
     }
 }
 
+/// Supports loading line break data, and creating line break iterators for different string
+/// encodings. Please see the [module-level documentation] for its usages.
+///
+/// [module-level documentation]: index.html
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
@@ -400,9 +404,8 @@ pub trait LineBreakType<'l, 's> {
     ) -> Vec<usize>;
 }
 
-/// The struct implementing the [`Iterator`] trait over the line break
-/// opportunities of the given string. Please see the [module-level
-/// documentation] for its usages.
+/// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
+/// see the [module-level documentation] for its usages.
 ///
 /// Lifetimes:
 ///
@@ -410,7 +413,7 @@ pub trait LineBreakType<'l, 's> {
 /// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
-/// [module-level documentation]: ../index.html
+/// [module-level documentation]: index.html
 pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     iter: Y::IterAttr,
     len: usize,

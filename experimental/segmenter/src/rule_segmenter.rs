@@ -11,34 +11,38 @@ const INTERMEDIATE_MATCH_RULE: i8 = 64;
 
 /// A trait allowing for RuleBreakIterator to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
-pub trait RuleBreakType<'a> {
+pub trait RuleBreakType<'l, 's> {
     /// The iterator over characters.
     type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
 
     /// The character type.
     type CharType: Copy + Into<u32>;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<'a, Self>) -> usize;
+    fn get_current_position_character_len(iter: &RuleBreakIterator<'l, 's, Self>) -> usize;
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'a, Self>,
+        iter: &mut RuleBreakIterator<'l, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize>;
 }
 
-/// The struct implementing the [`Iterator`] trait over the segmenter break
-/// opportunities of the given string. Please see the [module-level
-/// documentation] for its usages.
+/// Implements the [`Iterator`] trait over the segmenter break opportunities of the given string.
+/// Please see the [module-level documentation] for its usages.
+///
+/// Lifetimes:
+///
+/// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
-/// [module-level documentation]: ../index.html
-pub struct RuleBreakIterator<'a, Y: RuleBreakType<'a> + ?Sized> {
+/// [module-level documentation]: index.html
+pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
-    pub(crate) break_state_table: &'a [i8],
-    pub(crate) property_table: &'a [&'a [u8; 1024]; 897],
+    pub(crate) break_state_table: &'l [i8],
+    pub(crate) property_table: &'l [&'l [u8; 1024]; 897],
     pub(crate) rule_property_count: usize,
     pub(crate) last_codepoint_property: i8,
     pub(crate) sot_property: u8,
@@ -46,7 +50,7 @@ pub struct RuleBreakIterator<'a, Y: RuleBreakType<'a> + ?Sized> {
     pub(crate) complex_property: u8,
 }
 
-impl<'a, Y: RuleBreakType<'a>> Iterator for RuleBreakIterator<'a, Y> {
+impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -162,13 +166,15 @@ impl<'a, Y: RuleBreakType<'a>> Iterator for RuleBreakIterator<'a, Y> {
     }
 }
 
-impl<'a, Y: RuleBreakType<'a>> RuleBreakIterator<'a, Y> {
+impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
     pub(crate) fn get_current_break_property(&self) -> u8 {
         self.get_break_property(self.get_current_codepoint())
     }
 
     fn get_current_codepoint(&self) -> Y::CharType {
-        self.current_pos_data.expect("Not at the of the string").1
+        self.current_pos_data
+            .expect("Not at the end of the string!")
+            .1
     }
 
     fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
