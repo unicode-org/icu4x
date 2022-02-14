@@ -56,7 +56,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [ ] Calendrical calculations and formatting for Coptic, Japanese, and Indian National ([#534](https://github.com/unicode-org/icu4x/issues/534))
 	* [ ] April-June
 		* [ ] 1.0 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/16))
-		        * [ ] UnicodeSet L3b ([#168]((https://github.com/unicode-org/icu4x/issues/533))
+			* [ ] UnicodeSet L3b ([#168](https://github.com/unicode-org/icu4x/issues/533))
 			* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
 			* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109)) 
 		
