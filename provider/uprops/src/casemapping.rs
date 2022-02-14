@@ -128,8 +128,9 @@ mod tests {
             .expect("Loading was successful");
 
         let lithuanian_locale = Locale::from_str("lt").expect("Parsing was successful");
-        let lithuanian_case_mapping = CaseMapping::try_new_with_locale(&provider, &lithuanian_locale)
-            .expect("Loading was successful");
+        let lithuanian_case_mapping =
+            CaseMapping::try_new_with_locale(&provider, &lithuanian_locale)
+                .expect("Loading was successful");
 
         let uppercase_greek = "ΙΕΣΥΣ ΧΡΙΣΤΟΣ"; // "IESUS CHRISTOS"
         let lowercase_greek = "ιεσυς χριστος"; // "IESUS CHRISTOS"
