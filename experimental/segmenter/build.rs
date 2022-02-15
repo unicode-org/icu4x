@@ -2,13 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu::properties::{maps, sets, GraphemeClusterBreak, LineBreak, SentenceBreak, WordBreak};
+use icu::properties::{
+    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
+    WordBreak,
+};
 use icu_provider_fs::FsDataProvider;
 use serde::Deserialize;
 use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
+use std::thread;
 
 // state machine name define by builtin name
 // [[tables]]
@@ -86,8 +90,9 @@ fn set_break_state(
     right_index: usize,
     break_state: i8,
 ) {
-    if break_state_table[left_index * property_length + right_index] == UNKNOWN_RULE {
-        break_state_table[left_index * property_length + right_index] = break_state;
+    let index = left_index * property_length + right_index;
+    if break_state_table[index] == UNKNOWN_RULE || break_state_table[index] == NOT_MATCH_RULE {
+        break_state_table[index] = break_state;
     }
 }
 
@@ -164,6 +169,74 @@ fn get_sentence_segmenter_value_from_name(name: &str) -> SentenceBreak {
     }
 }
 
+fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
+    match name {
+        "AI" => LineBreak::Ambiguous,
+        "AL" => LineBreak::Alphabetic,
+        "B2" => LineBreak::BreakBoth,
+        "BA" => LineBreak::BreakAfter,
+        "BB" => LineBreak::BreakBefore,
+        "BK" => LineBreak::MandatoryBreak,
+        "CB" => LineBreak::ContingentBreak,
+        "CJ" => LineBreak::ConditionalJapaneseStarter,
+        "CL" => LineBreak::ClosePunctuation,
+        "CM" => LineBreak::CombiningMark,
+        "CP" => LineBreak::CloseParenthesis,
+        "CR" => LineBreak::CarriageReturn,
+        "EB" => LineBreak::EBase,
+        "EM" => LineBreak::EModifier,
+        "EX" => LineBreak::Exclamation,
+        "GL" => LineBreak::Glue,
+        "H2" => LineBreak::H2,
+        "H3" => LineBreak::H3,
+        "HL" => LineBreak::HebrewLetter,
+        "HY" => LineBreak::Hyphen,
+        "ID" => LineBreak::Ideographic,
+        "IN" => LineBreak::Inseparable,
+        "IS" => LineBreak::InfixNumeric,
+        "JL" => LineBreak::JL,
+        "JT" => LineBreak::JT,
+        "JV" => LineBreak::JV,
+        "LF" => LineBreak::LineFeed,
+        "NL" => LineBreak::NextLine,
+        "NS" => LineBreak::Nonstarter,
+        "NU" => LineBreak::Numeric,
+        "OP" => LineBreak::OpenPunctuation,
+        "PO" => LineBreak::PostfixNumeric,
+        "PR" => LineBreak::PrefixNumeric,
+        "QU" => LineBreak::Quotation,
+        "RI" => LineBreak::RegionalIndicator,
+        "SA" => LineBreak::ComplexContext,
+        "SG" => LineBreak::Surrogate,
+        "SP" => LineBreak::Space,
+        "SY" => LineBreak::BreakSymbols,
+        "WJ" => LineBreak::WordJoiner,
+        "XX" => LineBreak::Unknown,
+        "ZW" => LineBreak::ZWSpace,
+        "ZWJ" => LineBreak::ZWJ,
+        _ => {
+            panic!("Invalid property name: {}", name)
+        }
+    }
+}
+
+fn output_propery_plane_with_same_value(out: &mut File, name: &str, value: u8) {
+    writeln!(out, "#[allow(dead_code)]").ok();
+    writeln!(
+        out,
+        "pub const BREAK_PROPERTIES_FILL_BY_{}: [u8; 1024] = [",
+        name
+    )
+    .ok();
+    for i in 0..1024 {
+        write!(out, " {},", value).ok();
+        if ((i + 1) % 16) == 0 {
+            writeln!(out).ok();
+        }
+    }
+    writeln!(out, "];").ok();
+}
+
 fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &FsDataProvider) {
     let mut properties_map: [u8; CODEPOINT_TABLE_LEN] = [0; CODEPOINT_TABLE_LEN];
     let mut properties_names = Vec::<String>::new();
@@ -178,11 +251,17 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     let payload = maps::get_sentence_break(provider).expect("The data should be valid!");
     let sb = &payload.get().code_point_trie;
 
-    let payload = sets::get_extended_pictographic(provider).expect("The data should be valid");
+    let payload = sets::get_extended_pictographic(provider).expect("The data should be valid!");
     let extended_pictographic = &payload.get().inv_list;
 
     let payload = maps::get_line_break(provider).expect("The data should be valid!");
     let lb = &payload.get().code_point_trie;
+
+    let payload = maps::get_east_asian_width(provider).expect("The data should be valid!");
+    let eaw = &payload.get().code_point_trie;
+
+    let payload = maps::get_general_category(provider).expect("The data should be valid!");
+    let gc = &payload.get().code_point_trie;
 
     let segmenter: SegmenterRuleTable = toml::de::from_slice(toml_data).expect("TOML syntax error");
 
@@ -270,6 +349,65 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                     continue;
                 }
 
+                "line" => {
+                    if p.name == "CP_EA"
+                        || p.name == "OP_OP30"
+                        || p.name == "OP_EA"
+                        || p.name == "ID_CN"
+                    {
+                        for i in 0..0x20000 {
+                            match lb.get(i) {
+                                LineBreak::OpenPunctuation => {
+                                    if (p.name == "OP_OP30"
+                                        && (eaw.get(i) != EastAsianWidth::Fullwidth
+                                            && eaw.get(i) != EastAsianWidth::Halfwidth
+                                            && eaw.get(i) != EastAsianWidth::Wide))
+                                        || (p.name == "OP_EA"
+                                            && (eaw.get(i) == EastAsianWidth::Fullwidth
+                                                || eaw.get(i) == EastAsianWidth::Halfwidth
+                                                || eaw.get(i) == EastAsianWidth::Wide))
+                                    {
+                                        properties_map[i as usize] = property_index;
+                                    }
+                                }
+
+                                LineBreak::CloseParenthesis => {
+                                    // CP_EA is unused on the latest spec.
+                                    if p.name == "CP_EA"
+                                        && (eaw.get(i) == EastAsianWidth::Fullwidth
+                                            || eaw.get(i) == EastAsianWidth::Halfwidth
+                                            || eaw.get(i) == EastAsianWidth::Wide)
+                                    {
+                                        properties_map[i as usize] = property_index;
+                                    }
+                                }
+
+                                LineBreak::Ideographic => {
+                                    if p.name == "ID_CN" && gc.get(i) == GeneralCategory::Unassigned
+                                    {
+                                        if let Some(c) = char::from_u32(i) {
+                                            if extended_pictographic.contains(c) {
+                                                properties_map[i as usize] = property_index;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                _ => {}
+                            }
+                        }
+                        continue;
+                    }
+
+                    let prop = get_line_segmenter_value_from_name(&*p.name);
+                    for c in 0..0x20000 {
+                        if lb.get(c) == prop {
+                            properties_map[c as usize] = property_index;
+                        }
+                    }
+                    continue;
+                }
+
                 _ => {
                     panic!("unknown built-in segmenter type");
                 }
@@ -334,10 +472,6 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                 // Special case: right is Any
                 if r == "Any" {
                     for i in 0..properties_names.len() {
-                        if break_state == NOT_MATCH_RULE && i == properties_names.len() - 1 {
-                            break_state_table[left_index * properties_names.len() + i] =
-                                UNKNOWN_RULE;
-                        }
                         set_break_state(
                             &mut break_state_table,
                             properties_names.len(),
@@ -363,7 +497,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                     right_index,
                     break_state,
                 );
-                // Fill not match
+                // Fill not match for combine state
                 for i in 0..properties_names.len() {
                     if left_index >= simple_properties_count {
                         set_break_state(
@@ -432,6 +566,11 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
         if i > 1 && (i % 1024) == 0 {
             writeln!(out, "];").ok();
+            if i >= 0x20000 && segmenter.segmenter_type == "line" {
+                // Unnecessary over U+0x20000 on line segmenter.
+                // It is into line_break.rs.
+                break;
+            }
             if i >= CODEPOINT_TABLE_LEN {
                 break;
             }
@@ -444,6 +583,17 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                 codepoint_table.push("BREAK_PROPERTIES_FILL_BY_0".to_string());
             }
 
+            if segmenter.segmenter_type == "line" && is_same_value {
+                if get_index_from_name(&properties_names, "ID").unwrap() == *c as usize {
+                    codepoint_table.pop();
+                    codepoint_table.push("BREAK_PROPERTIES_FILL_BY_ID".to_string());
+                }
+                if get_index_from_name(&properties_names, "XX").unwrap() == *c as usize {
+                    codepoint_table.pop();
+                    codepoint_table.push("BREAK_PROPERTIES_FILL_BY_XX".to_string());
+                }
+            }
+
             codepoint_table.push(format!("BREAK_PROPERTIES_{}", page));
             writeln!(out, "#[allow(dead_code)]").ok();
             writeln!(out, "pub const BREAK_PROPERTIES_{}: [u8; 1024] = [", page).ok();
@@ -451,26 +601,39 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
         }
     }
 
-    writeln!(out, "#[allow(dead_code)]").ok();
-    writeln!(out, "pub const BREAK_PROPERTIES_FILL_BY_0: [u8; 1024] = [").ok();
-    for i in 0..1024 {
-        write!(out, " 0,").ok();
-        if ((i + 1) % 16) == 0 {
-            writeln!(out).ok();
-        }
-    }
-    writeln!(out, "];").ok();
+    output_propery_plane_with_same_value(&mut out, "0", 0);
 
-    writeln!(
-        out,
-        "pub const PROPERTY_TABLE: [&[u8; 1024]; {}] = [",
-        CODEPOINT_TABLE_LEN / 1024
-    )
-    .ok();
-    for i in codepoint_table.iter() {
-        writeln!(out, "    &{},", i).ok();
+    if segmenter.segmenter_type == "line" {
+        output_propery_plane_with_same_value(
+            &mut out,
+            "ID",
+            get_index_from_name(&properties_names, "ID").unwrap() as u8,
+        );
+        output_propery_plane_with_same_value(
+            &mut out,
+            "XX",
+            get_index_from_name(&properties_names, "XX").unwrap() as u8,
+        );
     }
-    writeln!(out, "];").ok();
+
+    if segmenter.segmenter_type == "line" {
+        writeln!(out, "pub const PROPERTY_TABLE: [[u8; 1024]; 128] = [").ok();
+        for i in codepoint_table.iter() {
+            writeln!(out, "    {},", i).ok();
+        }
+        writeln!(out, "];").ok();
+    } else {
+        writeln!(
+            out,
+            "pub const PROPERTY_TABLE: [&[u8; 1024]; {}] = [",
+            CODEPOINT_TABLE_LEN / 1024
+        )
+        .ok();
+        for i in codepoint_table.iter() {
+            writeln!(out, "    &{},", i).ok();
+        }
+        writeln!(out, "];").ok();
+    }
 
     writeln!(
         out,
@@ -525,7 +688,12 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     }
 
     for (i, p) in properties_names.iter().enumerate() {
-        writeln!(out, "// {} = {}", p, i).ok();
+        if segmenter.segmenter_type == "line" {
+            writeln!(out, "#[allow(dead_code)]").ok();
+            writeln!(out, "pub const {}: u8 = {};", p.to_uppercase(), i).ok();
+        } else {
+            writeln!(out, "// {} = {}", p, i).ok();
+        }
     }
 
     writeln!(out).ok();
@@ -550,17 +718,41 @@ fn main() {
     const WORD_SEGMENTER_TOML: &[u8] = include_bytes!("data/word.toml");
     const GRAPHEME_SEGMENTER_TOML: &[u8] = include_bytes!("data/grapheme.toml");
     const SENTENCE_SEGMENTER_TOML: &[u8] = include_bytes!("data/sentence.toml");
+    const LINE_SEGMENTER_TOML: &[u8] = include_bytes!("data/line.toml");
+
+    let word_thread = thread::spawn(|| {
+        let provider = icu_testdata::get_provider();
+        generate_rule_segmenter_table("generated_word_table.rs", WORD_SEGMENTER_TOML, &provider);
+    });
+
+    let grapheme_thread = thread::spawn(|| {
+        let provider = icu_testdata::get_provider();
+        generate_rule_segmenter_table(
+            "generated_grapheme_table.rs",
+            GRAPHEME_SEGMENTER_TOML,
+            &provider,
+        );
+    });
+
+    let sentence_thread = thread::spawn(|| {
+        let provider = icu_testdata::get_provider();
+        generate_rule_segmenter_table(
+            "generated_sentence_table.rs",
+            SENTENCE_SEGMENTER_TOML,
+            &provider,
+        );
+    });
 
     let provider = icu_testdata::get_provider();
-    generate_rule_segmenter_table("generated_word_table.rs", WORD_SEGMENTER_TOML, &provider);
-    generate_rule_segmenter_table(
-        "generated_grapheme_table.rs",
-        GRAPHEME_SEGMENTER_TOML,
-        &provider,
-    );
-    generate_rule_segmenter_table(
-        "generated_sentence_table.rs",
-        SENTENCE_SEGMENTER_TOML,
-        &provider,
-    );
+    generate_rule_segmenter_table("generated_line_table.rs", LINE_SEGMENTER_TOML, &provider);
+
+    word_thread
+        .join()
+        .expect("Couldn't join generating word table thread!.");
+    grapheme_thread
+        .join()
+        .expect("Couldn't join generating grapheme table thread!.");
+    sentence_thread
+        .join()
+        .expect("Couldn't join generating sentence table thread!.");
 }

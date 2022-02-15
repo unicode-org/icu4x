@@ -129,13 +129,6 @@ let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect()
 assert_eq!(&breakpoints, &[0, 11]);
 ```
 
-## Generating property table
-
-Copy the following files to `tools` directory. Then run `./generate_properties.py` in `tools` directory (requires Python 3.8+). Machine generated files are moved to `src` directory.
-- <https://www.unicode.org/Public/UCD/latest/ucd/LineBreak.txt>
-- <https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt>
-- <https://www.unicode.org/Public/UCD/latest/ucd/emoji/emoji-data.txt>
-
 ## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

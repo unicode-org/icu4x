@@ -133,13 +133,6 @@
 //! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 //! assert_eq!(&breakpoints, &[0, 11]);
 //! ```
-//!
-//! # Generating property table
-//!
-//! Copy the following files to `tools` directory. Then run `./generate_properties.py` in `tools` directory (requires Python 3.8+). Machine generated files are moved to `src` directory.
-//! - <https://www.unicode.org/Public/UCD/latest/ucd/LineBreak.txt>
-//! - <https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt>
-//! - <https://www.unicode.org/Public/UCD/latest/ucd/emoji/emoji-data.txt>
 
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
@@ -147,15 +140,10 @@ extern crate alloc;
 
 mod indices;
 mod language;
-mod lb_define;
-mod line_breaker;
-mod properties_defines;
-mod properties_other;
-mod property_table;
 mod rule_segmenter;
-mod rule_table;
 
 mod grapheme;
+mod line;
 mod sentence;
 mod word;
 
@@ -185,7 +173,7 @@ pub use crate::grapheme::{
     GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
 };
-pub use crate::line_breaker::*;
+pub use crate::line::*;
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
     SentenceBreakSegmenter,

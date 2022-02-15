@@ -6,7 +6,6 @@ extern crate unicode_width;
 
 use crate::indices::*;
 use crate::language::*;
-use crate::lb_define::*;
 use crate::provider::*;
 
 use alloc::vec;
@@ -15,6 +14,8 @@ use core::char;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
 use unicode_width::UnicodeWidthChar;
+
+include!(concat!(env!("OUT_DIR"), "/generated_line_table.rs"));
 
 // Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
@@ -351,7 +352,7 @@ fn is_non_break_by_keepall(left: u8, right: u8) -> bool {
 
 #[inline]
 fn get_break_state_from_table(rule_table: &LineBreakRuleTable<'_>, left: u8, right: u8) -> i8 {
-    let idx = ((left as usize) - 1) * (rule_table.property_count as usize) + (right as usize) - 1;
+    let idx = (left as usize) * (rule_table.property_count as usize) + (right as usize);
     // We use unwrap_or to fall back to the base case and prevent panics on bad data.
     rule_table.table_data.get(idx).unwrap_or(KEEP_RULE)
 }
@@ -533,7 +534,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                             break_state as u8,
                             EOT,
                         );
-                        if break_state == PREVIOUS_BREAK_RULE {
+                        if break_state == NOT_MATCH_RULE {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
                             return Some(previous_pos_data.unwrap().0);
@@ -555,7 +556,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 if break_state == KEEP_RULE {
                     continue;
                 }
-                if break_state == PREVIOUS_BREAK_RULE {
+                if break_state == NOT_MATCH_RULE {
                     self.iter = previous_iter;
                     self.current_pos_data = previous_pos_data;
                     return Some(previous_pos_data.unwrap().0);
@@ -797,6 +798,7 @@ mod tests {
 
     fn is_break(left: u8, right: u8) -> bool {
         let rule_table = Default::default();
+
         is_break_from_table(&rule_table, left, right)
     }
 
@@ -854,9 +856,9 @@ mod tests {
         assert_eq!(is_break(AL, BA), false);
         assert_eq!(is_break(AL, HY), false);
         assert_eq!(is_break(AL, NS), false);
-        assert_eq!(is_break(BB, AL), false);
         // LB21
         assert_eq!(is_break(AL, BA), false);
+        assert_eq!(is_break(BB, AL), false);
         assert_eq!(is_break(ID, BA), false);
         assert_eq!(is_break(ID, NS), false);
         // LB21a
