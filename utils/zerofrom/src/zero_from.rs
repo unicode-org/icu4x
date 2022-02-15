@@ -7,17 +7,17 @@ use alloc::borrow::{Cow, ToOwned};
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 
-/// Trait for types that can be created from a reference to a cart type `C` with no allocations,
+/// Trait for types that can be created from a reference to a different type `C` with no allocations,
 /// i.e. a zero-copy (zero-alloc) version of "From"
 ///
-/// A type can be the `ZeroFrom` target of multiple cart types.
+/// A type can be the `ZeroFrom` target of multiple other types.
 ///
-/// The intention is for `ZeroFrom` to produce a struct from a cart with as little work as
+/// The intention is for `ZeroFrom` to produce a struct from a other with as little work as
 /// possible. Although it is technically possible to implement `ZeroFrom` without being
 /// zero-copy (using heap allocations), doing so defeats the purpose of `ZeroFrom`.
 ///
 /// For example, `impl ZeroFrom<C> for Cow<str>` should return a `Cow::Borrowed` pointing at
-/// data in the cart `C`, even if the cart is itself fully owned.
+/// data in the other type `C`, even if the other type is itself fully owned.
 ///
 /// One can use the [`#[derive(ZeroFrom)]`](zerofrom_derive::ZeroFrom) custom derive to automatically
 /// implement this trait.
@@ -36,25 +36,25 @@ use alloc::string::String;
 ///
 /// // Reference from a borrowed version of self
 /// impl<'zf> ZeroFrom<'zf, MyStruct<'_>> for MyStruct<'zf> {
-///     fn zero_from(cart: &'zf MyStruct<'_>) -> Self {
+///     fn zero_from(other: &'zf MyStruct<'_>) -> Self {
 ///         MyStruct {
-///             message: Cow::Borrowed(&cart.message)
+///             message: Cow::Borrowed(&other.message)
 ///         }
 ///     }
 /// }
 ///
 /// // Reference from a string slice directly
 /// impl<'zf> ZeroFrom<'zf, str> for MyStruct<'zf> {
-///     fn zero_from(cart: &'zf str) -> Self {
+///     fn zero_from(other: &'zf str) -> Self {
 ///         MyStruct {
-///             message: Cow::Borrowed(cart)
+///             message: Cow::Borrowed(other)
 ///         }
 ///     }
 /// }
 /// ```
 pub trait ZeroFrom<'zf, C: ?Sized>: 'zf {
-    /// Clone the cart `C` into a struct that may retain references into `C`.
-    fn zero_from(cart: &'zf C) -> Self;
+    /// Clone the other `C` into a struct that may retain references into `C`.
+    fn zero_from(other: &'zf C) -> Self;
 }
 
 // Note: The following could be blanket implementations, but that would require constraining the
@@ -65,47 +65,47 @@ pub trait ZeroFrom<'zf, C: ?Sized>: 'zf {
 #[cfg(feature = "alloc")]
 impl<'zf> ZeroFrom<'zf, str> for Cow<'zf, str> {
     #[inline]
-    fn zero_from(cart: &'zf str) -> Self {
-        Cow::Borrowed(cart)
+    fn zero_from(other: &'zf str) -> Self {
+        Cow::Borrowed(other)
     }
 }
 
 #[cfg(feature = "alloc")]
 impl<'zf> ZeroFrom<'zf, String> for Cow<'zf, str> {
     #[inline]
-    fn zero_from(cart: &'zf String) -> Self {
-        Cow::Borrowed(cart)
+    fn zero_from(other: &'zf String) -> Self {
+        Cow::Borrowed(other)
     }
 }
 
 impl<'zf> ZeroFrom<'zf, str> for &'zf str {
     #[inline]
-    fn zero_from(cart: &'zf str) -> Self {
-        cart
+    fn zero_from(other: &'zf str) -> Self {
+        other
     }
 }
 
 #[cfg(feature = "alloc")]
 impl<'zf> ZeroFrom<'zf, String> for &'zf str {
     #[inline]
-    fn zero_from(cart: &'zf String) -> Self {
-        cart
+    fn zero_from(other: &'zf String) -> Self {
+        other
     }
 }
 
 impl<'zf, C, T: ZeroFrom<'zf, C>> ZeroFrom<'zf, Option<C>> for Option<T> {
-    fn zero_from(cart: &'zf Option<C>) -> Self {
-        cart.as_ref().map(|c| <T as ZeroFrom<C>>::zero_from(c))
+    fn zero_from(other: &'zf Option<C>) -> Self {
+        other.as_ref().map(|c| <T as ZeroFrom<C>>::zero_from(c))
     }
 }
 
 impl<'zf, C1, T1: ZeroFrom<'zf, C1>, C2, T2: ZeroFrom<'zf, C2>> ZeroFrom<'zf, (C1, C2)>
     for (T1, T2)
 {
-    fn zero_from(cart: &'zf (C1, C2)) -> Self {
+    fn zero_from(other: &'zf (C1, C2)) -> Self {
         (
-            <T1 as ZeroFrom<C1>>::zero_from(&cart.0),
-            <T2 as ZeroFrom<C2>>::zero_from(&cart.1),
+            <T1 as ZeroFrom<C1>>::zero_from(&other.0),
+            <T2 as ZeroFrom<C2>>::zero_from(&other.1),
         )
     }
 }
@@ -119,21 +119,21 @@ impl<'zf, C1, T1: ZeroFrom<'zf, C1>, C2, T2: ZeroFrom<'zf, C2>> ZeroFrom<'zf, (C
 #[cfg(feature = "alloc")]
 impl<'zf, B: ToOwned + ?Sized> ZeroFrom<'zf, Cow<'_, B>> for Cow<'zf, B> {
     #[inline]
-    fn zero_from(cart: &'zf Cow<'_, B>) -> Self {
-        Cow::Borrowed(cart)
+    fn zero_from(other: &'zf Cow<'_, B>) -> Self {
+        Cow::Borrowed(other)
     }
 }
 
 impl<'zf> ZeroFrom<'zf, &'_ str> for &'zf str {
     #[inline]
-    fn zero_from(cart: &'zf &'_ str) -> &'zf str {
-        cart
+    fn zero_from(other: &'zf &'_ str) -> &'zf str {
+        other
     }
 }
 
 impl<'zf, T> ZeroFrom<'zf, [T]> for &'zf [T] {
     #[inline]
-    fn zero_from(cart: &'zf [T]) -> &'zf [T] {
-        cart
+    fn zero_from(other: &'zf [T]) -> &'zf [T] {
+        other
     }
 }

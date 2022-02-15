@@ -12,8 +12,8 @@ where
     T: 'static + AsULE + ?Sized,
 {
     #[inline]
-    fn zero_from(cart: &'zf ZeroVec<'_, T>) -> Self {
-        ZeroVec::Borrowed(cart.as_ule_slice())
+    fn zero_from(other: &'zf ZeroVec<'_, T>) -> Self {
+        ZeroVec::Borrowed(other.as_ule_slice())
     }
 }
 
@@ -22,8 +22,8 @@ where
     T: 'static + VarULE + ?Sized,
 {
     #[inline]
-    fn zero_from(cart: &'zf VarZeroVec<'_, T>) -> Self {
-        cart.as_slice().into()
+    fn zero_from(other: &'zf VarZeroVec<'_, T>) -> Self {
+        other.as_slice().into()
     }
 }
 
@@ -34,10 +34,10 @@ where
     <K as ZeroMapKV<'zf>>::Container: ZeroFrom<'zf, <K as ZeroMapKV<'s>>::Container>,
     <V as ZeroMapKV<'zf>>::Container: ZeroFrom<'zf, <V as ZeroMapKV<'s>>::Container>,
 {
-    fn zero_from(cart: &'zf ZeroMap<'s, K, V>) -> Self {
+    fn zero_from(other: &'zf ZeroMap<'s, K, V>) -> Self {
         ZeroMap {
-            keys: K::Container::zero_from(&cart.keys),
-            values: V::Container::zero_from(&cart.values),
+            keys: K::Container::zero_from(&other.keys),
+            values: V::Container::zero_from(&other.values),
         }
     }
 }
@@ -51,12 +51,12 @@ where
     <K1 as ZeroMapKV<'zf>>::Container: ZeroFrom<'zf, <K1 as ZeroMapKV<'s>>::Container>,
     <V as ZeroMapKV<'zf>>::Container: ZeroFrom<'zf, <V as ZeroMapKV<'s>>::Container>,
 {
-    fn zero_from(cart: &'zf ZeroMap2d<'s, K0, K1, V>) -> Self {
+    fn zero_from(other: &'zf ZeroMap2d<'s, K0, K1, V>) -> Self {
         ZeroMap2d {
-            keys0: K0::Container::zero_from(&cart.keys0),
-            joiner: ZeroVec::zero_from(&cart.joiner),
-            keys1: K1::Container::zero_from(&cart.keys1),
-            values: V::Container::zero_from(&cart.values),
+            keys0: K0::Container::zero_from(&other.keys0),
+            joiner: ZeroVec::zero_from(&other.joiner),
+            keys1: K1::Container::zero_from(&other.keys1),
+            values: V::Container::zero_from(&other.values),
         }
     }
 }
