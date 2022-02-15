@@ -24,7 +24,7 @@ const HELLO_ALT_KEY: ResourceKey = crate::resource_key!("core/helloalt@1");
 #[derive(
     Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, zerofrom::ZeroFrom,
 )]
-#[yoke(cloning_zf)]
+#[zerofrom(cloning_zf)]
 struct HelloAlt {
     message: String,
 }

@@ -18,7 +18,7 @@ use std::borrow::Cow;
 /// `mat8` - `mat9`: the matrices associated with output layer (weight and bias term respectiely)
 #[icu_provider::data_struct(LstmDataMarker)]
 #[derive(PartialEq, Debug, Serialize, Deserialize, Clone)]
-#[yoke(cloning_zf)]
+#[zerofrom(cloning_zf)]
 pub struct LstmData<'data> {
     #[serde(borrow)]
     pub model: Cow<'data, str>,

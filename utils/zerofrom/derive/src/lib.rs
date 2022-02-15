@@ -19,10 +19,10 @@ mod visitor;
 /// without a lifetime parameter, and `ZeroFrom<Ty<'data>> for Ty<'static>`
 /// for types with a lifetime parameter.
 ///
-/// Apply the `#[yoke(cloning_zf)]` attribute if you wish for this custom derive
+/// Apply the `#[zerofrom(cloning_zf)]` attribute if you wish for this custom derive
 /// to use `.clone()` for its implementation. The attribute can be applied to
 /// fields as well.
-#[proc_macro_derive(ZeroFrom, attributes(yoke))]
+#[proc_macro_derive(ZeroFrom, attributes(zerofrom))]
 pub fn zf_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(zf_derive_impl(&input))
