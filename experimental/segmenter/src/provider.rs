@@ -54,8 +54,8 @@ impl Deref for LineBreakPropertyTable<'_> {
     }
 }
 
-impl<'zcf> zerofrom::ZeroFrom<'zcf, LineBreakPropertyTable<'_>> for LineBreakPropertyTable<'zcf> {
-    fn zero_from(cart: &'zcf LineBreakPropertyTable<'_>) -> Self {
+impl<'zf> zerofrom::ZeroFrom<'zf, LineBreakPropertyTable<'_>> for LineBreakPropertyTable<'zf> {
+    fn zero_from(cart: &'zf LineBreakPropertyTable<'_>) -> Self {
         LineBreakPropertyTable::Borrowed(&*cart)
     }
 }

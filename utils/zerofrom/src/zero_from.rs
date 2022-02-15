@@ -35,8 +35,8 @@ use alloc::string::String;
 /// }
 ///
 /// // Reference from a borrowed version of self
-/// impl<'zcf> ZeroFrom<'zcf, MyStruct<'_>> for MyStruct<'zcf> {
-///     fn zero_from(cart: &'zcf MyStruct<'_>) -> Self {
+/// impl<'zf> ZeroFrom<'zf, MyStruct<'_>> for MyStruct<'zf> {
+///     fn zero_from(cart: &'zf MyStruct<'_>) -> Self {
 ///         MyStruct {
 ///             message: Cow::Borrowed(&cart.message)
 ///         }
@@ -44,17 +44,17 @@ use alloc::string::String;
 /// }
 ///
 /// // Reference from a string slice directly
-/// impl<'zcf> ZeroFrom<'zcf, str> for MyStruct<'zcf> {
-///     fn zero_from(cart: &'zcf str) -> Self {
+/// impl<'zf> ZeroFrom<'zf, str> for MyStruct<'zf> {
+///     fn zero_from(cart: &'zf str) -> Self {
 ///         MyStruct {
 ///             message: Cow::Borrowed(cart)
 ///         }
 ///     }
 /// }
 /// ```
-pub trait ZeroFrom<'zcf, C: ?Sized>: 'zcf {
+pub trait ZeroFrom<'zf, C: ?Sized>: 'zf {
     /// Clone the cart `C` into a struct that may retain references into `C`.
-    fn zero_from(cart: &'zcf C) -> Self;
+    fn zero_from(cart: &'zf C) -> Self;
 }
 
 // Note: The following could be blanket implementations, but that would require constraining the
@@ -63,46 +63,46 @@ pub trait ZeroFrom<'zcf, C: ?Sized>: 'zcf {
 // specialization.
 
 #[cfg(feature = "alloc")]
-impl<'zcf> ZeroFrom<'zcf, str> for Cow<'zcf, str> {
+impl<'zf> ZeroFrom<'zf, str> for Cow<'zf, str> {
     #[inline]
-    fn zero_from(cart: &'zcf str) -> Self {
+    fn zero_from(cart: &'zf str) -> Self {
         Cow::Borrowed(cart)
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<'zcf> ZeroFrom<'zcf, String> for Cow<'zcf, str> {
+impl<'zf> ZeroFrom<'zf, String> for Cow<'zf, str> {
     #[inline]
-    fn zero_from(cart: &'zcf String) -> Self {
+    fn zero_from(cart: &'zf String) -> Self {
         Cow::Borrowed(cart)
     }
 }
 
-impl<'zcf> ZeroFrom<'zcf, str> for &'zcf str {
+impl<'zf> ZeroFrom<'zf, str> for &'zf str {
     #[inline]
-    fn zero_from(cart: &'zcf str) -> Self {
+    fn zero_from(cart: &'zf str) -> Self {
         cart
     }
 }
 
 #[cfg(feature = "alloc")]
-impl<'zcf> ZeroFrom<'zcf, String> for &'zcf str {
+impl<'zf> ZeroFrom<'zf, String> for &'zf str {
     #[inline]
-    fn zero_from(cart: &'zcf String) -> Self {
+    fn zero_from(cart: &'zf String) -> Self {
         cart
     }
 }
 
-impl<'zcf, C, T: ZeroFrom<'zcf, C>> ZeroFrom<'zcf, Option<C>> for Option<T> {
-    fn zero_from(cart: &'zcf Option<C>) -> Self {
+impl<'zf, C, T: ZeroFrom<'zf, C>> ZeroFrom<'zf, Option<C>> for Option<T> {
+    fn zero_from(cart: &'zf Option<C>) -> Self {
         cart.as_ref().map(|c| <T as ZeroFrom<C>>::zero_from(c))
     }
 }
 
-impl<'zcf, C1, T1: ZeroFrom<'zcf, C1>, C2, T2: ZeroFrom<'zcf, C2>> ZeroFrom<'zcf, (C1, C2)>
+impl<'zf, C1, T1: ZeroFrom<'zf, C1>, C2, T2: ZeroFrom<'zf, C2>> ZeroFrom<'zf, (C1, C2)>
     for (T1, T2)
 {
-    fn zero_from(cart: &'zcf (C1, C2)) -> Self {
+    fn zero_from(cart: &'zf (C1, C2)) -> Self {
         (
             <T1 as ZeroFrom<C1>>::zero_from(&cart.0),
             <T2 as ZeroFrom<C2>>::zero_from(&cart.1),
@@ -117,23 +117,23 @@ impl<'zcf, C1, T1: ZeroFrom<'zcf, C1>, C2, T2: ZeroFrom<'zcf, C2>> ZeroFrom<'zcf
 // or inference are involved, and the proc macro does not necessarily have
 // enough type information to figure this out on its own.
 #[cfg(feature = "alloc")]
-impl<'zcf, B: ToOwned + ?Sized> ZeroFrom<'zcf, Cow<'_, B>> for Cow<'zcf, B> {
+impl<'zf, B: ToOwned + ?Sized> ZeroFrom<'zf, Cow<'_, B>> for Cow<'zf, B> {
     #[inline]
-    fn zero_from(cart: &'zcf Cow<'_, B>) -> Self {
+    fn zero_from(cart: &'zf Cow<'_, B>) -> Self {
         Cow::Borrowed(cart)
     }
 }
 
-impl<'zcf> ZeroFrom<'zcf, &'_ str> for &'zcf str {
+impl<'zf> ZeroFrom<'zf, &'_ str> for &'zf str {
     #[inline]
-    fn zero_from(cart: &'zcf &'_ str) -> &'zcf str {
+    fn zero_from(cart: &'zf &'_ str) -> &'zf str {
         cart
     }
 }
 
-impl<'zcf, T> ZeroFrom<'zcf, [T]> for &'zcf [T] {
+impl<'zf, T> ZeroFrom<'zf, [T]> for &'zf [T] {
     #[inline]
-    fn zero_from(cart: &'zcf [T]) -> &'zcf [T] {
+    fn zero_from(cart: &'zf [T]) -> &'zf [T] {
         cart
     }
 }

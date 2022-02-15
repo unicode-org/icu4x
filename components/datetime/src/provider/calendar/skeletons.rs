@@ -18,7 +18,7 @@ use litemap::LiteMap;
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(cloning_zcf)]
+#[yoke(cloning_zf)]
 pub struct DateSkeletonPatternsV1<'data>(
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub  LiteMap<SkeletonV1, PatternPlurals<'data>>,

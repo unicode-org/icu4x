@@ -37,7 +37,7 @@ impl_copy_type!(bool);
 
 // This can be cleaned up once `[T; N]`::each_ref() is stabilized
 // https://github.com/rust-lang/rust/issues/76118
-macro_rules! array_zcf_impl {
+macro_rules! array_zf_impl {
     ($n:expr; $($i:expr),+) => {
         impl<'a, C, T: ZeroFrom<'a, C>> ZeroFrom<'a, [C; $n]> for [T; $n] {
             fn zero_from(this: &'a [C; $n]) -> Self {
@@ -52,19 +52,19 @@ macro_rules! array_zcf_impl {
     }
 }
 
-array_zcf_impl!(1; 0);
-array_zcf_impl!(2; 0, 1);
-array_zcf_impl!(3; 0, 1, 2);
-array_zcf_impl!(4; 0, 1, 2, 3);
-array_zcf_impl!(5; 0, 1, 2, 3, 4);
-array_zcf_impl!(6; 0, 1, 2, 3, 4, 5);
-array_zcf_impl!(7; 0, 1, 2, 3, 4, 5, 6);
-array_zcf_impl!(8; 0, 1, 2, 3, 4, 5, 6, 7);
-array_zcf_impl!(9; 0, 1, 2, 3, 4, 5, 6, 7, 8);
-array_zcf_impl!(10; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-array_zcf_impl!(11; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-array_zcf_impl!(12; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
-array_zcf_impl!(13; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
-array_zcf_impl!(14; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
-array_zcf_impl!(15; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
-array_zcf_impl!(16; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+array_zf_impl!(1; 0);
+array_zf_impl!(2; 0, 1);
+array_zf_impl!(3; 0, 1, 2);
+array_zf_impl!(4; 0, 1, 2, 3);
+array_zf_impl!(5; 0, 1, 2, 3, 4);
+array_zf_impl!(6; 0, 1, 2, 3, 4, 5);
+array_zf_impl!(7; 0, 1, 2, 3, 4, 5, 6);
+array_zf_impl!(8; 0, 1, 2, 3, 4, 5, 6, 7);
+array_zf_impl!(9; 0, 1, 2, 3, 4, 5, 6, 7, 8);
+array_zf_impl!(10; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+array_zf_impl!(11; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+array_zf_impl!(12; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+array_zf_impl!(13; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+array_zf_impl!(14; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+array_zf_impl!(15; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
+array_zf_impl!(16; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);

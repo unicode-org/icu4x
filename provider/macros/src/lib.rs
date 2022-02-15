@@ -21,7 +21,7 @@ mod tests;
 /// for use in a `DataStruct`. It does the following things:
 ///
 /// - `Apply #[derive(Yokeable, ZeroFrom)]`. The `ZeroFrom` derive can
-///    be customized with `#[yoke(cloning_zcf)]` as needed
+///    be customized with `#[yoke(cloning_zf)]` as needed
 ///
 /// In addition, the attribute can be used to implement `DataMarker` and/or `ResourceMarker`
 /// by adding symbols with optional key strings:

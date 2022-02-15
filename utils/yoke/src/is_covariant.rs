@@ -78,8 +78,8 @@ use alloc::{
 ///     }
 /// }
 ///
-/// impl<'zcf, 'a> ZeroFrom<'zcf, dyn ExampleTrait<'a> + 'a> for ExampleTraitDynRef<'zcf> {
-///     fn zero_from(this: &'zcf (dyn ExampleTrait<'a> + 'a)) -> ExampleTraitDynRef<'zcf> {
+/// impl<'zf, 'a> ZeroFrom<'zf, dyn ExampleTrait<'a> + 'a> for ExampleTraitDynRef<'zf> {
+///     fn zero_from(this: &'zf (dyn ExampleTrait<'a> + 'a)) -> ExampleTraitDynRef<'zf> {
 ///         // This is safe because the trait object requires IsCovariant.
 ///         ExampleTraitDynRef(unsafe { core::mem::transmute(this) })
 ///     }

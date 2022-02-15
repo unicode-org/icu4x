@@ -11,12 +11,12 @@ use stable_deref_trait::StableDeref;
 
 use crate::ZeroFrom;
 
-impl<'zcf, C: ?Sized, T> ZeroFrom<'zcf, C> for YokeTraitHack<T>
+impl<'zf, C: ?Sized, T> ZeroFrom<'zf, C> for YokeTraitHack<T>
 where
-    T: ZeroFrom<'zcf, C>,
+    T: ZeroFrom<'zf, C>,
 {
     #[inline]
-    fn zero_from(cart: &'zcf C) -> Self {
+    fn zero_from(cart: &'zf C) -> Self {
         YokeTraitHack(T::zero_from(cart))
     }
 }

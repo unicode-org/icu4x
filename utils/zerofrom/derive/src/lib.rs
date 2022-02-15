@@ -19,19 +19,19 @@ mod visitor;
 /// without a lifetime parameter, and `ZeroFrom<Ty<'data>> for Ty<'static>`
 /// for types with a lifetime parameter.
 ///
-/// Apply the `#[yoke(cloning_zcf)]` attribute if you wish for this custom derive
+/// Apply the `#[yoke(cloning_zf)]` attribute if you wish for this custom derive
 /// to use `.clone()` for its implementation. The attribute can be applied to
 /// fields as well.
 #[proc_macro_derive(ZeroFrom, attributes(yoke))]
-pub fn zcf_derive(input: TokenStream) -> TokenStream {
+pub fn zf_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    TokenStream::from(zcf_derive_impl(&input))
+    TokenStream::from(zf_derive_impl(&input))
 }
 
-fn has_cloning_zcf_attr(attrs: &[syn::Attribute]) -> bool {
+fn has_cloning_zf_attr(attrs: &[syn::Attribute]) -> bool {
     attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
-            if i == "cloning_zcf" {
+            if i == "cloning_zf" {
                 return true;
             }
         }
@@ -39,13 +39,13 @@ fn has_cloning_zcf_attr(attrs: &[syn::Attribute]) -> bool {
     })
 }
 
-fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
+fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let tybounds = input.generics.type_params().collect::<Vec<_>>();
     let typarams = tybounds
         .iter()
         .map(|ty| ty.ident.clone())
         .collect::<Vec<_>>();
-    let has_clone = has_cloning_zcf_attr(&input.attrs);
+    let has_clone = has_cloning_zf_attr(&input.attrs);
     let lts = input.generics.lifetimes().count();
     let name = &input.ident;
     if lts == 0 {
@@ -59,8 +59,8 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .map(|ty| parse_quote!(#ty: #clone_trait + 'static))
             .collect();
         quote! {
-            impl<'zcf, #(#tybounds),*> zerofrom::ZeroFrom<'zcf, #name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
-                fn zero_from(this: &'zcf Self) -> Self {
+            impl<'zf, #(#tybounds),*> zerofrom::ZeroFrom<'zf, #name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
+                fn zero_from(this: &'zf Self) -> Self {
                     #clone
                 }
             }
@@ -75,8 +75,8 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         }
         if has_clone {
             return quote! {
-                impl<'zcf> zerofrom::ZeroFrom<'zcf, #name<'_>> for #name<'zcf> {
-                    fn zero_from(this: &'zcf #name<'_>) -> Self {
+                impl<'zf> zerofrom::ZeroFrom<'zf, #name<'_>> for #name<'zf> {
+                    fn zero_from(this: &'zf #name<'_>) -> Self {
                         this.clone()
                     }
                 }
@@ -86,11 +86,11 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         let structure = Structure::new(input);
         let generics_env = typarams.iter().cloned().collect();
 
-        let mut zcf_bounds: Vec<WherePredicate> = vec![];
+        let mut zf_bounds: Vec<WherePredicate> = vec![];
         let body = structure.each_variant(|vi| {
-            let variant_cloning = has_cloning_zcf_attr(vi.ast().attrs);
+            let variant_cloning = has_cloning_zf_attr(vi.ast().attrs);
             vi.construct(|f, i| {
-                let binding_cloning = variant_cloning || has_cloning_zcf_attr(&f.attrs);
+                let binding_cloning = variant_cloning || has_cloning_zf_attr(&f.attrs);
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
 
@@ -99,37 +99,37 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         #field.clone()
                     }
                 } else {
-                    let fty = replace_lifetime(&f.ty, custom_lt("'zcf"));
-                    let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'zcf_inner"));
+                    let fty = replace_lifetime(&f.ty, custom_lt("'zf"));
+                    let lifetime_ty = replace_lifetime(&f.ty, custom_lt("'zf_inner"));
 
                     let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
                     if has_ty {
                         // For types without type parameters, the compiler can figure out that the field implements
                         // ZeroFrom on its own. However, if there are type parameters, there may be complex preconditions
                         // to `FieldTy: ZeroFrom` that need to be satisfied. We get them to be satisfied by requiring
-                        // `FieldTy<'zcf>: ZeroFrom<'zcf, FieldTy<'zcf_inner>>`
+                        // `FieldTy<'zf>: ZeroFrom<'zf, FieldTy<'zf_inner>>`
                         if has_lt {
-                            zcf_bounds
-                                .push(parse_quote!(#fty: zerofrom::ZeroFrom<'zcf, #lifetime_ty>));
+                            zf_bounds
+                                .push(parse_quote!(#fty: zerofrom::ZeroFrom<'zf, #lifetime_ty>));
                         } else {
-                            zcf_bounds.push(parse_quote!(#fty: zerofrom::ZeroFrom<'zcf, #fty>));
+                            zf_bounds.push(parse_quote!(#fty: zerofrom::ZeroFrom<'zf, #fty>));
                         }
                     }
 
                     // By doing this we essentially require ZCF to be implemented
                     // on all fields
                     quote! {
-                        <#fty as zerofrom::ZeroFrom<'zcf, #lifetime_ty>>::zero_from(#field)
+                        <#fty as zerofrom::ZeroFrom<'zf, #lifetime_ty>>::zero_from(#field)
                     }
                 }
             })
         });
 
         quote! {
-            impl<'zcf, 'zcf_inner, #(#tybounds),*> zerofrom::ZeroFrom<'zcf, #name<'zcf_inner, #(#typarams),*>> for #name<'zcf, #(#typarams),*>
+            impl<'zf, 'zf_inner, #(#tybounds),*> zerofrom::ZeroFrom<'zf, #name<'zf_inner, #(#typarams),*>> for #name<'zf, #(#typarams),*>
                 where
-                #(#zcf_bounds,)* {
-                fn zero_from(this: &'zcf #name<'zcf_inner, #(#typarams),*>) -> Self {
+                #(#zf_bounds,)* {
+                fn zero_from(this: &'zf #name<'zf_inner, #(#typarams),*>) -> Self {
                     match *this { #body }
                 }
             }

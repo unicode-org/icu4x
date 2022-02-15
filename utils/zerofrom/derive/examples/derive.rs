@@ -45,10 +45,10 @@ pub struct HasTuples<'data> {
     pub bar: (&'data str, &'data str),
 }
 
-pub fn assert_zcf_tuples<'b, 'data>(x: &'b HasTuples<'data>) -> HasTuples<'b> {
+pub fn assert_zf_tuples<'b, 'data>(x: &'b HasTuples<'data>) -> HasTuples<'b> {
     HasTuples::zero_from(x)
 }
-pub fn assert_zcf_generics<'a, 'b>(
+pub fn assert_zf_generics<'a, 'b>(
     x: &'b ZeroVecExampleWithGenerics<'a, u8>,
 ) -> ZeroVecExampleWithGenerics<'b, u8> {
     ZeroVecExampleWithGenerics::<'b, u8>::zero_from(x)
@@ -59,20 +59,20 @@ pub struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
     map: ZeroMap<'a, str, T>,
 }
 
-pub fn assert_zcf_map<'a, 'b>(
+pub fn assert_zf_map<'a, 'b>(
     x: &'b ZeroMapGenericExample<'a, str>,
 ) -> ZeroMapGenericExample<'b, str> {
     ZeroMapGenericExample::zero_from(x)
 }
 
 #[derive(Clone, ZeroFrom)]
-#[yoke(cloning_zcf)]
+#[yoke(cloning_zf)]
 pub struct CloningZCF1 {
     vec: Vec<u8>,
 }
 
 #[derive(Clone, ZeroFrom)]
-#[yoke(cloning_zcf)] // this will clone `cow` instead of borrowing from it
+#[yoke(cloning_zf)] // this will clone `cow` instead of borrowing from it
 pub struct CloningZCF2<'data> {
     cow: Cow<'data, str>,
     vec: Vec<u8>,
@@ -81,21 +81,21 @@ pub struct CloningZCF2<'data> {
 #[derive(ZeroFrom)]
 pub struct CloningZCF3<'data> {
     cow: Cow<'data, str>,
-    #[yoke(cloning_zcf)]
+    #[yoke(cloning_zf)]
     vec: Vec<u8>,
 }
 
 #[derive(ZeroFrom)]
 pub enum CloningZCF4<'data> {
     Cow(Cow<'data, str>),
-    #[yoke(cloning_zcf)] // this will clone the first field instead of borrowing
+    #[yoke(cloning_zf)] // this will clone the first field instead of borrowing
     CowVec(Cow<'data, str>, Vec<u8>),
 }
 
 #[derive(ZeroFrom)]
 pub enum CloningZCF5<'data> {
     Cow(Cow<'data, str>),
-    CowVec(Cow<'data, str>, #[yoke(cloning_zcf)] Vec<u8>),
+    CowVec(Cow<'data, str>, #[yoke(cloning_zf)] Vec<u8>),
 }
 
 fn main() {}

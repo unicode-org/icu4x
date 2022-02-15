@@ -33,7 +33,7 @@ pub struct EraStartDate {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(cloning_zcf)]
+#[yoke(cloning_zf)]
 // TODO (#1393) Make this zero-copy
 pub struct JapaneseErasV1 {
     pub dates_to_historical_eras: LiteMap<EraStartDate, TinyStr16>,
