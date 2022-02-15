@@ -422,7 +422,7 @@ impl<'a> LastField<'a> {
                                 "VarZeroVec" => Ok(LastField::VarZeroVec(generic)),
                                 "Cow" => OwnULETy::new(generic, "Cow").map(LastField::Cow),
                                 _ => Err("Can only automatically detect corresponding VarULE types for path \
-                                          types that are not Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into()),
+                                          types that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into()),
                             }
                         } else {
                             match &*ident {
