@@ -6,7 +6,7 @@ use std::fmt::Debug;
 use zerovec::*;
 use zerovec_derive::*;
 
-#[make_ule]
+#[make_ule(StructULE)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 struct Struct {
     a: u8,
@@ -15,10 +15,10 @@ struct Struct {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-#[make_ule]
+#[make_ule(TupleStructULE)]
 struct TupleStruct(u8, char);
 
-#[make_ule]
+#[make_ule(EnumULE)]
 #[repr(u8)]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
 enum Enum {

@@ -93,15 +93,20 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         .to_compile_error();
     }
 
-    if !attr.is_empty() {
+    if attr.len() > 1 {
+
+    }
+
+    let ule_name: Ident = if let Some(arg) = attr.get(0) {
+        parse_quote!(#arg)
+    } else {
         return Error::new(
             input.span(),
-            "#[make_ule] does not currently support any arguments",
+            "#[make_ule] takes one argument for the name of the ULE type it produces",
         )
         .to_compile_error();
-    }
+    };
     let name = &input.ident;
-    let ule_name = Ident::new(&format!("{}ULE", name), Span::call_site());
 
     let ule_stuff = match input.data {
         Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s),
