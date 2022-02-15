@@ -9,7 +9,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::{parenthesized, parse2, Attribute, Field, Fields, Ident, Result, Token};
+use syn::{parenthesized, parse2, Attribute, Field, Fields, Ident, Index, Result, Token};
 
 // Check that there are repr attributes satisfying the given predicate
 pub fn has_valid_repr(attrs: &[Attribute], predicate: impl Fn(&Ident) -> bool + Copy) -> bool {
@@ -105,6 +105,7 @@ pub fn field_accessor(f: &Field, index: usize) -> TokenStream2 {
     if let Some(ref i) = f.ident {
         quote!(#i)
     } else {
+        let index = Index::from(index);
         quote!(#index)
     }
 }

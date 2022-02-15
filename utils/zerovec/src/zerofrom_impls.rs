@@ -4,7 +4,7 @@
 
 use crate::map::ZeroMapKV;
 use crate::ule::*;
-use crate::{VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
+use crate::{VarZeroSlice, VarZeroVec, ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec};
 use zerofrom::ZeroFrom;
 
 impl<'zf, T> ZeroFrom<'zf, ZeroVec<'_, T>> for ZeroVec<'zf, T>
@@ -17,13 +17,23 @@ where
     }
 }
 
-impl<'zf, T> ZeroFrom<'zf, VarZeroVec<'_, T>> for VarZeroVec<'zf, T>
+impl<'zf, T> ZeroFrom<'zf, ZeroSlice<T>> for ZeroVec<'zf, T>
+where
+    T: 'static + AsULE + ?Sized,
+{
+    #[inline]
+    fn zero_from(other: &'zf ZeroSlice<T>) -> Self {
+        ZeroVec::Borrowed(other.as_ule_slice())
+    }
+}
+
+impl<'zf, T> ZeroFrom<'zf, VarZeroSlice<T>> for VarZeroVec<'zf, T>
 where
     T: 'static + VarULE + ?Sized,
 {
     #[inline]
-    fn zero_from(other: &'zf VarZeroVec<'_, T>) -> Self {
-        other.as_slice().into()
+    fn zero_from(other: &'zf VarZeroSlice<T>) -> Self {
+        other.into()
     }
 }
 

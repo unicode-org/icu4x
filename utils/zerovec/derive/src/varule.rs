@@ -450,8 +450,8 @@ impl<'a> LastField<'a> {
                 let inner_ule = inner.varule_ty();
                 quote!(#inner_ule)
             }
-            Self::ZeroVec(ref inner) => quote!(zerovec::ZeroVec<#inner>),
-            Self::VarZeroVec(ref inner) => quote!(zerovec::VarZeroVec<#inner>),
+            Self::ZeroVec(ref inner) => quote!(zerovec::ZeroSlice<#inner>),
+            Self::VarZeroVec(ref inner) => quote!(zerovec::VarZeroSlice<#inner>),
         }
     }
 
