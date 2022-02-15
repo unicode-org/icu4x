@@ -380,7 +380,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         })
     }
 
-
     /// Returns a [`CodePointMapRange`] struct which represents a range of code
     /// points associated with the same trie value. The returned range will be
     /// the longest stretch of consecutive code points starting at `start` that
@@ -829,7 +828,6 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     pub fn get_u32(&self, code_point: u32) -> u32 {
         self.get(code_point).into()
     }
-
 }
 
 impl<'trie, T: TrieValue> Clone for CodePointTrie<'trie, T>
