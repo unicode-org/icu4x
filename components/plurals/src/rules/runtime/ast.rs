@@ -13,7 +13,7 @@ use core::{
 use icu_provider::{yoke, zerofrom};
 use num_enum::{IntoPrimitive, TryFromPrimitive, UnsafeFromPrimitive};
 use zerovec::{
-    ule::{EncodeAsVarULE, AsULE, PairULE, RawBytesULE, VarULE, ZeroVecError, ULE},
+    ule::{AsULE, EncodeAsVarULE, PairULE, RawBytesULE, VarULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
