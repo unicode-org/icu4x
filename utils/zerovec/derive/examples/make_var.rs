@@ -4,9 +4,9 @@
 
 use std::borrow::Cow;
 
+use zerofrom::ZeroFrom;
 use zerovec::*;
 use zerovec_derive::*;
-use zerofrom::ZeroFrom;
 
 #[make_varule(VarStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
@@ -16,24 +16,52 @@ struct VarStruct<'a> {
     c: Cow<'a, str>,
 }
 
-fn main() {
-    let varzerovec: VarZeroVec<VarStructULE> = TEST_VARSTRUCTS.into();
+#[make_varule(VarTupleStructULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+struct VarTupleStruct<'a>(u32, char, VarZeroVec<'a, str>);
 
-    assert_eq!(varzerovec.len(), TEST_VARSTRUCTS.len());
+/// The `assert` function should have the body `|(stack, zero)| assert_eq!(stack, &U::zero_from(&zero))`
+///
+/// We cannot do this internally because we technically need a different `U` with a shorter lifetime here
+/// which would require some gnarly lifetime bounds and perhaps a Yoke dependency. This is just a test, so it's
+/// not important to get this 100% perfect
+fn assert_zerovec<T: ule::VarULE + ?Sized, U: ule::custom::EncodeAsVarULE<T>, F: Fn(&U, &T)>(
+    slice: &[U],
+    assert: F,
+) {
+    let varzerovec: VarZeroVec<T> = slice.into();
 
-    for (stack, zero) in TEST_VARSTRUCTS.iter().zip(varzerovec.iter()) {
-        assert_eq!(stack, &VarStruct::zero_from(&zero))
+    assert_eq!(varzerovec.len(), slice.len());
+
+    for (stack, zero) in slice.iter().zip(varzerovec.iter()) {
+        assert(stack, zero)
     }
 
     let bytes = varzerovec.as_bytes();
-    let reparsed: VarZeroVec<VarStructULE> = VarZeroVec::parse_byte_slice(bytes)
-        .unwrap_or_else(|_| panic!("{}", "Parsing VarZeroVec<VarStructULE> should succeed"));
+    let name = std::any::type_name::<T>();
+    let reparsed: VarZeroVec<T> = VarZeroVec::parse_byte_slice(bytes)
+        .unwrap_or_else(|_| panic!("Parsing VarZeroVec<{}> should succeed", name));
 
-    assert_eq!(reparsed.len(), TEST_VARSTRUCTS.len());
+    assert_eq!(reparsed.len(), slice.len());
 
-    for (stack, zero) in TEST_VARSTRUCTS.iter().zip(reparsed.iter()) {
-        assert_eq!(stack, &VarStruct::zero_from(&zero))
+    for (stack, zero) in slice.iter().zip(reparsed.iter()) {
+        assert(stack, zero)
     }
+}
+
+fn main() {
+    assert_zerovec::<VarStructULE, VarStruct, _>(&TEST_VARSTRUCTS, |stack, zero| {
+        assert_eq!(stack, &VarStruct::zero_from(&zero))
+    });
+
+    let vartuples = &[
+        VarTupleStruct(101, 'ø', TEST_STRINGS1.into()),
+        VarTupleStruct(9499, '⸘', TEST_STRINGS2.into()),
+        VarTupleStruct(3478, '月', TEST_STRINGS3.into()),
+    ];
+    assert_zerovec::<VarTupleStructULE, VarTupleStruct, _>(vartuples, |stack, zero| {
+        assert_eq!(stack, &VarTupleStruct::zero_from(&zero))
+    });
 }
 
 const TEST_VARSTRUCTS: &[VarStruct<'static>] = &[
@@ -53,3 +81,7 @@ const TEST_VARSTRUCTS: &[VarStruct<'static>] = &[
         c: Cow::Borrowed("好多嘅 string"),
     },
 ];
+
+const TEST_STRINGS1: &[&str] = &["foo", "bar", "baz"];
+const TEST_STRINGS2: &[&str] = &["hellø", "wørłd"];
+const TEST_STRINGS3: &[&str] = &["łořem", "ɨpsu₥"];
