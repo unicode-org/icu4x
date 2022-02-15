@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644952418005,
+  "lastUpdate": 1644952601695,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19229,6 +19229,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 120951,
             "range": "± 1989",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df10af0932e903d97d1d1bd6da808fd2f0735243",
+          "message": "Move ZeroCopyFrom to its own crate, rename to ZeroFrom (#1610)",
+          "timestamp": "2022-02-15T11:08:18-08:00",
+          "tree_id": "2d682d83898ec78e175e11843ea1bd0ca0852d93",
+          "url": "https://github.com/unicode-org/icu4x/commit/df10af0932e903d97d1d1bd6da808fd2f0735243"
+        },
+        "date": 1644952590545,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 102880,
+            "range": "± 291",
             "unit": "ns/iter"
           }
         ]
