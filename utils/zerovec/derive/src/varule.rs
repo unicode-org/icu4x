@@ -386,7 +386,7 @@ impl<'a> LastField<'a> {
                             Ok(LastField::Growable(OwnULETy::Str))
                         } else {
                             Err("Can only automatically detect corresponding VarULE types for path types \
-                                        that are not Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into())
+                                        that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into())
                         }
                     }
                     PathArguments::AngleBracketed(ref params) => {
