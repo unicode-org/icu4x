@@ -327,7 +327,7 @@ fn make_encode_impl(
 
     let last_bytes = last_field_info.encode_func(quote!(self.#last_field_name));
     quote!(
-        unsafe impl #maybe_lt_bound zerovec::ule::custom::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
+        unsafe impl #maybe_lt_bound zerovec::ule::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
             // Safety: unimplemented as the other two are implemented
             fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
                 unreachable!("other two methods implemented")

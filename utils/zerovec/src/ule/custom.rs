@@ -11,7 +11,6 @@
 //!
 //! ```rust
 //! use zerovec::ZeroVec;
-//! use zerovec::ule::custom::EncodeAsVarULE;
 //! use zerovec::ule::*;
 //! use zerofrom::ZeroFrom;
 //!
@@ -31,7 +30,6 @@
 //!
 //! ```rust
 //! use zerovec::{ZeroVec, VarZeroVec, ZeroSlice};
-//! use zerovec::ule::custom::{encode_varule_to_box, EncodeAsVarULE};
 //! use zerovec::ule::*;
 //! use zerofrom::ZeroFrom;
 //! use core::mem;
@@ -142,7 +140,3 @@
 //!     assert_eq!(&vzv.get(1).unwrap().field3, &[1932, 0, 8888, 91237][..]);
 //! }
 //! ```
-
-mod encode;
-
-pub use encode::{encode_varule_to_box, EncodeAsVarULE};

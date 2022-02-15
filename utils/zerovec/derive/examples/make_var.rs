@@ -25,7 +25,7 @@ struct VarTupleStruct<'a>(u32, char, VarZeroVec<'a, str>);
 /// We cannot do this internally because we technically need a different `U` with a shorter lifetime here
 /// which would require some gnarly lifetime bounds and perhaps a Yoke dependency. This is just a test, so it's
 /// not important to get this 100% perfect
-fn assert_zerovec<T: ule::VarULE + ?Sized, U: ule::custom::EncodeAsVarULE<T>, F: Fn(&U, &T)>(
+fn assert_zerovec<T: ule::VarULE + ?Sized, U: ule::EncodeAsVarULE<T>, F: Fn(&U, &T)>(
     slice: &[U],
     assert: F,
 ) {

@@ -372,7 +372,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
 impl<A, T> From<&Vec<A>> for VarZeroVec<'static, T>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
@@ -383,7 +383,7 @@ where
 impl<A, T> From<&[A]> for VarZeroVec<'static, T>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
@@ -394,7 +394,7 @@ where
 impl<A, T, const N: usize> From<&[A; N]> for VarZeroVec<'static, T>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
