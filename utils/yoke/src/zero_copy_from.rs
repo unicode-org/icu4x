@@ -9,11 +9,11 @@ use crate::Yokeable;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
 
-use crate::ZeroCopyFrom;
+use crate::ZeroFrom;
 
-impl<'zcf, C: ?Sized, T> ZeroCopyFrom<'zcf, C> for YokeTraitHack<T>
+impl<'zcf, C: ?Sized, T> ZeroFrom<'zcf, C> for YokeTraitHack<T>
 where
-    T: ZeroCopyFrom<'zcf, C>,
+    T: ZeroFrom<'zcf, C>,
 {
     #[inline]
     fn zero_copy_from(cart: &'zcf C) -> Self {
@@ -24,13 +24,13 @@ where
 impl<Y, C> Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
-    for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: ZeroCopyFrom<'a, <C as Deref>::Target>,
+    for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: ZeroFrom<'a, <C as Deref>::Target>,
     C: StableDeref + Deref,
 {
     /// Construct a [`Yoke`]`<Y, C>` from a cart implementing `StableDeref` by zero-copy cloning
     /// the cart to `Y` and then yokeing that object to the cart.
     ///
-    /// The type `Y` must implement [`ZeroCopyFrom`]`<C::Target>`. This trait is auto-implemented
+    /// The type `Y` must implement [`ZeroFrom`]`<C::Target>`. This trait is auto-implemented
     /// on many common types and can be custom implemented or derived in order to make it easier
     /// to construct a `Yoke`.
     ///

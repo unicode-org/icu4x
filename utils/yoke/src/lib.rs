@@ -54,4 +54,4 @@ pub use crate::yoke::{CloneableCart, Yoke};
 pub use crate::yokeable::Yokeable;
 
 #[cfg(feature = "zerofrom")]
-pub use zerofrom::ZeroFrom as ZeroCopyFrom;
+pub use zerofrom::ZeroFrom;

@@ -42,7 +42,7 @@ use alloc::{
 /// ```
 ///
 /// By constraining the trait `ExampleTrait<'a>` on `IsCovariant<'a>`, we can safely implement
-/// [`Yokeable`] and [`ZeroCopyFrom`] on its trait object:
+/// [`Yokeable`] and [`ZeroFrom`] on its trait object:
 ///
 /// ```
 /// # use yoke::*;
@@ -77,7 +77,7 @@ use alloc::{
 ///     }
 /// }
 ///
-/// impl<'zcf, 'a> ZeroCopyFrom<'zcf, dyn ExampleTrait<'a> + 'a> for ExampleTraitDynRef<'zcf> {
+/// impl<'zcf, 'a> ZeroFrom<'zcf, dyn ExampleTrait<'a> + 'a> for ExampleTraitDynRef<'zcf> {
 ///     fn zero_copy_from(this: &'zcf (dyn ExampleTrait<'a> + 'a)) -> ExampleTraitDynRef<'zcf> {
 ///         // This is safe because the trait object requires IsCovariant.
 ///         ExampleTraitDynRef(unsafe { core::mem::transmute(this) })
@@ -103,7 +103,7 @@ use alloc::{
 ///
 /// [`Yoke`]: crate::Yoke
 /// [`Yokeable`]: crate::Yokeable
-/// [`ZeroCopyFrom`]: crate::ZeroCopyFrom
+/// [`ZeroFrom`]: crate::ZeroFrom
 pub unsafe trait IsCovariant<'a>: 'a {}
 
 // IsCovariant is implemented on the standard library Copy types in macro_impls.rs
