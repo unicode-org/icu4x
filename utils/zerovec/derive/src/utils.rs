@@ -4,10 +4,12 @@
 
 use quote::quote;
 
+use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::{parenthesized, parse2, Attribute, Fields, Ident, Result, Token};
+use syn::spanned::Spanned;
+use syn::{parenthesized, parse2, Attribute, Field, Fields, Ident, Result, Token};
 
 // Check that there are repr attributes satisfying the given predicate
 pub fn has_valid_repr(attrs: &[Attribute], predicate: impl Fn(&Ident) -> bool + Copy) -> bool {
@@ -63,5 +65,46 @@ pub fn repr_for(f: &Fields) -> TokenStream2 {
         quote!(transparent)
     } else {
         quote!(packed)
+    }
+}
+
+fn suffixed_ident(name: &str, suffix: usize, s: Span) -> Ident {
+    Ident::new(&format!("{name}_{suffix}"), s)
+}
+
+/// Given an iterator over ULE struct fields, returns code that calculates field sizes and generates a line
+/// of code per field based on the per_field_code function (whose parameters are the field, the identifier of the const
+/// for the previous offset, the identifier for the const for the next offset, and the field index)
+pub(crate) fn generate_per_field_offsets<'a>(
+    iter: impl Iterator<Item = &'a Field>,
+    // (field, prev_offset_ident, size_ident, index)
+    mut per_field_code: impl FnMut(&Field, &Ident, &Ident, usize) -> TokenStream2, // (code, remaining_offset)
+) -> (TokenStream2, syn::Ident) {
+    let mut prev_offset_ident = Ident::new("ZERO", Span::call_site());
+    let mut code = quote!(const ZERO: usize = 0);
+
+    for (i, field) in iter.enumerate() {
+        let ty = &field.ty;
+        let new_offset_ident = suffixed_ident("OFFSET", i, field.span());
+        let size_ident = suffixed_ident("SIZE", i, field.span());
+        let pf_code = per_field_code(field, &prev_offset_ident, &size_ident, i);
+        code = quote! {
+            #code;
+            const #size_ident: usize = ::core::mem::size_of::<#ty>();
+            const #new_offset_ident: usize = #prev_offset_ident + #size_ident;
+            #pf_code;
+        };
+
+        prev_offset_ident = new_offset_ident;
+    }
+
+    (code, prev_offset_ident)
+}
+
+pub fn field_accessor(f: &Field, index: usize) -> TokenStream2 {
+    if let Some(ref i) = f.ident {
+        quote!(#i)
+    } else {
+        quote!(#index)
     }
 }
