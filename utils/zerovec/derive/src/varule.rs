@@ -129,15 +129,17 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
 
     let lt = input.generics.lifetimes().next();
 
-    if !attr.is_empty() {
+    if attr.len() != 1 {
         return Error::new(
             input.span(),
-            "#[make_varule] does not currently support any arguments",
+            "#[make_ule] takes one argument for the name of the ULE type it produces",
         )
         .to_compile_error();
     }
+    let arg = &attr[0];
+    let ule_name: Ident = parse_quote!(#arg);
+
     let name = &input.ident;
-    let ule_name = Ident::new(&format!("{}ULE", name), Span::call_site());
 
     let fields = match input.data {
         Data::Struct(ref s) => &s.fields,

@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use zerovec::*;
 use zerovec_derive::*;
 
-#[make_varule]
+#[make_varule(VarStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct VarStruct<'a> {
     a: u32,
