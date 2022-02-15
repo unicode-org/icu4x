@@ -3105,6 +3105,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerofrom"
+version = "0.1.0"
+dependencies = [
+ "zerofrom-derive",
+]
+
+[[package]]
+name = "zerofrom-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+ "zerofrom",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.6.0"
 dependencies = [

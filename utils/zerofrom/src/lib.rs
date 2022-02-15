@@ -1,0 +1,40 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+//! This crate provides [`Yoke<Y, C>`][Yoke], which allows one to "yoke" a zero-copy deserialized
+//! object(say, a [`Cow<'a, str>`](alloc::borrow::Cow)) to the source it was deserialized from, (say, an [`Rc<[u8]>`](alloc::rc::Rc)),
+//! known as a "cart", producing a type that looks like `Yoke<Cow<'static, str>, Rc<[u8]>>`
+//! and can be moved around with impunity.
+//!
+//! Succinctly, this allows one to "erase" static lifetimes and turn them into dynamic ones, similarly
+//! to how `dyn` allows one to "erase" static types and turn them into dynamic ones.
+//!
+//! Most of the time the yokeable `Y` type will be some kind of zero-copy deserializable
+//! abstraction, potentially with an owned variant (like [`Cow`](alloc::borrow::Cow),
+//! [`ZeroVec`](https://docs.rs/zerovec), or an aggregate containing such types), and the cart `C` will be some smart pointer like
+//!   [`Box<T>`](alloc::boxed::Box), [`Rc<T>`](alloc::rc::Rc), or [`Arc<T>`](std::sync::Arc), potentially wrapped in an [`Option<T>`](Option).
+//!
+//! The key behind this crate is [`Yoke::get()`], where calling [`.get()`][Yoke::get] on a type like
+//! `Yoke<Cow<'static, str>, _>` will get you a short-lived `&'a Cow<'a, str>`, restricted to the
+//! lifetime of the borrow used during [`.get()`](Yoke::get). This is entirely safe since the `Cow` borrows from
+//! the cart type, which cannot be interfered with as long as the `Yoke` is borrowed by [`.get()`](Yoke::get).
+//! [`.get()`](Yoke::get) protects access by essentially reifying the erased lifetime to a safe local one
+//! when necessary.
+//!
+//! See the documentation of [`Yoke`] for more details.
+
+#![cfg_attr(all(not(test), not(doc)), no_std)]
+// The lifetimes here are important for safety and explicitly writing
+// them out is good even when redundant
+#![allow(clippy::needless_lifetimes)]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+mod zero_copy_from;
+
+#[cfg(feature = "derive")]
+pub use zerofrom_derive::ZeroCopyFrom;
+
+pub use crate::zero_copy_from::ZeroCopyFrom;
