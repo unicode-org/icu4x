@@ -212,12 +212,15 @@ fn make_ule_enum_impl(
             type ULE = #ule_name;
 
             fn as_unaligned(self) -> Self::ULE {
+                // safety: the enum is repr(u8) and can be cast to a u8
                 unsafe {
                     ::core::mem::transmute(self)
                 }
             }
 
             fn from_unaligned(other: Self::ULE) -> Self {
+                // safety: the enum is repr(u8) and can be cast from a u8
+                // originally produced by as_unaligned
                 unsafe {
                     ::core::mem::transmute(other)
                 }
