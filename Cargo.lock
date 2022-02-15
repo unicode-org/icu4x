@@ -3140,6 +3140,7 @@ dependencies = [
  "serde",
  "serde_json",
  "yoke",
+ "zerofrom",
 ]
 
 [[package]]

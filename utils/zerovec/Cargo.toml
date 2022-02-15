@@ -28,6 +28,7 @@ all-features = true
 [dependencies]
 serde = { version = "1.0", optional = true, default-features = false, features = ["alloc"] }
 yoke = { version = "0.4.0", path = "../yoke", optional = true }
+zerofrom = { version = "0.1.0", path = "../zerofrom" }
 
 [dev-dependencies]
 icu_benchmark_macros = { version = "0.5", path = "../../tools/benchmark/macros" }
@@ -42,6 +43,7 @@ rand_pcg = "0.3"
 rand_distr = "0.4"
 getrandom = { version = "0.2", features = ["js"] }
 yoke = { version = "0.4.0", path = "../yoke", features = ["derive"] }
+zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 
 [features]
 bench = []
