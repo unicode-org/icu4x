@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::prelude::*;
 use litemap::LiteMap;
 use ndarray::Array1;
 use ndarray::Array2;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use icu_provider::prelude::*;
 
 /// 'LstmData' is a struct that store a LSTM model. Its attributes are:
 /// `model`: name of the model

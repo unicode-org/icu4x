@@ -21,7 +21,9 @@ use crate::zerofrom;
 const HELLO_ALT_KEY: ResourceKey = crate::resource_key!("core/helloalt@1");
 
 /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
-#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, zerofrom::ZeroFrom)]
+#[derive(
+    Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, zerofrom::ZeroFrom,
+)]
 #[yoke(cloning_zcf)]
 struct HelloAlt {
     message: String,

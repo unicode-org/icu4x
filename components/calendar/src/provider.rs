@@ -14,7 +14,9 @@ use tinystr::TinyStr16;
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
-#[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(
+    Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
+)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)

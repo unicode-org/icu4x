@@ -7,8 +7,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
-use icu_provider::{yoke, zerofrom};
 use icu_provider::DataMarker;
+use icu_provider::{yoke, zerofrom};
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
 /// standard plural forms. If none of the rules match, the "other" category is assumed.

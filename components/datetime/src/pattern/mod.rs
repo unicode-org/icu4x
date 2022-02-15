@@ -17,7 +17,9 @@ pub use item::{GenericPatternItem, PatternItem};
 
 /// The granularity of time represented in a pattern item.
 /// Ordered from least granular to most granular for comparsion.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
+)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
