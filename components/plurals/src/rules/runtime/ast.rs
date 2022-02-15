@@ -10,14 +10,14 @@ use core::{
     fmt,
     str::FromStr,
 };
-use icu_provider::yoke::{self, *};
+use icu_provider::{yoke, zerofrom};
 use num_enum::{IntoPrimitive, TryFromPrimitive, UnsafeFromPrimitive};
 use zerovec::{
     ule::{custom::EncodeAsVarULE, AsULE, PairULE, RawBytesULE, VarULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
-#[derive(Yokeable, ZeroCopyFrom, Clone, PartialEq, Debug)]
+#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]

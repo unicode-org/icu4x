@@ -7,7 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
-use icu_provider::yoke;
+use icu_provider::{yoke, zerofrom};
 use icu_provider::DataMarker;
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
