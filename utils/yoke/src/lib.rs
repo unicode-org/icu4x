@@ -47,7 +47,7 @@ mod zero_copy_from;
 mod serde;
 
 #[cfg(feature = "derive")]
-pub use yoke_derive::{Yokeable, ZeroCopyFrom};
+pub use yoke_derive::Yokeable;
 
 pub use crate::is_covariant::IsCovariant;
 pub use crate::yoke::{CloneableCart, Yoke};

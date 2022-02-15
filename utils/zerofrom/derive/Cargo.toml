@@ -27,3 +27,5 @@ synstructure = "0.12.4"
 
 [dev-dependencies]
 zerofrom = { version = "0.1.0", path = "..", features = ["derive"]}
+zerovec = { version = "0.6", path = "../../zerovec", features = ["yoke"] }
+

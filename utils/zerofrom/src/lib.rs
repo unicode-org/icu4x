@@ -32,6 +32,7 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+mod macro_impls;
 mod zero_copy_from;
 
 #[cfg(feature = "derive")]

@@ -7,7 +7,6 @@
 #![allow(clippy::transmute_ptr_to_ptr)]
 
 use crate::ZeroFrom;
-use core::{mem, ptr};
 
 macro_rules! impl_copy_type {
     ($ty:ident) => {

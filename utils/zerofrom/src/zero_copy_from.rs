@@ -26,8 +26,7 @@ use alloc::string::String;
 /// Implementing `ZeroFrom` on a custom data struct:
 ///
 /// ```
-/// use yoke::Yokeable;
-/// use yoke::ZeroFrom;
+/// use zerofrom::ZeroFrom;
 /// use std::borrow::Cow;
 ///
 /// struct MyStruct<'data> {
