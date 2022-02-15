@@ -27,3 +27,4 @@ synstructure = "0.12.4"
 
 [dev-dependencies]
 zerovec = { version = "0.6", path = ".." }
+zerofrom = { version = "0.1.0", path = "../../zerofrom" }

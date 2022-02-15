@@ -3154,6 +3154,7 @@ dependencies = [
  "quote",
  "syn",
  "synstructure",
+ "zerofrom",
  "zerovec",
 ]
 

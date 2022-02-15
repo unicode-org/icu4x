@@ -5,6 +5,7 @@
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
+use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::ops::Deref;
 
@@ -444,5 +445,17 @@ where
     #[inline]
     fn eq(&self, other: &[A; N]) -> bool {
         self.iter().eq(other.iter().map(|t| t.as_ref()))
+    }
+}
+
+impl<'a, T: VarULE + ?Sized + PartialOrd> PartialOrd for VarZeroVec<'a, T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.iter().partial_cmp(other.iter())
+    }
+}
+
+impl<'a, T: VarULE + ?Sized + Ord> Ord for VarZeroVec<'a, T> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.iter().cmp(other.iter())
     }
 }

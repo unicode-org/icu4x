@@ -4,7 +4,7 @@
 
 use super::components::VarZeroVecComponents;
 use super::*;
-use core::cmp::Ordering;
+use core::cmp::{Ord, Ordering, PartialOrd};
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::Index;
@@ -357,6 +357,28 @@ where
         // VarULE has an API guarantee that this is equivalent
         // to `T::VarULE::eq()`
         self.entire_slice.eq(&other.entire_slice)
+    }
+}
+
+impl<T> Eq for VarZeroSlice<T>
+where
+    T: VarULE,
+    T: ?Sized,
+    T: Eq,
+{
+}
+
+impl<T: VarULE + ?Sized + PartialOrd> PartialOrd for VarZeroSlice<T> {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.iter().partial_cmp(other.iter())
+    }
+}
+
+impl<T: VarULE + ?Sized + Ord> Ord for VarZeroSlice<T> {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.iter().cmp(other.iter())
     }
 }
 

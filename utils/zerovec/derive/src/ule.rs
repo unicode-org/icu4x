@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
@@ -12,10 +11,6 @@ use syn::{
     parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Field,
     Fields, Ident, Lit,
 };
-
-fn suffixed_ident(name: &str, suffix: usize, s: Span) -> Ident {
-    Ident::new(&format!("{name}_{suffix}"), s)
-}
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
@@ -88,7 +83,7 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     {
         return Error::new(
             input.generics.span(),
-            "make_ule must be applied to a struct without any generics",
+            "#[make_ule] must be applied to a struct without any generics",
         )
         .to_compile_error();
     }
@@ -337,24 +332,10 @@ pub(crate) fn generate_ule_validators<'a>(
     iter: impl Iterator<Item = &'a Field>,
     // (validators, remaining_offset)
 ) -> (TokenStream2, syn::Ident) {
-    let mut prev_offset_ident = Ident::new("ZERO", Span::call_site());
-    let mut validators = quote!(const ZERO: usize = 0);
-
-    for (i, field) in iter.enumerate() {
+    utils::generate_per_field_offsets(iter, |field, prev_offset_ident, size_ident, _| {
         let ty = &field.ty;
-        let new_offset_ident = suffixed_ident("OFFSET", i, field.span());
-        let size_ident = suffixed_ident("SIZE", i, field.span());
-        validators = quote! {
-            #validators;
-            const #size_ident: usize = ::core::mem::size_of::<#ty>();
-            const #new_offset_ident: usize = #prev_offset_ident + #size_ident;
-            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;
-        };
-
-        prev_offset_ident = new_offset_ident;
-    }
-
-    (validators, prev_offset_ident)
+        quote!(<#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;)
+    })
 }
 
 /// Make corresponding ULE fields for each field
