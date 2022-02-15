@@ -11,7 +11,8 @@ use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use yoke::{Yokeable, ZeroCopyFrom};
+use yoke::Yokeable;
+use zerofrom::ZeroFrom;
 use zerovec::ZeroVec;
 use zerovec::ZeroVecError;
 
@@ -103,7 +104,7 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
     header: CodePointTrieHeader,
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -114,7 +115,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
     /// range is defined as a partition of the code point space such that the

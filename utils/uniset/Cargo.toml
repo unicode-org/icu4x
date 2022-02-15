@@ -37,6 +37,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.4.0", path = "../yoke", features = ["derive"] }
+zerofrom = { version = "0.1.0", path = "../zerofrom", features = ["derive"] }
 zerovec = { version = "0.6", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 [dev-dependencies]

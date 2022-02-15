@@ -11,7 +11,7 @@ use crate::line::PROPERTY_COUNT;
 use crate::line::PROPERTY_TABLE;
 use alloc::boxed::Box;
 use core::ops::Deref;
-use icu_provider::yoke::{self, *};
+use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
@@ -33,7 +33,7 @@ pub struct LineBreakDataV1<'data> {
 }
 
 /// Property table for line breaking.
-#[derive(Debug, PartialEq, Clone, Yokeable)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -54,8 +54,8 @@ impl Deref for LineBreakPropertyTable<'_> {
     }
 }
 
-impl<'zcf> ZeroCopyFrom<'zcf, LineBreakPropertyTable<'_>> for LineBreakPropertyTable<'zcf> {
-    fn zero_copy_from(cart: &'zcf LineBreakPropertyTable<'_>) -> Self {
+impl<'zf> zerofrom::ZeroFrom<'zf, LineBreakPropertyTable<'_>> for LineBreakPropertyTable<'zf> {
+    fn zero_from(cart: &'zf LineBreakPropertyTable<'_>) -> Self {
         LineBreakPropertyTable::Borrowed(&*cart)
     }
 }
@@ -67,7 +67,7 @@ impl Default for LineBreakPropertyTable<'static> {
 }
 
 /// Rule table for line breaking.
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)

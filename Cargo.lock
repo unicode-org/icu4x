@@ -1104,6 +1104,7 @@ dependencies = [
  "serde",
  "toml",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1299,6 +1300,7 @@ dependencies = [
  "tinystr 0.5.0",
  "writeable",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1470,6 +1472,7 @@ dependencies = [
  "serde_json",
  "tinystr 0.5.0",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -3090,6 +3093,7 @@ dependencies = [
  "serde",
  "stable_deref_trait",
  "yoke-derive",
+ "zerofrom",
 ]
 
 [[package]]
@@ -3101,6 +3105,25 @@ dependencies = [
  "syn",
  "synstructure",
  "yoke",
+ "zerovec",
+]
+
+[[package]]
+name = "zerofrom"
+version = "0.1.0"
+dependencies = [
+ "zerofrom-derive",
+]
+
+[[package]]
+name = "zerofrom-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -3120,6 +3143,7 @@ dependencies = [
  "serde",
  "serde_json",
  "yoke",
+ "zerofrom",
 ]
 
 [[package]]

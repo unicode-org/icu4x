@@ -6,7 +6,8 @@
 use alloc::format;
 use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
-use yoke::{self, *};
+use yoke::Yokeable;
+use zerofrom::ZeroFrom;
 use zerovec::{ule::AsULE, ZeroVec};
 
 use super::UnicodeSetError;
@@ -25,7 +26,7 @@ const ALL_SLICE: &[u32] = &[0x0, (char::MAX as u32) + 1];
 ///
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
-#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 pub struct UnicodeSet<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
     // https://doc.rust-lang.org/nightly/core/array/trait.FixedSizeArray.html

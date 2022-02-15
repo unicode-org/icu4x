@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use icu_provider::yoke;
+use icu_provider::{yoke, zerofrom};
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 

@@ -111,6 +111,7 @@ mod zerovec;
 
 #[cfg(feature = "yoke")]
 mod yoke_impls;
+mod zerofrom_impls;
 
 pub use crate::error::ZeroVecError;
 pub use crate::map::ZeroMap;

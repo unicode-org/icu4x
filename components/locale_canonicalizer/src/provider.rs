@@ -8,7 +8,7 @@
 
 use alloc::vec::Vec;
 use icu_locid::LanguageIdentifier;
-use icu_provider::yoke;
+use icu_provider::prelude::*;
 use litemap::LiteMap;
 use tinystr::{TinyStr4, TinyStr8};
 
@@ -18,7 +18,7 @@ use tinystr::{TinyStr4, TinyStr8};
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(cloning_zcf)]
+#[zerofrom(cloning_zf)]
 /// This alias data is used for locale canonicalization. Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
 /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
@@ -62,7 +62,7 @@ pub struct AliasesV1 {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(cloning_zcf)]
+#[zerofrom(cloning_zf)]
 /// This likely subtags data is used for the minimize and maximize operations.
 /// Each field defines a mapping from an old identifier to a new identifier,
 /// based upon the rules in

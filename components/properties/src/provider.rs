@@ -8,7 +8,7 @@
 
 use crate::script::ScriptWithExtensions;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
-use icu_provider::yoke::{self, *};
+use icu_provider::{yoke, zerofrom};
 use icu_uniset::UnicodeSet;
 use icu_uniset::UnicodeSetBuilder;
 
@@ -388,7 +388,7 @@ impl<'data> From<UnicodePropertyV1<'data>> for UnicodeSet<'data> {
 //
 
 /// A map efficiently storing data about individual characters.
-#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
