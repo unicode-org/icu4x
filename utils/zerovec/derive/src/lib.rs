@@ -5,7 +5,7 @@
 //! Proc macros for generating `ULE`, `VarULE` impls and types for the `zerovec` crate
 
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, DeriveInput};
+use syn::{parse_macro_input, AttributeArgs, DeriveInput};
 
 pub(crate) mod ule;
 mod utils;
@@ -13,7 +13,7 @@ mod varule;
 
 /// Custom derive for `zerovec::ULE`,
 ///
-/// This can be attached to structs containing only ULE types
+/// This can be attached to `Copy` structs containing only ULE types
 #[proc_macro_derive(ULE)]
 pub fn ule_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -27,4 +27,17 @@ pub fn ule_derive(input: TokenStream) -> TokenStream {
 pub fn varule_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(varule::derive_impl(&input))
+}
+
+/// Generate a corresponding ULE type and the relevant AsULE implementations for this type
+///
+/// This can be attached to structs containing only AsULE types, or C-like enums that have `#[repr(u8)]`
+/// and all explicit discriminants.
+///
+/// The type must be `Copy`, `PartialEq`, and `Ord`.
+#[proc_macro_attribute]
+pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as DeriveInput);
+    let attr = parse_macro_input!(attr as AttributeArgs);
+    TokenStream::from(ule::make_ule_impl(attr, input))
 }
