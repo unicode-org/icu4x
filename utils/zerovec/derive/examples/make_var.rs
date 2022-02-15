@@ -50,8 +50,8 @@ fn assert_zerovec<T: ule::VarULE + ?Sized, U: ule::custom::EncodeAsVarULE<T>, F:
 }
 
 fn main() {
-    assert_zerovec::<VarStructULE, VarStruct, _>(&TEST_VARSTRUCTS, |stack, zero| {
-        assert_eq!(stack, &VarStruct::zero_from(&zero))
+    assert_zerovec::<VarStructULE, VarStruct, _>(TEST_VARSTRUCTS, |stack, zero| {
+        assert_eq!(stack, &VarStruct::zero_from(zero))
     });
 
     let vartuples = &[
@@ -60,7 +60,7 @@ fn main() {
         VarTupleStruct(3478, '月', TEST_STRINGS3.into()),
     ];
     assert_zerovec::<VarTupleStructULE, VarTupleStruct, _>(vartuples, |stack, zero| {
-        assert_eq!(stack, &VarTupleStruct::zero_from(&zero))
+        assert_eq!(stack, &VarTupleStruct::zero_from(zero))
     });
 }
 

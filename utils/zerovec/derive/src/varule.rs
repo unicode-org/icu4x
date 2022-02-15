@@ -129,7 +129,7 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
 
     let lt = input.generics.lifetimes().next();
 
-    if let Some(ref lt) = lt {
+    if let Some(lt) = lt {
         if lt.colon_token.is_some() || !lt.bounds.is_empty() {
             return Error::new(
                 input.generics.span(),
@@ -269,8 +269,8 @@ fn make_zf_impl(
 
     let last_field_ty = &last_field.ty;
     let last_field_ule_ty = last_field_info.varule_ty();
-    let accessor = utils::field_accessor(&last_field, fields.len() - 1);
-    let setter = utils::field_setter(&last_field);
+    let accessor = utils::field_accessor(last_field, fields.len() - 1);
+    let setter = utils::field_setter(last_field);
 
     let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
 
@@ -469,10 +469,10 @@ impl<'a> LastField<'a> {
     }
 
     fn has_zf(&self) -> bool {
-        match *self {
-            Self::Ref(_) | Self::Cow(_) | Self::ZeroVec(_) | Self::VarZeroVec(_) => true,
-            _ => false,
-        }
+        matches!(
+            *self,
+            Self::Ref(_) | Self::Cow(_) | Self::ZeroVec(_) | Self::VarZeroVec(_)
+        )
     }
 }
 
