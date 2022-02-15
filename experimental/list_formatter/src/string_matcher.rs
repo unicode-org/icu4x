@@ -8,11 +8,11 @@ use alloc::borrow::Cow;
     feature = "provider_transform_internals"
 ))]
 use alloc::string::ToString;
-use icu_provider::yoke::{self, *};
+use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
-#[derive(Clone, Debug, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct StringMatcher<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
     dfa_bytes: Cow<'data, [u8]>,
