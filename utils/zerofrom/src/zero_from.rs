@@ -7,7 +7,8 @@ use alloc::borrow::{Cow, ToOwned};
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 
-/// Trait for types that can be created from a reference to a cart type `C` with no allocations.
+/// Trait for types that can be created from a reference to a cart type `C` with no allocations,
+/// i.e. a zero-copy (zero-alloc) version of "From"
 ///
 /// A type can be the `ZeroFrom` target of multiple cart types.
 ///
