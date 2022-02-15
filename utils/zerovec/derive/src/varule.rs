@@ -372,6 +372,12 @@ enum LastField<'a> {
 impl<'a> LastField<'a> {
     /// Construct a LastField for the type of a LastField if possible
     fn new(ty: &'a Type) -> Result<LastField<'a>, String> {
+        static PATH_TYPE_IDENTITY_ERROR: &'static str =
+            "Can only automatically detect corresponding VarULE types for path types \
+            that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec";
+        static PATH_TYPE_GENERICS_ERROR: &'static str =
+            "Can only automatically detect corresponding VarULE types for path \
+            types with at most one lifetime and at most one generic parameter";
         match *ty {
             Type::Reference(ref tyref) => OwnULETy::new(&tyref.elem, "reference").map(LastField::Ref),
             Type::Path(ref typath) => {
@@ -385,8 +391,7 @@ impl<'a> LastField<'a> {
                         if segment.ident == "String" {
                             Ok(LastField::Growable(OwnULETy::Str))
                         } else {
-                            Err("Can only automatically detect corresponding VarULE types for path types \
-                                        that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into())
+                            Err(PATH_TYPE_IDENTITY_ERROR.into())
                         }
                     }
                     PathArguments::AngleBracketed(ref params) => {
@@ -401,8 +406,7 @@ impl<'a> LastField<'a> {
                                 GenericArgument::Type(ref ty) if generic.is_none() => {
                                     generic = Some(ty)
                                 }
-                                _ => return Err("Can only automatically detect corresponding VarULE types for path \
-                                                 types with at most one lifetime and at most one generic parameter".into()),
+                                _ => return Err(PATH_TYPE_GENERICS_ERROR.into()),
                             }
                         }
 
@@ -411,8 +415,7 @@ impl<'a> LastField<'a> {
                         let generic = if let Some(g) = generic {
                             g
                         } else {
-                            return Err("Can only automatically detect corresponding VarULE types for path \
-                                        types with at most one lifetime and at most one generic parameter".into());
+                            return Err(PATH_TYPE_GENERICS_ERROR.into());
                         };
 
                         let ident = segment.ident.to_string();
@@ -422,15 +425,13 @@ impl<'a> LastField<'a> {
                                 "ZeroVec" => Ok(LastField::ZeroVec(generic)),
                                 "VarZeroVec" => Ok(LastField::VarZeroVec(generic)),
                                 "Cow" => OwnULETy::new(generic, "Cow").map(LastField::Cow),
-                                _ => Err("Can only automatically detect corresponding VarULE types for path \
-                                          types that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into()),
+                                _ => Err(PATH_TYPE_IDENTITY_ERROR.into()),
                             }
                         } else {
                             match &*ident {
                                 "Vec" => Ok(LastField::Growable(OwnULETy::Slice(generic))),
                                 "Box" => OwnULETy::new(generic, "Box").map(LastField::Boxed),
-                                _ => Err("Can only automatically detect corresponding VarULE types for path types \
-                                          that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into()),
+                                _ => Err(PATH_TYPE_IDENTITY_ERROR.into()),
                             }
                         }
                     }
