@@ -11,7 +11,7 @@ use core::convert::TryFrom;
 use core::convert::TryInto;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
-use yoke::ZeroCopyFrom;
+use zerofrom::ZeroFrom;
 
 /// Representations of the `Any` trait object.
 ///
@@ -68,7 +68,7 @@ impl AnyPayload {
     where
         M: DataMarker + 'static,
         // For the StructRef case:
-        M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
+        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     {
@@ -196,7 +196,7 @@ impl DataPayload<AnyMarker> {
     where
         M: DataMarker + 'static,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-        M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
+        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     {
         self.try_unwrap_owned()?.downcast()
     }
@@ -241,7 +241,7 @@ impl AnyResponse {
     where
         M: DataMarker + 'static,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-        M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
+        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     {
         Ok(DataResponse {
             metadata: self.metadata,
@@ -341,7 +341,7 @@ where
     P: AnyProvider + ?Sized,
     M: ResourceMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-    M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
+    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
 {
     #[inline]
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {

@@ -20,7 +20,7 @@ mod tests;
 /// The `#[data_struct]` attribute should be applied to all types intended
 /// for use in a `DataStruct`. It does the following things:
 ///
-/// - `Apply #[derive(Yokeable, ZeroCopyFrom)]`. The `ZeroCopyFrom` derive can
+/// - `Apply #[derive(Yokeable, ZeroFrom)]`. The `ZeroFrom` derive can
 ///    be customized with `#[yoke(cloning_zcf)]` as needed
 ///
 /// In addition, the attribute can be used to implement `DataMarker` and/or `ResourceMarker`
@@ -28,6 +28,7 @@ mod tests;
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::zerofrom;
 /// use std::borrow::Cow;
 ///
 /// // We also need `yoke` in scope: [icu4x#1557](https://github.com/unicode-org/icu4x/issues/1557)
@@ -121,7 +122,7 @@ fn data_struct_impl(attr: AttributeArgs, item: ItemStruct) -> TokenStream2 {
     }
 
     result.extend(quote!(
-        #[derive(yoke::Yokeable, yoke::ZeroCopyFrom)]
+        #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
         #item
     ));
 

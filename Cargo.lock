@@ -1299,6 +1299,7 @@ dependencies = [
  "tinystr 0.5.0",
  "writeable",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 

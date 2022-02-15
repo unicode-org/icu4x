@@ -12,6 +12,7 @@ use crate::hello_world::*;
 use crate::iter::*;
 use crate::prelude::*;
 use crate::yoke;
+use crate::zerofrom;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.
@@ -20,7 +21,7 @@ use crate::yoke;
 const HELLO_ALT_KEY: ResourceKey = crate::resource_key!("core/helloalt@1");
 
 /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
-#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, zerofrom::ZeroFrom)]
 #[yoke(cloning_zcf)]
 struct HelloAlt {
     message: String,

@@ -20,7 +20,7 @@ use crate::ResourceKey;
 /// for the data struct:
 ///
 /// - `impl<'a> Yokeable<'a>` (required)
-/// - `impl ZeroCopyFrom<Self>`
+/// - `impl ZeroFrom<Self>`
 ///
 /// See also some common pre-made DataMarker impls in this module.
 ///
@@ -31,10 +31,11 @@ use crate::ResourceKey;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::yoke::*;
+/// use icu_provider::zerofrom::*;
 /// use std::borrow::Cow;
 /// use std::rc::Rc;
 ///
-/// #[derive(Yokeable, ZeroCopyFrom)]
+/// #[derive(Yokeable, ZeroFrom)]
 /// struct MyDataStruct<'data> {
 ///     message: Cow<'data, str>,
 /// }
