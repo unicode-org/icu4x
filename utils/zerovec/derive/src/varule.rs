@@ -2,14 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::utils;
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{AttributeArgs, Data, DeriveInput, Error, GenericArgument, Ident, PathArguments, Type};
+use syn::{
+    parse_quote, AttributeArgs, Data, DeriveInput, Error, GenericArgument, Ident, PathArguments,
+    Type,
+};
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
-    if !crate::utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
+    if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
         return Error::new(
             input.span(),
             "derive(VarULE) must be applied to a #[repr(packed)] or #[repr(transparent)] type",
@@ -154,9 +158,38 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         .to_compile_error();
     };
 
-    let last_field_info = LastField::new(&last_field.ty);
+    let last_field_info = match LastField::new(&last_field.ty) {
+        Ok(o) => o,
+        Err(e) => return Error::new(last_field.span(), e).to_compile_error(),
+    };
 
-    quote!()
+    let mut field_inits = crate::ule::make_ule_fields(fields.iter().take(fields.len() - 1));
+    let last_field_ule = last_field_info.varule_ty();
+    if let Some(ref lf_ident) = last_field.ident {
+        field_inits.push(quote!(#lf_ident: #last_field_ule))
+    } else {
+        field_inits.push(last_field_ule)
+    };
+
+    let semi = utils::semi_for(fields);
+    let repr_attr = utils::repr_for(fields);
+    let field_inits = utils::wrap_field_inits(&field_inits, fields);
+
+    let varule_struct: DeriveInput = parse_quote!(
+        #[repr(#repr_attr)]
+        #[derive(PartialEq)]
+        struct #ule_name #field_inits #semi
+    );
+
+    let derived = derive_impl(&varule_struct);
+
+    quote!(
+        #input
+
+        #varule_struct
+
+        #derived
+    )
 }
 
 /// Represents a VarULE-compatible type that would typically
