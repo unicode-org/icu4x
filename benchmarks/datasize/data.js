@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644945931384,
+  "lastUpdate": 1644952043881,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9293,6 +9293,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9ca9780f230b903b2fae7581c4674015da7bdcd8"
         },
         "date": 1644945919367,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "08e8f3804a63345b772af6f5d76cead28927255a",
+          "message": "Add #[make_ule] proc macro (#1603)\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-02-15T11:05:16-08:00",
+          "tree_id": "b345f27e70c20cbdbe095fb7cf5ac5a0116db390",
+          "url": "https://github.com/unicode-org/icu4x/commit/08e8f3804a63345b772af6f5d76cead28927255a"
+        },
+        "date": 1644952030635,
         "tool": "ndjson",
         "benches": [
           {
