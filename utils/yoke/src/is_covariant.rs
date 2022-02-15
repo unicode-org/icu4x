@@ -79,7 +79,7 @@ use alloc::{
 /// }
 ///
 /// impl<'zcf, 'a> ZeroFrom<'zcf, dyn ExampleTrait<'a> + 'a> for ExampleTraitDynRef<'zcf> {
-///     fn zero_copy_from(this: &'zcf (dyn ExampleTrait<'a> + 'a)) -> ExampleTraitDynRef<'zcf> {
+///     fn zero_from(this: &'zcf (dyn ExampleTrait<'a> + 'a)) -> ExampleTraitDynRef<'zcf> {
 ///         // This is safe because the trait object requires IsCovariant.
 ///         ExampleTraitDynRef(unsafe { core::mem::transmute(this) })
 ///     }

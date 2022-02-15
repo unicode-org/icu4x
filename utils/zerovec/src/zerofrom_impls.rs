@@ -10,7 +10,7 @@ where
     T: 'static + AsULE + ?Sized,
 {
     #[inline]
-    fn zero_copy_from(cart: &'zcf ZeroVec<'_, T>) -> Self {
+    fn zero_from(cart: &'zcf ZeroVec<'_, T>) -> Self {
         ZeroVec::Borrowed(cart.as_ule_slice())
     }
 }
@@ -20,7 +20,7 @@ where
     T: 'static + VarULE + ?Sized,
 {
     #[inline]
-    fn zero_copy_from(cart: &'zcf VarZeroVec<'_, T>) -> Self {
+    fn zero_from(cart: &'zcf VarZeroVec<'_, T>) -> Self {
         cart.as_slice().into()
     }
 }
@@ -32,10 +32,10 @@ where
     <K as ZeroMapKV<'zcf>>::Container: ZeroFrom<'zcf, <K as ZeroMapKV<'s>>::Container>,
     <V as ZeroMapKV<'zcf>>::Container: ZeroFrom<'zcf, <V as ZeroMapKV<'s>>::Container>,
 {
-    fn zero_copy_from(cart: &'zcf ZeroMap<'s, K, V>) -> Self {
+    fn zero_from(cart: &'zcf ZeroMap<'s, K, V>) -> Self {
         ZeroMap {
-            keys: K::Container::zero_copy_from(&cart.keys),
-            values: V::Container::zero_copy_from(&cart.values),
+            keys: K::Container::zero_from(&cart.keys),
+            values: V::Container::zero_from(&cart.values),
         }
     }
 }
@@ -49,12 +49,12 @@ where
     <K1 as ZeroMapKV<'zcf>>::Container: ZeroFrom<'zcf, <K1 as ZeroMapKV<'s>>::Container>,
     <V as ZeroMapKV<'zcf>>::Container: ZeroFrom<'zcf, <V as ZeroMapKV<'s>>::Container>,
 {
-    fn zero_copy_from(cart: &'zcf ZeroMap2d<'s, K0, K1, V>) -> Self {
+    fn zero_from(cart: &'zcf ZeroMap2d<'s, K0, K1, V>) -> Self {
         ZeroMap2d {
-            keys0: K0::Container::zero_copy_from(&cart.keys0),
-            joiner: ZeroVec::zero_copy_from(&cart.joiner),
-            keys1: K1::Container::zero_copy_from(&cart.keys1),
-            values: V::Container::zero_copy_from(&cart.values),
+            keys0: K0::Container::zero_from(&cart.keys0),
+            joiner: ZeroVec::zero_from(&cart.joiner),
+            keys1: K1::Container::zero_from(&cart.keys1),
+            values: V::Container::zero_from(&cart.values),
         }
     }
 }

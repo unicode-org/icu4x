@@ -41,7 +41,7 @@ pub mod trait_hack;
 mod yoke;
 mod yokeable;
 #[cfg(feature = "zerofrom")]
-mod zero_copy_from;
+mod zero_from;
 
 #[cfg(feature = "serde")]
 mod serde;

@@ -12,7 +12,7 @@ macro_rules! impl_copy_type {
     ($ty:ident) => {
         impl<'a> ZeroFrom<'a, $ty> for $ty {
             #[inline]
-            fn zero_copy_from(this: &'a Self) -> Self {
+            fn zero_from(this: &'a Self) -> Self {
                 // Essentially only works when the struct is fully Copy
                 *this
             }
@@ -40,10 +40,10 @@ impl_copy_type!(bool);
 macro_rules! array_zcf_impl {
     ($n:expr; $($i:expr),+) => {
         impl<'a, C, T: ZeroFrom<'a, C>> ZeroFrom<'a, [C; $n]> for [T; $n] {
-            fn zero_copy_from(this: &'a [C; $n]) -> Self {
+            fn zero_from(this: &'a [C; $n]) -> Self {
                 [
                     $(
-                        <T as ZeroFrom<C>>::zero_copy_from(&this[$i])
+                        <T as ZeroFrom<C>>::zero_from(&this[$i])
                     ),+
 
                 ]

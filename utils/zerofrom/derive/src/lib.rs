@@ -60,7 +60,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .collect();
         quote! {
             impl<'zcf, #(#tybounds),*> zerofrom::ZeroFrom<'zcf, #name<#(#typarams),*>> for #name<#(#typarams),*> where #(#bounds),* {
-                fn zero_copy_from(this: &'zcf Self) -> Self {
+                fn zero_from(this: &'zcf Self) -> Self {
                     #clone
                 }
             }
@@ -76,7 +76,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         if has_clone {
             return quote! {
                 impl<'zcf> zerofrom::ZeroFrom<'zcf, #name<'_>> for #name<'zcf> {
-                    fn zero_copy_from(this: &'zcf #name<'_>) -> Self {
+                    fn zero_from(this: &'zcf #name<'_>) -> Self {
                         this.clone()
                     }
                 }
@@ -119,7 +119,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     // By doing this we essentially require ZCF to be implemented
                     // on all fields
                     quote! {
-                        <#fty as zerofrom::ZeroFrom<'zcf, #lifetime_ty>>::zero_copy_from(#field)
+                        <#fty as zerofrom::ZeroFrom<'zcf, #lifetime_ty>>::zero_from(#field)
                     }
                 }
             })
@@ -129,7 +129,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             impl<'zcf, 'zcf_inner, #(#tybounds),*> zerofrom::ZeroFrom<'zcf, #name<'zcf_inner, #(#typarams),*>> for #name<'zcf, #(#typarams),*>
                 where
                 #(#zcf_bounds,)* {
-                fn zero_copy_from(this: &'zcf #name<'zcf_inner, #(#typarams),*>) -> Self {
+                fn zero_from(this: &'zcf #name<'zcf_inner, #(#typarams),*>) -> Self {
                     match *this { #body }
                 }
             }

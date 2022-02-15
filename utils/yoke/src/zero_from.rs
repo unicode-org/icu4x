@@ -16,8 +16,8 @@ where
     T: ZeroFrom<'zcf, C>,
 {
     #[inline]
-    fn zero_copy_from(cart: &'zcf C) -> Self {
-        YokeTraitHack(T::zero_copy_from(cart))
+    fn zero_from(cart: &'zcf C) -> Self {
+        YokeTraitHack(T::zero_from(cart))
     }
 }
 
@@ -51,7 +51,7 @@ where
     /// ```
     pub fn attach_to_zero_copy_cart(cart: C) -> Self {
         Yoke::<Y, C>::attach_to_cart(cart, |c| {
-            YokeTraitHack::<<Y as Yokeable>::Output>::zero_copy_from(c).0
+            YokeTraitHack::<<Y as Yokeable>::Output>::zero_from(c).0
         })
     }
 }

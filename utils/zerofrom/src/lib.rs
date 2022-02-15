@@ -33,9 +33,9 @@
 extern crate alloc;
 
 mod macro_impls;
-mod zero_copy_from;
+mod zero_from;
 
 #[cfg(feature = "derive")]
 pub use zerofrom_derive::ZeroFrom;
 
-pub use crate::zero_copy_from::ZeroFrom;
+pub use crate::zero_from::ZeroFrom;

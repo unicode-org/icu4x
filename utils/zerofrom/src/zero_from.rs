@@ -35,7 +35,7 @@ use alloc::string::String;
 ///
 /// // Reference from a borrowed version of self
 /// impl<'zcf> ZeroFrom<'zcf, MyStruct<'_>> for MyStruct<'zcf> {
-///     fn zero_copy_from(cart: &'zcf MyStruct<'_>) -> Self {
+///     fn zero_from(cart: &'zcf MyStruct<'_>) -> Self {
 ///         MyStruct {
 ///             message: Cow::Borrowed(&cart.message)
 ///         }
@@ -44,7 +44,7 @@ use alloc::string::String;
 ///
 /// // Reference from a string slice directly
 /// impl<'zcf> ZeroFrom<'zcf, str> for MyStruct<'zcf> {
-///     fn zero_copy_from(cart: &'zcf str) -> Self {
+///     fn zero_from(cart: &'zcf str) -> Self {
 ///         MyStruct {
 ///             message: Cow::Borrowed(cart)
 ///         }
@@ -53,7 +53,7 @@ use alloc::string::String;
 /// ```
 pub trait ZeroFrom<'zcf, C: ?Sized>: 'zcf {
     /// Clone the cart `C` into a struct that may retain references into `C`.
-    fn zero_copy_from(cart: &'zcf C) -> Self;
+    fn zero_from(cart: &'zcf C) -> Self;
 }
 
 // Note: The following could be blanket implementations, but that would require constraining the
@@ -64,7 +64,7 @@ pub trait ZeroFrom<'zcf, C: ?Sized>: 'zcf {
 #[cfg(feature = "alloc")]
 impl<'zcf> ZeroFrom<'zcf, str> for Cow<'zcf, str> {
     #[inline]
-    fn zero_copy_from(cart: &'zcf str) -> Self {
+    fn zero_from(cart: &'zcf str) -> Self {
         Cow::Borrowed(cart)
     }
 }
@@ -72,14 +72,14 @@ impl<'zcf> ZeroFrom<'zcf, str> for Cow<'zcf, str> {
 #[cfg(feature = "alloc")]
 impl<'zcf> ZeroFrom<'zcf, String> for Cow<'zcf, str> {
     #[inline]
-    fn zero_copy_from(cart: &'zcf String) -> Self {
+    fn zero_from(cart: &'zcf String) -> Self {
         Cow::Borrowed(cart)
     }
 }
 
 impl<'zcf> ZeroFrom<'zcf, str> for &'zcf str {
     #[inline]
-    fn zero_copy_from(cart: &'zcf str) -> Self {
+    fn zero_from(cart: &'zcf str) -> Self {
         cart
     }
 }
@@ -87,24 +87,24 @@ impl<'zcf> ZeroFrom<'zcf, str> for &'zcf str {
 #[cfg(feature = "alloc")]
 impl<'zcf> ZeroFrom<'zcf, String> for &'zcf str {
     #[inline]
-    fn zero_copy_from(cart: &'zcf String) -> Self {
+    fn zero_from(cart: &'zcf String) -> Self {
         cart
     }
 }
 
 impl<'zcf, C, T: ZeroFrom<'zcf, C>> ZeroFrom<'zcf, Option<C>> for Option<T> {
-    fn zero_copy_from(cart: &'zcf Option<C>) -> Self {
-        cart.as_ref().map(|c| <T as ZeroFrom<C>>::zero_copy_from(c))
+    fn zero_from(cart: &'zcf Option<C>) -> Self {
+        cart.as_ref().map(|c| <T as ZeroFrom<C>>::zero_from(c))
     }
 }
 
 impl<'zcf, C1, T1: ZeroFrom<'zcf, C1>, C2, T2: ZeroFrom<'zcf, C2>> ZeroFrom<'zcf, (C1, C2)>
     for (T1, T2)
 {
-    fn zero_copy_from(cart: &'zcf (C1, C2)) -> Self {
+    fn zero_from(cart: &'zcf (C1, C2)) -> Self {
         (
-            <T1 as ZeroFrom<C1>>::zero_copy_from(&cart.0),
-            <T2 as ZeroFrom<C2>>::zero_copy_from(&cart.1),
+            <T1 as ZeroFrom<C1>>::zero_from(&cart.0),
+            <T2 as ZeroFrom<C2>>::zero_from(&cart.1),
         )
     }
 }
@@ -118,21 +118,21 @@ impl<'zcf, C1, T1: ZeroFrom<'zcf, C1>, C2, T2: ZeroFrom<'zcf, C2>> ZeroFrom<'zcf
 #[cfg(feature = "alloc")]
 impl<'zcf, B: ToOwned + ?Sized> ZeroFrom<'zcf, Cow<'_, B>> for Cow<'zcf, B> {
     #[inline]
-    fn zero_copy_from(cart: &'zcf Cow<'_, B>) -> Self {
+    fn zero_from(cart: &'zcf Cow<'_, B>) -> Self {
         Cow::Borrowed(cart)
     }
 }
 
 impl<'zcf> ZeroFrom<'zcf, &'_ str> for &'zcf str {
     #[inline]
-    fn zero_copy_from(cart: &'zcf &'_ str) -> &'zcf str {
+    fn zero_from(cart: &'zcf &'_ str) -> &'zcf str {
         cart
     }
 }
 
 impl<'zcf, T> ZeroFrom<'zcf, [T]> for &'zcf [T] {
     #[inline]
-    fn zero_copy_from(cart: &'zcf [T]) -> &'zcf [T] {
+    fn zero_from(cart: &'zcf [T]) -> &'zcf [T] {
         cart
     }
 }

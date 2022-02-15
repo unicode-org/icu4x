@@ -217,7 +217,7 @@ It has the following signature and also has a custom derive:
 
 ```rust
 pub trait ZeroFrom<C: ?Sized>: for<'a> Yokeable<'a> {
-    fn zero_copy_from<'b>(cart: &'b C) -> <Self as Yokeable<'b>>::Output;
+    fn zero_from<'b>(cart: &'b C) -> <Self as Yokeable<'b>>::Output;
 }
 ```
 
