@@ -19,7 +19,7 @@ use alloc::string::String;
 /// For example, `impl ZeroFrom<C> for Cow<str>` should return a `Cow::Borrowed` pointing at
 /// data in the cart `C`, even if the cart is itself fully owned.
 ///
-/// One can use the [`#[derive(ZeroFrom)]`](yoke_derive::ZeroFrom) custom derive to automatically
+/// One can use the [`#[derive(ZeroFrom)]`](zerofrom_derive::ZeroFrom) custom derive to automatically
 /// implement this trait.
 ///
 /// # Examples
