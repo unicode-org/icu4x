@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644914386549,
+  "lastUpdate": 1644945931384,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9263,6 +9263,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/48738cb5b7bf3721dfd9802f50603286676a3ac2"
         },
         "date": 1644914375522,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9ca9780f230b903b2fae7581c4674015da7bdcd8",
+          "message": "Add user-facing provider-aware API for Script_Extensions data result (#1593)",
+          "timestamp": "2022-02-15T09:23:42-08:00",
+          "tree_id": "f7a558832521232e3eb939993b15ce4558bd6425",
+          "url": "https://github.com/unicode-org/icu4x/commit/9ca9780f230b903b2fae7581c4674015da7bdcd8"
+        },
+        "date": 1644945919367,
         "tool": "ndjson",
         "benches": [
           {
