@@ -93,9 +93,7 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         .to_compile_error();
     }
 
-    if attr.len() > 1 {
-
-    }
+    if attr.len() > 1 {}
 
     let ule_name: Ident = if let Some(arg) = attr.get(0) {
         parse_quote!(#arg)
