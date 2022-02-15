@@ -6,6 +6,7 @@ use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
+use crate::utils;
 use syn::spanned::Spanned;
 use syn::{
     parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Field,
@@ -17,7 +18,7 @@ fn suffixed_ident(name: &str, suffix: usize, s: Span) -> Ident {
 }
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
-    if !crate::utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
+    if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
         return Error::new(
             input.span(),
             "derive(ULE) must be applied to a #[repr(packed)] or #[repr(transparent)] type",
@@ -80,16 +81,6 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
 }
 
-fn wrap_field_inits(streams: &[TokenStream2], fields: &Fields) -> TokenStream2 {
-    match *fields {
-        Fields::Named(_) => quote!( { #(#streams),* } ),
-        Fields::Unnamed(_) => quote!( ( #(#streams),* ) ),
-        Fields::Unit => {
-            unreachable!("#[make_ule] should have already checked that there are fields")
-        }
-    }
-}
-
 pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.lifetimes().next().is_some()
@@ -143,7 +134,7 @@ fn make_ule_enum_impl(
     enu: &DataEnum,
 ) -> TokenStream2 {
     // We could support more int reprs in the future if needed
-    if !crate::utils::has_valid_repr(&input.attrs, |r| r == "u8") {
+    if !utils::has_valid_repr(&input.attrs, |r| r == "u8") {
         return Error::new(
             input.span(),
             "#[make_ule] can only be applied to #[repr(u8)] enums",
@@ -277,32 +268,12 @@ fn make_ule_struct_impl(
         )
         .to_compile_error();
     }
-    let ule_fields = struc
-        .fields
-        .iter()
-        .map(|f| {
-            let ty = &f.ty;
-            let ty = quote!(<#ty as zerovec::ule::AsULE>::ULE);
-            if let Some(ref ident) = f.ident {
-                quote!(#ident: #ty)
-            } else {
-                quote!(#ty)
-            }
-        })
-        .collect::<Vec<_>>();
+    let field_inits = make_ule_fields(struc.fields.iter());
+    let field_inits = utils::wrap_field_inits(&field_inits, &struc.fields);
 
-    let repr_attr = if struc.fields.len() == 1 {
-        quote!(transparent)
-    } else {
-        quote!(packed)
-    };
+    let semi = utils::semi_for(&struc.fields);
+    let repr_attr = utils::repr_for(&struc.fields);
 
-    let field_inits = wrap_field_inits(&ule_fields, &struc.fields);
-    let semi = if let Fields::Unnamed(..) = struc.fields {
-        quote!(;)
-    } else {
-        quote!()
-    };
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(Copy, Clone, PartialEq)]
@@ -330,8 +301,8 @@ fn make_ule_struct_impl(
         };
     }
 
-    let as_ule_conversions = wrap_field_inits(&as_ule_conversions, &struc.fields);
-    let from_ule_conversions = wrap_field_inits(&from_ule_conversions, &struc.fields);
+    let as_ule_conversions = utils::wrap_field_inits(&as_ule_conversions, &struc.fields);
+    let from_ule_conversions = utils::wrap_field_inits(&from_ule_conversions, &struc.fields);
     let asule_impl = quote!(
         impl zerovec::ule::AsULE for #name {
             type ULE = #ule_name;
@@ -377,4 +348,18 @@ pub(crate) fn generate_ule_validators<'a>(
     }
 
     (validators, prev_offset_ident)
+}
+
+/// Make corresponding ULE fields for each field
+pub(crate) fn make_ule_fields<'a>(iter: impl Iterator<Item = &'a Field>) -> Vec<TokenStream2> {
+    iter.map(|f| {
+        let ty = &f.ty;
+        let ty = quote!(<#ty as zerovec::ule::AsULE>::ULE);
+        if let Some(ref ident) = f.ident {
+            quote!(#ident: #ty)
+        } else {
+            quote!(#ty)
+        }
+    })
+    .collect::<Vec<_>>()
 }
