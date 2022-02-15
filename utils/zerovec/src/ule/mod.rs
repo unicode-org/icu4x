@@ -8,6 +8,7 @@
 //!
 //! The main traits for this module are [`ULE`], [`AsULE`] and, [`VarULE`].
 mod chars;
+#[cfg(doc)]
 pub mod custom;
 mod encode;
 mod pair;
