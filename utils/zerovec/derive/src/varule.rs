@@ -407,6 +407,7 @@ impl<'a> LastField<'a> {
                         }
 
                         // Must be exactly one generic parameter
+                        // (we've handled the zero generics case already)
                         let generic = if let Some(g) = generic {
                             g
                         } else {
