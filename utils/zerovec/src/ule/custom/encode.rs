@@ -7,6 +7,7 @@ use crate::{VarZeroSlice, VarZeroVec, ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::mem;
 
 /// Allows types to be encoded as VarULEs. This is highly useful for implementing VarULE on
 /// custom DSTs where the type cannot be obtained as a reference to some other type.
@@ -73,6 +74,24 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
                 dst = &mut dst[slice.len()..];
             }
         });
+    }
+}
+
+/// Given an [`EncodeAsVarULE`] type `S`, encode it into a `Box<T>`
+///
+/// This is primarily useful for generating `Deserialize` impls for VarULE types
+pub fn encode_varule_to_box<S: EncodeAsVarULE<T>, T: VarULE + ?Sized>(x: &S) -> Box<T> {
+    let mut vec: Vec<u8> = Vec::new();
+    // zero-fill the vector to avoid uninitialized data UB
+    vec.resize(x.encode_var_ule_len(), 0);
+    x.encode_var_ule_write(&mut vec);
+    unsafe {
+        // safety: vec is known to contain a valid encoded T
+        let ptr: *mut T = T::from_byte_slice_unchecked(&vec) as *const T as *mut T;
+        mem::forget(vec);
+
+        // Safety: we can construct an owned version since we have mem::forgotten the older owner
+        Box::from_raw(ptr)
     }
 }
 
