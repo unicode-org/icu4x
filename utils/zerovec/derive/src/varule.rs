@@ -328,13 +328,17 @@ fn make_encode_impl(
     let last_bytes = last_field_info.encode_func(quote!(self.#last_field_name));
     quote!(
         unsafe impl #maybe_lt_bound zerovec::ule::custom::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
+            // Safety: unimplemented as the other two are implemented
             fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
                 unreachable!("other two methods implemented")
             }
 
+            // Safety: returns the total length of the ULE form by adding up the lengths of each element's ULE forms
             fn encode_var_ule_len(&self) -> usize {
                 #(#lengths +)* #last_bytes.len()
             }
+
+            // Safety: converts each element to ULE form and writes them in sequence
             fn encode_var_ule_write(&self, mut dst: &mut [u8]) {
                 debug_assert_eq!(self.encode_var_ule_len(), dst.len());
                 #encoders
