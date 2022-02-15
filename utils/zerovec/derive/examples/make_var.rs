@@ -6,9 +6,10 @@ use std::borrow::Cow;
 
 use zerovec::*;
 use zerovec_derive::*;
+use zerofrom::ZeroFrom;
 
 #[make_varule(VarStructULE)]
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 struct VarStruct<'a> {
     a: u32,
     b: char,
@@ -16,15 +17,12 @@ struct VarStruct<'a> {
 }
 
 fn main() {
-    use zerovec::ule::AsULE;
     let varzerovec: VarZeroVec<VarStructULE> = TEST_VARSTRUCTS.into();
 
     assert_eq!(varzerovec.len(), TEST_VARSTRUCTS.len());
 
     for (stack, zero) in TEST_VARSTRUCTS.iter().zip(varzerovec.iter()) {
-        assert_eq!(zero.a, stack.a.as_unaligned());
-        assert_eq!(zero.b, stack.b.as_unaligned());
-        assert_eq!(zero.c, stack.c);
+        assert_eq!(stack, &VarStruct::zero_from(&zero))
     }
 
     let bytes = varzerovec.as_bytes();
@@ -34,9 +32,7 @@ fn main() {
     assert_eq!(reparsed.len(), TEST_VARSTRUCTS.len());
 
     for (stack, zero) in TEST_VARSTRUCTS.iter().zip(reparsed.iter()) {
-        assert_eq!(zero.a, stack.a.as_unaligned());
-        assert_eq!(zero.b, stack.b.as_unaligned());
-        assert_eq!(zero.c, stack.c);
+        assert_eq!(stack, &VarStruct::zero_from(&zero))
     }
 }
 

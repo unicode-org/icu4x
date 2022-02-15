@@ -9,7 +9,7 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{
     parse_quote, AttributeArgs, Data, DeriveInput, Error, Field, Fields, GenericArgument, Ident,
-    PathArguments, Type,
+    Lifetime, PathArguments, Type,
 };
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
@@ -129,6 +129,18 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
 
     let lt = input.generics.lifetimes().next();
 
+    if let Some(ref lt) = lt {
+        if lt.colon_token.is_some() || !lt.bounds.is_empty() {
+            return Error::new(
+                input.generics.span(),
+                "#[make_varule] must be applied to a struct without lifetime bounds",
+            )
+            .to_compile_error();
+        }
+    }
+
+    let lt = lt.map(|l| &l.lifetime);
+
     if attr.len() != 1 {
         return Error::new(
             input.span(),
@@ -185,7 +197,7 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
 
     let derived = derive_impl(&varule_struct);
 
-    let maybe_lt_bound = lt.map(|lt| quote!(<#lt>));
+    let maybe_lt_bound = lt.as_ref().map(|lt| quote!(<#lt>));
 
     let encode_impl = make_encode_impl(
         fields,
@@ -197,6 +209,16 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         &maybe_lt_bound,
     );
 
+    let zf_impl = make_zf_impl(
+        fields,
+        last_field,
+        &last_field_info,
+        name,
+        &ule_name,
+        lt,
+        input.span(),
+    );
+
     quote!(
         #input
 
@@ -204,7 +226,64 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
 
         #encode_impl
 
+        #zf_impl
+
         #derived
+    )
+}
+
+fn make_zf_impl(
+    fields: &Fields,
+    last_field: &Field,
+    last_field_info: &LastField,
+    name: &Ident,
+    ule_name: &Ident,
+    maybe_lt: Option<&Lifetime>,
+    span: Span,
+) -> TokenStream2 {
+    if !last_field_info.has_zf() {
+        return quote!();
+    }
+
+    let lt = if let Some(ref lt) = maybe_lt {
+        lt
+    } else {
+        return Error::new(
+            span,
+            "Can only generate ZeroFrom impls for types with lifetimes",
+        )
+        .to_compile_error();
+    };
+
+    let mut field_inits = fields
+        .iter()
+        .take(fields.len() - 1)
+        .enumerate()
+        .map(|(i, f)| {
+            let ty = &f.ty;
+            let accessor = utils::field_accessor(f, i);
+            let setter = utils::field_setter(f);
+            quote!(#setter <#ty as zerovec::ule::AsULE>::from_unaligned(other.#accessor))
+        })
+        .collect::<Vec<_>>();
+
+    let last_field_ty = &last_field.ty;
+    let last_field_ule_ty = last_field_info.varule_ty();
+    let accessor = utils::field_accessor(&last_field, fields.len() - 1);
+    let setter = utils::field_setter(&last_field);
+
+    let zerofrom_trait = quote!(zerovec::__zerovec_internal_reexport::ZeroFrom);
+
+    field_inits.push(quote!(#setter <#last_field_ty as #zerofrom_trait <#lt, #last_field_ule_ty>>::zero_from(&other.#accessor) ));
+
+    let field_inits = utils::wrap_field_inits(&field_inits, fields);
+
+    quote!(
+        impl <#lt> #zerofrom_trait <#lt, #ule_name> for #name <#lt> {
+            fn zero_from(other: &#lt #ule_name) -> Self {
+                Self #field_inits
+            }
+        }
     )
 }
 
@@ -386,6 +465,13 @@ impl<'a> LastField<'a> {
 
             Self::ZeroVec(_) => quote!(#value.as_bytes()),
             Self::VarZeroVec(_) => quote!(#value.as_bytes()),
+        }
+    }
+
+    fn has_zf(&self) -> bool {
+        match *self {
+            Self::Ref(_) | Self::Cow(_) | Self::ZeroVec(_) | Self::VarZeroVec(_) => true,
+            _ => false,
         }
     }
 }

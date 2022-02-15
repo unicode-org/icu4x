@@ -108,3 +108,11 @@ pub fn field_accessor(f: &Field, index: usize) -> TokenStream2 {
         quote!(#index)
     }
 }
+
+pub fn field_setter(f: &Field) -> TokenStream2 {
+    if let Some(ref i) = f.ident {
+        quote!(#i: )
+    } else {
+        quote!()
+    }
+}
