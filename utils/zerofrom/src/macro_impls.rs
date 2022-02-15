@@ -6,12 +6,12 @@
 // than using pointer casts
 #![allow(clippy::transmute_ptr_to_ptr)]
 
-use crate::ZeroCopyFrom;
+use crate::ZeroFrom;
 use core::{mem, ptr};
 
 macro_rules! impl_copy_type {
     ($ty:ident) => {
-        impl<'a> ZeroCopyFrom<'a, $ty> for $ty {
+        impl<'a> ZeroFrom<'a, $ty> for $ty {
             #[inline]
             fn zero_copy_from(this: &'a Self) -> Self {
                 // Essentially only works when the struct is fully Copy
@@ -40,11 +40,11 @@ impl_copy_type!(bool);
 // https://github.com/rust-lang/rust/issues/76118
 macro_rules! array_zcf_impl {
     ($n:expr; $($i:expr),+) => {
-        impl<'a, C, T: ZeroCopyFrom<'a, C>> ZeroCopyFrom<'a, [C; $n]> for [T; $n] {
+        impl<'a, C, T: ZeroFrom<'a, C>> ZeroFrom<'a, [C; $n]> for [T; $n] {
             fn zero_copy_from(this: &'a [C; $n]) -> Self {
                 [
                     $(
-                        <T as ZeroCopyFrom<C>>::zero_copy_from(&this[$i])
+                        <T as ZeroFrom<C>>::zero_copy_from(&this[$i])
                     ),+
 
                 ]

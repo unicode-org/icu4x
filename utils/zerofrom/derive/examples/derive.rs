@@ -5,21 +5,21 @@
 #![allow(unused)]
 
 use std::borrow::Cow;
-use zerofrom::ZeroCopyFrom;
+use zerofrom::ZeroFrom;
 use zerovec::{map::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
-#[derive(ZeroCopyFrom, Copy, Clone)]
+#[derive(ZeroFrom, Copy, Clone)]
 pub struct IntExample {
     x: u32,
 }
 
-#[derive(ZeroCopyFrom, Copy, Clone)]
+#[derive(ZeroFrom, Copy, Clone)]
 pub struct GenericsExample<T> {
     x: u32,
     y: T,
 }
 
-#[derive(ZeroCopyFrom)]
+#[derive(ZeroFrom)]
 pub struct CowExample<'a> {
     x: u8,
     y: &'a str,
@@ -27,20 +27,20 @@ pub struct CowExample<'a> {
     w: Cow<'a, [u8]>,
 }
 
-#[derive(ZeroCopyFrom)]
+#[derive(ZeroFrom)]
 pub struct ZeroVecExample<'a> {
     var: VarZeroVec<'a, str>,
     vec: ZeroVec<'a, u16>,
 }
 
-#[derive(ZeroCopyFrom)]
+#[derive(ZeroFrom)]
 pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
     gen: ZeroVec<'a, T>,
     vec: ZeroVec<'a, u16>,
     bare: T,
 }
 
-#[derive(ZeroCopyFrom)]
+#[derive(ZeroFrom)]
 pub struct HasTuples<'data> {
     pub bar: (&'data str, &'data str),
 }
@@ -54,8 +54,7 @@ pub fn assert_zcf_generics<'a, 'b>(
     ZeroVecExampleWithGenerics::<'b, u8>::zero_copy_from(x)
 }
 
-
-#[derive(ZeroCopyFrom)]
+#[derive(ZeroFrom)]
 pub struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
     map: ZeroMap<'a, str, T>,
 }
@@ -66,38 +65,37 @@ pub fn assert_zcf_map<'a, 'b>(
     ZeroMapGenericExample::zero_copy_from(x)
 }
 
-#[derive(Clone, ZeroCopyFrom)]
+#[derive(Clone, ZeroFrom)]
 #[yoke(cloning_zcf)]
 pub struct CloningZCF1 {
     vec: Vec<u8>,
 }
 
-#[derive(Clone, ZeroCopyFrom)]
+#[derive(Clone, ZeroFrom)]
 #[yoke(cloning_zcf)] // this will clone `cow` instead of borrowing from it
 pub struct CloningZCF2<'data> {
     cow: Cow<'data, str>,
     vec: Vec<u8>,
 }
 
-#[derive(ZeroCopyFrom)]
+#[derive(ZeroFrom)]
 pub struct CloningZCF3<'data> {
     cow: Cow<'data, str>,
     #[yoke(cloning_zcf)]
     vec: Vec<u8>,
 }
 
-#[derive(ZeroCopyFrom)]
+#[derive(ZeroFrom)]
 pub enum CloningZCF4<'data> {
     Cow(Cow<'data, str>),
     #[yoke(cloning_zcf)] // this will clone the first field instead of borrowing
     CowVec(Cow<'data, str>, Vec<u8>),
 }
 
-#[derive(ZeroCopyFrom)]
+#[derive(ZeroFrom)]
 pub enum CloningZCF5<'data> {
     Cow(Cow<'data, str>),
     CowVec(Cow<'data, str>, #[yoke(cloning_zcf)] Vec<u8>),
 }
-
 
 fn main() {}
