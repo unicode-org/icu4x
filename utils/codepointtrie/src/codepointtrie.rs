@@ -379,30 +379,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             data: converted_data,
         })
     }
-}
 
-impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
-    /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
-    /// as a `u32`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_codepointtrie::planes;
-    /// let trie = planes::get_planes_trie();
-    ///
-    /// let cp = '𑖎' as u32;
-    /// assert_eq!(cp, 0x1158E);
-    ///
-    /// let plane_num: u8 = trie.get(cp);
-    /// assert_eq!(trie.get_u32(cp), plane_num as u32);
-    /// ```
-    ///
-    // Note: This API method maintains consistency with the corresponding
-    // original ICU APIs.
-    pub fn get_u32(&self, code_point: u32) -> u32 {
-        self.get(code_point).into()
-    }
 
     /// Returns a [`CodePointMapRange`] struct which represents a range of code
     /// points associated with the same trie value. The returned range will be
@@ -830,6 +807,31 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     }
 }
 
+impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
+    /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
+    /// as a `u32`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let cp = '𑖎' as u32;
+    /// assert_eq!(cp, 0x1158E);
+    ///
+    /// let plane_num: u8 = trie.get(cp);
+    /// assert_eq!(trie.get_u32(cp), plane_num as u32);
+    /// ```
+    ///
+    // Note: This API method maintains consistency with the corresponding
+    // original ICU APIs.
+    pub fn get_u32(&self, code_point: u32) -> u32 {
+        self.get(code_point).into()
+    }
+
+}
+
 impl<'trie, T: TrieValue> Clone for CodePointTrie<'trie, T>
 where
     <T as zerovec::ule::AsULE>::ULE: Clone,
@@ -860,7 +862,7 @@ pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
     cpm_range: Option<CodePointMapRange<T>>,
 }
 
-impl<'a, T: TrieValue + Into<u32>> Iterator for CodePointMapRangeIterator<'a, T> {
+impl<'a, T: TrieValue> Iterator for CodePointMapRangeIterator<'a, T> {
     type Item = CodePointMapRange<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
