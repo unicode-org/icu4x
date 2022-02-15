@@ -9,7 +9,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::yoke;
+use icu_provider::{yoke, zerofrom};
 use litemap::LiteMap;
 
 #[icu_provider::data_struct(DateSkeletonPatternsV1Marker = "datetime/skeletons@1")]

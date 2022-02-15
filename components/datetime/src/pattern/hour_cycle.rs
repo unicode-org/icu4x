@@ -7,11 +7,11 @@ use crate::pattern::{reference, runtime};
 use crate::{fields, options::preferences};
 #[cfg(feature = "provider_transform_internals")]
 use crate::{provider, skeleton};
-use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
+use icu_provider::{yoke, zerofrom};
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
-#[derive(Debug, PartialEq, Clone, Copy, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)

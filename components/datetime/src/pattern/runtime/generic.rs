@@ -9,10 +9,10 @@ use super::{
 };
 use alloc::vec::Vec;
 use core::{fmt, str::FromStr};
-use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
+use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct GenericPattern<'data> {
     pub items: ZeroVec<'data, GenericPatternItem>,
 }

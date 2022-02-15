@@ -5,10 +5,10 @@
 use super::super::{reference, PatternError, PatternItem, TimeGranularity};
 use alloc::{fmt, vec::Vec};
 use core::str::FromStr;
-use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
+use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
     pub(crate) time_granularity: TimeGranularity,

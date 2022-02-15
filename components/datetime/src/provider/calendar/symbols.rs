@@ -5,7 +5,7 @@
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
 use alloc::borrow::Cow;
-use icu_provider::yoke::{self, *};
+use icu_provider::{yoke, zerofrom};
 use zerovec::map::ZeroMap;
 
 #[icu_provider::data_struct(DateSymbolsV1Marker = "datetime/symbols@1")]
@@ -26,7 +26,7 @@ pub struct DateSymbolsV1<'data> {
     pub eras: Eras<'data>,
 }
 
-#[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -46,13 +46,13 @@ macro_rules! symbols {
         pub mod $name {
             use super::*;
 
-            #[derive(Debug, PartialEq, Clone, Default, ZeroCopyFrom, Yokeable)]
+            #[derive(Debug, PartialEq, Clone, Default, zerofrom::ZeroFrom, yoke::Yokeable)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             $symbols
 
             // UTS 35 specifies that `format` widths are mandatory
             // except of `short`.
-            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct FormatWidthsV1<'data> {
                 #[cfg_attr(feature = "provider_serde", serde(borrow))]
@@ -66,7 +66,7 @@ macro_rules! symbols {
             }
 
             // UTS 35 specifies that `stand_alone` widths are optional
-            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct StandAloneWidthsV1<'data> {
                 #[cfg_attr(feature = "provider_serde", serde(borrow))]
@@ -79,7 +79,7 @@ macro_rules! symbols {
                 pub wide: Option<SymbolsV1<'data>>,
             }
 
-            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct ContextsV1<'data> {
                 #[cfg_attr(feature = "provider_serde", serde(borrow))]
