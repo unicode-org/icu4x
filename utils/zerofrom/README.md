@@ -1,4 +1,4 @@
-# yoke [![crates.io](https://img.shields.io/crates/v/yoke)](https://crates.io/crates/yoke)
+# zerofrom [![crates.io](https://img.shields.io/crates/v/zerofrom)](https://crates.io/crates/zerofrom)
 
 This crate provides [`Yoke<Y, C>`][Yoke], which allows one to "yoke" a zero-copy deserialized
 object(say, a [`Cow<'a, str>`](alloc::borrow::Cow)) to the source it was deserialized from, (say, an [`Rc<[u8]>`](alloc::rc::Rc)),
