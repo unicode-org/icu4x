@@ -93,17 +93,16 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         .to_compile_error();
     }
 
-    if attr.len() > 1 {}
-
-    let ule_name: Ident = if let Some(arg) = attr.get(0) {
-        parse_quote!(#arg)
-    } else {
+    if attr.len() != 1 {
         return Error::new(
             input.span(),
             "#[make_ule] takes one argument for the name of the ULE type it produces",
         )
         .to_compile_error();
-    };
+    }
+    let arg = &attr[0];
+    let ule_name: Ident = parse_quote!(#arg);
+
     let name = &input.ident;
 
     let ule_stuff = match input.data {
