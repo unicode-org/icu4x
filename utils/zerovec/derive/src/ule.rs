@@ -190,7 +190,9 @@ fn make_ule_enum_impl(
     //  2. ULE type is aligned to 1 byte.
     //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
     //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-    //  4. The impl of validate_byte_slice() returns an error if there are extra bytes (this never happens)
+    //     (Guarantees that the byte is in range of the corresponding enum.)
+    //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+    //     (This does not happen since we are backed by 1 byte.)
     //  5. The other ULE methods use the default impl.
     //  6. ULE type byte equality is semantic equality
     quote!(
