@@ -46,6 +46,7 @@ use alloc::{
 ///
 /// ```
 /// # use yoke::*;
+/// # use zerofrom::*;
 /// # use core::mem;
 /// trait ExampleTrait<'a>: IsCovariant<'a> {
 ///     fn get_message(&self) -> &'a str;
