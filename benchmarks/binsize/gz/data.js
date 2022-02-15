@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644946172347,
+  "lastUpdate": 1644952261937,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -47464,6 +47464,168 @@ window.BENCHMARK_DATA = {
           {
             "name": "elevator_floors+opt.wasm.gz",
             "value": 266125,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm.gz",
+            "value": 264936,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm.gz",
+            "value": 13210,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm.gz",
+            "value": 3169,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "08e8f3804a63345b772af6f5d76cead28927255a",
+          "message": "Add #[make_ule] proc macro (#1603)\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-02-15T11:05:16-08:00",
+          "tree_id": "b345f27e70c20cbdbe095fb7cf5ac5a0116db390",
+          "url": "https://github.com/unicode-org/icu4x/commit/08e8f3804a63345b772af6f5d76cead28927255a"
+        },
+        "date": 1644952250542,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "postcard+opt.wasm.gz",
+            "value": 5428,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm.gz",
+            "value": 225,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm.gz",
+            "value": 3860,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm.gz",
+            "value": 3103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm.gz",
+            "value": 280123,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm.gz",
+            "value": 5922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm.gz",
+            "value": 267550,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm.gz",
+            "value": 9269,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm.gz",
+            "value": 6258,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm.gz",
+            "value": 6044,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm.gz",
+            "value": 366062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm.gz",
+            "value": 5095,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derives+opt.wasm.gz",
+            "value": 6091,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm.gz",
+            "value": 347434,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm.gz",
+            "value": 265936,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm.gz",
+            "value": 7119,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm.gz",
+            "value": 9063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm.gz",
+            "value": 4077,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm.gz",
+            "value": 266125,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make+opt.wasm.gz",
+            "value": 3637,
             "unit": "bytes",
             "biggerIsBetter": false
           },
