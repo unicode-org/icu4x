@@ -354,6 +354,8 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                         || p.name == "OP_OP30"
                         || p.name == "OP_EA"
                         || p.name == "ID_CN"
+                        || p.name == "PO_EAW"
+                        || p.name == "PR_EAW"
                     {
                         for i in 0..0x20000 {
                             match lb.get(i) {
@@ -390,6 +392,26 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                                                 properties_map[i as usize] = property_index;
                                             }
                                         }
+                                    }
+                                }
+
+                                LineBreak::PostfixNumeric => {
+                                    if p.name == "PO_EAW"
+                                        && (eaw.get(i) == EastAsianWidth::Fullwidth
+                                            || eaw.get(i) == EastAsianWidth::Ambiguous
+                                            || eaw.get(i) == EastAsianWidth::Wide)
+                                    {
+                                        properties_map[i as usize] = property_index;
+                                    }
+                                }
+
+                                LineBreak::PrefixNumeric => {
+                                    if p.name == "PR_EAW"
+                                        && (eaw.get(i) == EastAsianWidth::Fullwidth
+                                            || eaw.get(i) == EastAsianWidth::Ambiguous
+                                            || eaw.get(i) == EastAsianWidth::Wide)
+                                    {
+                                        properties_map[i as usize] = property_index;
                                     }
                                 }
 
