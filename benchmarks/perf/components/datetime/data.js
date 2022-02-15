@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644889397412,
+  "lastUpdate": 1644914827141,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20507,6 +20507,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 217357,
             "range": "± 13324",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "48738cb5b7bf3721dfd9802f50603286676a3ac2",
+          "message": "Move UAX#14 defines to line.toml (#1568)\n\n* Convert UAX14 data to toml.\r\n\r\n* Remove unused code\r\n\r\n* Remove unused rule_table.rs\r\n\r\n* Rename line_breakeer.rs to line.rs\r\n\r\n* cargo clippy --fix\r\n\r\n* Update per code review.\r\n\r\n* Use multiple threads to generate tables.\r\n\r\n* Fix rustfmt",
+          "timestamp": "2022-02-15T17:38:04+09:00",
+          "tree_id": "d506eab02b3b3c94e49ea99e5a18015007b1d6dd",
+          "url": "https://github.com/unicode-org/icu4x/commit/48738cb5b7bf3721dfd9802f50603286676a3ac2"
+        },
+        "date": 1644914814997,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 72858,
+            "range": "± 683",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 754136,
+            "range": "± 3098",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 153707,
+            "range": "± 223",
             "unit": "ns/iter"
           }
         ]
