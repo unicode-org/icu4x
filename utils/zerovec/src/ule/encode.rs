@@ -16,7 +16,7 @@ use core::mem;
 /// of the VarULE type to the callback, in order. For an implementation to be safe, the slices
 /// to the callback must, when concatenated, be a valid instance of the VarULE type.
 ///
-/// See the [module level documentation](crate::ule::custom) for examples.
+/// See the [custom VarULEdocumentation](crate::ule::custom) for examples.
 ///
 /// [`Self::encode_var_ule_as_slices()`] is only used to provide default implementations for [`Self::encode_var_ule_write()`]
 /// and [`Self::encode_var_ule_len()`]. If you override the default implementations it is totally valid to

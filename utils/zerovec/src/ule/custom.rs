@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains utilities that help define custom VarULE types,
+//! This module contains documentation for defining custom VarULE types,
 //! especially those using complex custom dynamically sized types.
 //!
 //! # Example
@@ -90,8 +90,6 @@
 //!             self.field3.as_bytes()])
 //!    }
 //! }
-//!
-//!
 //!
 //! impl<'a> ZeroFrom<'a, FooULE> for Foo<'a> {
 //!     fn zero_from(other: &'a FooULE) -> Self {
