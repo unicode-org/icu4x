@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644952204639,
+  "lastUpdate": 1644956862612,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9353,6 +9353,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/df10af0932e903d97d1d1bd6da808fd2f0735243"
         },
         "date": 1644952194144,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5d84e2f8eb80ce491c7a8d6cad9a7f2d38d3567a",
+          "message": "Update the contributing docs after 2022-02-03 meeting (#1580)",
+          "timestamp": "2022-02-15T14:25:40-06:00",
+          "tree_id": "c9490aa0d3ebb82fe5c7c2ea4c1996b2d59f766d",
+          "url": "https://github.com/unicode-org/icu4x/commit/5d84e2f8eb80ce491c7a8d6cad9a7f2d38d3567a"
+        },
+        "date": 1644956849468,
         "tool": "ndjson",
         "benches": [
           {
