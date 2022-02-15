@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644881004726,
+  "lastUpdate": 1644889116553,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23609,6 +23609,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4311,
             "range": "± 340",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "91630072+sapriyag@users.noreply.github.com",
+            "name": "sapriyag",
+            "username": "sapriyag"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c90fd8eba311cef73f7ca8de20e092cd428c5f1",
+          "message": "Updated roadmap.md release 0.5 (#1607)\n\n* Updated roadmap.md release 0.5\r\n\r\n- Checked checkboxes completed in 0.5\r\n- Added items which were completed in 0.5 and were not listed.\r\n- Moved out items not completed in 0.5\r\n\r\n* Update roadmap.md\r\n\r\n- Fixed formatting",
+          "timestamp": "2022-02-14T17:28:11-08:00",
+          "tree_id": "aaa3fb2370e642a1390e1f48abdca729c998b496",
+          "url": "https://github.com/unicode-org/icu4x/commit/6c90fd8eba311cef73f7ca8de20e092cd428c5f1"
+        },
+        "date": 1644889102919,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2714,
+            "range": "± 141",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5167,
+            "range": "± 252",
             "unit": "ns/iter"
           }
         ]
