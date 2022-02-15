@@ -13,7 +13,6 @@ use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use icu_provider::yoke::{self, *};
 use icu_uniset::UnicodeSet;
 use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
 
