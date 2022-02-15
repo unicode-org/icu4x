@@ -429,7 +429,7 @@ impl<'a> LastField<'a> {
                                 "Vec" => Ok(LastField::Growable(OwnULETy::Slice(generic))),
                                 "Box" => OwnULETy::new(generic, "Box").map(LastField::Boxed),
                                 _ => Err("Can only automatically detect corresponding VarULE types for path types \
-                                          that are not Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into()),
+                                          that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into()),
                             }
                         }
                     }
