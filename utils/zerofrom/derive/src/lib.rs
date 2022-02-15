@@ -116,7 +116,7 @@ fn zf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         }
                     }
 
-                    // By doing this we essentially require ZCF to be implemented
+                    // By doing this we essentially require ZF to be implemented
                     // on all fields
                     quote! {
                         <#fty as zerofrom::ZeroFrom<'zf, #lifetime_ty>>::zero_from(#field)

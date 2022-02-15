@@ -112,7 +112,7 @@ impl<'zf, C1, T1: ZeroFrom<'zf, C1>, C2, T2: ZeroFrom<'zf, C2>> ZeroFrom<'zf, (C
 
 // These duplicate the functionality from above and aren't quite necessary due
 // to deref coercions, however for the custom derive to work, there always needs
-// to be `impl ZCF<T> for T`, otherwise it may fail to perform the necessary
+// to be `impl ZeroFrom<T> for T`, otherwise it may fail to perform the necessary
 // type inference. Deref coercions do not typically work when sufficient generics
 // or inference are involved, and the proc macro does not necessarily have
 // enough type information to figure this out on its own.

@@ -67,33 +67,33 @@ pub fn assert_zf_map<'a, 'b>(
 
 #[derive(Clone, ZeroFrom)]
 #[zerofrom(cloning_zf)]
-pub struct CloningZCF1 {
+pub struct CloningZF1 {
     vec: Vec<u8>,
 }
 
 #[derive(Clone, ZeroFrom)]
 #[zerofrom(cloning_zf)] // this will clone `cow` instead of borrowing from it
-pub struct CloningZCF2<'data> {
+pub struct CloningZF2<'data> {
     cow: Cow<'data, str>,
     vec: Vec<u8>,
 }
 
 #[derive(ZeroFrom)]
-pub struct CloningZCF3<'data> {
+pub struct CloningZF3<'data> {
     cow: Cow<'data, str>,
     #[zerofrom(cloning_zf)]
     vec: Vec<u8>,
 }
 
 #[derive(ZeroFrom)]
-pub enum CloningZCF4<'data> {
+pub enum CloningZF4<'data> {
     Cow(Cow<'data, str>),
     #[zerofrom(cloning_zf)] // this will clone the first field instead of borrowing
     CowVec(Cow<'data, str>, Vec<u8>),
 }
 
 #[derive(ZeroFrom)]
-pub enum CloningZCF5<'data> {
+pub enum CloningZF5<'data> {
     Cow(Cow<'data, str>),
     CowVec(Cow<'data, str>, #[zerofrom(cloning_zf)] Vec<u8>),
 }
