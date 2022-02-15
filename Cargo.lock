@@ -1104,6 +1104,7 @@ dependencies = [
  "serde",
  "toml",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1471,6 +1472,7 @@ dependencies = [
  "serde_json",
  "tinystr 0.5.0",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
