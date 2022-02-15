@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::borrow::Cow;
-use std::fmt::Debug;
+
 use zerovec::*;
 use zerovec_derive::*;
 

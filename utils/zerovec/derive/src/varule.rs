@@ -168,7 +168,7 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
     if let Some(ref lf_ident) = last_field.ident {
         field_inits.push(quote!(#lf_ident: #last_field_ule))
     } else {
-        field_inits.push(last_field_ule.clone())
+        field_inits.push(last_field_ule)
     };
 
     let semi = utils::semi_for(fields);
@@ -190,7 +190,7 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         &varule_struct.data,
         last_field,
         &last_field_info,
-        &name,
+        name,
         &ule_name,
         &maybe_lt_bound,
     );
@@ -304,8 +304,8 @@ impl<'a> LastField<'a> {
                         if segment.ident == "String" {
                             Ok(LastField::Growable(OwnULETy::Str))
                         } else {
-                            return Err("Can only automatically detect corresponding VarULE types for path types \
-                                        that are not Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into());
+                            Err("Can only automatically detect corresponding VarULE types for path types \
+                                        that are not Cow, ZeroVec, VarZeroVec, Box, String, or Vec".into())
                         }
                     }
                     PathArguments::AngleBracketed(ref params) => {
