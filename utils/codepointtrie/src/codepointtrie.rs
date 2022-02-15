@@ -821,7 +821,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// assert!(sip.contains_u32(end));
     /// assert!(!sip.contains_u32(end + 1));
     /// ```
-    pub fn get_set_for_value(&self, value: T) -> UnicodeSet {
+    pub fn get_set_for_value(&self, value: T) -> UnicodeSet<'static> {
         let value_ranges = self
             .iter_ranges()
             .filter(move |cpm_range| cpm_range.value == value)
