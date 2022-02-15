@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerofrom::ZeroFrom;
 use crate::map::ZeroMapKV;
 use crate::ule::*;
 use crate::{VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
+use zerofrom::ZeroFrom;
 
 impl<'zf, T> ZeroFrom<'zf, ZeroVec<'_, T>> for ZeroVec<'zf, T>
 where

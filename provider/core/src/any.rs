@@ -79,9 +79,7 @@ impl AnyPayload {
                 let down_ref: &'static M::Yokeable = any_ref
                     .downcast_ref()
                     .ok_or_else(|| DataError::for_type::<M>().with_str_context(type_name))?;
-                Ok(DataPayload::from_owned(M::Yokeable::zero_from(
-                    down_ref,
-                )))
+                Ok(DataPayload::from_owned(M::Yokeable::zero_from(down_ref)))
             }
             PayloadRc(any_rc) => {
                 let down_rc: Rc<DataPayload<M>> = any_rc
