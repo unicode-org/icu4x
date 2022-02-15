@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644914909996,
+  "lastUpdate": 1644946496146,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -26921,6 +26921,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17746,
             "range": "± 26",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9ca9780f230b903b2fae7581c4674015da7bdcd8",
+          "message": "Add user-facing provider-aware API for Script_Extensions data result (#1593)",
+          "timestamp": "2022-02-15T09:23:42-08:00",
+          "tree_id": "f7a558832521232e3eb939993b15ce4558bd6425",
+          "url": "https://github.com/unicode-org/icu4x/commit/9ca9780f230b903b2fae7581c4674015da7bdcd8"
+        },
+        "date": 1644946483573,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1074,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6490,
+            "range": "± 73",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17905,
+            "range": "± 366",
             "unit": "ns/iter"
           }
         ]
