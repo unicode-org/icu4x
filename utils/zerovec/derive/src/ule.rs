@@ -88,7 +88,7 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     {
         return Error::new(
             input.generics.span(),
-            "derive(ULE) must be applied to a struct without any generics",
+            "make_ule must be applied to a struct without any generics",
         )
         .to_compile_error();
     }
