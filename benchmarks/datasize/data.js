@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644952043881,
+  "lastUpdate": 1644952204639,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9323,6 +9323,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/08e8f3804a63345b772af6f5d76cead28927255a"
         },
         "date": 1644952030635,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df10af0932e903d97d1d1bd6da808fd2f0735243",
+          "message": "Move ZeroCopyFrom to its own crate, rename to ZeroFrom (#1610)",
+          "timestamp": "2022-02-15T11:08:18-08:00",
+          "tree_id": "2d682d83898ec78e175e11843ea1bd0ca0852d93",
+          "url": "https://github.com/unicode-org/icu4x/commit/df10af0932e903d97d1d1bd6da808fd2f0735243"
+        },
+        "date": 1644952194144,
         "tool": "ndjson",
         "benches": [
           {
