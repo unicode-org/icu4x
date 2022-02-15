@@ -28,11 +28,7 @@ mod tests;
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::zerofrom;
 /// use std::borrow::Cow;
-///
-/// // We also need `yoke` in scope: [icu4x#1557](https://github.com/unicode-org/icu4x/issues/1557)
-/// use icu_provider::yoke;
 ///
 /// #[icu_provider::data_struct(
 ///     FooV1Marker,
