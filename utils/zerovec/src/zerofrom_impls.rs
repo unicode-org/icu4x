@@ -37,6 +37,16 @@ where
     }
 }
 
+impl<'zf, T> ZeroFrom<'zf, VarZeroVec<'_, T>> for VarZeroVec<'zf, T>
+where
+    T: 'static + VarULE + ?Sized,
+{
+    #[inline]
+    fn zero_from(other: &'zf VarZeroVec<'_, T>) -> Self {
+        other.as_slice().into()
+    }
+}
+
 impl<'zf, 's, K, V> ZeroFrom<'zf, ZeroMap<'s, K, V>> for ZeroMap<'zf, K, V>
 where
     K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
