@@ -7,6 +7,7 @@
 
 use super::*;
 use core::convert::TryFrom;
+use core::cmp::Ordering;
 
 /// A u8 array of little-endian data corresponding to a Unicode code point.
 ///
@@ -85,6 +86,18 @@ impl AsULE for char {
 // EqULE is true because `char` is transmutable to `u32`, which in turn has the same byte sequence
 // as CharULE on little-endian platforms.
 unsafe impl EqULE for char {}
+
+impl PartialOrd for CharULE {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        char::from_unaligned(*self).partial_cmp(&char::from_unaligned(*other))
+    }
+}
+
+impl Ord for CharULE {
+    fn cmp(&self, other: &Self) -> Ordering {
+        char::from_unaligned(*self).cmp(&char::from_unaligned(*other))
+    }
+}
 
 #[cfg(test)]
 mod test {

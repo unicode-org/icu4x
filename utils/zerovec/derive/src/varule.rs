@@ -191,7 +191,7 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
 
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
-        #[derive(PartialEq)]
+        #[derive(PartialEq, Eq, PartialOrd, Ord)]
         struct #ule_name #field_inits #semi
     );
 
@@ -229,6 +229,13 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         #zf_impl
 
         #derived
+
+
+        impl<'a> zerovec::map::ZeroMapKV<'a> for #ule_name {
+            type Container = zerovec::VarZeroVec<'a, #ule_name>;
+            type GetType = #ule_name;
+            type OwnedType = Box<#ule_name>;
+        }
     )
 }
 
