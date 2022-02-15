@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644957318943,
+  "lastUpdate": 1644965101133,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20717,6 +20717,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 169911,
             "range": "± 318",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8d331f2838dc834d21efe5dc01eb8df4022d5399",
+          "message": "Add #[make_varule] proc macro (#1609)\n\n* Add make_varule",
+          "timestamp": "2022-02-15T14:33:43-08:00",
+          "tree_id": "7a062a50778748aa4a0e03095addd9d88a971de7",
+          "url": "https://github.com/unicode-org/icu4x/commit/8d331f2838dc834d21efe5dc01eb8df4022d5399"
+        },
+        "date": 1644965086203,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 105939,
+            "range": "± 6559",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1006371,
+            "range": "± 51744",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 238081,
+            "range": "± 12359",
             "unit": "ns/iter"
           }
         ]
