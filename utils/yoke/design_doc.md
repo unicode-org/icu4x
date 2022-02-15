@@ -209,7 +209,7 @@ What this function does is take a closure that, for all `'a`, can convert `Y<'a>
 
 ### ZeroFrom
 
-The `yoke` crate comes with an additional trait, [`ZeroFrom`]. Implementing this trait allows one to define a canonical, infallible implementation of Yoke's `attach_to_cart` function, enabling various additional constructors on Yoke for convenience, including `Yoke::attach_to_borrowed_cart()`, `Yoke::attach_to_box_cart()`, and `Yoke::attach_to_rc_cart()`.
+The `zerofrom` crate comes with the [`ZeroFrom`] trait. Implementing this trait allows one to define a canonical, infallible implementation of Yoke's `attach_to_cart` function, enabling various additional constructors on Yoke for convenience, including `Yoke::attach_to_borrowed_cart()`, `Yoke::attach_to_box_cart()`, and `Yoke::attach_to_rc_cart()`.
 
 Using this trait, for example, one can generically talk about taking a `Cow<'a, T>` and borrowing it to produce a `Cow<'b, T>` that is `Cow::Borrowed`, borrowing from the original `Cow`, regardless of whether or not the original `Cow` was owned or borrowed.
 
@@ -226,7 +226,7 @@ pub trait ZeroFrom<C: ?Sized>: for<'a> Yokeable<'a> {
  [`Yoke`]: https://docs.rs/yoke/latest/yoke/struct.Yoke.html
  [`Yokeable`]: https://docs.rs/yoke/latest/yoke/trait.Yokeable.html
  [yokeable-derive]: https://docs.rs/yoke/latest/yoke/derive.Yokeable.html
- [`ZeroFrom`]: https://docs.rs/yoke/latest/yoke/trait.ZeroFrom.html
+ [`ZeroFrom`]: https://docs.rs/zerofrom/latest/zerofrom/trait.ZeroFrom.html
  [get]: https://docs.rs/yoke/latest/yoke/struct.Yoke.html#method.get
  [attach]: https://docs.rs/yoke/latest/yoke/struct.Yoke.html#method.attach
  [with_mut]: https://docs.rs/yoke/latest/yoke/struct.Yoke.html#method.with_mut
