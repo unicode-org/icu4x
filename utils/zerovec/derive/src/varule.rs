@@ -402,7 +402,7 @@ impl<'a> LastField<'a> {
                                     generic = Some(ty)
                                 }
                                 _ => return Err("Can only automatically detect corresponding VarULE types for path \
-                                                 types with at most one lifetime and at most one generic parameter".into()),
+                                                 types with at most one lifetime and exactly one generic parameter".into()),
                             }
                         }
 
