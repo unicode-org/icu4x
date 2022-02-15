@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644957257418,
+  "lastUpdate": 1644964997698,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20369,6 +20369,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 50803195,
             "range": "± 2267173",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8d331f2838dc834d21efe5dc01eb8df4022d5399",
+          "message": "Add #[make_varule] proc macro (#1609)\n\n* Add make_varule",
+          "timestamp": "2022-02-15T14:33:43-08:00",
+          "tree_id": "7a062a50778748aa4a0e03095addd9d88a971de7",
+          "url": "https://github.com/unicode-org/icu4x/commit/8d331f2838dc834d21efe5dc01eb8df4022d5399"
+        },
+        "date": 1644964984141,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 45155642,
+            "range": "± 2096842",
             "unit": "ns/iter"
           }
         ]
