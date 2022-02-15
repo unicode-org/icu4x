@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644914783888,
+  "lastUpdate": 1644946439400,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23681,6 +23681,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4322,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9ca9780f230b903b2fae7581c4674015da7bdcd8",
+          "message": "Add user-facing provider-aware API for Script_Extensions data result (#1593)",
+          "timestamp": "2022-02-15T09:23:42-08:00",
+          "tree_id": "f7a558832521232e3eb939993b15ce4558bd6425",
+          "url": "https://github.com/unicode-org/icu4x/commit/9ca9780f230b903b2fae7581c4674015da7bdcd8"
+        },
+        "date": 1644946426222,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2677,
+            "range": "± 177",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4980,
+            "range": "± 246",
             "unit": "ns/iter"
           }
         ]
