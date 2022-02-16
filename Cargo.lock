@@ -1104,6 +1104,7 @@ dependencies = [
  "serde",
  "toml",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1299,6 +1300,7 @@ dependencies = [
  "tinystr 0.5.0",
  "writeable",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1355,6 +1357,7 @@ dependencies = [
  "unzip",
  "urlencoding",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -1371,6 +1374,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "log",
+ "postcard",
  "serde",
  "serde-json-core",
  "serde_json",
@@ -1412,6 +1416,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "icu",
+ "icu_codepointtrie",
  "icu_provider",
  "icu_provider_fs",
  "icu_segmenter_lstm",
@@ -1421,7 +1426,6 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "toml",
- "unicode-width",
  "zerovec",
 ]
 
@@ -1468,6 +1472,7 @@ dependencies = [
  "serde_json",
  "tinystr 0.5.0",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -3088,6 +3093,7 @@ dependencies = [
  "serde",
  "stable_deref_trait",
  "yoke-derive",
+ "zerofrom",
 ]
 
 [[package]]
@@ -3099,6 +3105,25 @@ dependencies = [
  "syn",
  "synstructure",
  "yoke",
+ "zerovec",
+]
+
+[[package]]
+name = "zerofrom"
+version = "0.1.0"
+dependencies = [
+ "zerofrom-derive",
+]
+
+[[package]]
+name = "zerofrom-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -3118,6 +3143,7 @@ dependencies = [
  "serde",
  "serde_json",
  "yoke",
+ "zerofrom",
 ]
 
 [[package]]
@@ -3128,6 +3154,7 @@ dependencies = [
  "quote",
  "syn",
  "synstructure",
+ "zerofrom",
  "zerovec",
 ]
 

@@ -9,7 +9,7 @@ mod symbols;
 
 use crate::pattern;
 use icu_provider::prelude::*;
-use icu_provider::yoke;
+use icu_provider::{yoke, zerofrom};
 pub use skeletons::*;
 pub use symbols::*;
 
@@ -46,9 +46,9 @@ pub struct DatePatternsV1<'data> {
 pub mod patterns {
     use super::*;
     use crate::pattern::runtime::{GenericPattern, Pattern, PatternPlurals};
-    use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
+    use icu_provider::{yoke, zerofrom};
 
-    #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "provider_serde",
         derive(serde::Serialize, serde::Deserialize)
@@ -64,7 +64,7 @@ pub mod patterns {
         pub short: Pattern<'data>,
     }
 
-    #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "provider_serde",
         derive(serde::Serialize, serde::Deserialize)
@@ -80,7 +80,7 @@ pub mod patterns {
         pub short: PatternPlurals<'data>,
     }
 
-    #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "provider_serde",
         derive(serde::Serialize, serde::Deserialize)

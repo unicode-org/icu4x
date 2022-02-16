@@ -7,11 +7,12 @@
 
 use crate::error::PropertiesError;
 use crate::props::Script;
+use crate::provider::*;
 
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
-use icu_provider::yoke::{self, *};
+use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
 use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
 
@@ -27,7 +28,7 @@ const SCRIPT_VAL_LENGTH: u16 = 10;
 const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 
 /// An internal-use only pseudo-property that represents the values stored in
-/// the trie of the special data structure [`ScriptExtensions`].
+/// the trie of the special data structure [`ScriptWithExtensions`].
 ///
 /// Note: The will assume a 12-bit layout. The 2 higher order bits in positions
 /// 11..10 will indicate how to deduce the Script value and Script_Extensions,
@@ -36,27 +37,110 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[repr(transparent)]
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 pub struct ScriptWithExt(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
 }
 
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 impl ScriptWithExt {
+    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// also indicates a Script value of [`Script::Common`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::script::ScriptWithExt;
+    ///
+    /// assert!(ScriptWithExt(0x04FF).is_common());
+    /// assert!(ScriptWithExt(0x0400).is_common());
+    ///
+    /// assert!(!ScriptWithExt(0x08FF).is_common());
+    /// assert!(!ScriptWithExt(0x0800).is_common());
+    ///
+    /// assert!(!ScriptWithExt(0x0CFF).is_common());
+    /// assert!(!ScriptWithExt(0x0C00).is_common());
+    ///
+    /// assert!(!ScriptWithExt(0xFF).is_common());
+    /// assert!(!ScriptWithExt(0x0).is_common());
+    /// ```
     pub fn is_common(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 1
     }
 
+    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// also indicates a Script value of [`Script::Inherited`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::script::ScriptWithExt;
+    ///
+    /// assert!(!ScriptWithExt(0x04FF).is_inherited());
+    /// assert!(!ScriptWithExt(0x0400).is_inherited());
+    ///
+    /// assert!(ScriptWithExt(0x08FF).is_inherited());
+    /// assert!(ScriptWithExt(0x0800).is_inherited());
+    ///
+    /// assert!(!ScriptWithExt(0x0CFF).is_inherited());
+    /// assert!(!ScriptWithExt(0x0C00).is_inherited());
+    ///
+    /// assert!(!ScriptWithExt(0xFF).is_inherited());
+    /// assert!(!ScriptWithExt(0x0).is_inherited());
+    /// ```
     pub fn is_inherited(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 2
     }
 
+    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
+    /// also indicates that the Script value is neither [`Script::Common`] nor
+    /// [`Script::Inherited`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::script::ScriptWithExt;
+    ///
+    /// assert!(!ScriptWithExt(0x04FF).is_other());
+    /// assert!(!ScriptWithExt(0x0400).is_other());
+    ///
+    /// assert!(!ScriptWithExt(0x08FF).is_other());
+    /// assert!(!ScriptWithExt(0x0800).is_other());
+    ///
+    /// assert!(ScriptWithExt(0x0CFF).is_other());
+    /// assert!(ScriptWithExt(0x0C00).is_other());
+    ///
+    /// assert!(!ScriptWithExt(0xFF).is_other());
+    /// assert!(!ScriptWithExt(0x0).is_other());
+    /// ```
     pub fn is_other(&self) -> bool {
         self.0 >> SCRIPT_VAL_LENGTH == 3
     }
 
+    /// Returns whether the [`ScriptWithExt`] value has Script_Extensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::script::ScriptWithExt;
+    ///
+    /// assert!(ScriptWithExt(0x04FF).has_extensions());
+    /// assert!(ScriptWithExt(0x0400).has_extensions());
+    ///
+    /// assert!(ScriptWithExt(0x08FF).has_extensions());
+    /// assert!(ScriptWithExt(0x0800).has_extensions());
+    ///
+    /// assert!(ScriptWithExt(0x0CFF).has_extensions());
+    /// assert!(ScriptWithExt(0x0C00).has_extensions());
+    ///
+    /// assert!(!ScriptWithExt(0xFF).has_extensions());
+    /// assert!(!ScriptWithExt(0x0).has_extensions());
+    /// ```
     pub fn has_extensions(&self) -> bool {
         let high_order_bits = self.0 >> SCRIPT_VAL_LENGTH;
         high_order_bits > 0
@@ -80,8 +164,8 @@ impl From<ScriptWithExt> for Script {
 /// the data and data structures that are stored in the corresponding ICU data
 /// file for these properties.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Eq, PartialEq, Yokeable, ZeroCopyFrom)]
-pub struct ScriptExtensions<'data> {
+#[derive(Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub struct ScriptWithExtensions<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
     /// Script_Extensions value, nearly matching the representation
@@ -108,17 +192,56 @@ pub struct ScriptExtensions<'data> {
     extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
-impl<'data> ScriptExtensions<'data> {
-    pub fn try_new(
+impl<'data> ScriptWithExtensions<'data> {
+    // This method is intended to be used by constructors of deserialized data
+    // in a data provider.
+    #[doc(hidden)]
+    pub fn new(
         trie: CodePointTrie<'data, ScriptWithExt>,
         extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> Result<ScriptExtensions<'data>, PropertiesError> {
-        // TODO: do validation here
-
-        Ok(ScriptExtensions { trie, extensions })
+    ) -> ScriptWithExtensions<'data> {
+        ScriptWithExtensions { trie, extensions }
     }
 
     /// Returns the `Script` property value for this code point.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload =
+    ///     script::get_script_with_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// // U+0640 ARABIC TATWEEL
+    /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Arabic);
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Thaana);
+    ///
+    /// // U+0650 ARABIC KASRA
+    /// assert_eq!(swe.get_script_val(0x0650), Script::Inherited); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Arabic);
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Thaana);
+    ///
+    /// // U+0660 ARABIC-INDIC DIGIT ZERO
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Common);
+    /// assert_eq!(swe.get_script_val(0x0660), Script::Arabic); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Thaana);
+    ///
+    /// // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Common);
+    /// assert_eq!(swe.get_script_val(0xFDF2), Script::Arabic); // main Script value
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Thaana);
+    /// ```
     pub fn get_script_val(&self, code_point: u32) -> Script {
         let sc_with_ext = self.trie.get(code_point);
 
@@ -176,13 +299,47 @@ impl<'data> ScriptExtensions<'data> {
     ///
     /// If `code_point` has Script_Extensions, then return the Script codes in
     /// the Script_Extensions. In this case, the Script property value
-    /// (normally Common or Inherited) is not included in the set.
+    /// (normally Common or Inherited) is not included in the [`ZeroSlice`].
     ///
     /// If c does not have Script_Extensions, then the one Script code is put
-    /// into the set and also returned.
+    /// into the [`ZeroSlice`] and also returned.
     ///
-    /// If c is not a valid code point, then the one UNKNOWN code is put into
-    /// the set and also returned.
+    /// If c is not a valid code point, then return an empty [`ZeroSlice`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload =
+    ///     script::get_script_with_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val('𐓐' as u32)  // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///         .iter().collect::<Vec<Script>>(),
+    ///     vec![Script::Osage]
+    /// );
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val('🥳' as u32)  // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+    ///         .iter().collect::<Vec<Script>>(),
+    ///     vec![Script::Common]
+    /// );
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val(0x200D)  // ZERO WIDTH JOINER
+    ///         .iter().collect::<Vec<Script>>(),
+    ///     vec![Script::Inherited]
+    /// );
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val('௫' as u32)  // U+0BEB TAMIL DIGIT FIVE
+    ///         .iter().collect::<Vec<Script>>(),
+    ///     vec![Script::Tamil, Script::Grantha]
+    /// );
+    /// ```
     pub fn get_script_extensions_val(&self, code_point: u32) -> &ZeroSlice<Script> {
         let sc_with_ext_ule = self.trie.get_ule(code_point);
 
@@ -199,6 +356,38 @@ impl<'data> ScriptExtensions<'data> {
     ///
     /// Some characters are commonly used in multiple scripts. For more information,
     /// see UAX #24: <http://www.unicode.org/reports/tr24/>.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload =
+    ///     script::get_script_with_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// // U+0650 ARABIC KASRA
+    /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
+    /// assert!(swe.has_script(0x0650, Script::Arabic));
+    /// assert!(swe.has_script(0x0650, Script::Syriac));
+    /// assert!(!swe.has_script(0x0650, Script::Thaana));
+    ///
+    /// // U+0660 ARABIC-INDIC DIGIT ZERO
+    /// assert!(!swe.has_script(0x0660, Script::Common)); // main Script value
+    /// assert!(swe.has_script(0x0660, Script::Arabic));
+    /// assert!(!swe.has_script(0x0660, Script::Syriac));
+    /// assert!(swe.has_script(0x0660, Script::Thaana));
+    ///
+    /// // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+    /// assert!(!swe.has_script(0xFDF2, Script::Common));
+    /// assert!(swe.has_script(0xFDF2, Script::Arabic)); // main Script value
+    /// assert!(!swe.has_script(0xFDF2, Script::Syriac));
+    /// assert!(swe.has_script(0xFDF2, Script::Thaana));
+    /// ```
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
         let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get_ule(code_point) {
             scwe_ule
@@ -219,6 +408,47 @@ impl<'data> ScriptExtensions<'data> {
 
     /// Returns all of the matching `CodePointMapRange`s for the given [`Script`]
     /// in which `has_script` will return true for all of the contained code points.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload =
+    ///     script::get_script_with_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
+    ///
+    /// let exp_ranges = vec![
+    ///     0x060C..=0x060C,   // ARABIC COMMA
+    ///     0x061B..=0x061B,   // ARABIC SEMICOLON
+    ///     0x061C..=0x061C,   // ARABIC LETTER MARK
+    ///     0x061F..=0x061F,   // ARABIC QUESTION MARK
+    ///     0x0640..=0x0640,   // ARABIC TATWEEL
+    ///     0x064B..=0x0655,   // ARABIC FATHATAN..ARABIC HAMZA BELOW
+    ///     0x0670..=0x0670,   // ARABIC LETTER SUPERSCRIPT ALEF
+    ///     0x0700..=0x070D,   // Syriac block begins at U+0700
+    ///     0x070F..=0x074A,   // Syriac block
+    ///     0x074D..=0x074F,   // Syriac block ends at U+074F
+    ///     0x0860..=0x086A,   // Syriac Supplement block is U+0860..=U+086F
+    ///     0x1DF8..=0x1DF8,   // U+1DF8 COMBINING DOT ABOVE LEFT
+    ///     0x1DFA..=0x1DFA,   // U+1DFA COMBINING DOT BELOW LEFT
+    /// ];
+    /// let mut exp_ranges_iter = exp_ranges.iter();
+    ///
+    /// for act_range in syriac_script_extensions_ranges {
+    ///     let exp_range = exp_ranges_iter.next()
+    ///         .expect("There are too many ranges returned by get_script_extensions_ranges()");
+    ///     assert_eq!(act_range.start(), exp_range.start());
+    ///     assert_eq!(act_range.end(), exp_range.end());
+    /// }
+    /// assert!(exp_ranges_iter.next().is_none(), "There are too few ranges returned by get_script_extensions_ranges()");
+    /// ```
     pub fn get_script_extensions_ranges(
         &self,
         script: Script,
@@ -240,72 +470,114 @@ impl<'data> ScriptExtensions<'data> {
 
     /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let payload =
+    ///     script::get_script_with_extensions(&provider)
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// let syriac = swe.get_script_extensions_set(Script::Syriac);
+    ///
+    /// assert!(!syriac.contains_u32(0x061E)); // ARABIC TRIPLE DOT PUNCTUATION MARK
+    /// assert!(syriac.contains_u32(0x061F)); // ARABIC QUESTION MARK
+    /// assert!(!syriac.contains_u32(0x0620)); // ARABIC LETTER KASHMIRI YEH
+    ///
+    /// assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
+    /// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
+    /// assert!(!syriac.contains_u32(0x074B)); // unassigned
+    /// assert!(syriac.contains_u32(0x074F)); // SYRIAC LETTER SOGDIAN FE
+    /// assert!(!syriac.contains_u32(0x0750)); // ARABIC LETTER BEH WITH THREE DOTS HORIZONTALLY BELOW
+    ///
+    /// assert!(syriac.contains_u32(0x1DF8)); // COMBINING DOT ABOVE LEFT
+    /// assert!(!syriac.contains_u32(0x1DF9)); // COMBINING WIDE INVERTED BRIDGE BELOW
+    /// assert!(syriac.contains_u32(0x1DFA)); // COMBINING DOT BELOW LEFT
+    /// assert!(!syriac.contains_u32(0x1DFB)); // COMBINING DELETION MARK
+    /// ```
     pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
         UnicodeSet::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub type ScriptWithExtensionsResult =
+    Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
 
-    #[test]
-    fn test_is_common() {
-        assert!(ScriptWithExt(0x04FF).is_common());
-        assert!(ScriptWithExt(0x0400).is_common());
+/// Returns a [`ScriptWithExtensions`] struct that represents the data for the Script
+/// and Script_Extensions properties.
+///
+/// # Examples
+///
+/// ```
+/// use icu::properties::{script, Script};
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let payload =
+///     script::get_script_with_extensions(&provider)
+///         .expect("The data should be valid");
+/// let data_struct = payload.get();
+/// let swe = &data_struct.data;
+///
+/// // get the `Script` property value
+/// assert_eq!(swe.get_script_val(0x0640), Script::Common); // U+0640 ARABIC TATWEEL
+/// assert_eq!(swe.get_script_val(0x0650), Script::Inherited); // U+0650 ARABIC KASRA
+/// assert_eq!(swe.get_script_val(0x0660), Script::Arabic); // // U+0660 ARABIC-INDIC DIGIT ZERO
+/// assert_eq!(swe.get_script_val(0xFDF2), Script::Arabic); // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+///
+/// // get the `Script_Extensions` property value
+/// assert_eq!(
+///     swe.get_script_extensions_val(0x0640) // U+0640 ARABIC TATWEEL
+///         .iter().collect::<Vec<Script>>(),
+///     vec![Script::Arabic, Script::Syriac, Script::Mandaic, Script::Manichaean,
+///          Script::PsalterPahlavi, Script::Adlam, Script::HanifiRohingya, Script::Sogdian,
+///          Script::OldUyghur]
+/// );
+/// assert_eq!(
+///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+///         .iter().collect::<Vec<Script>>(),
+///     vec![Script::Common]
+/// );
+/// assert_eq!(
+///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+///         .iter().collect::<Vec<Script>>(),
+///     vec![Script::Inherited]
+/// );
+/// assert_eq!(
+///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+///         .iter().collect::<Vec<Script>>(),
+///     vec![Script::Tamil, Script::Grantha]
+/// );
+///
+/// // check containment of a `Script` value in the `Script_Extensions` value
+/// // U+0650 ARABIC KASRA
+/// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
+/// assert!(swe.has_script(0x0650, Script::Arabic));
+/// assert!(swe.has_script(0x0650, Script::Syriac));
+/// assert!(!swe.has_script(0x0650, Script::Thaana));
+///
+/// // get a `UnicodeSet` for when `Script` value is contained in `Script_Extensions` value
+/// let syriac = swe.get_script_extensions_set(Script::Syriac);
+/// assert!(syriac.contains_u32(0x0650)); // ARABIC KASRA
+/// assert!(!syriac.contains_u32(0x0660)); // ARABIC-INDIC DIGIT ZERO
+/// assert!(!syriac.contains_u32(0xFDF2)); // ARABIC LIGATURE ALLAH ISOLATED FORM
+/// assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
+/// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
+/// ```
+pub fn get_script_with_extensions<D>(provider: &D) -> ScriptWithExtensionsResult
+where
+    D: DynProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized,
+{
+    let resp: DataResponse<ScriptWithExtensionsPropertyV1Marker> =
+        provider.load_payload(key::SCRIPT_EXTENSIONS_V1, &Default::default())?;
 
-        assert!(!ScriptWithExt(0x08FF).is_common());
-        assert!(!ScriptWithExt(0x0800).is_common());
-
-        assert!(!ScriptWithExt(0x0CFF).is_common());
-        assert!(!ScriptWithExt(0x0C00).is_common());
-
-        assert!(!ScriptWithExt(0xFF).is_common());
-        assert!(!ScriptWithExt(0x0).is_common());
-    }
-
-    #[test]
-    fn test_is_inherited() {
-        assert!(!ScriptWithExt(0x04FF).is_inherited());
-        assert!(!ScriptWithExt(0x0400).is_inherited());
-
-        assert!(ScriptWithExt(0x08FF).is_inherited());
-        assert!(ScriptWithExt(0x0800).is_inherited());
-
-        assert!(!ScriptWithExt(0x0CFF).is_inherited());
-        assert!(!ScriptWithExt(0x0C00).is_inherited());
-
-        assert!(!ScriptWithExt(0xFF).is_inherited());
-        assert!(!ScriptWithExt(0x0).is_inherited());
-    }
-
-    #[test]
-    fn test_is_other() {
-        assert!(!ScriptWithExt(0x04FF).is_other());
-        assert!(!ScriptWithExt(0x0400).is_other());
-
-        assert!(!ScriptWithExt(0x08FF).is_other());
-        assert!(!ScriptWithExt(0x0800).is_other());
-
-        assert!(ScriptWithExt(0x0CFF).is_other());
-        assert!(ScriptWithExt(0x0C00).is_other());
-
-        assert!(!ScriptWithExt(0xFF).is_other());
-        assert!(!ScriptWithExt(0x0).is_other());
-    }
-
-    #[test]
-    fn test_has_extensions() {
-        assert!(ScriptWithExt(0x04FF).has_extensions());
-        assert!(ScriptWithExt(0x0400).has_extensions());
-
-        assert!(ScriptWithExt(0x08FF).has_extensions());
-        assert!(ScriptWithExt(0x0800).has_extensions());
-
-        assert!(ScriptWithExt(0x0CFF).has_extensions());
-        assert!(ScriptWithExt(0x0C00).has_extensions());
-
-        assert!(!ScriptWithExt(0xFF).has_extensions());
-        assert!(!ScriptWithExt(0x0).has_extensions());
-    }
+    let property_payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> =
+        resp.take_payload()?;
+    Ok(property_payload)
 }

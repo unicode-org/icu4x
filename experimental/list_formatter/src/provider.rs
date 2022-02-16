@@ -9,8 +9,8 @@
 use crate::string_matcher::StringMatcher;
 use crate::ListStyle;
 use alloc::borrow::Cow;
-use icu_provider::yoke::{self, *};
 use icu_provider::DataMarker;
+use icu_provider::{yoke, zerofrom};
 use writeable::{LengthHint, Writeable};
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
@@ -73,7 +73,7 @@ impl<'data> ListFormatterPatternsV1<'data> {
 }
 
 /// A pattern that can behave conditionally on the next element.
-#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)
@@ -85,7 +85,7 @@ pub(crate) struct ConditionalListJoinerPattern<'data> {
     special_case: Option<SpecialCasePattern<'data>>,
 }
 
-#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)
@@ -98,7 +98,7 @@ struct SpecialCasePattern<'data> {
 }
 
 /// A pattern containing two numeric placeholders ("{0}, and {1}.")
-#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)

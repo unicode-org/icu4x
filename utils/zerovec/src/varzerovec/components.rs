@@ -7,6 +7,7 @@ use alloc::boxed::Box;
 use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::ops::Range;
@@ -275,7 +276,7 @@ where
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
-        self.binary_search_impl(needle, self.indices)
+        self.binary_search_impl(|probe| probe.cmp(needle), self.indices)
     }
 
     pub fn binary_search_in_range(
@@ -284,14 +285,26 @@ where
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
         let indices_slice = self.indices.get(range)?;
-        Some(self.binary_search_impl(needle, indices_slice))
+        Some(self.binary_search_impl(|probe| probe.cmp(needle), indices_slice))
+    }
+}
+
+impl<'a, T> VarZeroVecComponents<'a, T>
+where
+    T: VarULE,
+    T: ?Sized,
+{
+    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given predicate. For more information, see
+    /// the primitive function [`binary_search_by`](slice::binary_search_by).
+    pub fn binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
+        self.binary_search_impl(predicate, self.indices)
     }
 
-    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
+    /// Binary searches a sorted `VarZeroVecComponents<T>` with the given predicate. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     fn binary_search_impl(
         &self,
-        needle: &T,
+        mut predicate: impl FnMut(&T) -> Ordering,
         indices_slice: &[RawBytesULE<4>],
     ) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
@@ -325,7 +338,7 @@ where
             let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u32>();
             // safety: we know this is in bounds
             let actual_probe = unsafe { self.get_unchecked(index) };
-            actual_probe.cmp(needle)
+            predicate(actual_probe)
         })
     }
 }

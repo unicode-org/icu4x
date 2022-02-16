@@ -9,6 +9,7 @@ use crate::helpers;
 use crate::iter::IterableResourceProvider;
 use crate::prelude::*;
 use crate::yoke::{self, *};
+use crate::zerofrom::{self, *};
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::rc::Rc;
@@ -20,7 +21,7 @@ use icu_locid::LanguageIdentifier;
 use litemap::LiteMap;
 
 /// A struct containing "Hello World" in the requested language.
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HelloWorldV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

@@ -4,6 +4,7 @@
 
 use super::*;
 use alloc::boxed::Box;
+use core::cmp::Ordering;
 use core::ops::Range;
 
 /// A zero-copy "slice", i.e. the zero-copy version of `[T]`. This behaves
@@ -252,6 +253,36 @@ where
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
         self.as_ule_slice()
             .binary_search_by(|probe| T::from_unaligned(*probe).cmp(x))
+    }
+}
+
+impl<T> ZeroSlice<T>
+where
+    T: AsULE,
+{
+    /// Binary searches a sorted `ZeroVec<T>` based on a given predicate. For more information, see
+    /// the primitive function [`binary_search_by`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    ///
+    /// assert_eq!(zerovec.binary_search_by(|x| x.cmp(&281)), Ok(1));
+    /// assert_eq!(zerovec.binary_search_by(|x| x.cmp(&282)), Err(2));
+    /// ```
+    ///
+    /// [`binary_search_by`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search_by
+    #[inline]
+    pub fn binary_search_by(
+        &self,
+        mut predicate: impl FnMut(T) -> Ordering,
+    ) -> Result<usize, usize> {
+        self.as_ule_slice()
+            .binary_search_by(|probe| predicate(T::from_unaligned(*probe)))
     }
 }
 

@@ -180,14 +180,9 @@ The goal of the PR author is to find the subset of stakeholders that represent t
 
 ### PR author and reviewers workflow
 
-When the PR author submits the PR for review, and once they selected the initial group, each member of that group can chose to either review or resign from reviewing.
-If they resign, their only duty is to ensure that there is a sufficient coverage of the review, and nominate their replacement if not.
+When an author submits a PR for review, GitHub will automatically assign one or more code owners who can review it. It is the author's responsibility to select one or two reviewers from this list, and remove the other reviewers. More reviewers can be added if the PR is large, complicated, or controversial. It is generally preferable to keep the required reviewer list small. Reviewers who are removed from the PR may add themselves back if they are interested in reviewing.
 
-After a round of review, if there are blocking issues or a reviewer kept themselves in the review queue without accepting a review, the PR author must update the PR and re-request review from all pending reviewers.
-
-PRs should generally not be merged with pending reviews.
-
-If the PR author decides to make any substantial changes that go beyond of what the reviewers already approved, they can re-request an already accepted review after updating the PR.
+After a round of review, if there are blocking issues, the author must update the PR and re-request review from all blocking reviewers. PRs must not be merged with pending reviews. If the PR author decides to make any substantial changes that go beyond of what the reviewers already approved, they can re-request an already accepted review after updating the PR.
 
 #### Examples
 

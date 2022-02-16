@@ -45,6 +45,8 @@ members = [
     "utils/writeable",
     "utils/yoke",
     "utils/yoke/derive",
+    "utils/zerofrom",
+    "utils/zerofrom/derive",
     "utils/zerovec",
     "utils/zerovec/derive",
 ]

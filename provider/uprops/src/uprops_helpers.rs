@@ -50,7 +50,7 @@ pub fn load_enumerated_from_dir(root_dir: &Path) -> eyre::Result<TomlEnumerated>
 
 pub fn load_script_extensions_from_dir(
     root_dir: &Path,
-) -> eyre::Result<uprops_serde::script_extensions::ScriptExtensionsProperty> {
+) -> eyre::Result<uprops_serde::script_extensions::ScriptWithExtensionsProperty> {
     let mut path = root_dir.join("scx");
     path.set_extension("toml");
     let toml_str = read_path_to_string(&path)?;

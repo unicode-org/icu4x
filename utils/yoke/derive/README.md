@@ -1,6 +1,6 @@
 # yoke-derive [![crates.io](https://img.shields.io/crates/v/yoke-derive)](https://crates.io/crates/yoke-derive)
 
-Custom derives for `Yokeable` and `ZeroCopyFrom` from the `yoke` crate.
+Custom derives for `Yokeable` from the `yoke` crate.
 
 ## More Information
 

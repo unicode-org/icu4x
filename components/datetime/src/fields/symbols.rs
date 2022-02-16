@@ -5,7 +5,7 @@
 use crate::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
-use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
+use icu_provider::{yoke, zerofrom};
 
 #[derive(Display, Debug, PartialEq)]
 pub enum SymbolError {

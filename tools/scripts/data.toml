@@ -138,6 +138,23 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-build-postcard-tree]
+description = "Build ICU4X Postcard data to a filesystem structure at provider/testdata/data/postcard, overwriting if already present. Useful for breaking out the postcard data into individual files for debugging."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental",
+    "--",
+    "--input-from-testdata",
+    "--out-testdata",
+    "--test-keys",
+    "--test-locales",
+    "--syntax=postcard",
+    "--overwrite",
+]
+
 [tasks.testdata-build-bincode-all]
 description = "Build ICU4X Bincode filesystem structure from the downloaded CLDR JSON, testing all available locales, and overwriting the existing ICU4X Bincode if present."
 category = "ICU4X Data"

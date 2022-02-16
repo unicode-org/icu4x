@@ -174,10 +174,14 @@ pub mod prelude {
     pub use crate::any::AsDynProviderAnyMarkerWrap;
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
+
+    pub use yoke;
+    pub use zerofrom;
 }
 
-/// Re-export of the yoke crate for convenience of downstream implementors.
+/// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
 pub use yoke;
+pub use zerofrom;
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;

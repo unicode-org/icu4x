@@ -5,6 +5,7 @@
 use crate::ule::AsULE;
 use crate::{ZeroSlice, ZeroVec};
 
+use core::cmp::Ordering;
 use core::fmt;
 
 pub use super::kv::ZeroMapKV;
@@ -143,6 +144,33 @@ where
     /// ```
     pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
         let index = self.keys.zvl_binary_search(key).ok()?;
+        self.values.zvl_get_borrowed(index)
+    }
+
+    /// Binary search the map with `predicate` to find a key, returning the value.
+    ///
+    /// This is able to return values that live longer than the map itself
+    /// since they borrow directly from the backing buffer. This is the
+    /// primary advantage of using [`ZeroMapBorrowed`](super::ZeroMapBorrowed) over [`ZeroMap`](super::ZeroMap).
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap;
+    /// use zerovec::map::ZeroMapBorrowed;
+    ///
+    /// let mut map = ZeroMap::new();
+    /// map.insert(&1, "one");
+    /// map.insert(&2, "two");
+    /// let borrowed = map.as_borrowed();
+    /// assert_eq!(borrowed.get_by(|probe| probe.cmp(&1)), Some("one"));
+    /// assert_eq!(borrowed.get_by(|probe| probe.cmp(&3)), None);
+    ///
+    /// let borrow = borrowed.get_by(|probe| probe.cmp(&1));
+    /// drop(borrowed);
+    /// // still exists after the ZeroMapBorrowed has been dropped
+    /// assert_eq!(borrow, Some("one"));
+    /// ```
+    pub fn get_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<&'a V::GetType> {
+        let index = self.keys.zvl_binary_search_by(predicate).ok()?;
         self.values.zvl_get_borrowed(index)
     }
 

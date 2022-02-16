@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::TinyAsciiStr;
+use zerovec::map::ZeroMapKV;
 use zerovec::ule::*;
+use zerovec::ZeroVec;
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. CharULE does not include any uninitialized or padding bytes.
@@ -41,6 +43,12 @@ impl<const N: usize> AsULE for TinyAsciiStr<N> {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         unaligned
     }
+}
+
+impl<'a, const N: usize> ZeroMapKV<'a> for TinyAsciiStr<N> {
+    type Container = ZeroVec<'a, TinyAsciiStr<N>>;
+    type GetType = TinyAsciiStr<N>;
+    type OwnedType = TinyAsciiStr<N>;
 }
 
 #[cfg(test)]
