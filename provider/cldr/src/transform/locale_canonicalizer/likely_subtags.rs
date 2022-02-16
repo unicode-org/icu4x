@@ -5,7 +5,6 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::iter::IterableResourceProvider;
@@ -13,31 +12,24 @@ use icu_provider::prelude::*;
 use litemap::LiteMap;
 
 use std::convert::TryFrom;
+use std::path::PathBuf;
 use tinystr::TinyStr4;
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct LikelySubtagsProvider {
-    data: cldr_serde::likely_subtags::Resource,
+    path: PathBuf,
 }
 
 impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let data: cldr_serde::likely_subtags::Resource = {
-            let path = cldr_paths
+        Ok(Self {
+            path: cldr_paths
                 .cldr_core()?
                 .join("supplemental")
-                .join("likelySubtags.json");
-            serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?
-        };
-        Ok(Self { data })
-    }
-}
-
-impl KeyedDataProvider for LikelySubtagsProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![LikelySubtagsV1Marker::KEY]
+                .join("likelySubtags.json"),
+        })
     }
 }
 
@@ -48,6 +40,10 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
     ) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
         let langid = &req.options.langid;
 
+        let data: cldr_serde::likely_subtags::Resource =
+            serde_json::from_reader(open_reader(&self.path)?)
+                .map_err(|e| Error::Json(e, Some(self.path.clone())))?;
+
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
         if langid.is_none() {
@@ -55,7 +51,7 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
             // TODO(#1109): Set metadata.data_langid correctly.
             Ok(DataResponse {
                 metadata,
-                payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&self.data))),
+                payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&data))),
             })
         } else {
             Err(DataErrorKind::ExtraneousResourceOptions.with_req(LikelySubtagsV1Marker::KEY, req))

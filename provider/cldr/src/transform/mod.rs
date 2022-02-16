@@ -15,101 +15,72 @@ mod locale_canonicalizer;
 mod plurals;
 mod time_zones;
 
-use crate::support::KeyedDataProvider;
-use crate::support::LazyCldrProvider;
+use crate::error::Error;
 use crate::CldrPaths;
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
 use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
+use std::convert::TryFrom;
 
-macro_rules! cldr_json_data_provider {
-    ($($ident: ident: $type: ty,)+) => {
-        #[derive(Debug)]
-        pub struct CldrJsonDataProvider<'a> {
-            pub cldr_paths: &'a dyn CldrPaths,
-            $(
-                $ident: LazyCldrProvider<$type>,
-            )+
-        }
+pub struct CldrJsonDataProvider;
 
-        impl<'a> CldrJsonDataProvider<'a> {
-            pub fn new(cldr_paths: &'a dyn CldrPaths) -> Self {
-                CldrJsonDataProvider {
+impl CldrJsonDataProvider {
+    pub fn try_new(
+        cldr_paths: &dyn CldrPaths,
+    ) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<SerializeMarker>>>, Error> {
+        Ok(MultiForkByKeyProvider {
+            providers: vec![
+                Box::new(locale_canonicalizer::aliases::AliasesProvider::try_from(
                     cldr_paths,
-                    $(
-                        $ident: Default::default(),
-                    )+
-                }
-            }
-        }
+                )?),
+                Box::new(datetime::symbols::DateSymbolsProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(datetime::skeletons::DateSkeletonPatternsProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(datetime::patterns::DatePatternsProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(calendar::japanese::JapaneseErasProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(
+                    locale_canonicalizer::likely_subtags::LikelySubtagsProvider::try_from(
+                        cldr_paths,
+                    )?,
+                ),
+                Box::new(decimal::NumbersProvider::try_from(cldr_paths)?),
+                Box::new(plurals::PluralsProvider::try_from(cldr_paths)?),
+                Box::new(time_zones::TimeZonesProvider::try_from(cldr_paths)?),
+                #[cfg(feature = "icu_list")]
+                Box::new(list::ListProvider::try_from(cldr_paths)?),
+            ],
+        })
+    }
 
-        impl<'a> DynProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
-            fn load_payload(
-                &self,
-                key: ResourceKey,
-                req: &DataRequest,
-            ) -> Result<DataResponse<SerializeMarker>, DataError> {
-                $(
-                    if let Some(result) = self.$ident.try_load_serde(key, req, self.cldr_paths)? {
-                        return Ok(result);
-                    }
-                )+
-                Err(DataErrorKind::MissingResourceKey.with_req(key, req))
-            }
-        }
-
-        impl<'a> IterableDynProvider<SerializeMarker> for CldrJsonDataProvider<'a> {
-            fn supported_options_for_key(
-                &self,
-                resc_key: &ResourceKey,
-            ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-                $(
-                    if let Some(resp) = self
-                        .$ident
-                        .try_supported_options(resc_key, self.cldr_paths)?
-                    {
-                        return Ok(Box::new(resp.into_iter()));
-                    }
-                )+
-                Err(DataErrorKind::MissingResourceKey.with_key(*resc_key))
-            }
-        }
-
-        impl<'a> KeyedDataProvider for CldrJsonDataProvider<'a> {
-            fn supported_keys() -> Vec<ResourceKey> {
-                let mut result: Vec<ResourceKey> = vec![];
-                $(
-                    result.extend(<$type>::supported_keys());
-                )+
-                result
-            }
-        }
-    };
+    pub const ALL_KEYS: [ResourceKey; if cfg!(feature = "icu_list") { 18 } else { 15 }] = [
+        icu_calendar::provider::JapaneseErasV1Marker::KEY,
+        icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+        icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+        icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
+        icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY,
+        icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY,
+        icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY,
+        icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY,
+        icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY,
+        icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY,
+        icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+        #[cfg(feature = "icu_list")]
+        icu_list::provider::AndListV1Marker::KEY,
+        #[cfg(feature = "icu_list")]
+        icu_list::provider::OrListV1Marker::KEY,
+        #[cfg(feature = "icu_list")]
+        icu_list::provider::UnitListV1Marker::KEY,
+        icu_locale_canonicalizer::provider::AliasesV1Marker::KEY,
+        icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY,
+        icu_plurals::provider::CardinalV1Marker::KEY,
+        icu_plurals::provider::OrdinalV1Marker::KEY,
+    ];
 }
-
-#[cfg(feature = "icu_list")]
-cldr_json_data_provider!(
-    aliases: locale_canonicalizer::aliases::AliasesProvider,
-    date_symbols: datetime::symbols::DateSymbolsProvider,
-    date_skeletons: datetime::skeletons::DateSkeletonPatternsProvider,
-    date_patterns: datetime::patterns::DatePatternsProvider,
-    japanese: calendar::japanese::JapaneseErasProvider,
-    likelysubtags: locale_canonicalizer::likely_subtags::LikelySubtagsProvider,
-    numbers: decimal::NumbersProvider,
-    plurals: plurals::PluralsProvider,
-    time_zones: time_zones::TimeZonesProvider,
-    list: list::ListProvider,
-);
-
-#[cfg(not(feature = "icu_list"))]
-cldr_json_data_provider!(
-    aliases: locale_canonicalizer::aliases::AliasesProvider,
-    date_symbols: datetime::symbols::DateSymbolsProvider,
-    date_skeletons: datetime::skeletons::DateSkeletonPatternsProvider,
-    date_patterns: datetime::patterns::DatePatternsProvider,
-    japanese: calendar::japanese::JapaneseErasProvider,
-    likelysubtags: locale_canonicalizer::likely_subtags::LikelySubtagsProvider,
-    numbers: decimal::NumbersProvider,
-    plurals: plurals::PluralsProvider,
-    time_zones: time_zones::TimeZonesProvider,
-);

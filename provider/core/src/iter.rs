@@ -29,3 +29,16 @@ pub trait IterableResourceProvider<M: ResourceMarker>: ResourceProvider<M> {
         &self,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError>;
 }
+
+impl<M, P> IterableDynProvider<M> for Box<P>
+where
+    M: DataMarker,
+    P: IterableDynProvider<M> + ?Sized,
+{
+    fn supported_options_for_key(
+        &self,
+        resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        (**self).supported_options_for_key(resc_key)
+    }
+}

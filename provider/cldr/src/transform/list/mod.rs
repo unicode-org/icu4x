@@ -3,36 +3,28 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::reader::{get_langid_subdirectories, open_reader};
-use crate::support::KeyedDataProvider;
+use crate::error::Error;
+use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::CldrPaths;
 use icu_list::provider::*;
-use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
 use std::convert::TryFrom;
+use std::path::PathBuf;
 
 /// A data provider reading from CLDR JSON list rule files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct ListProvider {
-    data: LiteMap<LanguageIdentifier, cldr_serde::list_patterns::LangListPatterns>,
-    uprops_path: std::path::PathBuf,
+    cldr_misc: PathBuf,
+    uprops_path: PathBuf,
 }
 
 impl TryFrom<&dyn CldrPaths> for ListProvider {
-    type Error = crate::error::Error;
+    type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = LiteMap::new();
-        for dir in get_langid_subdirectories(&cldr_paths.cldr_misc()?.join("main"))? {
-            let path = dir.join("listPatterns.json");
-            let resource: cldr_serde::list_patterns::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.extend_from_litemap(resource.main.0);
-        }
         Ok(Self {
-            data,
+            cldr_misc: cldr_paths.cldr_misc()?,
             uprops_path: cldr_paths.uprops()?,
         })
     }
@@ -45,10 +37,19 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
         let langid = req
             .get_langid()
             .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
-        let data = &self
-            .data
+
+        let resource: cldr_serde::list_patterns::Resource = {
+            let path = get_langid_subdirectory(&self.cldr_misc.join("main"), langid)?
+                .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?
+                .join("listPatterns.json");
+            serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?
+        };
+
+        let data = &resource
+            .main
+            .0
             .get(langid)
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?
+            .expect("CLDR file contains the expected language")
             .list_patterns;
 
         let (wide, short, narrow) = match M::KEY {
@@ -150,16 +151,6 @@ icu_provider::impl_dyn_provider!(
     SERDE_SE
 );
 
-impl KeyedDataProvider for ListProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![
-            AndListV1Marker::KEY,
-            OrListV1Marker::KEY,
-            UnitListV1Marker::KEY,
-        ]
-    }
-}
-
 impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>
     for ListProvider
 {
@@ -167,10 +158,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
         &self,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
-            self.data
-                .iter_keys()
-                // TODO(#568): Avoid the clone
-                .cloned()
+            get_langid_subdirectories(&self.cldr_misc.join("main"))?
                 // ur-IN has a buggy pattern ("{1}, {0}") which violates
                 // our invariant that {0} is at index 0 (and rotates the output).
                 // ml has middle and start patterns with suffixes.

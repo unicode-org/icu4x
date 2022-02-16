@@ -72,15 +72,15 @@ pub trait CldrPaths: std::fmt::Debug {
 /// # Examples
 ///
 /// ```
+/// use icu_provider_cldr::CldrPaths;
 /// use icu_provider_cldr::CldrPathsLocal;
-/// use icu_provider_cldr::CldrJsonDataProvider;
 /// use std::path::PathBuf;
 ///
 /// let mut paths = CldrPathsLocal::default();
 /// paths.cldr_core = Ok(PathBuf::from("/path/to/cldr-core"));
 /// // fill in other paths as necessary
 ///
-/// let data_provider = CldrJsonDataProvider::new(&paths);
+/// paths.cldr_dates_all();
 /// ```
 #[non_exhaustive]
 #[derive(Debug, PartialEq)]
@@ -144,8 +144,8 @@ impl Default for CldrPathsLocal {
 /// # Examples
 ///
 /// ```
+/// use icu_provider_cldr::CldrPaths;
 /// use icu_provider_cldr::CldrPathsAllInOne;
-/// use icu_provider_cldr::CldrJsonDataProvider;
 /// use std::path::PathBuf;
 ///
 /// let paths = CldrPathsAllInOne {
@@ -154,7 +154,7 @@ impl Default for CldrPathsLocal {
 ///     uprops_root: Some(PathBuf::from("path/to/uprops")),
 /// };
 ///
-/// let data_provider = CldrJsonDataProvider::new(&paths);
+/// assert_eq!(paths.cldr_misc().unwrap(), PathBuf::from("/path/to/cldr-json/cldr-misc-full"))
 /// ```
 #[derive(Debug, PartialEq)]
 pub struct CldrPathsAllInOne {

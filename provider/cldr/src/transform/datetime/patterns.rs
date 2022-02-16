@@ -12,13 +12,12 @@ use icu_datetime::pattern;
 use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::provider::calendar::*;
 
-use crate::support::KeyedDataProvider;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
 /// A data provider reading from CLDR JSON dates files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct DatePatternsProvider(CommonDateProvider);
 
 impl TryFrom<&dyn CldrPaths> for DatePatternsProvider {
@@ -28,18 +27,12 @@ impl TryFrom<&dyn CldrPaths> for DatePatternsProvider {
     }
 }
 
-impl KeyedDataProvider for DatePatternsProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![DatePatternsV1Marker::KEY]
-    }
-}
-
 impl ResourceProvider<DatePatternsV1Marker> for DatePatternsProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<DatePatternsV1Marker>, DataError> {
-        let dates = self.0.dates_for::<DatePatternsV1Marker>(req)?;
+        let dates = &self.0.dates_for::<DatePatternsV1Marker>(req)?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {

@@ -9,8 +9,8 @@
 //! This crate contains two implementations of [`CldrPaths`]:
 //!
 //! - [`CldrPathsLocal`] points to local copies of the CLDR JSON repositories.
-//! - `CldrPathsDownload` downloads and caches the CLDR JSON repositories. Requires the
-//!   "download" feature.
+//! - [`CldrAllInOneDownloader`](download::CldrAllInOneDownloader) downloads and caches the
+//!   CLDR JSON repositories. Requires the "download" feature.
 //!
 //! **Important:** This data provider implementation is not optimized for production use.
 //! It is much more efficient if you use [`FsDataProvider`] instead.
@@ -18,15 +18,12 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [data provider]: icu_provider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-//! [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 
 mod cldr_paths;
 mod cldr_serde;
 mod error;
 mod reader;
-mod support;
-
-pub mod transform;
+mod transform;
 
 #[cfg(feature = "download")]
 pub mod download;
@@ -35,5 +32,4 @@ pub use cldr_paths::CldrPaths;
 pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
-pub use support::KeyedDataProvider;
 pub use transform::CldrJsonDataProvider;
