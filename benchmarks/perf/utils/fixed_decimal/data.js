@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645032931639,
+  "lastUpdate": 1645048949709,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19379,6 +19379,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 111126,
             "range": "± 3034",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fde100e061cf166bba10e796ec1e817b19869a4f",
+          "message": "Using MultiForkByKeyProvider for all datagen (#1615)",
+          "timestamp": "2022-02-16T22:53:54+01:00",
+          "tree_id": "9cf9ea932afd4555559db2131a8b60d31e51a08f",
+          "url": "https://github.com/unicode-org/icu4x/commit/fde100e061cf166bba10e796ec1e817b19869a4f"
+        },
+        "date": 1645048936912,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115307,
+            "range": "± 7219",
             "unit": "ns/iter"
           }
         ]
