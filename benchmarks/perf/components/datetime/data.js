@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645032977199,
+  "lastUpdate": 1645048993586,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20843,6 +20843,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 153118,
             "range": "± 365",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fde100e061cf166bba10e796ec1e817b19869a4f",
+          "message": "Using MultiForkByKeyProvider for all datagen (#1615)",
+          "timestamp": "2022-02-16T22:53:54+01:00",
+          "tree_id": "9cf9ea932afd4555559db2131a8b60d31e51a08f",
+          "url": "https://github.com/unicode-org/icu4x/commit/fde100e061cf166bba10e796ec1e817b19869a4f"
+        },
+        "date": 1645048982649,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77638,
+            "range": "± 5046",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 710308,
+            "range": "± 28701",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 166361,
+            "range": "± 29648",
             "unit": "ns/iter"
           }
         ]
