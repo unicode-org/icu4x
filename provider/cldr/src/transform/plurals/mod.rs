@@ -50,7 +50,7 @@ impl PluralsProvider {
                         .cardinal_rules
                         .write()
                         .unwrap()
-                        .insert(data.supplemental.plurals_type_cardinal);
+                        .get_or_insert(data.supplemental.plurals_type_cardinal);
                 }
                 self.cardinal_rules.read().unwrap()
             }
@@ -64,7 +64,7 @@ impl PluralsProvider {
                         .ordinal_rules
                         .write()
                         .unwrap()
-                        .insert(data.supplemental.plurals_type_ordinal);
+                        .get_or_insert(data.supplemental.plurals_type_ordinal);
                 }
                 self.ordinal_rules.read().unwrap()
             }

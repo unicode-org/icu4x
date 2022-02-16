@@ -112,7 +112,7 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
                 .cldr_numbering_systems_data
                 .write()
                 .unwrap()
-                .insert(resource.supplemental.numbering_systems);
+                .get_or_insert(resource.supplemental.numbering_systems);
         }
 
         result.digits = self

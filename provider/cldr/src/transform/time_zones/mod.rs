@@ -43,9 +43,7 @@ macro_rules! impl_data_provider {
                         .get_langid()
                         .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
 
-                    let time_zones = if self.data.read().unwrap().contains_key(langid) {
-                        self.data.read().unwrap().get(langid).unwrap().clone()
-                    } else {
+                    if !self.data.read().unwrap().contains_key(langid) {
                         let path = get_langid_subdirectory(&self.path, langid)?
                             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?
                             .join("timeZoneNames.json");
@@ -61,9 +59,13 @@ macro_rules! impl_data_provider {
                             .dates
                             .time_zone_names;
 
-                        self.data.write().unwrap().insert(langid.clone(), r.clone());
-                        r
-                    };
+                        let mut data_guard = self.data.write().unwrap();
+                        if !data_guard.contains_key(langid) {
+                            data_guard.insert(langid.clone(), r);
+                        }
+                    }
+
+                    let time_zones = self.data.read().unwrap().get(langid).unwrap().clone();
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
