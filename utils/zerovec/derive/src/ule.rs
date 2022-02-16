@@ -76,7 +76,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
 }
 
-pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.lifetimes().next().is_some()
         || input.generics.const_params().next().is_some()
@@ -98,6 +98,11 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     let arg = &attr[0];
     let ule_name: Ident = parse_quote!(#arg);
 
+    let skip_kv = match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
+        Ok(val) => val,
+        Err(e) => return e.to_compile_error(),
+    };
+
     let name = &input.ident;
 
     let ule_stuff = match input.data {
@@ -109,18 +114,24 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         }
     };
 
-    // Todo: opt-out for ZMKV impl
+    let zmkv = if skip_kv {
+        quote!()
+    } else {
+        quote!(
+            impl<'a> zerovec::map::ZeroMapKV<'a> for #name {
+                type Container = zerovec::ZeroVec<'a, #name>;
+                type GetType = #ule_name;
+                type OwnedType = #name;
+            }
+        )
+    };
 
     quote!(
         #input
 
         #ule_stuff
 
-        impl<'a> zerovec::map::ZeroMapKV<'a> for #name {
-            type Container = zerovec::ZeroVec<'a, #name>;
-            type GetType = #ule_name;
-            type OwnedType = #name;
-        }
+        #zmkv
     )
 }
 
@@ -278,7 +289,7 @@ fn make_ule_struct_impl(
 
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
-        #[derive(Copy, Clone, PartialEq)]
+        #[derive(Copy, Clone, PartialEq, Ord, PartialOrd)]
         struct #ule_name #field_inits #semi
 
     );

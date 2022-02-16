@@ -115,7 +115,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
 }
 
-pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.const_params().next().is_some()
         || input.generics.lifetimes().count() > 1
@@ -126,6 +126,11 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         )
         .to_compile_error();
     }
+
+    let skip_kv = match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
+        Ok(val) => val,
+        Err(e) => return e.to_compile_error(),
+    };
 
     let lt = input.generics.lifetimes().next();
 
@@ -219,6 +224,18 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         input.span(),
     );
 
+    let zmkv = if skip_kv {
+        quote!()
+    } else {
+        quote!(
+            impl<'a> zerovec::map::ZeroMapKV<'a> for #ule_name {
+                type Container = zerovec::VarZeroVec<'a, #ule_name>;
+                type GetType = #ule_name;
+                type OwnedType = Box<#ule_name>;
+            }
+        )
+    };
+
     quote!(
         #input
 
@@ -230,12 +247,7 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
 
         #derived
 
-
-        impl<'a> zerovec::map::ZeroMapKV<'a> for #ule_name {
-            type Container = zerovec::VarZeroVec<'a, #ule_name>;
-            type GetType = #ule_name;
-            type OwnedType = Box<#ule_name>;
-        }
+        #zmkv
     )
 }
 

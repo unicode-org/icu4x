@@ -9,7 +9,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::{parenthesized, parse2, Attribute, Field, Fields, Ident, Index, Result, Token};
+use syn::{parenthesized, parse2, Attribute, Error, Field, Fields, Ident, Index, Result, Token};
 
 // Check that there are repr attributes satisfying the given predicate
 pub fn has_valid_repr(attrs: &[Attribute], predicate: impl Fn(&Ident) -> bool + Copy) -> bool {
@@ -119,7 +119,10 @@ pub fn field_setter(f: &Field) -> TokenStream2 {
 }
 
 /// Extracts a single `zerovec::name` attribute
-pub fn extract_zerovec_attribute_named<'a>(attrs: &mut Vec<Attribute>, name: &str) -> Option<Attribute> {
+pub fn extract_zerovec_attribute_named<'a>(
+    attrs: &mut Vec<Attribute>,
+    name: &str,
+) -> Option<Attribute> {
     let mut ret = None;
     attrs.retain(|a| {
         // skip the "zerovec" part
@@ -150,4 +153,37 @@ pub fn extract_zerovec_attributes(attrs: &mut Vec<Attribute>) -> Vec<Attribute> 
         return true;
     });
     ret
+}
+
+pub fn check_attr_empty(attr: &Option<Attribute>, name: &str) -> Result<()> {
+    if let Some(ref attr) = *attr {
+        if !attr.tokens.is_empty() {
+            return Err(Error::new(
+                attr.span(),
+                format!("#[zerovec::{name}] does not support arguments"),
+            ));
+        }
+    }
+    Ok(())
+}
+
+/// Removes all known zerovec:: attributes from attrs and validates them
+/// Returns true if it found a skip_kv attribute. More will be added.
+pub fn extract_attributes_common(attrs: &mut Vec<Attribute>, name: &str) -> Result<bool> {
+    let mut zerovec_attrs = extract_zerovec_attributes(attrs);
+
+    let skip_kv = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_kv");
+
+    if let Some(attr) = zerovec_attrs.get(0) {
+        return Err(Error::new(
+            attr.span(),
+            format!("Found unknown or duplicate attribute for #[{name}]"),
+        ));
+    }
+
+    check_attr_empty(&skip_kv, "skip_kv")?;
+
+    let skip_kv = skip_kv.is_some();
+
+    Ok(skip_kv)
 }
