@@ -194,16 +194,9 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let repr_attr = utils::repr_for(fields);
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
 
-    let maybe_ord_derives = if skip_ord {
-        quote!()
-    } else {
-        quote!(#[derive(Ord, PartialOrd)])
-    };
-
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(PartialEq, Eq)]
-        #maybe_ord_derives
         struct #ule_name #field_inits #semi
     );
 
@@ -231,6 +224,28 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         input.span(),
     );
 
+    let maybe_ord_impls = if skip_ord {
+        quote!()
+    } else {
+        quote!(
+            impl core::cmp::PartialOrd for #ule_name {
+                fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+                    let this = <#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>::zero_from(self);
+                    let other = <#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>::zero_from(other);
+                    <#name as core::cmp::PartialOrd>::partial_cmp(&this, &other)
+                }
+            }
+
+            impl core::cmp::Ord for #ule_name {
+                fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+                    let this = <#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>::zero_from(self);
+                    let other = <#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>::zero_from(other);
+                    <#name as core::cmp::Ord>::cmp(&this, &other)
+                }
+            }
+        )
+    };
+
     let zmkv = if skip_kv {
         quote!()
     } else {
@@ -253,6 +268,8 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         #zf_impl
 
         #derived
+
+        #maybe_ord_impls
 
         #zmkv
     )

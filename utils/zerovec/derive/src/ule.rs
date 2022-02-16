@@ -296,18 +296,10 @@ fn make_ule_struct_impl(
     let semi = utils::semi_for(&struc.fields);
     let repr_attr = utils::repr_for(&struc.fields);
 
-    let maybe_ord_derives = if skip_ord {
-        quote!()
-    } else {
-        quote!(#[derive(Ord, PartialOrd)])
-    };
-
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(Copy, Clone, PartialEq, Eq)]
-        #maybe_ord_derives
         struct #ule_name #field_inits #semi
-
     );
     let derived = derive_impl(&ule_struct);
 
@@ -343,12 +335,37 @@ fn make_ule_struct_impl(
             }
         }
     );
+
+    let maybe_ord_impls = if skip_ord {
+        quote!()
+    } else {
+        quote!(
+            impl core::cmp::PartialOrd for #ule_name {
+                fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+                    let this = <#name as zerovec::ule::AsULE>::from_unaligned(*self);
+                    let other = <#name as zerovec::ule::AsULE>::from_unaligned(*other);
+                    <#name as core::cmp::PartialOrd>::partial_cmp(&this, &other)
+                }
+            }
+
+            impl core::cmp::Ord for #ule_name {
+                fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+                    let this = <#name as zerovec::ule::AsULE>::from_unaligned(*self);
+                    let other = <#name as zerovec::ule::AsULE>::from_unaligned(*other);
+                    <#name as core::cmp::Ord>::cmp(&this, &other)
+                }
+            }
+        )
+    };
+
     quote!(
         #asule_impl
 
         #ule_struct
 
         #derived
+
+        #maybe_ord_impls
     )
 }
 
