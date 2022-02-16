@@ -50,9 +50,12 @@ use transform::locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
 use transform::plurals::PluralsProvider;
 use transform::time_zones::TimeZonesProvider;
 
+#[cfg(not(feature = "icu_list"))]
+type ListProvider = PluralsProvider; // we can't cfg-exclude part of the bound, but we can do this...
+
 pub fn create_exportable_properties_provider<T: DataMarker>(
     cldr_paths: &dyn CldrPaths,
-    uprops_root: PathBuf,
+    _uprops_root: PathBuf,
 ) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>, CldrError>
 where
     AliasesProvider: IterableDynProvider<T>,
@@ -79,7 +82,7 @@ where
             Box::new(PluralsProvider::try_from(cldr_paths)?),
             Box::new(TimeZonesProvider::try_from(cldr_paths)?),
             #[cfg(feature = "icu_list")]
-            Box::new(ListProvider::try_from(cldr_paths, uprops_root)?),
+            Box::new(ListProvider::try_from(cldr_paths, _uprops_root)?),
         ],
     })
 }
