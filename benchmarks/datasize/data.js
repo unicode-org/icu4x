@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644964521753,
+  "lastUpdate": 1644987997303,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9413,6 +9413,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8d331f2838dc834d21efe5dc01eb8df4022d5399"
         },
         "date": 1644964511933,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88b1b2f599afc65608a8d99fafaabb6a99961f9c",
+          "message": "Remove unicode-width dependency (#1611)\n\nFix https://github.com/unicode-org/icu4x/issues/1505",
+          "timestamp": "2022-02-16T14:04:44+09:00",
+          "tree_id": "55a16b92090a4b8814912ce5b44546864202fb4d",
+          "url": "https://github.com/unicode-org/icu4x/commit/88b1b2f599afc65608a8d99fafaabb6a99961f9c"
+        },
+        "date": 1644987984874,
         "tool": "ndjson",
         "benches": [
           {
