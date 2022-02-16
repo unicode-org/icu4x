@@ -17,8 +17,11 @@
 use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
+use core::iter::FromIterator;
+use core::ops::RangeInclusive;
 use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
+use icu_uniset::UnicodeSet;
 
 /// TODO(#1239): Finalize this API.
 pub type UnisetResult = Result<DataPayload<UnicodePropertyV1Marker>, PropertiesError>;
@@ -1458,8 +1461,7 @@ where
         .map_project_cloned_with_capture(prop_val, |prop_map_marker, prop_val_capture, _| {
             let trie = &prop_map_marker.code_point_trie;
             let set = trie.get_set_for_value(prop_val_capture);
-            let uni_prop = UnicodePropertyV1::from_owned_uniset(set.clone());
-            uni_prop
+            UnicodePropertyV1::from_owned_uniset(set.clone())
         });
 
     Ok(prop_set_payload)
@@ -1483,52 +1485,25 @@ pub fn get_for_general_category_group<D>(
     enum_val: GeneralCategoryGroup,
 ) -> UnisetResult
 where
-    D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
+    D: DynProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
 {
-    let key = match enum_val {
-        GeneralCategoryGroup::Other => key::GENERAL_CATEGORY_OTHER_V1,
-        GeneralCategoryGroup::Control => key::GENERAL_CATEGORY_CONTROL_V1,
-        GeneralCategoryGroup::Format => key::GENERAL_CATEGORY_FORMAT_V1,
-        GeneralCategoryGroup::Unassigned => key::GENERAL_CATEGORY_UNASSIGNED_V1,
-        GeneralCategoryGroup::PrivateUse => key::GENERAL_CATEGORY_PRIVATE_USE_V1,
-        GeneralCategoryGroup::Surrogate => key::GENERAL_CATEGORY_SURROGATE_V1,
-        GeneralCategoryGroup::Letter => key::GENERAL_CATEGORY_LETTER_V1,
-        GeneralCategoryGroup::CasedLetter => key::GENERAL_CATEGORY_CASED_LETTER_V1,
-        GeneralCategoryGroup::LowercaseLetter => key::GENERAL_CATEGORY_LOWERCASE_LETTER_V1,
-        GeneralCategoryGroup::ModifierLetter => key::GENERAL_CATEGORY_MODIFIER_LETTER_V1,
-        GeneralCategoryGroup::OtherLetter => key::GENERAL_CATEGORY_OTHER_LETTER_V1,
-        GeneralCategoryGroup::TitlecaseLetter => key::GENERAL_CATEGORY_TITLECASE_LETTER_V1,
-        GeneralCategoryGroup::UppercaseLetter => key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1,
-        GeneralCategoryGroup::Mark => key::GENERAL_CATEGORY_MARK_V1,
-        GeneralCategoryGroup::SpacingMark => key::GENERAL_CATEGORY_SPACING_MARK_V1,
-        GeneralCategoryGroup::EnclosingMark => key::GENERAL_CATEGORY_ENCLOSING_MARK_V1,
-        GeneralCategoryGroup::NonspacingMark => key::GENERAL_CATEGORY_NONSPACING_MARK_V1,
-        GeneralCategoryGroup::Number => key::GENERAL_CATEGORY_NUMBER_V1,
-        GeneralCategoryGroup::DecimalNumber => key::GENERAL_CATEGORY_DIGIT_V1,
-        GeneralCategoryGroup::LetterNumber => key::GENERAL_CATEGORY_LETTER_NUMBER_V1,
-        GeneralCategoryGroup::OtherNumber => key::GENERAL_CATEGORY_OTHER_NUMBER_V1,
-        GeneralCategoryGroup::Punctuation => key::GENERAL_CATEGORY_PUNCTUATION_V1,
-        GeneralCategoryGroup::ConnectorPunctuation => {
-            key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1
-        }
-        GeneralCategoryGroup::DashPunctuation => key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1,
-        GeneralCategoryGroup::ClosePunctuation => key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1,
-        GeneralCategoryGroup::FinalPunctuation => key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1,
-        GeneralCategoryGroup::InitialPunctuation => key::GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1,
-        GeneralCategoryGroup::OtherPunctuation => key::GENERAL_CATEGORY_OTHER_PUNCTUATION_V1,
-        GeneralCategoryGroup::OpenPunctuation => key::GENERAL_CATEGORY_OPEN_PUNCTUATION_V1,
-        GeneralCategoryGroup::Symbol => key::GENERAL_CATEGORY_SYMBOL_V1,
-        GeneralCategoryGroup::CurrencySymbol => key::GENERAL_CATEGORY_CURRENCY_SYMBOL_V1,
-        GeneralCategoryGroup::ModifierSymbol => key::GENERAL_CATEGORY_MODIFIER_SYMBOL_V1,
-        GeneralCategoryGroup::MathSymbol => key::GENERAL_CATEGORY_MATH_SYMBOL_V1,
-        GeneralCategoryGroup::OtherSymbol => key::GENERAL_CATEGORY_OTHER_SYMBOL_V1,
-        GeneralCategoryGroup::Separator => key::GENERAL_CATEGORY_SEPARATOR_V1,
-        GeneralCategoryGroup::LineSeparator => key::GENERAL_CATEGORY_LINE_SEPARATOR_V1,
-        GeneralCategoryGroup::ParagraphSeparator => key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1,
-        GeneralCategoryGroup::SpaceSeparator => key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1,
-        _ => return Err(PropertiesError::UnknownGeneralCategoryGroup(enum_val.0)),
-    };
-    get_uniset(provider, key)
+    let gc_map_payload: DataPayload<UnicodePropertyMapV1Marker<GeneralCategory>> =
+        maps::get_general_category(provider)?;
+
+    let gc_group_set_payload: DataPayload<UnicodePropertyV1Marker> = gc_map_payload
+        .map_project_cloned_with_capture(enum_val, |gc_map_marker, gcg_val_capture, _| {
+            let gc = &gc_map_marker.code_point_trie;
+            let matching_gc_ranges = gc
+                .iter_ranges()
+                .filter(move |cpm_range| (1 << cpm_range.value as u32) & gcg_val_capture.0 != 0)
+                .map(|cpm_range| {
+                    RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end())
+                });
+            let set = UnicodeSet::from_iter(matching_gc_ranges);
+            UnicodePropertyV1::from_owned_uniset(set.clone())
+        });
+
+    Ok(gc_group_set_payload)
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Script Unicode enumerated property. See [`Script`].
@@ -1539,4 +1514,165 @@ where
     D: DynProvider<UnicodePropertyMapV1Marker<Script>> + ?Sized,
 {
     get_set_for_enum_prop_val(provider, key::SCRIPT_V1, enum_val)
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn test_general_category() {
+        use icu::properties::sets;
+        use icu::properties::GeneralCategoryGroup;
+
+        let provider = icu_testdata::get_provider();
+        let payload = sets::get_for_general_category_group(&provider, GeneralCategoryGroup::Number)
+            .expect("The data should be valid");
+        let data_struct = payload.get();
+        let digits = &data_struct.inv_list;
+
+        assert!(digits.contains('5'));
+        assert!(digits.contains('\u{0665}')); // U+0665 ARABIC-INDIC DIGIT FIVE
+        assert!(digits.contains('\u{096b}')); // U+0969 DEVANAGARI DIGIT FIVE
+
+        assert!(!digits.contains('A'));
+    }
+
+    #[test]
+    fn test_script() {
+        use icu::properties::sets;
+        use icu::properties::Script;
+
+        let provider = icu_testdata::get_provider();
+        let payload =
+            sets::get_for_script(&provider, Script::Thai).expect("The data should be valid");
+        let data_struct = payload.get();
+        let thai = &data_struct.inv_list;
+
+        assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
+        assert!(thai.contains('\u{0e50}')); // U+0E50 THAI DIGIT ZERO
+
+        assert!(!thai.contains('A'));
+        assert!(!thai.contains('\u{0e3f}')); // U+0E50 THAI CURRENCY SYMBOL BAHT
+    }
+
+    #[test]
+    fn test_gc_groupings() {
+        use icu::properties::sets;
+        use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+        use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+        use std::convert::TryInto;
+
+        let provider = icu_testdata::get_provider();
+
+        let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
+            let category_set_payload = sets::get_for_general_category_group(&provider, category)
+                .expect("The data should be valid");
+            let category_set: UnicodeSet = category_set_payload
+                .get()
+                .clone()
+                .try_into()
+                .expect("Valid unicode set");
+            let mut builder = UnicodeSetBuilder::new();
+            for subcategory in subcategories {
+                builder.add_set(
+                    &sets::get_for_general_category(&provider, *subcategory)
+                        .expect("The data should be valid")
+                        .get()
+                        .clone()
+                        .try_into()
+                        .expect("Valid unicode set"),
+                );
+            }
+            let combined_set = builder.build();
+            println!("{:?} {:?}", category, subcategories);
+            assert_eq!(
+                category_set.get_inversion_list(),
+                combined_set.get_inversion_list()
+            );
+        };
+
+        test_group(
+            GeneralCategoryGroup::Letter,
+            &[
+                GeneralCategory::UppercaseLetter,
+                GeneralCategory::LowercaseLetter,
+                GeneralCategory::TitlecaseLetter,
+                GeneralCategory::ModifierLetter,
+                GeneralCategory::OtherLetter,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Other,
+            &[
+                GeneralCategory::Control,
+                GeneralCategory::Format,
+                GeneralCategory::Unassigned,
+                GeneralCategory::PrivateUse,
+                GeneralCategory::Surrogate,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Mark,
+            &[
+                GeneralCategory::SpacingMark,
+                GeneralCategory::EnclosingMark,
+                GeneralCategory::NonspacingMark,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Number,
+            &[
+                GeneralCategory::DecimalNumber,
+                GeneralCategory::LetterNumber,
+                GeneralCategory::OtherNumber,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Punctuation,
+            &[
+                GeneralCategory::ConnectorPunctuation,
+                GeneralCategory::DashPunctuation,
+                GeneralCategory::ClosePunctuation,
+                GeneralCategory::FinalPunctuation,
+                GeneralCategory::InitialPunctuation,
+                GeneralCategory::OtherPunctuation,
+                GeneralCategory::OpenPunctuation,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Symbol,
+            &[
+                GeneralCategory::CurrencySymbol,
+                GeneralCategory::ModifierSymbol,
+                GeneralCategory::MathSymbol,
+                GeneralCategory::OtherSymbol,
+            ],
+        );
+        test_group(
+            GeneralCategoryGroup::Separator,
+            &[
+                GeneralCategory::LineSeparator,
+                GeneralCategory::ParagraphSeparator,
+                GeneralCategory::SpaceSeparator,
+            ],
+        );
+    }
+
+    #[test]
+    fn test_gc_surrogate() {
+        use icu::properties::sets;
+        use icu::properties::GeneralCategory;
+
+        let provider = icu_testdata::get_provider();
+        let payload = sets::get_for_general_category(&provider, GeneralCategory::Surrogate)
+            .expect("The data should be valid");
+        let data_struct = payload.get();
+        let surrogates = &data_struct.inv_list;
+
+        assert!(surrogates.contains_u32(0xd800));
+        assert!(surrogates.contains_u32(0xd900));
+        assert!(surrogates.contains_u32(0xdfff));
+
+        assert!(!surrogates.contains('A'));
+    }
 }
