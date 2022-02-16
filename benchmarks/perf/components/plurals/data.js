@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644988585908,
+  "lastUpdate": 1645033054014,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27173,6 +27173,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17330,
             "range": "± 3363",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "68e051ab78f262caa9223614874f777b055918d0",
+          "message": "Removing `KeyedDataProvider` from CLDR (#1599)",
+          "timestamp": "2022-02-16T18:26:24+01:00",
+          "tree_id": "bb867d24548961f0133a1ffce9e5e2d0acbd832f",
+          "url": "https://github.com/unicode-org/icu4x/commit/68e051ab78f262caa9223614874f777b055918d0"
+        },
+        "date": 1645033041402,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 941,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6269,
+            "range": "± 259",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15946,
+            "range": "± 551",
             "unit": "ns/iter"
           }
         ]
