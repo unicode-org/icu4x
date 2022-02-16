@@ -20,7 +20,7 @@ use zerovec::ZeroVec;
 
 /// This data provider returns `CodePointTrie` data inside a
 /// `UnicodePropertyMap` data struct. The source data is the same as that of
-/// [crate::provider::PropertiesDataProvider], which is a TOML file of data
+/// the other properties providers, which is a TOML file of data
 /// for the property(-ies) desired, as given by the ICU4C property data
 /// exporter tool.
 pub struct EnumeratedPropertyCodePointTrieProvider {
