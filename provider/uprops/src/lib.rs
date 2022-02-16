@@ -35,7 +35,7 @@ use icu_provider::iter::IterableDynProvider;
 use icu_provider::DataMarker;
 use std::path::Path;
 
-pub fn create_exportable_properties_provider<T: DataMarker>(
+pub fn create_exportable_provider<T: DataMarker>(
     root_dir: &Path,
 ) -> eyre::Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>>
 where

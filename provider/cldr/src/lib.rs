@@ -53,7 +53,7 @@ use transform::time_zones::TimeZonesProvider;
 #[cfg(not(feature = "icu_list"))]
 type ListProvider = PluralsProvider; // we can't cfg-exclude part of the bound, but we can do this...
 
-pub fn create_exportable_properties_provider<T: DataMarker>(
+pub fn create_exportable_provider<T: DataMarker>(
     cldr_paths: &dyn CldrPaths,
     _uprops_root: PathBuf,
 ) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>, CldrError>

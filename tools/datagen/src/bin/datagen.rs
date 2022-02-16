@@ -337,11 +337,11 @@ fn main() -> eyre::Result<()> {
 
         Box::new(MultiForkByKeyProvider {
             providers: vec![
-                Box::new(icu_provider_cldr::create_exportable_properties_provider(
+                Box::new(icu_provider_cldr::create_exportable_provider(
                     cldr_paths.as_ref(),
                     uprops_root.clone(),
                 )?) as Box<dyn IterableDynProvider<SerializeMarker>>,
-                Box::new(icu_provider_uprops::create_exportable_properties_provider(
+                Box::new(icu_provider_uprops::create_exportable_provider(
                     &uprops_root,
                 )?),
                 Box::new(HelloWorldProvider::new_with_placeholder_data()),
