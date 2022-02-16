@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644965154025,
+  "lastUpdate": 1644988585908,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27131,6 +27131,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17923,
             "range": "± 740",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88b1b2f599afc65608a8d99fafaabb6a99961f9c",
+          "message": "Remove unicode-width dependency (#1611)\n\nFix https://github.com/unicode-org/icu4x/issues/1505",
+          "timestamp": "2022-02-16T14:04:44+09:00",
+          "tree_id": "55a16b92090a4b8814912ce5b44546864202fb4d",
+          "url": "https://github.com/unicode-org/icu4x/commit/88b1b2f599afc65608a8d99fafaabb6a99961f9c"
+        },
+        "date": 1644988572233,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1019,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6719,
+            "range": "± 192",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17330,
+            "range": "± 3363",
             "unit": "ns/iter"
           }
         ]
