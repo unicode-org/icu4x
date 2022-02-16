@@ -177,7 +177,8 @@ mod tests {
     macro_rules! test {
         ($langid:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let cldr_paths = crate::cldr_paths::for_test();
-            let provider = ListProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+            let provider = ListProvider::try_from(
+                &cldr_paths as &dyn CldrPaths, icu_testdata::paths::uprops_toml_root()).unwrap();
             let f = ListFormatter::$type(langid!($langid), &provider, ListStyle::Wide).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);

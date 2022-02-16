@@ -142,7 +142,6 @@ impl Default for CldrPathsLocal {
 /// let paths = CldrPathsAllInOne {
 ///     cldr_json_root: PathBuf::from("/path/to/cldr-json"),
 ///     locale_subset: "full".to_string(),
-///     uprops_root: Some(PathBuf::from("path/to/uprops")),
 /// };
 ///
 /// assert_eq!(paths.cldr_misc().unwrap(), PathBuf::from("/path/to/cldr-json/cldr-misc-full"))

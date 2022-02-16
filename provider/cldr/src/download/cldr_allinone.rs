@@ -26,8 +26,7 @@ use std::path::PathBuf;
 /// let downloader = CldrAllInOneDownloader::try_new_from_github("38.1.0", "modern")
 ///     .expect("Cache directory not found");
 ///
-/// let paths: Box<dyn CldrPaths> = Box::new(downloader.download(None)
-///     .expect("The data should download successfully"));
+/// let paths: Box<dyn CldrPaths> = Box::new(downloader.download().expect("The data should download successfully"));
 /// ```
 #[derive(Debug)]
 pub struct CldrAllInOneDownloader {

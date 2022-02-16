@@ -20,13 +20,37 @@
 mod bin_uniset;
 mod enum_codepointtrie;
 mod enum_uniset;
-mod provider;
 mod reader;
 mod script;
 mod uprops_helpers;
 mod uprops_serde;
 
-pub use provider::PropertiesDataProvider;
-
-// Required by icu_provider_cldr::transform::list
+pub use bin_uniset::BinaryPropertyUnicodeSetDataProvider;
+pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
 pub use enum_uniset::EnumeratedPropertyUnicodeSetDataProvider;
+pub use script::ScriptWithExtensionsPropertyProvider;
+
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
+use icu_provider::iter::IterableDynProvider;
+use icu_provider::DataMarker;
+use std::path::Path;
+
+pub fn create_exportable_properties_provider<T: DataMarker>(
+    root_dir: &Path,
+) -> eyre::Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>>
+where
+    EnumeratedPropertyCodePointTrieProvider: IterableDynProvider<T>,
+    ScriptWithExtensionsPropertyProvider: IterableDynProvider<T>,
+    EnumeratedPropertyUnicodeSetDataProvider: IterableDynProvider<T>,
+    BinaryPropertyUnicodeSetDataProvider: IterableDynProvider<T>,
+{
+    Ok(MultiForkByKeyProvider {
+        providers: vec![
+            Box::new(EnumeratedPropertyCodePointTrieProvider::try_new(root_dir)?),
+            Box::new(ScriptWithExtensionsPropertyProvider::try_new(root_dir)?),
+            Box::new(EnumeratedPropertyUnicodeSetDataProvider::try_new(root_dir)?),
+            // Has to go last as it matches all props/ keys.
+            Box::new(BinaryPropertyUnicodeSetDataProvider::try_new(root_dir)?),
+        ],
+    })
+}

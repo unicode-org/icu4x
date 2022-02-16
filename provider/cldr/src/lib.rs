@@ -32,4 +32,78 @@ pub use cldr_paths::CldrPaths;
 pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
-pub use transform::CldrJsonDataProvider;
+
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
+use icu_provider::iter::IterableDynProvider;
+use icu_provider::prelude::*;
+use std::convert::TryFrom;
+use std::path::PathBuf;
+use transform::calendar::japanese::JapaneseErasProvider;
+use transform::datetime::patterns::DatePatternsProvider;
+use transform::datetime::skeletons::DateSkeletonPatternsProvider;
+use transform::datetime::symbols::DateSymbolsProvider;
+use transform::decimal::NumbersProvider;
+#[cfg(feature = "icu_list")]
+use transform::list::ListProvider;
+use transform::locale_canonicalizer::aliases::AliasesProvider;
+use transform::locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
+use transform::plurals::PluralsProvider;
+use transform::time_zones::TimeZonesProvider;
+
+pub fn create_exportable_properties_provider<T: DataMarker>(
+    cldr_paths: &dyn CldrPaths,
+    uprops_root: PathBuf,
+) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>, CldrError>
+where
+    AliasesProvider: IterableDynProvider<T>,
+    DateSymbolsProvider: IterableDynProvider<T>,
+    DateSkeletonPatternsProvider: IterableDynProvider<T>,
+    DatePatternsProvider: IterableDynProvider<T>,
+    JapaneseErasProvider: IterableDynProvider<T>,
+    LikelySubtagsProvider: IterableDynProvider<T>,
+    NumbersProvider: IterableDynProvider<T>,
+    PluralsProvider: IterableDynProvider<T>,
+    TimeZonesProvider: IterableDynProvider<T>,
+    ListProvider: IterableDynProvider<T>,
+{
+    #[allow(unused_variables)] // uprops_root is only used if icu_list
+    Ok(MultiForkByKeyProvider {
+        providers: vec![
+            Box::new(AliasesProvider::try_from(cldr_paths)?),
+            Box::new(DateSymbolsProvider::try_from(cldr_paths)?),
+            Box::new(DateSkeletonPatternsProvider::try_from(cldr_paths)?),
+            Box::new(DatePatternsProvider::try_from(cldr_paths)?),
+            Box::new(JapaneseErasProvider::try_from(cldr_paths)?),
+            Box::new(LikelySubtagsProvider::try_from(cldr_paths)?),
+            Box::new(NumbersProvider::try_from(cldr_paths)?),
+            Box::new(PluralsProvider::try_from(cldr_paths)?),
+            Box::new(TimeZonesProvider::try_from(cldr_paths)?),
+            #[cfg(feature = "icu_list")]
+            Box::new(ListProvider::try_from(cldr_paths, uprops_root)?),
+        ],
+    })
+}
+
+pub const ALL_KEYS: [ResourceKey; if cfg!(feature = "icu_list") { 18 } else { 15 }] = [
+    icu_calendar::provider::JapaneseErasV1Marker::KEY,
+    icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
+    icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+    icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
+    icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY,
+    icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY,
+    icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY,
+    icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY,
+    icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY,
+    icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY,
+    icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+    #[cfg(feature = "icu_list")]
+    icu_list::provider::AndListV1Marker::KEY,
+    #[cfg(feature = "icu_list")]
+    icu_list::provider::OrListV1Marker::KEY,
+    #[cfg(feature = "icu_list")]
+    icu_list::provider::UnitListV1Marker::KEY,
+    icu_locale_canonicalizer::provider::AliasesV1Marker::KEY,
+    icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY,
+    icu_plurals::provider::CardinalV1Marker::KEY,
+    icu_plurals::provider::OrdinalV1Marker::KEY,
+];

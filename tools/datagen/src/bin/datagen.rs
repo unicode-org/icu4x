@@ -5,7 +5,6 @@
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
 use icu_locid::LanguageIdentifier;
-use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SCRIPT_EXTENSIONS_KEYS, ALL_SET_KEYS};
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
 use icu_provider::fork::by_key::MultiForkByKeyProvider;
@@ -15,13 +14,11 @@ use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
-use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPathsAllInOne;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
-use icu_provider_uprops::PropertiesDataProvider;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -260,12 +257,12 @@ fn main() -> eyre::Result<()> {
     };
 
     let all_keys = {
-        // TODO: Use central key repository
+        // TODO(#1512): Use central key repository
         let mut v = vec![];
-        v.extend(CldrJsonDataProvider::ALL_KEYS);
-        v.extend(ALL_MAP_KEYS);
-        v.extend(ALL_SCRIPT_EXTENSIONS_KEYS);
-        v.extend(ALL_SET_KEYS);
+        v.extend(icu_provider_cldr::ALL_KEYS);
+        v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
+        v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
+        v.extend(icu_properties::provider::key::ALL_SET_KEYS);
         v
     };
 
@@ -340,14 +337,14 @@ fn main() -> eyre::Result<()> {
 
         Box::new(MultiForkByKeyProvider {
             providers: vec![
-                Box::new(CldrJsonDataProvider::try_new(
+                Box::new(icu_provider_cldr::create_exportable_properties_provider(
                     cldr_paths.as_ref(),
                     uprops_root.clone(),
                 )?) as Box<dyn IterableDynProvider<SerializeMarker>>,
-                Box::new(PropertiesDataProvider::try_new(&uprops_root)?)
-                    as Box<dyn IterableDynProvider<SerializeMarker>>,
-                Box::new(HelloWorldProvider::new_with_placeholder_data())
-                    as Box<dyn IterableDynProvider<SerializeMarker>>,
+                Box::new(icu_provider_uprops::create_exportable_properties_provider(
+                    &uprops_root,
+                )?),
+                Box::new(HelloWorldProvider::new_with_placeholder_data()),
             ],
         })
     };
