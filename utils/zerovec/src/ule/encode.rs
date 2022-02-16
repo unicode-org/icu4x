@@ -86,7 +86,7 @@ pub fn encode_varule_to_box<S: EncodeAsVarULE<T>, T: VarULE + ?Sized>(x: &S) -> 
     vec.resize(x.encode_var_ule_len(), 0);
     x.encode_var_ule_write(&mut vec);
     let boxed = vec.into_boxed_slice();
-    unsafe {        
+    unsafe {
         // Safety: `ptr` is a box, and `T` is a VarULE which guarantees it has the same memory layout as `[u8]`
         // and can be recouped via from_byte_slice_unchecked()
         let ptr: *mut T = T::from_byte_slice_unchecked(&boxed) as *const T as *mut T;
