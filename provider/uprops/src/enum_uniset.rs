@@ -99,7 +99,7 @@ impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataPr
 }
 
 icu_provider::impl_dyn_provider!(EnumeratedPropertyUnicodeSetDataProvider, {
-    _ => UnicodePropertyV1Marker,
+    _k if _k.get_path().starts_with("props/") && _k.get_path().contains('=') => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
 impl IterableDynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataProvider {

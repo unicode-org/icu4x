@@ -10,22 +10,20 @@ use icu_list::provider::*;
 use icu_locid_macros::langid;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
-use std::convert::TryFrom;
 use std::path::PathBuf;
 
 /// A data provider reading from CLDR JSON list rule files.
 #[derive(Debug)]
 pub struct ListProvider {
     cldr_misc: PathBuf,
-    uprops_path: PathBuf,
+    uprops_root: PathBuf,
 }
 
-impl TryFrom<&dyn CldrPaths> for ListProvider {
-    type Error = Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
+impl ListProvider {
+    pub fn try_from(cldr_paths: &dyn CldrPaths, uprops_root: PathBuf) -> Result<Self, Error> {
         Ok(Self {
             cldr_misc: cldr_paths.cldr_misc()?,
-            uprops_path: cldr_paths.uprops()?,
+            uprops_root,
         })
     }
 }
@@ -116,8 +114,8 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                     &format!(
                         "[^{}]",
                         icu_properties::sets::get_for_script(
-                            &icu_provider_uprops::PropertiesDataProvider::try_new(
-                                &self.uprops_path
+                            &icu_provider_uprops::EnumeratedPropertyUnicodeSetDataProvider::try_new(
+                                &self.uprops_root
                             )
                             .map_err(|e| DataError::custom("Properties data provider error")
                                 .with_display_context(&e))?,
@@ -179,7 +177,8 @@ mod tests {
     macro_rules! test {
         ($langid:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let cldr_paths = crate::cldr_paths::for_test();
-            let provider = ListProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
+            let provider = ListProvider::try_from(
+                &cldr_paths as &dyn CldrPaths, icu_testdata::paths::uprops_toml_root()).unwrap();
             let f = ListFormatter::$type(langid!($langid), &provider, ListStyle::Wide).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);

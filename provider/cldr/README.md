@@ -2,7 +2,7 @@
 
 `icu_provider_cldr` contains implementations of the [`ICU4X`] [data provider] interface
 based on the JSON files shipped by CLDR. Create a [`CldrPaths`] and then pass it into
-[`CldrJsonDataProvider`].
+[`create_exportable_provider`].
 
 This crate contains two implementations of [`CldrPaths`]:
 

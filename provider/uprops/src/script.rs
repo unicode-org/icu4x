@@ -18,10 +18,9 @@ use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 /// This data provider returns a [`ScriptWithExtensions`] instance,
 /// which efficiently represents data for the Script and Script_Extensions
-/// properties. The source data is the same as that of
-/// [crate::provider::PropertiesDataProvider], which is a TOML file of data
-/// for the property(-ies) desired, as given by the ICU4C property data
-/// exporter tool.
+/// properties. The source data is the same as that of the other properties
+/// providers, which is a TOML file of data for the property(-ies) desired,
+/// as given by the ICU4C property data exporter tool.
 pub struct ScriptWithExtensionsPropertyProvider {
     data: ScriptWithExtensionsProperty,
 }
