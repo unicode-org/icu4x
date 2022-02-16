@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645032514621,
+  "lastUpdate": 1645048533242,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9473,6 +9473,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/68e051ab78f262caa9223614874f777b055918d0"
         },
         "date": 1645032500590,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fde100e061cf166bba10e796ec1e817b19869a4f",
+          "message": "Using MultiForkByKeyProvider for all datagen (#1615)",
+          "timestamp": "2022-02-16T22:53:54+01:00",
+          "tree_id": "9cf9ea932afd4555559db2131a8b60d31e51a08f",
+          "url": "https://github.com/unicode-org/icu4x/commit/fde100e061cf166bba10e796ec1e817b19869a4f"
+        },
+        "date": 1645048523159,
         "tool": "ndjson",
         "benches": [
           {
