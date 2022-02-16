@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645033054014,
+  "lastUpdate": 1645049075494,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27215,6 +27215,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15946,
             "range": "± 551",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fde100e061cf166bba10e796ec1e817b19869a4f",
+          "message": "Using MultiForkByKeyProvider for all datagen (#1615)",
+          "timestamp": "2022-02-16T22:53:54+01:00",
+          "tree_id": "9cf9ea932afd4555559db2131a8b60d31e51a08f",
+          "url": "https://github.com/unicode-org/icu4x/commit/fde100e061cf166bba10e796ec1e817b19869a4f"
+        },
+        "date": 1645049062705,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1002,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6412,
+            "range": "± 327",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 16356,
+            "range": "± 937",
             "unit": "ns/iter"
           }
         ]
