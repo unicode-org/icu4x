@@ -6,6 +6,7 @@ use icu::properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
 };
+use icu_codepointtrie::CodePointTrie;
 use icu_provider_fs::FsDataProvider;
 use serde::Deserialize;
 use std::env;
@@ -220,6 +221,13 @@ fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
     }
 }
 
+fn is_cjk_fullwidth(eaw: &CodePointTrie<icu::properties::EastAsianWidth>, codepoint: u32) -> bool {
+    match eaw.get(codepoint) {
+        EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide => true,
+        _ => false,
+    }
+}
+
 fn output_propery_plane_with_same_value(out: &mut File, name: &str, value: u8) {
     writeln!(out, "#[allow(dead_code)]").ok();
     writeln!(
@@ -396,21 +404,13 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                                 }
 
                                 LineBreak::PostfixNumeric => {
-                                    if p.name == "PO_EAW"
-                                        && (eaw.get(i) == EastAsianWidth::Fullwidth
-                                            || eaw.get(i) == EastAsianWidth::Ambiguous
-                                            || eaw.get(i) == EastAsianWidth::Wide)
-                                    {
+                                    if p.name == "PO_EAW" && is_cjk_fullwidth(eaw, i) {
                                         properties_map[i as usize] = property_index;
                                     }
                                 }
 
                                 LineBreak::PrefixNumeric => {
-                                    if p.name == "PR_EAW"
-                                        && (eaw.get(i) == EastAsianWidth::Fullwidth
-                                            || eaw.get(i) == EastAsianWidth::Ambiguous
-                                            || eaw.get(i) == EastAsianWidth::Wide)
-                                    {
+                                    if p.name == "PR_EAW" && is_cjk_fullwidth(eaw, i) {
                                         properties_map[i as usize] = property_index;
                                     }
                                 }

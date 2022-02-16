@@ -41,6 +41,7 @@ criterion = "0.3"
 serde-json-core = { version = "0.4", features = ["std"] }
 
 [build-dependencies]
+icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie" }
 icu_provider_fs = { version = "0.5", path = "../../provider/fs", features = ["deserialize_json"] }
 icu = { version = "0.5", path = "../../components/icu" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata" }

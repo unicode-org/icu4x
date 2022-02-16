@@ -1414,6 +1414,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "icu",
+ "icu_codepointtrie",
  "icu_provider",
  "icu_provider_fs",
  "icu_segmenter_lstm",
