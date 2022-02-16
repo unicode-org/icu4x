@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644964989066,
+  "lastUpdate": 1644988427993,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -23861,6 +23861,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4280,
             "range": "± 32",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88b1b2f599afc65608a8d99fafaabb6a99961f9c",
+          "message": "Remove unicode-width dependency (#1611)\n\nFix https://github.com/unicode-org/icu4x/issues/1505",
+          "timestamp": "2022-02-16T14:04:44+09:00",
+          "tree_id": "55a16b92090a4b8814912ce5b44546864202fb4d",
+          "url": "https://github.com/unicode-org/icu4x/commit/88b1b2f599afc65608a8d99fafaabb6a99961f9c"
+        },
+        "date": 1644988417161,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2002,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3609,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
