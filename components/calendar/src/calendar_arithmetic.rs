@@ -20,7 +20,7 @@ pub trait CalendarArithmetic: Calendar {
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
-    pub fn offset_date(&self, mut offset: DateDuration<C::Calendar>) {
+    pub fn offset_date(&self, mut offset: DateDuration<C>) {
         let month_lengths = Self::month_lengths(self.year);
         self.year += offset.years;
         self.month += offset.months;
