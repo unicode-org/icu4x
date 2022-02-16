@@ -127,7 +127,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         .to_compile_error();
     }
 
-    let skip_kv = match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
+    let (skip_kv, skip_ord) = match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
         Ok(val) => val,
         Err(e) => return e.to_compile_error(),
     };
@@ -194,9 +194,16 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let repr_attr = utils::repr_for(fields);
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
 
+    let maybe_ord_derives = if skip_ord {
+        quote!()
+    } else {
+        quote!(#[derive(Ord, PartialOrd)])
+    };
+
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
-        #[derive(PartialEq, Eq, PartialOrd, Ord)]
+        #[derive(PartialEq, Eq)]
+        #maybe_ord_derives
         struct #ule_name #field_inits #semi
     );
 
