@@ -12,9 +12,11 @@ use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use serde::{Deserialize, Serialize};
+use std::collections::btree_map::BTreeMap;
 use std::fs;
 use std::ops::Deref;
 use std::path::PathBuf;
+use std::sync::Mutex;
 use writeable::Writeable;
 
 #[non_exhaustive]
@@ -55,46 +57,15 @@ impl Default for ExporterOptions {
 pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
-    alias_collection: Option<AliasCollection<Vec<u8>>>,
-    serializer: Box<dyn AbstractSerializer>,
-}
-
-impl Drop for FilesystemExporter {
-    fn drop(&mut self) {
-        if self.alias_collection.is_some() {
-            panic!("Please call flush before dropping FilesystemExporter");
-        }
-    }
-}
-
-impl DataExporter<SerializeMarker> for FilesystemExporter {
-    fn put_payload(
-        &mut self,
-        key: ResourceKey,
-        req: DataRequest,
-        obj: DataPayload<SerializeMarker>,
-    ) -> Result<(), DataError> {
-        let mut path_buf = self.root.clone();
-        path_buf.push(&*key.writeable_to_string());
-        path_buf.push(&*req.options.writeable_to_string());
-        log::trace!("Writing: {}", req);
-        self.write_to_path(path_buf, obj.get().deref())?;
-        Ok(())
-    }
-
-    /// This function must be called before the [`FilesystemExporter`] leaves scope.
-    /// It is recommended to flush after exporting each [`ResourceKey`].
-    fn flush(&mut self) -> Result<(), DataError> {
-        if let Some(mut alias_collection) = self.alias_collection.take() {
-            alias_collection.flush()?;
-        }
-        Ok(())
-    }
+    // The presence of the option does not change for the lifetime of the object and
+    // therefore doesn't need to be locked. This way a non-aliasing instance is lock-free.
+    alias_collections: Option<Mutex<BTreeMap<ResourceKeyHash, AliasCollection<Vec<u8>>>>>,
+    serializer: Box<dyn AbstractSerializer + Sync>,
 }
 
 impl FilesystemExporter {
     pub fn try_new(
-        serializer: Box<dyn AbstractSerializer>,
+        serializer: Box<dyn AbstractSerializer + Sync>,
         options: ExporterOptions,
     ) -> Result<Self, Error> {
         let result = FilesystemExporter {
@@ -103,7 +74,10 @@ impl FilesystemExporter {
                 aliasing: options.aliasing,
                 buffer_format: serializer.get_buffer_format(),
             },
-            alias_collection: None,
+            alias_collections: match options.aliasing {
+                AliasOption::NoAliases => None,
+                AliasOption::Symlink => Some(Mutex::new(BTreeMap::new())),
+            },
             serializer,
         };
 
@@ -133,44 +107,77 @@ impl FilesystemExporter {
             .map_err(|e| (e, manifest_path))?;
         Ok(result)
     }
+}
 
-    fn write_to_path(
-        &mut self,
-        mut path_buf: PathBuf,
-        obj: &dyn erased_serde::Serialize,
-    ) -> Result<(), Error> {
-        let file_extension = self.manifest.get_file_extension();
-        match self.manifest.aliasing {
-            AliasOption::NoAliases => {
-                path_buf.set_extension(file_extension);
+impl DataExporter<SerializeMarker> for FilesystemExporter {
+    fn put_payload(
+        &self,
+        key: ResourceKey,
+        options: ResourceOptions,
+        obj: DataPayload<SerializeMarker>,
+    ) -> Result<(), DataError> {
+        let mut key_root = self.root.clone();
+        key_root.push(&*key.writeable_to_string());
+        let mut path_buf = key_root.clone();
+        path_buf.push(&*options.writeable_to_string());
+
+        log::trace!("Writing: {}/{}", key, options);
+
+        match self.alias_collections.as_ref() {
+            None => {
+                path_buf.set_extension(self.manifest.get_file_extension());
                 if let Some(parent_dir) = path_buf.parent() {
-                    fs::create_dir_all(&parent_dir).map_err(|e| (e, parent_dir))?;
+                    fs::create_dir_all(&parent_dir).map_err(|e| Error::from((e, parent_dir)))?;
                 }
-                let mut file = fs::File::create(&path_buf).map_err(|e| (e, &path_buf))?;
+                let mut file =
+                    fs::File::create(&path_buf).map_err(|e| Error::from((e, &path_buf)))?;
                 self.serializer
-                    .serialize(obj, &mut file)
-                    .map_err(|e| (e, &path_buf))?;
+                    .serialize(obj.get().deref(), &mut file)
+                    .map_err(|e| Error::from((e, &path_buf)))?;
             }
-            AliasOption::Symlink => {
+            Some(alias_collections) => {
                 let mut buf: Vec<u8> = Vec::new();
                 self.serializer
-                    .serialize(obj, &mut buf)
+                    .serialize(obj.get().deref(), &mut buf)
                     .map_err(Error::from_serializers_error)?;
-                let mut alias_root = path_buf.clone();
-                assert!(alias_root.pop());
-                self.alias_collection
-                    .get_or_insert_with(|| {
+                alias_collections
+                    .lock()
+                    .unwrap()
+                    .entry(key.get_hash())
+                    .or_insert_with(|| {
                         AliasCollection::new(aliasing::Options {
-                            root: alias_root,
+                            root: key_root,
                             symlink_file_extension: "l",
                             data_file_prefix: "data",
-                            data_file_extension: file_extension,
+                            data_file_extension: self.manifest.get_file_extension(),
                         })
                     })
                     .put(path_buf, buf);
             }
         }
+        Ok(())
+    }
 
+    fn flush(&self, key: ResourceKey) -> Result<(), DataError> {
+        // If we're aliasing we have to flush the alias collection for this key
+        if let Some(alias_collections) = self.alias_collections.as_ref() {
+            if let Some(alias_collection) =
+                alias_collections.lock().unwrap().get_mut(&key.get_hash())
+            {
+                alias_collection.flush()?;
+            }
+        }
+        Ok(())
+    }
+
+    fn close(&mut self) -> Result<(), DataError> {
+        // If we're aliasing we have to make sure all alias collections were flushed
+        if let Some(alias_collections) = self.alias_collections.take() {
+            for (_, alias_collection) in alias_collections.lock().unwrap().iter_mut() {
+                // Flushing is idempotent
+                alias_collection.flush()?;
+            }
+        }
         Ok(())
     }
 }
