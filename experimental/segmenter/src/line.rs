@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-extern crate unicode_width;
-
 use crate::indices::*;
 use crate::language::*;
 use crate::provider::*;
@@ -13,7 +11,6 @@ use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
-use unicode_width::UnicodeWidthChar;
 
 include!(concat!(env!("OUT_DIR"), "/generated_line_table.rs"));
 
@@ -245,7 +242,6 @@ fn is_break_utf32_by_normal(codepoint: u32, ja_zh: bool) -> bool {
 
 #[inline]
 fn is_break_utf32_by_loose(
-    left_codepoint: u32,
     right_codepoint: u32,
     left_prop: u8,
     right_prop: u8,
@@ -295,16 +291,12 @@ fn is_break_utf32_by_loose(
 
     // breaks before suffixes:
     // Characters with the Unicode Line Break property PO and the East Asian Width property
-    if right_prop == PO
-        && UnicodeWidthChar::width_cjk(char::from_u32(right_codepoint).unwrap()).unwrap() == 2
-    {
+    if right_prop == PO_EAW {
         return Some(ja_zh);
     }
     // breaks after prefixes:
     // Characters with the Unicode Line Break property PR and the East Asian Width property
-    if left_prop == PR
-        && UnicodeWidthChar::width_cjk(char::from_u32(left_codepoint).unwrap()).unwrap() == 2
-    {
+    if left_prop == PR_EAW {
         return Some(ja_zh);
     }
     None
@@ -488,7 +480,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 }
                 LineBreakRule::Loose => {
                     if let Some(breakable) = is_break_utf32_by_loose(
-                        left_codepoint.unwrap().1.into(),
                         self.current_pos_data.unwrap().1.into(),
                         left_prop,
                         right_prop,

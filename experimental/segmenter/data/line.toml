@@ -116,7 +116,13 @@ name = "OP_OP30"
 name = "PO"
 
 [[tables]]
+name = "PO_EAW"
+
+[[tables]]
 name = "PR"
+
+[[tables]]
+name = "PR_EAW"
 
 [[tables]]
 name = "QU"
@@ -336,8 +342,20 @@ right = "CM"
 
 [[tables]]
 # LB9
+name = "PR_EAW"
+left = "PR_EAW"
+right = "CM"
+
+[[tables]]
+# LB9
 name = "PO"
 left = "PO"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PO_EAW"
+left = "PO_EAW"
 right = "CM"
 
 [[tables]]
@@ -558,6 +576,12 @@ right = "ZWJ"
 
 [[tables]]
 # LB9
+name = "PO_EAW"
+left = "PO_EAW"
+right = "ZWJ"
+
+[[tables]]
+# LB9
 name = "QU"
 left = "QU"
 right = "ZWJ"
@@ -572,6 +596,12 @@ right = "ZWJ"
 # LB9
 name = "PR"
 left = "PR"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PR_EAW"
+left = "PR_EAW"
 right = "ZWJ"
 
 [[tables]]
@@ -691,7 +721,19 @@ right = "HY"
 [[tables]]
 # LB25
 name = "LB25_HY"
+left = "PR_EAW"
+right = "HY"
+
+[[tables]]
+# LB25
+name = "LB25_HY"
 left = "PO"
+right = "HY"
+
+[[tables]]
+# LB25
+name = "LB25_HY"
+left = "PO_EAW"
 right = "HY"
 
 [[tables]]
@@ -703,7 +745,19 @@ right = "OP_OP30"
 [[tables]]
 # LB25
 name = "LB25_OP"
+left = "PR_EAW"
+right = "OP_OP30"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
 left = "PR"
+right = "OP_EA"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PR_EAW"
 right = "OP_EA"
 
 [[tables]]
@@ -715,7 +769,19 @@ right = "OP_OP30"
 [[tables]]
 # LB25
 name = "LB25_OP"
+left = "PO_EAW"
+right = "OP_OP30"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
 left = "PO"
+right = "OP_EA"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PO_EAW"
 right = "OP_EA"
 
 [[tables]]
@@ -1029,21 +1095,21 @@ break_state = false
 
 [[rules]]
 # LB23a
-left = [ "PR" ]
+left = [ "PR", "PR_EAW" ]
 right = [ "ID", "ID_CN", "EB", "EM" ]
 break_state = false
 
 [[rules]]
 # LB23a
 left = [ "ID", "ID_CN", "EB", "EM" ]
-right = [ "PO" ]
+right = [ "PO", "PO_EAW" ]
 break_state = false
 
 [[rules]]
 # LB24
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
-left = [ "PR", "PO" ]
+left = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
 right = [ "AI", "AL", "SA", "XX", "HL" ]
 break_state = false
 
@@ -1052,19 +1118,19 @@ break_state = false
 # (LB1 AL = AI, AL, SA or XX)
 # (LB10 AL = CM)
 left = [ "AI", "AL", "SA", "XX", "HL", "CM" ]
-right = [ "PR", "PO" ]
+right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
 break_state = false
 
 [[rules]]
 # LB25
-left = [ "PR", "PO", "OP_OP30", "OP_EA", "HY", "LB25_OP", "LB25_HY" ]
+left = [ "PR", "PO", "OP_OP30", "OP_EA", "HY", "LB25_OP", "LB25_HY", "PR_EAW", "PO_EAW" ]
 right = [ "NU" ]
 break_state = false
 
 [[rules]]
 # LB25
 left = [ "NU", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP" ]
-right = [ "PR", "PO" ]
+right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
 break_state = false
 
 [[rules]]
@@ -1106,12 +1172,12 @@ break_state = false
 [[rules]]
 # LB27
 left = [ "JL", "JV", "JT", "H2", "H3" ]
-right = [ "PO" ]
+right = [ "PO", "PO_EAW" ]
 break_state = false
 
 [[rules]]
 # LB27
-left = [ "PR" ]
+left = [ "PR", "PR_EAW" ]
 right = [ "JL", "JV", "JT", "H2", "H3" ]
 break_state = false
 

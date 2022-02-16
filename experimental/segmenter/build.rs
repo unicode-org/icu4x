@@ -6,6 +6,7 @@ use icu::properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
 };
+use icu_codepointtrie::CodePointTrie;
 use icu_provider_fs::FsDataProvider;
 use serde::Deserialize;
 use std::env;
@@ -220,6 +221,13 @@ fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
     }
 }
 
+fn is_cjk_fullwidth(eaw: &CodePointTrie<icu::properties::EastAsianWidth>, codepoint: u32) -> bool {
+    matches!(
+        eaw.get(codepoint),
+        EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
+    )
+}
+
 fn output_propery_plane_with_same_value(out: &mut File, name: &str, value: u8) {
     writeln!(out, "#[allow(dead_code)]").ok();
     writeln!(
@@ -354,6 +362,8 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                         || p.name == "OP_OP30"
                         || p.name == "OP_EA"
                         || p.name == "ID_CN"
+                        || p.name == "PO_EAW"
+                        || p.name == "PR_EAW"
                     {
                         for i in 0..0x20000 {
                             match lb.get(i) {
@@ -390,6 +400,18 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
                                                 properties_map[i as usize] = property_index;
                                             }
                                         }
+                                    }
+                                }
+
+                                LineBreak::PostfixNumeric => {
+                                    if p.name == "PO_EAW" && is_cjk_fullwidth(eaw, i) {
+                                        properties_map[i as usize] = property_index;
+                                    }
+                                }
+
+                                LineBreak::PrefixNumeric => {
+                                    if p.name == "PR_EAW" && is_cjk_fullwidth(eaw, i) {
+                                        properties_map[i as usize] = property_index;
                                     }
                                 }
 
