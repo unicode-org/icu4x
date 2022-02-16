@@ -266,6 +266,7 @@ fn main() -> eyre::Result<()> {
         v
     };
 
+    #[allow(clippy::if_same_then_else)]
     let selected_keys = if matches.is_present("ALL_KEYS") {
         all_keys
     } else if matches.is_present("TEST_KEYS") {
