@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644988407088,
+  "lastUpdate": 1645032898012,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20429,6 +20429,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39501923,
             "range": "± 1789507",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "68e051ab78f262caa9223614874f777b055918d0",
+          "message": "Removing `KeyedDataProvider` from CLDR (#1599)",
+          "timestamp": "2022-02-16T18:26:24+01:00",
+          "tree_id": "bb867d24548961f0133a1ffce9e5e2d0acbd832f",
+          "url": "https://github.com/unicode-org/icu4x/commit/68e051ab78f262caa9223614874f777b055918d0"
+        },
+        "date": 1645032885673,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 55111140,
+            "range": "± 794122",
             "unit": "ns/iter"
           }
         ]
