@@ -119,21 +119,19 @@ pub fn field_setter(f: &Field) -> TokenStream2 {
 }
 
 /// Extracts a single `zerovec::name` attribute
-pub fn extract_zerovec_attribute_named<'a>(
+pub fn extract_zerovec_attribute_named(
     attrs: &mut Vec<Attribute>,
     name: &str,
 ) -> Option<Attribute> {
     let mut ret = None;
     attrs.retain(|a| {
         // skip the "zerovec" part
-        let second_segment = a.path.segments.iter().skip(1).next();
+        let second_segment = a.path.segments.iter().nth(1);
 
         if let Some(second) = second_segment {
-            if second.ident == name {
-                if ret.is_none() {
-                    ret = Some(a.clone());
-                    return false;
-                }
+            if second.ident == name && ret.is_none() {
+                ret = Some(a.clone());
+                return false;
             }
         }
 
@@ -150,7 +148,7 @@ pub fn extract_zerovec_attributes(attrs: &mut Vec<Attribute>) -> Vec<Attribute> 
             ret.push(a.clone());
             return false;
         }
-        return true;
+        true
     });
     ret
 }

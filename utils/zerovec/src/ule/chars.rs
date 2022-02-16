@@ -6,8 +6,8 @@
 //! ULE implementation for the `char` type.
 
 use super::*;
-use core::convert::TryFrom;
 use core::cmp::Ordering;
+use core::convert::TryFrom;
 
 /// A u8 array of little-endian data corresponding to a Unicode code point.
 ///
