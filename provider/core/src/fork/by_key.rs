@@ -7,6 +7,7 @@
 use crate::iter::IterableDynProvider;
 use crate::prelude::*;
 use alloc::vec::Vec;
+use alloc::boxed::Box;
 
 /// A provider that returns data from one of two child providers based on the key.
 ///
