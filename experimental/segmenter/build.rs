@@ -222,10 +222,10 @@ fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
 }
 
 fn is_cjk_fullwidth(eaw: &CodePointTrie<icu::properties::EastAsianWidth>, codepoint: u32) -> bool {
-    match eaw.get(codepoint) {
-        EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide => true,
-        _ => false,
-    }
+    matches!(
+        eaw.get(codepoint),
+        EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
+    )
 }
 
 fn output_propery_plane_with_same_value(out: &mut File, name: &str, value: u8) {
