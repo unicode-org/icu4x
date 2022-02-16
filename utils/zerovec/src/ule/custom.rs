@@ -24,7 +24,7 @@
 //! ```
 //!
 //! then the ULE type will be implemented as follows. Ideally, you should have
-//! and `EncodeAsVarULE` and `ZeroFrom` implementations on `Foo` pertaining to `FooULE`,
+//! `EncodeAsVarULE` and `ZeroFrom` implementations on `Foo` pertaining to `FooULE`,
 //! as well as a `Serialize` impl on `FooULE` and a `Deserialize` impl on `Box<FooULE>`
 //! to enable human-readable serialization and deserialization.
 //!
