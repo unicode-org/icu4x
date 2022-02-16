@@ -17,9 +17,10 @@ mod time_zones;
 
 use crate::error::Error;
 use crate::CldrPaths;
+use icu_provider::fork::by_key::MultiForkByKeyProvider;
+use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
-use icu_provider::union_provider::UnionDataProvider;
 use std::convert::TryFrom;
 
 pub struct CldrJsonDataProvider;
@@ -27,32 +28,36 @@ pub struct CldrJsonDataProvider;
 impl CldrJsonDataProvider {
     pub fn try_new(
         cldr_paths: &dyn CldrPaths,
-    ) -> Result<UnionDataProvider<SerializeMarker>, Error> {
-        Ok(UnionDataProvider(vec![
-            Box::new(locale_canonicalizer::aliases::AliasesProvider::try_from(
-                cldr_paths,
-            )?),
-            Box::new(datetime::symbols::DateSymbolsProvider::try_from(
-                cldr_paths,
-            )?),
-            Box::new(datetime::skeletons::DateSkeletonPatternsProvider::try_from(
-                cldr_paths,
-            )?),
-            Box::new(datetime::patterns::DatePatternsProvider::try_from(
-                cldr_paths,
-            )?),
-            Box::new(calendar::japanese::JapaneseErasProvider::try_from(
-                cldr_paths,
-            )?),
-            Box::new(
-                locale_canonicalizer::likely_subtags::LikelySubtagsProvider::try_from(cldr_paths)?,
-            ),
-            Box::new(decimal::NumbersProvider::try_from(cldr_paths)?),
-            Box::new(plurals::PluralsProvider::try_from(cldr_paths)?),
-            Box::new(time_zones::TimeZonesProvider::try_from(cldr_paths)?),
-            #[cfg(feature = "icu_list")]
-            Box::new(list::ListProvider::try_from(cldr_paths)?),
-        ]))
+    ) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<SerializeMarker>>>, Error> {
+        Ok(MultiForkByKeyProvider {
+            providers: vec![
+                Box::new(locale_canonicalizer::aliases::AliasesProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(datetime::symbols::DateSymbolsProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(datetime::skeletons::DateSkeletonPatternsProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(datetime::patterns::DatePatternsProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(calendar::japanese::JapaneseErasProvider::try_from(
+                    cldr_paths,
+                )?),
+                Box::new(
+                    locale_canonicalizer::likely_subtags::LikelySubtagsProvider::try_from(
+                        cldr_paths,
+                    )?,
+                ),
+                Box::new(decimal::NumbersProvider::try_from(cldr_paths)?),
+                Box::new(plurals::PluralsProvider::try_from(cldr_paths)?),
+                Box::new(time_zones::TimeZonesProvider::try_from(cldr_paths)?),
+                #[cfg(feature = "icu_list")]
+                Box::new(list::ListProvider::try_from(cldr_paths)?),
+            ],
+        })
     }
 
     pub const ALL_KEYS: [ResourceKey; if cfg!(feature = "icu_list") { 18 } else { 15 }] = [
