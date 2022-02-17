@@ -14,7 +14,7 @@ fn test_supported_langids() {
     let mut supported_langids: Vec<LanguageIdentifier> = provider
         .supported_options()
         .unwrap()
-        .map(|resc_options| resc_options.langid.unwrap())
+        .map(|options| options.langid.unwrap())
         .collect();
     supported_langids.sort();
 

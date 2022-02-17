@@ -121,7 +121,7 @@ where
 /// }
 ///
 /// impl IterableDynProvider<HelloWorldV1Marker> for MyProvider {
-///     fn supported_options_for_key(&self, _key: &ResourceKey)
+///     fn supported_options_for_key(&self, _: ResourceKey)
 ///         -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
 ///         Ok(Box::new(core::iter::once(Default::default())))
 ///     }
@@ -219,14 +219,14 @@ macro_rules! impl_dyn_provider {
         }
 
         impl $crate::iter::IterableDynProvider<$dyn_m> for $provider {
-            fn supported_options_for_key(&self, key: &$crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
-                match *key {
+            fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+                match key {
                     $(
                         $pat $(if $guard)? => {
                             $crate::iter::IterableDynProvider::<$struct_m>::supported_options_for_key(self, key)
                         }
                     )+,
-                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(*key))
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(key))
                 }
             }
         }
@@ -262,14 +262,14 @@ macro_rules! impl_dyn_provider {
 
         impl $crate::iter::IterableDynProvider<$dyn_m> for $provider
         {
-            fn supported_options_for_key(&self, key: &$crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
-                match *key {
+            fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Box<dyn Iterator<Item = $crate::ResourceOptions> + '_>, $crate::DataError> {
+                match key {
                     $(
                         <$struct_m as $crate::ResourceMarker>::KEY => {
                             $crate::iter::IterableResourceProvider::<$struct_m>::supported_options(self)
                         }
                     )+,
-                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(*key))
+                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(key))
                 }
             }
         }

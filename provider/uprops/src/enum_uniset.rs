@@ -62,7 +62,7 @@ impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataPr
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        let key_str = get_last_component_no_version(&key);
+        let key_str = get_last_component_no_version(key);
 
         // ResourceKey subcategory strings for enumerated properties are
         // of the form "name=value", using the short name for both.
@@ -105,7 +105,7 @@ icu_provider::impl_dyn_provider!(EnumeratedPropertyUnicodeSetDataProvider, {
 impl IterableDynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        _: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
