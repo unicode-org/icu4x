@@ -5,6 +5,7 @@
 use crate::{Calendar, DateDuration, DateDurationUnit};
 use core::marker::PhantomData;
 
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct ArithmeticDate<C: CalendarArithmetic> {
     year: i32,
     month: u8,
@@ -14,7 +15,7 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
 
 pub trait CalendarArithmetic: Calendar {
     fn month_lengths(year: i32) -> [u8; 12];
-    fn months_for_every_year() -> Option<u8>;
+    fn months_for_every_year() -> u8;
     fn is_leap_year(year: i32) -> bool;
 }
 
@@ -56,14 +57,29 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
+    pub fn until(
+        &self,
+        date2: ArithmeticDate<C>,
+        _largest_unit: DateDurationUnit,
+        _smaller_unti: DateDurationUnit,
+    ) -> DateDuration<C> {
+        DateDuration::new(
+            self.year - date2.year,
+            self.month as i32 - date2.month as i32,
+            0,
+            self.day as i32 - date2.day as i32,
+        )
+    }
+
+    #[inline]
     pub fn days_in_year(&self) {
-        let months = self.month_lengths(self.year);
+        let months = Self::month_lengths(self.year);
         months.iter().sum()
     }
 
     #[inline]
     pub fn days_in_month(&self) -> u8 {
-        let months = self.month_lengths(self.year);
+        let months = Self::month_lengths(self.year);
         months[self.month]
     }
 }

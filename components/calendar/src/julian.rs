@@ -15,7 +15,7 @@ use core::convert::TryInto;
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
 const JULIAN_EPOCH: i32 = -1;
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 // The Julian calendar
 pub struct Julian;
 
@@ -33,7 +33,7 @@ impl CalendarArithmetic for Julian {
         months
     }
 
-    fn months_for_every_year() -> Option<u8> {
+    fn months_for_every_year() -> u8 {
         12
     }
 
@@ -82,12 +82,7 @@ impl Calendar for Julian {
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        DateDuration::new(
-            date1.0.year.0 - date2.0.year.0,
-            date1.0.year.0 - date2.0.year.0,
-            0,
-            u8::from(date1.0.day) as i32 - u8::from(date2.0.day) as i32,
-        )
+        date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
     /// The calendar-specific year represented by `date`
