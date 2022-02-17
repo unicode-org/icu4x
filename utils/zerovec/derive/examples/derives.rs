@@ -24,11 +24,11 @@ struct Foo {
 
 impl AsULE for Foo {
     type ULE = FooULE;
-    fn as_unaligned(self) -> FooULE {
+    fn to_unaligned(self) -> FooULE {
         FooULE {
             a: self.a,
-            b: self.b.as_unaligned(),
-            c: self.c.as_unaligned(),
+            b: self.b.to_unaligned(),
+            c: self.c.to_unaligned(),
         }
     }
 
@@ -65,7 +65,7 @@ unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[
             &[self.andor_polarity_operand],
-            ule::ULE::as_byte_slice(&[self.modulo.as_unaligned()]),
+            ule::ULE::as_byte_slice(&[self.modulo.to_unaligned()]),
             self.range_list.as_bytes(),
         ])
     }

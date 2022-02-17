@@ -152,7 +152,7 @@ The integer types use [`RawBytesULE<N>`][`RawBytesULE`], a type that is internal
 ```rust
 pub trait AsULE: Copy {
     type ULE: ULE;
-    fn as_unaligned(self) -> Self::ULE;
+    fn to_unaligned(self) -> Self::ULE;
     fn from_unaligned(unaligned: Self::ULE) -> Self;
 }
 ```

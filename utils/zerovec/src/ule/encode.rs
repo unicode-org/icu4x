@@ -151,7 +151,7 @@ where
         let S = core::mem::size_of::<T::ULE>();
         debug_assert_eq!(self.len() * S, dst.len());
         for (item, ref mut chunk) in self.iter().zip(dst.chunks_mut(S)) {
-            let ule = item.as_unaligned();
+            let ule = item.to_unaligned();
             chunk.copy_from_slice(ULE::as_byte_slice(core::slice::from_ref(&ule)));
         }
     }

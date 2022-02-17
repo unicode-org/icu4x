@@ -369,7 +369,7 @@ where
     A: EncodeAsVarULE<T>,
 {
     let num_elements = u32::try_from(elements.len()).ok().unwrap();
-    output[0..4].copy_from_slice(&num_elements.as_unaligned().0);
+    output[0..4].copy_from_slice(&num_elements.to_unaligned().0);
 
     // idx_offset = offset from the start of the buffer for the next index
     let mut idx_offset: usize = 4;
@@ -385,7 +385,7 @@ where
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
         let offset = (dat_offset - first_dat_offset) as u32;
-        idx_slice.copy_from_slice(&offset.as_unaligned().0);
+        idx_slice.copy_from_slice(&offset.to_unaligned().0);
 
         let dat_limit = dat_offset + element_len;
         let dat_slice = &mut output[dat_offset..dat_limit];

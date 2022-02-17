@@ -156,7 +156,7 @@ pub trait AsULE: Copy {
     /// This function may involve byte order swapping (native-endian to little-endian).
     ///
     /// For best performance, mark your implementation of this function `#[inline]`.
-    fn as_unaligned(self) -> Self::ULE;
+    fn to_unaligned(self) -> Self::ULE;
 
     /// Converts from `Self::ULE` to `Self`.
     ///
@@ -193,7 +193,7 @@ where
     /// Converts from `&[Self]` to `&[Self::ULE]` if possible.
     ///
     /// In general, this function returns `Some` on little-endian and `None` on big-endian.
-    fn slice_as_unaligned(slice: &[Self]) -> Option<&[Self::ULE]>;
+    fn slice_to_unaligned(slice: &[Self]) -> Option<&[Self::ULE]>;
 }
 
 #[cfg(target_endian = "little")]
@@ -202,7 +202,7 @@ where
     T: EqULE,
 {
     #[inline]
-    fn slice_as_unaligned(slice: &[Self]) -> Option<&[Self::ULE]> {
+    fn slice_to_unaligned(slice: &[Self]) -> Option<&[Self::ULE]> {
         // This is safe because on little-endian platforms, the byte sequence of &[T]
         // is equivalent to the byte sequence of &[T::ULE] by the contract of EqULE,
         // and &[T::ULE] has equal or looser alignment than &[T].
@@ -218,7 +218,7 @@ where
     T: EqULE,
 {
     #[inline]
-    fn slice_as_unaligned(_: &[Self]) -> Option<&[Self::ULE]> {
+    fn slice_to_unaligned(_: &[Self]) -> Option<&[Self::ULE]> {
         None
     }
 }

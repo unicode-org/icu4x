@@ -210,7 +210,7 @@ fn make_ule_enum_impl(
         impl zerovec::ule::AsULE for #name {
             type ULE = #ule_name;
 
-            fn as_unaligned(self) -> Self::ULE {
+            fn to_unaligned(self) -> Self::ULE {
                 // safety: the enum is repr(u8) and can be cast to a u8
                 unsafe {
                     ::core::mem::transmute(self)
@@ -292,12 +292,12 @@ fn make_ule_struct_impl(
         let i = syn::Index::from(i);
         if let Some(ref ident) = field.ident {
             as_ule_conversions
-                .push(quote!(#ident: <#ty as zerovec::ule::AsULE>::as_unaligned(self.#ident)));
+                .push(quote!(#ident: <#ty as zerovec::ule::AsULE>::to_unaligned(self.#ident)));
             from_ule_conversions.push(
                 quote!(#ident: <#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#ident)),
             );
         } else {
-            as_ule_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::as_unaligned(self.#i)));
+            as_ule_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::to_unaligned(self.#i)));
             from_ule_conversions
                 .push(quote!(<#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#i)));
         };
@@ -308,7 +308,7 @@ fn make_ule_struct_impl(
     let asule_impl = quote!(
         impl zerovec::ule::AsULE for #name {
             type ULE = #ule_name;
-            fn as_unaligned(self) -> Self::ULE {
+            fn to_unaligned(self) -> Self::ULE {
                 #ule_name #as_ule_conversions
             }
             fn from_unaligned(unaligned: Self::ULE) -> Self {
