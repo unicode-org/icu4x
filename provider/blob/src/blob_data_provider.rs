@@ -26,23 +26,16 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_blob::BlobDataProvider;
-/// use std::fs::File;
-/// use std::io::Read;
-/// use std::rc::Rc;
+/// use std::fs;
 ///
 /// // Read an ICU4X data blob dynamically:
-/// let mut blob: Vec<u8> = Vec::new();
-/// let filename = concat!(
+/// let blob = fs::read(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
 ///     "/tests/data/hello_world.postcard",
-/// );
-/// File::open(filename)
-///     .expect("File should exist")
-///     .read_to_end(&mut blob)
-///     .expect("Reading pre-computed postcard buffer");
+/// )).expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_rc_blob(Rc::from(blob))
+/// let provider = BlobDataProvider::new_from_rc_blob(blob.into())
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:

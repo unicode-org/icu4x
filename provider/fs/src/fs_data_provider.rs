@@ -13,11 +13,7 @@ use writeable::Writeable;
 
 use std::fmt::Debug;
 use std::fs;
-use std::fs::File;
-use std::io::BufReader;
-use std::io::Read;
 use std::path::PathBuf;
-use std::rc::Rc;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
 ///
@@ -59,12 +55,14 @@ impl FsDataProvider {
             manifest,
         })
     }
+}
 
-    fn get_reader(
+impl BufferProvider for FsDataProvider {
+    fn load_buffer(
         &self,
         key: ResourceKey,
         req: &DataRequest,
-    ) -> Result<(impl Read, PathBuf), DataError> {
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut path_buf = self.res_root.clone();
         path_buf.push(&*key.write_to_string());
         if req.options.is_empty() {
@@ -81,38 +79,13 @@ impl FsDataProvider {
         if !path_buf.exists() {
             return Err(DataErrorKind::MissingResourceOptions.with_req(key, req));
         }
-        let file = File::open(&path_buf).map_err(|e| DataError::from(e).with_path(&path_buf))?;
-        Ok((BufReader::new(file), path_buf))
-    }
-
-    fn get_rc_buffer(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<(Rc<[u8]>, PathBuf), DataError> {
-        let (mut reader, path_buf) = self.get_reader(key, req)?;
-        let mut buffer = Vec::<u8>::new();
-        reader
-            .read_to_end(&mut buffer)
-            .map_err(|e| DataError::from(e).with_path(&path_buf))?;
-        let rc_buffer: Rc<[u8]> = buffer.into();
-        Ok((rc_buffer, path_buf))
-    }
-}
-
-impl BufferProvider for FsDataProvider {
-    fn load_buffer(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let (rc_buffer, _) = self.get_rc_buffer(key, req)?;
+        let buffer = fs::read(&path_buf).map_err(|e| DataError::from(e).with_path(&path_buf))?;
         let mut metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_rc_buffer(rc_buffer)),
+            payload: Some(DataPayload::from_rc_buffer(buffer.into())),
         })
     }
 }

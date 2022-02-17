@@ -40,9 +40,7 @@ impl TestText {
 }
 
 fn load_lstm_data(filename: &str) -> DataPayload<structs::LstmDataMarker> {
-    let mut file = File::open(filename).expect("File should be present");
-    let mut buf = Vec::new();
-    file.read_to_end(&mut buf).expect("File can read to end");
+    let buf = fs::read(filename).expect("File can read to end");
     DataPayload::<structs::LstmDataMarker>::try_from_rc_buffer_badly(Rc::from(buf), |bytes| {
         serde_json::from_slice(bytes)
     })
