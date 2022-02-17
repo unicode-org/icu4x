@@ -58,7 +58,7 @@ unsafe impl ULE for ResourceKeyHash {
 impl AsULE for ResourceKeyHash {
     type ULE = Self;
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self
     }
     #[inline]

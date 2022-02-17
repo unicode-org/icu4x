@@ -84,8 +84,8 @@
 //! unsafe impl EncodeAsVarULE<FooULE> for Foo<'_> {
 //!    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
 //!        // take each field, convert to ULE byte slices, and pass them through
-//!        cb(&[<char as AsULE>::ULE::as_byte_slice(&[self.field1.as_unaligned()]),
-//!             <u32 as AsULE>::ULE::as_byte_slice(&[self.field2.as_unaligned()]),
+//!        cb(&[<char as AsULE>::ULE::as_byte_slice(&[self.field1.to_unaligned()]),
+//!             <u32 as AsULE>::ULE::as_byte_slice(&[self.field2.to_unaligned()]),
 //!             // the ZeroVec is already in the correct slice format
 //!             self.field3.as_bytes()])
 //!    }

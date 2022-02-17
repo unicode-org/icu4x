@@ -318,7 +318,7 @@ fn make_encode_impl(
             let accessor = utils::field_accessor(field, i);
             quote!(
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
-                let unaligned = zerovec::ule::AsULE::as_unaligned(self.#accessor);
+                let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
                 let src = <#ty as zerovec::ule::ULE>::as_byte_slice(unaligned_slice);
                 out.copy_from_slice(src);

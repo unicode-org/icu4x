@@ -47,7 +47,7 @@ impl AsULE for fields::Field {
     type ULE = FieldULE;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         FieldULE([self.symbol.idx(), self.length.idx()])
     }
 
@@ -121,7 +121,7 @@ mod test {
         ];
 
         for (ref_field, ref_bytes) in samples {
-            let ule = ref_field.as_unaligned();
+            let ule = ref_field.to_unaligned();
             assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
             let field = Field::from_unaligned(ule);
             assert_eq!(field, *ref_field);
@@ -150,7 +150,7 @@ mod test {
         for (ref_field, ref_bytes) in samples {
             let mut bytes: Vec<u8> = vec![];
             for item in ref_field.iter() {
-                let ule = item.as_unaligned();
+                let ule = item.to_unaligned();
                 bytes.extend(ULE::as_byte_slice(&[ule]));
             }
 

@@ -281,17 +281,17 @@ where
 {
     type OwnedType = T;
     fn zvl_insert(&mut self, index: usize, value: &T) {
-        self.to_mut().insert(index, value.as_unaligned())
+        self.to_mut().insert(index, value.to_unaligned())
     }
     fn zvl_remove(&mut self, index: usize) -> T {
         T::from_unaligned(self.to_mut().remove(index))
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> T {
         let vec = self.to_mut();
-        T::from_unaligned(mem::replace(&mut vec[index], value.as_unaligned()))
+        T::from_unaligned(mem::replace(&mut vec[index], value.to_unaligned()))
     }
     fn zvl_push(&mut self, value: &T) {
-        self.to_mut().push(value.as_unaligned())
+        self.to_mut().push(value.to_unaligned())
     }
     fn zvl_with_capacity(cap: usize) -> Self {
         ZeroVec::Owned(Vec::with_capacity(cap))

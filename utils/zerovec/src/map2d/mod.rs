@@ -329,7 +329,7 @@ where
     ) -> Option<(&'b K0, &'b K1, &'b V)> {
         if self.is_empty() {
             self.keys0.zvl_push(key0);
-            self.joiner.to_mut().push(1u32.as_unaligned());
+            self.joiner.to_mut().push(1u32.to_unaligned());
             self.keys1.zvl_push(key1);
             self.values.zvl_push(value);
             return None;
@@ -365,10 +365,10 @@ where
         // All OK to append
         if key0_cmp == Ordering::Greater {
             self.keys0.zvl_push(key0);
-            self.joiner.to_mut().push(joiner_value.as_unaligned());
+            self.joiner.to_mut().push(joiner_value.to_unaligned());
         } else {
             // This unwrap is protected because we are not empty
-            *self.joiner.to_mut().last_mut().unwrap() = joiner_value.as_unaligned();
+            *self.joiner.to_mut().last_mut().unwrap() = joiner_value.to_unaligned();
         }
         self.keys1.zvl_push(key1);
         self.values.zvl_push(value);
@@ -483,7 +483,7 @@ where
                 self.keys0.zvl_insert(key0_index, key0);
                 self.joiner
                     .to_mut()
-                    .insert(key0_index, joiner_value.as_unaligned());
+                    .insert(key0_index, joiner_value.to_unaligned());
                 (key0_index, (joiner_value as usize)..(joiner_value as usize))
             }
         }
@@ -507,7 +507,7 @@ where
                     .as_unsigned_int()
                     .checked_add(1)
                     .expect("Attempted to add more than 2^32 elements to a ZeroMap2d")
-                    .as_unaligned()
+                    .to_unaligned()
             });
     }
 
@@ -522,7 +522,7 @@ where
                     .as_unsigned_int()
                     .checked_sub(1)
                     .expect("Shrink should always succeed")
-                    .as_unaligned()
+                    .to_unaligned()
             });
     }
 

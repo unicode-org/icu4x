@@ -35,7 +35,7 @@ impl<const N: usize> AsULE for TinyAsciiStr<N> {
     type ULE = Self;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self
     }
 

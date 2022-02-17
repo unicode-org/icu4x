@@ -21,7 +21,7 @@ use core::convert::TryFrom;
 /// use zerovec::ule::{ULE, AsULE, CharULE};
 ///
 /// let c1 = '𑄃';
-/// let ule = c1.as_unaligned();
+/// let ule = c1.to_unaligned();
 /// assert_eq!(CharULE::as_byte_slice(&[ule]), &[0x03, 0x11, 0x01, 0x00]);
 /// let c2 = char::from_unaligned(ule);
 /// assert_eq!(c1, c2);
@@ -68,7 +68,7 @@ impl AsULE for char {
     type ULE = CharULE;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         let u = u32::from(self);
         CharULE(u.to_le_bytes())
     }
@@ -94,7 +94,7 @@ mod test {
     fn test_parse() {
         // 1-byte, 2-byte, 3-byte, and 4-byte character in UTF-8 (not as relevant in UTF-32)
         let chars = ['w', 'ω', '文', '𑄃'];
-        let char_ules: Vec<CharULE> = chars.iter().copied().map(char::as_unaligned).collect();
+        let char_ules: Vec<CharULE> = chars.iter().copied().map(char::to_unaligned).collect();
         let char_bytes: &[u8] = CharULE::as_byte_slice(&char_ules);
 
         // Check parsing
@@ -108,7 +108,7 @@ mod test {
         assert_eq!(&chars, parsed_chars.as_slice());
 
         // Check EqULE
-        let char_ule_slice = char::slice_as_unaligned(&chars);
+        let char_ule_slice = char::slice_to_unaligned(&chars);
         #[cfg(target_endian = "little")]
         assert_eq!(char_ule_slice, Some(char_ules.as_slice()));
         #[cfg(not(target_endian = "little"))]
@@ -119,7 +119,7 @@ mod test {
         let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
-            .map(<u32 as AsULE>::as_unaligned)
+            .map(<u32 as AsULE>::to_unaligned)
             .collect();
         let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         assert_eq!(char_bytes, u32_bytes);
@@ -138,7 +138,7 @@ mod test {
         let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
-            .map(<u32 as AsULE>::as_unaligned)
+            .map(<u32 as AsULE>::to_unaligned)
             .collect();
         let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
@@ -149,7 +149,7 @@ mod test {
         let u32_ules: Vec<RawBytesULE<4>> = u32s
             .iter()
             .copied()
-            .map(<u32 as AsULE>::as_unaligned)
+            .map(<u32 as AsULE>::to_unaligned)
             .collect();
         let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);

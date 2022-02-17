@@ -87,8 +87,8 @@ where
     ///
     /// // The little-endian bytes correspond to the numbers on the following line.
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let nums: &[RawBytesULE<2>] = &[211_u16.as_unaligned(), 281_u16.as_unaligned(),
-    ///                                 421_u16.as_unaligned(), 461_u16.as_unaligned()];
+    /// let nums: &[RawBytesULE<2>] = &[211_u16.to_unaligned(), 281_u16.to_unaligned(),
+    ///                                 421_u16.to_unaligned(), 461_u16.to_unaligned()];
     ///
     /// let zerovec = ZeroVec::<u16>::Borrowed(nums);
     ///
@@ -445,7 +445,7 @@ where
     /// ```
     #[inline]
     pub fn alloc_from_slice(other: &[T]) -> Self {
-        Self::Owned(other.iter().copied().map(T::as_unaligned).collect())
+        Self::Owned(other.iter().copied().map(T::to_unaligned).collect())
     }
 
     /// Creates a `Vec<T>` from a `ZeroVec<T>`.
@@ -490,7 +490,7 @@ where
     /// ```
     #[inline]
     pub fn try_from_slice(slice: &'a [T]) -> Option<Self> {
-        T::slice_as_unaligned(slice).map(|ule_slice| Self::Borrowed(ule_slice))
+        T::slice_to_unaligned(slice).map(|ule_slice| Self::Borrowed(ule_slice))
     }
 
     /// Creates a `ZeroVec<'a, T>` from a `&'a [T]`, either by borrowing the argument or by
@@ -548,7 +548,7 @@ where
         self.to_mut().iter_mut().for_each(|item| {
             let mut aligned = T::from_unaligned(*item);
             f(&mut aligned);
-            *item = aligned.as_unaligned()
+            *item = aligned.to_unaligned()
         });
     }
 
@@ -580,7 +580,7 @@ where
         self.to_mut().iter_mut().try_for_each(|item| {
             let mut aligned = T::from_unaligned(*item);
             f(&mut aligned)?;
-            *item = aligned.as_unaligned();
+            *item = aligned.to_unaligned();
             Ok(())
         })
     }
@@ -603,7 +603,7 @@ where
         match self {
             Self::Owned(vec) => ZeroVec::Owned(vec),
             Self::Borrowed(_) => {
-                let vec: Vec<T::ULE> = self.iter().map(T::as_unaligned).collect();
+                let vec: Vec<T::ULE> = self.iter().map(T::to_unaligned).collect();
                 ZeroVec::Owned(vec)
             }
         }
@@ -622,14 +622,14 @@ where
     /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
     ///
-    /// zerovec.to_mut().push(12_u16.as_unaligned());
+    /// zerovec.to_mut().push(12_u16.to_unaligned());
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// ```
     pub fn to_mut(&mut self) -> &mut Vec<T::ULE> {
         match self {
             ZeroVec::Owned(ref mut vec) => vec,
             ZeroVec::Borrowed(_) => {
-                let vec: Vec<T::ULE> = self.iter().map(T::as_unaligned).collect();
+                let vec: Vec<T::ULE> = self.iter().map(T::to_unaligned).collect();
                 let new_self = ZeroVec::Owned(vec);
                 *self = new_self;
                 // recursion is limited since we are guaranteed to hit the Owned branch
@@ -650,7 +650,7 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
     where
         I: IntoIterator<Item = T>,
     {
-        ZeroVec::Owned(iter.into_iter().map(|t| t.as_unaligned()).collect())
+        ZeroVec::Owned(iter.into_iter().map(|t| t.to_unaligned()).collect())
     }
 }
 

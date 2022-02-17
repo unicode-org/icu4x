@@ -77,7 +77,7 @@ macro_rules! impl_byte_slice_type {
         impl AsULE for $type {
             type ULE = RawBytesULE<$size>;
             #[inline]
-            fn as_unaligned(self) -> Self::ULE {
+            fn to_unaligned(self) -> Self::ULE {
                 RawBytesULE(self.to_le_bytes())
             }
             #[inline]
@@ -123,7 +123,7 @@ unsafe impl ULE for u8 {
 impl AsULE for u8 {
     type ULE = Self;
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self
     }
     #[inline]
@@ -152,7 +152,7 @@ unsafe impl ULE for i8 {
 impl AsULE for i8 {
     type ULE = Self;
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self
     }
     #[inline]
