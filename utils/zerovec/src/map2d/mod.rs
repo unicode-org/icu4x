@@ -10,6 +10,7 @@ pub(crate) mod map;
 #[cfg(feature = "serde")]
 mod serde;
 
+#[doc(no_inline)]
 pub use crate::ZeroMap2d;
 pub use borrowed::ZeroMap2dBorrowed;
 pub use map::KeyError;
