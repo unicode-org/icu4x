@@ -7,6 +7,7 @@ use crate::{VarZeroSlice, VarZeroVec, ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::mem;
 
 /// Allows types to be encoded as VarULEs. This is highly useful for implementing VarULE on
 /// custom DSTs where the type cannot be obtained as a reference to some other type.
@@ -15,7 +16,7 @@ use alloc::vec::Vec;
 /// of the VarULE type to the callback, in order. For an implementation to be safe, the slices
 /// to the callback must, when concatenated, be a valid instance of the VarULE type.
 ///
-/// See the [module level documentation](crate::ule::custom) for examples.
+/// See the [custom VarULEdocumentation](crate::ule::custom) for examples.
 ///
 /// [`Self::encode_var_ule_as_slices()`] is only used to provide default implementations for [`Self::encode_var_ule_write()`]
 /// and [`Self::encode_var_ule_len()`]. If you override the default implementations it is totally valid to
@@ -73,6 +74,26 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
                 dst = &mut dst[slice.len()..];
             }
         });
+    }
+}
+
+/// Given an [`EncodeAsVarULE`] type `S`, encode it into a `Box<T>`
+///
+/// This is primarily useful for generating `Deserialize` impls for VarULE types
+pub fn encode_varule_to_box<S: EncodeAsVarULE<T>, T: VarULE + ?Sized>(x: &S) -> Box<T> {
+    let mut vec: Vec<u8> = Vec::new();
+    // zero-fill the vector to avoid uninitialized data UB
+    vec.resize(x.encode_var_ule_len(), 0);
+    x.encode_var_ule_write(&mut vec);
+    let boxed = vec.into_boxed_slice();
+    unsafe {
+        // Safety: `ptr` is a box, and `T` is a VarULE which guarantees it has the same memory layout as `[u8]`
+        // and can be recouped via from_byte_slice_unchecked()
+        let ptr: *mut T = T::from_byte_slice_unchecked(&boxed) as *const T as *mut T;
+        mem::forget(boxed);
+
+        // Safety: we can construct an owned version since we have mem::forgotten the older owner
+        Box::from_raw(ptr)
     }
 }
 

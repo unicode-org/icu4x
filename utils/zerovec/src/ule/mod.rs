@@ -3,16 +3,21 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![allow(clippy::upper_case_acronyms)]
-//! Traits over unaligned little-endian data (ULE, pronounced "yule").
 
+//! Traits over unaligned little-endian data (ULE, pronounced "yule").
+//!
+//! The main traits for this module are [`ULE`], [`AsULE`] and, [`VarULE`].
 mod chars;
+#[cfg(doc)]
 pub mod custom;
+mod encode;
 mod pair;
 mod plain;
 mod slices;
 
 pub use super::ZeroVecError;
 pub use chars::CharULE;
+pub use encode::{encode_varule_to_box, EncodeAsVarULE};
 pub use pair::PairULE;
 pub use plain::RawBytesULE;
 
@@ -221,10 +226,14 @@ where
 /// Variable-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
 /// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types;
-/// however, it is much more preferable to use [`ULE`] for that purpose.
+/// however, it is much more preferable to use [`ULE`] for that purpose. The [`custom`] module contains
+/// additional documentation on how this type can be implemented on custom types.
 ///
 /// If deserialization with `VarZeroVec` is desired is recommended to implement `Deserialize` for
 /// `Box<T>` (serde does not do this automatically for unsized `T`).
+///
+/// For convenience it is typically desired to implement [`EncodeAsVarULE`] and [`ZeroFrom`](zerofrom::ZeroFrom)
+/// on some stack type to convert to and from the ULE type efficiently when necessary.
 ///
 /// # Safety
 ///

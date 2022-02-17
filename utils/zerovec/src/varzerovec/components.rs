@@ -347,7 +347,7 @@ where
 pub fn get_serializable_bytes<T, A>(elements: &[A]) -> Option<Vec<u8>>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     let len = compute_serializable_len(elements)?;
     debug_assert!(len >= 4);
@@ -366,7 +366,7 @@ where
 pub fn write_serializable_bytes<T, A>(elements: &[A], output: &mut [u8])
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     let num_elements = u32::try_from(elements.len()).ok().unwrap();
     output[0..4].copy_from_slice(&num_elements.as_unaligned().0);
@@ -403,7 +403,7 @@ where
 pub fn compute_serializable_len<T, A>(elements: &[A]) -> Option<u32>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     // 4 for length + 4 for each offset + the body
     let idx_len: u32 = u32::try_from(elements.len())
