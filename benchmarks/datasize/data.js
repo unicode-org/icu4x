@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645120489677,
+  "lastUpdate": 1645122767980,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9563,6 +9563,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/70f0f5eed936e206d225c26bcdf2157982518c27"
         },
         "date": 1645120477809,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90a55c44673b97938b1541f4898747a285fae342",
+          "message": "Add ResourceProvider impl to AnyPayloadProvider (#1583)",
+          "timestamp": "2022-02-17T10:30:44-08:00",
+          "tree_id": "682f5d48fb56ed3b035d89b1e86f90c05351db00",
+          "url": "https://github.com/unicode-org/icu4x/commit/90a55c44673b97938b1541f4898747a285fae342"
+        },
+        "date": 1645122755199,
         "tool": "ndjson",
         "benches": [
           {
