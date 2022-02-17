@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645076131747,
+  "lastUpdate": 1645120489677,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9533,6 +9533,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/412119d18e61f533c33b3526c42cefa39fefb3c4"
         },
         "date": 1645076120334,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "70f0f5eed936e206d225c26bcdf2157982518c27",
+          "message": "Rename as_unaligned to to_unaligned (#1619)\n\n* as_unaligned -> to_unaligned\r\n\r\n* everywhere else",
+          "timestamp": "2022-02-17T09:53:01-08:00",
+          "tree_id": "aabd94d5df812967a54c6949213ed053f13209e8",
+          "url": "https://github.com/unicode-org/icu4x/commit/70f0f5eed936e206d225c26bcdf2157982518c27"
+        },
+        "date": 1645120477809,
         "tool": "ndjson",
         "benches": [
           {
