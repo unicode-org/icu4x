@@ -369,7 +369,7 @@ fn main() -> eyre::Result<()> {
 
     for key in selected_keys {
         let result =
-            icu_provider::export::export_from_iterable(&key, provider.as_ref(), &mut *exporter);
+            icu_provider::export::export_from_iterable(key, provider.as_ref(), &mut *exporter);
         if matches.is_present("TEST_KEYS")
             && matches!(result, Err(e) if e.kind == DataErrorKind::MissingResourceKey)
         {

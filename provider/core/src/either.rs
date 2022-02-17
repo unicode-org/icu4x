@@ -79,12 +79,12 @@ impl<M: DataMarker, P0: IterableDynProvider<M>, P1: IterableDynProvider<M>> Iter
     #[inline]
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
+        key: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.supported_options_for_key(resc_key),
-            B(p) => p.supported_options_for_key(resc_key),
+            A(p) => p.supported_options_for_key(key),
+            B(p) => p.supported_options_for_key(key),
         }
     }
 }

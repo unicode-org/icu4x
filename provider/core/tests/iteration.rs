@@ -14,7 +14,7 @@ fn test_supported_langids() {
     let mut supported_langids: Vec<LanguageIdentifier> = provider
         .supported_options()
         .unwrap()
-        .map(|resc_options| resc_options.langid.unwrap())
+        .map(|options| options.langid.unwrap())
         .collect();
     supported_langids.sort();
 
@@ -47,7 +47,7 @@ fn test_export() {
     let mut dest_provider = HelloWorldProvider::default();
 
     icu_provider::export::export_from_iterable(
-        &HelloWorldV1Marker::KEY,
+        HelloWorldV1Marker::KEY,
         &source_provider,
         &mut dest_provider,
     )

@@ -15,7 +15,7 @@ pub trait IterableDynProvider<M: DataMarker>: DynProvider<M> {
     /// Given a [`ResourceKey`], returns a boxed iterator over [`ResourceOptions`].
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
+        key: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError>;
 }
 
@@ -37,8 +37,8 @@ where
 {
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
+        key: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        (**self).supported_options_for_key(resc_key)
+        (**self).supported_options_for_key(key)
     }
 }

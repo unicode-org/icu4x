@@ -48,7 +48,7 @@ where
 /// let mut dest_provider = HelloWorldProvider::default();
 ///
 /// icu_provider::export::export_from_iterable(
-///     &HelloWorldV1Marker::KEY,
+///     HelloWorldV1Marker::KEY,
 ///     &source_provider,
 ///     &mut dest_provider,
 /// )
@@ -59,7 +59,7 @@ where
 ///
 /// [`HelloWorldProvider`]: crate::hello_world::HelloWorldProvider
 pub fn export_from_iterable<P, E, M>(
-    resc_key: &ResourceKey,
+    key: ResourceKey,
     provider: &P,
     exporter: &mut E,
 ) -> Result<(), DataError>
@@ -68,15 +68,15 @@ where
     P: IterableDynProvider<M> + ?Sized,
     E: DataExporter<M> + ?Sized,
 {
-    let it = provider.supported_options_for_key(resc_key)?;
+    let it = provider.supported_options_for_key(key)?;
     let try_export = || -> Result<(), DataError> {
         for options in it {
             let req = DataRequest {
                 options,
                 metadata: Default::default(),
             };
-            let payload = provider.load_payload(*resc_key, &req)?.take_payload()?;
-            exporter.put_payload(*resc_key, req, payload)?;
+            let payload = provider.load_payload(key, &req)?.take_payload()?;
+            exporter.put_payload(key, req, payload)?;
         }
         Ok(())
     };

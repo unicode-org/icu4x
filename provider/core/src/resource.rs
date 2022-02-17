@@ -137,7 +137,7 @@ impl ResourceKey {
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
-    pub fn get_path(&self) -> &str {
+    pub fn get_path(&self) -> &'static str {
         // This becomes const with `const_ptr_offset` and `const_slice_from_raw_parts`.
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
@@ -450,22 +450,22 @@ mod tests {
     use super::*;
 
     struct KeyTestCase {
-        pub resc_key: ResourceKey,
+        pub key: ResourceKey,
         pub expected: &'static str,
     }
 
     fn get_key_test_cases() -> [KeyTestCase; 3] {
         [
             KeyTestCase {
-                resc_key: resource_key!("core/cardinal@1"),
+                key: resource_key!("core/cardinal@1"),
                 expected: "core/cardinal@1",
             },
             KeyTestCase {
-                resc_key: resource_key!("core/maxlengthsubcatg@1"),
+                key: resource_key!("core/maxlengthsubcatg@1"),
                 expected: "core/maxlengthsubcatg@1",
             },
             KeyTestCase {
-                resc_key: resource_key!("core/cardinal@65535"),
+                key: resource_key!("core/cardinal@65535"),
                 expected: "core/cardinal@65535",
             },
         ]
@@ -474,13 +474,13 @@ mod tests {
     #[test]
     fn test_options_to_string() {
         for cas in get_key_test_cases().iter() {
-            assert_eq!(cas.expected, cas.resc_key.to_string());
-            writeable::assert_writeable_eq!(&cas.resc_key, cas.expected);
+            assert_eq!(cas.expected, cas.key.to_string());
+            writeable::assert_writeable_eq!(&cas.key, cas.expected);
         }
     }
 
     struct OptionsTestCase {
-        pub resc_options: ResourceOptions,
+        pub options: ResourceOptions,
         pub expected: &'static str,
     }
 
@@ -488,21 +488,21 @@ mod tests {
         use icu_locid_macros::langid;
         [
             OptionsTestCase {
-                resc_options: ResourceOptions {
+                options: ResourceOptions {
                     variant: None,
                     langid: Some(LanguageIdentifier::und()),
                 },
                 expected: "und",
             },
             OptionsTestCase {
-                resc_options: ResourceOptions {
+                options: ResourceOptions {
                     variant: Some(Cow::Borrowed("GBP")),
                     langid: Some(LanguageIdentifier::und()),
                 },
                 expected: "GBP/und",
             },
             OptionsTestCase {
-                resc_options: ResourceOptions {
+                options: ResourceOptions {
                     variant: Some(Cow::Borrowed("GBP")),
                     langid: Some(langid!("en-ZA")),
                 },
@@ -514,8 +514,8 @@ mod tests {
     #[test]
     fn test_key_to_string() {
         for cas in get_options_test_cases().iter() {
-            assert_eq!(cas.expected, cas.resc_options.to_string());
-            writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
+            assert_eq!(cas.expected, cas.options.to_string());
+            writeable::assert_writeable_eq!(&cas.options, cas.expected);
         }
     }
 }
