@@ -7,7 +7,7 @@
 use crate::prelude::*;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
-use yoke::ZeroCopyFrom;
+use zerofrom::ZeroFrom;
 
 /// A data provider that returns clones of a constant type-erased payload.
 ///
@@ -60,7 +60,7 @@ impl<M> ResourceProvider<M> for AnyPayloadProvider
 where
     M: ResourceMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-    M::Yokeable: ZeroCopyFrom<'static, M::Yokeable>,
+    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
 {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         self.as_downcasting().load_resource(req)
