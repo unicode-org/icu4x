@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645120996960,
+  "lastUpdate": 1645134516745,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20969,6 +20969,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 221272,
             "range": "± 16413",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "db2c70d961ac853ada03543f8f85900df405fdf5",
+          "message": "Fix build failure on main after PR merge (#1621)",
+          "timestamp": "2022-02-17T15:38:12-06:00",
+          "tree_id": "1cc9b04e174d3309f2a3b12b610ec0f79eee0d16",
+          "url": "https://github.com/unicode-org/icu4x/commit/db2c70d961ac853ada03543f8f85900df405fdf5"
+        },
+        "date": 1645134504491,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 72439,
+            "range": "± 972",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 702279,
+            "range": "± 662",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 152150,
+            "range": "± 166",
             "unit": "ns/iter"
           }
         ]
