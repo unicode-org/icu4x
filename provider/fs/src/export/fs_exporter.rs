@@ -95,8 +95,7 @@ impl FilesystemExporter {
         };
         fs::create_dir_all(&result.root).map_err(|e| (e, &result.root))?;
 
-        let mut manifest_path = result.root.to_path_buf();
-        manifest_path.push(MANIFEST_FILE);
+        let manifest_path = result.root.join(MANIFEST_FILE);
         let mut manifest_file =
             fs::File::create(&manifest_path).map_err(|e| (e, &manifest_path))?;
         let manifest_serializer = json::Serializer::new(json::Options {
@@ -172,8 +171,8 @@ impl DataExporter<SerializeMarker> for FilesystemExporter {
 
     fn close(&mut self) -> Result<(), DataError> {
         // If we're aliasing we have to make sure all alias collections were flushed
-        if let Some(alias_collections) = self.alias_collections.take() {
-            for (_, alias_collection) in alias_collections.lock().unwrap().iter_mut() {
+        if let Some(mut alias_collections) = self.alias_collections.take() {
+            for (_, alias_collection) in alias_collections.get_mut().unwrap().iter_mut() {
                 // Flushing is idempotent
                 alias_collection.flush()?;
             }

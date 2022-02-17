@@ -55,7 +55,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
     fn close(&mut self) -> Result<(), DataError> {
         let zm = self
             .resources
-            .lock()
+            .get_mut()
             .unwrap()
             .drain(..)
             .collect::<ZeroMap2d<_, _, _>>();
