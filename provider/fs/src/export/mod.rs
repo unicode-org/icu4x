@@ -12,7 +12,6 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid_macros::langid;
 //! use icu_provider::export::DataExporter;
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::*;

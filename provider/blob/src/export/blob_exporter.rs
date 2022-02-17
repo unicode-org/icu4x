@@ -59,15 +59,18 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
             .unwrap()
             .drain(..)
             .collect::<ZeroMap2d<_, _, _>>();
-        let blob = BlobSchema::V001(BlobSchemaV1 {
-            resources: zm.as_borrowed(),
-        });
-        log::info!("Serializing blob to output stream...");
-        let mut serializer = postcard::Serializer {
-            output: postcard::flavors::AllocVec(Vec::new()),
-        };
-        serde::Serialize::serialize(&blob, &mut serializer)?;
-        self.sink.write_all(&serializer.output.0)?;
-        Ok(())
+
+        if zm.is_empty() {
+            let blob = BlobSchema::V001(BlobSchemaV1 {
+                resources: zm.as_borrowed(),
+            });
+            log::info!("Serializing blob to output stream...");
+            let mut serializer = postcard::Serializer {
+                output: postcard::flavors::AllocVec(Vec::new()),
+            };
+            serde::Serialize::serialize(&blob, &mut serializer)?;
+            self.sink.write_all(&serializer.output.0)?;
+            Ok(())
+        }
     }
 }

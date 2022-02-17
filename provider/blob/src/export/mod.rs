@@ -23,21 +23,20 @@
 //!
 //! let mut buffer: Vec<u8> = Vec::new();
 //!
-//! // Set up the exporter and export a key
-//! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut buffer));
-//!    
-//! // Export something
 //! let payload = DataPayload::<HelloWorldV1Marker>::from_owned(
 //!     HelloWorldV1 { message: Cow::Borrowed("Hi") }
 //! );
-//! let result = exporter.put_payload(
-//!    HelloWorldV1Marker::KEY,
-//!    Default::default(),
-//!    payload.clone().into_serializable())
-//! .expect("Should successfully export");
-//! exporter.close().expect("Should successfully dump to buffer");
 //!
-//! drop(exporter);
+//! // Export something
+//! {
+//!     let mut exporter = BlobExporter::new_with_sink(Box::new(&mut buffer));
+//!     exporter.put_payload(
+//!         HelloWorldV1Marker::KEY,
+//!         Default::default(),
+//!         payload.clone().into_serializable(),
+//!     ).expect("Should successfully export");
+//!     exporter.close().expect("Should successfully dump to buffer");
+//! }
 //!
 //! // Create a blob provider reading from the buffer
 //! let provider = BlobDataProvider::new_from_rc_blob(buffer.into())
