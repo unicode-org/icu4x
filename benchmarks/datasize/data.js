@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645134009632,
+  "lastUpdate": 1645136608436,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9623,6 +9623,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/db2c70d961ac853ada03543f8f85900df405fdf5"
         },
         "date": 1645133996824,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "32f1bd94edd6930f45d830e46cd4654ecac6bb4a",
+          "message": "Passing all `ResourceKey`s by value (#1618)",
+          "timestamp": "2022-02-17T23:21:38+01:00",
+          "tree_id": "184446e367494182dbcefca4cf30005c23b4c689",
+          "url": "https://github.com/unicode-org/icu4x/commit/32f1bd94edd6930f45d830e46cd4654ecac6bb4a"
+        },
+        "date": 1645136595542,
         "tool": "ndjson",
         "benches": [
           {
