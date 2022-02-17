@@ -80,7 +80,7 @@ impl DynProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsP
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
-        if uprops_helpers::get_last_component_no_version(&key) != "scx" {
+        if uprops_helpers::get_last_component_no_version(key) != "scx" {
             return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
         }
 
@@ -104,7 +104,7 @@ impl IterableDynProvider<ScriptWithExtensionsPropertyV1Marker>
 {
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        _: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }

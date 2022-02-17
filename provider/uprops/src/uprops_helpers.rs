@@ -69,7 +69,7 @@ pub fn load_script_extensions_from_dir(
         })
 }
 
-pub fn get_last_component_no_version(key: &icu_provider::ResourceKey) -> &str {
+pub fn get_last_component_no_version(key: icu_provider::ResourceKey) -> &'static str {
     key.get_path()
         .split('/')
         .last()

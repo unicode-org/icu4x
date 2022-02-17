@@ -278,7 +278,7 @@ where
 {
     fn supported_options_for_key(
         &self,
-        key: &ResourceKey,
+        key: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.supported_options_for_key(key);
@@ -286,6 +286,6 @@ where
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_key(*key))
+        Err(DataErrorKind::MissingResourceKey.with_key(key))
     }
 }

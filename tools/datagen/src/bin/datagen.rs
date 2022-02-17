@@ -370,7 +370,7 @@ fn main() -> eyre::Result<()> {
     // TODO: Parallelize this.
     selected_keys.into_iter().try_for_each(|key| {
         let result = provider
-            .supported_options_for_key(&key)?
+            .supported_options_for_key(key)?
             // TODO: Parallelize this.
             .try_for_each(|options| {
                 let payload = provider

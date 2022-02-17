@@ -1,48 +1,39 @@
-# Hooking up a DataProvider
+# Hooking up a data provider
 
-`DataProvider` is a general mechanism for loading data required for ICU4X components to operate from a source.
+`ResourceProvider` is a general mechanism for loading data required for ICU4X components to operate from a source.
 
-At the moment, `DataProvider` is only synchronous, but the model of plugging it in is intended to extend to asynchronous `DataProviders` later.
+At the moment, `ResourceProvider` is only synchronous, but the model of plugging it in is intended to extend to asynchronous `ResourceProviders` later.
 
 ## Data
 
-The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in the [`provider/core/src/structs`](../../provider/core/src/structs) directory and should represent the data efficiently (rather than 1-1 match to CLDR data model).
+The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in a [`provider`] module in your crate and should represent the data efficiently (rather than 1-1 match to CLDR data model).
 
 ## Types of providers
 
-Any component that needs to use `DataProvider` should only depend on `icu_provider` crate and use the `DataProvider` trait. The specific implementations such as `icu_provider_cldr` and `icu_provider_fs` will be used by the downstream consumer of the component to provide the specific implementation of the provider later.
+Any component that needs to use `ResourceProvider` should only depend on `icu_provider` crate and use the `ResourceProvider` trait. The specific implementations such as `icu_provider_blob::BlobDataProvider` will be provided by the downstream consumer of the component.
 
-## Hooking up DataProvider
+## Hooking up data provider
 
-Each component should use `DataProvider` only to construct the instance of each main struct that requires data. It means that all heavy data pulling should happen in the constructor, which, in result, must be fallible. Currently, since `DataProvider` is synchronous, the constructor may be synchronous as well, but in the future we expect to have both synchronous and asynchronous data providers and constructors.
+Each component should use `ResourceProvider` only to construct the instance of each main struct that requires data. It means that all heavy data pulling should happen in the constructor, which, in result, must be fallible. Currently, since `ResourceProvider` is synchronous, the constructor may be synchronous as well, but in the future we expect to have both synchronous and asynchronous data providers and constructors.
 
 ## Example
 
 ```rust
-pub struct MyComponent {
-    langid: LanguageIdentifier,
-    zero_digit: char,
-}
+pub struct AdditiveIdentity(char);
 
-impl MyComponent {
-    pub fn try_new<'data, D: DataProvider<'data>>(
+impl AdditiveIdentity {
+    pub fn try_new<P: ResourceProvider<DecimalSymbolsV1Marker>>(
         langid: LanguageIdentifier,
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, MyError> {
-        let response = data_provider.load(&DataRequest {
-            resc_key: icu_resc_key!(decimals: symbols@1),
-            resc_options: ResourceOptions {
-                variant: None,
-                langid: langid.clone(),
-            },
-        })?;
+        let response = data_provider.load_resource(&DataRequest {
+            options: langid.into().into(),
+            metadata: Default::default(),
+        })?.take_payload()?;
 
-        let decimal_data: &structs::decimal::SymbolsV1 = response.borrow_payload()?;
+        let decimal_data: &DecimalSymbolsV1 = response.get();
 
-        Ok(Self {
-            langid,
-            zero: decimal_data.zero_digit
-        })
+        Ok(Self(decimal_data.digits[0]))
     }
 }
 ```

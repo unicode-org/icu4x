@@ -318,7 +318,7 @@ fn make_encode_impl(
             let accessor = utils::field_accessor(field, i);
             quote!(
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
-                let unaligned = zerovec::ule::AsULE::as_unaligned(self.#accessor);
+                let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
                 let src = <#ty as zerovec::ule::ULE>::as_byte_slice(unaligned_slice);
                 out.copy_from_slice(src);
@@ -327,7 +327,7 @@ fn make_encode_impl(
 
     let last_bytes = last_field_info.encode_func(quote!(self.#last_field_name));
     quote!(
-        unsafe impl #maybe_lt_bound zerovec::ule::custom::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
+        unsafe impl #maybe_lt_bound zerovec::ule::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
             // Safety: unimplemented as the other two are implemented
             fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
                 unreachable!("other two methods implemented")

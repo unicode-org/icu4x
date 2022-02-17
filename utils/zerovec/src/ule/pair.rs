@@ -40,8 +40,8 @@ impl<A: AsULE, B: AsULE> AsULE for (A, B) {
     type ULE = PairULE<A::ULE, B::ULE>;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
-        PairULE(self.0.as_unaligned(), self.1.as_unaligned())
+    fn to_unaligned(self) -> Self::ULE {
+        PairULE(self.0.to_unaligned(), self.1.to_unaligned())
     }
 
     #[inline]

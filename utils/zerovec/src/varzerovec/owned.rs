@@ -65,7 +65,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Construct a VarZeroVecOwned from a list of elements
     pub fn try_from_elements<A>(elements: &[A]) -> Result<Self, &'static str>
     where
-        A: custom::EncodeAsVarULE<T>,
+        A: EncodeAsVarULE<T>,
     {
         Ok(Self {
             marker: PhantomData,
@@ -374,12 +374,12 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Insert an element at the end of this vector
-    pub fn push<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, element: &A) {
+    pub fn push<A: EncodeAsVarULE<T> + ?Sized>(&mut self, element: &A) {
         self.insert(self.len(), element)
     }
 
     /// Insert an element at index `idx`
-    pub fn insert<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
+    pub fn insert<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index > len {
             panic!(
@@ -395,8 +395,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             self.reserve(8 + value_len);
             let len_u32 = 1u32;
             let index_u32 = 0u32;
-            self.entire_slice.extend(&len_u32.as_unaligned().0);
-            self.entire_slice.extend(&index_u32.as_unaligned().0);
+            self.entire_slice.extend(&len_u32.to_unaligned().0);
+            self.entire_slice.extend(&index_u32.to_unaligned().0);
             element.encode_var_ule_as_slices(|slices| {
                 for slice in slices {
                     self.entire_slice.extend(*slice)
@@ -432,7 +432,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Replace the element at index `idx` with another
-    pub fn replace<A: custom::EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
+    pub fn replace<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
         if index >= len {
             panic!(
