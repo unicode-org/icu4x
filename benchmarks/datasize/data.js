@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645122767980,
+  "lastUpdate": 1645134009632,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9593,6 +9593,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/90a55c44673b97938b1541f4898747a285fae342"
         },
         "date": 1645122755199,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "db2c70d961ac853ada03543f8f85900df405fdf5",
+          "message": "Fix build failure on main after PR merge (#1621)",
+          "timestamp": "2022-02-17T15:38:12-06:00",
+          "tree_id": "1cc9b04e174d3309f2a3b12b610ec0f79eee0d16",
+          "url": "https://github.com/unicode-org/icu4x/commit/db2c70d961ac853ada03543f8f85900df405fdf5"
+        },
+        "date": 1645133996824,
         "tool": "ndjson",
         "benches": [
           {
