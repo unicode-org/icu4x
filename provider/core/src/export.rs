@@ -48,7 +48,7 @@ where
 /// let mut dest_provider = HelloWorldProvider::default();
 ///
 /// icu_provider::export::export_from_iterable(
-///     &HelloWorldV1Marker::KEY,
+///     HelloWorldV1Marker::KEY,
 ///     &source_provider,
 ///     &mut dest_provider,
 /// )
