@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645048533242,
+  "lastUpdate": 1645076131747,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9503,6 +9503,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fde100e061cf166bba10e796ec1e817b19869a4f"
         },
         "date": 1645048523159,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "412119d18e61f533c33b3526c42cefa39fefb3c4",
+          "message": "Add encode_varule_to_box(), clean up organization of `custom` module (#1612)\n\n* Add encode_to_box\n\n* Move EncodeAsVar out of custom::\n\n* Improve docs a bit\n\n* make it cfg(doc)\n\n* fmt\n\n* fix\n\n* add into_boxed_slice\n\n* review\n\n* fmt",
+          "timestamp": "2022-02-16T21:33:46-08:00",
+          "tree_id": "a9d9fabfbd1b9bbd056bbcec66d9575942e0cb5e",
+          "url": "https://github.com/unicode-org/icu4x/commit/412119d18e61f533c33b3526c42cefa39fefb3c4"
+        },
+        "date": 1645076120334,
         "tool": "ndjson",
         "benches": [
           {
