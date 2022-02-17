@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645076633881,
+  "lastUpdate": 1645120978721,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27299,6 +27299,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 14695,
             "range": "± 956",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "70f0f5eed936e206d225c26bcdf2157982518c27",
+          "message": "Rename as_unaligned to to_unaligned (#1619)\n\n* as_unaligned -> to_unaligned\r\n\r\n* everywhere else",
+          "timestamp": "2022-02-17T09:53:01-08:00",
+          "tree_id": "aabd94d5df812967a54c6949213ed053f13209e8",
+          "url": "https://github.com/unicode-org/icu4x/commit/70f0f5eed936e206d225c26bcdf2157982518c27"
+        },
+        "date": 1645120967638,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 949,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5436,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 14998,
+            "range": "± 16",
             "unit": "ns/iter"
           }
         ]
