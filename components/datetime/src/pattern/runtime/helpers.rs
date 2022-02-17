@@ -26,7 +26,7 @@ pub fn maybe_replace_first(
         .enumerate()
         .find_map(|(i, item)| f(&item).map(|result| (i, result)));
     if let Some((i, result)) = result {
-        pattern.items.to_mut()[i] = result.as_unaligned();
+        pattern.items.to_mut()[i] = result.to_unaligned();
     }
 }
 
@@ -51,10 +51,10 @@ pub fn maybe_replace(
         .find_map(|(i, item)| f(&item).map(|result| (i, result)));
     if let Some((i, result)) = result {
         let owned = pattern.items.to_mut();
-        owned[i] = result.as_unaligned();
+        owned[i] = result.to_unaligned();
         owned.iter_mut().skip(i).for_each(|item| {
             if let Some(new_item) = f(&PatternItem::from_unaligned(*item)) {
-                *item = new_item.as_unaligned();
+                *item = new_item.to_unaligned();
             }
         });
     }
