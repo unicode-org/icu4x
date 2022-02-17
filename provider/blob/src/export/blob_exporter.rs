@@ -60,7 +60,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
             .drain(..)
             .collect::<ZeroMap2d<_, _, _>>();
 
-        if zm.is_empty() {
+        if !zm.is_empty() {
             let blob = BlobSchema::V001(BlobSchemaV1 {
                 resources: zm.as_borrowed(),
             });
