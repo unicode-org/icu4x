@@ -116,7 +116,7 @@ mod zerofrom_impls;
 pub use crate::error::ZeroVecError;
 pub use crate::map::ZeroMap;
 pub use crate::map2d::ZeroMap2d;
-pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
+pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
 #[doc(hidden)]

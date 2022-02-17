@@ -4,13 +4,12 @@
 
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-
+use crate::ule::*;
+use core::ops::Deref;
 use super::*;
-use core::fmt;
+use core::{fmt, ptr, slice};
 use core::marker::PhantomData;
 use core::ops::Range;
-use core::ptr;
-use core::slice;
 
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
