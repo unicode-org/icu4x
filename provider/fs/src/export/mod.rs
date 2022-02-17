@@ -34,7 +34,7 @@
 //! // Export a key
 //! let source_provider = HelloWorldProvider::new_with_placeholder_data();
 //! let result = icu_provider::export::export_from_iterable(
-//!     &HelloWorldV1Marker::KEY,
+//!     HelloWorldV1Marker::KEY,
 //!     &source_provider,
 //!     &mut exporter)
 //! .expect("Should successfully export");
