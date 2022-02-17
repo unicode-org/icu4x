@@ -70,7 +70,7 @@ impl DataExporter<SerializeMarker> for BlobExporter<'_> {
             };
             serde::Serialize::serialize(&blob, &mut serializer)?;
             self.sink.write_all(&serializer.output.0)?;
-            Ok(())
         }
+        Ok(())
     }
 }
