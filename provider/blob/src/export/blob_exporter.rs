@@ -12,19 +12,19 @@ use zerovec::map2d::ZeroMap2d;
 
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
-pub struct BlobExporter {
+pub struct BlobExporter<'w> {
     resources: Mutex<Vec<(ResourceKeyHash, String, Vec<u8>)>>,
-    sink: Box<dyn std::io::Write>,
+    sink: Box<dyn std::io::Write + 'w>,
 }
 
 // This isn't auto-sync because sink is not Sync. But that's fine, because
 // it's only ever used in a &mut method, so there will be no aliases on any
 // thread.
-unsafe impl Sync for BlobExporter {}
+unsafe impl Sync for BlobExporter<'_> {}
 
-impl BlobExporter {
+impl<'w> BlobExporter<'w> {
     /// Create a [`BlobExporter`] that writes to the given I/O stream.
-    pub fn new_with_sink(sink: Box<dyn std::io::Write>) -> Self {
+    pub fn new_with_sink(sink: Box<dyn std::io::Write + 'w>) -> Self {
         Self {
             resources: Mutex::new(Vec::new()),
             sink,
@@ -32,7 +32,7 @@ impl BlobExporter {
     }
 }
 
-impl DataExporter<SerializeMarker> for BlobExporter {
+impl DataExporter<SerializeMarker> for BlobExporter<'_> {
     fn put_payload(
         &self,
         key: ResourceKey,

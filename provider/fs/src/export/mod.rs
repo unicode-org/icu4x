@@ -43,7 +43,7 @@
 //! .expect("Should successfully export");
 //!
 //! // Create a filesystem provider reading from the demo directory
-//! let fs_provider = FsDataProvider::try_new(demo_path.clone())
+//! let provider = FsDataProvider::try_new(demo_path.clone())
 //!     .expect("Should successfully read from filesystem");
 //!
 //! // Read the key from the filesystem and ensure it is as expected
@@ -51,11 +51,11 @@
 //!     options: Default::default(),
 //!     metadata: Default::default(),
 //! };
-//! let fs_response: DataPayload<HelloWorldV1Marker> =
-//!     fs_provider.load_resource(&req).unwrap().take_payload().unwrap();
+//! let response: DataPayload<HelloWorldV1Marker> =
+//!     provider.load_resource(&req).unwrap().take_payload().unwrap();
 //!
 //! assert_eq!(
-//!     fs_response.get(),
+//!     response.get(),
 //!     payload.get(),
 //! );
 //!

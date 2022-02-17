@@ -453,7 +453,7 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
     Ok(exporter)
 }
 
-fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter> {
+fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>> {
     if matches.value_of("SYNTAX") == Some("json") {
         eyre::bail!("Cannot use --format=blob with --syntax=json");
     }

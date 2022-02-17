@@ -15,36 +15,46 @@
 //! use icu_provider::prelude::*;
 //! use icu_provider::export::DataExporter;
 //! use icu_provider::hello_world::*;
-//! use icu_provider_blob::StaticDataProvider;
+//! use icu_provider_blob::BlobDataProvider;
 //! use icu_provider_blob::export::BlobExporter;
-//! use icu_locid_macros::langid;
+//! use std::borrow::Cow;
 //! use std::io::Read;
+//! use std::rc::Rc;
 //!
 //! let mut buffer: Vec<u8> = Vec::new();
 //!
 //! // Set up the exporter and export a key
-//! {
-//!     let mut exporter = BlobExporter::new_with_sink(Box::new(&mut buffer));
-//!     let source_provider = HelloWorldProvider::new_with_placeholder_data();
-//!     let result = icu_provider::export::export_from_iterable(
-//!         &HelloWorldV1Marker::KEY,
-//!         &source_provider,
-//!         &mut exporter)
-//!     .expect("Should successfully export");
-//!     exporter.close().expect("Should successfully dump to buffer");
-//! }
+//! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut buffer));
+//!    
+//! // Export something
+//! let payload = DataPayload::<HelloWorldV1Marker>::from_owned(
+//!     HelloWorldV1 { message: Cow::Borrowed("Hi") }
+//! );
+//! let result = exporter.put_payload(
+//!    HelloWorldV1Marker::KEY,
+//!    Default::default(),
+//!    payload.clone().into_serializable())
+//! .expect("Should successfully export");
+//! exporter.close().expect("Should successfully dump to buffer");
 //!
-//! // Assert that the exported data equals the pre-computed hello_world.postcard
-//! let mut expected_buffer: Vec<u8> = Vec::new();
-//! std::fs::File::open(concat!(
-//!     env!("CARGO_MANIFEST_DIR"),
-//!     "/tests/data/hello_world.postcard"
-//! ))
-//! .expect("File should exist")
-//! .read_to_end(&mut expected_buffer)
-//! .expect("Reading pre-computed postcard buffer");
+//! drop(exporter);
 //!
-//! assert_eq!(buffer, expected_buffer);
+//! // Create a blob provider reading from the buffer
+//! let provider = BlobDataProvider::new_from_rc_blob(buffer.into())
+//!     .expect("Should successfully read from buffer");
+//!
+//! // Read the key from the filesystem and ensure it is as expected
+//! let req = DataRequest {
+//!     options: Default::default(),
+//!     metadata: Default::default(),
+//! };
+//! let response: DataPayload<HelloWorldV1Marker> =
+//!     provider.load_resource(&req).unwrap().take_payload().unwrap();
+//!
+//! assert_eq!(
+//!     response.get(),
+//!     payload.get(),
+//! );
 //! ```
 
 mod blob_exporter;
