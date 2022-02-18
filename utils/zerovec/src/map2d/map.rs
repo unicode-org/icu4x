@@ -11,9 +11,9 @@ use core::fmt;
 use core::iter::FromIterator;
 use core::ops::Range;
 
+use super::ZeroMap2dBorrowed;
 use crate::map::ZeroMapKV;
 use crate::map::{MutableZeroVecLike, ZeroVecLike};
-use super::ZeroMap2dBorrowed;
 
 /// A zero-copy, two-dimensional map datastructure .
 ///

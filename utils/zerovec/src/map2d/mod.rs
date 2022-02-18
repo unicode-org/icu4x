@@ -4,7 +4,6 @@
 
 //! See [`ZeroMap2d`](crate::ZeroMap2d) for details.
 
-
 mod borrowed;
 pub(crate) mod map;
 #[cfg(feature = "serde")]
