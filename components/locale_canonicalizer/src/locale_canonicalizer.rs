@@ -377,19 +377,19 @@ impl LocaleCanonicalizer {
                             {
                                 region
                             } else {
-                                #[allow(clippy::indexing_slicing)]
+                                #[allow(clippy::unwrap_used)]
                                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                                &rule[0]
+                                rule.get(0).unwrap()
                             }
                         } else {
-                            #[allow(clippy::indexing_slicing)]
+                            #[allow(clippy::unwrap_used)]
                             // TODO(#1668) Clippy exceptions need docs or fixing.
-                            &rule[0]
+                            rule.get(0).unwrap()
                         }
                     } else {
-                        #[allow(clippy::indexing_slicing)]
+                        #[allow(clippy::unwrap_used)]
                         // TODO(#1668) Clippy exceptions need docs or fixing.
-                        &rule[0]
+                        rule.get(0).unwrap()
                     };
                     if let Ok(replacement) = replacement.parse::<subtags::Region>() {
                         locale.id.region = Some(replacement);

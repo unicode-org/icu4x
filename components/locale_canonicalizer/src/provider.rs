@@ -11,12 +11,13 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use tinystr::TinyAsciiStr;
+use zerovec::{ZeroMap, ZeroSlice};
 
 #[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serialize", derive(serde::Deserialize))]
-
+#[yoke(prove_covariance_manually)]
 /// This alias data is used for locale canonicalization. Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
 /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
@@ -29,7 +30,7 @@ use tinystr::TinyAsciiStr;
 /// The algorithm in tr35 is not guaranteed to terminate on data other than what
 /// is currently in CLDR. For this reason, it is not a good idea to attempt to add
 /// or modify aliases for use in this structure.
-pub struct AliasesV1 {
+pub struct AliasesV1<'data> {
     /// Language data not covered by other rules, normally this will be empty.
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[zerofrom(clone)]
@@ -48,23 +49,23 @@ pub struct AliasesV1 {
     #[zerofrom(clone)]
     pub language_len3: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
     /// Scripts.
-    #[zerofrom(clone)]
-    pub script: LiteMap<TinyAsciiStr<4>, TinyAsciiStr<4>>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub script: ZeroMap<'data, TinyAsciiStr<4>, TinyAsciiStr<4>>,
     /// Alphabetical region codes.
-    #[zerofrom(clone)]
-    pub region_alpha: LiteMap<TinyAsciiStr<2>, TinyAsciiStr<3>>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub region_alpha: ZeroMap<'data, TinyAsciiStr<2>, TinyAsciiStr<3>>,
     /// Numeric region codes.
-    #[zerofrom(clone)]
-    pub region_num: LiteMap<TinyAsciiStr<3>, TinyAsciiStr<3>>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub region_num: ZeroMap<'data, TinyAsciiStr<3>, TinyAsciiStr<3>>,
     /// Old regions which map to more than one new region.
-    #[zerofrom(clone)]
-    pub complex_region: LiteMap<TinyAsciiStr<3>, Vec<TinyAsciiStr<3>>>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub complex_region: ZeroMap<'data, TinyAsciiStr<3>, ZeroSlice<TinyAsciiStr<3>>>,
     /// Variants.
-    #[zerofrom(clone)]
-    pub variant: LiteMap<TinyAsciiStr<8>, TinyAsciiStr<8>>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub variant: ZeroMap<'data, TinyAsciiStr<8>, TinyAsciiStr<8>>,
     /// Subdivisions.
-    #[zerofrom(clone)]
-    pub subdivision: LiteMap<TinyAsciiStr<7>, TinyAsciiStr<7>>,
+    #[cfg_attr(feature = "serialize", serde(borrow))]
+    pub subdivision: ZeroMap<'data, TinyAsciiStr<7>, TinyAsciiStr<7>>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]

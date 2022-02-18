@@ -14,6 +14,7 @@ use litemap::LiteMap;
 use std::convert::TryFrom;
 use std::path::PathBuf;
 use tinystr::TinyAsciiStr;
+use zerovec::{ZeroMap, ZeroSlice};
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(Debug)]
@@ -96,7 +97,7 @@ fn rules_cmp(a: &LanguageIdentifier, b: &LanguageIdentifier) -> std::cmp::Orderi
     }
 }
 
-impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
+impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
     // Step 1. Load the rules from aliases.json
     fn from(other: &cldr_serde::aliases::Resource) -> Self {
         // These all correspond to language aliases in the CLDR data. By storing known
@@ -110,22 +111,23 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
         let mut language_len2 = LiteMap::new();
         let mut language_len3 = LiteMap::new();
 
-        let mut script = LiteMap::new();
+        let mut script = ZeroMap::new();
 
         // There are many more aliases for numeric region codes than for alphabetic,
         // so by storing them separately, we can minimize comparisons for alphabetic codes.
-        let mut region_alpha = LiteMap::new();
-        let mut region_num = LiteMap::new();
+        let mut region_alpha: ZeroMap<TinyAsciiStr<2>, TinyAsciiStr<3>> = ZeroMap::new();
+        let mut region_num = ZeroMap::new();
 
         // Complex regions are cases similar to the Soviet Union, where an old region
         // is replaced by multiple new regions. Determining the new region requires using
         // likely subtags. Many implementations preprocess the complex regions into simple
         // regions as part of data import, but that would introduce a dependency between
         // CDLR providers that we're not currently set up to handle.
-        let mut complex_region = LiteMap::new();
+        let mut complex_region: ZeroMap<TinyAsciiStr<3>, ZeroSlice<TinyAsciiStr<3>>> =
+            ZeroMap::new();
 
-        let mut variant = LiteMap::new();
-        let mut subdivision = LiteMap::new();
+        let mut variant = ZeroMap::new();
+        let mut subdivision = ZeroMap::new();
 
         // Step 2. Capture all languageAlias rules where the type is an invalid languageId
         // into a set of BCP47 LegacyRules. This implementation discards these.
@@ -176,7 +178,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                 continue;
             }
 
-            script.insert(*from, to.replacement);
+            script.insert(from, &to.replacement);
         }
 
         for (from, to) in other.supplemental.metadata.alias.region_aliases.iter() {
@@ -188,24 +190,26 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
 
             if let Ok(replacement) = to.replacement.parse::<TinyAsciiStr<3>>() {
                 if from.is_ascii_alphabetic() {
-                    region_alpha.insert(from.resize(), replacement);
+                    region_alpha.insert(&from.resize(), &replacement);
                 } else {
-                    region_num.insert(*from, replacement);
+                    region_num.insert(from, &replacement);
                 }
             } else {
                 complex_region.insert(
-                    *from,
-                    to.replacement
-                        .split(' ')
-                        .into_iter()
-                        .filter_map(|r| r.parse::<TinyAsciiStr<3>>().ok())
-                        .collect(),
+                    from,
+                    &ZeroSlice::from_boxed_slice(
+                        to.replacement
+                            .split(' ')
+                            .into_iter()
+                            .filter_map(|r| r.parse::<TinyAsciiStr<3>>().ok())
+                            .collect::<Box<[_]>>(),
+                    ),
                 );
             }
         }
 
         for (from, to) in other.supplemental.metadata.alias.variant_aliases.iter() {
-            variant.insert(*from, to.replacement);
+            variant.insert(from, &to.replacement);
         }
 
         for (from, to) in other.supplemental.metadata.alias.subdivision_aliases.iter() {
@@ -225,7 +229,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1 {
                 })
                 .next()
             {
-                subdivision.insert(*from, replacement);
+                subdivision.insert(from, &replacement);
             }
         }
 
@@ -311,5 +315,8 @@ fn test_basic() {
     assert_eq!(data.get().script.iter().next().unwrap().0, "Qaai");
     assert_eq!(data.get().script.iter().next().unwrap().1, "Zinh");
 
-    assert_eq!(data.get().region_num.get(&tinystr!(3, "768")).unwrap(), "TG");
+    assert_eq!(
+        data.get().region_num.get(&tinystr!(3, "768")).unwrap(),
+        "TG"
+    );
 }
