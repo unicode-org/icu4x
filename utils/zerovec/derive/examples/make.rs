@@ -30,6 +30,17 @@ enum Enum {
     F = 5,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
+#[make_ule(NoKVULE)]
+#[zerovec::skip_kv]
+struct NoKV(u8, char);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[make_ule(NoOrdULE)]
+#[zerovec::skip_ord]
+#[zerovec::skip_kv]
+struct NoOrd(u8, char);
+
 fn test_zerovec<T: ule::AsULE + Debug + PartialEq>(slice: &[T]) {
     let zerovec: ZeroVec<T> = slice.iter().copied().collect();
 

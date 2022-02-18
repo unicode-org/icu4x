@@ -20,6 +20,17 @@ struct VarStruct<'a> {
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 struct VarTupleStruct<'a>(u32, char, VarZeroVec<'a, str>);
 
+#[make_varule(NoKVULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[zerovec::skip_kv]
+struct NoKV<'a>(u32, char, VarZeroVec<'a, str>);
+
+#[make_varule(NoOrdULE)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[zerovec::skip_kv]
+#[zerovec::skip_ord]
+struct NoOrd<'a>(u32, char, VarZeroVec<'a, str>);
+
 /// The `assert` function should have the body `|(stack, zero)| assert_eq!(stack, &U::zero_from(&zero))`
 ///
 /// We cannot do this internally because we technically need a different `U` with a shorter lifetime here

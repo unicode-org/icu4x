@@ -16,6 +16,34 @@ use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! leading_tag {
+    () => {
+        "\nicu4x_key_tag"
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! trailing_tag {
+    () => {
+        "\n"
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! tagged {
+    ($without_tags:expr) => {
+        concat!(
+            $crate::leading_tag!(),
+            $without_tags,
+            $crate::trailing_tag!()
+        )
+    };
+}
+
 /// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -24,7 +52,10 @@ pub struct ResourceKeyHash([u8; 4]);
 
 impl ResourceKeyHash {
     const fn compute_from_str(path: &str) -> Self {
-        Self(helpers::fxhash_32(path.as_bytes()).to_le_bytes())
+        Self(
+            helpers::fxhash_32(path.as_bytes(), leading_tag!().len(), trailing_tag!().len())
+                .to_le_bytes(),
+        )
     }
 }
 
@@ -99,34 +130,6 @@ pub struct ResourceKey {
     // in a compiled binary.
     path: &'static str,
     hash: ResourceKeyHash,
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! leading_tag {
-    () => {
-        "\nicu4x_key_tag"
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! trailing_tag {
-    () => {
-        "\n"
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! tagged {
-    ($without_tags:expr) => {
-        concat!(
-            $crate::leading_tag!(),
-            $without_tags,
-            $crate::trailing_tag!()
-        )
-    };
 }
 
 impl ResourceKey {

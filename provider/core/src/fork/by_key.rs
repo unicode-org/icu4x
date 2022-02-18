@@ -156,6 +156,24 @@ where
     }
 }
 
+impl<M, P0, P1> IterableDynProvider<M> for ForkByKeyProvider<P0, P1>
+where
+    M: DataMarker,
+    P0: IterableDynProvider<M>,
+    P1: IterableDynProvider<M>,
+{
+    fn supported_options_for_key(
+        &self,
+        key: ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        let result = self.0.supported_options_for_key(key);
+        if !DataError::result_is_err_missing_resource_key(&result) {
+            return result;
+        }
+        self.1.supported_options_for_key(key)
+    }
+}
+
 /// A provider that returns data from the first child provider supporting the key.
 ///
 /// The result of the first provider that supports a particular [`ResourceKey`] will be returned,
