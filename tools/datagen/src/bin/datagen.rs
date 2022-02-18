@@ -256,15 +256,7 @@ fn main() -> eyre::Result<()> {
         None
     };
 
-    let all_keys = {
-        // TODO(#1512): Use central key repository
-        let mut v = vec![];
-        v.extend(icu_provider_cldr::ALL_KEYS);
-        v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
-        v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
-        v.extend(icu_properties::provider::key::ALL_SET_KEYS);
-        v
-    };
+    let all_keys = get_all_keys();
 
     #[allow(clippy::if_same_then_else)]
     let selected_keys = if matches.is_present("ALL_KEYS") {
@@ -462,4 +454,34 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
     };
 
     Ok(BlobExporter::new_with_sink(sink))
+}
+
+fn get_all_keys() -> Vec<ResourceKey> {
+    // TODO(#1512): Use central key repository
+    let mut v = vec![];
+    v.extend(icu_provider_cldr::ALL_KEYS);
+    v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
+    v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
+    v.extend(icu_properties::provider::key::ALL_SET_KEYS);
+    v
+}
+
+#[test]
+fn no_key_collisions() {
+    let mut map = std::collections::BTreeMap::new();
+    let mut failed = false;
+    for key in get_all_keys() {
+        if let Some(colliding_key) = map.insert(key.get_hash(), key) {
+            println!(
+                "{:?} and {:?} collide at {:?}",
+                key.get_path(),
+                colliding_key.get_path(),
+                key.get_hash()
+            );
+            failed = true;
+        }
+    }
+    if failed {
+        panic!();
+    }
 }
