@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645200029473,
+  "lastUpdate": 1645207179845,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19589,6 +19589,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 102920,
             "range": "± 824",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca764905dc100e05641b84a950ac1cf72c887235",
+          "message": "Checking for key hash collisions and fixing one (#1622)",
+          "timestamp": "2022-02-18T18:49:45+01:00",
+          "tree_id": "b5a1b68fcfea8acb15ee1be02f910bf2d6dfb3f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/ca764905dc100e05641b84a950ac1cf72c887235"
+        },
+        "date": 1645207165937,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123490,
+            "range": "± 518",
             "unit": "ns/iter"
           }
         ]
