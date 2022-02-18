@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645137148786,
+  "lastUpdate": 1645143648949,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27425,6 +27425,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15152,
             "range": "± 893",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "32d9dec309662f0da97285d2269c31644a371b58",
+          "message": "Add zerovec::skip_kv and zerovec::skip_ord attributes, as well as generalized attribute handling framework (#1613)\n\n* Add ZeroMapKV autogen for make_varule\r\n\r\n* Add code for handling zerovec:: attrs\r\n\r\n* Handle skip_kv\r\n\r\n* Add ability to skip ord impls\r\n\r\n* Use semantically correct ord impls\r\n\r\n* Add tests\r\n\r\n* doc/fmt/clip",
+          "timestamp": "2022-02-17T16:10:13-08:00",
+          "tree_id": "e4789cf61adcd5f0c351ea29ddcd9d28d8244481",
+          "url": "https://github.com/unicode-org/icu4x/commit/32d9dec309662f0da97285d2269c31644a371b58"
+        },
+        "date": 1645143637799,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 835,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5423,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15040,
+            "range": "± 71",
             "unit": "ns/iter"
           }
         ]
