@@ -6,6 +6,7 @@
 
 mod borrowed;
 mod kv;
+#[allow(clippy::module_inception)] // module is purely internal
 pub(crate) mod map;
 #[cfg(feature = "serde")]
 mod serde;
