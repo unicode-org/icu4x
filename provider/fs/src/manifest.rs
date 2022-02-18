@@ -8,20 +8,8 @@ use icu_provider::buf::BufferFormat;
 pub const MANIFEST_FILE: &str = "manifest.json";
 
 #[non_exhaustive]
-#[derive(Copy, Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-pub enum AliasOption {
-    /// Do not de-duplicate data.
-    NoAliases,
-    /// De-duplicate data by using filesystem symlinks.
-    Symlink,
-    // TODO: Alias based on a field in the JSON file
-}
-
-#[non_exhaustive]
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub(crate) struct Manifest {
-    /// Strategy for de-duplicating locale data.
-    pub aliasing: AliasOption,
     /// Which data serialization file format is used.
     #[serde(rename = "syntax")]
     pub buffer_format: BufferFormat,

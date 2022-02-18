@@ -62,7 +62,6 @@
 //! std::fs::remove_dir_all(&demo_path).expect("Should clean up test directory");
 //! ```
 
-mod aliasing;
 pub mod fs_exporter;
 pub mod serializers;
 pub use fs_exporter::FilesystemExporter;

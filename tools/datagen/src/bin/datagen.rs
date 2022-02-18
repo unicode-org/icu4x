@@ -18,7 +18,6 @@ use icu_provider_cldr::CldrPathsAllInOne;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
-use icu_provider_fs::manifest;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -438,13 +437,6 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
 
     let mut options = fs_exporter::ExporterOptions::default();
     options.root = output_path;
-    if let Some(value) = matches.value_of("ALIASING") {
-        options.aliasing = match value {
-            "none" => manifest::AliasOption::NoAliases,
-            "symlink" => manifest::AliasOption::Symlink,
-            _ => unreachable!(),
-        };
-    }
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
