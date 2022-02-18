@@ -461,7 +461,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
         None => log::info!("Writing blob to standard out"),
     };
 
-    let sink: Box<dyn std::io::Write> = if let Some(path_buf) = output_path {
+    let sink: Box<dyn std::io::Write + Sync> = if let Some(path_buf) = output_path {
         if !matches.is_present("OVERWRITE") && path_buf.exists() {
             eyre::bail!("Output path is present: {:?}", path_buf);
         }

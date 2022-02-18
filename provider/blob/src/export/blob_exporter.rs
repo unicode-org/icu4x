@@ -14,17 +14,12 @@ use zerovec::map2d::ZeroMap2d;
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
     resources: Mutex<Vec<(ResourceKeyHash, String, Vec<u8>)>>,
-    sink: Box<dyn std::io::Write + 'w>,
+    sink: Box<dyn std::io::Write + Sync + 'w>,
 }
-
-// This isn't auto-sync because sink is not Sync. But that's fine, because
-// it's only ever used in a &mut method, so there will be no aliases on any
-// thread.
-unsafe impl Sync for BlobExporter<'_> {}
 
 impl<'w> BlobExporter<'w> {
     /// Create a [`BlobExporter`] that writes to the given I/O stream.
-    pub fn new_with_sink(sink: Box<dyn std::io::Write + 'w>) -> Self {
+    pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
             resources: Mutex::new(Vec::new()),
             sink,
