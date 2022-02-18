@@ -54,14 +54,6 @@ fn main() -> eyre::Result<()> {
                 .default_value("dir"),
         )
         .arg(
-            Arg::with_name("ALIASING")
-                .long("aliasing")
-                .takes_value(true)
-                .possible_value("none")
-                .possible_value("symlink")
-                .help("Sets the aliasing mode of the output on the filesystem."),
-        )
-        .arg(
             Arg::with_name("OVERWRITE")
                 .short("W")
                 .long("overwrite")
