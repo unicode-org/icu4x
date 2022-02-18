@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645136608436,
+  "lastUpdate": 1645143144064,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9653,6 +9653,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/32f1bd94edd6930f45d830e46cd4654ecac6bb4a"
         },
         "date": 1645136595542,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "32d9dec309662f0da97285d2269c31644a371b58",
+          "message": "Add zerovec::skip_kv and zerovec::skip_ord attributes, as well as generalized attribute handling framework (#1613)\n\n* Add ZeroMapKV autogen for make_varule\r\n\r\n* Add code for handling zerovec:: attrs\r\n\r\n* Handle skip_kv\r\n\r\n* Add ability to skip ord impls\r\n\r\n* Use semantically correct ord impls\r\n\r\n* Add tests\r\n\r\n* doc/fmt/clip",
+          "timestamp": "2022-02-17T16:10:13-08:00",
+          "tree_id": "e4789cf61adcd5f0c351ea29ddcd9d28d8244481",
+          "url": "https://github.com/unicode-org/icu4x/commit/32d9dec309662f0da97285d2269c31644a371b58"
+        },
+        "date": 1645143130033,
         "tool": "ndjson",
         "benches": [
           {
