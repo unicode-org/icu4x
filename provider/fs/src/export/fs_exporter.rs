@@ -110,8 +110,7 @@ impl DataExporter<SerializeMarker> for FilesystemExporter {
         if let Some(parent_dir) = path_buf.parent() {
             fs::create_dir_all(&parent_dir).map_err(|e| Error::from((e, parent_dir)))?;
         }
-        let mut file =
-            fs::File::create(&path_buf).map_err(|e| Error::from((e, &path_buf)))?;
+        let mut file = fs::File::create(&path_buf).map_err(|e| Error::from((e, &path_buf)))?;
         self.serializer
             .serialize(obj.get().deref(), &mut file)
             .map_err(|e| Error::from((e, &path_buf)))?;
