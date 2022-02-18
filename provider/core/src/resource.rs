@@ -53,9 +53,7 @@ pub struct ResourceKeyHash([u8; 4]);
 impl ResourceKeyHash {
     const fn compute_from_str(path: &str) -> Self {
         const fn equals(tagged: &[u8], untagged: &[u8]) -> bool {
-            if tagged.len() - leading_tag!().len() - trailing_tag!().len()
-                != untagged.len()
-            {
+            if tagged.len() - leading_tag!().len() - trailing_tag!().len() != untagged.len() {
                 return false;
             }
             let mut i = 0;
@@ -65,7 +63,7 @@ impl ResourceKeyHash {
                 }
                 i += 1;
             }
-            return true;
+            true
         }
 
         let bytes = path.as_bytes();
