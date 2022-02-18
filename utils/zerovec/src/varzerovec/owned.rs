@@ -2,15 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::*;
+use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-
-use super::*;
-use core::fmt;
 use core::marker::PhantomData;
+use core::ops::Deref;
 use core::ops::Range;
-use core::ptr;
-use core::slice;
+use core::{fmt, ptr, slice};
 
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
