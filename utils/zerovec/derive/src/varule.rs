@@ -115,7 +115,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
 }
 
-pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.const_params().next().is_some()
         || input.generics.lifetimes().count() > 1
@@ -126,6 +126,11 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         )
         .to_compile_error();
     }
+
+    let (skip_kv, skip_ord) = match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
+        Ok(val) => val,
+        Err(e) => return e.to_compile_error(),
+    };
 
     let lt = input.generics.lifetimes().next();
 
@@ -191,7 +196,7 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
 
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
-        #[derive(PartialEq)]
+        #[derive(PartialEq, Eq)]
         struct #ule_name #field_inits #semi
     );
 
@@ -219,6 +224,40 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         input.span(),
     );
 
+    let maybe_ord_impls = if skip_ord {
+        quote!()
+    } else {
+        quote!(
+            impl core::cmp::PartialOrd for #ule_name {
+                fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+                    let this = <#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>::zero_from(self);
+                    let other = <#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>::zero_from(other);
+                    <#name as core::cmp::PartialOrd>::partial_cmp(&this, &other)
+                }
+            }
+
+            impl core::cmp::Ord for #ule_name {
+                fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+                    let this = <#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>::zero_from(self);
+                    let other = <#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>::zero_from(other);
+                    <#name as core::cmp::Ord>::cmp(&this, &other)
+                }
+            }
+        )
+    };
+
+    let zmkv = if skip_kv {
+        quote!()
+    } else {
+        quote!(
+            impl<'a> zerovec::map::ZeroMapKV<'a> for #ule_name {
+                type Container = zerovec::VarZeroVec<'a, #ule_name>;
+                type GetType = #ule_name;
+                type OwnedType = Box<#ule_name>;
+            }
+        )
+    };
+
     quote!(
         #input
 
@@ -229,6 +268,10 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         #zf_impl
 
         #derived
+
+        #maybe_ord_impls
+
+        #zmkv
     )
 }
 
