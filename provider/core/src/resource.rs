@@ -52,28 +52,9 @@ pub struct ResourceKeyHash([u8; 4]);
 
 impl ResourceKeyHash {
     const fn compute_from_str(path: &str) -> Self {
-        const fn equals(tagged: &[u8], untagged: &[u8]) -> bool {
-            if tagged.len() - leading_tag!().len() - trailing_tag!().len() != untagged.len() {
-                return false;
-            }
-            let mut i = 0;
-            while i < untagged.len() {
-                if tagged[i + leading_tag!().len()] != untagged[i] {
-                    return false;
-                }
-                i += 1;
-            }
-            true
-        }
-
-        let bytes = path.as_bytes();
         Self(
-            if equals(bytes, b"props/sc=Samr@1") {
-                0x10101010
-            } else {
-                helpers::fxhash_32(bytes)
-            }
-            .to_le_bytes(),
+            helpers::fxhash_32(path.as_bytes(), leading_tag!().len(), trailing_tag!().len())
+                .to_le_bytes(),
         )
     }
 }
@@ -539,13 +520,5 @@ mod tests {
             assert_eq!(cas.expected, cas.options.to_string());
             writeable::assert_writeable_eq!(&cas.options, cas.expected);
         }
-    }
-
-    #[test]
-    fn test_collision_special_cases() {
-        assert_eq!(
-            resource_key!("props/sc=Samr@1").get_hash(),
-            ResourceKeyHash([0x10, 0x10, 0x10, 0x10])
-        );
     }
 }
