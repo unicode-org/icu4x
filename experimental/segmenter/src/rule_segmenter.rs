@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::RuleBreakDataV1;
+
 // Note: Keep these constants in sync with build.rs.
 const NOT_MATCH_RULE: i8 = -2;
 const KEEP_RULE: i8 = -1;
@@ -41,13 +43,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
-    pub(crate) break_state_table: &'l [i8],
-    pub(crate) property_table: &'l [&'l [u8; 1024]; 897],
-    pub(crate) rule_property_count: usize,
-    pub(crate) last_codepoint_property: i8,
-    pub(crate) sot_property: u8,
-    pub(crate) eot_property: u8,
-    pub(crate) complex_property: u8,
+    pub(crate) data: &'l RuleBreakDataV1<'l>,
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {
@@ -77,7 +73,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
             self.current_pos_data = Some(current_pos_data);
             // SOT x anything
             let right_prop = self.get_current_break_property();
-            if self.is_break_from_table(self.sot_property, right_prop) {
+            if self.is_break_from_table(self.data.sot_property, right_prop) {
                 return Some(current_pos_data.0);
             }
         }
@@ -94,8 +90,8 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
 
             // Some segmenter rules doesn't have language-specific rules, we have to use LSTM (or dictionary) segmenter.
             // If property is marked as SA, use it
-            if right_prop == self.complex_property {
-                if left_prop != self.complex_property {
+            if right_prop == self.data.complex_property {
+                if left_prop != self.data.complex_property {
                     // break before SA
                     return Some(self.current_pos_data.unwrap().0);
                 }
@@ -118,7 +114,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                     if self.current_pos_data.is_none() {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                         if self
-                            .get_break_state_from_table(break_state as u8, self.eot_property as u8)
+                            .get_break_state_from_table(break_state as u8, self.data.eot_property)
                             == NOT_MATCH_RULE
                         {
                             self.iter = previous_iter;
@@ -136,7 +132,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                         break;
                     }
                     if previous_break_state >= 0
-                        && previous_break_state <= self.last_codepoint_property
+                        && previous_break_state <= self.data.last_codepoint_property
                     {
                         // Move marker
                         previous_iter = self.iter.clone();
@@ -183,11 +179,13 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
             // Unknown
             return 0;
         }
-        self.property_table[codepoint / 1024][(codepoint & 0x3ff)]
+        self.data.property_table[codepoint / 1024][(codepoint & 0x3ff)]
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
-        self.break_state_table[(left as usize) * self.rule_property_count + (right as usize)]
+        let idx = (left as usize) * self.data.property_count + (right as usize);
+        // We use unwrap_or to fall back to the base case and prevent panics on bad data.
+        self.data.break_state_table.0.get(idx).unwrap_or(KEEP_RULE)
     }
 
     fn is_break_from_table(&self, left: u8, right: u8) -> bool {
