@@ -7,7 +7,7 @@ use eyre::WrapErr;
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
-use icu_provider::fork::by_key::MultiForkByKeyProvider;
+use icu_provider::fork::by_key::ForkByKeyProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
 use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
@@ -256,15 +256,7 @@ fn main() -> eyre::Result<()> {
         None
     };
 
-    let all_keys = {
-        // TODO(#1512): Use central key repository
-        let mut v = vec![];
-        v.extend(icu_provider_cldr::ALL_KEYS);
-        v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
-        v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
-        v.extend(icu_properties::provider::key::ALL_SET_KEYS);
-        v
-    };
+    let all_keys = get_all_keys();
 
     #[allow(clippy::if_same_then_else)]
     let selected_keys = if matches.is_present("ALL_KEYS") {
@@ -300,55 +292,53 @@ fn main() -> eyre::Result<()> {
         filtered
     };
 
-    let mut provider: Box<dyn IterableDynProvider<SerializeMarker>> = {
-        let cldr_paths = if let Some(tag) = matches.value_of("CLDR_TAG") {
-            Box::new(
-                CldrAllInOneDownloader::try_new_from_github(
-                    tag,
-                    matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full"),
-                )?
-                .download()?,
-            )
+    let mut provider: Box<dyn IterableDynProvider<SerializeMarker>> =
+        if matches.is_present("HELLO_WORLD") {
+            Box::new(HelloWorldProvider::new_with_placeholder_data())
         } else {
-            let cldr_json_root = if let Some(path) = matches.value_of("CLDR_ROOT") {
-                PathBuf::from(path)
-            } else if matches.is_present("INPUT_FROM_TESTDATA") {
-                icu_testdata::paths::cldr_json_root()
+            let cldr_paths = if let Some(tag) = matches.value_of("CLDR_TAG") {
+                Box::new(
+                    CldrAllInOneDownloader::try_new_from_github(
+                        tag,
+                        matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full"),
+                    )?
+                    .download()?,
+                )
             } else {
-                eyre::bail!(
+                let cldr_json_root = if let Some(path) = matches.value_of("CLDR_ROOT") {
+                    PathBuf::from(path)
+                } else if matches.is_present("INPUT_FROM_TESTDATA") {
+                    icu_testdata::paths::cldr_json_root()
+                } else {
+                    eyre::bail!(
                     "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified",
                 )
+                };
+                Box::new(CldrPathsAllInOne {
+                    cldr_json_root,
+                    locale_subset: matches
+                        .value_of("CLDR_LOCALE_SUBSET")
+                        .unwrap_or("full")
+                        .to_string(),
+                })
             };
-            Box::new(CldrPathsAllInOne {
-                cldr_json_root,
-                locale_subset: matches
-                    .value_of("CLDR_LOCALE_SUBSET")
-                    .unwrap_or("full")
-                    .to_string(),
-            })
-        };
 
-        let uprops_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
-            PathBuf::from(path)
-        } else if matches.is_present("INPUT_FROM_TESTDATA") {
-            icu_testdata::paths::uprops_toml_root()
-        } else {
-            eyre::bail!("Value for --uprops-root must be specified",)
-        };
+            let uprops_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
+                PathBuf::from(path)
+            } else if matches.is_present("INPUT_FROM_TESTDATA") {
+                icu_testdata::paths::uprops_toml_root()
+            } else {
+                eyre::bail!("Value for --uprops-root must be specified",)
+            };
 
-        Box::new(MultiForkByKeyProvider {
-            providers: vec![
-                Box::new(icu_provider_cldr::create_exportable_provider(
+            Box::new(ForkByKeyProvider(
+                icu_provider_cldr::create_exportable_provider(
                     cldr_paths.as_ref(),
                     uprops_root.clone(),
-                )?) as Box<dyn IterableDynProvider<SerializeMarker>>,
-                Box::new(icu_provider_uprops::create_exportable_provider(
-                    &uprops_root,
-                )?),
-                Box::new(HelloWorldProvider::new_with_placeholder_data()),
-            ],
-        })
-    };
+                )?,
+                icu_provider_uprops::create_exportable_provider(&uprops_root)?,
+            ))
+        };
 
     if let Some(locales) = selected_locales.as_ref() {
         provider = Box::new(
@@ -462,4 +452,34 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
     };
 
     Ok(BlobExporter::new_with_sink(sink))
+}
+
+fn get_all_keys() -> Vec<ResourceKey> {
+    // TODO(#1512): Use central key repository
+    let mut v = vec![];
+    v.extend(icu_provider_cldr::ALL_KEYS);
+    v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
+    v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
+    v.extend(icu_properties::provider::key::ALL_SET_KEYS);
+    v
+}
+
+#[test]
+fn no_key_collisions() {
+    let mut map = std::collections::BTreeMap::new();
+    let mut failed = false;
+    for key in get_all_keys() {
+        if let Some(colliding_key) = map.insert(key.get_hash(), key) {
+            println!(
+                "{:?} and {:?} collide at {:?}",
+                key.get_path(),
+                colliding_key.get_path(),
+                key.get_hash()
+            );
+            failed = true;
+        }
+    }
+    if failed {
+        panic!();
+    }
 }
