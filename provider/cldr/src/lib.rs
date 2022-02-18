@@ -23,6 +23,7 @@ mod cldr_paths;
 mod cldr_serde;
 mod error;
 mod reader;
+mod support;
 mod transform;
 
 #[cfg(feature = "download")]
@@ -39,9 +40,7 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::PathBuf;
 use transform::calendar::japanese::JapaneseErasProvider;
-use transform::datetime::patterns::DatePatternsProvider;
-use transform::datetime::skeletons::DateSkeletonPatternsProvider;
-use transform::datetime::symbols::DateSymbolsProvider;
+use transform::datetime::CommonDateProvider;
 use transform::decimal::NumbersProvider;
 #[cfg(feature = "icu_list")]
 use transform::list::ListProvider;
@@ -59,9 +58,7 @@ pub fn create_exportable_provider<T: DataMarker>(
 ) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>, CldrError>
 where
     AliasesProvider: IterableDynProvider<T>,
-    DateSymbolsProvider: IterableDynProvider<T>,
-    DateSkeletonPatternsProvider: IterableDynProvider<T>,
-    DatePatternsProvider: IterableDynProvider<T>,
+    CommonDateProvider: IterableDynProvider<T>,
     JapaneseErasProvider: IterableDynProvider<T>,
     LikelySubtagsProvider: IterableDynProvider<T>,
     NumbersProvider: IterableDynProvider<T>,
@@ -73,9 +70,7 @@ where
     Ok(MultiForkByKeyProvider {
         providers: vec![
             Box::new(AliasesProvider::try_from(cldr_paths)?),
-            Box::new(DateSymbolsProvider::try_from(cldr_paths)?),
-            Box::new(DateSkeletonPatternsProvider::try_from(cldr_paths)?),
-            Box::new(DatePatternsProvider::try_from(cldr_paths)?),
+            Box::new(CommonDateProvider::try_from(cldr_paths)?),
             Box::new(JapaneseErasProvider::try_from(cldr_paths)?),
             Box::new(LikelySubtagsProvider::try_from(cldr_paths)?),
             Box::new(NumbersProvider::try_from(cldr_paths)?),

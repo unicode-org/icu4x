@@ -5,15 +5,14 @@
 use crate::cldr_serde;
 use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
+use crate::support::FrozenBTreeMap;
 use crate::CldrPaths;
 use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
 use std::convert::TryFrom;
 use std::path::PathBuf;
-use std::sync::RwLock;
 
 mod convert;
 
@@ -21,7 +20,7 @@ mod convert;
 #[derive(Debug)]
 pub struct TimeZonesProvider {
     path: PathBuf,
-    data: RwLock<LiteMap<LanguageIdentifier, cldr_serde::time_zone_names::TimeZoneNames>>,
+    data: FrozenBTreeMap<LanguageIdentifier, cldr_serde::time_zone_names::TimeZoneNames>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
@@ -29,12 +28,12 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         Ok(Self {
             path: cldr_paths.cldr_dates_gregorian()?.join("main"),
-            data: RwLock::new(LiteMap::new()),
+            data: FrozenBTreeMap::new(),
         })
     }
 }
 
-macro_rules! impl_data_provider {
+macro_rules! impl_resource_provider {
     ($($marker:ident),+) => {
         $(
             impl ResourceProvider<$marker> for TimeZonesProvider {
@@ -43,7 +42,7 @@ macro_rules! impl_data_provider {
                         .get_langid()
                         .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
 
-                    if !self.data.read().unwrap().contains_key(langid) {
+                    let time_zones = self.data.get_or_insert(&langid, || -> Result<_, DataError> {
                         let path = get_langid_subdirectory(&self.path, langid)?
                             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?
                             .join("timeZoneNames.json");
@@ -51,21 +50,14 @@ macro_rules! impl_data_provider {
                         let mut resource: cldr_serde::time_zone_names::Resource =
                             serde_json::from_reader(open_reader(&path)?)
                                 .map_err(|e| Error::Json(e, Some(path)))?;
-                        let r = resource
+                        Ok(resource
                             .main
                             .0
                             .remove(langid)
                             .expect("CLDR file contains the expected language")
                             .dates
-                            .time_zone_names;
-
-                        let mut data_guard = self.data.write().unwrap();
-                        if !data_guard.contains_key(langid) {
-                            data_guard.insert(langid.clone(), r);
-                        }
-                    }
-
-                    let time_zones = self.data.read().unwrap().get(langid).unwrap().clone();
+                            .time_zone_names)
+                    })?;
 
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
@@ -92,7 +84,7 @@ macro_rules! impl_data_provider {
     };
 }
 
-impl_data_provider!(
+impl_resource_provider!(
     TimeZoneFormatsV1Marker,
     ExemplarCitiesV1Marker,
     MetaZoneGenericNamesLongV1Marker,
