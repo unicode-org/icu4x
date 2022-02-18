@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645143524366,
+  "lastUpdate": 1645200048854,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20639,6 +20639,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 38479774,
             "range": "± 309144",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "181f1d7d601535d50e07345369066a9bc5f513c4",
+          "message": "Move VarZeroVec/VarZeroSlice/ZeroMap/ZeroMap2d into their own modules (#1620)\n\n* Refactor vzv into own module\n\n* docs\n\n* Move map into its own module\n\n* set doc(no_inline) attrs\n\n* fmt\n\n* clip",
+          "timestamp": "2022-02-18T07:52:10-08:00",
+          "tree_id": "cbadc15185ad31c86bc98978238307babb38dc99",
+          "url": "https://github.com/unicode-org/icu4x/commit/181f1d7d601535d50e07345369066a9bc5f513c4"
+        },
+        "date": 1645200036459,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 43873489,
+            "range": "± 95878",
             "unit": "ns/iter"
           }
         ]
