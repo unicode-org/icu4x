@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::dictionary::DictionarySegmenter;
 use crate::indices::*;
 use crate::language::*;
 use crate::provider::line_data::*;
@@ -106,12 +107,15 @@ impl Default for LineBreakOptions {
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
+    trie_payload: DataPayload<UCharDictionaryBreakDataV1Marker>,
 }
 
 impl LineBreakSegmenter {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<LineBreakDataV1Marker> + ?Sized,
+        D: ResourceProvider<LineBreakDataV1Marker>
+            + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+            + ?Sized,
     {
         Self::try_new_with_options(provider, Default::default())
     }
@@ -121,12 +125,21 @@ impl LineBreakSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: ResourceProvider<LineBreakDataV1Marker> + ?Sized,
+        D: ResourceProvider<LineBreakDataV1Marker>
+            + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+            + ?Sized,
     {
         let payload = provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
-        Ok(Self { options, payload })
+        let trie_payload = provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        Ok(Self {
+            options,
+            payload,
+            trie_payload,
+        })
     }
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
@@ -138,6 +151,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
+            trie_payload: &self.trie_payload,
         }
     }
 
@@ -153,6 +167,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
+            trie_payload: &self.trie_payload,
         }
     }
 
@@ -168,6 +183,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
+            trie_payload: &self.trie_payload,
         }
     }
 }
@@ -416,6 +432,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     result_cache: Vec<usize>,
     data: &'l LineBreakDataV1<'l>,
     options: &'l LineBreakOptions,
+    trie_payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -655,12 +672,17 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
     }
 
     fn get_line_break_by_platform_fallback(
-        _: &LineBreakIterator<Self>,
+        iterator: &LineBreakIterator<Self>,
         input: &[u16],
     ) -> Vec<usize> {
         if let Some(mut ret) = get_line_break_utf16(input) {
             ret.push(input.len());
             return ret;
+        }
+        if let Ok(segmenter) = DictionarySegmenter::try_new(iterator.trie_payload) {
+            let mut result: Vec<usize> = segmenter.segment_utf16(input).collect();
+            result.push(input.len());
+            return result;
         }
         [input.len()].to_vec()
     }
@@ -733,12 +755,17 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
     }
 
     fn get_line_break_by_platform_fallback(
-        _: &LineBreakIterator<Self>,
+        iterator: &LineBreakIterator<Self>,
         input: &[u16],
     ) -> Vec<usize> {
         if let Some(mut ret) = get_line_break_utf16(input) {
             ret.push(input.len());
             return ret;
+        }
+        if let Ok(segmenter) = DictionarySegmenter::try_new(iterator.trie_payload) {
+            let mut result: Vec<usize> = segmenter.segment_utf16(input).collect();
+            result.push(input.len());
+            return result;
         }
         [input.len()].to_vec()
     }

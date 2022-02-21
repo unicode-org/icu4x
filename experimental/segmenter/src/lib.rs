@@ -144,6 +144,7 @@
 
 extern crate alloc;
 
+mod dictionary;
 mod indices;
 mod language;
 mod rule_segmenter;
@@ -175,6 +176,7 @@ mod lstm {
     }
 }
 
+pub use crate::dictionary::{DictionaryBreakIterator, DictionarySegmenter};
 pub use crate::grapheme::{
     GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
