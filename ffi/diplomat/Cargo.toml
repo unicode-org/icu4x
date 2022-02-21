@@ -62,7 +62,6 @@ fixed_decimal = { path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_decimal = { path = "../../components/decimal/" }
 icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer" }
 icu_locid = { path = "../../components/locid" }
-icu_locid_macros = { path = "../../components/locid/macros" }
 icu_plurals = { path = "../../components/plurals/" }
 icu_properties = { path = "../../components/properties/" }
 icu_provider = { path = "../../provider/core", features = ["serde"] }

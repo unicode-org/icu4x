@@ -51,11 +51,6 @@ version = "0.5"
 path = "../locid"
 default-features = false
 
-[dependencies.icu_locid_macros]
-version = "0.5"
-path = "../locid/macros"
-default-features = false
-
 [dependencies.icu_locale_canonicalizer]
 version = "0.5"
 path = "../locale_canonicalizer"

@@ -54,7 +54,7 @@
 //!
 //! ```
 //! use icu::locid::Locale;
-//! use icu::locid::macros::langid;
+//! use icu::locid::langid;
 //! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
 //!
 //! let provider = icu_testdata::get_provider();
@@ -112,7 +112,7 @@ pub mod datetime {
     //!
     //! ```
     //! use icu::locid::Locale;
-    //! use icu::locid::macros::langid;
+    //! use icu::locid::langid;
     //! use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
     //!
     //! let provider = icu_testdata::get_provider();
@@ -153,7 +153,7 @@ pub mod decimal {
     //! ```
     //! use icu::decimal::FixedDecimalFormat;
     //! use icu::locid::Locale;
-    //! use icu::locid::macros::langid;
+    //! use icu::locid::langid;
     //! use writeable::Writeable;
     //!
     //! let locale: Locale = langid!("bn").into();
@@ -293,10 +293,6 @@ pub mod locid {
     //! [`ICU4X`]: https://github.com/unicode-org/icu4x
     //! [`Unicode Extensions`]: extensions
     pub use icu_locid::*;
-
-    pub mod macros {
-        pub use icu_locid_macros::*;
-    }
 }
 
 pub mod plurals {
@@ -322,7 +318,7 @@ pub mod plurals {
     //! # Examples
     //!
     //! ```
-    //! use icu::locid::macros::langid;
+    //! use icu::locid::langid;
     //! use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     //!
     //! let lid = langid!("en");

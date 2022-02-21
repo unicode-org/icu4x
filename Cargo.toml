@@ -12,7 +12,6 @@ members = [
     "components/icu4x",
     "components/locale_canonicalizer",
     "components/locid",
-    "components/locid/macros",
     "components/plurals",
     "components/properties",
     "experimental/bies",

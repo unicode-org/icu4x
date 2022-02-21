@@ -147,7 +147,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 
 #[test]
 fn test_basic() {
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = PluralsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();

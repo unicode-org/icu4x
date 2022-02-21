@@ -7,7 +7,7 @@
 //! # Examples
 //!
 //! ```rust
-//! use icu_locid::macros::{language, region, langid};
+//! use icu_locid::{language, region, langid};
 //!
 //! let lid = langid!("EN_US");
 //!
@@ -23,7 +23,7 @@
 ///
 /// ```
 /// use icu::locid::subtags::Language;
-/// use icu::locid::macros::language;
+/// use icu::locid::language;
 ///
 /// const DE: Language = language!("DE");
 ///
@@ -55,7 +55,7 @@ macro_rules! language {
 ///
 /// ```
 /// use icu::locid::subtags::Script;
-/// use icu::locid::macros::script;
+/// use icu::locid::script;
 ///
 /// const ARAB: Script = script!("aRAB");
 ///
@@ -87,7 +87,7 @@ macro_rules! script {
 ///
 /// ```
 /// use icu::locid::subtags::Region;
-/// use icu::locid::macros::region;
+/// use icu::locid::region;
 ///
 /// const CN: Region = region!("cn");
 ///
@@ -119,7 +119,7 @@ macro_rules! region {
 ///
 /// ```
 /// use icu::locid::subtags::Variant;
-/// use icu::locid::macros::variant;
+/// use icu::locid::variant;
 ///
 /// const POSIX: Variant = variant!("Posix");
 ///
@@ -151,7 +151,7 @@ macro_rules! variant {
 ///
 /// ```
 /// use icu::locid::LanguageIdentifier;
-/// use icu::locid::macros::langid;
+/// use icu::locid::langid;
 ///
 /// const DE_AT: LanguageIdentifier = langid!("de_at");
 ///

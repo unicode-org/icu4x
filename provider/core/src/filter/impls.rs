@@ -26,7 +26,7 @@ where
     /// use icu_provider::filter::Filterable;
     /// use icu_provider::iter::*;
     /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid_macros::{language, langid};
+    /// use icu_locid::{language, langid};
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
     ///     .filterable("Demo no-English filter")
@@ -99,7 +99,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::filter::Filterable;
-    /// use icu_locid_macros::langid;
+    /// use icu_locid::langid;
     ///
     /// let allowlist = vec![langid!("de"), langid!("zh")];
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
@@ -162,7 +162,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::filter::Filterable;
-    /// use icu_locid_macros::langid;
+    /// use icu_locid::langid;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data()
     ///     .filterable("Demo require-langid filter")

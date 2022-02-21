@@ -15,7 +15,7 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 ```rust
 use icu::decimal::FixedDecimalFormat;
 use icu::locid::Locale;
-use icu::locid::macros::langid;
+use icu::locid::langid;
 use writeable::Writeable;
 
 let locale: Locale = langid!("bn").into();

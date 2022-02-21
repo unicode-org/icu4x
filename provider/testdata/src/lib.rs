@@ -42,7 +42,7 @@
 //! ```
 //! use std::borrow::Cow;
 //! use icu_provider::prelude::*;
-//! use icu_locid_macros::langid;
+//! use icu_locid::langid;
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!

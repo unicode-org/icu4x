@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn basic_cldr_time_zones() {
-        use icu_locid_macros::langid;
+        use icu_locid::langid;
 
         let cldr_paths = crate::cldr_paths::for_test();
         let provider = TimeZonesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();

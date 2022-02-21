@@ -9,8 +9,8 @@
 
 use fixed_decimal::FixedDecimal;
 use icu_decimal::{options, FixedDecimalFormat};
+use icu_locid::langid;
 use icu_locid::Locale;
-use icu_locid_macros::langid;
 use writeable::Writeable;
 
 icu_benchmark_macros::static_setup!();

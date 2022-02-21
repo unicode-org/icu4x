@@ -151,7 +151,6 @@ displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.3", path = "../../utils/writeable", optional = true }
 
 [dev-dependencies]
-icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
 icu_plurals = { version = "0.5", path = "../../components/plurals" }
 
 [features]

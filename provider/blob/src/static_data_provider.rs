@@ -26,7 +26,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_blob::StaticDataProvider;
-/// use icu_locid_macros::langid;
+/// use icu_locid::langid;
 ///
 /// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
@@ -76,7 +76,7 @@ impl StaticDataProvider {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider_blob::StaticDataProvider;
-    /// use icu_locid_macros::langid;
+    /// use icu_locid::langid;
     ///
     /// let stub_provider = StaticDataProvider::new_empty();
     ///

@@ -7,7 +7,7 @@ use crate::error::Error;
 use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::CldrPaths;
 use icu_list::provider::*;
-use icu_locid_macros::langid;
+use icu_locid::langid;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::path::PathBuf;
@@ -171,7 +171,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableRes
 mod tests {
     use super::*;
     use icu_list::{ListFormatter, ListStyle};
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
     use writeable::assert_writeable_eq;
 
     macro_rules! test {

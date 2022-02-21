@@ -32,7 +32,7 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::macros::langid;
+/// use icu::locid::langid;
 /// use icu::datetime::{DateTimeFormat, options::length};
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu_provider::inv::InvariantDataProvider;
@@ -69,7 +69,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_provider::inv::InvariantDataProvider;
@@ -111,7 +111,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
@@ -147,7 +147,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
@@ -181,7 +181,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu_provider::inv::InvariantDataProvider;
@@ -214,7 +214,7 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
     ///     options::{components, length},
     ///     DateTimeFormat, DateTimeFormatOptions,
     /// };
-    /// use icu::locid::macros::langid;
+    /// use icu::locid::langid;
     /// use icu::locid::Locale;
     ///
     /// let options = DateTimeFormatOptions::Length(length::Bag {

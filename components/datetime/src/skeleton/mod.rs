@@ -17,7 +17,7 @@ pub use helpers::*;
 mod test {
     use super::reference::Skeleton;
     use super::*;
-    use icu_locid_macros::langid;
+    use icu_locid::langid;
     use icu_provider::prelude::*;
 
     use crate::{

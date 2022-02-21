@@ -52,7 +52,7 @@ functionality are compiled. These features are:
 
 ```rust
 use icu::locid::Locale;
-use icu::locid::macros::langid;
+use icu::locid::langid;
 use icu::datetime::{DateTimeFormat, options::length, mock::parse_gregorian_from_str};
 
 let provider = icu_testdata::get_provider();

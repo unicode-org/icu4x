@@ -22,7 +22,7 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// # Examples
 ///
 /// ```
-/// use icu_locid_macros::langid;
+/// use icu_locid::langid;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_blob::BlobDataProvider;

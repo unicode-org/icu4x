@@ -55,7 +55,6 @@ smallstr = { version = "0.2", features = ["serde"] }
 smallvec = "1.6"
 tinystr = { path = "../../utils/tinystr", version = "0.5.0", features = ["alloc", "serde", "zerovec"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
-icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
 icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
 icu_properties = { version = "0.5", path = "../../components/properties", features = ["provider_serde", "std"] }
 zerovec = { version = "0.6", path = "../../utils/zerovec"}
@@ -69,7 +68,6 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
-icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata" }
 writeable = { version = "0.3", path = "../../utils/writeable" }
 

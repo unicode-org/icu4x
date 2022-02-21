@@ -7,8 +7,8 @@ use icu_datetime::{
     options::{components, length, preferences},
     DateTimeFormat, DateTimeFormatOptions,
 };
+use icu_locid::langid;
 use icu_locid::Locale;
-use icu_locid_macros::langid;
 
 fn assert_resolved_components(options: &DateTimeFormatOptions, bag: &components::Bag) {
     let locale: Locale = langid!("en").into();

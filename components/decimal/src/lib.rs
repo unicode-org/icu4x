@@ -19,7 +19,7 @@
 //! ```
 //! use icu::decimal::FixedDecimalFormat;
 //! use icu::locid::Locale;
-//! use icu::locid::macros::langid;
+//! use icu::locid::langid;
 //! use writeable::Writeable;
 //!
 //! let locale: Locale = langid!("bn").into();

@@ -45,7 +45,7 @@ impl DataRequest {
     ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// use icu_locid_macros::langid;
+    /// use icu_locid::langid;
     ///
     /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
     ///

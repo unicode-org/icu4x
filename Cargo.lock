@@ -996,7 +996,6 @@ dependencies = [
  "icu_decimal",
  "icu_locale_canonicalizer",
  "icu_locid",
- "icu_locid_macros",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1073,7 +1072,6 @@ dependencies = [
  "icu_decimal",
  "icu_locale_canonicalizer",
  "icu_locid",
- "icu_locid_macros",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1143,7 +1141,6 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_calendar",
  "icu_locid",
- "icu_locid_macros",
  "icu_plurals",
  "icu_provider",
  "icu_testdata",
@@ -1169,7 +1166,6 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_locid",
- "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
  "rand",
@@ -1188,7 +1184,6 @@ dependencies = [
  "displaydoc",
  "icu_benchmark_macros",
  "icu_locid",
- "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
  "postcard",
@@ -1205,7 +1200,6 @@ version = "0.5.0"
 dependencies = [
  "criterion",
  "icu_locid",
- "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
  "litemap",
@@ -1229,16 +1223,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locid_macros"
-version = "0.5.0"
-dependencies = [
- "icu",
- "icu_locid",
- "proc-macro-crate",
- "tinystr 0.5.0",
-]
-
-[[package]]
 name = "icu_pattern"
 version = "0.1.1"
 dependencies = [
@@ -1257,7 +1241,6 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_locid",
- "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
  "num_enum",
@@ -1289,7 +1272,6 @@ dependencies = [
  "displaydoc",
  "erased-serde",
  "icu_locid",
- "icu_locid_macros",
  "icu_provider_macros",
  "litemap",
  "log",
@@ -1311,7 +1293,6 @@ dependencies = [
  "erased-serde",
  "icu",
  "icu_locid",
- "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
  "litemap",
@@ -1335,7 +1316,6 @@ dependencies = [
  "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
- "icu_locid_macros",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1370,7 +1350,6 @@ dependencies = [
  "erased-serde",
  "icu_benchmark_macros",
  "icu_locid",
- "icu_locid_macros",
  "icu_plurals",
  "icu_provider",
  "log",
@@ -1449,7 +1428,6 @@ dependencies = [
  "cargo_metadata",
  "displaydoc",
  "icu_locid",
- "icu_locid_macros",
  "icu_plurals",
  "icu_provider",
  "icu_provider_blob",
@@ -1575,7 +1553,6 @@ dependencies = [
  "criterion",
  "icu_benchmark_macros",
  "icu_locid",
- "icu_locid_macros",
  "postcard",
  "rkyv",
  "serde",
@@ -1952,16 +1929,6 @@ name = "ppv-lite86"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed0cfbc8191465bed66e1718596ee0b0b35d5ee1f41c5df2189d0fe8bde535ba"
-
-[[package]]
-name = "proc-macro-crate"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ebace6889caf889b4d3f76becee12e90353f2b8c7d875534a71e5742f8f6f83"
-dependencies = [
- "thiserror",
- "toml",
-]
 
 [[package]]
 name = "proc-macro-hack"
@@ -2615,26 +2582,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d326610f408c7a4eb6f51c37c330e496b08506c9457c9d34287ecc38809fb060"
 dependencies = [
  "unicode-width",
-]
-
-[[package]]
-name = "thiserror"
-version = "1.0.30"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "854babe52e4df1653706b98fcfc05843010039b406875930a70e4d9644e5c417"
-dependencies = [
- "thiserror-impl",
-]
-
-[[package]]
-name = "thiserror-impl"
-version = "1.0.30"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa32fd3f627f367fe16f893e2597ae3c05020f8bba2666a4e6ea73d377e5714b"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
