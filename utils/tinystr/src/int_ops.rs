@@ -11,9 +11,13 @@ impl Aligned4 {
     /// # Panics
     /// Panics if N is greater than 4
     #[inline]
-    pub fn from_bytes<const N: usize>(src: &[u8; N]) -> Self {
+    pub const fn from_bytes<const N: usize>(src: &[u8; N]) -> Self {
         let mut bytes = [0; 4];
-        bytes[0..N].copy_from_slice(src);
+        let mut i = 0;
+        while i < N {
+            bytes[i] = src[i];
+            i += 1;
+        }
         Self(u32::from_ne_bytes(bytes))
     }
 
@@ -84,9 +88,13 @@ impl Aligned8 {
     /// # Panics
     /// Panics if N is greater than 8
     #[inline]
-    pub fn from_bytes<const N: usize>(src: &[u8; N]) -> Self {
+    pub const fn from_bytes<const N: usize>(src: &[u8; N]) -> Self {
         let mut bytes = [0; 8];
-        bytes[0..N].copy_from_slice(src);
+        let mut i = 0;
+        while i < N {
+            bytes[i] = src[i];
+            i += 1;
+        }
         Self(u64::from_ne_bytes(bytes))
     }
 
