@@ -420,10 +420,10 @@ impl Iso {
 
         let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
-        if n_400 == 4 || n_4 == 1 {
-            year
+        if n_100 == 4 || n_1 == 4 {
+            year // Date is day 366 in a leap year
         } else {
-            year + 1
+            year + 1 // Date is day (day % 365 + 1) in year (year + 1)
         }
     }
 

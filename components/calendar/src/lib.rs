@@ -28,6 +28,7 @@ pub mod gregorian;
 pub mod iso;
 pub mod japanese;
 pub mod julian;
+pub mod persian;
 pub mod provider;
 pub mod types;
 
