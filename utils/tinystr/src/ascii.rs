@@ -14,10 +14,14 @@ pub struct TinyAsciiStr<const N: usize> {
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
+    /// Creates a `TinyAsciiStr<N>` from the given byte slice.
+    /// `bytes` may contain at most `N` non-null ASCII bytes.
     pub const fn from_bytes(bytes: &[u8]) -> Result<Self, TinyStrError> {
         Self::from_bytes_inner(bytes, 0, bytes.len(), false)
     }
 
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+    /// but callable in a `const` context (which range indexing is not).
     pub const fn from_bytes_manual_slice(
         bytes: &[u8],
         start: usize,

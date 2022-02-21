@@ -37,6 +37,7 @@ use core::ops::Deref;
 pub use key::Key;
 
 use crate::parser::ParserError;
+use crate::parser::SubtagIterator;
 
 /// A list of [`Private Use Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
@@ -124,9 +125,7 @@ impl Private {
         self.0 = None;
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        iter: &mut impl Iterator<Item = &'a [u8]>,
-    ) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter<'a>(iter: &mut SubtagIterator<'a>) -> Result<Self, ParserError> {
         let keys = iter.map(Key::from_bytes).collect::<Result<Vec<_>, _>>()?;
 
         Ok(Self::from_vec_unchecked(keys))

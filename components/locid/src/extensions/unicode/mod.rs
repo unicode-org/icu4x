@@ -43,6 +43,7 @@ pub use keywords::Keywords;
 pub use value::Value;
 
 use crate::parser::ParserError;
+use crate::parser::SubtagIterator;
 
 use core::iter::Peekable;
 
@@ -114,9 +115,7 @@ impl Unicode {
         self.keywords.is_empty() && self.attributes.is_empty()
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
-    ) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter<'a>(iter: &mut SubtagIterator<'a>) -> Result<Self, ParserError> {
         let mut attributes = vec![];
         let mut keywords = vec![];
 

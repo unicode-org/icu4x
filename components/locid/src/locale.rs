@@ -260,7 +260,7 @@ macro_rules! subtag_matches {
 
 impl PartialEq<str> for Locale {
     fn eq(&self, other: &str) -> bool {
-        let mut iter = get_subtag_iterator(other.as_bytes()).peekable();
+        let mut iter = get_subtag_iterator(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }

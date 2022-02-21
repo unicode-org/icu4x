@@ -59,7 +59,7 @@ use alloc::vec::Vec;
 use core::iter::Peekable;
 
 use crate::parser::ParserError;
-
+use crate::parser::SubtagIterator;
 /// Defines the type of extension.
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 pub enum ExtensionType {
@@ -136,9 +136,7 @@ impl Extensions {
             && self.other.is_empty()
     }
 
-    pub(crate) fn try_from_iter<'a>(
-        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
-    ) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter<'a>(iter: &mut SubtagIterator<'a>) -> Result<Self, ParserError> {
         let mut unicode = None;
         let mut transform = None;
         let mut private = None;

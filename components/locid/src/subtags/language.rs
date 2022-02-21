@@ -58,14 +58,27 @@ impl Language {
     ///
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        let slen = v.len();
+    pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+        Self::from_bytes_manual_slice(v, 0, v.len())
+    }
 
-        if !LANGUAGE_LENGTH.contains(&slen) {
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+    /// but callable in a `const` context (which range indexing is not).
+    pub const fn from_bytes_manual_slice(
+        v: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        let slen = end - start;
+
+        if slen < *LANGUAGE_LENGTH.start() || *LANGUAGE_LENGTH.end() < slen {
             return Err(ParserError::InvalidLanguage);
         }
 
-        let s = TinyStr4::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
+        let s = match TinyStr4::from_bytes_manual_slice(v, start, end) {
+            Ok(s) => s,
+            _ => return Err(ParserError::InvalidLanguage),
+        };
 
         if !s.is_ascii_alphabetic() {
             return Err(ParserError::InvalidLanguage);
@@ -73,7 +86,11 @@ impl Language {
 
         let value = s.to_ascii_lowercase();
 
-        if value == UND_VALUE {
+        if slen == 3
+            && value.all_bytes()[0] == UND_VALUE.all_bytes()[0]
+            && value.all_bytes()[1] == UND_VALUE.all_bytes()[1]
+            && value.all_bytes()[2] == UND_VALUE.all_bytes()[2]
+        {
             Ok(Self(None))
         } else {
             Ok(Self(Some(value)))

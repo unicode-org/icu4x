@@ -40,12 +40,26 @@ impl Script {
     ///
     /// assert_eq!(script, "Latn");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        if v.len() != SCRIPT_LENGTH {
+    pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+        Self::from_bytes_manual_slice(v, 0, v.len())
+    }
+
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+    /// but callable in a `const` context (which range indexing is not).
+    pub const fn from_bytes_manual_slice(
+        v: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        if end - start != SCRIPT_LENGTH {
             return Err(ParserError::InvalidSubtag);
         }
 
-        let s = TinyStr4::from_bytes(v).map_err(|_| ParserError::InvalidSubtag)?;
+        let s = match TinyStr4::from_bytes_manual_slice(v, start, end) {
+            Ok(s) => s,
+            _ => return Err(ParserError::InvalidSubtag),
+        };
+
         if !s.is_ascii_alphabetic() {
             return Err(ParserError::InvalidSubtag);
         }

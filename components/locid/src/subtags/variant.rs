@@ -42,20 +42,33 @@ impl Variant {
     ///
     /// assert_eq!(variant, "posix");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        let slen = v.len();
+    pub const fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+        Self::from_bytes_manual_slice(v, 0, v.len())
+    }
 
-        if !VARIANT_LENGTH.contains(&slen) {
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+    /// but callable in a `const` context (which range indexing is not).
+    pub const fn from_bytes_manual_slice(
+        v: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        let slen = end - start;
+
+        if slen < *VARIANT_LENGTH.start() || *VARIANT_LENGTH.end() < slen {
             return Err(ParserError::InvalidSubtag);
         }
 
-        let s = TinyStr8::from_bytes(v).map_err(|_| ParserError::InvalidSubtag)?;
+        let s = match TinyStr8::from_bytes_manual_slice(v, start, end) {
+            Ok(s) => s,
+            _ => return Err(ParserError::InvalidSubtag),
+        };
 
         if !s.is_ascii_alphanumeric() {
             return Err(ParserError::InvalidSubtag);
         }
 
-        if slen == VARIANT_NUM_ALPHA_LENGTH && !v[0].is_ascii_digit() {
+        if slen == VARIANT_NUM_ALPHA_LENGTH && !v[start].is_ascii_digit() {
             return Err(ParserError::InvalidSubtag);
         }
 
