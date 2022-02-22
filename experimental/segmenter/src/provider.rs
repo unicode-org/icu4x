@@ -126,12 +126,12 @@ pub struct RuleBreakDataV1<'data> {
 )]
 pub enum RuleBreakPropertyTable<'data> {
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    Borrowed(&'data [&'data [u8; 1024]; 897]),
-    Owned(Box<[&'data [u8; 1024]; 897]>),
+    Borrowed(&'data [[u8; 1024]; 897]),
+    Owned(Box<[[u8; 1024]; 897]>),
 }
 
 impl<'data> Deref for RuleBreakPropertyTable<'data> {
-    type Target = [&'data [u8; 1024]; 897];
+    type Target = [[u8; 1024]; 897];
     fn deref(&self) -> &Self::Target {
         match self {
             Self::Borrowed(v) => v,

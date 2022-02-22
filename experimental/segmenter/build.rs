@@ -647,12 +647,12 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     } else {
         writeln!(
             out,
-            "pub const PROPERTY_TABLE: [&[u8; 1024]; {}] = [",
+            "pub static PROPERTY_TABLE: [[u8; 1024]; {}] = [",
             CODEPOINT_TABLE_LEN / 1024
         )
         .ok();
         for i in codepoint_table.iter() {
-            writeln!(out, "    &{},", i).ok();
+            writeln!(out, "    {},", i).ok();
         }
         writeln!(out, "];").ok();
     }
