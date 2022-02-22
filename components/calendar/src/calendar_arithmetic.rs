@@ -22,20 +22,20 @@ pub trait CalendarArithmetic: Calendar {
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn offset_date(&self, mut offset: DateDuration<C>) {
-        let month_lengths = Self::month_lengths(self.year);
+        let month_lengths = C::month_lengths(self.year);
         self.year += offset.years;
-        self.month += offset.months;
+        self.month += offset.months as u8;
         offset.months = 0;
 
         offset.days += offset.weeks * 7;
 
-        offset.days += self.day - 1;
+        offset.days += self.day as i32 - 1;
         self.day = 1;
 
         while offset.days != 0 {
             if offset.days < 0 {
                 self.month -= 1;
-                let month_days = month_lengths[self.month];
+                let month_days = month_lengths[self.month as usize];
                 if (-offset.days) > month_days as i32 {
                     offset.days += month_days as i32;
                 } else {
@@ -43,7 +43,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
                     offset.days = 0;
                 }
             } else {
-                let month_days = month_lengths[self.month];
+                let month_days = month_lengths[self.month as usize];
 
                 if offset.days >= month_days as i32 {
                     self.month += 1;
@@ -72,14 +72,18 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn days_in_year(&self) {
-        let months = Self::month_lengths(self.year);
-        months.iter().sum()
+    pub fn days_in_year(&self) -> i32 {
+        let months = C::month_lengths(self.year);
+        let mut days: i32 = 0;
+        for month in months {
+            days += month as i32;
+        }
+        days
     }
 
     #[inline]
     pub fn days_in_month(&self) -> u8 {
-        let months = Self::month_lengths(self.year);
-        months[self.month]
+        let months = C::month_lengths(self.year);
+        months[self.month as usize]
     }
 }
