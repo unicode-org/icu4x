@@ -7,9 +7,9 @@ use core::marker::PhantomData;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct ArithmeticDate<C: CalendarArithmetic> {
-    year: i32,
-    month: u8,
-    day: u8,
+    pub year: i32,
+    pub month: u8,
+    pub day: u8,
     marker: PhantomData<C>,
 }
 
@@ -72,11 +72,11 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn days_in_year(&self) -> i32 {
+    pub fn days_in_year(&self) -> u32 {
         let months = C::month_lengths(self.year);
-        let mut days: i32 = 0;
+        let mut days: u32 = 0;
         for month in months {
-            days += month as i32;
+            days += month as u32;
         }
         days
     }
@@ -85,5 +85,20 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     pub fn days_in_month(&self) -> u8 {
         let months = C::month_lengths(self.year);
         months[self.month as usize]
+    }
+
+    #[inline]
+    pub fn months_in_year(&self) -> u8 {
+        C::month_lengths(self.year).len() as u8
+    }
+
+    #[inline]
+    pub fn day_of_year(&self) -> u32 {
+        let months = C::month_lengths(self.year);
+        let mut day_of_year = 0;
+        for month in 1..self.month {
+            day_of_year += months[month as usize] as u32;
+        }
+        day_of_year + (self.day as u32)
     }
 }

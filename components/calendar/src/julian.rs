@@ -55,7 +55,7 @@ impl Calendar for Julian {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Iso.months_in_year(&date.0)
+        date.0.months_in_year()
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
@@ -87,12 +87,12 @@ impl Calendar for Julian {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        date.0.year.into()
+        IsoYear(date.0.year).into()
     }
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::Month {
-        date.0.month.into()
+        IsoMonth(date.0.month).into()
     }
 
     /// The calendar-specific day-of-month represented by `date`
@@ -101,11 +101,11 @@ impl Calendar for Julian {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = IsoYear(date.0.year.0 - 1);
-        let next_year = IsoYear(date.0.year.0 + 1);
+        let prev_year = IsoYear(date.0.year - 1);
+        let next_year = IsoYear(date.0.year + 1);
         types::DayOfYearInfo {
-            day_of_year: Julian::day_of_year(date.0),
-            days_in_year: Julian::days_in_year(date.0.year),
+            day_of_year: date.0.day_of_year(),
+            days_in_year: date.0.days_in_year(),
             prev_year: prev_year.into(),
             days_in_prev_year: Julian::days_in_year(prev_year),
             next_year: next_year.into(),
@@ -123,25 +123,15 @@ impl Julian {
         Self
     }
 
-    fn day_of_year(date: IsoDateInner) -> u32 {
-        let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
-        let mut offset = month_offset[u8::from(date.month) as usize - 1];
-        if Self::is_leap_year(date.year) && u8::from(date.month) > 2 {
-            offset += 1;
-        }
-        let prev_month_days = (30 * (u8::from(date.month) as i32 - 1) + offset) as u32;
-        prev_month_days + u8::from(date.day) as u32
-    }
-
     // Fixed is day count representation of calendars starting from Jan 1st of year 1 of Georgian Calendar.
     // The fixed calculations algorithms are from the Calendrical Calculations book
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709
-    fn fixed_from_julian(date: IsoDateInner) -> i32 {
-        let year = if date.year.0 < 0 {
-            date.year.0 + 1
+    fn fixed_from_julian(date: ArithmeticDate<Julian>) -> i32 {
+        let year = if date.year < 0 {
+            date.year + 1
         } else {
-            date.year.0
+            date.year
         };
         let mut fixed: i32 = JULIAN_EPOCH - 1 + 365 * (year - 1) + (year - 1) / 4;
         fixed += (367 * (u8::from(date.month) as i32) - 362) / 12;
