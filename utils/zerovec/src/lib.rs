@@ -145,8 +145,8 @@ pub mod maps {
     pub use crate::map2d::ZeroMap2d;
     pub use crate::map2d::ZeroMap2dBorrowed;
 
+    pub use crate::map::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
     pub use crate::map2d::KeyError;
-    pub use crate::map::{ZeroMapKV, ZeroVecLike, BorrowedZeroVecLike, MutableZeroVecLike};
 }
 
 pub mod vecs {
@@ -161,10 +161,10 @@ pub mod vecs {
     //! direct manipulation of the backing buffer.
 
     #[doc(no_inline)]
-    pub use crate::zerovec::{ZeroVec, ZeroSlice};
+    pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
     #[doc(no_inline)]
-    pub use crate::varzerovec::{VarZeroVec, VarZeroSlice};
+    pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
     pub use crate::varzerovec::VarZeroVecOwned;
 }
