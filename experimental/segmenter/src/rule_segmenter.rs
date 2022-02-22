@@ -183,7 +183,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
-        let idx = (left as usize) * self.data.property_count + (right as usize);
+        let idx = left as usize * self.data.property_count as usize + right as usize;
         // We use unwrap_or to fall back to the base case and prevent panics on bad data.
         self.data.break_state_table.0.get(idx).unwrap_or(KEEP_RULE)
     }

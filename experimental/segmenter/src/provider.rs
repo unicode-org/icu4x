@@ -110,7 +110,7 @@ pub struct RuleBreakDataV1<'data> {
     pub break_state_table: RuleBreakStateTable<'data>,
 
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
-    pub property_count: usize,
+    pub property_count: u8,
 
     pub last_codepoint_property: i8,
     pub sot_property: u8,

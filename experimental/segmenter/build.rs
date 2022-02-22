@@ -679,7 +679,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
     writeln!(
         out,
-        "pub const PROPERTY_COUNT: usize = {};",
+        "pub const PROPERTY_COUNT: u8 = {};",
         properties_names.len()
     )
     .ok();
