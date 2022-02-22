@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645549061900,
+  "lastUpdate": 1645550222759,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9773,6 +9773,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f574d2a7313cef08cfa8c3869859a1b318b9d97b"
         },
         "date": 1645549050028,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1670502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8f6ff988f231c939d1ca882ba610c663f70a5ae4",
+          "message": "Making more tinystr operations const (#1628)",
+          "timestamp": "2022-02-22T18:14:59+01:00",
+          "tree_id": "c4cd53125ed12b46515d54eb4f4655698d881859",
+          "url": "https://github.com/unicode-org/icu4x/commit/8f6ff988f231c939d1ca882ba610c663f70a5ae4"
+        },
+        "date": 1645550211418,
         "tool": "ndjson",
         "benches": [
           {
