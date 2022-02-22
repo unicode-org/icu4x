@@ -101,8 +101,8 @@
 extern crate alloc;
 
 mod error;
-pub mod map;
-pub mod map2d;
+mod map;
+mod map2d;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;
@@ -122,4 +122,28 @@ pub use crate::zerovec::{ZeroSlice, ZeroVec};
 #[doc(hidden)]
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
+}
+
+pub mod maps {
+    //! This module contains additional utility types and traits for working with
+    //! [`ZeroMap`] and [`ZeroMap2d`].
+    //!
+    //! [`ZeroMapBorrowed`] and [`ZeroMap2dBorrowed`] are versions of [`ZeroMap`] and [`ZeroMap2d`]
+    //! that can be used when you wish to guarantee that the map data is always borrowed, leading to
+    //! relaxed lifetime constraints.
+    //!
+    //! The [`ZeroMapKV`] trait is required to be implemented on any type that needs to be used
+    //! within a map type. [`ZeroVecLike`], [`BorrowedZeroVecLike`], and [`MutableZeroVecLike`] are
+    //! all traits used in the internal workings of the map types, and should typically not be used
+    //! or implemented by users of this crate.
+    #[doc(no_inline)]
+    pub use crate::map::ZeroMap;
+    pub use crate::map::ZeroMapBorrowed;
+
+    #[doc(no_inline)]
+    pub use crate::map2d::ZeroMap2d;
+    pub use crate::map2d::ZeroMap2dBorrowed;
+
+    pub use crate::map2d::KeyError;
+    pub use crate::map::{ZeroMapKV, ZeroVecLike, BorrowedZeroVecLike, MutableZeroVecLike};
 }
