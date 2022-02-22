@@ -2,15 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Calendar, DateDuration, DateDurationUnit};
+use crate::{types, Calendar, DateDuration, DateDurationUnit};
 use core::marker::PhantomData;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub year: i32,
+    /// 1-based month of year
     pub month: u8,
+    /// 1-based day of month
     pub day: u8,
-    marker: PhantomData<C>,
+    pub marker: PhantomData<C>,
 }
 
 pub trait CalendarArithmetic: Calendar {
@@ -100,5 +102,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             day_of_year += months[month as usize] as u32;
         }
         day_of_year + (self.day as u32)
+    }
+
+    #[inline]
+    pub fn day_of_month(&self) -> types::DayOfMonth {
+        types::DayOfMonth(self.day.into())
     }
 }

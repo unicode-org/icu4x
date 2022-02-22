@@ -10,6 +10,8 @@ use crate::{
     DateTime, DateTimeError,
 };
 use core::convert::TryInto;
+use core::marker::PhantomData;
+use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
@@ -87,17 +89,20 @@ impl Calendar for Julian {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        IsoYear(date.0.year).into()
+        crate::gregorian::year_as_gregorian(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::Month {
-        IsoMonth(date.0.month).into()
+        types::Month {
+            number: date.0.month.into(),
+            code: types::MonthCode(tinystr!(8, "TODO")),
+        }
     }
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day.into()
+        date.0.day_of_month()
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
@@ -107,7 +112,7 @@ impl Calendar for Julian {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: prev_year.into(),
-            days_in_prev_year: Julian::days_in_year(prev_year),
+            days_in_prev_year: Julian::days_in_year_direct(prev_year.0),
             next_year: next_year.into(),
         }
     }
@@ -147,11 +152,22 @@ impl Julian {
     }
 
     fn fixed_from_julian_integers(year: i32, month: i32, day: i32) -> i32 {
-        Self::fixed_from_julian(
-            *Date::new_iso_date_from_integers(year, month as u8, day as u8)
-                .unwrap()
-                .inner(),
-        )
+        Self::fixed_from_julian(ArithmeticDate {
+            year,
+            month: month.try_into().unwrap(),
+            day: day.try_into().unwrap(),
+            marker: PhantomData,
+        })
+    }
+
+    /// Convenience function so we can call days_in_year without
+    /// needing to construct a full ArithmeticDate
+    fn days_in_year_direct(year: i32) -> u32 {
+        if Julian::is_leap_year(year) {
+            366
+        } else {
+            365
+        }
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
@@ -161,7 +177,7 @@ impl Julian {
         let prior_days = date - Self::fixed_from_julian_integers(year, 1, 1);
         let correction = if date < Self::fixed_from_julian_integers(year, 3, 1) {
             0
-        } else if Self::is_leap_year(IsoYear::from(year)) {
+        } else if Julian::is_leap_year(year) {
             1
         } else {
             2
@@ -185,23 +201,21 @@ impl Date<Julian> {
         let day_int = u8::from(day);
         let month_int = u8::from(month);
 
+        let inner = ArithmeticDate {
+            year: year.0,
+            month: month.into(),
+            day: day.into(),
+            marker: PhantomData,
+        };
+
         if day_int > 28 {
-            let bound = Julian::days_in_month(year, month);
+            let bound = inner.days_in_month();
             if day_int > bound {
                 return Err(DateTimeError::OutOfRange);
             }
         }
 
-        Ok(Date::from_raw(
-            JulianDateInner {
-                0: IsoDateInner {
-                    day: day_int.try_into()?,
-                    month: month_int.try_into()?,
-                    year,
-                },
-            },
-            Julian,
-        ))
+        Ok(Date::from_raw(JulianDateInner(inner), Julian))
     }
 
     pub fn new_julian_date_from_integers(
