@@ -4,7 +4,7 @@
 
 //! This module contains types and implementations for the Julian calendar
 
-use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
+use crate::iso::{Iso, IsoDay, IsoMonth, IsoYear};
 use crate::{
     types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
     DateTime, DateTimeError,
@@ -28,7 +28,7 @@ pub struct JulianDateInner(ArithmeticDate<Julian>);
 
 impl CalendarArithmetic for Julian {
     fn month_lengths(year: i32) -> [u8; 12] {
-        let months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        let mut months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         if Self::is_leap_year(year) {
             months[1] += 1;
         }
@@ -199,7 +199,6 @@ impl Date<Julian> {
         day: IsoDay,
     ) -> Result<Date<Julian>, DateTimeError> {
         let day_int = u8::from(day);
-        let month_int = u8::from(month);
 
         let inner = ArithmeticDate {
             year: year.0,
