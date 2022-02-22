@@ -18,7 +18,6 @@ use icu_provider_cldr::CldrPathsAllInOne;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
-use icu_provider_fs::manifest;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -53,14 +52,6 @@ fn main() -> eyre::Result<()> {
                 .possible_value("blob")
                 .help("Output to a directory on the filesystem or a single blob.")
                 .default_value("dir"),
-        )
-        .arg(
-            Arg::with_name("ALIASING")
-                .long("aliasing")
-                .takes_value(true)
-                .possible_value("none")
-                .possible_value("symlink")
-                .help("Sets the aliasing mode of the output on the filesystem."),
         )
         .arg(
             Arg::with_name("OVERWRITE")
@@ -357,18 +348,37 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    for key in selected_keys {
-        let result =
-            icu_provider::export::export_from_iterable(key, provider.as_ref(), &mut *exporter);
+    // TODO: Parallelize this.
+    selected_keys.into_iter().try_for_each(|key| {
+        let result = provider
+            .supported_options_for_key(key)?
+            // TODO: Parallelize this.
+            .try_for_each(|options| {
+                let payload = provider
+                    .load_payload(
+                        key,
+                        &DataRequest {
+                            options: options.clone(),
+                            metadata: Default::default(),
+                        },
+                    )?
+                    .take_payload()?;
+                exporter.put_payload(key, options, payload)
+            });
+
+        exporter.flush(key)?;
+
         if matches.is_present("TEST_KEYS")
             && matches!(result, Err(e) if e.kind == DataErrorKind::MissingResourceKey)
         {
             log::trace!("Skipping key: {}", key);
+            Ok(())
         } else {
             log::info!("Writing key: {}", key);
-            result?
+            result
         }
-    }
+    })?;
+
     exporter.close()?;
 
     Ok(())
@@ -387,34 +397,28 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
 
     log::info!("Writing to filesystem tree at: {}", output_path.display());
 
-    let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
-        Some("json") | None => {
-            let mut options = serializers::json::Options::default();
-            if matches.is_present("PRETTY") {
-                options.style = serializers::json::StyleOption::Pretty;
+    let serializer: Box<dyn serializers::AbstractSerializer + Sync> =
+        match matches.value_of("SYNTAX") {
+            Some("json") | None => {
+                let mut options = serializers::json::Options::default();
+                if matches.is_present("PRETTY") {
+                    options.style = serializers::json::StyleOption::Pretty;
+                }
+                Box::new(serializers::json::Serializer::new(options))
             }
-            Box::new(serializers::json::Serializer::new(options))
-        }
-        Some("bincode") => {
-            let options = serializers::bincode::Options::default();
-            Box::new(serializers::bincode::Serializer::new(options))
-        }
-        Some("postcard") => {
-            let options = serializers::postcard::Options::default();
-            Box::new(serializers::postcard::Serializer::new(options))
-        }
-        _ => unreachable!(),
-    };
+            Some("bincode") => {
+                let options = serializers::bincode::Options::default();
+                Box::new(serializers::bincode::Serializer::new(options))
+            }
+            Some("postcard") => {
+                let options = serializers::postcard::Options::default();
+                Box::new(serializers::postcard::Serializer::new(options))
+            }
+            _ => unreachable!(),
+        };
 
     let mut options = fs_exporter::ExporterOptions::default();
     options.root = output_path;
-    if let Some(value) = matches.value_of("ALIASING") {
-        options.aliasing = match value {
-            "none" => manifest::AliasOption::NoAliases,
-            "symlink" => manifest::AliasOption::Symlink,
-            _ => unreachable!(),
-        };
-    }
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
@@ -439,7 +443,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
         None => log::info!("Writing blob to standard out"),
     };
 
-    let sink: Box<dyn std::io::Write> = if let Some(path_buf) = output_path {
+    let sink: Box<dyn std::io::Write + Sync> = if let Some(path_buf) = output_path {
         if !matches.is_present("OVERWRITE") && path_buf.exists() {
             eyre::bail!("Output path is present: {:?}", path_buf);
         }
