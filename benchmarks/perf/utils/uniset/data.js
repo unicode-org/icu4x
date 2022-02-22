@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645549500759,
+  "lastUpdate": 1645550650381,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20729,6 +20729,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43672671,
             "range": "± 117468",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8f6ff988f231c939d1ca882ba610c663f70a5ae4",
+          "message": "Making more tinystr operations const (#1628)",
+          "timestamp": "2022-02-22T18:14:59+01:00",
+          "tree_id": "c4cd53125ed12b46515d54eb4f4655698d881859",
+          "url": "https://github.com/unicode-org/icu4x/commit/8f6ff988f231c939d1ca882ba610c663f70a5ae4"
+        },
+        "date": 1645550635776,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 54105253,
+            "range": "± 1949050",
             "unit": "ns/iter"
           }
         ]
