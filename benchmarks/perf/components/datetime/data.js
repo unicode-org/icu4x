@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645549552408,
+  "lastUpdate": 1645550700983,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21221,6 +21221,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 169879,
             "range": "± 210",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8f6ff988f231c939d1ca882ba610c663f70a5ae4",
+          "message": "Making more tinystr operations const (#1628)",
+          "timestamp": "2022-02-22T18:14:59+01:00",
+          "tree_id": "c4cd53125ed12b46515d54eb4f4655698d881859",
+          "url": "https://github.com/unicode-org/icu4x/commit/8f6ff988f231c939d1ca882ba610c663f70a5ae4"
+        },
+        "date": 1645550688536,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 71763,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 709787,
+            "range": "± 722",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 152386,
+            "range": "± 287",
             "unit": "ns/iter"
           }
         ]
