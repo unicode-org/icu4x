@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645550636278,
+  "lastUpdate": 1645551965900,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19679,6 +19679,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 122940,
             "range": "± 1088",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6cbd05a2226fce1d41e20b7838a7e118af492f4d",
+          "message": "Add paragraph about alignment tradeoff (#1625)",
+          "timestamp": "2022-02-22T11:37:16-06:00",
+          "tree_id": "0f818159cc08cae017d20075553070b37288649c",
+          "url": "https://github.com/unicode-org/icu4x/commit/6cbd05a2226fce1d41e20b7838a7e118af492f4d"
+        },
+        "date": 1645551952694,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112809,
+            "range": "± 3002",
             "unit": "ns/iter"
           }
         ]
