@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645207231152,
+  "lastUpdate": 1645549559682,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24221,6 +24221,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4951,
             "range": "± 325",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f574d2a7313cef08cfa8c3869859a1b318b9d97b",
+          "message": "Fix get_best_available_format_pattern()'s skeleton matching logic. (#1549)\n\nThe compare was inverted resulting in matching at best stopping at the first\r\nmissing symbol rather than iterating through.\r\n\r\nFor example, with:\r\n\r\nfields = \"hs\"\r\nskeletons = [\"h\", \"hms\"]\r\n\r\nPreviously for \"hms\" we'd get a score of missing+extra = 11000:\r\n\r\nrequested_fields.peek() | skeleton_fields.peek() | result\r\n------------------------|------------------------|--------\r\n                    \"h\" | \"h\"                    | match\r\n                    \"s\" | \"m\"                    | missing\r\n                   None | \"s\"                    | extra\r\n\r\nWhereas we now get 1000:\r\n\r\nrequested_fields.peek() | skeleton_fields.peek() | result\r\n------------------------|------------------------|--------\r\n                    \"h\" | \"h\"                    | match\r\n                    \"s\" | \"m\"                    | extra\r\n                    \"s\" | \"s\"                    | match\r\n\r\n\"h\"'s score is missing = 10000 both before & now resulting in the best match changing from \"h\" to \"hms\".\r\n\r\nWorst case scenario was when a candidate pattern started with a symbol <\r\nthe first requested symbol. In such a case the pattern fails to match at\r\nall: e.g. requested = \"s\" won't match \"hms\".",
+          "timestamp": "2022-02-22T17:55:48+01:00",
+          "tree_id": "1cd6685e94fd7120f186e4ee0069077ffc18d1c9",
+          "url": "https://github.com/unicode-org/icu4x/commit/f574d2a7313cef08cfa8c3869859a1b318b9d97b"
+        },
+        "date": 1645549546000,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2716,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4914,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
