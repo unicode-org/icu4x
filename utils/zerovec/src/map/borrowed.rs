@@ -20,7 +20,7 @@ pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 /// # Examples
 ///
 /// ```
-/// use zerovec::map::ZeroMapBorrowed;
+/// use zerovec::maps::ZeroMapBorrowed;
 ///
 /// // Example byte buffer representing the map { 1: "one" }
 /// let BINCODE_BYTES: &[u8; 31] = &[
@@ -96,7 +96,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use zerovec::map::ZeroMapBorrowed;
+    /// use zerovec::maps::ZeroMapBorrowed;
     ///
     /// let zm: ZeroMapBorrowed<u16, str> = ZeroMapBorrowed::new();
     /// assert!(zm.is_empty());
@@ -128,7 +128,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
-    /// use zerovec::map::ZeroMapBorrowed;
+    /// use zerovec::maps::ZeroMapBorrowed;
     ///
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
@@ -155,7 +155,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
-    /// use zerovec::map::ZeroMapBorrowed;
+    /// use zerovec::maps::ZeroMapBorrowed;
     ///
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
@@ -178,7 +178,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
-    /// use zerovec::map::ZeroMapBorrowed;
+    /// use zerovec::maps::ZeroMapBorrowed;
     ///
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");

@@ -250,7 +250,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         quote!()
     } else {
         quote!(
-            impl<'a> zerovec::map::ZeroMapKV<'a> for #ule_name {
+            impl<'a> zerovec::maps::ZeroMapKV<'a> for #ule_name {
                 type Container = zerovec::VarZeroVec<'a, #ule_name>;
                 type GetType = #ule_name;
                 type OwnedType = Box<#ule_name>;

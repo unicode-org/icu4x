@@ -189,7 +189,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap2d;
-    /// use zerovec::map2d::KeyError;
+    /// use zerovec::maps::KeyError;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -257,7 +257,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap2d;
-    /// use zerovec::map2d::KeyError;
+    /// use zerovec::maps::KeyError;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -294,7 +294,7 @@ where
     /// sorted list.
     /// ```rust
     /// use zerovec::ZeroMap2d;
-    /// use zerovec::map2d::KeyError;
+    /// use zerovec::maps::KeyError;
     ///
     /// let mut map = ZeroMap2d::new();
     /// assert!(map.try_append(&1, "one", "uno").is_none());
