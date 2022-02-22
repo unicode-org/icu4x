@@ -106,7 +106,7 @@ mod map2d;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;
-pub mod varzerovec;
+mod varzerovec;
 mod zerovec;
 
 #[cfg(feature = "yoke")]
@@ -126,7 +126,8 @@ pub mod __zerovec_internal_reexport {
 
 pub mod maps {
     //! This module contains additional utility types and traits for working with
-    //! [`ZeroMap`] and [`ZeroMap2d`].
+    //! [`ZeroMap`] and [`ZeroMap2d`]. See their docs for more details on the general purpose
+    //! of these types.
     //!
     //! [`ZeroMapBorrowed`] and [`ZeroMap2dBorrowed`] are versions of [`ZeroMap`] and [`ZeroMap2d`]
     //! that can be used when you wish to guarantee that the map data is always borrowed, leading to
@@ -146,4 +147,24 @@ pub mod maps {
 
     pub use crate::map2d::KeyError;
     pub use crate::map::{ZeroMapKV, ZeroVecLike, BorrowedZeroVecLike, MutableZeroVecLike};
+}
+
+pub mod vecs {
+    //! This module contains additional utility types for working with
+    //! [`ZeroVec`] and  [`VarZeroVec`]. See their docs for more details on the general purpose
+    //! of these types.
+    //!
+    //! [`ZeroSlice`] and [`VarZeroSlice`] provide slice-like versions of the vector types
+    //! for use behind references and in custom ULE types.
+    //!
+    //! [`VarZeroVecOwned`] is a special owned/mutable version of [`VarZeroVec`], allowing
+    //! direct manipulation of the backing buffer.
+
+    #[doc(no_inline)]
+    pub use crate::zerovec::{ZeroVec, ZeroSlice};
+
+    #[doc(no_inline)]
+    pub use crate::varzerovec::{VarZeroVec, VarZeroSlice};
+
+    pub use crate::varzerovec::VarZeroVecOwned;
 }

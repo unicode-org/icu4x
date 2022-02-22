@@ -27,8 +27,7 @@ use core::ops::Range;
 ///
 /// ```rust
 /// use zerovec::VarZeroVec;
-/// use zerovec::ZeroVec;
-/// use zerovec::varzerovec::VarZeroSlice;
+/// use zerovec::{ZeroVec, VarZeroSlice};
 /// use zerovec::ule::*;
 /// let strings_1: Vec<&str> = vec!["foo", "bar", "baz"];
 /// let strings_2: Vec<&str> = vec!["twelve", "seventeen", "forty two"];
