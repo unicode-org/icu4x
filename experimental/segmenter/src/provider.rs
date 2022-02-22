@@ -174,9 +174,9 @@ impl ResourceProvider<GraphemeClusterBreakDataV1Marker> for RuleBreakDataProvide
             ),
             property_count: grapheme_data::PROPERTY_COUNT,
             last_codepoint_property: grapheme_data::LAST_CODEPOINT_PROPERTY,
-            sot_property: grapheme_data::PROP_SOT as u8,
-            eot_property: grapheme_data::PROP_EOT as u8,
-            complex_property: grapheme_data::PROP_COMPLEX as u8,
+            sot_property: grapheme_data::PROP_SOT,
+            eot_property: grapheme_data::PROP_EOT,
+            complex_property: grapheme_data::PROP_COMPLEX,
         };
 
         Ok(DataResponse {
@@ -203,9 +203,9 @@ impl ResourceProvider<WordBreakDataV1Marker> for RuleBreakDataProvider {
             ),
             property_count: word_data::PROPERTY_COUNT,
             last_codepoint_property: word_data::LAST_CODEPOINT_PROPERTY,
-            sot_property: word_data::PROP_SOT as u8,
-            eot_property: word_data::PROP_EOT as u8,
-            complex_property: word_data::PROP_COMPLEX as u8,
+            sot_property: word_data::PROP_SOT,
+            eot_property: word_data::PROP_EOT,
+            complex_property: word_data::PROP_COMPLEX,
         };
 
         Ok(DataResponse {
@@ -232,9 +232,9 @@ impl ResourceProvider<SentenceBreakDataV1Marker> for RuleBreakDataProvider {
             ),
             property_count: sentence_data::PROPERTY_COUNT,
             last_codepoint_property: sentence_data::LAST_CODEPOINT_PROPERTY,
-            sot_property: sentence_data::PROP_SOT as u8,
-            eot_property: sentence_data::PROP_EOT as u8,
-            complex_property: sentence_data::PROP_COMPLEX as u8,
+            sot_property: sentence_data::PROP_SOT,
+            eot_property: sentence_data::PROP_EOT,
+            complex_property: sentence_data::PROP_COMPLEX,
         };
 
         Ok(DataResponse {
