@@ -31,38 +31,40 @@ use tinystr::TinyAsciiStr;
 /// or modify aliases for use in this structure.
 pub struct AliasesV1 {
     /// Language data not covered by other rules, normally this will be empty.
+    /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[zerofrom(clone)]
     pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     /// Language and variant.
+    /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[zerofrom(clone)]
     pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     /// Sign language and region data.
     #[zerofrom(clone)]
-    pub sgn_region: Vec<(TinyAsciiStr<3>, LanguageIdentifier)>,
+    pub sgn_region: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
     /// Two character language codes.
     #[zerofrom(clone)]
-    pub language_len2: Vec<(TinyAsciiStr<2>, LanguageIdentifier)>,
+    pub language_len2: LiteMap<TinyAsciiStr<2>, LanguageIdentifier>,
     /// Three character language codes.
     #[zerofrom(clone)]
-    pub language_len3: Vec<(TinyAsciiStr<3>, LanguageIdentifier)>,
+    pub language_len3: LiteMap<TinyAsciiStr<3>, LanguageIdentifier>,
     /// Scripts.
     #[zerofrom(clone)]
-    pub script: Vec<(TinyAsciiStr<4>, TinyAsciiStr<4>)>,
+    pub script: LiteMap<TinyAsciiStr<4>, TinyAsciiStr<4>>,
     /// Alphabetical region codes.
     #[zerofrom(clone)]
-    pub region_alpha: Vec<(TinyAsciiStr<2>, TinyAsciiStr<3>)>,
+    pub region_alpha: LiteMap<TinyAsciiStr<2>, TinyAsciiStr<3>>,
     /// Numeric region codes.
     #[zerofrom(clone)]
-    pub region_num: Vec<(TinyAsciiStr<3>, TinyAsciiStr<3>)>,
+    pub region_num: LiteMap<TinyAsciiStr<3>, TinyAsciiStr<3>>,
     /// Old regions which map to more than one new region.
     #[zerofrom(clone)]
-    pub complex_region: Vec<(TinyAsciiStr<3>, Vec<TinyAsciiStr<3>>)>,
+    pub complex_region: LiteMap<TinyAsciiStr<3>, Vec<TinyAsciiStr<3>>>,
     /// Variants.
     #[zerofrom(clone)]
-    pub variant: Vec<(TinyAsciiStr<8>, TinyAsciiStr<8>)>,
+    pub variant: LiteMap<TinyAsciiStr<8>, TinyAsciiStr<8>>,
     /// Subdivisions.
     #[zerofrom(clone)]
-    pub subdivision: Vec<(TinyAsciiStr<7>, TinyAsciiStr<7>)>,
+    pub subdivision: LiteMap<TinyAsciiStr<7>, TinyAsciiStr<7>>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
