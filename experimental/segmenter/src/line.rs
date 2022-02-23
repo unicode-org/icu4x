@@ -382,8 +382,6 @@ pub trait LineBreakType<'l, 's> {
 
     fn use_complex_breaking(iterator: &LineBreakIterator<'l, 's, Self>, c: Self::CharType) -> bool;
 
-    fn get_linebreak_property(iterator: &LineBreakIterator<'l, 's, Self>) -> u8;
-
     fn get_linebreak_property_with_rule(
         iterator: &LineBreakIterator<'l, 's, Self>,
         c: Self::CharType,
@@ -444,14 +442,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
         }
 
         loop {
-            let mut left_prop = Y::get_linebreak_property(self);
+            let mut left_prop = self.get_linebreak_property();
             let left_codepoint = self.current_pos_data;
             self.current_pos_data = self.iter.next();
             if self.current_pos_data.is_none() {
                 // EOF
                 return Some(self.len);
             }
-            let right_prop = Y::get_linebreak_property(self);
+            let right_prop = self.get_linebreak_property();
 
             // CSS word-break property handling
             match self.options.word_break_rule {
@@ -534,7 +532,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                         return Some(self.len);
                     }
 
-                    let prop = Y::get_linebreak_property(self);
+                    let prop = self.get_linebreak_property();
                     break_state =
                         get_break_state_from_table(&self.data.rule_table, break_state as u8, prop);
                     if break_state < 0 {
@@ -572,6 +570,10 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
             }
         }
         false
+    }
+
+    fn get_linebreak_property(&self) -> u8 {
+        Y::get_linebreak_property_with_rule(self, self.current_pos_data.unwrap().1)
     }
 
     // UAX14 doesn't define line break rules for some languages such as Thai.
@@ -616,10 +618,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
 impl<'l, 's> LineBreakType<'l, 's> for char {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
-
-    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
-        Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
-    }
 
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
         get_linebreak_property_with_rule(
@@ -681,11 +679,6 @@ impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8; // TODO: Latin1Char
 
-    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
-        // No CJ on Latin1
-        Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
-    }
-
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u8) -> u8 {
         // No CJ on Latin1
         get_linebreak_property_latin1(&iterator.data.property_table, c)
@@ -717,10 +710,6 @@ pub struct Utf16Char(pub u32);
 impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32; // TODO: Utf16Char
-
-    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
-        Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
-    }
 
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u32) -> u8 {
         get_linebreak_property_utf32_with_rule(
