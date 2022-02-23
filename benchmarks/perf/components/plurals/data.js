@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645601829320,
+  "lastUpdate": 1645656991986,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27761,6 +27761,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15041,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2f33727923fa3472be8bd5d269017b8fdc28e1eb",
+          "message": "WeekOf provider (#1366)\n\n- Adds regional preference data for week info.",
+          "timestamp": "2022-02-23T14:45:07-08:00",
+          "tree_id": "66f32f26e4a7f4770b25efa55c6f7e0d99c8cc8e",
+          "url": "https://github.com/unicode-org/icu4x/commit/2f33727923fa3472be8bd5d269017b8fdc28e1eb"
+        },
+        "date": 1645656976939,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1042,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6952,
+            "range": "± 336",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17637,
+            "range": "± 813",
             "unit": "ns/iter"
           }
         ]
