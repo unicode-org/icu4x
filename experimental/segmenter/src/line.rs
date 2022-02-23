@@ -233,7 +233,7 @@ fn get_linebreak_property_with_rule(
 
 #[inline]
 fn is_break_utf32_by_normal(codepoint: u32, ja_zh: bool) -> bool {
-    match codepoint as u32 {
+    match codepoint {
         0x301C => ja_zh,
         0x30A0 => ja_zh,
         _ => false,
@@ -387,8 +387,6 @@ pub trait LineBreakType<'l, 's> {
         c: Self::CharType,
     ) -> u8;
 
-    fn is_break_by_normal(iterator: &LineBreakIterator<'l, 's, Self>) -> bool;
-
     fn get_line_break_by_platform_fallback(
         iterator: &LineBreakIterator<'l, 's, Self>,
         input: &[u16],
@@ -472,7 +470,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // CSS line-break property handling
             match self.options.line_break_rule {
                 LineBreakRule::Normal => {
-                    if Y::is_break_by_normal(self) {
+                    if self.is_break_by_normal() {
                         return Some(self.current_pos_data.unwrap().0);
                     }
                 }
@@ -576,6 +574,10 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
         Y::get_linebreak_property_with_rule(self, self.current_pos_data.unwrap().1)
     }
 
+    fn is_break_by_normal(&self) -> bool {
+        is_break_utf32_by_normal(self.current_pos_data.unwrap().1.into(), self.options.ja_zh)
+    }
+
     // UAX14 doesn't define line break rules for some languages such as Thai.
     // These languages uses dictionary-based breaker, so we use OS's line breaker instead.
     fn handle_complex_language(&mut self, left_codepoint: Y::CharType) -> Option<usize> {
@@ -628,13 +630,6 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
         )
     }
 
-    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
-        is_break_utf32_by_normal(
-            iterator.current_pos_data.unwrap().1 as u32,
-            iterator.options.ja_zh,
-        )
-    }
-
     #[inline]
     fn use_complex_breaking(iterator: &LineBreakIterator<Self>, c: char) -> bool {
         use_complex_breaking_utf32(&iterator.data.property_table, c as u32)
@@ -684,13 +679,6 @@ impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
         get_linebreak_property_latin1(&iterator.data.property_table, c)
     }
 
-    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
-        is_break_utf32_by_normal(
-            iterator.current_pos_data.unwrap().1 as u32,
-            iterator.options.ja_zh,
-        )
-    }
-
     #[inline]
     fn use_complex_breaking(_iterator: &LineBreakIterator<Self>, _c: u8) -> bool {
         false
@@ -717,13 +705,6 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
             c,
             iterator.options.line_break_rule,
             iterator.options.word_break_rule,
-        )
-    }
-
-    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
-        is_break_utf32_by_normal(
-            iterator.current_pos_data.unwrap().1 as u32,
-            iterator.options.ja_zh,
         )
     }
 
