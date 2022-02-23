@@ -3144,6 +3144,7 @@ dependencies = [
  "serde_json",
  "yoke",
  "zerofrom",
+ "zerovec-derive",
 ]
 
 [[package]]

@@ -26,7 +26,13 @@ use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
 use core::{mem, slice};
 
+#[cfg(feature = "serde")]
+pub use zerovec_derive::{VarULE, ULE};
+
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
+///
+/// If you need to implement this trait, consider using [`#[make_ule]`](crate::make_ule) or
+///  [`#[derive(ULE)]`](macro@ULE) instead.
 ///
 /// Types that are not fixed-width can implement [`VarULE`] instead.
 ///
@@ -142,6 +148,8 @@ where
 }
 
 /// A trait for any type that has a 1:1 mapping with an unaligned little-endian (ULE) type.
+///
+/// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_ule) instead.
 pub trait AsULE: Copy {
     /// The ULE type corresponding to `Self`.
     ///
@@ -224,6 +232,9 @@ where
 }
 
 /// Variable-width, byte-aligned data that can be cast to and from a little-endian byte slice.
+///
+/// If you need to implement this trait, consider using [`#[make_varule]`](crate::make_varule) or
+///  [`#[derive(VarULE)]`](macro@VarULE) instead.
 ///
 /// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types;
 /// however, it is much more preferable to use [`ULE`] for that purpose. The [`custom`] module contains

@@ -21,9 +21,13 @@
 //! Clients upgrading to `zerovec` benefit from zero heap allocations when deserializing
 //! read-only data.
 //!
-//! This crate has two optional features: `serde` and `yoke`. `serde` allows serializing and deserializing
+//! This crate has three optional features: `serde`, `yoke`, and `derive`. `serde` allows serializing and deserializing
 //! `zerovec`'s abstractions via [`serde`](https://docs.rs/serde), and `yoke` enables implementations of `Yokeable`
 //! from the [`yoke`](https://docs.rs/yoke/) crate.
+//!
+//! `derive` makes it easier to use custom types in these collections by providing the [`#[make_ule]`](crate::make_ule) and
+//! [`#[make_varule]`](crate::make_varule) proc macros, which generate appropriate [`ULE`](crate::ule::ULE) and
+//! [`VarULE`](crate::ule::VarULE)-conformant types for a given "normal" type.
 //!
 //! # Performance
 //!
@@ -118,6 +122,9 @@ pub use crate::map::map::ZeroMap;
 pub use crate::map2d::map::ZeroMap2d;
 pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
+
+#[cfg(feature = "serde")]
+pub use zerovec_derive::{make_ule, make_varule};
 
 #[doc(hidden)]
 pub mod __zerovec_internal_reexport {
