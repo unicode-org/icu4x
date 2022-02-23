@@ -61,9 +61,6 @@ pub trait CldrPaths: std::fmt::Debug + Sync {
         // more calendars here
         vec
     }
-
-    /// Path to uprops TOML data, which is required by some CLDR transformers
-    fn uprops(&self) -> Result<PathBuf, Error>;
 }
 
 /// An implementation of [`CldrPaths`] for multiple separate local CLDR JSON directories per
@@ -72,15 +69,15 @@ pub trait CldrPaths: std::fmt::Debug + Sync {
 /// # Examples
 ///
 /// ```
+/// use icu_provider_cldr::CldrPaths;
 /// use icu_provider_cldr::CldrPathsLocal;
-/// use icu_provider_cldr::CldrJsonDataProvider;
 /// use std::path::PathBuf;
 ///
 /// let mut paths = CldrPathsLocal::default();
 /// paths.cldr_core = Ok(PathBuf::from("/path/to/cldr-core"));
 /// // fill in other paths as necessary
 ///
-/// let data_provider = CldrJsonDataProvider::new(&paths);
+/// paths.cldr_dates_all();
 /// ```
 #[non_exhaustive]
 #[derive(Debug, PartialEq)]
@@ -112,12 +109,6 @@ impl CldrPaths for CldrPathsLocal {
     fn cldr_misc(&self) -> Result<PathBuf, Error> {
         self.cldr_misc.clone().map_err(|e| e.into())
     }
-    fn uprops(&self) -> Result<PathBuf, Error> {
-        Err(Error::Custom(
-            "This implementation does not know about uprops".to_owned(),
-            None,
-        ))
-    }
 }
 
 impl Default for CldrPathsLocal {
@@ -144,17 +135,16 @@ impl Default for CldrPathsLocal {
 /// # Examples
 ///
 /// ```
+/// use icu_provider_cldr::CldrPaths;
 /// use icu_provider_cldr::CldrPathsAllInOne;
-/// use icu_provider_cldr::CldrJsonDataProvider;
 /// use std::path::PathBuf;
 ///
 /// let paths = CldrPathsAllInOne {
 ///     cldr_json_root: PathBuf::from("/path/to/cldr-json"),
 ///     locale_subset: "full".to_string(),
-///     uprops_root: Some(PathBuf::from("path/to/uprops")),
 /// };
 ///
-/// let data_provider = CldrJsonDataProvider::new(&paths);
+/// assert_eq!(paths.cldr_misc().unwrap(), PathBuf::from("/path/to/cldr-json/cldr-misc-full"))
 /// ```
 #[derive(Debug, PartialEq)]
 pub struct CldrPathsAllInOne {
@@ -162,8 +152,6 @@ pub struct CldrPathsAllInOne {
     pub cldr_json_root: PathBuf,
     /// CLDR JSON directory suffix: probably either "modern" or "full"
     pub locale_subset: String,
-    /// Path to uprops TOML root directory. Required by some CLDR transformers
-    pub uprops_root: Option<PathBuf>,
 }
 
 impl CldrPaths for CldrPathsAllInOne {
@@ -200,11 +188,6 @@ impl CldrPaths for CldrPathsAllInOne {
             .clone()
             .join(format!("cldr-misc-{}", self.locale_subset)))
     }
-    fn uprops(&self) -> Result<PathBuf, Error> {
-        self.uprops_root
-            .clone()
-            .ok_or_else(|| Error::Custom("The uprops root has not been set".to_owned(), None))
-    }
 }
 
 #[cfg(test)]
@@ -212,6 +195,5 @@ pub(crate) fn for_test() -> CldrPathsAllInOne {
     CldrPathsAllInOne {
         cldr_json_root: icu_testdata::paths::cldr_json_root(),
         locale_subset: "full".to_string(),
-        uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
     }
 }

@@ -40,15 +40,18 @@ mod macro_impls;
 pub mod trait_hack;
 mod yoke;
 mod yokeable;
-mod zero_copy_from;
+#[cfg(feature = "zerofrom")]
+mod zero_from;
 
 #[cfg(feature = "serde")]
 mod serde;
 
 #[cfg(feature = "derive")]
-pub use yoke_derive::{Yokeable, ZeroCopyFrom};
+pub use yoke_derive::Yokeable;
 
 pub use crate::is_covariant::IsCovariant;
 pub use crate::yoke::{CloneableCart, Yoke};
 pub use crate::yokeable::Yokeable;
-pub use crate::zero_copy_from::ZeroCopyFrom;
+
+#[cfg(feature = "zerofrom")]
+use zerofrom::ZeroFrom;

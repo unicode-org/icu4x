@@ -80,8 +80,8 @@ use icu_locid::Locale;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
+use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
-use provider::PluralRulesV1Marker;
 use rules::runtime::test_rule;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
@@ -273,7 +273,7 @@ impl PluralCategory {
 /// [`Plural Category`]: PluralCategory
 pub struct PluralRules {
     _locale: Locale,
-    rules: DataPayload<PluralRulesV1Marker>,
+    rules: DataPayload<ErasedPluralRulesV1Marker>,
 }
 
 impl PluralRules {
@@ -539,7 +539,7 @@ impl PluralRules {
     /// data obtained from a provider.
     fn new<T: Into<Locale>>(
         locale: T,
-        rules: DataPayload<PluralRulesV1Marker>,
+        rules: DataPayload<ErasedPluralRulesV1Marker>,
     ) -> Result<Self, PluralRulesError> {
         let locale = locale.into();
         Ok(Self {

@@ -5,27 +5,19 @@
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use eyre::WrapErr;
 use icu_locid::LanguageIdentifier;
-use icu_properties::provider::key::{ALL_MAP_KEYS, ALL_SCRIPT_EXTENSIONS_KEYS, ALL_SET_KEYS};
-use icu_provider::either::EitherProvider;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
+use icu_provider::fork::by_key::ForkByKeyProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1Marker};
+use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
-use icu_provider_cldr::CldrJsonDataProvider;
-use icu_provider_cldr::CldrPaths;
 use icu_provider_cldr::CldrPathsAllInOne;
-use icu_provider_cldr::KeyedDataProvider;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
-use icu_provider_fs::manifest;
-use icu_provider_uprops::{
-    EnumeratedPropertyCodePointTrieProvider, PropertiesDataProvider,
-    ScriptExtensionsPropertyProvider,
-};
 use rayon::prelude::*;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
@@ -35,8 +27,6 @@ use std::io;
 use std::io::BufRead;
 use std::path::PathBuf;
 use std::str::FromStr;
-use std::sync::{Arc, Mutex};
-use writeable::Writeable;
 
 fn main() -> eyre::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
@@ -65,14 +55,6 @@ fn main() -> eyre::Result<()> {
                 .default_value("dir"),
         )
         .arg(
-            Arg::with_name("ALIASING")
-                .long("aliasing")
-                .takes_value(true)
-                .possible_value("none")
-                .possible_value("symlink")
-                .help("Sets the aliasing mode of the output on the filesystem."),
-        )
-        .arg(
             Arg::with_name("OVERWRITE")
                 .short("W")
                 .long("overwrite")
@@ -85,6 +67,7 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .possible_value("json")
                 .possible_value("bincode")
+                .possible_value("postcard")
                 .help("File format syntax for data files."),
         )
         .arg(
@@ -253,13 +236,7 @@ fn main() -> eyre::Result<()> {
         eyre::bail!("Dry-run is not yet supported");
     }
 
-    // TODO: Build up this list from --keys and --key-file
-
-    let format = matches
-        .value_of("FORMAT")
-        .expect("Option has default value");
-
-    let locales_vec = if let Some(locale_strs) = matches.values_of("LOCALES") {
+    let selected_locales = if let Some(locale_strs) = matches.values_of("LOCALES") {
         Some(
             locale_strs
                 .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
@@ -271,68 +248,139 @@ fn main() -> eyre::Result<()> {
         None
     };
 
-    let mut anchor1;
-    let mut anchor2;
-    let exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>> = match format {
-        "dir" => {
-            anchor1 = get_fs_exporter(&matches)?;
-            Arc::new(Mutex::new(&mut anchor1))
-        }
-        "blob" => {
-            anchor2 = get_blob_exporter(&matches)?;
-            Arc::new(Mutex::new(&mut anchor2))
-        }
-        _ => unreachable!(),
-    };
+    let all_keys = get_all_keys();
 
-    let mut keys;
-    let mut tasks: Vec<Box<dyn Fn() -> eyre::Result<()> + Send + Sync>> = vec![];
-    if matches.is_present("ALL_KEYS")
-        || matches.is_present("KEYS")
-        || matches.is_present("KEY_FILE")
-        || matches.is_present("TEST_KEYS")
-    {
-        keys = matches
-            .values_of("KEYS")
-            .map(|keys| keys.map(Cow::Borrowed).collect::<HashSet<_>>());
-        if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
-            let keys = keys.get_or_insert_with(Default::default);
+    #[allow(clippy::if_same_then_else)]
+    let selected_keys = if matches.is_present("ALL_KEYS") {
+        all_keys
+    } else if matches.is_present("TEST_KEYS") {
+        // We go with all keys now and later ignore key errors.
+        all_keys
+    } else if matches.is_present("HELLO_WORLD") {
+        vec![HelloWorldV1Marker::KEY]
+    } else {
+        let mut keys = HashSet::new();
+
+        if let Some(paths) = matches.values_of("KEYS") {
+            keys.extend(paths.map(Cow::Borrowed));
+        } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
             let file = File::open(key_file_path)
                 .with_context(|| key_file_path.to_string_lossy().into_owned())?;
             for line in io::BufReader::new(file).lines() {
-                let line_string =
-                    line.with_context(|| key_file_path.to_string_lossy().into_owned())?;
-                keys.insert(Cow::Owned(line_string));
+                let path = line.with_context(|| key_file_path.to_string_lossy().into_owned())?;
+                keys.insert(Cow::Owned(path));
             }
         }
 
-        tasks.push(Box::new(|| {
-            export_cldr(
-                &matches,
-                exporter.clone(),
-                locales_vec.as_deref(),
-                keys.as_ref(),
-            )
-        }));
-        tasks.push(Box::new(|| {
-            export_set_props(&matches, exporter.clone(), keys.as_ref())
-        }));
-        tasks.push(Box::new(|| {
-            export_map_props(&matches, exporter.clone(), keys.as_ref())
-        }));
-        tasks.push(Box::new(|| {
-            export_script_extensions_props(&matches, exporter.clone(), keys.as_ref())
-        }));
+        let filtered: Vec<_> = all_keys
+            .into_iter()
+            .filter(|k| keys.contains(k.get_path()))
+            .collect();
+
+        if filtered.is_empty() {
+            eyre::bail!("No keys selected");
+        }
+
+        filtered
+    };
+
+    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> =
+        if matches.is_present("HELLO_WORLD") {
+            Box::new(HelloWorldProvider::new_with_placeholder_data())
+        } else {
+            let cldr_paths = if let Some(tag) = matches.value_of("CLDR_TAG") {
+                Box::new(
+                    CldrAllInOneDownloader::try_new_from_github(
+                        tag,
+                        matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full"),
+                    )?
+                    .download()?,
+                )
+            } else {
+                let cldr_json_root = if let Some(path) = matches.value_of("CLDR_ROOT") {
+                    PathBuf::from(path)
+                } else if matches.is_present("INPUT_FROM_TESTDATA") {
+                    icu_testdata::paths::cldr_json_root()
+                } else {
+                    eyre::bail!(
+                    "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified",
+                )
+                };
+                Box::new(CldrPathsAllInOne {
+                    cldr_json_root,
+                    locale_subset: matches
+                        .value_of("CLDR_LOCALE_SUBSET")
+                        .unwrap_or("full")
+                        .to_string(),
+                })
+            };
+
+            let uprops_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
+                PathBuf::from(path)
+            } else if matches.is_present("INPUT_FROM_TESTDATA") {
+                icu_testdata::paths::uprops_toml_root()
+            } else {
+                eyre::bail!("Value for --uprops-root must be specified",)
+            };
+
+            Box::new(ForkByKeyProvider(
+                icu_provider_cldr::create_exportable_provider(
+                    cldr_paths.as_ref(),
+                    uprops_root.clone(),
+                )?,
+                icu_provider_uprops::create_exportable_provider(&uprops_root)?,
+            ))
+        };
+
+    if let Some(locales) = selected_locales.as_ref() {
+        provider = Box::new(
+            provider
+                .filterable("icu4x-datagen locales")
+                .filter_by_langid_allowlist_strict(locales),
+        );
     }
 
-    if matches.is_present("HELLO_WORLD") {
-        tasks.push(Box::new(|| {
-            export_hello_world(&matches, exporter.clone(), locales_vec.as_deref())
-        }));
-    }
-    tasks.par_iter().try_for_each(|c| c())?;
+    let mut exporter: Box<dyn DataExporter<_>> = match matches
+        .value_of("FORMAT")
+        .expect("Option has default value")
+    {
+        "dir" => Box::new(get_fs_exporter(&matches)?),
+        "blob" => Box::new(get_blob_exporter(&matches)?),
+        _ => unreachable!(),
+    };
 
-    exporter.lock().unwrap().close()?;
+    selected_keys.into_par_iter().try_for_each(|key| {
+        let result = provider
+            .supported_options_for_key(key)?
+            .collect::<Vec<_>>()
+            .into_par_iter()
+            .try_for_each(|options| {
+                let payload = provider
+                    .load_payload(
+                        key,
+                        &DataRequest {
+                            options: options.clone(),
+                            metadata: Default::default(),
+                        },
+                    )?
+                    .take_payload()?;
+                exporter.put_payload(key, options, payload)
+            });
+
+        exporter.flush(key)?;
+
+        if matches.is_present("TEST_KEYS")
+            && matches!(result, Err(e) if e.kind == DataErrorKind::MissingResourceKey)
+        {
+            log::trace!("Skipping key: {}", key);
+            Ok(())
+        } else {
+            log::info!("Writing key: {}", key);
+            result
+        }
+    })?;
+
+    exporter.close()?;
 
     Ok(())
 }
@@ -350,7 +398,7 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
 
     log::info!("Writing to filesystem tree at: {}", output_path.display());
 
-    let serializer: Box<dyn serializers::AbstractSerializer + Send> =
+    let serializer: Box<dyn serializers::AbstractSerializer + Sync> =
         match matches.value_of("SYNTAX") {
             Some("json") | None => {
                 let mut options = serializers::json::Options::default();
@@ -363,18 +411,15 @@ fn get_fs_exporter(matches: &ArgMatches) -> eyre::Result<FilesystemExporter> {
                 let options = serializers::bincode::Options::default();
                 Box::new(serializers::bincode::Serializer::new(options))
             }
+            Some("postcard") => {
+                let options = serializers::postcard::Options::default();
+                Box::new(serializers::postcard::Serializer::new(options))
+            }
             _ => unreachable!(),
         };
 
     let mut options = fs_exporter::ExporterOptions::default();
     options.root = output_path;
-    if let Some(value) = matches.value_of("ALIASING") {
-        options.aliasing = match value {
-            "none" => manifest::AliasOption::NoAliases,
-            "symlink" => manifest::AliasOption::Symlink,
-            _ => unreachable!(),
-        };
-    }
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
@@ -399,7 +444,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
         None => log::info!("Writing blob to standard out"),
     };
 
-    let sink: Box<dyn std::io::Write + Send> = if let Some(path_buf) = output_path {
+    let sink: Box<dyn std::io::Write + Sync> = if let Some(path_buf) = output_path {
         if !matches.is_present("OVERWRITE") && path_buf.exists() {
             eyre::bail!("Output path is present: {:?}", path_buf);
         }
@@ -414,230 +459,32 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
     Ok(BlobExporter::new_with_sink(sink))
 }
 
-fn export_cldr(
-    matches: &ArgMatches,
-    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
-    allowed_locales: Option<&[LanguageIdentifier]>,
-    allowed_keys: Option<&HashSet<Cow<str>>>,
-) -> eyre::Result<()> {
-    let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
-    let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(
-            CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?
-                .download(matches.value_of("UPROPS_ROOT").map(PathBuf::from))?,
-        )
-    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-        Box::new(CldrPathsAllInOne {
-            cldr_json_root: PathBuf::from(path),
-            locale_subset: locale_subset.to_string(),
-            uprops_root: matches.value_of("UPROPS_ROOT").map(PathBuf::from),
-        })
-    } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        Box::new(CldrPathsAllInOne {
-            cldr_json_root: icu_testdata::paths::cldr_json_root(),
-            locale_subset: "full".to_string(),
-            uprops_root: Some(icu_testdata::paths::uprops_toml_root()),
-        })
-    } else {
-        eyre::bail!("Either --cldr-tag or --cldr-root must be specified",)
-    };
-
-    let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
-    let provider: EitherProvider<_, _> = if let Some(allowlist) = allowed_locales {
-        let filtered_provider = raw_provider
-            .filterable("icu4x-datagen langid allowlist")
-            .filter_by_langid_allowlist_strict(allowlist);
-        EitherProvider::A(filtered_provider)
-    } else {
-        EitherProvider::B(raw_provider)
-    };
-
-    CldrJsonDataProvider::supported_keys()
-        .par_iter()
-        .filter(|key| {
-            allowed_keys.map_or(true, |allowed_keys| {
-                allowed_keys.contains(&key.writeable_to_string())
-            })
-        })
-        .try_for_each_with(exporter, |exporter, key| {
-            log::info!("Writing key: {}", key);
-            icu_provider::export::export_from_iterable_with_locking(key, &provider, exporter)
-        })?;
-
-    Ok(())
+fn get_all_keys() -> Vec<ResourceKey> {
+    // TODO(#1512): Use central key repository
+    let mut v = vec![];
+    v.extend(icu_provider_cldr::ALL_KEYS);
+    v.extend(icu_properties::provider::key::ALL_MAP_KEYS);
+    v.extend(icu_properties::provider::key::ALL_SCRIPT_EXTENSIONS_KEYS);
+    v.extend(icu_properties::provider::key::ALL_SET_KEYS);
+    v
 }
 
-fn export_set_props(
-    matches: &ArgMatches,
-    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
-    allowed_keys: Option<&HashSet<Cow<str>>>,
-) -> eyre::Result<()> {
-    log::trace!("Loading data for binary properties...");
-
-    let toml_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
-        PathBuf::from(path)
-    } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        icu_testdata::paths::uprops_toml_root()
-    } else {
-        eyre::bail!("Value for --uprops-root must be specified",)
-    };
-    let provider = PropertiesDataProvider::try_new(&toml_root)?;
-
-    let keys = ALL_SET_KEYS;
-    let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
-        keys.iter()
-            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
-            .copied()
-            .collect()
-    } else {
-        keys.to_vec()
-    };
-
-    keys.par_iter()
-        .try_for_each_with(exporter, |exporter, key| {
-            let result =
-                icu_provider::export::export_from_iterable_with_locking(key, &provider, exporter);
-            if matches.is_present("TEST_KEYS")
-                && matches!(
-                    result,
-                    Err(DataError {
-                        kind: DataErrorKind::MissingResourceKey,
-                        ..
-                    })
-                )
-            {
-                // Within testdata, if the data for a particular property is unavailable, skip it for now.
-                log::trace!("Skipping key: {}", key);
-                Ok(())
-            } else {
-                log::info!("Writing key: {}", key);
-                result
-            }
-        })?;
-
-    Ok(())
-}
-
-fn export_map_props(
-    matches: &ArgMatches,
-    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
-    allowed_keys: Option<&HashSet<Cow<str>>>,
-) -> eyre::Result<()> {
-    log::trace!("Loading data for enumerated properties...");
-
-    let toml_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
-        PathBuf::from(path)
-    } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        icu_testdata::paths::uprops_toml_root()
-    } else {
-        eyre::bail!("Value for --uprops-root must be specified",)
-    };
-    let provider = EnumeratedPropertyCodePointTrieProvider::try_new(&toml_root)?;
-
-    let keys = ALL_MAP_KEYS;
-    let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
-        keys.iter()
-            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
-            .copied()
-            .collect()
-    } else {
-        keys.to_vec()
-    };
-
-    keys.par_iter()
-        .try_for_each_with(exporter, |exporter, key| {
-            let result =
-                icu_provider::export::export_from_iterable_with_locking(key, &provider, exporter);
-            if matches.is_present("TEST_KEYS")
-                && matches!(
-                    result,
-                    Err(DataError {
-                        kind: DataErrorKind::MissingResourceKey,
-                        ..
-                    })
-                )
-            {
-                // Within testdata, if the data for a particular property is unavailable, skip it for now.
-                log::trace!("Skipping key: {}", key);
-                Ok(())
-            } else {
-                log::info!("Writing key: {}", key);
-                result
-            }
-        })?;
-
-    Ok(())
-}
-
-fn export_script_extensions_props(
-    matches: &ArgMatches,
-    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
-    allowed_keys: Option<&HashSet<Cow<str>>>,
-) -> eyre::Result<()> {
-    log::trace!("Loading data for the Script_Extensions property...");
-
-    let toml_root = if let Some(path) = matches.value_of("UPROPS_ROOT") {
-        PathBuf::from(path)
-    } else if matches.is_present("INPUT_FROM_TESTDATA") {
-        icu_testdata::paths::uprops_toml_root()
-    } else {
-        eyre::bail!("Value for --uprops-root must be specified",)
-    };
-    let provider = ScriptExtensionsPropertyProvider::try_new(&toml_root)?;
-
-    let keys = ALL_SCRIPT_EXTENSIONS_KEYS;
-    let keys: Vec<ResourceKey> = if let Some(allowed_keys) = allowed_keys {
-        keys.iter()
-            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
-            .copied()
-            .collect()
-    } else {
-        keys.to_vec()
-    };
-
-    keys.par_iter()
-        .try_for_each_with(exporter, |exporter, key| {
-            let result =
-                icu_provider::export::export_from_iterable_with_locking(key, &provider, exporter);
-            if matches.is_present("TEST_KEYS")
-                && matches!(
-                    result,
-                    Err(DataError {
-                        kind: DataErrorKind::MissingResourceKey,
-                        ..
-                    })
-                )
-            {
-                // Within testdata, if the data for a particular property is unavailable, skip it for now.
-                log::trace!("Skipping key: {}", key);
-                Ok(())
-            } else {
-                log::info!("Writing key: {}", key);
-                result
-            }
-        })?;
-
-    Ok(())
-}
-
-fn export_hello_world(
-    _: &ArgMatches,
-    exporter: Arc<Mutex<&mut (dyn DataExporter<SerializeMarker> + Send)>>,
-    allowed_locales: Option<&[LanguageIdentifier]>,
-) -> eyre::Result<()> {
-    let raw_provider = HelloWorldProvider::new_with_placeholder_data();
-    let provider: EitherProvider<_, _> = if let Some(allowlist) = allowed_locales {
-        let filtered_provider = raw_provider
-            .filterable("icu4x-datagen langid allowlist")
-            .filter_by_langid_allowlist_strict(allowlist);
-        EitherProvider::A(filtered_provider)
-    } else {
-        EitherProvider::B(raw_provider)
-    };
-
-    let key = HelloWorldV1Marker::KEY;
-    log::info!("Writing key: {}", key);
-    icu_provider::export::export_from_iterable_with_locking(&key, &provider, &exporter)?;
-
-    Ok(())
+#[test]
+fn no_key_collisions() {
+    let mut map = std::collections::BTreeMap::new();
+    let mut failed = false;
+    for key in get_all_keys() {
+        if let Some(colliding_key) = map.insert(key.get_hash(), key) {
+            println!(
+                "{:?} and {:?} collide at {:?}",
+                key.get_path(),
+                colliding_key.get_path(),
+                key.get_hash()
+            );
+            failed = true;
+        }
+    }
+    if failed {
+        panic!();
+    }
 }

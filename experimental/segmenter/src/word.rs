@@ -6,6 +6,7 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
+use icu_provider::DataError;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::lstm::get_line_break_utf16;
@@ -30,16 +31,65 @@ fn get_complex_language_break_utf8(input: &str) -> Vec<usize> {
     [input.len()].to_vec()
 }
 
-pub struct WordBreakType;
+/// Word break iterator for an `str` (a UTF-8 string).
+pub type WordBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, WordBreakType>;
 
-// UTF-8 version of word break iterator using rule based segmenter.
-pub type WordBreakIterator<'a> = RuleBreakIterator<'a, WordBreakType>;
+/// Word break iterator for a Latin-1 (8-bit) string.
+pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeLatin1>;
 
-impl<'a> WordBreakIterator<'a> {
-    /// Create word break iterator
-    pub fn new(input: &'a str) -> Self {
-        Self {
+/// Word break iterator for a UTF-16 string.
+pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
+
+/// Supports loading word break data, and creating word break iterators for different string
+/// encodings. Please see the [module-level documentation] for its usages.
+///
+/// [module-level documentation]: index.html
+pub struct WordBreakSegmenter;
+
+impl WordBreakSegmenter {
+    pub fn try_new() -> Result<Self, DataError> {
+        // Note: This will be able to return an Error once DataProvider is added
+        Ok(Self)
+    }
+
+    /// Create a word break iterator for an `str` (a UTF-8 string).
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIterator<'l, 's> {
+        WordBreakIterator {
             iter: input.char_indices(),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            break_state_table: &BREAK_STATE_MACHINE_TABLE,
+            property_table: &PROPERTY_TABLE,
+            rule_property_count: PROPERTY_COUNT,
+            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
+            sot_property: PROP_SOT as u8,
+            eot_property: PROP_EOT as u8,
+            complex_property: PROP_COMPLEX as u8,
+        }
+    }
+
+    /// Create a word break iterator for a Latin-1 (8-bit) string.
+    pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
+        WordBreakIteratorLatin1 {
+            iter: Latin1Indices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            break_state_table: &BREAK_STATE_MACHINE_TABLE,
+            property_table: &PROPERTY_TABLE,
+            rule_property_count: PROPERTY_COUNT,
+            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
+            sot_property: PROP_SOT as u8,
+            eot_property: PROP_EOT as u8,
+            complex_property: PROP_COMPLEX as u8,
+        }
+    }
+
+    /// Create a word break iterator for a UTF-16 string.
+    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
+        WordBreakIteratorUtf16 {
+            iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -54,8 +104,10 @@ impl<'a> WordBreakIterator<'a> {
     }
 }
 
-impl<'a> RuleBreakType<'a> for WordBreakType {
-    type IterAttr = CharIndices<'a>;
+pub struct WordBreakType;
+
+impl<'l, 's> RuleBreakType<'l, 's> for WordBreakType {
+    type IterAttr = CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
@@ -63,7 +115,7 @@ impl<'a> RuleBreakType<'a> for WordBreakType {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'a, Self>,
+        iter: &mut RuleBreakIterator<'l, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         // word segmenter doesn't define break rules for some languages such as Thai.
@@ -106,30 +158,8 @@ impl<'a> RuleBreakType<'a> for WordBreakType {
 
 pub struct WordBreakTypeLatin1;
 
-// Latin-1 version of word break iterator using rule based segmenter.
-pub type WordBreakIteratorLatin1<'a> = RuleBreakIterator<'a, WordBreakTypeLatin1>;
-
-impl<'a> WordBreakIteratorLatin1<'a> {
-    /// Create word break iterator using Latin-1/8-bit string.
-    pub fn new(input: &'a [u8]) -> Self {
-        Self {
-            iter: Latin1Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
-        }
-    }
-}
-
-impl<'a> RuleBreakType<'a> for WordBreakTypeLatin1 {
-    type IterAttr = Latin1Indices<'a>;
+impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeLatin1 {
+    type IterAttr = Latin1Indices<'s>;
     type CharType = u8; // TODO: Latin1Char
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
@@ -137,7 +167,7 @@ impl<'a> RuleBreakType<'a> for WordBreakTypeLatin1 {
     }
 
     fn handle_complex_language(
-        _: &mut RuleBreakIterator<'a, Self>,
+        _: &mut RuleBreakIterator<'l, 's, Self>,
         _: Self::CharType,
     ) -> Option<usize> {
         panic!("not reachable")
@@ -146,30 +176,8 @@ impl<'a> RuleBreakType<'a> for WordBreakTypeLatin1 {
 
 pub struct WordBreakTypeUtf16;
 
-// UTF-16 version of word break iterator using rule based segmenter.
-pub type WordBreakIteratorUtf16<'a> = RuleBreakIterator<'a, WordBreakTypeUtf16>;
-
-impl<'a> WordBreakIteratorUtf16<'a> {
-    /// Create word break iterator using UTF-16 string.
-    pub fn new(input: &'a [u16]) -> Self {
-        Self {
-            iter: Utf16Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
-        }
-    }
-}
-
-impl<'a> RuleBreakType<'a> for WordBreakTypeUtf16 {
-    type IterAttr = Utf16Indices<'a>;
+impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
+    type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {

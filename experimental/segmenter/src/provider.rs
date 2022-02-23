@@ -6,11 +6,12 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::property_table::UAX14_PROPERTY_TABLE;
-use crate::rule_table::UAX14_RULE_TABLE;
+use crate::line::BREAK_STATE_MACHINE_TABLE;
+use crate::line::PROPERTY_COUNT;
+use crate::line::PROPERTY_TABLE;
 use alloc::boxed::Box;
 use core::ops::Deref;
-use icu_provider::yoke::{self, *};
+use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
@@ -32,7 +33,7 @@ pub struct LineBreakDataV1<'data> {
 }
 
 /// Property table for line breaking.
-#[derive(Debug, PartialEq, Clone, Yokeable)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -53,20 +54,20 @@ impl Deref for LineBreakPropertyTable<'_> {
     }
 }
 
-impl<'zcf> ZeroCopyFrom<'zcf, LineBreakPropertyTable<'_>> for LineBreakPropertyTable<'zcf> {
-    fn zero_copy_from(cart: &'zcf LineBreakPropertyTable<'_>) -> Self {
+impl<'zf> zerofrom::ZeroFrom<'zf, LineBreakPropertyTable<'_>> for LineBreakPropertyTable<'zf> {
+    fn zero_from(cart: &'zf LineBreakPropertyTable<'_>) -> Self {
         LineBreakPropertyTable::Borrowed(&*cart)
     }
 }
 
 impl Default for LineBreakPropertyTable<'static> {
     fn default() -> Self {
-        LineBreakPropertyTable::Borrowed(&UAX14_PROPERTY_TABLE)
+        LineBreakPropertyTable::Borrowed(&PROPERTY_TABLE)
     }
 }
 
 /// Rule table for line breaking.
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -82,8 +83,8 @@ pub struct LineBreakRuleTable<'data> {
 impl Default for LineBreakRuleTable<'static> {
     fn default() -> Self {
         Self {
-            table_data: ZeroSlice::from_ule_slice(&UAX14_RULE_TABLE).as_zerovec(),
-            property_count: crate::lb_define::PROP_COUNT as u8,
+            table_data: ZeroSlice::from_ule_slice(&BREAK_STATE_MACHINE_TABLE).as_zerovec(),
+            property_count: PROPERTY_COUNT as u8,
         }
     }
 }

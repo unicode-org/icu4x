@@ -147,9 +147,9 @@ where
 {
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
+        key: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
-        self.inner.supported_options_for_key(resc_key).map(|iter| {
+        self.inner.supported_options_for_key(key).map(|iter| {
             // Use filter_map instead of filter to avoid cloning the options
             let filtered_iter = iter.filter_map(move |options| {
                 let request = DataRequest {

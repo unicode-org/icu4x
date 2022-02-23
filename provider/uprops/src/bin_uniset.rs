@@ -31,7 +31,7 @@ impl DynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvid
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
         let data = &self
             .data
-            .get(get_last_component_no_version(&key))
+            .get(get_last_component_no_version(key))
             .ok_or_else(|| DataErrorKind::MissingResourceKey.with_req(key, req))?;
 
         let mut builder = UnicodeSetBuilder::new();
@@ -50,13 +50,13 @@ impl DynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvid
 }
 
 icu_provider::impl_dyn_provider!(BinaryPropertyUnicodeSetDataProvider, {
-    _ => UnicodePropertyV1Marker,
+    _k if _k.get_path().starts_with("props/") => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
 impl IterableDynProvider<UnicodePropertyV1Marker> for BinaryPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        _: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }

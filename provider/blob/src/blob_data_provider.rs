@@ -10,7 +10,7 @@ use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
-use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
+use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///

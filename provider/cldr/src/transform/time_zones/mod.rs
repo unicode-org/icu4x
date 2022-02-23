@@ -4,53 +4,32 @@
 
 use crate::cldr_serde;
 use crate::error::Error;
-use crate::reader::{get_langid_subdirectories, open_reader};
-use crate::support::KeyedDataProvider;
+use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::CldrPaths;
 use icu_datetime::provider::time_zones::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use litemap::LiteMap;
-
 use std::convert::TryFrom;
+use std::path::PathBuf;
+use std::sync::RwLock;
 
 mod convert;
 
 /// A data provider reading from CLDR JSON zones files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct TimeZonesProvider {
-    data: LiteMap<LanguageIdentifier, cldr_serde::time_zone_names::LangTimeZones>,
+    path: PathBuf,
+    data: RwLock<LiteMap<LanguageIdentifier, cldr_serde::time_zone_names::TimeZoneNames>>,
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = LiteMap::new();
-
-        let path = cldr_paths.cldr_dates("gregory")?.join("main");
-
-        let locale_dirs = get_langid_subdirectories(&path)?;
-
-        for dir in locale_dirs {
-            let path = dir.join("timeZoneNames.json");
-
-            let resource: cldr_serde::time_zone_names::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.extend_from_litemap(resource.main.0);
-        }
-
-        Ok(Self { data })
-    }
-}
-
-impl TryFrom<&str> for TimeZonesProvider {
-    type Error = Error;
-    fn try_from(input: &str) -> Result<Self, Self::Error> {
-        let resource: cldr_serde::time_zone_names::Resource =
-            serde_json::from_str(input).map_err(|e| Error::Json(e, None))?;
         Ok(Self {
-            data: resource.main.0,
+            path: cldr_paths.cldr_dates_gregorian()?.join("main"),
+            data: RwLock::new(LiteMap::new()),
         })
     }
 }
@@ -63,15 +42,36 @@ macro_rules! impl_data_provider {
                     let langid = req
                         .get_langid()
                         .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(<$marker>::KEY, req))?;
-                    let time_zones = match self.data.get(&langid) {
-                        Some(v) => &v.dates.time_zone_names,
-                        None => return Err(DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req)),
-                    };
+
+                    if !self.data.read().unwrap().contains_key(langid) {
+                        let path = get_langid_subdirectory(&self.path, langid)?
+                            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(<$marker>::KEY, req))?
+                            .join("timeZoneNames.json");
+
+                        let mut resource: cldr_serde::time_zone_names::Resource =
+                            serde_json::from_reader(open_reader(&path)?)
+                                .map_err(|e| Error::Json(e, Some(path)))?;
+                        let r = resource
+                            .main
+                            .0
+                            .remove(langid)
+                            .expect("CLDR file contains the expected language")
+                            .dates
+                            .time_zone_names;
+
+                        let mut data_guard = self.data.write().unwrap();
+                        if !data_guard.contains_key(langid) {
+                            data_guard.insert(langid.clone(), r);
+                        }
+                    }
+
+                    let time_zones = self.data.read().unwrap().get(langid).unwrap().clone();
+
                     let metadata = DataResponseMetadata::default();
                     // TODO(#1109): Set metadata.data_langid correctly.
                     Ok(DataResponse {
                         metadata,
-                        payload: Some(DataPayload::from_owned(<$marker as DataMarker>::Yokeable::from(time_zones.clone()))),
+                        payload: Some(DataPayload::from_owned(<$marker as DataMarker>::Yokeable::from(time_zones))),
                     })
                 }
             }
@@ -81,21 +81,12 @@ macro_rules! impl_data_provider {
                     &self,
                 ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
                     Ok(Box::new(
-                        self.data
-                            .iter_keys()
-                            // TODO(#568): Avoid the clone
-                            .cloned()
+                        get_langid_subdirectories(&self.path)?
                             .map(Into::<ResourceOptions>::into),
                     ))
                 }
             }
         )+
-
-        impl KeyedDataProvider for TimeZonesProvider {
-            fn supported_keys() -> Vec<ResourceKey> {
-                vec![$(<$marker>::KEY),+]
-            }
-        }
 
         icu_provider::impl_dyn_provider!(TimeZonesProvider, [$($marker),+,], SERDE_SE);
     };
@@ -141,7 +132,10 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("Pohnpei", exemplar_cities.get()["Pacific/Ponape"]);
+        assert_eq!(
+            "Pohnpei",
+            exemplar_cities.get().0.get("Pacific/Ponape").unwrap()
+        );
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
             .load_resource(&DataRequest {
@@ -153,7 +147,11 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
-            generic_names_long.get()["Australia_CentralWestern"]
+            generic_names_long
+                .get()
+                .defaults
+                .get("Australia_CentralWestern")
+                .unwrap()
         );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
@@ -166,7 +164,11 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
-            specific_names_long.get()["Australia_CentralWestern"][&tinystr!(8, "standard")]
+            specific_names_long
+                .get()
+                .defaults
+                .get("Australia_CentralWestern", &tinystr!(8, "standard"))
+                .unwrap()
         );
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
@@ -177,7 +179,14 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("PT", generic_names_short.get()["America_Pacific"]);
+        assert_eq!(
+            "PT",
+            generic_names_short
+                .get()
+                .defaults
+                .get("America_Pacific")
+                .unwrap()
+        );
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
             .load_resource(&DataRequest {
@@ -189,7 +198,11 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PDT",
-            specific_names_short.get()["America_Pacific"][&tinystr!(8, "daylight")]
+            specific_names_short
+                .get()
+                .defaults
+                .get("America_Pacific", &tinystr!(8, "daylight"))
+                .unwrap()
         );
     }
 }

@@ -7,14 +7,16 @@
 //! Read more about data providers: [`icu_provider`]
 
 use core::str::FromStr;
-use icu_provider::yoke::{self, *};
+use icu_provider::{yoke, zerofrom};
 use litemap::LiteMap;
 use tinystr::TinyStr16;
 
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
-#[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, Yokeable, ZeroCopyFrom)]
+#[derive(
+    Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
+)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -31,7 +33,7 @@ pub struct EraStartDate {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(cloning_zcf)]
+#[zerofrom(cloning_zf)]
 // TODO (#1393) Make this zero-copy
 pub struct JapaneseErasV1 {
     pub dates_to_historical_eras: LiteMap<EraStartDate, TinyStr16>,

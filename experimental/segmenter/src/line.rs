@@ -2,11 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-extern crate unicode_width;
-
 use crate::indices::*;
 use crate::language::*;
-use crate::lb_define::*;
 use crate::provider::*;
 
 use alloc::vec;
@@ -14,7 +11,8 @@ use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
-use unicode_width::UnicodeWidthChar;
+
+include!(concat!(env!("OUT_DIR"), "/generated_line_table.rs"));
 
 // Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
@@ -104,6 +102,10 @@ impl Default for LineBreakOptions {
     }
 }
 
+/// Supports loading line break data, and creating line break iterators for different string
+/// encodings. Please see the [module-level documentation] for its usages.
+///
+/// [module-level documentation]: index.html
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
@@ -240,7 +242,6 @@ fn is_break_utf32_by_normal(codepoint: u32, ja_zh: bool) -> bool {
 
 #[inline]
 fn is_break_utf32_by_loose(
-    left_codepoint: u32,
     right_codepoint: u32,
     left_prop: u8,
     right_prop: u8,
@@ -290,16 +291,12 @@ fn is_break_utf32_by_loose(
 
     // breaks before suffixes:
     // Characters with the Unicode Line Break property PO and the East Asian Width property
-    if right_prop == PO
-        && UnicodeWidthChar::width_cjk(char::from_u32(right_codepoint).unwrap()).unwrap() == 2
-    {
+    if right_prop == PO_EAW {
         return Some(ja_zh);
     }
     // breaks after prefixes:
     // Characters with the Unicode Line Break property PR and the East Asian Width property
-    if left_prop == PR
-        && UnicodeWidthChar::width_cjk(char::from_u32(left_codepoint).unwrap()).unwrap() == 2
-    {
+    if left_prop == PR_EAW {
         return Some(ja_zh);
     }
     None
@@ -347,7 +344,7 @@ fn is_non_break_by_keepall(left: u8, right: u8) -> bool {
 
 #[inline]
 fn get_break_state_from_table(rule_table: &LineBreakRuleTable<'_>, left: u8, right: u8) -> i8 {
-    let idx = ((left as usize) - 1) * (rule_table.property_count as usize) + (right as usize) - 1;
+    let idx = (left as usize) * (rule_table.property_count as usize) + (right as usize);
     // We use unwrap_or to fall back to the base case and prevent panics on bad data.
     rule_table.table_data.get(idx).unwrap_or(KEEP_RULE)
 }
@@ -400,9 +397,8 @@ pub trait LineBreakType<'l, 's> {
     ) -> Vec<usize>;
 }
 
-/// The struct implementing the [`Iterator`] trait over the line break
-/// opportunities of the given string. Please see the [module-level
-/// documentation] for its usages.
+/// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
+/// see the [module-level documentation] for its usages.
 ///
 /// Lifetimes:
 ///
@@ -410,7 +406,7 @@ pub trait LineBreakType<'l, 's> {
 /// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
-/// [module-level documentation]: ../index.html
+/// [module-level documentation]: index.html
 pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     iter: Y::IterAttr,
     len: usize,
@@ -484,7 +480,6 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 }
                 LineBreakRule::Loose => {
                     if let Some(breakable) = is_break_utf32_by_loose(
-                        left_codepoint.unwrap().1.into(),
                         self.current_pos_data.unwrap().1.into(),
                         left_prop,
                         right_prop,
@@ -530,7 +525,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                             break_state as u8,
                             EOT,
                         );
-                        if break_state == PREVIOUS_BREAK_RULE {
+                        if break_state == NOT_MATCH_RULE {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
                             return Some(previous_pos_data.unwrap().0);
@@ -552,7 +547,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 if break_state == KEEP_RULE {
                     continue;
                 }
-                if break_state == PREVIOUS_BREAK_RULE {
+                if break_state == NOT_MATCH_RULE {
                     self.iter = previous_iter;
                     self.current_pos_data = previous_pos_data;
                     return Some(previous_pos_data.unwrap().0);
@@ -794,6 +789,7 @@ mod tests {
 
     fn is_break(left: u8, right: u8) -> bool {
         let rule_table = Default::default();
+
         is_break_from_table(&rule_table, left, right)
     }
 
@@ -851,9 +847,9 @@ mod tests {
         assert_eq!(is_break(AL, BA), false);
         assert_eq!(is_break(AL, HY), false);
         assert_eq!(is_break(AL, NS), false);
-        assert_eq!(is_break(BB, AL), false);
         // LB21
         assert_eq!(is_break(AL, BA), false);
+        assert_eq!(is_break(BB, AL), false);
         assert_eq!(is_break(ID, BA), false);
         assert_eq!(is_break(ID, NS), false);
         // LB21a

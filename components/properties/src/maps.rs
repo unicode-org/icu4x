@@ -22,13 +22,13 @@ use icu_provider::prelude::*;
 pub type CodePointMapResult<T> =
     Result<DataPayload<UnicodePropertyMapV1Marker<T>>, PropertiesError>;
 
-fn get_cp_map<D, T>(provider: &D, resc_key: ResourceKey) -> CodePointMapResult<T>
+fn get_cp_map<D, T>(provider: &D, key: ResourceKey) -> CodePointMapResult<T>
 where
     D: DynProvider<UnicodePropertyMapV1Marker<T>> + ?Sized,
     T: TrieValue,
 {
     let resp: DataResponse<UnicodePropertyMapV1Marker<T>> =
-        provider.load_payload(resc_key, &Default::default())?;
+        provider.load_payload(key, &Default::default())?;
 
     let property_payload: DataPayload<UnicodePropertyMapV1Marker<T>> = resp.take_payload()?;
     Ok(property_payload)

@@ -3,8 +3,8 @@
 `icu_provider_uprops` contains implementations of the [`ICU4X`]
 [data provider] interface backed by TOML files exported by the
 ICU4C icuwriteuprops tool. Create a directory containing TOML files for
-the necessary Unicode properties and then pass the path into the
-[`PropertiesDataProvider`].
+the necessary Unicode properties and then pass the path to the desired
+provider.
 
 **Important:** This data provider implementation is not optimized
 for production use.  It is much more efficient if you use

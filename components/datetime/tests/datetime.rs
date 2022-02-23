@@ -487,31 +487,6 @@ fn test_components_combine_datetime() {
 }
 
 #[test]
-fn constructing_datetime_format_with_missing_pattern_is_err() {
-    use icu_datetime::{
-        options::components::{Bag, Week},
-        DateTimeFormatError, DateTimeFormatOptions,
-    };
-    use icu_locid::Locale;
-    use icu_locid_macros::langid;
-
-    let options = DateTimeFormatOptions::Components(Bag {
-        // There's no pattern for just 'w'.
-        week: Some(Week::NumericWeekOfYear),
-        ..Default::default()
-    });
-
-    let locale: Locale = langid!("en").into();
-    let provider = icu_testdata::get_provider();
-    let result = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
-
-    assert!(matches!(
-        result.err(),
-        Some(DateTimeFormatError::UnsupportedOptions)
-    ));
-}
-
-#[test]
 fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     use icu_datetime::{
         options::length::{Bag, Time},

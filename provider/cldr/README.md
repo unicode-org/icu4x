@@ -2,13 +2,13 @@
 
 `icu_provider_cldr` contains implementations of the [`ICU4X`] [data provider] interface
 based on the JSON files shipped by CLDR. Create a [`CldrPaths`] and then pass it into
-[`CldrJsonDataProvider`].
+[`create_exportable_provider`].
 
 This crate contains two implementations of [`CldrPaths`]:
 
 - [`CldrPathsLocal`] points to local copies of the CLDR JSON repositories.
-- `CldrPathsDownload` downloads and caches the CLDR JSON repositories. Requires the
-  "download" feature.
+- [`CldrAllInOneDownloader`](download::CldrAllInOneDownloader) downloads and caches the
+  CLDR JSON repositories. Requires the "download" feature.
 
 **Important:** This data provider implementation is not optimized for production use.
 It is much more efficient if you use [`FsDataProvider`] instead.
@@ -16,7 +16,6 @@ It is much more efficient if you use [`FsDataProvider`] instead.
 [`ICU4X`]: ../icu/index.html
 [data provider]: icu_provider
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-[`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 
 ## More Information
 

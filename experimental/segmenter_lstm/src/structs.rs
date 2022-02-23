@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::prelude::*;
 use litemap::LiteMap;
 use ndarray::Array1;
 use ndarray::Array2;
@@ -17,7 +18,7 @@ use std::borrow::Cow;
 /// `mat8` - `mat9`: the matrices associated with output layer (weight and bias term respectiely)
 #[icu_provider::data_struct(LstmDataMarker)]
 #[derive(PartialEq, Debug, Serialize, Deserialize, Clone)]
-#[yoke(cloning_zcf)]
+#[zerofrom(cloning_zf)]
 pub struct LstmData<'data> {
     #[serde(borrow)]
     pub model: Cow<'data, str>,

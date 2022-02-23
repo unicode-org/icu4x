@@ -6,74 +6,66 @@ use crate::blob_schema::*;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
-use litemap::LiteMap;
+use std::sync::Mutex;
 use writeable::Writeable;
-use zerovec::map2d::ZeroMap2d;
+use zerovec::ZeroMap2d;
 
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
-    resources: LiteMap<(ResourceKeyHash, String), Vec<u8>>,
-    sink: Box<dyn std::io::Write + Send + 'w>,
+    resources: Mutex<Vec<(ResourceKeyHash, String, Vec<u8>)>>,
+    sink: Box<dyn std::io::Write + Sync + 'w>,
 }
 
 impl<'w> BlobExporter<'w> {
     /// Create a [`BlobExporter`] that writes to the given I/O stream.
-    pub fn new_with_sink(sink: Box<dyn std::io::Write + Send + 'w>) -> Self {
+    pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
-            resources: LiteMap::new(),
+            resources: Mutex::new(Vec::new()),
             sink,
-        }
-    }
-}
-
-impl Drop for BlobExporter<'_> {
-    fn drop(&mut self) {
-        if !self.resources.is_empty() {
-            panic!("Please call close before dropping FilesystemExporter");
         }
     }
 }
 
 impl DataExporter<SerializeMarker> for BlobExporter<'_> {
     fn put_payload(
-        &mut self,
+        &self,
         key: ResourceKey,
-        req: DataRequest,
+        options: ResourceOptions,
         payload: DataPayload<SerializeMarker>,
     ) -> Result<(), DataError> {
-        log::trace!("Adding: {} {}", key, req);
+        log::trace!("Adding: {}/{}", key, options);
         let mut serializer = postcard::Serializer {
             output: postcard::flavors::AllocVec(Vec::new()),
         };
         payload.serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
-        self.resources.insert(
-            (
-                key.get_hash(),
-                req.options.writeable_to_string().into_owned(),
-            ),
+        self.resources.lock().unwrap().push((
+            key.get_hash(),
+            options.writeable_to_string().into_owned(),
             serializer.output.0,
-        );
+        ));
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        // Convert from LiteMap<(String, String), Vec<u8>> to ZeroMap2d<str, str, [u8]>
-        let mut zm: ZeroMap2d<ResourceKeyHash, str, [u8]> =
-            ZeroMap2d::with_capacity(self.resources.len());
-        for ((key, option), bytes) in self.resources.iter() {
-            zm.insert(key, option, bytes);
+        let zm = self
+            .resources
+            .get_mut()
+            .unwrap()
+            .drain(..)
+            .collect::<ZeroMap2d<_, _, _>>();
+
+        if !zm.is_empty() {
+            let blob = BlobSchema::V001(BlobSchemaV1 {
+                resources: zm.as_borrowed(),
+            });
+            log::info!("Serializing blob to output stream...");
+            let mut serializer = postcard::Serializer {
+                output: postcard::flavors::AllocVec(Vec::new()),
+            };
+            serde::Serialize::serialize(&blob, &mut serializer)?;
+            self.sink.write_all(&serializer.output.0)?;
         }
-        let blob = BlobSchema::V001(BlobSchemaV1 {
-            resources: zm.as_borrowed(),
-        });
-        log::info!("Serializing blob to output stream...");
-        let mut serializer = postcard::Serializer {
-            output: postcard::flavors::AllocVec(Vec::new()),
-        };
-        serde::Serialize::serialize(&blob, &mut serializer)?;
-        self.sink.write_all(&serializer.output.0)?;
-        self.resources.clear();
         Ok(())
     }
 }

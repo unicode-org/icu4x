@@ -10,14 +10,14 @@ use core::{
     fmt,
     str::FromStr,
 };
-use icu_provider::yoke::{self, *};
+use icu_provider::{yoke, zerofrom};
 use num_enum::{IntoPrimitive, TryFromPrimitive, UnsafeFromPrimitive};
 use zerovec::{
-    ule::{custom::EncodeAsVarULE, AsULE, PairULE, RawBytesULE, VarULE, ZeroVecError, ULE},
+    ule::{AsULE, EncodeAsVarULE, PairULE, RawBytesULE, VarULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
-#[derive(Yokeable, ZeroCopyFrom, Clone, PartialEq, Debug)]
+#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
@@ -407,7 +407,7 @@ unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
             RelationULE::encode_andor_polarity_operand(self.and_or, self.polarity, self.operand);
         cb(&[
             &[encoded],
-            RawBytesULE::<4>::as_byte_slice(&[self.modulo.as_unaligned()]),
+            RawBytesULE::<4>::as_byte_slice(&[self.modulo.to_unaligned()]),
             self.range_list.as_bytes(),
         ])
     }
@@ -419,10 +419,10 @@ impl AsULE for RangeOrValue {
     type ULE = RangeOrValueULE;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         match self {
-            Self::Range(start, end) => PairULE(start.as_unaligned(), end.as_unaligned()),
-            Self::Value(idx) => PairULE(idx.as_unaligned(), idx.as_unaligned()),
+            Self::Range(start, end) => PairULE(start.to_unaligned(), end.to_unaligned()),
+            Self::Value(idx) => PairULE(idx.to_unaligned(), idx.to_unaligned()),
         }
     }
 
@@ -552,7 +552,7 @@ mod test {
                 polarity: Polarity::Positive,
                 operand: Operand::I,
                 modulo: 0,
-                range_list: ZeroVec::Borrowed(&[RangeOrValue::Value(1).as_unaligned()])
+                range_list: ZeroVec::Borrowed(&[RangeOrValue::Value(1).to_unaligned()])
             }
         );
 
@@ -611,12 +611,12 @@ mod test {
     #[test]
     fn range_or_value_ule_test() {
         let rov = RangeOrValue::Value(1);
-        let ule = rov.as_unaligned();
+        let ule = rov.to_unaligned();
         let ref_bytes = &[1, 0, 0, 0, 1, 0, 0, 0];
         assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
 
         let rov = RangeOrValue::Range(2, 4);
-        let ule = rov.as_unaligned();
+        let ule = rov.to_unaligned();
         let ref_bytes = &[2, 0, 0, 0, 4, 0, 0, 0];
         assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
     }
