@@ -101,12 +101,12 @@
 extern crate alloc;
 
 mod error;
-pub mod map;
-pub mod map2d;
+mod map;
+mod map2d;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;
-pub mod varzerovec;
+mod varzerovec;
 mod zerovec;
 
 #[cfg(feature = "yoke")]
@@ -122,4 +122,49 @@ pub use crate::zerovec::{ZeroSlice, ZeroVec};
 #[doc(hidden)]
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
+}
+
+pub mod maps {
+    //! This module contains additional utility types and traits for working with
+    //! [`ZeroMap`] and [`ZeroMap2d`]. See their docs for more details on the general purpose
+    //! of these types.
+    //!
+    //! [`ZeroMapBorrowed`] and [`ZeroMap2dBorrowed`] are versions of [`ZeroMap`] and [`ZeroMap2d`]
+    //! that can be used when you wish to guarantee that the map data is always borrowed, leading to
+    //! relaxed lifetime constraints.
+    //!
+    //! The [`ZeroMapKV`] trait is required to be implemented on any type that needs to be used
+    //! within a map type. [`ZeroVecLike`], [`BorrowedZeroVecLike`], and [`MutableZeroVecLike`] are
+    //! all traits used in the internal workings of the map types, and should typically not be used
+    //! or implemented by users of this crate.
+    #[doc(no_inline)]
+    pub use crate::map::ZeroMap;
+    pub use crate::map::ZeroMapBorrowed;
+
+    #[doc(no_inline)]
+    pub use crate::map2d::ZeroMap2d;
+    pub use crate::map2d::ZeroMap2dBorrowed;
+
+    pub use crate::map::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+    pub use crate::map2d::KeyError;
+}
+
+pub mod vecs {
+    //! This module contains additional utility types for working with
+    //! [`ZeroVec`] and  [`VarZeroVec`]. See their docs for more details on the general purpose
+    //! of these types.
+    //!
+    //! [`ZeroSlice`] and [`VarZeroSlice`] provide slice-like versions of the vector types
+    //! for use behind references and in custom ULE types.
+    //!
+    //! [`VarZeroVecOwned`] is a special owned/mutable version of [`VarZeroVec`], allowing
+    //! direct manipulation of the backing buffer.
+
+    #[doc(no_inline)]
+    pub use crate::zerovec::{ZeroSlice, ZeroVec};
+
+    #[doc(no_inline)]
+    pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
+
+    pub use crate::varzerovec::VarZeroVecOwned;
 }

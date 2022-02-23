@@ -59,7 +59,7 @@ impl ResourceKeyHash {
     }
 }
 
-impl<'a> zerovec::map::ZeroMapKV<'a> for ResourceKeyHash {
+impl<'a> zerovec::maps::ZeroMapKV<'a> for ResourceKeyHash {
     type Container = zerovec::ZeroVec<'a, ResourceKeyHash>;
     type GetType = <ResourceKeyHash as AsULE>::ULE;
     type OwnedType = ResourceKeyHash;

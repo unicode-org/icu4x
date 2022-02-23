@@ -8,7 +8,7 @@ use icu_provider::prelude::*;
 use icu_provider::serde::SerializeMarker;
 use std::sync::Mutex;
 use writeable::Writeable;
-use zerovec::map2d::ZeroMap2d;
+use zerovec::ZeroMap2d;
 
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.

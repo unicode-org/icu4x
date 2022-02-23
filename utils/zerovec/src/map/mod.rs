@@ -12,7 +12,6 @@ pub(crate) mod map;
 mod serde;
 mod vecs;
 
-#[doc(no_inline)]
 pub use crate::ZeroMap;
 pub use borrowed::ZeroMapBorrowed;
 pub use kv::ZeroMapKV;

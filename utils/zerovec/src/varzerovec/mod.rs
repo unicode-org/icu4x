@@ -12,7 +12,6 @@ pub(crate) mod vec;
 #[cfg(feature = "serde")]
 mod serde;
 
-#[doc(no_inline)]
 pub use crate::{VarZeroSlice, VarZeroVec};
 
 #[cfg(feature = "bench")]

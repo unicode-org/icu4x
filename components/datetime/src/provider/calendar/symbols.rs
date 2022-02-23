@@ -6,7 +6,7 @@
 
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
-use zerovec::map::ZeroMap;
+use zerovec::ZeroMap;
 
 #[icu_provider::data_struct(DateSymbolsV1Marker = "datetime/symbols@1")]
 #[derive(Debug, PartialEq, Clone, Default)]

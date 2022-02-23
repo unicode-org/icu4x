@@ -118,7 +118,7 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
         quote!()
     } else {
         quote!(
-            impl<'a> zerovec::map::ZeroMapKV<'a> for #name {
+            impl<'a> zerovec::maps::ZeroMapKV<'a> for #name {
                 type Container = zerovec::ZeroVec<'a, #name>;
                 type GetType = #ule_name;
                 type OwnedType = #name;

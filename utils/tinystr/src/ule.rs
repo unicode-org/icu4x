@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::TinyAsciiStr;
-use zerovec::map::ZeroMapKV;
+use zerovec::maps::ZeroMapKV;
 use zerovec::ule::*;
 use zerovec::ZeroVec;
 
