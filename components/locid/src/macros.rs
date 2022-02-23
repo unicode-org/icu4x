@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module provides convenience macros for [`icu_locid`].
+//! This module provides convenience macros.
 //!
 //! # Examples
 //!
 //! ```rust
-//! use icu_locid::{language, region, langid};
+//! use crate::{language, region, langid};
 //!
 //! let lid = langid!("EN_US");
 //!
@@ -34,7 +34,7 @@
 /// assert_eq!(DE, de);
 /// ```
 ///
-/// [`Language`]: icu_locid::subtags::Language
+/// [`Language`]: crate::subtags::Language
 #[macro_export]
 macro_rules! language {
     ($language:literal) => {{
@@ -66,7 +66,7 @@ macro_rules! language {
 /// assert_eq!(ARAB, arab);
 /// ```
 ///
-/// [`Script`]: icu_locid::subtags::Script
+/// [`Script`]: crate::subtags::Script
 #[macro_export]
 macro_rules! script {
     ($script:literal) => {{
@@ -98,7 +98,7 @@ macro_rules! script {
 /// assert_eq!(CN, cn);
 /// ```
 ///
-/// [`Region`]: icu_locid::subtags::Region
+/// [`Region`]: crate::subtags::Region
 #[macro_export]
 macro_rules! region {
     ($region:literal) => {{
@@ -130,7 +130,7 @@ macro_rules! region {
 /// assert_eq!(POSIX, posix);
 /// ```
 ///
-/// [`Variant`]: icu_locid::subtags::Variant
+/// [`Variant`]: crate::subtags::Variant
 #[macro_export]
 macro_rules! variant {
     ($variant:literal) => {{
@@ -165,7 +165,7 @@ macro_rules! variant {
 /// *Note*: As of Rust 1.47, the macro cannot produce language identifier
 /// with variants in the const mode pending [`Heap Allocations in Constants`].
 ///
-/// [`LanguageIdentifier`]: icu_locid::LanguageIdentifier
+/// [`LanguageIdentifier`]: crate::LanguageIdentifier
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
 #[macro_export]
 macro_rules! langid {
