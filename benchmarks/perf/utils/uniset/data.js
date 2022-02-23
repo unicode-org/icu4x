@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645564372228,
+  "lastUpdate": 1645601756546,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20819,6 +20819,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 52571147,
             "range": "± 159891",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6a43fc5e0d1f6a6e59c151b3d104442c963c073f",
+          "message": "Create façades for ZeroVec types, hide internal code organization modules (#1629)\n\n* Create zerovec::maps façade\r\n\r\n\r\n* Create zerovec::vecs façade",
+          "timestamp": "2022-02-22T23:25:48-08:00",
+          "tree_id": "1dac8a75f034643e3182e5289e89337cf4f3c1e0",
+          "url": "https://github.com/unicode-org/icu4x/commit/6a43fc5e0d1f6a6e59c151b3d104442c963c073f"
+        },
+        "date": 1645601741219,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 46458666,
+            "range": "± 2019916",
             "unit": "ns/iter"
           }
         ]
