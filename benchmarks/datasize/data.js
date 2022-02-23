@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645601275262,
+  "lastUpdate": 1645656436662,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9898,6 +9898,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 1670502,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2f33727923fa3472be8bd5d269017b8fdc28e1eb",
+          "message": "WeekOf provider (#1366)\n\n- Adds regional preference data for week info.",
+          "timestamp": "2022-02-23T14:45:07-08:00",
+          "tree_id": "66f32f26e4a7f4770b25efa55c6f7e0d99c8cc8e",
+          "url": "https://github.com/unicode-org/icu4x/commit/2f33727923fa3472be8bd5d269017b8fdc28e1eb"
+        },
+        "date": 1645656421896,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
             "unit": "bytes",
             "biggerIsBetter": false
           }
