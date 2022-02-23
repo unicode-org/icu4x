@@ -3150,8 +3150,11 @@ dependencies = [
 name = "zerovec-derive"
 version = "0.6.0"
 dependencies = [
+ "postcard",
  "proc-macro2",
  "quote",
+ "serde",
+ "serde_json",
  "syn",
  "synstructure",
  "zerofrom",
