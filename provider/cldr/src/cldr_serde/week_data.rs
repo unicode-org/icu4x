@@ -12,7 +12,7 @@ use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 use std::num::ParseIntError;
 use std::str::FromStr;
-use tinystr::{tinystr4, TinyStr4};
+use tinystr::{tinystr, TinyStr4};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -58,7 +58,7 @@ pub enum Territory {
 }
 
 /// The string used to represent the default territory.
-pub const DEFAULT_TERRITORY: Territory = Territory::Region(tinystr4!("001"));
+pub const DEFAULT_TERRITORY: Territory = Territory::Region(tinystr!(4, "001"));
 
 /// Suffix used to denote alternative week data variants for a given territory (e.g. English BC/AD v English BCE/CE).
 const ALT_VARIANT_SUFFIX: &str = "-alt-variant";

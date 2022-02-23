@@ -8,11 +8,10 @@ use crate::cldr_serde::{
 };
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::KeyedDataProvider;
 use crate::CldrPaths;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -62,17 +61,10 @@ impl TryFrom<&dyn CldrPaths> for WeekDataProvider {
     }
 }
 
-impl KeyedDataProvider for WeekDataProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![WeekDataV1Marker::KEY]
-    }
-}
-
-impl IterableProvider for WeekDataProvider {
+impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options_for_key(
+    fn supported_options(
         &self,
-        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         let regions: HashSet<Option<TinyStr4>> = self
             .week_data

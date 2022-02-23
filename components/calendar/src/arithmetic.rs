@@ -9,7 +9,7 @@ pub mod week_of {
     pub const MIN_UNIT_DAYS: u16 = 14;
 
     /// Information about how a given calendar assigns weeks to a year or month.
-    #[derive(Clone, Debug)]
+    #[derive(Clone, Copy, Debug)]
     #[cfg_attr(
         feature = "provider_serde",
         derive(serde::Serialize, serde::Deserialize)
