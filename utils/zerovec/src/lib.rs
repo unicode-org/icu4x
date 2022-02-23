@@ -122,6 +122,9 @@ pub use crate::zerovec::{ZeroSlice, ZeroVec};
 #[doc(hidden)]
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
+
+    #[cfg(feature = "serde")]
+    pub use serde;
 }
 
 pub mod maps {
