@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645601744360,
+  "lastUpdate": 1645656876498,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24401,6 +24401,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4034,
             "range": "± 33",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2f33727923fa3472be8bd5d269017b8fdc28e1eb",
+          "message": "WeekOf provider (#1366)\n\n- Adds regional preference data for week info.",
+          "timestamp": "2022-02-23T14:45:07-08:00",
+          "tree_id": "66f32f26e4a7f4770b25efa55c6f7e0d99c8cc8e",
+          "url": "https://github.com/unicode-org/icu4x/commit/2f33727923fa3472be8bd5d269017b8fdc28e1eb"
+        },
+        "date": 1645656861853,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2551,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4803,
+            "range": "± 666",
             "unit": "ns/iter"
           }
         ]
