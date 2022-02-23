@@ -63,9 +63,7 @@ impl TryFrom<&dyn CldrPaths> for WeekDataProvider {
 
 impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options(
-        &self,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         let regions: HashSet<Option<TinyStr4>> = self
             .week_data
             .min_days
