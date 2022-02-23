@@ -26,8 +26,7 @@ use core::ops::Range;
 /// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
-/// use zerovec::VarZeroVec;
-/// use zerovec::{ZeroVec, VarZeroSlice};
+/// use zerovec::{ZeroVec, VarZeroSlice, VarZeroVec};
 /// use zerovec::ule::*;
 /// let strings_1: Vec<&str> = vec!["foo", "bar", "baz"];
 /// let strings_2: Vec<&str> = vec!["twelve", "seventeen", "forty two"];
