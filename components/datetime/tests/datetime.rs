@@ -11,7 +11,10 @@ use icu_calendar::{buddhist::Buddhist, japanese::Japanese, AsCalendar, DateTime,
 use icu_datetime::{
     mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
     pattern::runtime::Pattern,
-    provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    provider::{
+        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        week_data::WeekDataV1Marker,
+    },
     time_zone::TimeZoneFormat,
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
@@ -98,7 +101,8 @@ fn assert_fixture_element<A, D>(
     D: ResourceProvider<DateSymbolsV1Marker>
         + ResourceProvider<DatePatternsV1Marker>
         + ResourceProvider<DateSkeletonPatternsV1Marker>
-        + ResourceProvider<OrdinalV1Marker>,
+        + ResourceProvider<OrdinalV1Marker>
+        + ResourceProvider<WeekDataV1Marker>,
 {
     let locale: Locale = locale.parse().unwrap();
     let dtf = DateTimeFormat::<A::Calendar>::try_new(locale, provider, options).unwrap();
@@ -209,6 +213,17 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: langid.region.map(|r| r.as_str().to_string().into()),
+                    langid: None,
+                },
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
                 let datetime = parse_gregorian_from_str(dt_input).unwrap();
@@ -233,6 +248,10 @@ fn test_dayperiod_patterns() {
                                 AnyPayloadProvider {
                                     key: DatePatternsV1Marker::KEY,
                                     data: patterns_data.clone().wrap_into_any_payload(),
+                                },
+                                AnyPayloadProvider {
+                                    key: WeekDataV1Marker::KEY,
+                                    data: week_data.clone().wrap_into_any_payload(),
                                 },
                             ],
                         };
@@ -351,6 +370,17 @@ fn test_time_zone_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> = date_provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions {
+                    variant: langid.region.map(|r| r.as_str().to_string().into()),
+                    langid: None,
+                },
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
 
         patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -382,6 +412,10 @@ fn test_time_zone_patterns() {
                         AnyPayloadProvider {
                             key: DatePatternsV1Marker::KEY,
                             data: patterns_data.clone().wrap_into_any_payload(),
+                        },
+                        AnyPayloadProvider {
+                            key: WeekDataV1Marker::KEY,
+                            data: week_data.clone().wrap_into_any_payload(),
                         },
                     ],
                 };

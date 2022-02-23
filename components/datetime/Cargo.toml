@@ -67,7 +67,7 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = ["provider_serde"]
 bench = []
-provider_serde = ["serde", "litemap/serde_serialize", "smallvec/serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
+provider_serde = ["serde", "litemap/serde_serialize", "smallvec/serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "icu_calendar/provider_serde", "icu_provider/serde"]
 provider_transform_internals = ["std"]
 
 [[bench]]
