@@ -9,8 +9,10 @@ use serde::{Deserialize, Serialize};
 
 use super::*;
 use crate::hello_world::*;
+use crate::iter::*;
 use crate::prelude::*;
 use crate::yoke;
+use crate::zerofrom;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.
@@ -19,8 +21,10 @@ use crate::yoke;
 const HELLO_ALT_KEY: ResourceKey = crate::resource_key!("core/helloalt@1");
 
 /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
-#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, ZeroCopyFrom)]
-#[yoke(cloning_zcf)]
+#[derive(
+    Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, zerofrom::ZeroFrom,
+)]
+#[zerofrom(cloning_zf)]
 struct HelloAlt {
     message: String,
 }
@@ -63,6 +67,12 @@ impl ResourceProvider<HelloWorldV1Marker> for DataWarehouse {
     }
 }
 
+impl IterableResourceProvider<HelloWorldV1Marker> for DataWarehouse {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    }
+}
+
 crate::impl_dyn_provider!(DataWarehouse, [HelloWorldV1Marker,], ANY);
 
 /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
@@ -89,12 +99,24 @@ impl ResourceProvider<HelloWorldV1Marker> for DataProvider2 {
     }
 }
 
+impl IterableResourceProvider<HelloWorldV1Marker> for DataProvider2 {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    }
+}
+
 impl ResourceProvider<HelloAltMarker> for DataProvider2 {
     fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(self.data.hello_alt.clone())),
         })
+    }
+}
+
+impl IterableResourceProvider<HelloAltMarker> for DataProvider2 {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }
 }
 

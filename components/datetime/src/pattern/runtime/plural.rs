@@ -10,10 +10,10 @@ use crate::{
 };
 use either::Either;
 use icu_plurals::{PluralCategory, PluralRules};
-use icu_provider::yoke::{self, Yokeable, ZeroCopyFrom};
+use icu_provider::{yoke, zerofrom};
 
 /// A collection of plural variants of a pattern.
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(::serde::Serialize, ::serde::Deserialize)
@@ -129,7 +129,7 @@ impl<'data> PluralPattern<'data> {
 }
 
 /// Either a single Pattern or a collection of pattern when there are plural variants.
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.

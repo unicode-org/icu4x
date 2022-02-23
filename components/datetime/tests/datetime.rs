@@ -31,7 +31,7 @@ use patterns::{
     },
 };
 use std::fmt::Write;
-use tinystr::tinystr8;
+use tinystr::tinystr;
 
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
@@ -454,7 +454,7 @@ fn test_length_fixtures() {
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
             metazone_id: Some(String::from("America_Pacific")),
-            time_variant: Some(tinystr8!("daylight")),
+            time_variant: Some(tinystr!(8, "daylight")),
             ..TimeZoneConfig::default()
         },
     );
@@ -518,31 +518,6 @@ fn test_components_partial_matches() {
 fn test_components_combine_datetime() {
     // components/datetime/tests/fixtures/tests/components-combine-datetime.json
     test_fixture("components-combine-datetime");
-}
-
-#[test]
-fn constructing_datetime_format_with_missing_pattern_is_err() {
-    use icu_datetime::{
-        options::components::{Bag, Week},
-        DateTimeFormatError, DateTimeFormatOptions,
-    };
-    use icu_locid::Locale;
-    use icu_locid_macros::langid;
-
-    let options = DateTimeFormatOptions::Components(Bag {
-        // There's no pattern for just 'w'.
-        week: Some(Week::NumericWeekOfYear),
-        ..Default::default()
-    });
-
-    let locale: Locale = langid!("en").into();
-    let provider = icu_testdata::get_provider();
-    let result = DateTimeFormat::<Gregorian>::try_new(locale, &provider, &options);
-
-    assert!(matches!(
-        result.err(),
-        Some(DateTimeFormatError::UnsupportedOptions)
-    ));
 }
 
 #[test]

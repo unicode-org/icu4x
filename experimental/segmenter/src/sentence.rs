@@ -4,22 +4,75 @@
 
 use alloc::vec::Vec;
 use core::str::CharIndices;
+use icu_provider::DataError;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::rule_segmenter::*;
 
 include!(concat!(env!("OUT_DIR"), "/generated_sentence_table.rs"));
 
-pub struct SentenceBreakType;
+/// Sentence break iterator for an `str` (a UTF-8 string).
+pub type SentenceBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakType>;
 
-// UTF-8 version of sentence break iterator using rule based segmenter.
-pub type SentenceBreakIterator<'a> = RuleBreakIterator<'a, SentenceBreakType>;
+/// Sentence break iterator for a Latin-1 (8-bit) string.
+pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeLatin1>;
 
-impl<'a> SentenceBreakIterator<'a> {
-    /// Create sentence break iterator
-    pub fn new(input: &'a str) -> Self {
-        Self {
+/// Sentence break iterator for a UTF-16 string.
+pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf16>;
+
+/// Supports loading sentence break data, and creating sentence break iterators for different string
+/// encodings. Please see the [module-level documentation] for its usages.
+///
+/// [module-level documentation]: index.html
+pub struct SentenceBreakSegmenter;
+
+impl SentenceBreakSegmenter {
+    pub fn try_new() -> Result<Self, DataError> {
+        // Note: This will be able to return an Error once DataProvider is added
+        Ok(Self)
+    }
+
+    /// Create a sentence break iterator for an `str` (a UTF-8 string).
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIterator<'l, 's> {
+        SentenceBreakIterator {
             iter: input.char_indices(),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            break_state_table: &BREAK_STATE_MACHINE_TABLE,
+            property_table: &PROPERTY_TABLE,
+            rule_property_count: PROPERTY_COUNT,
+            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
+            sot_property: PROP_SOT as u8,
+            eot_property: PROP_EOT as u8,
+            complex_property: PROP_COMPLEX as u8,
+        }
+    }
+
+    /// Create a sentence break iterator for a Latin-1 (8-bit) string.
+    pub fn segment_latin1<'l, 's>(
+        &'l self,
+        input: &'s [u8],
+    ) -> SentenceBreakIteratorLatin1<'l, 's> {
+        SentenceBreakIteratorLatin1 {
+            iter: Latin1Indices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            break_state_table: &BREAK_STATE_MACHINE_TABLE,
+            property_table: &PROPERTY_TABLE,
+            rule_property_count: PROPERTY_COUNT,
+            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
+            sot_property: PROP_SOT as u8,
+            eot_property: PROP_EOT as u8,
+            complex_property: PROP_COMPLEX as u8,
+        }
+    }
+
+    /// Create a sentence break iterator for a UTF-16 string.
+    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> SentenceBreakIteratorUtf16<'l, 's> {
+        SentenceBreakIteratorUtf16 {
+            iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -34,8 +87,10 @@ impl<'a> SentenceBreakIterator<'a> {
     }
 }
 
-impl<'a> RuleBreakType<'a> for SentenceBreakType {
-    type IterAttr = CharIndices<'a>;
+pub struct SentenceBreakType;
+
+impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakType {
+    type IterAttr = CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
@@ -52,30 +107,8 @@ impl<'a> RuleBreakType<'a> for SentenceBreakType {
 
 pub struct SentenceBreakTypeLatin1;
 
-// Latin-1 version of sentence break iterator using rule based segmenter.
-pub type SentenceBreakIteratorLatin1<'a> = RuleBreakIterator<'a, SentenceBreakTypeLatin1>;
-
-impl<'a> SentenceBreakIteratorLatin1<'a> {
-    /// Create sentence break iterator using Latin-1/8-bit string.
-    pub fn new(input: &'a [u8]) -> Self {
-        Self {
-            iter: Latin1Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
-        }
-    }
-}
-
-impl<'a> RuleBreakType<'a> for SentenceBreakTypeLatin1 {
-    type IterAttr = Latin1Indices<'a>;
+impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeLatin1 {
+    type IterAttr = Latin1Indices<'s>;
     type CharType = u8; // TODO: Latin1Char
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
@@ -92,30 +125,8 @@ impl<'a> RuleBreakType<'a> for SentenceBreakTypeLatin1 {
 
 pub struct SentenceBreakTypeUtf16;
 
-// UTF-16 version of sentence break iterator using rule based segmenter.
-pub type SentenceBreakIteratorUtf16<'a> = RuleBreakIterator<'a, SentenceBreakTypeUtf16>;
-
-impl<'a> SentenceBreakIteratorUtf16<'a> {
-    /// Create sentence break iterator using UTF-16 string.
-    pub fn new(input: &'a [u16]) -> Self {
-        Self {
-            iter: Utf16Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
-        }
-    }
-}
-
-impl<'a> RuleBreakType<'a> for SentenceBreakTypeUtf16 {
-    type IterAttr = Utf16Indices<'a>;
+impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf16 {
+    type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {

@@ -4,7 +4,7 @@
 
 //! Locale-invariant data provider that requires no I/O.
 
-use crate::iter::IterableProvider;
+use crate::iter::IterableDynProvider;
 use crate::prelude::*;
 use alloc::boxed::Box;
 
@@ -59,10 +59,14 @@ where
     }
 }
 
-impl IterableProvider for InvariantDataProvider {
+impl<M> IterableDynProvider<M> for InvariantDataProvider
+where
+    M: DataMarker,
+    M::Yokeable: Default,
+{
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        _: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }

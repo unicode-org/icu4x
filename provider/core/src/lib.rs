@@ -85,8 +85,8 @@
 //!
 //! ### `IterableDataProvider`
 //!
-//! Data providers can implement [`IterableProvider`], allowing iteration over all
-//! [`ResourceOptions`] instances supported for a certain key in the data provider.
+//! Data providers can implement [`IterableDynProvider`]/[`IterableResourceProvider`], allowing
+//! iteration over all [`ResourceOptions`] instances supported for a certain key in the data provider.
 //!
 //! For more information, see the [`iter`] module.
 //!
@@ -103,7 +103,8 @@
 //! [`DataProvider`]: data_provider::DataProvider
 //! [`ResourceKey`]: resource::ResourceKey
 //! [`ResourceOptions`]: resource::ResourceOptions
-//! [`IterableProvider`]: iter::IterableProvider
+//! [`IterableDynProvider`]: iter::IterableDynProvider
+//! [`IterableResourceProvider`]: iter::IterableResourceProvider
 //! [`InvariantDataProvider`]: inv::InvariantDataProvider
 //! [`AnyPayloadProvider`]: struct_provider::AnyPayloadProvider
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
@@ -173,10 +174,14 @@ pub mod prelude {
     pub use crate::any::AsDynProviderAnyMarkerWrap;
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
+
+    pub use yoke;
+    pub use zerofrom;
 }
 
-/// Re-export of the yoke crate for convenience of downstream implementors.
+/// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
 pub use yoke;
+pub use zerofrom;
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;

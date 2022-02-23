@@ -365,7 +365,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "tinystr",
+ "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1057,7 +1057,7 @@ dependencies = [
  "icu_provider",
  "litemap",
  "serde",
- "tinystr",
+ "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1082,7 +1082,7 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "log",
- "tinystr",
+ "tinystr 0.5.0",
  "writeable",
 ]
 
@@ -1104,6 +1104,7 @@ dependencies = [
  "serde",
  "toml",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1152,7 +1153,7 @@ dependencies = [
  "serde-tuple-vec-map",
  "serde_json",
  "smallvec",
- "tinystr",
+ "tinystr 0.5.0",
  "writeable",
  "zerovec",
 ]
@@ -1210,7 +1211,7 @@ dependencies = [
  "litemap",
  "serde",
  "serde_json",
- "tinystr",
+ "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1223,7 +1224,7 @@ dependencies = [
  "icu_benchmark_macros",
  "serde",
  "serde_json",
- "tinystr",
+ "tinystr 0.5.0",
  "writeable",
 ]
 
@@ -1234,7 +1235,7 @@ dependencies = [
  "icu",
  "icu_locid",
  "proc-macro-crate",
- "tinystr",
+ "tinystr 0.5.0",
 ]
 
 [[package]]
@@ -1296,9 +1297,10 @@ dependencies = [
  "serde",
  "serde_json",
  "static_assertions",
- "tinystr",
+ "tinystr 0.5.0",
  "writeable",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1351,10 +1353,11 @@ dependencies = [
  "serde_json",
  "smallstr",
  "smallvec",
- "tinystr",
+ "tinystr 0.5.0",
  "unzip",
  "urlencoding",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -1371,6 +1374,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "log",
+ "postcard",
  "serde",
  "serde-json-core",
  "serde_json",
@@ -1401,7 +1405,7 @@ dependencies = [
  "icu_uniset",
  "log",
  "serde",
- "tinystr",
+ "tinystr 0.4.11",
  "toml",
  "zerovec",
 ]
@@ -1412,6 +1416,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "icu",
+ "icu_codepointtrie",
  "icu_provider",
  "icu_provider_fs",
  "icu_segmenter_lstm",
@@ -1421,7 +1426,6 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "toml",
- "unicode-width",
  "zerovec",
 ]
 
@@ -1466,8 +1470,9 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
- "tinystr",
+ "tinystr 0.5.0",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -2660,17 +2665,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "tinystr-macros"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f65be51117c325c2b58eec529be7a0857d11527a9029973b58810a4c63e77a6"
-dependencies = [
- "tinystr-raw",
-]
-
-[[package]]
-name = "tinystr-neo"
-version = "0.3.1"
+name = "tinystr"
+version = "0.5.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -2678,8 +2674,17 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
- "tinystr",
+ "tinystr 0.4.11",
  "zerovec",
+]
+
+[[package]]
+name = "tinystr-macros"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f65be51117c325c2b58eec529be7a0857d11527a9029973b58810a4c63e77a6"
+dependencies = [
+ "tinystr-raw",
 ]
 
 [[package]]
@@ -3088,6 +3093,7 @@ dependencies = [
  "serde",
  "stable_deref_trait",
  "yoke-derive",
+ "zerofrom",
 ]
 
 [[package]]
@@ -3099,6 +3105,25 @@ dependencies = [
  "syn",
  "synstructure",
  "yoke",
+ "zerovec",
+]
+
+[[package]]
+name = "zerofrom"
+version = "0.1.0"
+dependencies = [
+ "zerofrom-derive",
+]
+
+[[package]]
+name = "zerofrom-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -3118,6 +3143,19 @@ dependencies = [
  "serde",
  "serde_json",
  "yoke",
+ "zerofrom",
+]
+
+[[package]]
+name = "zerovec-derive"
+version = "0.6.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]

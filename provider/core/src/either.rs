@@ -4,7 +4,7 @@
 
 //! Helpers for switching between multiple providers.
 
-use crate::iter::IterableProvider;
+use crate::iter::*;
 use crate::prelude::*;
 use alloc::boxed::Box;
 
@@ -73,16 +73,33 @@ impl<M: ResourceMarker, P0: ResourceProvider<M>, P1: ResourceProvider<M>> Resour
     }
 }
 
-impl<P0: IterableProvider, P1: IterableProvider> IterableProvider for EitherProvider<P0, P1> {
+impl<M: DataMarker, P0: IterableDynProvider<M>, P1: IterableDynProvider<M>> IterableDynProvider<M>
+    for EitherProvider<P0, P1>
+{
     #[inline]
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
+        key: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.supported_options_for_key(resc_key),
-            B(p) => p.supported_options_for_key(resc_key),
+            A(p) => p.supported_options_for_key(key),
+            B(p) => p.supported_options_for_key(key),
+        }
+    }
+}
+
+impl<M: ResourceMarker, P0: IterableResourceProvider<M>, P1: IterableResourceProvider<M>>
+    IterableResourceProvider<M> for EitherProvider<P0, P1>
+{
+    #[inline]
+    fn supported_options(
+        &self,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        use EitherProvider::*;
+        match self {
+            A(p) => p.supported_options(),
+            B(p) => p.supported_options(),
         }
     }
 }

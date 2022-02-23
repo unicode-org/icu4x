@@ -41,6 +41,11 @@ pub trait ZeroVecLike<'a, T: ?Sized> {
         k: &T,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>>;
+
+    /// Search for a key in a sorted vector by a predicate, returns `Ok(index)` if found,
+    /// returns `Err(insert_index)` if not found, where `insert_index` is the
+    /// index where it should be inserted to maintain sort order.
+    fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize>;
     /// Get element at `index`
     fn zvl_get(&self, index: usize) -> Option<&Self::GetType>;
     /// The length of this vector
@@ -154,6 +159,12 @@ where
         let zs: &ZeroSlice<T> = &*self;
         zs.zvl_binary_search_in_range(k, range)
     }
+    fn zvl_binary_search_by(
+        &self,
+        mut predicate: impl FnMut(&T) -> Ordering,
+    ) -> Result<usize, usize> {
+        ZeroSlice::binary_search_by(self, |probe| predicate(&probe))
+    }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
@@ -214,6 +225,12 @@ where
         let subslice = self.get_subslice(range)?;
         Some(ZeroSlice::binary_search(subslice, k))
     }
+    fn zvl_binary_search_by(
+        &self,
+        mut predicate: impl FnMut(&T) -> Ordering,
+    ) -> Result<usize, usize> {
+        ZeroSlice::binary_search_by(self, |probe| predicate(&probe))
+    }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
@@ -264,17 +281,17 @@ where
 {
     type OwnedType = T;
     fn zvl_insert(&mut self, index: usize, value: &T) {
-        self.to_mut().insert(index, value.as_unaligned())
+        self.to_mut().insert(index, value.to_unaligned())
     }
     fn zvl_remove(&mut self, index: usize) -> T {
         T::from_unaligned(self.to_mut().remove(index))
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> T {
         let vec = self.to_mut();
-        T::from_unaligned(mem::replace(&mut vec[index], value.as_unaligned()))
+        T::from_unaligned(mem::replace(&mut vec[index], value.to_unaligned()))
     }
     fn zvl_push(&mut self, value: &T) {
-        self.to_mut().push(value.as_unaligned())
+        self.to_mut().push(value.to_unaligned())
     }
     fn zvl_with_capacity(cap: usize) -> Self {
         ZeroVec::Owned(Vec::with_capacity(cap))
@@ -312,6 +329,9 @@ where
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
         self.binary_search_in_range(k, range)
+    }
+    fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
+        self.binary_search_by(predicate)
     }
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)
@@ -381,6 +401,9 @@ where
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
         self.binary_search_in_range(k, range)
+    }
+    fn zvl_binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
+        self.binary_search_by(predicate)
     }
     fn zvl_get(&self, index: usize) -> Option<&T> {
         self.get(index)

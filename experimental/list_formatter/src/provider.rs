@@ -9,27 +9,16 @@
 use crate::string_matcher::StringMatcher;
 use crate::ListStyle;
 use alloc::borrow::Cow;
-use icu_provider::yoke::{self, *};
+use icu_provider::DataMarker;
+use icu_provider::{yoke, zerofrom};
 use writeable::{LengthHint, Writeable};
 
-// TODO(#1561): Remove the explicit keys and move them to ResourceMarker.
-pub mod key {
-    //! Resource keys for [`icu_list`](crate).
-    use icu_provider::{resource_key, ResourceKey};
-
-    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::And`](crate::ListType::And)
-    pub const LIST_FORMAT_AND_V1: ResourceKey = resource_key!("list/and@1");
-    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::Or`](crate::ListType::Or)
-    pub const LIST_FORMAT_OR_V1: ResourceKey = resource_key!("list/or@1");
-    /// Resource key for [`ListFormatterPatternsV1`](super::ListFormatterPatternsV1)
-    /// for [`ListFormatter`](crate::ListFormatter)s of [`ListType::Unit`](crate::ListType::Unit)
-    pub const LIST_FORMAT_UNIT_V1: ResourceKey = resource_key!("list/unit@1");
-}
-
-/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter)
-#[icu_provider::data_struct(ListFormatterPatternsV1Marker)]
+/// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
+#[icu_provider::data_struct(
+    AndListV1Marker = "list/and@1",
+    OrListV1Marker = "list/or@1",
+    UnitListV1Marker = "list/unit@1"
+)]
 #[derive(Debug)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -44,6 +33,12 @@ pub struct ListFormatterPatternsV1<'data>(
     /// short_end, short_pair, narrow_start, narrow_middle, narrow_end, narrow_pair,
     [ConditionalListJoinerPattern<'data>; 12],
 );
+
+pub(crate) struct ErasedListV1Marker;
+
+impl DataMarker for ErasedListV1Marker {
+    type Yokeable = ListFormatterPatternsV1<'static>;
+}
 
 impl<'data> ListFormatterPatternsV1<'data> {
     pub(crate) fn start(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
@@ -78,7 +73,7 @@ impl<'data> ListFormatterPatternsV1<'data> {
 }
 
 /// A pattern that can behave conditionally on the next element.
-#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)
@@ -90,7 +85,7 @@ pub(crate) struct ConditionalListJoinerPattern<'data> {
     special_case: Option<SpecialCasePattern<'data>>,
 }
 
-#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)
@@ -103,7 +98,7 @@ struct SpecialCasePattern<'data> {
 }
 
 /// A pattern containing two numeric placeholders ("{0}, and {1}.")
-#[derive(Clone, Debug, PartialEq, Yokeable, ZeroCopyFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Deserialize, serde::Serialize)

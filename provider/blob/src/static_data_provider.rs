@@ -8,7 +8,7 @@ use icu_provider::prelude::*;
 use serde::de::Deserialize;
 use writeable::Writeable;
 use yoke::trait_hack::YokeTraitHack;
-use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
+use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data statically baked in to the binary.
 ///

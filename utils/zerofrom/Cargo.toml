@@ -1,0 +1,33 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "zerofrom"
+version = "0.1.0"
+description = "ZeroFrom trait for constructing"
+authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
+edition = "2018"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+categories = ["data-structures", "caching", "no-std"]
+keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[features]
+alloc = []
+derive = ["zerofrom-derive"]
+default = ["alloc"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+zerofrom-derive = { path = "./derive", version = "0.1.0", optional = true}

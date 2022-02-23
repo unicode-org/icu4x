@@ -65,9 +65,9 @@ Examples of source data providers include:
 
 Source data providers must implement the following traits:
 
-- `DataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
-- `DataProvider<SerdeSeDataStructMarker>`, usually implemented with the macro [`impl_dyn_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dyn_provider.html)
-- [`IterableProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/iter/trait.IterableProvider.html), required for the data exporter (see below)
+- `ResourceProvider<M>` or `DynProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
+- `IterableDynProvider<M>`. or `IterableResourceProvider<M>`, required for the data exporter (see below)
+- `DynProvider<SerializeMarker>` and `IterableDynProvider<SerializeMarker>`, usually implemented with the macro [`impl_dyn_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dyn_provider.html) after the above traits have been implemented
 
 Source data providers are often complex to write. Rules of thumb:
 
@@ -200,8 +200,8 @@ struct FooProvider {
 impl TryFrom<&dyn CldrPaths> for FooProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        // CLDR providers are constructed from CldrPaths, which gives you
-        // access to raw CLDR JSON data.
+        // Don't do any heavy lifting here. Ideally you just want to save
+        // the paths you need.
     }
 }
 
@@ -213,26 +213,20 @@ impl ResourceProvider<FooV1Marker> for FooProvider {
         // Load the data from CLDR JSON and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
+        // This method will be called once per option returned by supported_options.
+        // Use internal mutability (RwLock) to avoid duplicating work.
     }
 }
 
-impl IterableProvider for FooProvider {
-    fn supported_options_for_key(
+impl IterableResourceProvider<FooV1Marker> for FooProvider {
+    fn supported_options(
         &self,
-        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         // This should list all supported locales, for example.
     }
 }
 
-impl KeyedDataProvider for FooProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![FooV1Marker::KEY]
-    }
-}
-
-// Once we have ResourceProvider, IterableProvider, and KeyedDataProvider, we can
-// implement DynProvider<SerializeMarker>.
+// Once we have ResourceProvider and IterableResourceProvider, we can implement IterableDynProvider<SerializeMarker>.
 icu_provider::impl_dyn_provider!(FooProvider, [
     FooV1Marker,
 ], SERDE_SE);

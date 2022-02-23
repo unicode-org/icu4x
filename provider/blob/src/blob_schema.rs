@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_provider::prelude::*;
-use zerovec::map2d::ZeroMap2dBorrowed;
+use zerovec::maps::ZeroMap2dBorrowed;
 
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Serialize, serde::Deserialize)]

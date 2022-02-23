@@ -19,24 +19,37 @@ pub fn open_reader(path: &Path) -> Result<BufReader<File>, Error> {
         .map_err(|e| (e, path).into())
 }
 
-/// Helper function which returns a sorted list of subdirectories.
-pub fn get_subdirectories(root: &Path) -> Result<Vec<PathBuf>, Error> {
+fn get_langid_subdirectories_internal(
+    root: &Path,
+) -> Result<impl Iterator<Item = (LanguageIdentifier, PathBuf)>, Error> {
     let mut result = vec![];
     for entry in fs::read_dir(root).map_err(|e| (e, root))? {
         let entry = entry.map_err(|e| (e, root))?;
         let path = entry.path();
         result.push(path);
     }
-    result.sort();
-    Ok(result)
+    Ok(result.into_iter().map(|path| {
+        (
+            LanguageIdentifier::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap(),
+            path,
+        )
+    }))
 }
 
-/// Helper function which returns a sorted list of langid subdirectories.
-pub fn get_langid_subdirectories(root: &Path) -> Result<Vec<PathBuf>, Error> {
-    get_subdirectories(root).map(|mut result| {
-        result.sort_by_key(|path| {
-            LanguageIdentifier::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap()
-        });
-        result
+/// Helper function which returns an unsorted list of langids for which subdirectories exist.
+pub fn get_langid_subdirectories(
+    root: &Path,
+) -> Result<impl Iterator<Item = LanguageIdentifier>, Error> {
+    get_langid_subdirectories_internal(root).map(|iter| iter.map(|(l, _)| l))
+}
+
+/// Helper function which returns the subdirectory for the selected language, if it exists.
+pub fn get_langid_subdirectory(
+    root: &Path,
+    langid: &LanguageIdentifier,
+) -> Result<Option<PathBuf>, Error> {
+    get_langid_subdirectories_internal(root).map(|mut iter| {
+        iter.find(|(langid2, _)| langid2 == langid)
+            .map(|(_, path)| path)
     })
 }

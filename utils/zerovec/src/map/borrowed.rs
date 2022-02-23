@@ -5,6 +5,7 @@
 use crate::ule::AsULE;
 use crate::{ZeroSlice, ZeroVec};
 
+use core::cmp::Ordering;
 use core::fmt;
 
 pub use super::kv::ZeroMapKV;
@@ -19,7 +20,7 @@ pub use super::vecs::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroVecLike};
 /// # Examples
 ///
 /// ```
-/// use zerovec::map::ZeroMapBorrowed;
+/// use zerovec::maps::ZeroMapBorrowed;
 ///
 /// // Example byte buffer representing the map { 1: "one" }
 /// let BINCODE_BYTES: &[u8; 31] = &[
@@ -95,7 +96,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use zerovec::map::ZeroMapBorrowed;
+    /// use zerovec::maps::ZeroMapBorrowed;
     ///
     /// let zm: ZeroMapBorrowed<u16, str> = ZeroMapBorrowed::new();
     /// assert!(zm.is_empty());
@@ -127,7 +128,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
-    /// use zerovec::map::ZeroMapBorrowed;
+    /// use zerovec::maps::ZeroMapBorrowed;
     ///
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
@@ -146,11 +147,38 @@ where
         self.values.zvl_get_borrowed(index)
     }
 
+    /// Binary search the map with `predicate` to find a key, returning the value.
+    ///
+    /// This is able to return values that live longer than the map itself
+    /// since they borrow directly from the backing buffer. This is the
+    /// primary advantage of using [`ZeroMapBorrowed`](super::ZeroMapBorrowed) over [`ZeroMap`](super::ZeroMap).
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap;
+    /// use zerovec::maps::ZeroMapBorrowed;
+    ///
+    /// let mut map = ZeroMap::new();
+    /// map.insert(&1, "one");
+    /// map.insert(&2, "two");
+    /// let borrowed = map.as_borrowed();
+    /// assert_eq!(borrowed.get_by(|probe| probe.cmp(&1)), Some("one"));
+    /// assert_eq!(borrowed.get_by(|probe| probe.cmp(&3)), None);
+    ///
+    /// let borrow = borrowed.get_by(|probe| probe.cmp(&1));
+    /// drop(borrowed);
+    /// // still exists after the ZeroMapBorrowed has been dropped
+    /// assert_eq!(borrow, Some("one"));
+    /// ```
+    pub fn get_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<&'a V::GetType> {
+        let index = self.keys.zvl_binary_search_by(predicate).ok()?;
+        self.values.zvl_get_borrowed(index)
+    }
+
     /// Returns whether `key` is contained in this map
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
-    /// use zerovec::map::ZeroMapBorrowed;
+    /// use zerovec::maps::ZeroMapBorrowed;
     ///
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");

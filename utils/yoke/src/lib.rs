@@ -2,14 +2,29 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This crate provides [`Yoke`], a data structure that allows one
-//! to "yoke" Cow-like borrowed data types to their backing storage,
-//! enabling one to use Cow (etc) in zero-copy deserialization
-//! with dynamic lifetimes for the borrowed data, for example caching it.
+//! This crate provides [`Yoke<Y, C>`][Yoke], which allows one to "yoke" a zero-copy deserialized
+//! object(say, a [`Cow<'a, str>`](alloc::borrow::Cow)) to the source it was deserialized from, (say, an [`Rc<[u8]>`](alloc::rc::Rc)),
+//! known as a "cart", producing a type that looks like `Yoke<Cow<'static, str>, Rc<[u8]>>`
+//! and can be moved around with impunity.
+//!
+//! Succinctly, this allows one to "erase" static lifetimes and turn them into dynamic ones, similarly
+//! to how `dyn` allows one to "erase" static types and turn them into dynamic ones.
+//!
+//! Most of the time the yokeable `Y` type will be some kind of zero-copy deserializable
+//! abstraction, potentially with an owned variant (like [`Cow`](alloc::borrow::Cow),
+//! [`ZeroVec`](https://docs.rs/zerovec), or an aggregate containing such types), and the cart `C` will be some smart pointer like
+//!   [`Box<T>`](alloc::boxed::Box), [`Rc<T>`](alloc::rc::Rc), or [`Arc<T>`](std::sync::Arc), potentially wrapped in an [`Option<T>`](Option).
+//!
+//! The key behind this crate is [`Yoke::get()`], where calling [`.get()`][Yoke::get] on a type like
+//! `Yoke<Cow<'static, str>, _>` will get you a short-lived `&'a Cow<'a, str>`, restricted to the
+//! lifetime of the borrow used during [`.get()`](Yoke::get). This is entirely safe since the `Cow` borrows from
+//! the cart type, which cannot be interfered with as long as the `Yoke` is borrowed by [`.get()`](Yoke::get).
+//! [`.get()`](Yoke::get) protects access by essentially reifying the erased lifetime to a safe local one
+//! when necessary.
 //!
 //! See the documentation of [`Yoke`] for more details.
 
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(all(not(test), not(doc)), no_std)]
 // The lifetimes here are important for safety and explicitly writing
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]
@@ -25,15 +40,18 @@ mod macro_impls;
 pub mod trait_hack;
 mod yoke;
 mod yokeable;
-mod zero_copy_from;
+#[cfg(feature = "zerofrom")]
+mod zero_from;
 
 #[cfg(feature = "serde")]
 mod serde;
 
 #[cfg(feature = "derive")]
-pub use yoke_derive::{Yokeable, ZeroCopyFrom};
+pub use yoke_derive::Yokeable;
 
 pub use crate::is_covariant::IsCovariant;
 pub use crate::yoke::{CloneableCart, Yoke};
 pub use crate::yokeable::Yokeable;
-pub use crate::zero_copy_from::ZeroCopyFrom;
+
+#[cfg(feature = "zerofrom")]
+use zerofrom::ZeroFrom;

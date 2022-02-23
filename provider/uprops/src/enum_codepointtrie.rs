@@ -12,7 +12,7 @@ use icu_properties::{
     CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak,
     Script, SentenceBreak, WordBreak,
 };
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::path::Path;
@@ -20,7 +20,7 @@ use zerovec::ZeroVec;
 
 /// This data provider returns `CodePointTrie` data inside a
 /// `UnicodePropertyMap` data struct. The source data is the same as that of
-/// [crate::provider::PropertiesDataProvider], which is a TOML file of data
+/// the other properties providers, which is a TOML file of data
 /// for the property(-ies) desired, as given by the ICU4C property data
 /// exporter tool.
 pub struct EnumeratedPropertyCodePointTrieProvider {
@@ -103,7 +103,7 @@ impl<T: TrieValue> DynProvider<UnicodePropertyMapV1Marker<T>>
         // For data resource keys that represent the CodePointTrie data for an enumerated
         // property, the ResourceKey sub-category string will just be the short alias
         // for the property.
-        let prop_name = get_last_component_no_version(&key);
+        let prop_name = get_last_component_no_version(key);
         let source_cpt_data = &self
             .data
             .get(prop_name)
@@ -130,10 +130,12 @@ icu_provider::impl_dyn_provider!(EnumeratedPropertyCodePointTrieProvider, {
     key::SENTENCE_BREAK_V1 => UnicodePropertyMapV1Marker<SentenceBreak>,
 }, SERDE_SE);
 
-impl IterableProvider for EnumeratedPropertyCodePointTrieProvider {
+impl<T: TrieValue> IterableDynProvider<UnicodePropertyMapV1Marker<T>>
+    for EnumeratedPropertyCodePointTrieProvider
+{
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        _: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }

@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::*;
+use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::ops::Range;
@@ -275,7 +276,7 @@ where
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
-        self.binary_search_impl(needle, self.indices)
+        self.binary_search_impl(|probe| probe.cmp(needle), self.indices)
     }
 
     pub fn binary_search_in_range(
@@ -284,14 +285,26 @@ where
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
         let indices_slice = self.indices.get(range)?;
-        Some(self.binary_search_impl(needle, indices_slice))
+        Some(self.binary_search_impl(|probe| probe.cmp(needle), indices_slice))
+    }
+}
+
+impl<'a, T> VarZeroVecComponents<'a, T>
+where
+    T: VarULE,
+    T: ?Sized,
+{
+    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given predicate. For more information, see
+    /// the primitive function [`binary_search_by`](slice::binary_search_by).
+    pub fn binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
+        self.binary_search_impl(predicate, self.indices)
     }
 
-    /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
+    /// Binary searches a sorted `VarZeroVecComponents<T>` with the given predicate. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     fn binary_search_impl(
         &self,
-        needle: &T,
+        mut predicate: impl FnMut(&T) -> Ordering,
         indices_slice: &[RawBytesULE<4>],
     ) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
@@ -325,7 +338,7 @@ where
             let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u32>();
             // safety: we know this is in bounds
             let actual_probe = unsafe { self.get_unchecked(index) };
-            actual_probe.cmp(needle)
+            predicate(actual_probe)
         })
     }
 }
@@ -334,7 +347,7 @@ where
 pub fn get_serializable_bytes<T, A>(elements: &[A]) -> Option<Vec<u8>>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     let len = compute_serializable_len(elements)?;
     debug_assert!(len >= 4);
@@ -353,10 +366,10 @@ where
 pub fn write_serializable_bytes<T, A>(elements: &[A], output: &mut [u8])
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     let num_elements = u32::try_from(elements.len()).ok().unwrap();
-    output[0..4].copy_from_slice(&num_elements.as_unaligned().0);
+    output[0..4].copy_from_slice(&num_elements.to_unaligned().0);
 
     // idx_offset = offset from the start of the buffer for the next index
     let mut idx_offset: usize = 4;
@@ -372,7 +385,7 @@ where
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
         let offset = (dat_offset - first_dat_offset) as u32;
-        idx_slice.copy_from_slice(&offset.as_unaligned().0);
+        idx_slice.copy_from_slice(&offset.to_unaligned().0);
 
         let dat_limit = dat_offset + element_len;
         let dat_slice = &mut output[dat_offset..dat_limit];
@@ -390,7 +403,7 @@ where
 pub fn compute_serializable_len<T, A>(elements: &[A]) -> Option<u32>
 where
     T: VarULE + ?Sized,
-    A: custom::EncodeAsVarULE<T>,
+    A: EncodeAsVarULE<T>,
 {
     // 4 for length + 4 for each offset + the body
     let idx_len: u32 = u32::try_from(elements.len())

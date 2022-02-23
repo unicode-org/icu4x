@@ -6,10 +6,11 @@
 //!
 //! Every ICU4X component should have its own private submodule and then export the types from here.
 
-mod calendar;
-mod datetime;
-mod decimal;
+pub(crate) mod calendar;
+pub(crate) mod datetime;
+pub(crate) mod decimal;
 #[cfg(feature = "icu_list")]
+<<<<<<< HEAD
 mod list;
 mod locale_canonicalizer;
 mod plurals;
@@ -115,3 +116,9 @@ cldr_json_data_provider!(
     time_zones: time_zones::TimeZonesProvider,
     week_data: datetime::week_data::WeekDataProvider,
 );
+=======
+pub(crate) mod list;
+pub(crate) mod locale_canonicalizer;
+pub(crate) mod plurals;
+pub(crate) mod time_zones;
+>>>>>>> upstream/main

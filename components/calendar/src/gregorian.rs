@@ -7,7 +7,7 @@
 use crate::iso::{Iso, IsoDateInner, IsoDay, IsoMonth, IsoYear};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::TryInto;
-use tinystr::tinystr16;
+use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The Gregorian Calendar
@@ -121,13 +121,13 @@ impl DateTime<Gregorian> {
 fn iso_year_as_gregorian(year: IsoYear) -> types::Year {
     if year.0 > 0 {
         types::Year {
-            era: types::Era(tinystr16!("ad")),
+            era: types::Era(tinystr!(16, "ad")),
             number: year.0,
             related_iso: year.0,
         }
     } else {
         types::Year {
-            era: types::Era(tinystr16!("bc")),
+            era: types::Era(tinystr!(16, "bc")),
             number: 1 - year.0,
             related_iso: year.0,
         }

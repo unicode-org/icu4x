@@ -9,7 +9,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::yoke;
+use icu_provider::{yoke, zerofrom};
 use litemap::LiteMap;
 
 #[icu_provider::data_struct(DateSkeletonPatternsV1Marker = "datetime/skeletons@1")]
@@ -18,7 +18,7 @@ use litemap::LiteMap;
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(cloning_zcf)]
+#[zerofrom(cloning_zf)]
 pub struct DateSkeletonPatternsV1<'data>(
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub  LiteMap<SkeletonV1, PatternPlurals<'data>>,

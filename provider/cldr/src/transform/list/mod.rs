@@ -3,78 +3,85 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::reader::{get_langid_subdirectories, open_reader};
-use crate::support::KeyedDataProvider;
+use crate::error::Error;
+use crate::reader::{get_langid_subdirectories, get_langid_subdirectory, open_reader};
 use crate::CldrPaths;
 use icu_list::provider::*;
-use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
-use std::convert::TryFrom;
+use std::path::PathBuf;
 
 /// A data provider reading from CLDR JSON list rule files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct ListProvider {
-    data: LiteMap<LanguageIdentifier, cldr_serde::list_patterns::LangListPatterns>,
-    uprops_path: std::path::PathBuf,
+    cldr_misc: PathBuf,
+    uprops_root: PathBuf,
 }
 
-impl TryFrom<&dyn CldrPaths> for ListProvider {
-    type Error = crate::error::Error;
-    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut data = LiteMap::new();
-        for dir in get_langid_subdirectories(&cldr_paths.cldr_misc()?.join("main"))? {
-            let path = dir.join("listPatterns.json");
-            let resource: cldr_serde::list_patterns::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.extend_from_litemap(resource.main.0);
-        }
+impl ListProvider {
+    pub fn try_from(cldr_paths: &dyn CldrPaths, uprops_root: PathBuf) -> Result<Self, Error> {
         Ok(Self {
-            data,
-            uprops_path: cldr_paths.uprops()?,
+            cldr_misc: cldr_paths.cldr_misc()?,
+            uprops_root,
         })
     }
 }
 
-impl KeyedDataProvider for ListProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![
-            key::LIST_FORMAT_AND_V1,
-            key::LIST_FORMAT_OR_V1,
-            key::LIST_FORMAT_UNIT_V1,
-        ]
-    }
-}
-
-impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<ListFormatterPatternsV1Marker>, DataError> {
+impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourceProvider<M>
+    for ListProvider
+{
+    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         let langid = req
             .get_langid()
-            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(key, req))?;
-        let data = match self.data.get(langid) {
-            Some(v) => &v.list_patterns,
-            None => return Err(DataErrorKind::MissingLocale.with_req(key, req)),
+            .ok_or_else(|| DataErrorKind::NeedsLocale.with_req(M::KEY, req))?;
+
+        let resource: cldr_serde::list_patterns::Resource = {
+            let path = get_langid_subdirectory(&self.cldr_misc.join("main"), langid)?
+                .ok_or_else(|| DataErrorKind::MissingLocale.with_req(M::KEY, req))?
+                .join("listPatterns.json");
+            serde_json::from_reader(open_reader(&path)?).map_err(|e| Error::Json(e, Some(path)))?
         };
 
-        let mut patterns = match key {
-            key::LIST_FORMAT_AND_V1 => parse_and_patterns(data),
-            key::LIST_FORMAT_OR_V1 => parse_or_patterns(data),
-            key::LIST_FORMAT_UNIT_V1 => parse_unit_patterns(data),
-            _ => return Err(DataErrorKind::MissingResourceKey.with_key(key)),
-        }
-        .map_err(|e| e.with_req(key, req))?;
+        let data = &resource
+            .main
+            .0
+            .get(langid)
+            .expect("CLDR file contains the expected language")
+            .list_patterns;
+
+        let (wide, short, narrow) = match M::KEY {
+            AndListV1Marker::KEY => (&data.standard, &data.standard_short, &data.standard_narrow),
+            OrListV1Marker::KEY => (&data.or, &data.or_short, &data.or_narrow),
+            UnitListV1Marker::KEY => (&data.unit, &data.unit_short, &data.unit_narrow),
+            _ => {
+                return Err(
+                    DataError::custom("Unknown key for ListFormatterPatternsV1").with_key(M::KEY)
+                )
+            }
+        };
+
+        let mut patterns = ListFormatterPatternsV1::try_new([
+            &wide.start,
+            &wide.middle,
+            &wide.end,
+            &wide.pair,
+            &short.start,
+            &short.middle,
+            &short.end,
+            &short.pair,
+            &narrow.start,
+            &narrow.middle,
+            &narrow.end,
+            &narrow.pair,
+        ])
+        .map_err(|e| e.with_req(M::KEY, req))?;
 
         if langid.language == langid!("es").language {
-            match key {
+            match M::KEY {
                 // Replace " y " with " e " before /i/ sounds.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
-                key::LIST_FORMAT_AND_V1 | key::LIST_FORMAT_UNIT_V1 => patterns
+                AndListV1Marker::KEY | UnitListV1Marker::KEY => patterns
                     .make_conditional(
                         "{0} y {1}",
                         // Starts with i or (hi but not hia/hie)
@@ -84,7 +91,7 @@ impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
                     .expect("Valid regex and pattern"),
                 // Replace " o " with " u " before /o/ sound.
                 // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
-                key::LIST_FORMAT_OR_V1 => patterns
+                OrListV1Marker::KEY => patterns
                     .make_conditional(
                         "{0} o {1}",
                         // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
@@ -107,8 +114,8 @@ impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
                     &format!(
                         "[^{}]",
                         icu_properties::sets::get_for_script(
-                            &icu_provider_uprops::PropertiesDataProvider::try_new(
-                                &self.uprops_path
+                            &icu_provider_uprops::EnumeratedPropertyUnicodeSetDataProvider::try_new(
+                                &self.uprops_root
                             )
                             .map_err(|e| DataError::custom("Properties data provider error")
                                 .with_display_context(&e))?,
@@ -136,20 +143,20 @@ impl DynProvider<ListFormatterPatternsV1Marker> for ListProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(ListProvider, {
-    _ => ListFormatterPatternsV1Marker,
-}, SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    ListProvider,
+    [AndListV1Marker, OrListV1Marker, UnitListV1Marker,],
+    SERDE_SE
+);
 
-impl IterableProvider for ListProvider {
-    fn supported_options_for_key(
+impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>
+    for ListProvider
+{
+    fn supported_options(
         &self,
-        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         Ok(Box::new(
-            self.data
-                .iter_keys()
-                // TODO(#568): Avoid the clone
-                .cloned()
+            get_langid_subdirectories(&self.cldr_misc.join("main"))?
                 // ur-IN has a buggy pattern ("{1}, {0}") which violates
                 // our invariant that {0} is at index 0 (and rotates the output).
                 // ml has middle and start patterns with suffixes.
@@ -160,117 +167,70 @@ impl IterableProvider for ListProvider {
     }
 }
 
-fn parse_and_patterns<'a>(
-    raw: &cldr_serde::list_patterns::ListPatterns,
-) -> Result<ListFormatterPatternsV1<'a>, DataError> {
-    ListFormatterPatternsV1::try_new([
-        &raw.standard.start,
-        &raw.standard.middle,
-        &raw.standard.end,
-        &raw.standard.pair,
-        &raw.standard_short.start,
-        &raw.standard_short.middle,
-        &raw.standard_short.end,
-        &raw.standard_short.pair,
-        &raw.standard_narrow.start,
-        &raw.standard_narrow.middle,
-        &raw.standard_narrow.end,
-        &raw.standard_narrow.pair,
-    ])
-}
-
-fn parse_or_patterns<'a>(
-    raw: &cldr_serde::list_patterns::ListPatterns,
-) -> Result<ListFormatterPatternsV1<'a>, DataError> {
-    ListFormatterPatternsV1::try_new([
-        &raw.or.start,
-        &raw.or.middle,
-        &raw.or.end,
-        &raw.or.pair,
-        &raw.or_short.start,
-        &raw.or_short.middle,
-        &raw.or_short.end,
-        &raw.or_short.pair,
-        &raw.or_narrow.start,
-        &raw.or_narrow.middle,
-        &raw.or_narrow.end,
-        &raw.or_narrow.pair,
-    ])
-}
-
-fn parse_unit_patterns<'a>(
-    raw: &cldr_serde::list_patterns::ListPatterns,
-) -> Result<ListFormatterPatternsV1<'a>, DataError> {
-    ListFormatterPatternsV1::try_new([
-        &raw.unit.start,
-        &raw.unit.middle,
-        &raw.unit.end,
-        &raw.unit.pair,
-        &raw.unit_short.start,
-        &raw.unit_short.middle,
-        &raw.unit_short.end,
-        &raw.unit_short.pair,
-        &raw.unit_narrow.start,
-        &raw.unit_narrow.middle,
-        &raw.unit_narrow.end,
-        &raw.unit_narrow.pair,
-    ])
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_list::{ListFormatter, ListStyle, ListType};
+    use icu_list::{ListFormatter, ListStyle};
     use icu_locid_macros::langid;
     use writeable::assert_writeable_eq;
 
-    macro_rules! formatter {
-        ($name:ident, $langid:expr, $type:expr, $width:expr) => {
+    macro_rules! test {
+        ($langid:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let cldr_paths = crate::cldr_paths::for_test();
-            let provider = ListProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-            let $name = ListFormatter::try_new($langid, &provider, $type, $width).unwrap();
+            let provider = ListProvider::try_from(
+                &cldr_paths as &dyn CldrPaths, icu_testdata::paths::uprops_toml_root()).unwrap();
+            let f = ListFormatter::$type(langid!($langid), &provider, ListStyle::Wide).unwrap();
+            $(
+                assert_writeable_eq!(f.format($input.iter()), $output);
+            )+
         };
     }
 
     #[test]
     fn test_basic() {
-        formatter!(f, langid!("fr"), ListType::Or, ListStyle::Wide);
-        assert_writeable_eq!(f.format(["A", "B"].iter()), "A ou B");
+        test!("fr", try_new_or, (["A", "B"], "A ou B"),);
     }
 
     #[test]
     fn test_spanish() {
-        formatter!(and, langid!("es"), ListType::And, ListStyle::Wide);
-        assert_writeable_eq!(and.format(["", "Mallorca"].iter()), " y Mallorca");
-        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " e Ibiza");
-        assert_writeable_eq!(and.format(["", "Hidalgo"].iter()), " e Hidalgo");
-        assert_writeable_eq!(and.format(["", "Hierva"].iter()), " y Hierva");
+        test!(
+            "es",
+            try_new_and,
+            (["x", "Mallorca"], "x y Mallorca"),
+            (["x", "Ibiza"], "x e Ibiza"),
+            (["x", "Hidalgo"], "x e Hidalgo"),
+            (["x", "Hierva"], "x y Hierva"),
+        );
 
-        formatter!(or, langid!("es"), ListType::Or, ListStyle::Wide);
-        assert_writeable_eq!(or.format(["", "Ibiza"].iter()), " o Ibiza");
-        assert_writeable_eq!(or.format(["", "Okinawa"].iter()), " u Okinawa");
-        assert_writeable_eq!(or.format(["", "8 más"].iter()), " u 8 más");
-        assert_writeable_eq!(or.format(["", "8"].iter()), " u 8");
-        assert_writeable_eq!(or.format(["", "87 más"].iter()), " u 87 más");
-        assert_writeable_eq!(or.format(["", "87"].iter()), " u 87");
-        assert_writeable_eq!(or.format(["", "11 más"].iter()), " u 11 más");
-        assert_writeable_eq!(or.format(["", "11"].iter()), " u 11");
-        assert_writeable_eq!(or.format(["", "110 más"].iter()), " o 110 más");
-        assert_writeable_eq!(or.format(["", "110"].iter()), " o 110");
-        assert_writeable_eq!(or.format(["", "11.000 más"].iter()), " u 11.000 más");
-        assert_writeable_eq!(or.format(["", "11.000"].iter()), " u 11.000");
-        assert_writeable_eq!(or.format(["", "11.000,92 más"].iter()), " u 11.000,92 más");
-        assert_writeable_eq!(or.format(["", "11.000,92"].iter()), " u 11.000,92");
+        test!(
+            "es",
+            try_new_or,
+            (["x", "Ibiza"], "x o Ibiza"),
+            (["x", "Okinawa"], "x u Okinawa"),
+            (["x", "8 más"], "x u 8 más"),
+            (["x", "8"], "x u 8"),
+            (["x", "87 más"], "x u 87 más"),
+            (["x", "87"], "x u 87"),
+            (["x", "11 más"], "x u 11 más"),
+            (["x", "11"], "x u 11"),
+            (["x", "110 más"], "x o 110 más"),
+            (["x", "110"], "x o 110"),
+            (["x", "11.000 más"], "x u 11.000 más"),
+            (["x", "11.000"], "x u 11.000"),
+            (["x", "11.000,92 más"], "x u 11.000,92 más"),
+            (["x", "11.000,92"], "x u 11.000,92"),
+        );
 
-        formatter!(and, langid!("es-AR"), ListType::And, ListStyle::Wide);
-        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " e Ibiza");
+        test!("es-AR", try_new_and, (["x", "Ibiza"], "x e Ibiza"),);
     }
 
     #[test]
     fn test_hebrew() {
-        formatter!(and, langid!("he"), ListType::And, ListStyle::Wide);
-
-        assert_writeable_eq!(and.format(["", "יפו"].iter()), " ויפו");
-        assert_writeable_eq!(and.format(["", "Ibiza"].iter()), " ו-Ibiza");
+        test!(
+            "he",
+            try_new_and,
+            (["x", "יפו"], "x ויפו"),
+            (["x", "Ibiza"], "x ו-Ibiza"),
+        );
     }
 }

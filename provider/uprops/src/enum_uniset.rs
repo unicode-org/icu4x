@@ -6,7 +6,7 @@ use crate::uprops_helpers::{self, get_last_component_no_version, TomlEnumerated}
 
 use icu_properties::provider::UnicodePropertyV1;
 use icu_properties::provider::UnicodePropertyV1Marker;
-use icu_provider::iter::IterableProvider;
+use icu_provider::iter::IterableDynProvider;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::path::Path;
@@ -62,7 +62,7 @@ impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataPr
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<UnicodePropertyV1Marker>, DataError> {
-        let key_str = get_last_component_no_version(&key);
+        let key_str = get_last_component_no_version(key);
 
         // ResourceKey subcategory strings for enumerated properties are
         // of the form "name=value", using the short name for both.
@@ -99,13 +99,13 @@ impl DynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataPr
 }
 
 icu_provider::impl_dyn_provider!(EnumeratedPropertyUnicodeSetDataProvider, {
-    _ => UnicodePropertyV1Marker,
+    _k if _k.get_path().starts_with("props/") && _k.get_path().contains('=') => UnicodePropertyV1Marker,
 }, SERDE_SE);
 
-impl IterableProvider for EnumeratedPropertyUnicodeSetDataProvider {
+impl IterableDynProvider<UnicodePropertyV1Marker> for EnumeratedPropertyUnicodeSetDataProvider {
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        _: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }

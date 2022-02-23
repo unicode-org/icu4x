@@ -18,7 +18,7 @@ use alloc::{
 /// perform lifetime casting on trait objects (`dyn Trait`). This enables a type-erased [`Yoke`]
 /// consisting of only trait objects. See the examples.
 ///
-/// `IsCovariant` is auto-implemented in [`#[derive(Yokeable)]`](yoke_derive::Yokeable).
+/// `IsCovariant` is auto-implemented in [`#[derive(Yokeable)]`](macro@crate::Yokeable).
 ///
 /// # Safety
 ///
@@ -42,10 +42,11 @@ use alloc::{
 /// ```
 ///
 /// By constraining the trait `ExampleTrait<'a>` on `IsCovariant<'a>`, we can safely implement
-/// [`Yokeable`] and [`ZeroCopyFrom`] on its trait object:
+/// [`Yokeable`] and [`ZeroFrom`] on its trait object:
 ///
 /// ```
 /// # use yoke::*;
+/// # use zerofrom::*;
 /// # use core::mem;
 /// trait ExampleTrait<'a>: IsCovariant<'a> {
 ///     fn get_message(&self) -> &'a str;
@@ -77,8 +78,8 @@ use alloc::{
 ///     }
 /// }
 ///
-/// impl<'zcf, 'a> ZeroCopyFrom<'zcf, dyn ExampleTrait<'a> + 'a> for ExampleTraitDynRef<'zcf> {
-///     fn zero_copy_from(this: &'zcf (dyn ExampleTrait<'a> + 'a)) -> ExampleTraitDynRef<'zcf> {
+/// impl<'zf, 'a> ZeroFrom<'zf, dyn ExampleTrait<'a> + 'a> for ExampleTraitDynRef<'zf> {
+///     fn zero_from(this: &'zf (dyn ExampleTrait<'a> + 'a)) -> ExampleTraitDynRef<'zf> {
 ///         // This is safe because the trait object requires IsCovariant.
 ///         ExampleTraitDynRef(unsafe { core::mem::transmute(this) })
 ///     }
@@ -103,7 +104,7 @@ use alloc::{
 ///
 /// [`Yoke`]: crate::Yoke
 /// [`Yokeable`]: crate::Yokeable
-/// [`ZeroCopyFrom`]: crate::ZeroCopyFrom
+/// [`ZeroFrom`]: crate::ZeroFrom
 pub unsafe trait IsCovariant<'a>: 'a {}
 
 // IsCovariant is implemented on the standard library Copy types in macro_impls.rs

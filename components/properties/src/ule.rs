@@ -15,7 +15,7 @@ impl AsULE for CanonicalCombiningClass {
     type ULE = u8;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self.0
     }
 
@@ -33,7 +33,7 @@ impl AsULE for GeneralCategory {
     type ULE = GeneralCategoryULE;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         let u = self as u8;
         GeneralCategoryULE(u)
     }
@@ -69,7 +69,7 @@ impl AsULE for Script {
     type ULE = RawBytesULE<2>;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         RawBytesULE(self.0.to_le_bytes())
     }
 
@@ -83,7 +83,7 @@ impl AsULE for ScriptWithExt {
     type ULE = RawBytesULE<2>;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         RawBytesULE(self.0.to_le_bytes())
     }
 
@@ -97,7 +97,7 @@ impl AsULE for EastAsianWidth {
     type ULE = u8;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self.0
     }
 
@@ -111,7 +111,7 @@ impl AsULE for LineBreak {
     type ULE = u8;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self.0
     }
 
@@ -125,7 +125,7 @@ impl AsULE for GraphemeClusterBreak {
     type ULE = u8;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self.0
     }
 
@@ -139,7 +139,7 @@ impl AsULE for WordBreak {
     type ULE = u8;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self.0
     }
 
@@ -153,7 +153,7 @@ impl AsULE for SentenceBreak {
     type ULE = u8;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self.0
     }
 

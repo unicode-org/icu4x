@@ -7,6 +7,9 @@ pub mod json;
 #[cfg(feature = "bincode")]
 pub mod bincode;
 
+#[cfg(feature = "postcard")]
+pub mod postcard;
+
 use displaydoc::Display;
 use icu_provider::buf::BufferFormat;
 use std::io;
