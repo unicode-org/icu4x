@@ -45,8 +45,6 @@ pub use value::Value;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 
-use core::iter::Peekable;
-
 /// Unicode Extensions provide information about user preferences in a given locale.
 ///
 /// A list of [`Unicode BCP47 U Extensions`] as defined in [`Unicode Locale
@@ -115,7 +113,7 @@ impl Unicode {
         self.keywords.is_empty() && self.attributes.is_empty()
     }
 
-    pub(crate) fn try_from_iter<'a>(iter: &mut SubtagIterator<'a>) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut attributes = vec![];
         let mut keywords = vec![];
 

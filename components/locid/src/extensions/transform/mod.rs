@@ -117,7 +117,7 @@ impl Transform {
         self.lang.is_none() && self.fields.is_empty()
     }
 
-    pub(crate) fn try_from_iter<'a>(iter: &mut SubtagIterator<'a>) -> Result<Self, ParserError> {
+    pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut tlang = None;
         let mut tfields = vec![];
 

@@ -36,8 +36,10 @@ pub struct SubtagIterator<'a> {
     r_cursor: usize,
 }
 
+pub type ManualSlice<'a> = (&'a [u8], usize, usize);
+
 impl<'a> SubtagIterator<'a> {
-    pub const fn next_manual(mut self) -> (Self, Option<(&'a [u8], usize, usize)>) {
+    pub const fn next_manual(mut self) -> (Self, Option<ManualSlice<'a>>) {
         if self.l_cursor == self.r_cursor {
             (self, None)
         } else {
@@ -59,7 +61,7 @@ impl<'a> SubtagIterator<'a> {
         }
     }
 
-    pub const fn peek_manual(&self) -> Option<(&'a [u8], usize, usize)> {
+    pub const fn peek_manual(&self) -> Option<ManualSlice<'a>> {
         if self.l_cursor == self.r_cursor {
             None
         } else {

@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::iter::Peekable;
-
 pub use super::errors::ParserError;
 use crate::parser::{get_subtag_iterator, SubtagIterator};
 use crate::subtags;
@@ -24,8 +22,8 @@ enum ParserPosition {
     Variant,
 }
 
-pub fn parse_language_identifier_from_iter<'a>(
-    iter: &mut SubtagIterator<'a>,
+pub fn parse_language_identifier_from_iter(
+    iter: &mut SubtagIterator,
     mode: ParserMode,
 ) -> Result<LanguageIdentifier, ParserError> {
     let language;
@@ -107,8 +105,8 @@ pub fn parse_language_identifier(
     parse_language_identifier_from_iter(&mut iter, mode)
 }
 
-pub const fn parse_language_identifier_without_variants_from_iter<'a>(
-    mut iter: SubtagIterator<'a>,
+pub const fn parse_language_identifier_without_variants_from_iter(
+    mut iter: SubtagIterator,
     mode: ParserMode,
 ) -> Result<
     (
