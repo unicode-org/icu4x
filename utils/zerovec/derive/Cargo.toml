@@ -26,7 +26,7 @@ syn = { version = "1.0.73", features = ["derive", "parsing"] }
 synstructure = "0.12.4"
 
 [dev-dependencies]
-zerovec = { version = "0.6", path = "..", features = ["serde"] }
+zerovec = { version = "0.6", path = "..", features = ["serde", "derive"] }
 serde = { version = "1.0", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../zerofrom" }
 postcard = { version = "0.7", features = ["use-std"] }

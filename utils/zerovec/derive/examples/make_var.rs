@@ -6,7 +6,6 @@ use std::borrow::Cow;
 
 use zerofrom::ZeroFrom;
 use zerovec::*;
-use zerovec_derive::*;
 
 #[make_varule(VarStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
