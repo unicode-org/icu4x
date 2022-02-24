@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645668900317,
+  "lastUpdate": 1645675481615,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19829,6 +19829,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 115287,
             "range": "± 8903",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "938ed36605d6dc6861d1ff60fe409e35e2761a00",
+          "message": "Wire DataProvider into UAX29 segmenters (#1627)\n\n* Wire DataProvider into UAX29 segmenters\r\n\r\nThe UAX29 segmenters and iterators share the same data structure. This PR moves\r\nall the data required to initialize `RuleBreakIterator` into `RuleBreakDataV1`,\r\nand implements `RuleBreakDataProvider` to load the generated data under\r\n`OUT_DIR`.\r\n\r\nIn the future, `RuleBreakDataProvider` can be replaced by any formal\r\nDataProvider loading data from blob or elsewhere.\r\n\r\n* Change RuleBreakDataV1::property_count from usize to u8\r\n\r\n`usize` has different sizes on 32 bit and 64 bit system. Use `u8` so that it has\r\nconsistent size across all platforms.\r\n\r\nGenerate PROPERTY_COUNT as `u8` directly in `build.rs`.\r\n\r\n* Change other fields in RuleBreakDataV1 from usize to u8\r\n\r\n* Change PROPERTY_TABLE to be a 2d array instead of an array of references\r\n\r\nAlso, change \"pub const PROPERTY_TABLE\" to \"pub static PROPERTY_TABLE\" to fix\r\nthis clippy warning:\r\nhttps://rust-lang.github.io/rust-clippy/master/index.html#large_const_arrays",
+          "timestamp": "2022-02-23T19:55:37-08:00",
+          "tree_id": "0c3a96c1fb2373fdeb448dc31358fdfe88695924",
+          "url": "https://github.com/unicode-org/icu4x/commit/938ed36605d6dc6861d1ff60fe409e35e2761a00"
+        },
+        "date": 1645675469772,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 102934,
+            "range": "± 393",
             "unit": "ns/iter"
           }
         ]
