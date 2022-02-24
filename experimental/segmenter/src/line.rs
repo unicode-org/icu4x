@@ -303,12 +303,12 @@ fn is_break_utf32_by_loose(
 
 #[inline]
 fn is_break_from_table(
-    rule_table: &LineBreakRuleTable<'_>,
+    break_state_table: &LineBreakStateTable<'_>,
     property_count: u8,
     left: u8,
     right: u8,
 ) -> bool {
-    let rule = get_break_state_from_table(rule_table, property_count, left, right);
+    let rule = get_break_state_from_table(break_state_table, property_count, left, right);
     if rule == KEEP_RULE {
         return false;
     }
@@ -348,14 +348,14 @@ fn is_non_break_by_keepall(left: u8, right: u8) -> bool {
 
 #[inline]
 fn get_break_state_from_table(
-    rule_table: &LineBreakRuleTable<'_>,
+    break_state_table: &LineBreakStateTable<'_>,
     property_count: u8,
     left: u8,
     right: u8,
 ) -> i8 {
     let idx = (left as usize) * (property_count as usize) + (right as usize);
     // We use unwrap_or to fall back to the base case and prevent panics on bad data.
-    rule_table.0.get(idx).unwrap_or(KEEP_RULE)
+    break_state_table.0.get(idx).unwrap_or(KEEP_RULE)
 }
 
 #[inline]
@@ -582,11 +582,21 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
-        get_break_state_from_table(&self.data.rule_table, self.data.property_count, left, right)
+        get_break_state_from_table(
+            &self.data.break_state_table,
+            self.data.property_count,
+            left,
+            right,
+        )
     }
 
     fn is_break_from_table(&self, left: u8, right: u8) -> bool {
-        is_break_from_table(&self.data.rule_table, self.data.property_count, left, right)
+        is_break_from_table(
+            &self.data.break_state_table,
+            self.data.property_count,
+            left,
+            right,
+        )
     }
 
     // UAX14 doesn't define line break rules for some languages such as Thai.
@@ -770,7 +780,12 @@ mod tests {
 
     fn is_break(left: u8, right: u8) -> bool {
         let lb_data: LineBreakDataV1 = Default::default();
-        is_break_from_table(&lb_data.rule_table, lb_data.property_count, left, right)
+        is_break_from_table(
+            &lb_data.break_state_table,
+            lb_data.property_count,
+            left,
+            right,
+        )
     }
 
     #[test]
