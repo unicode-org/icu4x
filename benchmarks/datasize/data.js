@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645656436662,
+  "lastUpdate": 1645668469412,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -9923,6 +9923,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2f33727923fa3472be8bd5d269017b8fdc28e1eb"
         },
         "date": 1645656421896,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96ea961e4bdb67a2ce3c86547f982a84550a923a",
+          "message": "Remove duplicate implementation in LineBreakType (#1630)\n\n* Implement get_linebreak_property() in LineBreakIterator\r\n* Implement is_break_by_normal() in LineBreakIterator",
+          "timestamp": "2022-02-23T18:05:41-08:00",
+          "tree_id": "1448f2e9276c8f6974ebc227fba2931e8a303805",
+          "url": "https://github.com/unicode-org/icu4x/commit/96ea961e4bdb67a2ce3c86547f982a84550a923a"
+        },
+        "date": 1645668455054,
         "tool": "ndjson",
         "benches": [
           {
