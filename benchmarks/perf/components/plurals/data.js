@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645656991986,
+  "lastUpdate": 1645668960904,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27803,6 +27803,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17637,
             "range": "± 813",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96ea961e4bdb67a2ce3c86547f982a84550a923a",
+          "message": "Remove duplicate implementation in LineBreakType (#1630)\n\n* Implement get_linebreak_property() in LineBreakIterator\r\n* Implement is_break_by_normal() in LineBreakIterator",
+          "timestamp": "2022-02-23T18:05:41-08:00",
+          "tree_id": "1448f2e9276c8f6974ebc227fba2931e8a303805",
+          "url": "https://github.com/unicode-org/icu4x/commit/96ea961e4bdb67a2ce3c86547f982a84550a923a"
+        },
+        "date": 1645668950066,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 880,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 4751,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 13404,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
