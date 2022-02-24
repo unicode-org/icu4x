@@ -194,11 +194,12 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let semi = utils::semi_for(fields);
     let repr_attr = utils::repr_for(fields);
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
+    let vis = &input.vis;
 
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(PartialEq, Eq)]
-        struct #ule_name #field_inits #semi
+        #vis struct #ule_name #field_inits #semi
     );
 
     let derived = derive_impl(&varule_struct);
