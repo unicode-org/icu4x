@@ -19,9 +19,13 @@ intended as a replacement for `HashMap` or `LiteMap`.
 Clients upgrading to `zerovec` benefit from zero heap allocations when deserializing
 read-only data.
 
-This crate has two optional features: `serde` and `yoke`. `serde` allows serializing and deserializing
+This crate has three optional features: `serde`, `yoke`, and `derive`. `serde` allows serializing and deserializing
 `zerovec`'s abstractions via [`serde`](https://docs.rs/serde), and `yoke` enables implementations of `Yokeable`
 from the [`yoke`](https://docs.rs/yoke/) crate.
+
+`derive` makes it easier to use custom types in these collections by providing the [`#[make_ule]`](crate::make_ule) and
+[`#[make_varule]`](crate::make_varule) proc macros, which generate appropriate [`ULE`](crate::ule::ULE) and
+[`VarULE`](crate::ule::VarULE)-conformant types for a given "normal" type.
 
 ## Performance
 
