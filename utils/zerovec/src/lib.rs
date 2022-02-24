@@ -123,7 +123,7 @@ pub use crate::map2d::map::ZeroMap2d;
 pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "derive")]
 pub use zerovec_derive::{make_ule, make_varule};
 
 #[doc(hidden)]

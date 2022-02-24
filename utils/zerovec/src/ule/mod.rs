@@ -26,7 +26,7 @@ use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
 use core::{mem, slice};
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "derive")]
 pub use zerovec_derive::{VarULE, ULE};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
