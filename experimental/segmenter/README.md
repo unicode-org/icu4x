@@ -62,7 +62,8 @@ Segment a string:
 
 ```rust
 use icu_segmenter::GraphemeClusterBreakSegmenter;
-let segmenter = GraphemeClusterBreakSegmenter::try_new()
+let provider = icu_segmenter::RuleBreakDataProvider;
+let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider)
     .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_str("Hello 🗺").collect();
@@ -74,7 +75,8 @@ Segment a Latin1 byte string:
 
 ```rust
 use icu_segmenter::GraphemeClusterBreakSegmenter;
-let segmenter = GraphemeClusterBreakSegmenter::try_new()
+let provider = icu_segmenter::RuleBreakDataProvider;
+let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider)
     .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
@@ -87,7 +89,8 @@ Segment a string:
 
 ```rust
 use icu_segmenter::WordBreakSegmenter;
-let segmenter = WordBreakSegmenter::try_new()
+let provider = icu_segmenter::RuleBreakDataProvider;
+let segmenter = WordBreakSegmenter::try_new(&provider)
     .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
@@ -98,7 +101,8 @@ Segment a Latin1 byte string:
 
 ```rust
 use icu_segmenter::WordBreakSegmenter;
-let segmenter = WordBreakSegmenter::try_new()
+let provider = icu_segmenter::RuleBreakDataProvider;
+let segmenter = WordBreakSegmenter::try_new(&provider)
     .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
@@ -111,7 +115,8 @@ Segment a string:
 
 ```rust
 use icu_segmenter::SentenceBreakSegmenter;
-let segmenter = SentenceBreakSegmenter::try_new()
+let provider = icu_segmenter::RuleBreakDataProvider;
+let segmenter = SentenceBreakSegmenter::try_new(&provider)
     .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
@@ -122,7 +127,8 @@ Segment a Latin1 byte string:
 
 ```rust
 use icu_segmenter::SentenceBreakSegmenter;
-let segmenter = SentenceBreakSegmenter::try_new()
+let provider = icu_segmenter::RuleBreakDataProvider;
+let segmenter = SentenceBreakSegmenter::try_new(&provider)
     .expect("Data exists");
 
 let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();

@@ -67,7 +67,8 @@
 //!
 //!```rust
 //! use icu_segmenter::GraphemeClusterBreakSegmenter;
-//! let segmenter = GraphemeClusterBreakSegmenter::try_new()
+//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> = segmenter.segment_str("Hello 🗺").collect();
@@ -79,7 +80,8 @@
 //!
 //! ```rust
 //! use icu_segmenter::GraphemeClusterBreakSegmenter;
-//! let segmenter = GraphemeClusterBreakSegmenter::try_new()
+//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
@@ -92,7 +94,8 @@
 //!
 //!```rust
 //! use icu_segmenter::WordBreakSegmenter;
-//! let segmenter = WordBreakSegmenter::try_new()
+//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let segmenter = WordBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
@@ -103,7 +106,8 @@
 //!
 //! ```rust
 //! use icu_segmenter::WordBreakSegmenter;
-//! let segmenter = WordBreakSegmenter::try_new()
+//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let segmenter = WordBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
@@ -116,7 +120,8 @@
 //!
 //!```rust
 //! use icu_segmenter::SentenceBreakSegmenter;
-//! let segmenter = SentenceBreakSegmenter::try_new()
+//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let segmenter = SentenceBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
@@ -127,7 +132,8 @@
 //!
 //! ```rust
 //! use icu_segmenter::SentenceBreakSegmenter;
-//! let segmenter = SentenceBreakSegmenter::try_new()
+//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let segmenter = SentenceBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
@@ -147,7 +153,7 @@ mod line;
 mod sentence;
 mod word;
 
-pub mod provider;
+mod provider;
 
 #[cfg(feature = "lstm")]
 #[macro_use]
@@ -174,6 +180,7 @@ pub use crate::grapheme::{
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
 };
 pub use crate::line::*;
+pub use crate::provider::RuleBreakDataProvider;
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
     SentenceBreakSegmenter,
