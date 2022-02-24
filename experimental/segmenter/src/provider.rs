@@ -6,18 +6,19 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::line::BREAK_STATE_MACHINE_TABLE;
-use crate::line::PROPERTY_COUNT;
-use crate::line::PROPERTY_TABLE;
 use alloc::boxed::Box;
 use core::ops::Deref;
 use icu_provider::prelude::*;
 use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
+pub(crate) mod line_data {
+    include!(concat!(env!("OUT_DIR"), "/generated_line_table.rs"));
+}
+
 /// Pre-processed Unicode data in the form of tables to be used for line breaking.
 #[icu_provider::data_struct(LineBreakDataV1Marker = "segmenter/line@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -30,6 +31,21 @@ pub struct LineBreakDataV1<'data> {
     /// Rule table for line breaking.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub rule_table: LineBreakRuleTable<'data>,
+
+    /// Number of properties; should be the square root of the length of [`Self::rule_table`].
+    pub property_count: u8,
+}
+
+impl Default for LineBreakDataV1<'static> {
+    fn default() -> Self {
+        Self {
+            property_table: LineBreakPropertyTable::Borrowed(&line_data::PROPERTY_TABLE),
+            rule_table: LineBreakRuleTable(
+                ZeroSlice::from_ule_slice(&line_data::BREAK_STATE_MACHINE_TABLE).as_zerovec(),
+            ),
+            property_count: line_data::PROPERTY_COUNT,
+        }
+    }
 }
 
 /// Property table for line breaking.
@@ -60,34 +76,13 @@ impl<'zf> zerofrom::ZeroFrom<'zf, LineBreakPropertyTable<'_>> for LineBreakPrope
     }
 }
 
-impl Default for LineBreakPropertyTable<'static> {
-    fn default() -> Self {
-        LineBreakPropertyTable::Borrowed(&PROPERTY_TABLE)
-    }
-}
-
 /// Rule table for line breaking.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct LineBreakRuleTable<'data> {
-    /// Matrix of rules.
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub table_data: ZeroVec<'data, i8>,
-    /// Number of properties; should be the square root of the length of [`Self::table_data`].
-    pub property_count: u8,
-}
-
-impl Default for LineBreakRuleTable<'static> {
-    fn default() -> Self {
-        Self {
-            table_data: ZeroSlice::from_ule_slice(&BREAK_STATE_MACHINE_TABLE).as_zerovec(),
-            property_count: PROPERTY_COUNT as u8,
-        }
-    }
-}
+pub struct LineBreakRuleTable<'data>(pub ZeroVec<'data, i8>);
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
