@@ -7,7 +7,7 @@
 //! # Examples
 //!
 //! ```rust
-//! use crate::{language, region, langid};
+//! use icu::locid::{language, region, langid};
 //!
 //! let lid = langid!("EN_US");
 //!
