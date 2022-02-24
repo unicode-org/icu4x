@@ -125,10 +125,13 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
             let code =
                 era_to_code(era_name, start_date.year).map_err(|e| Error::Custom(e, None))?;
             if start_date.year >= 1868 {
-                ret.dates_to_eras.to_mut().push((start_date, code).to_unaligned());
+                ret.dates_to_eras
+                    .to_mut()
+                    .push((start_date, code).to_unaligned());
             } else {
                 ret.dates_to_historical_eras
-                    .to_mut().push((start_date, code).to_unaligned());
+                    .to_mut()
+                    .push((start_date, code).to_unaligned());
             }
         }
 
