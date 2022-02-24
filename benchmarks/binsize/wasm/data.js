@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645668800132,
+  "lastUpdate": 1645675304317,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -50849,6 +50849,174 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/96ea961e4bdb67a2ce3c86547f982a84550a923a"
         },
         "date": 1645668785530,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 15749,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 1684842,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 1969650,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 1681802,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 6832,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12743,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13178,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 6990,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 20788,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 1911423,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm",
+            "value": 11724,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm",
+            "value": 1687850,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 8545,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30965,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make_var+opt.wasm",
+            "value": 15248,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derives+opt.wasm",
+            "value": 13195,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17658,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm",
+            "value": 1716269,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make+opt.wasm",
+            "value": 7912,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 9081,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13919,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10615,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 1684833,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "938ed36605d6dc6861d1ff60fe409e35e2761a00",
+          "message": "Wire DataProvider into UAX29 segmenters (#1627)\n\n* Wire DataProvider into UAX29 segmenters\r\n\r\nThe UAX29 segmenters and iterators share the same data structure. This PR moves\r\nall the data required to initialize `RuleBreakIterator` into `RuleBreakDataV1`,\r\nand implements `RuleBreakDataProvider` to load the generated data under\r\n`OUT_DIR`.\r\n\r\nIn the future, `RuleBreakDataProvider` can be replaced by any formal\r\nDataProvider loading data from blob or elsewhere.\r\n\r\n* Change RuleBreakDataV1::property_count from usize to u8\r\n\r\n`usize` has different sizes on 32 bit and 64 bit system. Use `u8` so that it has\r\nconsistent size across all platforms.\r\n\r\nGenerate PROPERTY_COUNT as `u8` directly in `build.rs`.\r\n\r\n* Change other fields in RuleBreakDataV1 from usize to u8\r\n\r\n* Change PROPERTY_TABLE to be a 2d array instead of an array of references\r\n\r\nAlso, change \"pub const PROPERTY_TABLE\" to \"pub static PROPERTY_TABLE\" to fix\r\nthis clippy warning:\r\nhttps://rust-lang.github.io/rust-clippy/master/index.html#large_const_arrays",
+          "timestamp": "2022-02-23T19:55:37-08:00",
+          "tree_id": "0c3a96c1fb2373fdeb448dc31358fdfe88695924",
+          "url": "https://github.com/unicode-org/icu4x/commit/938ed36605d6dc6861d1ff60fe409e35e2761a00"
+        },
+        "date": 1645675291455,
         "tool": "ndjson",
         "benches": [
           {
