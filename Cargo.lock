@@ -1058,6 +1058,8 @@ dependencies = [
  "litemap",
  "serde",
  "tinystr 0.5.0",
+ "zerovec",
+ "zerovec-derive",
 ]
 
 [[package]]

@@ -9,7 +9,7 @@ use crate::utils;
 use syn::spanned::Spanned;
 use syn::{
     parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Field,
-    Fields, Ident, Lit,
+    Fields, Ident, Lit, Visibility,
 };
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
@@ -104,10 +104,11 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
     };
 
     let name = &input.ident;
+    let vis = &input.vis;
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, skip_ord),
-        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, skip_ord),
+        Data::Struct(ref s) => make_ule_struct_impl(name, vis, &ule_name, &input, s, skip_ord),
+        Data::Enum(ref e) => make_ule_enum_impl(name, vis, &ule_name, &input, e, skip_ord),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
@@ -137,6 +138,7 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
 
 fn make_ule_enum_impl(
     name: &Ident,
+    vis: &Visibility,
     ule_name: &Ident,
     input: &DeriveInput,
     enu: &DataEnum,
@@ -212,7 +214,7 @@ fn make_ule_enum_impl(
         #[repr(transparent)]
         #[derive(Copy, Clone, PartialEq, Eq)]
         #maybe_ord_derives
-        struct #ule_name(u8);
+        #vis struct #ule_name(u8);
 
         unsafe impl zerovec::ule::ULE for #ule_name {
             #[inline]
@@ -278,6 +280,7 @@ fn get_expr_int(e: &Expr) -> Option<u64> {
 
 fn make_ule_struct_impl(
     name: &Ident,
+    vis: &Visibility,
     ule_name: &Ident,
     input: &DeriveInput,
     struc: &DataStruct,
@@ -299,7 +302,7 @@ fn make_ule_struct_impl(
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(Copy, Clone, PartialEq, Eq)]
-        struct #ule_name #field_inits #semi
+        #vis struct #ule_name #field_inits #semi
     );
     let derived = derive_impl(&ule_struct);
 
