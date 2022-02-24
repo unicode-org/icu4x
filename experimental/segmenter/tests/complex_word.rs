@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::RuleBreakDataProvider;
 use icu_segmenter::WordBreakSegmenter;
 
 // Additional word segmenter tests with complex string.
 
 #[test]
 fn word_break_th() {
-    let provider = RuleBreakDataProvider;
+    let provider = icu_testdata::get_provider();
     let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
 
     // http://wpt.live/css/css-text/word-break/word-break-normal-th-000.html
@@ -41,7 +40,7 @@ fn word_break_th() {
 
 #[test]
 fn word_break_my() {
-    let provider = RuleBreakDataProvider;
+    let provider = icu_testdata::get_provider();
     let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
 
     let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";

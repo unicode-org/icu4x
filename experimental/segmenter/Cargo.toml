@@ -31,13 +31,14 @@ skip_optional_dependencies = true
 [dependencies]
 icu_provider = { version = "0.5", path = "../../provider/core", features = ["macros"] }
 icu_segmenter_lstm = { version = "0.1", path = "../segmenter_lstm", optional = true }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 lazy_static = { version = "1.0", features = ["spin_no_std"] }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 [dev-dependencies]
 criterion = "0.3"
+icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
 serde-json-core = { version = "0.4", features = ["std"] }
 
 [build-dependencies]
@@ -61,5 +62,6 @@ name = "complex_word"
 required-features = ["lstm"]
 
 [features]
-default = []
+default = ["provider_serde"]
 lstm = ["icu_segmenter_lstm"]
+provider_serde = ["serde"]

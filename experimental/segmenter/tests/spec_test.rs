@@ -4,7 +4,6 @@
 
 use icu_segmenter::GraphemeClusterBreakSegmenter;
 use icu_segmenter::LineBreakSegmenter;
-use icu_segmenter::RuleBreakDataProvider;
 use icu_segmenter::SentenceBreakSegmenter;
 use icu_segmenter::WordBreakSegmenter;
 use std::char;
@@ -139,7 +138,7 @@ fn run_line_break_test() {
 #[test]
 fn run_word_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/WordBreakTest.txt");
-    let provider = RuleBreakDataProvider;
+    let provider = icu_testdata::get_provider();
     let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -171,7 +170,7 @@ fn run_word_break_test() {
 #[test]
 fn run_grapheme_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/GraphemeBreakTest.txt");
-    let provider = RuleBreakDataProvider;
+    let provider = icu_testdata::get_provider();
     let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -203,7 +202,7 @@ fn run_grapheme_break_test() {
 #[test]
 fn run_sentence_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/SentenceBreakTest.txt");
-    let provider = RuleBreakDataProvider;
+    let provider = icu_testdata::get_provider();
     let segmenter = SentenceBreakSegmenter::try_new(&provider).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();

@@ -3,13 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::RuleBreakDataV1;
-
-// Note: Keep these constants in sync with build.rs.
-const NOT_MATCH_RULE: i8 = -2;
-const KEEP_RULE: i8 = -1;
-// This is a mask bit chosen sufficiently large than all other concrete states.
-// If a break state contains this bit, we have to look ahead one more character.
-const INTERMEDIATE_MATCH_RULE: i8 = 64;
+use crate::symbols::*;
 
 /// A trait allowing for RuleBreakIterator to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
@@ -178,7 +172,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
             // Unknown
             return 0;
         }
-        self.data.property_table[codepoint / 1024][(codepoint & 0x3ff)]
+        self.data.property_table.0.get(codepoint).unwrap_or(0)
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {

@@ -67,7 +67,7 @@
 //!
 //!```rust
 //! use icu_segmenter::GraphemeClusterBreakSegmenter;
-//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
@@ -80,7 +80,7 @@
 //!
 //! ```rust
 //! use icu_segmenter::GraphemeClusterBreakSegmenter;
-//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
@@ -94,7 +94,7 @@
 //!
 //!```rust
 //! use icu_segmenter::WordBreakSegmenter;
-//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = WordBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
@@ -106,7 +106,7 @@
 //!
 //! ```rust
 //! use icu_segmenter::WordBreakSegmenter;
-//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = WordBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
@@ -120,7 +120,7 @@
 //!
 //!```rust
 //! use icu_segmenter::SentenceBreakSegmenter;
-//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = SentenceBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
@@ -132,7 +132,7 @@
 //!
 //! ```rust
 //! use icu_segmenter::SentenceBreakSegmenter;
-//! let provider = icu_segmenter::RuleBreakDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = SentenceBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
@@ -154,6 +154,7 @@ mod sentence;
 mod word;
 
 mod provider;
+pub mod symbols;
 
 #[cfg(feature = "lstm")]
 #[macro_use]
@@ -183,7 +184,10 @@ pub use crate::line::{
     Latin1Char, LineBreakIterator, LineBreakOptions, LineBreakRule, LineBreakSegmenter, Utf16Char,
     WordBreakRule,
 };
-pub use crate::provider::RuleBreakDataProvider;
+pub use crate::provider::{
+    GraphemeClusterBreakDataV1Marker, RuleBreakDataV1, RuleBreakPropertyTable, RuleBreakStateTable,
+    SentenceBreakDataV1Marker, WordBreakDataV1Marker, ALL_KEYS,
+};
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
     SentenceBreakSegmenter,

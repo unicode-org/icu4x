@@ -13,7 +13,6 @@ use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
-use std::thread;
 
 // state machine name define by builtin name
 // [[tables]]
@@ -737,44 +736,8 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 fn main() {
     println!("cargo:rerun-if-changed=data");
 
-    const WORD_SEGMENTER_TOML: &[u8] = include_bytes!("data/word.toml");
-    const GRAPHEME_SEGMENTER_TOML: &[u8] = include_bytes!("data/grapheme.toml");
-    const SENTENCE_SEGMENTER_TOML: &[u8] = include_bytes!("data/sentence.toml");
     const LINE_SEGMENTER_TOML: &[u8] = include_bytes!("data/line.toml");
-
-    let word_thread = thread::spawn(|| {
-        let provider = icu_testdata::get_provider();
-        generate_rule_segmenter_table("generated_word_table.rs", WORD_SEGMENTER_TOML, &provider);
-    });
-
-    let grapheme_thread = thread::spawn(|| {
-        let provider = icu_testdata::get_provider();
-        generate_rule_segmenter_table(
-            "generated_grapheme_table.rs",
-            GRAPHEME_SEGMENTER_TOML,
-            &provider,
-        );
-    });
-
-    let sentence_thread = thread::spawn(|| {
-        let provider = icu_testdata::get_provider();
-        generate_rule_segmenter_table(
-            "generated_sentence_table.rs",
-            SENTENCE_SEGMENTER_TOML,
-            &provider,
-        );
-    });
 
     let provider = icu_testdata::get_provider();
     generate_rule_segmenter_table("generated_line_table.rs", LINE_SEGMENTER_TOML, &provider);
-
-    word_thread
-        .join()
-        .expect("Couldn't join generating word table thread!.");
-    grapheme_thread
-        .join()
-        .expect("Couldn't join generating grapheme table thread!.");
-    sentence_thread
-        .join()
-        .expect("Couldn't join generating sentence table thread!.");
 }

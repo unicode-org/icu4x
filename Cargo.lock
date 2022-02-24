@@ -1380,6 +1380,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_segmenter"
+version = "0.1.0"
+dependencies = [
+ "icu_codepointtrie",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_fs",
+ "icu_segmenter",
+ "icu_testdata",
+ "serde",
+ "toml",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_provider_uprops"
 version = "0.5.0"
 dependencies = [
