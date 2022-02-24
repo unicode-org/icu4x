@@ -179,7 +179,10 @@ pub use crate::grapheme::{
     GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
 };
-pub use crate::line::*;
+pub use crate::line::{
+    Latin1Char, LineBreakIterator, LineBreakOptions, LineBreakRule, LineBreakSegmenter, Utf16Char,
+    WordBreakRule,
+};
 pub use crate::provider::RuleBreakDataProvider;
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
