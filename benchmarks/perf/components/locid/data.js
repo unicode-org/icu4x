@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645678850939,
+  "lastUpdate": 1645691757290,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24545,6 +24545,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4259,
             "range": "± 20",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "00dd18c1dee952ed5336e7b12c8a353b7295209f",
+          "message": "Fix a command name in icu_testdata docs (#1633)",
+          "timestamp": "2022-02-24T00:26:57-08:00",
+          "tree_id": "51329f1b3b0c26884c0083e7cb93dfaf2affdce6",
+          "url": "https://github.com/unicode-org/icu4x/commit/00dd18c1dee952ed5336e7b12c8a353b7295209f"
+        },
+        "date": 1645691743816,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2584,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4765,
+            "range": "± 66",
             "unit": "ns/iter"
           }
         ]
