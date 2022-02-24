@@ -233,7 +233,7 @@ fn get_linebreak_property_with_rule(
 
 #[inline]
 fn is_break_utf32_by_normal(codepoint: u32, ja_zh: bool) -> bool {
-    match codepoint as u32 {
+    match codepoint {
         0x301C => ja_zh,
         0x30A0 => ja_zh,
         _ => false,
@@ -382,14 +382,10 @@ pub trait LineBreakType<'l, 's> {
 
     fn use_complex_breaking(iterator: &LineBreakIterator<'l, 's, Self>, c: Self::CharType) -> bool;
 
-    fn get_linebreak_property(iterator: &LineBreakIterator<'l, 's, Self>) -> u8;
-
     fn get_linebreak_property_with_rule(
         iterator: &LineBreakIterator<'l, 's, Self>,
         c: Self::CharType,
     ) -> u8;
-
-    fn is_break_by_normal(iterator: &LineBreakIterator<'l, 's, Self>) -> bool;
 
     fn get_line_break_by_platform_fallback(
         iterator: &LineBreakIterator<'l, 's, Self>,
@@ -444,14 +440,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
         }
 
         loop {
-            let mut left_prop = Y::get_linebreak_property(self);
+            let mut left_prop = self.get_linebreak_property();
             let left_codepoint = self.current_pos_data;
             self.current_pos_data = self.iter.next();
             if self.current_pos_data.is_none() {
                 // EOF
                 return Some(self.len);
             }
-            let right_prop = Y::get_linebreak_property(self);
+            let right_prop = self.get_linebreak_property();
 
             // CSS word-break property handling
             match self.options.word_break_rule {
@@ -474,7 +470,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // CSS line-break property handling
             match self.options.line_break_rule {
                 LineBreakRule::Normal => {
-                    if Y::is_break_by_normal(self) {
+                    if self.is_break_by_normal() {
                         return Some(self.current_pos_data.unwrap().0);
                     }
                 }
@@ -534,7 +530,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                         return Some(self.len);
                     }
 
-                    let prop = Y::get_linebreak_property(self);
+                    let prop = self.get_linebreak_property();
                     break_state =
                         get_break_state_from_table(&self.data.rule_table, break_state as u8, prop);
                     if break_state < 0 {
@@ -572,6 +568,14 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
             }
         }
         false
+    }
+
+    fn get_linebreak_property(&self) -> u8 {
+        Y::get_linebreak_property_with_rule(self, self.current_pos_data.unwrap().1)
+    }
+
+    fn is_break_by_normal(&self) -> bool {
+        is_break_utf32_by_normal(self.current_pos_data.unwrap().1.into(), self.options.ja_zh)
     }
 
     // UAX14 doesn't define line break rules for some languages such as Thai.
@@ -617,23 +621,12 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
-    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
-        Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
-    }
-
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
         get_linebreak_property_with_rule(
             &iterator.data.property_table,
             c,
             iterator.options.line_break_rule,
             iterator.options.word_break_rule,
-        )
-    }
-
-    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
-        is_break_utf32_by_normal(
-            iterator.current_pos_data.unwrap().1 as u32,
-            iterator.options.ja_zh,
         )
     }
 
@@ -681,21 +674,9 @@ impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8; // TODO: Latin1Char
 
-    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
-        // No CJ on Latin1
-        Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
-    }
-
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u8) -> u8 {
         // No CJ on Latin1
         get_linebreak_property_latin1(&iterator.data.property_table, c)
-    }
-
-    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
-        is_break_utf32_by_normal(
-            iterator.current_pos_data.unwrap().1 as u32,
-            iterator.options.ja_zh,
-        )
     }
 
     #[inline]
@@ -718,23 +699,12 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32; // TODO: Utf16Char
 
-    fn get_linebreak_property(iterator: &LineBreakIterator<Self>) -> u8 {
-        Self::get_linebreak_property_with_rule(iterator, iterator.current_pos_data.unwrap().1)
-    }
-
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u32) -> u8 {
         get_linebreak_property_utf32_with_rule(
             &iterator.data.property_table,
             c,
             iterator.options.line_break_rule,
             iterator.options.word_break_rule,
-        )
-    }
-
-    fn is_break_by_normal(iterator: &LineBreakIterator<Self>) -> bool {
-        is_break_utf32_by_normal(
-            iterator.current_pos_data.unwrap().1 as u32,
-            iterator.options.ja_zh,
         )
     }
 
