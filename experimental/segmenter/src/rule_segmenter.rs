@@ -29,7 +29,7 @@ pub trait RuleBreakType<'l, 's> {
 }
 
 /// Implements the [`Iterator`] trait over the segmenter break opportunities of the given string.
-/// Please see the [module-level documentation] for its usages.
+/// Please see the [module-level documentation](crate) for its usages.
 ///
 /// Lifetimes:
 ///
@@ -37,7 +37,6 @@ pub trait RuleBreakType<'l, 's> {
 /// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
-/// [module-level documentation]: index.html
 pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
