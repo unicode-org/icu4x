@@ -37,6 +37,8 @@ icu_provider_blob = { version = "0.5", path = "../../provider/blob", features = 
 icu_provider_cldr = { version = "0.5", path = "../../provider/cldr", features = ["download"] }
 icu_provider_fs = { version = "0.5", path = "../../provider/fs", features = ["export"] }
 icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", features = ["log"] }
+icu_provider_segmenter = { version = "0.1", path = "../../provider/segmenter" }
+icu_segmenter = { version = "0.1", path = "../../experimental/segmenter" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["metadata"] }
 log = "0.4"
 rayon = "1.5"

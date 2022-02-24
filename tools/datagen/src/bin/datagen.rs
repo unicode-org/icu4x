@@ -380,6 +380,41 @@ fn main() -> eyre::Result<()> {
         }
     })?;
 
+    // Segmenter's rule data depends on various Unicode Properties. We have to generate them after
+    // uprops.
+    if matches.is_present("TEST_KEYS") {
+        // FIXME: We should support specifying segmenter keys in --keys.
+        let segmenter_keys = icu_segmenter::ALL_KEYS;
+        let segmenter_data_root = icu_provider_segmenter::break_data_root();
+        let segmenter_provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> = Box::new(
+            icu_provider_segmenter::create_exportable_provider(&segmenter_data_root)?,
+        );
+
+        segmenter_keys.into_par_iter().try_for_each(|key| {
+            let result = segmenter_provider
+                .supported_options_for_key(key)?
+                .collect::<Vec<_>>()
+                .into_par_iter()
+                .try_for_each(|options| {
+                    let payload = segmenter_provider
+                        .load_payload(
+                            key,
+                            &DataRequest {
+                                options: options.clone(),
+                                metadata: Default::default(),
+                            },
+                        )?
+                        .take_payload()?;
+                    exporter.put_payload(key, options, payload)
+                });
+
+            exporter.flush(key)?;
+
+            log::info!("Writing key: {}", key);
+            result
+        })?;
+    }
+
     exporter.close()?;
 
     Ok(())
