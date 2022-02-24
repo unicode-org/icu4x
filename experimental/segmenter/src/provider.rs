@@ -35,6 +35,11 @@ pub struct LineBreakDataV1<'data> {
     /// Number of properties; should be the square root of the length of
     /// [`Self::break_state_table`].
     pub property_count: u8,
+
+    pub last_codepoint_property: i8,
+    pub sot_property: u8,
+    pub eot_property: u8,
+    pub complex_property: u8,
 }
 
 impl Default for LineBreakDataV1<'static> {
@@ -45,6 +50,10 @@ impl Default for LineBreakDataV1<'static> {
                 ZeroSlice::from_ule_slice(&line_data::BREAK_STATE_MACHINE_TABLE).as_zerovec(),
             ),
             property_count: line_data::PROPERTY_COUNT,
+            last_codepoint_property: line_data::LAST_CODEPOINT_PROPERTY,
+            sot_property: line_data::PROP_SOT,
+            eot_property: line_data::PROP_EOT,
+            complex_property: line_data::PROP_COMPLEX,
         }
     }
 }

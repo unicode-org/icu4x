@@ -524,7 +524,8 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     self.current_pos_data = self.iter.next();
                     if self.current_pos_data.is_none() {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
-                        let break_state = self.get_break_state_from_table(break_state as u8, EOT);
+                        let break_state = self
+                            .get_break_state_from_table(break_state as u8, self.data.eot_property);
                         if break_state == NOT_MATCH_RULE {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
