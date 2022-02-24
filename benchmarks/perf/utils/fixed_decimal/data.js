@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645656810308,
+  "lastUpdate": 1645668900317,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19799,6 +19799,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 123446,
             "range": "± 388",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96ea961e4bdb67a2ce3c86547f982a84550a923a",
+          "message": "Remove duplicate implementation in LineBreakType (#1630)\n\n* Implement get_linebreak_property() in LineBreakIterator\r\n* Implement is_break_by_normal() in LineBreakIterator",
+          "timestamp": "2022-02-23T18:05:41-08:00",
+          "tree_id": "1448f2e9276c8f6974ebc227fba2931e8a303805",
+          "url": "https://github.com/unicode-org/icu4x/commit/96ea961e4bdb67a2ce3c86547f982a84550a923a"
+        },
+        "date": 1645668885575,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115287,
+            "range": "± 8903",
             "unit": "ns/iter"
           }
         ]
