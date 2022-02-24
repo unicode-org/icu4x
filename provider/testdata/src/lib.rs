@@ -35,7 +35,7 @@
 //! - `cargo make testdata-download` downloads fresh CLDR JSON
 //! - `cargo make testdata-build-json` re-generates the ICU4X JSON
 //! - `cargo make testdata-build-blob` re-generates the ICU4X blob file
-//! - `cargo make bincode-gen-testdata` generates Bincode filesystem testdata
+//! - `cargo make testdata-build-bincode` re-generates Bincode filesystem testdata
 //!
 //! # Examples
 //!

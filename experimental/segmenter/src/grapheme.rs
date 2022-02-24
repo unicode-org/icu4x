@@ -4,12 +4,11 @@
 
 use alloc::vec::Vec;
 use core::str::CharIndices;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::provider::*;
 use crate::rule_segmenter::*;
-
-include!(concat!(env!("OUT_DIR"), "/generated_grapheme_table.rs"));
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
 pub type GraphemeClusterBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, GraphemeClusterBreakType>;
@@ -26,12 +25,19 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// different string encodings. Please see the [module-level documentation] for its usages.
 ///
 /// [module-level documentation]: index.html
-pub struct GraphemeClusterBreakSegmenter;
+pub struct GraphemeClusterBreakSegmenter {
+    payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
+}
 
 impl GraphemeClusterBreakSegmenter {
-    pub fn try_new() -> Result<Self, DataError> {
-        // Note: This will be able to return an Error once DataProvider is added
-        Ok(Self)
+    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: ResourceProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
+    {
+        let payload = provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        Ok(Self { payload })
     }
 
     /// Create a grapheme cluster break iterator for an `str` (a UTF-8 string).
@@ -41,13 +47,7 @@ impl GraphemeClusterBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
+            data: self.payload.get(),
         }
     }
 
@@ -61,13 +61,7 @@ impl GraphemeClusterBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
+            data: self.payload.get(),
         }
     }
 
@@ -81,13 +75,7 @@ impl GraphemeClusterBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
+            data: self.payload.get(),
         }
     }
 }

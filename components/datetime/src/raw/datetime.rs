@@ -11,8 +11,9 @@ use crate::{
     options::DateTimeFormatOptions,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    provider::week_data::WeekDataV1Marker,
 };
-use alloc::string::String;
+use alloc::string::{String, ToString};
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
@@ -28,6 +29,7 @@ pub(crate) struct DateTimeFormat {
     pub locale: Locale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+    pub week_data: Option<DataPayload<WeekDataV1Marker>>,
     pub ordinal_rules: Option<PluralRules>,
 }
 
@@ -47,7 +49,8 @@ impl DateTimeFormat {
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>,
+            + ResourceProvider<OrdinalV1Marker>
+            + ResourceProvider<WeekDataV1Marker>,
     {
         let locale = locale.into();
 
@@ -58,10 +61,26 @@ impl DateTimeFormat {
             calendar,
         )?;
 
-        let requires_data = datetime::analyze_patterns(&patterns.get().0, false)
+        let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
 
         let langid: icu_locid::LanguageIdentifier = locale.clone().into();
+
+        let week_data = if required.week_data {
+            Some(
+                data_provider
+                    .load_resource(&DataRequest {
+                        options: ResourceOptions {
+                            variant: langid.region.map(|r| r.as_str().to_string().into()),
+                            langid: None,
+                        },
+                        metadata: Default::default(),
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(locale.clone(), data_provider)?)
@@ -69,7 +88,7 @@ impl DateTimeFormat {
             None
         };
 
-        let symbols_data = if requires_data {
+        let symbols_data = if required.symbols_data {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
@@ -85,7 +104,13 @@ impl DateTimeFormat {
             None
         };
 
-        Ok(Self::new(locale, patterns, symbols_data, ordinal_rules))
+        Ok(Self::new(
+            locale,
+            patterns,
+            symbols_data,
+            week_data,
+            ordinal_rules,
+        ))
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
@@ -93,6 +118,7 @@ impl DateTimeFormat {
         locale: T,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+        week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,
     ) -> Self {
         let locale = locale.into();
@@ -101,6 +127,7 @@ impl DateTimeFormat {
             locale,
             patterns,
             symbols,
+            week_data,
             ordinal_rules,
         }
     }
@@ -116,6 +143,7 @@ impl DateTimeFormat {
             patterns: &self.patterns,
             symbols: self.symbols.as_ref().map(|s| s.get()),
             datetime: value,
+            week_data: self.week_data.as_ref().map(|s| s.get()),
             locale: &self.locale,
             ordinal_rules: self.ordinal_rules.as_ref(),
         }
@@ -133,6 +161,7 @@ impl DateTimeFormat {
             &self.patterns.get().0,
             self.symbols.as_ref().map(|s| s.get()),
             value,
+            self.week_data.as_ref().map(|s| s.get()),
             self.ordinal_rules.as_ref(),
             &self.locale,
             w,

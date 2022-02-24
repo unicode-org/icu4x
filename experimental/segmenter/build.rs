@@ -647,12 +647,12 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
     } else {
         writeln!(
             out,
-            "pub const PROPERTY_TABLE: [&[u8; 1024]; {}] = [",
+            "pub static PROPERTY_TABLE: [[u8; 1024]; {}] = [",
             CODEPOINT_TABLE_LEN / 1024
         )
         .ok();
         for i in codepoint_table.iter() {
-            writeln!(out, "    &{},", i).ok();
+            writeln!(out, "    {},", i).ok();
         }
         writeln!(out, "];").ok();
     }
@@ -679,7 +679,7 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
     writeln!(
         out,
-        "pub const PROPERTY_COUNT: usize = {};",
+        "pub const PROPERTY_COUNT: u8 = {};",
         properties_names.len()
     )
     .ok();
@@ -692,21 +692,21 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
     writeln!(
         out,
-        "pub const PROP_SOT: usize = {};",
+        "pub const PROP_SOT: u8 = {};",
         properties_names.len() - 2
     )
     .ok();
     writeln!(
         out,
-        "pub const PROP_EOT: usize = {};",
+        "pub const PROP_EOT: u8 = {};",
         properties_names.len() - 1
     )
     .ok();
     if let Some(sa_index) = get_index_from_name(&properties_names, "SA") {
-        writeln!(out, "pub const PROP_COMPLEX: usize = {};", sa_index,).ok();
+        writeln!(out, "pub const PROP_COMPLEX: u8 = {};", sa_index,).ok();
     } else {
         // complex language isn't handled.
-        writeln!(out, "pub const PROP_COMPLEX: usize = 127;").ok();
+        writeln!(out, "pub const PROP_COMPLEX: u8 = 127;").ok();
     }
 
     for (i, p) in properties_names.iter().enumerate() {

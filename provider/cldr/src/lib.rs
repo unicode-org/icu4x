@@ -42,6 +42,7 @@ use transform::calendar::japanese::JapaneseErasProvider;
 use transform::datetime::patterns::DatePatternsProvider;
 use transform::datetime::skeletons::DateSkeletonPatternsProvider;
 use transform::datetime::symbols::DateSymbolsProvider;
+use transform::datetime::week_data::WeekDataProvider;
 use transform::decimal::NumbersProvider;
 #[cfg(feature = "icu_list")]
 use transform::list::ListProvider;
@@ -68,6 +69,7 @@ where
     PluralsProvider: IterableDynProvider<T>,
     TimeZonesProvider: IterableDynProvider<T>,
     ListProvider: IterableDynProvider<T>,
+    WeekDataProvider: IterableDynProvider<T>,
 {
     #[allow(unused_variables)] // uprops_root is only used if icu_list
     Ok(MultiForkByKeyProvider {
@@ -81,13 +83,14 @@ where
             Box::new(NumbersProvider::try_from(cldr_paths)?),
             Box::new(PluralsProvider::try_from(cldr_paths)?),
             Box::new(TimeZonesProvider::try_from(cldr_paths)?),
+            Box::new(WeekDataProvider::try_from(cldr_paths)?),
             #[cfg(feature = "icu_list")]
             Box::new(ListProvider::try_from(cldr_paths, _uprops_root)?),
         ],
     })
 }
 
-pub const ALL_KEYS: [ResourceKey; if cfg!(feature = "icu_list") { 18 } else { 15 }] = [
+pub const ALL_KEYS: [ResourceKey; if cfg!(feature = "icu_list") { 19 } else { 16 }] = [
     icu_calendar::provider::JapaneseErasV1Marker::KEY,
     icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
     icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
@@ -98,6 +101,7 @@ pub const ALL_KEYS: [ResourceKey; if cfg!(feature = "icu_list") { 18 } else { 15
     icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY,
     icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY,
     icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY,
+    icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
     icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
     #[cfg(feature = "icu_list")]
     icu_list::provider::AndListV1Marker::KEY,

@@ -117,7 +117,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
 
 pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
     data: &'data T,
-    calendar: week_of::CalendarInfo,
+    calendar: Option<&'data week_of::CalendarInfo>,
 }
 
 fn compute_week_of_year<T: DateInput>(
@@ -164,33 +164,27 @@ fn week_of_year<T: DateInput>(
 }
 
 impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
-    pub fn new(data: &'data T, _locale: &Locale) -> Self {
-        Self {
-            data,
-            // TODO(#488): Implement week calculations.
-            calendar: week_of::CalendarInfo {
-                first_weekday: IsoWeekday::Monday,
-                min_week_days: 4,
-            },
-        }
+    pub fn new(
+        data: &'data T,
+        calendar: Option<&'data week_of::CalendarInfo>,
+        _locale: &Locale,
+    ) -> Self {
+        Self { data, calendar }
     }
 }
 
 pub(crate) struct ZonedDateTimeInputWithLocale<'data, T: ZonedDateTimeInput> {
     data: &'data T,
-    calendar: week_of::CalendarInfo,
+    calendar: Option<&'data week_of::CalendarInfo>,
 }
 
 impl<'data, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'data, T> {
-    pub fn new(data: &'data T, _locale: &Locale) -> Self {
-        Self {
-            data,
-            // TODO(#488): Implement week calculations.
-            calendar: week_of::CalendarInfo {
-                first_weekday: IsoWeekday::Monday,
-                min_week_days: 4,
-            },
-        }
+    pub fn new(
+        data: &'data T,
+        calendar: Option<&'data week_of::CalendarInfo>,
+        _locale: &Locale,
+    ) -> Self {
+        Self { data, calendar }
     }
 }
 
@@ -200,7 +194,11 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
     }
 
     fn year_week(&self) -> Result<Year, DateTimeError> {
-        year_week(self.data, &self.calendar)
+        year_week(
+            self.data,
+            self.calendar
+                .expect("calendar must be provided when using week of methods"),
+        )
     }
 
     fn week_of_month(&self) -> WeekOfMonth {
@@ -208,7 +206,11 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
     }
 
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
-        week_of_year(self.data, &self.calendar)
+        week_of_year(
+            self.data,
+            self.calendar
+                .expect("calendar must be provided when using week of methods"),
+        )
     }
 
     fn flexible_day_period(&self) {
@@ -224,7 +226,11 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
     }
 
     fn year_week(&self) -> Result<Year, DateTimeError> {
-        year_week(self.data, &self.calendar)
+        year_week(
+            self.data,
+            self.calendar
+                .expect("calendar must be provided when using week of methods"),
+        )
     }
 
     fn week_of_month(&self) -> WeekOfMonth {
@@ -232,7 +238,11 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
     }
 
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
-        week_of_year(self.data, &self.calendar)
+        week_of_year(
+            self.data,
+            self.calendar
+                .expect("calendar must be provided when using week of methods"),
+        )
     }
 
     fn flexible_day_period(&self) {
