@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645691757290,
+  "lastUpdate": 1645750267721,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24581,6 +24581,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4765,
             "range": "± 66",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c22ef7d6aa78aa8d1bc4f7193619ccd03f65976",
+          "message": "Add serde support to the zerovec proc macro; reexport from the zerovec crate (#1632)\n\n* Add serde reexport\r\n\r\n* Add zerovec::serde\r\n\r\n* Reexport derive, add docs\r\n\r\n* fixup vis\r\n\r\n* fixup feature\r\n\r\n* Update utils/zerovec/derive/src/lib.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* readme\r\n\r\n* fixup test deps\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-02-24T16:36:53-08:00",
+          "tree_id": "a579238d57bb74a14423b7d3043dcd164cd000fe",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c22ef7d6aa78aa8d1bc4f7193619ccd03f65976"
+        },
+        "date": 1645750253184,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2571,
+            "range": "± 208",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4903,
+            "range": "± 182",
             "unit": "ns/iter"
           }
         ]
