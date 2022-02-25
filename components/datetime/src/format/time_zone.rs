@@ -68,7 +68,7 @@ where
     T: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    time_zone_format.format(w, time_zone)?;
+    time_zone_format.format(w, time_zone);
     Ok(())
 }
 
@@ -107,6 +107,6 @@ where
     T: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    time_zone_format.format(w, time_zone)?;
+    time_zone_format.format(w, time_zone);
     Ok(())
 }
