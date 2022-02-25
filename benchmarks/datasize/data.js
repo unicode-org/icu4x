@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645749523575,
+  "lastUpdate": 1645817047820,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10073,6 +10073,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4c22ef7d6aa78aa8d1bc4f7193619ccd03f65976"
         },
         "date": 1645749510075,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "caacf5426577cf9e77523a2ca05a86ca0af04e3f",
+          "message": "Remove @gregtatum from the alerts list (#1639)\n\nThese alerts aren't really actionable by me, and end up being\r\nnotifications that I mostly ignore. It's probably best to just remove\r\nmyself from the list at this time.",
+          "timestamp": "2022-02-25T13:22:12-06:00",
+          "tree_id": "11a1eb314e7048e7504cbf3d02be3ef6b20f95d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/caacf5426577cf9e77523a2ca05a86ca0af04e3f"
+        },
+        "date": 1645817033377,
         "tool": "ndjson",
         "benches": [
           {
