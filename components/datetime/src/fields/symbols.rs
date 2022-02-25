@@ -291,12 +291,12 @@ impl Ord for FieldSymbol {
 field_type!(Year; {
     'y' => Calendar = 0,
     'Y' => WeekOf = 1,
-}; Numeric);
+}; Numeric; YearULE);
 
 field_type!(Month; {
     'M' => Format = 0,
     'L' => StandAlone = 1,
-});
+}; MonthULE);
 
 impl LengthType for Month {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
@@ -316,31 +316,31 @@ field_type!(Day; {
     'D' => DayOfYear = 1,
     'F' => DayOfWeekInMonth = 2,
     'g' => ModifiedJulianDay = 3,
-}; Numeric);
+}; Numeric; DayULE);
 
 field_type!(Hour; {
     'K' => H11 = 0,
     'h' => H12 = 1,
-    'H' => H23 = 3,
-    'k' => H24 = 4,
-}; Numeric);
+    'H' => H23 = 2,
+    'k' => H24 = 3,
+}; Numeric; HourULE);
 
 field_type!(Second; {
     's' => Second = 0,
     'S' => FractionalSecond = 1,
     'A' => Millisecond = 2,
-}; Numeric);
+}; Numeric; SecondULE);
 
 field_type!(Week; {
     'w' => WeekOfYear = 0,
     'W' => WeekOfMonth = 1,
-}; Numeric);
+}; Numeric; WeekULE);
 
 field_type!(Weekday; {
     'E' => Format = 0,
     'e' => Local = 1,
     'c' => StandAlone = 2,
-});
+}; WeekdayULE);
 
 impl LengthType for Weekday {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
@@ -357,7 +357,7 @@ impl LengthType for Weekday {
 field_type!(DayPeriod; {
     'a' => AmPm = 0,
     'b' => NoonMidnight = 1,
-}; Text);
+}; Text; DayPeriodULE);
 
 field_type!(TimeZone; {
     'z' => LowerZ = 0,
@@ -367,7 +367,7 @@ field_type!(TimeZone; {
     'V' => UpperV = 4,
     'x' => LowerX = 5,
     'X' => UpperX = 6,
-});
+}; TimeZoneULE);
 
 impl LengthType for TimeZone {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {

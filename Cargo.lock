@@ -1148,7 +1148,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "litemap",
- "num_enum",
  "serde",
  "serde-tuple-vec-map",
  "serde_json",

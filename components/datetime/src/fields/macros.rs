@@ -36,8 +36,8 @@ macro_rules! const_expr_count {
 /// }; Text);
 /// ```
 macro_rules! field_type {
-    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $length_type:ident) => (
-        field_type!($i; {$($key => $val = $idx,)*});
+    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $length_type:ident; $ule_name:ident) => (
+        field_type!($i; {$($key => $val = $idx,)*}; $ule_name);
 
         impl LengthType for $i {
             fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
@@ -45,17 +45,17 @@ macro_rules! field_type {
             }
         }
     );
-    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }) => (
-        #[derive(Debug, Eq, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
+    ($i:ident; { $($key:expr => $val:ident = $idx:expr,)* }; $ule_name:ident) => (
+        #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
-        #[derive(num_enum::IntoPrimitive, num_enum::TryFromPrimitive)]
         #[cfg_attr(
             feature = "provider_serde",
             derive(serde::Serialize, serde::Deserialize)
         )]
         #[allow(clippy::enum_variant_names)]
         #[repr(u8)]
+        #[zerovec::make_ule($ule_name)]
         pub enum $i {
             $($val = $idx, )*
         }
