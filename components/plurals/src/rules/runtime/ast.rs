@@ -55,11 +55,16 @@ pub enum RangeOrValue {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Relation<'data> {
+    pub(crate) aopo: AndOrPolarityOperand,
+    pub(crate) modulo: u32,
+    pub(crate) range_list: ZeroVec<'data, RangeOrValue>,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub(crate) struct AndOrPolarityOperand {
     pub(crate) and_or: AndOr,
     pub(crate) polarity: Polarity,
     pub(crate) operand: Operand,
-    pub(crate) modulo: u32,
-    pub(crate) range_list: ZeroVec<'data, RangeOrValue>,
 }
 
 /////
@@ -83,10 +88,14 @@ impl From<&reference::ast::Rule> for Rule<'_> {
                     AndOr::And
                 };
 
-                relations.push(Relation {
+                let aopo = AndOrPolarityOperand {
                     and_or,
                     polarity: relation.operator.into(),
                     operand: relation.expression.operand.into(),
+                };
+
+                relations.push(Relation {
+                    aopo,
                     modulo: get_modulo(&relation.expression.modulus),
                     range_list: ZeroVec::alloc_from_slice(&range_list),
                 })
@@ -105,12 +114,12 @@ impl From<&Rule<'_>> for reference::ast::Rule {
             let rel = rel.as_relation();
             let list = rel.range_list.iter().map(Into::into).collect();
             let relation = reference::ast::Relation {
-                expression: (rel.operand, rel.modulo).into(),
-                operator: rel.polarity.into(),
+                expression: (rel.aopo.operand, rel.modulo).into(),
+                operator: rel.aopo.polarity.into(),
                 range_list: reference::ast::RangeList(list),
             };
 
-            if rel.and_or == AndOr::And {
+            if rel.aopo.and_or == AndOr::And {
                 and_conditions.push(relation);
             } else {
                 or_conditions.push(reference::ast::AndCondition(and_conditions));
@@ -306,33 +315,32 @@ pub struct RelationULE {
 impl RelationULE {
     #[inline]
     pub fn as_relation(&self) -> Relation {
-        let (and_or, polarity, operand) =
-            unsafe { Self::decode_andor_polarity_operand(self.andor_polarity_operand) };
+        let aopo = unsafe { AndOrPolarityOperand::decode(self.andor_polarity_operand) };
         Relation {
-            and_or,
-            polarity,
-            operand,
+            aopo,
             modulo: u32::from_unaligned(self.modulo),
             range_list: ZeroVec::Borrowed(&self.range_list),
         }
     }
+}
 
-    fn encode_andor_polarity_operand(and_or: AndOr, polarity: Polarity, operand: Operand) -> u8 {
-        let encoded_operand = u8::from(operand);
+impl AndOrPolarityOperand {
+    fn encode(self) -> u8 {
+        let encoded_operand = u8::from(self.operand);
         debug_assert!(encoded_operand <= 0b0011_1111);
-        (((and_or == AndOr::And) as u8) << 7)
-            + (((polarity == Polarity::Positive) as u8) << 6)
+        (((self.and_or == AndOr::And) as u8) << 7)
+            + (((self.polarity == Polarity::Positive) as u8) << 6)
             + encoded_operand
     }
 
     #[inline]
-    fn validate_andor_polarity_operand(encoded: u8) -> Result<(), ZeroVecError> {
+    fn validate(encoded: u8) -> Result<(), ZeroVecError> {
         Operand::try_from(encoded & 0b0011_1111).map_err(|_| ZeroVecError::parse::<Self>())?;
         Ok(())
     }
 
     #[inline]
-    unsafe fn decode_andor_polarity_operand(encoded: u8) -> (AndOr, Polarity, Operand) {
+    unsafe fn decode(encoded: u8) -> Self {
         let and_or = if encoded & 0b1000_0000 != 0 {
             AndOr::And
         } else {
@@ -346,7 +354,11 @@ impl RelationULE {
         };
 
         let operand = Operand::from_unchecked(encoded & 0b0011_1111);
-        (and_or, polarity, operand)
+        Self {
+            and_or,
+            polarity,
+            operand,
+        }
     }
 }
 
@@ -386,7 +398,7 @@ unsafe impl VarULE for RelationULE {
 
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        RelationULE::validate_andor_polarity_operand(bytes[0])?;
+        AndOrPolarityOperand::validate(bytes[0])?;
         // Skip bytes 1-4 as they're always valid `u32` for `Modulo`.
         if bytes.len() < 5 {
             return Err(ZeroVecError::parse::<Self>());
@@ -403,8 +415,7 @@ unsafe impl VarULE for RelationULE {
 // are a valid instance of the RelationULE type.
 unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        let encoded =
-            RelationULE::encode_andor_polarity_operand(self.and_or, self.polarity, self.operand);
+        let encoded = self.aopo.encode();
         cb(&[
             &[encoded],
             RawBytesULE::<4>::as_byte_slice(&[self.modulo.to_unaligned()]),
