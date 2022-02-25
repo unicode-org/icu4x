@@ -250,7 +250,7 @@ fn make_ule_enum_impl(
             fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
                 for byte in bytes {
                     if *byte >= #max {
-                        return Err(ZeroVecError::parse::<Self>())
+                        return Err(zerovec::ZeroVecError::parse::<Self>())
                     }
                 }
                 Ok(())
