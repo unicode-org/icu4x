@@ -705,7 +705,7 @@ jobs:
           auto-push: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
-          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran,@gregtatum'
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
       # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the
       # files across jobs within the same workflow.
@@ -862,7 +862,7 @@ jobs:
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
-        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran,@gregtatum'
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Switch to branch gh-pages for benchmark data storage (merge to main only)
       # Only for PRs that merge into the ICU4X mainline
@@ -925,7 +925,7 @@ jobs:
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
-        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran,@gregtatum'
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Switch to branch gh-pages for benchmark data storage (merge to main only)
       # Only for PRs that merge into the ICU4X mainline
