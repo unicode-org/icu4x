@@ -68,7 +68,7 @@ where
 ///
 /// let provider = InvariantDataProvider;
 ///
-/// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::GenericNonLocationLong, &provider, None)
+/// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::GenericNonLocationLong, &provider, &TimeZoneFormatOptions::default())
 ///     .expect("Failed to create TimeZoneFormat");
 ///
 /// let time_zone = MockTimeZone::new(
@@ -117,7 +117,7 @@ impl TimeZoneFormat {
         locale: L,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         zone_provider: &ZP,
-        fallback_format: Option<FallbackFormat>,
+        options: &TimeZoneFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
@@ -330,7 +330,7 @@ impl TimeZoneFormat {
                 },
             }
         }
-        tz_format.load_fallback_format(fallback_format)?;
+        tz_format.load_fallback_format(options.fallback_format)?;
         Ok(tz_format)
     }
 
@@ -347,7 +347,7 @@ impl TimeZoneFormat {
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, None);
+    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, &TimeZoneFormatOptions::default());
     ///
     /// assert!(tzf.is_ok());
     /// ```
@@ -355,7 +355,7 @@ impl TimeZoneFormat {
         locale: L,
         config: TimeZoneFormatConfig,
         zone_provider: &ZP,
-        fallback_format: Option<FallbackFormat>,
+        options: &TimeZoneFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
@@ -413,11 +413,11 @@ impl TimeZoneFormat {
                 tz_format.load_iso_8601_format(format, minutes, seconds)?;
             }
         }
-
-        tz_format.load_fallback_format(fallback_format)?;
+        tz_format.load_fallback_format(options.fallback_format)?;
         Ok(tz_format)
     }
 
+    /// Load generic non location long format for timezone. For example, Pacific Time.
     pub fn load_generic_non_location_long<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -434,19 +434,13 @@ impl TimeZoneFormat {
                 zone_provider,
             )?;
         }
-        if self.data_payloads.exemplar_cities == None {
-            load_resource(
-                &self.locale,
-                &mut self.data_payloads.exemplar_cities,
-                zone_provider,
-            )?;
-        }
         self.units.push(TimeZoneFormatUnit::GenericNonLocationLong(
             GenericNonLocationLongFormat {},
         ));
         Ok(self)
     }
 
+    /// Load generic non location short format for timezone. For example, PT.
     pub fn load_generic_non_location_short<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -463,19 +457,13 @@ impl TimeZoneFormat {
                 zone_provider,
             )?;
         }
-        if self.data_payloads.exemplar_cities == None {
-            load_resource(
-                &self.locale,
-                &mut self.data_payloads.exemplar_cities,
-                zone_provider,
-            )?;
-        }
         self.units.push(TimeZoneFormatUnit::GenericNonLocationShort(
             GenericNonLocationShortFormat {},
         ));
         Ok(self)
     }
 
+    /// Load specific non location long format for timezone. For example, Pacific Standard Time.
     pub fn load_specific_non_location_long<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -496,6 +484,7 @@ impl TimeZoneFormat {
         Ok(self)
     }
 
+    /// Load specific non location short format for timezone. For example, PDT.
     pub fn load_specific_non_location_short<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -517,6 +506,7 @@ impl TimeZoneFormat {
         Ok(self)
     }
 
+    /// Load generic location format for timezone. For example, Los Angeles Time.
     pub fn load_generic_location_format<ZP>(
         &mut self,
         zone_provider: &ZP,
@@ -537,7 +527,8 @@ impl TimeZoneFormat {
         Ok(self)
     }
 
-    pub fn load_exemplar_city_format<ZP>(
+    /// Load exemplar city format for timezone. For example, Los Angeles.
+    fn load_exemplar_city_format<ZP>(
         &mut self,
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError>
@@ -556,6 +547,7 @@ impl TimeZoneFormat {
         Ok(self)
     }
 
+    /// Load localized GMT format for timezone. For example, GMT-07:00.
     pub fn load_localized_gmt_format(
         &mut self,
     ) -> Result<&mut TimeZoneFormat, DateTimeFormatError> {
@@ -564,6 +556,7 @@ impl TimeZoneFormat {
         Ok(self)
     }
 
+    /// Load Iso8601 format for timezone. For example, -07:00.
     pub fn load_iso_8601_format(
         &mut self,
         format: IsoFormat,
@@ -578,6 +571,8 @@ impl TimeZoneFormat {
         Ok(self)
     }
 
+    /// Load a fallback format for timezone. The fallback format will be executed if there are no
+    /// matching format results.
     pub fn load_fallback_format(
         &mut self,
         fallback_format: Option<FallbackFormat>,
@@ -610,7 +605,7 @@ impl TimeZoneFormat {
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, None)
+    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, &TimeZoneFormatOptions::default())
     ///     .expect("Failed to create TimeZoneFormat");
     ///
     /// let time_zone = MockTimeZone::new(
@@ -657,7 +652,7 @@ impl TimeZoneFormat {
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, None)
+    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, &TimeZoneFormatOptions::default())
     ///     .expect("Failed to create TimeZoneFormat");
     ///
     /// let time_zone = MockTimeZone::new(
@@ -698,7 +693,7 @@ impl TimeZoneFormat {
     ///
     /// let provider = InvariantDataProvider;
     ///
-    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, None)
+    /// let tzf = TimeZoneFormat::try_from_config(locale!("en"), TimeZoneFormatConfig::LocalizedGMT, &provider, &TimeZoneFormatOptions::default())
     ///     .expect("Failed to create TimeZoneFormat");
     ///
     /// let time_zone = MockTimeZone::new(
@@ -799,6 +794,12 @@ pub enum FallbackFormat {
     LocalizedGmt,
 }
 
+/// A bag of options to define how time zone will be formatted.
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
+pub struct TimeZoneFormatOptions {
+    pub fallback_format: Option<FallbackFormat>,
+}
+
 // Pacific Time
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct GenericNonLocationLongFormat {}
@@ -848,7 +849,7 @@ enum TimeZoneFormatUnit {
     ExemplarCity(ExemplarCityFormat),
 }
 
-pub trait FormatTimeZone {
+trait FormatTimeZone {
     fn format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,

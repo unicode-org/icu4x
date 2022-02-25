@@ -17,7 +17,7 @@ use icu_datetime::{
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
         week_data::WeekDataV1Marker,
     },
-    time_zone::{FallbackFormat, TimeZoneFormat},
+    time_zone::{FallbackFormat, TimeZoneFormat, TimeZoneFormatOptions},
     CldrCalendar, DateTimeFormat, DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
@@ -166,7 +166,9 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
                 &provider,
                 &provider,
                 &options,
-                Some(FallbackFormat::LocalizedGmt),
+                &TimeZoneFormatOptions {
+                    fallback_format: Some(FallbackFormat::LocalizedGmt),
+                },
             )
             .unwrap();
             let result = dtf.format_to_string(&input_value);
@@ -320,7 +322,7 @@ fn test_time_zone_format_configs() {
                         langid.clone(),
                         config_input.into(),
                         &zone_provider,
-                        fallback_format.into(),
+                        &fallback_format.into(),
                     )
                     .unwrap();
                     let mut buffer = String::new();
@@ -451,7 +453,7 @@ fn test_time_zone_patterns() {
                         &zone_provider,
                         &plural_provider,
                         &format_options,
-                        fallback_format.into(),
+                        &fallback_format.into(),
                     )
                     .unwrap();
 
