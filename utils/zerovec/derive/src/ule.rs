@@ -298,10 +298,8 @@ fn make_ule_enum_impl(
 }
 
 fn get_expr_int(e: &Expr) -> Option<u64> {
-    if let Expr::Lit(ref l) = *e {
-        if let Lit::Int(ref i) = l.lit {
-            return i.base10_parse().ok();
-        }
+    if let Ok(Lit::Int(ref i)) = syn::parse2(quote!(#e)) {
+        return i.base10_parse().ok();
     }
 
     None
