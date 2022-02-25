@@ -98,10 +98,19 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
     let arg = &attr[0];
     let ule_name: Ident = parse_quote!(#arg);
 
-    let (skip_kv, skip_ord) = match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
-        Ok(val) => val,
-        Err(e) => return e.to_compile_error(),
-    };
+    let (skip_kv, skip_ord, serde) =
+        match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
+            Ok(val) => val,
+            Err(e) => return e.to_compile_error(),
+        };
+
+    if serde {
+        return Error::new(
+            input.span(),
+            "#[make_ule] does not support #[zerovec::serde]",
+        )
+        .to_compile_error();
+    }
 
     let name = &input.ident;
 
@@ -197,6 +206,8 @@ fn make_ule_enum_impl(
         quote!(#[derive(Ord, PartialOrd)])
     };
 
+    let vis = &input.vis;
+
     // Safety (based on the safety checklist on the ULE trait):
     //  1. ULE type does not include any uninitialized or padding bytes.
     //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant
@@ -212,7 +223,7 @@ fn make_ule_enum_impl(
         #[repr(transparent)]
         #[derive(Copy, Clone, PartialEq, Eq)]
         #maybe_ord_derives
-        struct #ule_name(u8);
+        #vis struct #ule_name(u8);
 
         unsafe impl zerovec::ule::ULE for #ule_name {
             #[inline]
@@ -295,11 +306,12 @@ fn make_ule_struct_impl(
 
     let semi = utils::semi_for(&struc.fields);
     let repr_attr = utils::repr_for(&struc.fields);
+    let vis = &input.vis;
 
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[derive(Copy, Clone, PartialEq, Eq)]
-        struct #ule_name #field_inits #semi
+        #vis struct #ule_name #field_inits #semi
     );
     let derived = derive_impl(&ule_struct);
 

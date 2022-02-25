@@ -5,6 +5,9 @@
 //! This module contains documentation for defining custom VarULE types,
 //! especially those using complex custom dynamically sized types.
 //!
+//! In *most cases* you should be able to create custom VarULE types using
+//! [`#[make_varule]`](crate::make_ule).
+//!
 //! # Example
 //!
 //! For example, if your regular stack type is:
