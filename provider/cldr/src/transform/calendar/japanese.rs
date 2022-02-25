@@ -234,6 +234,6 @@ pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
         .iter()
         .chain(snapshot.dates_to_eras.iter())
         .enumerate()
-        .map(|(year, (_, value))| (year.to_string(), value))
+        .map(|(i, (_, value))| (i.to_string(), value))
         .collect()
 }
