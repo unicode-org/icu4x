@@ -11,7 +11,6 @@ use core::{
     str::FromStr,
 };
 use icu_provider::{yoke, zerofrom};
-use num_enum::{IntoPrimitive, TryFromPrimitive, UnsafeFromPrimitive};
 use zerovec::{
     ule::{AsULE, PairULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
@@ -34,28 +33,18 @@ pub enum Polarity {
     Positive,
 }
 
-#[derive(
-    IntoPrimitive,
-    UnsafeFromPrimitive,
-    TryFromPrimitive,
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    Ord,
-    PartialOrd,
-)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[repr(u8)]
+#[zerovec::make_ule(OperandULE)]
 pub enum Operand {
-    N,
-    I,
-    V,
-    W,
-    F,
-    T,
-    C,
-    E,
+    N = 0,
+    I = 1,
+    V = 2,
+    W = 3,
+    F = 4,
+    T = 5,
+    C = 6,
+    E = 7,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
@@ -309,7 +298,7 @@ unsafe impl ULE for AndOrPolarityOperandULE {
 impl AsULE for AndOrPolarityOperand {
     type ULE = AndOrPolarityOperandULE;
     fn to_unaligned(self) -> AndOrPolarityOperandULE {
-        let encoded_operand = u8::from(self.operand);
+        let encoded_operand = self.operand.to_unaligned().0;
         debug_assert!(encoded_operand <= 0b0011_1111);
         AndOrPolarityOperandULE(
             (((self.and_or == AndOr::And) as u8) << 7)
@@ -332,11 +321,15 @@ impl AsULE for AndOrPolarityOperand {
             Polarity::Negative
         };
 
-        let operand = unsafe { Operand::from_unchecked(encoded & 0b0011_1111) };
+        // note that this is unsafe, since OperandULE has its own
+        // safety requirements
+        // we can guarantee safety here since these bits can only come
+        // from validated OperandULEs
+        let operand = OperandULE(encoded & 0b0011_1111);
         Self {
             and_or,
             polarity,
-            operand,
+            operand: Operand::from_unaligned(operand),
         }
     }
 }
