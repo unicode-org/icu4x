@@ -307,7 +307,7 @@ pub struct RelationULE {
     /// to Polarity (1 == Positive), and the remaining bits to Operand
     /// encoded via Operand::encode. It is unsound for the Operand bits to
     /// not be a valid encoded Operand.
-    andor_polarity_operand: u8,
+    aopo: AndOrPolarityOperandULE,
     modulo: <u32 as AsULE>::ULE,
     range_list: [RangeOrValueULE],
 }
@@ -315,32 +315,51 @@ pub struct RelationULE {
 impl RelationULE {
     #[inline]
     pub fn as_relation(&self) -> Relation {
-        let aopo = unsafe { AndOrPolarityOperand::decode(self.andor_polarity_operand) };
         Relation {
-            aopo,
+            aopo: AndOrPolarityOperand::from_unaligned(self.aopo),
             modulo: u32::from_unaligned(self.modulo),
             range_list: ZeroVec::Borrowed(&self.range_list),
         }
     }
 }
 
-impl AndOrPolarityOperand {
-    fn encode(self) -> u8 {
-        let encoded_operand = u8::from(self.operand);
-        debug_assert!(encoded_operand <= 0b0011_1111);
-        (((self.and_or == AndOr::And) as u8) << 7)
-            + (((self.polarity == Polarity::Positive) as u8) << 6)
-            + encoded_operand
-    }
+#[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
+#[repr(transparent)]
+pub(crate) struct AndOrPolarityOperandULE(u8);
 
-    #[inline]
-    fn validate(encoded: u8) -> Result<(), ZeroVecError> {
-        Operand::try_from(encoded & 0b0011_1111).map_err(|_| ZeroVecError::parse::<Self>())?;
+// Safety (based on the safety checklist on the ULE trait):
+//  1. AndOrPolarityOperandULE does not include any uninitialized or padding bytes
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+/// 2. AndOrPolarityOperandULE is aligned to 1 byte
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  4. The impl of validate_byte_slice() returns an error if there are extra bytes
+//     (impossible since it is of size 1 byte)
+//  5 The other ULE methods use the default impl.
+//  6. AndOrPolarityOperandULE byte equality is semantic equality.
+unsafe impl ULE for AndOrPolarityOperandULE {
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        for byte in bytes {
+            Operand::try_from(byte & 0b0011_1111).map_err(|_| ZeroVecError::parse::<Self>())?;
+        }
         Ok(())
     }
+}
 
-    #[inline]
-    unsafe fn decode(encoded: u8) -> Self {
+impl AsULE for AndOrPolarityOperand {
+    type ULE = AndOrPolarityOperandULE;
+    fn to_unaligned(self) -> AndOrPolarityOperandULE {
+        let encoded_operand = u8::from(self.operand);
+        debug_assert!(encoded_operand <= 0b0011_1111);
+        AndOrPolarityOperandULE(
+            (((self.and_or == AndOr::And) as u8) << 7)
+                + (((self.polarity == Polarity::Positive) as u8) << 6)
+                + encoded_operand,
+        )
+    }
+
+    fn from_unaligned(other: AndOrPolarityOperandULE) -> Self {
+        let encoded = other.0;
         let and_or = if encoded & 0b1000_0000 != 0 {
             AndOr::And
         } else {
@@ -353,7 +372,7 @@ impl AndOrPolarityOperand {
             Polarity::Negative
         };
 
-        let operand = Operand::from_unchecked(encoded & 0b0011_1111);
+        let operand = unsafe { Operand::from_unchecked(encoded & 0b0011_1111) };
         Self {
             and_or,
             polarity,
@@ -398,11 +417,12 @@ unsafe impl VarULE for RelationULE {
 
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        AndOrPolarityOperand::validate(bytes[0])?;
         // Skip bytes 1-4 as they're always valid `u32` for `Modulo`.
         if bytes.len() < 5 {
             return Err(ZeroVecError::parse::<Self>());
         }
+        // check byte 0
+        AndOrPolarityOperandULE::validate_byte_slice(&bytes[0..1])?;
         let remaining = &bytes[5..];
         RangeOrValueULE::validate_byte_slice(remaining)?;
         Ok(())
@@ -415,9 +435,9 @@ unsafe impl VarULE for RelationULE {
 // are a valid instance of the RelationULE type.
 unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        let encoded = self.aopo.encode();
+        let encoded = self.aopo.to_unaligned();
         cb(&[
-            &[encoded],
+            ULE::as_byte_slice(&[encoded]),
             RawBytesULE::<4>::as_byte_slice(&[self.modulo.to_unaligned()]),
             self.range_list.as_bytes(),
         ])
@@ -559,9 +579,11 @@ mod test {
         assert_eq!(
             relation,
             Relation {
-                and_or: AndOr::And,
-                polarity: Polarity::Positive,
-                operand: Operand::I,
+                aopo: AndOrPolarityOperand {
+                    and_or: AndOr::And,
+                    polarity: Polarity::Positive,
+                    operand: Operand::I,
+                },
                 modulo: 0,
                 range_list: ZeroVec::Borrowed(&[RangeOrValue::Value(1).to_unaligned()])
             }
@@ -635,10 +657,13 @@ mod test {
     #[test]
     fn relation_ule_test() {
         let rov = RangeOrValue::Value(1);
-        let relation = Relation {
+        let aopo = AndOrPolarityOperand {
             and_or: AndOr::And,
             polarity: Polarity::Positive,
             operand: Operand::N,
+        };
+        let relation = Relation {
+            aopo,
             modulo: 0,
             range_list: ZeroVec::alloc_from_slice(&[rov]),
         };
