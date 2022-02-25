@@ -64,6 +64,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
             #[inline]
             fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ZeroVecError> {
                 const SIZE: usize = ::core::mem::size_of::<#name>();
+                #[allow(clippy::modulo_one)]
                 if bytes.len() % SIZE != 0 {
                     return Err(zerovec::ZeroVecError::length::<Self>(bytes.len()));
                 }
