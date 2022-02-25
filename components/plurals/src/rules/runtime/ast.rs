@@ -13,28 +13,39 @@ use core::{
 use icu_provider::{yoke, zerofrom};
 use num_enum::{IntoPrimitive, TryFromPrimitive, UnsafeFromPrimitive};
 use zerovec::{
-    ule::{AsULE, EncodeAsVarULE, PairULE, RawBytesULE, VarULE, ZeroVecError, ULE},
+    ule::{AsULE, PairULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
 };
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
 pub enum AndOr {
     Or,
     And,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
 pub enum Polarity {
     Negative,
     Positive,
 }
 
-#[derive(IntoPrimitive, UnsafeFromPrimitive, TryFromPrimitive, Copy, Clone, Debug, PartialEq)]
+#[derive(
+    IntoPrimitive,
+    UnsafeFromPrimitive,
+    TryFromPrimitive,
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Ord,
+    PartialOrd,
+)]
 #[repr(u8)]
 pub enum Operand {
     N,
@@ -47,26 +58,32 @@ pub enum Operand {
     E,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
 pub enum RangeOrValue {
     Range(u32, u32),
     Value(u32),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
+#[zerovec::make_varule(RelationULE)]
 pub struct Relation<'data> {
     pub(crate) aopo: AndOrPolarityOperand,
     pub(crate) modulo: u32,
     pub(crate) range_list: ZeroVec<'data, RangeOrValue>,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 pub(crate) struct AndOrPolarityOperand {
     pub(crate) and_or: AndOr,
     pub(crate) polarity: Polarity,
     pub(crate) operand: Operand,
 }
 
+impl fmt::Debug for RelationULE {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.as_relation().fmt(f)
+    }
+}
 /////
 
 impl From<&reference::ast::Rule> for Rule<'_> {
@@ -259,67 +276,10 @@ impl fmt::Display for Rule<'_> {
     }
 }
 
-/// `RelationULE` is a type optimized for efficent storing and
-/// deserialization of `rule::runtime::ast::Rule` `ZeroVec` model.
-///
-/// The serialization model packages the rule into 4 bytes plus
-/// variable length of the list of ranges.
-///
-/// The first byte is used to store:
-///  * One bit to store the state of AndOr.
-///  * One bit to store the state of Polarity.
-///  * Six bits to store the Operand.
-///
-/// The following four bytes store the value of the modulo as `u32`.
-///
-/// Finally, the remaining variable length is used to store a list
-/// of `RangeOrValue` elements which have `[u32;2]` layout.
-///
-/// # Diagram
-///
-/// ```text
-/// ┌───────────────┬───────────────┬───────────────┐
-/// │      u8       │    [u8;4]     │     [u8]      │
-/// ├─┬─┬─┬─┬─┬─┬─┬─┼───┬───┬───┬───┼───────────────┤
-/// ├─┼─┼─┴─┴─┴─┴─┴─┼───┴───┴───┴───┼───────────────┤
-/// │ │ │  Operand  │    Modulo     │  RangeOrValue │
-/// └─┴─┴───────────┴───────────────┴───────────────┘
-///  ▲ ▲
-///  │ │
-///  │ Polarity
-///  │
-///  AndOr
-/// ```
-///
-/// # Optimization
-///
-/// This model is optimized for efficient packaging of the `Relation` elements
-/// and performant deserialization from the `RelationULE` to `Relation` type.
-///
-/// # Constraints
-///
-/// The model constraints the `Operand` to 64 variants, and `Modulo` to `u32::MAX`.
-#[derive(Debug, PartialEq)]
-#[repr(packed)]
-pub struct RelationULE {
-    /// This maps to (AndOr, Polarity, Operand),
-    /// with the first bit mapping to AndOr (1 == And), the second bit
-    /// to Polarity (1 == Positive), and the remaining bits to Operand
-    /// encoded via Operand::encode. It is unsound for the Operand bits to
-    /// not be a valid encoded Operand.
-    aopo: AndOrPolarityOperandULE,
-    modulo: <u32 as AsULE>::ULE,
-    range_list: [RangeOrValueULE],
-}
-
 impl RelationULE {
     #[inline]
     pub fn as_relation(&self) -> Relation {
-        Relation {
-            aopo: AndOrPolarityOperand::from_unaligned(self.aopo),
-            modulo: u32::from_unaligned(self.modulo),
-            range_list: ZeroVec::Borrowed(&self.range_list),
-        }
+        zerofrom::ZeroFrom::zero_from(self)
     }
 }
 
@@ -378,69 +338,6 @@ impl AsULE for AndOrPolarityOperand {
             polarity,
             operand,
         }
-    }
-}
-
-// Safety (based on the safety checklist on the ULE trait):
-//  1. RelationULE does not include any uninitialized or padding bytes.
-//     (achieved by `#[repr(packed)]` on a type that satisfies this invariant)
-//  2. RelationULE is aligned to 1 byte
-//     (achieved by `#[repr(packed)]` on a type that satisfies this invariant)
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
-//  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data.
-//  6. The other VarULE methods use the default impl.
-//  7. RelationULE byte equality is semantic equality.
-unsafe impl VarULE for RelationULE {
-    #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        let ptr = bytes.as_ptr();
-        let len = bytes.len();
-        // subtract length of andor_polarity_operand and modulo and then convert between a slice of bytes and RangeOrValueULE
-        let len_new = (len - 5) / 8;
-
-        // Keep this in sync with `RelationULE`
-        struct RelationULESized {
-            _andor_polarity_operand: u8,
-            _modulo: <u32 as AsULE>::ULE,
-        }
-        debug_assert_eq!(core::mem::size_of::<RelationULESized>(), 5);
-        debug_assert_eq!(core::mem::size_of::<RangeOrValueULE>(), 8);
-
-        // it's hard constructing custom DSTs, we fake a pointer/length construction
-        // eventually we can use the Pointer::Metadata APIs when they stabilize
-        let fake_slice = core::ptr::slice_from_raw_parts(ptr as *const RangeOrValueULE, len_new);
-        let ret = &*(fake_slice as *const Self);
-        debug_assert_eq!(core::mem::size_of_val(ret), core::mem::size_of_val(bytes));
-        ret
-    }
-
-    #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        // Skip bytes 1-4 as they're always valid `u32` for `Modulo`.
-        if bytes.len() < 5 {
-            return Err(ZeroVecError::parse::<Self>());
-        }
-        // check byte 0
-        AndOrPolarityOperandULE::validate_byte_slice(&bytes[0..1])?;
-        let remaining = &bytes[5..];
-        RangeOrValueULE::validate_byte_slice(remaining)?;
-        Ok(())
-    }
-}
-
-// Safety
-//
-// the slices to the callback must, when concatenated,
-// are a valid instance of the RelationULE type.
-unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
-    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        let encoded = self.aopo.to_unaligned();
-        cb(&[
-            ULE::as_byte_slice(&[encoded]),
-            RawBytesULE::<4>::as_byte_slice(&[self.modulo.to_unaligned()]),
-            self.range_list.as_bytes(),
-        ])
     }
 }
 
