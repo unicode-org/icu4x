@@ -1276,7 +1276,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
- "num_enum",
  "serde",
  "zerovec",
 ]

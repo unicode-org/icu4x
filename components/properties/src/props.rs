@@ -4,7 +4,6 @@
 
 //! A collection of enums for enumerated properties.
 
-use num_enum::{TryFromPrimitive, UnsafeFromPrimitive};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -47,7 +46,7 @@ pub enum EnumeratedProperty {
 ///
 /// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[zerovec::make_ule(GeneralCategoryULE)]
 #[repr(u8)]
