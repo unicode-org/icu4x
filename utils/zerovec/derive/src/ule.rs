@@ -12,6 +12,8 @@ use syn::{
     Fields, Ident, Lit,
 };
 
+use std::collections::HashSet;
+
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
         return Error::new(
@@ -160,6 +162,11 @@ fn make_ule_enum_impl(
         .to_compile_error();
     }
 
+    // the next discriminant expected
+    let mut next = 0;
+    // Discriminants that have not been found in series (we might find them later)
+    let mut not_found = HashSet::new();
+
     for (i, variant) in enu.variants.iter().enumerate() {
         if variant.fields != Fields::Unit {
             // This can be supported in the future, see zerovec/design_doc.md
@@ -172,16 +179,21 @@ fn make_ule_enum_impl(
 
         if let Some((_, ref discr)) = variant.discriminant {
             if let Some(n) = get_expr_int(discr) {
+                if n >= next {
+                    for missing in next..n {
+                        not_found.insert(missing);
+                    }
+                    next = n + 1;
+                }
+
+                not_found.remove(&n);
+
                 // We require explicit discriminants so that it is clear that reordering
                 // fields would be a breaking change. Furthermore, using explicit discriminants helps ensure that
                 // platform-specific C ABI choices do not matter.
                 // We could potentially add in explicit discriminants on the user's behalf in the future, or support
                 // more complicated sets of explicit discriminant values.
-                if n != i as u64 {
-                    return Error::new(discr.span(), &format!("#[make_ule] must be applied to enums with discriminants \
-                                                              increasing in order from 0, expected {i}, found {n}"))
-                        .to_compile_error();
-                }
+                if n != i as u64 {}
             } else {
                 return Error::new(
                     discr.span(),
@@ -198,7 +210,15 @@ fn make_ule_enum_impl(
         }
     }
 
-    let max = enu.variants.len() as u8;
+    let not_found = not_found.iter().collect::<Vec<_>>();
+
+    if !not_found.is_empty() {
+        return Error::new(input.span(), &format!("#[make_ule] must be applied to enums with discriminants \
+                                                  filling the range from 0 to a maximum; could not find {:?}", not_found))
+            .to_compile_error();
+    }
+
+    let max = next as u8;
 
     let maybe_ord_derives = if skip_ord {
         quote!()

@@ -47,8 +47,9 @@ pub enum EnumeratedProperty {
 ///
 /// GeneralCategory only supports specific subcategories (eg `UppercaseLetter`).
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
-#[derive(Copy, Clone, PartialEq, Eq, Debug, TryFromPrimitive, UnsafeFromPrimitive)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[zerovec::make_ule(GeneralCategoryULE)]
 #[repr(u8)]
 pub enum GeneralCategory {
     /// (`Cn`) A reserved unassigned code point or a noncharacter
