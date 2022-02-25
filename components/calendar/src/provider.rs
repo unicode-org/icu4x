@@ -14,7 +14,7 @@ use zerovec::ZeroVec;
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
-#[zerovec_derive::make_ule(EraStartDateULE)]
+#[zerovec::make_ule(EraStartDateULE)]
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
 )]

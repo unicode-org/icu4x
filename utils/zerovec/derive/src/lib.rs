@@ -55,6 +55,11 @@ pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///
 /// The type must be `PartialEq` and `Eq`.
 ///
+/// Provided the type implements `serde::Serialize` and `serde::Deserialize`, this attribute can also generate
+/// the relevant serialize/deserialize implementations for the `VarULE` type if you apply the `#[zerovec::serde]`
+/// attribute. Those impls are required to support human-readable serialization of the VarZeroVec.
+/// This needs the `serde` feature to be enabled on the `zerovec` crate to work.
+///
 /// By default this attribute will also autogenerate a `ZeroMapKV` implementation, which requires
 /// `Ord` and `PartialOrd` on the `VarULE` type. You can opt out of this with `#[zerovec::skip_kv]`.
 ///

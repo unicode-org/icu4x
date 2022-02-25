@@ -1059,7 +1059,6 @@ dependencies = [
  "serde",
  "tinystr 0.5.0",
  "zerovec",
- "zerovec-derive",
 ]
 
 [[package]]
@@ -3146,14 +3145,18 @@ dependencies = [
  "serde_json",
  "yoke",
  "zerofrom",
+ "zerovec-derive",
 ]
 
 [[package]]
 name = "zerovec-derive"
 version = "0.6.0"
 dependencies = [
+ "postcard",
  "proc-macro2",
  "quote",
+ "serde",
+ "serde_json",
  "syn",
  "synstructure",
  "zerofrom",

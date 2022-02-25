@@ -4,7 +4,6 @@
 
 use std::fmt::Debug;
 use zerovec::*;
-use zerovec_derive::*;
 
 #[make_ule(StructULE)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

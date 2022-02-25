@@ -166,12 +166,16 @@ pub fn check_attr_empty(attr: &Option<Attribute>, name: &str) -> Result<()> {
 }
 
 /// Removes all known zerovec:: attributes from attrs and validates them
-/// Returns (skip_kv, skip_ord)
-pub fn extract_attributes_common(attrs: &mut Vec<Attribute>, name: &str) -> Result<(bool, bool)> {
+/// Returns (skip_kv, skip_ord, serde)
+pub fn extract_attributes_common(
+    attrs: &mut Vec<Attribute>,
+    name: &str,
+) -> Result<(bool, bool, bool)> {
     let mut zerovec_attrs = extract_zerovec_attributes(attrs);
 
     let skip_kv = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_kv");
     let skip_ord = extract_zerovec_attribute_named(&mut zerovec_attrs, "skip_ord");
+    let serde = extract_zerovec_attribute_named(&mut zerovec_attrs, "serde");
 
     if let Some(attr) = zerovec_attrs.get(0) {
         return Err(Error::new(
@@ -182,9 +186,11 @@ pub fn extract_attributes_common(attrs: &mut Vec<Attribute>, name: &str) -> Resu
 
     check_attr_empty(&skip_kv, "skip_kv")?;
     check_attr_empty(&skip_ord, "skip_ord")?;
+    check_attr_empty(&serde, "serde")?;
 
     let skip_kv = skip_kv.is_some();
     let skip_ord = skip_ord.is_some();
+    let serde = serde.is_some();
 
-    Ok((skip_kv, skip_ord))
+    Ok((skip_kv, skip_ord, serde))
 }

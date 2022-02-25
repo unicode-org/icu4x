@@ -9,7 +9,7 @@ use crate::utils;
 use syn::spanned::Spanned;
 use syn::{
     parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Field,
-    Fields, Ident, Lit, Visibility,
+    Fields, Ident, Lit,
 };
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
@@ -98,17 +98,25 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
     let arg = &attr[0];
     let ule_name: Ident = parse_quote!(#arg);
 
-    let (skip_kv, skip_ord) = match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
-        Ok(val) => val,
-        Err(e) => return e.to_compile_error(),
-    };
+    let (skip_kv, skip_ord, serde) =
+        match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
+            Ok(val) => val,
+            Err(e) => return e.to_compile_error(),
+        };
+
+    if serde {
+        return Error::new(
+            input.span(),
+            "#[make_ule] does not support #[zerovec::serde]",
+        )
+        .to_compile_error();
+    }
 
     let name = &input.ident;
-    let vis = &input.vis;
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(name, vis, &ule_name, &input, s, skip_ord),
-        Data::Enum(ref e) => make_ule_enum_impl(name, vis, &ule_name, &input, e, skip_ord),
+        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, skip_ord),
+        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, skip_ord),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
@@ -138,7 +146,6 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
 
 fn make_ule_enum_impl(
     name: &Ident,
-    vis: &Visibility,
     ule_name: &Ident,
     input: &DeriveInput,
     enu: &DataEnum,
@@ -198,6 +205,8 @@ fn make_ule_enum_impl(
     } else {
         quote!(#[derive(Ord, PartialOrd)])
     };
+
+    let vis = &input.vis;
 
     // Safety (based on the safety checklist on the ULE trait):
     //  1. ULE type does not include any uninitialized or padding bytes.
@@ -280,7 +289,6 @@ fn get_expr_int(e: &Expr) -> Option<u64> {
 
 fn make_ule_struct_impl(
     name: &Ident,
-    vis: &Visibility,
     ule_name: &Ident,
     input: &DeriveInput,
     struc: &DataStruct,
@@ -298,6 +306,7 @@ fn make_ule_struct_impl(
 
     let semi = utils::semi_for(&struc.fields);
     let repr_attr = utils::repr_for(&struc.fields);
+    let vis = &input.vis;
 
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
