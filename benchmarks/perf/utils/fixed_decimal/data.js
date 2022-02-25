@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645750171671,
+  "lastUpdate": 1645817468627,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -19949,6 +19949,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 93583,
             "range": "± 1137",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "caacf5426577cf9e77523a2ca05a86ca0af04e3f",
+          "message": "Remove @gregtatum from the alerts list (#1639)\n\nThese alerts aren't really actionable by me, and end up being\r\nnotifications that I mostly ignore. It's probably best to just remove\r\nmyself from the list at this time.",
+          "timestamp": "2022-02-25T13:22:12-06:00",
+          "tree_id": "11a1eb314e7048e7504cbf3d02be3ef6b20f95d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/caacf5426577cf9e77523a2ca05a86ca0af04e3f"
+        },
+        "date": 1645817454831,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122085,
+            "range": "± 3126",
             "unit": "ns/iter"
           }
         ]
