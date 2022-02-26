@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645817540494,
+  "lastUpdate": 1645916782333,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24653,6 +24653,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4871,
             "range": "± 293",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b34c72b370fddc504e1ca207099c523cbaed072a",
+          "message": "Bump trim-off-newlines from 1.0.2 to 1.0.3 in /ffi/diplomat/wasm (#1640)\n\nBumps [trim-off-newlines](https://github.com/stevemao/trim-off-newlines) from 1.0.2 to 1.0.3.\r\n- [Release notes](https://github.com/stevemao/trim-off-newlines/releases)\r\n- [Commits](https://github.com/stevemao/trim-off-newlines/compare/v1.0.2...v1.0.3)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: trim-off-newlines\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\n\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2022-02-26T16:56:22-06:00",
+          "tree_id": "6bcf7b12dcc47e524ae96ae9735c13e3b5ceafe6",
+          "url": "https://github.com/unicode-org/icu4x/commit/b34c72b370fddc504e1ca207099c523cbaed072a"
+        },
+        "date": 1645916768691,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2528,
+            "range": "± 105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5092,
+            "range": "± 276",
             "unit": "ns/iter"
           }
         ]
