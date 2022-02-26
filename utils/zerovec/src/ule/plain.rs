@@ -136,38 +136,6 @@ impl AsULE for u8 {
 unsafe impl EqULE for u8 {}
 
 // Safety (based on the safety checklist on the ULE trait):
-//  1. [u8; N] does not include any uninitialized or padding bytes.
-//  2. [u8; N] is aligned to 1 byte.
-//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
-//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
-//  5. The other ULE methods use the default impl.
-//  6. [u8; N] byte equality is semantic equality
-unsafe impl<const N: usize> ULE for [u8; N] {
-    #[inline]
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        if bytes.len() % mem::size_of::<Self>() == 0 {
-            Ok(())
-        } else {
-            Err(ZeroVecError::length::<Self>(bytes.len()))
-        }
-    }
-}
-
-impl<const N: usize> AsULE for [u8; N] {
-    type ULE = Self;
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-unsafe impl<const N: usize> EqULE for [u8; N] {}
-
-// Safety (based on the safety checklist on the ULE trait):
 //  1. i8 does not include any uninitialized or padding bytes.
 //  2. i8 is aligned to 1 byte.
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).

@@ -5,6 +5,35 @@
 use crate::ule::*;
 use core::str;
 
+// Safety (based on the safety checklist on the ULE trait):
+//  1. [T; N] does not include any uninitialized or padding bytes since T is ULE
+//  2. [T; N] is aligned to 1 byte since T is ULE
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
+//  5. The other ULE methods use the default impl.
+//  6. [T; N] byte equality is semantic equality since T is ULE
+unsafe impl<T: ULE, const N: usize> ULE for [T; N] {
+    #[inline]
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        // a slice of multiple Selfs is equivalent to just a larger slice of Ts
+        T::validate_byte_slice(bytes)
+    }
+}
+
+impl<T: ULE, const N: usize> AsULE for [T; N] {
+    type ULE = Self;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+unsafe impl<T: ULE, const N: usize> EqULE for [T; N] {}
+
 // Safety (based on the safety checklist on the VarULE trait):
 //  1. str does not include any uninitialized or padding bytes.
 //  2. str is aligned to 1 byte.
