@@ -285,7 +285,7 @@ pub(crate) struct AndOrPolarityOperandULE(u8);
 unsafe impl ULE for AndOrPolarityOperandULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         for byte in bytes {
-            Operand::new_from_u8(byte & 0b0011_1111).ok_or(ZeroVecError::parse::<Self>())?;
+            Operand::new_from_u8(byte & 0b0011_1111).ok_or_else(ZeroVecError::parse::<Self>)?;
         }
         Ok(())
     }
