@@ -5,11 +5,7 @@
 #![allow(missing_docs)]
 
 use crate::rules::reference;
-use core::{
-    convert::{TryFrom, TryInto},
-    fmt,
-    str::FromStr,
-};
+use core::{convert::TryInto, fmt, str::FromStr};
 use icu_provider::{yoke, zerofrom};
 use zerovec::{
     ule::{AsULE, PairULE, ZeroVecError, ULE},
@@ -289,7 +285,8 @@ pub(crate) struct AndOrPolarityOperandULE(u8);
 unsafe impl ULE for AndOrPolarityOperandULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         for byte in bytes {
-            Operand::try_from(byte & 0b0011_1111).map_err(|_| ZeroVecError::parse::<Self>())?;
+            Operand::new_from_u8(byte & 0b0011_1111)
+                .ok_or_else(|| ZeroVecError::parse::<Self>())?;
         }
         Ok(())
     }

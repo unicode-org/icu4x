@@ -78,7 +78,7 @@ macro_rules! field_type {
             /// versions.
             #[inline]
             pub(crate) fn idx(self) -> u8 {
-                self.into()
+                self as u8
             }
 
             /// Retrieves a field variant from an index.
@@ -98,8 +98,8 @@ macro_rules! field_type {
             /// versions.
             #[inline]
             pub(crate) fn from_idx(idx: u8) -> Result<Self, SymbolError> {
-                Self::try_from(idx)
-                    .map_err(|_| SymbolError::InvalidIndex(idx))
+                Self::new_from_u8(idx)
+                    .ok_or(SymbolError::InvalidIndex(idx))
             }
 
             #[inline]

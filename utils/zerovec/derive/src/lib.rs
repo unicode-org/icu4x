@@ -41,6 +41,10 @@ pub fn varule_derive(input: TokenStream) -> TokenStream {
 ///
 /// This implementation will also by default autogenerate `Ord` and `PartialOrd` on the ULE type based on
 /// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_ord]`
+///
+/// For enums, this implementation will generate a crate-public `fn new_from_u8(value: u8) -> Option<Self>`
+/// method on the main type that allows one to construct the value from a u8. If this method is desired
+/// to be more public, it should be wrapped.
 #[proc_macro_attribute]
 pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);

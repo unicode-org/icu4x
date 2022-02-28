@@ -277,22 +277,17 @@ fn make_ule_enum_impl(
             }
         }
 
-        impl ::core::convert::TryFrom<u8> for #name {
-            type Error = ();
-            fn try_from(value: u8) -> Result<Self, Self::Error> {
+        impl #name {
+            /// Attempt to construct the value from its corresponding integer,
+            /// returning None if not possible
+            pub(crate) fn new_from_u8(value: u8) -> Option<Self> {
                 if value <= #max {
                     unsafe {
-                        Ok(::core::mem::transmute(value))
+                        Some(::core::mem::transmute(value))
                     }
                 } else {
-                    Err(())
+                    None
                 }
-            }
-        }
-
-        impl From<#name> for u8 {
-            fn from(other: #name) -> Self {
-                other as u8
             }
         }
     )
