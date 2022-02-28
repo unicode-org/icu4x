@@ -219,7 +219,7 @@ mod tests {
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
-        let r: Vec<usize> = segmenter.segment_str(&s).collect();
+        let r: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(r, vec![12, 21, 33, 42, 54, 63]);
 
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
