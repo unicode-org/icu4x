@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1645916727591,
+  "lastUpdate": 1646086209266,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21089,6 +21089,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 42881495,
             "range": "± 1479637",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "10595307+mildgravitas@users.noreply.github.com",
+            "name": "mildgravitas",
+            "username": "mildgravitas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d501688aef534f55358f79ff6d2660880cffea88",
+          "message": "Use rayon to add parallelism to datagen (#1600)\n\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2022-02-28T14:01:04-08:00",
+          "tree_id": "191e220f65c9c25657eb3df20bd0adaff29b0934",
+          "url": "https://github.com/unicode-org/icu4x/commit/d501688aef534f55358f79ff6d2660880cffea88"
+        },
+        "date": 1646086196810,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 43783792,
+            "range": "± 98039",
             "unit": "ns/iter"
           }
         ]
