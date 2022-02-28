@@ -20,19 +20,19 @@ unsafe impl<T: ULE, const N: usize> ULE for [T; N] {
     }
 }
 
-impl<T: ULE, const N: usize> AsULE for [T; N] {
-    type ULE = Self;
+impl<T: AsULE, const N: usize> AsULE for [T; N] {
+    type ULE = [T::ULE; N];
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        self
+        self.map(T::to_unaligned)
     }
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
+        unaligned.map(T::from_unaligned)
     }
 }
 
-unsafe impl<T: ULE, const N: usize> EqULE for [T; N] {}
+unsafe impl<T: EqULE, const N: usize> EqULE for [T; N] {}
 
 // Safety (based on the safety checklist on the VarULE trait):
 //  1. str does not include any uninitialized or padding bytes.
