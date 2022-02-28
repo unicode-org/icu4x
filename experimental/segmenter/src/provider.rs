@@ -262,9 +262,8 @@ const THAI_DICTIONARY: &[u8; 224978] = include_bytes!("../tests/testdata/thai.di
 
 impl<'data> Default for UCharDictionaryBreakDataV1<'data> {
     fn default() -> Self {
-        let trie_data = unsafe {
-            core::mem::transmute::<&[u8; 224978], &[u16; (224978 / 2)]>(THAI_DICTIONARY)
-        };
+        let trie_data =
+            unsafe { core::mem::transmute::<&[u8; 224978], &[u16; 112489]>(THAI_DICTIONARY) };
         Self {
             trie_data: ZeroVec::from_slice(trie_data),
         }

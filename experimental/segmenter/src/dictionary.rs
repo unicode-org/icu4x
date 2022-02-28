@@ -164,7 +164,7 @@ mod tests {
 
         // Match case
         let s = "龟山岛龟山岛";
-        let result: Vec<usize> = segmenter.segment_str(&s).collect();
+        let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![9, 18]);
 
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
@@ -173,7 +173,7 @@ mod tests {
 
         // Match case, then no match case
         let s = "エディターエディ";
-        let result: Vec<usize> = segmenter.segment_str(&s).collect();
+        let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![15, 24]);
 
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
@@ -188,16 +188,15 @@ mod tests {
         // dd if=tmp.bin of=khmer.dict bs=1 skip=64
         const KHMER_DICTIONARY: &[u8; 798374] = include_bytes!("../tests/testdata/khmer.dict");
 
-        let trie_data = unsafe {
-            core::mem::transmute::<&[u8; 798374], &[u16; (798374 / 2)]>(KHMER_DICTIONARY)
-        };
+        let trie_data =
+            unsafe { core::mem::transmute::<&[u8; 798374], &[u16; 399187]>(KHMER_DICTIONARY) };
         let data = UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::from_slice(trie_data),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
-        let result: Vec<usize> = segmenter.segment_str(&s).collect();
+        let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![27, 54, 81]);
 
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
@@ -213,7 +212,7 @@ mod tests {
         const LAO_DICTIONARY: &[u8; 292456] = include_bytes!("../tests/testdata/lao.dict");
 
         let trie_data =
-            unsafe { core::mem::transmute::<&[u8; 292456], &[u16; (292456 / 2)]>(LAO_DICTIONARY) };
+            unsafe { core::mem::transmute::<&[u8; 292456], &[u16; 146228]>(LAO_DICTIONARY) };
         let data = UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::from_slice(trie_data),
         };
