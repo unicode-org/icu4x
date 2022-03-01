@@ -4,6 +4,7 @@
 
 use crate::indices::*;
 use crate::language::*;
+use crate::provider::line_data::*;
 use crate::provider::*;
 
 use alloc::vec;
@@ -11,8 +12,6 @@ use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
-
-include!(concat!(env!("OUT_DIR"), "/generated_line_table.rs"));
 
 // Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
@@ -103,9 +102,7 @@ impl Default for LineBreakOptions {
 }
 
 /// Supports loading line break data, and creating line break iterators for different string
-/// encodings. Please see the [module-level documentation] for its usages.
-///
-/// [module-level documentation]: index.html
+/// encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
@@ -303,8 +300,13 @@ fn is_break_utf32_by_loose(
 }
 
 #[inline]
-fn is_break_from_table(rule_table: &LineBreakRuleTable<'_>, left: u8, right: u8) -> bool {
-    let rule = get_break_state_from_table(rule_table, left, right);
+fn is_break_from_table(
+    break_state_table: &LineBreakStateTable<'_>,
+    property_count: u8,
+    left: u8,
+    right: u8,
+) -> bool {
+    let rule = get_break_state_from_table(break_state_table, property_count, left, right);
     if rule == KEEP_RULE {
         return false;
     }
@@ -343,10 +345,15 @@ fn is_non_break_by_keepall(left: u8, right: u8) -> bool {
 }
 
 #[inline]
-fn get_break_state_from_table(rule_table: &LineBreakRuleTable<'_>, left: u8, right: u8) -> i8 {
-    let idx = (left as usize) * (rule_table.property_count as usize) + (right as usize);
+fn get_break_state_from_table(
+    break_state_table: &LineBreakStateTable<'_>,
+    property_count: u8,
+    left: u8,
+    right: u8,
+) -> i8 {
+    let idx = (left as usize) * (property_count as usize) + (right as usize);
     // We use unwrap_or to fall back to the base case and prevent panics on bad data.
-    rule_table.table_data.get(idx).unwrap_or(KEEP_RULE)
+    break_state_table.0.get(idx).unwrap_or(KEEP_RULE)
 }
 
 #[inline]
@@ -394,7 +401,7 @@ pub trait LineBreakType<'l, 's> {
 }
 
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
-/// see the [module-level documentation] for its usages.
+/// see the [module-level documentation](crate) for its usages.
 ///
 /// Lifetimes:
 ///
@@ -402,7 +409,6 @@ pub trait LineBreakType<'l, 's> {
 /// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
-/// [module-level documentation]: index.html
 pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     iter: Y::IterAttr,
     len: usize,
@@ -506,8 +512,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             }
 
             // If break_state is equals or grater than 0, it is alias of property.
-            let mut break_state =
-                get_break_state_from_table(&self.data.rule_table, left_prop, right_prop);
+            let mut break_state = self.get_break_state_from_table(left_prop, right_prop);
             if break_state >= 0_i8 {
                 let mut previous_iter = self.iter.clone();
                 let mut previous_pos_data = self.current_pos_data;
@@ -516,11 +521,8 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     self.current_pos_data = self.iter.next();
                     if self.current_pos_data.is_none() {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
-                        let break_state = get_break_state_from_table(
-                            &self.data.rule_table,
-                            break_state as u8,
-                            EOT,
-                        );
+                        let break_state = self
+                            .get_break_state_from_table(break_state as u8, self.data.eot_property);
                         if break_state == NOT_MATCH_RULE {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
@@ -531,8 +533,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     }
 
                     let prop = self.get_linebreak_property();
-                    break_state =
-                        get_break_state_from_table(&self.data.rule_table, break_state as u8, prop);
+                    break_state = self.get_break_state_from_table(break_state as u8, prop);
                     if break_state < 0 {
                         break;
                     }
@@ -551,7 +552,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 return Some(self.current_pos_data.unwrap().0);
             }
 
-            if is_break_from_table(&self.data.rule_table, left_prop, right_prop) {
+            if self.is_break_from_table(left_prop, right_prop) {
                 return Some(self.current_pos_data.unwrap().0);
             }
         }
@@ -576,6 +577,24 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
 
     fn is_break_by_normal(&self) -> bool {
         is_break_utf32_by_normal(self.current_pos_data.unwrap().1.into(), self.options.ja_zh)
+    }
+
+    fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
+        get_break_state_from_table(
+            &self.data.break_state_table,
+            self.data.property_count,
+            left,
+            right,
+        )
+    }
+
+    fn is_break_from_table(&self, left: u8, right: u8) -> bool {
+        is_break_from_table(
+            &self.data.break_state_table,
+            self.data.property_count,
+            left,
+            right,
+        )
     }
 
     // UAX14 doesn't define line break rules for some languages such as Thai.
@@ -730,9 +749,9 @@ mod tests {
     use super::*;
 
     fn get_linebreak_property(codepoint: char) -> u8 {
-        let property_table = Default::default();
+        let lb_data: LineBreakDataV1 = Default::default();
         get_linebreak_property_with_rule(
-            &property_table,
+            &lb_data.property_table,
             codepoint,
             LineBreakRule::Strict,
             WordBreakRule::Normal,
@@ -758,9 +777,13 @@ mod tests {
     }
 
     fn is_break(left: u8, right: u8) -> bool {
-        let rule_table = Default::default();
-
-        is_break_from_table(&rule_table, left, right)
+        let lb_data: LineBreakDataV1 = Default::default();
+        is_break_from_table(
+            &lb_data.break_state_table,
+            lb_data.property_count,
+            left,
+            right,
+        )
     }
 
     #[test]

@@ -40,9 +40,7 @@ pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTy
 pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
 
 /// Supports loading word break data, and creating word break iterators for different string
-/// encodings. Please see the [module-level documentation] for its usages.
-///
-/// [module-level documentation]: index.html
+/// encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct WordBreakSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
 }

@@ -20,9 +20,7 @@ pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, Sentenc
 pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf16>;
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string
-/// encodings. Please see the [module-level documentation] for its usages.
-///
-/// [module-level documentation]: index.html
+/// encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct SentenceBreakSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,
 }

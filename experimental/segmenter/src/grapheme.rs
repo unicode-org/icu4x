@@ -22,9 +22,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
     RuleBreakIterator<'l, 's, GraphemeClusterBreakTypeUtf16>;
 
 /// Supports loading grapheme cluster break data, and creating grapheme cluster break iterators for
-/// different string encodings. Please see the [module-level documentation] for its usages.
-///
-/// [module-level documentation]: index.html
+/// different string encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct GraphemeClusterBreakSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
 }
