@@ -25,18 +25,6 @@ macro_rules! impl_byte_slice_size {
             pub fn as_bytes(&self) -> &[u8] {
                 &self.0
             }
-
-            pub const fn slice_from_byte_slice(bytes: &[u8]) -> Result<&[Self], ZeroVecError> {
-                let len = bytes.len();
-                if len % $size == 0 {
-                    unsafe { Ok(mem::transmute(bytes)) }
-                } else {
-                    Err(ZeroVecError::InvalidLength {
-                        ty: concat!("RawBytesULE< ", $size, ">"),
-                        len,
-                    })
-                }
-            }
         }
         // Safety (based on the safety checklist on the ULE trait):
         //  1. RawBytesULE does not include any uninitialized or padding bytes.
@@ -66,6 +54,23 @@ macro_rules! impl_byte_slice_size {
                 let len = bytes.len() / $size;
                 // Safe because Self is transparent over [u8; $size]
                 unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
+            }
+
+            /// This function can be used for constructing things that can be passed to
+            /// [`ZeroSlice::from_ule_slice()`](crate::ZeroSlice::from_ule_slice) in a const context, avoiding
+            /// parsing checks. `from_ule_slice()` itself cannot be const yet since there are trait bounds,
+            /// however it is not expensive to call in a non const context.
+            #[inline]
+            pub const fn slice_from_byte_slice(bytes: &[u8]) -> Result<&[Self], ZeroVecError> {
+                let len = bytes.len();
+                if len % $size == 0 {
+                    unsafe { Ok(mem::transmute(bytes)) }
+                } else {
+                    Err(ZeroVecError::InvalidLength {
+                        ty: concat!("RawBytesULE< ", $size, ">"),
+                        len,
+                    })
+                }
             }
 
             /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
