@@ -56,12 +56,20 @@ macro_rules! impl_byte_slice_size {
                 unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
             }
 
-            /// This function can be used for constructing things that can be passed to
-            /// [`ZeroSlice::from_ule_slice()`](crate::ZeroSlice::from_ule_slice) in a const context, avoiding
-            /// parsing checks. `from_ule_slice()` itself cannot be const yet since there are trait bounds,
-            /// however it is not expensive to call in a non const context.
+            /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
+            /// [AsULE::from_unaligned()] on the appropriately sized type.
             #[inline]
-            pub const fn slice_from_byte_slice(bytes: &[u8]) -> Result<&[Self], ZeroVecError> {
+            pub fn as_unsigned_int(&self) -> $unsigned {
+                <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
+            }
+        }
+
+        impl crate::ZeroSlice<$unsigned> {
+            /// This function can be used for constructing ZeroVecs in a const context, avoiding
+            /// parsing checks.
+            ///
+            /// This cannot be generic over T because of current limitations in `const`
+            pub const fn const_from_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
                 let len = bytes.len();
                 if len % $size == 0 {
                     unsafe { Ok(mem::transmute(bytes)) }
@@ -71,13 +79,6 @@ macro_rules! impl_byte_slice_size {
                         len,
                     })
                 }
-            }
-
-            /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
-            /// [AsULE::from_unaligned()] on the appropriately sized type.
-            #[inline]
-            pub fn as_unsigned_int(&self) -> $unsigned {
-                <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
             }
         }
     };
