@@ -35,3 +35,5 @@ tools/datagen/tests/testdata/work_log_bincode
 # Other blanket directory ignores
 **/node_modules/
 **/_debug/
+
+.venv
