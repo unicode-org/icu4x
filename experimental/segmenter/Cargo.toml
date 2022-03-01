@@ -19,7 +19,6 @@ include = [
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
-    "build.rs",
     "Cargo.toml",
     "LICENSE",
     "README.md"
@@ -40,14 +39,6 @@ zerovec = { path = "../../utils/zerovec", features = ["serde", "yoke"] }
 criterion = "0.3"
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["static"] }
 serde-json-core = { version = "0.4", features = ["std"] }
-
-[build-dependencies]
-icu_codepointtrie = { version = "0.3.3", path = "../../utils/codepointtrie" }
-icu_provider_fs = { version = "0.5", path = "../../provider/fs", features = ["deserialize_json"] }
-icu = { version = "0.5", path = "../../components/icu" }
-icu_testdata = { version = "0.5", path = "../../provider/testdata" }
-serde = { version = "1.0", features = ["derive"] }
-toml = "0.5"
 
 [lib]
 path = "src/lib.rs"
