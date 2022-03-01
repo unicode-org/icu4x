@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646086285652,
+  "lastUpdate": 1646095174545,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21767,6 +21767,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 234145,
             "range": "± 28428",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1a4e610165ff33eea11c25271915058ca1bbf5eb",
+          "message": "Bring LineBreakDataV1 data structure closer to RuleBreakDataV1 (#1634)\n\n* Align LineBreakDataV1 with RuleBreakDataV1\r\n\r\nMake LineBreakDataV1 data more similar to RuleBreakDataV1 via:\r\n\r\n- Include generated_line_table.rs in `line_data` mod in provider.rs.\r\n- Move `property_count` from LineBreakRuleTable into LineBreakDataV1.\r\n\r\n* Rename LineBreakRuleTable to LineBreakStateTable\r\n\r\nIt's because we have RuleBreakDataV1::RuleBreakStateTable.\r\n\r\n* Add more fields from line data to LineBreakDataV1\r\n\r\nCurrently, only `eot_property` is used in LineBreakIterator.\r\n\r\n* Use `crate` link to refer to module-level documentation\r\n\r\nhttps://doc.rust-lang.org/rustdoc/linking-to-items-by-name.html?highlight=super#valid-links\r\n\r\n* Expand the types to export in line mod",
+          "timestamp": "2022-02-28T16:28:36-08:00",
+          "tree_id": "6e627e63dae593b460d6b22d45e0525d7663c44f",
+          "url": "https://github.com/unicode-org/icu4x/commit/1a4e610165ff33eea11c25271915058ca1bbf5eb"
+        },
+        "date": 1646095160434,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 100478,
+            "range": "± 10545",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 990221,
+            "range": "± 111986",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 224564,
+            "range": "± 13356",
             "unit": "ns/iter"
           }
         ]
