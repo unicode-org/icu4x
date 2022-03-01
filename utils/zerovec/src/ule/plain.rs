@@ -25,6 +25,18 @@ macro_rules! impl_byte_slice_size {
             pub fn as_bytes(&self) -> &[u8] {
                 &self.0
             }
+
+            pub const fn slice_from_byte_slice(bytes: &[u8]) -> Result<&[Self], ZeroVecError> {
+                let len = bytes.len();
+                if len % $size == 0 {
+                    unsafe { Ok(mem::transmute(bytes)) }
+                } else {
+                    Err(ZeroVecError::InvalidLength {
+                        ty: concat!("RawBytesULE< ", $size, ">"),
+                        len,
+                    })
+                }
+            }
         }
         // Safety (based on the safety checklist on the ULE trait):
         //  1. RawBytesULE does not include any uninitialized or padding bytes.
