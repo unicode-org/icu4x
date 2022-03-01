@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646095199638,
+  "lastUpdate": 1646101161389,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10223,6 +10223,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dc36207f4f9e774a014fb1a692b4bf1726f7df49"
         },
         "date": 1646095186685,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a70dc0d6686307f7a1932fa6280fd55984c2f6c5",
+          "message": "Add basic codespaces configuration (#1646)",
+          "timestamp": "2022-02-28T18:17:32-08:00",
+          "tree_id": "4b52486d0c18117ba081beaad6749885a37878da",
+          "url": "https://github.com/unicode-org/icu4x/commit/a70dc0d6686307f7a1932fa6280fd55984c2f6c5"
+        },
+        "date": 1646101147778,
         "tool": "ndjson",
         "benches": [
           {
