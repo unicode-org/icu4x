@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646095613708,
+  "lastUpdate": 1646101558878,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20099,6 +20099,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 110354,
             "range": "± 2128",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a70dc0d6686307f7a1932fa6280fd55984c2f6c5",
+          "message": "Add basic codespaces configuration (#1646)",
+          "timestamp": "2022-02-28T18:17:32-08:00",
+          "tree_id": "4b52486d0c18117ba081beaad6749885a37878da",
+          "url": "https://github.com/unicode-org/icu4x/commit/a70dc0d6686307f7a1932fa6280fd55984c2f6c5"
+        },
+        "date": 1646101548138,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 90920,
+            "range": "± 5408",
             "unit": "ns/iter"
           }
         ]
