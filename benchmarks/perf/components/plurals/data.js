@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646095733828,
+  "lastUpdate": 1646101762938,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28223,6 +28223,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 15264,
             "range": "± 55",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a70dc0d6686307f7a1932fa6280fd55984c2f6c5",
+          "message": "Add basic codespaces configuration (#1646)",
+          "timestamp": "2022-02-28T18:17:32-08:00",
+          "tree_id": "4b52486d0c18117ba081beaad6749885a37878da",
+          "url": "https://github.com/unicode-org/icu4x/commit/a70dc0d6686307f7a1932fa6280fd55984c2f6c5"
+        },
+        "date": 1646101748568,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 975,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6546,
+            "range": "± 346",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 18054,
+            "range": "± 1317",
             "unit": "ns/iter"
           }
         ]
