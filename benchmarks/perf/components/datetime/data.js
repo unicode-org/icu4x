@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646095174545,
+  "lastUpdate": 1646095743057,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21809,6 +21809,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 224564,
             "range": "± 13356",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc36207f4f9e774a014fb1a692b4bf1726f7df49",
+          "message": "Use zerovec proc macros where possible, get rid of num_enum dep (#1642)\n\n* Add ULE impl for byte arrays\r\n\r\n* Use zerovec proc macro in provider\r\n\r\n* Relax requirement that enums must be in order\r\n\r\n* Move GeneralCategory over to make_ule\r\n\r\n* convert the rest of the enums to ule\r\n\r\n* don't export ULE types\r\n\r\n* Move AndOrPolarityOperand to separate type\r\n\r\n* Move to AndOrPolarityOperandULE\r\n\r\n* switch to make_varule\r\n\r\n* Add manual indices to macro\r\n\r\n* Use zerovec::make_ule instead of num_enum in datetime\r\n\r\n* Get rid of num_enum in plurals\r\n\r\n* make array AsULE impl work on T:AsULE\r\n\r\n* Use inherent method returning Option instead",
+          "timestamp": "2022-02-28T16:38:15-08:00",
+          "tree_id": "3f08de19e4d27720c6f894967bbfd011c5c7155d",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc36207f4f9e774a014fb1a692b4bf1726f7df49"
+        },
+        "date": 1646095729387,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 86266,
+            "range": "± 1493",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 937405,
+            "range": "± 16389",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 201215,
+            "range": "± 4623",
             "unit": "ns/iter"
           }
         ]
