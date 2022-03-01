@@ -275,7 +275,39 @@ where
         }
     }
 
+    /// Casts a `ZeroVec<T>` to a compatible `ZeroVec<P>`.
+    ///
+    /// `T` and `P` are compatible if they have the same `ULE` representation.
+    ///
+    /// If the `ULE`s of `T` and `P` are different types but have the same size,
+    /// use [`Self::try_into_converted()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    ///
+    /// let zerovec_u16: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// assert_eq!(zerovec_u16.get(3), Some(32973));
+    ///
+    /// let zerovec_i16: ZeroVec<i16> = zerovec_u16.cast();
+    /// assert_eq!(zerovec_i16.get(3), Some(-32563));
+    /// ```
+    pub fn cast<P>(self) -> ZeroVec<'a, P>
+    where
+        P: AsULE<ULE = T::ULE>,
+    {
+        match self {
+            Self::Owned(v) => ZeroVec::Owned(v),
+            Self::Borrowed(v) => ZeroVec::Borrowed(v),
+        }
+    }
+
     /// Converts a `ZeroVec<T>` into a `ZeroVec<P>`, retaining the current ownership model.
+    ///
+    /// If `T` and `P` have the exact same `ULE`, use [`Self::cast()`].
     ///
     /// # Panics
     ///
