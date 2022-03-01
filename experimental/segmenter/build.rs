@@ -735,9 +735,4 @@ fn generate_rule_segmenter_table(file_name: &str, toml_data: &[u8], provider: &F
 
 fn main() {
     println!("cargo:rerun-if-changed=data");
-
-    const LINE_SEGMENTER_TOML: &[u8] = include_bytes!("data/line.toml");
-
-    let provider = icu_testdata::get_provider();
-    generate_rule_segmenter_table("generated_line_table.rs", LINE_SEGMENTER_TOML, &provider);
 }

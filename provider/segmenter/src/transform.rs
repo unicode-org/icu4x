@@ -304,7 +304,14 @@ impl SegmenterRuleProvider {
         // UAX29 defines break property until U+0xE01EF
         const UAX29_CODEPOINT_TABLE_LEN: usize = 0xe0400;
 
-        let mut properties_map = vec![0; UAX29_CODEPOINT_TABLE_LEN];
+        // The property values of codepoints >= U+0x20000 are built into the line segmenter.
+        const UAX14_CODEPOINT_TABLE_LEN: usize = 0x20000;
+
+        let mut properties_map = if segmenter.segmenter_type == "line" {
+            vec![0; UAX14_CODEPOINT_TABLE_LEN]
+        } else {
+            vec![0; UAX29_CODEPOINT_TABLE_LEN]
+        };
         let mut properties_names = Vec::<String>::new();
         let mut simple_properties_count = 0;
 
@@ -607,6 +614,20 @@ impl SegmenterRuleProvider {
     }
 }
 
+impl ResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
+    fn load_resource(
+        &self,
+        _req: &DataRequest,
+    ) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
+        let break_data = self.generate_rule_break_data(LineBreakDataV1Marker::KEY)?;
+
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(break_data)),
+        })
+    }
+}
+
 impl ResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
     fn load_resource(
         &self,
@@ -652,12 +673,19 @@ impl ResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
 icu_provider::impl_dyn_provider!(
     SegmenterRuleProvider,
     [
+        LineBreakDataV1Marker,
         GraphemeClusterBreakDataV1Marker,
         WordBreakDataV1Marker,
         SentenceBreakDataV1Marker,
     ],
     SERDE_SE
 );
+
+impl IterableResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
+    fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        Ok(Box::new(core::iter::once(ResourceOptions::default())))
+    }
+}
 
 impl IterableResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
     fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {

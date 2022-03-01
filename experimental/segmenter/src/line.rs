@@ -4,8 +4,8 @@
 
 use crate::indices::*;
 use crate::language::*;
-use crate::provider::line_data::*;
 use crate::provider::*;
+use crate::symbols::*;
 
 use alloc::vec;
 use alloc::vec::Vec;
@@ -173,14 +173,14 @@ impl LineBreakSegmenter {
 }
 
 fn get_linebreak_property_utf32_with_rule(
-    property_table: &LineBreakPropertyTable<'_>,
+    property_table: &RuleBreakPropertyTable<'_>,
     codepoint: u32,
     line_break_rule: LineBreakRule,
     word_break_rule: WordBreakRule,
 ) -> u8 {
     if codepoint < 0x20000 {
         let codepoint = codepoint as usize;
-        let prop = property_table[codepoint / 1024][(codepoint & 0x3ff)];
+        let prop = property_table.0.get(codepoint).unwrap_or(0);
 
         if word_break_rule == WordBreakRule::BreakAll
             || line_break_rule == LineBreakRule::Loose
@@ -208,14 +208,14 @@ fn get_linebreak_property_utf32_with_rule(
 }
 
 #[inline]
-fn get_linebreak_property_latin1(property_table: &LineBreakPropertyTable<'_>, codepoint: u8) -> u8 {
+fn get_linebreak_property_latin1(property_table: &RuleBreakPropertyTable<'_>, codepoint: u8) -> u8 {
     let codepoint = codepoint as usize;
-    property_table[codepoint / 1024][(codepoint & 0x3ff)]
+    property_table.0.get(codepoint).unwrap_or(0)
 }
 
 #[inline]
 fn get_linebreak_property_with_rule(
-    property_table: &LineBreakPropertyTable<'_>,
+    property_table: &RuleBreakPropertyTable<'_>,
     codepoint: char,
     linebreak_rule: LineBreakRule,
     wordbreak_rule: WordBreakRule,
@@ -301,7 +301,7 @@ fn is_break_utf32_by_loose(
 
 #[inline]
 fn is_break_from_table(
-    break_state_table: &LineBreakStateTable<'_>,
+    break_state_table: &RuleBreakStateTable<'_>,
     property_count: u8,
     left: u8,
     right: u8,
@@ -346,7 +346,7 @@ fn is_non_break_by_keepall(left: u8, right: u8) -> bool {
 
 #[inline]
 fn get_break_state_from_table(
-    break_state_table: &LineBreakStateTable<'_>,
+    break_state_table: &RuleBreakStateTable<'_>,
     property_count: u8,
     left: u8,
     right: u8,
@@ -357,7 +357,7 @@ fn get_break_state_from_table(
 }
 
 #[inline]
-fn use_complex_breaking_utf32(property_table: &LineBreakPropertyTable<'_>, codepoint: u32) -> bool {
+fn use_complex_breaking_utf32(property_table: &RuleBreakPropertyTable<'_>, codepoint: u32) -> bool {
     let line_break_property = get_linebreak_property_utf32_with_rule(
         property_table,
         codepoint,
@@ -414,7 +414,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
     result_cache: Vec<usize>,
-    data: &'l LineBreakDataV1<'l>,
+    data: &'l RuleBreakDataV1<'l>,
     options: &'l LineBreakOptions,
 }
 
@@ -749,7 +749,13 @@ mod tests {
     use super::*;
 
     fn get_linebreak_property(codepoint: char) -> u8 {
-        let lb_data: LineBreakDataV1 = Default::default();
+        let provider = icu_testdata::get_provider();
+        let payload: DataPayload<LineBreakDataV1Marker> = provider
+            .load_resource(&DataRequest::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let lb_data: &RuleBreakDataV1 = payload.get();
         get_linebreak_property_with_rule(
             &lb_data.property_table,
             codepoint,
@@ -777,7 +783,13 @@ mod tests {
     }
 
     fn is_break(left: u8, right: u8) -> bool {
-        let lb_data: LineBreakDataV1 = Default::default();
+        let provider = icu_testdata::get_provider();
+        let payload: DataPayload<LineBreakDataV1Marker> = provider
+            .load_resource(&DataRequest::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let lb_data: &RuleBreakDataV1 = payload.get();
         is_break_from_table(
             &lb_data.break_state_table,
             lb_data.property_count,
@@ -882,7 +894,7 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let provider = icu_provider::inv::InvariantDataProvider;
+        let provider = icu_testdata::get_provider();
         let segmenter = LineBreakSegmenter::try_new(&provider).expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");

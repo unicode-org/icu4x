@@ -23,7 +23,7 @@
 //!```rust
 //! use icu_segmenter::LineBreakSegmenter;
 //!
-//! let provider = icu_provider::inv::InvariantDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = LineBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
@@ -40,7 +40,7 @@
 //! options.line_break_rule = LineBreakRule::Strict;
 //! options.word_break_rule = WordBreakRule::BreakAll;
 //! options.ja_zh = false;
-//! let provider = icu_provider::inv::InvariantDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = LineBreakSegmenter::try_new_with_options(&provider, options)
 //!     .expect("Data exists");
 //!
@@ -53,7 +53,7 @@
 //! ```rust
 //! use icu_segmenter::LineBreakSegmenter;
 //!
-//! let provider = icu_provider::inv::InvariantDataProvider;
+//! let provider = icu_testdata::get_provider();
 //! let segmenter = LineBreakSegmenter::try_new(&provider)
 //!     .expect("Data exists");
 //!
@@ -185,8 +185,9 @@ pub use crate::line::{
     WordBreakRule,
 };
 pub use crate::provider::{
-    GraphemeClusterBreakDataV1Marker, RuleBreakDataV1, RuleBreakPropertyTable, RuleBreakStateTable,
-    SentenceBreakDataV1Marker, WordBreakDataV1Marker, ALL_KEYS,
+    GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, RuleBreakDataV1,
+    RuleBreakPropertyTable, RuleBreakStateTable, SentenceBreakDataV1Marker, WordBreakDataV1Marker,
+    ALL_KEYS,
 };
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
