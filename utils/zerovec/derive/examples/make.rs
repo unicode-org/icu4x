@@ -29,6 +29,19 @@ enum Enum {
     F = 5,
 }
 
+#[make_ule(OutOfOrderEnumULE)]
+#[repr(u8)]
+#[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
+#[allow(unused)]
+enum OutOfOrderEnum {
+    A = 0,
+    B = 1,
+    E = 3,
+    FooBar = 4,
+    D = 2,
+    F = 5,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[make_ule(NoKVULE)]
 #[zerovec::skip_kv]
