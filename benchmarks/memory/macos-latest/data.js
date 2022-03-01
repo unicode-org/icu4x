@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646095822167,
+  "lastUpdate": 1646096266799,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Heap – macos-latest": [
@@ -110999,6 +110999,192 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1a4e610165ff33eea11c25271915058ca1bbf5eb"
         },
         "date": 1646095806929,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "icu_datetime/work_log – Total Heap Allocations",
+            "value": 1551,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at Global Memory Max",
+            "value": 1255,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at End of Program Execution",
+            "value": 1024,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Total Heap Allocations",
+            "value": 514,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at Global Memory Max",
+            "value": 305,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Total Heap Allocations",
+            "value": 295,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at Global Memory Max",
+            "value": 214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Total Heap Allocations",
+            "value": 2,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at Global Memory Max",
+            "value": 2,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Total Heap Allocations",
+            "value": 2,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at Global Memory Max",
+            "value": 2,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Total Heap Allocations",
+            "value": 1008,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at Global Memory Max",
+            "value": 388,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Total Heap Allocations",
+            "value": 15,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at Global Memory Max",
+            "value": 15,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Total Heap Allocations",
+            "value": 1240,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at Global Memory Max",
+            "value": 1040,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at End of Program Execution",
+            "value": 1024,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Total Heap Allocations",
+            "value": 448,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Heap at Global Memory Max",
+            "value": 256,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc36207f4f9e774a014fb1a692b4bf1726f7df49",
+          "message": "Use zerovec proc macros where possible, get rid of num_enum dep (#1642)\n\n* Add ULE impl for byte arrays\r\n\r\n* Use zerovec proc macro in provider\r\n\r\n* Relax requirement that enums must be in order\r\n\r\n* Move GeneralCategory over to make_ule\r\n\r\n* convert the rest of the enums to ule\r\n\r\n* don't export ULE types\r\n\r\n* Move AndOrPolarityOperand to separate type\r\n\r\n* Move to AndOrPolarityOperandULE\r\n\r\n* switch to make_varule\r\n\r\n* Add manual indices to macro\r\n\r\n* Use zerovec::make_ule instead of num_enum in datetime\r\n\r\n* Get rid of num_enum in plurals\r\n\r\n* make array AsULE impl work on T:AsULE\r\n\r\n* Use inherent method returning Option instead",
+          "timestamp": "2022-02-28T16:38:15-08:00",
+          "tree_id": "3f08de19e4d27720c6f894967bbfd011c5c7155d",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc36207f4f9e774a014fb1a692b4bf1726f7df49"
+        },
+        "date": 1646096260664,
         "tool": "ndjson",
         "benches": [
           {
