@@ -16,6 +16,7 @@
 //! Gregorian calendars respectively.
 extern crate alloc;
 
+#[allow(indexing_slicing, expect_used, panic)]
 pub mod arithmetic;
 pub mod buddhist;
 mod calendar;
