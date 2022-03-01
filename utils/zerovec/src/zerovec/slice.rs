@@ -5,6 +5,7 @@
 use super::*;
 use alloc::boxed::Box;
 use core::cmp::Ordering;
+use core::mem;
 use core::ops::Range;
 
 /// A zero-copy "slice", i.e. the zero-copy version of `[T]`. This behaves
@@ -29,6 +30,14 @@ where
     #[inline]
     pub fn as_zerovec(&self) -> ZeroVec<'_, T> {
         ZeroVec::Borrowed(&self.0)
+    }
+
+    /// Attempt to construct a `&ZeroSlice<T>` from a byte slice, returning an error
+    /// if it's not a valid byte sequence
+    pub fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+        T::ULE::validate_byte_slice(bytes)?;
+        // safe since the bytes have been validated
+        unsafe { Ok(mem::transmute(bytes)) }
     }
 
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs

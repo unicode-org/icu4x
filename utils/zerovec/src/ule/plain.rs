@@ -6,6 +6,7 @@
 //! ULE implementation for Plain Old Data types, including all sized integers.
 
 use super::*;
+use crate::ZeroSlice;
 
 /// A u8 array of little-endian data with infallible conversions to and from &[u8].
 #[repr(transparent)]
@@ -64,12 +65,14 @@ macro_rules! impl_byte_slice_size {
             }
         }
 
-        impl crate::ZeroSlice<$unsigned> {
+        impl ZeroSlice<$unsigned> {
             /// This function can be used for constructing ZeroVecs in a const context, avoiding
             /// parsing checks.
             ///
-            /// This cannot be generic over T because of current limitations in `const`
-            pub const fn const_from_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+            /// This cannot be generic over T because of current limitations in `const`, but if
+            /// this method is needed in a non-const context, check out [`ZeroSlice::parse_byte_slice()`]
+            /// instead.
+            pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
                 let len = bytes.len();
                 if len % $size == 0 {
                     unsafe { Ok(mem::transmute(bytes)) }
