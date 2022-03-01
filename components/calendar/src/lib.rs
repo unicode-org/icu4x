@@ -16,7 +16,7 @@
 //! Gregorian calendars respectively.
 extern crate alloc;
 
-#[allow(indexing_slicing, expect_used, panic)]
+#[allow(clippy::indexing_slicing, clippy::expect_used, clippy::panic)]
 pub mod arithmetic;
 pub mod buddhist;
 mod calendar;
