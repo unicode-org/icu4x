@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646101762938,
+  "lastUpdate": 1646177624957,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28265,6 +28265,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18054,
             "range": "± 1317",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "50c5f7ab26ad24e04a7197e1c3d1c00e099147eb",
+          "message": "Changes to CI and benchmarks: (#1643)\n\n* Changes to CI and benchmarks:\r\n- Access the benchmark result data that is to be forwarded to the\r\n  publishing repository directly from the gh-pages branch. No need\r\n  to upload and download artifacts anymore.\r\n- Set retention period to 1 day for the one remaining artifact, which is from\r\n  doc generation.\r\n- Datasize benchmark results are forwarded to the publishing repository.\r\n\r\nUpdates the root README.md accordingly.\r\n\r\nSolves #1578.\r\n\r\n* Update README.md\r\n\r\nCo-authored-by: Elango <elango@unicode.org>\r\n\r\nCo-authored-by: Elango <elango@unicode.org>",
+          "timestamp": "2022-03-01T15:22:47-08:00",
+          "tree_id": "22eec369ac63d5fc8fc87a7045bded9f659e9896",
+          "url": "https://github.com/unicode-org/icu4x/commit/50c5f7ab26ad24e04a7197e1c3d1c00e099147eb"
+        },
+        "date": 1646177610160,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 993,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6552,
+            "range": "± 690",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17696,
+            "range": "± 1327",
             "unit": "ns/iter"
           }
         ]
