@@ -145,19 +145,19 @@ impl<'a> DictionarySegmenter<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use zerovec::ule::AsULE;
     use zerovec::ZeroVec;
 
     #[test]
     fn cj_dictionary_test() {
-        // This test data is created by the following using ICU4X tools
+        // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/cjdict.txt tmp.bin
         // dd if=tmp.bin of=cjdict.dict bs=1 skip=64
-        const CJ_DICTIONARY: &[u8; 2003390] = include_bytes!("../tests/testdata/cjdic.dict");
+        const CJ_DICTIONARY: [<u16 as AsULE>::ULE; 1001695] =
+            unsafe { core::mem::transmute(*include_bytes!("../tests/testdata/cjdic.dict")) };
 
-        let trie_data =
-            unsafe { core::mem::transmute::<&[u8; 2003390], &[u16; 1001695]>(CJ_DICTIONARY) };
         let data = UCharDictionaryBreakDataV1 {
-            trie_data: ZeroVec::from_slice(trie_data),
+            trie_data: ZeroVec::Borrowed(&CJ_DICTIONARY),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
@@ -183,15 +183,14 @@ mod tests {
 
     #[test]
     fn khmer_dictionary_test() {
-        // This test data is created by the following using ICU4X tools
+        // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/khmerdict.txt tmp.bin
         // dd if=tmp.bin of=khmer.dict bs=1 skip=64
-        const KHMER_DICTIONARY: &[u8; 798374] = include_bytes!("../tests/testdata/khmer.dict");
+        const KHMER_DICTIONARY: [<u16 as AsULE>::ULE; 399187] =
+            unsafe { core::mem::transmute(*include_bytes!("../tests/testdata/khmer.dict")) };
 
-        let trie_data =
-            unsafe { core::mem::transmute::<&[u8; 798374], &[u16; 399187]>(KHMER_DICTIONARY) };
         let data = UCharDictionaryBreakDataV1 {
-            trie_data: ZeroVec::from_slice(trie_data),
+            trie_data: ZeroVec::Borrowed(&KHMER_DICTIONARY),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
@@ -206,15 +205,14 @@ mod tests {
 
     #[test]
     fn lao_dictionary_test() {
-        // This test data is created by the following using ICU4X tools
+        // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/laodict.txt tmp.bin
         // dd if=tmp.bin of=lao.dict bs=1 skip=64
-        const LAO_DICTIONARY: &[u8; 292456] = include_bytes!("../tests/testdata/lao.dict");
+        const LAO_DICTIONARY: [<u16 as AsULE>::ULE; 146228] =
+            unsafe { core::mem::transmute(*include_bytes!("../tests/testdata/lao.dict")) };
 
-        let trie_data =
-            unsafe { core::mem::transmute::<&[u8; 292456], &[u16; 146228]>(LAO_DICTIONARY) };
         let data = UCharDictionaryBreakDataV1 {
-            trie_data: ZeroVec::from_slice(trie_data),
+            trie_data: ZeroVec::Borrowed(&LAO_DICTIONARY),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
