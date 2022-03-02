@@ -15,7 +15,7 @@ mod varule;
 ///
 /// This can be attached to `Copy` structs containing only ULE types.
 ///
-/// Most of the time, it is recommended one use [`#[make_ule]`](make_ule) instead of defining
+/// Most of the time, it is recommended one use [`#[make_ule]`](macro@make_ule) instead of defining
 /// a custom ULE type.
 #[proc_macro_derive(ULE)]
 pub fn ule_derive(input: TokenStream) -> TokenStream {
@@ -27,7 +27,7 @@ pub fn ule_derive(input: TokenStream) -> TokenStream {
 ///
 /// This can be attached to structs containing only ULE types with one VarULE type at the end.
 ///
-/// Most of the time, it is recommended one use [`#[make_varule]`](make_varule) instead of defining
+/// Most of the time, it is recommended one use [`#[make_varule]`](macro@make_varule) instead of defining
 /// a custom VarULE type.
 #[proc_macro_derive(VarULE)]
 pub fn varule_derive(input: TokenStream) -> TokenStream {
