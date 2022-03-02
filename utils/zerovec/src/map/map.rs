@@ -22,6 +22,10 @@ use core::iter::FromIterator;
 /// values, sorted by the keys. Therefore, all types used in `ZeroMap` need to work with either
 /// [`ZeroVec`] or [`VarZeroVec`].
 ///
+/// This does mean that for fixed-size data, one must use the regular type (`u32`, `u8`, `char`, etc),
+/// whereas for variable-size data, `ZeroMap` will use the dynamically sized version (`str` not `String`,
+/// `ZeroSlice` not `ZeroVec`, `FooULE` not `Foo` for custom types)
+///
 /// # Examples
 ///
 /// ```
@@ -135,6 +139,10 @@ where
     }
 
     /// Get the value associated with `key`, if it exists.
+    ///
+    /// For fixed-size ([`AsULE`]) `V` types, this _will_ return
+    /// their corresponding [`AsULE::ULE`] type. If you wish to work with the `V`
+    /// type directly, [`Self::get_copied()`] exists for convenience.
     ///
     /// ```rust
     /// use zerovec::ZeroMap;
