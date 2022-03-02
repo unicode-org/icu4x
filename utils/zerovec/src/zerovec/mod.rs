@@ -23,11 +23,17 @@ use core::ops::Deref;
 ///
 /// `T` must implement [`AsULE`], which is auto-implemented for a number of built-in types,
 /// including all fixed-width multibyte integers. For variable-width types like [`str`],
-/// see [`VarZeroVec`](crate::VarZeroVec).
+/// see [`VarZeroVec`](crate::VarZeroVec). [`zerovec::make_ule`](crate::make_ule) may
+/// be used to automatically implement [`AsULE`] for a type and generate the underlying [`ULE`] type.
 ///
 /// Typically, the zero-copy equivalent of a `Vec<T>` will simply be `ZeroVec<'a, T>`.
 ///
 /// Most of the methods on `ZeroVec<'a, T>` come from its [`Deref`] implementation to [`ZeroSlice<T>`](ZeroSlice).
+///
+/// For creating zero-copy vectors of fixed-size types, see [`VarZeroVec`](crate::VarZeroVec).
+///
+/// `ZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from
+/// owned data (and then mutated!) but can also borrow from some buffer.
 ///
 /// # Example
 ///
