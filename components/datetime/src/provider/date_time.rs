@@ -380,6 +380,6 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
         };
         symbols
             .get(&era_code.0)
-            .ok_or_else(|| DateTimeFormatError::MissingEraSymbol(era_code.0))
+            .ok_or(|| DateTimeFormatError::MissingEraSymbol(era_code.0))
     }
 }
