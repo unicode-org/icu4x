@@ -27,7 +27,37 @@ use core::ops::Deref;
 ///
 /// Typically, the zero-copy equivalent of a `Vec<T>` will simply be `ZeroVec<'a, T>`.
 ///
-/// Most of the methods on `ZeroVec<'a, T>` come from its [`Deref`] implementation to [`ZeroSlice<T>`](ZeroSlice)
+/// Most of the methods on `ZeroVec<'a, T>` come from its [`Deref`] implementation to [`ZeroSlice<T>`](ZeroSlice).
+///
+/// # Example
+///
+/// ```
+/// use zerovec::ZeroVec;
+///
+/// // The little-endian bytes correspond to the numbers on the following line.
+/// let nums: &[u16] = &[211, 281, 421, 461];
+///
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct Data<'a> {
+///     #[serde(borrow)]
+///     nums: ZeroVec<'a, u16>,
+/// }
+///
+/// // The owned version will allocate
+/// let data = Data { nums: ZeroVec::alloc_from_slice(nums) };
+/// let bincode_bytes = bincode::serialize(&data)
+///     .expect("Serialization should be successful");
+///
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
+///
+/// // This deserializes without allocation!
+/// assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
+/// assert_eq!(deserialized.nums.get(2), Some(421));
+/// assert_eq!(deserialized.nums, nums);
+/// ```
+///
+/// [`ule`]: crate::ule
 ///
 /// # How it Works
 ///
@@ -42,23 +72,6 @@ use core::ops::Deref;
 /// array; `ZeroVec<T>` deserializes 80% faster than `Vec<T>` in Serde Bincode, and it does not
 /// require any heap allocations.
 ///
-/// # Example
-///
-/// ```
-/// use zerovec::ZeroVec;
-///
-/// // The little-endian bytes correspond to the numbers on the following line.
-/// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-/// let nums: &[u16] = &[211, 281, 421, 461];
-///
-/// let zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).unwrap();
-///
-/// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
-/// assert_eq!(zerovec.get(2), Some(421));
-/// assert_eq!(zerovec, nums);
-/// ```
-///
-/// [`ule`]: crate::ule
 #[non_exhaustive]
 #[derive(Clone)]
 pub enum ZeroVec<'a, T>
