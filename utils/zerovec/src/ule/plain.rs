@@ -80,6 +80,10 @@ macro_rules! impl_byte_slice_size {
                         // Most of the slice manipulation functions are not yet const-stable,
                         // so we construct a slice with the right metadata and cast its type
                         // https://rust-lang.github.io/unsafe-code-guidelines/layout/pointers.html#notes
+                        //
+                        // Safety:
+                        // * [u8] and [RawBytesULE<N>] have different lengths but the same alignment
+                        // * ZeroSlice<$unsigned> is repr(transparent) with [RawBytesULE<N>]
                         let [ptr, _]: [usize; 2] = mem::transmute(bytes);
                         let new_len = len / $size;
                         let raw = [ptr, new_len];
