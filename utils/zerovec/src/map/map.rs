@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::ule::AsULE;
-use crate::{ZeroSlice, ZeroVec};
+use crate::ule::{AsULE, EncodeAsVarULE, VarULE};
+use crate::{VarZeroVec, ZeroSlice, ZeroVec};
 use alloc::borrow::Borrow;
 use core::cmp::Ordering;
 use core::fmt;
@@ -272,6 +272,51 @@ where
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
+}
+
+impl<'a, K, V> ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a, Container = VarZeroVec<'a, V>> + ?Sized,
+    V: VarULE,
+{
+    /// Same as `insert()`, but allows using [EncodeAsVarULE](crate::ule::EncodeAsVarULE)
+    /// types with the value to avoid an extra allocation when dealing with custom ULE types.
+    ///
+    /// ```rust
+    /// use zerovec::ZeroMap;
+    /// use std::borrow::Cow;
+    ///
+    /// #[zerovec::make_varule(PersonULE)]
+    /// #[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
+    /// struct Person<'a> {
+    ///     age: u8,
+    ///     name: Cow<'a, str>    
+    /// }
+    ///
+    /// let mut map: ZeroMap<u32, PersonULE> = ZeroMap::new();
+    /// map.insert_var_v(&1, &Person { age: 20, name: "Joseph".into()    });
+    /// map.insert_var_v(&1, &Person { age: 35, name: "Carla".into()     });
+    /// assert_eq!(&map.get(&1).unwrap().name, "Carla");
+    /// assert!(map.get(&3).is_none());
+    /// ```
+    pub fn insert_var_v<VE: EncodeAsVarULE<V>>(&mut self, key: &K, value: &VE) -> Option<Box<V>> {
+        match self.keys.zvl_binary_search(key) {
+            Ok(index) => {
+                let ret = self.values.get(index).expect("invalid index").to_boxed();
+                self.values.make_mut().replace(index, value);
+                Some(ret)
+            }
+            Err(index) => {
+                self.keys.zvl_insert(index, key);
+                self.values.make_mut().insert(index, value);
+                None
+            }
+        }
+    }
+
+    // insert_var_k, insert_var_kv are not possible since one cannot perform the binary search with EncodeAsVarULE
+    // though we might be able to do it in the future if we add a trait for cross-Ord requirements
 }
 
 impl<'a, K, V> ZeroMap<'a, K, V>

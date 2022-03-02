@@ -138,9 +138,9 @@
 //! let important_dates = ZeroVec::alloc_from_slice(&[Date { y: 1943, m: 3, d: 20}, Date { y: 1976, m: 8, d: 2}, Date { y: 1998, m: 2, d: 15}]);
 //! let important_people = VarZeroVec::from(&[person1.clone(), person2.clone()]);
 //! let mut birthdays_to_people: ZeroMap<Date, PersonULE> = ZeroMap::new();
-//! // (temporary)
-//! birthdays_to_people.insert(&person1.birthday, &encode_varule_to_box(&person1));
-//! birthdays_to_people.insert(&person2.birthday, &encode_varule_to_box(&person2));
+//! // `.insert_var_v()` is slightly more convenient over `.insert()` for custom ULE types
+//! birthdays_to_people.insert_var_v(&person1.birthday, &person1);
+//! birthdays_to_people.insert_var_v(&person2.birthday, &person2);
 //!
 //! let data = Data { important_dates, important_people, birthdays_to_people };
 //!
