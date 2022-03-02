@@ -15,7 +15,7 @@ use crate::provider::calendar::{
     DateSkeletonPatternsV1Marker,
 };
 use crate::skeleton;
-use alloc::borrow::ToOwned;
+use icu_calendar::types::Era;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
@@ -254,7 +254,7 @@ pub trait DateTimeSymbols {
         hour: date::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str>;
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &'_ str) -> Result<&str>;
+    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str>;
 }
 
 impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
@@ -372,14 +372,14 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
         })
     }
 
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: &str) -> Result<&str> {
+    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str> {
         let symbols = match length {
             fields::FieldLength::Wide => &self.eras.names,
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
         symbols
-            .get(era_code)
-            .ok_or_else(|| DateTimeFormatError::MissingEraSymbol(era_code.to_owned()))
+            .get(&era_code.0)
+            .ok_or_else(|| DateTimeFormatError::MissingEraSymbol(era_code.0))
     }
 }
