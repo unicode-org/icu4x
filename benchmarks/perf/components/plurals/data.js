@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646177624957,
+  "lastUpdate": 1646184333300,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28307,6 +28307,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17696,
             "range": "± 1327",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "748235294d18a8686d6a5dfc03329ff942780629",
+          "message": "Add RawBytesULE::slice_from_byte_slice (#1648)",
+          "timestamp": "2022-03-01T17:15:43-08:00",
+          "tree_id": "c102e6a16317d66585dca53cb91197cbc5c278f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/748235294d18a8686d6a5dfc03329ff942780629"
+        },
+        "date": 1646184321133,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 935,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5467,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15302,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
