@@ -76,27 +76,34 @@ use super::*;
 /// use zerovec::ule::*;
 ///
 /// // The structured list correspond to the list of integers.
-/// let numbers: Vec<Vec<u32>> = vec![
-///     vec![12, 25, 38],
-///     vec![39179, 100],
-///     vec![42, 55555],
-///     vec![12345, 54321, 9],
+/// let numbers: &[&[u32]] = &[
+///     &[12, 25, 38],
+///     &[39179, 100],
+///     &[42, 55555],
+///     &[12345, 54321, 9],
 /// ];
-/// let bytes = &[4, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 20, 0, 0, 0, 28, 0, 0, 0,
-///              12, 0, 0, 0, 25, 0, 0, 0, 38, 0, 0, 0, 11, 153, 0, 0, 100, 0,
-///              0, 0, 42, 0, 0, 0, 3, 217, 0, 0, 57, 48, 0, 0, 49, 212, 0, 0,
-///              9, 0, 0, 0];
 ///
-/// let zerovec1: VarZeroVec<ZeroSlice<u32>> = VarZeroVec::parse_byte_slice(bytes)?;
-/// assert_eq!(zerovec1.get(2).and_then(|v| v.get(1)), Some(55555));
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct Data<'a> {
+///     #[serde(borrow)]
+///     vecs: VarZeroVec<'a, ZeroSlice<u32>>
+/// }
 ///
-/// let zerovec2: VarZeroVec<ZeroSlice<u32>> = (&numbers).into();
-/// assert_eq!(zerovec1, zerovec2);
+/// let data = Data { vecs: VarZeroVec::from(numbers) };
+///
+/// let bincode_bytes = bincode::serialize(&data)
+///     .expect("Serialization should be successful");
+///
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
+///
+/// assert_eq!(deserialized.vecs[0].get(1).unwrap(), 25);
+/// assert_eq!(deserialized.vecs[1], *numbers[1]);
 ///
 /// # Ok::<(), ZeroVecError>(())
 /// ```
 ///
-/// [`VarZeroVec`]s can be nested infinitely, see the docs of [`VarZeroSlice`]
+/// [`VarZeroVec`]s can be nested infinitely via a similar mechanism, see the docs of [`VarZeroSlice`]
 /// for more information.
 ///
 /// # How it Works

@@ -22,7 +22,11 @@ use core::ops::Range;
 /// owned data and as such is ideal for deserialization since most human readable
 /// serialization formats cannot unconditionally deserialize zero-copy.
 ///
-/// This type can be nested within [`VarZeroVec<T>`] to allow for multi-level nested `Vec`s, for
+/// This type can be used inside [`VarZeroVec<T>`](crate::VarZeroVec) and [`ZeroMap`](crate::ZeroMap):
+/// This essentially allows for the construction of zero-copy types isomorphic to `Vec<Vec<T>>` by instead
+/// using `VarZeroVec<ZeroSlice<T>>`.
+///
+/// This type can be nested within itself to allow for multi-level nested `Vec`s, for
 /// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
