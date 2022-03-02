@@ -27,16 +27,28 @@ use core::iter::FromIterator;
 /// ```
 /// use zerovec::ZeroMap;
 ///
-/// // Example byte buffer representing the map { 1: "one" }
-/// let BINCODE_BYTES: &[u8; 31] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
-///     1, 0, 0, 0, 0, 0, 0, 0, 111, 110, 101
-/// ];
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct Data<'a> {
+///     #[serde(borrow)]
+///     map: ZeroMap<'a, u32, str>,
+/// }
 ///
-/// // Deserializing to ZeroMap requires no heap allocations.
-/// let zero_map: ZeroMap<u32, str> = bincode::deserialize(BINCODE_BYTES)
-///     .expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1), Some("one"));
+/// let mut map = ZeroMap::new();
+/// map.insert(&1, "one");
+/// map.insert(&2, "two");
+/// map.insert(&4, "four");
+///
+/// let data = Data { map };
+///
+/// let bincode_bytes = bincode::serialize(&data)
+///     .expect("Serialization should be successful");
+///
+/// // Will deserialize without any allocations
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
+///
+/// assert_eq!(data.map.get(&1), Some("one"));
+/// assert_eq!(data.map.get(&2), Some("two"));
 /// ```
 ///
 /// [`VarZeroVec`]: crate::VarZeroVec

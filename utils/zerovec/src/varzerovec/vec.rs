@@ -57,6 +57,7 @@ use super::*;
 /// let bincode_bytes = bincode::serialize(&data)
 ///     .expect("Serialization should be successful");
 ///
+/// // Will deserialize without allocations
 /// let deserialized: Data = bincode::deserialize(&bincode_bytes)
 ///     .expect("Deserialization should be successful");
 ///
