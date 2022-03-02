@@ -73,6 +73,8 @@ macro_rules! impl_byte_slice_size {
             /// This cannot be generic over T because of current limitations in `const`, but if
             /// this method is needed in a non-const context, check out [`ZeroSlice::parse_byte_slice()`]
             /// instead.
+            ///
+            /// See [ZeroSlice::cast()] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
                 let len = bytes.len();
                 if len % $size == 0 {
