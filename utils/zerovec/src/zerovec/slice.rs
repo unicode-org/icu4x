@@ -182,6 +182,9 @@ where
     ///
     /// `T` and `P` are compatible if they have the same `ULE` representation.
     ///
+    /// If the `ULE`s of `T` and `P` are different types but have the same size,
+    /// use [`Self::try_as_converted()`].
+    ///
     /// # Examples
     ///
     /// ```
@@ -191,7 +194,7 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     ///
     /// let zerovec_u16: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// let zeroslice_i16: &ZeroSlice<i16> = zerovec_u16.cast();
+    /// let zeroslice_i16: &ZeroSlice<i16> = (*zerovec_u16).cast();
     ///
     /// assert_eq!(zerovec_u16.get(3), Some(32973));
     /// assert_eq!(zeroslice_i16.get(3), Some(-32563));
@@ -202,6 +205,39 @@ where
         P: AsULE<ULE = T::ULE>,
     {
         ZeroSlice::<P>::from_ule_slice(self.as_ule_slice())
+    }
+
+    /// Converts a `&ZeroSlice<T>` into a `&ZeroSlice<P>`.
+    ///
+    /// If `T` and `P` have the exact same `ULE`, use [`Self::cast()`].
+    ///
+    /// # Panics
+    ///
+    /// Panics if `T::ULE` and `P::ULE` are not the same size.
+    ///
+    /// # Examples
+    /// 
+    /// ```
+    /// use zerovec::ZeroSlice;
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
+    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes)
+    ///     .expect("valid code points");
+    /// let zs_u32: &ZeroSlice<u32> = zv_char.try_as_converted()
+    ///     .expect("infallible conversion");
+    ///
+    /// assert_eq!(zv_char.get(0), Some('🍿'));
+    /// assert_eq!(zs_u32.get(0), Some(u32::from('🍿')));
+    /// ```
+    #[inline]
+    pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, ZeroVecError> {
+        assert_eq!(
+            core::mem::size_of::<<T as AsULE>::ULE>(),
+            core::mem::size_of::<<P as AsULE>::ULE>()
+        );
+        let new_slice = P::ULE::parse_byte_slice(self.as_bytes())?;
+        Ok(ZeroSlice::from_ule_slice(new_slice))
     }
 
     /// Gets the first element. Returns None if empty.
