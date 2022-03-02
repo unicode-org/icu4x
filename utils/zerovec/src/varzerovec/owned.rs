@@ -396,11 +396,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             let index_u32 = 0u32;
             self.entire_slice.extend(&len_u32.to_unaligned().0);
             self.entire_slice.extend(&index_u32.to_unaligned().0);
-            element.encode_var_ule_as_slices(|slices| {
-                for slice in slices {
-                    self.entire_slice.extend(*slice)
-                }
-            });
+            let header_len = self.entire_slice.len();
+            self.entire_slice.resize(header_len + value_len, 0);
+            element.encode_var_ule_write(&mut self.entire_slice[header_len..]);
             return;
         }
 
