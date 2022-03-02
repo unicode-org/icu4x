@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646177468716,
+  "lastUpdate": 1646184244314,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24869,6 +24869,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4178,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "748235294d18a8686d6a5dfc03329ff942780629",
+          "message": "Add RawBytesULE::slice_from_byte_slice (#1648)",
+          "timestamp": "2022-03-01T17:15:43-08:00",
+          "tree_id": "c102e6a16317d66585dca53cb91197cbc5c278f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/748235294d18a8686d6a5dfc03329ff942780629"
+        },
+        "date": 1646184229202,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2188,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4118,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
