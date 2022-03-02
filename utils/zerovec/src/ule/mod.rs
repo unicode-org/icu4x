@@ -7,6 +7,9 @@
 //! Traits over unaligned little-endian data (ULE, pronounced "yule").
 //!
 //! The main traits for this module are [`ULE`], [`AsULE`] and, [`VarULE`].
+//!
+//! See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for details on how these traits
+//! works under the hood.
 mod chars;
 #[cfg(doc)]
 pub mod custom;

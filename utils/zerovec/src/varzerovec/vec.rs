@@ -120,6 +120,8 @@ use super::*;
 /// data part in the `data` list. The ending index can be calculated from the starting index
 /// of the next element (or the length of the slice if dealing with the last element).
 ///
+/// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
+///
 /// [`ule`]: crate::ule
 pub enum VarZeroVec<'a, T: ?Sized> {
     /// An allocated VarZeroVec, allowing for mutations.

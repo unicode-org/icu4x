@@ -27,6 +27,9 @@ from binary formats like `bincode` and `postcard`, these types will borrow data 
 avoiding allocations and only performing validity checks. As such, this crate can be pretty fast (see [below](#Performance) for more information)
 on deserialization.
 
+See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for details on how this crate
+works under the hood.
+
 ## Cargo features
 
 This crate has four optional features:

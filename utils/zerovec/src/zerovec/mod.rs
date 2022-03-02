@@ -79,6 +79,7 @@ use core::ops::Deref;
 /// array; `ZeroVec<T>` deserializes 80% faster than `Vec<T>` in Serde Bincode, and it does not
 /// require any heap allocations.
 ///
+/// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 #[derive(Clone)]
 pub enum ZeroVec<'a, T>
 where
