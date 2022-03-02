@@ -9,7 +9,6 @@
 use alloc::boxed::Box;
 use core::ops::Deref;
 use icu_provider::prelude::*;
-use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
@@ -258,16 +257,16 @@ pub struct UCharDictionaryBreakDataV1<'data> {
     pub trie_data: ZeroVec<'data, u16>,
 }
 
-// Test data of thai dictionary
-// Safe because all byte sequences are valid u16::ULE.
-// TODO(#1647): Use a const constructor instead.
-const THAI_DICTIONARY: [<u16 as AsULE>::ULE; 112489] =
-    unsafe { core::mem::transmute(*include_bytes!("../tests/testdata/thai.dict")) };
-
 impl<'data> Default for UCharDictionaryBreakDataV1<'data> {
     fn default() -> Self {
+        // Test data of thai dictionary
+        const THAI_DICTIONARY: &ZeroSlice<u16> =
+            match ZeroSlice::<u16>::try_from_bytes(include_bytes!("../tests/testdata/thai.dict")) {
+                Ok(s) => s,
+                Err(_) => panic!("invalid dictionary data"),
+            };
         Self {
-            trie_data: ZeroVec::Borrowed(&THAI_DICTIONARY),
+            trie_data: THAI_DICTIONARY.as_zerovec(),
         }
     }
 }
