@@ -6,6 +6,7 @@ use super::*;
 use crate::ule::{AsULE, EncodeAsVarULE, VarULE};
 use crate::{VarZeroVec, ZeroSlice, ZeroVec};
 use alloc::borrow::Borrow;
+use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::fmt;
 use core::iter::FromIterator;
