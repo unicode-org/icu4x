@@ -45,7 +45,9 @@ pub struct RuleBreakDataV1<'data> {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct RuleBreakPropertyTable<'data>(#[serde(borrow)] pub ZeroVec<'data, u8>);
+pub struct RuleBreakPropertyTable<'data>(
+    #[cfg_attr(feature = "provider_serde", serde(borrow))] pub ZeroVec<'data, u8>,
+);
 
 /// Break state table for rule-based breaking.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
@@ -53,7 +55,9 @@ pub struct RuleBreakPropertyTable<'data>(#[serde(borrow)] pub ZeroVec<'data, u8>
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct RuleBreakStateTable<'data>(#[serde(borrow)] pub ZeroVec<'data, i8>);
+pub struct RuleBreakStateTable<'data>(
+    #[cfg_attr(feature = "provider_serde", serde(borrow))] pub ZeroVec<'data, i8>,
+);
 
 pub const ALL_KEYS: [ResourceKey; 4] = [
     LineBreakDataV1Marker::KEY,
