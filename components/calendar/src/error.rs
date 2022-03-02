@@ -9,11 +9,11 @@ impl std::error::Error for DateTimeError {}
 
 /// A list of possible error outcomes for working with various inputs to DateTime inputs
 /// and operations.
-#[derive(Display, Debug)]
+#[derive(Display, Debug, Copy, Clone)]
 pub enum DateTimeError {
     /// An input could not be parsed.
-    #[displaydoc("{0}")]
-    Parse(core::num::ParseIntError),
+    #[displaydoc("Could not parse as integer")]
+    Parse,
     /// An input overflowed its range.
     #[displaydoc("{field} must be between 0-{max}")]
     Overflow {
@@ -42,7 +42,7 @@ pub enum DateTimeError {
 }
 
 impl From<core::num::ParseIntError> for DateTimeError {
-    fn from(e: core::num::ParseIntError) -> Self {
-        DateTimeError::Parse(e)
+    fn from(_: core::num::ParseIntError) -> Self {
+        DateTimeError::Parse
     }
 }
