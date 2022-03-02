@@ -2,6 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![deny(
+    clippy::indexing_slicing,
+    clippy::expect_used,
+    clippy::unwrap_used,
+    clippy::panic
+)]
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
 //! The `icu_calendar` crate contains the core types used by ICU4X for dealing
@@ -16,7 +22,6 @@
 //! Gregorian calendars respectively.
 extern crate alloc;
 
-#[allow(clippy::indexing_slicing, clippy::expect_used, clippy::panic)]
 pub mod arithmetic;
 pub mod buddhist;
 mod calendar;
