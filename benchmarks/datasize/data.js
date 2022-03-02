@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646183844325,
+  "lastUpdate": 1646191498541,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10313,6 +10313,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/748235294d18a8686d6a5dfc03329ff942780629"
         },
         "date": 1646183832153,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fa5e8c369e6eaaba1b379105624f43a45fcdaeac",
+          "message": "Add cast methods to ZeroVec and ZeroSlice (#1651)",
+          "timestamp": "2022-03-01T19:23:22-08:00",
+          "tree_id": "1df10a482a3ca80d2a3718eac147e1eac1ad5763",
+          "url": "https://github.com/unicode-org/icu4x/commit/fa5e8c369e6eaaba1b379105624f43a45fcdaeac"
+        },
+        "date": 1646191483551,
         "tool": "ndjson",
         "benches": [
           {
