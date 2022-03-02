@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646177068286,
+  "lastUpdate": 1646183844325,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10283,6 +10283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/50c5f7ab26ad24e04a7197e1c3d1c00e099147eb"
         },
         "date": 1646177055452,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "748235294d18a8686d6a5dfc03329ff942780629",
+          "message": "Add RawBytesULE::slice_from_byte_slice (#1648)",
+          "timestamp": "2022-03-01T17:15:43-08:00",
+          "tree_id": "c102e6a16317d66585dca53cb91197cbc5c278f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/748235294d18a8686d6a5dfc03329ff942780629"
+        },
+        "date": 1646183832153,
         "tool": "ndjson",
         "benches": [
           {
