@@ -189,15 +189,19 @@ where
     ///
     /// ```
     /// use zerovec::ZeroSlice;
-    /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// const bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
+    /// const zs_u16: &ZeroSlice<u16> = {
+    ///     match ZeroSlice::<u16>::try_from_bytes(bytes) {
+    ///         Ok(s) => s,
+    ///         Err(_) => unreachable!()
+    ///     }
+    /// };
     ///
-    /// let zerovec_u16: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// let zeroslice_i16: &ZeroSlice<i16> = (*zerovec_u16).cast();
+    /// let zs_i16: &ZeroSlice<i16> = zs_u16.cast();
     ///
-    /// assert_eq!(zerovec_u16.get(3), Some(32973));
-    /// assert_eq!(zeroslice_i16.get(3), Some(-32563));
+    /// assert_eq!(zs_u16.get(3), Some(32973));
+    /// assert_eq!(zs_i16.get(3), Some(-32563));
     /// ```
     #[inline]
     pub fn cast<P>(&self) -> &ZeroSlice<P>
@@ -216,19 +220,23 @@ where
     /// Panics if `T::ULE` and `P::ULE` are not the same size.
     ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use zerovec::ZeroSlice;
-    /// use zerovec::ZeroVec;
     ///
-    /// let bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
-    /// let zv_char: ZeroVec<char> = ZeroVec::parse_byte_slice(bytes)
+    /// const bytes: &[u8] = &[0x7F, 0xF3, 0x01, 0x00, 0x49, 0xF6, 0x01, 0x00];
+    /// const zs_u32: &ZeroSlice<u32> = {
+    ///     match ZeroSlice::<u32>::try_from_bytes(bytes) {
+    ///         Ok(s) => s,
+    ///         Err(_) => unreachable!()
+    ///     }
+    /// };
+    ///
+    /// let zs_char: &ZeroSlice<char> = zs_u32.try_as_converted()
     ///     .expect("valid code points");
-    /// let zs_u32: &ZeroSlice<u32> = zv_char.try_as_converted()
-    ///     .expect("infallible conversion");
     ///
-    /// assert_eq!(zv_char.get(0), Some('🍿'));
     /// assert_eq!(zs_u32.get(0), Some(u32::from('🍿')));
+    /// assert_eq!(zs_char.get(0), Some('🍿'));
     /// ```
     #[inline]
     pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, ZeroVecError> {
