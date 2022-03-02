@@ -182,8 +182,7 @@ where
     ///
     /// `T` and `P` are compatible if they have the same `ULE` representation.
     ///
-    /// If the `ULE`s of `T` and `P` are different types but have the same size,
-    /// use [`Self::try_as_converted()`].
+    /// If the `ULE`s of `T` and `P` are different, use [`Self::try_as_converted()`].
     ///
     /// # Examples
     ///
@@ -213,11 +212,10 @@ where
 
     /// Converts a `&ZeroSlice<T>` into a `&ZeroSlice<P>`.
     ///
+    /// The resulting slice will have the same length as the original slice
+    /// if and only if `T::ULE` and `P::ULE` are the same size.
+    ///
     /// If `T` and `P` have the exact same `ULE`, use [`Self::cast()`].
-    ///
-    /// # Panics
-    ///
-    /// Panics if `T::ULE` and `P::ULE` are not the same size.
     ///
     /// # Examples
     ///
@@ -240,10 +238,6 @@ where
     /// ```
     #[inline]
     pub fn try_as_converted<P: AsULE>(&self) -> Result<&ZeroSlice<P>, ZeroVecError> {
-        assert_eq!(
-            core::mem::size_of::<<T as AsULE>::ULE>(),
-            core::mem::size_of::<<P as AsULE>::ULE>()
-        );
         let new_slice = P::ULE::parse_byte_slice(self.as_bytes())?;
         Ok(ZeroSlice::from_ule_slice(new_slice))
     }
