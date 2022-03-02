@@ -6,6 +6,7 @@
 
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
+use tinystr::TinyStr16;
 use zerovec::ZeroMap;
 
 #[icu_provider::data_struct(DateSymbolsV1Marker = "datetime/symbols@1")]
@@ -34,11 +35,11 @@ pub struct DateSymbolsV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct Eras<'data> {
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub names: ZeroMap<'data, str, str>,
+    pub names: ZeroMap<'data, TinyStr16, str>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub abbr: ZeroMap<'data, str, str>,
+    pub abbr: ZeroMap<'data, TinyStr16, str>,
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub narrow: ZeroMap<'data, str, str>,
+    pub narrow: ZeroMap<'data, TinyStr16, str>,
 }
 
 macro_rules! symbols {
