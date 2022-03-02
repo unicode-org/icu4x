@@ -7,7 +7,7 @@
 use displaydoc::Display;
 
 #[allow(missing_docs)] // TODO(#1025) - Add missing docs.
-#[derive(Display, Debug)]
+#[derive(Display, Debug, Copy, Clone)]
 pub enum Error {
     #[displaydoc("error loading data: {0}")]
     Data(icu_provider::DataError),
