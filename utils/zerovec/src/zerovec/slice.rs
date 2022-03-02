@@ -31,6 +31,12 @@ where
         ZeroVec::Borrowed(&self.0)
     }
 
+    /// Attempt to construct a `&ZeroSlice<T>` from a byte slice, returning an error
+    /// if it's not a valid byte sequence
+    pub fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+        T::ULE::parse_byte_slice(bytes).map(Self::from_ule_slice)
+    }
+
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs
     #[inline]
     pub fn from_ule_slice(slice: &[T::ULE]) -> &Self {
