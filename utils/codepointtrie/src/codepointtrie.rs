@@ -801,7 +801,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let value_ranges = self
             .iter_ranges()
             .filter(move |cpm_range| cpm_range.value == value)
-            .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()));
+            .map(|cpm_range| cpm_range.range);
         UnicodeSet::from_iter(value_ranges)
     }
 }
