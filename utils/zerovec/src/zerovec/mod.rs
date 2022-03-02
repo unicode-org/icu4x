@@ -42,11 +42,6 @@ use core::ops::Deref;
 /// array; `ZeroVec<T>` deserializes 80% faster than `Vec<T>` in Serde Bincode, and it does not
 /// require any heap allocations.
 ///
-/// # Safety
-///
-/// `ZeroVec<T>` contains no unsafe code. However, the conversion from `&[u8]` to `&[T::ULE]` may
-/// be unsafe. For more information, see the [`ule`] module.
-///
 /// # Example
 ///
 /// ```
