@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646184239206,
+  "lastUpdate": 1646191862099,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -21269,6 +21269,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 45074415,
             "range": "± 1756247",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fa5e8c369e6eaaba1b379105624f43a45fcdaeac",
+          "message": "Add cast methods to ZeroVec and ZeroSlice (#1651)",
+          "timestamp": "2022-03-01T19:23:22-08:00",
+          "tree_id": "1df10a482a3ca80d2a3718eac147e1eac1ad5763",
+          "url": "https://github.com/unicode-org/icu4x/commit/fa5e8c369e6eaaba1b379105624f43a45fcdaeac"
+        },
+        "date": 1646191851879,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 38482145,
+            "range": "± 824646",
             "unit": "ns/iter"
           }
         ]
