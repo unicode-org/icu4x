@@ -153,7 +153,7 @@ mod tests {
         // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/cjdict.txt tmp.bin
         // dd if=tmp.bin of=cjdict.dict bs=1 skip=64
-        const CJ_DICTIONARY: [<u16 as AsULE>::ULE; 1001695] =
+        static CJ_DICTIONARY: [<u16 as AsULE>::ULE; 1001695] =
             unsafe { core::mem::transmute(*include_bytes!("../tests/testdata/cjdic.dict")) };
 
         let data = UCharDictionaryBreakDataV1 {
@@ -186,7 +186,7 @@ mod tests {
         // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/khmerdict.txt tmp.bin
         // dd if=tmp.bin of=khmer.dict bs=1 skip=64
-        const KHMER_DICTIONARY: [<u16 as AsULE>::ULE; 399187] =
+        static KHMER_DICTIONARY: [<u16 as AsULE>::ULE; 399187] =
             unsafe { core::mem::transmute(*include_bytes!("../tests/testdata/khmer.dict")) };
 
         let data = UCharDictionaryBreakDataV1 {
@@ -208,7 +208,7 @@ mod tests {
         // This test data is created by the following using ICU4C tools
         // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/laodict.txt tmp.bin
         // dd if=tmp.bin of=lao.dict bs=1 skip=64
-        const LAO_DICTIONARY: [<u16 as AsULE>::ULE; 146228] =
+        static LAO_DICTIONARY: [<u16 as AsULE>::ULE; 146228] =
             unsafe { core::mem::transmute(*include_bytes!("../tests/testdata/lao.dict")) };
 
         let data = UCharDictionaryBreakDataV1 {
