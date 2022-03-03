@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646330353235,
+  "lastUpdate": 1646332621880,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22103,6 +22103,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 224676,
             "range": "± 13076",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "789009afe1f56c8a4c4bb6e65fbe176ebc70bf01",
+          "message": "Implement dictionary based segmenter for line segmenter. (#1644)",
+          "timestamp": "2022-03-03T10:27:35-08:00",
+          "tree_id": "1e03188727ea4461891679bf63d1a6ad9ef25d3b",
+          "url": "https://github.com/unicode-org/icu4x/commit/789009afe1f56c8a4c4bb6e65fbe176ebc70bf01"
+        },
+        "date": 1646332609209,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 73854,
+            "range": "± 885",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 796406,
+            "range": "± 2206",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 172746,
+            "range": "± 1455",
             "unit": "ns/iter"
           }
         ]
