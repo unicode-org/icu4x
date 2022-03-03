@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646303314503,
+  "lastUpdate": 1646330297785,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25013,6 +25013,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4934,
             "range": "± 128",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pandusonu@google.com",
+            "name": "Gollapudi Vamsi Krishna",
+            "username": "pandusonu2"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "03031533317965904c1dbdd744f985d52d749c0c",
+          "message": "Add Calendar Arithmetic (#1614)\n\n* Add Calendar Arithmetic\r\n\r\n* Remove calendar extension\r\n\r\n* Add until()\r\n\r\n* Fix errors in calendar_arithmetic\r\n\r\n* Fix few more errors\r\n\r\n* Fix other type errors\r\n\r\n* mutability\r\n\r\n* Fix tests\r\n\r\n* Clippy suggestions\r\n\r\n* More clippy\r\n\r\n* Fix comments\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2022-03-03T09:49:31-08:00",
+          "tree_id": "3dc08370fd8fa52f2c828a3d502b3a3d6709c8b4",
+          "url": "https://github.com/unicode-org/icu4x/commit/03031533317965904c1dbdd744f985d52d749c0c"
+        },
+        "date": 1646330282946,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2570,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4837,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
