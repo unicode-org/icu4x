@@ -258,7 +258,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
             impl<'a> zerovec::maps::ZeroMapKV<'a> for #ule_name {
                 type Container = zerovec::VarZeroVec<'a, #ule_name>;
                 type GetType = #ule_name;
-                type OwnedType = Box<#ule_name>;
+                type OwnedType = zerovec::__zerovec_internal_reexport::boxed::Box<#ule_name>;
             }
         )
     };

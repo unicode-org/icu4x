@@ -169,12 +169,11 @@ where
                 .expect("Expect symbols to be present")
                 .get_symbol_for_era(
                     field.length,
-                    &datetime
+                    datetime
                         .datetime()
                         .year()
                         .ok_or(Error::MissingInputField)?
-                        .era
-                        .0,
+                        .era,
                 )?;
             w.write_str(symbol)?
         }

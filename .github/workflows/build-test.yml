@@ -574,19 +574,6 @@ jobs:
           comment-on-alert: true
           alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
-      # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the files across jobs within the same workflow.
-
-      - name: Switch branch to get result of benchmark pages output (merge to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-        run: git checkout gh-pages
-
-      - name: Upload updated benchmark data (merge to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-        uses: actions/upload-artifact@v2
-        with:
-          path: ./benchmarks/perf/**  # use wildcard pattern to preserve dir structure of uploaded files
-          name: benchmark-perf
-
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
   # more information.
@@ -705,22 +692,7 @@ jobs:
           auto-push: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
-          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran,@gregtatum'
-
-      # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the
-      # files across jobs within the same workflow.
-
-      - name: Switch branch to get result of benchmark pages output (merge to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-        run: git checkout gh-pages
-
-      - name: Upload updated benchmark data (merge to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-        uses: actions/upload-artifact@v2
-        with:
-          # Use wildcard pattern to preserve dir structure of uploaded files:
-          path: ./benchmarks/memory/**
-          name: benchmark-memory
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
 
@@ -862,20 +834,7 @@ jobs:
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
-        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran,@gregtatum'
-
-    - name: Switch to branch gh-pages for benchmark data storage (merge to main only)
-      # Only for PRs that merge into the ICU4X mainline
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-      run: git checkout gh-pages
-
-    - name: Upload binsize with benchmark data in ndjson format (merge to main only)
-      # Only for PRs that merge into the ICU4X mainline.
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-      uses: actions/upload-artifact@v2
-      with:
-        path: ./benchmarks/binsize/**
-        name: benchmark-binsize
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
   # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
 
@@ -925,20 +884,7 @@ jobs:
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
-        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran,@gregtatum'
-
-    - name: Switch to branch gh-pages for benchmark data storage (merge to main only)
-      # Only for PRs that merge into the ICU4X mainline
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-      run: git checkout gh-pages
-
-    - name: Upload datasize with benchmark data in ndjson format (merge to main only)
-      # Only for PRs that merge into the ICU4X mainline.
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-      uses: actions/upload-artifact@v2
-      with:
-        path: ./benchmarks/datasize/**
-        name: benchmark-datasize
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
   # Docs job
 
@@ -966,6 +912,7 @@ jobs:
       with:
         path: target/doc/**
         name: doc
+        retention-days: 1
 
   # Doc-GH-Pages job
 
@@ -974,7 +921,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [check, tidy, benchmark, memory, binsize, doc]
+    needs: [check, tidy, benchmark, memory, binsize, datasize, doc]
 
     ## Only create docs for merges/pushes to main (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
@@ -986,55 +933,25 @@ jobs:
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
+    - name: Switch to benchmark data storage branch.
+      run: |
+        git fetch
+        git checkout gh-pages
+
     # TODO(#234) re-include cache steps, also using Rust version in cache key
-
-    - name: Create (ensure existence of) folder suitable for copying to external repo
-      run: mkdir -p copy-to-ext-repo
-
-    - name: Create (ensure existence of) folder for benchmark data to copy
-      run: mkdir -p copy-to-ext-repo/benchmarks/perf
-
-    - name: Create (ensure existence of) folder for memory benchmark data to copy
-      run: mkdir -p copy-to-ext-repo/benchmarks/memory
-
-    - name: Create (ensure existence of) folder for binary size benchmark data to copy
-      run: mkdir -p copy-to-ext-repo/benchmarks/binsize
-
-    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
-
-    - name: Download previous content destined for GH pages
-      uses: actions/download-artifact@v2
-      with:
-        path: ./copy-to-ext-repo/benchmarks/perf
-        name: benchmark-perf
-
-    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
-    - name: Download previous content destined for GH pages
-      uses: actions/download-artifact@v2
-      with:
-        path: ./copy-to-ext-repo/benchmarks/memory
-        name: benchmark-memory
-
-    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
-    - name: Download previous content destined for GH pages
-      uses: actions/download-artifact@v2
-      with:
-        path: ./copy-to-ext-repo/benchmarks/binsize
-        name: benchmark-binsize
 
     # Doc-GH-Pages job > Download docs files from previous jobs into folder of files to copy to remote repo
     - name: Download previous content destined for GH pages
       uses: actions/download-artifact@v2
       with:
-        path: ./copy-to-ext-repo/doc
+        path: doc
         name: doc
 
     # Doc-GH-Pages job > Generate placeholder root index.html to redirect to `icu4x` crate
 
     - name: Create doc /index.html
       run: |
-        mkdir -p copy-to-ext-repo
-        cat > copy-to-ext-repo/index.html <<EOL
+        cat > index.html <<EOL
         <!doctype html>
         <html>
           <head>
@@ -1066,5 +983,5 @@ jobs:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         external_repository: unicode-org/icu4x-docs
         publish_branch: gh-pages
-        publish_dir: copy-to-ext-repo
+        publish_dir: ./
         commit_message: Rust API docs + benchmark dashboards -> GH Pages

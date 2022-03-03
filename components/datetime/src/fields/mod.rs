@@ -17,7 +17,7 @@ use core::{
     convert::TryFrom,
 };
 
-#[derive(Display, Debug)]
+#[derive(Display, Debug, Copy, Clone)]
 pub enum Error {
     #[displaydoc("Field {0:?} is not a valid length")]
     InvalidLength(FieldSymbol),

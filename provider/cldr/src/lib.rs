@@ -57,7 +57,7 @@ type ListProvider = PluralsProvider; // we can't cfg-exclude part of the bound, 
 pub fn create_exportable_provider<T: DataMarker>(
     cldr_paths: &dyn CldrPaths,
     _uprops_root: PathBuf,
-) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T>>>, CldrError>
+) -> Result<MultiForkByKeyProvider<Box<dyn IterableDynProvider<T> + Sync>>, CldrError>
 where
     AliasesProvider: IterableDynProvider<T>,
     DateSymbolsProvider: IterableDynProvider<T>,

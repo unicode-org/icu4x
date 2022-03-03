@@ -11,7 +11,7 @@ use alloc::vec::Vec;
 use core::iter::Peekable;
 use displaydoc::Display;
 
-#[derive(Display, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, PartialEq, Eq, Copy, Clone)]
 #[allow(clippy::enum_variant_names)]
 pub enum ParserError {
     #[displaydoc("expected 'AND' condition")]

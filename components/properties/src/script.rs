@@ -9,15 +9,15 @@ use crate::error::PropertiesError;
 use crate::props::Script;
 use crate::provider::*;
 
+use crate::props::ScriptULE;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
-use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
-
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
 
 /// The number of bits at the low-end of a `ScriptWithExt` value used for
 /// storing the `Script` value (or `extensions` index).
@@ -45,6 +45,20 @@ pub struct ScriptWithExt(pub u16);
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
+}
+
+impl AsULE for ScriptWithExt {
+    type ULE = ScriptULE;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        Script(self.0).to_unaligned()
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        ScriptWithExt(Script::from_unaligned(unaligned).0)
+    }
 }
 
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor

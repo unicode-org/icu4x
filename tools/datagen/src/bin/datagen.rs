@@ -18,6 +18,7 @@ use icu_provider_cldr::CldrPathsAllInOne;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
+use rayon::prelude::*;
 use simple_logger::SimpleLogger;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -283,7 +284,7 @@ fn main() -> eyre::Result<()> {
         filtered
     };
 
-    let mut provider: Box<dyn IterableDynProvider<SerializeMarker>> =
+    let mut provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> =
         if matches.is_present("HELLO_WORLD") {
             Box::new(HelloWorldProvider::new_with_placeholder_data())
         } else {
@@ -348,11 +349,11 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    // TODO: Parallelize this.
-    selected_keys.into_iter().try_for_each(|key| {
+    selected_keys.into_par_iter().try_for_each(|key| {
         let result = provider
             .supported_options_for_key(key)?
-            // TODO: Parallelize this.
+            .collect::<Vec<_>>()
+            .into_par_iter()
             .try_for_each(|options| {
                 let payload = provider
                     .load_payload(

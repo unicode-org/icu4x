@@ -32,10 +32,10 @@ pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {
 
     for relation in rule.0.iter() {
         let relation = relation.as_relation();
-        if left && relation.and_or == ast::AndOr::Or {
+        if left && relation.aopo.and_or == ast::AndOr::Or {
             return true;
         }
-        if left || relation.and_or == ast::AndOr::Or {
+        if left || relation.aopo.and_or == ast::AndOr::Or {
             left = test_relation(&relation, operands);
         }
     }
@@ -54,7 +54,7 @@ fn test_relation(relation: &ast::Relation, operands: &PluralOperands) -> bool {
     } else {
         false
     };
-    match relation.polarity {
+    match relation.aopo.polarity {
         ast::Polarity::Negative => !result,
         ast::Polarity::Positive => result,
     }
@@ -62,7 +62,7 @@ fn test_relation(relation: &ast::Relation, operands: &PluralOperands) -> bool {
 
 #[inline]
 fn get_value(relation: &ast::Relation, operands: &PluralOperands) -> Option<u64> {
-    let value = match relation.operand {
+    let value = match relation.aopo.operand {
         ast::Operand::N if operands.w == 0 => operands.i,
         ast::Operand::N => return None,
         ast::Operand::I => operands.i,

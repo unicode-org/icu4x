@@ -77,6 +77,8 @@ pub mod provider;
 pub mod script;
 pub mod sets;
 mod trievalue;
-mod ule;
 
-pub use props::*;
+pub use props::{
+    CanonicalCombiningClass, EastAsianWidth, EnumeratedProperty, GeneralCategory,
+    GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+};
