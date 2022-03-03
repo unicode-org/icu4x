@@ -162,12 +162,10 @@ fn wordbreak_keepall_lstm() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "lstm"), ignore)]
 fn wordbreak_normal() {
-    {
-        let s = "\u{0e20}\u{0e32}\u{0e29}\u{0e32}\u{0e44}\u{0e17}\u{0e22}\u{0e20}\u{0e32}\u{0e29}\u{0e32}\u{0e44}\u{0e17}\u{0e22}";
-        normal(s, vec![12, 21, 33, 42], vec![4, 7, 11, 14]);
-    }
+    // from css/css-text/word-break/word-break-normal-th-000.html
+    let s = "ภาษาไทยภาษาไทย";
+    normal(s, vec![12, 21, 33, 42], vec![4, 7, 11, 14]);
 }
 
 #[test]

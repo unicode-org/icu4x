@@ -1404,6 +1404,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "icu",
+ "icu_char16trie",
  "icu_codepointtrie",
  "icu_provider",
  "icu_provider_fs",
