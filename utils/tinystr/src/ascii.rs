@@ -4,11 +4,12 @@
 
 use crate::int_ops::{Aligned4, Aligned8};
 use crate::TinyStrError;
+use core::fmt;
 use core::ops::Deref;
 use core::str::{self, FromStr};
 
 #[repr(transparent)]
-#[derive(PartialEq, Eq, Ord, PartialOrd, Copy, Clone, Debug, Hash)]
+#[derive(PartialEq, Eq, Ord, PartialOrd, Copy, Clone, Hash)]
 pub struct TinyAsciiStr<const N: usize> {
     bytes: [u8; N],
 }
@@ -298,6 +299,18 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[must_use]
     pub const fn to_ascii_uppercase(mut self) -> Self {
         to!(self, to_ascii_uppercase, to_ascii_uppercase)
+    }
+}
+
+impl<const N: usize> fmt::Debug for TinyAsciiStr<N> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Debug::fmt(self.as_str(), f)
+    }
+}
+
+impl<const N: usize> fmt::Display for TinyAsciiStr<N> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(self.as_str(), f)
     }
 }
 

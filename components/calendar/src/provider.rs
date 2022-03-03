@@ -8,12 +8,13 @@
 
 use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
-use litemap::LiteMap;
 use tinystr::TinyStr16;
+use zerovec::ZeroVec;
 
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
+#[zerovec::make_ule(EraStartDateULE)]
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
@@ -33,11 +34,11 @@ pub struct EraStartDate {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[zerofrom(cloning_zf)]
-// TODO (#1393) Make this zero-copy
-pub struct JapaneseErasV1 {
-    pub dates_to_historical_eras: LiteMap<EraStartDate, TinyStr16>,
-    pub dates_to_eras: LiteMap<EraStartDate, TinyStr16>,
+pub struct JapaneseErasV1<'data> {
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub dates_to_historical_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
 
 impl FromStr for EraStartDate {

@@ -6,13 +6,13 @@ use crate::date::DateTimeError;
 use crate::fields::FieldSymbol;
 use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
-use alloc::string::String;
 use displaydoc::Display;
 use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
+use tinystr::TinyStr16;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
-#[derive(Display, Debug)]
+#[derive(Display, Debug, Copy, Clone)]
 pub enum DateTimeFormatError {
     /// An error originating from parsing a pattern.
     #[displaydoc("{0}")]
@@ -50,7 +50,7 @@ pub enum DateTimeFormatError {
     MissingMonthSymbol(usize),
     /// An error originating from a missing era symbol in the data.
     #[displaydoc("Data file missing era symbol for era code {0}")]
-    MissingEraSymbol(String),
+    MissingEraSymbol(TinyStr16),
 }
 
 #[cfg(feature = "std")]

@@ -109,9 +109,12 @@ mod map;
 mod map2d;
 #[cfg(test)]
 pub mod samples;
-pub mod ule;
 mod varzerovec;
 mod zerovec;
+
+// This must be after `mod zerovec` for some impls on `ZeroSlice<RawBytesULE>`
+// to show up in the right spot in the docs
+pub mod ule;
 
 #[cfg(feature = "yoke")]
 mod yoke_impls;

@@ -3,16 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::common::CommonDateProvider;
-use crate::error::Error;
-use litemap::LiteMap;
-
 use crate::cldr_serde;
+use crate::error::Error;
 use crate::CldrPaths;
 use icu_datetime::provider::calendar::*;
-
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 use std::convert::TryFrom;
 use tinystr::{tinystr, TinyStr16};
 
@@ -69,7 +67,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     let map = get_era_code_map(calendar);
     let mut out_eras = Eras::default();
 
-    for (cldr, code) in map.into_tuple_vec().into_iter() {
+    for (cldr, code) in map.into_iter() {
         if let Some(name) = eras.names.get(&cldr) {
             out_eras.names.insert(&code, name);
         }
@@ -83,7 +81,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     out_eras
 }
 
-fn get_era_code_map(calendar: &str) -> LiteMap<String, TinyStr16> {
+fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
     match calendar {
         "gregory" => vec![
             ("0".to_string(), tinystr!(16, "bc")),

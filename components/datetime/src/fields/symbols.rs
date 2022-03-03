@@ -7,7 +7,7 @@ use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_provider::{yoke, zerofrom};
 
-#[derive(Display, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq, Copy, Clone)]
 pub enum SymbolError {
     /// Invalid field symbol index.
     #[displaydoc("Invalid field symbol index: {0}")]

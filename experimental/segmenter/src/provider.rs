@@ -59,6 +59,28 @@ pub struct RuleBreakStateTable<'data>(
     #[cfg_attr(feature = "provider_serde", serde(borrow))] pub ZeroVec<'data, i8>,
 );
 
+/// char16trie data for dictionary break
+#[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/char16trie@1")]
+pub struct UCharDictionaryBreakDataV1<'data> {
+    /// Dictionary data of char16trie.
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub trie_data: ZeroVec<'data, u16>,
+}
+
+impl<'data> Default for UCharDictionaryBreakDataV1<'data> {
+    fn default() -> Self {
+        // Test data of thai dictionary
+        const THAI_DICTIONARY: &ZeroSlice<u16> =
+            match ZeroSlice::<u16>::try_from_bytes(include_bytes!("../tests/testdata/thai.dict")) {
+                Ok(s) => s,
+                Err(_) => panic!("invalid dictionary data"),
+            };
+        Self {
+            trie_data: THAI_DICTIONARY.as_zerovec(),
+        }
+    }
+}
+
 pub const ALL_KEYS: [ResourceKey; 4] = [
     LineBreakDataV1Marker::KEY,
     GraphemeClusterBreakDataV1Marker::KEY,

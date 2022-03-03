@@ -6,6 +6,8 @@
 //! ULE implementation for Plain Old Data types, including all sized integers.
 
 use super::*;
+use crate::ZeroSlice;
+use core::mem;
 
 /// A u8 array of little-endian data with infallible conversions to and from &[u8].
 #[repr(transparent)]
@@ -61,6 +63,40 @@ macro_rules! impl_byte_slice_size {
             #[inline]
             pub fn as_unsigned_int(&self) -> $unsigned {
                 <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
+            }
+        }
+
+        impl ZeroSlice<$unsigned> {
+            /// This function can be used for constructing ZeroVecs in a const context, avoiding
+            /// parsing checks.
+            ///
+            /// This cannot be generic over T because of current limitations in `const`, but if
+            /// this method is needed in a non-const context, check out [`ZeroSlice::parse_byte_slice()`]
+            /// instead.
+            ///
+            /// See [ZeroSlice::cast()] for an example.
+            pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+                let len = bytes.len();
+                if len % $size == 0 {
+                    unsafe {
+                        // Most of the slice manipulation functions are not yet const-stable,
+                        // so we construct a slice with the right metadata and cast its type
+                        // https://rust-lang.github.io/unsafe-code-guidelines/layout/pointers.html#notes
+                        //
+                        // Safety:
+                        // * [u8] and [RawBytesULE<N>] have different lengths but the same alignment
+                        // * ZeroSlice<$unsigned> is repr(transparent) with [RawBytesULE<N>]
+                        let [ptr, _]: [usize; 2] = mem::transmute(bytes);
+                        let new_len = len / $size;
+                        let raw = [ptr, new_len];
+                        Ok(mem::transmute(raw))
+                    }
+                } else {
+                    Err(ZeroVecError::InvalidLength {
+                        ty: concat!("RawBytesULE< ", $size, ">"),
+                        len,
+                    })
+                }
             }
         }
     };

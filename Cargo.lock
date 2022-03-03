@@ -1047,6 +1047,7 @@ dependencies = [
  "litemap",
  "serde",
  "tinystr 0.5.0",
+ "zerovec",
 ]
 
 [[package]]
@@ -1419,6 +1420,7 @@ name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu_char16trie",
  "icu_provider",
  "icu_segmenter_lstm",
  "icu_testdata",
