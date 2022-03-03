@@ -776,6 +776,33 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         }
     }
 
+    /// Yields an [`Iterator`] returning the ranges of the code points whose values
+    /// match `value` in the [`CodePointTrie`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let plane_val = 2;
+    /// let mut sip_range_iter = trie.get_ranges_for_value(plane_val as u8);
+    ///
+    /// let start = plane_val * 0x1_0000;
+    /// let end = start + 0xffff;
+    ///
+    /// let sip_range = sip_range_iter.next()
+    ///     .expect("Plane 2 (SIP) should exist in planes data");
+    /// assert_eq!(start..=end, sip_range);
+    ///
+    /// assert!(sip_range_iter.next().is_none());
+    pub fn get_ranges_for_value(&self, value: T) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.iter_ranges()
+            .filter(move |cpm_range| cpm_range.value == value)
+            .map(|cpm_range| cpm_range.range)
+    }
+
     /// Returns a [`UnicodeSet`] for the code points that have the given
     /// [`TrieValue`] in the trie.
     ///
@@ -798,10 +825,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert!(!sip.contains_u32(end + 1));
     /// ```
     pub fn get_set_for_value(&self, value: T) -> UnicodeSet<'static> {
-        let value_ranges = self
-            .iter_ranges()
-            .filter(move |cpm_range| cpm_range.value == value)
-            .map(|cpm_range| cpm_range.range);
+        let value_ranges = self.get_ranges_for_value(value);
         UnicodeSet::from_iter(value_ranges)
     }
 }
