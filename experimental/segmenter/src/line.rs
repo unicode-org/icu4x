@@ -107,7 +107,7 @@ impl Default for LineBreakOptions {
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
-    trie_payload: DataPayload<UCharDictionaryBreakDataV1Marker>,
+    dictionary_payload: DataPayload<UCharDictionaryBreakDataV1Marker>,
 }
 
 impl LineBreakSegmenter {
@@ -132,13 +132,13 @@ impl LineBreakSegmenter {
         let payload = provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
-        let trie_payload = provider
+        let dictionary_payload = provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
         Ok(Self {
             options,
             payload,
-            trie_payload,
+            dictionary_payload,
         })
     }
 
@@ -151,7 +151,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            trie_payload: &self.trie_payload,
+            dictionary_payload: &self.dictionary_payload,
         }
     }
 
@@ -167,7 +167,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            trie_payload: &self.trie_payload,
+            dictionary_payload: &self.dictionary_payload,
         }
     }
 
@@ -183,7 +183,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            trie_payload: &self.trie_payload,
+            dictionary_payload: &self.dictionary_payload,
         }
     }
 }
@@ -410,7 +410,7 @@ pub trait LineBreakType<'l, 's> {
         c: Self::CharType,
     ) -> u8;
 
-    fn get_line_break_by_platform_fallback(
+    fn compute_line_break_for_complex_language(
         iterator: &LineBreakIterator<'l, 's, Self>,
         input: &[u16],
     ) -> Vec<usize>;
@@ -432,7 +432,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     result_cache: Vec<usize>,
     data: &'l LineBreakDataV1<'l>,
     options: &'l LineBreakOptions,
-    trie_payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
+    dictionary_payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -633,7 +633,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
         // Restore iterator to move to head of complex string
         self.iter = start_iter;
         self.current_pos_data = start_point;
-        let breaks = Y::get_line_break_by_platform_fallback(self, &s);
+        let breaks = Y::compute_line_break_for_complex_language(self, &s);
         let mut i = 1;
         self.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
@@ -671,7 +671,7 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
         use_complex_breaking_utf32(&iterator.data.property_table, c as u32)
     }
 
-    fn get_line_break_by_platform_fallback(
+    fn compute_line_break_for_complex_language(
         iterator: &LineBreakIterator<Self>,
         input: &[u16],
     ) -> Vec<usize> {
@@ -679,7 +679,7 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
             ret.push(input.len());
             return ret;
         }
-        if let Ok(segmenter) = DictionarySegmenter::try_new(iterator.trie_payload) {
+        if let Ok(segmenter) = DictionarySegmenter::try_new(iterator.dictionary_payload) {
             let mut result: Vec<usize> = segmenter.segment_utf16(input).collect();
             result.push(input.len());
             return result;
@@ -725,7 +725,7 @@ impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
         false
     }
 
-    fn get_line_break_by_platform_fallback(
+    fn compute_line_break_for_complex_language(
         _: &LineBreakIterator<Self>,
         _input: &[u16],
     ) -> Vec<usize> {
@@ -754,7 +754,7 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
         use_complex_breaking_utf32(&iterator.data.property_table, c)
     }
 
-    fn get_line_break_by_platform_fallback(
+    fn compute_line_break_for_complex_language(
         iterator: &LineBreakIterator<Self>,
         input: &[u16],
     ) -> Vec<usize> {
@@ -762,7 +762,7 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
             ret.push(input.len());
             return ret;
         }
-        if let Ok(segmenter) = DictionarySegmenter::try_new(iterator.trie_payload) {
+        if let Ok(segmenter) = DictionarySegmenter::try_new(iterator.dictionary_payload) {
             let mut result: Vec<usize> = segmenter.segment_utf16(input).collect();
             result.push(input.len());
             return result;

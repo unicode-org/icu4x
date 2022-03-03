@@ -29,6 +29,14 @@ pub struct DictionaryBreakIterator<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> {
     // TODO transform value for byte trie
 }
 
+/// Implement the [`Iterator`] trait over the segmenter break opportunities of the given string.
+/// Please see the [module-level documentation](crate) for its usages.
+///
+/// Lifetimes:
+/// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'s` = lifetime of the string being segmented
+///
+/// [`Iterator`]: core::iter::Iterator
 impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> Iterator for DictionaryBreakIterator<'l, 's, Y> {
     type Item = usize;
 
@@ -107,21 +115,20 @@ impl<'l, 's> DictionaryType<'l, 's> for char {
     }
 }
 
-pub struct DictionarySegmenter<'a> {
-    payload: &'a DataPayload<UCharDictionaryBreakDataV1Marker>,
+pub struct DictionarySegmenter<'l> {
+    payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
 }
 
-impl<'a> DictionarySegmenter<'a> {
+impl<'l> DictionarySegmenter<'l> {
     pub fn try_new(
-        payload: &'a DataPayload<UCharDictionaryBreakDataV1Marker>,
+        payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
     ) -> Result<Self, DataError> {
         // TODO: no way to verify trie data
         Ok(Self { payload })
     }
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
-    #[allow(dead_code)]
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> DictionaryBreakIterator<'l, 's, char> {
+    pub fn segment_str<'s>(&self, input: &'s str) -> DictionaryBreakIterator<'l, 's, char> {
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
             iter: input.char_indices(),
@@ -130,10 +137,7 @@ impl<'a> DictionarySegmenter<'a> {
     }
 
     /// Create a dictionary based break iterator for a UTF-16 string.
-    pub fn segment_utf16<'l, 's>(
-        &'l self,
-        input: &'s [u16],
-    ) -> DictionaryBreakIterator<'l, 's, u32> {
+    pub fn segment_utf16<'s>(&self, input: &'s [u16]) -> DictionaryBreakIterator<'l, 's, u32> {
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
             iter: Utf16Indices::new(input),
