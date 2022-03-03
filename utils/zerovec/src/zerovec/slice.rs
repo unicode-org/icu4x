@@ -294,7 +294,7 @@ where
     /// assert_eq!(it.next(), None);
     /// ```
     #[inline]
-    pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = T> + '_ {
         self.as_ule_slice().iter().copied().map(T::from_unaligned)
     }
 }
