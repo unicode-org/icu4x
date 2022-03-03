@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646191889525,
+  "lastUpdate": 1646266784572,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20219,6 +20219,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 106121,
             "range": "± 6280",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "afcd45a277729a2fb7fd4091711b55a916415ff9",
+          "message": "Turn all errors into Copy types (#1657)\n\n* Move DateTimeError to Copy\r\n\r\n* Move DTF errors to Copy\r\n\r\n* Display for TinyStr\r\n\r\n* copy types in plurals\r\n\r\n* Copy for core DateTimeFormatError\r\n\r\n* Copy for decimal, locid, properties errors\r\n\r\n* clip\r\n\r\n* clip",
+          "timestamp": "2022-03-02T16:11:28-08:00",
+          "tree_id": "3bb8b7ddf0c0bb0c5b2a08d8ebe0e59865a06c33",
+          "url": "https://github.com/unicode-org/icu4x/commit/afcd45a277729a2fb7fd4091711b55a916415ff9"
+        },
+        "date": 1646266770451,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 120687,
+            "range": "± 3383",
             "unit": "ns/iter"
           }
         ]
