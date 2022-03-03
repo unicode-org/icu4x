@@ -33,10 +33,10 @@ pub struct FixedDecimalFormatOptions {
 ///     .expect("Data should load successfully");
 ///
 /// let one_thousand = 1000.into();
-/// assert_eq!("1000", fdf.format(&one_thousand).writeable_to_string());
+/// assert_eq!("1000", fdf.format(&one_thousand).write_to_string());
 ///
 /// let ten_thousand = 10000.into();
-/// assert_eq!("10,000", fdf.format(&ten_thousand).writeable_to_string());
+/// assert_eq!("10,000", fdf.format(&ten_thousand).write_to_string());
 /// ```
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
@@ -84,13 +84,13 @@ impl Default for GroupingStrategy {
 ///     .expect("Data should load successfully");
 ///
 /// let pos_thousand = 1000.into();
-/// assert_eq!("+1,000", fdf.format(&pos_thousand).writeable_to_string());
+/// assert_eq!("+1,000", fdf.format(&pos_thousand).write_to_string());
 ///
 /// let zero = 0.into();
-/// assert_eq!("0", fdf.format(&zero).writeable_to_string());
+/// assert_eq!("0", fdf.format(&zero).write_to_string());
 ///
 /// let neg_thousand = (-1000).into();
-/// assert_eq!("-1,000", fdf.format(&neg_thousand).writeable_to_string());
+/// assert_eq!("-1,000", fdf.format(&neg_thousand).write_to_string());
 /// ```
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]

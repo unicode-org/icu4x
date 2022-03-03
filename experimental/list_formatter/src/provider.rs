@@ -123,7 +123,7 @@ impl<'a> ConditionalListJoinerPattern<'a> {
         match &self.special_case {
             Some(SpecialCasePattern { condition, pattern })
                 // TODO: Implement lookahead instead of materializing here.
-                if condition.test(&*following_value.writeable_to_string()) =>
+                if condition.test(&*following_value.write_to_string()) =>
             {
                 pattern.borrow_tuple()
             }
