@@ -44,6 +44,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
+            dictionary_payload: None,
         }
     }
 
@@ -58,6 +59,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
+            dictionary_payload: None,
         }
     }
 
@@ -69,6 +71,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
+            dictionary_payload: None,
         }
     }
 }
