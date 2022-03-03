@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646330392819,
+  "lastUpdate": 1646332720839,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28517,6 +28517,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 19433,
             "range": "± 20",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "789009afe1f56c8a4c4bb6e65fbe176ebc70bf01",
+          "message": "Implement dictionary based segmenter for line segmenter. (#1644)",
+          "timestamp": "2022-03-03T10:27:35-08:00",
+          "tree_id": "1e03188727ea4461891679bf63d1a6ad9ef25d3b",
+          "url": "https://github.com/unicode-org/icu4x/commit/789009afe1f56c8a4c4bb6e65fbe176ebc70bf01"
+        },
+        "date": 1646332707404,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 981,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6304,
+            "range": "± 398",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17937,
+            "range": "± 1743",
             "unit": "ns/iter"
           }
         ]
