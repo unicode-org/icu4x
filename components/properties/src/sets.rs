@@ -19,7 +19,6 @@ use crate::provider::*;
 use crate::*;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
-use icu_codepointtrie::TrieValue;
 use icu_provider::prelude::*;
 use icu_uniset::UnicodeSet;
 
@@ -1446,37 +1445,6 @@ where
 // Enumerated property getter fns
 //
 
-fn get_set_for_enum_prop_val<D, T>(provider: &D, resc_key: ResourceKey, prop_val: T) -> UnisetResult
-where
-    D: DynProvider<UnicodePropertyMapV1Marker<T>> + ?Sized,
-    T: TrieValue,
-{
-    let prop_map_resp: DataResponse<UnicodePropertyMapV1Marker<T>> =
-        provider.load_payload(resc_key, &Default::default())?;
-
-    let property_map_payload: DataPayload<UnicodePropertyMapV1Marker<T>> =
-        prop_map_resp.take_payload()?;
-
-    let prop_set_payload: DataPayload<UnicodePropertyV1Marker> = property_map_payload
-        .map_project_cloned_with_capture(prop_val, |prop_map_marker, prop_val_capture, _| {
-            let trie = &prop_map_marker.code_point_trie;
-            let set = trie.get_set_for_value(prop_val_capture);
-            UnicodePropertyV1::from_owned_uniset(set.clone())
-        });
-
-    Ok(prop_set_payload)
-}
-
-/// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property. See [`GeneralCategory`].
-///
-/// [`UnicodeSet`]: icu_uniset::UnicodeSet
-pub fn get_for_general_category<D>(provider: &D, enum_val: GeneralCategory) -> UnisetResult
-where
-    D: DynProvider<UnicodePropertyMapV1Marker<GeneralCategory>> + ?Sized,
-{
-    get_set_for_enum_prop_val(provider, key::GENERAL_CATEGORY_V1, enum_val)
-}
-
 /// Return a [`UnicodeSet`] for a value or a grouping of values of the General_Category property. See [`GeneralCategoryGroup`].
 ///
 /// [`UnicodeSet`]: icu_uniset::UnicodeSet
@@ -1506,16 +1474,6 @@ where
     Ok(gc_group_set_payload)
 }
 
-/// Return a [`UnicodeSet`] for a particular value of the Script Unicode enumerated property. See [`Script`].
-///
-/// [`UnicodeSet`]: icu_uniset::UnicodeSet
-pub fn get_for_script<D>(provider: &D, enum_val: Script) -> UnisetResult
-where
-    D: DynProvider<UnicodePropertyMapV1Marker<Script>> + ?Sized,
-{
-    get_set_for_enum_prop_val(provider, key::SCRIPT_V1, enum_val)
-}
-
 #[cfg(test)]
 mod tests {
 
@@ -1539,14 +1497,14 @@ mod tests {
 
     #[test]
     fn test_script() {
-        use icu::properties::sets;
+        use icu::properties::maps;
         use icu::properties::Script;
 
         let provider = icu_testdata::get_provider();
-        let payload =
-            sets::get_for_script(&provider, Script::Thai).expect("The data should be valid");
+        let payload = maps::get_script(&provider).expect("The data should be valid");
         let data_struct = payload.get();
-        let thai = &data_struct.inv_list;
+        let script = &data_struct.code_point_trie;
+        let thai = script.get_set_for_value(Script::Thai);
 
         assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
         assert!(thai.contains('\u{0e50}')); // U+0E50 THAI DIGIT ZERO
@@ -1557,7 +1515,7 @@ mod tests {
 
     #[test]
     fn test_gc_groupings() {
-        use icu::properties::sets;
+        use icu::properties::{maps, sets};
         use icu::properties::{GeneralCategory, GeneralCategoryGroup};
         use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
         use std::convert::TryInto;
@@ -1572,16 +1530,15 @@ mod tests {
                 .clone()
                 .try_into()
                 .expect("Valid unicode set");
+
+            let gc_payload =
+                maps::get_general_category(&provider).expect("The data should be valid");
+            let data_struct = gc_payload.get();
+            let gc = &data_struct.code_point_trie;
+
             let mut builder = UnicodeSetBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(
-                    &sets::get_for_general_category(&provider, *subcategory)
-                        .expect("The data should be valid")
-                        .get()
-                        .clone()
-                        .try_into()
-                        .expect("Valid unicode set"),
-                );
+                builder.add_set(&gc.get_set_for_value(*subcategory));
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);
@@ -1660,14 +1617,14 @@ mod tests {
 
     #[test]
     fn test_gc_surrogate() {
-        use icu::properties::sets;
+        use icu::properties::maps;
         use icu::properties::GeneralCategory;
 
         let provider = icu_testdata::get_provider();
-        let payload = sets::get_for_general_category(&provider, GeneralCategory::Surrogate)
-            .expect("The data should be valid");
-        let data_struct = payload.get();
-        let surrogates = &data_struct.inv_list;
+        let gc_payload = maps::get_general_category(&provider).expect("The data should be valid");
+        let data_struct = gc_payload.get();
+        let gc = &data_struct.code_point_trie;
+        let surrogates = gc.get_set_for_value(GeneralCategory::Surrogate);
 
         assert!(surrogates.contains_u32(0xd800));
         assert!(surrogates.contains_u32(0xd900));
