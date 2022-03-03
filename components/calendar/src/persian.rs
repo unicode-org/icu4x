@@ -1,26 +1,38 @@
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, Iso};
+use core::marker::PhantomData;
+
+use crate::{
+    types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit, Iso,
+};
 use tinystr::tinystr;
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 /// The Persian Calendar
 pub struct Persian;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct PersianDateInner {
-    year: i32,
-    month: u8,
-    day: u8,
-}
+impl CalendarArithmetic for Persian {
+    fn month_lengths(year: i32) -> [u8; 12] {
+        const SMPL: [u8; 12] = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+        const LEAP: [u8; 12] = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30];
+        if Persian::is_leap_year(year) {
+            LEAP
+        } else {
+            SMPL
+        }
+    }
 
-impl Persian {
+    fn months_for_every_year() -> u8 {
+        12
+    }
+
     fn is_leap_year(year: i32) -> bool {
         (year * 25 + 11) % 33 < 8
     }
+}
 
-    fn day_of_year(date: &PersianDateInner) -> i32 {
-        Persian::MONTH_PREFIX_SUM[date.month as usize - 1] + date.day as i32 - 1
-    }
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PersianDateInner(ArithmeticDate<Persian>);
 
+impl Persian {
     const EPOCH: i32 = 226895;
     const MONTH_PREFIX_SUM: [i32; 12] = [0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336];
 }
@@ -42,13 +54,18 @@ impl Calendar for Persian {
         let day = day_of_year - Persian::MONTH_PREFIX_SUM[month as usize];
         let day = day as u8 + 1;
         let month = month + 1;
-        PersianDateInner { day, month, year }
+        PersianDateInner(ArithmeticDate {
+            day,
+            month,
+            year,
+            marker: PhantomData,
+        })
     }
 
     // Source: https://github.com/hhstechgroup/icu4j/blob/master/main/classes/core/src/com/ibm/icu/util/PersianCalendar.java
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let day_of_year = Persian::day_of_year(date);
-        let farvardin1 = 365 * (date.year - 1) + (8 * date.year + 21) / 33;
+        let day_of_year = date.0.day_of_year() as i32 - 1;
+        let farvardin1 = 365 * (date.0.year - 1) + (8 * date.0.year + 21) / 33;
         Iso::iso_from_fixed(farvardin1 + day_of_year + Persian::EPOCH)
     }
 
@@ -57,35 +74,25 @@ impl Calendar for Persian {
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u32 {
-        if Persian::is_leap_year(date.year) {
-            366
-        } else {
-            365
-        }
+        date.0.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        match date.month {
-            1..=6 => 31,
-            7..=11 => 30,
-            12 if Persian::is_leap_year(date.year) => 30,
-            12 => 29,
-            _ => 0, // invalid
-        }
+        date.0.days_in_month()
     }
 
-    fn offset_date(&self, _: &mut Self::DateInner, _: DateDuration<Self>) {
-        todo!()
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        date.0.offset_date(offset)
     }
 
     fn until(
         &self,
-        _: &Self::DateInner,
-        _: &Self::DateInner,
-        _: DateDurationUnit,
-        _: DateDurationUnit,
+        date1: &Self::DateInner,
+        date2: &Self::DateInner,
+        largest_unit: DateDurationUnit,
+        smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        todo!()
+        date1.0.until(date2.0, largest_unit, smallest_unit)
     }
 
     fn debug_name() -> &'static str {
@@ -93,12 +100,12 @@ impl Calendar for Persian {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::Year {
-        let (era, number) = if date.year < 1 {
-            (tinystr!(16, "bh"), -date.year + 1)
+        let (era, number) = if date.0.year < 1 {
+            (tinystr!(16, "bh"), -date.0.year + 1)
         } else {
-            (tinystr!(16, "ah"), date.year)
+            (tinystr!(16, "ah"), date.0.year)
         };
-        let related_iso = date.year + 621;
+        let related_iso = date.0.year + 621;
         types::Year {
             era: types::Era(era),
             number,
@@ -108,44 +115,49 @@ impl Calendar for Persian {
 
     fn month(&self, date: &Self::DateInner) -> types::Month {
         types::Month {
-            number: date.month as u32,
+            number: date.0.month as u32,
             // TODO(#486): Implement month codes
             code: types::MonthCode(tinystr!(8, "TODO")),
         }
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.day as u32)
+        types::DayOfMonth(date.0.day as u32)
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let day_of_year = Persian::day_of_year(date) as u32;
+        let day_of_year = date.0.day_of_year();
         let days_in_year = self.days_in_year(date);
         types::DayOfYearInfo {
             day_of_year,
             days_in_year,
-            prev_year: self.year(&PersianDateInner {
+            prev_year: self.year(&PersianDateInner(ArithmeticDate {
                 day: 1,
                 month: 1,
-                year: date.year - 1,
-            }),
-            days_in_prev_year: self.days_in_year(&PersianDateInner {
+                year: date.0.year - 1,
+                marker: PhantomData,
+            })),
+            days_in_prev_year: self.days_in_year(&PersianDateInner(ArithmeticDate {
                 day: 1,
                 month: 1,
-                year: date.year - 1,
-            }),
-            next_year: self.year(&PersianDateInner {
+                year: date.0.year - 1,
+                marker: PhantomData,
+            })),
+            next_year: self.year(&PersianDateInner(ArithmeticDate {
                 day: 1,
                 month: 1,
-                year: date.year + 1,
-            }),
+                year: date.0.year + 1,
+                marker: PhantomData,
+            })),
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{Date, Iso};
+    use std::marker::PhantomData;
+
+    use crate::{ArithmeticDate, Date, Iso};
 
     use super::{Persian, PersianDateInner};
 
@@ -160,11 +172,12 @@ mod tests {
 
         let iso = Date::new_iso_date_from_integers(i_year, i_month, i_day).unwrap();
         let persian = Date::from_raw(
-            PersianDateInner {
+            PersianDateInner(ArithmeticDate {
                 day: p_day,
                 month: p_month,
                 year: p_year,
-            },
+                marker: PhantomData,
+            }),
             Persian,
         );
         assert_eq!(iso.to_calendar(Persian), persian);
