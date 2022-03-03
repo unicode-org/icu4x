@@ -23,7 +23,6 @@ pub struct Julian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 // The inner date type used for representing Date<Julian>
-// The inner date uses IsoDateInner, but represent Julian Dates
 pub struct JulianDateInner(ArithmeticDate<Julian>);
 
 impl CalendarArithmetic for Julian {
@@ -88,6 +87,7 @@ impl Calendar for Julian {
     }
 
     /// The calendar-specific year represented by `date`
+    /// Julian has the same era scheme as Georgian
     fn year(&self, date: &Self::DateInner) -> types::Year {
         crate::gregorian::year_as_gregorian(date.0.year)
     }
