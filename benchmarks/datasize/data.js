@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646266381535,
+  "lastUpdate": 1646302822774,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10373,6 +10373,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/afcd45a277729a2fb7fd4091711b55a916415ff9"
         },
         "date": 1646266367577,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3e8c8fdff33ee346511799655043b9a7a896fb93",
+          "message": "ZeroFrom JapaneseEras (#1635)",
+          "timestamp": "2022-03-03T11:18:57+01:00",
+          "tree_id": "f1f96e9f5f674ce282c20c739b7bb0754c073bf1",
+          "url": "https://github.com/unicode-org/icu4x/commit/3e8c8fdff33ee346511799655043b9a7a896fb93"
+        },
+        "date": 1646302809567,
         "tool": "ndjson",
         "benches": [
           {
