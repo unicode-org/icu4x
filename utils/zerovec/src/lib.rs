@@ -75,13 +75,13 @@
 //! };
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
-//! assert_eq!(74, bincode_bytes.len());
+//! assert_eq!(bincode_bytes.len(), 74);
 //!
 //! let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
-//! assert_eq!(Some(211), deserialized.nums.first());
-//! assert_eq!(Some('冇'), deserialized.chars.get(1));
-//! assert_eq!(Some("world"), deserialized.strs.get(1));
+//! assert_eq!(deserialized.nums.first(), Some(211));
+//! assert_eq!(deserialized.chars.get(1), Some('冇'));
+//! assert_eq!(deserialized.strs.get(1), Some("world"));
 //! // The deserialization will not have allocated anything
 //! assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
 //! # } // feature = "serde"
@@ -149,7 +149,7 @@
 //!
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
-//! assert_eq!(180, bincode_bytes.len());
+//! assert_eq!(bincode_bytes.len(), 180);
 //!
 //! let deserialized: Data = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
@@ -178,7 +178,7 @@
 //! | Count chars in vec of 100 strings (read every element) | 747.50 ns | 955.28 ns |
 //! | Binary search vec of 500 strings 10 times | 466.09 ns | 790.33 ns |
 //!
-//! \* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to `Vec<&str>`; this gives 1.8420 μs, much faster than `Vec<String>` but a bit slower than `zerovec`.*
+//! \* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to the partially-zero-copy `Vec<&str>`; this gives 1.8420 μs, much faster than `Vec<String>` but a bit slower than `zerovec`.*
 //!
 //! | Operation | `HashMap<K,V>`  | `LiteMap<K,V>` | `ZeroMap<K,V>` |
 //! |---|---|---|---|

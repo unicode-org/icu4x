@@ -72,13 +72,13 @@ let data = DataStruct {
 };
 let bincode_bytes = bincode::serialize(&data)
     .expect("Serialization should be successful");
-assert_eq!(74, bincode_bytes.len());
+assert_eq!(bincode_bytes.len(), 74);
 
 let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
     .expect("Deserialization should be successful");
-assert_eq!(Some(211), deserialized.nums.first());
-assert_eq!(Some('冇'), deserialized.chars.get(1));
-assert_eq!(Some("world"), deserialized.strs.get(1));
+assert_eq!(deserialized.nums.first(), Some(211));
+assert_eq!(deserialized.chars.get(1), Some('冇'));
+assert_eq!(deserialized.strs.get(1), Some("world"));
 // The deserialization will not have allocated anything
 assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
 ```
@@ -144,7 +144,7 @@ let data = Data { important_dates, important_people, birthdays_to_people };
 
 let bincode_bytes = bincode::serialize(&data)
     .expect("Serialization should be successful");
-assert_eq!(180, bincode_bytes.len());
+assert_eq!(bincode_bytes.len(), 180);
 
 let deserialized: Data = bincode::deserialize(&bincode_bytes)
     .expect("Deserialization should be successful");
