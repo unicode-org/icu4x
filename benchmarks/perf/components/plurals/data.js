@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646266968100,
+  "lastUpdate": 1646303329319,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28433,6 +28433,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 18759,
             "range": "± 942",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3e8c8fdff33ee346511799655043b9a7a896fb93",
+          "message": "ZeroFrom JapaneseEras (#1635)",
+          "timestamp": "2022-03-03T11:18:57+01:00",
+          "tree_id": "f1f96e9f5f674ce282c20c739b7bb0754c073bf1",
+          "url": "https://github.com/unicode-org/icu4x/commit/3e8c8fdff33ee346511799655043b9a7a896fb93"
+        },
+        "date": 1646303316233,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 877,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5338,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 14767,
+            "range": "± 248",
             "unit": "ns/iter"
           }
         ]
