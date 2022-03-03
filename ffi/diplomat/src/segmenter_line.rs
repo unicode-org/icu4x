@@ -17,6 +17,7 @@ pub mod ffi {
     use icu_segmenter::LineBreakDataV1Marker;
     use icu_segmenter::LineBreakIterator;
     use icu_segmenter::LineBreakSegmenter;
+    use icu_segmenter::UCharDictionaryBreakDataV1Marker;
     use icu_segmenter::Utf16Char;
 
     #[diplomat::opaque]
@@ -68,7 +69,9 @@ pub mod ffi {
 
         fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()>
         where
-            D: ResourceProvider<LineBreakDataV1Marker> + ?Sized,
+            D: ResourceProvider<LineBreakDataV1Marker>
+                + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+                + ?Sized,
         {
             LineBreakSegmenter::try_new(provider)
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
@@ -92,7 +95,9 @@ pub mod ffi {
             options: ICU4XLineBreakOptions,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ()>
         where
-            D: ResourceProvider<LineBreakDataV1Marker> + ?Sized,
+            D: ResourceProvider<LineBreakDataV1Marker>
+                + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+                + ?Sized,
         {
             LineBreakSegmenter::try_new_with_options(provider, options.into())
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))

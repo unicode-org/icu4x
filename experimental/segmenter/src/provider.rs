@@ -7,7 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
-use zerovec::ZeroVec;
+use zerovec::{ZeroSlice, ZeroVec};
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
@@ -61,6 +61,11 @@ pub struct RuleBreakStateTable<'data>(
 
 /// char16trie data for dictionary break
 #[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/char16trie@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct UCharDictionaryBreakDataV1<'data> {
     /// Dictionary data of char16trie.
     #[cfg_attr(feature = "provider_serde", serde(borrow))]

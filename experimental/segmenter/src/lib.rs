@@ -188,8 +188,8 @@ pub use crate::line::{
 };
 pub use crate::provider::{
     GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, RuleBreakDataV1,
-    RuleBreakPropertyTable, RuleBreakStateTable, SentenceBreakDataV1Marker, WordBreakDataV1Marker,
-    ALL_KEYS,
+    RuleBreakPropertyTable, RuleBreakStateTable, SentenceBreakDataV1Marker,
+    UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker, ALL_KEYS,
 };
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,

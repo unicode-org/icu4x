@@ -132,7 +132,11 @@ impl LineBreakSegmenter {
         let payload = provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
-        let dictionary_payload = provider
+
+        // TODO: Use `provider` parameter after we support loading dictionary data from the
+        // production-ready providers.
+        let inv_provider = icu_provider::inv::InvariantDataProvider;
+        let dictionary_payload = inv_provider
             .load_resource(&DataRequest::default())?
             .take_payload()?;
         Ok(Self {
