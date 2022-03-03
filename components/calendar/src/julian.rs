@@ -252,28 +252,28 @@ mod test {
         // March 1st 200 is same on both calendars
         let iso_date = Date::new_iso_date_from_integers(200, 3, 1).unwrap();
         let julian_date = Julian.date_from_iso(iso_date);
-        assert_eq!(julian_date.0.year.0, 200);
+        assert_eq!(julian_date.0.year, 200);
         assert_eq!(u8::from(julian_date.0.month), 3);
         assert_eq!(u8::from(julian_date.0.day), 1);
 
         // Feb 28th, 200 (iso) = Feb 29th, 200 (julian)
         let iso_date = Date::new_iso_date_from_integers(200, 2, 28).unwrap();
         let julian_date = Julian.date_from_iso(iso_date);
-        assert_eq!(julian_date.0.year.0, 200);
+        assert_eq!(julian_date.0.year, 200);
         assert_eq!(u8::from(julian_date.0.month), 2);
         assert_eq!(u8::from(julian_date.0.day), 29);
 
         // March 1st 400 (iso) = Feb 29th, 400 (julian)
         let iso_date = Date::new_iso_date_from_integers(400, 3, 1).unwrap();
         let julian_date = Julian.date_from_iso(iso_date);
-        assert_eq!(julian_date.0.year.0, 400);
+        assert_eq!(julian_date.0.year, 400);
         assert_eq!(u8::from(julian_date.0.month), 2);
         assert_eq!(u8::from(julian_date.0.day), 29);
 
         // Jan 1st, 2022 (iso) = Dec 19, 2021 (julian)
         let iso_date = Date::new_iso_date_from_integers(2022, 1, 1).unwrap();
         let julian_date = Julian.date_from_iso(iso_date);
-        assert_eq!(julian_date.0.year.0, 2021);
+        assert_eq!(julian_date.0.year, 2021);
         assert_eq!(u8::from(julian_date.0.month), 12);
         assert_eq!(u8::from(julian_date.0.day), 19);
     }
