@@ -73,3 +73,4 @@ postcard = { version = "0.7.0", default-features = false, optional = true }
 serde_json = "1.0"
 static_assertions = "1.1"
 icu_locid_macros = { version = "0.5", path = "../../components/locid/macros" }
+postcard = { version = "0.7.0", default-features = false, features = ["alloc"] }

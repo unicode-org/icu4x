@@ -254,6 +254,7 @@
 //! ```
 
 use core::mem;
+use core::fmt;
 
 /// A wrapper around a type `T`, forwarding trait calls down to the inner type.
 ///
@@ -307,5 +308,11 @@ where
         D: serde::de::Deserializer<'de>,
     {
         T::deserialize(deserializer).map(YokeTraitHack)
+    }
+}
+
+impl<T: fmt::Debug> fmt::Debug for YokeTraitHack<T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.0.fmt(f)
     }
 }

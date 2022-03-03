@@ -141,6 +141,8 @@ pub mod marker;
 #[macro_use]
 mod resource;
 #[cfg(feature = "serde")]
+pub mod registry;
+#[cfg(feature = "serde")]
 pub mod serde;
 pub mod struct_provider;
 
