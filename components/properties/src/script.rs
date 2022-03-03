@@ -458,7 +458,7 @@ impl<'data> ScriptWithExtensions<'data> {
             .filter(move |cpm_range| {
                 let sc_with_ext = ScriptWithExt(cpm_range.value.0);
                 if sc_with_ext.has_extensions() {
-                    self.get_scx_val_using_trie_val(&sc_with_ext.as_unaligned())
+                    self.get_scx_val_using_trie_val(&sc_with_ext.to_unaligned())
                         .iter()
                         .any(|sc| sc == script)
                 } else {

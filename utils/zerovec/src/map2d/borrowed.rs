@@ -21,7 +21,7 @@ use crate::map2d::KeyError;
 /// # Examples
 ///
 /// ```
-/// use zerovec::map2d::ZeroMap2dBorrowed;
+/// use zerovec::maps::ZeroMap2dBorrowed;
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
 /// let BINCODE_BYTES: &[u8; 53] = &[
@@ -112,7 +112,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use zerovec::map2d::ZeroMap2dBorrowed;
+    /// use zerovec::maps::ZeroMap2dBorrowed;
     ///
     /// let zm: ZeroMap2dBorrowed<u16, u16, str> = ZeroMap2dBorrowed::new();
     /// assert!(zm.is_empty());
@@ -149,7 +149,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap2d;
-    /// use zerovec::map2d::{KeyError, ZeroMap2dBorrowed};
+    /// use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
@@ -187,7 +187,7 @@ where
     ///
     /// ```rust
     /// use zerovec::ZeroMap2d;
-    /// use zerovec::map2d::ZeroMap2dBorrowed;
+    /// use zerovec::maps::ZeroMap2dBorrowed;
     ///
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");

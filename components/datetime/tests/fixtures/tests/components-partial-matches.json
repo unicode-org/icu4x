@@ -1,6 +1,6 @@
 [
     {
-        "description": "Partial match for m -> m:ss",
+        "description": "Partial match for m -> hm -> h:m a",
         "input": {
             "value": "2002-12-31T08:05:07.000",
             "options": {
@@ -11,13 +11,13 @@
         },
         "output": {
             "values": {
-                "en": "5:07",
-                "fr": "5:07"
+                "en": "8:5 AM",
+                "fr": "8:5 AM"
             }
         }
     },
     {
-        "description": "Partial match for Hs -> H",
+        "description": "Partial match for hs -> hms -> h:mm:s a",
         "input": {
             "value": "2002-12-31T08:05:07.000",
             "options": {
@@ -29,13 +29,13 @@
         },
         "output": {
             "values": {
-                "en": "8",
-                "fr": "8 h"
+                "en": "8:05:7",
+                "fr": "8:05:7"
             }
         }
     },
     {
-        "description": "Partial match for YEEEE -> y",
+        "description": "Partial match for YEEEE -> yMEd -> E, M/d/y",
         "input": {
             "value": "2002-12-31T08:25:07.000",
             "options": {
@@ -47,13 +47,13 @@
         },
         "output": {
             "values": {
-                "en": "2002",
-                "fr": "2002"
+                "en": "Tuesday, 12/31/2002",
+                "fr": "mardi 31/12/2002"
             }
         }
     },
     {
-        "description": "Partial match for YwEEEE -> 'week w of Y'",
+        "description": "Partial match for YwEEEE -> yw -> 'week w of Y'",
         "input": {
             "value": "2002-12-31T08:25:07.000",
             "options": {
@@ -66,8 +66,7 @@
         },
         "output": {
             "values": {
-                "en": "week 01 of 2003",
-                "fr": "semaine 01 de 2003"
+                "en": "week 53 of 2002"
             }
         }
     }

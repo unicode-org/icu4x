@@ -4,7 +4,9 @@
 
 //! Providers that invoke other providers based on the resource key.
 
+use crate::iter::IterableDynProvider;
 use crate::prelude::*;
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 
 /// A provider that returns data from one of two child providers based on the key.
@@ -154,6 +156,24 @@ where
     }
 }
 
+impl<M, P0, P1> IterableDynProvider<M> for ForkByKeyProvider<P0, P1>
+where
+    M: DataMarker,
+    P0: IterableDynProvider<M>,
+    P1: IterableDynProvider<M>,
+{
+    fn supported_options_for_key(
+        &self,
+        key: ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        let result = self.0.supported_options_for_key(key);
+        if !DataError::result_is_err_missing_resource_key(&result) {
+            return result;
+        }
+        self.1.supported_options_for_key(key)
+    }
+}
+
 /// A provider that returns data from the first child provider supporting the key.
 ///
 /// The result of the first provider that supports a particular [`ResourceKey`] will be returned,
@@ -261,6 +281,25 @@ where
     ) -> Result<DataResponse<M>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_payload(key, req);
+            if !DataError::result_is_err_missing_resource_key(&result) {
+                return result;
+            }
+        }
+        Err(DataErrorKind::MissingResourceKey.with_key(key))
+    }
+}
+
+impl<M, P> IterableDynProvider<M> for MultiForkByKeyProvider<P>
+where
+    M: DataMarker,
+    P: IterableDynProvider<M>,
+{
+    fn supported_options_for_key(
+        &self,
+        key: ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        for provider in self.providers.iter() {
+            let result = provider.supported_options_for_key(key);
             if !DataError::result_is_err_missing_resource_key(&result) {
                 return result;
             }

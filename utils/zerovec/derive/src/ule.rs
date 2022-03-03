@@ -76,7 +76,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
 }
 
-pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.lifetimes().next().is_some()
         || input.generics.const_params().next().is_some()
@@ -98,29 +98,49 @@ pub fn make_ule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     let arg = &attr[0];
     let ule_name: Ident = parse_quote!(#arg);
 
+    let (skip_kv, skip_ord, serde) =
+        match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
+            Ok(val) => val,
+            Err(e) => return e.to_compile_error(),
+        };
+
+    if serde {
+        return Error::new(
+            input.span(),
+            "#[make_ule] does not support #[zerovec::serde]",
+        )
+        .to_compile_error();
+    }
+
     let name = &input.ident;
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s),
-        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e),
+        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, skip_ord),
+        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, skip_ord),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
         }
     };
 
-    // Todo: opt-out for ZMKV impl
+    let zmkv = if skip_kv {
+        quote!()
+    } else {
+        quote!(
+            impl<'a> zerovec::maps::ZeroMapKV<'a> for #name {
+                type Container = zerovec::ZeroVec<'a, #name>;
+                type GetType = #ule_name;
+                type OwnedType = #name;
+            }
+        )
+    };
 
     quote!(
         #input
 
         #ule_stuff
 
-        impl<'a> zerovec::map::ZeroMapKV<'a> for #name {
-            type Container = zerovec::ZeroVec<'a, #name>;
-            type GetType = #ule_name;
-            type OwnedType = #name;
-        }
+        #zmkv
     )
 }
 
@@ -129,6 +149,7 @@ fn make_ule_enum_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     enu: &DataEnum,
+    skip_ord: bool,
 ) -> TokenStream2 {
     // We could support more int reprs in the future if needed
     if !utils::has_valid_repr(&input.attrs, |r| r == "u8") {
@@ -179,6 +200,14 @@ fn make_ule_enum_impl(
 
     let max = enu.variants.len() as u8;
 
+    let maybe_ord_derives = if skip_ord {
+        quote!()
+    } else {
+        quote!(#[derive(Ord, PartialOrd)])
+    };
+
+    let vis = &input.vis;
+
     // Safety (based on the safety checklist on the ULE trait):
     //  1. ULE type does not include any uninitialized or padding bytes.
     //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant
@@ -192,8 +221,9 @@ fn make_ule_enum_impl(
     //  6. ULE type byte equality is semantic equality
     quote!(
         #[repr(transparent)]
-        #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
-        struct #ule_name(u8);
+        #[derive(Copy, Clone, PartialEq, Eq)]
+        #maybe_ord_derives
+        #vis struct #ule_name(u8);
 
         unsafe impl zerovec::ule::ULE for #ule_name {
             #[inline]
@@ -210,7 +240,7 @@ fn make_ule_enum_impl(
         impl zerovec::ule::AsULE for #name {
             type ULE = #ule_name;
 
-            fn as_unaligned(self) -> Self::ULE {
+            fn to_unaligned(self) -> Self::ULE {
                 // safety: the enum is repr(u8) and can be cast to a u8
                 unsafe {
                     ::core::mem::transmute(self)
@@ -262,6 +292,7 @@ fn make_ule_struct_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     struc: &DataStruct,
+    skip_ord: bool,
 ) -> TokenStream2 {
     if struc.fields.iter().next().is_none() {
         return Error::new(
@@ -275,12 +306,12 @@ fn make_ule_struct_impl(
 
     let semi = utils::semi_for(&struc.fields);
     let repr_attr = utils::repr_for(&struc.fields);
+    let vis = &input.vis;
 
     let ule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
-        #[derive(Copy, Clone, PartialEq)]
-        struct #ule_name #field_inits #semi
-
+        #[derive(Copy, Clone, PartialEq, Eq)]
+        #vis struct #ule_name #field_inits #semi
     );
     let derived = derive_impl(&ule_struct);
 
@@ -292,12 +323,12 @@ fn make_ule_struct_impl(
         let i = syn::Index::from(i);
         if let Some(ref ident) = field.ident {
             as_ule_conversions
-                .push(quote!(#ident: <#ty as zerovec::ule::AsULE>::as_unaligned(self.#ident)));
+                .push(quote!(#ident: <#ty as zerovec::ule::AsULE>::to_unaligned(self.#ident)));
             from_ule_conversions.push(
                 quote!(#ident: <#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#ident)),
             );
         } else {
-            as_ule_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::as_unaligned(self.#i)));
+            as_ule_conversions.push(quote!(<#ty as zerovec::ule::AsULE>::to_unaligned(self.#i)));
             from_ule_conversions
                 .push(quote!(<#ty as zerovec::ule::AsULE>::from_unaligned(unaligned.#i)));
         };
@@ -308,7 +339,7 @@ fn make_ule_struct_impl(
     let asule_impl = quote!(
         impl zerovec::ule::AsULE for #name {
             type ULE = #ule_name;
-            fn as_unaligned(self) -> Self::ULE {
+            fn to_unaligned(self) -> Self::ULE {
                 #ule_name #as_ule_conversions
             }
             fn from_unaligned(unaligned: Self::ULE) -> Self {
@@ -316,12 +347,37 @@ fn make_ule_struct_impl(
             }
         }
     );
+
+    let maybe_ord_impls = if skip_ord {
+        quote!()
+    } else {
+        quote!(
+            impl core::cmp::PartialOrd for #ule_name {
+                fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+                    let this = <#name as zerovec::ule::AsULE>::from_unaligned(*self);
+                    let other = <#name as zerovec::ule::AsULE>::from_unaligned(*other);
+                    <#name as core::cmp::PartialOrd>::partial_cmp(&this, &other)
+                }
+            }
+
+            impl core::cmp::Ord for #ule_name {
+                fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+                    let this = <#name as zerovec::ule::AsULE>::from_unaligned(*self);
+                    let other = <#name as zerovec::ule::AsULE>::from_unaligned(*other);
+                    <#name as core::cmp::Ord>::cmp(&this, &other)
+                }
+            }
+        )
+    };
+
     quote!(
         #asule_impl
 
         #ule_struct
 
         #derived
+
+        #maybe_ord_impls
     )
 }
 

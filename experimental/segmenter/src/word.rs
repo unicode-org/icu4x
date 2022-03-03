@@ -6,14 +6,13 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::lstm::get_line_break_utf16;
 use crate::lstm::get_line_break_utf8;
+use crate::provider::*;
 use crate::rule_segmenter::*;
-
-include!(concat!(env!("OUT_DIR"), "/generated_word_table.rs"));
 
 fn get_complex_language_break(input: &[u16]) -> Vec<usize> {
     if let Some(mut ret) = get_line_break_utf16(input) {
@@ -44,12 +43,19 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// encodings. Please see the [module-level documentation] for its usages.
 ///
 /// [module-level documentation]: index.html
-pub struct WordBreakSegmenter;
+pub struct WordBreakSegmenter {
+    payload: DataPayload<WordBreakDataV1Marker>,
+}
 
 impl WordBreakSegmenter {
-    pub fn try_new() -> Result<Self, DataError> {
-        // Note: This will be able to return an Error once DataProvider is added
-        Ok(Self)
+    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: ResourceProvider<WordBreakDataV1Marker> + ?Sized,
+    {
+        let payload = provider
+            .load_resource(&DataRequest::default())?
+            .take_payload()?;
+        Ok(Self { payload })
     }
 
     /// Create a word break iterator for an `str` (a UTF-8 string).
@@ -59,13 +65,7 @@ impl WordBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
+            data: self.payload.get(),
         }
     }
 
@@ -76,13 +76,7 @@ impl WordBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
+            data: self.payload.get(),
         }
     }
 
@@ -93,13 +87,7 @@ impl WordBreakSegmenter {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_state_table: &BREAK_STATE_MACHINE_TABLE,
-            property_table: &PROPERTY_TABLE,
-            rule_property_count: PROPERTY_COUNT,
-            last_codepoint_property: LAST_CODEPOINT_PROPERTY,
-            sot_property: PROP_SOT as u8,
-            eot_property: PROP_EOT as u8,
-            complex_property: PROP_COMPLEX as u8,
+            data: self.payload.get(),
         }
     }
 }
@@ -129,7 +117,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakType {
             if iter.current_pos_data.is_none() {
                 break;
             }
-            if iter.get_current_break_property() != iter.complex_property {
+            if iter.get_current_break_property() != iter.data.complex_property {
                 break;
             }
         }
@@ -203,7 +191,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
             if iter.current_pos_data.is_none() {
                 break;
             }
-            if iter.get_current_break_property() != iter.complex_property {
+            if iter.get_current_break_property() != iter.data.complex_property {
                 break;
             }
         }

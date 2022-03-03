@@ -111,7 +111,7 @@ impl AsULE for PatternItem {
     type ULE = PatternItemULE;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         match self {
             Self::Field(field) => {
                 PatternItemULE([0b1000_0000, field.symbol.idx(), field.length.idx()])
@@ -246,7 +246,7 @@ impl AsULE for GenericPatternItem {
     type ULE = GenericPatternItemULE;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         match self {
             Self::Placeholder(idx) => GenericPatternItemULE([0b1000_0000, 0x00, idx]),
             Self::Literal(ch) => {
@@ -311,7 +311,7 @@ mod test {
         ];
 
         for (ref_pattern, ref_bytes) in samples {
-            let ule = ref_pattern.as_unaligned();
+            let ule = ref_pattern.to_unaligned();
             assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
             let pattern = PatternItem::from_unaligned(ule);
             assert_eq!(pattern, *ref_pattern);
@@ -344,7 +344,7 @@ mod test {
         for (ref_pattern, ref_bytes) in samples {
             let mut bytes: Vec<u8> = vec![];
             for item in ref_pattern.iter() {
-                let ule = item.as_unaligned();
+                let ule = item.to_unaligned();
                 bytes.extend(ULE::as_byte_slice(&[ule]));
             }
 
@@ -367,7 +367,7 @@ mod test {
         ];
 
         for (ref_pattern, ref_bytes) in samples {
-            let ule = ref_pattern.as_unaligned();
+            let ule = ref_pattern.to_unaligned();
             assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
             let pattern = GenericPatternItem::from_unaligned(ule);
             assert_eq!(pattern, *ref_pattern);

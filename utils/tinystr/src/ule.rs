@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::TinyAsciiStr;
-use zerovec::map::ZeroMapKV;
+use zerovec::maps::ZeroMapKV;
 use zerovec::ule::*;
 use zerovec::ZeroVec;
 
@@ -24,7 +24,7 @@ unsafe impl<const N: usize> ULE for TinyAsciiStr<N> {
         }
         // Validate the bytes
         for chunk in bytes.chunks_exact(N) {
-            let _ = TinyAsciiStr::<N>::from_bytes_inner(chunk, true)
+            let _ = TinyAsciiStr::<N>::from_bytes_inner(chunk, 0, N, true)
                 .map_err(|_| ZeroVecError::parse::<Self>())?;
         }
         Ok(())
@@ -35,7 +35,7 @@ impl<const N: usize> AsULE for TinyAsciiStr<N> {
     type ULE = Self;
 
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self
     }
 

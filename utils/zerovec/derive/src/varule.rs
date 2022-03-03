@@ -115,7 +115,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
 }
 
-pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.const_params().next().is_some()
         || input.generics.lifetimes().count() > 1
@@ -126,6 +126,12 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         )
         .to_compile_error();
     }
+
+    let (skip_kv, skip_ord, serde) =
+        match utils::extract_attributes_common(&mut input.attrs, "make_ule") {
+            Ok(val) => val,
+            Err(e) => return e.to_compile_error(),
+        };
 
     let lt = input.generics.lifetimes().next();
 
@@ -188,11 +194,12 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
     let semi = utils::semi_for(fields);
     let repr_attr = utils::repr_for(fields);
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
+    let vis = &input.vis;
 
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
-        #[derive(PartialEq)]
-        struct #ule_name #field_inits #semi
+        #[derive(PartialEq, Eq)]
+        #vis struct #ule_name #field_inits #semi
     );
 
     let derived = derive_impl(&varule_struct);
@@ -219,6 +226,63 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         input.span(),
     );
 
+    let zerofrom_fq_path =
+        quote!(<#name as zerovec::__zerovec_internal_reexport::ZeroFrom<#ule_name>>);
+
+    let maybe_ord_impls = if skip_ord {
+        quote!()
+    } else {
+        quote!(
+            impl core::cmp::PartialOrd for #ule_name {
+                fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+                    let this = #zerofrom_fq_path::zero_from(self);
+                    let other = #zerofrom_fq_path::zero_from(other);
+                    <#name as core::cmp::PartialOrd>::partial_cmp(&this, &other)
+                }
+            }
+
+            impl core::cmp::Ord for #ule_name {
+                fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+                    let this = #zerofrom_fq_path::zero_from(self);
+                    let other = #zerofrom_fq_path::zero_from(other);
+                    <#name as core::cmp::Ord>::cmp(&this, &other)
+                }
+            }
+        )
+    };
+
+    let zmkv = if skip_kv {
+        quote!()
+    } else {
+        quote!(
+            impl<'a> zerovec::maps::ZeroMapKV<'a> for #ule_name {
+                type Container = zerovec::VarZeroVec<'a, #ule_name>;
+                type GetType = #ule_name;
+                type OwnedType = Box<#ule_name>;
+            }
+        )
+    };
+
+    let maybe_serde_impl = if serde {
+        let serde_path = quote!(zerovec::__zerovec_internal_reexport::serde);
+        quote!(
+            impl #serde_path::Serialize for #ule_name {
+                fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: #serde_path::Serializer {
+                    let this = #zerofrom_fq_path::zero_from(self);
+                    <#name as #serde_path::Serialize>::serialize(&this, serializer)
+                }
+            }
+            impl<'de> #serde_path::Deserialize<'de> for zerovec::__zerovec_internal_reexport::boxed::Box<#ule_name> {
+                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: #serde_path::Deserializer<'de> {
+                    let this = <#name as #serde_path::Deserialize>::deserialize(deserializer)?;
+                    Ok(zerovec::ule::encode_varule_to_box(&this))
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     quote!(
         #input
 
@@ -229,6 +293,12 @@ pub fn make_varule_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2
         #zf_impl
 
         #derived
+
+        #maybe_ord_impls
+
+        #zmkv
+
+        #maybe_serde_impl
     )
 }
 
@@ -318,7 +388,7 @@ fn make_encode_impl(
             let accessor = utils::field_accessor(field, i);
             quote!(
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
-                let unaligned = zerovec::ule::AsULE::as_unaligned(self.#accessor);
+                let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
                 let src = <#ty as zerovec::ule::ULE>::as_byte_slice(unaligned_slice);
                 out.copy_from_slice(src);
@@ -327,7 +397,7 @@ fn make_encode_impl(
 
     let last_bytes = last_field_info.encode_func(quote!(self.#last_field_name));
     quote!(
-        unsafe impl #maybe_lt_bound zerovec::ule::custom::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
+        unsafe impl #maybe_lt_bound zerovec::ule::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
             // Safety: unimplemented as the other two are implemented
             fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
                 unreachable!("other two methods implemented")

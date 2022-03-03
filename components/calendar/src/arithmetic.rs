@@ -9,6 +9,11 @@ pub mod week_of {
     pub const MIN_UNIT_DAYS: u16 = 14;
 
     /// Information about how a given calendar assigns weeks to a year or month.
+    #[derive(Clone, Copy, Debug)]
+    #[cfg_attr(
+        feature = "provider_serde",
+        derive(serde::Serialize, serde::Deserialize)
+    )]
     pub struct CalendarInfo {
         /// The first day of a week.
         pub first_weekday: IsoWeekday,
@@ -20,6 +25,15 @@ pub mod week_of {
         /// Returns the zero based index of `weekday` vs this calendar's start of week.
         fn weekday_index(&self, weekday: IsoWeekday) -> i8 {
             (7 + (weekday as i8) - (self.first_weekday as i8)) % 7
+        }
+    }
+
+    impl Default for CalendarInfo {
+        fn default() -> Self {
+            Self {
+                first_weekday: IsoWeekday::Monday,
+                min_week_days: 1,
+            }
         }
     }
 

@@ -6,7 +6,7 @@
 
 use std::borrow::Cow;
 use zerofrom::ZeroFrom;
-use zerovec::{map::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{maps::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(ZeroFrom, Copy, Clone)]
 pub struct IntExample {

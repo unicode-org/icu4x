@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::String;
+use alloc::string::{String, ToString};
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
@@ -18,6 +18,7 @@ use crate::{
     provider::{
         self,
         calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+        week_data::WeekDataV1Marker,
     },
     raw,
     time_zone::TimeZoneFormat,
@@ -50,7 +51,8 @@ impl ZonedDateTimeFormat {
         L: Into<Locale>,
         DP: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>,
+            + ResourceProvider<DateSkeletonPatternsV1Marker>
+            + ResourceProvider<WeekDataV1Marker>,
         ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
@@ -69,9 +71,24 @@ impl ZonedDateTimeFormat {
             options,
             calendar,
         )?;
-
-        let requires_data = datetime::analyze_patterns(&patterns.get().0, true)
+        let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
+
+        let week_data = if required.week_data {
+            Some(
+                date_provider
+                    .load_resource(&DataRequest {
+                        options: ResourceOptions {
+                            variant: langid.region.map(|r| r.as_str().to_string().into()),
+                            langid: None,
+                        },
+                        metadata: Default::default(),
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
@@ -82,7 +99,7 @@ impl ZonedDateTimeFormat {
             None
         };
 
-        let symbols_data = if requires_data {
+        let symbols_data = if required.symbols_data {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
@@ -99,7 +116,7 @@ impl ZonedDateTimeFormat {
         };
 
         let datetime_format =
-            raw::DateTimeFormat::new(locale, patterns, symbols_data, ordinal_rules);
+            raw::DateTimeFormat::new(locale, patterns, symbols_data, week_data, ordinal_rules);
         let time_zone_format = TimeZoneFormat::try_new(
             datetime_format.locale.clone(),
             datetime_format

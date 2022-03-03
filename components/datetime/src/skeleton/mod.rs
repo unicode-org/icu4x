@@ -23,9 +23,14 @@ mod test {
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
-        provider::{calendar::DatePatternsV1Marker, calendar::DateSkeletonPatternsV1Marker},
+        pattern::runtime::Pattern,
+        provider::calendar::{
+            DatePatternsV1Marker, DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, SkeletonV1,
+        },
     };
     use core::convert::TryFrom;
+    use core::str::FromStr;
+    use litemap::LiteMap;
 
     use ::serde::{
         ser::{self, SerializeSeq},
@@ -88,7 +93,7 @@ mod test {
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
                         .to_string(),
-                    String::from("MMMM d, y")
+                    String::from("H:m:s")
                 )
             }
             BestSkeleton::NoMatch => {
@@ -100,7 +105,7 @@ mod test {
     #[test]
     fn test_skeleton_matching_missing_fields() {
         let components = components::Bag {
-            month: Some(components::Month::Numeric),
+            week: Some(components::Week::TwoDigitWeekOfYear),
             weekday: Some(components::Text::Short),
             ..Default::default()
         };
@@ -113,7 +118,9 @@ mod test {
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
                         .to_string(),
-                    String::from("L")
+                    // CLDR has ("yw", "MMMMW", "ccc"). The first two result in 1 missing & 1 extra symbol vs just
+                    // 1 missing symbol for "ccc".
+                    String::from("ccc")
                 )
             }
             best => panic!("Unexpected {:?}", best),
@@ -168,8 +175,6 @@ mod test {
         );
     }
 
-    /// There are no skeletons that match just the time zone. They all rely on the appendItems
-    /// data from the CLDR.
     #[test]
     fn test_skeleton_no_match() {
         let components = components::Bag {
@@ -177,10 +182,16 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let (_, skeletons) = get_data_payload();
+        // Construct a set of skeletons that do not use the time zone symbol.
+        let mut skeletons = LiteMap::new();
+        skeletons.insert(
+            SkeletonV1::try_from("EEEE").unwrap(),
+            Pattern::from_str("weekday EEEE").unwrap().into(),
+        );
+        let skeletons = DateSkeletonPatternsV1(skeletons);
 
         assert_eq!(
-            get_best_available_format_pattern(skeletons.get(), &requested_fields, false),
+            get_best_available_format_pattern(&skeletons, &requested_fields, false),
             BestSkeleton::NoMatch,
             "No match was found"
         );

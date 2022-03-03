@@ -16,6 +16,34 @@ use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! leading_tag {
+    () => {
+        "\nicu4x_key_tag"
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! trailing_tag {
+    () => {
+        "\n"
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! tagged {
+    ($without_tags:expr) => {
+        concat!(
+            $crate::leading_tag!(),
+            $without_tags,
+            $crate::trailing_tag!()
+        )
+    };
+}
+
 /// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -24,11 +52,14 @@ pub struct ResourceKeyHash([u8; 4]);
 
 impl ResourceKeyHash {
     const fn compute_from_str(path: &str) -> Self {
-        Self(helpers::fxhash_32(path.as_bytes()).to_le_bytes())
+        Self(
+            helpers::fxhash_32(path.as_bytes(), leading_tag!().len(), trailing_tag!().len())
+                .to_le_bytes(),
+        )
     }
 }
 
-impl<'a> zerovec::map::ZeroMapKV<'a> for ResourceKeyHash {
+impl<'a> zerovec::maps::ZeroMapKV<'a> for ResourceKeyHash {
     type Container = zerovec::ZeroVec<'a, ResourceKeyHash>;
     type GetType = <ResourceKeyHash as AsULE>::ULE;
     type OwnedType = ResourceKeyHash;
@@ -58,7 +89,7 @@ unsafe impl ULE for ResourceKeyHash {
 impl AsULE for ResourceKeyHash {
     type ULE = Self;
     #[inline]
-    fn as_unaligned(self) -> Self::ULE {
+    fn to_unaligned(self) -> Self::ULE {
         self
     }
     #[inline]
@@ -101,34 +132,6 @@ pub struct ResourceKey {
     hash: ResourceKeyHash,
 }
 
-#[doc(hidden)]
-#[macro_export]
-macro_rules! leading_tag {
-    () => {
-        "\nicu4x_key_tag"
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! trailing_tag {
-    () => {
-        "\n"
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! tagged {
-    ($without_tags:expr) => {
-        concat!(
-            $crate::leading_tag!(),
-            $without_tags,
-            $crate::trailing_tag!()
-        )
-    };
-}
-
 impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
     ///
@@ -137,7 +140,7 @@ impl ResourceKey {
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
-    pub fn get_path(&self) -> &str {
+    pub fn get_path(&self) -> &'static str {
         // This becomes const with `const_ptr_offset` and `const_slice_from_raw_parts`.
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
@@ -450,22 +453,22 @@ mod tests {
     use super::*;
 
     struct KeyTestCase {
-        pub resc_key: ResourceKey,
+        pub key: ResourceKey,
         pub expected: &'static str,
     }
 
     fn get_key_test_cases() -> [KeyTestCase; 3] {
         [
             KeyTestCase {
-                resc_key: resource_key!("core/cardinal@1"),
+                key: resource_key!("core/cardinal@1"),
                 expected: "core/cardinal@1",
             },
             KeyTestCase {
-                resc_key: resource_key!("core/maxlengthsubcatg@1"),
+                key: resource_key!("core/maxlengthsubcatg@1"),
                 expected: "core/maxlengthsubcatg@1",
             },
             KeyTestCase {
-                resc_key: resource_key!("core/cardinal@65535"),
+                key: resource_key!("core/cardinal@65535"),
                 expected: "core/cardinal@65535",
             },
         ]
@@ -474,13 +477,13 @@ mod tests {
     #[test]
     fn test_options_to_string() {
         for cas in get_key_test_cases().iter() {
-            assert_eq!(cas.expected, cas.resc_key.to_string());
-            writeable::assert_writeable_eq!(&cas.resc_key, cas.expected);
+            assert_eq!(cas.expected, cas.key.to_string());
+            writeable::assert_writeable_eq!(&cas.key, cas.expected);
         }
     }
 
     struct OptionsTestCase {
-        pub resc_options: ResourceOptions,
+        pub options: ResourceOptions,
         pub expected: &'static str,
     }
 
@@ -488,21 +491,21 @@ mod tests {
         use icu_locid_macros::langid;
         [
             OptionsTestCase {
-                resc_options: ResourceOptions {
+                options: ResourceOptions {
                     variant: None,
                     langid: Some(LanguageIdentifier::und()),
                 },
                 expected: "und",
             },
             OptionsTestCase {
-                resc_options: ResourceOptions {
+                options: ResourceOptions {
                     variant: Some(Cow::Borrowed("GBP")),
                     langid: Some(LanguageIdentifier::und()),
                 },
                 expected: "GBP/und",
             },
             OptionsTestCase {
-                resc_options: ResourceOptions {
+                options: ResourceOptions {
                     variant: Some(Cow::Borrowed("GBP")),
                     langid: Some(langid!("en-ZA")),
                 },
@@ -514,8 +517,8 @@ mod tests {
     #[test]
     fn test_key_to_string() {
         for cas in get_options_test_cases().iter() {
-            assert_eq!(cas.expected, cas.resc_options.to_string());
-            writeable::assert_writeable_eq!(&cas.resc_options, cas.expected);
+            assert_eq!(cas.expected, cas.options.to_string());
+            writeable::assert_writeable_eq!(&cas.options, cas.expected);
         }
     }
 }

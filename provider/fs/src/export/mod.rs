@@ -12,7 +12,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid_macros::langid;
+//! use icu_provider::export::DataExporter;
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::*;
 //! use icu_provider_fs::FsDataProvider;
@@ -31,38 +31,37 @@
 //! let mut exporter = fs_exporter::FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
-//! // Export a key
-//! let source_provider = HelloWorldProvider::new_with_placeholder_data();
-//! let result = icu_provider::export::export_from_iterable(
-//!     &HelloWorldV1Marker::KEY,
-//!     &source_provider,
-//!     &mut exporter)
+//! // Export something
+//! let payload = DataPayload::<HelloWorldV1Marker>::from_owned(
+//!     HelloWorldV1 { message: Cow::Borrowed("Hi") }
+//! );
+//! let result = exporter.put_payload(
+//!     HelloWorldV1Marker::KEY,
+//!     Default::default(),
+//!     payload.clone().into_serializable())
 //! .expect("Should successfully export");
 //!
 //! // Create a filesystem provider reading from the demo directory
-//! let fs_provider = FsDataProvider::try_new(demo_path.clone())
+//! let provider = FsDataProvider::try_new(demo_path.clone())
 //!     .expect("Should successfully read from filesystem");
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
-//!     options: langid!("bn").into(),
+//!     options: Default::default(),
 //!     metadata: Default::default(),
 //! };
-//! let source_response: DataResponse<HelloWorldV1Marker> =
-//!     source_provider.load_resource(&req).unwrap();
-//! let fs_response: DataResponse<HelloWorldV1Marker> =
-//!     fs_provider.load_resource(&req).unwrap();
+//! let response: DataPayload<HelloWorldV1Marker> =
+//!     provider.load_resource(&req).unwrap().take_payload().unwrap();
 //!
 //! assert_eq!(
-//!     source_response.payload.unwrap().get(),
-//!     fs_response.payload.unwrap().get(),
+//!     response.get(),
+//!     payload.get(),
 //! );
 //!
 //! // Clean up from demo
 //! std::fs::remove_dir_all(&demo_path).expect("Should clean up test directory");
 //! ```
 
-mod aliasing;
 pub mod fs_exporter;
 pub mod serializers;
 pub use fs_exporter::FilesystemExporter;

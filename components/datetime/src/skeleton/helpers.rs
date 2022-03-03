@@ -368,13 +368,13 @@ pub fn get_best_available_format_pattern<'data>(
                         .symbol
                         .discriminant_cmp(&requested_field.symbol)
                     {
-                        Ordering::Greater => {
+                        Ordering::Less => {
                             // Keep searching for a matching skeleton field.
                             skeleton_fields.next();
                             distance += SKELETON_EXTRA_SYMBOL;
                             continue;
                         }
-                        Ordering::Less => {
+                        Ordering::Greater => {
                             // The requested field symbol is missing from the skeleton.
                             distance += REQUESTED_SYMBOL_MISSING;
                             missing_fields += 1;

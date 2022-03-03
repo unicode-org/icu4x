@@ -8,6 +8,7 @@
 use crate::{
     options::{components, DateTimeFormatOptions},
     provider::calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
+    provider::week_data::WeekDataV1Marker,
     raw,
 };
 use alloc::string::String;
@@ -96,7 +97,8 @@ impl<C: CldrCalendar> DateTimeFormat<C> {
         D: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<DatePatternsV1Marker>
             + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>,
+            + ResourceProvider<OrdinalV1Marker>
+            + ResourceProvider<WeekDataV1Marker>,
     {
         Ok(Self(
             raw::DateTimeFormat::try_new(locale, data_provider, options, C::IDENTIFIER)?,

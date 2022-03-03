@@ -1417,6 +1417,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "icu",
+ "icu_codepointtrie",
  "icu_provider",
  "icu_provider_fs",
  "icu_segmenter_lstm",
@@ -1426,7 +1427,6 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "toml",
- "unicode-width",
  "zerovec",
 ]
 
@@ -3145,14 +3145,18 @@ dependencies = [
  "serde_json",
  "yoke",
  "zerofrom",
+ "zerovec-derive",
 ]
 
 [[package]]
 name = "zerovec-derive"
 version = "0.6.0"
 dependencies = [
+ "postcard",
  "proc-macro2",
  "quote",
+ "serde",
+ "serde_json",
  "syn",
  "synstructure",
  "zerofrom",

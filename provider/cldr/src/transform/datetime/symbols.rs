@@ -10,7 +10,6 @@ use crate::cldr_serde;
 use crate::CldrPaths;
 use icu_datetime::provider::calendar::*;
 
-use crate::support::KeyedDataProvider;
 use icu_provider::iter::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -18,7 +17,7 @@ use std::convert::TryFrom;
 use tinystr::{tinystr, TinyStr16};
 
 /// A data provider reading from CLDR JSON dates files.
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct DateSymbolsProvider(CommonDateProvider);
 
 impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
@@ -28,18 +27,12 @@ impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider {
     }
 }
 
-impl KeyedDataProvider for DateSymbolsProvider {
-    fn supported_keys() -> Vec<ResourceKey> {
-        vec![DateSymbolsV1Marker::KEY]
-    }
-}
-
 impl ResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<DateSymbolsV1Marker>, DataError> {
-        let dates = self.0.dates_for::<DateSymbolsV1Marker>(req)?;
+        let dates = &self.0.dates_for::<DateSymbolsV1Marker>(req)?;
         let metadata = DataResponseMetadata::default();
         // TODO(#1109): Set metadata.data_langid correctly.
         let calendar =

@@ -21,9 +21,13 @@
 //! Clients upgrading to `zerovec` benefit from zero heap allocations when deserializing
 //! read-only data.
 //!
-//! This crate has two optional features: `serde` and `yoke`. `serde` allows serializing and deserializing
+//! This crate has three optional features: `serde`, `yoke`, and `derive`. `serde` allows serializing and deserializing
 //! `zerovec`'s abstractions via [`serde`](https://docs.rs/serde), and `yoke` enables implementations of `Yokeable`
 //! from the [`yoke`](https://docs.rs/yoke/) crate.
+//!
+//! `derive` makes it easier to use custom types in these collections by providing the [`#[make_ule]`](crate::make_ule) and
+//! [`#[make_varule]`](crate::make_varule) proc macros, which generate appropriate [`ULE`](crate::ule::ULE) and
+//! [`VarULE`](crate::ule::VarULE)-conformant types for a given "normal" type.
 //!
 //! # Performance
 //!
@@ -101,12 +105,12 @@
 extern crate alloc;
 
 mod error;
-pub mod map;
-pub mod map2d;
+mod map;
+mod map2d;
 #[cfg(test)]
 pub mod samples;
 pub mod ule;
-pub mod varzerovec;
+mod varzerovec;
 mod zerovec;
 
 #[cfg(feature = "yoke")]
@@ -114,12 +118,65 @@ mod yoke_impls;
 mod zerofrom_impls;
 
 pub use crate::error::ZeroVecError;
-pub use crate::map::ZeroMap;
-pub use crate::map2d::ZeroMap2d;
-pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
+pub use crate::map::map::ZeroMap;
+pub use crate::map2d::map::ZeroMap2d;
+pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
+
+#[cfg(feature = "derive")]
+pub use zerovec_derive::{make_ule, make_varule};
 
 #[doc(hidden)]
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
+
+    pub use alloc::boxed;
+
+    #[cfg(feature = "serde")]
+    pub use serde;
+}
+
+pub mod maps {
+    //! This module contains additional utility types and traits for working with
+    //! [`ZeroMap`] and [`ZeroMap2d`]. See their docs for more details on the general purpose
+    //! of these types.
+    //!
+    //! [`ZeroMapBorrowed`] and [`ZeroMap2dBorrowed`] are versions of [`ZeroMap`] and [`ZeroMap2d`]
+    //! that can be used when you wish to guarantee that the map data is always borrowed, leading to
+    //! relaxed lifetime constraints.
+    //!
+    //! The [`ZeroMapKV`] trait is required to be implemented on any type that needs to be used
+    //! within a map type. [`ZeroVecLike`], [`BorrowedZeroVecLike`], and [`MutableZeroVecLike`] are
+    //! all traits used in the internal workings of the map types, and should typically not be used
+    //! or implemented by users of this crate.
+    #[doc(no_inline)]
+    pub use crate::map::ZeroMap;
+    pub use crate::map::ZeroMapBorrowed;
+
+    #[doc(no_inline)]
+    pub use crate::map2d::ZeroMap2d;
+    pub use crate::map2d::ZeroMap2dBorrowed;
+
+    pub use crate::map::{BorrowedZeroVecLike, MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+    pub use crate::map2d::KeyError;
+}
+
+pub mod vecs {
+    //! This module contains additional utility types for working with
+    //! [`ZeroVec`] and  [`VarZeroVec`]. See their docs for more details on the general purpose
+    //! of these types.
+    //!
+    //! [`ZeroSlice`] and [`VarZeroSlice`] provide slice-like versions of the vector types
+    //! for use behind references and in custom ULE types.
+    //!
+    //! [`VarZeroVecOwned`] is a special owned/mutable version of [`VarZeroVec`], allowing
+    //! direct manipulation of the backing buffer.
+
+    #[doc(no_inline)]
+    pub use crate::zerovec::{ZeroSlice, ZeroVec};
+
+    #[doc(no_inline)]
+    pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
+
+    pub use crate::varzerovec::VarZeroVecOwned;
 }

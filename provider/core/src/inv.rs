@@ -66,7 +66,7 @@ where
 {
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        _: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }

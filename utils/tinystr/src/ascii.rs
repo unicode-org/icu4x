@@ -15,15 +15,25 @@ pub struct TinyAsciiStr<const N: usize> {
 
 impl<const N: usize> TinyAsciiStr<N> {
     pub const fn from_bytes(bytes: &[u8]) -> Result<Self, TinyStrError> {
-        Self::from_bytes_inner(bytes, false)
+        Self::from_bytes_inner(bytes, 0, bytes.len(), false)
+    }
+
+    pub const fn from_bytes_manual_slice(
+        bytes: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, TinyStrError> {
+        Self::from_bytes_inner(bytes, start, end, false)
     }
 
     #[inline]
     pub(crate) const fn from_bytes_inner(
         bytes: &[u8],
+        start: usize,
+        end: usize,
         allow_trailing_null: bool,
     ) -> Result<Self, TinyStrError> {
-        let len = bytes.len();
+        let len = end - start;
         if len > N {
             return Err(TinyStrError::TooLarge { max: N, len });
         }
@@ -32,7 +42,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         let mut i = 0;
         let mut found_null = false;
         while i < len {
-            let b = bytes[i];
+            let b = bytes[start + i];
 
             if b == 0 {
                 found_null = true;
@@ -57,7 +67,7 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     #[inline]
     pub const fn from_str(s: &str) -> Result<Self, TinyStrError> {
-        Self::from_bytes_inner(s.as_bytes(), false)
+        Self::from_bytes_inner(s.as_bytes(), 0, s.len(), false)
     }
 
     #[inline]
@@ -95,6 +105,35 @@ impl<const N: usize> TinyAsciiStr<N> {
         &self.bytes
     }
 
+    /// # Safety
+    /// Must be called with a bytes array made of valid ASCII bytes, with no null bytes
+    /// between ASCII characters
+    #[must_use]
+    pub const unsafe fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
+        Self { bytes }
+    }
+}
+
+macro_rules! check_is {
+    ($self:ident, $check:ident, $check_u8:ident) => {
+        if N <= 4 {
+            Aligned4::from_bytes(&$self.bytes).$check()
+        } else if N <= 8 {
+            Aligned8::from_bytes(&$self.bytes).$check()
+        } else {
+            let mut i = 0;
+            while i < N && $self.bytes[i] != 0 {
+                if !$self.bytes[i].$check_u8() {
+                    return false;
+                }
+                i += 1;
+            }
+            true
+        }
+    };
+}
+
+impl<const N: usize> TinyAsciiStr<N> {
     /// Checks if the value is composed of ASCII alphabetic characters:
     ///
     ///  * U+0041 'A' ..= U+005A 'Z', or
@@ -115,14 +154,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn is_ascii_alphabetic(&self) -> bool {
-        if N <= 4 {
-            Aligned4::from_bytes(&self.bytes).is_ascii_alphabetic()
-        } else if N <= 8 {
-            Aligned8::from_bytes(&self.bytes).is_ascii_alphabetic()
-        } else {
-            self.as_bytes().iter().all(u8::is_ascii_alphabetic)
-        }
+    pub const fn is_ascii_alphabetic(&self) -> bool {
+        check_is!(self, is_ascii_alphabetic, is_ascii_alphabetic)
     }
 
     /// Checks if the value is composed of ASCII alphanumeric characters:
@@ -146,14 +179,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn is_ascii_alphanumeric(&self) -> bool {
-        if N <= 4 {
-            Aligned4::from_bytes(&self.bytes).is_ascii_alphanumeric()
-        } else if N <= 8 {
-            Aligned8::from_bytes(&self.bytes).is_ascii_alphanumeric()
-        } else {
-            self.as_bytes().iter().all(u8::is_ascii_alphanumeric)
-        }
+    pub const fn is_ascii_alphanumeric(&self) -> bool {
+        check_is!(self, is_ascii_alphanumeric, is_ascii_alphanumeric)
     }
 
     /// Checks if the value is composed of ASCII decimal digits:
@@ -175,16 +202,38 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn is_ascii_numeric(&self) -> bool {
-        if N <= 4 {
-            Aligned4::from_bytes(&self.bytes).is_ascii_numeric()
-        } else if N <= 8 {
-            Aligned8::from_bytes(&self.bytes).is_ascii_numeric()
-        } else {
-            self.as_bytes().iter().all(u8::is_ascii_digit)
-        }
+    pub const fn is_ascii_numeric(&self) -> bool {
+        check_is!(self, is_ascii_numeric, is_ascii_digit)
     }
+}
 
+macro_rules! to {
+    ($self:ident, $to:ident, $later_char_to:ident $(,$first_char_to:ident)?) => {{
+        let mut i = 0;
+        if N <= 4 {
+            let aligned = Aligned4::from_bytes(&$self.bytes).$to().to_bytes();
+            while i < N {
+                $self.bytes[i] = aligned[i];
+                i += 1;
+            }
+        } else if N <= 8 {
+            let aligned = Aligned8::from_bytes(&$self.bytes).$to().to_bytes();
+            while i < N {
+                $self.bytes[i] = aligned[i];
+                i += 1;
+            }
+        } else {
+            while i < N && $self.bytes[i] != 0 {
+                $self.bytes[i] = $self.bytes[i].$later_char_to();
+                i += 1;
+            }
+            $($self.bytes[0] = $self.bytes[0].$first_char_to())?
+        }
+        $self
+    }};
+}
+
+impl<const N: usize> TinyAsciiStr<N> {
     /// Converts this type to its ASCII lower case equivalent in-place.
     ///
     /// ASCII letters 'A' to 'Z' are mapped to 'a' to 'z', other characters are unchanged.
@@ -201,17 +250,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn to_ascii_lowercase(mut self) -> Self {
-        if N <= 4 {
-            let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_lowercase();
-            Self::from_slice(&aligned.to_bytes()[0..N])
-        } else if N <= 8 {
-            let aligned = Aligned8::from_bytes(&self.bytes).to_ascii_lowercase();
-            Self::from_slice(&aligned.to_bytes()[0..N])
-        } else {
-            self.bytes.iter_mut().for_each(u8::make_ascii_lowercase);
-            self
-        }
+    pub const fn to_ascii_lowercase(mut self) -> Self {
+        to!(self, to_ascii_lowercase, to_ascii_lowercase)
     }
 
     /// Converts this type to its ASCII title case equivalent in-place.
@@ -231,18 +271,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn to_ascii_titlecase(mut self) -> Self {
-        if N <= 4 {
-            let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_titlecase();
-            Self::from_slice(&aligned.to_bytes()[0..N])
-        } else if N <= 8 {
-            let aligned = Aligned8::from_bytes(&self.bytes).to_ascii_titlecase();
-            Self::from_slice(&aligned.to_bytes()[0..N])
-        } else {
-            self.bytes.iter_mut().for_each(u8::make_ascii_lowercase);
-            self.bytes[0].make_ascii_uppercase();
-            self
-        }
+    pub const fn to_ascii_titlecase(mut self) -> Self {
+        to!(
+            self,
+            to_ascii_titlecase,
+            to_ascii_lowercase,
+            to_ascii_uppercase
+        )
     }
 
     /// Converts this type to its ASCII upper case equivalent in-place.
@@ -261,33 +296,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn to_ascii_uppercase(mut self) -> Self {
-        if N <= 4 {
-            let aligned = Aligned4::from_bytes(&self.bytes).to_ascii_uppercase();
-            Self::from_slice(&aligned.to_bytes()[0..N])
-        } else if N <= 8 {
-            let aligned = Aligned8::from_bytes(&self.bytes).to_ascii_uppercase();
-            Self::from_slice(&aligned.to_bytes()[0..N])
-        } else {
-            self.bytes.iter_mut().for_each(u8::make_ascii_uppercase);
-            self
-        }
-    }
-
-    /// # Panics
-    /// Panics if src is not exactly N bytes long
-    fn from_slice(src: &[u8]) -> Self {
-        let mut bytes = [0; N];
-        bytes[0..N].copy_from_slice(src);
-        Self { bytes }
-    }
-
-    /// # Safety
-    /// Must be called with a bytes array made of valid ASCII bytes, with no null bytes
-    /// between ASCII characters
-    #[must_use]
-    pub const unsafe fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
-        Self { bytes }
+    pub const fn to_ascii_uppercase(mut self) -> Self {
+        to!(self, to_ascii_uppercase, to_ascii_uppercase)
     }
 }
 

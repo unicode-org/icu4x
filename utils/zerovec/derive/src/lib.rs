@@ -34,7 +34,13 @@ pub fn varule_derive(input: TokenStream) -> TokenStream {
 /// This can be attached to structs containing only AsULE types, or C-like enums that have `#[repr(u8)]`
 /// and all explicit discriminants.
 ///
-/// The type must be `Copy`, `PartialEq`, and `Ord`.
+/// The type must be `Copy`, `PartialEq`, and `Eq`.
+///
+/// By default this attribute will also autogenerate a `ZeroMapKV` implementation, which requires
+/// `Ord` and `PartialOrd` on `Self`. You can opt out of this with `#[zerovec::skip_kv]`.
+///
+/// This implementation will also by default autogenerate `Ord` and `PartialOrd` on the ULE type based on
+/// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_ord]`
 #[proc_macro_attribute]
 pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);
@@ -42,12 +48,23 @@ pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(ule::make_ule_impl(attr, input))
 }
 
-/// Generate a corresponding VarULE type and the relevant EncodeAsVarULE implementations for this type
+/// Generate a corresponding VarULE type and the relevant EncodeAsVarULE/ZeroFrom implementations for this type
 ///
 /// This can be attached to structs containing only AsULE types with the last field being `Cow<'a, str>`,
-/// `Cow<'a, [u8]>`, ZeroSlice, or VarZeroSlice
+/// `Cow<'a, [u8]>`, ZeroSlice, or VarZeroSlice.
 ///
-/// The type must be `PartialEq` `Ord`.
+/// The type must be `PartialEq` and `Eq`.
+///
+/// Provided the type implements `serde::Serialize` and `serde::Deserialize`, this attribute can also generate
+/// the relevant serialize/deserialize implementations for the `VarULE` type if you apply the `#[zerovec::serde]`
+/// attribute. Those impls are required to support human-readable serialization of the VarZeroVec.
+/// This needs the `serde` feature to be enabled on the `zerovec` crate to work.
+///
+/// By default this attribute will also autogenerate a `ZeroMapKV` implementation, which requires
+/// `Ord` and `PartialOrd` on the `VarULE` type. You can opt out of this with `#[zerovec::skip_kv]`.
+///
+/// This implementation will also by default autogenerate `Ord` and `PartialOrd` on the VarULE type based on
+/// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_ord]`
 #[proc_macro_attribute]
 pub fn make_varule(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);

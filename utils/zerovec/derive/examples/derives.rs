@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::ule::custom::EncodeAsVarULE;
 use zerovec::ule::AsULE;
+use zerovec::ule::EncodeAsVarULE;
 use zerovec::*;
-use zerovec_derive::*;
 
 #[repr(packed)]
-#[derive(ULE, Copy, Clone)]
+#[derive(ule::ULE, Copy, Clone)]
 pub struct FooULE {
     a: u8,
     b: <u32 as AsULE>::ULE,
@@ -24,11 +23,11 @@ struct Foo {
 
 impl AsULE for Foo {
     type ULE = FooULE;
-    fn as_unaligned(self) -> FooULE {
+    fn to_unaligned(self) -> FooULE {
         FooULE {
             a: self.a,
-            b: self.b.as_unaligned(),
-            c: self.c.as_unaligned(),
+            b: self.b.to_unaligned(),
+            c: self.c.to_unaligned(),
         }
     }
 
@@ -42,7 +41,7 @@ impl AsULE for Foo {
 }
 
 #[repr(packed)]
-#[derive(VarULE)]
+#[derive(ule::VarULE)]
 pub struct RelationULE {
     /// This maps to (AndOr, Polarity, Operand),
     /// with the first bit mapping to AndOr (1 == And), the second bit
@@ -65,7 +64,7 @@ unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[
             &[self.andor_polarity_operand],
-            ule::ULE::as_byte_slice(&[self.modulo.as_unaligned()]),
+            ule::ULE::as_byte_slice(&[self.modulo.to_unaligned()]),
             self.range_list.as_bytes(),
         ])
     }

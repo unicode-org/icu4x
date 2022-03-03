@@ -18,10 +18,9 @@ use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 /// This data provider returns a [`ScriptWithExtensions`] instance,
 /// which efficiently represents data for the Script and Script_Extensions
-/// properties. The source data is the same as that of
-/// [crate::provider::PropertiesDataProvider], which is a TOML file of data
-/// for the property(-ies) desired, as given by the ICU4C property data
-/// exporter tool.
+/// properties. The source data is the same as that of the other properties
+/// providers, which is a TOML file of data for the property(-ies) desired,
+/// as given by the ICU4C property data exporter tool.
 pub struct ScriptWithExtensionsPropertyProvider {
     data: ScriptWithExtensionsProperty,
 }
@@ -81,7 +80,7 @@ impl DynProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsP
         key: ResourceKey,
         req: &DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
-        if uprops_helpers::get_last_component_no_version(&key) != "scx" {
+        if uprops_helpers::get_last_component_no_version(key) != "scx" {
             return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
         }
 
@@ -105,7 +104,7 @@ impl IterableDynProvider<ScriptWithExtensionsPropertyV1Marker>
 {
     fn supported_options_for_key(
         &self,
-        _resc_key: &ResourceKey,
+        _: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         Ok(Box::new(core::iter::once(ResourceOptions::default())))
     }

@@ -957,3 +957,17 @@ where
     /// Error with more information.
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
 }
+
+impl<M, P> DynProvider<M> for alloc::boxed::Box<P>
+where
+    M: DataMarker,
+    P: DynProvider<M> + ?Sized,
+{
+    fn load_payload(
+        &self,
+        key: ResourceKey,
+        req: &DataRequest,
+    ) -> Result<DataResponse<M>, DataError> {
+        (**self).load_payload(key, req)
+    }
+}

@@ -26,12 +26,12 @@ use icu_uniset::UnicodeSet;
 pub type UnisetResult = Result<DataPayload<UnicodePropertyV1Marker>, PropertiesError>;
 
 // helper fn
-fn get_uniset<D>(provider: &D, resc_key: ResourceKey) -> UnisetResult
+fn get_uniset<D>(provider: &D, key: ResourceKey) -> UnisetResult
 where
     D: DynProvider<UnicodePropertyV1Marker> + ?Sized,
 {
     let resp: DataResponse<UnicodePropertyV1Marker> =
-        provider.load_payload(resc_key, &Default::default())?;
+        provider.load_payload(key, &Default::default())?;
 
     let property_payload: DataPayload<UnicodePropertyV1Marker> = resp.take_payload()?;
     Ok(property_payload)
