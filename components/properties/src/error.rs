@@ -8,7 +8,7 @@ use icu_provider::DataError;
 #[cfg(feature = "std")]
 impl std::error::Error for PropertiesError {}
 
-#[derive(Display, Debug)]
+#[derive(Display, Debug, Copy, Clone)]
 pub enum PropertiesError {
     /// An error occurred while loading data
     #[displaydoc("{0}")]
