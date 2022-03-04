@@ -218,7 +218,12 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-icu_provider::impl_dyn_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    JapaneseErasProvider,
+    [JapaneseErasV1Marker,],
+    SERDE_SE,
+    impl ConvertData
+);
 
 impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn supported_options(&self) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {

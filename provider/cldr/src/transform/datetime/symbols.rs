@@ -44,7 +44,12 @@ impl ResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(DateSymbolsProvider, [DateSymbolsV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    DateSymbolsProvider,
+    [DateSymbolsV1Marker,],
+    SERDE_SE,
+    impl ConvertData
+);
 
 impl IterableResourceProvider<DateSymbolsV1Marker> for DateSymbolsProvider {
     fn supported_options(

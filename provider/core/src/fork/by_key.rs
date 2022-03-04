@@ -307,3 +307,37 @@ where
         Err(DataErrorKind::MissingResourceKey.with_key(key))
     }
 }
+
+#[cfg(feature = "datagen")]
+impl<P, MFrom, MTo> crate::datagen::ConvertData<MFrom, MTo> for MultiForkByKeyProvider<P>
+where
+    P: crate::datagen::ConvertData<MFrom, MTo>,
+    MFrom: DataMarker,
+    MTo: DataMarker,
+{
+    fn convert(
+        &self,
+        key: crate::ResourceKey,
+        mut from: DataPayload<MFrom>,
+    ) -> Result<DataPayload<MTo>, crate::datagen::ReturnedPayloadError<MFrom>> {
+        use crate::datagen::ReturnedPayloadError;
+
+        for provider in self.providers.iter() {
+            let result = provider.convert(key, from);
+            match result {
+                Ok(_) => return result,
+                Err(e) => {
+                    let ReturnedPayloadError(returned, error) = e;
+                    if error.kind == DataErrorKind::MissingResourceKey {
+                        return Err(ReturnedPayloadError(returned, error));
+                    }
+                    from = returned;
+                }
+            }
+        }
+        Err(ReturnedPayloadError(
+            from,
+            DataErrorKind::MissingResourceKey.with_key(key),
+        ))
+    }
+}

@@ -123,7 +123,12 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(WeekDataProvider, [WeekDataV1Marker,], SERDE_SE);
+icu_provider::impl_dyn_provider!(
+    WeekDataProvider,
+    [WeekDataV1Marker,],
+    SERDE_SE,
+    impl ConvertData
+);
 
 #[test]
 fn basic_cldr_week_data() {
