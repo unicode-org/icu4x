@@ -142,11 +142,11 @@ impl Writeable for str {
     /// use writeable::Writeable;
     /// use std::borrow::Cow;
     ///
-    /// let cow = "foo".writeable_to_string();
+    /// let cow = "foo".write_to_string();
     /// assert!(matches!(cow, Cow::Borrowed(_)));
     /// ```
     #[inline]
-    fn writeable_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<str> {
         Cow::Borrowed(self)
     }
 }
@@ -163,7 +163,7 @@ impl Writeable for String {
     }
 
     #[inline]
-    fn writeable_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<str> {
         Cow::Borrowed(self)
     }
 }
@@ -185,8 +185,8 @@ impl<'a, T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
-    fn writeable_to_string(&self) -> Cow<str> {
-        (*self).writeable_to_string()
+    fn write_to_string(&self) -> Cow<str> {
+        (*self).write_to_string()
     }
 }
 

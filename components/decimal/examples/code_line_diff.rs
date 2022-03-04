@@ -41,13 +41,13 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         let decimals: (FixedDecimal, FixedDecimal) = (line.0.into(), line.1.into());
         let removed = fdf.format(&decimals.0);
         let added = fdf.format(&decimals.1);
-        assert_ne!("", removed.writeable_to_string());
-        assert_ne!("", added.writeable_to_string());
+        assert_ne!("", removed.write_to_string());
+        assert_ne!("", added.write_to_string());
         #[cfg(debug_assertions)]
         println!(
             "Added/Removed: {}/{}",
-            removed.writeable_to_string(),
-            added.writeable_to_string()
+            removed.write_to_string(),
+            added.write_to_string()
         );
     }
 
