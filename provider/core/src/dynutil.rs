@@ -181,6 +181,20 @@ macro_rules! impl_dyn_provider {
             $crate::serde::SerializeMarker
         );
     };
+    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, SERDE_SE, impl DataConverter) => {
+        // If this fails to compile, enable the "serialize" feature on this crate.
+        $crate::impl_dyn_provider!(
+            $provider,
+            { $($pat $(if $guard)? => $struct_m),+, },
+            $crate::serde::SerializeMarker
+        );
+
+        $crate::impl_dyn_provider!(
+            $provider,
+            { $($pat $(if $guard)? => $struct_m),+, },
+            impl DataConverter
+        );
+    };
     ($provider:ty, [ $($struct_m:ty),+, ], SERDE_SE) => {
         // If this fails to compile, enable the "serialize" feature on this crate.
         $crate::impl_dyn_provider!(
@@ -189,6 +203,50 @@ macro_rules! impl_dyn_provider {
             $crate::serde::SerializeMarker
         );
     };
+    ($provider:ty, [ $($struct_m:ty),+, ], SERDE_SE, impl DataConverter) => {
+        $crate::impl_dyn_provider!(
+            $provider,
+            [ $($struct_m),+, ],
+            SERDE_SE
+        );
+        $crate::impl_dyn_provider!(
+            $provider,
+            { $(<$struct_m as $crate::ResourceMarker>::KEY => $struct_m),+, },
+            impl DataConverter
+        );
+    };
+    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, impl DataConverter) => {
+        // If this fails to compile, enable the "datagen" feature on this crate.
+        impl $crate::datagen::DataConverter<$crate::any::AnyMarker, $crate::serde::SerializeMarker> for $provider {
+            fn convert(&self, key: $crate::ResourceKey, from: DataPayload<$crate::any::AnyMarker>) -> Result<$crate::DataPayload<$crate::serde::SerializeMarker>, $crate::datagen::ReturnedPayloadError<$crate::any::AnyMarker>> {
+                use $crate::datagen::ReturnedPayloadError;
+                match key {
+                    $(
+                        $pat $(if $guard)? => {
+                            let result: $crate::DataPayload<$struct_m> = from.downcast().expect("Downcasting failed!");
+                            return Ok(result.into_serializable());
+                        }
+                    )+,
+                    _ => Err(ReturnedPayloadError(from, $crate::DataErrorKind::MissingResourceKey.with_key(key)))
+                }
+            }
+        }
+        impl $crate::datagen::DataConverter<$crate::buf::BufferMarker, $crate::datagen::HeapStatsMarker> for $provider {
+            fn convert(&self, key: $crate::ResourceKey, from: DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, $crate::datagen::ReturnedPayloadError<$crate::buf::BufferMarker>> {
+                use $crate::datagen::ReturnedPayloadError;
+                match key {
+                    $(
+                        $pat $(if $guard)? => {
+                            let heap_stats = from.attempt_zero_copy_heap_size::<$struct_m>();
+                            return Ok($crate::DataPayload::from_owned(heap_stats));
+                        }
+                    )+,
+                    _ => Err(ReturnedPayloadError(from, $crate::DataErrorKind::MissingResourceKey.with_key(key)))
+                }
+            }
+        }
+    };
+
     ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, $dyn_m:path) => {
         impl $crate::DynProvider<$dyn_m> for $provider
         {

@@ -27,6 +27,7 @@ use std::io;
 use std::io::BufRead;
 use std::path::PathBuf;
 use std::str::FromStr;
+use icu_datagen::get_all_keys;
 
 fn main() -> eyre::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
@@ -364,6 +365,37 @@ fn main() -> eyre::Result<()> {
                         },
                     )?
                     .take_payload()?;
+<<<<<<< HEAD
+||||||| parent of 13c6a4748 (verifier code)
+
+                let payload2 = provider
+                    .load_payload(
+                        key.clone(),
+                        &DataRequest {
+                            options: options.clone(),
+                            metadata: Default::default(),
+                        },
+                    )?
+                    .take_payload()?;
+                print!("SIZE for {}:", key);
+                let payload2: DataPayload<icu_provider::datagen::HeapStatsMarker> = provider.convert(key, payload2).expect("couldn't convert");
+                println!("{}", payload2.get().bytes_needed);
+=======
+
+                let payload2 = provider
+                    .load_payload(
+                        key.clone(),
+                        &DataRequest {
+                            options: options.clone(),
+                            metadata: Default::default(),
+                        },
+                    )?
+                    .take_payload()?;
+                print!("SIZE for {}:", key);
+                let payload2: DataPayload<icu_provider::datagen::HeapStatsMarker> =
+                    provider.convert(key, payload2).expect("couldn't convert");
+                println!("{}", payload2.get().bytes_needed);
+>>>>>>> 13c6a4748 (verifier code)
                 exporter.put_payload(key, options, payload)
             });
 
@@ -458,6 +490,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> eyre::Result<BlobExporter<'static>
 
     Ok(BlobExporter::new_with_sink(sink))
 }
+
 
 #[test]
 fn no_key_collisions() {

@@ -40,6 +40,7 @@ icu_provider_uprops = { version = "0.5", path = "../../provider/uprops", feature
 icu_provider_segmenter = { version = "0.1", path = "../../provider/segmenter" }
 icu_segmenter = { version = "0.1", path = "../../experimental/segmenter" }
 icu_testdata = { version = "0.5", path = "../../provider/testdata", features = ["metadata"] }
+litemap = { version = "0.3.0", path = "../../utils/litemap" }
 log = "0.4"
 rayon = "1.5"
 reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }
@@ -47,6 +48,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 simple_logger = "1.12"
 tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"] }
 writeable = { version = "0.3", path = "../../utils/writeable" }
+dhat = "0.3.0"
 
 [features]
 experimental = ["icu_provider_cldr/experimental"]
@@ -58,3 +60,7 @@ path = "src/bin/datagen.rs"
 [[bin]]
 name = "icu4x-testdata-download"
 path = "src/bin/testdata-download.rs"
+
+[[bin]]
+name = "icu4x-verify-zero-copy"
+path = "src/bin/verify-zero-copy.rs"

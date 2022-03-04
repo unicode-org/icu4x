@@ -1,0 +1,52 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use crate::prelude::*;
+use core::fmt;
+
+pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
+    fn convert(
+        &self,
+        key: crate::ResourceKey,
+        from: DataPayload<MFrom>,
+    ) -> Result<DataPayload<MTo>, ReturnedPayloadError<MFrom>>;
+}
+
+impl<MFrom, MTo, P> DataConverter<MFrom, MTo> for Box<P>
+where
+    MFrom: DataMarker,
+    MTo: DataMarker,
+    P: DataConverter<MFrom, MTo> + ?Sized,
+{
+    fn convert(
+        &self,
+        key: crate::ResourceKey,
+        from: DataPayload<MFrom>,
+    ) -> Result<DataPayload<MTo>, ReturnedPayloadError<MFrom>> {
+        (**self).convert(key, from)
+    }
+}
+
+pub struct ReturnedPayloadError<M: DataMarker>(pub DataPayload<M>, pub DataError);
+
+impl<M: DataMarker> From<ReturnedPayloadError<M>> for DataError {
+    fn from(other: ReturnedPayloadError<M>) -> Self {
+        other.1
+    }
+}
+
+impl<M: DataMarker> fmt::Debug for ReturnedPayloadError<M> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.1.fmt(f)
+    }
+}
+
+impl<M: DataMarker> fmt::Display for ReturnedPayloadError<M> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.1.fmt(f)
+    }
+}
+
+#[cfg(feature = "std")]
+impl<M: DataMarker> std::error::Error for ReturnedPayloadError<M> {}
