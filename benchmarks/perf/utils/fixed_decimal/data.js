@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646332544229,
+  "lastUpdate": 1646354430407,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20339,6 +20339,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 102826,
             "range": "± 267",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "105eaa0d9d091b30c520c4b5b3471690358a8e06",
+          "message": "Rename writeable_to_string() to write_to_string() (#1663)",
+          "timestamp": "2022-03-03T16:31:44-08:00",
+          "tree_id": "72a6e68067549657811bccbe064e21ee713943f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/105eaa0d9d091b30c520c4b5b3471690358a8e06"
+        },
+        "date": 1646354415627,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116701,
+            "range": "± 3830",
             "unit": "ns/iter"
           }
         ]
