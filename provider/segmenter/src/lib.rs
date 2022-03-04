@@ -37,8 +37,8 @@ mod transform;
 
 pub use crate::transform::SegmenterRuleProvider;
 
-/// Returns the absolute path to the directory containing rule break data.
-pub fn break_data_root() -> PathBuf {
+/// Returns the absolute path to the directory containing the segmenter raw data.
+pub fn segmenter_data_root() -> PathBuf {
     PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data")
 }
 

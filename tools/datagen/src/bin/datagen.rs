@@ -385,7 +385,7 @@ fn main() -> eyre::Result<()> {
     if matches.is_present("TEST_KEYS") {
         // FIXME: We should support specifying segmenter keys in --keys.
         let segmenter_keys = icu_segmenter::ALL_KEYS;
-        let segmenter_data_root = icu_provider_segmenter::break_data_root();
+        let segmenter_data_root = icu_provider_segmenter::segmenter_data_root();
         let segmenter_provider: Box<dyn IterableDynProvider<SerializeMarker> + Sync> = Box::new(
             icu_provider_segmenter::create_exportable_provider(&segmenter_data_root)?,
         );

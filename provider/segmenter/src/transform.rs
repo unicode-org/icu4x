@@ -711,7 +711,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = SegmenterRuleProvider::try_new(&crate::break_data_root())
+        let provider = SegmenterRuleProvider::try_new(&crate::segmenter_data_root())
             .expect("Rule break data should exists!");
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load_resource(&DataRequest::default())
