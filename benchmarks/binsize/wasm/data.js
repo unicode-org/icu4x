@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646332395888,
+  "lastUpdate": 1646354261573,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -53537,6 +53537,174 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/789009afe1f56c8a4c4bb6e65fbe176ebc70bf01"
         },
         "date": 1646332383706,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 15749,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 1684983,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 1968895,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 1681844,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 6832,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12743,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13178,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 6990,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 20788,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 1911143,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm",
+            "value": 11724,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm",
+            "value": 1688021,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 8545,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30961,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make_var+opt.wasm",
+            "value": 70437,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derives+opt.wasm",
+            "value": 13195,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17658,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm",
+            "value": 1716488,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make+opt.wasm",
+            "value": 7912,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 9081,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 13919,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10615,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 1685004,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "105eaa0d9d091b30c520c4b5b3471690358a8e06",
+          "message": "Rename writeable_to_string() to write_to_string() (#1663)",
+          "timestamp": "2022-03-03T16:31:44-08:00",
+          "tree_id": "72a6e68067549657811bccbe064e21ee713943f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/105eaa0d9d091b30c520c4b5b3471690358a8e06"
+        },
+        "date": 1646354248654,
         "tool": "ndjson",
         "benches": [
           {
