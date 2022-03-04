@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646332139815,
+  "lastUpdate": 1646353985218,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -10463,6 +10463,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/789009afe1f56c8a4c4bb6e65fbe176ebc70bf01"
         },
         "date": 1646332127504,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 1672368,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "105eaa0d9d091b30c520c4b5b3471690358a8e06",
+          "message": "Rename writeable_to_string() to write_to_string() (#1663)",
+          "timestamp": "2022-03-03T16:31:44-08:00",
+          "tree_id": "72a6e68067549657811bccbe064e21ee713943f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/105eaa0d9d091b30c520c4b5b3471690358a8e06"
+        },
+        "date": 1646353973352,
         "tool": "ndjson",
         "benches": [
           {
