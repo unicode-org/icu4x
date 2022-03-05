@@ -113,6 +113,9 @@ pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
 /// This implementation will also by default autogenerate `Ord` and `PartialOrd` on the VarULE type based on
 /// the implementation on `Self`. You can opt out of this with `#[zerovec::skip_ord]`
 ///
+/// Note that this implementation will autogenerate `EncodeAsVarULE` impls for _both_ `Self` and `&Self`
+/// for convenience. This allows for a little more flexibility in how things are encoded.
+///
 /// # Example
 ///
 /// ```rust
@@ -160,7 +163,7 @@ pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///     name: Cow::from("Jesse")
 /// };
 ///
-/// let important_people = VarZeroVec::from(&[person1.clone(), person2.clone()]);
+/// let important_people = VarZeroVec::from(&[person1, person2]);
 /// let data = Data { important_people };
 ///
 /// let postcard_bytes = postcard::to_stdvec(&data)

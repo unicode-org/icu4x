@@ -36,8 +36,8 @@ use core::ops::Range;
 /// let strings_2: Vec<&str> = vec!["twelve", "seventeen", "forty two"];
 /// let strings_3: Vec<&str> = vec!["我", "喜歡", "烏龍茶"];
 /// let strings_4: Vec<&str> = vec!["w", "ω", "文", "𑄃"];
-/// let strings_12 = vec![strings_1.clone(), strings_2.clone()];
-/// let strings_34 = vec![strings_3.clone(), strings_4.clone()];
+/// let strings_12 = vec![&*strings_1, &*strings_2];
+/// let strings_34 = vec![&*strings_3, &*strings_4];
 /// let all_strings = vec![strings_12, strings_34];
 ///
 /// let vzv_1: VarZeroVec<str> = VarZeroVec::from(&strings_1);
