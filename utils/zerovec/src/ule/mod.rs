@@ -29,9 +29,6 @@ use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
 use core::{mem, slice};
 
-#[cfg(feature = "derive")]
-pub use zerovec_derive::{VarULE, ULE};
-
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
 /// If you need to implement this trait, consider using [`#[make_ule]`](crate::make_ule) or
@@ -358,3 +355,27 @@ pub unsafe trait VarULE: 'static {
         }
     }
 }
+
+// Proc macro reexports
+//
+// These exist so that our docs can use intra-doc links.
+// Due to quirks of how rustdoc does documentation on reexports, these must be in this module and not reexported from
+// a submodule
+
+/// Custom derive for `zerovec::ULE`,
+///
+/// This can be attached to `Copy` structs containing only ULE types.
+///
+/// Most of the time, it is recommended one use [`#[make_ule]`](macro@make_ule) instead of defining
+/// a custom ULE type.
+#[cfg(feature = "derive")]
+pub use zerovec_derive::ULE;
+
+/// Custom derive for `zerovec::VarULE`,
+///
+/// This can be attached to structs containing only ULE types with one VarULE type at the end.
+///
+/// Most of the time, it is recommended one use [`#[make_varule]`](macro@make_varule) instead of defining
+/// a custom VarULE type.
+#[cfg(feature = "derive")]
+pub use zerovec_derive::VarULE;
