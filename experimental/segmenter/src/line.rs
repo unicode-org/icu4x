@@ -200,7 +200,7 @@ fn get_linebreak_property_utf32_with_rule(
 ) -> u8 {
     if codepoint < 0x20000 {
         let codepoint = codepoint as usize;
-        let prop = property_table.0.get(codepoint).unwrap_or(0);
+        let prop = property_table.0.get(codepoint).unwrap_or(UNKNOWN);
 
         if word_break_rule == WordBreakRule::BreakAll
             || line_break_rule == LineBreakRule::Loose
@@ -230,7 +230,7 @@ fn get_linebreak_property_utf32_with_rule(
 #[inline]
 fn get_linebreak_property_latin1(property_table: &RuleBreakPropertyTable<'_>, codepoint: u8) -> u8 {
     let codepoint = codepoint as usize;
-    property_table.0.get(codepoint).unwrap_or(0)
+    property_table.0.get(codepoint).unwrap_or(UNKNOWN)
 }
 
 #[inline]
