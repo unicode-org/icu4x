@@ -301,8 +301,16 @@ impl SegmenterRuleProvider {
             maps::get_general_category(&self.provider).expect("The data should be valid!");
         let gc = &payload.get().code_point_trie;
 
-        // UAX29 defines break property until U+0xE01EF
-        const UAX29_CODEPOINT_TABLE_LEN: usize = 0xe0400;
+        // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
+        // summarized in the following list. See details in the property txt in
+        // https://www.unicode.org/Public/14.0.0/ucd/auxiliary/.
+        //
+        // Grapheme Break Property: U+E0FFF ; Control
+        // Sentence Break Property: U+E01EF ; Extend
+        // Word Break Property: U+E01EF ; Extend
+        //
+        // The table length should be large enough to contain all codepoints.
+        const UAX29_CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
         // The property values of codepoints >= U+0x20000 are built into the line segmenter.
         const UAX14_CODEPOINT_TABLE_LEN: usize = 0x20000;
